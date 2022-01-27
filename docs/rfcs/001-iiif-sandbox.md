@@ -43,7 +43,7 @@ Host: iiif-sandbox.digirati.io
 Content-Type: application/json
 
 {
-  "id": <anything>,
+  "id": <original-id>,
   // rest of valid IIIF manifest
 }
 ```
@@ -62,6 +62,7 @@ The worker:
 3. If either 1, 2 or 3 fail, return a 400 Bad Request, with a JSON body `{ "error": "Bad Request" }` (we can expand on that later)
 4. If it was successfully loaded into vault, mint the *manifest* identifier. This is like a Google doc link - an unguessable long string.
 5. Replace the `id` of the manifest in the uploaded JSON with `https://iiif-sandbox.digirati.io/p3/<manifest-identifier>.json`. The /p3/ path reserves a "namespace" for future versions.
+6. Add or update a custom service block in the manifest that stores the `<original-id>` (see note "Storing the original ID" below)
 6. Store the manifest in the publicly read-only bucket, where it will be available at that address. The bucket policy adds the `Access-Control-Allow-Origin: *` header.
 7. From the manifest identifier, mint the *update* identifier.
 8. Return an HTTP 201 Created response, with the `Location` header set to that same address. The body of the response looks like this: 
@@ -83,7 +84,7 @@ Host: iiif-sandbox.digirati.io
 Content-Type: application/json
 
 {
-  "id": <anything-again>,
+  "id": <original-id>,
   // rest of valid IIIF manifest
 }
 ```
@@ -93,11 +94,39 @@ Content-Type: application/json
 3. Validate by performing steps 1, 2 and 3 above. 
 4. If invalid, return the Bad Request error.
 5. If valid, replace the `id` of the manifest in the uploaded JSON with `https://iiif-sandbox.digirati.io/p3/<manifest-identifier>.json`. 
+6. Add or update a custom service block in the manifest that stores the `<original-id>`.
 5. **Overwrite** the JSON stored at `/p3/<manifest-identifier>.json` with the new JSON
 6. Return the same 201 Created response body as before.
 
 
 ## Considerations
+
+### Storing the original ID
+
+The client uploads a manifest like:
+
+```
+{
+  "id": <original-id>,
+  // rest of valid IIIF manifest
+}
+```
+
+It would be useful for the value of `<original-id>` to be stored in the manifest; the client might need it when it comes to "properly" persist the manifest to their own storage, or when re-opening the manifest from the sandbox. It gets stored like this:
+
+```
+  ... ,
+  "seeAlso": [
+    // any existing seeAlsos ,
+    {
+      "id": "<original-id>",
+      "type": "Manifest",
+      "profile": "https://iiif-sandbox.digirati.io/original-id"
+    }
+  ],
+  ...
+```
+
 
 ### Maximum size
 
