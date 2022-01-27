@@ -119,6 +119,22 @@ https://iiif-sandbox.digirati.io/p3-update/0dZF4FdZF4FVBnkHE27AKXoCKo1nkHVBxQ80d
 
 It's up to the client to keep this secret, if they want it to be secret (you can imagine scenarios where it's shared just like a public Google doc).
 
+### Abuse
+
+Anyone can post to this. But it won't get hosted if it's above a certain size, or not JSON. It also needs to be parseable by Vault - which isn't quite the same as a valid manifest. You could, for example, host this:
+
+```
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json", 
+    "id": "my-id",
+    "type": "Manifest"
+}
+```
+
+... a just-started, WIP manifest. 
+
+But you can't host images, videos, arbitrary docs. The worker gateway insists that it's a manifest (or later a collection), which makes the oppurtunity for abuse a lot less.
+
 ## Implementation options
 
  - With cloudflare R2 and workers the running costs might even be free - "R2 will zero-rate infrequent storage operations under a threshold — currently planned to be in the single digit requests per second range." However this is still a private alpha.
