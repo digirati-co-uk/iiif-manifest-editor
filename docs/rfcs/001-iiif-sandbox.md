@@ -6,6 +6,8 @@ When editing a IIIF manifest, you need to see it working in viewers like Mirador
 
 Instead, the manifest needs to be hosted somewhere so it can be loaded by a viewer over HTTP.
 
+![image](https://user-images.githubusercontent.com/1443575/151345653-774665de-0e15-4ca2-b1d6-ecad1e7698ea.png)
+
 You can do this by:
 
  - checking it into GitHub and hosting in gh-pages
@@ -18,7 +20,7 @@ The last of these is one of the integration mechanisms manifest editor will supp
 
 This RFC proposes a variant of the third that is always available to all users of the manifest editor, and is used for previewing - even if you have the first and/or second mechanisms above, you might not want to have to commit, or push to storage, every time you want to check on your work in the editor.
 
-It's a service that **any clien, anywhere** can POST a IIIF manifest to, so that the manifest is available on the public web, over https, with the necessary CORS headers.
+It's a service that **any client, anywhere** can POST a IIIF manifest to, so that the manifest is available on the public web, over https, with the necessary CORS headers.
 
 ## Background discussions
 
