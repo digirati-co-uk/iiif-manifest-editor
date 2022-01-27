@@ -65,7 +65,7 @@ The worker:
 6. Add or update a custom service block in the manifest that stores the `<original-id>` (see note "Storing the original ID" below)
 6. Store the manifest in the publicly read-only bucket, where it will be available at that address. The bucket policy adds the `Access-Control-Allow-Origin: *` header.
 7. From the manifest identifier, mint the *update* identifier.
-8. Return an HTTP 201 Created response, with the `Location` header set to that same address. The body of the response looks like this: 
+8. Return an HTTP 201 Created response, with the `Location` header set to the manifest location address - the new manifest `id`. The body of the response looks like this: 
 
 ```
 {
