@@ -6,13 +6,15 @@ import {
   SimpleViewerProvider
 } from "@hyperion-framework/react-vault";
 import styles from "../styles/Home.module.css";
-import { AddManifestModal } from "../components/molecule/AddManifestModal";
+import { AddManifestModal } from "../components/molecules/AddManifestModal";
+import { Button } from "../components/atoms/Button";
+import { AddIcon } from "../components/icons/AddIcon";
 
 const Home: NextPage = () => {
   const [manifest, setManifest] = useState(
-    "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json");
-
-
+    "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
+  );
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -23,14 +25,24 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Manifest Editor
-          <VaultProvider>
-            <SimpleViewerProvider manifest={manifest}>
-              <AddManifestModal manifest={manifest} onChange={setManifest}/>
-            </SimpleViewerProvider>
-          </VaultProvider>
-        </h1>
+        <h1 className={styles.title}>Manifest Editor </h1>
+
+        <Button onClick={() => setModalVisible(!modalVisible)}>
+          <AddIcon />
+        </Button>
+        {modalVisible ? (
+          <AddManifestModal
+            manifest={manifest}
+            onChange={setManifest}
+            close={() => setModalVisible(false)}
+          />
+        ) : (
+          <></>
+        )}
+
+        <VaultProvider>
+          <SimpleViewerProvider manifest={manifest}></SimpleViewerProvider>
+        </VaultProvider>
       </main>
 
       {/* <footer className={styles.footer}>
