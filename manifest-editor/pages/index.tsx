@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type, { NextPage } from "next";
 import Head from "next/head";
 import {
@@ -9,12 +9,18 @@ import styles from "../styles/Home.module.css";
 import { AddManifestModal } from "../components/molecules/AddManifestModal";
 import { Button } from "../components/atoms/Button";
 import { AddIcon } from "../components/icons/AddIcon";
+import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 
 const Home: NextPage = () => {
   const [manifest, setManifest] = useState(
     "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
   );
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setModalVisible(false);
+  }, [manifest]);
+
 
   return (
     <div className={styles.container}>
@@ -41,7 +47,9 @@ const Home: NextPage = () => {
         )}
 
         <VaultProvider>
-          <SimpleViewerProvider manifest={manifest}></SimpleViewerProvider>
+          <SimpleViewerProvider manifest={manifest}>
+            <ThumbnailStrip />
+          </SimpleViewerProvider>
         </VaultProvider>
       </main>
 

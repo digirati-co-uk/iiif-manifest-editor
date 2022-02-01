@@ -5,7 +5,7 @@ export const Input = styled.input`
     padding: 0.5em;
     margin: 0.5em;
     color: ${(props: any) => props.inputColor || "palevioletred"};
-    background: papayawhip;
+    background: FloralWhite;
     border: none;
     border-radius: 3px;
   }
