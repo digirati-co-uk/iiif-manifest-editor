@@ -1,6 +1,13 @@
+import React, { useRef, useEffect } from "react";
 import { useCanvas } from "@hyperion-framework/react-vault";
+
 export const CanvasView: React.FC = () => {
+  const viewer = useRef();
   const canvas = useCanvas();
-  console.log(canvas)
-  return <div>I am the canvas view. I will be CanvasPanel?</div>;
+  // required for next js ssr
+  useEffect(() => {
+    import("@digirati/canvas-panel-web-components")
+  }, [])
+
+  return <canvas-panel ref={viewer} iiif-content={canvas?.id} />;
 };

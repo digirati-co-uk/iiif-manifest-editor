@@ -3,24 +3,11 @@ import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { useState } from "react";
 
-import { Modal } from "../atoms/Modal";
+import { ModalBackground } from "../atoms/ModalBackground";
+import {ModalContainer} from "../atoms/ModalContainer"
 
 import styled from "styled-components";
 
-const Container = styled.div`
-   {
-    position: fixed;
-    background: white;
-    width: 33%;
-    height: auto;
-    border-radius: 10px;
-    padding: 0.75rem;
-    color: rgba(0, 0, 139, 0.7);
-    display: flex;
-    top: 50%;
-    left: 33%;
-  }
-`;
 
 export const AddManifestModal: React.FC<{
   manifest: string;
@@ -30,8 +17,8 @@ export const AddManifestModal: React.FC<{
   const [inputValue, setInputValue] = useState(manifest);
 
   return (
-    <Modal>
-      <Container>
+    <ModalBackground>
+      <ModalContainer>
         <Input
           placeholder={manifest}
           onChange={(e: any) => setInputValue(e.target.value)}
@@ -40,7 +27,7 @@ export const AddManifestModal: React.FC<{
         <Button onClick={close}>
           <CloseIcon />
         </Button>
-      </Container>
-    </Modal>
+      </ModalContainer>
+    </ModalBackground>
   );
 };

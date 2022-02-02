@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Modal = styled.div`
+export const ModalBackground = styled.div`
    {
     z-index: auto;
     position: fixed;

@@ -6,7 +6,10 @@ import {
   useThumbnail
 } from "@hyperion-framework/react-vault";
 
-export const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
+import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
+import { ThumbnailImg } from "../atoms/Thumbnail";
+
+const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
   const thumb = useThumbnail({
     maxHeight: 300,
     maxWidth: 300
@@ -17,7 +20,12 @@ export const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
   }
 
   return (
-    <img height={50} src={thumb.id} alt="" loading="lazy" onClick={onClick} />
+    <ThumbnailImg
+      src={thumb.id}
+      alt=""
+      loading="lazy"
+      onClick={onClick}
+    />
   );
 };
 
@@ -26,7 +34,7 @@ export const ThumbnailStrip: FC = () => {
   const { setCurrentCanvasId } = useSimpleViewer();
 
   return (
-    <div style={{ maxHeight: "100%", display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+    <ThumbnailContainer>
       {manifest?.items.map((item: any) => {
         return (
           <CanvasContext key={item.id} canvas={item.id}>
@@ -34,6 +42,6 @@ export const ThumbnailStrip: FC = () => {
           </CanvasContext>
         );
       })}
-    </div>
+    </ThumbnailContainer>
   );
 };
