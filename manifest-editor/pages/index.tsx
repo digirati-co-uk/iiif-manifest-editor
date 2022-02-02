@@ -3,13 +3,14 @@ import type, { NextPage } from "next";
 import Head from "next/head";
 import {
   VaultProvider,
-  SimpleViewerProvider
+  SimpleViewerProvider, useCanvas
 } from "@hyperion-framework/react-vault";
 import styles from "../styles/Home.module.css";
 import { AddManifestModal } from "../components/molecules/AddManifestModal";
 import { Button } from "../components/atoms/Button";
 import { AddIcon } from "../components/icons/AddIcon";
 import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
+import { CanvasView } from "../components/organisms/CanvasView";
 
 const Home: NextPage = () => {
   const [manifest, setManifest] = useState(
@@ -50,6 +51,9 @@ const Home: NextPage = () => {
           <SimpleViewerProvider manifest={manifest}>
             <ThumbnailStrip />
           </SimpleViewerProvider>
+          <div>Your selected canvas is: <CanvasView/>
+          </div>
+          <div>You are viewing: {manifest}</div>
         </VaultProvider>
       </main>
 
