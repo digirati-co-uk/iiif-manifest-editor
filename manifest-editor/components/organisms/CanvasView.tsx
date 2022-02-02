@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import { useCanvas } from "@hyperion-framework/react-vault";
 
+import {CanvasContainer} from '../atoms/CanvasContainer'
+
 export const CanvasView: React.FC = () => {
   const viewer = useRef();
   const canvas = useCanvas();
@@ -9,5 +11,9 @@ export const CanvasView: React.FC = () => {
     import("@digirati/canvas-panel-web-components")
   }, [])
 
-  return <canvas-panel ref={viewer} iiif-content={canvas?.id} />;
+  return (
+    <CanvasContainer>
+      <canvas-panel ref={viewer} canvas-id={canvas?.id} />
+    </CanvasContainer>
+  );
 };
