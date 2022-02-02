@@ -50,3 +50,8 @@ We don't want to needlessly throw away the capabilities we have, but we want to 
  - Fix or drop things that don't work
 
  How much of the UI we already have will be able to return?
+ 
+ ## Implementation ideas
+ 
+ We're using [GitHub discussions](https://github.com/digirati-co-uk/iiif-manifest-editor/discussions) to explore ideas, and the [Wiki](https://github.com/digirati-co-uk/iiif-manifest-editor/wiki) to think about implementation.
+ 
