@@ -31,7 +31,6 @@ export const PreviewView: React.FC<{ manifest: any; close: any }> = ({
           {/* WE ACTUALLY NEED TO GIVE IT THE VAULT MANIFEST HERE INSTEAD BUT WE DON"T HAVE A PERSISTED URL YET*/}
           <UniversalViewer manifestId={manifest.manifest}
           canvasIndex={2}
-
           />
         </CanvasContainer>
       </ModalContainer>

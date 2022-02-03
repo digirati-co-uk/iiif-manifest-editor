@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [previewVisible, setPreviewVisible] = useState(true);
+  const [previewVisible, setPreviewVisible] = useState(false);
 
   useEffect(() => {
     setModalVisible(false);
@@ -63,7 +63,7 @@ const Home: NextPage = () => {
         )}
 
         <VaultProvider>
-          <SimpleViewerProvider manifest={manifest}>
+          <SimpleViewerProvider manifest={manifest} >
             <FlexContainerRow>
               <ThumbnailStrip />
               <CanvasView manifest={manifest} />

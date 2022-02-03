@@ -3,7 +3,7 @@ import {
   CanvasContext,
   useManifest,
   useSimpleViewer,
-  useThumbnail
+  useThumbnail,
 } from "@hyperion-framework/react-vault";
 
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
@@ -20,14 +20,12 @@ const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
   }
 
   return (
-    <ThumbnailImg
-      src={thumb.id}
-      alt=""
-      loading="lazy"
-      onClick={onClick}
-    />
+    <ThumbnailImg src={thumb.id} alt="" loading="lazy" onClick={onClick} />
   );
 };
+// The CanvasContext currently only lets you select every second canvas. Once the
+// SimpleViewerProvider && SimpleViewerContext from @hyperion-framework/react-vault
+// get updated with the latest code they will accept a prop pagingView={false}
 
 export const ThumbnailStrip: FC = () => {
   const manifest = useManifest();
