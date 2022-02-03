@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { useCanvas, ManifestContext } from "@hyperion-framework/react-vault";
+import { useCanvas } from "@hyperion-framework/react-vault";
 
 import { CanvasContainer } from "../atoms/CanvasContainer";
 
