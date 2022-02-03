@@ -12,5 +12,6 @@ export const ModalContainer = styled.div`
     display: flex;
     top: 50%;
     left: 33%;
+    z-index: 12;
   }
 `;
