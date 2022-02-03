@@ -55,7 +55,7 @@ const Home: NextPage = () => {
           <SimpleViewerProvider manifest={manifest}>
             <FlexContainerRow>
               <ThumbnailStrip />
-              <CanvasView />
+              <CanvasView manifest={manifest}/>
               <div>You are viewing: {manifest}</div>
             </FlexContainerRow>
           </SimpleViewerProvider>
