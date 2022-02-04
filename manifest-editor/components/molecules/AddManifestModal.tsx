@@ -1,4 +1,4 @@
-import { Input } from "../atoms/Input";
+import { Input } from "../form/Input";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { useState } from "react";

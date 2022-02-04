@@ -10,11 +10,15 @@ import { CanvasView } from "../components/organisms/CanvasView";
 import { Placeholder } from "../components/atoms/Placeholder";
 import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
+import { EditorPanel } from "../components/layout/EditorPanel";
 
 const Home: NextPage = () => {
+  // This will actually be handled by the vault in a higher level - by the shell?
   const [manifest, setManifest] = useState(
     "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
   );
+
+  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -35,6 +39,7 @@ const Home: NextPage = () => {
           <Button
             onClick={() => setModalVisible(!modalVisible)}
             title="Add a manifest"
+            color={"#6b6b6b"}
           >
             <AddIcon />
           </Button>
@@ -46,6 +51,13 @@ const Home: NextPage = () => {
             <a href={"/preview"} target={"_blank"}>
               Preview{" "}
             </a>
+          </Button>
+          <Button
+            // This will change but just to get some MVP
+            onClick={() => setEditorPanelOpen(true)}
+            title="Edit manifest label"
+          >
+            Edit Manifest Label
           </Button>
         </Toolbar>
         {modalVisible ? (
@@ -61,7 +73,14 @@ const Home: NextPage = () => {
         <FlexContainerRow>
           <ThumbnailStrip />
           <CanvasView manifest={manifest} />
-          <div>You are viewing: {manifest}</div>
+          <EditorPanel
+            // Hard coded value here but this will depend on the element being edited
+            title={"Edit manifest label"}
+            open={editorPanelOpen}
+            close={() => setEditorPanelOpen(false)}
+          >
+            {/* The children of this will vary */}
+          </EditorPanel>
         </FlexContainerRow>
       </main>
 

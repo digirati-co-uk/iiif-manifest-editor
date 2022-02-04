@@ -14,6 +14,7 @@
     "@digirati/canvas-panel-web-components": "^1.0.30",
     "@hyperion-framework/react-vault": "^2.0.0-alpha.0",
     "@hyperion-framework/vault": "^2.0.0-alpha.0",
+    "@iiif/vault-helpers": "^0.9.0",
     "@types/styled-components": "^5.1.21",
     "next": "12.0.9",
     "react": "17.0.2",
