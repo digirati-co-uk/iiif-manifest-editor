@@ -8,8 +8,8 @@ import { AddIcon } from "../components/icons/AddIcon";
 import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
 import { Placeholder } from "../components/atoms/Placeholder";
-import { Toolbar } from "../components/atoms/Toolbar";
-import { FlexContainerRow } from "../components/atoms/FlexContainer";
+import { Toolbar } from "../components/layout/Toolbar";
+import { FlexContainerRow } from "../components/layout/FlexContainer";
 
 const Home: NextPage = () => {
   const [manifest, setManifest] = useState(

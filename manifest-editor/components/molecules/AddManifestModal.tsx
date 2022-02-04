@@ -3,8 +3,8 @@ import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { useState } from "react";
 
-import { ModalBackground } from "../atoms/ModalBackground";
-import { ModalContainer } from "../atoms/ModalContainer";
+import { ModalBackground } from "../layout/ModalBackground";
+import { ModalContainer } from "../layout/ModalContainer";
 
 export const AddManifestModal: React.FC<{
   manifest: string;

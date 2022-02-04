@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useManifest } from "@hyperion-framework/react-vault";
-import { CanvasContainer } from "../atoms/CanvasContainer";
+import { CanvasContainer } from "../layout/CanvasContainer";
 import { UniversalViewer } from "../previewers/UniversalViewerLazy";
 
 export const PreviewView: React.FC = () => {

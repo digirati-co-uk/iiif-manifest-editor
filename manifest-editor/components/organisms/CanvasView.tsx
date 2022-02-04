@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { useCanvas } from "@hyperion-framework/react-vault";
 
-import { CanvasContainer } from "../atoms/CanvasContainer";
+import { CanvasContainer } from "../layout/CanvasContainer";
 
 export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
   const viewer = useRef();
