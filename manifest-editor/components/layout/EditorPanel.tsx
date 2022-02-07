@@ -5,7 +5,6 @@ import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { Input } from "../form/Input";
 import { useManifest } from "@hyperion-framework/react-vault";
-// import { getValue } from "@iiif/vault-helpers";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -37,18 +36,18 @@ export const EditorPanel: React.FC<{
   title: string;
 }> = ({ close, open, title }) => {
   const manifest = useManifest();
-  // const [helpers, setHelpers] = useState(null);
+  const [helpers, setHelpers] = useState(null);
 
-  // function getLabel(manifest: any) {
-  //   return manifest.label ? getValue(manifest.label) : "";
-  // }
+  function getLabel(manifest: any) {
+    return manifest.label ? getValue(manifest.label) : "";
+  }
 
-  // let helps = null;
+  let helps = null;
 
-  // // required for next js ssr
-  // useEffect(() => {
-  //   helps = import("@iiif/vault-helpers");
-  // }, []);
+  // required for next js ssr
+  useEffect(() => {
+    // helps = import("@iiif/vault-helpers");
+  }, []);
 
   return (
     <>
@@ -63,7 +62,7 @@ export const EditorPanel: React.FC<{
           <div>Manifest ID:</div>
           <div>{manifest && manifest.id ? manifest.id : "Unknown"}</div>
           <div>Manifest Label:</div>
-          {/* <div>{helps && helps.getLabel ? helps.getLabel(manifest): ''}  </div> */}
+          <div>{helps && helps.getLabel ? helps.getLabel(manifest): ''}  </div>
 
           <Input />
         </EditorPanelContainerOpen>

@@ -12,11 +12,16 @@ import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
+import {
+  CanvasContext,
+  useManifest,
+  useSimpleViewer,
+  useThumbnail
+} from "@hyperion-framework/react-vault";
+import { useSave } from "../hooks/useSave";
+
 const Home: NextPage = () => {
-  // This will actually be handled by the vault in a higher level - by the shell?
-  const [manifest, setManifest] = useState(
-    "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
-  );
+  const manifest = useManifest();
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,6 +29,13 @@ const Home: NextPage = () => {
   useEffect(() => {
     setModalVisible(false);
   }, [manifest]);
+
+  const setManifest = () => {};
+
+  const saveManifest = () => {
+    const data = useSave(manifest);
+    console.log(data);
+  };
 
   return (
     <div className={styles.container}>
@@ -45,6 +57,7 @@ const Home: NextPage = () => {
           </Button>
           <Button
             // Implement a change of viewer type here
+            // Viewer options will be handled in some config
             onClick={() => {}}
             title="Preview"
           >
@@ -59,6 +72,13 @@ const Home: NextPage = () => {
           >
             Edit Manifest Label
           </Button>
+          <Button
+            // This will evolve to a file/save option
+            onClick={() => saveManifest()}
+            title="Save manifest"
+          >
+            Save manifest
+          </Button>
         </Toolbar>
         {modalVisible ? (
           <AddManifestModal
@@ -72,7 +92,7 @@ const Home: NextPage = () => {
 
         <FlexContainerRow>
           <ThumbnailStrip />
-          <CanvasView manifest={manifest} />
+          {/* <CanvasView manifest={manifest} /> */}
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
             title={"Edit manifest label"}

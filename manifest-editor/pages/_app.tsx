@@ -21,6 +21,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   // const [clickAmount, setClickAmount] = useState(0)
   // Switch for the vault here
   const [manifest, setManifest] = useState(
+    // We will want to actually implement some options/templates etc
+    // but just implementing with some examples for development purposes.
     "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
   );
 
