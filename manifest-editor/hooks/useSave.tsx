@@ -16,7 +16,7 @@ export const useSave = async (manifest: any) => {
     })
   };
   // Don't commit URLs.local here
-  const response = await fetch(URLs.local, requestOptions)
+  const response = await fetch(URLs.prod, requestOptions)
     .then(response => {
       return response.json().catch(err => {
         console.error(`'${err}' happened!`);
