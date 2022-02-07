@@ -38,9 +38,9 @@ export const EditorPanel: React.FC<{
   const manifest = useManifest();
   const [helpers, setHelpers] = useState(null);
 
-  function getLabel(manifest: any) {
-    return manifest.label ? getValue(manifest.label) : "";
-  }
+  // function getLabel(manifest: any) {
+  //   return manifest.label ? getValue(manifest.label) : "";
+  // }
 
   let helps = null;
 
