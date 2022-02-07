@@ -62,7 +62,7 @@ export const EditorPanel: React.FC<{
           <div>Manifest ID:</div>
           <div>{manifest && manifest.id ? manifest.id : "Unknown"}</div>
           <div>Manifest Label:</div>
-          <div>{helps && helps.getLabel ? helps.getLabel(manifest): ''}  </div>
+          {/* <div>{helps && helps.getLabel ? helps.getLabel(manifest): ''}  </div> */}
 
           <Input />
         </EditorPanelContainerOpen>
