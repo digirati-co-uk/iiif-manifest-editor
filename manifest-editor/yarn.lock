@@ -1556,15 +1556,6 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.4"
 
-"@iiif/parser@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.0.tgz#57c98de6c7b3da407e0f2f03695e1e5ef9aefb15"
-  integrity sha512-QX9bkBW13NOl4z4HONckSrk2qatcWrqItf/cLitW1vNwDj9SxTk5Qj0/8E6bbZROh/uRmweeUJICXozbvshVUQ==
-  dependencies:
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
-    "@types/geojson" "^7946.0.8"
-
 "@iiif/parser@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.2.tgz#14f84be4ebe0989a74a39feb1fab4d269e5b5afd"
@@ -1574,24 +1565,10 @@
     "@iiif/presentation-3" "^1.0.3"
     "@types/geojson" "^7946.0.8"
 
-"@iiif/presentation-2@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.0.tgz#b85d33f79cdb441b8044afb41ef2e92417f3e1c0"
-  integrity sha512-HZdjlvPwxRweO4ZjV3uvy6r4Rm/iE+CefRHVBZ0x5irEUZuUKEQySMdFqFJpV2/kDFTlGHcZPgbkTbNeEtfLIA==
-  dependencies:
-    "@iiif/presentation-3" "1.0.0"
-
 "@iiif/presentation-2@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
   integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
-
-"@iiif/presentation-3@1.0.0", "@iiif/presentation-3@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.0.tgz#2ed414354f4dbf2b09cc03a39256e08df0b7c06e"
-  integrity sha512-EHiqGTMZx+3EDd6oYRzmJ7c0d9bTJA7NdkOXN0xOQlCbgbBUB2xeBFbacACqW6Rh04+nplv046C392Z+QoUCBg==
-  dependencies:
-    "@types/geojson" "^7946.0.7"
 
 "@iiif/presentation-3@^1.0.3", "@iiif/presentation-3@^1.0.4":
   version "1.0.4"
@@ -1599,18 +1576,6 @@
   integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
   dependencies:
     "@types/geojson" "^7946.0.7"
-
-"@iiif/vault-helpers@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.0.tgz#27c0b66e085d66582a6c8e064cb016fe060b0084"
-  integrity sha512-VlHU5PR+qQG0GSWBgpcDlFxIcSW4amN/YcPyXuHaPHh/ZWD8ctk8pvkYXOVBCpda17f4LQ8ACXseMPs0Bp8gPw==
-  dependencies:
-    "@atlas-viewer/iiif-image-api" "^1.2.6"
-    "@iiif/parser" "^1.0.0"
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
-    "@iiif/vault" "0.9.5"
-    tiny-invariant "^1.2.0"
 
 "@iiif/vault-helpers@^0.9.4":
   version "0.9.4"
@@ -1624,21 +1589,7 @@
     "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
 
-"@iiif/vault@0.9.5":
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.5.tgz#2dd1c5fbef2fc5065ee985c5e48b5f7884d2f4e9"
-  integrity sha512-WnjlAbk7Yux/sZeV6qDWiz+HAzLY0tPv+D2f09IBAfmXoApC6pikT78c7EWkEox63NWxQBnHhL1djKvBtL12XQ==
-  dependencies:
-    "@iiif/parser" "^1.0.0"
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
-    mitt "^3.0.0"
-    node-fetch "^3.1.1"
-    redux "^4.1.2"
-    tiny-invariant "^1.2.0"
-    typesafe-actions "^5.1.0"
-
-"@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
+"@iiif/vault@^0.9.10", "@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.10.tgz#f620813d664511895529e59e2e124a9971352fce"
   integrity sha512-f+wKltOjIDbTNcELocBjo8c1svTe6BjQ9LQFSXXObYE6VYtc3bLYGBzS08huGUN39duVBi6vNtUsmlsl6H1KYQ==
