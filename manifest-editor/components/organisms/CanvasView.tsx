@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { useCanvas } from "react-iiif-vault";
-import("@digirati/canvas-panel-web-components");
+// import("@digirati/canvas-panel-web-components");
 import { CanvasContainer } from "../layout/CanvasContainer";
 
 export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
@@ -8,8 +8,8 @@ export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
   const canvas = useCanvas();
 
   // required for next js ssr
-  // useEffect(() => {
-  //   import("@digirati/canvas-panel-web-components");
+  // useEffect(async () => {
+  //   await import("@digirati/canvas-panel-web-components");
   // }, []);
 
   return (
