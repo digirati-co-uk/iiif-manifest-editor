@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { useCanvas } from "@hyperion-framework/react-vault";
-
+import { useCanvas } from "react-iiif-vault";
+import("@digirati/canvas-panel-web-components");
 import { CanvasContainer } from "../layout/CanvasContainer";
 
 export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
@@ -8,17 +8,17 @@ export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
   const canvas = useCanvas();
 
   // required for next js ssr
-  useEffect(() => {
-    import("@digirati/canvas-panel-web-components");
-  }, []);
+  // useEffect(() => {
+  //   import("@digirati/canvas-panel-web-components");
+  // }, []);
 
   return (
     <CanvasContainer>
-      <canvas-panel
+      {/* <canvas-panel
         ref={viewer}
         canvas-id={canvas?.id}
-        manifest-id={manifest.manifest}
-      />
+        manifest-id={manifest}
+      /> */}
     </CanvasContainer>
   );
 };

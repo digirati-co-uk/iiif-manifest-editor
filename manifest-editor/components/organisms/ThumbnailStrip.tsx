@@ -3,8 +3,8 @@ import {
   CanvasContext,
   useManifest,
   useSimpleViewer,
-  useThumbnail,
-} from "@hyperion-framework/react-vault";
+  useThumbnail
+} from "react-iiif-vault";
 
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
 import { ThumbnailImg } from "../atoms/Thumbnail";
@@ -24,7 +24,7 @@ const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
   );
 };
 // The CanvasContext currently only lets you select every second canvas. Once the
-// SimpleViewerProvider && SimpleViewerContext from @hyperion-framework/react-vault
+// SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
 // get updated with the latest code they will accept a prop pagingView={false}
 
 export const ThumbnailStrip: FC = () => {

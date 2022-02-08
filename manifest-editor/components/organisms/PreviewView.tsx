@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useManifest } from "@hyperion-framework/react-vault";
+import { useManifest } from "react-iiif-vault";
 import { CanvasContainer } from "../layout/CanvasContainer";
 import { UniversalViewer } from "../previewers/UniversalViewerLazy";
 

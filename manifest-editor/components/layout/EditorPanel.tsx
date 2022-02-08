@@ -4,7 +4,7 @@ import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { Input } from "../form/Input";
-import { useManifest } from "@hyperion-framework/react-vault";
+import { useManifest } from "react-iiif-vault";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -52,7 +52,7 @@ export const EditorPanel: React.FC<{
   return (
     <>
       {open ? (
-        <EditorPanelContainerOpen wide={true}>
+        <EditorPanelContainerOpen  justify={"space-between"} wide={true}>
           <FlexContainerRow justify="space-between">
             <h4>{title}</h4>
             <Button onClick={close}>

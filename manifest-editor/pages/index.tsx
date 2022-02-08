@@ -32,6 +32,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     setModalVisible(false);
+    console.log(manifest);
   }, [manifest]);
 
   const setManifest = () => {};
@@ -39,7 +40,6 @@ const Home: NextPage = () => {
   const saveManifest = async () => {
     const data = await useSave(manifest);
     setpersistedManifest(data ? data : "");
-    console.log(data);
   };
 
   return (
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
         </Toolbar>
         {modalVisible ? (
           <AddManifestModal
-            manifest={manifest ? manifest?.manifest : ""}
+            manifest={manifest ? manifest?.id : ""}
             onChange={setManifest}
             close={() => setModalVisible(false)}
           />
@@ -121,7 +121,7 @@ const Home: NextPage = () => {
 
         <FlexContainerRow>
           <ThumbnailStrip />
-          <CanvasView manifest={manifest} />
+          <CanvasView manifest={manifest?.id} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
             title={"Edit manifest label"}
