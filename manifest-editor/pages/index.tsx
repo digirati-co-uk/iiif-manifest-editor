@@ -120,7 +120,7 @@ const Home: NextPage = () => {
 
         <FlexContainerRow>
           <ThumbnailStrip />
-          <CanvasView manifest={manifest?.id} />
+          <CanvasView manifest={manifest ? manifest?.id : ""} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
             title={"Edit manifest label"}
