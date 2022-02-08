@@ -100,7 +100,6 @@ const Home: NextPage = () => {
                     href={`http://universalviewer.io/uv.html?manifest=${persistedManifest.location}`}
                     target={"_blank"}
                     rel="noreferrer"
-                    target="_blank"
                   >
                     Preview externally on Universal Viewer
                   </a>
