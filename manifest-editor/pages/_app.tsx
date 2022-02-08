@@ -1,10 +1,7 @@
 import { useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
-import {
-  VaultProvider,
-  SimpleViewerProvider
-} from "@hyperion-framework/react-vault";
+import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,

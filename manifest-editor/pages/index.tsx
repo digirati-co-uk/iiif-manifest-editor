@@ -12,7 +12,7 @@ import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
-import { useManifest } from "@hyperion-framework/react-vault";
+import { useManifest } from "react-iiif-vault";
 import { useSave } from "../hooks/useSave";
 import { DropdownMenu } from "../components/atoms/DropdownMenu";
 
