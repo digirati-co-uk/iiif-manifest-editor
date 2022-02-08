@@ -6,8 +6,7 @@ import { CanvasContainer } from "../layout/CanvasContainer";
 export const CanvasView: React.FC<{manifest: string}> = (manifest) => {
   const viewer = useRef();
   const canvas = useCanvas();
-  console.log(manifest.manifest);
-  
+
   // required for next js ssr
   useEffect(() => {
     import("@digirati/canvas-panel-web-components");

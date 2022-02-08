@@ -5,7 +5,6 @@ const URLs = {
 };
 
 export const useSave = async (manifest: any) => {
-  // console.log("Your manifest is: ", manifest);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -16,7 +15,8 @@ export const useSave = async (manifest: any) => {
     })
   };
   // Don't commit URLs.local here
-  const response = await fetch(URLs.prod, requestOptions)
+  let responseData = {};
+  await fetch(URLs.prod, requestOptions)
     .then(response => {
       return response.json().catch(err => {
         console.error(`'${err}' happened!`);
@@ -24,8 +24,8 @@ export const useSave = async (manifest: any) => {
       });
     })
     .then(data => {
-      console.log(data);
+      responseData = { ...data };
     });
 
-  return response;
+  return responseData;
 };

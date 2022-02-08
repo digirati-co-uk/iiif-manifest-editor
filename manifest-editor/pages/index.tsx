@@ -12,19 +12,23 @@ import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
-import {
-  CanvasContext,
-  useManifest,
-  useSimpleViewer,
-  useThumbnail
-} from "@hyperion-framework/react-vault";
+import { useManifest } from "@hyperion-framework/react-vault";
 import { useSave } from "../hooks/useSave";
+import { DropdownMenu } from "../components/atoms/DropdownMenu";
+
+type Persistance = {
+  deleteLocation?: string;
+  expirationTtl?: Number;
+  location?: string;
+  updateLocation?: string;
+};
 
 const Home: NextPage = () => {
   const manifest = useManifest();
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
 
   useEffect(() => {
     setModalVisible(false);
@@ -32,8 +36,9 @@ const Home: NextPage = () => {
 
   const setManifest = () => {};
 
-  const saveManifest = () => {
-    const data = useSave(manifest);
+  const saveManifest = async () => {
+    const data = await useSave(manifest);
+    setpersistedManifest(data ? data : "");
     console.log(data);
   };
 
@@ -62,7 +67,7 @@ const Home: NextPage = () => {
             title="Preview"
           >
             <a href={"/preview"} target={"_blank"}>
-              Preview{" "}
+              Preview
             </a>
           </Button>
           <Button
@@ -79,10 +84,34 @@ const Home: NextPage = () => {
           >
             Save manifest
           </Button>
+          <DropdownMenu
+            label={"Preview"}
+            options={[
+              {
+                label: (
+                  <a href={"/preview"} target={"_blank"}>
+                    Preview internally on canvas panel
+                  </a>
+                )
+              },
+              {
+                label: (
+                  <a
+                    href={`http://universalviewer.io/uv.html?manifest=${persistedManifest.location}`}
+                    target={"_blank"}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Preview externally on Universal Viewer
+                  </a>
+                )
+              }
+            ]}
+          ></DropdownMenu>
         </Toolbar>
         {modalVisible ? (
           <AddManifestModal
-            manifest={manifest}
+            manifest={manifest ? manifest?.manifest : ""}
             onChange={setManifest}
             close={() => setModalVisible(false)}
           />
@@ -92,7 +121,7 @@ const Home: NextPage = () => {
 
         <FlexContainerRow>
           <ThumbnailStrip />
-          {/* <CanvasView manifest={manifest} /> */}
+          <CanvasView manifest={manifest} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
             title={"Edit manifest label"}
@@ -104,7 +133,9 @@ const Home: NextPage = () => {
         </FlexContainerRow>
       </main>
 
-      <footer className={styles.footer}></footer>
+      <footer className={styles.footer}>
+        Your manifest is saved here: {persistedManifest.location}
+      </footer>
     </div>
   );
 };
