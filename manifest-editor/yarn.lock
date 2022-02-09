@@ -1556,49 +1556,47 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.4"
 
-"@iiif/parser@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.0.tgz#57c98de6c7b3da407e0f2f03695e1e5ef9aefb15"
-  integrity sha512-QX9bkBW13NOl4z4HONckSrk2qatcWrqItf/cLitW1vNwDj9SxTk5Qj0/8E6bbZROh/uRmweeUJICXozbvshVUQ==
+"@iiif/parser@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.2.tgz#14f84be4ebe0989a74a39feb1fab4d269e5b5afd"
+  integrity sha512-zgwonz5ofF/CM+9EkQO7FoeVho/x5FkC9G+vXpt3P8F0AYzPUyfkGQrcHcjAh2ikFNKoE/yx8+vFU7lQNZfECA==
   dependencies:
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.3"
     "@types/geojson" "^7946.0.8"
 
-"@iiif/presentation-2@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.0.tgz#b85d33f79cdb441b8044afb41ef2e92417f3e1c0"
-  integrity sha512-HZdjlvPwxRweO4ZjV3uvy6r4Rm/iE+CefRHVBZ0x5irEUZuUKEQySMdFqFJpV2/kDFTlGHcZPgbkTbNeEtfLIA==
-  dependencies:
-    "@iiif/presentation-3" "1.0.0"
+"@iiif/presentation-2@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
+  integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
 
-"@iiif/presentation-3@1.0.0", "@iiif/presentation-3@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.0.tgz#2ed414354f4dbf2b09cc03a39256e08df0b7c06e"
-  integrity sha512-EHiqGTMZx+3EDd6oYRzmJ7c0d9bTJA7NdkOXN0xOQlCbgbBUB2xeBFbacACqW6Rh04+nplv046C392Z+QoUCBg==
+"@iiif/presentation-3@^1.0.3", "@iiif/presentation-3@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.4.tgz#9433c38c6a26e95ef94d1f9e0232962398611d70"
+  integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/vault-helpers@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.0.tgz#27c0b66e085d66582a6c8e064cb016fe060b0084"
-  integrity sha512-VlHU5PR+qQG0GSWBgpcDlFxIcSW4amN/YcPyXuHaPHh/ZWD8ctk8pvkYXOVBCpda17f4LQ8ACXseMPs0Bp8gPw==
+"@iiif/vault-helpers@^0.9.4":
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.4.tgz#50f3aecb59bc7f9ebe99822b37d3637d5e40eb66"
+  integrity sha512-WZPrZW/abymHZNLFYFeuToXGoZQ4RXdeu8lbcVDu6N4HghSA2dW4soMm4XaKC4Krm6JsKBPEbMBskuXO2Sb6DQ==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.2.6"
-    "@iiif/parser" "^1.0.0"
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
-    "@iiif/vault" "0.9.5"
+    "@iiif/parser" "^1.0.2"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
 
-"@iiif/vault@0.9.5":
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.5.tgz#2dd1c5fbef2fc5065ee985c5e48b5f7884d2f4e9"
-  integrity sha512-WnjlAbk7Yux/sZeV6qDWiz+HAzLY0tPv+D2f09IBAfmXoApC6pikT78c7EWkEox63NWxQBnHhL1djKvBtL12XQ==
+"@iiif/vault@^0.9.10", "@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
+  version "0.9.10"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.10.tgz#f620813d664511895529e59e2e124a9971352fce"
+  integrity sha512-f+wKltOjIDbTNcELocBjo8c1svTe6BjQ9LQFSXXObYE6VYtc3bLYGBzS08huGUN39duVBi6vNtUsmlsl6H1KYQ==
   dependencies:
-    "@iiif/parser" "^1.0.0"
-    "@iiif/presentation-2" "^1.0.0"
-    "@iiif/presentation-3" "^1.0.0"
+    "@iiif/parser" "^1.0.2"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.3"
     mitt "^3.0.0"
     node-fetch "^3.1.1"
     redux "^4.1.2"
@@ -10012,6 +10010,23 @@ react-helmet-async@^1.0.7:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
+react-iiif-vault@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.0.tgz#204dc7902e5255a9da8c4c75fbed410fed084dc5"
+  integrity sha512-MKWpcO0beSFn9OWiOUb1y1HOvQsUZutXu2CxbrLBn9ZkdY1QTHzMS3xLtnPQM4vS05MtGMhLe1/Sfvd2zo2jZQ==
+  dependencies:
+    "@atlas-viewer/iiif-image-api" "^1.2.6"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    "@iiif/vault" "^0.9.9"
+    "@iiif/vault-helpers" "^0.9.4"
+    react "^16.10.2 || ^17.0.1"
+    react-dom "^16.10.2 || ^17.0.1"
+    react-query "^1.5.10"
+    redux "^4.1.2"
+    rollup "^2.67.1"
+    typescript "^4.5.5"
+
 react-inspector@^5.1.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-inspector/-/react-inspector-5.1.1.tgz#58476c78fde05d5055646ed8ec02030af42953c8"
@@ -10506,6 +10521,13 @@ rollup@^2.36.1:
   version "2.66.1"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.66.1.tgz#366b0404de353c4331d538c3ad2963934fcb4937"
   integrity sha512-crSgLhSkLMnKr4s9iZ/1qJCplgAgrRY+igWv8KhG/AjKOJ0YX/WpmANyn8oxrw+zenF3BXWDLa7Xl/QZISH+7w==
+  optionalDependencies:
+    fsevents "~2.3.2"
+
+rollup@^2.67.1:
+  version "2.67.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.67.1.tgz#4402665706fa00f321d446ce45f880e02cf54f01"
+  integrity sha512-1Sbcs4OuW+aD+hhqpIRl+RqooIpF6uQcfzU/QSI7vGkwADY6cM4iLsBGRM2CGLXDTDN5y/yShohFmnKegSPWzg==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -11627,7 +11649,7 @@ typescript-memoize@^1.0.0-alpha.3:
   resolved "https://registry.yarnpkg.com/typescript-memoize/-/typescript-memoize-1.1.0.tgz#4a8f512d06fc995167c703a3592219901db8bc79"
   integrity sha512-LQPKVXK8QrBBkL/zclE6YgSWn0I8ew5m0Lf+XL00IwMhlotqRLlzHV+BRrljVQIc+NohUAuQP7mg4HQwrx5Xbg==
 
-typescript@4.5.5, typescript@^4.1.3:
+typescript@4.5.5, typescript@^4.1.3, typescript@^4.5.5:
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
   integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==

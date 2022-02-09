@@ -1,10 +1,7 @@
 import { useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
-import {
-  VaultProvider,
-  SimpleViewerProvider
-} from "@hyperion-framework/react-vault";
+import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
@@ -21,6 +18,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   // const [clickAmount, setClickAmount] = useState(0)
   // Switch for the vault here
   const [manifest, setManifest] = useState(
+    // We will want to actually implement some options/templates etc
+    // but just implementing with some examples for development purposes.
     "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
   );
 

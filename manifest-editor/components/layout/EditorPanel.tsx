@@ -4,8 +4,7 @@ import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { Input } from "../form/Input";
-import { useManifest } from "@hyperion-framework/react-vault";
-// import { getValue } from "@iiif/vault-helpers";
+import { useManifest } from "react-iiif-vault";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -37,23 +36,23 @@ export const EditorPanel: React.FC<{
   title: string;
 }> = ({ close, open, title }) => {
   const manifest = useManifest();
-  // const [helpers, setHelpers] = useState(null);
+  const [helpers, setHelpers] = useState(null);
 
   // function getLabel(manifest: any) {
   //   return manifest.label ? getValue(manifest.label) : "";
   // }
 
-  // let helps = null;
+  let helps = null;
 
-  // // required for next js ssr
-  // useEffect(() => {
-  //   helps = import("@iiif/vault-helpers");
-  // }, []);
+  // required for next js ssr
+  useEffect(() => {
+    // helps = import("@iiif/vault-helpers");
+  }, []);
 
   return (
     <>
       {open ? (
-        <EditorPanelContainerOpen wide={true}>
+        <EditorPanelContainerOpen  justify={"space-between"} wide={true}>
           <FlexContainerRow justify="space-between">
             <h4>{title}</h4>
             <Button onClick={close}>

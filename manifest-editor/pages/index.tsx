@@ -12,18 +12,35 @@ import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
+import { useManifest } from "react-iiif-vault";
+import { useSave } from "../hooks/useSave";
+import { DropdownMenu } from "../components/atoms/DropdownMenu";
+
+type Persistance = {
+  deleteLocation?: string;
+  expirationTtl?: Number;
+  location?: string;
+  updateLocation?: string;
+};
+
 const Home: NextPage = () => {
-  // This will actually be handled by the vault in a higher level - by the shell?
-  const [manifest, setManifest] = useState(
-    "https://view.nls.uk/manifest/1227/7148/122771487/manifest.json"
-  );
+  const manifest = useManifest();
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
 
   useEffect(() => {
     setModalVisible(false);
+    console.log(manifest);
   }, [manifest]);
+
+  const setManifest = () => {};
+
+  const saveManifest = async () => {
+    const data = await useSave(manifest);
+    setpersistedManifest(data ? data : "");
+  };
 
   return (
     <div className={styles.container}>
@@ -45,11 +62,12 @@ const Home: NextPage = () => {
           </Button>
           <Button
             // Implement a change of viewer type here
+            // Viewer options will be handled in some config
             onClick={() => {}}
             title="Preview"
           >
             <a href={"/preview"} target={"_blank"}>
-              Preview{" "}
+              Preview
             </a>
           </Button>
           <Button
@@ -59,10 +77,40 @@ const Home: NextPage = () => {
           >
             Edit Manifest Label
           </Button>
+          <Button
+            // This will evolve to a file/save option
+            onClick={() => saveManifest()}
+            title="Save manifest"
+          >
+            Save manifest
+          </Button>
+          <DropdownMenu
+            label={"Preview"}
+            options={[
+              {
+                label: (
+                  <a href={"/preview"} target={"_blank"}>
+                    Preview internally on canvas panel
+                  </a>
+                )
+              },
+              {
+                label: (
+                  <a
+                    href={`http://universalviewer.io/uv.html?manifest=${persistedManifest.location}`}
+                    target={"_blank"}
+                    rel="noreferrer"
+                  >
+                    Preview externally on Universal Viewer
+                  </a>
+                )
+              }
+            ]}
+          ></DropdownMenu>
         </Toolbar>
         {modalVisible ? (
           <AddManifestModal
-            manifest={manifest}
+            manifest={manifest ? manifest?.id : ""}
             onChange={setManifest}
             close={() => setModalVisible(false)}
           />
@@ -72,7 +120,7 @@ const Home: NextPage = () => {
 
         <FlexContainerRow>
           <ThumbnailStrip />
-          <CanvasView manifest={manifest} />
+          <CanvasView manifest={manifest ? manifest?.id : ""} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
             title={"Edit manifest label"}
@@ -84,7 +132,9 @@ const Home: NextPage = () => {
         </FlexContainerRow>
       </main>
 
-      <footer className={styles.footer}></footer>
+      <footer className={styles.footer}>
+        Your manifest is saved here: {persistedManifest.location}
+      </footer>
     </div>
   );
 };

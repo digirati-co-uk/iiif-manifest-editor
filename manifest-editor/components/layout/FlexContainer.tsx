@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FlexContainerRow = styled.div<{justify: string}>`
+export const FlexContainerRow = styled.div<{ justify?: string }>`
    {
     display: flex;
     flex-direction: row;
@@ -8,7 +8,7 @@ export const FlexContainerRow = styled.div<{justify: string}>`
   }
 `;
 
-export const FlexContainerColumn = styled.div<{justify: string}>`
+export const FlexContainerColumn = styled.div<{ justify: string }>`
    {
     display: flex;
     flex-direction: column;
