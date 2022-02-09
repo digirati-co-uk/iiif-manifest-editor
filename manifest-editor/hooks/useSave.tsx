@@ -10,9 +10,7 @@ export const useSave = async (manifest: any) => {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      ...manifest
-    })
+    body: JSON.stringify(manifest)
   };
   // Don't commit URLs.local here
   let responseData = {};

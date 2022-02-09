@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "./Button";
 import { FlexContainerColumn } from "../layout/FlexContainer";
+import { PreviewIcon } from "../icons/Preview";
 
 export const DropdownItem = styled.div`
    {
@@ -10,38 +11,71 @@ export const DropdownItem = styled.div`
     color: ${(props: any) => props.color || "none"};
     border: none;
     cursor: pointer;
+    display: block;
+    right: 0;
+    &:hover {
+      background-color: lightgrey;
+    }
   }
 `;
 
 const DropdownContainer = styled(FlexContainerColumn)`
-  position: relative;
+  display: flex;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  right: 0;
 `;
 
 type DropdownOption = {
   label: any;
-}
+};
 
-export const DropdownMenu: React.FC<{ label: string; options: Array<DropdownOption> }> = ({
-  label,
-  options
-}) => {
+const PreviewButton = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  alignitems: center;
+`;
+
+const MenuContainer = styled.div`
+  display: inline-block;
+  position: relative;
+`;
+
+export const DropdownMenu: React.FC<{
+  label: string;
+  options: Array<DropdownOption>;
+  onClick: () => Promise<void>;
+  selectedPreviewIndex: number;
+}> = ({ label, options, onClick, selectedPreviewIndex }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div>
-      <Button style={{ height: "90%" }} onClick={() => setOpen(!open)}>
-        {label}
-      </Button>
+    <MenuContainer>
+      <PreviewButton onClick={onClick}>
+        <Button
+          style={{
+            height: "90%",
+            display: "flex",
+            alignItems: "center"
+          }}
+          onClick={() => setOpen(!open)}
+        >
+          <PreviewIcon />
+          {label}
+        </Button>
+      </PreviewButton>
       {open ? (
-        <DropdownContainer justify={"flex-start"}>
+        <DropdownContainer justify={"flex-end"}>
           {options.map((option: DropdownOption) => {
-            return (
-              <DropdownItem>{option.label}</DropdownItem>
-            );
+            return <DropdownItem>{option.label}</DropdownItem>;
           })}
         </DropdownContainer>
       ) : (
         <></>
       )}
-    </div>
+    </MenuContainer>
   );
 };

@@ -1589,7 +1589,21 @@
     "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
 
-"@iiif/vault@^0.9.10", "@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
+"@iiif/vault@0.9.11":
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.11.tgz#5f0f56d9dd8f6b1d46e44bcacb3fa15aae1ce4f5"
+  integrity sha512-TaNQUOl/imJ9fC1JubV0IG9Yxqx1Z06tY3EDNxQTOgl4LzYA4UcPCBHvQ57LigSWiLggQMVsSJL0ahCVNlRcZQ==
+  dependencies:
+    "@iiif/parser" "^1.0.2"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.3"
+    mitt "^3.0.0"
+    node-fetch "^3.1.1"
+    redux "^4.1.2"
+    tiny-invariant "^1.2.0"
+    typesafe-actions "^5.1.0"
+
+"@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.10.tgz#f620813d664511895529e59e2e124a9971352fce"
   integrity sha512-f+wKltOjIDbTNcELocBjo8c1svTe6BjQ9LQFSXXObYE6VYtc3bLYGBzS08huGUN39duVBi6vNtUsmlsl6H1KYQ==
