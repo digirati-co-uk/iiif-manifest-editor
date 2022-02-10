@@ -20,6 +20,8 @@ import { DropdownMenu } from "../components/atoms/DropdownMenu";
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
+import data from "../config.json";
+
 type Persistance = {
   deleteLocation?: string;
   expirationTtl?: Number;
@@ -27,7 +29,16 @@ type Persistance = {
   updateLocation?: string;
 };
 
-const Home: NextPage = () => {
+export const getStaticProps = async () => {
+  return {
+    props: {
+      config: data
+    }
+  }
+
+}
+
+const Home: NextPage<{config: any}> = (props) => {
   const vault = useVault();
   const manifest = useManifest();
 
@@ -39,9 +50,14 @@ const Home: NextPage = () => {
   const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
+    console.log(props.config)
+  }, []);
+  useEffect(() => {
     setModalVisible(false);
-    console.log(manifest);
+
   }, [manifest]);
+
+
 
   const setManifest = () => {};
 
@@ -80,7 +96,11 @@ const Home: NextPage = () => {
 
       {showPreviewModal ? (
         <PersistenceModal
-          manifest={(persistedManifest && persistedManifest.location) ? persistedManifest.location: ""}
+          manifest={
+            persistedManifest && persistedManifest.location
+              ? persistedManifest.location
+              : ""
+          }
           value={!showAgain}
           onChange={() => setShowAgain(!showAgain)}
           close={() => setShowPreviewModal(false)}
