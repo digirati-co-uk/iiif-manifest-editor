@@ -9,6 +9,7 @@ const PERSISTENCEURL = {
 const nextConfig = {
   reactStrictMode: true,
   target: "serverless",
+  headerless: "true",
   async rewrites() {
     return [
       {
