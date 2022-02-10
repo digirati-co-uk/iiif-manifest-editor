@@ -16,9 +16,9 @@ import { useManifest, useVault } from "react-iiif-vault";
 import { useSave } from "../hooks/useSave";
 import { DropdownMenu } from "../components/atoms/DropdownMenu";
 
-
 // Temporary code until big fixed on react-iiif-vault
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
+import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 type Persistance = {
   deleteLocation?: string;
@@ -35,6 +35,8 @@ const Home: NextPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
     setModalVisible(false);
@@ -45,18 +47,17 @@ const Home: NextPage = () => {
 
   const saveManifest = async () => {
     if (manifest) {
-                    // Temporary code until big fixed on react-iiif-vault
-
-                    const man = await serialize(
-                      vault.getState().iiif,
-                      manifest,
-                      serializeConfigPresentation3
-                    );
-                    // const manifestToPersist = await vault.toPresentation3(manifest)
-                    const data = await useSave(man);
-                    setpersistedManifest(data ? data : "");
-                    console.log(data);
-                  }
+      // Temporary code until big fixed on react-iiif-vault
+      const man = await serialize(
+        vault.getState().iiif,
+        manifest,
+        serializeConfigPresentation3
+      );
+      // const manifestToPersist = await vault.toPresentation3(manifest)
+      const data = await useSave(man);
+      setpersistedManifest(data ? data : "");
+      if (showAgain) setShowPreviewModal(true);
+    }
   };
 
   return (
@@ -76,12 +77,24 @@ const Home: NextPage = () => {
       ) : (
         <></>
       )}
+
+      {showPreviewModal ? (
+        <PersistenceModal
+          manifest={(persistedManifest && persistedManifest.location) ? persistedManifest.location: ""}
+          value={!showAgain}
+          onChange={() => setShowAgain(!showAgain)}
+          close={() => setShowPreviewModal(false)}
+        />
+      ) : (
+        <></>
+      )}
       <main className={styles.main}>
         <Placeholder>IIIF Manifest Editor</Placeholder>
         <DropdownMenu
           selectedPreviewIndex={selectedPreviewIndex}
           onClick={() => saveManifest()}
           label={"Preview"}
+          // MOVE THESE OPTIONS TO CONFIG
           options={[
             {
               label: (
