@@ -1,11 +1,25 @@
 import { Input } from "../form/Input";
-import { Button } from "../atoms/Button";
+import { Button, SecondaryButton, CalltoButton } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { useRef, useState } from "react";
 
 import { ModalBackground } from "../layout/ModalBackground";
 import { ModalContainer } from "../layout/ModalContainer";
 import { FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
+import { CopyIcon } from "../icons/Copy";
+import styled from "styled-components";
+
+
+const LinkBox = styled.textarea`
+  color: #347cff;
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: none;
+  resize: none;
+`;
+
 
 export const PersistenceModal: React.FC<{
   manifest: string;
@@ -14,10 +28,11 @@ export const PersistenceModal: React.FC<{
   value: boolean;
 }> = ({ manifest, onChange, close, value }) => {
   const [copySuccess, setCopySuccess] = useState("");
-  const textAreaRef = useRef();
+  const textAreaRef = useRef(null);
 
-  function copyToClipboard(e: HTMLElementEventMap) {
-    if (textAreaRef) {
+  function copyToClipboard(e: any) {
+    if (textAreaRef && textAreaRef.current) {
+      // @ts-ignore
       textAreaRef?.current?.select();
       document.execCommand("copy");
       e?.target?.focus();
@@ -31,64 +46,46 @@ export const PersistenceModal: React.FC<{
       <ModalContainer>
         <FlexContainerColumn justify={"flex-start"}>
           <FlexContainerRow justify={"space-between"}>
-            <h4>Preview IIIF Manifest</h4>
+            <h3>Preview IIIF Manifest</h3>
             <Button onClick={close}>
               <CloseIcon />
             </Button>
           </FlexContainerRow>
           <p>A preview of this Manifest is now available at: </p>
 
-          <FlexContainerRow justify={"space-between"}>
-            <form>
-              <textarea ref={textAreaRef} value={manifest} />
-            </form>
+          <FlexContainerRow justify={"space-between"} style={{justifyItems: "center"}}>
+              <LinkBox ref={textAreaRef}>{manifest}</LinkBox>
             {document.queryCommandSupported("copy") && (
-              <div>
-                <button onClick={copyToClipboard}>Copy</button>
+              <>
+                <SecondaryButton onClick={(e: any) => copyToClipboard(e)}>
+                  <CopyIcon/> Copy Link
+                </SecondaryButton>
                 {copySuccess}
-              </div>
+              </>
             )}
           </FlexContainerRow>
+          <p>
+            <small>
+              This preview will expire in 48 hours. For a permanent version,
+              select Permalink from the File / Save As menu option.
+            </small>
+          </p>
+          <label>
+            <Input
+              type={"checkbox"}
+              checked={value}
+              onChange={(e: any) => onChange(e.target.value)}
+            />
+            <span>Don't show this again</span>
+          </label>
+          <FlexContainerRow justify={"flex-end"}>
+            <CalltoButton>
+              PREVIEW
+            </CalltoButton>
 
-          <Input
-            type={"checkbox"}
-            checked={value}
-            onChange={(e: any) => setInputValue(e.target.value)}
-          />
-
-          <Button onClick={() => onChange(inputValue)}>Load Manifest</Button>
+          </FlexContainerRow>
         </FlexContainerColumn>
       </ModalContainer>
     </>
   );
 };
-
-export default function CopyExample() {
-  const [copySuccess, setCopySuccess] = useState("");
-  const textAreaRef = useRef(null);
-
-  function copyToClipboard(e) {
-    textAreaRef.current.select();
-    document.execCommand("copy");
-    // This is just personal preference.
-    // I prefer to not show the whole text area selected.
-    e.target.focus();
-    setCopySuccess("Copied!");
-  }
-
-  return (
-    <div>
-      {/* Logical shortcut for only displaying the
-          button if the copy command exists */
-      document.queryCommandSupported("copy") && (
-        <div>
-          <button onClick={copyToClipboard}>Copy</button>
-          {copySuccess}
-        </div>
-      )}
-      <form>
-        <textarea ref={textAreaRef} value="Some text to copy" />
-      </form>
-    </div>
-  );
-}
