@@ -65,12 +65,7 @@ export const PersistenceModal: React.FC<{
                 {manifest}
               </a>
             </LinkBox>
-
-            <HiddenElement ref={textAreaRef}>
-              <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
-                {manifest}
-              </a>
-            </HiddenElement>
+            <HiddenElement ref={textAreaRef} defaultValue={manifest} />
             {document.queryCommandSupported("copy") && (
               <>
                 <SecondaryButton onClick={(e: any) => copyToClipboard(e)}>
