@@ -28,7 +28,7 @@ const DropdownContainer = styled(FlexContainerColumn)`
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   padding: 12px 16px;
-  z-index: 1;
+  z-index: 13;
   right: 0;
 `;
 
@@ -66,12 +66,24 @@ export const DropdownMenu: React.FC<{
   options: Array<DropdownOption>;
   onPreviewClick: () => Promise<void>;
   setSelectedPreviewIndex: (index: number) => void;
-}> = ({ label, options, onPreviewClick, setSelectedPreviewIndex }) => {
+  previewUrl: string;
+  showAgain: boolean;
+}> = ({
+  label,
+  options,
+  onPreviewClick,
+  setSelectedPreviewIndex,
+  previewUrl,
+  showAgain
+}) => {
   const [open, setOpen] = useState(false);
 
   const clickHandler = (index: number) => {
     setOpen(!open);
     setSelectedPreviewIndex(index);
+    if (showAgain) {
+      onPreviewClick();
+    }
   };
   return (
     <MenuContainer>
@@ -106,7 +118,13 @@ export const DropdownMenu: React.FC<{
           {options.map((option: DropdownOption, index: number) => {
             return (
               <DropdownItem onClick={() => clickHandler(index)}>
-                {option.label}
+                {showAgain ? (
+                  option.label
+                ) : (
+                  <a href={previewUrl} target={"_blank"} rel="noreferrer">
+                    {option.label}
+                  </a>
+                )}
               </DropdownItem>
             );
           })}

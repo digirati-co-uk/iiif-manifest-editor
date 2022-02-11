@@ -9,7 +9,7 @@ import { FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
 import { CopyIcon } from "../icons/Copy";
 import styled from "styled-components";
 
-const LinkBox = styled.textarea`
+const LinkBox = styled.div`
   color: #347cff;
   width: 80%;
   overflow: hidden;
@@ -17,6 +17,10 @@ const LinkBox = styled.textarea`
   white-space: nowrap;
   border: none;
   resize: none;
+`;
+
+const HiddenElement = styled.textarea`
+  display: none;
 `;
 
 export const PersistenceModal: React.FC<{
@@ -56,7 +60,17 @@ export const PersistenceModal: React.FC<{
             justify={"space-between"}
             style={{ justifyItems: "center" }}
           >
-            <LinkBox ref={textAreaRef} defaultValue={manifest} />
+            <LinkBox ref={textAreaRef}>
+              <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
+                {manifest}
+              </a>
+            </LinkBox>
+
+            <HiddenElement ref={textAreaRef}>
+              <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
+                {manifest}
+              </a>
+            </HiddenElement>
             {document.queryCommandSupported("copy") && (
               <>
                 <SecondaryButton onClick={(e: any) => copyToClipboard(e)}>

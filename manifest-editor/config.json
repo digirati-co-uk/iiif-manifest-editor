@@ -1,7 +1,29 @@
 {
-  "externalPreviewOptions": [
-    { "baseUrl": "/preview?manifest=", "label": "Hosted Universal Viewer"},
-    { "baseUrl": "http://universalviewer.io/uv.html?manifest=", "label": "Universal Viewer" },
-    { "baseUrl": "https://tomcrane.github.io/scratch/mirador3/?iiif-content=", "label": "Mirador" }
+  "preview": [
+    {
+      "baseUrl": "",
+      "mechanism": "previewService",
+      "label": "Raw Manifest"
+    },
+    {
+      "baseUrl": "/preview?manifest=",
+      "mechanism": "previewService",
+      "label": "Hosted Universal Viewer"
+    },
+    {
+      "baseUrl": "http://universalviewer.io/examples/#?manifest=",
+      "mechanism": "previewService",
+      "label": "Universal Viewer"
+    },
+    {
+      "baseUrl": "https://tomcrane.github.io/scratch/mirador3/?iiif-content=",
+      "mechanism": "previewService",
+      "label": "Mirador 3"
+    },
+    {
+      "label": "Ocean Liners",
+      "mechanism": "previewService",
+      "template": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
+    }
   ]
 }

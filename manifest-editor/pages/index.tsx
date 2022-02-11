@@ -120,7 +120,10 @@ const Home: NextPage = (props: any) => {
               ? persistedManifest.location
               : ""
           }
-          link={props.config.externalPreviewOptions[selectedPreviewIndex].baseUrl + persistedManifest.location}
+          link={
+            props.config.preview[selectedPreviewIndex].baseUrl +
+            persistedManifest.location
+          }
           value={!showAgain}
           onChange={() => setShowAgain(!showAgain)}
           close={() => setShowPreviewModal(false)}
@@ -134,17 +137,29 @@ const Home: NextPage = (props: any) => {
           onPreviewClick={() => saveManifest()}
           label={
             showAgain ? (
-              "Preview"
+              `Preview: ${props.config.preview[selectedPreviewIndex].label}`
             ) : (
-              <a href={props.config.externalPreviewOptions[selectedPreviewIndex].baseUrl + persistedManifest.location} target={"_blank"} rel="noreferrer">
+              <a
+                href={
+                  props.config.preview[selectedPreviewIndex].baseUrl +
+                  persistedManifest.location
+                }
+                target={"_blank"}
+                rel="noreferrer"
+              >
                 Preview
               </a>
             )
           }
+          previewUrl={
+            props.config.preview[selectedPreviewIndex].baseUrl +
+            persistedManifest.location
+          }
           setSelectedPreviewIndex={(index: number) =>
             setSelectedPreviewIndex(index)
           }
-          options={props.config.externalPreviewOptions}
+          showAgain={showAgain}
+          options={props.config.preview}
         ></DropdownMenu>
         <Toolbar>
           <Button
