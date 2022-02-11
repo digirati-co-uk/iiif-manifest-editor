@@ -147,7 +147,7 @@ const Home: NextPage = (props: any) => {
                 target={"_blank"}
                 rel="noreferrer"
               >
-                Preview
+              {`Preview: ${props.config.preview[selectedPreviewIndex].label}`}
               </a>
             )
           }
