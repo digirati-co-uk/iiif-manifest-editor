@@ -48,7 +48,6 @@ const Home: NextPage = (props: any) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showAgain, setShowAgain] = useState(true);
-  const [persistedValuesLocalStorage, setPersistedValuesLocalStorage] = useState<Persistance>({})
 
   useEffect(() => {
     console.log(props.config)
@@ -79,7 +78,6 @@ const Home: NextPage = (props: any) => {
       const data = await useSave(man);
       setpersistedManifest(data ? data : "");
       // We want to hold on to the persistedValue in localStorage
-      setPersistedValuesLocalStorage(data ? data : "");
       if (showAgain) setShowPreviewModal(true);
     }
   };
