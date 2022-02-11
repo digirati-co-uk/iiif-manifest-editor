@@ -23,7 +23,7 @@
     {
       "label": "Ocean Liners",
       "mechanism": "previewService",
-      "template": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
+      "baseUrl": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
     }
   ]
 }
