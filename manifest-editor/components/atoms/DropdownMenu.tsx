@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Button } from "./Button";
 import { FlexContainerColumn } from "../layout/FlexContainer";
 import { PreviewIcon } from "../icons/Preview";
+import { DownIcon } from "../icons/DownIcon";
+import { VerticalDivider } from "./VerticalDivider";
 
 export const DropdownItem = styled.div`
    {
@@ -34,43 +36,79 @@ type DropdownOption = {
   label: any;
 };
 
+const Outline = styled.div`
+  border: 0.0375rem solid grey;
+  border-radius: 0.0375rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+`;
+
 const PreviewButton = styled.div`
   display: flex;
+  align-items: center;
+  height: 100%;
+  text-align: right;
   justify-content: flex-end;
-  alignitems: center;
+  padding: none;
 `;
 
 const MenuContainer = styled.div`
   display: inline-block;
+  justify-content: flex-end;
+  align-items: center;
   position: relative;
+  height: 2rem;
 `;
 
 export const DropdownMenu: React.FC<{
-  label: string;
+  label: string | JSX.Element;
   options: Array<DropdownOption>;
-  onClick: () => Promise<void>;
-  selectedPreviewIndex: number;
-}> = ({ label, options, onClick, selectedPreviewIndex }) => {
+  onPreviewClick: () => Promise<void>;
+  setSelectedPreviewIndex: (index: number) => void;
+}> = ({ label, options, onPreviewClick, setSelectedPreviewIndex }) => {
   const [open, setOpen] = useState(false);
+
+  const clickHandler = (index: number) => {
+    setOpen(!open);
+    setSelectedPreviewIndex(index);
+  };
   return (
     <MenuContainer>
-      <PreviewButton onClick={onClick}>
-        <Button
-          style={{
-            height: "90%",
-            display: "flex",
-            alignItems: "center"
-          }}
-          onClick={() => setOpen(!open)}
-        >
-          <PreviewIcon />
-          {label}
-        </Button>
+      <PreviewButton>
+        <Outline>
+          <Button
+            style={{
+              height: "90%",
+              display: "flex",
+              alignItems: "center"
+            }}
+            onClick={onPreviewClick}
+          >
+            <PreviewIcon />
+            {label}
+          </Button>
+          <Button
+            style={{
+              height: "90%",
+              display: "flex",
+              alignItems: "center"
+            }}
+            onClick={() => setOpen(!open)}
+          >
+            <VerticalDivider />
+            <DownIcon />
+          </Button>
+        </Outline>
       </PreviewButton>
       {open ? (
         <DropdownContainer justify={"flex-end"}>
-          {options.map((option: DropdownOption) => {
-            return <DropdownItem>{option.label}</DropdownItem>;
+          {options.map((option: DropdownOption, index: number) => {
+            return (
+              <DropdownItem onClick={() => clickHandler(index)}>
+                {option.label}
+              </DropdownItem>
+            );
           })}
         </DropdownContainer>
       ) : (

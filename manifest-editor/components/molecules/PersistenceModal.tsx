@@ -9,7 +9,6 @@ import { FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
 import { CopyIcon } from "../icons/Copy";
 import styled from "styled-components";
 
-
 const LinkBox = styled.textarea`
   color: #347cff;
   width: 80%;
@@ -20,13 +19,13 @@ const LinkBox = styled.textarea`
   resize: none;
 `;
 
-
 export const PersistenceModal: React.FC<{
   manifest: string;
   onChange: any;
   close: any;
   value: boolean;
-}> = ({ manifest, onChange, close, value }) => {
+  link: string;
+}> = ({ manifest, onChange, close, value, link }) => {
   const [copySuccess, setCopySuccess] = useState("");
   const textAreaRef = useRef(null);
 
@@ -53,12 +52,15 @@ export const PersistenceModal: React.FC<{
           </FlexContainerRow>
           <p>A preview of this Manifest is now available at: </p>
 
-          <FlexContainerRow justify={"space-between"} style={{justifyItems: "center"}}>
-              <LinkBox ref={textAreaRef}>{manifest}</LinkBox>
+          <FlexContainerRow
+            justify={"space-between"}
+            style={{ justifyItems: "center" }}
+          >
+            <LinkBox ref={textAreaRef} defaultValue={manifest} />
             {document.queryCommandSupported("copy") && (
               <>
                 <SecondaryButton onClick={(e: any) => copyToClipboard(e)}>
-                  <CopyIcon/> Copy Link
+                  <CopyIcon /> Copy Link
                 </SecondaryButton>
                 {copySuccess}
               </>
@@ -80,9 +82,10 @@ export const PersistenceModal: React.FC<{
           </label>
           <FlexContainerRow justify={"flex-end"}>
             <CalltoButton>
-              PREVIEW
+              <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
+                PREVIEW
+              </a>
             </CalltoButton>
-
           </FlexContainerRow>
         </FlexContainerColumn>
       </ModalContainer>

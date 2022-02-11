@@ -21,6 +21,7 @@ import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 import data from "../config.json";
+import { promises } from "dns";
 
 type Persistance = {
   deleteLocation?: string;
@@ -34,9 +35,8 @@ export const getStaticProps = async () => {
     props: {
       config: data
     }
-  }
-
-}
+  };
+};
 
 const Home: NextPage = (props: any) => {
   const vault = useVault();
@@ -50,25 +50,39 @@ const Home: NextPage = (props: any) => {
   const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
-    console.log(props.config)
-    console.log(window.localStorage)
+    console.log(props.config);
+
+    if (localStorage.getItem("persistedManifest")) {
+      const pers = localStorage.getItem("persistedManifest")
+        ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")
+        : {};
+      setpersistedManifest(pers);
+    }
   }, []);
+
+  useEffect(() => {
+    // We want to hold on to the prefered viewer choice in localstorage
+    localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
+  }, [selectedPreviewIndex]);
+
   useEffect(() => {
     setModalVisible(false);
-
   }, [manifest]);
 
   useEffect(() => {
-    localStorage.setItem('persistedManifest', JSON.stringify(persistedManifest));
-  }, [persistedManifest])
-
-
+    // We want to hold on to the persisted value in localStorage
+    // TODO handle the time constraint on this value
+    localStorage.setItem(
+      "persistedManifest",
+      JSON.stringify(persistedManifest)
+    );
+  }, [persistedManifest]);
 
   const setManifest = () => {};
 
   const saveManifest = async () => {
     if (manifest) {
-      // Temporary code until big fixed on react-iiif-vault
+      // Temporary code until bug fixed on react-iiif-vault
       const man = await serialize(
         vault.getState().iiif,
         manifest,
@@ -77,7 +91,6 @@ const Home: NextPage = (props: any) => {
       // const manifestToPersist = await vault.toPresentation3(manifest)
       const data = await useSave(man);
       setpersistedManifest(data ? data : "");
-      // We want to hold on to the persistedValue in localStorage
       if (showAgain) setShowPreviewModal(true);
     }
   };
@@ -107,6 +120,7 @@ const Home: NextPage = (props: any) => {
               ? persistedManifest.location
               : ""
           }
+          link={props.config.externalPreviewOptions[selectedPreviewIndex].baseUrl + persistedManifest.location}
           value={!showAgain}
           onChange={() => setShowAgain(!showAgain)}
           close={() => setShowPreviewModal(false)}
@@ -117,41 +131,20 @@ const Home: NextPage = (props: any) => {
       <main className={styles.main}>
         <Placeholder>IIIF Manifest Editor</Placeholder>
         <DropdownMenu
-          selectedPreviewIndex={selectedPreviewIndex}
-          onClick={() => saveManifest()}
-          label={"Preview"}
-          // MOVE THESE OPTIONS TO CONFIG
-          options={[
-            {
-              label: (
-                <a href={"/preview"} target={"_blank"}>
-                  Preview internally on universal viewer
-                </a>
-              )
-            },
-            {
-              label: (
-                <a
-                  href={`http://universalviewer.io/uv.html?manifest=${persistedManifest.location}`}
-                  target={"_blank"}
-                  rel="noreferrer"
-                >
-                  Preview externally on Universal Viewer
-                </a>
-              )
-            },
-            {
-              label: (
-                <a
-                  href={`https://tomcrane.github.io/scratch/mirador3/?iiif-content=${persistedManifest.location}`}
-                  target={"_blank"}
-                  rel="noreferrer"
-                >
-                  Preview externally on Mirador
-                </a>
-              )
-            }
-          ]}
+          onPreviewClick={() => saveManifest()}
+          label={
+            showAgain ? (
+              "Preview"
+            ) : (
+              <a href={props.config.externalPreviewOptions[selectedPreviewIndex].baseUrl + persistedManifest.location} target={"_blank"} rel="noreferrer">
+                Preview
+              </a>
+            )
+          }
+          setSelectedPreviewIndex={(index: number) =>
+            setSelectedPreviewIndex(index)
+          }
+          options={props.config.externalPreviewOptions}
         ></DropdownMenu>
         <Toolbar>
           <Button
@@ -168,13 +161,15 @@ const Home: NextPage = (props: any) => {
           >
             Edit Manifest Label
           </Button>
-          <Button
-            // This will evolve to a file/save option and will be used for the permalink eventually
-            onClick={() => saveManifest()}
-            title="Save manifest"
-          >
-            Save manifest
-          </Button>
+          {
+            <Button
+              // This will evolve to a file/save option and will be used for the permalink eventually
+              onClick={() => saveManifest()}
+              title="Save manifest"
+            >
+              Save manifest
+            </Button>
+          }
         </Toolbar>
         <FlexContainerRow>
           <ThumbnailStrip />

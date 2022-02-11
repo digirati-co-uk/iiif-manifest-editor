@@ -1,8 +1,7 @@
 {
   "externalPreviewOptions": [
-    {
-      "Universal Viewer": true,
-      "Mirador": true
-    }
+    { "baseUrl": "/preview?manifest=", "label": "Hosted Universal Viewer"},
+    { "baseUrl": "http://universalviewer.io/uv.html?manifest=", "label": "Universal Viewer" },
+    { "baseUrl": "https://tomcrane.github.io/scratch/mirador3/?iiif-content=", "label": "Mirador" }
   ]
 }
