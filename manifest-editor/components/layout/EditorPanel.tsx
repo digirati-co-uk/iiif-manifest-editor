@@ -38,21 +38,10 @@ export const EditorPanel: React.FC<{
   const manifest = useManifest();
   const [helpers, setHelpers] = useState(null);
 
-  // function getLabel(manifest: any) {
-  //   return manifest.label ? getValue(manifest.label) : "";
-  // }
-
-  let helps = null;
-
-  // required for next js ssr
-  useEffect(() => {
-    // helps = import("@iiif/vault-helpers");
-  }, []);
-
   return (
     <>
       {open ? (
-        <EditorPanelContainerOpen  justify={"space-between"} wide={true}>
+        <EditorPanelContainerOpen  justify={"flex-start"} wide={true}>
           <FlexContainerRow justify="space-between">
             <h4>{title}</h4>
             <Button onClick={close}>

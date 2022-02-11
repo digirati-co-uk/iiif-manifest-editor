@@ -11,6 +11,6 @@ export const ModalContainer = styled.div`
     flex-direction: column;
     top: ${(props: any) => props.top || '33%' };
     left: 33%;
-    z-index: 12;
+    z-index: 13;
   }
 `;

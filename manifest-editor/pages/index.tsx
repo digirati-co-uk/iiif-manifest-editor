@@ -21,7 +21,6 @@ import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 import data from "../config.json";
-import { promises } from "dns";
 
 type Persistance = {
   deleteLocation?: string;
@@ -50,8 +49,6 @@ const Home: NextPage = (props: any) => {
   const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
-    console.log(props.config);
-
     if (localStorage.getItem("persistedManifest")) {
       const pers = localStorage.getItem("persistedManifest")
         ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")
@@ -195,7 +192,6 @@ const Home: NextPage = (props: any) => {
             open={editorPanelOpen}
             close={() => setEditorPanelOpen(false)}
           >
-            {/* The children of this will vary */}
           </EditorPanel>
         </FlexContainerRow>
       </main>
