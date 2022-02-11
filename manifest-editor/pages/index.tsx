@@ -38,7 +38,7 @@ export const getStaticProps = async () => {
 
 }
 
-const Home: NextPage<{config: any}> = (props) => {
+const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
 
@@ -48,14 +48,20 @@ const Home: NextPage<{config: any}> = (props) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showAgain, setShowAgain] = useState(true);
+  const [persistedValuesLocalStorage, setPersistedValuesLocalStorage] = useState<Persistance>({})
 
   useEffect(() => {
     console.log(props.config)
+    console.log(window.localStorage)
   }, []);
   useEffect(() => {
     setModalVisible(false);
 
   }, [manifest]);
+
+  useEffect(() => {
+    localStorage.setItem('persistedManifest', JSON.stringify(persistedManifest));
+  }, [persistedManifest])
 
 
 
@@ -72,6 +78,8 @@ const Home: NextPage<{config: any}> = (props) => {
       // const manifestToPersist = await vault.toPresentation3(manifest)
       const data = await useSave(man);
       setpersistedManifest(data ? data : "");
+      // We want to hold on to the persistedValue in localStorage
+      setPersistedValuesLocalStorage(data ? data : "");
       if (showAgain) setShowPreviewModal(true);
     }
   };
