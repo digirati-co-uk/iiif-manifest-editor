@@ -41,7 +41,7 @@ const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);

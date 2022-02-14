@@ -5,6 +5,7 @@ import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { Input } from "../form/Input";
 import { useManifest } from "react-iiif-vault";
+import { getLabel } from "@iiif/vault-helpers";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -38,6 +39,12 @@ export const EditorPanel: React.FC<{
   const manifest = useManifest();
   const [helpers, setHelpers] = useState(null);
 
+  console.log(manifest);
+
+  const getLabel = () => {
+
+  }
+
   return (
     <>
       {open ? (
@@ -48,12 +55,8 @@ export const EditorPanel: React.FC<{
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-          <div>Manifest ID:</div>
-          <div>{manifest && manifest.id ? manifest.id : "Unknown"}</div>
           <div>Manifest Label:</div>
-          {/* <div>{helps && helps.getLabel ? helps.getLabel(manifest): ''}  </div> */}
-
-          <Input />
+          <Input value={"A label"} onChange={(e: any) => console.log(e.target.value)}/>
         </EditorPanelContainerOpen>
       ) : (
         <></>
