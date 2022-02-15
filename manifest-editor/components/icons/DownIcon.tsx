@@ -14,7 +14,7 @@ export const DownIcon: React.FC<{
              <path
                d="M7 10l5 5 5-5z"
                style={{ fill: "rgba(0, 0, 0, 0.6)", transform: `rotate(${rotate}deg)` }}
-               vector-effect="non-scaling-stroke"
+               vectorEffect="non-scaling-stroke"
              />
            </g>
          </svg>

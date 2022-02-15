@@ -117,7 +117,7 @@ export const DropdownMenu: React.FC<{
         <DropdownContainer justify={"flex-end"}>
           {options.map((option: DropdownOption, index: number) => {
             return (
-              <DropdownItem onClick={() => clickHandler(index)}>
+              <DropdownItem onClick={() => clickHandler(index)} key={index}>
                 {showAgain ? (
                   option.label
                 ) : (

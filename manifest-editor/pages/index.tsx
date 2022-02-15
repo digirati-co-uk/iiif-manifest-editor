@@ -9,7 +9,10 @@ import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
 import { Placeholder } from "../components/atoms/Placeholder";
 import { Toolbar } from "../components/layout/Toolbar";
-import { FlexContainerRow, FlexContainer } from "../components/layout/FlexContainer";
+import {
+  FlexContainerRow,
+  FlexContainer
+} from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
 import { useManifest, useVault } from "react-iiif-vault";
@@ -51,11 +54,19 @@ const Home: NextPage = (props: any) => {
   const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
+
+    console.log(props.config)
     if (localStorage.getItem("persistedManifest")) {
       const pers = localStorage.getItem("persistedManifest")
         ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")
         : {};
       setpersistedManifest(pers);
+    }
+    if (localStorage.getItem("previewChoice")) {
+      const preview = localStorage.getItem("previewChoice")
+        ? JSON.parse(localStorage.getItem("previewChoice") || "{}")
+        : {};
+      setSelectedPreviewIndex(preview);
     }
   }, []);
 
@@ -199,6 +210,7 @@ const Home: NextPage = (props: any) => {
             title={"Edit manifest label"}
             open={editorPanelOpen}
             close={() => setEditorPanelOpen(false)}
+            languages={props.config.defaultLanguages}
           ></EditorPanel>
         </FlexContainerRow>
       </main>

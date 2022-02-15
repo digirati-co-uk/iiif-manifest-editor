@@ -25,5 +25,6 @@
       "mechanism": "previewService",
       "baseUrl": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
     }
-  ]
+  ],
+  "defaultLanguages": ["en", "none"]
 }

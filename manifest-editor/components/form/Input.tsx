@@ -9,7 +9,7 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
   display: flex;
   align-items: center;
 
-  ${props =>
+  ${(props: any) =>
     props.$caps &&
     css`
       text-transform: capitalize;
@@ -90,11 +90,11 @@ export const InputContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  max-width: ${props =>
+  max-width: ${(props: any) =>
     props.fluid ? "100%" : props.wide ? "550px" : "360px"};
   margin-bottom: 1em;
 
-  ${props =>
+  ${(props: any) =>
     props.$error &&
     css`
       background: #ffeaea;
@@ -127,7 +127,7 @@ export const InputCheckboxInputContainer = styled.div<{ $checked?: boolean }>`
   align-items: center;
   justify-content: center;
   border: 2px solid #ccc;
-  ${props =>
+  ${(props: any) =>
     props.$checked &&
     css`
       background-color: #c5e8c5;
@@ -144,7 +144,7 @@ export const EmptyInputValue = styled.div<{ wide?: boolean }>`
   border-radius: 0;
   width: 100%;
   box-shadow: none;
-  max-width: ${props => (props.wide ? "550px" : "450px")};
+  max-width: ${(props: any) => (props.wide ? "550px" : "450px")};
   margin-bottom: 0.8em;
   &:focus {
     border-color: #333;

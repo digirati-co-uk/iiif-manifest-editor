@@ -33,7 +33,8 @@ export const EditorPanel: React.FC<{
   open: boolean;
   close: () => void;
   title: string;
-}> = ({ close, open, title }) => {
+  languages: Array<string>;
+}> = ({ close, open, title, languages }) => {
   const manifest = useManifest();
 
   return (
@@ -46,7 +47,13 @@ export const EditorPanel: React.FC<{
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-          <LanguageMapInput dispatchType={"label"} languageMap={Object.entries(manifest && manifest.label ? manifest.label : {})} />
+          <LanguageMapInput
+            dispatchType={"label"}
+            languageMap={Object.entries(
+              manifest && manifest.label ? manifest.label : {}
+            )}
+            languages={languages}
+          />
         </EditorPanelContainerOpen>
       ) : (
         <></>
