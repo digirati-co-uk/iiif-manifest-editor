@@ -9,7 +9,7 @@ import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
 import { Placeholder } from "../components/atoms/Placeholder";
 import { Toolbar } from "../components/layout/Toolbar";
-import { FlexContainerRow } from "../components/layout/FlexContainer";
+import { FlexContainerRow, FlexContainer } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
 import { useManifest, useVault } from "react-iiif-vault";
@@ -21,6 +21,8 @@ import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 import data from "../config.json";
+import { ShellToolbar } from "../components/molecules/ShellToolbar";
+import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
 
 type Persistance = {
   deleteLocation?: string;
@@ -41,7 +43,7 @@ const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
@@ -129,35 +131,41 @@ const Home: NextPage = (props: any) => {
         <></>
       )}
       <main className={styles.main}>
-        <Placeholder>IIIF Manifest Editor</Placeholder>
-        <DropdownMenu
-          onPreviewClick={() => saveManifest()}
-          label={
-            showAgain ? (
-              `Preview: ${props.config.preview[selectedPreviewIndex].label}`
-            ) : (
-              <a
-                href={
-                  props.config.preview[selectedPreviewIndex].baseUrl +
-                  persistedManifest.location
-                }
-                target={"_blank"}
-                rel="noreferrer"
-              >
-              {`Preview: ${props.config.preview[selectedPreviewIndex].label}`}
-              </a>
-            )
-          }
-          previewUrl={
-            props.config.preview[selectedPreviewIndex].baseUrl +
-            persistedManifest.location
-          }
-          setSelectedPreviewIndex={(index: number) =>
-            setSelectedPreviewIndex(index)
-          }
-          showAgain={showAgain}
-          options={props.config.preview}
-        ></DropdownMenu>
+        <ShellToolbar>
+          <FlexContainer>
+            <ManifestEditorIcon />
+            <Placeholder>IIIF Manifest Editor</Placeholder>
+          </FlexContainer>
+          <DropdownMenu
+            onPreviewClick={() => saveManifest()}
+            label={
+              showAgain ? (
+                `Preview: ${props.config.preview[selectedPreviewIndex].label}`
+              ) : (
+                <a
+                  href={
+                    props.config.preview[selectedPreviewIndex].baseUrl +
+                    persistedManifest.location
+                  }
+                  target={"_blank"}
+                  rel="noreferrer"
+                >
+                  {`Preview: ${props.config.preview[selectedPreviewIndex].label}`}
+                </a>
+              )
+            }
+            previewUrl={
+              props.config.preview[selectedPreviewIndex].baseUrl +
+              persistedManifest.location
+            }
+            setSelectedPreviewIndex={(index: number) =>
+              setSelectedPreviewIndex(index)
+            }
+            showAgain={showAgain}
+            options={props.config.preview}
+          ></DropdownMenu>
+        </ShellToolbar>
+
         <Toolbar>
           <Button
             onClick={() => setModalVisible(!modalVisible)}
@@ -191,8 +199,7 @@ const Home: NextPage = (props: any) => {
             title={"Edit manifest label"}
             open={editorPanelOpen}
             close={() => setEditorPanelOpen(false)}
-          >
-          </EditorPanel>
+          ></EditorPanel>
         </FlexContainerRow>
       </main>
 

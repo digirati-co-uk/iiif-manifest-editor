@@ -6,6 +6,8 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
   letter-spacing: -0.3px;
   font-weight: 500;
   line-height: 1.8em;
+  display: flex;
+  align-items: center;
 
   ${props =>
     props.$caps &&
@@ -30,7 +32,7 @@ export const _Input = styled.input`
     outline: none;
   }
   display: block;
-  margin: 0;
+  margin: 0.5em;
   outline: 0;
   font-family: inherit;
   -webkit-appearance: none;

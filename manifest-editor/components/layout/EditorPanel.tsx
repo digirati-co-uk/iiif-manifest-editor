@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
-import { Input } from "../form/Input";
+import { LanguageMapInput } from "../form/LanguageMapInput";
 import { useManifest } from "react-iiif-vault";
-import { getLabel } from "@iiif/vault-helpers";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -37,26 +35,18 @@ export const EditorPanel: React.FC<{
   title: string;
 }> = ({ close, open, title }) => {
   const manifest = useManifest();
-  const [helpers, setHelpers] = useState(null);
-
-  console.log(manifest);
-
-  const getLabel = () => {
-
-  }
 
   return (
     <>
       {open ? (
-        <EditorPanelContainerOpen  justify={"flex-start"} wide={true}>
+        <EditorPanelContainerOpen justify={"flex-start"} wide={true}>
           <FlexContainerRow justify="space-between">
             <h4>{title}</h4>
             <Button onClick={close}>
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-          <div>Manifest Label:</div>
-          <Input value={"A label"} onChange={(e: any) => console.log(e.target.value)}/>
+          <LanguageMapInput dispatchType={"label"} languageMap={Object.entries(manifest && manifest.label ? manifest.label : {})} />
         </EditorPanelContainerOpen>
       ) : (
         <></>
