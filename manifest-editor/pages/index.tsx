@@ -54,8 +54,6 @@ const Home: NextPage = (props: any) => {
   const [showAgain, setShowAgain] = useState(true);
 
   useEffect(() => {
-
-    console.log(props.config)
     if (localStorage.getItem("persistedManifest")) {
       const pers = localStorage.getItem("persistedManifest")
         ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")

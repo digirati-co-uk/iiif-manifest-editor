@@ -4,6 +4,7 @@ import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { LanguageMapInput } from "../form/LanguageMapInput";
 import { useManifest } from "react-iiif-vault";
+import { AddIcon } from "../icons/AddIcon";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -35,7 +36,6 @@ export const EditorPanel: React.FC<{
   title: string;
   languages: Array<string>;
 }> = ({ close, open, title, languages }) => {
-  const manifest = useManifest();
 
   return (
     <>
@@ -49,9 +49,6 @@ export const EditorPanel: React.FC<{
           </FlexContainerRow>
           <LanguageMapInput
             dispatchType={"label"}
-            languageMap={Object.entries(
-              manifest && manifest.label ? manifest.label : {}
-            )}
             languages={languages}
           />
         </EditorPanelContainerOpen>
