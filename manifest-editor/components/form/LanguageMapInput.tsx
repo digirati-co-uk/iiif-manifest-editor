@@ -16,25 +16,11 @@ export const LanguageMapInput: React.FC<{
   const [newItem, setNewItem] = useState(0);
   const [newValue, setValue] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
-  const [languageMap, setLanguageMap] = useState();
   const isMounted = useRef(false);
 
   useEffect(() => {
-    if (dispatchType === "label") {
-      const labels = Object.entries(
-        manifest && manifest.label ? manifest.label : {}
-      );
-      setLanguageMap(labels);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("manifest HAS CHANGED", manifest.label);
-    if (dispatchType == "label") {
-      const labels = Object.entries(
-        manifest && manifest.label ? manifest.label : {}
-      );
-      setLanguageMap(labels);
+    if (manifest) {
+      console.log("manifest HAS CHANGED", manifest?.label);
     }
   }, [manifest]);
 
@@ -66,40 +52,44 @@ export const LanguageMapInput: React.FC<{
         // @ts-ignore
         newLabel[selectedLanguage] = [""];
       }
-      console.log("dispatching this newLabel to the vault: ", newLabel)
+      console.log("dispatching this newLabel to the vault: ", newLabel);
       vault.modifyEntityField(manifest, dispatchType, newLabel);
     }
   }, [newItem]);
 
   return (
     <>
-      {languageMap ? (
-        languageMap.map(([key, value], index: number) => {
-          return (
-            <div key={index}>
-              {value &&
-                value.map((val: any) => {
-                  return (
-                    <InputLabel key={JSON.stringify(value)}>
-                      <LanguageSelector
-                        selected={key}
-                        setLanguage={(val: string) => setSelectedLanguage(val)}
-                        options={languages}
-                      />
-                      <Input
-                        key={val}
-                        defaultValue={val}
-                        onChange={(e: any) => setValue(e.target.value)}
-                      />
-                      <CalltoButton onClick={() => setSave(!save)}>
-                        Save
-                      </CalltoButton>
-                    </InputLabel>
-                  );
-                })}
-            </div>
-          );
-        })
+      {Object.entries(manifest && manifest.label ? manifest.label : {}) ? (
+        Object.entries(manifest && manifest.label ? manifest.label : {}).map(
+          ([key, value], index: number) => {
+            return (
+              <div key={index}>
+                {value &&
+                  value.map((val: any) => {
+                    return (
+                      <InputLabel key={JSON.stringify(value)}>
+                        <LanguageSelector
+                          selected={key}
+                          setLanguage={(val: string) =>
+                            setSelectedLanguage(val)
+                          }
+                          options={languages}
+                        />
+                        <Input
+                          key={val}
+                          defaultValue={val}
+                          onChange={(e: any) => setValue(e.target.value)}
+                        />
+                        <CalltoButton onClick={() => setSave(!save)}>
+                          Save
+                        </CalltoButton>
+                      </InputLabel>
+                    );
+                  })}
+              </div>
+            );
+          }
+        )
       ) : (
         <></>
       )}
