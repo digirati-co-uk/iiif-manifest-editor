@@ -13,7 +13,7 @@ export const LanguageMapInput: React.FC<{
   const manifest = useManifest();
   const vault = useVault();
   const [save, setSave] = useState(false);
-  const [newItem, setNewItem] = useState(false);
+  const [newItem, setNewItem] = useState(0);
   const [newValue, setValue] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [languageMap, setLanguageMap] = useState();
@@ -29,7 +29,7 @@ export const LanguageMapInput: React.FC<{
   }, []);
 
   useEffect(() => {
-    console.log("manifest HAS CHANGED");
+    console.log("manifest HAS CHANGED", manifest.label);
     if (dispatchType == "label") {
       const labels = Object.entries(
         manifest && manifest.label ? manifest.label : {}
@@ -38,18 +38,35 @@ export const LanguageMapInput: React.FC<{
     }
   }, [manifest]);
 
-  useEffect(() => {
-    if (manifest) {
-      const newLabel = { ...manifest.label, [selectedLanguage]: [newValue] };
-      // @ts-ignore
-      [selectedLanguage].push(newValue);
-      vault.modifyEntityField(manifest, dispatchType, newLabel);
-    }
-  }, [save]);
+  // useEffect(() => {
+  //   if (isMounted.current) return;
+  //   console.log("manifest HAS CHANGED");
+  //   if (manifest) {
+  //     const newLabel = { ...manifest.label };
+  //     // @ts-ignore
+  //     if (newLabel[selectedLanguage]) {
+  //       // @ts-ignore
+  //       newLabel[selectedLanguage].push(newValue);
+  //     } else {
+  //       // @ts-ignore
+  //       newLabel[selectedLanguage] = [newValue];
+  //     }
+  //     vault.modifyEntityField(manifest, dispatchType, newLabel);
+  //   }
+  // }, [save]);
 
   useEffect(() => {
-    if (manifest) {
-      const newLabel = { ...manifest.label, [selectedLanguage]: [""] };
+    if (manifest && newItem >= 1) {
+      const newLabel = { ...manifest.label };
+      // @ts-ignore
+      if (newLabel[selectedLanguage]) {
+        // @ts-ignore
+        newLabel[selectedLanguage].push("");
+      } else {
+        // @ts-ignore
+        newLabel[selectedLanguage] = [""];
+      }
+      console.log("dispatching this newLabel to the vault: ", newLabel)
       vault.modifyEntityField(manifest, dispatchType, newLabel);
     }
   }, [newItem]);
@@ -59,7 +76,7 @@ export const LanguageMapInput: React.FC<{
       {languageMap ? (
         languageMap.map(([key, value], index: number) => {
           return (
-            <>
+            <div key={index}>
               {value &&
                 value.map((val: any) => {
                   return (
@@ -80,13 +97,13 @@ export const LanguageMapInput: React.FC<{
                     </InputLabel>
                   );
                 })}
-            </>
+            </div>
           );
         })
       ) : (
         <></>
       )}
-      <Button onClick={() => setNewItem(!newItem)}>
+      <Button onClick={() => setNewItem(1 + newItem)}>
         <AddIcon />
       </Button>
     </>
