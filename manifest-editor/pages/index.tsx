@@ -87,8 +87,6 @@ const Home: NextPage = (props: any) => {
     );
   }, [persistedManifest]);
 
-  const setManifest = () => {};
-
   const saveManifest = async () => {
     if (manifest) {
       // Temporary code until bug fixed on react-iiif-vault
@@ -115,7 +113,7 @@ const Home: NextPage = (props: any) => {
       {modalVisible ? (
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
-          onChange={setManifest}
+          onChange={(url: string) => props.changeSampleManifest(url)}
           close={() => setModalVisible(false)}
         />
       ) : (
@@ -144,7 +142,9 @@ const Home: NextPage = (props: any) => {
         <ShellToolbar>
           <FlexContainer>
             <ManifestEditorIcon />
-            <Placeholder>IIIF Manifest Editor</Placeholder>
+            <Placeholder>
+              IIIF {manifest?.type} : {manifest?.label.none[0]}
+            </Placeholder>
           </FlexContainer>
           <DropdownMenu
             onPreviewClick={() => saveManifest()}
@@ -175,15 +175,21 @@ const Home: NextPage = (props: any) => {
             options={props.config.preview}
           ></DropdownMenu>
         </ShellToolbar>
+        <FlexContainer>
+          <FlexContainer>
+            <Button onClick={() => alert("File clicked")}>File</Button>
+            <Button onClick={() => alert("Help clicked")}>Help</Button>
+            <Button
+              onClick={() => setModalVisible(!modalVisible)}
+              title="Add an existing manifest to get started"
+              color={"#6b6b6b"}
+            >
+              <AddIcon />
+            </Button>
+          </FlexContainer>
+        </FlexContainer>
 
         <Toolbar>
-          <Button
-            onClick={() => setModalVisible(!modalVisible)}
-            title="Add a manifest"
-            color={"#6b6b6b"}
-          >
-            <AddIcon />
-          </Button>
           <Button
             // This will change but just to get some MVP
             onClick={() => setEditorPanelOpen(true)}
@@ -206,7 +212,7 @@ const Home: NextPage = (props: any) => {
           <CanvasView manifest={manifest ? manifest?.id : ""} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited
-            title={"Edit manifest label"}
+            title={"Edit manifest"}
             open={editorPanelOpen}
             close={() => setEditorPanelOpen(false)}
             languages={props.config.defaultLanguages}

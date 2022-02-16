@@ -2,8 +2,6 @@ import { useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
-import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
-import { ShellToolbar } from "../components/molecules/ShellToolbar";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
@@ -27,10 +25,9 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
-
       <VaultProvider>
         <SimpleViewerProvider manifest={manifest}>
-          <Component {...pageProps} />
+          <Component {...pageProps} changeSampleManifest={(url: string) => setManifest(url)}/>
         </SimpleViewerProvider>
       </VaultProvider>
     </>

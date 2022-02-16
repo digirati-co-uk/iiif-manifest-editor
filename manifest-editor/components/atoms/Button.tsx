@@ -8,6 +8,8 @@ export const Button = styled.button`
     background-color: white;
     border: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
 `;
 

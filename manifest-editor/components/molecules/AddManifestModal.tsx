@@ -17,6 +17,7 @@ export const AddManifestModal: React.FC<{
     <>
       <ModalBackground />
       <ModalContainer>
+        <h2>Import an existing IIIF manifest to get started</h2>
         <Input
           placeholder={manifest}
           onChange={(e: any) => setInputValue(e.target.value)}

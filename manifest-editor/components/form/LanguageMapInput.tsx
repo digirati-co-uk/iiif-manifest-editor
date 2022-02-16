@@ -68,6 +68,7 @@ export const LanguageMapInput: React.FC<{
 
   return (
     <>
+      <h4>{dispatchType}</h4>
       {Object.entries(
         // @ts-ignore
         manifest && manifest[dispatchType] ? manifest[dispatchType] : {}
