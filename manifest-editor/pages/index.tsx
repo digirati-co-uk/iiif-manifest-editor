@@ -15,7 +15,8 @@ import {
 } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
 
-import { useManifest, useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault";
+import { useManifest } from "../hooks/useManifest";
 import { useSave } from "../hooks/useSave";
 import { DropdownMenu } from "../components/atoms/DropdownMenu";
 

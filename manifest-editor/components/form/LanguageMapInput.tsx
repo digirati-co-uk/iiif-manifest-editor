@@ -1,7 +1,7 @@
 import { InputLabel, Input } from "./Input";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
-import { useManifest } from "../hooks/useManifest";
+import { useManifest } from "../../hooks/useManifest";
 import { useEffect, useState } from "react";
 import { CalltoButton, Button } from "../atoms/Button";
 import { LanguageSelector } from "./LanguageSelector";
