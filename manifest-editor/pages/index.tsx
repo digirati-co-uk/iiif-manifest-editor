@@ -1,33 +1,27 @@
 import { useState, useEffect } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
+
 import styles from "../styles/Home.module.css";
 import { Button } from "../components/atoms/Button";
 import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
-import { Placeholder } from "../components/atoms/Placeholder";
 import { Toolbar } from "../components/layout/Toolbar";
-import {
-  FlexContainerRow,
-  FlexContainer
-} from "../components/layout/FlexContainer";
+import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
+import { ShellToolbar } from "../components/molecules/ShellToolbar";
+import { ShellOptions } from "../components/apps/Shell/ShellOptions";
+import { ShellHeader } from "../components/apps/Shell/ShellHeader";
 
 import { useVault } from "react-iiif-vault";
 import { useManifest } from "../hooks/useManifest";
 import { useSave } from "../hooks/useSave";
-import { DropdownPreviewMenu } from "../components/atoms/DropdownPreviewMenu";
 
 // Temporary code until big fixed on react-iiif-vault
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 import data from "../config.json";
-import { ShellHeaderStrip } from "../components/molecules/ShellHeaderStrip";
-import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
-import { ShellToolbar } from "../components/molecules/ShellToolbar";
-import { ShellOptions } from "../components/apps/Shell/ShellOptions";
-import { ShellHeader } from "../components/apps/Shell/ShellHeader";
 
 export type Persistance = {
   deleteLocation?: string;
@@ -48,7 +42,7 @@ const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -98,9 +92,6 @@ const Home: NextPage = (props: any) => {
     }
   };
 
-  const showHidePreviewModal = () => {
-    setShowPreviewModal(!showPreviewModal);
-  }
 
   return (
     <div className={styles.container}>

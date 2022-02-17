@@ -47,13 +47,13 @@ export const EditorPanel: React.FC<{
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-
+{/*
           {Object.entries(
             // @ts-ignore
             manifest ? manifest : {}
           ).map(([key, value], index: number) => {
             console.log(key, value);
-          })}
+          })} */}
           <LanguageMapInput dispatchType={"label"} languages={languages} />
         </EditorPanelContainerOpen>
       ) : (

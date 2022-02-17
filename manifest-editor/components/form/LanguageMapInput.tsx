@@ -6,11 +6,7 @@ import { useEffect, useState } from "react";
 import { CalltoButton, Button } from "../atoms/Button";
 import { LanguageSelector } from "./LanguageSelector";
 import { AddIcon } from "../icons/AddIcon";
-
-type LanguageMap = {
-  key?: string;
-  value?: string;
-};
+import { FlexContainer } from "../layout/FlexContainer";
 
 export const LanguageMapInput: React.FC<{
   // Add to this list as we go
@@ -21,93 +17,89 @@ export const LanguageMapInput: React.FC<{
   const vault = useVault();
   const [save, setSave] = useState(0);
   const [newItem, setNewItem] = useState(0);
-  const [newValue, setNewValue] = useState<LanguageMap>();
+  const [languageMap, setLanguageMap] = useState<any>([]);
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const [inputValue, setInputValue] = useState();
 
   useEffect(() => {
     if (manifest && save >= 1) {
-      const newLabel = { ...manifest.label };
-      // @ts-ignore
-      if (newLabel[newValue.key] && !(newLabel[newValue.key][0] === "")) {
-        // @ts-ignore
-        newLabel[newValue.key].push(newValue.value);
-      } else {
-        // @ts-ignore
-        newLabel[newValue.key] = [newValue.value];
-      }
+      const newLabel = Object.fromEntries(languageMap);
       vault.modifyEntityField(manifest, dispatchType, newLabel);
     }
-    setNewValue({ key: selectedLanguage, value: "" });
   }, [save]);
 
+
+  const setValue = () => {
+    if (!inputValue) return;
+    const updateValue = [...languageMap];
+    const editedIndexValue = updateValue[inputValue.parentIndex][inputValue.index + 1].indexOf(
+      inputValue.previousValue
+    );
+    updateValue[inputValue.parentIndex][inputValue.index + 1][editedIndexValue] = inputValue.value;
+    setLanguageMap(updateValue);
+    setInputValue(null);
+  };
+
   useEffect(() => {
-    if (manifest && newItem >= 1 && newValue && newValue.value !== "") {
-      const newLabel = { ...manifest.label };
-      // @ts-ignore
-      if (newLabel[selectedLanguage]) {
-        // @ts-ignore
-        newLabel[selectedLanguage].push("");
-      } else {
-        // @ts-ignore
-        newLabel[selectedLanguage] = [""];
-      }
-      vault.modifyEntityField(manifest, dispatchType, newLabel);
-    }
+    const timer = setTimeout(() => {
+      setValue();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  useEffect(() => {
+    const withNew = [...languageMap];
+    withNew.push([selectedLanguage, [""]]);
+    setLanguageMap(withNew);
   }, [newItem]);
 
-  const setLan = (lang: string) => {
-    const newVal = { ...newValue, key: lang };
-    setNewValue(newVal);
-    setSelectedLanguage(lang);
-  };
-
-  const setValue = (value: string) => {
-    const newVal = { ...newValue, value: value };
-    setNewValue(newVal);
-  };
+  useEffect(() => {
+    const languageMap = Object.entries(
+      // @ts-ignore
+      manifest && manifest[dispatchType] ? manifest[dispatchType] : {}
+    );
+    setLanguageMap(languageMap);
+  }, [manifest]);
 
   return (
     <>
       <h4>{dispatchType}</h4>
-      {Object.entries(
-        // @ts-ignore
-        manifest && manifest[dispatchType] ? manifest[dispatchType] : {}
-      ) ? (
-        Object.entries(
-          // @ts-ignore
-          manifest && manifest[dispatchType] ? manifest[dispatchType] : {}
-        ).map(([key, value], index: number) => {
-          return (
-            <div key={index}>
-              {value &&
-                value.map((val: any, index: number) => {
-                  return (
-                    <InputLabel key={index}>
-                      <LanguageSelector
-                        selected={key}
-                        setLanguage={(lang: string) => setLan(lang)}
-                        options={languages}
-                      />
-                      <Input
-                        key={val}
-                        defaultValue={val}
-                        onChange={(e: any) => setValue(e.target.value)}
-                      />
-                      <CalltoButton onClick={() => setSave(1 + save)}>
-                        Save
-                      </CalltoButton>
-                    </InputLabel>
-                  );
-                })}
-            </div>
-          );
-        })
-      ) : (
-        <></>
-      )}
-      <Button onClick={() => setNewItem(1 + newItem)}>
-        <AddIcon />
-      </Button>
+      {languageMap.map(([key, value], parentIndex: number) => {
+        return (
+          <div key={parentIndex}>
+            {value &&
+              value.map((val: any, index: number) => {
+                return (
+                  <InputLabel key={index}>
+                    <LanguageSelector
+                      selected={key}
+                      setLanguage={(lang: string) => setSelectedLanguage(lang)}
+                      options={languages}
+                    />
+                    <Input
+                      key={val}
+                      defaultValue={val}
+                      onChange={(e: any) =>
+                        setInputValue({
+                          parentIndex: parentIndex,
+                          index: index,
+                          value: e.target.value,
+                          previousValue: val
+                        })
+                      }
+                    />
+                  </InputLabel>
+                );
+              })}
+          </div>
+        );
+      })}
+      <FlexContainer>
+        <CalltoButton onClick={() => setSave(1 + save)}>Save</CalltoButton>
+        <Button onClick={() => setNewItem(1 + newItem)}>
+          <AddIcon />
+        </Button>
+      </FlexContainer>
     </>
   );
 };
