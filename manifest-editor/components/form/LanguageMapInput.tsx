@@ -72,7 +72,10 @@ export const LanguageMapInput: React.FC<{
   return (
     <>
       <h4>{dispatchType}</h4>
-      {languageMap.map(([key, value], parentIndex: number) => {
+
+      {languageMap.map(
+          // @ts-ignore
+          ([key, value], parentIndex: number) => {
         return (
           <div key={parentIndex}>
             {value &&
