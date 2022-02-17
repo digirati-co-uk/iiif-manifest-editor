@@ -49,9 +49,13 @@ export const ShellOptions: React.FC<{
         <></>
       )}
       <Dropdown>
-        <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
+        <Button
+          onClick={() => setFileOpen(!fileOpen)}
+        >
+          File
+        </Button>
         {fileOpen && (
-          <DropdownContent>
+          <DropdownContent onMouseLeave={() => setFileOpen(false)}>
             <Button
               onClick={() => setModalVisible(!modalVisible)}
               title="Add an existing manifest to get started"
@@ -86,7 +90,7 @@ export const ShellOptions: React.FC<{
           </DropdownContent>
         )}
       </Dropdown>
-      <Dropdown>
+      <Dropdown onMouseLeave={() => setHelpOpen(false)}>
         <Button onClick={() => setHelpOpen(!helpOpen)}>Help</Button>
         {helpOpen && (
           <DropdownContent>
