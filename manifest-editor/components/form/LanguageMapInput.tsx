@@ -82,11 +82,6 @@ export const LanguageMapInput: React.FC<{
               value.map((val: any, index: number) => {
                 return (
                   <InputLabel key={index}>
-                    <LanguageSelector
-                      selected={key}
-                      setLanguage={(lang: string) => setSelectedLanguage(lang)}
-                      options={languages}
-                    />
                     <Input
                       key={val}
                       defaultValue={val}
@@ -98,6 +93,11 @@ export const LanguageMapInput: React.FC<{
                           previousValue: val
                         })
                       }
+                    />
+                    <LanguageSelector
+                      selected={key}
+                      setLanguage={(lang: string) => setSelectedLanguage(lang)}
+                      options={languages}
                     />
                   </InputLabel>
                 );
