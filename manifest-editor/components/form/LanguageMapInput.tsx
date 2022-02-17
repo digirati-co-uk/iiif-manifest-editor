@@ -41,7 +41,7 @@ export const LanguageMapInput: React.FC<{
   }, [save]);
 
   useEffect(() => {
-    if (manifest && newItem >= 1) {
+    if (manifest && newItem >= 1 && newValue && newValue.value !== "") {
       const newLabel = { ...manifest.label };
       // @ts-ignore
       if (newLabel[selectedLanguage]) {

@@ -53,6 +53,13 @@ export const ShellOptions: React.FC<{
         {fileOpen && (
           <DropdownContent>
             <Button
+              onClick={() => setModalVisible(!modalVisible)}
+              title="Add an existing manifest to get started"
+              color={"#6b6b6b"}
+            >
+              Open
+            </Button>
+            <Button
               onClick={() => {
                 setFileOpen(!fileOpen);
                 saveManifest();
@@ -94,13 +101,6 @@ export const ShellOptions: React.FC<{
           </DropdownContent>
         )}
       </Dropdown>
-      <Button
-        onClick={() => setModalVisible(!modalVisible)}
-        title="Add an existing manifest to get started"
-        color={"#6b6b6b"}
-      >
-        <AddIcon />
-      </Button>
     </>
   );
 };
