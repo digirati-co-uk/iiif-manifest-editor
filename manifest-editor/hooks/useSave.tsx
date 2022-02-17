@@ -14,7 +14,7 @@ export const useSave = async (manifest: any) => {
     body: JSON.stringify(manifest)
   };
   let responseData = {};
-  await fetch(PERSISTENCEURL.local, requestOptions)
+  await fetch(PERSISTENCEURL.prod, requestOptions)
     .then(response => {
       return response.json().catch(err => {
         console.error(`'${err}' happened!`);
