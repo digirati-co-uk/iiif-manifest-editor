@@ -26,7 +26,7 @@ import data from "../config.json";
 import { ShellHeaderStrip } from "../components/molecules/ShellHeaderStrip";
 import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
 import { ShellToolbar } from "../components/molecules/ShellToolbar";
-import {  ShellOptions } from "../components/atoms/ShellOptions";
+import { ShellOptions } from "../components/atoms/ShellOptions";
 
 type Persistance = {
   deleteLocation?: string;
@@ -73,7 +73,6 @@ const Home: NextPage = (props: any) => {
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
   }, [selectedPreviewIndex]);
 
-
   useEffect(() => {
     // We want to hold on to the persisted value in localStorage
     // TODO handle the time constraint on this value
@@ -96,6 +95,23 @@ const Home: NextPage = (props: any) => {
       setpersistedManifest(data ? data : "");
       if (showAgain) setShowPreviewModal(true);
     }
+  };
+
+  const getTitle = () => {
+    //  This needs to actually adapt for the specific content and default language
+    if (
+      manifest &&
+      manifest.label &&
+      manifest.label.none &&
+      manifest.label.none[0]
+    ) {
+      return (
+        <h5>
+          IIIF {manifest.type} : {manifest.label.none[0]}
+        </h5>
+      );
+    }
+    return <h5>IIIF Manifest Editor</h5>;
   };
 
   return (
@@ -130,7 +146,7 @@ const Home: NextPage = (props: any) => {
             <ManifestEditorIcon />
             <Placeholder>
               {/* We need to decide what this should actually show */}
-              IIIF {manifest?.type} : {manifest?.label.none[0]}
+              {getTitle()}
             </Placeholder>
           </FlexContainer>
           <DropdownPreviewMenu
@@ -163,7 +179,10 @@ const Home: NextPage = (props: any) => {
           ></DropdownPreviewMenu>
         </ShellHeaderStrip>
         <ShellToolbar>
-          <ShellOptions changeManifest={(url: string) => props.changeSampleManifest(url)} saveManifest={saveManifest}/>
+          <ShellOptions
+            changeManifest={(url: string) => props.changeSampleManifest(url)}
+            saveManifest={saveManifest}
+          />
         </ShellToolbar>
         <Toolbar>
           <Button
