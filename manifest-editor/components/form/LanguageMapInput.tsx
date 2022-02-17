@@ -8,6 +8,13 @@ import { LanguageSelector } from "./LanguageSelector";
 import { AddIcon } from "../icons/AddIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 
+type TempInput = {
+  parentIndex: number;
+  index: number;
+  value: string;
+  previousValue: string;
+};
+
 export const LanguageMapInput: React.FC<{
   // Add to this list as we go
   dispatchType: "label" | "summary";
@@ -19,7 +26,7 @@ export const LanguageMapInput: React.FC<{
   const [newItem, setNewItem] = useState(0);
   const [languageMap, setLanguageMap] = useState<any>([]);
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
-  const [inputValue, setInputValue] = useState();
+  const [inputValue, setInputValue] = useState<TempInput | null>();
 
   useEffect(() => {
     if (manifest && save >= 1) {
@@ -28,14 +35,15 @@ export const LanguageMapInput: React.FC<{
     }
   }, [save]);
 
-
   const setValue = () => {
     if (!inputValue) return;
     const updateValue = [...languageMap];
-    const editedIndexValue = updateValue[inputValue.parentIndex][inputValue.index + 1].indexOf(
-      inputValue.previousValue
-    );
-    updateValue[inputValue.parentIndex][inputValue.index + 1][editedIndexValue] = inputValue.value;
+    const editedIndexValue = updateValue[inputValue.parentIndex][
+      inputValue.index + 1
+    ].indexOf(inputValue.previousValue);
+    updateValue[inputValue.parentIndex][inputValue.index + 1][
+      editedIndexValue
+    ] = inputValue.value;
     setLanguageMap(updateValue);
     setInputValue(null);
   };
