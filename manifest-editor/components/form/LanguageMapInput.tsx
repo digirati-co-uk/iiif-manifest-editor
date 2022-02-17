@@ -7,6 +7,7 @@ import { CalltoButton, Button } from "../atoms/Button";
 import { LanguageSelector } from "./LanguageSelector";
 import { AddIcon } from "../icons/AddIcon";
 import { FlexContainer } from "../layout/FlexContainer";
+import { CloseIcon } from "../icons/CloseIcon";
 
 type TempInput = {
   parentIndex: number;
@@ -69,42 +70,69 @@ export const LanguageMapInput: React.FC<{
     setLanguageMap(languageMap);
   }, [manifest]);
 
+  const deleteInput = (selectedInput: TempInput) => {
+    const updateValue = [...languageMap];
+
+    const editedIndexValue = updateValue[selectedInput.parentIndex][
+      selectedInput.index + 1
+    ].indexOf(selectedInput.previousValue);
+
+    updateValue[selectedInput.parentIndex][selectedInput.index + 1].splice(editedIndexValue, 1)
+
+    setLanguageMap(updateValue);
+  };
+
   return (
     <>
       <h4>{dispatchType}</h4>
 
       {languageMap.map(
-          // @ts-ignore
-          ([key, value], parentIndex: number) => {
-        return (
-          <div key={parentIndex}>
-            {value &&
-              value.map((val: any, index: number) => {
-                return (
-                  <InputLabel key={index}>
-                    <Input
-                      key={val}
-                      defaultValue={val}
-                      onChange={(e: any) =>
-                        setInputValue({
-                          parentIndex: parentIndex,
-                          index: index,
-                          value: e.target.value,
-                          previousValue: val
-                        })
-                      }
-                    />
-                    <LanguageSelector
-                      selected={key}
-                      setLanguage={(lang: string) => setSelectedLanguage(lang)}
-                      options={languages}
-                    />
-                  </InputLabel>
-                );
-              })}
-          </div>
-        );
-      })}
+        // @ts-ignore
+        ([key, value], parentIndex: number) => {
+          return (
+            <div key={parentIndex}>
+              {value &&
+                value.map((val: any, index: number) => {
+                  return (
+                    <InputLabel key={index}>
+                      <Button
+                        onClick={() =>
+                          deleteInput({
+                            parentIndex: parentIndex,
+                            index: index,
+                            value: "",
+                            previousValue: val
+                          })
+                        }
+                      >
+                        <CloseIcon />
+                      </Button>
+                      <Input
+                        key={val}
+                        defaultValue={val}
+                        onChange={(e: any) =>
+                          setInputValue({
+                            parentIndex: parentIndex,
+                            index: index,
+                            value: e.target.value,
+                            previousValue: val
+                          })
+                        }
+                      />
+                      <LanguageSelector
+                        selected={key}
+                        setLanguage={(lang: string) =>
+                          setSelectedLanguage(lang)
+                        }
+                        options={languages}
+                      />
+                    </InputLabel>
+                  );
+                })}
+            </div>
+          );
+        }
+      )}
       <FlexContainer>
         <CalltoButton onClick={() => setSave(1 + save)}>Save</CalltoButton>
         <Button onClick={() => setNewItem(1 + newItem)}>
