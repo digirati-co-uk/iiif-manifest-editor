@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { AddManifestModal } from "../molecules/AddManifestModal";
-import { Button } from "./Button";
-import { AddIcon } from "../icons/AddIcon";
-import { useManifest } from "../../hooks/useManifest";
+import { AddManifestModal } from "../../molecules/AddManifestModal";
+import { Button } from "../../atoms/Button";
+import { useManifest } from "../../../hooks/useManifest";
 
 export const Dropdown = styled.li`
    {

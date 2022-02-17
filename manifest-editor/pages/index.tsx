@@ -26,9 +26,10 @@ import data from "../config.json";
 import { ShellHeaderStrip } from "../components/molecules/ShellHeaderStrip";
 import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
 import { ShellToolbar } from "../components/molecules/ShellToolbar";
-import { ShellOptions } from "../components/atoms/ShellOptions";
+import { ShellOptions } from "../components/apps/Shell/ShellOptions";
+import { ShellHeader } from "../components/apps/Shell/ShellHeader";
 
-type Persistance = {
+export type Persistance = {
   deleteLocation?: string;
   expirationTtl?: Number;
   location?: string;
@@ -97,22 +98,9 @@ const Home: NextPage = (props: any) => {
     }
   };
 
-  const getTitle = () => {
-    //  This needs to actually adapt for the specific content and default language
-    if (
-      manifest &&
-      manifest.label &&
-      manifest.label.none &&
-      manifest.label.none[0]
-    ) {
-      return (
-        <h5>
-          IIIF {manifest.type} : {manifest.label.none[0]}
-        </h5>
-      );
-    }
-    return <h5>IIIF Manifest Editor</h5>;
-  };
+  const showHidePreviewModal = () => {
+    setShowPreviewModal(!showPreviewModal);
+  }
 
   return (
     <div className={styles.container}>
@@ -141,43 +129,14 @@ const Home: NextPage = (props: any) => {
         <></>
       )}
       <main className={styles.main}>
-        <ShellHeaderStrip>
-          <FlexContainer>
-            <ManifestEditorIcon />
-            <Placeholder>
-              {/* We need to decide what this should actually show */}
-              {getTitle()}
-            </Placeholder>
-          </FlexContainer>
-          <DropdownPreviewMenu
-            onPreviewClick={() => saveManifest()}
-            label={
-              showAgain ? (
-                `Preview: ${props.config.preview[selectedPreviewIndex].label}`
-              ) : (
-                <a
-                  href={
-                    props.config.preview[selectedPreviewIndex].baseUrl +
-                    persistedManifest.location
-                  }
-                  target={"_blank"}
-                  rel="noreferrer"
-                >
-                  {`Preview: ${props.config.preview[selectedPreviewIndex].label}`}
-                </a>
-              )
-            }
-            previewUrl={
-              props.config.preview[selectedPreviewIndex].baseUrl +
-              persistedManifest.location
-            }
-            setSelectedPreviewIndex={(index: number) =>
-              setSelectedPreviewIndex(index)
-            }
-            showAgain={showAgain}
-            options={props.config.preview}
-          ></DropdownPreviewMenu>
-        </ShellHeaderStrip>
+        <ShellHeader
+          saveManifest={saveManifest}
+          showAgain={showAgain}
+          setSelectedPreviewIndex={setSelectedPreviewIndex}
+          previewConfig={props.config.preview}
+          selectedPreviewIndex={selectedPreviewIndex}
+          persistedManifest={persistedManifest}
+        />
         <ShellToolbar>
           <ShellOptions
             changeManifest={(url: string) => props.changeSampleManifest(url)}
