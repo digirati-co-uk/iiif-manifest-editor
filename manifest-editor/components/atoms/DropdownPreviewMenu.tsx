@@ -61,7 +61,7 @@ const MenuContainer = styled.div`
   height: 2rem;
 `;
 
-export const DropdownMenu: React.FC<{
+export const DropdownPreviewMenu: React.FC<{
   label: string | JSX.Element;
   options: Array<DropdownOption>;
   onPreviewClick: () => Promise<void>;

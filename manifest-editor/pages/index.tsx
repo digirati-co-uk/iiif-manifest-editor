@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { AddManifestModal } from "../components/molecules/AddManifestModal";
 import { Button } from "../components/atoms/Button";
-import { AddIcon } from "../components/icons/AddIcon";
 import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
 import { Placeholder } from "../components/atoms/Placeholder";
@@ -18,15 +16,17 @@ import { EditorPanel } from "../components/layout/EditorPanel";
 import { useVault } from "react-iiif-vault";
 import { useManifest } from "../hooks/useManifest";
 import { useSave } from "../hooks/useSave";
-import { DropdownMenu } from "../components/atoms/DropdownMenu";
+import { DropdownPreviewMenu } from "../components/atoms/DropdownPreviewMenu";
 
 // Temporary code until big fixed on react-iiif-vault
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { PersistenceModal } from "../components/molecules/PersistenceModal";
 
 import data from "../config.json";
-import { ShellToolbar } from "../components/molecules/ShellToolbar";
+import { ShellHeaderStrip } from "../components/molecules/ShellHeaderStrip";
 import { ManifestEditorIcon } from "../components/icons/ManifestEditorIcon";
+import { ShellToolbar } from "../components/molecules/ShellToolbar";
+import {  ShellOptions } from "../components/atoms/ShellOptions";
 
 type Persistance = {
   deleteLocation?: string;
@@ -48,7 +48,6 @@ const Home: NextPage = (props: any) => {
   const manifest = useManifest();
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -74,9 +73,6 @@ const Home: NextPage = (props: any) => {
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
   }, [selectedPreviewIndex]);
 
-  useEffect(() => {
-    setModalVisible(false);
-  }, [manifest]);
 
   useEffect(() => {
     // We want to hold on to the persisted value in localStorage
@@ -110,16 +106,6 @@ const Home: NextPage = (props: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {modalVisible ? (
-        <AddManifestModal
-          manifest={manifest ? manifest?.id : ""}
-          onChange={(url: string) => props.changeSampleManifest(url)}
-          close={() => setModalVisible(false)}
-        />
-      ) : (
-        <></>
-      )}
-
       {showPreviewModal ? (
         <PersistenceModal
           manifest={
@@ -139,14 +125,15 @@ const Home: NextPage = (props: any) => {
         <></>
       )}
       <main className={styles.main}>
-        <ShellToolbar>
+        <ShellHeaderStrip>
           <FlexContainer>
             <ManifestEditorIcon />
             <Placeholder>
+              {/* We need to decide what this should actually show */}
               IIIF {manifest?.type} : {manifest?.label.none[0]}
             </Placeholder>
           </FlexContainer>
-          <DropdownMenu
+          <DropdownPreviewMenu
             onPreviewClick={() => saveManifest()}
             label={
               showAgain ? (
@@ -173,22 +160,11 @@ const Home: NextPage = (props: any) => {
             }
             showAgain={showAgain}
             options={props.config.preview}
-          ></DropdownMenu>
+          ></DropdownPreviewMenu>
+        </ShellHeaderStrip>
+        <ShellToolbar>
+          <ShellOptions changeManifest={(url: string) => props.changeSampleManifest(url)} saveManifest={saveManifest}/>
         </ShellToolbar>
-        <FlexContainer>
-          <FlexContainer>
-            <Button onClick={() => alert("File clicked")}>File</Button>
-            <Button onClick={() => alert("Help clicked")}>Help</Button>
-            <Button
-              onClick={() => setModalVisible(!modalVisible)}
-              title="Add an existing manifest to get started"
-              color={"#6b6b6b"}
-            >
-              <AddIcon />
-            </Button>
-          </FlexContainer>
-        </FlexContainer>
-
         <Toolbar>
           <Button
             // This will change but just to get some MVP
@@ -197,15 +173,6 @@ const Home: NextPage = (props: any) => {
           >
             Edit Manifest Label
           </Button>
-          {
-            <Button
-              // This will evolve to a file/save option and will be used for the permalink eventually
-              onClick={() => saveManifest()}
-              title="Save manifest"
-            >
-              Save manifest
-            </Button>
-          }
         </Toolbar>
         <FlexContainerRow>
           <ThumbnailStrip />

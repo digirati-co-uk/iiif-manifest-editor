@@ -12,7 +12,7 @@ export const DropdownItem = styled.option`
 `;
 
 
-const LangSelector = styled.select`
+export const StyledSelect = styled.select`
   display: flex;
   align-items: center;
   border: 0.0375rem solid grey;
@@ -23,7 +23,7 @@ const LangSelector = styled.select`
   padding: none;
 `;
 
-const MenuContainer = styled.div`
+export const SelectMenuContainer = styled.div`
   display: inline;
   flex-direction: column;
   justify-content: flex-end;
@@ -42,8 +42,8 @@ export const LanguageSelector: React.FC<{
   };
 
   return (
-    <MenuContainer>
-      <LangSelector
+    <SelectMenuContainer>
+      <StyledSelect
         defaultValue={selected}
         onChange={(e: any) => clickHandler(e.target.value)}
       >
@@ -57,7 +57,7 @@ export const LanguageSelector: React.FC<{
             />
           );
         })}
-      </LangSelector>
-    </MenuContainer>
+      </StyledSelect>
+    </SelectMenuContainer>
   );
 };
