@@ -9,13 +9,13 @@ export const DownIcon: React.FC<{
            viewBox="0 0 24 24"
            width="20"
            height="20"
+           style={{
+             fill: "rgba(0, 0, 0, 0.6)",
+             transform: `rotate(${rotate}deg)`
+           }}
          >
            <g>
-             <path
-               d="M7 10l5 5 5-5z"
-               style={{ fill: "rgba(0, 0, 0, 0.6)", transform: `rotate(${rotate}deg)` }}
-               vectorEffect="non-scaling-stroke"
-             />
+             <path d="M7 10l5 5 5-5z" vectorEffect="non-scaling-stroke" />
            </g>
          </svg>
        );

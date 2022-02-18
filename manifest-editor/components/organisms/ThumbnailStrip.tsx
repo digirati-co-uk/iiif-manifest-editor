@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 import {
   CanvasContext,
   useManifest,
@@ -9,7 +8,7 @@ import {
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
 import { ThumbnailImg } from "../atoms/Thumbnail";
 
-const Thumbnail: FC<{ onClick: () => void }> = ({ onClick }) => {
+const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const thumb = useThumbnail({
     maxHeight: 300,
     maxWidth: 300

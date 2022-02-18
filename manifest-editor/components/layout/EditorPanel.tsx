@@ -1,9 +1,10 @@
-import styled from "styled-components";
 import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { LanguageMapInput } from "../form/LanguageMapInput";
 import { useManifest } from "../../hooks/useManifest";
+
+import styled from "styled-components";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -35,7 +36,6 @@ export const EditorPanel: React.FC<{
   title: string;
   languages: Array<string>;
 }> = ({ close, open, title, languages }) => {
-  const manifest = useManifest();
 
   return (
     <>
@@ -47,13 +47,6 @@ export const EditorPanel: React.FC<{
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-{/*
-          {Object.entries(
-            // @ts-ignore
-            manifest ? manifest : {}
-          ).map(([key, value], index: number) => {
-            console.log(key, value);
-          })} */}
           <LanguageMapInput dispatchType={"label"} languages={languages} />
         </EditorPanelContainerOpen>
       ) : (

@@ -4,7 +4,6 @@ import Head from "next/head";
 
 import styles from "../styles/Home.module.css";
 import { Button } from "../components/atoms/Button";
-import { ThumbnailStrip } from "../components/organisms/ThumbnailStrip";
 import { CanvasView } from "../components/organisms/CanvasView";
 import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
@@ -12,6 +11,8 @@ import { EditorPanel } from "../components/layout/EditorPanel";
 import { ShellToolbar } from "../components/molecules/ShellToolbar";
 import { ShellOptions } from "../components/apps/Shell/ShellOptions";
 import { ShellHeader } from "../components/apps/Shell/ShellHeader";
+import { ContentSelector } from "../components/layout/ContentSelector";
+
 
 import { useVault } from "react-iiif-vault";
 import { useManifest } from "../hooks/useManifest";
@@ -42,11 +43,12 @@ const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showAgain, setShowAgain] = useState(true);
+  const [view, setView] = useState<"thumbnails" | "tree">("tree")
 
   useEffect(() => {
     if (localStorage.getItem("persistedManifest")) {
@@ -132,6 +134,7 @@ const Home: NextPage = (props: any) => {
           <ShellOptions
             changeManifest={(url: string) => props.changeSampleManifest(url)}
             saveManifest={saveManifest}
+            setView={(view: "thumbnails" | "tree") => setView(view)}
           />
         </ShellToolbar>
         <Toolbar>
@@ -144,7 +147,7 @@ const Home: NextPage = (props: any) => {
           </Button>
         </Toolbar>
         <FlexContainerRow>
-          <ThumbnailStrip />
+          <ContentSelector view={view}/>
           <CanvasView manifest={manifest ? manifest?.id : ""} />
           <EditorPanel
             // Hard coded value here but this will depend on the element being edited

@@ -25,10 +25,12 @@ export const DropdownContent = styled.div`
 export const ShellOptions: React.FC<{
   changeManifest: (url: string) => void;
   saveManifest: () => void;
-}> = ({ changeManifest, saveManifest }) => {
+  setView: (view: "thumbnails" | "tree") => void;
+}> = ({ changeManifest, saveManifest, setView }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
   const manifest = useManifest();
 
@@ -48,11 +50,7 @@ export const ShellOptions: React.FC<{
         <></>
       )}
       <Dropdown>
-        <Button
-          onClick={() => setFileOpen(!fileOpen)}
-        >
-          File
-        </Button>
+        <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
         {fileOpen && (
           <DropdownContent onMouseLeave={() => setFileOpen(false)}>
             <Button
@@ -85,6 +83,29 @@ export const ShellOptions: React.FC<{
               }}
             >
               Export
+            </Button>
+          </DropdownContent>
+        )}
+      </Dropdown>
+      <Dropdown onMouseLeave={() => setViewOpen(false)}>
+        <Button onClick={() => setViewOpen(!viewOpen)}>View</Button>
+        {viewOpen && (
+          <DropdownContent>
+            <Button
+              onClick={() => {
+                setViewOpen(!viewOpen);
+                setView("tree");
+              }}
+            >
+              IIIF Tree Structure
+            </Button>
+            <Button
+              onClick={() => {
+                setViewOpen(!viewOpen);
+                setView("thumbnails");
+              }}
+            >
+              Canvas Thumbnails
             </Button>
           </DropdownContent>
         )}
