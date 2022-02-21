@@ -106,14 +106,14 @@ export const Tree: React.FC = () => {
         propertyName={"logo"}
         array={manifest?.logo || []}
       />
-      <KeyValuePairArray
+      <KeyObjectPairing
         onClick={
           editorContext
             ? () => editorContext.changeSelectedProperty("metadata")
             : () => {}
         }
         propertyName={"metadata"}
-        array={manifest?.metadata || []}
+        object={manifest?.metadata || {}}
       />
       <KeyObjectPairing
         onClick={
