@@ -77,7 +77,10 @@ export const LanguageMapInput: React.FC<{
       selectedInput.index + 1
     ].indexOf(selectedInput.previousValue);
 
-    updateValue[selectedInput.parentIndex][selectedInput.index + 1].splice(editedIndexValue, 1)
+    updateValue[selectedInput.parentIndex][selectedInput.index + 1].splice(
+      editedIndexValue,
+      1
+    );
 
     setLanguageMap(updateValue);
   };

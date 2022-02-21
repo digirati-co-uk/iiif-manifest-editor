@@ -1,5 +1,13 @@
 import React from "react";
 
-const ManifestEditorContext = React.createContext({});
+interface EditorContextInterface {
+  selectedProperty: string;
+  changeSelectedProperty: (property: string) => void;
+}
+
+const ManifestEditorContext = React.createContext<EditorContextInterface | null>(
+  null
+);
+
 
 export default ManifestEditorContext;

@@ -28,7 +28,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Container>
+      <Container onClick={() => onClick()}>
         <Key>{propertyName}</Key>
         <Expandable onClick={() => setOpen(!open)}>
           <Count title={`Count of ${propertyName}`}>{array.length}</Count>

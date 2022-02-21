@@ -42,15 +42,15 @@ export const getStaticProps = async () => {
 const Home: NextPage = (props: any) => {
   const vault = useVault();
   const manifest = useManifest();
-  const [selectedProperty, setSelectedProperty] = useState(0);
+  const [selectedProperty, setSelectedProperty] = useState("id");
 
-  const changeSelectedProperty = () => {
-    setSelectedProperty(selectedProperty + 1);
+  const changeSelectedProperty = (property: string) => {
+    setSelectedProperty(property);
   };
 
   const editorSettings = { selectedProperty, changeSelectedProperty };
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -148,17 +148,15 @@ const Home: NextPage = (props: any) => {
             <Button
               // This will change but just to get some MVP
               onClick={() => setEditorPanelOpen(true)}
-              title="Edit manifest label"
+              title="Open editor panel"
             >
-              Edit Manifest Label
+              Open editor panel
             </Button>
           </Toolbar>
           <FlexContainerRow>
             <ContentSelector view={view} />
             <CanvasView manifest={manifest ? manifest?.id : ""} />
             <EditorPanel
-              // Hard coded value here but this will depend on the element being edited
-              title={"Edit manifest"}
               open={editorPanelOpen}
               close={() => setEditorPanelOpen(false)}
               languages={props.config.defaultLanguages}

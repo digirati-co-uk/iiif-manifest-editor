@@ -1,10 +1,13 @@
+import { useContext } from "react";
 import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
 import { LanguageMapInput } from "../form/LanguageMapInput";
-import { useManifest } from "../../hooks/useManifest";
+
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 import styled from "styled-components";
+import { StringInput } from "../form/StringInput";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -33,21 +36,34 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
 export const EditorPanel: React.FC<{
   open: boolean;
   close: () => void;
-  title: string;
   languages: Array<string>;
-}> = ({ close, open, title, languages }) => {
+}> = ({ close, open, languages }) => {
+  const editorContext = useContext(ManifestEditorContext);
 
   return (
     <>
       {open ? (
         <EditorPanelContainerOpen justify={"flex-start"} wide={true}>
           <FlexContainerRow justify="space-between">
-            <h4>{title}</h4>
+            <h4>Edit {editorContext?.selectedProperty}</h4>
             <Button onClick={close}>
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-          <LanguageMapInput dispatchType={"label"} languages={languages} />
+          {(editorContext?.selectedProperty === "id" ||
+            editorContext?.selectedProperty === "type" ||
+            editorContext?.selectedProperty === "viewingDirection" ||
+            editorContext?.selectedProperty === "@context") && (
+            <StringInput
+              dispatchType={editorContext?.selectedProperty}
+            />
+          )}
+          {editorContext?.selectedProperty === "label" && (
+            <LanguageMapInput
+              dispatchType={editorContext?.selectedProperty}
+              languages={languages}
+            />
+          )}
         </EditorPanelContainerOpen>
       ) : (
         <></>

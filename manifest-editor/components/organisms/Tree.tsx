@@ -6,6 +6,7 @@ import { KeyValuePairString } from "../atoms/IIIFElementsShared";
 import { KeyValuePairArray } from "../atoms/IIIFElementsArrays";
 import { KeyObjectPairing } from "../atoms/IIIFElementsObject";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+
 const TreeContainer = styled.div`
   z-index: 12;
   font-size: 0.85em;
@@ -34,127 +35,255 @@ export const Tree: React.FC = () => {
     <TreeContainer>
       <h5>IIIF Properties</h5>
       <KeyValuePairString
-        onClick={() => console.log("clicked id")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("id")
+            : () => {}
+        }
         propertyName={"id"}
         value={manifest?.id}
       />
       <KeyValuePairString
-        onClick={() => console.log("clicked type")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("type")
+            : () => {}
+        }
         propertyName={"type"}
         value={manifest?.type}
       />
       <KeyValuePairArray
-        onClick={() => console.log("clicked type")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("annotations")
+            : () => {}
+        }
         propertyName={"annotations"}
         array={manifest?.annotations || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("behaviour type")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("behavior")
+            : () => {}
+        }
         propertyName={"behavior"}
         array={manifest?.behavior || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("homepage")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("homepage")
+            : () => {}
+        }
         propertyName={"homepage"}
         array={manifest?.homepage || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("items")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("items")
+            : () => {}
+        }
         propertyName={"items"}
         array={manifest?.items || []}
       />
-      <KeyObjectPairing propertyName={"label"} object={manifest?.label || {}} />
+      <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("label")
+            : () => {}
+        }
+        propertyName={"label"}
+        object={manifest?.label || {}}
+      />
       <KeyValuePairArray
-        onClick={() => console.log("logo")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("logo")
+            : () => {}
+        }
         propertyName={"logo"}
         array={manifest?.logo || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("metadata")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("metadata")
+            : () => {}
+        }
         propertyName={"metadata"}
         array={manifest?.metadata || []}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("motivation")
+            : () => {}
+        }
         propertyName={"motivation"}
         object={manifest?.motivation || {}}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("navDate")
+            : () => {}
+        }
         propertyName={"navDate"}
         object={manifest?.navDate || {}}
       />
       <KeyValuePairArray
-        onClick={() => console.log("provider")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("provider")
+            : () => {}
+        }
         propertyName={"provider"}
         array={manifest?.provider || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("partOf")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("partOf")
+            : () => {}
+        }
         propertyName={"partOf"}
         array={manifest?.partOf || []}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("posterCanvas")
+            : () => {}
+        }
         propertyName={"posterCanvas"}
         object={manifest?.posterCanvas || {}}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("accompanyingCanvas")
+            : () => {}
+        }
         propertyName={"accompanyingCanvas"}
         object={manifest?.accompanyingCanvas || {}}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("placeholderCanvas")
+            : () => {}
+        }
         propertyName={"placeholderCanvas"}
         object={manifest?.placeholderCanvas || {}}
       />
       <KeyValuePairArray
-        onClick={() => console.log("rendering")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("rendering")
+            : () => {}
+        }
         propertyName={"rendering"}
         array={manifest?.rendering || []}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("requiredStatement")
+            : () => {}
+        }
         propertyName={"requiredStatement"}
         object={manifest?.requiredStatement || {}}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("rights")
+            : () => {}
+        }
         propertyName={"rights"}
         object={manifest?.rights || {}}
       />
       <KeyValuePairArray
-        onClick={() => console.log("clicked seeAlso")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("seeAlso")
+            : () => {}
+        }
         propertyName={"seeAlso"}
         array={manifest?.seeAlso || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("clicked service")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("service")
+            : () => {}
+        }
         propertyName={"service"}
         array={manifest?.service || []}
       />
       <KeyValuePairArray
-        onClick={() => console.log("clicked services")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("services")
+            : () => {}
+        }
         propertyName={"services"}
         array={manifest?.services || []}
       />
-      <KeyObjectPairing propertyName={"start"} object={manifest?.start || {}} />
+      <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("start")
+            : () => {}
+        }
+        propertyName={"start"}
+        object={manifest?.start || {}}
+      />
 
       <KeyValuePairArray
-        onClick={() => console.log("clicked structures")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("structures")
+            : () => {}
+        }
         propertyName={"structures"}
         array={manifest?.structures || []}
       />
       <KeyObjectPairing
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("summary")
+            : () => {}
+        }
         propertyName={"summary"}
         object={manifest?.summary || {}}
       />
       <KeyValuePairArray
-        onClick={() => console.log("clicked thumbnail")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("thumbnail")
+            : () => {}
+        }
         propertyName={"thumbnail"}
         array={manifest?.thumbnail || []}
       />
       <KeyValuePairString
-        onClick={() => console.log("clicked viewingDirection")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("viewingDirection")
+            : () => {}
+        }
         propertyName={"viewingDirection"}
         value={manifest?.viewingDirection}
       />
       <KeyValuePairString
-        onClick={() => console.log("clicked @context")}
+        onClick={
+          editorContext
+            ? () => editorContext.changeSelectedProperty("@context")
+            : () => {}
+        }
         propertyName={"@context"}
         // @ts-ignore
         value={manifest["@context"]}

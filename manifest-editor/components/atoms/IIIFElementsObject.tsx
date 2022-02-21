@@ -9,14 +9,16 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 type KeyObjectPairing = {
   propertyName: string;
   object: any;
+  onClick: () => void;
 };
 
 export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
   propertyName,
-  object
+  object,
+  onClick
 }) => {
   return (
-    <Container>
+    <Container onClick={() => onClick()}>
       <Key>{propertyName}</Key>
       <ContainerColumn>
         {Object.entries(object).map(([key, value]) => {
