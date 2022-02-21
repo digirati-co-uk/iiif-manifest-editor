@@ -196,14 +196,14 @@ export const Tree: React.FC = () => {
         propertyName={"requiredStatement"}
         object={manifest?.requiredStatement || {}}
       />
-      <KeyObjectPairing
+      <KeyValuePairString
         onClick={
           editorContext
             ? () => editorContext.changeSelectedProperty("rights")
             : () => {}
         }
         propertyName={"rights"}
-        object={manifest?.rights || {}}
+        value={manifest?.rights || ""}
       />
       <KeyValuePairArray
         onClick={

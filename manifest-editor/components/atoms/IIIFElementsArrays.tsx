@@ -45,6 +45,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                 return Object.entries(val).map(([key, value]) => {
                   return (
                     <KeyValuePairString
+                      key={key}
                       onClick={() => console.log("clicked", key)}
                       propertyName={key}
                       value={value}
