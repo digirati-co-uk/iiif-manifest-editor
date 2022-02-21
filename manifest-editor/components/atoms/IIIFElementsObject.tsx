@@ -9,7 +9,6 @@ import {
   Expanded
 } from "./IIIFElementsShared";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
-import { array } from "prop-types";
 import { DownIcon } from "../icons/DownIcon";
 
 type KeyObjectPairing = {
