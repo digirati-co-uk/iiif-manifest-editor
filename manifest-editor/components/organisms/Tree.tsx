@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useManifest } from "../../hooks/useManifest";
 
 import styled from "styled-components";
 import { KeyValuePairString } from "../atoms/IIIFElementsShared";
 import { KeyValuePairArray } from "../atoms/IIIFElementsArrays";
 import { KeyObjectPairing } from "../atoms/IIIFElementsObject";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 const TreeContainer = styled.div`
   z-index: 12;
   font-size: 0.85em;
@@ -15,6 +16,8 @@ const TreeContainer = styled.div`
 export const Tree: React.FC = () => {
   const manifest = useManifest();
 
+  const editorContext = useContext(ManifestEditorContext);
+
   useEffect(() => {
     {
       Object.entries(
@@ -24,6 +27,7 @@ export const Tree: React.FC = () => {
         console.log(key, value);
       });
     }
+    console.log(editorContext);
   }, [manifest]);
 
   return (
