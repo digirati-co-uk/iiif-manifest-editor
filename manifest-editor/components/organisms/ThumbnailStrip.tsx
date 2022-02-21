@@ -26,7 +26,7 @@ const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
 // SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
 // get updated with the latest code they will accept a prop pagingView={false}
 
-export const ThumbnailStrip: FC = () => {
+export const ThumbnailStrip: React.FC = () => {
   const manifest = useManifest();
   const { setCurrentCanvasId } = useSimpleViewer();
 

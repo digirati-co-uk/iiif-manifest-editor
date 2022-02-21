@@ -1,8 +1,4 @@
 import styled from "styled-components";
-import { useState } from "react";
-import { DownIcon } from "../icons/DownIcon";
-import { ErrorBoundary } from "./ErrorBoundary";
-import { KeyValuePairArray } from "./IIIFElementsArrays";
 
 export const Container = styled.div`
   display: flex;
@@ -75,7 +71,7 @@ export const Count = styled.div`
 
 type KeyString = {
   propertyName: string;
-  value: string | undefined | unknown;
+  value: any;
   onClick: () => void;
 };
 
@@ -88,39 +84,6 @@ export const KeyValuePairString: React.FC<KeyString> = ({
     <Container onClick={onClick}>
       <Key>{propertyName}</Key>
       <Value>{value}</Value>
-    </Container>
-  );
-};
-
-type KeyObjectPairing = {
-  propertyName: string;
-  object: any;
-};
-
-export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
-  propertyName,
-  object
-}) => {
-  return (
-    <Container>
-      <Key>{propertyName}</Key>
-      {Object.entries(object).map(([key, value]) => {
-        console.log(value);
-        if (typeof value === "string") {
-          return (
-            <KeyValuePairString
-              onClick={() => console.log("clicked", key)}
-              propertyName={key}
-              value={value}
-            />
-          );
-        } else if (Array.isArray(value)) {
-          return <KeyValuePairArray propertyName={key} array={value}  onClick={() => {}}/>;
-        } else {
-          return <KeyObjectPairing propertyName={key} object={value}/>
-        }
-
-      })}
     </Container>
   );
 };
