@@ -27,7 +27,8 @@ export const StringInput: React.FC<{
       <h4>{dispatchType}</h4>
       <Input
         key={dispatchType}
-        defaultValue={manifest[dispatchType]}
+        // @ts-ignore
+        defaultValue={manifest && manifest[dispatchType]}
         onChange={(e: any) => setInputValue(e.target.value)}
       />
       <FlexContainer>
