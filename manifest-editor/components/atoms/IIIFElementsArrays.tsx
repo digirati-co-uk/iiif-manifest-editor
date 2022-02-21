@@ -1,17 +1,18 @@
 import { useState } from "react";
 import {
   Container,
+  ContainerColumn,
   Expandable,
   Count,
   Expanded,
   KeyValuePairString,
-  Key
+  Key,
+  Value
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 
 import { ErrorBoundary } from "./ErrorBoundary";
-
 
 type KeyArrayPairing = {
   propertyName: string;
@@ -31,7 +32,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
         <Key>{propertyName}</Key>
         <Expandable onClick={() => setOpen(!open)}>
           <Count title={`Count of ${propertyName}`}>{array.length}</Count>
-          <DownIcon rotate={open ? 180 : 0} />
+          {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
         </Expandable>
       </Container>
       <Expanded>
@@ -39,7 +40,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
           {open ? (
             array.map((val: any) => {
               if (typeof val === "string") {
-                return val;
+                return <Value>{val}</Value>;
               } else {
                 return Object.entries(val).map(([key, value]) => {
                   return (

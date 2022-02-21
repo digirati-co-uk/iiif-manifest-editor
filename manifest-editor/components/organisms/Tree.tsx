@@ -4,11 +4,12 @@ import { useManifest } from "../../hooks/useManifest";
 import styled from "styled-components";
 import { KeyValuePairString } from "../atoms/IIIFElementsShared";
 import { KeyValuePairArray } from "../atoms/IIIFElementsArrays";
-import {KeyObjectPairing} from "../atoms/IIIFElementsObject"
+import { KeyObjectPairing } from "../atoms/IIIFElementsObject";
 const TreeContainer = styled.div`
   z-index: 12;
   font-size: 0.85em;
   line-height: 1.3em;
+  max-width: 40vw;
 `;
 
 export const Tree: React.FC = () => {
@@ -28,18 +29,6 @@ export const Tree: React.FC = () => {
   return (
     <TreeContainer>
       <h5>IIIF Properties</h5>
-      {/* {Object.entries(
-        // @ts-ignore
-        manifest ? manifest : {}
-      ).map(([key, value]) => {
-        if (typeof value === "string") {
-          return <p>{key}</p>;
-        } else if (Array.isArray(value)) {
-          return <KeyValuePairArray propertyName={key} array={value} />;
-        } else {
-          return <KeyObjectPairing name={key} object={value} />;
-        }
-      })} */}
       <KeyValuePairString
         onClick={() => console.log("clicked id")}
         propertyName={"id"}
@@ -70,7 +59,7 @@ export const Tree: React.FC = () => {
         propertyName={"items"}
         array={manifest?.items || []}
       />
-      <div>label</div>
+      <KeyObjectPairing propertyName={"label"} object={manifest?.label || {}} />
       <KeyValuePairArray
         onClick={() => console.log("logo")}
         propertyName={"logo"}
@@ -81,8 +70,14 @@ export const Tree: React.FC = () => {
         propertyName={"metadata"}
         array={manifest?.metadata || []}
       />
-      <div>motovation</div>
-      <div>navData</div>
+      <KeyObjectPairing
+        propertyName={"motivation"}
+        object={manifest?.motivation || {}}
+      />
+      <KeyObjectPairing
+        propertyName={"navDate"}
+        object={manifest?.navDate || {}}
+      />
       <KeyValuePairArray
         onClick={() => console.log("provider")}
         propertyName={"provider"}
@@ -93,9 +88,18 @@ export const Tree: React.FC = () => {
         propertyName={"partOf"}
         array={manifest?.partOf || []}
       />
-      <div>posterCanvas</div>
-      <div>accompanyingCanvas</div>
-      <div>placeholderCanvas</div>
+      <KeyObjectPairing
+        propertyName={"posterCanvas"}
+        object={manifest?.posterCanvas || {}}
+      />
+      <KeyObjectPairing
+        propertyName={"accompanyingCanvas"}
+        object={manifest?.accompanyingCanvas || {}}
+      />
+      <KeyObjectPairing
+        propertyName={"placeholderCanvas"}
+        object={manifest?.placeholderCanvas || {}}
+      />
       <KeyValuePairArray
         onClick={() => console.log("rendering")}
         propertyName={"rendering"}
@@ -103,9 +107,12 @@ export const Tree: React.FC = () => {
       />
       <KeyObjectPairing
         propertyName={"requiredStatement"}
-        object={manifest?.requiredStatement}
+        object={manifest?.requiredStatement || {}}
       />
-      <div>rights</div>
+      <KeyObjectPairing
+        propertyName={"rights"}
+        object={manifest?.rights || {}}
+      />
       <KeyValuePairArray
         onClick={() => console.log("clicked seeAlso")}
         propertyName={"seeAlso"}
@@ -121,13 +128,17 @@ export const Tree: React.FC = () => {
         propertyName={"services"}
         array={manifest?.services || []}
       />
-      <div>start</div>
+      <KeyObjectPairing propertyName={"start"} object={manifest?.start || {}} />
+
       <KeyValuePairArray
         onClick={() => console.log("clicked structures")}
         propertyName={"structures"}
         array={manifest?.structures || []}
       />
-      <div>summary</div>
+      <KeyObjectPairing
+        propertyName={"summary"}
+        object={manifest?.summary || {}}
+      />
       <KeyValuePairArray
         onClick={() => console.log("clicked thumbnail")}
         propertyName={"thumbnail"}
@@ -136,8 +147,7 @@ export const Tree: React.FC = () => {
       <KeyValuePairString
         onClick={() => console.log("clicked viewingDirection")}
         propertyName={"viewingDirection"}
-        // @ts-ignore
-        value={manifest.viewingDirection}
+        value={manifest?.viewingDirection}
       />
       <KeyValuePairString
         onClick={() => console.log("clicked @context")}

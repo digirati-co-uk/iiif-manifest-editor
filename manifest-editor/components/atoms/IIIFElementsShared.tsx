@@ -5,8 +5,20 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   border: none;
+  padding: 1em 0;
+  width: 100%;
+  border-bottom: 0.01px solid lightgrey;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+`;
+
+export const ContainerColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
   padding: 1em;
-  background-color: white;
   width: 100%;
   &:hover {
     background-color: #e8e8e8;
@@ -29,13 +41,14 @@ export const Key = styled.div`
 
 export const Expandable = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   right: 0;
   width: 100%
   cursor: pointer;
 `;
 
 export const Expanded = styled.div`
+  position: inline-block;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -48,15 +61,9 @@ export const Expanded = styled.div`
 
 export const Value = styled.div`
   padding: 0 0.5em 0 0;
-  width: fit-content;
-  overflow: hidden;
-  white-space: nowrap;
+  max-width: 50%;
   text-align: left;
   font-size: 0.75rem;
-  &:hover {
-    overflow: unset;
-    white-space: normal;
-  }
 `;
 
 export const Count = styled.div`
