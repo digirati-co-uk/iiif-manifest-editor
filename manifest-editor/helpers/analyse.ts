@@ -33,11 +33,12 @@ export const analyse = async (url: string, expectedTypes?: Array<"Image" | "Imag
       throw new Error(response.statusText);
     }
     data = (await response.json()) as T;
-    console.log(data.response);
+    console.log(data);
 
   } catch (error) {
     console.log(error);
   }
+
 
   return {
     id: url,

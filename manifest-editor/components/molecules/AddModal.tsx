@@ -5,19 +5,24 @@ import { useState } from "react";
 
 import { ModalBackground } from "../layout/ModalBackground";
 import { ModalContainer } from "../layout/ModalContainer";
+import { analyse } from "../../helpers/analyse";
 
 export const AddModal: React.FC<{
   manifest: string;
-  onChange: any;
+  // onChange: any;
   close: any;
-}> = ({ manifest, onChange, close }) => {
+}> = ({ manifest, close }) => {
   const [inputValue, setInputValue] = useState(manifest);
+
+  const onChange = (inputValue: string) => {
+    analyse(inputValue);
+  };
 
   return (
     <>
       <ModalBackground />
       <ModalContainer>
-        <h2>Import an existing IIIF manifest to get started</h2>
+        <h2>Something</h2>
         <Input
           placeholder={manifest}
           onChange={(e: any) => setInputValue(e.target.value)}

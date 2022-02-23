@@ -12,9 +12,9 @@ import { StringInput } from "../form/StringInput";
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
 }>`
-  position: fixed;
+  position: absolute;
   right: 0;
-  height: 100%;
+  height: 80vh;
   z-index: 12;
   background: white;
   overflow-y: scroll;
@@ -23,7 +23,7 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   font-size: 0.85em;
   line-height: 1.3em;
   border-radius: 0;
-  width: 100%;
+  min-width: 350px;
   box-shadow: none;
   max-width: ${(props: any) => (props.wide ? "550px" : "450px")};
   margin-bottom: 0.8em;
