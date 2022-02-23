@@ -86,7 +86,7 @@ const Annotation: React.FC<{ type: string; id: string }> = ({ type, id }) => {
       </Container>
       {open && (
         <ContainerColumn>
-          {Object.entries(annotation).map(([key, value]) => {
+          {annotation && Object.entries(annotation).map(([key, value]) => {
             if (typeof value === "string") {
               return (
                 <KeyValuePairString
