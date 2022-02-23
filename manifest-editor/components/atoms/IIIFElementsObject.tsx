@@ -24,7 +24,6 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
   onClick
 }) => {
   const [open, setOpen] = useState(false);
-  console.log(object)
   if (!object || Object.keys(object).length === 0)
     return (
       <Container>

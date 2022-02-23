@@ -1,9 +1,10 @@
 import { useEffect, useContext, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
 import { getValue } from "@iiif/vault-helpers";
-import { KeyValuePairString, Key, KeyManifest } from "../atoms/IIIFElementsShared";
-import { KeyValuePairArray, Annotations } from "../atoms/IIIFElementsArrays";
+import { KeyValuePairString, KeyManifest } from "../atoms/IIIFElementsShared";
+import { KeyValuePairArray } from "../atoms/IIIFElementsArrays";
 import { KeyObjectPairing } from "../atoms/IIIFElementsObject";
+import { Annotations } from "../atoms/IIIFAnnotationPages";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { DownIcon } from "../icons/DownIcon";
 import { Button } from "../atoms/Button";
@@ -39,9 +40,8 @@ export const Tree: React.FC = () => {
   const manifest = useManifest();
   const editorContext = useContext(ManifestEditorContext);
   const [open, setOpen] = useState(true);
-
   useEffect(() => {
-    // console.log(getValue(manifest));
+    console.log(manifest);
   }, [manifest]);
 
   return (
@@ -50,7 +50,7 @@ export const Tree: React.FC = () => {
         <KeyManifest>{manifest?.type}</KeyManifest>
         <IIIFTitle>{getValue(manifest?.label)}</IIIFTitle>
         <Button onClick={() => setOpen(!open)}>
-          <DownIcon  rotate={open ? 180 : 0}/>
+          <DownIcon rotate={open ? 180 : 0} />
         </Button>
       </HeaderPanel>
       {open && (
