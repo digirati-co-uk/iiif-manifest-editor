@@ -40,9 +40,9 @@ export const Tree: React.FC = () => {
   const manifest = useManifest();
   const editorContext = useContext(ManifestEditorContext);
   const [open, setOpen] = useState(true);
-  useEffect(() => {
-    console.log(manifest);
-  }, [manifest]);
+  // useEffect(() => {
+  //   console.log(manifest);
+  // }, [manifest]);
 
   return (
     <TreeContainer>

@@ -6,13 +6,14 @@ import {
   Expanded,
   KeyValuePairString,
   Key,
-  Value,
+  Value
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 
 import { ErrorBoundary } from "./ErrorBoundary";
 import { FlexContainer } from "../layout/FlexContainer";
+import { KeyObjectPairing } from "./IIIFElementsObject";
 
 export type KeyArrayPairing = {
   propertyName: string;
@@ -45,14 +46,18 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                 return <Value>{val}</Value>;
               } else {
                 return Object.entries(val).map(([key, value]) => {
-                  return (
-                    <KeyValuePairString
-                      key={key}
-                      onClick={() => console.log("clicked", key)}
-                      propertyName={key}
-                      value={value}
-                    />
-                  );
+                  if (typeof value === "string") {
+                    return (
+                      <KeyValuePairString
+                        key={key}
+                        onClick={() => console.log("clicked", key)}
+                        propertyName={key}
+                        value={value}
+                      />
+                    );
+                  } else {
+                    return <KeyObjectPairing object={value} propertyName={key} onClick={() => {}}/>; }
+
                 });
               }
             })
