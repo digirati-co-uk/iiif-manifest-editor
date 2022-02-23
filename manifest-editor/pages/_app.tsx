@@ -20,14 +20,17 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const [manifest, setManifest] = useState(
     //   // We will want to actually implement some options/templates etc
     //   // but just implementing with some examples for development purposes.
-    "https://view.nls.uk/manifest/7807/78079829/manifest.json"
+    "https://iiif.wellcomecollection.org/presentation/b28799495"
   );
 
   return (
     <>
       <VaultProvider>
         <SimpleViewerProvider manifest={manifest}>
-          <Component {...pageProps} changeSampleManifest={(url: string) => setManifest(url)}/>
+          <Component
+            {...pageProps}
+            changeSampleManifest={(url: string) => setManifest(url)}
+          />
         </SimpleViewerProvider>
       </VaultProvider>
     </>

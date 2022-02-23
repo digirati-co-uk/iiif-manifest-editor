@@ -50,7 +50,7 @@ const Home: NextPage = (props: any) => {
 
   const editorSettings = { selectedProperty, changeSelectedProperty };
 
-  const [editorPanelOpen, setEditorPanelOpen] = useState(true);
+  const [editorPanelOpen, setEditorPanelOpen] = useState(false);
   const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);

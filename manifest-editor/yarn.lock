@@ -36,6 +36,14 @@
   dependencies:
     "@hyperion-framework/types" "^1.0.0-alpha.14"
 
+"@atlas-viewer/iiif-image-api@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.2.tgz#b713b033da6f4d967d0826d06d5ffbad70458567"
+  integrity sha512-SIzDGz2dLVnrRKYnRsN5xv66sTmtbrvr8BoyuNsE7Ykhz9BkbFLKDhDBkaQZH/2XL3se6gzc9kpiB35imVDMig==
+  dependencies:
+    "@iiif/presentation-3" "*"
+    node-fetch "^3.2.0"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.16.7", "@babel/code-frame@^7.5.5", "@babel/code-frame@^7.8.3":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
@@ -1570,7 +1578,7 @@
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
   integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
 
-"@iiif/presentation-3@^1.0.3", "@iiif/presentation-3@^1.0.4":
+"@iiif/presentation-3@*", "@iiif/presentation-3@^1.0.3", "@iiif/presentation-3@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.4.tgz#9433c38c6a26e95ef94d1f9e0232962398611d70"
   integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
@@ -1603,7 +1611,21 @@
     tiny-invariant "^1.2.0"
     typesafe-actions "^5.1.0"
 
-"@iiif/vault@^0.9.8", "@iiif/vault@^0.9.9":
+"@iiif/vault@^0.9.14":
+  version "0.9.14"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.14.tgz#f455d0089fb542f9d50ab27aebe2aa55ff7bcf67"
+  integrity sha512-Y6ay8Ja3WibEJKX98a5Ttre6vmti3NR13f5yu+YJa63dStgzrB0KA4DQ3zxn4pxBAne9Mjj6mxRrRDWw9dvOyA==
+  dependencies:
+    "@iiif/parser" "^1.0.2"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.3"
+    mitt "^3.0.0"
+    node-fetch "^3.1.1"
+    redux "^4.1.2"
+    tiny-invariant "^1.2.0"
+    typesafe-actions "^5.1.0"
+
+"@iiif/vault@^0.9.8":
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.10.tgz#f620813d664511895529e59e2e124a9971352fce"
   integrity sha512-f+wKltOjIDbTNcELocBjo8c1svTe6BjQ9LQFSXXObYE6VYtc3bLYGBzS08huGUN39duVBi6vNtUsmlsl6H1KYQ==
@@ -8893,7 +8915,7 @@ node-fetch@^2.6.1:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^3.1.1:
+node-fetch@^3.1.1, node-fetch@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-3.2.0.tgz#59390db4e489184fa35d4b74caf5510e8dfbaf3b"
   integrity sha512-8xeimMwMItMw8hRrOl3C9/xzU49HV/yE6ORew/l+dxWimO5A4Ra8ld2rerlJvc/O7et5Z1zrWsPX43v1QBjCxw==
@@ -10024,21 +10046,21 @@ react-helmet-async@^1.0.7:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
-react-iiif-vault@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.0.tgz#204dc7902e5255a9da8c4c75fbed410fed084dc5"
-  integrity sha512-MKWpcO0beSFn9OWiOUb1y1HOvQsUZutXu2CxbrLBn9ZkdY1QTHzMS3xLtnPQM4vS05MtGMhLe1/Sfvd2zo2jZQ==
+react-iiif-vault@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.3.tgz#6cc4194036f6e8235316fc7d92a8f814a146ff38"
+  integrity sha512-Baw7dEp09nDr29Bmn0cQ4/a6G5Fkf98yGqlQDMfWrzSv+rhRmPwSuZcz5mcfmaQdLMQXjHA6B0oqRS7k4nmcvQ==
   dependencies:
-    "@atlas-viewer/iiif-image-api" "^1.2.6"
+    "@atlas-viewer/iiif-image-api" "^2.0.2"
     "@iiif/presentation-2" "^1.0.1"
     "@iiif/presentation-3" "^1.0.4"
-    "@iiif/vault" "^0.9.9"
+    "@iiif/vault" "^0.9.14"
     "@iiif/vault-helpers" "^0.9.4"
     react "^16.10.2 || ^17.0.1"
     react-dom "^16.10.2 || ^17.0.1"
     react-query "^1.5.10"
     redux "^4.1.2"
-    rollup "^2.67.1"
+    rollup "^2.68.0"
     typescript "^4.5.5"
 
 react-inspector@^5.1.0:
@@ -10538,10 +10560,10 @@ rollup@^2.36.1:
   optionalDependencies:
     fsevents "~2.3.2"
 
-rollup@^2.67.1:
-  version "2.67.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.67.1.tgz#4402665706fa00f321d446ce45f880e02cf54f01"
-  integrity sha512-1Sbcs4OuW+aD+hhqpIRl+RqooIpF6uQcfzU/QSI7vGkwADY6cM4iLsBGRM2CGLXDTDN5y/yShohFmnKegSPWzg==
+rollup@^2.68.0:
+  version "2.68.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.68.0.tgz#6ccabfd649447f8f21d62bf41662e5caece3bd66"
+  integrity sha512-XrMKOYK7oQcTio4wyTz466mucnd8LzkiZLozZ4Rz0zQD+HeX4nUK4B8GrTX/2EvN2/vBF/i2WnaXboPxo0JylA==
   optionalDependencies:
     fsevents "~2.3.2"
 

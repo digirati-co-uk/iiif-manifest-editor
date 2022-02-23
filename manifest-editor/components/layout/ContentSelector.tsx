@@ -11,9 +11,6 @@ const ContentSelectorContainer = styled.div`
     justify-content: flex-start;
     margin: 0.375rem 0;
     padding: 0.25rem 0;
-    position: absolute;
-    height: 80vh;
-    overflow-y: scroll;
   }
 `;
 
