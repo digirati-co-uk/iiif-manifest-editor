@@ -14,6 +14,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { FlexContainer } from "../layout/FlexContainer";
 import { KeyObjectPairing } from "./IIIFElementsObject";
+import { ContentResources } from "./IIIFContentResource";
 
 export type KeyArrayPairing = {
   propertyName: string;
@@ -42,7 +43,15 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
         <ErrorBoundary>
           {open ? (
             array.map((val: any) => {
-              if (typeof val === "string") {
+              if (val && val.type === "ContentResource") {
+                return (
+                  <ContentResources
+                    propertyName="ContentResource"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (typeof val === "string") {
                 return <Value>{val}</Value>;
               } else {
                 return Object.entries(val).map(([key, value]) => {
@@ -56,8 +65,14 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                       />
                     );
                   } else {
-                    return <KeyObjectPairing object={value} propertyName={key} onClick={() => {}}/>; }
-
+                    return (
+                      <KeyObjectPairing
+                        object={value}
+                        propertyName={key}
+                        onClick={() => {}}
+                      />
+                    );
+                  }
                 });
               }
             })

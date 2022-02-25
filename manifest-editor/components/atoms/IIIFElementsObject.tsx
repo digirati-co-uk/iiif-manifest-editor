@@ -12,7 +12,7 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { DownIcon } from "../icons/DownIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 
-type KeyObjectPairing = {
+export type KeyObjectPairing = {
   propertyName: string;
   object: any;
   onClick: () => void;

@@ -44,6 +44,10 @@ export const KeyAnnoPage = styled(Key)`
   background: rgba(247, 226, 173, 0.8);
 `;
 
+export const KeyContentResource = styled(Key)`
+  background: rgba(207, 247, 255, 0.8);
+`;
+
 export const Expandable = styled.div`
   display: flex;
   align-items: center;

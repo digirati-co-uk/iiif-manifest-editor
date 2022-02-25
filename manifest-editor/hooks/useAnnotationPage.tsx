@@ -8,8 +8,6 @@ export function useAnnotationPage<T = AnnotationPageNormalized>(
 ): AnnotationPageNormalized | T | undefined {
   return useVaultSelector(
     state =>
-      state.iiif.entities.AnnotationPage[
-        "https://iiif.wellcomecollection.org/annotations/v3/b28799495/images"
-      ]
+      state.iiif.entities.AnnotationPage[options.id || ""]
   );
 }
