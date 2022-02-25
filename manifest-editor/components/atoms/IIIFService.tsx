@@ -1,0 +1,80 @@
+import { getValue } from "@iiif/vault-helpers";
+import { useState } from "react";
+
+import {
+  Container,
+  Expandable,
+  ContainerColumn,
+  KeyValuePairString,
+  Expanded,
+  KeyService
+} from "./IIIFElementsShared";
+
+import { DownIcon } from "../icons/DownIcon";
+import { KeyValuePairArray } from "./IIIFElementsArrays";
+import { KeyObjectPairing } from "./IIIFElementsObject";
+import { ErrorBoundary } from "./ErrorBoundary";
+
+const Service: React.FC<KeyObjectPairing> = ({ object }) => {
+  const label = getValue(object?.label);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Container>
+        <KeyService>{object["@type"]}</KeyService>
+        {label}
+        <Expandable onClick={() => setOpen(!open)}>
+          <DownIcon rotate={open ? 180 : 0} />
+        </Expandable>
+      </Container>
+      {open && (
+        <ContainerColumn>
+          {object &&
+            Object.entries(object).map(([key, value]) => {
+              if (typeof value === "string") {
+                return (
+                  <KeyValuePairString
+                    key={key}
+                    onClick={() => console.log("clicked", key)}
+                    propertyName={key}
+                    value={value}
+                  />
+                );
+              } else if (Array.isArray(value)) {
+                return (
+                  <KeyValuePairArray
+                    key={key}
+                    propertyName={key}
+                    array={value}
+                    onClick={() => {}}
+                  />
+                );
+              } else {
+                return (
+                  <KeyObjectPairing
+                    key={key}
+                    onClick={() => {}}
+                    propertyName={key}
+                    object={value}
+                  />
+                );
+              }
+            })}
+        </ContainerColumn>
+      )}
+    </>
+  );
+};
+
+export const IIIFService: React.FC<KeyObjectPairing> = ({ object }) => {
+  return (
+    <>
+      <Expanded>
+        <ErrorBoundary>
+          <Service propertyName={""} object={object} onClick={() => {}} />
+        </ErrorBoundary>
+      </Expanded>
+    </>
+  );
+};

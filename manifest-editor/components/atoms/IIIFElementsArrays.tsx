@@ -15,6 +15,10 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { FlexContainer } from "../layout/FlexContainer";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ContentResources } from "./IIIFContentResource";
+import { Canvases } from "./IIIFCanvas";
+import { Ranges } from "./IIIFRange";
+import { Services } from "./IIIFServices";
+import { IIIFService } from "./IIIFService";
 
 export type KeyArrayPairing = {
   propertyName: string;
@@ -43,6 +47,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
         <ErrorBoundary>
           {open ? (
             array.map((val: any) => {
+              console.log(val)
               if (val && val.type === "ContentResource") {
                 return (
                   <ContentResources
@@ -51,30 +56,62 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                     onClick={() => {}}
                   />
                 );
-              } else if (typeof val === "string") {
-                return <Value>{val}</Value>;
-              } else {
-                return Object.entries(val).map(([key, value]) => {
-                  if (typeof value === "string") {
-                    return (
-                      <KeyValuePairString
-                        key={key}
-                        onClick={() => console.log("clicked", key)}
-                        propertyName={key}
-                        value={value}
-                      />
-                    );
-                  } else {
-                    return (
-                      <KeyObjectPairing
-                        object={value}
-                        propertyName={key}
-                        onClick={() => {}}
-                      />
-                    );
-                  }
-                });
-              }
+              } else if (val && val.type === "Canvas") {
+                return (
+                  <Canvases
+                    propertyName="ContentResource"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+               }else if (propertyName === "services") {
+                       return (
+                         <Services
+                           propertyName="Services"
+                           object={val}
+                           onClick={() => {}}
+                         />
+                       );
+                     } else if (propertyName === "service") {
+                       return (
+                         <IIIFService
+                           propertyName="Services"
+                           object={val}
+                           onClick={() => {}}
+                         />
+                       );
+                     } else if (val && val.type === "Range") {
+                       return (
+                         <Ranges
+                           propertyName="Range"
+                           object={val}
+                           onClick={() => {}}
+                         />
+                       );
+                     } else if (typeof val === "string") {
+                       return <Value>{val}</Value>;
+                     } else {
+                       return Object.entries(val).map(([key, value]) => {
+                         if (typeof value === "string") {
+                           return (
+                             <KeyValuePairString
+                               key={key}
+                               onClick={() => console.log("clicked", key)}
+                               propertyName={key}
+                               value={value}
+                             />
+                           );
+                         } else {
+                           return (
+                             <KeyObjectPairing
+                               object={value}
+                               propertyName={key}
+                               onClick={() => {}}
+                             />
+                           );
+                         }
+                       });
+                     }
             })
           ) : (
             <></>

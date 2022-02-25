@@ -38,7 +38,11 @@ export const KeyManifest = styled(Key)`
 `;
 
 export const KeyCanvas = styled(Key)`
-  background: rgba(255, 225, 170, 0.2);
+  background: rgba(255, 222, 219, 0.8);
+`;
+
+export const KeyService = styled(Key)`
+  background: rgba(13, 110, 253, 0.8);
 `;
 export const KeyAnnoPage = styled(Key)`
   background: rgba(247, 226, 173, 0.8);
@@ -46,6 +50,10 @@ export const KeyAnnoPage = styled(Key)`
 
 export const KeyContentResource = styled(Key)`
   background: rgba(207, 247, 255, 0.8);
+`;
+
+export const KeyRanges = styled(Key)`
+  background: rgba(144, 213, 157, 0.8);
 `;
 
 export const Expandable = styled.div`
@@ -63,8 +71,8 @@ export const Expanded = styled.div`
   width: 100%;
   padding: 0 0 0 3rem;
   background-color: #e8e8e8
-  &:hover {
-    background-color: white;
+  .parent:hover .child {
+    background-color: #e8e8e8;
   }
 `;
 
