@@ -21,6 +21,7 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
   id
 }) => {
   const content = useContentResource({ id: id });
+  // @ts-ignore
   const label = getValue(content?.label);
   const [open, setOpen] = useState(false);
 
