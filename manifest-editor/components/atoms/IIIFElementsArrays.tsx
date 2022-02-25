@@ -1,20 +1,27 @@
 import { useState } from "react";
 import {
   Container,
-  ContainerColumn,
   Expandable,
   Count,
   Expanded,
   KeyValuePairString,
   Key,
-  Value
+  Value,
+  ContainerColumn
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 
 import { ErrorBoundary } from "./ErrorBoundary";
+import { FlexContainer } from "../layout/FlexContainer";
+import { KeyObjectPairing } from "./IIIFElementsObject";
+import { ContentResources } from "./IIIFContentResource";
+import { Canvases } from "./IIIFCanvas";
+import { Ranges } from "./IIIFRange";
+import { Services } from "./IIIFServices";
+import { IIIFService } from "./IIIFService";
 
-type KeyArrayPairing = {
+export type KeyArrayPairing = {
   propertyName: string;
   array: Array<any>;
   onClick: () => void;
@@ -27,30 +34,83 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
 }) => {
   const [open, setOpen] = useState(false);
   return (
-    <>
+    <ContainerColumn>
       <Container onClick={() => onClick()}>
-        <Key>{propertyName}</Key>
-        <Expandable onClick={() => setOpen(!open)}>
+        <FlexContainer>
+          <Key>{propertyName}</Key>
           <Count title={`Count of ${propertyName}`}>{array.length}</Count>
+        </FlexContainer>
+        <Expandable onClick={() => setOpen(!open)}>
           {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
         </Expandable>
       </Container>
-      <Expanded>
+      <>
         <ErrorBoundary>
           {open ? (
             array.map((val: any) => {
-              if (typeof val === "string") {
+              console.log(val);
+              if (val && val.type === "ContentResource") {
+                return (
+                  <ContentResources
+                    propertyName="ContentResource"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (val && val.type === "Canvas") {
+                return (
+                  <Canvases
+                    propertyName="ContentResource"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (propertyName === "services") {
+                return (
+                  <Services
+                    propertyName="Services"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (propertyName === "service") {
+                return (
+                  <IIIFService
+                    propertyName="Services"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (val && val.type === "Range") {
+                return (
+                  <Ranges
+                    propertyName="Range"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (typeof val === "string") {
                 return <Value>{val}</Value>;
               } else {
                 return Object.entries(val).map(([key, value]) => {
-                  return (
-                    <KeyValuePairString
-                      key={key}
-                      onClick={() => console.log("clicked", key)}
-                      propertyName={key}
-                      value={value}
-                    />
-                  );
+                  if (typeof value === "string") {
+                    return (
+                      <KeyValuePairString
+                        key={key}
+                        onClick={() => console.log("clicked", key)}
+                        propertyName={key}
+                        value={value}
+                      />
+                    );
+                  } else {
+                    return (
+                      <KeyObjectPairing
+                        object={value}
+                        propertyName={key}
+                        onClick={() => {}}
+                      />
+                    );
+                  }
                 });
               }
             })
@@ -58,7 +118,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
             <></>
           )}
         </ErrorBoundary>
-      </Expanded>
-    </>
+      </>
+    </ContainerColumn>
   );
 };

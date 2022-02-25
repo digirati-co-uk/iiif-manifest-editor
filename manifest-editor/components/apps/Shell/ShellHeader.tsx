@@ -5,6 +5,7 @@ import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { Placeholder } from "../../atoms/Placeholder";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
 import { Persistance } from "../../../pages";
+import { getValue } from "@iiif/vault-helpers";
 
 export const ShellHeader: React.FC<{
   saveManifest: () => Promise<void>;
@@ -33,7 +34,7 @@ export const ShellHeader: React.FC<{
     ) {
       return (
         <h5>
-          IIIF {manifest.type} : {manifest.label.none[0]}
+          IIIF {manifest.type} : {getValue(manifest.label)}
         </h5>
       );
     }

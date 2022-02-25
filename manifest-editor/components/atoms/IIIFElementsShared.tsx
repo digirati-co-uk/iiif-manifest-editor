@@ -1,61 +1,80 @@
 import styled from "styled-components";
 
+export const ContainerColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify: space-between;
+  border: none;
+  width: 100%;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+`;
+
 export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: none;
-  padding: 1em 0;
+  padding: 1rem 0.75rem;
   width: 100%;
   border-bottom: 0.01px solid lightgrey;
   &:hover {
     background-color: #e8e8e8;
-  }
-`;
-
-export const ContainerColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: none;
-  padding: 1em;
-  width: 100%;
-  &:hover {
-    background-color: #e8e8e8;
+    ${ContainerColumn} {
+      background: #e8e8e8;
+    }
   }
 `;
 
 export const Key = styled.div`
-  color: #696969;
-  padding: 0 0.5em 0 0;
-  width: 9em;
-  overflow: hidden;
+  padding: 0 1rem;
   white-space: nowrap;
-  text-align: left;
+  text-align: center;
+  border-radius: 1rem;
   font-size: 0.75rem;
-  &:hover {
-    overflow: unset;
-    white-space: normal;
-  }
+`;
+
+export const KeyManifest = styled(Key)`
+  background: rgba(0, 0, 0, 0.2);
+`;
+
+export const KeyCanvas = styled(Key)`
+  background: rgba(255, 222, 219, 0.8);
+`;
+
+export const KeyService = styled(Key)`
+  background: rgba(13, 110, 253, 0.8);
+`;
+export const KeyAnnoPage = styled(Key)`
+  background: rgba(247, 226, 173, 0.8);
+`;
+
+export const KeyContentResource = styled(Key)`
+  background: rgba(207, 247, 255, 0.8);
+`;
+
+export const KeyRanges = styled(Key)`
+  background: rgba(144, 213, 157, 0.8);
 `;
 
 export const Expandable = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   right: 0;
   width: 100%
   cursor: pointer;
 `;
 
 export const Expanded = styled.div`
-  position: inline-block;
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 0 0 0 3rem;
   background-color: #e8e8e8
-  &:hover {
-    background-color: white;
+  .parent:hover .child {
+    background-color: #e8e8e8;
   }
 `;
 
@@ -67,13 +86,12 @@ export const Value = styled.div`
 `;
 
 export const Count = styled.div`
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  background: rgba(200, 54, 54, 0.2);
-  color: black;
+  border-radius: 1rem;
+  background: #347cff;
+  color: rgba(255, 255, 255, 0.87);
   text-align: center;
-  padding: 10px 0;
+  padding: 0 0.5rem;
+  margin: 0rem 0.75rem;
 `;
 
 type KeyString = {
