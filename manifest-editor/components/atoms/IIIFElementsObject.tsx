@@ -6,7 +6,6 @@ import {
   ContainerColumn,
   Expandable,
   Count,
-  Expanded
 } from "./IIIFElementsShared";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { DownIcon } from "../icons/DownIcon";
@@ -32,7 +31,7 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
     );
 
   return (
-    <>
+    <ContainerColumn>
       {Object.keys(object).length > 0 ? (
         <>
           <Container>
@@ -120,6 +119,6 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
           </ContainerColumn>
         </>
       )}
-    </>
+    </ContainerColumn>
   );
 };

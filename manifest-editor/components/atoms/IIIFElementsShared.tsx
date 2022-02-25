@@ -1,5 +1,16 @@
 import styled from "styled-components";
 
+export const ContainerColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify: space-between;
+  border: none;
+  width: 100%;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+`;
+
 export const Container = styled.div`
   display: flex;
   align-items: center;
@@ -10,18 +21,9 @@ export const Container = styled.div`
   border-bottom: 0.01px solid lightgrey;
   &:hover {
     background-color: #e8e8e8;
-  }
-`;
-
-export const ContainerColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify: space-between;
-  padding: 1rem 0.75rem;
-  border: none;
-  width: 100%;
-  &:hover {
-    background-color: #e8e8e8;
+    ${ContainerColumn} {
+      background: #e8e8e8;
+    }
   }
 `;
 

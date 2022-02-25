@@ -6,7 +6,8 @@ import {
   Expanded,
   KeyValuePairString,
   Key,
-  Value
+  Value,
+  ContainerColumn
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
@@ -33,7 +34,7 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
 }) => {
   const [open, setOpen] = useState(false);
   return (
-    <>
+    <ContainerColumn>
       <Container onClick={() => onClick()}>
         <FlexContainer>
           <Key>{propertyName}</Key>
@@ -43,11 +44,11 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
           {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
         </Expandable>
       </Container>
-      <Expanded>
+      <>
         <ErrorBoundary>
           {open ? (
             array.map((val: any) => {
-              console.log(val)
+              console.log(val);
               if (val && val.type === "ContentResource") {
                 return (
                   <ContentResources
@@ -64,60 +65,60 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                     onClick={() => {}}
                   />
                 );
-               }else if (propertyName === "services") {
-                       return (
-                         <Services
-                           propertyName="Services"
-                           object={val}
-                           onClick={() => {}}
-                         />
-                       );
-                     } else if (propertyName === "service") {
-                       return (
-                         <IIIFService
-                           propertyName="Services"
-                           object={val}
-                           onClick={() => {}}
-                         />
-                       );
-                     } else if (val && val.type === "Range") {
-                       return (
-                         <Ranges
-                           propertyName="Range"
-                           object={val}
-                           onClick={() => {}}
-                         />
-                       );
-                     } else if (typeof val === "string") {
-                       return <Value>{val}</Value>;
-                     } else {
-                       return Object.entries(val).map(([key, value]) => {
-                         if (typeof value === "string") {
-                           return (
-                             <KeyValuePairString
-                               key={key}
-                               onClick={() => console.log("clicked", key)}
-                               propertyName={key}
-                               value={value}
-                             />
-                           );
-                         } else {
-                           return (
-                             <KeyObjectPairing
-                               object={value}
-                               propertyName={key}
-                               onClick={() => {}}
-                             />
-                           );
-                         }
-                       });
-                     }
+              } else if (propertyName === "services") {
+                return (
+                  <Services
+                    propertyName="Services"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (propertyName === "service") {
+                return (
+                  <IIIFService
+                    propertyName="Services"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (val && val.type === "Range") {
+                return (
+                  <Ranges
+                    propertyName="Range"
+                    object={val}
+                    onClick={() => {}}
+                  />
+                );
+              } else if (typeof val === "string") {
+                return <Value>{val}</Value>;
+              } else {
+                return Object.entries(val).map(([key, value]) => {
+                  if (typeof value === "string") {
+                    return (
+                      <KeyValuePairString
+                        key={key}
+                        onClick={() => console.log("clicked", key)}
+                        propertyName={key}
+                        value={value}
+                      />
+                    );
+                  } else {
+                    return (
+                      <KeyObjectPairing
+                        object={value}
+                        propertyName={key}
+                        onClick={() => {}}
+                      />
+                    );
+                  }
+                });
+              }
             })
           ) : (
             <></>
           )}
         </ErrorBoundary>
-      </Expanded>
-    </>
+      </>
+    </ContainerColumn>
   );
 };

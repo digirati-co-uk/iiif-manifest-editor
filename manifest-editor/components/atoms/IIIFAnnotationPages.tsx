@@ -18,6 +18,7 @@ import { KeyValuePairArray, KeyArrayPairing } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { FlexContainer } from "../layout/FlexContainer";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { Subdirectory } from "../icons/Subdirectory";
 
 const Annotation: React.FC<{ type: string; id: string }> = ({ type, id }) => {
   const annotation = useAnnotationPage({ id: id });
@@ -26,6 +27,7 @@ const Annotation: React.FC<{ type: string; id: string }> = ({ type, id }) => {
   return (
     <>
       <Container>
+        <Subdirectory />
         <KeyAnnoPage>{type}</KeyAnnoPage>
         {label}
         <Expandable onClick={() => setOpen(!open)}>

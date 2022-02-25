@@ -15,6 +15,7 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useRange } from "react-iiif-vault";
+import { Subdirectory } from "../icons/Subdirectory";
 
 const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
   const range = useRange({ id: id });
@@ -24,6 +25,7 @@ const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
   return (
     <>
       <Container>
+        <Subdirectory />
         <KeyRanges>{type}</KeyRanges>
         {label}
         <Expandable onClick={() => setOpen(!open)}>

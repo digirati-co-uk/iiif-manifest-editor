@@ -15,6 +15,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { Subdirectory } from "../icons/Subdirectory";
 
 const ContentResource: React.FC<{ type: string; id: string }> = ({
   type,
@@ -28,6 +29,7 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
   return (
     <>
       <Container>
+        <Subdirectory />
         <KeyContentResource>{type}</KeyContentResource>
         {label}
         <Expandable onClick={() => setOpen(!open)}>
