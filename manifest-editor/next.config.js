@@ -2,7 +2,10 @@
 
 const nextConfig = {
   reactStrictMode: true,
-  target: "serverless"
+  target: "serverless",
+  node: {
+    fs: 'empty'
+  }
 };
 
 module.exports = nextConfig;

@@ -155,7 +155,7 @@ const Home: NextPage = (props: any) => {
           </Toolbar>
           <FlexContainerRow>
             <ContentSelector view={view} />
-            <CanvasView manifest={manifest ? manifest?.id : ""} />
+            <CanvasView />
             <EditorPanel
               open={editorPanelOpen}
               close={() => setEditorPanelOpen(false)}
