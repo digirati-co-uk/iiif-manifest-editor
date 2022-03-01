@@ -23,7 +23,7 @@ export type Collection = {
 }
 
 
-const handleJSON = async (imageUrl: string) => {
+const handleImageService = async (imageUrl: string) => {
   let data: any = {};
   if (!imageUrl) return;
   try {
@@ -36,22 +36,50 @@ const handleJSON = async (imageUrl: string) => {
   return data;
 };
 
+const handleImages = async (url: string) => {
+  let data: any = {};
+
+  try {
+    const response = await fetch(url, {
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    })
+    if (!response.ok) {
+      throw new Error(response.statusText)
+    }
+    if (response.headers.get("Content-Type")?.includes("ld+json")) {
+      data = await handleImageService(url) as any;
+    } else if (response.headers.get("Content-Type")?.includes("image")) {
+      data = {
+        id: url,
+        type: "Image",
+        format: response.headers.get("Content-Type"),
+      }
+    }
+  } catch {
+    // error
+  }
+  return data;
+}
+
 export const analyse = async (url: string, expectedTypes?: Array<"Image" | "ImageService" | "Manifest" | "Collection">) => {
   if (!url) return;
   let data: any = {}
 
   // Static images
-  if (url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png")) {
-    data = {
-      id: url,
-      type: "Image",
-    }
+  if (url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png") || url.includes(".JP2")) {
+    data = await handleImages(url)
     return data;
   };
 
   // info.json image service
   if (url.includes("/info.json")) {
-    data = await handleJSON(url);
+    data = await handleImageService(url);
     return data;
   };
 

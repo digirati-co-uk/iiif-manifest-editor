@@ -43,7 +43,7 @@ export const AddManifestModal: React.FC<{
     const inputed = await analyse(inputValue);
     setInputType(inputed?.type);
     setLabel(inputed?.label);
-    if (
+    if (inputed &&
       !(inputed.type === "Manifest" ||
       inputed.type === "Image" ||
       inputed.type !== "Collection")
@@ -52,7 +52,7 @@ export const AddManifestModal: React.FC<{
     }
 
     // Only handling manifest for now.
-    if (inputed.type === "Manifest") onChange(inputValue);
+    if (inputed && inputed.type === "Manifest") onChange(inputValue);
   };
 
   const handleImage = (e: any) => {
