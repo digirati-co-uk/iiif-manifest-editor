@@ -10,12 +10,19 @@ import { ModalHeader } from "../atoms/ModalHeader";
 import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import { analyse } from "../../helpers/analyse";
-import styled from "styled-components";
 
+const getImage = async (src: string) => {
+  return new Promise((resolve, reject) => {
+    const $img = document.createElement("img");
+    $img.onload = () => resolve($img);
+    $img.onerror = () => reject();
+    $img.src = src;
+    if ($img.complete) {
+      resolve($img); // cached.
+    }
+  });
+};
 
-const HiddenImage = styled.img`
-  display: none;
-`;
 
 
 export const AddManifestModal: React.FC<{
@@ -30,6 +37,7 @@ export const AddManifestModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
 
+
   useEffect(() => {
     // Clear the populated value if we use a new url
     setInputType(undefined);
@@ -43,6 +51,13 @@ export const AddManifestModal: React.FC<{
     const inputed = await analyse(inputValue);
     setInputType(inputed?.type);
     setLabel(inputed?.label);
+    if (inputed.type === "Image") {
+      const image = await getImage(inputValue) as any;
+      image.naturalHeight;
+      image.naturalWidth;
+      setWidth(image.naturalWidth);
+      setHeight(image.naturalHeight);
+    }
     if (inputed &&
       !(inputed.type === "Manifest" ||
       inputed.type === "Image" ||
@@ -55,10 +70,6 @@ export const AddManifestModal: React.FC<{
     if (inputed && inputed.type === "Manifest") onChange(inputValue);
   };
 
-  const handleImage = (e: any) => {
-    setHeight(e.naturalHeight);
-    setWidth(e.naturalWidth);
-  }
 
   return (
     <>
@@ -86,12 +97,6 @@ export const AddManifestModal: React.FC<{
           <CalltoButton onClick={() => handleChange()}>ADD</CalltoButton>
         </FlexContainer>
         <br />
-        {inputType === "Image" && (
-          <HiddenImage
-            src={inputValue}
-            onLoad={(e: any) => handleImage(e.currentTarget)}
-          />
-        )}
         {(inputType !== "Manifest" && inputType) && (
           <FlexContainerColumn justify={"flex-start"}>
             <p>This resource is not a manifest.</p>
