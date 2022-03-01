@@ -92,19 +92,22 @@ export const AddManifestModal: React.FC<{
             onLoad={(e: any) => handleImage(e.currentTarget)}
           />
         )}
-        <FlexContainerColumn justify={"flex-start"}>
-          <small>{inputType}</small>
-          <small>{label}</small>
-          <small>{width && `Image width: ${width}`}</small>
-          <small>{height && `Image height: ${height}`}</small>
-          {imageServiceJSON && (
-            <small
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(imageServiceJSON)
-              }}
-            />
-          )}
-        </FlexContainerColumn>
+        {(inputType !== "Manifest" && inputType) && (
+          <FlexContainerColumn justify={"flex-start"}>
+            <p>This resource is not a manifest.</p>
+            <small>{inputType}</small>
+            <small>{label}</small>
+            <small>{width && `Image width: ${width}`}</small>
+            <small>{height && `Image height: ${height}`}</small>
+            {imageServiceJSON && (
+              <small
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify(imageServiceJSON)
+                }}
+              />
+            )}
+          </FlexContainerColumn>
+        )}
       </ModalContainer>
     </>
   );
