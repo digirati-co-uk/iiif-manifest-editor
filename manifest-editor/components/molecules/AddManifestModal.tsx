@@ -56,8 +56,8 @@ export const AddManifestModal: React.FC<{
   };
 
   const handleImage = (e: any) => {
-    setHeight(e.height);
-    setWidth(e.width);
+    setHeight(e.naturalHeight);
+    setWidth(e.naturalWidth);
   }
 
   return (
