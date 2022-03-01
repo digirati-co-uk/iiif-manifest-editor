@@ -36,6 +36,18 @@ const handleImageService = async (imageUrl: string) => {
   return data;
 };
 
+const getImage = async (src: string) => {
+  return new Promise((resolve, reject) => {
+    const $img = document.createElement("img");
+    $img.onload = () => resolve($img);
+    $img.onerror = () => reject();
+    $img.src = src;
+    if ($img.complete) {
+      resolve($img); // cached.
+    }
+  });
+};
+
 const handleImages = async (url: string) => {
   let data: any = {};
 
@@ -54,10 +66,14 @@ const handleImages = async (url: string) => {
     }
     if (response.headers.get("Content-Type")?.includes("ld+json")) {
       data = await handleImageService(url) as any;
+      data.type = "ImageService"
     } else if (response.headers.get("Content-Type")?.includes("image")) {
+      const image = await getImage(url) as any;
       data = {
         id: url,
         type: "Image",
+        width: image.width,
+        height: image.height,
         format: response.headers.get("Content-Type"),
       }
     }

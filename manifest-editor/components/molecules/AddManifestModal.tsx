@@ -11,20 +11,6 @@ import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import { analyse } from "../../helpers/analyse";
 
-const getImage = async (src: string) => {
-  return new Promise((resolve, reject) => {
-    const $img = document.createElement("img");
-    $img.onload = () => resolve($img);
-    $img.onerror = () => reject();
-    $img.src = src;
-    if ($img.complete) {
-      resolve($img); // cached.
-    }
-  });
-};
-
-
-
 export const AddManifestModal: React.FC<{
   manifest: string;
   onChange: any;
@@ -51,17 +37,12 @@ export const AddManifestModal: React.FC<{
     const inputed = await analyse(inputValue);
     setInputType(inputed?.type);
     setLabel(inputed?.label);
-    if (inputed.type === "Image") {
-      const image = await getImage(inputValue) as any;
-      image.naturalHeight;
-      image.naturalWidth;
-      setWidth(image.naturalWidth);
-      setHeight(image.naturalHeight);
-    }
+    setHeight(inputed?.height);
+    setWidth(inputed?.width);
     if (inputed &&
       !(inputed.type === "Manifest" ||
       inputed.type === "Image" ||
-      inputed.type !== "Collection")
+      inputed.type === "Collection")
     ) {
       setImageServiceJSON(inputed);
     }
