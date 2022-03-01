@@ -10,6 +10,12 @@ import { ModalHeader } from "../atoms/ModalHeader";
 import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import { analyse } from "../../helpers/analyse";
+import styled from "styled-components";
+
+
+const HiddenImage = styled.img`
+  display: none;
+`;
 
 
 export const AddManifestModal: React.FC<{
@@ -37,12 +43,10 @@ export const AddManifestModal: React.FC<{
     const inputed = await analyse(inputValue);
     setInputType(inputed?.type);
     setLabel(inputed?.label);
-    setHeight(inputed?.height);
-    setWidth(inputed?.width);
     if (
-      inputed.type !== "Manifest" ||
-      inputed.type !== "Image" ||
-      inputed.type !== "Collection"
+      !(inputed.type === "Manifest" ||
+      inputed.type === "Image" ||
+      inputed.type !== "Collection")
     ) {
       setImageServiceJSON(inputed);
     }
@@ -50,6 +54,11 @@ export const AddManifestModal: React.FC<{
     // Only handling manifest for now.
     if (inputed.type === "Manifest") onChange(inputValue);
   };
+
+  const handleImage = (e: any) => {
+    setHeight(e.height);
+    setWidth(e.width);
+  }
 
   return (
     <>
@@ -77,6 +86,12 @@ export const AddManifestModal: React.FC<{
           <CalltoButton onClick={() => handleChange()}>ADD</CalltoButton>
         </FlexContainer>
         <br />
+        {inputType === "Image" && (
+          <HiddenImage
+            src={inputValue}
+            onLoad={(e: any) => handleImage(e.currentTarget)}
+          />
+        )}
         <FlexContainerColumn justify={"flex-start"}>
           <small>{inputType}</small>
           <small>{label}</small>

@@ -23,38 +23,6 @@ export type Collection = {
 }
 
 
-const handleImages = (imgUrl: string) => {
-  const sizeOf = require('image-size')
-  sizeOf.disableFS(true);
-
-  const URL = require('url');
-  const http = require('http');
-  const options = URL.parse(imgUrl);
-  let data = {};
-
-  return new Promise((resolve) => {
-    let req = http.get(options, function (response: any) {
-      const chunks: any = [];
-      response.on('data', function (chunk: any) {
-        chunks.push(chunk);
-      }).on('end', function () {
-        const buffer = Buffer.concat(chunks);
-        const properties = sizeOf(buffer);
-        data = {
-          id: imgUrl,
-          type: "Image",
-          format: properties.type,
-          width: properties.width,
-          height: properties.height
-        };
-        resolve(data);
-      })
-      req.end();
-    })
-    return data;
-  })
-};
-
 const handleJSON = async (imageUrl: string) => {
   let data: any = {};
   if (!imageUrl) return;
@@ -74,7 +42,10 @@ export const analyse = async (url: string, expectedTypes?: Array<"Image" | "Imag
 
   // Static images
   if (url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png")) {
-    data = await handleImages(url);
+    data = {
+      id: url,
+      type: "Image",
+    }
     return data;
   };
 
