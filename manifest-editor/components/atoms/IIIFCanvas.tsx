@@ -14,7 +14,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas, useSimpleViewer } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 
 const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
@@ -24,10 +24,12 @@ const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
   const canvas = useCanvas({ id: id });
   const label = getValue(canvas?.label);
   const [open, setOpen] = useState(false);
+  const { setCurrentCanvasId } = useSimpleViewer();
+
 
   return (
     <>
-      <Container>
+      <Container onClick={() => setCurrentCanvasId(id)}>
         <Subdirectory />
         <KeyCanvas>{type}</KeyCanvas>
         {label}
