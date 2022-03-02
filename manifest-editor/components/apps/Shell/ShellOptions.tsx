@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { AddManifestModal } from "../../modals/AddManifestModal";
 import { Button } from "../../atoms/Button";
 import { useManifest } from "../../../hooks/useManifest";
+import { SaveModal } from "../../modals/SaveModal";
 
 export const Dropdown = styled.li`
    {
@@ -27,7 +28,9 @@ export const ShellOptions: React.FC<{
   saveManifest: () => void;
   setView: (view: "thumbnails" | "tree") => void;
 }> = ({ changeManifest, saveManifest, setView }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [addModalVisible, setaddModalVisible] = useState(false);
+  const [saveModalVisible, setSaveModalVisible] = useState(false);
+
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
@@ -35,16 +38,24 @@ export const ShellOptions: React.FC<{
   const manifest = useManifest();
 
   useEffect(() => {
-    setModalVisible(false);
+    setaddModalVisible(false);
   }, [manifest]);
+
 
   return (
     <>
-      {modalVisible ? (
+      {addModalVisible ? (
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
           onChange={(url: string) => changeManifest(url)}
-          close={() => setModalVisible(false)}
+          close={() => setaddModalVisible(false)}
+        />
+      ) : (
+        <></>
+      )}
+      {saveModalVisible ? (
+        <SaveModal
+          close={() => setSaveModalVisible(false)}
         />
       ) : (
         <></>
@@ -54,7 +65,7 @@ export const ShellOptions: React.FC<{
         {fileOpen && (
           <DropdownContent onMouseLeave={() => setFileOpen(false)}>
             <Button
-              onClick={() => setModalVisible(!modalVisible)}
+              onClick={() => setaddModalVisible(!addModalVisible)}
               title="Add an existing manifest to get started"
               color={"#6b6b6b"}
             >
@@ -71,7 +82,7 @@ export const ShellOptions: React.FC<{
             <Button
               onClick={() => {
                 setFileOpen(!fileOpen);
-                alert("Save as clicked");
+                setSaveModalVisible(!saveModalVisible);
               }}
             >
               Save as...

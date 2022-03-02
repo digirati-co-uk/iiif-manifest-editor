@@ -1,11 +1,14 @@
-import { useManifest } from "../../../hooks/useManifest";
+import { useState, useEffect } from "react";
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { Placeholder } from "../../atoms/Placeholder";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
-import { Persistance } from "../../../pages";
 import { getValue } from "@iiif/vault-helpers";
+
+import { useManifest } from "../../../hooks/useManifest";
+import { PersistenceModal } from "../../modals/PersistenceModal";
+import { Persistance } from "./Shell";
 
 export const ShellHeader: React.FC<{
   saveManifest: () => Promise<void>;
@@ -14,24 +17,25 @@ export const ShellHeader: React.FC<{
   previewConfig: any;
   selectedPreviewIndex: number;
   persistedManifest: Persistance;
+  showPreviewModal: boolean;
+  setShowAgain: (show: boolean) => void;
+  setShowPreviewModal: (show: boolean) => void;
 }> = ({
   saveManifest,
-  showAgain,
   setSelectedPreviewIndex,
   previewConfig,
   selectedPreviewIndex,
-  persistedManifest
+  persistedManifest,
+  showPreviewModal,
+  setShowAgain,
+  showAgain,
+  setShowPreviewModal
 }) => {
   const manifest = useManifest();
 
   const getTitle = () => {
     //  This needs to actually adapt for the specific content and default language
-    if (
-      manifest &&
-      manifest.label &&
-      manifest.label.none &&
-      manifest.label.none[0]
-    ) {
+    if (manifest) {
       return (
         <h5>
           IIIF {manifest.type} : {getValue(manifest.label)}
@@ -42,42 +46,57 @@ export const ShellHeader: React.FC<{
   };
 
   return (
-    <ShellHeaderStrip>
-      <FlexContainer>
-        <ManifestEditorIcon />
-        <Placeholder>
-          {/* We need to decide what this should actually show */}
-          {getTitle()}
-        </Placeholder>
-      </FlexContainer>
-      <DropdownPreviewMenu
-        onPreviewClick={() => saveManifest()}
-        label={
-          showAgain ? (
-            `Preview: ${previewConfig[selectedPreviewIndex].label}`
-          ) : (
-            <a
-              href={
-                previewConfig[selectedPreviewIndex].baseUrl +
-                persistedManifest.location
-              }
-              target={"_blank"}
-              rel="noreferrer"
-            >
-              {`Preview: ${previewConfig[selectedPreviewIndex].label}`}
-            </a>
-          )
-        }
-        previewUrl={
-          previewConfig[selectedPreviewIndex].baseUrl +
-          persistedManifest.location
-        }
-        setSelectedPreviewIndex={(index: number) =>
-          setSelectedPreviewIndex(index)
-        }
-        showAgain={showAgain}
-        options={previewConfig}
-      ></DropdownPreviewMenu>
-    </ShellHeaderStrip>
+    <>
+      {showPreviewModal && (
+        <PersistenceModal
+          manifest={
+            persistedManifest && persistedManifest.location
+              ? persistedManifest.location
+              : ""
+          }
+          link={
+            previewConfig[selectedPreviewIndex].baseUrl +
+            persistedManifest.location
+          }
+          value={!showAgain}
+          onChange={() => setShowAgain(!showAgain)}
+          close={() => setShowPreviewModal(false)}
+        />
+      )}
+      <ShellHeaderStrip>
+        <FlexContainer>
+          <ManifestEditorIcon />
+          <Placeholder>{getTitle()}</Placeholder>
+        </FlexContainer>
+        <DropdownPreviewMenu
+          onPreviewClick={() => saveManifest()}
+          label={
+            showAgain ? (
+              `Preview: ${previewConfig[selectedPreviewIndex].label}`
+            ) : (
+              <a
+                href={
+                  previewConfig[selectedPreviewIndex].baseUrl +
+                  persistedManifest.location
+                }
+                target={"_blank"}
+                rel="noreferrer"
+              >
+                {`Preview: ${previewConfig[selectedPreviewIndex].label}`}
+              </a>
+            )
+          }
+          previewUrl={
+            previewConfig[selectedPreviewIndex].baseUrl +
+            persistedManifest.location
+          }
+          setSelectedPreviewIndex={(index: number) =>
+            setSelectedPreviewIndex(index)
+          }
+          showAgain={showAgain}
+          options={previewConfig}
+        ></DropdownPreviewMenu>
+      </ShellHeaderStrip>
+    </>
   );
 };

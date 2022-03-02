@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
 
@@ -8,28 +8,11 @@ import { CanvasView } from "../components/organisms/CanvasView";
 import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
-import { ShellToolbar } from "../components/apps/Shell/ShellToolbar"
-import { ShellOptions } from "../components/apps/Shell/ShellOptions";
-import { ShellHeader } from "../components/apps/Shell/ShellHeader";
 import { ContentSelector } from "../components/layout/ContentSelector";
-
-import { useVault } from "react-iiif-vault";
-import { useManifest } from "../hooks/useManifest";
-import { useSave } from "../hooks/useSave";
-
-// Temporary code until big fixed on react-iiif-vault
-import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
-import { PersistenceModal } from "../components/modals/PersistenceModal";
+import { Shell } from "../components/apps/Shell/Shell";
 
 import data from "../config.json";
 import ManifestEditorContext from "../components/apps/ManifestEditor/ManifestEditorContext";
-
-export type Persistance = {
-  deleteLocation?: string;
-  expirationTtl?: Number;
-  location?: string;
-  updateLocation?: string;
-};
 
 export const getStaticProps = async () => {
   return {
@@ -40,66 +23,14 @@ export const getStaticProps = async () => {
 };
 
 const Home: NextPage = (props: any) => {
-  const vault = useVault();
-  const manifest = useManifest();
   const [selectedProperty, setSelectedProperty] = useState("id");
-
   const changeSelectedProperty = (property: string) => {
     setSelectedProperty(property);
   };
 
   const editorSettings = { selectedProperty, changeSelectedProperty };
-
   const [editorPanelOpen, setEditorPanelOpen] = useState(false);
-  const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
-  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [showAgain, setShowAgain] = useState(true);
   const [view, setView] = useState<"thumbnails" | "tree">("tree");
-
-  useEffect(() => {
-    if (localStorage.getItem("persistedManifest")) {
-      const pers = localStorage.getItem("persistedManifest")
-        ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")
-        : {};
-      setpersistedManifest(pers);
-    }
-    if (localStorage.getItem("previewChoice")) {
-      const preview = localStorage.getItem("previewChoice")
-        ? JSON.parse(localStorage.getItem("previewChoice") || "{}")
-        : {};
-      setSelectedPreviewIndex(preview);
-    }
-  }, []);
-
-  useEffect(() => {
-    // We want to hold on to the prefered viewer choice in localstorage
-    localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
-  }, [selectedPreviewIndex]);
-
-  useEffect(() => {
-    // We want to hold on to the persisted value in localStorage
-    // TODO handle the time constraint on this value
-    localStorage.setItem(
-      "persistedManifest",
-      JSON.stringify(persistedManifest)
-    );
-  }, [persistedManifest]);
-
-  const saveManifest = async () => {
-    if (manifest) {
-      // Temporary code until bug fixed on react-iiif-vault
-      const man = await serialize(
-        vault.getState().iiif,
-        manifest,
-        serializeConfigPresentation3
-      );
-      // const manifestToPersist = await vault.toPresentation3(manifest)
-      const data = await useSave(man);
-      setpersistedManifest(data ? data : "");
-      if (showAgain) setShowPreviewModal(true);
-    }
-  };
 
   return (
     <div className={styles.container}>
@@ -108,42 +39,15 @@ const Home: NextPage = (props: any) => {
         <meta name="description" content="IIIF Manifest Editor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      {showPreviewModal ? (
-        <PersistenceModal
-          manifest={
-            persistedManifest && persistedManifest.location
-              ? persistedManifest.location
-              : ""
-          }
-          link={
-            props.config.preview[selectedPreviewIndex].baseUrl +
-            persistedManifest.location
-          }
-          value={!showAgain}
-          onChange={() => setShowAgain(!showAgain)}
-          close={() => setShowPreviewModal(false)}
-        />
-      ) : (
-        <></>
-      )}
       <main className={styles.main}>
         <ManifestEditorContext.Provider value={editorSettings}>
-          <ShellHeader
-            saveManifest={saveManifest}
-            showAgain={showAgain}
-            setSelectedPreviewIndex={setSelectedPreviewIndex}
+          <Shell
+            changeSampleManifest={(url: string) =>
+              props.changeSampleManifest(url)
+            }
+            setView={(view: "thumbnails" | "tree") => setView(view)}
             previewConfig={props.config.preview}
-            selectedPreviewIndex={selectedPreviewIndex}
-            persistedManifest={persistedManifest}
           />
-          <ShellToolbar>
-            <ShellOptions
-              changeManifest={(url: string) => props.changeSampleManifest(url)}
-              saveManifest={saveManifest}
-              setView={(view: "thumbnails" | "tree") => setView(view)}
-            />
-          </ShellToolbar>
           <Toolbar>
             <Button
               // This will change but just to get some MVP
@@ -165,9 +69,7 @@ const Home: NextPage = (props: any) => {
         </ManifestEditorContext.Provider>
       </main>
 
-      <footer className={styles.footer}>
-        Your manifest is saved here: {persistedManifest.location}
-      </footer>
+      <footer className={styles.footer}></footer>
     </div>
   );
 };

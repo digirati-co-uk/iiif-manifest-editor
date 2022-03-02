@@ -15,7 +15,6 @@ import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
-  // const [clickAmount, setClickAmount] = useState(0)
   // Switch for the vault here
   const [manifest, setManifest] = useState(
     //   // We will want to actually implement some options/templates etc
