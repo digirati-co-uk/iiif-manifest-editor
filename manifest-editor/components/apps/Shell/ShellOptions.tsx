@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { AddManifestModal } from "../../molecules/AddManifestModal";
+import { AddManifestModal } from "../../modals/AddManifestModal";
 import { Button } from "../../atoms/Button";
 import { useManifest } from "../../../hooks/useManifest";
 

@@ -1,5 +1,5 @@
 import { useManifest } from "../../../hooks/useManifest";
-import { ShellHeaderStrip } from "../../molecules/ShellHeaderStrip";
+import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { Placeholder } from "../../atoms/Placeholder";

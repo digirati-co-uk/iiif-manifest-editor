@@ -7,26 +7,31 @@ import {
   ContainerColumn,
   KeyValuePairString,
   Expanded,
-  KeyRanges
+  KeyCanvas
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { ErrorBoundary } from "./ErrorBoundary";
-import { useRange } from "react-iiif-vault";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
+import { useCanvas, useSimpleViewer } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 
-const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
-  const range = useRange({ id: id });
-  const label = getValue(range?.label);
+const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
+  type,
+  id
+}) => {
+  const canvas = useCanvas({ id: id });
+  const label = getValue(canvas?.label);
   const [open, setOpen] = useState(false);
+  const { setCurrentCanvasId } = useSimpleViewer();
+
 
   return (
     <>
-      <Container>
+      <Container onClick={() => setCurrentCanvasId(id)}>
         <Subdirectory />
-        <KeyRanges>{type}</KeyRanges>
+        <KeyCanvas>{type}</KeyCanvas>
         {label}
         <Expandable onClick={() => setOpen(!open)}>
           <DownIcon rotate={open ? 180 : 0} />
@@ -34,8 +39,8 @@ const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
       </Container>
       {open && (
         <ContainerColumn>
-          {range &&
-            Object.entries(range).map(([key, value]) => {
+          {canvas &&
+            Object.entries(canvas).map(([key, value]) => {
               if (typeof value === "string") {
                 return (
                   <KeyValuePairString
@@ -71,12 +76,12 @@ const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
   );
 };
 
-export const Ranges: React.FC<KeyObjectPairing> = ({ object }) => {
+export const Canvases: React.FC<KeyObjectPairing> = ({ object }) => {
   return (
     <>
       <Expanded>
         <ErrorBoundary>
-          <IIIFRange id={object.id} type={object.type} />
+          <IIIFCanvas id={object.id} type={object.type} />
         </ErrorBoundary>
       </Expanded>
     </>

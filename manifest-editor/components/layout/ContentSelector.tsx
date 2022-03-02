@@ -1,5 +1,5 @@
 import { ThumbnailStrip } from "../organisms/ThumbnailStrip";
-import { Tree } from "../organisms/Tree";
+import { Tree } from "../tree/Tree";
 
 import styled from "styled-components";
 

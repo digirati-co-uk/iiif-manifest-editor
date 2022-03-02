@@ -3,7 +3,6 @@ import {
   Container,
   Expandable,
   Count,
-  Expanded,
   KeyValuePairString,
   Key,
   Value,
@@ -12,7 +11,7 @@ import {
 
 import { DownIcon } from "../icons/DownIcon";
 
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { FlexContainer } from "../layout/FlexContainer";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ContentResources } from "./IIIFContentResource";

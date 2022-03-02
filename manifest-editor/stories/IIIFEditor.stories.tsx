@@ -1,7 +1,7 @@
 import React from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { AddModal } from "../components/molecules/AddModal";
+import { AddModal } from "../components/modals/AddModal";
 
 export default {
   title: "Manifest Editor/AddModal",

@@ -1,28 +1,36 @@
+import { useContentResource } from "../../hooks/useContentResource";
 import { getValue } from "@iiif/vault-helpers";
 import { useState } from "react";
 
 import {
   Container,
+  KeyContentResource,
   Expandable,
   ContainerColumn,
   KeyValuePairString,
-  Expanded,
-  KeyService
+  Expanded
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
+import { Subdirectory } from "../icons/Subdirectory";
 
-const Service: React.FC<KeyObjectPairing> = ({ object }) => {
-  const label = getValue(object?.label);
+const ContentResource: React.FC<{ type: string; id: string }> = ({
+  type,
+  id
+}) => {
+  const content = useContentResource({ id: id });
+  // @ts-ignore
+  const label = getValue(content?.label);
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <Container>
-        <KeyService>{object["@type"]}</KeyService>
+        <Subdirectory />
+        <KeyContentResource>{type}</KeyContentResource>
         {label}
         <Expandable onClick={() => setOpen(!open)}>
           <DownIcon rotate={open ? 180 : 0} />
@@ -30,8 +38,8 @@ const Service: React.FC<KeyObjectPairing> = ({ object }) => {
       </Container>
       {open && (
         <ContainerColumn>
-          {object &&
-            Object.entries(object).map(([key, value]) => {
+          {content &&
+            Object.entries(content).map(([key, value]) => {
               if (typeof value === "string") {
                 return (
                   <KeyValuePairString
@@ -67,12 +75,12 @@ const Service: React.FC<KeyObjectPairing> = ({ object }) => {
   );
 };
 
-export const IIIFService: React.FC<KeyObjectPairing> = ({ object }) => {
+export const ContentResources: React.FC<KeyObjectPairing> = ({ object }) => {
   return (
     <>
       <Expanded>
         <ErrorBoundary>
-          <Service propertyName={""} object={object} onClick={() => {}} />
+          <ContentResource id={object.id} type={object.type} />
         </ErrorBoundary>
       </Expanded>
     </>

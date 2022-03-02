@@ -1,10 +1,10 @@
-import { useEffect, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
 import { getValue } from "@iiif/vault-helpers";
-import { KeyValuePairString, KeyManifest } from "../atoms/IIIFElementsShared";
-import { KeyValuePairArray } from "../atoms/IIIFElementsArrays";
-import { KeyObjectPairing } from "../atoms/IIIFElementsObject";
-import { Annotations } from "../atoms/IIIFAnnotationPages";
+import { KeyValuePairString, KeyManifest } from "./IIIFElementsShared";
+import { KeyValuePairArray } from "./IIIFElementsArrays";
+import { KeyObjectPairing } from "./IIIFElementsObject";
+import { Annotations } from "./IIIFAnnotationPages";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { DownIcon } from "../icons/DownIcon";
 import { Button } from "../atoms/Button";

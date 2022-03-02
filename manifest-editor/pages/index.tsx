@@ -8,7 +8,7 @@ import { CanvasView } from "../components/organisms/CanvasView";
 import { Toolbar } from "../components/layout/Toolbar";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { EditorPanel } from "../components/layout/EditorPanel";
-import { ShellToolbar } from "../components/molecules/ShellToolbar";
+import { ShellToolbar } from "../components/apps/Shell/ShellToolbar"
 import { ShellOptions } from "../components/apps/Shell/ShellOptions";
 import { ShellHeader } from "../components/apps/Shell/ShellHeader";
 import { ContentSelector } from "../components/layout/ContentSelector";
@@ -19,7 +19,7 @@ import { useSave } from "../hooks/useSave";
 
 // Temporary code until big fixed on react-iiif-vault
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
-import { PersistenceModal } from "../components/molecules/PersistenceModal";
+import { PersistenceModal } from "../components/modals/PersistenceModal";
 
 import data from "../config.json";
 import ManifestEditorContext from "../components/apps/ManifestEditor/ManifestEditorContext";

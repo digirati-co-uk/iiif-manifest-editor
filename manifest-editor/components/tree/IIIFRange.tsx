@@ -7,31 +7,26 @@ import {
   ContainerColumn,
   KeyValuePairString,
   Expanded,
-  KeyCanvas
+  KeyRanges
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { ErrorBoundary } from "./ErrorBoundary";
-import { useCanvas, useSimpleViewer } from "react-iiif-vault";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
+import { useRange } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 
-const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
-  type,
-  id
-}) => {
-  const canvas = useCanvas({ id: id });
-  const label = getValue(canvas?.label);
+const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
+  const range = useRange({ id: id });
+  const label = getValue(range?.label);
   const [open, setOpen] = useState(false);
-  const { setCurrentCanvasId } = useSimpleViewer();
-
 
   return (
     <>
-      <Container onClick={() => setCurrentCanvasId(id)}>
+      <Container>
         <Subdirectory />
-        <KeyCanvas>{type}</KeyCanvas>
+        <KeyRanges>{type}</KeyRanges>
         {label}
         <Expandable onClick={() => setOpen(!open)}>
           <DownIcon rotate={open ? 180 : 0} />
@@ -39,8 +34,8 @@ const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
       </Container>
       {open && (
         <ContainerColumn>
-          {canvas &&
-            Object.entries(canvas).map(([key, value]) => {
+          {range &&
+            Object.entries(range).map(([key, value]) => {
               if (typeof value === "string") {
                 return (
                   <KeyValuePairString
@@ -76,12 +71,12 @@ const IIIFCanvas: React.FC<{ type: string; id: string }> = ({
   );
 };
 
-export const Canvases: React.FC<KeyObjectPairing> = ({ object }) => {
+export const Ranges: React.FC<KeyObjectPairing> = ({ object }) => {
   return (
     <>
       <Expanded>
         <ErrorBoundary>
-          <IIIFCanvas id={object.id} type={object.type} />
+          <IIIFRange id={object.id} type={object.type} />
         </ErrorBoundary>
       </Expanded>
     </>

@@ -17,7 +17,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray, KeyArrayPairing } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { FlexContainer } from "../layout/FlexContainer";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { Subdirectory } from "../icons/Subdirectory";
 
 const Annotation: React.FC<{ type: string; id: string }> = ({ type, id }) => {

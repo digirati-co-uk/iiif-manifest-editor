@@ -13,7 +13,7 @@ import {
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 
 const Service: React.FC<KeyObjectPairing> = ({ object }) => {
   const label = getValue(object?.label);
