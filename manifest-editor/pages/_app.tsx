@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
