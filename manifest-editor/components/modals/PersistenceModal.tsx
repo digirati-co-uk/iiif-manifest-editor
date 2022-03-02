@@ -33,12 +33,9 @@ export const PersistenceModal: React.FC<{
   const [copySuccess, setCopySuccess] = useState("");
   const textAreaRef = useRef(null);
 
-  function copyToClipboard(e: any) {
+  function copyToClipboard() {
     if (textAreaRef && textAreaRef.current) {
-      // @ts-ignore
-      textAreaRef?.current?.select();
-      document.execCommand("copy");
-      e?.target?.focus();
+      navigator.clipboard.writeText(manifest);
       setCopySuccess("Copied!");
     }
   }
@@ -58,7 +55,7 @@ export const PersistenceModal: React.FC<{
 
           <FlexContainerRow
             justify={"space-between"}
-            style={{ justifyItems: "center" }}
+            style={{ alignItems: "center" }}
           >
             <LinkBox ref={textAreaRef}>
               <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
@@ -66,14 +63,11 @@ export const PersistenceModal: React.FC<{
               </a>
             </LinkBox>
             <HiddenElement ref={textAreaRef} defaultValue={manifest} />
-            {document.queryCommandSupported("copy") && (
-              <>
-                <SecondaryButton onClick={(e: any) => copyToClipboard(e)}>
-                  <CopyIcon /> Copy Link
-                </SecondaryButton>
-                {copySuccess}
-              </>
-            )}
+            <SecondaryButton onClick={() => copyToClipboard()}>
+              <CopyIcon />
+              Copy Link
+            </SecondaryButton>
+            <small>{copySuccess}</small>
           </FlexContainerRow>
           <p>
             <small>
