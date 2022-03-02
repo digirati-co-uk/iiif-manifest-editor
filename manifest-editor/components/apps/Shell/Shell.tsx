@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 
 import { useVault } from "react-iiif-vault";
 import { useSave } from "../../../hooks/useSave";
+import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
 
 export type Persistance = {
@@ -23,9 +24,18 @@ export const Shell: React.FC<{
   changeSampleManifest: (newId: string) => void;
 }> = ({ previewConfig, setView, changeSampleManifest }) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
-  const [persistedManifest, setpersistedManifest] = useState<Persistance>({});
+  const [persistedManifest, setpersistedManifest] = useState<
+    Persistance | undefined
+  >({});
+  const [manifestPermalink, setManifestPermalink] = useState<
+    Persistance | undefined
+  >();
   const [showAgain, setShowAgain] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previouslySaved, setPreviouslySaved] = useState(false);
+
+  const manifest = useManifest();
+  const vault = useVault();
 
   useEffect(() => {
     // We want to hold on to the persisted value in localStorage
@@ -37,12 +47,19 @@ export const Shell: React.FC<{
   }, [persistedManifest]);
 
   useEffect(() => {
+    // We want to hold on to the persisted value in localStorage
+    if (manifestPermalink) {
+      localStorage.setItem(
+        "manifestPermalink",
+        JSON.stringify(manifestPermalink)
+      );
+    }
+  }, [manifestPermalink]);
+
+  useEffect(() => {
     // We want to hold on to the prefered viewer choice in localstorage
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
   }, [selectedPreviewIndex]);
-
-  const manifest = useManifest();
-  const vault = useVault();
 
   useEffect(() => {
     if (localStorage.getItem("persistedManifest")) {
@@ -56,6 +73,13 @@ export const Shell: React.FC<{
         ? JSON.parse(localStorage.getItem("previewChoice") || "{}")
         : {};
       setSelectedPreviewIndex(preview);
+    }
+    if (localStorage.getItem("manifestPermalink")) {
+      const permalink = localStorage.getItem("manifestPermalink")
+        ? JSON.parse(localStorage.getItem("manifestPermalink") || "{}")
+        : undefined;
+      setManifestPermalink(permalink);
+      setPreviouslySaved(true);
     }
   }, []);
 
@@ -73,6 +97,21 @@ export const Shell: React.FC<{
       if (showAgain) setShowPreviewModal(true);
     }
   };
+
+  const savePermalink = async () => {
+    if (manifest) {
+      // Temporary code until bug fixed on react-iiif-vault
+      const man = await serialize(
+        vault.getState().iiif,
+        manifest,
+        serializeConfigPresentation3
+      );
+      // const manifestToPersist = await vault.toPresentation3(manifest)
+      const perma = await usePermalink(man);
+      setManifestPermalink(perma ? perma : undefined);
+    }
+  };
+
   return (
     <>
       <ShellHeader
@@ -89,7 +128,11 @@ export const Shell: React.FC<{
       <ShellToolbar>
         <ShellOptions
           changeManifest={(url: string) => changeSampleManifest(url)}
+          // This is the 48hr persistence
           saveManifest={saveManifest}
+          // This is the permalink
+          savePermalink={savePermalink}
+          previouslySaved={previouslySaved}
           setView={(view: "thumbnails" | "tree") => setView(view)}
         />
       </ShellToolbar>

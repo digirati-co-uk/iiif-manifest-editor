@@ -4,7 +4,7 @@ const PERSISTENCEURL = {
   local: "http://127.0.0.1:8787/store"
 };
 
-
+// Save for 28 hrs.
 export const useSave = async (manifest: any) => {
   const requestOptions = {
     method: "POST",

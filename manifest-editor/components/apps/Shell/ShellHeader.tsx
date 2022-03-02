@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
@@ -16,7 +15,7 @@ export const ShellHeader: React.FC<{
   setSelectedPreviewIndex: (index: number) => void;
   previewConfig: any;
   selectedPreviewIndex: number;
-  persistedManifest: Persistance;
+  persistedManifest: Persistance | undefined;
   showPreviewModal: boolean;
   setShowAgain: (show: boolean) => void;
   setShowPreviewModal: (show: boolean) => void;
@@ -47,7 +46,7 @@ export const ShellHeader: React.FC<{
 
   return (
     <>
-      {showPreviewModal && (
+      {showPreviewModal && persistedManifest && (
         <PersistenceModal
           manifest={
             persistedManifest && persistedManifest.location
@@ -68,34 +67,36 @@ export const ShellHeader: React.FC<{
           <ManifestEditorIcon />
           <Placeholder>{getTitle()}</Placeholder>
         </FlexContainer>
-        <DropdownPreviewMenu
-          onPreviewClick={() => saveManifest()}
-          label={
-            showAgain ? (
-              `Preview: ${previewConfig[selectedPreviewIndex].label}`
-            ) : (
-              <a
-                href={
-                  previewConfig[selectedPreviewIndex].baseUrl +
-                  persistedManifest.location
-                }
-                target={"_blank"}
-                rel="noreferrer"
-              >
-                {`Preview: ${previewConfig[selectedPreviewIndex].label}`}
-              </a>
-            )
-          }
-          previewUrl={
-            previewConfig[selectedPreviewIndex].baseUrl +
-            persistedManifest.location
-          }
-          setSelectedPreviewIndex={(index: number) =>
-            setSelectedPreviewIndex(index)
-          }
-          showAgain={showAgain}
-          options={previewConfig}
-        ></DropdownPreviewMenu>
+        {persistedManifest && (
+          <DropdownPreviewMenu
+            onPreviewClick={() => saveManifest()}
+            label={
+              showAgain ? (
+                `Preview: ${previewConfig[selectedPreviewIndex].label}`
+              ) : (
+                <a
+                  href={
+                    previewConfig[selectedPreviewIndex].baseUrl +
+                    persistedManifest.location
+                  }
+                  target={"_blank"}
+                  rel="noreferrer"
+                >
+                  {`Preview: ${previewConfig[selectedPreviewIndex].label}`}
+                </a>
+              )
+            }
+            previewUrl={
+              previewConfig[selectedPreviewIndex].baseUrl +
+              persistedManifest.location
+            }
+            setSelectedPreviewIndex={(index: number) =>
+              setSelectedPreviewIndex(index)
+            }
+            showAgain={showAgain}
+            options={previewConfig}
+          />
+        )}
       </ShellHeaderStrip>
     </>
   );

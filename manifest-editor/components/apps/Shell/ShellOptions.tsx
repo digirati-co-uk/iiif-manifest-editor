@@ -27,7 +27,15 @@ export const ShellOptions: React.FC<{
   changeManifest: (url: string) => void;
   saveManifest: () => void;
   setView: (view: "thumbnails" | "tree") => void;
-}> = ({ changeManifest, saveManifest, setView }) => {
+  savePermalink: () => void;
+  previouslySaved: boolean;
+}> = ({
+  changeManifest,
+  saveManifest,
+  setView,
+  savePermalink,
+  previouslySaved
+}) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
 
@@ -40,7 +48,6 @@ export const ShellOptions: React.FC<{
   useEffect(() => {
     setaddModalVisible(false);
   }, [manifest]);
-
 
   return (
     <>
@@ -56,6 +63,8 @@ export const ShellOptions: React.FC<{
       {saveModalVisible ? (
         <SaveModal
           close={() => setSaveModalVisible(false)}
+          savePermalink={savePermalink}
+          previouslySaved={previouslySaved}
         />
       ) : (
         <></>
