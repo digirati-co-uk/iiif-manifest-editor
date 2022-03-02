@@ -2,15 +2,17 @@ import styled from "styled-components";
 
 export const ModalContainer = styled.div`
    {
-    position: fixed;
-    background: white;
-    width: ${(props: any) => props.width || '33%' };
-    height: auto;
-    padding: 1rem 2rem;
     display: flex;
     flex-direction: column;
-    top: ${(props: any) => props.top || '33%' };
-    left: 33%;
     z-index: 13;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    min-height: 360px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    background: white;
   }
 `;
