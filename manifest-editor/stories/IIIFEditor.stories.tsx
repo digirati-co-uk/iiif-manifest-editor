@@ -1,19 +1,20 @@
 import React from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { AddModal } from "../components/modals/AddModal";
+import { AddManifestModal } from "../components/modals/AddManifestModal";
 
 export default {
-  title: "Manifest Editor/AddModal",
-  component: AddModal
-} as ComponentMeta<typeof AddModal>;
+  title: "Manifest Editor/AddManifestModal",
+  component: AddManifestModal
+} as ComponentMeta<typeof AddManifestModal>;
 
-const Template: ComponentStory<typeof AddModal> = args => (
-  <AddModal {...args} />
+const Template: ComponentStory<typeof AddManifestModal> = args => (
+  <AddManifestModal {...args} />
 );
 
 export const AnExample = Template.bind({});
-AnExample.args = {
-  manifest: undefined
-};
 
+AnExample.args = {
+  manifest: undefined,
+  close: () => {console.log("close clicked")},
+};
