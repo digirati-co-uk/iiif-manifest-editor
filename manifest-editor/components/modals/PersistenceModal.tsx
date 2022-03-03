@@ -1,27 +1,11 @@
 import { Input } from "../form/Input";
-import { Button, SecondaryButton, CalltoButton } from "../atoms/Button";
+import { Button, CalltoButton } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
-import { useRef, useState } from "react";
-
 import { ModalBackground } from "../layout/ModalBackground";
 import { ModalContainer } from "../layout/ModalContainer";
 import { FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
-import { CopyIcon } from "../icons/Copy";
-import styled from "styled-components";
+import { CopyURL } from "../atoms/CopyURL";
 
-const LinkBox = styled.div`
-  color: #347cff;
-  width: 80%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  border: none;
-  resize: none;
-`;
-
-const HiddenElement = styled.textarea`
-  display: none;
-`;
 
 export const PersistenceModal: React.FC<{
   manifest: string;
@@ -30,15 +14,7 @@ export const PersistenceModal: React.FC<{
   value: boolean;
   link: string;
 }> = ({ manifest, onChange, close, value, link }) => {
-  const [copySuccess, setCopySuccess] = useState("");
-  const textAreaRef = useRef(null);
 
-  function copyToClipboard() {
-    if (textAreaRef && textAreaRef.current) {
-      navigator.clipboard.writeText(manifest);
-      setCopySuccess("Copied!");
-    }
-  }
 
   return (
     <>
@@ -52,23 +28,7 @@ export const PersistenceModal: React.FC<{
             </Button>
           </FlexContainerRow>
           <p>A preview of this Manifest is now available at: </p>
-
-          <FlexContainerRow
-            justify={"space-between"}
-            style={{ alignItems: "center" }}
-          >
-            <LinkBox ref={textAreaRef}>
-              <a href={link} target={"_blank"} rel="noreferrer" onClick={close}>
-                {manifest}
-              </a>
-            </LinkBox>
-            <HiddenElement ref={textAreaRef} defaultValue={manifest} />
-            <SecondaryButton onClick={() => copyToClipboard()}>
-              <CopyIcon />
-              Copy Link
-            </SecondaryButton>
-            <small>{copySuccess}</small>
-          </FlexContainerRow>
+          <CopyURL manifest={manifest} link={link}/>
           <p>
             <small>
               This preview will expire in 48 hours. For a permanent version,

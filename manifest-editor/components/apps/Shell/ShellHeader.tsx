@@ -33,7 +33,6 @@ export const ShellHeader: React.FC<{
   const manifest = useManifest();
 
   const getTitle = () => {
-    //  This needs to actually adapt for the specific content and default language
     if (manifest) {
       return (
         <h5>

@@ -7,7 +7,7 @@ import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { useState, useEffect } from "react";
 
 import { useVault } from "react-iiif-vault";
-import { useSave } from "../../../hooks/useSave";
+import { useSave, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
 
@@ -24,15 +24,22 @@ export const Shell: React.FC<{
   changeSampleManifest: (newId: string) => void;
 }> = ({ previewConfig, setView, changeSampleManifest }) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
+  // 48 hours link
   const [persistedManifest, setpersistedManifest] = useState<
     Persistance | undefined
   >({});
+  // Permalink
   const [manifestPermalink, setManifestPermalink] = useState<
     Persistance | undefined
   >();
+  // This is an index of the list of choices,
+  // 0 is replace, 1 is create new - default is to create new
+  const [saveAsChoice, setSaveAsChoice] = useState(1);
+
   const [showAgain, setShowAgain] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
+  const [useSavedChanges, setUnsavedChanges] = useState(false);
 
   const manifest = useManifest();
   const vault = useVault();
@@ -83,6 +90,10 @@ export const Shell: React.FC<{
     }
   }, []);
 
+  useEffect(() => {
+    changeSampleManifest(manifestPermalink?.location || "");
+  }, [manifestPermalink]);
+
   const saveManifest = async () => {
     if (manifest) {
       // Temporary code until bug fixed on react-iiif-vault
@@ -107,8 +118,21 @@ export const Shell: React.FC<{
         serializeConfigPresentation3
       );
       // const manifestToPersist = await vault.toPresentation3(manifest)
-      const perma = await usePermalink(man);
-      setManifestPermalink(perma ? perma : undefined);
+      // Save as choice 0 is overwrite
+      if (saveAsChoice === 0) {
+        const perma = await useUpdatePermalink(
+          manifestPermalink?.updateLocation,
+          man
+        );
+        setManifestPermalink(perma ? perma : undefined);
+        setUnsavedChanges(false);
+      }
+      // save as choice 1 is save new;
+      else if (saveAsChoice === 1) {
+        const perma = await usePermalink(man);
+        setManifestPermalink(perma ? perma : undefined);
+        setUnsavedChanges(false);
+      }
     }
   };
 
@@ -134,6 +158,9 @@ export const Shell: React.FC<{
           savePermalink={savePermalink}
           previouslySaved={previouslySaved}
           setView={(view: "thumbnails" | "tree") => setView(view)}
+          permalink={manifestPermalink?.location}
+          saveAsChoice={saveAsChoice}
+          setSaveAsChoice={setSaveAsChoice}
         />
       </ShellToolbar>
     </>

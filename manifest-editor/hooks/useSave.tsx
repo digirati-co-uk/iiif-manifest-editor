@@ -52,3 +52,34 @@ export const usePermalink = async (manifest: any) => {
 
   return responseData;
 };
+
+// AS ABOVE HOOKING UP TO THE PREVIEW URL TEMPORARILY UNTIL WE GET PERMALINK IN PLACE TO ALLOW REACT DEVELOPMENT !
+// THIS WILL NOT BE PERMALINK FOR NOW AND WILL HAVE AN EXPIRY
+export const useUpdatePermalink = async (
+  updateUrl: string | undefined,
+  manifest: any
+) => {
+  console.log(updateUrl)
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(manifest)
+  };
+  let responseData = {};
+  if (updateUrl) {
+    await fetch(updateUrl, requestOptions)
+      .then(response => {
+        return response.json().catch(err => {
+          console.error(`'${err}' happened!`);
+          return {};
+        });
+      })
+      .then(data => {
+        responseData = { ...data };
+      });
+  }
+
+  return responseData;
+};

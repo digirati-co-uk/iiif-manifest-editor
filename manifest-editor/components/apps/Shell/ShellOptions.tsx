@@ -29,12 +29,18 @@ export const ShellOptions: React.FC<{
   setView: (view: "thumbnails" | "tree") => void;
   savePermalink: () => void;
   previouslySaved: boolean;
+  permalink: string | undefined;
+  saveAsChoice: number;
+  setSaveAsChoice: (number: number) => void;
 }> = ({
   changeManifest,
   saveManifest,
   setView,
   savePermalink,
-  previouslySaved
+  previouslySaved,
+  permalink,
+  saveAsChoice,
+  setSaveAsChoice
 }) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
@@ -65,6 +71,9 @@ export const ShellOptions: React.FC<{
           close={() => setSaveModalVisible(false)}
           savePermalink={savePermalink}
           previouslySaved={previouslySaved}
+          permalink={permalink}
+          saveAsChoice={saveAsChoice}
+          setSaveAsChoice={setSaveAsChoice}
         />
       ) : (
         <></>
