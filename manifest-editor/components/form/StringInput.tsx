@@ -1,10 +1,9 @@
-import { InputLabel, Input } from "./Input";
+import { Input } from "./Input";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
 import { useEffect, useState } from "react";
-import { CalltoButton, Button } from "../atoms/Button";
-import { AddIcon } from "../icons/AddIcon";
+import { CalltoButton } from "../atoms/Button";
 import { FlexContainer } from "../layout/FlexContainer";
 
 export const StringInput: React.FC<{
