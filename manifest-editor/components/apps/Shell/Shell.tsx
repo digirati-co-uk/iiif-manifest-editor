@@ -29,9 +29,8 @@ export const Shell: React.FC<{
     Persistance | undefined
   >({});
   // Permalink
-  const [manifestPermalink, setManifestPermalink] = useState<
-    Persistance | undefined
-  >();
+  const [manifestPermalink, setManifestPermalink] =
+    useState<Persistance | undefined>();
   // This is an index of the list of choices,
   // 0 is replace, 1 is create new - default is to create new
   const [saveAsChoice, setSaveAsChoice] = useState(1);
@@ -91,7 +90,9 @@ export const Shell: React.FC<{
   }, []);
 
   useEffect(() => {
-    changeSampleManifest(manifestPermalink?.location || "");
+    if (manifestPermalink && manifestPermalink.location) {
+      changeSampleManifest(manifestPermalink.location);
+    }
   }, [manifestPermalink]);
 
   const saveManifest = async () => {
