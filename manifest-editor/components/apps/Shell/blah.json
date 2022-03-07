@@ -1,0 +1,283 @@
+{
+  "id": "https://iiif.wellcomecollection.org/presentation/b28799495",
+  "type": "Manifest",
+  "annotations": [],
+  "behavior": ["paged"],
+  "homepage": [],
+  "items": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0001.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0002.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0003.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0004.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0005.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0006.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0007.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0008.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0009.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0010.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0011.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0012.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0013.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0014.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0015.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0016.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0017.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0018.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0019.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0020.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0021.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0022.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0023.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0024.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0025.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0026.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0027.jp2",
+      "type": "Canvas"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/canvases/b28799495_0028.jp2",
+      "type": "Canvas"
+    }
+  ],
+  "label": {
+    "en": ["[Report 1948] / Medical Officer of Health, Aldridge U.D.C."]
+  },
+  "logo": [],
+  "metadata": [
+    {
+      "label": { "en": ["Publication/creation"] },
+      "value": { "none": ["1948."] }
+    },
+    {
+      "label": { "en": ["Contributors"] },
+      "value": { "none": ["Aldridge (England). Urban District Council."] }
+    },
+    {
+      "label": { "en": ["Type/technique"] },
+      "value": { "en": ["Electronic books", "Annual reports", "MOH reports"] }
+    },
+    {
+      "label": { "en": ["Subjects"] },
+      "value": {
+        "en": [
+          "Disease Outbreaks",
+          "Public Health",
+          "Sanitation",
+          "Water Supply",
+          "Aldridge (England)"
+        ]
+      }
+    },
+    {
+      "label": { "en": ["Attribution and usage"] },
+      "value": {
+        "en": [
+          "Wellcome Collection",
+          "<span>You have permission to make copies of this work under a <a target=\"_top\" href=\"http://creativecommons.org/licenses/by/4.0/\">Creative Commons, Attribution license</a>.<br/><br/>This licence permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. See the <a target=\"_top\" href=\"http://creativecommons.org/licenses/by/4.0/legalcode\">Legal Code</a> for further information.<br/><br/>Image source should be attributed as specified in the full catalogue record. If no source is given the image should be attributed to Wellcome Collection.</span>"
+        ]
+      }
+    }
+  ],
+  "motivation": null,
+  "navDate": null,
+  "provider": [{ "id": "https://wellcomecollection.org", "type": "Agent" }],
+  "partOf": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/genres/Annual_reports",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/genres/Electronic_books",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/genres/MOH_reports",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/axc28uv8",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/pxxu6hsg",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/p2mzt7rw",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/tva37rme",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/xaqnqsbj",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/contributors/Aldridge_(England)._Urban_District_Council.",
+      "type": "ContentResource"
+    }
+  ],
+  "posterCanvas": null,
+  "accompanyingCanvas": null,
+  "placeholderCanvas": null,
+  "rendering": [
+    {
+      "id": "https://iiif.wellcomecollection.org/pdf/b28799495",
+      "type": "ContentResource"
+    },
+    {
+      "id": "https://api.wellcomecollection.org/text/v1/b28799495",
+      "type": "ContentResource"
+    }
+  ],
+  "requiredStatement": null,
+  "rights": "http://creativecommons.org/licenses/by/4.0/",
+  "seeAlso": [
+    {
+      "id": "https://api.wellcomecollection.org/catalogue/v2/works/nqn33jv8",
+      "type": "ContentResource"
+    }
+  ],
+  "service": [
+    {
+      "@id": "https://iiif.wellcomecollection.org/search/v1/b28799495",
+      "@type": "SearchService1",
+      "profile": "http://iiif.io/api/search/1/search",
+      "label": "Search within this manifest",
+      "service": {
+        "@id": "https://iiif.wellcomecollection.org/search/autocomplete/v1/b28799495",
+        "@type": "AutoCompleteService1",
+        "profile": "http://iiif.io/api/search/1/autocomplete",
+        "label": "Autocomplete words in this manifest"
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495#tracking",
+      "type": "Text",
+      "profile": "http://universalviewer.io/tracking-extensions-profile",
+      "label": {
+        "en": [
+          "Format: Monograph, Institution: n/a, Identifier: b28799495, Digicode: digmoh, Collection code: n/a"
+        ]
+      }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495#timestamp",
+      "type": "Text",
+      "profile": "https://github.com/wellcomecollection/iiif-builder/build-timestamp",
+      "label": { "none": ["2021-04-28T16:42:03.9115651Z"] }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495#accesscontrolhints",
+      "type": "Text",
+      "profile": "http://wellcomelibrary.org/ld/iiif-ext/access-control-hints",
+      "label": { "en": ["open"] }
+    }
+  ],
+  "start": null,
+  "structures": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/ranges/LOG_0001",
+      "type": "Range"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/ranges/LOG_0002",
+      "type": "Range"
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b28799495/ranges/LOG_0003",
+      "type": "Range"
+    }
+  ],
+  "summary": null,
+  "thumbnail": [
+    {
+      "id": "https://iiif.wellcomecollection.org/thumbs/b28799495_0003.jp2/full/63,100/0/default.jpg",
+      "type": "ContentResource"
+    }
+  ],
+  "viewingDirection": "left-to-right"
+}
