@@ -89,8 +89,8 @@ export const ExportModal: React.FC<{
           <SecondaryButton onClick={() => close()}>CANCEL</SecondaryButton>
           <CalltoButton
             onClick={() => {
-              savePermalink();
-              setSaveClicked(true);
+              // savePermalink();
+              // setSaveClicked(true);
             }}
           >
             SAVE
