@@ -1,13 +1,19 @@
+import { useContext, useState } from "react";
+
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { Placeholder } from "../../atoms/Placeholder";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
-import { getValue } from "@iiif/vault-helpers";
-
 import { useManifest } from "../../../hooks/useManifest";
 import { PersistenceModal } from "../../modals/PersistenceModal";
 import { Persistance } from "./Shell";
+import { Button } from "../../atoms/Button";
+import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
+import { DownIcon } from "../../icons/DownIcon";
+
+import { getValue } from "@iiif/vault-helpers";
+import ShellContext from "./ShellContext";
 
 export const ShellHeader: React.FC<{
   saveManifest: () => Promise<void>;
@@ -28,9 +34,11 @@ export const ShellHeader: React.FC<{
   showPreviewModal,
   setShowAgain,
   showAgain,
-  setShowPreviewModal
+  setShowPreviewModal,
 }) => {
   const manifest = useManifest();
+  const [appMenuOpen, setAppMenuOpen] = useState(false);
+  const shellContext = useContext(ShellContext);
 
   const getTitle = () => {
     if (manifest) {
@@ -64,6 +72,33 @@ export const ShellHeader: React.FC<{
       <ShellHeaderStrip>
         <FlexContainer>
           <ManifestEditorIcon />
+          <Dropdown>
+            <Button onClick={() => setAppMenuOpen(!appMenuOpen)}>
+              <DownIcon />
+            </Button>
+            {appMenuOpen && (
+              <DropdownContent onMouseLeave={() => setAppMenuOpen(false)}>
+                <Button
+                  onClick={() => {
+                    setAppMenuOpen(!appMenuOpen);
+                    shellContext?.changeSelectedApplication("ManifestEditor");
+                  }}
+                  title="Open the Manifest Editor"
+                >
+                  Manifest Editor
+                </Button>
+                <Button
+                  onClick={() => {
+                    setAppMenuOpen(!appMenuOpen);
+                    shellContext?.changeSelectedApplication("Browser");
+                  }}
+                  title="Open the IIIF Browser"
+                >
+                  IIIF Browser
+                </Button>
+              </DropdownContent>
+            )}
+          </Dropdown>
           <Placeholder>{getTitle()}</Placeholder>
         </FlexContainer>
         {persistedManifest && (

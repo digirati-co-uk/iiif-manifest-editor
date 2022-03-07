@@ -47,7 +47,6 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
         <ErrorBoundary>
           {open ? (
             array.map((val: any) => {
-              console.log(val);
               if (val && val.type === "ContentResource") {
                 return (
                   <ContentResources
