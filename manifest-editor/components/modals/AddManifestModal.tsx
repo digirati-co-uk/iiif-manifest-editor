@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { Input, InputLabel } from "../form/Input";
 import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
@@ -9,13 +9,13 @@ import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { ModalHeader } from "../atoms/ModalHeader";
 import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
+import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
 
 export const AddManifestModal: React.FC<{
   manifest: string;
-  onChange: any;
   close: any;
-}> = ({ manifest, onChange, close }) => {
+}> = ({ manifest, close }) => {
   const [inputValue, setInputValue] = useState(manifest);
   const [inputType, setInputType] = useState<string | undefined>();
   const [label, setLabel] = useState<string | undefined>();
@@ -23,6 +23,7 @@ export const AddManifestModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
 
+  const shellContext = useContext(ShellContext);
 
   useEffect(() => {
     // Clear the populated value if we use a new url
@@ -39,18 +40,22 @@ export const AddManifestModal: React.FC<{
     setLabel(inputed?.label);
     setHeight(inputed?.height);
     setWidth(inputed?.width);
-    if (inputed &&
-      !(inputed.type === "Manifest" ||
-      inputed.type === "Image" ||
-      inputed.type === "Collection")
+    if (
+      inputed &&
+      !(
+        inputed.type === "Manifest" ||
+        inputed.type === "Image" ||
+        inputed.type === "Collection"
+      )
     ) {
       setImageServiceJSON(inputed);
     }
 
     // Only handling manifest for now.
-    if (inputed && inputed.type === "Manifest") onChange(inputValue);
+    if (inputed && inputed.type === "Manifest" || inputType === "Collection") {
+      shellContext?.changeResourceID(inputValue);
+    }
   };
-
 
   return (
     <>
@@ -78,22 +83,67 @@ export const AddManifestModal: React.FC<{
           <CalltoButton onClick={() => handleChange()}>ADD</CalltoButton>
         </FlexContainer>
         <br />
-        {(inputType !== "Manifest" && inputType) && (
-          <FlexContainerColumn justify={"flex-start"}>
-            <p>This resource is not a manifest.</p>
-            <small>{inputType}</small>
-            <small>{label}</small>
-            <small>{width && `Image width: ${width}`}</small>
-            <small>{height && `Image height: ${height}`}</small>
-            {imageServiceJSON && (
-              <small
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify(imageServiceJSON)
-                }}
-              />
-            )}
-          </FlexContainerColumn>
-        )}
+        {inputType !== "Manifest" &&
+          inputType &&
+          shellContext?.selectedApplication === "ManifestEditor" && (
+            <FlexContainerColumn justify={"flex-start"}>
+              <p>This resource is not a manifest.</p>
+              <small>{inputType}</small>
+              <small>{label}</small>
+              <small>{width && `Image width: ${width}`}</small>
+              <small>{height && `Image height: ${height}`}</small>
+              {imageServiceJSON && (
+                <small
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(imageServiceJSON),
+                  }}
+                />
+              )}
+            </FlexContainerColumn>
+          )}
+        {inputType === "Collection" &&
+          inputType &&
+          shellContext?.selectedApplication === "ManifestEditor" && (
+            <>
+              <HorizontalDivider />
+              <FlexContainer style={{ justifyContent: "space-between" }}>
+                <small>
+                  {/* This UI will change again */}
+                  This resource is a collection, do you want to launch the IIIF
+                  Browser App?
+                </small>
+                <Button
+                  onClick={() => {
+                    shellContext?.changeSelectedApplication("Browser");
+                    close();
+                  }}
+                >
+                  Launch Application
+                </Button>
+              </FlexContainer>
+            </>
+          )}
+        {inputType === "Manifest" &&
+          inputType &&
+          shellContext?.selectedApplication === "Browser" && (
+            <>
+              <HorizontalDivider />
+              <FlexContainer style={{ justifyContent: "space-between" }}>
+                <small>
+                  {/* This UI will change again */}
+                  This resource is a manifest, do you want to launch the Manifest Editor App?
+                </small>
+                <Button
+                  onClick={() => {
+                    shellContext?.changeSelectedApplication("ManifestEditor");
+                    close();
+                  }}
+                >
+                  Launch Application
+                </Button>
+              </FlexContainer>
+            </>
+          )}
       </ModalContainer>
     </>
   );

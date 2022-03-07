@@ -3,7 +3,6 @@ import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 
-
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
 // the <App /> will initialize again and the state will be reset.
@@ -16,23 +15,12 @@ import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
-  // Switch for the vault here
-  const [manifest, setManifest] = useState(
-    //   // We will want to actually implement some options/templates etc
-    //   // but just implementing with some examples for development purposes.
-    "https://iiif.wellcomecollection.org/presentation/b28799495"
-  );
-
   return (
     <>
-      <VaultProvider>
-        <SimpleViewerProvider manifest={manifest}>
-          <Component
-            {...pageProps}
-            changeSampleManifest={(url: string) => setManifest(url)}
-          />
-        </SimpleViewerProvider>
-      </VaultProvider>
+      <Component
+        {...pageProps}
+        // changeSampleManifest={(url: string) => setManifest(url)}
+      />
     </>
   );
 };

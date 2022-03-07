@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
+import ShellContext from "../Shell/ShellContext";
 
 export const IIIFBrowser: React.FC = () => {
   const vault = useVault();
-  const [IIIFuni, setIIIFuni] = useState<any>({});
+  const [collection, setCollection] = useState<any>({});
+  const shellContext = useContext(ShellContext);
 
   useEffect(() => {
     // ASYNC FUNCTION
     const waitData = async () => {
-      const IIIFUniverse = await vault.load(
-        "https://ryanfb.github.io/iiif-universe/iiif-universe.json"
-      );
-      setIIIFuni(IIIFUniverse);
+      const data = await vault.load(shellContext?.resourceID || "");
+      console.log(shellContext);
+      console.log(data);
+      setCollection(data);
     };
     waitData();
   });
 
+  // https://ryanfb.github.io/iiif-universe/iiif-universe.json
+
   return (
     <ul>
       <h4>
-        Check out these IIIF Resources from{" "}
-        <a href="https://ryanfb.github.io/iiif-universe/iiif-universe.json">
-          https://ryanfb.github.io/iiif-universe/iiif-universe.json
-        </a>
+        You are browsing:
+        <a href={shellContext?.resourceID || ""}>{shellContext?.resourceID} </a>
       </h4>
-      {IIIFuni &&
-        IIIFuni.items &&
-        IIIFuni.items.map((item: any) => {
+      {collection &&
+        collection.items &&
+        collection.items.map((item: any) => {
           return (
             <li>
               <a href={item.id} rel="noreffer" target="_blank">
-                {getValue(item.label) }
+                {getValue(item.label)}
               </a>
             </li>
           );

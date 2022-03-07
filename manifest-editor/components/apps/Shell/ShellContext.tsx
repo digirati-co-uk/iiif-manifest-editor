@@ -5,6 +5,8 @@ interface ShellContextInterface {
   changeSelectedApplication: (
     application: "ManifestEditor" | "Browser"
   ) => void;
+  resourceID: string | null;
+  changeResourceID: (id: string | null) => void;
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);

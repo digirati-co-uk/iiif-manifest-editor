@@ -7,7 +7,6 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../modals/ExportModal";
 
 export const ShellOptions: React.FC<{
-  changeManifest: (url: string) => void;
   saveManifest: () => void;
   setView: (view: "thumbnails" | "tree") => void;
   savePermalink: () => void;
@@ -16,7 +15,6 @@ export const ShellOptions: React.FC<{
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
 }> = ({
-  changeManifest,
   saveManifest,
   setView,
   savePermalink,
@@ -45,7 +43,6 @@ export const ShellOptions: React.FC<{
       {addModalVisible && (
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
-          onChange={(url: string) => changeManifest(url)}
           close={() => setaddModalVisible(false)}
         />
       )}

@@ -34,40 +34,40 @@ export default {
 
 const Template = (props: any) => <WarningMessage {...props} />;
 
-export const DefaultWarningMessage = Template.bind({});
-DefaultWarningMessage.args = {
-  $small: false,
-};
+// export const DefaultWarningMessage = Template.bind({});
+// DefaultWarningMessage.args = {
+//   $small: false,
+// };
 
-export const SmallWarningMessage = Template.bind({});
-SmallWarningMessage.args = {
-  $small: true,
-};
+// export const SmallWarningMessage = Template.bind({});
+// SmallWarningMessage.args = {
+//   $small: true,
+// };
 
-export const WarningWithIcon = Template.bind({});
-WarningWithIcon.args = {
-  children: [<WhiteTickIcon key={0} />, "This is with an icon."],
-};
+// export const WarningWithIcon = Template.bind({});
+// WarningWithIcon.args = {
+//   children: [<WhiteTickIcon key={0} />, "This is with an icon."],
+// };
 
-export const SmallWarningWithIcon = Template.bind({});
-SmallWarningWithIcon.args = {
-  $small: true,
-  children: [<WhiteTickIcon key={0} />, "This is with an icon."],
-};
+// export const SmallWarningWithIcon = Template.bind({});
+// SmallWarningWithIcon.args = {
+//   $small: true,
+//   children: [<WhiteTickIcon key={0} />, "This is with an icon."],
+// };
 
-export const WarningWithLink = Template.bind({});
-WarningWithLink.args = {
-  children: [
-    "A warning message with ",
-    <a key={0} href="#">
-      a link
-    </a>,
-    " included.",
-  ],
-};
+// export const WarningWithLink = Template.bind({});
+// WarningWithLink.args = {
+//   children: [
+//     "A warning message with ",
+//     <a key={0} href="#">
+//       a link
+//     </a>,
+//     " included.",
+//   ],
+// };
 
-export const WarningAsBanner = Template.bind({});
-WarningAsBanner.args = {
-  $banner: true,
-  children: "A warning message as a banner",
-};
+// export const WarningAsBanner = Template.bind({});
+// WarningAsBanner.args = {
+//   $banner: true,
+//   children: "A warning message as a banner",
+// };
