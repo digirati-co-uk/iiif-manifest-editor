@@ -4,6 +4,7 @@ import { Button } from "../../atoms/Button";
 import { useManifest } from "../../../hooks/useManifest";
 import { SaveModal } from "../../modals/SaveModal";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
+import { ExportModal } from "../../modals/ExportModal";
 
 export const ShellOptions: React.FC<{
   changeManifest: (url: string) => void;
@@ -26,6 +27,8 @@ export const ShellOptions: React.FC<{
 }) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+
 
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -39,16 +42,14 @@ export const ShellOptions: React.FC<{
 
   return (
     <>
-      {addModalVisible ? (
+      {addModalVisible && (
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
           onChange={(url: string) => changeManifest(url)}
           close={() => setaddModalVisible(false)}
         />
-      ) : (
-        <></>
       )}
-      {saveModalVisible ? (
+      {saveModalVisible && (
         <SaveModal
           close={() => setSaveModalVisible(false)}
           savePermalink={savePermalink}
@@ -57,8 +58,9 @@ export const ShellOptions: React.FC<{
           saveAsChoice={saveAsChoice}
           setSaveAsChoice={setSaveAsChoice}
         />
-      ) : (
-        <></>
+      )}
+      {exportModalVisible && (
+        <ExportModal close={() => setExportModalVisible(false)}/>
       )}
       <Dropdown>
         <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
@@ -90,7 +92,7 @@ export const ShellOptions: React.FC<{
             <Button
               onClick={() => {
                 setFileOpen(!fileOpen);
-                alert("Export clicked");
+                setExportModalVisible(!exportModalVisible);
               }}
             >
               Export
