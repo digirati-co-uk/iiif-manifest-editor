@@ -61,9 +61,10 @@ export const useUpdatePermalink = async (
 ) => {
   console.log(updateUrl)
   const requestOptions = {
-    method: "POST",
+    method: "PUT",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Origin": "*"
     },
     body: JSON.stringify(manifest)
   };
@@ -80,6 +81,5 @@ export const useUpdatePermalink = async (
         responseData = { ...data };
       });
   }
-
   return responseData;
 };
