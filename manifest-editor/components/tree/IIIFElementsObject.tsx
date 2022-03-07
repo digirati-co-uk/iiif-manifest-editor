@@ -31,7 +31,7 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
     );
 
   return (
-    <ContainerColumn>
+    <ContainerColumn onClick={() => onClick()}>
       {Object.keys(object).length > 0 ? (
         <>
           <Container>
