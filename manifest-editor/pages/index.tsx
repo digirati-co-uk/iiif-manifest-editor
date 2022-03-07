@@ -27,7 +27,7 @@ export const getStaticProps = async () => {
 const Home: NextPage = (props: any) => {
   const [selectedProperty, setSelectedProperty] = useState("id");
   const [selectedApplication, setSelectedApplication] =
-    useState<"ManifestEditor" | "Browser">("Browser");
+    useState<"ManifestEditor" | "Browser">("ManifestEditor");
 
   const changeSelectedProperty = (property: string) => {
     setSelectedProperty(property);
