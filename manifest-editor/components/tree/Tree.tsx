@@ -1,13 +1,16 @@
 import { useContext, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
 import { getValue } from "@iiif/vault-helpers";
+
 import { KeyValuePairString, KeyManifest } from "./IIIFElementsShared";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { Annotations } from "./IIIFAnnotationPages";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { DownIcon } from "../icons/DownIcon";
 import { Button } from "../atoms/Button";
+
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+
 
 import styled from "styled-components";
 
@@ -32,7 +35,6 @@ const IIIFTitle = styled.div`
   padding: 1rem 0.75rem;
   font-size: 0.875rem;
   font-weight: bold;
-  white-space: nowrap;
   display: inline;
 `;
 
