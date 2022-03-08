@@ -4,13 +4,12 @@ import { ShellToolbar } from "./ShellToolbar";
 
 // Temporary code until big fixed on react-iiif-vault
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 
 import { useVault } from "react-iiif-vault";
 import { useSave, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
-import ShellContext from "./ShellContext";
 
 export type Persistance = {
   deleteLocation?: string;
@@ -21,8 +20,7 @@ export type Persistance = {
 
 export const Shell: React.FC<{
   previewConfig: any;
-  setView: (view: "thumbnails" | "tree") => void;
-}> = ({ previewConfig, setView }) => {
+}> = ({ previewConfig }) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   // 48 hours link
   const [persistedManifest, setpersistedManifest] = useState<
@@ -38,11 +36,10 @@ export const Shell: React.FC<{
   const [showAgain, setShowAgain] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
-  const [useSavedChanges, setUnsavedChanges] = useState(false);
+  const [unSavedChanges, setUnsavedChanges] = useState(false);
 
   const manifest = useManifest();
   const vault = useVault();
-  const shellContext = useContext(ShellContext);
 
   useEffect(() => {
     // We want to hold on to the persisted value in localStorage
@@ -160,7 +157,6 @@ export const Shell: React.FC<{
           // This is the permalink
           savePermalink={savePermalink}
           previouslySaved={previouslySaved}
-          setView={(view: "thumbnails" | "tree") => setView(view)}
           permalink={manifestPermalink?.location}
           saveAsChoice={saveAsChoice}
           setSaveAsChoice={setSaveAsChoice}

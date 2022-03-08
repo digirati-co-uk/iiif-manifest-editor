@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
+import ShellContext from "../components/apps/Shell/ShellContext";
+
 import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 
 // Next.js <App /> component will keep state alive during client side transitions.
@@ -15,12 +17,42 @@ import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
+  const [resourceID, setResouceID] = useState(
+    //   // We will want to actually implement some options/templates etc
+    //   // but just implementing with some examples for development purposes.
+    "https://iiif.wellcomecollection.org/presentation/b28799495"
+  );
+
+  const [selectedApplication, setSelectedApplication] =
+    useState<"ManifestEditor" | "Browser">("ManifestEditor");
+
+  const changeSelectedApplication = (app: "ManifestEditor" | "Browser") => {
+    setSelectedApplication(app);
+  };
+
+  const changeResourceID = (id: string | null) => {
+    if (id) setResouceID(id);
+  };
+
+  const shellSettings = {
+    selectedApplication,
+    changeSelectedApplication,
+    changeResourceID,
+    resourceID,
+  };
+
   return (
     <>
-      <Component
-        {...pageProps}
-        // changeSampleManifest={(url: string) => setManifest(url)}
-      />
+      <ShellContext.Provider value={shellSettings}>
+        <VaultProvider>
+          <SimpleViewerProvider manifest={resourceID}>
+            <Component
+              {...pageProps}
+              selectedApplication={selectedApplication}
+            />
+          </SimpleViewerProvider>
+        </VaultProvider>
+      </ShellContext.Provider>
     </>
   );
 };
