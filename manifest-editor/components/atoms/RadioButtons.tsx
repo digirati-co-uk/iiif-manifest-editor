@@ -1,11 +1,11 @@
 import styled from "styled-components";
+import { Input } from "./Input";
 
 export const RadioLabel = styled.label`
   display: block;
-  color: #000;
+  color: ${(props: any) => props.theme.color.black || "black"};
   text-decoration: none;
-  padding: 0.4em 0.75em;
-  white-space: nowrap;
+  padding: ${(props: any) => props.theme.padding.small || "none"};
   &:hover,
   &:focus {
     outline: none;
@@ -24,7 +24,7 @@ export const RadioButtons: React.FC<{
       {options.map((item: LabelValue, index: number) => {
         return (
           <RadioLabel key={item.label}>
-            <input
+            <Input
               type="radio"
               checked={selectedIndex === index}
               onChange={() => {

@@ -6,7 +6,6 @@ export const ShellHeaderStrip = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${(props: any) => props.color || "black"};
-    margin: 0.375rem 0;
-    padding: 0.25rem 0;
+    padding: ${(props: any) => props.theme.padding.medium || "1rem"} 0 0 0;
   }
 `;

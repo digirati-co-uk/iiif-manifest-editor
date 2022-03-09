@@ -12,14 +12,14 @@ import { StringInput } from "../form/StringInput";
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
 }>`
+  padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   position: absolute;
   right: 0;
   height: 80vh;
   z-index: 12;
-  background: white;
-  overflow-y: scroll;
+  background: ${(props: any) => props.theme.color.white || "white"};
+  overflow-y: auto;
   border-left: 1px solid rgba(5, 42, 68, 0.2);
-  padding: 0.7em 0.9em;
   font-size: 0.85em;
   line-height: 1.3em;
   border-radius: 0;

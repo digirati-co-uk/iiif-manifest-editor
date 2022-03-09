@@ -3,17 +3,18 @@ import { useState } from "react";
 
 import {
   Container,
-  Expandable,
   ContainerColumn,
   KeyValuePairString,
   Expanded,
-  KeyService
+  KeyService,
+  Indentation,
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
+import { FlexContainer } from "../layout/FlexContainer";
 
 const Service: React.FC<KeyObjectPairing> = ({ object }) => {
   const label = getValue(object?.label);
@@ -21,12 +22,12 @@ const Service: React.FC<KeyObjectPairing> = ({ object }) => {
 
   return (
     <>
-      <Container>
-        <KeyService>{object["@type"]}</KeyService>
-        {label}
-        <Expandable onClick={() => setOpen(!open)}>
-          <DownIcon rotate={open ? 180 : 0} />
-        </Expandable>
+      <Container onClick={() => setOpen(!open)}>
+        <FlexContainer>
+          <KeyService>{object["@type"]}</KeyService>
+          {label}
+        </FlexContainer>
+        <DownIcon rotate={open ? 180 : 0} />
       </Container>
       {open && (
         <ContainerColumn>
@@ -69,12 +70,13 @@ const Service: React.FC<KeyObjectPairing> = ({ object }) => {
 
 export const IIIFService: React.FC<KeyObjectPairing> = ({ object }) => {
   return (
-    <>
+    <FlexContainer>
+      <Indentation />
       <Expanded>
         <ErrorBoundary>
           <Service propertyName={""} object={object} onClick={() => {}} />
         </ErrorBoundary>
       </Expanded>
-    </>
+    </FlexContainer>
   );
 };

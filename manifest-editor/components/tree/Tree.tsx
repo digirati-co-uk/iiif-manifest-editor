@@ -11,29 +11,30 @@ import { Button } from "../atoms/Button";
 
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
-
 import styled from "styled-components";
+import { FlexContainer } from "../layout/FlexContainer";
 
 const TreeContainer = styled.div`
   z-index: 12;
-  font-size: 0.85em;
-  line-height: 1.3em;
+  font-size: 0.75rem;
 `;
 
 const HeaderPanel = styled.div`
-  background-color: #f6f6f6;
-  border-top: 1px solid #dddddd;
-  border-bottom: 1px solid #dddddd;
-  height: 51px;
+  background-color: ${(props: any) =>
+    props.theme.color.lightgrey || "lightgrey"};
+  border-top: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
+  border-bottom: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
+  height: 4rem;
   display: flex;
   align-items: center;
-  padding: 1rem 0.75rem;
+  padding: ${(props: any) => props.theme.padding.medium || "1rem"}
+    ${(props: any) => props.theme.padding.small || "0.5rem"};
   justify-content: space-between;
 `;
 
 const IIIFTitle = styled.div`
-  padding: 1rem 0.75rem;
-  font-size: 0.875rem;
+  padding: ${(props: any) => props.theme.padding.medium || "1rem"}
+    ${(props: any) => props.theme.padding.small || "0.5rem"};
   font-weight: bold;
   display: inline;
 `;
@@ -42,18 +43,15 @@ export const Tree: React.FC = () => {
   const manifest = useManifest();
   const editorContext = useContext(ManifestEditorContext);
   const [open, setOpen] = useState(true);
-  // useEffect(() => {
-  //   console.log(manifest);
-  // }, [manifest]);
 
   return (
     <TreeContainer>
-      <HeaderPanel>
-        <KeyManifest>{manifest?.type}</KeyManifest>
-        <IIIFTitle>{getValue(manifest?.label)}</IIIFTitle>
-        <Button onClick={() => setOpen(!open)}>
-          <DownIcon rotate={open ? 180 : 0} />
-        </Button>
+      <HeaderPanel onClick={() => setOpen(!open)}>
+        <FlexContainer>
+          <KeyManifest>{manifest?.type}</KeyManifest>
+          <IIIFTitle>{getValue(manifest?.label)}</IIIFTitle>
+        </FlexContainer>
+        <DownIcon rotate={open ? 180 : 0} />
       </HeaderPanel>
       {open && (
         <>

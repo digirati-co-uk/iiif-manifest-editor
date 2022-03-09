@@ -10,9 +10,9 @@ const ContentSelectorContainer = styled.div`
     border-right: 0.016rem solid #dddddd;
     justify-content: flex-start;
     margin: 0.375rem 0;
-    padding: 0.25rem 0;
+    padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
     height: 80vh;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 `;
 

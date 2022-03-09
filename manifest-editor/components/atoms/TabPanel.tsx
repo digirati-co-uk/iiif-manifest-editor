@@ -5,26 +5,26 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
   max-width: 200px;
   overflow: hidden;
   font-size: 14px;
-  padding: 1rem;
-  color: #000000;
+  padding: ${(props: any) => props.theme.padding.medium || "1rem"};
+  color: ${(props: any) => props.theme.color.black || "black"};
   ${(props) =>
     props.$active &&
     css`
-      color: #6200ee;
-      border-bottom: 2px solid #6200ee;
+      color: ${props.theme.color.black || "black"};
+      border-bottom: 2px solid ${props.theme.color.main || "blue"};
     `};
 `;
 
 const TabPanelOptions = styled.div`
   display: flex;
-  background-color: #fff;
-  border: 0.05px solid #f8f9fa;
+  background-color: ${(props: any) => props.theme.color.white || "white"};
+  border: 0.05px solid ${(props: any) => props.theme.color.lightgrey || "lightgrey"};
 `;
 
 const TabPanelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: ${(props: any) => props.theme.color.lightgrey || "lightgrey"};
 `;
 
 export const TabPanel: React.FC<{

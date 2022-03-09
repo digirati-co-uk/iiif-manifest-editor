@@ -2,8 +2,7 @@ import styled from "styled-components";
 
 export const VerticalDivider = styled.div`
    {
-    width: 0.0375rem;
-    border: 0.0375rem solid grey;
+    border-right: 0.031rem solid ${(props: any) => props.theme.color.grey || "grey"};
     height: 100%;
   }
 `;

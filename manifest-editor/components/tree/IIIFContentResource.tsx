@@ -5,10 +5,10 @@ import { useState } from "react";
 import {
   Container,
   KeyContentResource,
-  Expandable,
   ContainerColumn,
   KeyValuePairString,
-  Expanded
+  Expanded,
+  Indentation,
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
@@ -16,10 +16,11 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { Subdirectory } from "../icons/Subdirectory";
+import { FlexContainer } from "../layout/FlexContainer";
 
 const ContentResource: React.FC<{ type: string; id: string }> = ({
   type,
-  id
+  id,
 }) => {
   const content = useContentResource({ id: id });
   // @ts-ignore
@@ -28,48 +29,51 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
 
   return (
     <>
-      <Container>
-        <Subdirectory />
-        <KeyContentResource>{type}</KeyContentResource>
-        {label}
-        <Expandable onClick={() => setOpen(!open)}>
-          <DownIcon rotate={open ? 180 : 0} />
-        </Expandable>
+      <Container onClick={() => setOpen(!open)}>
+        <FlexContainer>
+          <Subdirectory />
+          <KeyContentResource>{type}</KeyContentResource>
+          {label}
+        </FlexContainer>
+        <DownIcon rotate={open ? 180 : 0} />
       </Container>
       {open && (
-        <ContainerColumn>
-          {content &&
-            Object.entries(content).map(([key, value]) => {
-              if (typeof value === "string") {
-                return (
-                  <KeyValuePairString
-                    key={key}
-                    onClick={() => console.log("clicked", key)}
-                    propertyName={key}
-                    value={value}
-                  />
-                );
-              } else if (Array.isArray(value)) {
-                return (
-                  <KeyValuePairArray
-                    key={key}
-                    propertyName={key}
-                    array={value}
-                    onClick={() => {}}
-                  />
-                );
-              } else {
-                return (
-                  <KeyObjectPairing
-                    key={key}
-                    onClick={() => {}}
-                    propertyName={key}
-                    object={value}
-                  />
-                );
-              }
-            })}
-        </ContainerColumn>
+        <FlexContainer>
+          <Indentation/>
+          <ContainerColumn>
+            {content &&
+              Object.entries(content).map(([key, value]) => {
+                if (typeof value === "string") {
+                  return (
+                    <KeyValuePairString
+                      key={key}
+                      onClick={() => console.log("clicked", key)}
+                      propertyName={key}
+                      value={value}
+                    />
+                  );
+                } else if (Array.isArray(value)) {
+                  return (
+                    <KeyValuePairArray
+                      key={key}
+                      propertyName={key}
+                      array={value}
+                      onClick={() => {}}
+                    />
+                  );
+                } else {
+                  return (
+                    <KeyObjectPairing
+                      key={key}
+                      onClick={() => {}}
+                      propertyName={key}
+                      object={value}
+                    />
+                  );
+                }
+              })}
+          </ContainerColumn>
+        </FlexContainer>
       )}
     </>
   );
@@ -77,12 +81,13 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
 
 export const ContentResources: React.FC<KeyObjectPairing> = ({ object }) => {
   return (
-    <>
+    <FlexContainer>
+      <Indentation />
       <Expanded>
         <ErrorBoundary>
           <ContentResource id={object.id} type={object.type} />
         </ErrorBoundary>
       </Expanded>
-    </>
+    </FlexContainer>
   );
 };

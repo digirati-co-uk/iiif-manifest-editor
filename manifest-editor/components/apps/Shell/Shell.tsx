@@ -60,6 +60,8 @@ export const Shell: React.FC<{
     }
   }, [manifestPermalink]);
 
+  // Switch out the localstorage out to higher in the application as this is a UI component really
+
   useEffect(() => {
     // We want to hold on to the prefered viewer choice in localstorage
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
@@ -88,12 +90,12 @@ export const Shell: React.FC<{
   }, []);
 
   // Commented out as causing other issues
-  // useEffect(() => {
-  //   if (manifestPermalink && manifestPermalink.location) {
-  //     console.log('in here')
-  //     shellContext?.changeResourceID(manifestPermalink.location);
-  //   }
-  // }, [manifestPermalink]);
+  useEffect(() => {
+    if (manifestPermalink && manifestPermalink.location) {
+      console.log("in here")
+      // shellContext?.changeResourceID(manifestPermalink.location);
+    }
+  }, [manifestPermalink]);
 
   const saveManifest = async () => {
     if (manifest) {

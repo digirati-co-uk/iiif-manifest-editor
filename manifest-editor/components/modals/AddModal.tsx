@@ -14,7 +14,7 @@ export const AddModal: React.FC<{
 }> = ({ manifest, close }) => {
   const [inputValue, setInputValue] = useState(manifest);
 
-  const onChange = (inputValue: string) => {
+  const onChange = () => {
     analyse(inputValue);
   };
 
@@ -27,7 +27,7 @@ export const AddModal: React.FC<{
           placeholder={manifest}
           onChange={(e: any) => setInputValue(e.target.value)}
         />
-        <Button onClick={() => onChange(inputValue)}>Load Manifest</Button>
+        <Button onClick={() => onChange()}>Load Manifest</Button>
         <Button onClick={close}>
           <CloseIcon />
         </Button>

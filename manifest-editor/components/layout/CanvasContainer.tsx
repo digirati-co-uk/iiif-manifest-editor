@@ -4,5 +4,6 @@ export const CanvasContainer = styled.div`
    {
     height: 100%;
     width: 100%;
+    padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   }
 `;

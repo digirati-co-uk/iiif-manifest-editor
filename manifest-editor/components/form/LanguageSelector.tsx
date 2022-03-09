@@ -2,11 +2,11 @@ import styled from "styled-components";
 
 export const DropdownItem = styled.option`
    {
-    padding: 0.12em;
+    padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
     border: none;
     cursor: pointer;
     &:hover {
-      background-color: lightgrey;
+      background-color: ${(props: any) => props.theme.color.grey || "grey"};
     }
   }
 `;
@@ -15,7 +15,7 @@ export const DropdownItem = styled.option`
 export const StyledSelect = styled.select`
   display: flex;
   align-items: center;
-  border: 0.0375rem solid grey;
+  border: 0.0375rem solid ${(props: any) => props.theme.color.grey || "grey"};
   border-radius: 0.0375rem;
   height: 100%;
   text-align: right;

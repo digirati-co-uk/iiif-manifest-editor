@@ -1,16 +1,18 @@
 import styled, { css } from "styled-components";
 
 export const ErrorMessage = styled.div<{ $small?: boolean }>`
-  background: #a90e21;
-  color: #fff;
+  background: ${(props: any) => props.theme.color.danger || "red"};
+  color: ${(props: any) => props.theme.color.white || "white"};
   width: 100%;
-  padding: 0.5em 1em;
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
+    ${(props: any) => props.theme.padding.medium || "1rem"};
   line-height: 1.9em;
   ${(props) =>
     props.$small &&
     css`
       font-size: 0.75em;
-      padding: 0.25em 0.5em;
+      padding: ${props.theme.padding.xs || "0.25rem"}
+        ${props.theme.padding.small || "0.5rem"};
       line-height: 1.6em;
     `}
 `;
