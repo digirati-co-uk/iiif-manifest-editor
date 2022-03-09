@@ -3,7 +3,6 @@ import { useContext, useState } from "react";
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
-import { Placeholder } from "../../atoms/Placeholder";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
 import { useManifest } from "../../../hooks/useManifest";
 import { PersistenceModal } from "../../modals/PersistenceModal";
@@ -99,7 +98,7 @@ export const ShellHeader: React.FC<{
               </DropdownContent>
             )}
           </Dropdown>
-          <Placeholder>{getTitle()}</Placeholder>
+          {getTitle()}
         </FlexContainer>
         {persistedManifest && (
           <DropdownPreviewMenu

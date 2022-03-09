@@ -8,15 +8,15 @@ import { VerticalDivider } from "./VerticalDivider";
 
 export const DropdownItem = styled.div`
    {
-    padding: 0.12em;
-    margin: 0.12em;
-    color: ${(props: any) => props.color || "none"};
+    padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+    color: ${(props: any) => props.theme.color.main || "none"};
     border: none;
     cursor: pointer;
     display: block;
     right: 0;
     &:hover {
-      background-color: lightgrey;
+      background-color: ${(props: any) =>
+        props.theme.color.lightgrey || "lightgrey"};
     }
   }
 `;
@@ -24,10 +24,9 @@ export const DropdownItem = styled.div`
 const DropdownContainer = styled(FlexContainerColumn)`
   display: flex;
   position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
+  background-color: ${(props: any) => props.theme.color.white || "none"};
+  min-width: 100%;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
   z-index: 13;
   right: 0;
 `;
@@ -37,20 +36,11 @@ type DropdownOption = {
 };
 
 const Outline = styled.div`
-  border: 0.0375rem solid grey;
-  border-radius: 0.0375rem;
+  border: 0.031rem solid grey;
+  border-radius: 0.25rem;
   display: flex;
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   align-items: center;
-  height: 100%;
-`;
-
-const PreviewButton = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  text-align: right;
-  justify-content: flex-end;
-  padding: none;
 `;
 
 const MenuContainer = styled.div`
@@ -87,34 +77,22 @@ export const DropdownPreviewMenu: React.FC<{
   };
   return (
     <MenuContainer>
-      <PreviewButton>
         <Outline>
           <Button
-            style={{
-              height: "90%",
-              display: "flex",
-              alignItems: "center"
-            }}
             onClick={onPreviewClick}
           >
             <PreviewIcon />
             {label}
           </Button>
           <Button
-            style={{
-              height: "90%",
-              display: "flex",
-              alignItems: "center"
-            }}
             onClick={() => setOpen(!open)}
           >
             <VerticalDivider />
             <DownIcon />
           </Button>
         </Outline>
-      </PreviewButton>
       {open ? (
-        <DropdownContainer justify={"flex-end"}>
+        <DropdownContainer justify={"flex-end"} onMouseLeave={() => setOpen(!open)}>
           {options.map((option: DropdownOption, index: number) => {
             return (
               <DropdownItem onClick={() => clickHandler(index)} key={index}>

@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import styled, { css } from "styled-components";
 
 export const InputLabel = styled.label<{ $caps?: boolean }>`
-  margin-bottom: 0.5em;
   letter-spacing: -0.3px;
   font-weight: 500;
   line-height: 1.8em;
@@ -19,16 +18,17 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
 export const CheckboxInput = styled.input.attrs({ type: "checkbox" })``;
 
 export const _Input = styled.input`
-  background: #fff;
+  background: ${(props: any) => props.theme.color.white || "white"};
   border: 1px solid rgba(5, 42, 68, 0.2);
-  padding: 0.7em 0.9em;
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
+    ${(props: any) => props.theme.padding.medium || "1rem"};
   font-size: 0.85em;
   line-height: 1.2em;
   border-radius: 3px;
   width: 100%;
   box-shadow: 0 0 0 0 transparent inset;
   &:focus {
-    border-color: #333;
+    border-color: ${(props: any) => props.theme.color.black || "black"};
     outline: none;
   }
   display: block;
@@ -38,9 +38,8 @@ export const _Input = styled.input`
   -webkit-appearance: none;
   tap-highlight-color: rgba(255, 255, 255, 0);
   color: rgba(0, 0, 0, 0.87);
-
   &:focus {
-    border-color: #5168d9;
+    border-color: ${(props: any) => props.theme.color.main || "main"};
     outline: none;
   }
 `;
@@ -71,14 +70,14 @@ export const HighlightInput: typeof _Input = ((props: any) => {
 export const InputBorderless = styled.input`
   background: transparent;
   border: none;
-  padding: 0.5em;
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
   font-size: 0.9em;
   line-height: 1.3em;
   width: 100%;
   box-shadow: none;
   border: none;
   &:focus {
-    border-color: #333;
+    border-color: ${(props: any) => props.theme.color.main || "main"};
     outline: none;
   }
 `;
@@ -97,12 +96,11 @@ export const InputContainer = styled.div<{
   ${(props: any) =>
     props.$error &&
     css`
-      background: #ffeaea;
-      outline: 5px solid #ffeaea;
-
+      background: ${props.theme.color.lightdanger || "#ffeaea"};
+      outline: 5px solid ${props.theme.color.lightdanger || "#ffeaea"};
       input,
       textarea {
-        border-color: #9c2824;
+        border-color: ${props.theme.color.danger || "#9c2824"};
       }
     `}
 `;
@@ -120,25 +118,26 @@ export const InputCheckboxContainer = styled.div`
 `;
 
 export const InputCheckboxInputContainer = styled.div<{ $checked?: boolean }>`
-  background: #ddd;
+  background: ${(props: any) => props.theme.color.grey || "grey"};
   height: 2em;
   width: 2em;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ccc;
+  border: 2px solid ${(props: any) => props.theme.color.grey || "grey"};
   ${(props: any) =>
     props.$checked &&
     css`
-      background-color: #c5e8c5;
-      border-color: #6ccd55;
+      background-color: ${props.theme.color.lightsuccess || "#c5e8c5"};
+      border-color: ${props.theme.color.sucess || "#6ccd55"};
     `}
 `;
 
 export const EmptyInputValue = styled.div<{ wide?: boolean }>`
-  background: #eee;
+  background: ${(props: any) => props.theme.color.grey || "grey"};
   border: 1px solid rgba(5, 42, 68, 0.2);
-  padding: 0.7em 0.9em;
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
+    ${(props: any) => props.theme.padding.medium || "1rem"};
   font-size: 0.85em;
   line-height: 1.3em;
   border-radius: 0;
@@ -155,5 +154,5 @@ export const EmptyInputValue = styled.div<{ wide?: boolean }>`
 export const InputLink = styled.a`
   margin: 0.5em 0;
   font-size: 0.75em;
-  color: #5071f4;
+  color: ${(props: any) => props.theme.color.main || "main"};
 `;

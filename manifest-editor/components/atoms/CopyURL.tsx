@@ -6,7 +6,7 @@ import { FlexContainerRow } from "../layout/FlexContainer";
 import { SecondaryButton } from "./Button";
 
 const LinkBox = styled.div`
-  color: #347cff;
+  color: ${(props: any) => props.theme.color.main || "none"};
   width: 80%;
   overflow: hidden;
   text-overflow: ellipsis;

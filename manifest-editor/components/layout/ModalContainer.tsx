@@ -12,7 +12,7 @@ export const ModalContainer = styled.div`
     width: 60%;
     min-height: 360px;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
-    padding: 2rem;
-    background: white;
+    padding: ${(props: any) => props.theme.padding.large || "1rem"};
+    background: ${(props: any) => props.theme.color.white || "white"};
   }
 `;

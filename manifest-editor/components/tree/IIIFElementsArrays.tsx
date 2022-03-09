@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
   Container,
-  Expandable,
   Count,
   KeyValuePairString,
   Key,
-  Value,
-  ContainerColumn
+  Indentation,
+  ContainerColumn,
+  ValueSolo,
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
@@ -29,91 +29,97 @@ export type KeyArrayPairing = {
 export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
   propertyName,
   array,
-  onClick
+  onClick,
 }) => {
   const [open, setOpen] = useState(false);
   return (
     <ContainerColumn>
-      <Container onClick={() => onClick()}>
+      <Container
+        onClick={() => {
+          onClick();
+          setOpen(!open);
+        }}
+      >
         <FlexContainer>
           <Key>{propertyName}</Key>
           <Count title={`Count of ${propertyName}`}>{array.length}</Count>
         </FlexContainer>
-        <Expandable onClick={() => setOpen(!open)}>
-          {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
-        </Expandable>
+        {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
       </Container>
       <>
         <ErrorBoundary>
-          {open ? (
-            array.map((val: any) => {
-              if (val && val.type === "ContentResource") {
-                return (
-                  <ContentResources
-                    propertyName="ContentResource"
-                    object={val}
-                    onClick={() => {}}
-                  />
-                );
-              } else if (val && val.type === "Canvas") {
-                return (
-                  <Canvases
-                    propertyName="ContentResource"
-                    object={val}
-                    onClick={() => {}}
-                  />
-                );
-              } else if (propertyName === "services") {
-                return (
-                  <Services
-                    propertyName="Services"
-                    object={val}
-                    onClick={() => {}}
-                  />
-                );
-              } else if (propertyName === "service") {
-                return (
-                  <IIIFService
-                    propertyName="Services"
-                    object={val}
-                    onClick={() => {}}
-                  />
-                );
-              } else if (val && val.type === "Range") {
-                return (
-                  <Ranges
-                    propertyName="Range"
-                    object={val}
-                    onClick={() => {}}
-                  />
-                );
-              } else if (typeof val === "string") {
-                return <Value>{val}</Value>;
-              } else {
-                return Object.entries(val).map(([key, value]) => {
-                  if (typeof value === "string") {
+          {open && (
+            <FlexContainer>
+              <Indentation />
+              <ContainerColumn>
+                {array.map((val: any) => {
+                  if (val && val.type === "ContentResource") {
                     return (
-                      <KeyValuePairString
-                        key={key}
-                        onClick={() => console.log("clicked", key)}
-                        propertyName={key}
-                        value={value}
-                      />
-                    );
-                  } else {
-                    return (
-                      <KeyObjectPairing
-                        object={value}
-                        propertyName={key}
+                      <ContentResources
+                        propertyName="ContentResource"
+                        object={val}
                         onClick={() => {}}
                       />
                     );
+                  } else if (val && val.type === "Canvas") {
+                    return (
+                      <Canvases
+                        propertyName="ContentResource"
+                        object={val}
+                        onClick={() => {}}
+                      />
+                    );
+                  } else if (propertyName === "services") {
+                    return (
+                      <Services
+                        propertyName="Services"
+                        object={val}
+                        onClick={() => {}}
+                      />
+                    );
+                  } else if (propertyName === "service") {
+                    return (
+                      <IIIFService
+                        propertyName="Services"
+                        object={val}
+                        onClick={() => {}}
+                      />
+                    );
+                  } else if (val && val.type === "Range") {
+                    return (
+                      <Ranges
+                        propertyName="Range"
+                        object={val}
+                        onClick={() => {}}
+                      />
+                    );
+                  } else if (typeof val === "string") {
+                    return <ValueSolo>{val}</ValueSolo>;
+                  } else {
+                    return Object.entries(val).map(([key, value]) => {
+                      if (typeof value === "string") {
+                        return (
+                          <KeyValuePairString
+                            key={key}
+                            onClick={() => console.log("clicked", key)}
+                            propertyName={key}
+                            value={value}
+                          />
+                        );
+                      } else {
+                        return (
+                          <KeyObjectPairing
+                            object={value}
+                            propertyName={key}
+                            onClick={() => {}}
+                          />
+                        );
+                      }
+                    });
                   }
-                });
-              }
-            })
-          ) : (
-            <></>
+                })}
+              </ContainerColumn>
+            </FlexContainer>
           )}
         </ErrorBoundary>
       </>
