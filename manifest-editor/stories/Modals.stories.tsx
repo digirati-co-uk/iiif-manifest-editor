@@ -6,18 +6,18 @@ import { ExportModal } from "../components/modals/ExportModal";
 
 export default {
   title: "Manifest Editor/Modals",
-  component: SaveModal
+  component: SaveModal,
 } as ComponentMeta<typeof SaveModal>;
 
-const SaveModalExample: ComponentStory<typeof SaveModal> = args => (
+const SaveModalExample: ComponentStory<typeof SaveModal> = (args) => (
   <SaveModal {...args} />
 );
 
 export const Save = SaveModalExample.bind({});
 Save.args = {
   close: () => {
-console.log("close clicked")
-},
+    console.log("close clicked");
+  },
 };
 
 const ExportModalExample: ComponentStory<typeof ExportModal> = (args) => (
@@ -25,4 +25,3 @@ const ExportModalExample: ComponentStory<typeof ExportModal> = (args) => (
 );
 
 export const Export = ExportModalExample.bind({});
-

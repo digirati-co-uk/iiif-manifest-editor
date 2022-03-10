@@ -16,5 +16,6 @@ export const AnExample = Template.bind({});
 
 AnExample.args = {
   manifest: undefined,
-  close: () => {console.log("close clicked")},
+  close: () => {
+},
 };
