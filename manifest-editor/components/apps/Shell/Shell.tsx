@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { ShellHeader } from "./ShellHeader";
 import { ShellOptions } from "./ShellOptions";
 import { ShellToolbar } from "./ShellToolbar";
@@ -10,6 +11,7 @@ import { useVault } from "react-iiif-vault";
 import { useSave, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
+import ShellContext from "./ShellContext";
 
 export type Persistance = {
   deleteLocation?: string;
@@ -37,6 +39,8 @@ export const Shell: React.FC<{
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
   const [unSavedChanges, setUnsavedChanges] = useState(false);
+  const shellContext = useContext(ShellContext);
+
 
   const manifest = useManifest();
   const vault = useVault();
@@ -50,17 +54,6 @@ export const Shell: React.FC<{
     );
   }, [persistedManifest]);
 
-  useEffect(() => {
-    // We want to hold on to the persisted value in localStorage
-    if (manifestPermalink) {
-      localStorage.setItem(
-        "manifestPermalink",
-        JSON.stringify(manifestPermalink)
-      );
-    }
-  }, [manifestPermalink]);
-
-  // Switch out the localstorage out to higher in the application as this is a UI component really
 
   useEffect(() => {
     // We want to hold on to the prefered viewer choice in localstorage
@@ -85,15 +78,21 @@ export const Shell: React.FC<{
         ? JSON.parse(localStorage.getItem("manifestPermalink") || "{}")
         : undefined;
       setManifestPermalink(permalink);
+      shellContext?.changeResourceID(permalink.location);
       setPreviouslySaved(true);
     }
   }, []);
 
-  // Commented out as causing other issues
   useEffect(() => {
     if (manifestPermalink && manifestPermalink.location) {
-      console.log("in here")
-      // shellContext?.changeResourceID(manifestPermalink.location);
+      shellContext?.changeResourceID(manifestPermalink.location);
+    }
+    // We want to hold on to the persisted value in localStorage
+    if (manifestPermalink) {
+      localStorage.setItem(
+        "manifestPermalink",
+        JSON.stringify(manifestPermalink)
+      );
     }
   }, [manifestPermalink]);
 
