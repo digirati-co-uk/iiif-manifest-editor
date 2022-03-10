@@ -53,6 +53,7 @@ export const AddManifestModal: React.FC<{
 
     // Only handling manifest for now.
     if (inputed && inputed.type === "Manifest" || inputType === "Collection") {
+      shellContext?.setUnsavedChanges(true);
       shellContext?.changeResourceID(inputValue);
     }
   };
@@ -115,6 +116,7 @@ export const AddManifestModal: React.FC<{
                 <Button
                   onClick={() => {
                     shellContext?.changeSelectedApplication("Browser");
+                    shellContext?.changeResourceID(inputValue);
                     close();
                   }}
                 >

@@ -5,6 +5,7 @@ import { useManifest } from "../../../hooks/useManifest";
 import { SaveModal } from "../../modals/SaveModal";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../modals/ExportModal";
+import { FlexContainer } from "../../layout/FlexContainer";
 
 export const ShellOptions: React.FC<{
   saveManifest: () => void;
@@ -54,61 +55,63 @@ export const ShellOptions: React.FC<{
         />
       )}
       {exportModalVisible && (
-        <ExportModal close={() => setExportModalVisible(false)}/>
+        <ExportModal close={() => setExportModalVisible(false)} />
       )}
-      <Dropdown>
-        <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
-        {fileOpen && (
-          <DropdownContent onMouseLeave={() => setFileOpen(false)}>
-            <Button
-              onClick={() => setaddModalVisible(!addModalVisible)}
-              title="Add an existing manifest to get started"
-              color={"#6b6b6b"}
-            >
-              Open
-            </Button>
-            <Button
-              onClick={() => {
-                setFileOpen(!fileOpen);
-                saveManifest();
-              }}
-            >
-              Save
-            </Button>
-            <Button
-              onClick={() => {
-                setFileOpen(!fileOpen);
-                setSaveModalVisible(!saveModalVisible);
-              }}
-            >
-              Save as...
-            </Button>
-            <Button
-              onClick={() => {
-                setFileOpen(!fileOpen);
-                setExportModalVisible(!exportModalVisible);
-              }}
-            >
-              Export
-            </Button>
-          </DropdownContent>
-        )}
-      </Dropdown>
-      <Dropdown onMouseLeave={() => setHelpOpen(false)}>
-        <Button onClick={() => setHelpOpen(!helpOpen)}>Help</Button>
-        {helpOpen && (
-          <DropdownContent>
-            <Button
-              onClick={() => {
-                setHelpOpen(!helpOpen);
-                alert("About clicked");
-              }}
-            >
-              About
-            </Button>
-          </DropdownContent>
-        )}
-      </Dropdown>
+      <FlexContainer>
+        <Dropdown>
+          <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
+          {fileOpen && (
+            <DropdownContent onMouseLeave={() => setFileOpen(false)}>
+              <Button
+                onClick={() => setaddModalVisible(!addModalVisible)}
+                title="Add an existing manifest to get started"
+                color={"#6b6b6b"}
+              >
+                Open
+              </Button>
+              <Button
+                onClick={() => {
+                  setFileOpen(!fileOpen);
+                  saveManifest();
+                }}
+              >
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  setFileOpen(!fileOpen);
+                  setSaveModalVisible(!saveModalVisible);
+                }}
+              >
+                Save as...
+              </Button>
+              <Button
+                onClick={() => {
+                  setFileOpen(!fileOpen);
+                  setExportModalVisible(!exportModalVisible);
+                }}
+              >
+                Export
+              </Button>
+            </DropdownContent>
+          )}
+        </Dropdown>
+        <Dropdown onMouseLeave={() => setHelpOpen(false)}>
+          <Button onClick={() => setHelpOpen(!helpOpen)}>Help</Button>
+          {helpOpen && (
+            <DropdownContent>
+              <Button
+                onClick={() => {
+                  setHelpOpen(!helpOpen);
+                  alert("About clicked");
+                }}
+              >
+                About
+              </Button>
+            </DropdownContent>
+          )}
+        </Dropdown>
+      </FlexContainer>
     </>
   );
 };

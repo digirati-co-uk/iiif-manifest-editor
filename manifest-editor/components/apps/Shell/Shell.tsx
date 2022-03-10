@@ -12,6 +12,8 @@ import { useSave, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "./ShellContext";
+import { WarningMessage } from "../../atoms/callouts/WarningMessage";
+import { FlexContainer } from "../../layout/FlexContainer";
 
 export type Persistance = {
   deleteLocation?: string;
@@ -38,9 +40,7 @@ export const Shell: React.FC<{
   const [showAgain, setShowAgain] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
-  const [unSavedChanges, setUnsavedChanges] = useState(false);
   const shellContext = useContext(ShellContext);
-
 
   const manifest = useManifest();
   const vault = useVault();
@@ -52,8 +52,10 @@ export const Shell: React.FC<{
       "persistedManifest",
       JSON.stringify(persistedManifest)
     );
+    if (persistedManifest && persistedManifest.location) {
+      shellContext?.changeResourceID(persistedManifest?.location);
+    }
   }, [persistedManifest]);
-
 
   useEffect(() => {
     // We want to hold on to the prefered viewer choice in localstorage
@@ -78,7 +80,6 @@ export const Shell: React.FC<{
         ? JSON.parse(localStorage.getItem("manifestPermalink") || "{}")
         : undefined;
       setManifestPermalink(permalink);
-      shellContext?.changeResourceID(permalink.location);
       setPreviouslySaved(true);
     }
   }, []);
@@ -127,13 +128,13 @@ export const Shell: React.FC<{
           man
         );
         setManifestPermalink(perma ? perma : undefined);
-        setUnsavedChanges(false);
+        shellContext?.setUnsavedChanges(false);
       }
       // save as choice 1 is save new;
       else if (saveAsChoice === 1) {
         const perma = await usePermalink(man);
         setManifestPermalink(perma ? perma : undefined);
-        setUnsavedChanges(false);
+        shellContext?.setUnsavedChanges(false);
       }
     }
   };
@@ -152,16 +153,21 @@ export const Shell: React.FC<{
         setShowPreviewModal={setShowPreviewModal}
       />
       <ShellToolbar>
-        <ShellOptions
-          // This is the 48hr persistence
-          saveManifest={saveManifest}
-          // This is the permalink
-          savePermalink={savePermalink}
-          previouslySaved={previouslySaved}
-          permalink={manifestPermalink?.location}
-          saveAsChoice={saveAsChoice}
-          setSaveAsChoice={setSaveAsChoice}
-        />
+        <FlexContainer style={{ justifyContent: "space-between", width: "100%" }}>
+          <ShellOptions
+            // This is the 48hr persistence
+            saveManifest={saveManifest}
+            // This is the permalink
+            savePermalink={savePermalink}
+            previouslySaved={previouslySaved}
+            permalink={manifestPermalink?.location}
+            saveAsChoice={saveAsChoice}
+            setSaveAsChoice={setSaveAsChoice}
+          />
+          {shellContext?.unsavedChanges && (
+            <WarningMessage $small={true}>You have unsaved changes</WarningMessage>
+          )}
+        </FlexContainer>
       </ShellToolbar>
     </>
   );

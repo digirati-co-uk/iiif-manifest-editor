@@ -22,6 +22,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     //   // but just implementing with some examples for development purposes.
     "https://iiif.wellcomecollection.org/presentation/b28799495"
   );
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const [selectedApplication, setSelectedApplication] =
     useState<"ManifestEditor" | "Browser">("ManifestEditor");
@@ -34,11 +35,14 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     if (id) setResouceID(id);
   };
 
+
   const shellSettings = {
     selectedApplication,
     changeSelectedApplication,
     changeResourceID,
     resourceID,
+    unsavedChanges,
+    setUnsavedChanges,
   };
 
   return (

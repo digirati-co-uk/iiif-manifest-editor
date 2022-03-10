@@ -7,6 +7,8 @@ interface ShellContextInterface {
   ) => void;
   resourceID: string | null;
   changeResourceID: (id: string | null) => void;
+  unsavedChanges: boolean;
+  setUnsavedChanges: (bol: boolean) => void;
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);
