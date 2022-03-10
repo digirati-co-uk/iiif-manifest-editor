@@ -91,7 +91,8 @@ export const Expanded = styled.div`
 
 export const Value = styled.div`
   padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
-  max-width: 70%;
+  overflow-x: hidden;
+  word-break: break-all;
   text-align: left;
   font-size: 0.75rem;
 `;
