@@ -107,6 +107,7 @@ export const Shell: React.FC<{
       );
       // const manifestToPersist = await vault.toPresentation3(manifest)
       const data = await useSave(man);
+      shellContext?.setUnsavedChanges(false);
       setpersistedManifest(data ? data : "");
       if (showAgain) setShowPreviewModal(true);
     }
