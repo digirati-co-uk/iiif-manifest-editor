@@ -20,6 +20,7 @@ export const SecondaryButton = styled.button`
     color: ${(props: any) => props.theme.color.main || "#347cff;"};
     background-color: ${(props: any) => props.theme.color.white || "white"};
     border: none;
+    border-radius: 0.25rem;
     cursor: pointer;
     height: 2rem;
     display: flex;
@@ -33,6 +34,7 @@ export const CalltoButton = styled.button`
     color: ${(props: any) => props.theme.color.white || "white"};
     background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
     border: none;
+    border-radius: 0.25rem;
     cursor: pointer;
     height: 2rem;
     display: flex;

@@ -31,10 +31,22 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     setSelectedApplication(app);
   };
 
-  const changeResourceID = (id: string | null) => {
-    if (id) setResouceID(id);
+  const changeResourceID = async (id: string | null) => {
+    // We want to check that resource is returning 200 before loading it into the vault.
+    // We probably want to do some error handling here
+    // For now we are just going for the default | previous value
+    // maybe load the launch screen
+    if (id) {
+      try {
+        const success = await fetch(id);
+        if (success.ok) setResouceID(id);
+      } catch (error) {
+        console.log(
+          "Couldn't fetch the resource, has the temporary link expired?"
+        );
+      }
+    }
   };
-
 
   const shellSettings = {
     selectedApplication,

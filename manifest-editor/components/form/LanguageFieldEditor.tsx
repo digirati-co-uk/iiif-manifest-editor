@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import {
   useMetadataEditor,
   UseMetadataEditor,
-} from "../../hooks/useMetadataEditor"
+} from "../../hooks/useMetadataEditor";
+import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
+import { DeleteIcon } from "../icons/DeleteIcon";
+import { FlexContainer } from "../layout/FlexContainer";
+import { Input } from "./Input";
+import { DropdownItem, StyledSelect } from "./LanguageSelector";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -54,38 +59,44 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           }
 
           return (
-            <div key={key}>
-              <input
+            <FlexContainer key={key}>
+              <Button onClick={() => removeItem(key)}>
+                <DeleteIcon />
+              </Button>
+              <Input
                 type="text"
                 id={key}
                 value={field.value}
                 onChange={(e) => changeValue(key, e.currentTarget.value)}
               />
-              <select
+              <StyledSelect
                 value={field.language}
                 onChange={(e) => changeLanguage(key, e.currentTarget.value)}
               >
                 {languages.map((lang) => (
-                  <option key={lang} value={lang}>
+                  <DropdownItem key={lang} value={lang}>
                     {lang}
-                  </option>
+                  </DropdownItem>
                 ))}
-              </select>
-              <button onClick={() => removeItem(key)}>Remove</button>
-            </div>
+              </StyledSelect>
+            </FlexContainer>
           );
         })}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-        <button onClick={() => createNewItem(true)}>Add new value</button>
+        <CalltoButton onClick={() => createNewItem(true)}>
+          Add new value
+        </CalltoButton>
         <hr />
-        <button
-          onClick={() => {
-            setShowAllFields(false);
-            saveChanges();
-          }}
-        >
-          Save changes to languages
-        </button>
+        <FlexContainer style={{ justifyContent: "flex-end" }}>
+          <CalltoButton
+            onClick={() => {
+              setShowAllFields(false);
+              saveChanges();
+            }}
+          >
+            Save changes to {props.label}
+          </CalltoButton>
+        </FlexContainer>
       </div>
     ) : null;
 
@@ -97,7 +108,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     // information to the user and propmt to add a new one.
     return (
       <div>
-        No value <button onClick={() => createNewItem(false)}>Create</button>
+        No value{" "}
+        <CalltoButton onClick={() => createNewItem(false)}>Create</CalltoButton>
       </div>
     );
   }
@@ -105,8 +117,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // Our default text box, we are provided with `firstItem` which is enough for
   // out on change event. For other resources we need to know what this "id" is.
   const defaultTextBox = (
-    <div>
-      <input
+    <FlexContainer>
+      <Input
         type="text"
         value={firstItem.field.value}
         onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
@@ -118,15 +130,25 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           saveChanges();
         }}
       />
-      <button onClick={() => setShowAllFields(true)} disabled={showAllFields}>
-        ({firstItem.field.language}{" "}
-        {fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""} )
-      </button>
-    </div>
+      <CalltoButton
+        onClick={() => setShowAllFields(true)}
+        disabled={showAllFields}
+      >
+        {`(${firstItem.field.language}${
+          fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
+        })`}
+      </CalltoButton>
+    </FlexContainer>
   );
 
   return (
-    <div style={{ background: showAllFields ? "#eee" : "#fff" }}>
+    <div
+      style={{
+        border: showAllFields ? "1px solid grey" : "none",
+        borderRadius: showAllFields ? "5px" : "none",
+        padding: "1rem",
+      }}
+    >
       <div>{props.label}</div>
       <div>{defaultTextBox}</div>
       <div>{allFields}</div>
