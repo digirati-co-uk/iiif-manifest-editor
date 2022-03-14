@@ -1,27 +1,12 @@
-import {
-  CanvasContext,
-  useManifest,
-  useSimpleViewer,
-  useThumbnail
-} from "react-iiif-vault";
+import { CanvasContext, useManifest, useSimpleViewer } from "react-iiif-vault";
 
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
-import { ThumbnailImg } from "../atoms/Thumbnail";
+import { Thumbnail } from "../atoms/Thumbnail";
+import { useContext } from "react";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import { FlexContainerColumn } from "../layout/FlexContainer";
+import { ViewSelector } from "../atoms/ViewSelector";
 
-const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  const thumb = useThumbnail({
-    maxHeight: 300,
-    maxWidth: 300
-  });
-
-  if (!thumb) {
-    return null;
-  }
-
-  return (
-    <ThumbnailImg src={thumb.id} alt="" loading="lazy" onClick={onClick} />
-  );
-};
 // The CanvasContext currently only lets you select every second canvas. Once the
 // SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
 // get updated with the latest code they will accept a prop pagingView={false}
@@ -29,16 +14,25 @@ const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
 export const ThumbnailStrip: React.FC = () => {
   const manifest = useManifest();
   const { setCurrentCanvasId } = useSimpleViewer();
+  const editorContext = useContext(ManifestEditorContext);
+
+  const handleChange = (itemId: string) => {
+    setCurrentCanvasId(itemId);
+    editorContext?.changeSelectedProperty(itemId);
+  };
 
   return (
-    <ThumbnailContainer>
-      {manifest?.items.map((item: any) => {
-        return (
-          <CanvasContext key={item.id} canvas={item.id}>
-            <Thumbnail onClick={() => setCurrentCanvasId(item.id)} />
-          </CanvasContext>
-        );
-      })}
-    </ThumbnailContainer>
+    <FlexContainerColumn style={{ alignItems: "center" }} justify="space-between">
+      <ThumbnailContainer>
+        {manifest?.items.map((item: any) => {
+          return (
+            <CanvasContext key={item.id} canvas={item.id}>
+              <Thumbnail onClick={() => handleChange(item.id)} />
+            </CanvasContext>
+          );
+        })}
+      </ThumbnailContainer>
+      <ViewSelector />
+    </FlexContainerColumn>
   );
 };

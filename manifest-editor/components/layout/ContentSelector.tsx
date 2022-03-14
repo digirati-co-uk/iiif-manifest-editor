@@ -12,13 +12,15 @@ const ContentSelectorContainer = styled.div`
     margin: 0.375rem 0;
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
     height: 80vh;
-    overflow-y: auto;
   }
 `;
 
 export const ContentSelector: React.FC<{
-  view: "tree" | "thumbnails";
+  view: "tree" | "thumbnails" | "grid";
 }> = ({ view }) => {
+  if (view === "grid") {
+    return <></>;
+  }
   return (
     <ContentSelectorContainer>
       {view === "thumbnails" && <ThumbnailStrip />}

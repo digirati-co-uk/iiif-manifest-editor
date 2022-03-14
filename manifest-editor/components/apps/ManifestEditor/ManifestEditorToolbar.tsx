@@ -4,7 +4,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 
 export const ManifestEditorToolbar: React.FC<{
   setEditorPanelOpen: (bool: boolean) => void;
-  setView: (view: "thumbnails" | "tree") => void;
+  setView: (view: "thumbnails" | "tree" | "grid") => void;
 }> = ({
   setView,
   setEditorPanelOpen,
@@ -41,6 +41,14 @@ export const ManifestEditorToolbar: React.FC<{
               }}
             >
               Canvas Thumbnails
+            </Button>
+            <Button
+              onClick={() => {
+                setViewOpen(!viewOpen);
+                setView("grid");
+              }}
+            >
+              Thumbnail Grid
             </Button>
           </DropdownContent>
         )}
