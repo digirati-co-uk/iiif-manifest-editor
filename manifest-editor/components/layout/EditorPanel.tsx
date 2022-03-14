@@ -56,12 +56,13 @@ export const EditorPanel: React.FC<{
             editorContext?.selectedProperty === "@context") && (
             <StringInput dispatchType={editorContext?.selectedProperty} />
           )}
-          {editorContext?.selectedProperty === "label" && (
-              <LanguageMapInput
-                dispatchType={editorContext?.selectedProperty}
-                languages={languages}
-              />
-            )}
+          {(editorContext?.selectedProperty === "label" ||
+            editorContext?.selectedProperty === "summary") && (
+            <LanguageMapInput
+              dispatchType={editorContext?.selectedProperty}
+              languages={languages}
+            />
+          )}
         </EditorPanelContainerOpen>
       ) : (
         <></>

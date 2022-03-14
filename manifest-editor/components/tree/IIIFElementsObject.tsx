@@ -25,7 +25,7 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
   const [open, setOpen] = useState(false);
   if (!object || Object.keys(object).length === 0)
     return (
-      <Container onClick={() => setOpen(!open)}>
+      <Container onClick={() => onClick()}>
         <Key>{propertyName}</Key>
       </Container>
     );

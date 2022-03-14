@@ -35,32 +35,3 @@ export const SelectMenuContainer = styled.div`
   height: 2rem;
 `;
 
-export const LanguageSelector: React.FC<{
-  options: Array<string>;
-  setLanguage: (value: string) => void;
-  selected: string;
-}> = ({ options, setLanguage, selected }) => {
-  const clickHandler = (lang: string) => {
-    setLanguage(lang);
-  };
-
-  return (
-    <SelectMenuContainer>
-      <StyledSelect
-        defaultValue={selected}
-        onChange={(e: any) => clickHandler(e.target.value)}
-      >
-        {options.map((option: string) => {
-          return (
-            <DropdownItem
-              key={option}
-              onClick={(e: any) => clickHandler(e.target.value)}
-              value={option}
-              label={option}
-            />
-          );
-        })}
-      </StyledSelect>
-    </SelectMenuContainer>
-  );
-};

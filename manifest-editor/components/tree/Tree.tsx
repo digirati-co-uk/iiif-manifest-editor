@@ -7,7 +7,6 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { Annotations } from "./IIIFAnnotationPages";
 import { DownIcon } from "../icons/DownIcon";
-import { Button } from "../atoms/Button";
 
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 

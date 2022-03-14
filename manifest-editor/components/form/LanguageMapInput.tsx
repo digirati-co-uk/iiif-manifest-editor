@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
@@ -29,16 +30,16 @@ export const LanguageMapInput: React.FC<{
 
   return (
     <>
-      <ErrorBoundary>
-        {manifest && manifest[dispatchType] && (
+      {manifest && (
+        <ErrorBoundary>
           <LanguageFieldEditor
             label={dispatchType}
             fields={manifest[dispatchType] || {}}
             onSave={(data: any) => changeHandler(data)}
             availableLanguages={languages}
           />
-        )}
-      </ErrorBoundary>
+        </ErrorBoundary>
+      )}
     </>
   );
 };
