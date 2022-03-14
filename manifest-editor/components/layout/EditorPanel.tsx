@@ -8,6 +8,8 @@ import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext"
 
 import styled from "styled-components";
 import { StringInput } from "../form/StringInput";
+import { OpenFullscreen } from "../icons/OpenFullscreen";
+import { CollapseFullscreen } from "../icons/CollapseFullscreen";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -15,15 +17,13 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
   overflow-y: auto;
+  width: ${(props: any) => (props.wide ? "100%" : "450px")};
   z-index: 12;
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
-  line-height: 1.3em;
-  border-radius: 0;
-  min-width: 350px;
+  min-width: 400px;
   box-shadow: none;
-  max-width: ${(props: any) => (props.wide ? "550px" : "450px")};
   margin-bottom: 0.8em;
   &:focus {
     border-color: #333;
@@ -41,26 +41,48 @@ export const EditorPanel: React.FC<{
   return (
     <>
       {open ? (
-        <EditorPanelContainerOpen justify={"flex-start"} wide={true}>
-          <FlexContainerRow justify="space-between">
-            <h4>Edit {editorContext?.selectedProperty}</h4>
-            <Button onClick={close}>
-              <CloseIcon />
-            </Button>
+        <EditorPanelContainerOpen
+          justify={"space-between"}
+          wide={editorContext?.view === "fullEditor"}
+        >
+          <div>
+            <FlexContainerRow justify="space-between">
+              <h4>Edit {editorContext?.selectedProperty}</h4>
+              <Button onClick={close}>
+                <CloseIcon />
+              </Button>
+            </FlexContainerRow>
+            {(editorContext?.selectedProperty === "id" ||
+              editorContext?.selectedProperty === "type" ||
+              editorContext?.selectedProperty === "viewingDirection" ||
+              editorContext?.selectedProperty === "@context") && (
+              <StringInput dispatchType={editorContext?.selectedProperty} />
+            )}
+            {(editorContext?.selectedProperty === "label" ||
+              editorContext?.selectedProperty === "summary") && (
+              <LanguageMapInput
+                dispatchType={editorContext?.selectedProperty}
+                languages={languages}
+              />
+            )}
+          </div>
+          <FlexContainerRow justify="flex-end">
+            {editorContext?.view === "fullEditor" ? (
+              <Button
+                onClick={() => editorContext?.setView("tree")}
+                title="close"
+              >
+                <CollapseFullscreen />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => editorContext?.setView("fullEditor")}
+                title="Expand to full"
+              >
+                <OpenFullscreen />
+              </Button>
+            )}
           </FlexContainerRow>
-          {(editorContext?.selectedProperty === "id" ||
-            editorContext?.selectedProperty === "type" ||
-            editorContext?.selectedProperty === "viewingDirection" ||
-            editorContext?.selectedProperty === "@context") && (
-            <StringInput dispatchType={editorContext?.selectedProperty} />
-          )}
-          {(editorContext?.selectedProperty === "label" ||
-            editorContext?.selectedProperty === "summary") && (
-            <LanguageMapInput
-              dispatchType={editorContext?.selectedProperty}
-              languages={languages}
-            />
-          )}
         </EditorPanelContainerOpen>
       ) : (
         <></>

@@ -2,13 +2,15 @@ import { ThumbnailStrip } from "../organisms/ThumbnailStrip";
 import { Tree } from "../tree/Tree";
 
 import styled from "styled-components";
+import { ViewSelector } from "../atoms/ViewSelector";
 
 const ContentSelectorContainer = styled.div`
    {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     border-right: 0.016rem solid #dddddd;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
     margin: 0.375rem 0;
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
     height: 80vh;
@@ -16,15 +18,17 @@ const ContentSelectorContainer = styled.div`
 `;
 
 export const ContentSelector: React.FC<{
-  view: "tree" | "thumbnails" | "grid";
+  view: "tree" | "thumbnails" | "grid" | "noNav" | "fullEditor";
 }> = ({ view }) => {
-  if (view === "grid") {
-    return <></>;
-  }
   return (
-    <ContentSelectorContainer>
-      {view === "thumbnails" && <ThumbnailStrip />}
-      {view === "tree" && <Tree />}
-    </ContentSelectorContainer>
+    <>
+      {(view === "thumbnails" || view === "tree") && (
+        <ContentSelectorContainer>
+          {view === "thumbnails" && <ThumbnailStrip />}
+          {view === "tree" && <Tree />}
+          <ViewSelector />
+        </ContentSelectorContainer>
+      )}
+    </>
   );
 };

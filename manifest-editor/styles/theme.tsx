@@ -6,7 +6,7 @@ export const Theme = {
     grey: "grey",
     black: "black",
     lightgrey: "#F8F9FA",
-    mediumgrey: "#b0b0b0",
+    mediumgrey: "#dddddd",
     danger: "#a90e21",
     warning: "#e38627",
     lightdanger: "#ffeaea",

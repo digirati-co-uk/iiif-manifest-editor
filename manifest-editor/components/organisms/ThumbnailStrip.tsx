@@ -4,8 +4,6 @@ import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
 import { Thumbnail } from "../atoms/Thumbnail";
 import { useContext } from "react";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
-import { FlexContainerColumn } from "../layout/FlexContainer";
-import { ViewSelector } from "../atoms/ViewSelector";
 
 // The CanvasContext currently only lets you select every second canvas. Once the
 // SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
@@ -22,17 +20,14 @@ export const ThumbnailStrip: React.FC = () => {
   };
 
   return (
-    <FlexContainerColumn style={{ alignItems: "center" }} justify="space-between">
-      <ThumbnailContainer>
-        {manifest?.items.map((item: any) => {
-          return (
-            <CanvasContext key={item.id} canvas={item.id}>
-              <Thumbnail onClick={() => handleChange(item.id)} />
-            </CanvasContext>
-          );
-        })}
-      </ThumbnailContainer>
-      <ViewSelector />
-    </FlexContainerColumn>
+    <ThumbnailContainer>
+      {manifest?.items.map((item: any) => {
+        return (
+          <CanvasContext key={item.id} canvas={item.id}>
+            <Thumbnail onClick={() => handleChange(item.id)} />
+          </CanvasContext>
+        );
+      })}
+    </ThumbnailContainer>
   );
 };

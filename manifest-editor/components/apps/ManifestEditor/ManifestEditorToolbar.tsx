@@ -4,14 +4,11 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 
 export const ManifestEditorToolbar: React.FC<{
   setEditorPanelOpen: (bool: boolean) => void;
-  setView: (view: "thumbnails" | "tree" | "grid") => void;
-}> = ({
-  setView,
-  setEditorPanelOpen,
-}) => {
-
+  setView: (
+    view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"
+  ) => void;
+}> = ({ setView, setEditorPanelOpen }) => {
   const [viewOpen, setViewOpen] = useState(false);
-
 
   return (
     <>
@@ -32,7 +29,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setView("tree");
               }}
             >
-              IIIF Tree Structure
+              Outline
             </Button>
             <Button
               onClick={() => {

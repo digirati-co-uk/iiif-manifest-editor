@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useManifest } from "../../../hooks/useManifest";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { ExpandTab } from "../../atoms/ExpandTab";
 import { ContentSelector } from "../../layout/ContentSelector";
 import { EditorPanel } from "../../layout/EditorPanel";
 import { FlexContainerRow } from "../../layout/FlexContainer";
@@ -17,7 +18,7 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
   const [selectedProperty, setSelectedProperty] = useState("id");
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
-  const [view, setView] = useState<"thumbnails" | "tree" | "grid">("tree");
+  const [view, setView] = useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("fullEditor");
   const changeSelectedProperty = (property: string) => {
     setSelectedProperty(property);
   };
@@ -44,16 +45,22 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
             <Toolbar>
               <ManifestEditorToolbar
                 setEditorPanelOpen={(bool: boolean) => setEditorPanelOpen(bool)}
-                setView={(selectedView: "thumbnails" | "tree" | "grid") =>
-                  setView(selectedView)
-                }
+                setView={(
+                  selectedView:
+                    | "thumbnails"
+                    | "tree"
+                    | "grid"
+                    | "noNav"
+                    | "fullEditor"
+                ) => setView(selectedView)}
               />
             </Toolbar>
           </ErrorBoundary>
           <FlexContainerRow>
-            {view !== "grid" && (
+            {(view !== "grid" && view !== "fullEditor") && (
               <ErrorBoundary>
                 <ContentSelector view={view} />
+                <ExpandTab />
                 <CanvasView />
                 <EditorPanel
                   open={editorPanelOpen}
@@ -65,6 +72,15 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
             {view === "grid" && (
               <ErrorBoundary>
                 <GridView />
+                <EditorPanel
+                  open={editorPanelOpen}
+                  close={() => setEditorPanelOpen(false)}
+                  languages={defaultLanguages}
+                />
+              </ErrorBoundary>
+            )}
+            {view === "fullEditor" && (
+              <ErrorBoundary>
                 <EditorPanel
                   open={editorPanelOpen}
                   close={() => setEditorPanelOpen(false)}

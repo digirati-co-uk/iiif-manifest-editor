@@ -16,6 +16,8 @@ import { FlexContainer } from "../layout/FlexContainer";
 const TreeContainer = styled.div`
   z-index: 12;
   font-size: 0.75rem;
+  max-height: 100%;
+  overflow-y: auto;
 `;
 
 const HeaderPanel = styled.div`

@@ -32,7 +32,6 @@ export const _Input = styled.input`
     outline: none;
   }
   display: block;
-  margin: 0.5em;
   outline: 0;
   font-family: inherit;
   -webkit-appearance: none;

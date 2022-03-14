@@ -3,7 +3,8 @@ import React from "react";
 interface EditorContextInterface {
   selectedProperty: string;
   changeSelectedProperty: (property: string) => void;
-  setView: (view: "thumbnails" | "tree" | "grid") => void;
+  setView: (view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor") => void;
+  view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
 }
 
 const ManifestEditorContext =

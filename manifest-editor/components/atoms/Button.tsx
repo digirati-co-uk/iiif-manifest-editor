@@ -14,6 +14,10 @@ export const Button = styled.button`
   }
 `;
 
+export const SmallButton = styled(Button)`
+  padding: 0 ${(props: any) => props.theme.padding.xs || "0.25rem"};
+`;
+
 export const SecondaryButton = styled.button`
    {
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
