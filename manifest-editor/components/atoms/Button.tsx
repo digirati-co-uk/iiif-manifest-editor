@@ -39,5 +39,6 @@ export const CalltoButton = styled.button`
     height: 2rem;
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 `;
