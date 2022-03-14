@@ -9,24 +9,25 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@^1.6.10":
-  version "1.6.10"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.6.10.tgz#8b746ca036cbb35d89a598e7d3061bd578c7888d"
-  integrity sha512-S6B2Hez3N2Da1VILG7/gE2skh0yCVhmo9AeQu+rgbnljARBEoXpJ1BsUmxwfKCh1BDchIveBvzLsIBAeRFk2pQ==
+"@atlas-viewer/atlas@^2.0.0-alpha.9":
+  version "2.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.9.tgz#898359d404dc8a03f045da36921db3e3d49bf03d"
+  integrity sha512-bb3LKye/drwaGTXJnGTtEhov31JgH5N9SdnXRjugKxrOH2Aq73akJq7tACZrBN9LX+x1BKDEyxfkcgBFLAleDQ==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^1.2.5"
     "@hyperion-framework/types" "^1.0.0"
     "@hyperion-framework/vault" "^1.0.0"
     "@popmotion/popcorn" "^0.4.4"
+    bezier-easing "^2.1.0"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
     popmotion "^8.7.6"
     react "^16.12.0"
     react-dom "^16.12.0"
-    react-reconciler "^0.25.1"
+    react-reconciler "^0.26.2"
     react-use-measure "^2.0.1"
-    scheduler "^0.19.1"
+    scheduler "^0.20.2"
     stats.js "^0.17.0"
     style-value-types "^3.1.7"
     typescript-memoize "^1.0.0-alpha.3"
@@ -43,7 +44,7 @@
   dependencies:
     "@hyperion-framework/types" "^1.0.0-alpha.14"
 
-"@atlas-viewer/iiif-image-api@^2.0.2":
+"@atlas-viewer/iiif-image-api@^2.0.1", "@atlas-viewer/iiif-image-api@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.2.tgz#b713b033da6f4d967d0826d06d5ffbad70458567"
   integrity sha512-SIzDGz2dLVnrRKYnRsN5xv66sTmtbrvr8BoyuNsE7Ykhz9BkbFLKDhDBkaQZH/2XL3se6gzc9kpiB35imVDMig==
@@ -1252,20 +1253,22 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@digirati/canvas-panel-web-components@^1.0.30":
-  version "1.0.30"
-  resolved "https://registry.yarnpkg.com/@digirati/canvas-panel-web-components/-/canvas-panel-web-components-1.0.30.tgz#7447da28049561df15e5ffb40de5249cb3145322"
-  integrity sha512-zhHUOl4IbohSmQdArxt6to9iyBP8WwzoP0ytfq8VtWz+Nxnd1TfSFgZijquYPME8g5MkhIXecRtMZDHPQOFPmA==
+"@digirati/canvas-panel-web-components@^v1.0.47":
+  version "1.0.47"
+  resolved "https://registry.yarnpkg.com/@digirati/canvas-panel-web-components/-/canvas-panel-web-components-1.0.47.tgz#2bf3c5ab07d0edb1c7490cb134a931f54559bc51"
+  integrity sha512-5nG0qOz68RKB+eciqqsBNNFyA/WgnfoIVAKM4bi3tivcg+hzHHsjPROgwHUfynsBPDRZzrV+ryMejL9HvorwOA==
   dependencies:
-    "@atlas-viewer/atlas" "^1.6.10"
-    "@atlas-viewer/iiif-image-api" "^1.2.6"
-    "@hyperion-framework/react-vault" "^2.0.0-alpha.0"
-    "@hyperion-framework/types" "^2.0.0-alpha.0"
-    "@hyperion-framework/vault" "^2.0.0-alpha.0"
-    "@preact/compat" "17.0.2"
+    "@atlas-viewer/atlas" "^2.0.0-alpha.9"
+    "@atlas-viewer/iiif-image-api" "^2.0.1"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    "@iiif/vault" "^0.9.16"
+    "@iiif/vault-helpers" "^0.9.4"
+    "@preact/compat" "17.0.3"
     "@react-hook/media-query" "^1.1.1"
-    preact "^10.5.15"
+    preact "^10.6.6"
     react-error-boundary "^3.1.4"
+    react-iiif-vault "^0.9.6"
 
 "@discoveryjs/json-ext@^0.5.0", "@discoveryjs/json-ext@^0.5.3":
   version "0.5.6"
@@ -1461,16 +1464,6 @@
     "@hyperion-framework/types" "^1.1.0"
     rollup "^2.36.1"
 
-"@hyperion-framework/parser@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/parser/-/parser-2.0.0-alpha.0.tgz#e51ba0ad83298e9f0a48e3b988943ec4ac24baf6"
-  integrity sha512-SRwdDWQHvsVjGrzZBGTfn76honAJS/4aZe3Ei/z+XVI2N60YjmsBMMco63XzFlhy1tlS8+GyBfBYwvx14e76Og==
-  dependencies:
-    "@hyperion-framework/presentation-2" "^2.0.0-alpha.0"
-    "@hyperion-framework/presentation-2-parser" "^2.0.0-alpha.0"
-    "@hyperion-framework/types" "^2.0.0-alpha.0"
-    rollup "^2.36.1"
-
 "@hyperion-framework/presentation-2-parser@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2-parser/-/presentation-2-parser-1.1.0.tgz#28668c8de5d24c86e60115da23564d1d93bf4eb2"
@@ -1480,43 +1473,12 @@
     "@hyperion-framework/presentation-2" "^1.1.0"
     rollup "^2.36.1"
 
-"@hyperion-framework/presentation-2-parser@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2-parser/-/presentation-2-parser-2.0.0-alpha.0.tgz#e7ca7dbc59a9d61f0014b431dbbca8bb46fc36e5"
-  integrity sha512-A8SmkfjqWLOsAKkG97ckW7Pc2Wl/moqXG2+zo39jk6FCjOYtj0grauluJywW7n5kAQ+gZk45gX5ZYb8030OdCQ==
-  dependencies:
-    "@atlas-viewer/iiif-image-api" "^1.2.4"
-    "@hyperion-framework/presentation-2" "^2.0.0-alpha.0"
-    rollup "^2.36.1"
-
 "@hyperion-framework/presentation-2@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2/-/presentation-2-1.1.0.tgz#aa59a5bfa60977c081c007cb0ac619cd8e4a9b7f"
   integrity sha512-Ql/vLQxT/z8C81s7Pm3mOAqk6V0eXjwt6eIUk9pRgjG0ZTueF9jeQuSrIW60Yoho7ecrbHJHcodXnsWklwV2yQ==
   dependencies:
     "@hyperion-framework/types" "^1.1.0"
-
-"@hyperion-framework/presentation-2@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2/-/presentation-2-2.0.0-alpha.0.tgz#7262ff1427fe855fc51cf45810a595f9e7c12c06"
-  integrity sha512-GLtTt7bGXAQZZ1l5rO3409ZpFYu49tKWe+VwZ/zcsBWoH3XesQ/KcLz/9SE2QA/CZJAeZOduq0C0WDAOAbztiQ==
-  dependencies:
-    "@hyperion-framework/types" "^2.0.0-alpha.0"
-
-"@hyperion-framework/react-vault@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/react-vault/-/react-vault-2.0.0-alpha.0.tgz#9bad58fc360983fcd7fea57a4108c37f1823a5d7"
-  integrity sha512-O8VOX/bB2SLnF8mnnoEa0ODmTxcXyQHNcPN4e1eJz85s78abKqp7pjNpVSluRsata6dBdwwY7qwsEDNuheTi8g==
-  dependencies:
-    "@atlas-viewer/iiif-image-api" "^1.2.4"
-    "@hyperion-framework/store" "^2.0.0-alpha.0"
-    "@hyperion-framework/vault" "^2.0.0-alpha.0"
-    react "^16.10.2 || ^17.0.1"
-    react-dom "^16.10.2 || ^17.0.1"
-    react-query "^1.5.10"
-    redux "^4.1.2"
-    rollup "^2.36.1"
-    typescript "^4.1.3"
 
 "@hyperion-framework/store@^1.1.0":
   version "1.1.0"
@@ -1529,28 +1491,10 @@
     rollup "^2.36.1"
     typesafe-actions "^5.1.0"
 
-"@hyperion-framework/store@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/store/-/store-2.0.0-alpha.0.tgz#a8ac6cd207bf108e3d5cb7ed9a06d029e70010a6"
-  integrity sha512-9oI+C4K9okMqtuUTyKL+ODMV1gzXPRBuHaOTny0GdnYoZZnyiqld9G7SkK0GKkwahFo8f6fdnHFKziVXFpLbIw==
-  dependencies:
-    "@hyperion-framework/parser" "^2.0.0-alpha.0"
-    "@hyperion-framework/types" "^2.0.0-alpha.0"
-    redux "^4.0.5"
-    rollup "^2.36.1"
-    typesafe-actions "^5.1.0"
-
 "@hyperion-framework/types@^1.0.0", "@hyperion-framework/types@^1.0.0-alpha.14", "@hyperion-framework/types@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-1.1.0.tgz#c2020040d0d46a78afbe125261ebde1a1ea19dd5"
   integrity sha512-uwqumcFUrpy85u69T/fNKaKQ5z2ct9Zt4gAuP/WfPij1ixYVpjS+YIwDnIf+niyDr+XSOZDptW7HvQOu1ay1LQ==
-  dependencies:
-    "@types/geojson" "^7946.0.7"
-
-"@hyperion-framework/types@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-2.0.0-alpha.0.tgz#f5c880b6e009a64f8fd8799ab8136bca6ef9bb2e"
-  integrity sha512-j/7dYJSvIzCQvNx3b+/YAjHCDkI4NMJnCJIspjRc81VGYGbqlPM/UfzOY98UN7/s+CJvzG4GmH8q1lB0MgvMlg==
   dependencies:
     "@types/geojson" "^7946.0.7"
 
@@ -1563,19 +1507,6 @@
     "@hyperion-framework/parser" "^1.1.0"
     "@hyperion-framework/store" "^1.1.0"
     "@hyperion-framework/types" "^1.1.0"
-    "@types/geojson" "^7946.0.7"
-    mitt "^2.1.0"
-    rollup "^2.36.1"
-
-"@hyperion-framework/vault@^2.0.0-alpha.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-2.0.0-alpha.0.tgz#fe1c0576775ad408740c8afcd6bbb686a507b6d7"
-  integrity sha512-cfPazjCDJOcsOgOjMzdOxeYNBoZ16p2zL87X/jbo8DqrpxdVgNftHFn0e5c98l1ijDiBRcNkq2Ntc8cjeduj4A==
-  dependencies:
-    "@atlas-viewer/iiif-image-api" "^1.2.4"
-    "@hyperion-framework/parser" "^2.0.0-alpha.0"
-    "@hyperion-framework/store" "^2.0.0-alpha.0"
-    "@hyperion-framework/types" "^2.0.0-alpha.0"
     "@types/geojson" "^7946.0.7"
     mitt "^2.1.0"
     rollup "^2.36.1"
@@ -1669,6 +1600,15 @@
     "@iiif/presentation-3" "^1.0.3"
     "@types/geojson" "^7946.0.8"
 
+"@iiif/parser@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.6.tgz#0f5252b94ba586aade3d6558b5a649fa265fe217"
+  integrity sha512-bIdmqe3JwPopL7qEeZk193YNkGaEkkfSR9i/+B7I3MVXkKGE6G80tOWhfQRs/EY3fMzOS8OUFxzAu+aS6CXvEg==
+  dependencies:
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    "@types/geojson" "^7946.0.8"
+
 "@iiif/presentation-2@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
@@ -1701,6 +1641,20 @@
     "@iiif/parser" "^1.0.2"
     "@iiif/presentation-2" "^1.0.1"
     "@iiif/presentation-3" "^1.0.3"
+    mitt "^3.0.0"
+    node-fetch "^3.1.1"
+    redux "^4.1.2"
+    tiny-invariant "^1.2.0"
+    typesafe-actions "^5.1.0"
+
+"@iiif/vault@^0.9.16":
+  version "0.9.16"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.16.tgz#842752d2fdd22af63bd4ec51f39c6b66e8d07241"
+  integrity sha512-72EVB0xyhWd7D5qa56pnaW8GImlSSpWAM1L141Lf/dmMpAZA8N6njE7W/sAjH56tmDMKHRLzfFPF/kTN3g9mJQ==
+  dependencies:
+    "@iiif/parser" "^1.0.6"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
     mitt "^3.0.0"
     node-fetch "^3.1.1"
     redux "^4.1.2"
@@ -2183,10 +2137,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
   integrity sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==
 
-"@preact/compat@17.0.2":
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/@preact/compat/-/compat-17.0.2.tgz#c1b97a4d0add60fc07898a250448fa585479a920"
-  integrity sha512-svzrLCGU++qft7dPmP2hQuSfih73jge2ohoWCT+UQs7i9757p12xMTe3yefylW5t6zMkQEtQ6urPnGT3jh2VCg==
+"@preact/compat@17.0.3":
+  version "17.0.3"
+  resolved "https://registry.yarnpkg.com/@preact/compat/-/compat-17.0.3.tgz#5e41def12b4b6d00d6f86e6b24ef46b029a99626"
+  integrity sha512-lzkui97aQ00hxzUwfRfZm7jUXE1bjWyOXiqm8DeWYhkD+G9ZaY1wso/itqyg60wGnP9DRlM4PDn2blIOnh1yeg==
 
 "@react-hook/media-query@^1.1.1":
   version "1.1.1"
@@ -4902,6 +4856,11 @@ better-opn@^2.1.1:
   integrity sha512-kIPXZS5qwyKiX/HcRvDYfmBQUa8XP17I0mYZZ0y4UhpYOSvtsLHDYqmomS+Mj20aDvD3knEiQ0ecQy2nhio3yA==
   dependencies:
     open "^7.0.3"
+
+bezier-easing@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/bezier-easing/-/bezier-easing-2.1.0.tgz#c04dfe8b926d6ecaca1813d69ff179b7c2025d86"
+  integrity sha1-wE3+i5JtbsrKGBPWn/F5t8ICXYY=
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -8217,7 +8176,7 @@ immediate@~3.0.5:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
 
-immer@^9, immer@^9.0.12:
+immer@^9.0.12:
   version "9.0.12"
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.12.tgz#2d33ddf3ee1d247deab9d707ca472c8c942a0f20"
   integrity sha512-lk7UNmSbAukB5B6dh9fnh5D0bJTOFKxVg2cyJWTYrWRfhLrLMBquONcUs3aFq507hNoIZEDDh8lb8UtOizSMhA==
@@ -11081,10 +11040,10 @@ postcss@^7.0.14, postcss@^7.0.26, postcss@^7.0.32, postcss@^7.0.36, postcss@^7.0
     picocolors "^0.2.1"
     source-map "^0.6.1"
 
-preact@^10.5.15:
-  version "10.6.5"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.6.5.tgz#726d8bd12903a0d51cdd17e2e1b90cc539403e0c"
-  integrity sha512-i+LXM6JiVjQXSt2jG2vZZFapGpCuk1fl8o6ii3G84MA3xgj686FKjs4JFDkmUVhtxyq21+4ay74zqPykz9hU6w==
+preact@^10.6.6:
+  version "10.6.6"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.6.6.tgz#f1899bc8dab7c0788b858481532cb3b5d764a520"
+  integrity sha512-dgxpTFV2vs4vizwKohYKkk7g7rmp1wOOcfd4Tz3IB3Wi+ivZzsn/SpeKJhRENSE+n8sUfsAl4S3HiCVT923ABw==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -11386,7 +11345,7 @@ react-docgen@^5.0.0:
     node-dir "^0.1.10"
     strip-indent "^3.0.0"
 
-react-dom@17.0.2, "react-dom@^16.10.2 || ^17.0.1":
+react-dom@17.0.2, "react-dom@^16.10.2 || ^17.0.1", "react-dom@^16.10.2 || ^17.0.2":
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -11471,6 +11430,22 @@ react-iiif-vault@^0.9.3:
     rollup "^2.68.0"
     typescript "^4.5.5"
 
+react-iiif-vault@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.6.tgz#1dbc90151fea720a0dc88cc88f776f53420715ac"
+  integrity sha512-j1QlcQ6mKYhyu/Fr6FM7xrhfwJ0XqcEeJuf3gDVdQmg91Q75TsyfMjVtsRi9PyQ5Mlfwc4kTfP+MZbDL4Nagkw==
+  dependencies:
+    "@atlas-viewer/iiif-image-api" "^2.0.2"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    "@iiif/vault" "^0.9.16"
+    "@iiif/vault-helpers" "^0.9.4"
+    react "^16.10.2 || ^17.0.2"
+    react-dom "^16.10.2 || ^17.0.2"
+    redux "^4.1.2"
+    rollup "^2.70.0"
+    typescript "^4.6.2"
+
 react-inspector@^5.1.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-inspector/-/react-inspector-5.1.1.tgz#58476c78fde05d5055646ed8ec02030af42953c8"
@@ -11520,15 +11495,14 @@ react-query@^1.5.10:
     "@scarf/scarf" "^1.0.6"
     ts-toolbelt "^6.9.4"
 
-react-reconciler@^0.25.1:
-  version "0.25.1"
-  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.25.1.tgz#f9814d59d115e1210762287ce987801529363aaa"
-  integrity sha512-R5UwsIvRcSs3w8n9k3tBoTtUHdVhu9u84EG7E5M0Jk9F5i6DA1pQzPfUZd6opYWGy56MJOtV3VADzy6DRwYDjw==
+react-reconciler@^0.26.2:
+  version "0.26.2"
+  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.26.2.tgz#bbad0e2d1309423f76cf3c3309ac6c96e05e9d91"
+  integrity sha512-nK6kgY28HwrMNwDnMui3dvm3rCFjZrcGiuwLc5COUipBK5hWHLOxMJhSnSomirqWwjPBJKV1QcbkI0VJr7Gl1Q==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.19.1"
+    scheduler "^0.20.2"
 
 react-refresh@^0.11.0:
   version "0.11.0"
@@ -11587,7 +11561,7 @@ react-use-measure@^2.0.1:
   dependencies:
     debounce "^1.2.1"
 
-react@17.0.2, "react@^16.10.2 || ^17.0.1":
+react@17.0.2, "react@^16.10.2 || ^17.0.1", "react@^16.10.2 || ^17.0.2":
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
@@ -12007,6 +11981,13 @@ rollup@^2.68.0:
   version "2.68.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.68.0.tgz#6ccabfd649447f8f21d62bf41662e5caece3bd66"
   integrity sha512-XrMKOYK7oQcTio4wyTz466mucnd8LzkiZLozZ4Rz0zQD+HeX4nUK4B8GrTX/2EvN2/vBF/i2WnaXboPxo0JylA==
+  optionalDependencies:
+    fsevents "~2.3.2"
+
+rollup@^2.70.0:
+  version "2.70.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.1.tgz#824b1f1f879ea396db30b0fc3ae8d2fead93523e"
+  integrity sha512-CRYsI5EuzLbXdxC6RnYhOuRdtz4bhejPMSWjsFLfVM/7w/85n2szZv6yExqUXsBdz5KT8eoubeyDUDjhLHEslA==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -13228,10 +13209,15 @@ typescript-memoize@^1.0.0-alpha.3:
   resolved "https://registry.yarnpkg.com/typescript-memoize/-/typescript-memoize-1.1.0.tgz#4a8f512d06fc995167c703a3592219901db8bc79"
   integrity sha512-LQPKVXK8QrBBkL/zclE6YgSWn0I8ew5m0Lf+XL00IwMhlotqRLlzHV+BRrljVQIc+NohUAuQP7mg4HQwrx5Xbg==
 
-typescript@4.5.5, typescript@^4.1.3, typescript@^4.5.5:
+typescript@4.5.5, typescript@^4.5.5:
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
   integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==
+
+typescript@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.2.tgz#fe12d2727b708f4eef40f51598b3398baa9611d4"
+  integrity sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==
 
 ua-parser-js@^0.7.30:
   version "0.7.31"

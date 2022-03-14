@@ -12,7 +12,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
-    "@digirati/canvas-panel-web-components": "^1.0.30",
+    "@digirati/canvas-panel-web-components": "^v1.0.47",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.14",
     "@iiif/vault-helpers": "^0.9.4",
