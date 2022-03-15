@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useManifest } from "../../../hooks/useManifest";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
+import { Editor } from "../../atoms/Editor";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ExpandTab } from "../../atoms/ExpandTab";
 import { ContentSelector } from "../../layout/ContentSelector";
 import { EditorPanel } from "../../layout/EditorPanel";
-import { FlexContainerRow } from "../../layout/FlexContainer";
 import { Toolbar } from "../../layout/Toolbar";
 import { CanvasView } from "../../organisms/CanvasView";
 import { GridView } from "../../organisms/GridView";
@@ -18,7 +18,7 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
   const [selectedProperty, setSelectedProperty] = useState("id");
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
-  const [view, setView] = useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("fullEditor");
+  const [view, setView] = useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("tree");
   const changeSelectedProperty = (property: string) => {
     setSelectedProperty(property);
   };
@@ -56,7 +56,7 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
               />
             </Toolbar>
           </ErrorBoundary>
-          <FlexContainerRow>
+          <Editor>
             {(view !== "grid" && view !== "fullEditor") && (
               <ErrorBoundary>
                 <ContentSelector view={view} />
@@ -88,7 +88,7 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
                 />
               </ErrorBoundary>
             )}
-          </FlexContainerRow>
+          </Editor>
         </ManifestEditorContext.Provider>
       )}
     </>

@@ -10,6 +10,12 @@ export const ThumbnailContainer = styled.div`
     height: auto;
     overflow-y: auto;
     width: fit-content;
+    @media (max-width: ${(props: any) =>
+        props.theme.device.tablet || "770px"}) {
+      flex-direction: row;
+      width: 100%;
+      overflow-x: auto;
+    }
   }
 `;
 
@@ -24,5 +30,11 @@ export const ThumbnailGrid = styled.div`
     overflow-y: auto;
     width: 100%;
     flex-wrap: wrap;
+    @media (max-width: ${(props: any) =>
+        props.theme.device.tablet || "770px"}) {
+      flex-direction: row;
+      height: 30%;
+      overflow-x: auto;
+    }
   }
 `;

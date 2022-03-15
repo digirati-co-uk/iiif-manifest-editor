@@ -14,6 +14,12 @@ const ContentSelectorContainer = styled.div`
     margin: 0.375rem 0;
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
     height: 80vh;
+    @media (max-width: ${(props: any) =>
+        props.theme.device.tablet || "770px"}) {
+      width: 100%;
+      border-right: none;
+      max-height: 30%;
+    }
   }
 `;
 

@@ -13,9 +13,16 @@ const ExpandTabContainer = styled.div`
     ${(props: any) => props.theme.color.mediumgrey || "grey"};
   border-bottom: 0.016rem solid
     ${(props: any) => props.theme.color.mediumgrey || "grey"};
-
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
   height: 3rem;
+  @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
+    border: none;
+    display: flex;
+    button: {
+      transform: rotate(90deg);
+    }
+    justify-content: flex-end;
+
 `;
 
 export const ExpandTab: React.FC = () => {

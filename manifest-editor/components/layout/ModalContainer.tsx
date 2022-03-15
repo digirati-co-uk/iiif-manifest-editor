@@ -14,5 +14,11 @@ export const ModalContainer = styled.div`
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
     padding: ${(props: any) => props.theme.padding.large || "1rem"};
     background: ${(props: any) => props.theme.color.white || "white"};
+    @media (max-width: ${(props: any) =>
+      props.theme.device.tablet || "770px"}) {
+      height: 100vh;
+      width: 100vw;
+      z-index: 16;
+      justify-content: space-between;
   }
 `;

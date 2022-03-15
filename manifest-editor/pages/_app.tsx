@@ -20,7 +20,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const [resourceID, setResouceID] = useState(
     //   // We will want to actually implement some options/templates etc
     //   // but just implementing with some examples for development purposes.
-    "https://iiif.wellcomecollection.org/presentation/b28799495"
+    "https://digirati-co-uk.github.io/wunder.json"
   );
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 

@@ -29,6 +29,11 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
     border-color: #333;
     outline: none;
   }
+  @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
+    width: 100%;
+    border-top: 1px solid rgba(5, 42, 68, 0.2);
+    border-left: none;
+  }
 `;
 
 export const EditorPanel: React.FC<{
