@@ -18,7 +18,7 @@ const ExpandTabContainer = styled.div`
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     border: none;
     display: flex;
-    button: {
+    button {
       transform: rotate(90deg);
     }
     justify-content: flex-end;
