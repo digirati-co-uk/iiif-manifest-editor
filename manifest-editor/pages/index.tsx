@@ -43,6 +43,7 @@ const Home: NextPage = (props: any) => {
           <title>Manifest Editor</title>
           <meta name="description" content="IIIF Manifest Editor" />
           <link rel="icon" href="/favicon.ico" />
+          <script src="https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@latest"/>
         </Head>
         <ErrorBoundary>
           <Main>
