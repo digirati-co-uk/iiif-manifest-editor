@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/globals.css";
 import { AppProps } from "next/app";
 import ShellContext from "../components/apps/Shell/ShellContext";
@@ -25,13 +25,21 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const [selectedApplication, setSelectedApplication] =
-    useState<"ManifestEditor" | "Browser" | "Splash">("Splash");
+    useState<"ManifestEditor" | "Browser" | "Splash">("ManifestEditor");
 
   const changeSelectedApplication = (
     app: "ManifestEditor" | "Browser" | "Splash"
   ) => {
     setSelectedApplication(app);
   };
+
+  useEffect(() => {
+    console.log(localStorage.getItem("previouslyVisited"));
+    if (!localStorage.getItem("previouslyVisited")) {
+      setSelectedApplication("Splash");
+      localStorage.setItem("previouslyVisited", "true");
+    }
+  }, []);
 
   const changeResourceID = async (id: string | null) => {
     // We want to check that resource is returning 200 before loading it into the vault.
