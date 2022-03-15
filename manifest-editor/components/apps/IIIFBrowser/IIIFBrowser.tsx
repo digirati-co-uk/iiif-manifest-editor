@@ -9,11 +9,8 @@ export const IIIFBrowser: React.FC = () => {
   const shellContext = useContext(ShellContext);
 
   useEffect(() => {
-    // ASYNC FUNCTION
     const waitData = async () => {
       const data = await vault.load(shellContext?.resourceID || "");
-      console.log(shellContext);
-      console.log(data);
       setCollection(data);
     };
     waitData();
