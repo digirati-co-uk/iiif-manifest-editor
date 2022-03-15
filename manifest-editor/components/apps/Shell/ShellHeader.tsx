@@ -70,7 +70,11 @@ export const ShellHeader: React.FC<{
       )}
       <ShellHeaderStrip>
         <FlexContainer>
-          <ManifestEditorIcon />
+          <Button
+            onClick={() => shellContext?.changeSelectedApplication("Splash")}
+          >
+            <ManifestEditorIcon />
+          </Button>
           <Dropdown>
             <Button onClick={() => setAppMenuOpen(!appMenuOpen)}>
               <DownIcon />
