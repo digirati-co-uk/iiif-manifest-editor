@@ -25,9 +25,11 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const [selectedApplication, setSelectedApplication] =
-    useState<"ManifestEditor" | "Browser">("ManifestEditor");
+    useState<"ManifestEditor" | "Browser" | "Splash">("Splash");
 
-  const changeSelectedApplication = (app: "ManifestEditor" | "Browser") => {
+  const changeSelectedApplication = (
+    app: "ManifestEditor" | "Browser" | "Splash"
+  ) => {
     setSelectedApplication(app);
   };
 

@@ -1,9 +1,9 @@
 import React from "react";
 
 interface ShellContextInterface {
-  selectedApplication: "ManifestEditor" | "Browser";
+  selectedApplication: "ManifestEditor" | "Browser" | "Splash";
   changeSelectedApplication: (
-    application: "ManifestEditor" | "Browser"
+    application: "ManifestEditor" | "Browser" | "Splash"
   ) => void;
   resourceID: string | null;
   changeResourceID: (id: string | null) => void;
