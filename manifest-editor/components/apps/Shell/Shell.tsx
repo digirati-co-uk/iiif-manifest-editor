@@ -121,7 +121,6 @@ export const Shell: React.FC<{
         manifest,
         serializeConfigPresentation3
       );
-      // const manifestToPersist = await vault.toPresentation3(manifest)
       // Save as choice 0 is overwrite
       if (saveAsChoice === 0) {
         const perma = await useUpdatePermalink(
@@ -135,6 +134,7 @@ export const Shell: React.FC<{
       else if (saveAsChoice === 1) {
         const perma = await usePermalink(man);
         setManifestPermalink(perma ? perma : undefined);
+        shellContext?.updateRecentManifests(manifest.id);
         shellContext?.setUnsavedChanges(false);
       }
     }
@@ -154,7 +154,9 @@ export const Shell: React.FC<{
         setShowPreviewModal={setShowPreviewModal}
       />
       <ShellToolbar>
-        <FlexContainer style={{ justifyContent: "space-between", width: "100%" }}>
+        <FlexContainer
+          style={{ justifyContent: "space-between", width: "100%" }}
+        >
           <ShellOptions
             // This is the 48hr persistence
             saveManifest={saveManifest}
@@ -166,7 +168,9 @@ export const Shell: React.FC<{
             setSaveAsChoice={setSaveAsChoice}
           />
           {shellContext?.unsavedChanges && (
-            <WarningMessage $small={true}>You have unsaved changes</WarningMessage>
+            <WarningMessage $small={true}>
+              You have unsaved changes
+            </WarningMessage>
           )}
         </FlexContainer>
       </ShellToolbar>

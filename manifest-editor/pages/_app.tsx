@@ -33,13 +33,40 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     setSelectedApplication(app);
   };
 
+  const [recentManifests, setRecentManifests] = useState<Array<string>>([]);
+
+  const updateRecentManifests = (manifestId: string) => {
+    // Maintaining the last 10 for now but do we want more, maybe?
+    const recents = [...recentManifests];
+    if (recents.find((id: string) => id === manifestId)) return;
+    if (recentManifests.length >= 10) {
+      recents.pop();
+    }
+    recents.unshift(manifestId);
+    setRecentManifests(recents);
+  };
+
   useEffect(() => {
-    console.log(localStorage.getItem("previouslyVisited"));
+    // Determine if the user has been to the site before
+    // and send them to the splash screen if not
+    // Set to true from now on.
     if (!localStorage.getItem("previouslyVisited")) {
       setSelectedApplication("Splash");
       localStorage.setItem("previouslyVisited", "true");
     }
+    // Get recent manifests from localStorage
+    if (localStorage.getItem("recentManifests")) {
+      const manifests = JSON.parse(
+        localStorage.getItem("recentManifests") || "[]"
+      );
+      setRecentManifests(manifests);
+    }
   }, []);
+
+  useEffect(() => {
+    // Send changes to localstorage
+    localStorage.setItem("recentManifests", JSON.stringify(recentManifests));
+  }, [recentManifests]);
 
   const changeResourceID = async (id: string | null) => {
     // We want to check that resource is returning 200 before loading it into the vault.
@@ -49,7 +76,9 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     if (id) {
       try {
         const success = await fetch(id);
-        if (success.ok) setResouceID(id);
+        if (success.ok) {
+          setResouceID(id);
+        }
       } catch (error) {
         console.log(
           "Couldn't fetch the resource, has the temporary link expired?"
@@ -65,6 +94,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     resourceID,
     unsavedChanges,
     setUnsavedChanges,
+    recentManifests,
+    updateRecentManifests,
   };
 
   return (

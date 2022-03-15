@@ -9,6 +9,8 @@ interface ShellContextInterface {
   changeResourceID: (id: string | null) => void;
   unsavedChanges: boolean;
   setUnsavedChanges: (bol: boolean) => void;
+  updateRecentManifests: (manifestId: string) => void;
+  recentManifests: string[];
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);

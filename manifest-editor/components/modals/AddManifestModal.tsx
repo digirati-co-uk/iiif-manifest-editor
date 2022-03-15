@@ -51,10 +51,25 @@ export const AddManifestModal: React.FC<{
       setImageServiceJSON(inputed);
     }
 
-    // Only handling manifest for now.
-    if (inputed && inputed.type === "Manifest" || inputType === "Collection") {
+    // Only handling manifest & collection for now.
+    if (
+      (inputed && inputed.type === "Manifest") ||
+      inputType === "Collection"
+    ) {
       shellContext?.setUnsavedChanges(true);
       shellContext?.changeResourceID(inputValue);
+      if (
+        shellContext?.selectedApplication === "ManifestEditor" &&
+        inputed.type === "Manifest"
+      ) {
+        shellContext?.updateRecentManifests(inputValue);
+        close();
+      } else if (
+        shellContext?.selectedApplication === "Browser" &&
+        inputed.type === "Collection"
+      ) {
+        close();
+      }
     }
   };
 
@@ -76,7 +91,7 @@ export const AddManifestModal: React.FC<{
           />
         </InputLabel>
         <small>
-          Any image, IIIF Image Service, IIIF Manifest or IIIF Collection.{" "}
+          Any image, IIIF Image Service, IIIF Manifest or IIIF Collection.
         </small>
         <HorizontalDivider />
         <FlexContainer style={{ justifyContent: "flex-end" }}>
@@ -133,7 +148,8 @@ export const AddManifestModal: React.FC<{
               <FlexContainer style={{ justifyContent: "space-between" }}>
                 <small>
                   {/* This UI will change again */}
-                  This resource is a manifest, do you want to launch the Manifest Editor App?
+                  This resource is a manifest, do you want to launch the
+                  Manifest Editor App?
                 </small>
                 <Button
                   onClick={() => {

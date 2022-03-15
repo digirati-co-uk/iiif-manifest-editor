@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { CalltoButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import ShellContext from "../Shell/ShellContext";
+import { RecentFiles } from "../Widgets/RecentFiles";
 
 export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   const shellContext = useContext(ShellContext);
@@ -12,6 +13,7 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
         className="text-container"
         dangerouslySetInnerHTML={{ __html: welcome }}
       />
+      <RecentFiles />
       <FlexContainer style={{ justifyContent: "flex-end" }}>
         <CalltoButton
           onClick={() =>
