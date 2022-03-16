@@ -18,7 +18,8 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
   const [selectedProperty, setSelectedProperty] = useState("id");
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
-  const [view, setView] = useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("tree");
+  const [view, setView] =
+    useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("grid");
   const changeSelectedProperty = (property: string) => {
     setSelectedProperty(property);
   };
@@ -57,7 +58,7 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
             </Toolbar>
           </ErrorBoundary>
           <Editor>
-            {(view !== "grid" && view !== "fullEditor") && (
+            {view !== "grid" && view !== "fullEditor" && (
               <ErrorBoundary>
                 <ContentSelector view={view} />
                 <ExpandTab />
