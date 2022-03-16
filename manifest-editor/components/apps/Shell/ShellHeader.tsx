@@ -5,7 +5,7 @@ import { FlexContainer } from "../../layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
 import { useManifest } from "../../../hooks/useManifest";
-import { PersistenceModal } from "../../modals/PersistenceModal";
+import { PreviewModal } from "../../modals/PreviewModal";
 import { Persistance } from "./Shell";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
@@ -15,21 +15,21 @@ import { getValue } from "@iiif/vault-helpers";
 import ShellContext from "./ShellContext";
 
 export const ShellHeader: React.FC<{
-  saveManifest: () => Promise<void>;
+  savePreviewLink: () => Promise<void>;
   showAgain: boolean;
   setSelectedPreviewIndex: (index: number) => void;
   previewConfig: any;
   selectedPreviewIndex: number;
-  persistedManifest: Persistance | undefined;
+  previewLocation: Persistance | undefined;
   showPreviewModal: boolean;
   setShowAgain: (show: boolean) => void;
   setShowPreviewModal: (show: boolean) => void;
 }> = ({
-  saveManifest,
+  savePreviewLink,
   setSelectedPreviewIndex,
   previewConfig,
   selectedPreviewIndex,
-  persistedManifest,
+  previewLocation,
   showPreviewModal,
   setShowAgain,
   showAgain,
@@ -52,16 +52,16 @@ export const ShellHeader: React.FC<{
 
   return (
     <>
-      {showPreviewModal && persistedManifest && (
-        <PersistenceModal
+      {showPreviewModal && previewLocation && (
+        <PreviewModal
           manifest={
-            persistedManifest && persistedManifest.location
-              ? persistedManifest.location
+            previewLocation && previewLocation.location
+              ? previewLocation.location
               : ""
           }
           link={
             previewConfig[selectedPreviewIndex].baseUrl +
-            persistedManifest.location
+            previewLocation.location
           }
           value={!showAgain}
           onChange={() => setShowAgain(!showAgain)}
@@ -104,9 +104,9 @@ export const ShellHeader: React.FC<{
           </Dropdown>
           {getTitle()}
         </FlexContainer>
-        {persistedManifest && (
+        {previewLocation && (
           <DropdownPreviewMenu
-            onPreviewClick={() => saveManifest()}
+            onPreviewClick={() => savePreviewLink()}
             label={
               showAgain ? (
                 `Preview: ${previewConfig[selectedPreviewIndex].label}`
@@ -114,7 +114,7 @@ export const ShellHeader: React.FC<{
                 <a
                   href={
                     previewConfig[selectedPreviewIndex].baseUrl +
-                    persistedManifest.location
+                    previewLocation.location
                   }
                   target={"_blank"}
                   rel="noreferrer"
@@ -125,7 +125,7 @@ export const ShellHeader: React.FC<{
             }
             previewUrl={
               previewConfig[selectedPreviewIndex].baseUrl +
-              persistedManifest.location
+              previewLocation.location
             }
             setSelectedPreviewIndex={(index: number) =>
               setSelectedPreviewIndex(index)

@@ -2,14 +2,16 @@ import { Input } from "./Input";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CalltoButton } from "../atoms/Button";
 import { FlexContainer } from "../layout/FlexContainer";
+import ShellContext from "../apps/Shell/ShellContext";
 
 export const StringInput: React.FC<{
   // Add to this list as we go
-  dispatchType: "id" | "type" | "viewingDirection" | "@context";
+  dispatchType: "type" | "viewingDirection" | "@context";
 }> = ({ dispatchType }) => {
+  const shellContext = useContext(ShellContext);
   const manifest = useManifest();
   const vault = useVault();
   const [save, setSave] = useState(0);
@@ -17,6 +19,7 @@ export const StringInput: React.FC<{
 
   useEffect(() => {
     if (manifest && save >= 1) {
+      shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, inputValue);
     }
   }, [save]);

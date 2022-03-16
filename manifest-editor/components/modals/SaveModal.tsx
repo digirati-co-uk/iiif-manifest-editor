@@ -12,18 +12,18 @@ import { CopyURL } from "../atoms/CopyURL";
 
 export const SaveModal: React.FC<{
   close: any;
-  savePermalink: () => void;
+  save: () => void;
   previouslySaved: boolean;
   permalink: string | undefined;
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
 }> = ({
   close,
-  savePermalink,
+  save,
   previouslySaved,
   permalink,
   saveAsChoice,
-  setSaveAsChoice
+  setSaveAsChoice,
 }) => {
   const [saveClicked, setSaveClicked] = useState(false);
   return (
@@ -47,7 +47,11 @@ export const SaveModal: React.FC<{
           <RadioButtons
             options={[
               { label: `Replace ${permalink}`, value: "replace" },
-              { label: "Create a new permalink", value: "create" }
+              { label: "Create a new permalink", value: "create" },
+              {
+                label: "Save to your browser's local storage",
+                value: "createLS",
+              },
             ]}
             onChange={(index: number) => {
               setSaveAsChoice(index);
@@ -61,14 +65,15 @@ export const SaveModal: React.FC<{
           <SecondaryButton onClick={() => close()}>CANCEL</SecondaryButton>
           <CalltoButton
             onClick={() => {
-              savePermalink();
+              save();
               setSaveClicked(true);
+              if (saveAsChoice === 2) close();
             }}
           >
             SAVE
           </CalltoButton>
         </FlexContainer>
-        {saveClicked && (
+        {saveClicked && saveAsChoice !== 2 && (
           <>
             <HorizontalDivider />
             <small>The manifest has been saved to the permalink here:</small>

@@ -12,7 +12,7 @@ const Link = styled.a`
   text-decoration: none;
 `;
 
-export const PersistenceModal: React.FC<{
+export const PreviewModal: React.FC<{
   manifest: string;
   onChange: any;
   close: any;

@@ -8,12 +8,12 @@ import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { useState, useEffect } from "react";
 
 import { useVault } from "react-iiif-vault";
-import { useSave, useUpdatePermalink } from "../../../hooks/useSave";
+import { usePreviewLink, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
 import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "./ShellContext";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
-import { FlexContainer } from "../../layout/FlexContainer";
+import { Button } from "../../atoms/Button";
 
 export type Persistance = {
   deleteLocation?: string;
@@ -26,8 +26,8 @@ export const Shell: React.FC<{
   previewConfig: any;
 }> = ({ previewConfig }) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
-  // 48 hours link
-  const [persistedManifest, setpersistedManifest] = useState<
+  // 48 hours link preview link
+  const [previewLocation, setPreviewLocation] = useState<
     Persistance | undefined
   >({});
   // Permalink
@@ -46,58 +46,22 @@ export const Shell: React.FC<{
   const vault = useVault();
 
   useEffect(() => {
-    // We want to hold on to the persisted value in localStorage
-    // TODO handle the time constraint on this value
-    localStorage.setItem(
-      "persistedManifest",
-      JSON.stringify(persistedManifest)
-    );
-    if (persistedManifest && persistedManifest.location) {
-      shellContext?.changeResourceID(persistedManifest?.location);
-    }
-  }, [persistedManifest]);
-
-  useEffect(() => {
     // We want to hold on to the prefered viewer choice in localstorage
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
   }, [selectedPreviewIndex]);
 
   useEffect(() => {
-    if (localStorage.getItem("persistedManifest")) {
-      const pers = localStorage.getItem("persistedManifest")
-        ? JSON.parse(localStorage.getItem("persistedManifest") || "{}")
-        : {};
-      setpersistedManifest(pers);
-    }
+    // previewchoice in localStorage?
     if (localStorage.getItem("previewChoice")) {
       const preview = localStorage.getItem("previewChoice")
         ? JSON.parse(localStorage.getItem("previewChoice") || "{}")
         : {};
       setSelectedPreviewIndex(preview);
     }
-    if (localStorage.getItem("manifestPermalink")) {
-      const permalink = localStorage.getItem("manifestPermalink")
-        ? JSON.parse(localStorage.getItem("manifestPermalink") || "{}")
-        : undefined;
-      setManifestPermalink(permalink);
-      setPreviouslySaved(true);
-    }
   }, []);
 
-  useEffect(() => {
-    if (manifestPermalink && manifestPermalink.location) {
-      shellContext?.changeResourceID(manifestPermalink.location);
-    }
-    // We want to hold on to the persisted value in localStorage
-    if (manifestPermalink) {
-      localStorage.setItem(
-        "manifestPermalink",
-        JSON.stringify(manifestPermalink)
-      );
-    }
-  }, [manifestPermalink]);
-
-  const saveManifest = async () => {
+  // Save the manifest to a preview location for 48 hours
+  const savePreviewLink = async () => {
     if (manifest) {
       // Temporary code until bug fixed on react-iiif-vault
       const man = await serialize(
@@ -106,14 +70,21 @@ export const Shell: React.FC<{
         serializeConfigPresentation3
       );
       // const manifestToPersist = await vault.toPresentation3(manifest)
-      const data = await useSave(man);
-      shellContext?.setUnsavedChanges(false);
-      setpersistedManifest(data ? data : "");
+      const data = await usePreviewLink(man);
+      setPreviewLocation(data ? data : "");
       if (showAgain) setShowPreviewModal(true);
     }
   };
 
-  const savePermalink = async () => {
+  useEffect(() => {
+    if (manifestPermalink && manifestPermalink.location) {
+      vault.load(manifestPermalink.location);
+    }
+  }, [manifestPermalink]);
+
+  // Save to the selected location
+  const save = async () => {
+    setPreviouslySaved(true);
     if (manifest) {
       // Temporary code until bug fixed on react-iiif-vault
       const man = await serialize(
@@ -137,42 +108,41 @@ export const Shell: React.FC<{
         shellContext?.updateRecentManifests(manifest.id);
         shellContext?.setUnsavedChanges(false);
       }
+      // save as choice 2 is save to localStorage;
+      else if (saveAsChoice === 2) {
+        const perma = vault.getState();
+        localStorage.setItem("savedManifest", JSON.stringify(perma));
+      }
     }
   };
 
   return (
     <>
       <ShellHeader
-        saveManifest={saveManifest}
+        savePreviewLink={savePreviewLink}
         showAgain={showAgain}
         setSelectedPreviewIndex={setSelectedPreviewIndex}
         previewConfig={previewConfig}
         selectedPreviewIndex={selectedPreviewIndex}
-        persistedManifest={persistedManifest}
+        previewLocation={previewLocation}
         showPreviewModal={showPreviewModal}
         setShowAgain={setShowAgain}
         setShowPreviewModal={setShowPreviewModal}
       />
       <ShellToolbar>
-        <FlexContainer
-          style={{ justifyContent: "space-between", width: "100%" }}
-        >
-          <ShellOptions
-            // This is the 48hr persistence
-            saveManifest={saveManifest}
-            // This is the permalink
-            savePermalink={savePermalink}
-            previouslySaved={previouslySaved}
-            permalink={manifestPermalink?.location}
-            saveAsChoice={saveAsChoice}
-            setSaveAsChoice={setSaveAsChoice}
-          />
-          {shellContext?.unsavedChanges && (
-            <WarningMessage $small={true}>
-              You have unsaved changes
-            </WarningMessage>
-          )}
-        </FlexContainer>
+        <ShellOptions
+          save={() => save()}
+          previouslySaved={previouslySaved}
+          permalink={manifestPermalink?.location}
+          saveAsChoice={saveAsChoice}
+          setSaveAsChoice={setSaveAsChoice}
+        />
+        {shellContext?.unsavedChanges && (
+          <WarningMessage $small={true}>
+            You have unsaved changes
+            <Button onClick={() => save()}>Save Changes</Button>
+          </WarningMessage>
+        )}
       </ShellToolbar>
     </>
   );

@@ -16,9 +16,10 @@ export const WarningMessage = styled.div<{ $small?: boolean }>`
     props.$small &&
     css`
       font-size: 0.75em;
+      white-space: nowrap;
       padding: ${props.theme.padding.xs || "0.25rem"}
         ${props.theme.padding.small || "0.5rem"};
       line-height: 1.6em;
-      width: 16rem;
+      width: fit-content;
     `}
 `;

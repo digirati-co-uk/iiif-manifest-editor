@@ -8,24 +8,15 @@ import { ExportModal } from "../../modals/ExportModal";
 import { FlexContainer } from "../../layout/FlexContainer";
 
 export const ShellOptions: React.FC<{
-  saveManifest: () => void;
-  savePermalink: () => void;
+  save: () => void;
   previouslySaved: boolean;
   permalink: string | undefined;
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
-}> = ({
-  saveManifest,
-  savePermalink,
-  previouslySaved,
-  permalink,
-  saveAsChoice,
-  setSaveAsChoice
-}) => {
+}> = ({ save, previouslySaved, permalink, saveAsChoice, setSaveAsChoice }) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
-  const [saveModalVisible, setSaveModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
-
+  const [saveModalVisible, setSaveModalVisible] = useState(false);
 
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -35,6 +26,15 @@ export const ShellOptions: React.FC<{
   useEffect(() => {
     setaddModalVisible(false);
   }, [manifest]);
+
+  const saveClickHandler = () => {
+    setFileOpen(!fileOpen);
+    if (previouslySaved) {
+      save();
+    } else {
+      setSaveModalVisible(true);
+    }
+  };
 
   return (
     <>
@@ -47,7 +47,7 @@ export const ShellOptions: React.FC<{
       {saveModalVisible && (
         <SaveModal
           close={() => setSaveModalVisible(false)}
-          savePermalink={savePermalink}
+          save={save}
           previouslySaved={previouslySaved}
           permalink={permalink}
           saveAsChoice={saveAsChoice}
@@ -69,14 +69,7 @@ export const ShellOptions: React.FC<{
               >
                 Open
               </Button>
-              <Button
-                onClick={() => {
-                  setFileOpen(!fileOpen);
-                  saveManifest();
-                }}
-              >
-                Save
-              </Button>
+              <Button onClick={() => saveClickHandler()}>Save</Button>
               <Button
                 onClick={() => {
                   setFileOpen(!fileOpen);

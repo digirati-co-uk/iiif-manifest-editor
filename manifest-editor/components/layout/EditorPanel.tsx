@@ -57,8 +57,7 @@ export const EditorPanel: React.FC<{
                 <CloseIcon />
               </Button>
             </FlexContainerRow>
-            {(editorContext?.selectedProperty === "id" ||
-              editorContext?.selectedProperty === "type" ||
+            {(editorContext?.selectedProperty === "type" ||
               editorContext?.selectedProperty === "viewingDirection" ||
               editorContext?.selectedProperty === "@context") && (
               <StringInput dispatchType={editorContext?.selectedProperty} />

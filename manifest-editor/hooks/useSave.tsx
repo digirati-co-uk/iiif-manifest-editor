@@ -1,27 +1,27 @@
 const PERSISTENCEURL = {
   prod: "https://iiif-preview.stephen.wf/store",
   // Need iiif-preview to be running locally.
-  local: "http://127.0.0.1:8787/store"
+  local: "http://127.0.0.1:8787/store",
 };
 
 // Save for 28 hrs.
-export const useSave = async (manifest: any) => {
+export const usePreviewLink = async (manifest: any) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(manifest)
+    body: JSON.stringify(manifest),
   };
   let responseData = {};
   await fetch(PERSISTENCEURL.prod, requestOptions)
-    .then(response => {
-      return response.json().catch(err => {
+    .then((response) => {
+      return response.json().catch((err) => {
         console.error(`'${err}' happened!`);
         return {};
       });
     })
-    .then(data => {
+    .then((data) => {
       responseData = { ...data };
     });
 
@@ -34,19 +34,19 @@ export const usePermalink = async (manifest: any) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(manifest)
+    body: JSON.stringify(manifest),
   };
   let responseData = {};
   await fetch(PERSISTENCEURL.prod, requestOptions)
-    .then(response => {
-      return response.json().catch(err => {
+    .then((response) => {
+      return response.json().catch((err) => {
         console.error(`'${err}' happened!`);
         return {};
       });
     })
-    .then(data => {
+    .then((data) => {
       responseData = { ...data };
     });
 
@@ -59,25 +59,24 @@ export const useUpdatePermalink = async (
   updateUrl: string | undefined,
   manifest: any
 ) => {
-  console.log(updateUrl)
   const requestOptions = {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "Origin": "*"
+      Origin: "*",
     },
-    body: JSON.stringify(manifest)
+    body: JSON.stringify(manifest),
   };
   let responseData = {};
   if (updateUrl) {
     await fetch(updateUrl, requestOptions)
-      .then(response => {
-        return response.json().catch(err => {
+      .then((response) => {
+        return response.json().catch((err) => {
           console.error(`'${err}' happened!`);
           return {};
         });
       })
-      .then(data => {
+      .then((data) => {
         responseData = { ...data };
       });
   }
