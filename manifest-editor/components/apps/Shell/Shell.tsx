@@ -35,11 +35,13 @@ export const Shell: React.FC<{
     useState<Persistance | undefined>();
   // This is an index of the list of choices,
   // 0 is replace, 1 is create new - default is to create new
+  // 2 if local storage
   const [saveAsChoice, setSaveAsChoice] = useState(1);
 
   const [showAgain, setShowAgain] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const shellContext = useContext(ShellContext);
 
   const manifest = useManifest();
@@ -85,6 +87,7 @@ export const Shell: React.FC<{
   // Save to the selected location
   const save = async () => {
     setPreviouslySaved(true);
+    setShowSaveModal(false);
     if (manifest) {
       // Temporary code until bug fixed on react-iiif-vault
       const man = await serialize(
@@ -136,11 +139,18 @@ export const Shell: React.FC<{
           permalink={manifestPermalink?.location}
           saveAsChoice={saveAsChoice}
           setSaveAsChoice={setSaveAsChoice}
+          forceShowModal={showSaveModal}
         />
         {shellContext?.unsavedChanges && (
           <WarningMessage $small={true}>
             You have unsaved changes
-            <Button onClick={() => save()}>Save Changes</Button>
+            <Button
+              onClick={
+                previouslySaved ? () => save() : () => setShowSaveModal(true)
+              }
+            >
+              Save Changes
+            </Button>
           </WarningMessage>
         )}
       </ShellToolbar>

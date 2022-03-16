@@ -13,7 +13,15 @@ export const ShellOptions: React.FC<{
   permalink: string | undefined;
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
-}> = ({ save, previouslySaved, permalink, saveAsChoice, setSaveAsChoice }) => {
+  forceShowModal: boolean;
+}> = ({
+  save,
+  previouslySaved,
+  permalink,
+  saveAsChoice,
+  setSaveAsChoice,
+  forceShowModal,
+}) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
@@ -44,16 +52,17 @@ export const ShellOptions: React.FC<{
           close={() => setaddModalVisible(false)}
         />
       )}
-      {saveModalVisible && (
-        <SaveModal
-          close={() => setSaveModalVisible(false)}
-          save={save}
-          previouslySaved={previouslySaved}
-          permalink={permalink}
-          saveAsChoice={saveAsChoice}
-          setSaveAsChoice={setSaveAsChoice}
-        />
-      )}
+      {saveModalVisible ||
+        (forceShowModal && (
+          <SaveModal
+            close={() => setSaveModalVisible(false)}
+            save={save}
+            previouslySaved={previouslySaved}
+            permalink={permalink}
+            saveAsChoice={saveAsChoice}
+            setSaveAsChoice={setSaveAsChoice}
+          />
+        ))}
       {exportModalVisible && (
         <ExportModal close={() => setExportModalVisible(false)} />
       )}
