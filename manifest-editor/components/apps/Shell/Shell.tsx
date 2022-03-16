@@ -108,7 +108,9 @@ export const Shell: React.FC<{
       else if (saveAsChoice === 1) {
         const perma = await usePermalink(man);
         setManifestPermalink(perma ? perma : undefined);
-        shellContext?.updateRecentManifests(manifest.id);
+        if (perma && perma.location) {
+          shellContext?.updateRecentManifests(perma?.location);
+        }
         shellContext?.setUnsavedChanges(false);
       }
       // save as choice 2 is save to localStorage;

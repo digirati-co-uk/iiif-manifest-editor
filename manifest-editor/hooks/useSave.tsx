@@ -38,12 +38,12 @@ export const usePermalink = async (manifest: any) => {
     },
     body: JSON.stringify(manifest),
   };
-  let responseData = {};
+  let responseData: any;
   await fetch(PERSISTENCEURL.prod, requestOptions)
     .then((response) => {
       return response.json().catch((err) => {
         console.error(`'${err}' happened!`);
-        return {};
+        return null;
       });
     })
     .then((data) => {

@@ -52,17 +52,16 @@ export const ShellOptions: React.FC<{
           close={() => setaddModalVisible(false)}
         />
       )}
-      {saveModalVisible ||
-        (forceShowModal && (
-          <SaveModal
-            close={() => setSaveModalVisible(false)}
-            save={save}
-            previouslySaved={previouslySaved}
-            permalink={permalink}
-            saveAsChoice={saveAsChoice}
-            setSaveAsChoice={setSaveAsChoice}
-          />
-        ))}
+      {(saveModalVisible || forceShowModal) && (
+        <SaveModal
+          close={() => setSaveModalVisible(false)}
+          save={save}
+          previouslySaved={previouslySaved}
+          permalink={permalink}
+          saveAsChoice={saveAsChoice}
+          setSaveAsChoice={setSaveAsChoice}
+        />
+      )}
       {exportModalVisible && (
         <ExportModal close={() => setExportModalVisible(false)} />
       )}
