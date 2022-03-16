@@ -69,6 +69,20 @@ export const AddManifestModal: React.FC<{
         inputed.type === "Collection"
       ) {
         close();
+      } else if (
+        shellContext?.selectedApplication === "Splash" &&
+        inputed.type === "Manifest"
+      ) {
+        shellContext?.changeSelectedApplication("ManifestEditor");
+        shellContext?.changeResourceID(inputValue);
+        close();
+      } else if (
+        shellContext?.selectedApplication === "Splash" &&
+        inputed.type === "Collection"
+      ) {
+        shellContext?.changeSelectedApplication("Browser");
+        shellContext?.changeResourceID(inputValue);
+        close();
       }
     }
   };
