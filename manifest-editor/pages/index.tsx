@@ -52,9 +52,7 @@ const Home: NextPage = (props: any) => {
         </Head>
         <ErrorBoundary>
           <Main>
-            {props.selectedApplication !== "Splash" && (
-              <Shell previewConfig={props.config.preview} />
-            )}
+            <Shell previewConfig={props.config.preview} />
             {props.selectedApplication === "ManifestEditor" && (
               <ManifestEditor
                 defaultLanguages={props.config.defaultLanguages}
