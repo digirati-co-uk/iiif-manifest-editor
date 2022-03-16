@@ -4,6 +4,8 @@ import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext"
 
 import { Thumbnail } from "../atoms/Thumbnail";
 import { ThumbnailGrid } from "../atoms/ThumbnailContainer";
+import { ViewSelector } from "../atoms/ViewSelector";
+import { FlexContainerColumn } from "../layout/FlexContainer";
 
 // The CanvasContext currently only lets you select every second canvas. Once the
 // SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
@@ -17,18 +19,23 @@ export const GridView: React.FC = () => {
   const handleChange = (itemId: string) => {
     setCurrentCanvasId(itemId);
     editorContext?.changeSelectedProperty(itemId);
-
-  }
+  };
 
   return (
-    <ThumbnailGrid>
-      {manifest?.items.map((item: any) => {
-        return (
-          <CanvasContext key={item.id} canvas={item.id}>
-            <Thumbnail onClick={() => handleChange(item.id)} />
-          </CanvasContext>
-        );
-      })}
-    </ThumbnailGrid>
+    <FlexContainerColumn
+      justify="space-between"
+      style={{ alignItems: "center" }}
+    >
+      <ThumbnailGrid>
+        {manifest?.items.map((item: any) => {
+          return (
+            <CanvasContext key={item.id} canvas={item.id}>
+              <Thumbnail onClick={() => handleChange(item.id)} />
+            </CanvasContext>
+          );
+        })}
+      </ThumbnailGrid>
+      <ViewSelector />
+    </FlexContainerColumn>
   );
 };
