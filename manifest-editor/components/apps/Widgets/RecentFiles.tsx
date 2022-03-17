@@ -1,8 +1,6 @@
-import { Button } from "../../atoms/Button";
 import { IIIFBuilder } from "iiif-builder";
 import { ManifestNormalized } from "@iiif/presentation-3";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import {
   RecentFilesWidget,
   RecentManifestCard,
