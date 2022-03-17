@@ -11,6 +11,7 @@ import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
+import { RecentFiles } from "../apps/Widgets/RecentFiles";
 
 export const AddManifestModal: React.FC<{
   manifest: string;
@@ -62,7 +63,7 @@ export const AddManifestModal: React.FC<{
         shellContext?.selectedApplication === "ManifestEditor" &&
         inputed.type === "Manifest"
       ) {
-        shellContext?.updateRecentManifests(inputValue);
+        await shellContext?.updateRecentManifests(inputValue);
         close();
       } else if (
         shellContext?.selectedApplication === "Browser" &&
@@ -176,6 +177,14 @@ export const AddManifestModal: React.FC<{
               </FlexContainer>
             </>
           )}
+        <RecentFiles
+          changeManifest={(id: string) => {
+            shellContext?.changeSelectedApplication("ManifestEditor");
+            shellContext?.changeResourceID(id);
+            close();
+          }}
+          recentManifests={shellContext?.recentManifests}
+        />
       </ModalContainer>
     </>
   );

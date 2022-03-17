@@ -109,7 +109,7 @@ export const Shell: React.FC<{
         const perma = await usePermalink(man);
         setManifestPermalink(perma ? perma : undefined);
         if (perma && perma.location) {
-          shellContext?.updateRecentManifests(perma?.location);
+          await shellContext?.updateRecentManifests(perma?.location);
         }
         shellContext?.setUnsavedChanges(false);
       }

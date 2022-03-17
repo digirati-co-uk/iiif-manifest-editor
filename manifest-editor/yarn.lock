@@ -1600,7 +1600,7 @@
     "@iiif/presentation-3" "^1.0.3"
     "@types/geojson" "^7946.0.8"
 
-"@iiif/parser@^1.0.6":
+"@iiif/parser@^1.0.4", "@iiif/parser@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.6.tgz#0f5252b94ba586aade3d6558b5a649fa265fe217"
   integrity sha512-bIdmqe3JwPopL7qEeZk193YNkGaEkkfSR9i/+B7I3MVXkKGE6G80tOWhfQRs/EY3fMzOS8OUFxzAu+aS6CXvEg==
@@ -1633,6 +1633,20 @@
     "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
 
+"@iiif/vault@^0.9.11", "@iiif/vault@^0.9.16":
+  version "0.9.16"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.16.tgz#842752d2fdd22af63bd4ec51f39c6b66e8d07241"
+  integrity sha512-72EVB0xyhWd7D5qa56pnaW8GImlSSpWAM1L141Lf/dmMpAZA8N6njE7W/sAjH56tmDMKHRLzfFPF/kTN3g9mJQ==
+  dependencies:
+    "@iiif/parser" "^1.0.6"
+    "@iiif/presentation-2" "^1.0.1"
+    "@iiif/presentation-3" "^1.0.4"
+    mitt "^3.0.0"
+    node-fetch "^3.1.1"
+    redux "^4.1.2"
+    tiny-invariant "^1.2.0"
+    typesafe-actions "^5.1.0"
+
 "@iiif/vault@^0.9.14":
   version "0.9.14"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.14.tgz#f455d0089fb542f9d50ab27aebe2aa55ff7bcf67"
@@ -1641,20 +1655,6 @@
     "@iiif/parser" "^1.0.2"
     "@iiif/presentation-2" "^1.0.1"
     "@iiif/presentation-3" "^1.0.3"
-    mitt "^3.0.0"
-    node-fetch "^3.1.1"
-    redux "^4.1.2"
-    tiny-invariant "^1.2.0"
-    typesafe-actions "^5.1.0"
-
-"@iiif/vault@^0.9.16":
-  version "0.9.16"
-  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.16.tgz#842752d2fdd22af63bd4ec51f39c6b66e8d07241"
-  integrity sha512-72EVB0xyhWd7D5qa56pnaW8GImlSSpWAM1L141Lf/dmMpAZA8N6njE7W/sAjH56tmDMKHRLzfFPF/kTN3g9mJQ==
-  dependencies:
-    "@iiif/parser" "^1.0.6"
-    "@iiif/presentation-2" "^1.0.1"
-    "@iiif/presentation-3" "^1.0.4"
     mitt "^3.0.0"
     node-fetch "^3.1.1"
     redux "^4.1.2"
@@ -8170,6 +8170,15 @@ ignore@^5.1.8, ignore@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
   integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
+
+iiif-builder@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/iiif-builder/-/iiif-builder-1.0.2.tgz#59bb3078df28a151f0adcf6f6b5085310181297f"
+  integrity sha512-Wu28nQfU+j/AhSiP1qdFqfKrQF2aIPB5cLYE4flDjQQEmhGjBkZlb3UGdUqqDugrR3kz2i3Qts+RWta6Ph1eaQ==
+  dependencies:
+    "@iiif/parser" "^1.0.4"
+    "@iiif/presentation-3" "^1.0.4"
+    "@iiif/vault" "^0.9.11"
 
 image-size@~0.5.0:
   version "0.5.5"

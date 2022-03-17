@@ -20,7 +20,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
   const initialState: State<T> = {
     error: undefined,
 
-    data: undefined
+    data: undefined,
   };
 
   const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {

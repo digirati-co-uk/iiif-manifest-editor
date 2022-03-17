@@ -1,15 +1,23 @@
 import { useContext } from "react";
 import { CanvasContext, useManifest, useSimpleViewer } from "react-iiif-vault";
+import styled from "styled-components";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 import { Thumbnail } from "../atoms/Thumbnail";
 import { ThumbnailGrid } from "../atoms/ThumbnailContainer";
 import { ViewSelector } from "../atoms/ViewSelector";
-import { FlexContainerColumn } from "../layout/FlexContainer";
 
-// The CanvasContext currently only lets you select every second canvas. Once the
-// SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
-// get updated with the latest code they will accept a prop pagingView={false}
+const GridViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justiy-content: space-between;
+  align-items: center;
+  height: 80vh;
+  @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
+    height: unset;
+    min-height: 50vh;
+  } ;
+`;
 
 export const GridView: React.FC = () => {
   const manifest = useManifest();
@@ -22,10 +30,7 @@ export const GridView: React.FC = () => {
   };
 
   return (
-    <FlexContainerColumn
-      justify="space-between"
-      style={{ alignItems: "center", height: "80vh" }}
-    >
+    <GridViewContainer>
       <ThumbnailGrid>
         {manifest?.items.map((item: any) => {
           return (
@@ -36,6 +41,6 @@ export const GridView: React.FC = () => {
         })}
       </ThumbnailGrid>
       <ViewSelector />
-    </FlexContainerColumn>
+    </GridViewContainer>
   );
 };

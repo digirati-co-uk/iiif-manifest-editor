@@ -7,7 +7,6 @@ export function useAnnotationPage<T = AnnotationPageNormalized>(
   } = {}
 ): AnnotationPageNormalized | T | undefined {
   return useVaultSelector(
-    state =>
-      state.iiif.entities.AnnotationPage[options.id || ""]
+    (state) => state.iiif.entities.AnnotationPage[options.id || ""]
   );
 }

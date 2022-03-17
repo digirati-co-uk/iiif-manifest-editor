@@ -11,7 +11,8 @@ export const ThumbnailImg = styled.img`
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const thumb = useThumbnail({
-    maxHeight: 300,
+    minWidth: 200,
+    minHeight: 200,
     maxWidth: 300,
   });
 

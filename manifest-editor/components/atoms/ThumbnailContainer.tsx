@@ -13,7 +13,7 @@ export const ThumbnailContainer = styled.div`
     @media (max-width: ${(props: any) =>
         props.theme.device.tablet || "770px"}) {
       flex-direction: row;
-      width: 100%;
+      width: 80%;
       overflow-x: auto;
     }
   }
@@ -33,7 +33,6 @@ export const ThumbnailGrid = styled.div`
     @media (max-width: ${(props: any) =>
         props.theme.device.tablet || "770px"}) {
       flex-direction: row;
-      height: 30%;
       overflow-x: auto;
     }
   }

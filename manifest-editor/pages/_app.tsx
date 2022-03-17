@@ -4,6 +4,8 @@ import { AppProps } from "next/app";
 import ShellContext from "../components/apps/Shell/ShellContext";
 
 import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
+import { ManifestNormalized } from "@iiif/presentation-3";
+import { getManifestNomalized } from "../helpers/getManifestNormalized";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
@@ -33,16 +35,14 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     setSelectedApplication(app);
   };
 
-  const [recentManifests, setRecentManifests] = useState<Array<string>>([]);
+  const [recentManifests, setRecentManifests] = useState<
+    Array<ManifestNormalized>
+  >([]);
 
-  const updateRecentManifests = (manifestId: string) => {
-    // Maintaining the last 10 for now but do we want more, maybe?
+  const updateRecentManifests = async (newManifest: string) => {
     const recents = [...recentManifests];
-    if (recents.find((id: string) => id === manifestId)) return;
-    if (recentManifests.length >= 10) {
-      recents.pop();
-    }
-    recents.unshift(manifestId);
+    const toAdd = await getManifestNomalized(newManifest);
+    if (toAdd) recents.push(toAdd);
     setRecentManifests(recents);
   };
 
@@ -57,7 +57,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     // Get recent manifests from localStorage
     if (localStorage.getItem("recentManifests")) {
       const manifests = JSON.parse(
-        localStorage.getItem("recentManifests") || "[]"
+        localStorage.getItem("recentManifests") || "{}"
       );
       setRecentManifests(manifests);
     }
@@ -102,7 +102,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     <>
       <ShellContext.Provider value={shellSettings}>
         <VaultProvider>
-          <SimpleViewerProvider manifest={resourceID}>
+          <SimpleViewerProvider manifest={resourceID} pagingEnabled={false}>
             <Component
               {...pageProps}
               selectedApplication={selectedApplication}

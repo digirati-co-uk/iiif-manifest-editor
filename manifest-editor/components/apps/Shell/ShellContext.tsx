@@ -1,3 +1,4 @@
+import { ManifestNormalized } from "@iiif/presentation-3";
 import React from "react";
 
 interface ShellContextInterface {
@@ -9,8 +10,8 @@ interface ShellContextInterface {
   changeResourceID: (id: string | null) => void;
   unsavedChanges: boolean;
   setUnsavedChanges: (bol: boolean) => void;
-  updateRecentManifests: (manifestId: string) => void;
-  recentManifests: string[];
+  updateRecentManifests: (manifest: string) => Promise<void>;
+  recentManifests: ManifestNormalized[];
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);

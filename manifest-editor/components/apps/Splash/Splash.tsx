@@ -7,13 +7,18 @@ import { RecentFiles } from "../Widgets/RecentFiles";
 export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   const shellContext = useContext(ShellContext);
 
+  const handleClick = (id: string) => {
+    shellContext?.changeResourceID(id);
+    shellContext?.changeSelectedApplication("ManifestEditor");
+  };
+
   return (
     <FlexContainerColumn justify="flex-start">
-      <div
-        className="text-container"
-        dangerouslySetInnerHTML={{ __html: welcome }}
+      <div dangerouslySetInnerHTML={{ __html: welcome }} />
+      <RecentFiles
+        recentManifests={shellContext?.recentManifests}
+        changeManifest={handleClick}
       />
-      <RecentFiles />
       <FlexContainer style={{ justifyContent: "flex-end" }}>
         <CalltoButton
           onClick={() =>

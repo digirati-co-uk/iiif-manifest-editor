@@ -298,7 +298,7 @@ export const Tree: React.FC = () => {
             }
             propertyName={"@context"}
             // @ts-ignore
-            value={manifest["@context"]}
+            value={manifest && manifest["@context"]}
           />
         </>
       )}
