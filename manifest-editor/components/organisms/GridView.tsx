@@ -24,7 +24,7 @@ export const GridView: React.FC = () => {
   return (
     <FlexContainerColumn
       justify="space-between"
-      style={{ alignItems: "center" }}
+      style={{ alignItems: "center", height: "80vh" }}
     >
       <ThumbnailGrid>
         {manifest?.items.map((item: any) => {
