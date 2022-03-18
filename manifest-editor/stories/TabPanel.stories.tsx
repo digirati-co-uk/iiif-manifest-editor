@@ -9,7 +9,7 @@ export const Tab_Panel = () => {
     <TabPanel
       menu={[
         {
-          label: "Decriptive",
+          label: "Descriptive",
           component: <div>I will be the descriptive panel</div>,
         },
         {
