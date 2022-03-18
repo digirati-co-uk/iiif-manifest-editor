@@ -108,7 +108,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     // information to the user and propmt to add a new one.
     return (
       <div>
-        No value{" "}
+        {props.label}
         <CalltoButton onClick={() => createNewItem(false)}>Create</CalltoButton>
       </div>
     );

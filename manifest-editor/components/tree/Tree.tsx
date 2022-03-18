@@ -53,7 +53,15 @@ export const Tree: React.FC = () => {
     <TreeContainer>
       <HeaderPanel onClick={() => setOpen(!open)}>
         <FlexContainer>
-          <KeyManifest>{manifest?.type}</KeyManifest>
+          <KeyManifest
+            onClick={
+              editorContext
+                ? () => editorContext.changeSelectedProperty("manifest")
+                : () => {}
+            }
+          >
+            {manifest?.type}
+          </KeyManifest>
           <IIIFTitle>{getValue(manifest?.label)}</IIIFTitle>
         </FlexContainer>
         <DownIcon rotate={open ? 180 : 0} />

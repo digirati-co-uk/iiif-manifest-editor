@@ -56,6 +56,7 @@ const Home: NextPage = (props: any) => {
             {props.selectedApplication === "ManifestEditor" && (
               <ManifestEditor
                 defaultLanguages={props.config.defaultLanguages}
+                behaviorProperties={props.config.behaviorPresets}
               />
             )}
             {props.selectedApplication === "Browser" && <IIIFBrowser />}

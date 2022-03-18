@@ -12,10 +12,11 @@ import { GridView } from "../../organisms/GridView";
 import ManifestEditorContext from "./ManifestEditorContext";
 import { ManifestEditorToolbar } from "./ManifestEditorToolbar";
 
-export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
-  defaultLanguages,
-}) => {
-  const [selectedProperty, setSelectedProperty] = useState("id");
+export const ManifestEditor: React.FC<{
+  defaultLanguages: string[];
+  behaviorProperties: string[];
+}> = ({ defaultLanguages, behaviorProperties }) => {
+  const [selectedProperty, setSelectedProperty] = useState("manifest");
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const [view, setView] =
@@ -29,6 +30,8 @@ export const ManifestEditor: React.FC<{ defaultLanguages: string[] }> = ({
     changeSelectedProperty,
     view,
     setView,
+    languages: defaultLanguages,
+    behaviorProperties: behaviorProperties,
   };
 
   const manifest = useManifest();

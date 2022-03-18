@@ -1,17 +1,12 @@
-import styled from "styled-components";
 import { ButtonGroup } from "../atoms/Button";
 import { HorizontalDivider } from "../atoms/HorizontalDivider";
+import { ShadowContainer } from "../atoms/ShadowContainer";
 import { HiddenCheckbox, InputLabel, MutliselectLabel } from "./Input";
 
-const Container = styled.div`
-  box-shadow: ${(props: any) => props.theme.shadows.standard || ""};
-  padding: ${(props: any) => props.theme.padding.medium || "1rem"};
-`;
-
 export const StringSelector: React.FC<{
-  options: string[];
+  options: string[] | null;
   label: string;
-  selected: string[];
+  selected: string | string[] | null;
   changeHandler: (value: string) => void;
   multi?: boolean;
   guidanceReference?: string;
@@ -24,21 +19,22 @@ export const StringSelector: React.FC<{
   guidanceReference,
 }) => {
   return (
-    <Container>
+    <ShadowContainer>
       <InputLabel>{label}</InputLabel>
       <ButtonGroup>
-        {options.map((choice) => {
-          return (
-            <MutliselectLabel $selected={selected.includes(choice)}>
-              {choice}
-              <HiddenCheckbox
-                type={multi ? "checkbox" : "radio"}
-                checked={selected.includes(choice)}
-                onChange={() => changeHandler(choice)}
-              />
-            </MutliselectLabel>
-          );
-        })}
+        {options &&
+          options.map((choice) => {
+            return (
+              <MutliselectLabel $selected={selected?.includes(choice)}>
+                {choice}
+                <HiddenCheckbox
+                  type={multi ? "checkbox" : "radio"}
+                  checked={selected?.includes(choice)}
+                  onChange={() => changeHandler(choice)}
+                />
+              </MutliselectLabel>
+            );
+          })}
       </ButtonGroup>
 
       {guidanceReference && (
@@ -53,6 +49,6 @@ export const StringSelector: React.FC<{
           </a>
         </>
       )}
-    </Container>
+    </ShadowContainer>
   );
 };

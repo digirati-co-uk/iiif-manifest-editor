@@ -10,6 +10,7 @@ import styled from "styled-components";
 import { StringInput } from "../form/StringInput";
 import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
+import { ManifestForm } from "../form/ManifestForm";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -52,11 +53,12 @@ export const EditorPanel: React.FC<{
         >
           <div>
             <FlexContainerRow justify="space-between">
-              <h4>Edit {editorContext?.selectedProperty}</h4>
+              <h4>{editorContext?.selectedProperty} properties</h4>
               <Button onClick={close}>
                 <CloseIcon />
               </Button>
             </FlexContainerRow>
+            {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
             {(editorContext?.selectedProperty === "type" ||
               editorContext?.selectedProperty === "viewingDirection" ||
               editorContext?.selectedProperty === "@context") && (

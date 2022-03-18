@@ -6,11 +6,6 @@ import { UniversalViewer } from "../previewers/UniversalViewerLazy";
 export const PreviewView: React.FC = () => {
   const manifest = useManifest();
 
-  // required for next js ssr
-  useEffect(() => {
-    import("@digirati/canvas-panel-web-components");
-  }, []);
-
   return (
     <>
       <CanvasContainer>

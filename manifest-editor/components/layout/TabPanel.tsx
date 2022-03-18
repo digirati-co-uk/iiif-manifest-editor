@@ -22,6 +22,7 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
 const TabPanelOptions = styled.div`
   display: flex;
   background-color: ${(props: any) => props.theme.color.white || "white"};
+  flex-wrap: wrap;
 `;
 
 const TabPanelContainer = styled.div`
