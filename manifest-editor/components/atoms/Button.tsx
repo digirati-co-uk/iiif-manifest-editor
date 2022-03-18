@@ -46,3 +46,11 @@ export const CalltoButton = styled.button`
     white-space: nowrap;
   }
 `;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+  flex-wrap: wrap;
+  align-content: flex-start;
+`;

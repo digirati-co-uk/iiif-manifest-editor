@@ -15,6 +15,33 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
     `}
 `;
 
+export const MutliselectLabel = styled(InputLabel)<{
+  $selected?: boolean;
+}>`
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
+    ${(props: any) => props.theme.padding.medium || "1rem"};
+  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  background-color: ${(props: any) => props.theme.color.white || "white"};
+  color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
+  cursor: pointer;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  ${(props: any) =>
+    props.$selected &&
+    css`
+      color: ${props.theme.color.white || "white"};
+      background-color: ${props.theme.color.main || "#347cff;"};
+    `}
+
+  :hover {
+    color: ${(props: any) => props.theme.color.white || "white"};
+    background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  }
+`;
+
 export const CheckboxInput = styled.input.attrs({ type: "checkbox" })``;
 
 export const _Input = styled.input`
@@ -154,4 +181,8 @@ export const InputLink = styled.a`
   margin: 0.5em 0;
   font-size: 0.75em;
   color: ${(props: any) => props.theme.color.main || "main"};
+`;
+
+export const HiddenCheckbox = styled.input`
+  display: none;
 `;

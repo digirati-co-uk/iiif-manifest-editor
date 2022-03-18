@@ -1,13 +1,12 @@
 import { IIIFBuilder } from "iiif-builder";
 import { ManifestNormalized } from "@iiif/presentation-3";
-import { ThumbnailImg } from "../../atoms/Thumbnail";
+import { ThumbnailImg } from "../atoms/Thumbnail";
 import {
   RecentFilesWidget,
   RecentLabel,
   RecentManifestCard,
   RecentThumbnails,
-} from "../../atoms/RecentFilesWidget";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
+} from "../atoms/RecentFilesWidget";
 
 type RecentFiles = {
   recentManifests: ManifestNormalized[] | undefined;
@@ -42,7 +41,6 @@ export const RecentFiles: React.FC<RecentFiles> = ({
   );
   return (
     <RecentFilesWidget>
-      <HorizontalDivider />
       <h4>Open Recent </h4>
       <RecentThumbnails>
         {IIIFCollection.items.map((manifest) => {

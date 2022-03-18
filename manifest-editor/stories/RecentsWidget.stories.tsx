@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RecentFiles } from "../components/apps/Widgets/RecentFiles";
+import { RecentFiles } from "../components/widgets/RecentFiles";
 import { recentManifests } from "./storiesData/recent-manifests";
 
 export default {

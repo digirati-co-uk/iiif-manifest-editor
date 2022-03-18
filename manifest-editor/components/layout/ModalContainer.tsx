@@ -11,7 +11,7 @@ export const ModalContainer = styled.div`
     transform: translate(-50%, -50%);
     width: 60%;
     min-height: 360px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: ${(props: any) => props.theme.shadows.standard || ""};
     padding: ${(props: any) => props.theme.padding.large || "1rem"};
     background: ${(props: any) => props.theme.color.white || "white"};
     @media (max-width: ${(props: any) =>

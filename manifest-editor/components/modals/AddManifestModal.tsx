@@ -11,7 +11,7 @@ import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
-import { RecentFiles } from "../apps/Widgets/RecentFiles";
+import { RecentFiles } from "../widgets/RecentFiles";
 
 export const AddManifestModal: React.FC<{
   manifest: string;
@@ -177,6 +177,7 @@ export const AddManifestModal: React.FC<{
               </FlexContainer>
             </>
           )}
+        <HorizontalDivider />
         <RecentFiles
           changeManifest={(id: string) => {
             shellContext?.changeSelectedApplication("ManifestEditor");

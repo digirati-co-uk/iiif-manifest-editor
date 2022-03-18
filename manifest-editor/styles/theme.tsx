@@ -19,7 +19,7 @@ export const Theme = {
     service: "rgba(13, 110, 253, 0.8)",
     annotation: "rgba(247, 226, 173, 0.8)",
     contentResource: "rgba(207, 247, 255, 0.8)",
-    ranges: "rgba(144, 213, 157, 0.8)"
+    ranges: "rgba(144, 213, 157, 0.8)",
   },
   padding: {
     xs: "0.25rem",
@@ -31,6 +31,10 @@ export const Theme = {
     mobile: "375px",
     tablet: "768px",
     laptop: "992px",
-    desktop: "1200px"
-  }
+    desktop: "1200px",
+  },
+  shadows: {
+    standard:
+      "rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.05) 0px 5px 15px 0px",
+  },
 };

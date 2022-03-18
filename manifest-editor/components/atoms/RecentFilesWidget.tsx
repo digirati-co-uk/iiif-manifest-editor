@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 export const RecentFilesWidget = styled.div`
   height: 16rem;
-  width: 95%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: ${(props: any) => props.theme.shadows.standard || ""};
   padding: ${(props: any) => props.theme.padding.small || "0.25rem"};
   background: ${(props: any) => props.theme.color.white || "white"};
   // border: 1px solid black;
