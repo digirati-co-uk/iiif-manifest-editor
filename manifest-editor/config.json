@@ -26,5 +26,21 @@
       "baseUrl": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
     }
   ],
-  "defaultLanguages": ["en", "none"]
+  "defaultLanguages": ["en", "none"],
+  "behaviorPresets": [
+    "auto-advance",
+    "no-auto-advance",
+    "repeat",
+    "no-repeat",
+    "unordered",
+    "individuals",
+    "continuous",
+    "paged",
+    "multi-part",
+    "together",
+    "sequence",
+    "thumbnail-nav",
+    "no-nav",
+    "hidden"
+  ]
 }

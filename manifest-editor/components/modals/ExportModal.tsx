@@ -6,7 +6,7 @@ import { ModalContainer } from "../layout/ModalContainer";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { ModalHeader } from "../atoms/ModalHeader";
 import { HorizontalDivider } from "../atoms/HorizontalDivider";
-import { TabPanel } from "../atoms/TabPanel";
+import { TabPanel } from "../layout/TabPanel";
 import { WarningMessage } from "../atoms/callouts/WarningMessage";
 import { useManifest } from "../../hooks/useManifest";
 import { JSONPreview } from "../atoms/JSONPreview";
