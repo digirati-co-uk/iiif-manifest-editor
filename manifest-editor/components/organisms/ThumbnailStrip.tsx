@@ -16,7 +16,7 @@ export const ThumbnailStrip: React.FC = () => {
 
   const handleChange = (itemId: string) => {
     setCurrentCanvasId(itemId);
-    editorContext?.changeSelectedProperty(itemId);
+    editorContext?.changeSelectedProperty("canvas");
   };
 
   return (
