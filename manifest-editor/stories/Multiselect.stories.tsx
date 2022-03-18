@@ -22,7 +22,7 @@ ViewingDirectionNone.args = {
 };
 
 export const ViewingDirectionOne = Template.bind({});
-ViewingDirectionNone.args = {
+ViewingDirectionOne.args = {
   label: "Viewing direction, one selected",
   options: ["left to right", "right to left", "top to bottom", "bottom to top"],
   selected: ["left to right"],
