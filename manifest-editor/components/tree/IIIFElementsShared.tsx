@@ -18,7 +18,7 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   border: none;
-  padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   width: 100%;
   cursor: pointer;
   border-bottom: 1px solid
@@ -57,10 +57,12 @@ export const KeyCanvas = styled(Key)`
 `;
 
 export const KeyService = styled(Key)`
-  background: ${(props: any) => props.theme.iiifColor.service || "rgba(13, 110, 253, 0.8)"};
+  background: ${(props: any) =>
+    props.theme.iiifColor.service || "rgba(13, 110, 253, 0.8)"};
 `;
 export const KeyAnnoPage = styled(Key)`
-  background: ${(props: any) => props.theme.iiifColor.annotation || "rgba(247, 226, 173, 0.8)"};
+  background: ${(props: any) =>
+    props.theme.iiifColor.annotation || "rgba(247, 226, 173, 0.8)"};
 `;
 
 export const KeyContentResource = styled(Key)`
@@ -72,7 +74,6 @@ export const KeyRanges = styled(Key)`
   background: ${(props: any) =>
     props.theme.iiifColor.ranges || "rgba(144, 213, 157, 0.8)"};
 `;
-
 
 export const Expanded = styled.div`
   display: flex;
@@ -121,7 +122,7 @@ type KeyString = {
 export const KeyValuePairString: React.FC<KeyString> = ({
   propertyName,
   value,
-  onClick
+  onClick,
 }) => {
   return (
     <Container onClick={onClick}>

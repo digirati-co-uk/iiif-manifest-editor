@@ -1,20 +1,19 @@
 import { useContext } from "react";
-import { LanguageFieldEditor } from "./LanguageFieldEditor";
-import { LanguageMapInput } from "./LanguageMapInput";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
-import { SingleValueInput } from "./SingleValueInput";
+import { LanguageMapInputCanvas } from "./LanguageMapInputCanvas";
+import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { SingleValueInput } from "../SingleValueInput";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
 
   return (
     <>
-      <LanguageMapInput
+      <LanguageMapInputCanvas
         dispatchType={"label"}
         languages={editorContext?.languages || []}
         guidanceReference={"https://iiif.io/api/presentation/3.0/#label"}
       />
-      <LanguageMapInput
+      <LanguageMapInputCanvas
         dispatchType={"summary"}
         languages={editorContext?.languages || []}
         guidanceReference={"https://iiif.io/api/presentation/3.0/#summary"}

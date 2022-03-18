@@ -1,4 +1,4 @@
-import { SingleValueInput } from "./SingleValueInput";
+import { SingleValueInput } from "../SingleValueInput";
 
 export const TechnicalForm = () => {
   return (

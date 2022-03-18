@@ -10,7 +10,8 @@ import styled from "styled-components";
 import { StringInput } from "../form/StringInput";
 import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
-import { ManifestForm } from "../form/ManifestForm";
+import { ManifestForm } from "../form/ManifestProperties/ManifestForm";
+import { CanvasForm } from "../form/CanvasProperties/CanvasForm";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -59,6 +60,8 @@ export const EditorPanel: React.FC<{
               </Button>
             </FlexContainerRow>
             {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
+            {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
+
             {(editorContext?.selectedProperty === "type" ||
               editorContext?.selectedProperty === "viewingDirection" ||
               editorContext?.selectedProperty === "@context") && (

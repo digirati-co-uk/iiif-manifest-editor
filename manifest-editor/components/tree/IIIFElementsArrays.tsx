@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Container,
   Count,
@@ -19,6 +19,7 @@ import { Canvases } from "./IIIFCanvas";
 import { Ranges } from "./IIIFRange";
 import { Services } from "./IIIFServices";
 import { IIIFService } from "./IIIFService";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 export type KeyArrayPairing = {
   propertyName: string;
@@ -32,6 +33,8 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
   onClick,
 }) => {
   const [open, setOpen] = useState(false);
+  const editorContext = useContext(ManifestEditorContext);
+
   return (
     <ContainerColumn>
       <Container
@@ -66,7 +69,9 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                       <Canvases
                         propertyName="ContentResource"
                         object={val}
-                        onClick={() => {}}
+                        onClick={() =>
+                          editorContext?.changeSelectedProperty("canvas")
+                        }
                       />
                     );
                   } else if (propertyName === "services") {
