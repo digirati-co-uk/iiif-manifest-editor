@@ -28,8 +28,12 @@ const TabPanelOptions = styled.div`
 const TabPanelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: ${(props: any) =>
-    props.theme.color.lightgrey || "lightgrey"};
+`;
+
+const Content = styled.div`
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
+  max-height: 60vh;
+  overflow: auto;
 `;
 
 export const TabPanel: React.FC<{
@@ -53,7 +57,7 @@ export const TabPanel: React.FC<{
           );
         })}
       </TabPanelOptions>
-      {menu[selected].component}
+      <Content>{menu[selected].component}</Content>
     </TabPanelContainer>
   );
 };

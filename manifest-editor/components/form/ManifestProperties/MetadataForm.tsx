@@ -8,7 +8,7 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
-import { Button, CalltoButton } from "../../atoms/Button";
+import { CalltoButton } from "../../atoms/Button";
 
 export const MetadataForm: React.FC<{}> = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -24,9 +24,19 @@ export const MetadataForm: React.FC<{}> = () => {
   ) => {
     const newMetaData =
       manifest && manifest[dispatchType] ? [...manifest[dispatchType]] : [];
-
     if (manifest && (index || index === 0) && property) {
       newMetaData[index][property] = data.toInternationalString();
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(manifest, dispatchType, newMetaData);
+    }
+  };
+
+  const removeItem = (index: number) => {
+    const newMetaData =
+      manifest && manifest[dispatchType] ? [...manifest[dispatchType]] : [];
+
+    if (manifest && (index || index === 0)) {
+      newMetaData.splice(index, 1);
       shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newMetaData);
     }
@@ -45,10 +55,12 @@ export const MetadataForm: React.FC<{}> = () => {
 
   return (
     <>
-      <div style={{ height: "50vh", overflowY: "auto" }}>
+      <div key={manifest?.id}>
         {manifest && (
           <ErrorBoundary>
             <MetadataEditor
+              // @ts-ignore
+              key={manifest.metadata}
               fields={manifest[dispatchType]}
               onSave={(
                 data: any,
@@ -56,6 +68,7 @@ export const MetadataForm: React.FC<{}> = () => {
                 property?: "label" | "value"
               ) => changeHandler(data, index, property)}
               availableLanguages={languages}
+              removeItem={removeItem}
             />
           </ErrorBoundary>
         )}
