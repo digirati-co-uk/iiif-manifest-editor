@@ -4,7 +4,7 @@ import { useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import ShellContext from "../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { HorizontalDivider } from "../atoms/HorizontalDivider";
+import { InformationLink } from "../atoms/InformationLink";
 import { ShadowContainer } from "../atoms/ShadowContainer";
 import { LanguageFieldEditor } from "./LanguageFieldEditor";
 
@@ -41,16 +41,7 @@ export const LanguageMapInput: React.FC<{
         </ErrorBoundary>
       )}
       {guidanceReference && (
-        <>
-          <HorizontalDivider />
-          <a
-            href={guidanceReference}
-            target={"_blank"}
-            rel="noopener noreferrer"
-          >
-            Further guidance
-          </a>
-        </>
+        <InformationLink guidanceReference={guidanceReference} />
       )}
     </ShadowContainer>
   );

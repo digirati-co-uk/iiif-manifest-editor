@@ -1,5 +1,5 @@
 import { ButtonGroup } from "../atoms/Button";
-import { HorizontalDivider } from "../atoms/HorizontalDivider";
+import { InformationLink } from "../atoms/InformationLink";
 import { ShadowContainer } from "../atoms/ShadowContainer";
 import { HiddenCheckbox, InputLabel, MutliselectLabel } from "./Input";
 
@@ -38,16 +38,7 @@ export const StringSelector: React.FC<{
       </ButtonGroup>
 
       {guidanceReference && (
-        <>
-          <HorizontalDivider />
-          <a
-            href={guidanceReference}
-            target={"_blank"}
-            rel="noopener noreferrer"
-          >
-            Further guidance
-          </a>
-        </>
+        <InformationLink guidanceReference={guidanceReference} />
       )}
     </ShadowContainer>
   );
