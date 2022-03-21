@@ -28,7 +28,7 @@ export const LanguageMapInputCanvas: React.FC<{
   };
 
   return (
-    <ShadowContainer>
+    <ShadowContainer key={canvas?.id}>
       {canvas && (
         <ErrorBoundary>
           <LanguageFieldEditor
