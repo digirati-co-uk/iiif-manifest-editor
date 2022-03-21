@@ -3,7 +3,7 @@ import {
   useMetadataEditor,
   UseMetadataEditor,
 } from "../../hooks/useMetadataEditor";
-import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
+import { Button, CalltoButton } from "../atoms/Button";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import { Input } from "./Input";
