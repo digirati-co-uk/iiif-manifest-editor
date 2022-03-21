@@ -61,19 +61,19 @@ export const EditorPanel: React.FC<{
             </FlexContainerRow>
             {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
             {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
-
+            {/*
             {(editorContext?.selectedProperty === "type" ||
               editorContext?.selectedProperty === "viewingDirection" ||
               editorContext?.selectedProperty === "@context") && (
               <StringInput dispatchType={editorContext?.selectedProperty} />
-            )}
-            {(editorContext?.selectedProperty === "label" ||
+            )} */}
+            {/* {(editorContext?.selectedProperty === "label" ||
               editorContext?.selectedProperty === "summary") && (
               <LanguageMapInput
                 dispatchType={editorContext?.selectedProperty}
                 languages={languages}
               />
-            )}
+            )} */}
           </div>
           <FlexContainerRow justify="flex-end">
             {editorContext?.view === "fullEditor" ? (

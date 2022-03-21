@@ -89,7 +89,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("behavior")
+                ? () => editorContext.changeSelectedProperty("manifest", 1)
                 : () => {}
             }
             propertyName={"behavior"}
@@ -107,7 +107,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("items")
+                ? () => editorContext.changeSelectedProperty("canvas")
                 : () => {}
             }
             propertyName={"items"}
@@ -126,7 +126,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("metadata")
+                ? () => editorContext.changeSelectedProperty("manifest", 1)
                 : () => {}
             }
             propertyName={"metadata"}
@@ -292,7 +292,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairString
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("viewingDirection")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"viewingDirection"}

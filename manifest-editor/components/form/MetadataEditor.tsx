@@ -24,7 +24,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
         fields.map((field, index) => {
           return (
             <ShadowContainer>
-              <FlexContainer>
+              <FlexContainer style={{ justifyContent: "space-between" }}>
                 <div>
                   <LanguageFieldEditor
                     label={"label"}

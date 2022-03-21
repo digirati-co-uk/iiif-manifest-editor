@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { TabPanel } from "../../layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { MetadataForm } from "./MetadataForm";
 // import { TechnicalForm } from "./TechnicalForm";
 
 export const CanvasForm = () => {
-  const [selectedPanel, setSeletedPanel] = useState(0);
+  const editorContext = useContext(ManifestEditorContext);
 
   return (
     <TabPanel
@@ -35,8 +36,10 @@ export const CanvasForm = () => {
         //   component: <div>I will be the annotations panel</div>,
         // },
       ]}
-      switchPanel={(idx: number) => setSeletedPanel(idx)}
-      selected={selectedPanel}
+      switchPanel={(idx) =>
+        editorContext?.changeSelectedProperty("canvas", idx)
+      }
+      selected={editorContext?.selectedPanel || 0}
     />
   );
 };

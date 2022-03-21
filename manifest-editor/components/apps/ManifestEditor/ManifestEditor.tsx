@@ -17,12 +17,16 @@ export const ManifestEditor: React.FC<{
   behaviorProperties: string[];
 }> = ({ defaultLanguages, behaviorProperties }) => {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
+  const [selectedPanel, setSelectedPanel] = useState(0);
 
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const [view, setView] =
     useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("grid");
-  const changeSelectedProperty = (property: string) => {
+  const changeSelectedProperty = (property: string, panelNum?: number) => {
     setSelectedProperty(property);
+    if (panelNum || panelNum === 0) {
+      setSelectedPanel(panelNum);
+    }
   };
 
   const editorSettings = {
@@ -32,6 +36,7 @@ export const ManifestEditor: React.FC<{
     setView,
     languages: defaultLanguages,
     behaviorProperties: behaviorProperties,
+    selectedPanel,
   };
 
   const manifest = useManifest();

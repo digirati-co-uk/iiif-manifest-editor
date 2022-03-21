@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/vault-helpers";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import {
   Container,
@@ -17,6 +17,7 @@ import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { useCanvas, useSimpleViewer } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 import { FlexContainer } from "../layout/FlexContainer";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
   ({ type, id, onClick }) => {
@@ -24,6 +25,7 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
     const label = getValue(canvas?.label);
     const [open, setOpen] = useState(false);
     const { setCurrentCanvasId } = useSimpleViewer();
+    const editorContext = useContext(ManifestEditorContext);
 
     return (
       <>
@@ -61,7 +63,11 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
                         key={key}
                         propertyName={key}
                         array={value}
-                        onClick={() => {}}
+                        onClick={() => {
+                          if (key === "metatdata") {
+                            editorContext?.changeSelectedProperty("canvas", 1);
+                          }
+                        }}
                       />
                     );
                   } else {
