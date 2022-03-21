@@ -11,6 +11,8 @@ import { DropdownItem, StyledSelect } from "./LanguageSelector";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
+  index?: number;
+  property?: "label" | "value";
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -91,7 +93,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           <CalltoButton
             onClick={() => {
               setShowAllFields(false);
-              saveChanges();
+              saveChanges(props.index, props.property);
             }}
           >
             Save changes to {props.label}
@@ -127,7 +129,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           // input, we will call onChange to the component using this component
           // but not after every character. Here I've set it on blur of the
           // first text box and also when you "close" the expanded view.
-          saveChanges();
+          saveChanges(props.index, props.property);
         }}
       />
       <CalltoButton

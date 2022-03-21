@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TabPanel } from "../../layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
+import { MetadataForm } from "./MetadataForm";
 import { TechnicalForm } from "./TechnicalForm";
 
 export const ManifestForm = () => {
@@ -13,10 +14,10 @@ export const ManifestForm = () => {
           label: "Descriptive",
           component: <DescriptiveForm />,
         },
-        // {
-        //   label: "Metadata",
-        //   component: <div>I will be the metadata panel</div>,
-        // },
+        {
+          label: "Metadata",
+          component: <MetadataForm />,
+        },
         // {
         //   label: "Linking",
         //   component: <div>I will be the linking panel</div>,

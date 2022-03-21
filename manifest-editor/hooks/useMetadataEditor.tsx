@@ -4,7 +4,6 @@ import { useMemo, useReducer } from "react";
 import { useClosestLanguage } from "../components/atoms/LocaleString";
 import { MetadataDefinition } from "../types/metadata-definition";
 
-
 export type MetadataEditorState = {
   fieldIds: number[]; // for ordering.
   selected: string | undefined;
@@ -206,12 +205,16 @@ export interface UseMetadataEditor {
   defaultLocale?: string;
   allowCustomLanguage?: boolean;
   // Actions.
-  onSave?: (data: {
-    getDiff: () => MetadataDiff;
-    key: string;
-    items: MetadataDefinition[];
-    toInternationalString: () => InternationalString;
-  }) => void;
+  onSave?: (
+    data: {
+      getDiff: () => MetadataDiff;
+      key: string;
+      items: MetadataDefinition[];
+      toInternationalString: () => InternationalString;
+    },
+    index?: number,
+    property?: "label" | "value"
+  ) => void;
 }
 
 export function useMetadataEditor({
@@ -265,21 +268,25 @@ export function useMetadataEditor({
       },
     });
 
-  const saveChanges = () => {
+  const saveChanges = (index?: number, property?: "label" | "value") => {
     if (onSave && state && state.hasChanged) {
-      onSave({
-        items: Object.values(state.fields),
-        key: metadataKey,
-        getDiff: () => ({
-          added: (state.added as string[]).map((fid) => state.fields[fid]),
-          removed: state.removed as number[],
-          modified: (state.modified as string[])
-            .filter((fid) => state.added.indexOf(fid) === -1)
-            .map((fid) => state.fields[fid]),
-        }),
-        toInternationalString: () =>
-          valuesToIntlString(Object.values(state.fields)),
-      });
+      onSave(
+        {
+          items: Object.values(state.fields),
+          key: metadataKey,
+          getDiff: () => ({
+            added: (state.added as string[]).map((fid) => state.fields[fid]),
+            removed: state.removed as number[],
+            modified: (state.modified as string[])
+              .filter((fid) => state.added.indexOf(fid) === -1)
+              .map((fid) => state.fields[fid]),
+          }),
+          toInternationalString: () =>
+            valuesToIntlString(Object.values(state.fields)),
+        },
+        index,
+        property
+      );
     }
   };
 

@@ -5,7 +5,7 @@ import { LanguageFieldEditor } from "./LanguageFieldEditor";
 interface MetadataEditorProps {
   availableLanguages: string[];
   fields: any[];
-  onSave: (data: any) => void;
+  onSave: (data: any, index?: number, property?: "label" | "value") => void;
 }
 
 export const MetadataEditor: React.FC<MetadataEditorProps> = ({
@@ -15,24 +15,29 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
 }) => {
   return (
     <>
-      {fields.map((field) => {
-        return (
-          <ShadowContainer>
-            <LanguageFieldEditor
-              label={""}
-              fields={field.label}
-              availableLanguages={availableLanguages}
-              onSave={onSave}
-            />
-            <LanguageFieldEditor
-              label={""}
-              fields={field.value}
-              availableLanguages={availableLanguages}
-              onSave={onSave}
-            />
-          </ShadowContainer>
-        );
-      })}
+      {Array.isArray(fields) &&
+        fields.map((field, index) => {
+          return (
+            <ShadowContainer>
+              <LanguageFieldEditor
+                label={""}
+                fields={field.label}
+                availableLanguages={availableLanguages}
+                onSave={onSave}
+                index={index}
+                property={"label"}
+              />
+              <LanguageFieldEditor
+                label={""}
+                fields={field.value}
+                availableLanguages={availableLanguages}
+                onSave={onSave}
+                index={index}
+                property={"value"}
+              />
+            </ShadowContainer>
+          );
+        })}
     </>
   );
 };
