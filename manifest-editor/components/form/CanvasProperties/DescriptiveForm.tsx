@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { LanguageMapInputCanvas } from "./LanguageMapInputCanvas";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import { SingleValueInput } from "../SingleValueInput";
+import { SingleValueInput } from "./SingleValueInputCanvas";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -20,6 +20,7 @@ export const DescriptiveForm = () => {
       />
       {/* <div>Required Statement</div> */}
       <SingleValueInput dispatchType={"rights"} />
+      <SingleValueInput dispatchType={"behavior"} />
 
       {/* <div>Date</div>
       <div>Time</div> */}
