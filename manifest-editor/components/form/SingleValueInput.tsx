@@ -50,6 +50,7 @@ export const SingleValueInput: React.FC<{
       {manifest && dispatchType === "rights" && (
         <ErrorBoundary>
           <StringSelector
+            key={manifest.id}
             options={[
               "http://creativecommons.org/licenses/by/4.0/",
               "http://creativecommons.org/licenses/by-nc/4.0/",
@@ -66,6 +67,7 @@ export const SingleValueInput: React.FC<{
       {manifest && dispatchType === "viewingDirection" && (
         <ErrorBoundary>
           <StringSelector
+            key={manifest.id}
             label="Viewing direction"
             options={[
               "left to right",
@@ -85,6 +87,7 @@ export const SingleValueInput: React.FC<{
       {manifest && dispatchType === "behavior" && (
         <ErrorBoundary>
           <StringSelector
+            key={manifest.id}
             label="Behavior"
             options={manifestEditorContext?.behaviorProperties || []}
             selected={selected}
