@@ -15,7 +15,7 @@ export const FlexContainer = styled.div`
   }
 `;
 
-export const FlexContainerColumn = styled.div<{ justify: string }>`
+export const FlexContainerColumn = styled.div<{ justify?: string }>`
    {
     display: flex;
     flex-direction: column;

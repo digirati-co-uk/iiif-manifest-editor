@@ -48,6 +48,16 @@ export const MetadataForm: React.FC<{}> = () => {
       vault.modifyEntityField(canvas, dispatchType, withNew);
     }
   };
+
+  const reorder = (fromPosition: number, toPosition: number) => {
+    const newOrder = canvas ? [...canvas[dispatchType]] : [];
+    const [removed] = newOrder.splice(fromPosition, 1);
+    newOrder.splice(toPosition, 0, removed);
+    if (canvas) {
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(canvas, dispatchType, newOrder);
+    }
+  };
   const languages = editorContext?.languages || ["en", "none"];
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#metadata";
 
@@ -67,6 +77,7 @@ export const MetadataForm: React.FC<{}> = () => {
               ) => changeHandler(data, index, property)}
               availableLanguages={languages}
               removeItem={removeItem}
+              reorder={reorder}
             />
           </ErrorBoundary>
         )}

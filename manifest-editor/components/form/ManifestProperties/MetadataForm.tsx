@@ -9,6 +9,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
 import { CalltoButton } from "../../atoms/Button";
+import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 export const MetadataForm: React.FC<{}> = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -50,6 +51,16 @@ export const MetadataForm: React.FC<{}> = () => {
       vault.modifyEntityField(manifest, dispatchType, withNew);
     }
   };
+
+  const reorder = (fromPosition: number, toPosition: number) => {
+    const newOrder = manifest ? [...manifest[dispatchType]] : [];
+    const [removed] = newOrder.splice(fromPosition, 1);
+    newOrder.splice(toPosition, 0, removed);
+    if (manifest) {
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(manifest, dispatchType, newOrder);
+    }
+  };
   const languages = editorContext?.languages || ["en", "none"];
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#metadata";
 
@@ -69,6 +80,7 @@ export const MetadataForm: React.FC<{}> = () => {
               ) => changeHandler(data, index, property)}
               availableLanguages={languages}
               removeItem={removeItem}
+              reorder={reorder}
             />
           </ErrorBoundary>
         )}
@@ -76,9 +88,11 @@ export const MetadataForm: React.FC<{}> = () => {
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-      <CalltoButton onClick={() => addNew()}>
-        Add new metadata property
-      </CalltoButton>
+      <FlexContainer style={{ justifyContent: "center" }}>
+        <CalltoButton onClick={() => addNew()}>
+          + Add new metadata pair
+        </CalltoButton>
+      </FlexContainer>
     </>
   );
 };

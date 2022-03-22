@@ -148,7 +148,6 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
       style={{
         border: showAllFields ? "1px solid grey" : "none",
         borderRadius: showAllFields ? "5px" : "none",
-        padding: "1rem",
       }}
     >
       <div>{props.label}</div>
