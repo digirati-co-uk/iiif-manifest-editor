@@ -15,7 +15,7 @@ import {
 import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray, KeyArrayPairing } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
+import { FlexContainer } from "../layout/FlexContainer";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { Subdirectory } from "../icons/Subdirectory";
 
@@ -97,16 +97,16 @@ export const Annotations: React.FC<KeyArrayPairing> = ({
         {array.length > 0 && <DownIcon rotate={open ? 180 : 0} />}
       </Container>
       {open && (
-          <ErrorBoundary>
-            {array.map((annotation: any) => {
-              return (
-                <FlexContainer>
-                  <Indentation />
-                  <Annotation id={annotation.id} type={annotation.type} />
-                </FlexContainer>
-              );
-            })}
-          </ErrorBoundary>
+        <ErrorBoundary>
+          {array.map((annotation: any) => {
+            return (
+              <FlexContainer>
+                <Indentation />
+                <Annotation id={annotation.id} type={annotation.type} />
+              </FlexContainer>
+            );
+          })}
+        </ErrorBoundary>
       )}
     </>
   );

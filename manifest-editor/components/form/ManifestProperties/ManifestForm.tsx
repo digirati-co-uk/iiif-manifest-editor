@@ -2,7 +2,7 @@ import { useContext } from "react";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { TabPanel } from "../../layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
-// import { LinkingForm } from "./LinkingForm";
+import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
 import { TechnicalForm } from "./TechnicalForm";
 
@@ -20,10 +20,10 @@ export const ManifestForm: React.FC<{}> = () => {
           label: "Metadata",
           component: <MetadataForm />,
         },
-        // {
-        //   label: "Linking",
-        //   component: <LinkingForm />,
-        // },
+        {
+          label: "Linking",
+          component: <LinkingForm />,
+        },
         {
           label: "Technical",
           component: <TechnicalForm />,
