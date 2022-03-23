@@ -26,6 +26,14 @@ const GridViewContainer = styled.div`
   } ;
 `;
 
+const ThumnbnailLabel = styled.small`
+  white-space: nowrap;
+  text-align: center;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const GridItem: React.FC<{
   handleChange: (id: string) => void;
   canvasId: string;
@@ -35,7 +43,9 @@ const GridItem: React.FC<{
   return (
     <FlexContainerColumn style={{ alignItems: "center" }}>
       <Thumbnail onClick={() => handleChange(canvasId)} />
-      {getValue(canvas?.label)}
+      <ThumnbnailLabel title={getValue(canvas?.label)}>
+        {getValue(canvas?.label)}
+      </ThumnbnailLabel>
     </FlexContainerColumn>
   );
 };
