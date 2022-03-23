@@ -62,6 +62,7 @@ export const ManifestEditor: React.FC<{
                     | "noNav"
                     | "fullEditor"
                 ) => setView(selectedView)}
+                view={view}
               />
             </Toolbar>
           </ErrorBoundary>

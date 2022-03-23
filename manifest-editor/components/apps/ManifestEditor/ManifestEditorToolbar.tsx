@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
+import { CheckIcon } from "../../icons/CheckIcon";
 
 export const ManifestEditorToolbar: React.FC<{
   setEditorPanelOpen: (bool: boolean) => void;
   setView: (
     view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"
   ) => void;
-}> = ({ setView, setEditorPanelOpen }) => {
+  view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
+}> = ({ setView, setEditorPanelOpen, view }) => {
   const [viewOpen, setViewOpen] = useState(false);
 
   return (
@@ -29,6 +31,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setView("tree");
               }}
             >
+              {view === "tree" && <CheckIcon />}
               Outline
             </Button>
             <Button
@@ -37,6 +40,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setView("thumbnails");
               }}
             >
+              {view === "thumbnails" && <CheckIcon />}
               Canvas Thumbnails
             </Button>
             <Button
@@ -45,6 +49,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setView("grid");
               }}
             >
+              {view === "grid" && <CheckIcon />}
               Thumbnail Grid
             </Button>
           </DropdownContent>
