@@ -62,6 +62,9 @@ Pick a Rights Statement for your manifest.
 Give each canvas a _Label_ - use the printed page number, where it's visible in the image.
 For these numerals as labels, set the language to `none`.
 
+Add some pairs of metadata (labels and values) to the Manifest.
+For example, include information about the Author, and where and when it was published.
+Add a few metadata fields to the manifest, and try re-ordering them.
 
 ### 6. Set the Manifest behavior
 
