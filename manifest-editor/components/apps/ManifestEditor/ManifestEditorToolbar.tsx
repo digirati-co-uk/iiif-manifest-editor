@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { CheckIcon } from "../../icons/CheckIcon";
+import ManifestEditorContext from "./ManifestEditorContext";
 
 export const ManifestEditorToolbar: React.FC<{
   setEditorPanelOpen: (bool: boolean) => void;
-  setView: (
-    view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"
-  ) => void;
-  view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
-}> = ({ setView, setEditorPanelOpen, view }) => {
+}> = ({ setEditorPanelOpen }) => {
   const [viewOpen, setViewOpen] = useState(false);
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
+  const editorContext = useContext(ManifestEditorContext);
 
   return (
     <>
@@ -28,29 +27,54 @@ export const ManifestEditorToolbar: React.FC<{
             <Button
               onClick={() => {
                 setViewOpen(!viewOpen);
-                setView("tree");
+                editorContext?.setView("tree");
               }}
             >
-              {view === "tree" && <CheckIcon />}
+              {editorContext?.view === "tree" && <CheckIcon />}
               Outline
             </Button>
             <Button
               onClick={() => {
                 setViewOpen(!viewOpen);
-                setView("thumbnails");
+                editorContext?.setView("thumbnails");
               }}
             >
-              {view === "thumbnails" && <CheckIcon />}
+              {editorContext?.view === "thumbnails" && <CheckIcon />}
               Canvas Thumbnails
             </Button>
             <Button
               onClick={() => {
                 setViewOpen(!viewOpen);
-                setView("grid");
+                editorContext?.setView("grid");
               }}
             >
-              {view === "grid" && <CheckIcon />}
+              {editorContext?.view === "thumbnails" && <CheckIcon />}
               Thumbnail Grid
+            </Button>
+          </DropdownContent>
+        )}
+      </Dropdown>
+      <Dropdown onMouseLeave={() => setPropertiesOpen(false)}>
+        <Button onClick={() => setPropertiesOpen(!propertiesOpen)}>
+          Properties
+        </Button>
+        {propertiesOpen && (
+          <DropdownContent>
+            <Button
+              onClick={() => {
+                setPropertiesOpen(!propertiesOpen);
+                editorContext?.changeSelectedProperty("manifest");
+              }}
+            >
+              Edit Manifest Properties
+            </Button>
+            <Button
+              onClick={() => {
+                setPropertiesOpen(!propertiesOpen);
+                editorContext?.changeSelectedProperty("canvas");
+              }}
+            >
+              Edit Canvas Properties
             </Button>
           </DropdownContent>
         )}

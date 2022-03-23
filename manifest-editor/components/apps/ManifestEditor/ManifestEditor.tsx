@@ -54,15 +54,6 @@ export const ManifestEditor: React.FC<{
             <Toolbar>
               <ManifestEditorToolbar
                 setEditorPanelOpen={(bool: boolean) => setEditorPanelOpen(bool)}
-                setView={(
-                  selectedView:
-                    | "thumbnails"
-                    | "tree"
-                    | "grid"
-                    | "noNav"
-                    | "fullEditor"
-                ) => setView(selectedView)}
-                view={view}
               />
             </Toolbar>
           </ErrorBoundary>
