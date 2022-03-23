@@ -3,7 +3,7 @@ import { useVault } from "react-iiif-vault";
 import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { Button, SecondaryButton } from "../../atoms/Button";
-import { FlexContainer } from "../../layout/FlexContainer";
+import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import { Input } from "../Input";
 import {
   DragDropContext,
@@ -13,6 +13,8 @@ import {
 } from "react-beautiful-dnd";
 import { MenuIcon } from "../../icons/MenuIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
+import { LanguageFieldEditor } from "../LanguageFieldEditor";
+import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 
 export const ExternalResource: React.FC<{
   dispatchType: "homepage" | "services" | "seeAlso" | "rendering";
@@ -82,7 +84,7 @@ export const ExternalResource: React.FC<{
               {manifest &&
                 manifest[dispatchType] &&
                 Array.isArray(manifest[dispatchType]) &&
-                manifest[dispatchType].map((item, index) => {
+                manifest[dispatchType].map((item: any, index) => {
                   return (
                     <Draggable
                       key={item.id.toString() + "--HASH--"}
@@ -90,24 +92,46 @@ export const ExternalResource: React.FC<{
                       index={index}
                     >
                       {(innerProvided) => (
-                        <FlexContainer
-                          ref={innerProvided.innerRef}
-                          {...innerProvided.draggableProps}
-                          {...innerProvided.dragHandleProps}
-                          key={index}
-                        >
-                          <MenuIcon />
-                          <Input
-                            type="string"
-                            onChange={(e: any) => {
-                              updateValue(e.target.value, index);
-                            }}
-                            value={item.id}
-                          />
-                          <Button onClick={() => removeItem(index)}>
-                            <DeleteIcon />
-                          </Button>
-                        </FlexContainer>
+                        <>
+                          <FlexContainer
+                            ref={innerProvided.innerRef}
+                            {...innerProvided.draggableProps}
+                            {...innerProvided.dragHandleProps}
+                            key={index}
+                          >
+                            <MenuIcon />
+                            <FlexContainerColumn>
+                              {item?.label && (
+                                <LanguageFieldEditor
+                                  label=""
+                                  fields={item.label}
+                                />
+                              )}
+                              <Input
+                                type="string"
+                                onChange={(e: any) => {
+                                  updateValue(e.target.value, index);
+                                }}
+                                value={item.id}
+                              />
+                              {item.type && (
+                                <Input
+                                  type="string"
+                                  // onChange={(e: any) => {
+                                  //   changeType(e.target.value, index);
+                                  // }}
+                                  value={item.type}
+                                />
+                              )}
+                            </FlexContainerColumn>
+                            <Button onClick={() => removeItem(index)}>
+                              <DeleteIcon />
+                            </Button>
+                          </FlexContainer>
+                          {index !== manifest[dispatchType].length - 1 && (
+                            <HorizontalDivider />
+                          )}
+                        </>
                       )}
                     </Draggable>
                   );
