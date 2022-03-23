@@ -12,7 +12,7 @@ export const SingleValueInput: React.FC<{
   dispatchType: "rights" | "behavior";
 }> = ({ dispatchType }) => {
   const shellContext = useContext(ShellContext);
-  const canvasEditorContext = useContext(ManifestEditorContext);
+  const manifestEditorContext = useContext(ManifestEditorContext);
   const canvas = useCanvas();
   const vault = useVault();
   const changeHandler = (data: any) => {
@@ -69,7 +69,7 @@ export const SingleValueInput: React.FC<{
           <StringSelector
             key={canvas.id}
             label="Behavior"
-            options={canvasEditorContext?.behaviorProperties || []}
+            options={manifestEditorContext?.behaviorProperties || []}
             selected={selected}
             multi={true}
             guidanceReference="https://iiif.io/api/presentation/3.0/#behavior"
