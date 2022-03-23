@@ -1,4 +1,4 @@
-## Test 2: Opening a Manifest
+## Test 1: Opening a Manifest
 
 The goal of this test is simply to open an existing Manifest and view its canvases.
 
@@ -15,14 +15,12 @@ Opening the URL above in the Manifest Editor.
 
 ### 2. Exploring
 
-Can you view the _Manifest Overview_ as a field of thumbnails?
+Trying out different views: can you get an overview of the whole manifest? A visual idea of how many _Canvases_ it contains?
 
-If you select a thumbnail, can you see information for that _Canvas_?
+Can you see information for an individual _Canvas_?
 
-Can you switch the Manifest Editor to a view that looks more like a slide deck, with a strip of thumbnails?
-
-Can you switch the Manifest Editor to Outline view and explore the technical structure of the Manifest?
-(You don't need to know what all the terms in this view mean).
+What other views are available, and what do you think they mean? What are they telling you? 
+What would you use them for?
 
 ### 3. Loading a different Manifest
 
