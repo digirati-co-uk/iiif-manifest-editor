@@ -28,6 +28,13 @@ export const LinkingForm: React.FC<{}> = () => {
         />
       </ShadowContainer>
       <ShadowContainer>
+        <h3>service</h3>
+        <ExternalResource dispatchType={"service"} />
+        <InformationLink
+          guidanceReference={"https://iiif.io/api/presentation/3.0/#service"}
+        />
+      </ShadowContainer>
+      <ShadowContainer>
         <h3>services</h3>
         <ExternalResource dispatchType={"services"} />
         <InformationLink

@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { LanguageMapInput } from "../LanguageMapInput";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { SingleValueInput } from "../SingleValueInput";
+import { DateForm } from "./DateForm";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -18,11 +19,16 @@ export const DescriptiveForm = () => {
         languages={editorContext?.languages || []}
         guidanceReference={"https://iiif.io/api/presentation/3.0/#summary"}
       />
-      {/* <div>Required Statement</div> */}
+      <LanguageMapInput
+        dispatchType={"requiredStatement"}
+        languages={editorContext?.languages || []}
+        guidanceReference={
+          "https://iiif.io/api/presentation/3.0/#requiredStatement"
+        }
+      />
       <SingleValueInput dispatchType={"rights"} />
-
-      {/* <div>Date</div>
-      <div>Time</div> */}
+      <DateForm />
+      {/* <div>Time</div> */}
     </>
   );
 };

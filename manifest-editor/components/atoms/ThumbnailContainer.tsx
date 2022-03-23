@@ -19,6 +19,19 @@ export const ThumbnailContainer = styled.div`
   }
 `;
 
+export const SmallThumbnailStripContainer = styled.div`
+   {
+    padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
+    color: ${(props: any) => props.color || "black"};
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 10rem;
+    overflow-x: auto;
+    width: 100%;
+  }
+`;
+
 export const ThumbnailGrid = styled.div`
    {
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"};

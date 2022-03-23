@@ -200,7 +200,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("rendering")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"rendering"}
@@ -209,8 +209,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () =>
-                    editorContext.changeSelectedProperty("requiredStatement")
+                ? () => editorContext.changeSelectedProperty("manifest", 0)
                 : () => {}
             }
             propertyName={"requiredStatement"}
@@ -219,7 +218,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairString
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("rights")
+                ? () => editorContext.changeSelectedProperty("manifest", 0)
                 : () => {}
             }
             propertyName={"rights"}
@@ -228,7 +227,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("seeAlso")
+                ? () => editorContext.changeSelectedProperty("manifest", 3)
                 : () => {}
             }
             propertyName={"seeAlso"}
@@ -237,7 +236,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("service")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"service"}
@@ -246,7 +245,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("services")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"services"}
@@ -274,7 +273,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("summary")
+                ? () => editorContext.changeSelectedProperty("manifest", 0)
                 : () => {}
             }
             propertyName={"summary"}

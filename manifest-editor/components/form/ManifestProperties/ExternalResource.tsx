@@ -17,7 +17,7 @@ import { LanguageFieldEditor } from "../LanguageFieldEditor";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 
 export const ExternalResource: React.FC<{
-  dispatchType: "homepage" | "services" | "seeAlso" | "rendering";
+  dispatchType: "homepage" | "service" | "services" | "seeAlso" | "rendering";
 }> = ({ dispatchType }) => {
   const shellContext = useContext(ShellContext);
   const manifest = useManifest();
@@ -87,8 +87,8 @@ export const ExternalResource: React.FC<{
                 manifest[dispatchType].map((item: any, index) => {
                   return (
                     <Draggable
-                      key={item.id.toString() + "--HASH--"}
-                      draggableId={item.id.toString() + "--HASH--"}
+                      key={item?.id?.toString() + "--HASH--"}
+                      draggableId={item?.id?.toString() + "--HASH--"}
                       index={index}
                     >
                       {(innerProvided) => (
@@ -98,6 +98,7 @@ export const ExternalResource: React.FC<{
                             {...innerProvided.draggableProps}
                             {...innerProvided.dragHandleProps}
                             key={index}
+                            style={{ justifyContent: "space-between" }}
                           >
                             <MenuIcon />
                             <FlexContainerColumn>

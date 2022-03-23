@@ -10,7 +10,7 @@ import { LanguageFieldEditor } from "./LanguageFieldEditor";
 
 export const LanguageMapInput: React.FC<{
   // Add to this list as we go
-  dispatchType: "label" | "summary";
+  dispatchType: "label" | "summary" | "requiredStatement";
   languages: Array<string>;
   guidanceReference?: string;
 }> = ({ dispatchType, languages, guidanceReference }) => {
@@ -34,6 +34,7 @@ export const LanguageMapInput: React.FC<{
         <ErrorBoundary>
           <LanguageFieldEditor
             label={dispatchType}
+            // @ts-ignore
             fields={manifest[dispatchType] || {}}
             onSave={(data: any) => changeHandler(data)}
             availableLanguages={languages}

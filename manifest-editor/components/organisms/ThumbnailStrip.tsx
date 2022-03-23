@@ -1,6 +1,9 @@
 import { CanvasContext, useManifest, useSimpleViewer } from "react-iiif-vault";
 
-import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
+import {
+  SmallThumbnailStripContainer,
+  ThumbnailContainer,
+} from "../atoms/ThumbnailContainer";
 import { Thumbnail } from "../atoms/Thumbnail";
 import { useContext } from "react";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
@@ -29,5 +32,28 @@ export const ThumbnailStrip: React.FC = () => {
         );
       })}
     </ThumbnailContainer>
+  );
+};
+
+export const SmallThumbnailStrip: React.FC = () => {
+  const manifest = useManifest();
+  const { setCurrentCanvasId } = useSimpleViewer();
+  const editorContext = useContext(ManifestEditorContext);
+
+  const handleChange = (itemId: string) => {
+    setCurrentCanvasId(itemId);
+    editorContext?.changeSelectedProperty("canvas");
+  };
+
+  return (
+    <SmallThumbnailStripContainer>
+      {manifest?.items.map((item: any) => {
+        return (
+          <CanvasContext key={item.id} canvas={item.id}>
+            <Thumbnail onClick={() => handleChange(item.id)} />
+          </CanvasContext>
+        );
+      })}
+    </SmallThumbnailStripContainer>
   );
 };
