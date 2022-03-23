@@ -1,11 +1,18 @@
+import { getValue } from "@iiif/vault-helpers";
 import { useContext } from "react";
-import { CanvasContext, useManifest, useSimpleViewer } from "react-iiif-vault";
+import {
+  CanvasContext,
+  useCanvas,
+  useManifest,
+  useSimpleViewer,
+} from "react-iiif-vault";
 import styled from "styled-components";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 import { Thumbnail } from "../atoms/Thumbnail";
 import { ThumbnailGrid } from "../atoms/ThumbnailContainer";
 import { ViewSelector } from "../atoms/ViewSelector";
+import { FlexContainerColumn } from "../layout/FlexContainer";
 
 const GridViewContainer = styled.div`
   display: flex;
@@ -18,6 +25,20 @@ const GridViewContainer = styled.div`
     min-height: 50vh;
   } ;
 `;
+
+const GridItem: React.FC<{
+  handleChange: (id: string) => void;
+  canvasId: string;
+}> = ({ handleChange, canvasId }) => {
+  const canvas = useCanvas();
+
+  return (
+    <FlexContainerColumn style={{ alignItems: "center" }}>
+      <Thumbnail onClick={() => handleChange(canvasId)} />
+      {getValue(canvas?.label)}
+    </FlexContainerColumn>
+  );
+};
 
 export const GridView: React.FC = () => {
   const manifest = useManifest();
@@ -35,7 +56,10 @@ export const GridView: React.FC = () => {
         {manifest?.items.map((item: any) => {
           return (
             <CanvasContext key={item.id} canvas={item.id}>
-              <Thumbnail onClick={() => handleChange(item.id)} />
+              <GridItem
+                canvasId={item.id}
+                handleChange={() => handleChange(item.id)}
+              />
             </CanvasContext>
           );
         })}
