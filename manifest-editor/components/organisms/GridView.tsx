@@ -42,10 +42,10 @@ const GridItem: React.FC<{
 
   return (
     <FlexContainerColumn style={{ alignItems: "center" }}>
-      <Thumbnail onClick={() => handleChange(canvasId)} />
       <ThumnbnailLabel title={getValue(canvas?.label)}>
         {getValue(canvas?.label)}
       </ThumnbnailLabel>
+      <Thumbnail onClick={() => handleChange(canvasId)} />
     </FlexContainerColumn>
   );
 };
