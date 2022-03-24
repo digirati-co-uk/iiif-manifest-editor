@@ -5,7 +5,9 @@ export const ThumbnailImg = styled.img`
    {
     margin: 0.375rem;
     object-fit: contain;
-    cursor: pointer;
+    pointer-events: none;
+    background-color: pink;
+    padding: 10px;
   }
 `;
 
