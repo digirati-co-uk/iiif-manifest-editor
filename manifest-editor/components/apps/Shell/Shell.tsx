@@ -24,7 +24,8 @@ export type Persistance = {
 
 export const Shell: React.FC<{
   previewConfig: any;
-}> = ({ previewConfig }) => {
+  newTemplates: any;
+}> = ({ previewConfig, newTemplates }) => {
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   // 48 hours link preview link
   const [previewLocation, setPreviewLocation] = useState<
@@ -51,6 +52,10 @@ export const Shell: React.FC<{
     // We want to hold on to the prefered viewer choice in localstorage
     localStorage.setItem("previewChoice", JSON.stringify(selectedPreviewIndex));
   }, [selectedPreviewIndex]);
+
+  useEffect(() => {
+    shellContext?.setNewTemplates(JSON.parse(newTemplates));
+  }, []);
 
   useEffect(() => {
     // previewchoice in localStorage?

@@ -29,6 +29,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const [selectedApplication, setSelectedApplication] =
     useState<"ManifestEditor" | "Browser" | "Splash">("ManifestEditor");
 
+  const [newManifestTemplates, setNewManifestsTemplates] = useState<any>();
+
   const changeSelectedApplication = (
     app: "ManifestEditor" | "Browser" | "Splash"
   ) => {
@@ -96,6 +98,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     setUnsavedChanges,
     recentManifests,
     updateRecentManifests,
+    newTemplates: newManifestTemplates,
+    setNewTemplates: setNewManifestsTemplates,
   };
 
   return (

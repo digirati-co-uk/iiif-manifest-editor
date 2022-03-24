@@ -31,11 +31,19 @@ export const getStaticProps = async () => {
   const path = require("path").join(process.cwd(), "/public/welcome.html");
   const welcome = await fs.readFileSync(path, "utf-8");
 
+  const templatesPath = require("path").join(
+    process.cwd(),
+    "public/config/built-in-manifest-editor-templates.json"
+  );
+
+  const templates = await fs.readFileSync(templatesPath, "utf-8");
+
   return {
     props: {
       config: data,
       theme: Theme,
       welcome: welcome,
+      templates: templates,
     },
   };
 };
@@ -52,7 +60,10 @@ const Home: NextPage = (props: any) => {
         </Head>
         <ErrorBoundary>
           <Main>
-            <Shell previewConfig={props.config.preview} />
+            <Shell
+              previewConfig={props.config.preview}
+              newTemplates={props.templates}
+            />
             {props.selectedApplication === "ManifestEditor" && (
               <ManifestEditor
                 defaultLanguages={props.config.defaultLanguages}

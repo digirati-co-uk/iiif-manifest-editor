@@ -12,6 +12,8 @@ interface ShellContextInterface {
   setUnsavedChanges: (bol: boolean) => void;
   updateRecentManifests: (manifest: string) => Promise<void>;
   recentManifests: ManifestNormalized[];
+  newTemplates: any;
+  setNewTemplates: (templates: any) => void;
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);
