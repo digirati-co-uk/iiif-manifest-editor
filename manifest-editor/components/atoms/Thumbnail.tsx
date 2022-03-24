@@ -6,7 +6,6 @@ export const ThumbnailImg = styled.img`
     margin: 0.375rem;
     object-fit: contain;
     pointer-events: none;
-    background-color: pink;
     padding: 10px;
   }
 `;
@@ -19,7 +18,7 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   });
 
   if (!thumb) {
-    return null;
+    return <div></div>;
   }
 
   return (

@@ -14,7 +14,7 @@ import { Thumbnail } from "../atoms/Thumbnail";
 import { ViewSelector } from "../atoms/ViewSelector";
 import { FlexContainerColumn } from "../layout/FlexContainer";
 
-import SortableList, { SortableItem } from "react-easy-sort";
+import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import ShellContext from "../apps/Shell/ShellContext";
 
 const GridViewContainer = styled.div`
@@ -25,7 +25,6 @@ const GridViewContainer = styled.div`
   height: 80vh;
   .list {
     padding: 2px;
-    background-color: blue;
     flex-direction: row;
     display: flex;
     justify-content: space-evenly;
@@ -87,8 +86,6 @@ export const GridView: React.FC = () => {
   const reorder = (fromPosition: number, toPosition: number) => {
     const newOrder = manifest ? [...manifest[dispatchType]] : [];
     const [removed] = newOrder.splice(fromPosition, 1);
-    setRedraw(redraw + 1);
-
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
       shellContext?.setUnsavedChanges(true);
@@ -112,10 +109,12 @@ export const GridView: React.FC = () => {
               <SortableItem key={item?.id?.toString() + "--HASH--"}>
                 <div className="item">
                   <CanvasContext key={item.id} canvas={item.id}>
-                    <GridItem
-                      canvasId={item.id}
-                      handleChange={() => handleChange(item.id)}
-                    />
+                    <SortableKnob>
+                      <GridItem
+                        canvasId={item.id}
+                        handleChange={() => handleChange(item.id)}
+                      />
+                    </SortableKnob>
                   </CanvasContext>
                 </div>
               </SortableItem>
