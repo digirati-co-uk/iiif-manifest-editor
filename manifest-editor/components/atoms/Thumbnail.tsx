@@ -5,7 +5,6 @@ export const ThumbnailImg = styled.img`
    {
     margin: 0.375rem;
     object-fit: contain;
-    pointer-events: none;
     padding: 10px;
   }
 `;
