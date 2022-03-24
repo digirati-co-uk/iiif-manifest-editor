@@ -1,0 +1,11 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "/config/manifest-templates/blank.json",
+    "type": "Manifest",
+    "label": {
+        "en": [
+            "Blank Manifest"
+        ]
+    },
+    "items": []
+}
