@@ -1,18 +1,10 @@
-import { useContext } from "react";
-import { LanguageMapInput } from "../LanguageMapInput";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import { SingleValueInput } from "../SingleValueInput";
-import ShellContext from "../../apps/Shell/ShellContext";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault";
 import { JSONPreview } from "../../atoms/JSONPreview";
 import { ShadowContainer } from "../../atoms/ShadowContainer";
 import { SmallThumbnailStrip } from "../../organisms/ThumbnailStrip";
 
 export const StructuralForm = () => {
-  const editorContext = useContext(ManifestEditorContext);
-  const shellContext = useContext(ShellContext);
   const manifest = useManifest();
-  const vault = useVault();
 
   return (
     <>

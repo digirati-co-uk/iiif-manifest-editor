@@ -2,7 +2,9 @@ import { useContext, useState } from "react";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { TabPanel } from "../../layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
+import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
+import { TechnicalForm } from "./TechnicalForm";
 // import { TechnicalForm } from "./TechnicalForm";
 
 export const CanvasForm = () => {
@@ -19,14 +21,14 @@ export const CanvasForm = () => {
           label: "Metadata",
           component: <MetadataForm />,
         },
-        // {
-        //   label: "Linking",
-        //   component: <div>I will be the linking panel</div>,
-        // },
-        // {
-        //   label: "Technical",
-        //   component: <TechnicalForm />,
-        // },
+        {
+          label: "Linking",
+          component: <LinkingForm />,
+        },
+        {
+          label: "Technical",
+          component: <TechnicalForm />,
+        },
         // {
         //   label: "Structural",
         //   component: <div>I will be the structural panel</div>,

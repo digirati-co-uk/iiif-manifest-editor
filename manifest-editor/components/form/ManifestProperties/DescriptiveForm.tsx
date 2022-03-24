@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { LanguageMapInput } from "../LanguageMapInput";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import { SingleValueInput } from "../SingleValueInput";
+import { SingleValueInput } from "./SingleValueInput";
 import { DateForm } from "./DateForm";
 
 export const DescriptiveForm = () => {

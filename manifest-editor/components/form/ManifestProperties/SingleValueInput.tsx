@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
-import { useManifest } from "../../hooks/useManifest";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
-import ShellContext from "../apps/Shell/ShellContext";
-import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { StringSelector } from "./StringSelector";
+import { useManifest } from "../../../hooks/useManifest";
+import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import ShellContext from "../../apps/Shell/ShellContext";
+import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { StringSelector } from "../StringSelector";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go

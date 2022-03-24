@@ -19,7 +19,7 @@ export const StringSelector: React.FC<{
   guidanceReference,
 }) => {
   return (
-    <ShadowContainer>
+    <ShadowContainer style={{ overflow: "hidden" }}>
       <InputLabel>{label}</InputLabel>
       <ButtonGroup>
         {options &&
