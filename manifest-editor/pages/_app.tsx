@@ -103,7 +103,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   };
 
   return (
-    <>
+    <div key={resourceID}>
       <ShellContext.Provider value={shellSettings}>
         <VaultProvider>
           <SimpleViewerProvider manifest={resourceID} pagingEnabled={false}>
@@ -114,7 +114,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
           </SimpleViewerProvider>
         </VaultProvider>
       </ShellContext.Provider>
-    </>
+    </div>
   );
 };
 
