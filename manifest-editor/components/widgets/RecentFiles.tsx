@@ -28,7 +28,7 @@ export const RecentFiles: React.FC<RecentFiles> = ({
           collection.createManifest(recent.id, (manifest) => {
             manifest.addLabel(recent.id);
             // @ts-ignore
-            if (recent.thumbnail[0]) {
+            if (recent && recent.thumbnail && recent.thumbnail[0]) {
               manifest.addThumbnail({
                 id: recent.thumbnail[0].id,
                 type: "Image",
