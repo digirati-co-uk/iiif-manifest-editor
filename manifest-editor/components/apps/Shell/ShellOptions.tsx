@@ -6,6 +6,7 @@ import { SaveModal } from "../../modals/SaveModal";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../modals/ExportModal";
 import { FlexContainer } from "../../layout/FlexContainer";
+import { NewManifestModal } from "../../modals/NewManifestModal";
 
 export const ShellOptions: React.FC<{
   save: () => void;
@@ -25,6 +26,7 @@ export const ShellOptions: React.FC<{
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
+  const [newModalVisible, setNewModalVisible] = useState(false);
 
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -65,11 +67,22 @@ export const ShellOptions: React.FC<{
       {exportModalVisible && (
         <ExportModal close={() => setExportModalVisible(false)} />
       )}
+
+      {newModalVisible && (
+        <NewManifestModal close={() => setNewModalVisible(false)} />
+      )}
       <FlexContainer>
         <Dropdown>
           <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
           {fileOpen && (
             <DropdownContent onMouseLeave={() => setFileOpen(false)}>
+              <Button
+                onClick={() => setNewModalVisible(!newModalVisible)}
+                title="Start a new Manifest"
+                color={"#6b6b6b"}
+              >
+                New
+              </Button>
               <Button
                 onClick={() => setaddModalVisible(!addModalVisible)}
                 title="Add an existing manifest to get started"

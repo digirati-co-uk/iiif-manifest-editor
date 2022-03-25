@@ -3,9 +3,6 @@ import {
   RecentLabel,
   RecentThumbnails,
 } from "../atoms/RecentFilesWidget";
-import { useManifest } from "../../hooks/useManifest";
-import { FlexContainerColumn } from "../layout/FlexContainer";
-import { ManifestContext, VaultProvider } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
 import * as IIIFVault from "@iiif/vault";
 import { useEffect, useState } from "react";
