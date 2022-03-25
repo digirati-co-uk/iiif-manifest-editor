@@ -14,32 +14,22 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
     shellContext?.changeSelectedApplication("ManifestEditor");
   };
 
-  useEffect(() => {
-    console.log(shellContext?.newTemplates);
-  });
-
   return (
     <FlexContainerColumn justify="flex-start">
       <div dangerouslySetInnerHTML={{ __html: welcome }} />
       <HorizontalDivider />
-      <RecentFiles
-        recentManifests={shellContext?.recentManifests}
-        changeManifest={handleClick}
-      />
       <NewTemplates
         newTemplates={shellContext?.newTemplates}
         changeManifest={handleClick}
       />
       <HorizontalDivider />
-      <FlexContainer style={{ justifyContent: "flex-end" }}>
-        <CalltoButton
-          onClick={() =>
-            shellContext?.changeSelectedApplication("ManifestEditor")
-          }
-        >
-          Get started
-        </CalltoButton>
-      </FlexContainer>
+
+      <RecentFiles
+        recentManifests={shellContext?.recentManifests}
+        changeManifest={handleClick}
+      />
+
+      <HorizontalDivider />
     </FlexContainerColumn>
   );
 };

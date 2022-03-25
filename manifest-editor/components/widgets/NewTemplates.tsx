@@ -1,28 +1,54 @@
-import { IIIFBuilder } from "iiif-builder";
-import { ManifestNormalized } from "@iiif/presentation-3";
-import { ThumbnailImg } from "../atoms/Thumbnail";
 import {
   RecentFilesWidget,
   RecentLabel,
-  RecentManifestCard,
   RecentThumbnails,
 } from "../atoms/RecentFilesWidget";
 import { useManifest } from "../../hooks/useManifest";
 import { FlexContainerColumn } from "../layout/FlexContainer";
-import { ManifestContext } from "react-iiif-vault";
+import { ManifestContext, VaultProvider } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
+import * as IIIFVault from "@iiif/vault";
+import { useEffect, useState } from "react";
+import {
+  TemplateCardContainer,
+  TemplateCardNew,
+  TemplateCardPlaceholder,
+} from "../atoms/TemplateCard";
+import { AddIcon } from "../icons/AddIcon";
 
 type NewTemplates = {
   newTemplates: any[] | undefined;
   changeManifest: (id: string) => void;
 };
 
-const TemplateCard: React.FC<{}> = () => {
-  const manifest = useManifest();
+const TemplateCard: React.FC<{
+  manifestUrl: string;
+  changeManifest: (id: string) => void;
+}> = ({ manifestUrl, changeManifest }) => {
+  const vault = new IIIFVault.Vault();
+
+  const [manifest, setManifest] = useState<any>();
+
+  useEffect(() => {
+    const waitData = async () => {
+      const data = await vault.loadManifest(manifestUrl || "");
+      setManifest(data);
+    };
+    waitData();
+  }, []);
   return (
-    <FlexContainerColumn style={{ alignItems: "center", cursor: "grab" }}>
-      {getValue(manifest?.label)}
-    </FlexContainerColumn>
+    <TemplateCardContainer
+      onClick={() => changeManifest(window.location.href + manifest.id)}
+    >
+      <TemplateCardNew>
+        {getValue(manifest?.label) === "Blank Manifest" ? (
+          <AddIcon />
+        ) : (
+          <TemplateCardPlaceholder />
+        )}
+      </TemplateCardNew>
+      <RecentLabel>{getValue(manifest?.label)}</RecentLabel>
+    </TemplateCardContainer>
   );
 };
 
@@ -30,7 +56,6 @@ export const NewTemplates: React.FC<NewTemplates> = ({
   newTemplates,
   changeManifest,
 }) => {
-  const builder = new IIIFBuilder();
   return (
     <RecentFilesWidget>
       <h4>Start from template </h4>
@@ -38,22 +63,12 @@ export const NewTemplates: React.FC<NewTemplates> = ({
         {newTemplates &&
           // @ts-ignore
           newTemplates?.items.map((manifest) => {
-            console.log(window.location.href + manifest.id);
             return (
               <>
-                <ManifestContext
-                  manifest={window.location.href + manifest.id}
-                  key={manifest.id}
-                >
-                  <TemplateCard></TemplateCard>
-                </ManifestContext>
-                <RecentLabel
-                  onClick={() =>
-                    changeManifest(window.location.href + manifest.id)
-                  }
-                >
-                  {window.location.href + manifest.id}
-                </RecentLabel>
+                <TemplateCard
+                  manifestUrl={window.location.href + manifest.id}
+                  changeManifest={changeManifest}
+                />
               </>
             );
           })}

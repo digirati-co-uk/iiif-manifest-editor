@@ -48,7 +48,18 @@ export const RecentFiles: React.FC<RecentFiles> = ({
             <RecentManifestCard>
               <ThumbnailImg
                 // @ts-ignore
-                src={manifest?.thumbnail[0].id}
+                src={
+                  manifest &&
+                  // @ts-ignore
+                  manifest?.thumbnail &&
+                  // @ts-ignore
+                  manifest?.thumbnail[0] &&
+                  // @ts-ignore
+                  manifest?.thumbnail[0].id
+                    ? // @ts-ignore
+                      manifest?.thumbnail[0].id
+                    : ""
+                }
                 alt={manifest.id}
                 loading="lazy"
                 onClick={() => changeManifest(manifest.id)}
