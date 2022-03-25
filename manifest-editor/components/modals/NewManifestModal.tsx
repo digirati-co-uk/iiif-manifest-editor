@@ -5,7 +5,6 @@ import { ModalBackground } from "../layout/ModalBackground";
 import { ModalContainer } from "../layout/ModalContainer";
 import { FlexContainer } from "../layout/FlexContainer";
 import { ModalHeader } from "../atoms/ModalHeader";
-import { HorizontalDivider } from "../atoms/HorizontalDivider";
 
 import ShellContext from "../apps/Shell/ShellContext";
 
