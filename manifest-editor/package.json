@@ -12,7 +12,7 @@
     "test": "jest --watch"
   },
   "resolutions": {
-    "@iiif/vault": "[latest version]"
+    "@iiif/vault": "^0.9.17"
   },
   "dependencies": {
     "@digirati/canvas-panel-web-components": "^v1.0.47",
