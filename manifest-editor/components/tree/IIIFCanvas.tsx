@@ -14,24 +14,25 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { useCanvas, useSimpleViewer } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 import { FlexContainer } from "../layout/FlexContainer";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import ShellContext from "../apps/Shell/ShellContext";
 
 const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
   ({ type, id, onClick }) => {
     const canvas = useCanvas({ id: id });
     const label = getValue(canvas?.label);
     const [open, setOpen] = useState(false);
-    const { setCurrentCanvasId } = useSimpleViewer();
+    const shellContext = useContext(ShellContext);
     const editorContext = useContext(ManifestEditorContext);
 
     return (
       <>
         <Container
           onClick={() => {
-            setCurrentCanvasId(id);
+            shellContext?.setCurrentCanvasId(id);
             setOpen(!open);
           }}
         >
@@ -48,11 +49,19 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
             <ContainerColumn>
               {canvas &&
                 Object.entries(canvas).map(([key, value]) => {
-                  if (typeof value === "string") {
+                  if (typeof value === "string" || typeof value === "number") {
                     return (
                       <KeyValuePairString
                         key={key}
-                        onClick={() => console.log("clicked", key)}
+                        onClick={() => {
+                          if (
+                            key === "height" ||
+                            key === "width" ||
+                            key === "duration"
+                          ) {
+                            editorContext?.changeSelectedProperty("canvas", 3);
+                          }
+                        }}
                         propertyName={key}
                         value={value}
                       />
@@ -64,8 +73,10 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
                         propertyName={key}
                         array={value}
                         onClick={() => {
-                          if (key === "metatdata") {
+                          if (key === "metadata") {
                             editorContext?.changeSelectedProperty("canvas", 1);
+                          } else if (key === "behavior") {
+                            editorContext?.changeSelectedProperty("canvas", 3);
                           }
                         }}
                       />
@@ -74,7 +85,11 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
                     return (
                       <KeyObjectPairing
                         key={key}
-                        onClick={() => {}}
+                        onClick={() => {
+                          if (key === "summary" || "label" || "rights") {
+                            editorContext?.changeSelectedProperty("canvas", 0);
+                          }
+                        }}
                         propertyName={key}
                         object={value}
                       />

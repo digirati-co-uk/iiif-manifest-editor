@@ -42,7 +42,7 @@ export const EditorPanel: React.FC<{
   open: boolean;
   close: () => void;
   languages: Array<string>;
-}> = ({ close, open, languages }) => {
+}> = ({ close, open }) => {
   const editorContext = useContext(ManifestEditorContext);
 
   return (

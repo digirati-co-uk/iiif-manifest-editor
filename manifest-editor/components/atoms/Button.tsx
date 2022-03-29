@@ -11,6 +11,10 @@ export const Button = styled.button`
     display: flex;
     align-items: center;
     height: 2rem;
+    :disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
   }
 `;
 
@@ -18,7 +22,7 @@ export const SmallButton = styled(Button)`
   padding: 0 ${(props: any) => props.theme.padding.xs || "0.25rem"};
 `;
 
-export const SecondaryButton = styled.button`
+export const SecondaryButton = styled(Button)`
    {
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
     color: ${(props: any) => props.theme.color.main || "#347cff;"};
@@ -32,7 +36,7 @@ export const SecondaryButton = styled.button`
   }
 `;
 
-export const CalltoButton = styled.button`
+export const CalltoButton = styled(Button)`
    {
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
     color: ${(props: any) => props.theme.color.white || "white"};
@@ -43,7 +47,6 @@ export const CalltoButton = styled.button`
     height: 2rem;
     display: flex;
     align-items: center;
-    white-space: nowrap;
   }
 `;
 

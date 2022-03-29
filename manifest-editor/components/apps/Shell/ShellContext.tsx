@@ -14,6 +14,7 @@ interface ShellContextInterface {
   recentManifests: ManifestNormalized[];
   newTemplates: any;
   setNewTemplates: (templates: any) => void;
+  setCurrentCanvasId: (id: string) => void;
 }
 
 const ShellContext = React.createContext<ShellContextInterface | null>(null);

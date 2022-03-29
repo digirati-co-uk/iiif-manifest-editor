@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { useCanvas, useVault } from "react-iiif-vault";
 import ShellContext from "../../apps/Shell/ShellContext";

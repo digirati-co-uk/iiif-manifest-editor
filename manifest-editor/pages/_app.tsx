@@ -3,9 +3,16 @@ import "../styles/globals.css";
 import { AppProps } from "next/app";
 import ShellContext from "../components/apps/Shell/ShellContext";
 
-import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
+import {
+  VaultProvider,
+  SimpleViewerProvider,
+  useExistingVault,
+  ManifestContext,
+  CanvasContext,
+} from "react-iiif-vault";
 import { ManifestNormalized } from "@iiif/presentation-3";
 import { getManifestNomalized } from "../helpers/getManifestNormalized";
+import * as IIIFVault from "@iiif/vault";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
@@ -19,12 +26,15 @@ import { getManifestNomalized } from "../helpers/getManifestNormalized";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
+  const vault = new IIIFVault.Vault();
   const [resourceID, setResouceID] = useState(
     //   // We will want to actually implement some options/templates etc
     //   // but just implementing with some examples for development purposes.
     "https://digirati-co-uk.github.io/wunder.json"
   );
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [manifest, setManifest] = useState<any>();
+  const [currentCanvasId, setCurrentCanvasId] = useState("");
 
   const [selectedApplication, setSelectedApplication] =
     useState<"ManifestEditor" | "Browser" | "Splash">("ManifestEditor");
@@ -66,6 +76,17 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   }, []);
 
   useEffect(() => {
+    const loadManifest = async () => {
+      const mani = await vault.loadManifest(resourceID);
+      setManifest(mani);
+      if (mani && mani.items && mani.items[0] && mani.items[0]?.id) {
+        setCurrentCanvasId(mani.items[0]?.id);
+      }
+    };
+    loadManifest();
+  }, [resourceID]);
+
+  useEffect(() => {
     // Send changes to localstorage
     localStorage.setItem("recentManifests", JSON.stringify(recentManifests));
   }, [recentManifests]);
@@ -100,19 +121,24 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     updateRecentManifests,
     newTemplates: newManifestTemplates,
     setNewTemplates: setNewManifestsTemplates,
+    setCurrentCanvasId,
   };
 
   return (
     <div key={resourceID}>
       <ShellContext.Provider value={shellSettings}>
-        <VaultProvider>
-          <SimpleViewerProvider manifest={resourceID} pagingEnabled={false}>
-            <Component
-              {...pageProps}
-              selectedApplication={selectedApplication}
-            />
-          </SimpleViewerProvider>
-        </VaultProvider>
+        {manifest && (
+          <VaultProvider vault={vault}>
+            <ManifestContext manifest={manifest?.id}>
+              <CanvasContext canvas={currentCanvasId}>
+                <Component
+                  {...pageProps}
+                  selectedApplication={selectedApplication}
+                />
+              </CanvasContext>
+            </ManifestContext>
+          </VaultProvider>
+        )}
       </ShellContext.Provider>
     </div>
   );

@@ -7,10 +7,10 @@ import { ShellToolbar } from "./ShellToolbar";
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { useState, useEffect } from "react";
 
-import { useVault } from "react-iiif-vault";
+import { useVault, useManifest } from "react-iiif-vault";
 import { usePreviewLink, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
-import { useManifest } from "../../../hooks/useManifest";
+// import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "./ShellContext";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Button } from "../../atoms/Button";

@@ -15,6 +15,8 @@ interface EditorContextInterface {
   view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
   languages: string[];
   behaviorProperties: string[] | null;
+  addCanvasModalOpen: boolean;
+  setAddCanvasModalOpen: (boolean: boolean) => void;
 }
 
 const ManifestEditorContext =

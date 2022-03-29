@@ -4,7 +4,6 @@ import {
   CanvasContext,
   useCanvas,
   useManifest,
-  useSimpleViewer,
   useVault,
 } from "react-iiif-vault";
 import styled from "styled-components";
@@ -16,6 +15,7 @@ import { FlexContainerColumn } from "../layout/FlexContainer";
 
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import ShellContext from "../apps/Shell/ShellContext";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 
 const GridViewContainer = styled.div`
   display: flex;
@@ -62,7 +62,9 @@ const GridItem: React.FC<{
       <ThumnbnailLabel title={getValue(canvas?.label)}>
         {getValue(canvas?.label)}
       </ThumnbnailLabel>
-      <Thumbnail onClick={() => handleChange(canvasId)} />
+      <ErrorBoundary>
+        <Thumbnail onClick={() => handleChange(canvasId)} />
+      </ErrorBoundary>
     </FlexContainerColumn>
   );
 };
@@ -71,12 +73,10 @@ export const GridView: React.FC = () => {
   const manifest = useManifest();
   const shellContext = useContext(ShellContext);
 
-  const { setCurrentCanvasId } = useSimpleViewer();
   const editorContext = useContext(ManifestEditorContext);
-  const [redraw, setRedraw] = useState(0);
 
   const handleChange = (itemId: string) => {
-    setCurrentCanvasId(itemId);
+    shellContext?.setCurrentCanvasId(itemId);
     editorContext?.changeSelectedProperty("canvas");
   };
 
@@ -97,7 +97,6 @@ export const GridView: React.FC = () => {
     <GridViewContainer>
       <SortableList
         onSortEnd={reorder}
-        key={redraw}
         className="list"
         draggedItemClassName="dragged"
       >

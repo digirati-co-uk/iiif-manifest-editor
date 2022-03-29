@@ -8,12 +8,10 @@ export const RecentFilesWidget = styled.div`
   box-shadow: ${(props: any) => props.theme.shadows.standard || ""};
   padding: ${(props: any) => props.theme.padding.small || "0.25rem"};
   background: ${(props: any) => props.theme.color.white || "white"};
-  // border: 1px solid black;
-  // border-radius: 1rem;
 `;
 
 export const RecentThumbnails = styled.div`
-  width: 100%
+  width: 100%;
   overflow: auto;
   justify-content: flex-start;
   display: flex;
