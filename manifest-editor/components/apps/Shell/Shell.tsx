@@ -45,7 +45,9 @@ export const Shell: React.FC<{
   const [showSaveModal, setShowSaveModal] = useState(false);
   const shellContext = useContext(ShellContext);
 
-  const manifest = useManifest();
+  const manifest = useManifest({
+    id: shellContext?.resourceID ? shellContext?.resourceID : "",
+  });
   const vault = useVault();
 
   useEffect(() => {

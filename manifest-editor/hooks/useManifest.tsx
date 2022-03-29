@@ -26,11 +26,10 @@ export function useManifest<T = ManifestNormalized>(
   const ctx = useResourceContext();
   const manifestId = id ? id : ctx.manifest;
 
-  const manifest = manifestId
-    ? useVaultSelector((s: IIIFStore) =>
-        manifestId ? s.iiif.entities.Manifest[manifestId] : undefined
-      )
-    : undefined;
+  const manifest = useVaultSelector((s: IIIFStore) =>
+    manifestId ? s.iiif.entities.Manifest[manifestId] : undefined
+  );
+  console.log("this hook is being called", id);
 
   return useMemo(() => {
     if (!manifest) {
@@ -40,5 +39,5 @@ export function useManifest<T = ManifestNormalized>(
       return selector(manifest);
     }
     return manifest;
-  }, [manifest, selector, ...deps]);
+  }, [manifest, selector, deps]);
 }

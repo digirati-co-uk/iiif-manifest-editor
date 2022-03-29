@@ -34,6 +34,7 @@ export const ShellOptions: React.FC<{
   const manifest = useManifest();
 
   useEffect(() => {
+    console.log(manifest);
     setaddModalVisible(false);
   }, [manifest]);
 

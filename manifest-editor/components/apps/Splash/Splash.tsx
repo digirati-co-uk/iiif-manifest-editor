@@ -26,7 +26,7 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
 
       <RecentFiles
         recentManifests={shellContext?.recentManifests}
-        changeManifest={handleClick}
+        changeManifest={(id: string) => handleClick(id)}
       />
 
       <HorizontalDivider />

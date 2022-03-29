@@ -11,17 +11,11 @@ export const ThumbnailImg = styled.img`
 `;
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  let thumb: any;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    thumb = useThumbnail({
-      minWidth: 200,
-      minHeight: 200,
-      maxWidth: 300,
-    });
-  } catch (error) {
-    console.warn(error);
-  }
+  const thumb = useThumbnail({
+    minWidth: 200,
+    minHeight: 200,
+    maxWidth: 300,
+  });
 
   if (!thumb) {
     return <div onClick={onClick}>No Thumbnail</div>;

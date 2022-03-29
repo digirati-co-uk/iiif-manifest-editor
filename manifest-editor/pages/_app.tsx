@@ -76,6 +76,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   }, []);
 
   useEffect(() => {
+    console.log(resourceID);
     const loadManifest = async () => {
       const mani = await vault.loadManifest(resourceID);
       setManifest(mani);
@@ -125,12 +126,11 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   };
 
   return (
-    <div key={resourceID}>
+    <div key={manifest?.id}>
       <ShellContext.Provider value={shellSettings}>
-        {manifest && (
-          // @ts-ignore
-          <VaultProvider vault={vault}>
-            <ManifestContext manifest={manifest?.id}>
+        <VaultProvider vault={vault}>
+          <div>
+            <ManifestContext manifest={resourceID}>
               <CanvasContext canvas={currentCanvasId}>
                 <Component
                   {...pageProps}
@@ -138,8 +138,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
                 />
               </CanvasContext>
             </ManifestContext>
-          </VaultProvider>
-        )}
+          </div>
+        </VaultProvider>
       </ShellContext.Provider>
     </div>
   );
