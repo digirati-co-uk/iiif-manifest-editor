@@ -1654,14 +1654,14 @@
     tiny-invariant "^1.2.0"
     typesafe-actions "^5.1.0"
 
-"@iiif/vault@^0.9.14":
-  version "0.9.14"
-  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.14.tgz#f455d0089fb542f9d50ab27aebe2aa55ff7bcf67"
-  integrity sha512-Y6ay8Ja3WibEJKX98a5Ttre6vmti3NR13f5yu+YJa63dStgzrB0KA4DQ3zxn4pxBAne9Mjj6mxRrRDWw9dvOyA==
+"@iiif/vault@^0.9.17":
+  version "0.9.17"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.17.tgz#9ea201d027cded42d3cee02825def1bc815c115e"
+  integrity sha512-kCg9UU5p1DtRvShZxO7Q2m5BHV+YQ0ZXID4Bg3AKt3DKGGa/5EcSnJGN9l45EYWrql1co3v77tjtWY7/BXYBJw==
   dependencies:
-    "@iiif/parser" "^1.0.2"
+    "@iiif/parser" "^1.0.6"
     "@iiif/presentation-2" "^1.0.1"
-    "@iiif/presentation-3" "^1.0.3"
+    "@iiif/presentation-3" "^1.0.4"
     mitt "^3.0.0"
     node-fetch "^3.1.1"
     redux "^4.1.2"

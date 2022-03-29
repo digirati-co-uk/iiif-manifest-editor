@@ -128,6 +128,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     <div key={resourceID}>
       <ShellContext.Provider value={shellSettings}>
         {manifest && (
+          // @ts-ignore
           <VaultProvider vault={vault}>
             <ManifestContext manifest={manifest?.id}>
               <CanvasContext canvas={currentCanvasId}>
