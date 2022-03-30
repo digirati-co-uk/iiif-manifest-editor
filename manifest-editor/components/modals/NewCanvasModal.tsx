@@ -13,8 +13,11 @@ import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { InformationLink } from "../atoms/InformationLink";
-import { useVault } from "react-iiif-vault";
+import { useCanvas, useExistingVault, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
+import { addReference, removeReference } from "@iiif/vault/actions";
+import { IIIFBuilder } from "iiif-builder";
+import { CanvasNormalized } from "@iiif/presentation-3";
 
 var uuid = require("uuid");
 
@@ -28,8 +31,10 @@ export const NewCanvasModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>(1000);
   const [duration, setDuration] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
+  const [newCanvasID, setNewCanvasID] = useState(`vault://${uuid.v4()}`);
   const [emptyCanvas, setEmptyCanvas] = useState(false);
-  const vault = useVault();
+
+  const vault = useExistingVault();
 
   const shellContext = useContext(ShellContext);
   const manifest = useManifest();
@@ -53,47 +58,38 @@ export const NewCanvasModal: React.FC<{
     ) {
       setImageServiceJSON(inputed);
     }
-    if (inputed && inputed.type === "Image" && !emptyCanvas) {
-      const newCanvas = {
-        id: `vault://${uuid.v4()}`,
-        height: inputed?.height,
-        width: inputed?.width,
-        type: "Canvas",
-        annotations: [
-          {
-            id: `vault://${uuid.v4()}`,
+    if (inputed && inputed.type === "Image" && !emptyCanvas && manifest) {
+      const builder = new IIIFBuilder(vault);
+      builder.editManifest(manifest.id, (mani) => {
+        mani.createCanvas(newCanvasID, (can: any) => {
+          can.height = inputed?.height;
+          can.width = inputed?.height;
+          can.createAnnotation(inputValue, {
+            id: inputValue,
             type: "Annotation",
             motivation: "Painting",
             body: {
-              id: inputValue,
+              id: inputType,
               type: "Image",
               format: "image/png",
               height: inputed?.height,
-              width: inputed?.width,
+              width: inputed?.height,
             },
-          },
-        ],
-      };
-      const previousItems = manifest?.items;
-      // @ts-ignore
-      previousItems?.push(newCanvas);
-      if (manifest) {
-        vault?.modifyEntityField(manifest, "items", previousItems);
-      }
+          });
+        });
+      });
       close();
-    } else if (emptyCanvas && height && width) {
-      const newCanvas = {
-        id: `vault://${uuid.v4()}`,
-        height: height,
-        width: width,
-        type: "Canvas",
-      };
-      const previousItems = manifest?.items;
-      // @ts-ignore
-      previousItems?.push(newCanvas);
-      if (manifest) {
-        vault?.modifyEntityField(manifest, "items", previousItems);
-      }
+    } else if (emptyCanvas && height && width && manifest) {
+      const builder = new IIIFBuilder(vault);
+      console.log(manifest.id);
+
+      builder.editManifest(manifest.id, (mani) => {
+        mani.createCanvas(newCanvasID, (canvas) => {
+          canvas.height = height;
+          canvas.width = width;
+        });
+      });
+      console.log(manifest);
       close();
     }
   };

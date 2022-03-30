@@ -29,7 +29,6 @@ export function useManifest<T = ManifestNormalized>(
   const manifest = useVaultSelector((s: IIIFStore) =>
     manifestId ? s.iiif.entities.Manifest[manifestId] : undefined
   );
-  console.log("this hook is being called", id);
 
   return useMemo(() => {
     if (!manifest) {

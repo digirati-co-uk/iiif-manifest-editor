@@ -7,6 +7,7 @@ export const ThumbnailImg = styled.img`
     margin: 0.375rem;
     object-fit: contain;
     padding: 10px;
+    user-select: none;
   }
 `;
 
