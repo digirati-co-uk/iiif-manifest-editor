@@ -1,5 +1,7 @@
 ## Test 5: Creating annotations
 
+The goal of this test is to explore how you create new annotations in the Manifest Editor.
+
 ## Materials
 
 For this test, use this Manifest:
@@ -29,6 +31,7 @@ Are you able to declare what language your text is in?
 
 Find a mention of a city or other place in the Journal.
 Make a link from a box drawn around the text in the journal, to the Wikipedia page about that place.
+(This annotation should have the motivation `linking`)
 
 ### 5. Save your new Manifest to a permalink
 

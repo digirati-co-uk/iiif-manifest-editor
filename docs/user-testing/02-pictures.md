@@ -32,7 +32,7 @@ Visit [https://manifest-editor-testing.netlify.app/](https://manifest-editor-tes
 If you have never been here before, you'll see a Splash Screen, which you can dismiss.
 If you have been here before, your settings might automatically load the manifest you last worked on.
 
-Either way, start a new Manifest with File -> Open, and pick "Empty Manifest".
+Either way, start a new Manifest with File -> New, and pick "Blank Manifest".
 
 ### 2. Add canvases
 
@@ -53,7 +53,7 @@ Add the remaining images in the same way as before - as new canvases.
 ### 5. Add some descriptive information
 
 Give your Manifest a _Label_.
-Give your Manifest a _Description_.
+Give your Manifest a _Summary_.
 
 Pick a Rights Statement for your manifest.
 
