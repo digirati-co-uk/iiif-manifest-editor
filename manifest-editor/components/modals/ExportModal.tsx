@@ -98,7 +98,11 @@ export const ExportModal: React.FC<{
                       <pre
                         ref={textAreaRef}
                         dangerouslySetInnerHTML={{
-                          __html: JSON.stringify(manifest, null, 2),
+                          __html: JSON.stringify(
+                            vault.toPresentation3(manifest),
+                            null,
+                            2
+                          ),
                         }}
                       />
                     </JSONPreview>
