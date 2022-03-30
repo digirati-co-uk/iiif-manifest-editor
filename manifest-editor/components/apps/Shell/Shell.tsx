@@ -147,6 +147,7 @@ export const Shell: React.FC<{
           saveAsChoice={saveAsChoice}
           setSaveAsChoice={setSaveAsChoice}
           forceShowModal={showSaveModal}
+          setForceShowModal={setShowSaveModal}
         />
         {shellContext?.unsavedChanges && (
           <WarningMessage $small={true}>

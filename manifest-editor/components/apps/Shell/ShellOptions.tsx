@@ -15,6 +15,7 @@ export const ShellOptions: React.FC<{
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
   forceShowModal: boolean;
+  setForceShowModal: (boolean: boolean) => void;
 }> = ({
   save,
   previouslySaved,
@@ -22,6 +23,7 @@ export const ShellOptions: React.FC<{
   saveAsChoice,
   setSaveAsChoice,
   forceShowModal,
+  setForceShowModal,
 }) => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -56,7 +58,10 @@ export const ShellOptions: React.FC<{
       )}
       {(saveModalVisible || forceShowModal) && (
         <SaveModal
-          close={() => setSaveModalVisible(false)}
+          close={() => {
+            setSaveModalVisible(false);
+            setForceShowModal(false);
+          }}
           save={save}
           previouslySaved={previouslySaved}
           permalink={permalink}
