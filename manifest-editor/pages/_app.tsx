@@ -5,14 +5,12 @@ import ShellContext from "../components/apps/Shell/ShellContext";
 
 import {
   VaultProvider,
-  SimpleViewerProvider,
   useExistingVault,
   ManifestContext,
   CanvasContext,
 } from "react-iiif-vault";
 import { ManifestNormalized } from "@iiif/presentation-3";
 import { getManifestNomalized } from "../helpers/getManifestNormalized";
-import * as IIIFVault from "@iiif/vault";
 
 // Next.js <App /> component will keep state alive during client side transitions.
 // If you refresh the page, or link to another page without utilizing Next.js <Link />,
@@ -26,7 +24,7 @@ import * as IIIFVault from "@iiif/vault";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
-  const vault = new IIIFVault.Vault();
+  const vault = useExistingVault();
   const [resourceID, setResouceID] = useState(
     //   // We will want to actually implement some options/templates etc
     //   // but just implementing with some examples for development purposes.
@@ -76,7 +74,6 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   }, []);
 
   useEffect(() => {
-    console.log(resourceID);
     const loadManifest = async () => {
       const mani = await vault.loadManifest(resourceID);
       setManifest(mani);
@@ -129,16 +126,14 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     <div key={manifest?.id}>
       <ShellContext.Provider value={shellSettings}>
         <VaultProvider vault={vault}>
-          <div>
-            <ManifestContext manifest={resourceID}>
-              <CanvasContext canvas={currentCanvasId}>
-                <Component
-                  {...pageProps}
-                  selectedApplication={selectedApplication}
-                />
-              </CanvasContext>
-            </ManifestContext>
-          </div>
+          <ManifestContext manifest={manifest?.id}>
+            <CanvasContext canvas={currentCanvasId}>
+              <Component
+                {...pageProps}
+                selectedApplication={selectedApplication}
+              />
+            </CanvasContext>
+          </ManifestContext>
         </VaultProvider>
       </ShellContext.Provider>
     </div>

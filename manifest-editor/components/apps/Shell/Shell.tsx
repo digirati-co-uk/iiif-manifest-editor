@@ -7,10 +7,10 @@ import { ShellToolbar } from "./ShellToolbar";
 import { serialize, serializeConfigPresentation3 } from "@iiif/parser";
 import { useState, useEffect } from "react";
 
-import { useVault, useManifest } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault";
 import { usePreviewLink, useUpdatePermalink } from "../../../hooks/useSave";
 import { usePermalink } from "../../../hooks/useSave";
-// import { useManifest } from "../../../hooks/useManifest";
+import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "./ShellContext";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Button } from "../../atoms/Button";
@@ -45,9 +45,7 @@ export const Shell: React.FC<{
   const [showSaveModal, setShowSaveModal] = useState(false);
   const shellContext = useContext(ShellContext);
 
-  const manifest = useManifest({
-    id: shellContext?.resourceID ? shellContext?.resourceID : "",
-  });
+  const manifest = useManifest();
   const vault = useVault();
 
   useEffect(() => {
@@ -87,7 +85,7 @@ export const Shell: React.FC<{
 
   useEffect(() => {
     if (manifestPermalink && manifestPermalink.location) {
-      vault.load(manifestPermalink.location);
+      shellContext?.changeResourceID(manifestPermalink.location);
     }
   }, [manifestPermalink]);
 

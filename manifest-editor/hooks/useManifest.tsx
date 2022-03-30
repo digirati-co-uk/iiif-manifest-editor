@@ -39,5 +39,5 @@ export function useManifest<T = ManifestNormalized>(
       return selector(manifest);
     }
     return manifest;
-  }, [manifest, selector, deps]);
+  }, [manifest, selector, ...deps]);
 }

@@ -20,7 +20,7 @@ const Preview: NextPage = (props: any) => {
   return (
     <div className={styles.container}>
       <ThemeProvider theme={props.theme}>
-        <Shell previewConfig={props.config.preview} newTemplates={[]} />
+        <Shell previewConfig={props.config.preview} newTemplates={"[]"} />
         <PreviewView />
       </ThemeProvider>
     </div>
