@@ -23,7 +23,13 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
 
   return (
     <ErrorBoundary>
-      <ThumbnailImg src={thumb.id} alt="" loading="lazy" onClick={onClick} />
+      <ThumbnailImg
+        src={thumb.id}
+        alt=""
+        loading="lazy"
+        onClick={onClick}
+        draggable="false"
+      />
     </ErrorBoundary>
   );
 };
