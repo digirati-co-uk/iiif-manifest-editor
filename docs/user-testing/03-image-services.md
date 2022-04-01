@@ -8,7 +8,9 @@ As a digitised book, there is some additional useful information beyond the sequ
 
 ## Materials
 
-To avoid to much work, this is a very short book!
+To avoid too much work, this is a very short book!
+
+https://iiif.wellcomecollection.org/presentation/b22292196
 
 You're going to need the following image services:
 
@@ -45,17 +47,23 @@ Add the remaining images services, in the same way as before - as new canvases.
 
 ### 5. Add some descriptive information
 
-Give your Manifest the following _Label_, in French:
+Give your Manifest the following _Label_, in Italian:
 
---label here--
+```
+Una modificazione nelle forbici chirurgiche
+```
 
 Also provide the label in English:
 
---label here--
+```
+A modification in surgical scissors
+```
 
 Give your Manifest a _Description_, in English.
 
---description here--
+```
+By Fabrizj, Paolo, 1806-1859. 13 pages, 1 unnumbered folded plate : illustrations ; 23 cm
+```
 
 Pick a Rights Statement for your manifest.
 

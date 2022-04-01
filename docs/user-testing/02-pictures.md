@@ -8,7 +8,7 @@ The goal of this test is to create a simple manifest out of existing, hosted sta
 To start, you need the URLs of 10 hi-res images, in JPEG format. These can be anything - artworks, your own photos - but they need to be on the web already.
 
 A good source might be [NASA image galleries](https://www.nasa.gov/multimedia/imagegallery/index.html), where all the images are public domain.
-For example, the from the [Apollo Image Gallery](https://www.nasa.gov/mission_pages/apollo/images.html), you might collect these 10 image URLs (you can use these ones if you want!):
+For example, from the [Apollo Image Gallery](https://www.nasa.gov/mission_pages/apollo/images.html), you might collect these 10 image URLs (you can use these ones if you want!):
 
 - https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg
 - https://www.nasa.gov/sites/default/files/as16-113-18339.jpg

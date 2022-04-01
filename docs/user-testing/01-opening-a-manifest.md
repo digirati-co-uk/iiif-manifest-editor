@@ -5,9 +5,8 @@ The goal of this test is simply to open an existing Manifest and view its canvas
 ## Materials
 
 This is the URL of a IIIF Manifest:
-https://iiif.wellcomecollection.org/presentation/b1932795x
+https://iiif.wellcomecollection.org/presentation/b18725259
 
-(todo - one with canvas labels would be better)
 
 ### 1. Loading a Manifest
 
