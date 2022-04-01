@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AddManifestModal } from "../../modals/AddManifestModal";
 import { Button } from "../../atoms/Button";
 import { useManifest } from "../../../hooks/useManifest";
@@ -7,6 +7,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../modals/ExportModal";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { NewManifestModal } from "../../modals/NewManifestModal";
+import ShellContext from "./ShellContext";
 
 export const ShellOptions: React.FC<{
   save: () => void;
@@ -25,6 +26,7 @@ export const ShellOptions: React.FC<{
   forceShowModal,
   setForceShowModal,
 }) => {
+  const shellContext = useContext(ShellContext);
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
@@ -122,7 +124,7 @@ export const ShellOptions: React.FC<{
               <Button
                 onClick={() => {
                   setHelpOpen(!helpOpen);
-                  alert("About clicked");
+                  shellContext?.changeSelectedApplication("Splash");
                 }}
               >
                 About

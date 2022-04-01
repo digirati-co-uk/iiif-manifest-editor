@@ -12,6 +12,7 @@ import {
   TemplateCardPlaceholder,
 } from "../atoms/TemplateCard";
 import { AddIcon } from "../icons/AddIcon";
+import { WidgetHeader } from "../atoms/WidgetHeader";
 
 type NewTemplates = {
   newTemplates: any[] | undefined;
@@ -55,7 +56,8 @@ export const NewTemplates: React.FC<NewTemplates> = ({
 }) => {
   return (
     <RecentFilesWidget>
-      <h4>Start from template </h4>
+      <WidgetHeader>Start from template</WidgetHeader>
+
       <RecentThumbnails>
         {newTemplates &&
           // @ts-ignore

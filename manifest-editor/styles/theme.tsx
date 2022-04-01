@@ -36,5 +36,6 @@ export const Theme = {
   shadows: {
     standard:
       "rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.05) 0px 5px 15px 0px",
+    bottom: "rgba(0, 0, 0, 0.1) 0px 4px 2px -2px",
   },
 };

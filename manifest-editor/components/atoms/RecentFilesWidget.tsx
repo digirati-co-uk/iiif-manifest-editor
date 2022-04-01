@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 export const RecentFilesWidget = styled.div`
-  height: 16rem;
+  height: 20rem;
   width: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: ${(props: any) => props.theme.shadows.standard || ""};
-  padding: ${(props: any) => props.theme.padding.small || "0.25rem"};
+  padding: ${(props: any) => props.theme.padding.medium || "2rem"};
   background: ${(props: any) => props.theme.color.white || "white"};
 `;
 

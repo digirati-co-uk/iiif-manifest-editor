@@ -25,7 +25,7 @@ import { getManifestNomalized } from "../helpers/getManifestNormalized";
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
   const vault = useExistingVault();
-  const [resourceID, setResouceID] = useState(
+  const [resourceID, setResourceID] = useState(
     //   // We will want to actually implement some options/templates etc
     //   // but just implementing with some examples for development purposes.
     "https://digirati-co-uk.github.io/wunder.json"
@@ -69,6 +69,9 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       const manifests = JSON.parse(
         localStorage.getItem("recentManifests") || "{}"
       );
+      if (manifests.length > 0) {
+        setResourceID(manifests.splice(-1)[0].id);
+      }
       setRecentManifests(manifests);
     }
   }, []);
@@ -100,7 +103,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       try {
         const success = await fetch(id);
         if (success.ok) {
-          setResouceID(id);
+          setResourceID(id);
         }
       } catch (error) {
         console.log(

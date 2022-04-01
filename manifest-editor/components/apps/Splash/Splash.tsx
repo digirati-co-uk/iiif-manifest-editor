@@ -5,6 +5,8 @@ import ShellContext from "../Shell/ShellContext";
 import { RecentFiles } from "../../widgets/RecentFiles";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { NewTemplates } from "../../widgets/NewTemplates";
+import { WelcomeTextContainer } from "../../atoms/WelcomeText";
+import { PaddingComponentLarge } from "../../atoms/PaddingComponent";
 
 export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   const shellContext = useContext(ShellContext);
@@ -15,21 +17,24 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   };
 
   return (
-    <FlexContainerColumn justify="flex-start">
+    <FlexContainerColumn
+      justify="flex-start"
+      style={{ maxWidth: "80%", margin: "auto" }}
+    >
       <div dangerouslySetInnerHTML={{ __html: welcome }} />
-      <HorizontalDivider />
+      <PaddingComponentLarge />
       <NewTemplates
         newTemplates={shellContext?.newTemplates}
         changeManifest={handleClick}
       />
-      <HorizontalDivider />
+      <PaddingComponentLarge />
 
       <RecentFiles
         recentManifests={shellContext?.recentManifests}
         changeManifest={handleClick}
       />
 
-      <HorizontalDivider />
+      <PaddingComponentLarge />
     </FlexContainerColumn>
   );
 };
