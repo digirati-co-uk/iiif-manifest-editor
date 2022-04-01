@@ -7,7 +7,7 @@ interface EditorContextInterface {
   changeSelectedProperty: (
     property: string,
     // This list will grow
-    tabPanel?: number
+    key?: number
   ) => void;
   setView: (
     view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"

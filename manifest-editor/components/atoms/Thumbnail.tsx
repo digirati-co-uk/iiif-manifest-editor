@@ -1,6 +1,14 @@
+import { getValue } from "@iiif/vault-helpers";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
+import { AddIcon } from "../icons/AddIcon";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { RecentLabel } from "./RecentFilesWidget";
+import {
+  TemplateCardContainer,
+  TemplateCardNew,
+  TemplateCardPlaceholder,
+} from "./TemplateCard";
 
 export const ThumbnailImg = styled.img`
    {
@@ -19,7 +27,14 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   });
 
   if (!thumb) {
-    return <div onClick={onClick}>No Thumbnail</div>;
+    return (
+      <TemplateCardContainer onClick={onClick}>
+        <TemplateCardNew>
+          <TemplateCardPlaceholder />
+        </TemplateCardNew>
+        <RecentLabel>No thumbnail</RecentLabel>
+      </TemplateCardContainer>
+    );
   }
 
   return (

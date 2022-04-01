@@ -11,18 +11,27 @@ import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext"
 
 import { Thumbnail } from "../atoms/Thumbnail";
 import { ViewSelector } from "../atoms/ViewSelector";
-import { FlexContainerColumn } from "../layout/FlexContainer";
+import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import ShellContext from "../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
+import { GhostCanvas } from "../layout/CanvasContainer";
+import { RecentLabel } from "../atoms/RecentFilesWidget";
+import {
+  TemplateCardContainer,
+  TemplateCardNew,
+  TemplateCardPlaceholder,
+} from "../atoms/TemplateCard";
+import { AddIcon } from "../icons/AddIcon";
 
 const GridViewContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justiy-content: space-between;
+  justify-content: space-between;
   align-items: center;
   height: 80vh;
+  width: 100%;
   .list {
     padding: 2px;
     flex-direction: row;
@@ -93,6 +102,28 @@ export const GridView: React.FC = () => {
     }
   };
 
+  if (
+    !manifest ||
+    !manifest[dispatchType] ||
+    manifest[dispatchType].length <= 0
+  ) {
+    return (
+      <GridViewContainer>
+        <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
+          <TemplateCardContainer
+            onClick={() => editorContext?.setAddCanvasModalOpen(true)}
+          >
+            <TemplateCardNew>
+              <AddIcon />
+            </TemplateCardNew>
+            <RecentLabel>Add</RecentLabel>
+          </TemplateCardContainer>
+        </FlexContainer>
+
+        <ViewSelector />
+      </GridViewContainer>
+    );
+  }
   return (
     <GridViewContainer>
       <SortableList

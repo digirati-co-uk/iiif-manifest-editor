@@ -9,6 +9,11 @@ import { useContext } from "react";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import ShellContext from "../apps/Shell/ShellContext";
+import { RecentLabel } from "../atoms/RecentFilesWidget";
+import { TemplateCardContainer, TemplateCardNew } from "../atoms/TemplateCard";
+import { ViewSelector } from "../atoms/ViewSelector";
+import { AddIcon } from "../icons/AddIcon";
+import { FlexContainer } from "../layout/FlexContainer";
 
 // The CanvasContext currently only lets you select every second canvas. Once the
 // SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
@@ -23,6 +28,23 @@ export const ThumbnailStrip: React.FC = () => {
     shellContext?.setCurrentCanvasId(itemId);
     editorContext?.changeSelectedProperty("canvas");
   };
+
+  if (!manifest || !manifest.items || manifest.items.length <= 0) {
+    return (
+      <ThumbnailContainer>
+        <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
+          <TemplateCardContainer
+            onClick={() => editorContext?.setAddCanvasModalOpen(true)}
+          >
+            <TemplateCardNew>
+              <AddIcon />
+            </TemplateCardNew>
+            <RecentLabel>Add</RecentLabel>
+          </TemplateCardContainer>
+        </FlexContainer>
+      </ThumbnailContainer>
+    );
+  }
 
   return (
     <ThumbnailContainer>

@@ -79,6 +79,8 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       setManifest(mani);
       if (mani && mani.items && mani.items[0] && mani.items[0]?.id) {
         setCurrentCanvasId(mani.items[0]?.id);
+      } else {
+        setCurrentCanvasId("");
       }
     };
     loadManifest();

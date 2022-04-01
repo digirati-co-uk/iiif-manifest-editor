@@ -1,14 +1,22 @@
 import React, { useRef, useEffect } from "react";
 import { useCanvas } from "react-iiif-vault";
-import { CanvasContainer } from "../layout/CanvasContainer";
+import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
 import { useManifest } from "../../hooks/useManifest";
 
 export const CanvasView: React.FC = () => {
   const viewer = useRef();
   const canvas = useCanvas();
   const manifest = useManifest();
+
+  if (!canvas) {
+    return (
+      <CanvasContainer>
+        <GhostCanvas></GhostCanvas>
+      </CanvasContainer>
+    );
+  }
   return (
-    <CanvasContainer>
+    <CanvasContainer key={canvas?.id}>
       <canvas-panel
         ref={viewer}
         canvas-id={canvas?.id}
