@@ -2,7 +2,7 @@ export const AddIcon: React.FC<{
   inline?: boolean;
   height?: number;
   className?: string;
-}> = ({ className, inline, height = 24 }) => (
+}> = ({ className, inline, height = 16 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height={height}

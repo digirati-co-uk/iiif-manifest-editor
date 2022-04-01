@@ -5,7 +5,6 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { Input, InputLabel } from "../Input";
-import { ShadowContainer } from "../../atoms/ShadowContainer";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 export const DimensionsForm: React.FC<{}> = () => {
@@ -35,7 +34,7 @@ export const DimensionsForm: React.FC<{}> = () => {
   };
 
   return (
-    <ShadowContainer>
+    <>
       <FlexContainer>
         <ErrorBoundary>
           <FlexContainerColumn>
@@ -83,6 +82,6 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
       </FlexContainer>
-    </ShadowContainer>
+    </>
   );
 };

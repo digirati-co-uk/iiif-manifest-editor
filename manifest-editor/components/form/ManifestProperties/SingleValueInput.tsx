@@ -59,6 +59,7 @@ export const SingleValueInput: React.FC<{
             selected={
               manifest && manifest[dispatchType] ? manifest[dispatchType] : []
             }
+            multi={false}
             changeHandler={(e: any) => changeHandler(e)}
             guidanceReference={"https://iiif.io/api/presentation/3.0/#rights"}
           />

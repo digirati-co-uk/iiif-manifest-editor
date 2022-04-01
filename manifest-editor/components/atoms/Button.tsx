@@ -27,12 +27,18 @@ export const SecondaryButton = styled(Button)`
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
     color: ${(props: any) => props.theme.color.main || "#347cff;"};
     background-color: ${(props: any) => props.theme.color.white || "white"};
-    border: none;
+    border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
     border-radius: 0.25rem;
     cursor: pointer;
     height: 2rem;
     display: flex;
     align-items: center;
+    white-space: nowrap;
+
+    :disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
   }
 `;
 

@@ -141,7 +141,7 @@ export const ExternalResource: React.FC<{
           )}
         </Droppable>
       </DragDropContext>
-      <FlexContainer style={{ justifyContent: "center" }}>
+      <FlexContainer>
         <SecondaryButton onClick={() => addNew()}>
           Add new {dispatchType}
         </SecondaryButton>

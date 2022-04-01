@@ -18,15 +18,15 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
 export const MutliselectLabel = styled(InputLabel)<{
   $selected?: boolean;
 }>`
-  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
-    ${(props: any) => props.theme.padding.medium || "1rem"};
-  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  padding: 0 ${(props: any) => props.theme.padding.small || "1rem"};
+  margin: ${(props: any) => props.theme.padding.xs || "1rem"} ${(props: any) =>
+  props.theme.padding.xs || "1rem"};
   background-color: ${(props: any) => props.theme.color.white || "white"};
   color: ${(props: any) => props.theme.color.main || "#347cff;"};
   border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
+  border-radius 20px;
   cursor: pointer;
   height: 2rem;
-  font-size: 0.75rem;
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -59,6 +59,7 @@ export const _Input = styled.input`
     border-color: ${(props: any) => props.theme.color.black || "black"};
     outline: none;
   }
+  margin: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
   display: block;
   outline: 0;
   font-family: inherit;
@@ -97,7 +98,7 @@ export const HighlightInput: typeof _Input = ((props: any) => {
 export const InputBorderless = styled.input`
   background: transparent;
   border: none;
-  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   font-size: 0.9em;
   line-height: 1.3em;
   width: 100%;
@@ -119,6 +120,7 @@ export const InputContainer = styled.div<{
   max-width: ${(props: any) =>
     props.fluid ? "100%" : props.wide ? "550px" : "360px"};
   margin-bottom: 1em;
+  margin: ${(props: any) => props.theme.padding.small || "0.5rem"};
 
   ${(props: any) =>
     props.$error &&

@@ -1,6 +1,5 @@
 import { useManifest } from "react-iiif-vault";
 import { JSONPreview } from "../../atoms/JSONPreview";
-import { ShadowContainer } from "../../atoms/ShadowContainer";
 import { SmallThumbnailStrip } from "../../organisms/ThumbnailStrip";
 
 export const StructuralForm = () => {
@@ -8,11 +7,11 @@ export const StructuralForm = () => {
 
   return (
     <>
-      <ShadowContainer>
+      <>
         <h3>items</h3>
         <SmallThumbnailStrip />
-      </ShadowContainer>
-      <ShadowContainer>
+      </>
+      <>
         <h3>annotations</h3>
         <JSONPreview>
           <pre
@@ -21,8 +20,8 @@ export const StructuralForm = () => {
             }}
           />
         </JSONPreview>
-      </ShadowContainer>
-      <ShadowContainer>
+      </>
+      <>
         <h3>partOf</h3>
         <JSONPreview>
           <pre
@@ -31,8 +30,8 @@ export const StructuralForm = () => {
             }}
           />
         </JSONPreview>
-      </ShadowContainer>
-      <ShadowContainer>
+      </>
+      <>
         <h3>start</h3>
         <JSONPreview>
           <pre
@@ -41,8 +40,8 @@ export const StructuralForm = () => {
             }}
           />
         </JSONPreview>
-      </ShadowContainer>
-      <ShadowContainer>
+      </>
+      <>
         <h3>structures</h3>
         <JSONPreview>
           <pre
@@ -51,7 +50,7 @@ export const StructuralForm = () => {
             }}
           />
         </JSONPreview>
-      </ShadowContainer>
+      </>
     </>
   );
 };

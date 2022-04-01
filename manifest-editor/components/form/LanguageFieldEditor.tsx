@@ -3,7 +3,7 @@ import {
   useMetadataEditor,
   UseMetadataEditor,
 } from "../../hooks/useMetadataEditor";
-import { Button, CalltoButton } from "../atoms/Button";
+import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import { Input } from "./Input";
@@ -85,19 +85,19 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           );
         })}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-        <CalltoButton onClick={() => createNewItem(true)}>
+        <SecondaryButton onClick={() => createNewItem(true)}>
           Add new value
-        </CalltoButton>
-        <hr />
+        </SecondaryButton>
+        <br />
         <FlexContainer style={{ justifyContent: "flex-end" }}>
-          <CalltoButton
+          <SecondaryButton
             onClick={() => {
               setShowAllFields(false);
               saveChanges(props.index, props.property);
             }}
           >
             Save changes to {props.label}
-          </CalltoButton>
+          </SecondaryButton>
         </FlexContainer>
       </div>
     ) : null;
@@ -111,7 +111,9 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     return (
       <div>
         {props.label}
-        <CalltoButton onClick={() => createNewItem(false)}>Create</CalltoButton>
+        <SecondaryButton onClick={() => createNewItem(false)}>
+          Create
+        </SecondaryButton>
       </div>
     );
   }
@@ -132,24 +134,19 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           saveChanges(props.index, props.property);
         }}
       />
-      <CalltoButton
+      <SecondaryButton
         onClick={() => setShowAllFields(true)}
         disabled={showAllFields}
       >
         {`(${firstItem.field.language}${
           fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
         })`}
-      </CalltoButton>
+      </SecondaryButton>
     </FlexContainer>
   );
 
   return (
-    <div
-      style={{
-        border: showAllFields ? "1px solid grey" : "none",
-        borderRadius: showAllFields ? "5px" : "none",
-      }}
-    >
+    <div style={{ width: "100%}" }}>
       <div>{props.label}</div>
       <div>{defaultTextBox}</div>
       <div>{allFields}</div>

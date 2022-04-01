@@ -1,6 +1,8 @@
 import { ButtonGroup } from "../atoms/Button";
 import { InformationLink } from "../atoms/InformationLink";
-import { ShadowContainer } from "../atoms/ShadowContainer";
+import { AddIcon } from "../icons/AddIcon";
+import { CheckIcon } from "../icons/CheckIcon";
+import { FlexContainer } from "../layout/FlexContainer";
 import { HiddenCheckbox, InputLabel, MutliselectLabel } from "./Input";
 
 export const StringSelector: React.FC<{
@@ -19,14 +21,20 @@ export const StringSelector: React.FC<{
   guidanceReference,
 }) => {
   return (
-    <ShadowContainer style={{ overflow: "hidden" }}>
+    <>
       <InputLabel>{label}</InputLabel>
-      <ButtonGroup>
+      <FlexContainer style={{ flexWrap: "wrap" }}>
         {options &&
           options.map((choice) => {
             return (
               <MutliselectLabel $selected={selected?.includes(choice)}>
                 {choice}
+                {selected?.includes(choice) && multi ? (
+                  <CheckIcon />
+                ) : (
+                  multi && <AddIcon />
+                )}
+                {selected?.includes(choice) && !multi && <CheckIcon />}
                 <HiddenCheckbox
                   type={multi ? "checkbox" : "radio"}
                   checked={selected?.includes(choice)}
@@ -35,11 +43,11 @@ export const StringSelector: React.FC<{
               </MutliselectLabel>
             );
           })}
-      </ButtonGroup>
+      </FlexContainer>
 
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-    </ShadowContainer>
+    </>
   );
 };

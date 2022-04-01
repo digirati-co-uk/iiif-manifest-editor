@@ -7,7 +7,6 @@ import { LanguageMapInput } from "../form/LanguageMapInput";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 import styled from "styled-components";
-import { StringInput } from "../form/StringInput";
 import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
 import { ManifestForm } from "../form/ManifestProperties/ManifestForm";
@@ -18,14 +17,11 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
 }>`
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
-  overflow-y: auto;
-  // width: ${(props: any) => (props.wide ? "100%" : "600px")};
   width: 1000px;
   z-index: 12;
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
-  // min-width: 400px;
   box-shadow: none;
   margin-bottom: 0.8em;
   &:focus {

@@ -5,7 +5,6 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { Input, InputLabel } from "../Input";
-import { ShadowContainer } from "../../atoms/ShadowContainer";
 
 export const DateForm: React.FC<{}> = () => {
   const shellContext = useContext(ShellContext);
@@ -25,7 +24,7 @@ export const DateForm: React.FC<{}> = () => {
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#navDate";
 
   return (
-    <ShadowContainer>
+    <>
       <ErrorBoundary>
         <InputLabel>{dispatchType}</InputLabel>
         <Input
@@ -38,6 +37,6 @@ export const DateForm: React.FC<{}> = () => {
         />
         <InformationLink guidanceReference={guidanceReference} />
       </ErrorBoundary>
-    </ShadowContainer>
+    </>
   );
 };
