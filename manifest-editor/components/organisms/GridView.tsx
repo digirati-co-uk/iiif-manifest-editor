@@ -16,13 +16,8 @@ import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import ShellContext from "../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { GhostCanvas } from "../layout/CanvasContainer";
 import { RecentLabel } from "../atoms/RecentFilesWidget";
-import {
-  TemplateCardContainer,
-  TemplateCardNew,
-  TemplateCardPlaceholder,
-} from "../atoms/TemplateCard";
+import { TemplateCardContainer, TemplateCardNew } from "../atoms/TemplateCard";
 import { AddIcon } from "../icons/AddIcon";
 
 const GridViewContainer = styled.div`
@@ -31,7 +26,6 @@ const GridViewContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 80vh;
-  width: 100%;
   .list {
     padding: 2px;
     flex-direction: row;

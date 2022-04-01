@@ -19,12 +19,13 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
   overflow-y: auto;
-  width: ${(props: any) => (props.wide ? "100%" : "450px")};
+  // width: ${(props: any) => (props.wide ? "100%" : "600px")};
+  width: 1000px;
   z-index: 12;
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
-  min-width: 400px;
+  // min-width: 400px;
   box-shadow: none;
   margin-bottom: 0.8em;
   &:focus {
