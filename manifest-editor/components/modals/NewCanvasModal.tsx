@@ -63,25 +63,25 @@ export const NewCanvasModal: React.FC<{
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (can: any) => {
           can.height = inputed?.height;
-          can.width = inputed?.height;
-          can.createAnnotation(inputValue, {
-            id: inputValue,
+          can.width = inputed?.width;
+          can.createAnnotation(`${newCanvasID}/annotation/image`, {
+            id: `${newCanvasID}/annotation/image`,
             type: "Annotation",
             motivation: "Painting",
             body: {
-              id: inputType,
+              id: inputValue,
               type: "Image",
               format: "image/png",
               height: inputed?.height,
-              width: inputed?.height,
+              width: inputed?.width,
             },
           });
         });
       });
+
       close();
     } else if (emptyCanvas && height && width && manifest) {
       const builder = new IIIFBuilder(vault);
-      console.log(manifest.id);
 
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (canvas) => {
@@ -89,7 +89,6 @@ export const NewCanvasModal: React.FC<{
           canvas.width = width;
         });
       });
-      console.log(manifest);
       close();
     }
   };
