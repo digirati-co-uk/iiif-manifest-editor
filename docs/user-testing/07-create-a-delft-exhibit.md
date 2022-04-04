@@ -1,19 +1,72 @@
+## Test 7: Create complex scenes
 
+This test explores the creation of IIIF Manifests with canvases that have more than one image on them, like a collage or poster board.
+It also examines using custom behavior properties to give information to a custom viewer to control layout.
 
+This is a requirement for Delft exhibitions, some examples of which appear here:
 https://github.com/digirati-co-uk/delft-static-site-generator/tree/master/content/exhibitions
 
-Need to
 
-Create an empty canvas
+## Material and requirements
 
-Position media on the canvas
+> TODO: pick one of the Delft exhibits and use its assets to create this test.
+> We need a preview environment for it though.
 
-Position multiple media on the canvas
+For this test you need to obtain links to several already-hosted high resolution images, and/or IIIF Image API services.
+You can use examples from previous tests, but this test probably works better with personally chosen images - imagine making a mood-board.
 
-Remove media from the canvas
+## 1. Create a blank Manifest
 
-Specify custom behaviors
+Open the Manifest Editor and start a new Manifest from the Blank template.
 
-Apply custom behaviors to manifests, canvases and annotations
+Give the Manifest a Label of "Delft Exhibit" and set the language to English.
 
 
+## 2. Add a _blank_ Canvas
+
+In previous tests, you have created canvases from content - from images or image services, so the dimensions of the canvas have been set to match the image. This time, create a blank Canvas, and give it a width of 5000 and a height of 3000. (#52)
+
+## 3. Add an image (or service) to the canvas
+
+Now add an image or an image service to this canvas using (media tab for canvas, or media tab in toolbar) #97
+See https://github.com/digirati-co-uk/iiif-manifest-editor/issues/97#issuecomment-1072217641
+
+You should be able to set the body to an external resource - an image.
+If you provide an image service, the editor will construct an image resource automatically and append the service to it.
+
+You should be able to set the position of the image on the canvas. Move and resize it so that it is clearly not filling the available canvas space.
+Can you find two different ways of doing this?
+
+> (moving/resizing the image on the canvas, or adjusting the target values)
+
+
+## 4. Add another one
+
+Repeat for a different image.
+Can you set the order they appear so that one appears on top of the other?
+
+## 5. Add a canvas from content
+
+As a variation on the previous steps, add a new canvas but this time, don't select "emtpy canvas" - just use an existing image service.
+
+## 6. Resize the canvas
+
+This canvas will be created with dimensions taken from the supplied image service. But here we want the image to sit inside the canvas, so make the canvas width and height bigger by editing the canvas width and height properties.
+
+## 7. Add another image to the second canvas
+
+Add another image to the canvas to sit alongside the existing one.
+
+Experiment with positioning images on the canvas, and adjusting the size of the images, and adjusting the values of the canvas width and height.
+
+What are the effects of these changes? What do the canvas width and height actually mean?
+
+## 8. Set labels and summaries for all of these images
+
+For each of the images you added, on each canvas, set a label and description _on the media annotation_ to describe what each image is.
+
+## 9. Add behaviors to media and canvases
+
+> TODO - need appropriate custom behaviors here.
+> Need to supply the custom behaviors we want to be able to choose
+> Need to be able to pick them.
