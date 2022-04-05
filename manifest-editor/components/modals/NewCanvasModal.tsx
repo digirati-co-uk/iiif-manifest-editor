@@ -71,7 +71,7 @@ export const NewCanvasModal: React.FC<{
             body: {
               id: inputValue,
               type: "Image",
-              format: "image/png",
+              format: inputed?.format,
               height: inputed?.height,
               width: inputed?.width,
             },
