@@ -57,7 +57,6 @@ export const AddManifestModal: React.FC<{
       (inputed && inputed.type === "Manifest") ||
       inputType === "Collection"
     ) {
-      shellContext?.setUnsavedChanges(true);
       shellContext?.changeResourceID(inputValue);
       if (
         shellContext?.selectedApplication === "ManifestEditor" &&
