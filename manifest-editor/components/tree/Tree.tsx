@@ -29,7 +29,6 @@ const HeaderPanel = styled.div`
     props.theme.color.lightgrey || "lightgrey"};
   border-top: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
   border-bottom: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
-  height: 4rem;
   display: flex;
   align-items: center;
   padding: ${(props: any) => props.theme.padding.medium || "1rem"}
