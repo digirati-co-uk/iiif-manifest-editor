@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useCanvas } from "react-iiif-vault";
@@ -40,10 +40,6 @@ export const SingleValueInput: React.FC<{
     }
     setSelected(newValue);
   };
-
-  useEffect(() => {
-    changeHandler(selected);
-  }, [selected]);
 
   return (
     <>
