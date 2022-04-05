@@ -30,6 +30,8 @@ export const ManifestEditor: React.FC<{
     }
   };
 
+  const [thumbnailSize, setThumbnailSize] = useState({ w: 256, h: 256 });
+
   const editorSettings = {
     selectedProperty,
     changeSelectedProperty,
@@ -40,6 +42,8 @@ export const ManifestEditor: React.FC<{
     selectedPanel,
     addCanvasModalOpen,
     setAddCanvasModalOpen,
+    thumbnailSize,
+    setThumbnailSize,
   };
 
   const manifest = useManifest();

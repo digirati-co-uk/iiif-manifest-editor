@@ -11,7 +11,11 @@ import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext"
 
 import { Thumbnail } from "../atoms/Thumbnail";
 import { ViewSelector } from "../atoms/ViewSelector";
-import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
+import {
+  FlexContainer,
+  FlexContainerColumn,
+  FlexContainerRow,
+} from "../layout/FlexContainer";
 
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import ShellContext from "../apps/Shell/ShellContext";
@@ -21,6 +25,10 @@ import { TemplateCardContainer, TemplateCardNew } from "../atoms/TemplateCard";
 import { AddIcon } from "../icons/AddIcon";
 import { DropdownContent } from "../atoms/Dropdown";
 import { DropdownItem } from "../atoms/DropdownPreviewMenu";
+import {
+  HeightWidthSwitcher,
+  ThumbnailSize,
+} from "../atoms/HeightWidthSwitcher";
 
 const GridViewContainer = styled.div`
   display: flex;
@@ -194,7 +202,9 @@ export const GridView: React.FC = () => {
           Array.isArray(manifest[dispatchType]) &&
           manifest[dispatchType].map((item: any, index: number) => {
             return (
-              <SortableItem key={item?.id?.toString() + "--HASH--"}>
+              <SortableItem
+                key={item?.id?.toString() + editorContext?.thumbnailSize?.h}
+              >
                 <div
                   className="item"
                   onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
@@ -214,7 +224,21 @@ export const GridView: React.FC = () => {
             );
           })}
       </SortableList>
-      <ViewSelector />
+
+      <FlexContainerRow>
+        <ViewSelector />
+        <HeightWidthSwitcher
+          options={[
+            { h: 256, w: 256 },
+            { h: 512, w: 512 },
+            { h: 1024, w: 1024 },
+          ]}
+          label={`${editorContext?.thumbnailSize?.w}x${editorContext?.thumbnailSize?.h}`}
+          onOptionClick={(selected: ThumbnailSize) =>
+            editorContext?.setThumbnailSize(selected)
+          }
+        />
+      </FlexContainerRow>
     </GridViewContainer>
   );
 };

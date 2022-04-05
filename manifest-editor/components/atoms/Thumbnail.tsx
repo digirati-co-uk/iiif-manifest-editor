@@ -1,6 +1,8 @@
 import { getValue } from "@iiif/vault-helpers";
+import { useContext, useEffect } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { AddIcon } from "../icons/AddIcon";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { RecentLabel } from "./RecentFilesWidget";
@@ -20,10 +22,11 @@ export const ThumbnailImg = styled.img`
 `;
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+  const editorContext = useContext(ManifestEditorContext);
+
   const thumb = useThumbnail({
-    minWidth: 200,
-    minHeight: 200,
-    maxWidth: 300,
+    maxWidth: editorContext?.thumbnailSize?.w || 256,
+    maxHeight: editorContext?.thumbnailSize?.h || 256,
   });
 
   if (!thumb) {
@@ -38,14 +41,16 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   }
 
   return (
-    <ErrorBoundary>
-      <ThumbnailImg
-        src={thumb.id}
-        alt=""
-        loading="lazy"
-        onClick={onClick}
-        draggable="false"
-      />
-    </ErrorBoundary>
+    <div key={editorContext?.thumbnailSize?.w}>
+      <ErrorBoundary>
+        <ThumbnailImg
+          src={thumb.id}
+          alt=""
+          loading="lazy"
+          onClick={onClick}
+          draggable="false"
+        />
+      </ErrorBoundary>
+    </div>
   );
 };

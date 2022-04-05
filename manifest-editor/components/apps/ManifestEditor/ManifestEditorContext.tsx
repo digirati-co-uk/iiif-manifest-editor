@@ -1,4 +1,5 @@
 import React from "react";
+import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 
 interface EditorContextInterface {
   selectedProperty: string;
@@ -17,6 +18,8 @@ interface EditorContextInterface {
   behaviorProperties: string[] | null;
   addCanvasModalOpen: boolean;
   setAddCanvasModalOpen: (boolean: boolean) => void;
+  thumbnailSize: ThumbnailSize;
+  setThumbnailSize: (size: ThumbnailSize) => void;
 }
 
 const ManifestEditorContext =
