@@ -55,18 +55,21 @@ const ThumnbnailLabel = styled.small`
 `;
 
 const GridItem: React.FC<{
-  handleChange: (id: string) => void;
+  handleChange: (id: string, e: any) => void;
   canvasId: string;
 }> = ({ handleChange, canvasId }) => {
   const canvas = useCanvas();
 
   return (
-    <FlexContainerColumn style={{ alignItems: "center", cursor: "grab" }}>
+    <FlexContainerColumn
+      style={{ alignItems: "center", cursor: "grab" }}
+      onClick={(e: any) => handleChange(canvasId, e)}
+    >
       <ThumnbnailLabel title={getValue(canvas?.label)}>
         {getValue(canvas?.label)}
       </ThumnbnailLabel>
       <ErrorBoundary>
-        <Thumbnail onClick={() => handleChange(canvasId)} />
+        <Thumbnail onClick={() => {}} />
       </ErrorBoundary>
     </FlexContainerColumn>
   );
@@ -78,9 +81,18 @@ export const GridView: React.FC = () => {
 
   const editorContext = useContext(ManifestEditorContext);
 
-  const handleChange = (itemId: string) => {
-    shellContext?.setCurrentCanvasId(itemId);
-    editorContext?.changeSelectedProperty("canvas");
+  const handleChange = (itemId: string, e: any) => {
+    switch (e.detail) {
+      case 1:
+        shellContext?.setCurrentCanvasId(itemId);
+        editorContext?.changeSelectedProperty("canvas");
+        break;
+      case 2:
+        shellContext?.setCurrentCanvasId(itemId);
+        editorContext?.changeSelectedProperty("canvas");
+        editorContext?.setView("thumbnails");
+        break;
+    }
   };
 
   const dispatchType = "items";
@@ -136,7 +148,7 @@ export const GridView: React.FC = () => {
                     <SortableKnob>
                       <GridItem
                         canvasId={item.id}
-                        handleChange={() => handleChange(item.id)}
+                        handleChange={handleChange}
                       />
                     </SortableKnob>
                   </CanvasContext>
