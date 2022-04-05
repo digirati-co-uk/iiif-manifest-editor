@@ -49,6 +49,7 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
           loading="lazy"
           onClick={onClick}
           draggable="false"
+          height={editorContext?.thumbnailSize?.h || 256}
         />
       </ErrorBoundary>
     </div>

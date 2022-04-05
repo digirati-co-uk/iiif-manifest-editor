@@ -13,9 +13,8 @@ import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { InformationLink } from "../atoms/InformationLink";
-import { useCanvas, useExistingVault, useVault } from "react-iiif-vault";
+import { useExistingVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import { addReference, removeReference } from "@iiif/vault/actions";
 import { IIIFBuilder } from "iiif-builder";
 import { CanvasNormalized } from "@iiif/presentation-3";
 
@@ -78,7 +77,7 @@ export const NewCanvasModal: React.FC<{
           });
         });
       });
-
+      shellContext?.setUnsavedChanges(true);
       close();
     } else if (emptyCanvas && height && width && manifest) {
       const builder = new IIIFBuilder(vault);
@@ -89,6 +88,7 @@ export const NewCanvasModal: React.FC<{
           canvas.width = width;
         });
       });
+      shellContext?.setUnsavedChanges(true);
       close();
     }
   };
