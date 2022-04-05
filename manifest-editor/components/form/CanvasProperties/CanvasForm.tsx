@@ -15,7 +15,7 @@ export const CanvasForm = () => {
 
   return (
     <>
-      <small>CanvasID: {canvas?.id}</small>
+      {/* <small>CanvasID: {canvas?.id}</small> */}
       <TabPanel
         menu={[
           {
