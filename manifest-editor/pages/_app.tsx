@@ -25,11 +25,7 @@ import { getManifestNomalized } from "../helpers/getManifestNormalized";
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
   const vault = useExistingVault();
-  const [resourceID, setResourceID] = useState(
-    //   // We will want to actually implement some options/templates etc
-    //   // but just implementing with some examples for development purposes.
-    "https://digirati-co-uk.github.io/wunder.json"
-  );
+  const [resourceID, setResourceID] = useState("");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [manifest, setManifest] = useState<any>();
   const [currentCanvasId, setCurrentCanvasId] = useState("");
@@ -78,6 +74,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     const loadManifest = async () => {
+      if (!resourceID || resourceID === "") return;
       const mani = await vault.loadManifest(resourceID);
       setManifest(mani);
       if (mani && mani.items && mani.items[0] && mani.items[0]?.id) {
