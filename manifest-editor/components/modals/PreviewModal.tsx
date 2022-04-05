@@ -38,15 +38,15 @@ export const PreviewModal: React.FC<{
               select Permalink from the File / Save As menu option.
             </small>
           </p>
-          <InputLabel>
-            <Input
-              type={"checkbox"}
-              checked={value}
-              onChange={(e: any) => onChange(e.target.value)}
-            />
-            <span>Don't show this again</span>
-          </InputLabel>
-          <FlexContainerRow justify={"flex-end"}>
+          <FlexContainerRow justify={"space-between"}>
+            <InputLabel>
+              <Input
+                type={"checkbox"}
+                checked={value}
+                onChange={(e: any) => onChange(e.target.value)}
+              />
+              <span>Don't show this again</span>
+            </InputLabel>
             <CalltoButton>
               <Link
                 href={link}
