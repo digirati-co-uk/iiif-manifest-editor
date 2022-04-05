@@ -15,6 +15,10 @@ export const CanvasView: React.FC = () => {
       </CanvasContainer>
     );
   }
+
+  if (!manifest || manifest.id === "") {
+    return <></>;
+  }
   return (
     <CanvasContainer key={canvas?.id}>
       <canvas-panel
