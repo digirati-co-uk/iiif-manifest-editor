@@ -3,7 +3,6 @@ import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { AddIcon } from "../../icons/AddIcon";
 import { CheckIcon } from "../../icons/CheckIcon";
-import { NewCanvasModal } from "../../modals/NewCanvasModal";
 import ManifestEditorContext from "./ManifestEditorContext";
 
 export const ManifestEditorToolbar: React.FC<{
@@ -40,8 +39,8 @@ export const ManifestEditorToolbar: React.FC<{
                 editorContext?.setView("tree");
               }}
             >
+              Outline View
               {editorContext?.view === "tree" && <CheckIcon />}
-              Outline
             </Button>
             <Button
               onClick={() => {
@@ -49,8 +48,8 @@ export const ManifestEditorToolbar: React.FC<{
                 editorContext?.setView("thumbnails");
               }}
             >
+              Thumbnails with Canvas
               {editorContext?.view === "thumbnails" && <CheckIcon />}
-              Canvas Thumbnails
             </Button>
             <Button
               onClick={() => {
@@ -58,8 +57,8 @@ export const ManifestEditorToolbar: React.FC<{
                 editorContext?.setView("grid");
               }}
             >
-              {editorContext?.view === "thumbnails" && <CheckIcon />}
-              Thumbnail Grid
+              Thumbnails Only
+              {editorContext?.view === "grid" && <CheckIcon />}
             </Button>
           </DropdownContent>
         )}
