@@ -19,6 +19,8 @@ import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { RecentLabel } from "../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../atoms/TemplateCard";
 import { AddIcon } from "../icons/AddIcon";
+import { DropdownContent } from "../atoms/Dropdown";
+import { DropdownItem } from "../atoms/DropdownPreviewMenu";
 
 const GridViewContainer = styled.div`
   display: flex;
@@ -52,6 +54,7 @@ const ThumnbnailLabel = styled.small`
   max-width: 16rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: ${(props: any) => props.theme.padding.medium || "1rem"} 0 0 0;
 `;
 
 const GridItem: React.FC<{
@@ -76,6 +79,10 @@ const GridItem: React.FC<{
 };
 
 export const GridView: React.FC = () => {
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+  // For the context menu to know where to send
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const manifest = useManifest();
   const shellContext = useContext(ShellContext);
 
@@ -108,6 +115,25 @@ export const GridView: React.FC = () => {
     }
   };
 
+  const showContextMenu = (
+    event: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    // Disable the default context menu
+    event.preventDefault();
+
+    setSelectedIndex(index);
+
+    setContextMenuVisible(false);
+    const newPosition = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+
+    setAnchorPoint(newPosition);
+    setContextMenuVisible(true);
+  };
+
   if (
     !manifest ||
     !manifest[dispatchType] ||
@@ -131,7 +157,33 @@ export const GridView: React.FC = () => {
     );
   }
   return (
-    <GridViewContainer>
+    <GridViewContainer onClick={() => setContextMenuVisible(false)}>
+      {contextMenuVisible && (
+        <DropdownContent style={{ top: anchorPoint.y, left: anchorPoint.x }}>
+          <DropdownItem
+            onClick={() => {
+              reorder(selectedIndex, 0);
+              setContextMenuVisible(false);
+            }}
+          >
+            Send to start
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => {
+              if (
+                manifest &&
+                manifest[dispatchType] &&
+                Array.isArray(manifest[dispatchType]) &&
+                manifest[dispatchType]
+              )
+                reorder(selectedIndex, manifest[dispatchType].length - 1);
+              setContextMenuVisible(false);
+            }}
+          >
+            Send to end
+          </DropdownItem>
+        </DropdownContent>
+      )}
       <SortableList
         onSortEnd={reorder}
         className="list"
@@ -140,10 +192,15 @@ export const GridView: React.FC = () => {
         {manifest &&
           manifest[dispatchType] &&
           Array.isArray(manifest[dispatchType]) &&
-          manifest[dispatchType].map((item: any) => {
+          manifest[dispatchType].map((item: any, index: number) => {
             return (
               <SortableItem key={item?.id?.toString() + "--HASH--"}>
-                <div className="item">
+                <div
+                  className="item"
+                  onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
+                    showContextMenu(e, index)
+                  }
+                >
                   <CanvasContext key={item.id} canvas={item.id}>
                     <SortableKnob>
                       <GridItem
