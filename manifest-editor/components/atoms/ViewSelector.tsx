@@ -24,7 +24,7 @@ export const ViewSelector: React.FC = () => {
       </Button>
       <Button
         onClick={() => editorContext?.setView("thumbnails")}
-        title="Swith to thumbnails with canvas"
+        title="Switch to thumbnails with canvas"
       >
         <ThumbnailStripIcon />
       </Button>
