@@ -18,13 +18,13 @@ export const ViewSelector: React.FC = () => {
       </Button>
       <Button
         onClick={() => editorContext?.setView("grid")}
-        title="Switch to grid view"
+        title="Switch to thumbnails only"
       >
         <GridIcon />
       </Button>
       <Button
         onClick={() => editorContext?.setView("thumbnails")}
-        title="Swith to thumbnail stip view"
+        title="Swith to thumbnails with canvas"
       >
         <ThumbnailStripIcon />
       </Button>
