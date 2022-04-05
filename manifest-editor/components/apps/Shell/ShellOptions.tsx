@@ -56,6 +56,7 @@ export const ShellOptions: React.FC<{
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
           close={() => setaddModalVisible(false)}
+          save={save}
         />
       )}
       {(saveModalVisible || forceShowModal) && (
@@ -76,7 +77,7 @@ export const ShellOptions: React.FC<{
       )}
 
       {newModalVisible && (
-        <NewManifestModal close={() => setNewModalVisible(false)} />
+        <NewManifestModal close={() => setNewModalVisible(false)} save={save} />
       )}
       <FlexContainer>
         <Dropdown>

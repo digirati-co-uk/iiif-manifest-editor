@@ -9,10 +9,12 @@ import { ModalHeader } from "../atoms/ModalHeader";
 import ShellContext from "../apps/Shell/ShellContext";
 
 import { NewTemplates } from "../widgets/NewTemplates";
+import { WarningMessage } from "../atoms/callouts/WarningMessage";
 
 export const NewManifestModal: React.FC<{
   close: any;
-}> = ({ close }) => {
+  save: () => void;
+}> = ({ close, save }) => {
   const shellContext = useContext(ShellContext);
 
   return (
@@ -25,6 +27,13 @@ export const NewManifestModal: React.FC<{
             <CloseIcon />
           </Button>
         </FlexContainer>
+        {shellContext?.unsavedChanges && (
+          <WarningMessage $small={true}>
+            Loading a manifest from a template will mean you will loose your
+            unsaved changes.
+            <Button onClick={() => save()}>Save Changes</Button>
+          </WarningMessage>
+        )}
         <NewTemplates
           changeManifest={(id: string) => {
             shellContext?.changeSelectedApplication("ManifestEditor");
