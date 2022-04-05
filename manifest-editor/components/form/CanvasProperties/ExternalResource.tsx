@@ -101,7 +101,7 @@ export const ExternalResource: React.FC<{
                             style={{ justifyContent: "space-between" }}
                           >
                             <MenuIcon />
-                            <FlexContainerColumn>
+                            <FlexContainerColumn style={{ width: "100%" }}>
                               {item?.label && (
                                 <LanguageFieldEditor
                                   label=""

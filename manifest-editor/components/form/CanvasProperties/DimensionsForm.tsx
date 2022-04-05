@@ -37,7 +37,7 @@ export const DimensionsForm: React.FC<{}> = () => {
     <>
       <FlexContainer>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"height"}</InputLabel>
             <Input
               type="number"
@@ -52,7 +52,7 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"width"}</InputLabel>
             <Input
               type="number"
@@ -67,7 +67,7 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"duration"}</InputLabel>
             <Input
               type="number"

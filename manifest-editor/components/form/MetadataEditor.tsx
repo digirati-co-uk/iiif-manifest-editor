@@ -58,7 +58,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                         <FlexContainer
                           style={{ justifyContent: "space-between" }}
                         >
-                          <FlexContainerColumn>
+                          <FlexContainerColumn style={{ width: "100%" }}>
                             <LanguageFieldEditor
                               label={"label"}
                               fields={field.label}

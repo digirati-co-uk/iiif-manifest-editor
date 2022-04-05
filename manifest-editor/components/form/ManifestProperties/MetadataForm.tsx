@@ -9,7 +9,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
 import { CalltoButton } from "../../atoms/Button";
-import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
+import { FlexContainer } from "../../layout/FlexContainer";
 
 export const MetadataForm: React.FC<{}> = () => {
   const editorContext = useContext(ManifestEditorContext);
