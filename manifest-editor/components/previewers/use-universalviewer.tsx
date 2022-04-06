@@ -6,11 +6,11 @@ export function useEvent(
   name: string,
   cb: (...args: any[]) => void
 ) {
-  useLayoutEffect(() => {
-    if (viewer) {
-      return viewer.subscribe(name, cb);
-    }
-  }, [viewer]);
+  // useLayoutEffect(() => {
+  //   if (viewer) {
+  //     return viewer.subscribe(name, cb);
+  //   }
+  // }, [viewer]);
 }
 
 export function useUniversalViewer(
