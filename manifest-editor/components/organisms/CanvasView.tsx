@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useCanvas } from "react-iiif-vault";
 import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
 import { useManifest } from "../../hooks/useManifest";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 
 export const CanvasView: React.FC = () => {
   const viewer = useRef();
@@ -21,11 +22,13 @@ export const CanvasView: React.FC = () => {
   }
   return (
     <CanvasContainer key={canvas?.id}>
-      <canvas-panel
-        ref={viewer}
-        canvas-id={canvas?.id}
-        manifest-id={manifest?.id}
-      />
+      <ErrorBoundary>
+        <canvas-panel
+          ref={viewer}
+          canvas-id={canvas?.id}
+          manifest-id={manifest?.id}
+        />
+      </ErrorBoundary>
     </CanvasContainer>
   );
 };
