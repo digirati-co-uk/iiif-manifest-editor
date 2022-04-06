@@ -13,10 +13,10 @@ import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { InformationLink } from "../atoms/InformationLink";
-import { useExistingVault } from "react-iiif-vault";
+import { useExistingVault, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
-import { CanvasNormalized } from "@iiif/presentation-3";
+import { importEntities } from "@iiif/vault/actions";
 
 var uuid = require("uuid");
 
@@ -58,26 +58,46 @@ export const NewCanvasModal: React.FC<{
       setImageServiceJSON(inputed);
     }
     if (inputed && inputed.type === "Image" && !emptyCanvas && manifest) {
+      if (inputValue) {
+        vault.dispatch(
+          importEntities({
+            entities: {
+              [newCanvasID]: {
+                [inputValue]: {
+                  id: inputValue,
+                  type: "Image",
+                  format: inputed?.format,
+                  height: inputed?.height,
+                  width: inputed?.width,
+                },
+              },
+            },
+          })
+        );
+      }
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (can: any) => {
           can.height = inputed?.height;
           can.width = inputed?.width;
-          can.createAnnotation(`${newCanvasID}/annotation/image`, {
-            id: `${newCanvasID}/annotation/image`,
+          can.createAnnotation(`${newCanvasID}/painting`, {
+            id: `${newCanvasID}/painting`,
             type: "Annotation",
-            motivation: "Painting",
-            body: {
-              id: inputValue,
-              type: "Image",
-              format: inputed?.format,
-              height: inputed?.height,
-              width: inputed?.width,
-            },
+            motivation: ["painting"],
+            body: [
+              {
+                id: inputValue,
+                type: "Image",
+                format: inputed?.format,
+                height: inputed?.height,
+                width: inputed?.width,
+              },
+            ],
           });
         });
       });
       shellContext?.setUnsavedChanges(true);
+
       close();
     } else if (emptyCanvas && height && width && manifest) {
       const builder = new IIIFBuilder(vault);
