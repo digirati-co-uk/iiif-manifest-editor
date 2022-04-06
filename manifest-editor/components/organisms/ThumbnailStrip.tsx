@@ -11,13 +11,8 @@ import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import ShellContext from "../apps/Shell/ShellContext";
 import { RecentLabel } from "../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../atoms/TemplateCard";
-import { ViewSelector } from "../atoms/ViewSelector";
 import { AddIcon } from "../icons/AddIcon";
 import { FlexContainer } from "../layout/FlexContainer";
-
-// The CanvasContext currently only lets you select every second canvas. Once the
-// SimpleViewerProvider && SimpleViewerContext from react-iiif-vault
-// get updated with the latest code they will accept a prop pagingView={false}
 
 export const ThumbnailStrip: React.FC = () => {
   const manifest = useManifest();
@@ -77,7 +72,9 @@ export const SmallThumbnailStrip: React.FC = () => {
         return (
           <ErrorBoundary>
             <CanvasContext key={item.id} canvas={item.id}>
-              <Thumbnail onClick={() => handleChange(item.id)} />
+              <ErrorBoundary>
+                <Thumbnail onClick={() => handleChange(item.id)} />
+              </ErrorBoundary>
             </CanvasContext>
           </ErrorBoundary>
         );

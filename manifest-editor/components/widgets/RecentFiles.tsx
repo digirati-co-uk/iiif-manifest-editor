@@ -7,6 +7,7 @@ import {
   RecentManifestCard,
   RecentThumbnails,
 } from "../atoms/RecentFilesWidget";
+import { ErrorBoundary } from "../atoms/ErrorBoundary";
 
 type RecentFiles = {
   recentManifests: ManifestNormalized[] | undefined;
@@ -46,25 +47,27 @@ export const RecentFiles: React.FC<RecentFiles> = ({
         {IIIFCollection.items.map((manifest) => {
           return (
             <RecentManifestCard>
-              <ThumbnailImg
-                // @ts-ignore
-                src={
-                  manifest &&
+              <ErrorBoundary>
+                <ThumbnailImg
                   // @ts-ignore
-                  manifest?.thumbnail &&
-                  // @ts-ignore
-                  manifest?.thumbnail[0] &&
-                  // @ts-ignore
-                  manifest?.thumbnail[0].id
-                    ? // @ts-ignore
-                      manifest?.thumbnail[0].id
-                    : ""
-                }
-                alt={manifest.id}
-                loading="lazy"
-                onClick={() => changeManifest(manifest.id)}
-                title={manifest.id}
-              />
+                  src={
+                    manifest &&
+                    // @ts-ignore
+                    manifest?.thumbnail &&
+                    // @ts-ignore
+                    manifest?.thumbnail[0] &&
+                    // @ts-ignore
+                    manifest?.thumbnail[0].id
+                      ? // @ts-ignore
+                        manifest?.thumbnail[0].id
+                      : ""
+                  }
+                  alt={manifest.id}
+                  loading="lazy"
+                  onClick={() => changeManifest(manifest.id)}
+                  title={manifest.id}
+                />
+              </ErrorBoundary>
               <RecentLabel>{manifest.id}</RecentLabel>
             </RecentManifestCard>
           );

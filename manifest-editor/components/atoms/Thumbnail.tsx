@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useThumbnail } from "../../hooks/useThumbnail";
+import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import { ErrorBoundary } from "./ErrorBoundary";
