@@ -1,9 +1,7 @@
-import { getValue } from "@iiif/vault-helpers";
-import { useContext, useEffect } from "react";
-import { useThumbnail } from "react-iiif-vault";
+import { useContext } from "react";
+import { useThumbnail } from "../../hooks/useThumbnail";
 import styled from "styled-components";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
-import { AddIcon } from "../icons/AddIcon";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { RecentLabel } from "./RecentFilesWidget";
 import {
