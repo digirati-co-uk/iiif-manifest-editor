@@ -17,7 +17,10 @@ import { useExistingVault, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
 import { importEntities } from "@iiif/vault/actions";
-import { PaddingComponentLarge } from "../atoms/PaddingComponent";
+import {
+  PaddingComponentLarge,
+  PaddingComponentMedium,
+} from "../atoms/PaddingComponent";
 import { TickIcon } from "../icons/TickIcon";
 
 var uuid = require("uuid");
@@ -114,6 +117,54 @@ export const NewCanvasModal: React.FC<{
                 format: inputed?.format,
                 height: inputed?.height,
                 width: inputed?.width,
+              },
+            ],
+          });
+        });
+      });
+      shellContext?.setUnsavedChanges(true);
+
+      close();
+    } else if (
+      inputed &&
+      inputed.type === "ImageService" &&
+      !emptyCanvas &&
+      manifest
+    ) {
+      if (inputValue) {
+        vault.dispatch(
+          importEntities({
+            entities: {
+              [newCanvasID]: {
+                [inputValue]: {
+                  id: inputValue,
+                  type: "Image",
+                  format: inputed?.format,
+                  height: inputed?.height,
+                  width: inputed?.width,
+                },
+              },
+            },
+          })
+        );
+      }
+      const builder = new IIIFBuilder(vault);
+      builder.editManifest(manifest.id, (mani) => {
+        mani.createCanvas(newCanvasID, (can: any) => {
+          can.height = inputed?.height;
+          can.width = inputed?.width;
+          can.createAnnotation(`${newCanvasID}/painting`, {
+            id: `${newCanvasID}/painting`,
+            type: "Annotation",
+            motivation: ["painting"],
+            body: [
+              {
+                id: inputValue,
+                type: "Image",
+                format: inputed?.format,
+                height: inputed?.height,
+                width: inputed?.width,
+                service: [inputed],
               },
             ],
           });
@@ -236,11 +287,16 @@ export const NewCanvasModal: React.FC<{
             <>
               <HorizontalDivider />
               <FlexContainer>
-                <img src={inputValue} height={100} />
+                <img
+                  src={inputValue}
+                  height={100}
+                  style={{ transition: "all 0.3s ease-in" }}
+                />
                 <PaddingComponentLarge />
                 <small>
                   This image/service is {width} x {height}, the Manifest Editor
-                  will create Canvas {width} x {height} from this image/service.
+                  will create a Canvas {width} x {height} from this
+                  image/service.
                 </small>
               </FlexContainer>
             </>
@@ -252,16 +308,16 @@ export const NewCanvasModal: React.FC<{
             <>
               <HorizontalDivider />
               <FlexContainer>
-                {/* <img src={inputValue} height={100} /> */}
+                <img
+                  src={"https://iiif.io/assets/images/logos/logo-sm.png"}
+                  height={20}
+                />
                 <PaddingComponentLarge />
-                {/* <small>
+                <small>
                   This image/service is {width} x {height}, the Manifest Editor
-                  will create Canvas {width} x {height} from this image/service.
-                </small> */}
-                <div>
-                  This resource is an image service and adding content from an
-                  image service is not supported yet.
-                </div>
+                  will create a Canvas {width} x {height} from this
+                  image/service.
+                </small>
               </FlexContainer>
             </>
           )}
@@ -313,6 +369,11 @@ export const NewCanvasModal: React.FC<{
             <>
               <HorizontalDivider />
               <FlexContainer style={{ justifyContent: "space-between" }}>
+                <img
+                  src={"https://iiif.io/assets/images/logos/logo-sm.png"}
+                  height={20}
+                />
+                <PaddingComponentMedium />
                 <small>
                   {/* This UI will change again */}
                   This resource is a collection, do you want to launch the IIIF
@@ -338,6 +399,11 @@ export const NewCanvasModal: React.FC<{
             <>
               <HorizontalDivider />
               <FlexContainer style={{ justifyContent: "space-between" }}>
+                <img
+                  src={"https://iiif.io/assets/images/logos/logo-sm.png"}
+                  height={20}
+                />
+                <PaddingComponentMedium />
                 <small>
                   This resource is a manifest, do you want to start a new
                   manifest from this resource?
