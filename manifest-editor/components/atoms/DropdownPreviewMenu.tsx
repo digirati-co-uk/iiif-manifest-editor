@@ -21,7 +21,7 @@ export const DropdownItem = styled.div`
   }
 `;
 
-const DropdownContainer = styled(FlexContainerColumn)`
+export const DropdownContainer = styled(FlexContainerColumn)`
   display: flex;
   position: absolute;
   background-color: ${(props: any) => props.theme.color.white || "none"};
@@ -43,7 +43,7 @@ const Outline = styled.div`
   align-items: center;
 `;
 
-const MenuContainer = styled.div`
+export const MenuContainer = styled.div`
   display: inline-block;
   justify-content: flex-end;
   align-items: center;

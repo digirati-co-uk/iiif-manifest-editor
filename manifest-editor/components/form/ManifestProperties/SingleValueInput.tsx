@@ -5,6 +5,7 @@ import { useManifest } from "../../../hooks/useManifest";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 
 export const SingleValueInput: React.FC<{
@@ -46,13 +47,13 @@ export const SingleValueInput: React.FC<{
     <>
       {manifest && dispatchType === "rights" && (
         <ErrorBoundary>
-          <StringSelector
+          <RightsForm
             key={manifest.id}
             options={[
               "http://creativecommons.org/licenses/by/4.0/",
               "http://creativecommons.org/licenses/by-nc/4.0/",
             ]}
-            label={"Rights"}
+            label={"rights"}
             selected={
               manifest && manifest[dispatchType] ? manifest[dispatchType] : []
             }

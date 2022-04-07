@@ -3,6 +3,7 @@ import { LanguageMapInput } from "../LanguageMapInput";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { SingleValueInput } from "./SingleValueInput";
 import { DateForm } from "./DateForm";
+import { RightsForm } from "../RightsForm";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
