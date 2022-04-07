@@ -11,6 +11,8 @@ import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
 import { ManifestForm } from "../form/ManifestProperties/ManifestForm";
 import { CanvasForm } from "../form/CanvasProperties/CanvasForm";
+import { ModalHeader } from "../atoms/ModalHeader";
+import { BackIcon } from "../icons/BackIcon";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -50,8 +52,22 @@ export const EditorPanel: React.FC<{
           wide={editorContext?.view === "fullEditor"}
         >
           <div>
-            <FlexContainerRow justify="space-between">
-              <h4>{editorContext?.selectedProperty} properties</h4>
+            <FlexContainerRow
+              justify="space-between"
+              style={{ alignItems: "center" }}
+            >
+              {editorContext?.selectedProperty === "canvas" && (
+                <Button
+                  onClick={() =>
+                    editorContext?.changeSelectedProperty("manifest")
+                  }
+                >
+                  <BackIcon />
+                </Button>
+              )}
+              <ModalHeader>
+                {editorContext?.selectedProperty} properties
+              </ModalHeader>
               <Button onClick={close}>
                 <CloseIcon />
               </Button>
