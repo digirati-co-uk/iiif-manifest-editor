@@ -17,6 +17,8 @@ import { useExistingVault, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
 import { importEntities } from "@iiif/vault/actions";
+import { PaddingComponentLarge } from "../atoms/PaddingComponent";
+import { TickIcon } from "../icons/TickIcon";
 
 var uuid = require("uuid");
 
@@ -37,6 +39,27 @@ export const NewCanvasModal: React.FC<{
 
   const shellContext = useContext(ShellContext);
   const manifest = useManifest();
+
+  const runAnalyser = async () => {
+    let inputed: any;
+    if (inputValue) {
+      inputed = await analyse(inputValue);
+      setInputType(inputed?.type);
+    }
+    setLabel(inputed?.label);
+    setHeight(inputed?.height);
+    setWidth(inputed?.width);
+    if (
+      inputed &&
+      !(
+        inputed.type === "Manifest" ||
+        inputed.type === "Image" ||
+        inputed.type === "Collection"
+      )
+    ) {
+      setImageServiceJSON(inputed);
+    }
+  };
 
   const handleChange = async () => {
     let inputed: any;
@@ -124,18 +147,26 @@ export const NewCanvasModal: React.FC<{
           </Button>
         </FlexContainer>
         {!emptyCanvas && (
-          <>
-            <InputLabel>
-              From content
+          <div>
+            <InputLabel>From content</InputLabel>
+            <FlexContainer>
               <Input
-                placeholder={"Paste URL"}
+                placeholder="Paste URL of Media to create Canvas"
                 onChange={(e: any) => setInputValue(e.target.value)}
+                onBlur={() => runAnalyser()}
+                onKeyPress={(e: any) => {
+                  if (e.key === "Enter") runAnalyser();
+                }}
               />
-            </InputLabel>
+              <Button onClick={() => runAnalyser()}>
+                <TickIcon />
+              </Button>
+            </FlexContainer>
+
             <small>
               Any image, IIIF Image Service, audio, video, or IIIF Canvas.
             </small>
-          </>
+          </div>
         )}
         {emptyCanvas && (
           <>
@@ -198,6 +229,42 @@ export const NewCanvasModal: React.FC<{
             </FlexContainer>
           </>
         )}
+        {inputType &&
+          !emptyCanvas &&
+          inputType === "Image" &&
+          shellContext?.selectedApplication === "ManifestEditor" && (
+            <>
+              <HorizontalDivider />
+              <FlexContainer>
+                <img src={inputValue} height={100} />
+                <PaddingComponentLarge />
+                <small>
+                  This image/service is {width} x {height}, the Manifest Editor
+                  will create Canvas {width} x {height} from this image/service.
+                </small>
+              </FlexContainer>
+            </>
+          )}
+        {inputType &&
+          !emptyCanvas &&
+          inputType === "ImageService" &&
+          shellContext?.selectedApplication === "ManifestEditor" && (
+            <>
+              <HorizontalDivider />
+              <FlexContainer>
+                {/* <img src={inputValue} height={100} /> */}
+                <PaddingComponentLarge />
+                {/* <small>
+                  This image/service is {width} x {height}, the Manifest Editor
+                  will create Canvas {width} x {height} from this image/service.
+                </small> */}
+                <div>
+                  This resource is an image service and adding content from an
+                  image service is not supported yet.
+                </div>
+              </FlexContainer>
+            </>
+          )}
         <HorizontalDivider />
 
         <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -222,7 +289,7 @@ export const NewCanvasModal: React.FC<{
             )}
             {!emptyCanvas && (
               <CalltoButton
-                disabled={!inputValue}
+                disabled={!inputValue && inputType === "ImageService"}
                 onClick={() => handleChange()}
               >
                 ADD
