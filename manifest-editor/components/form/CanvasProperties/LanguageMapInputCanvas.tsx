@@ -5,7 +5,6 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
-import { ShadowContainer } from "../../atoms/ShadowContainer";
 import { LanguageFieldEditor } from "../LanguageFieldEditor";
 
 export const LanguageMapInputCanvas: React.FC<{
@@ -29,7 +28,7 @@ export const LanguageMapInputCanvas: React.FC<{
   };
 
   return (
-    <ShadowContainer key={canvas?.id}>
+    <div key={canvas?.id}>
       {canvas && (
         <ErrorBoundary>
           <LanguageFieldEditor
@@ -43,6 +42,6 @@ export const LanguageMapInputCanvas: React.FC<{
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-    </ShadowContainer>
+    </div>
   );
 };

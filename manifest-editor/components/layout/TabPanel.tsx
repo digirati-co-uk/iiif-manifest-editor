@@ -28,6 +28,12 @@ const TabPanelOptions = styled.div`
 const TabPanelContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 40vw;
+  @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
+    width: 100vw;
+    border-top: 1px solid rgba(5, 42, 68, 0.2);
+    border-left: none;
+  }
 `;
 
 const Content = styled.div`

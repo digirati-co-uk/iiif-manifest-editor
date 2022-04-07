@@ -5,7 +5,6 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { Input, InputLabel } from "../Input";
-import { ShadowContainer } from "../../atoms/ShadowContainer";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 export const DimensionsForm: React.FC<{}> = () => {
@@ -35,10 +34,10 @@ export const DimensionsForm: React.FC<{}> = () => {
   };
 
   return (
-    <ShadowContainer>
+    <>
       <FlexContainer>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"height"}</InputLabel>
             <Input
               type="number"
@@ -53,7 +52,7 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"width"}</InputLabel>
             <Input
               type="number"
@@ -68,7 +67,7 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
         <ErrorBoundary>
-          <FlexContainerColumn>
+          <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel>{"duration"}</InputLabel>
             <Input
               type="number"
@@ -83,6 +82,6 @@ export const DimensionsForm: React.FC<{}> = () => {
           </FlexContainerColumn>
         </ErrorBoundary>
       </FlexContainer>
-    </ShadowContainer>
+    </>
   );
 };

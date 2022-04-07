@@ -2,7 +2,7 @@ export const CloseIcon: React.FC<{
   inline?: boolean;
   height?: number;
   className?: string;
-}> = ({height = 24 }) => (
+}> = ({ height = 16 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height={height}

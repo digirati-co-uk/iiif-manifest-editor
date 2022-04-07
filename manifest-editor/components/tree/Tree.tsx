@@ -29,7 +29,6 @@ const HeaderPanel = styled.div`
     props.theme.color.lightgrey || "lightgrey"};
   border-top: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
   border-bottom: 1px solid ${(props: any) => props.theme.color.grey || "grey"};
-  height: 4rem;
   display: flex;
   align-items: center;
   padding: ${(props: any) => props.theme.padding.medium || "1rem"}
@@ -50,7 +49,8 @@ export const Tree: React.FC = () => {
   const [open, setOpen] = useState(true);
 
   return (
-    <TreeContainer>
+    // @ts-ignore
+    <TreeContainer key={manifest}>
       <HeaderPanel onClick={() => setOpen(!open)}>
         <FlexContainer>
           <KeyManifest
@@ -71,7 +71,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("label")
+                ? () => editorContext.changeSelectedProperty("manifest", 0)
                 : () => {}
             }
             propertyName={"label"}
@@ -98,16 +98,18 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("homepage")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"homepage"}
             array={manifest?.homepage || []}
           />
           <KeyValuePairArray
+            // @ts-ignore
+            key={manifest}
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("canvas")
+                ? () => editorContext.changeSelectedProperty("manifest", 4)
                 : () => {}
             }
             propertyName={"items"}
@@ -144,7 +146,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("navDate")
+                ? () => editorContext.changeSelectedProperty("manifest", 0)
                 : () => {}
             }
             propertyName={"navDate"}
@@ -153,7 +155,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("provider")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"provider"}
@@ -162,7 +164,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("partOf")
+                ? () => editorContext.changeSelectedProperty("manifest", 2)
                 : () => {}
             }
             propertyName={"partOf"}
@@ -254,7 +256,7 @@ export const Tree: React.FC = () => {
           <KeyObjectPairing
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("start")
+                ? () => editorContext.changeSelectedProperty("manifest", 4)
                 : () => {}
             }
             propertyName={"start"}
@@ -264,7 +266,7 @@ export const Tree: React.FC = () => {
           <KeyValuePairArray
             onClick={
               editorContext
-                ? () => editorContext.changeSelectedProperty("structures")
+                ? () => editorContext.changeSelectedProperty("manifest", 4)
                 : () => {}
             }
             propertyName={"structures"}

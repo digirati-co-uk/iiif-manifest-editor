@@ -20,11 +20,7 @@ const Preview: NextPage = (props: any) => {
   return (
     <div className={styles.container}>
       <ThemeProvider theme={props.theme}>
-        <Shell previewConfig={props.config.preview} newTemplates={[]} />
-
-        {/* Whilst we will have our own configuarable preview options fed by JSON
-      there will also be the option to pass your persisted URL and open a link directly to
-      for example an external Universal Viewer */}
+        <Shell previewConfig={props.config.preview} newTemplates={"[]"} />
         <PreviewView />
       </ThemeProvider>
     </div>

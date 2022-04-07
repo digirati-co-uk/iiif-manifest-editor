@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../../hooks/useManifest";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 
 export const SingleValueInput: React.FC<{
@@ -15,6 +16,7 @@ export const SingleValueInput: React.FC<{
   const manifestEditorContext = useContext(ManifestEditorContext);
   const manifest = useManifest();
   const vault = useVault();
+
   const changeHandler = (data: any) => {
     if (manifest) {
       shellContext?.setUnsavedChanges(true);
@@ -41,24 +43,21 @@ export const SingleValueInput: React.FC<{
     setSelected(newValue);
   };
 
-  useEffect(() => {
-    changeHandler(selected);
-  }, [selected]);
-
   return (
     <>
       {manifest && dispatchType === "rights" && (
         <ErrorBoundary>
-          <StringSelector
+          <RightsForm
             key={manifest.id}
             options={[
               "http://creativecommons.org/licenses/by/4.0/",
               "http://creativecommons.org/licenses/by-nc/4.0/",
             ]}
-            label={"Rights"}
+            label={"rights"}
             selected={
               manifest && manifest[dispatchType] ? manifest[dispatchType] : []
             }
+            multi={false}
             changeHandler={(e: any) => changeHandler(e)}
             guidanceReference={"https://iiif.io/api/presentation/3.0/#rights"}
           />

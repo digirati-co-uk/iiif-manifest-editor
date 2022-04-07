@@ -1,4 +1,5 @@
 import React from "react";
+import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 
 interface EditorContextInterface {
   selectedProperty: string;
@@ -7,7 +8,7 @@ interface EditorContextInterface {
   changeSelectedProperty: (
     property: string,
     // This list will grow
-    tabPanel?: number
+    key?: number
   ) => void;
   setView: (
     view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"
@@ -15,6 +16,10 @@ interface EditorContextInterface {
   view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
   languages: string[];
   behaviorProperties: string[] | null;
+  addCanvasModalOpen: boolean;
+  setAddCanvasModalOpen: (boolean: boolean) => void;
+  thumbnailSize: ThumbnailSize;
+  setThumbnailSize: (size: ThumbnailSize) => void;
 }
 
 const ManifestEditorContext =

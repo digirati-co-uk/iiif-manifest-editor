@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "../atoms/Button";
-import { ShadowContainer } from "../atoms/ShadowContainer";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { LanguageFieldEditor } from "./LanguageFieldEditor";
@@ -10,6 +9,7 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
+import { LightBox } from "../atoms/LightBox";
 
 interface MetadataEditorProps {
   availableLanguages: string[];
@@ -49,7 +49,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                     index={index}
                   >
                     {(innerProvided) => (
-                      <ShadowContainer
+                      <LightBox
                         ref={innerProvided.innerRef}
                         {...innerProvided.draggableProps}
                         {...innerProvided.dragHandleProps}
@@ -58,7 +58,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                         <FlexContainer
                           style={{ justifyContent: "space-between" }}
                         >
-                          <FlexContainerColumn>
+                          <FlexContainerColumn style={{ width: "100%" }}>
                             <LanguageFieldEditor
                               label={"label"}
                               fields={field.label}
@@ -80,7 +80,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                             <DeleteIcon />
                           </Button>
                         </FlexContainer>
-                      </ShadowContainer>
+                      </LightBox>
                     )}
                   </Draggable>
                 );

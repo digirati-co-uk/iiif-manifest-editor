@@ -1,9 +1,9 @@
 import styled, { css } from "styled-components";
 
 export const WarningMessage = styled.div<{ $small?: boolean }>`
-  background: ${(props: any) => props.theme.color.warning || "orange"};
-  color: ${(props: any) => props.theme.color.white || "white"};
+  border: 2px solid ${(props: any) => props.theme.color.warning || "orange"};
   width: 100%;
+  border-radius: 5px;
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
     ${(props: any) => props.theme.padding.medium || "1rem"};
   line-height: 1.9em;

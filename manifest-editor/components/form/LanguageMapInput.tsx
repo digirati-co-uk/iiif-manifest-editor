@@ -5,7 +5,6 @@ import { useManifest } from "../../hooks/useManifest";
 import ShellContext from "../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { InformationLink } from "../atoms/InformationLink";
-import { ShadowContainer } from "../atoms/ShadowContainer";
 import { LanguageFieldEditor } from "./LanguageFieldEditor";
 
 export const LanguageMapInput: React.FC<{
@@ -29,7 +28,7 @@ export const LanguageMapInput: React.FC<{
   };
 
   return (
-    <ShadowContainer>
+    <>
       {manifest && (
         <ErrorBoundary>
           <LanguageFieldEditor
@@ -44,6 +43,6 @@ export const LanguageMapInput: React.FC<{
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-    </ShadowContainer>
+    </>
   );
 };

@@ -26,11 +26,9 @@ export function useManifest<T = ManifestNormalized>(
   const ctx = useResourceContext();
   const manifestId = id ? id : ctx.manifest;
 
-  const manifest = manifestId
-    ? useVaultSelector((s: IIIFStore) =>
-        manifestId ? s.iiif.entities.Manifest[manifestId] : undefined
-      )
-    : undefined;
+  const manifest = useVaultSelector((s: IIIFStore) =>
+    manifestId ? s.iiif.entities.Manifest[manifestId] : undefined
+  );
 
   return useMemo(() => {
     if (!manifest) {

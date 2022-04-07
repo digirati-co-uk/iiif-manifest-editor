@@ -7,25 +7,23 @@ import { LanguageMapInput } from "../form/LanguageMapInput";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
 import styled from "styled-components";
-import { StringInput } from "../form/StringInput";
 import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
 import { ManifestForm } from "../form/ManifestProperties/ManifestForm";
 import { CanvasForm } from "../form/CanvasProperties/CanvasForm";
+import { ModalHeader } from "../atoms/ModalHeader";
+import { BackIcon } from "../icons/BackIcon";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
 }>`
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
-  overflow-y: auto;
-  width: ${(props: any) => (props.wide ? "100%" : "450px")};
   z-index: 12;
+  width: 500px:
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
-  min-width: 400px;
-  box-shadow: none;
   margin-bottom: 0.8em;
   &:focus {
     border-color: #333;
@@ -42,7 +40,7 @@ export const EditorPanel: React.FC<{
   open: boolean;
   close: () => void;
   languages: Array<string>;
-}> = ({ close, open, languages }) => {
+}> = ({ close, open }) => {
   const editorContext = useContext(ManifestEditorContext);
 
   return (
@@ -53,8 +51,22 @@ export const EditorPanel: React.FC<{
           wide={editorContext?.view === "fullEditor"}
         >
           <div>
-            <FlexContainerRow justify="space-between">
-              <h4>{editorContext?.selectedProperty} properties</h4>
+            <FlexContainerRow
+              justify="space-between"
+              style={{ alignItems: "center" }}
+            >
+              {editorContext?.selectedProperty === "canvas" && (
+                <Button
+                  onClick={() =>
+                    editorContext?.changeSelectedProperty("manifest")
+                  }
+                >
+                  <BackIcon />
+                </Button>
+              )}
+              <ModalHeader $color={editorContext?.selectedProperty}>
+                {editorContext?.selectedProperty} properties
+              </ModalHeader>
               <Button onClick={close}>
                 <CloseIcon />
               </Button>

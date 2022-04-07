@@ -8,7 +8,7 @@ import { VerticalDivider } from "./VerticalDivider";
 
 export const DropdownItem = styled.div`
    {
-    padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+    padding: ${(props: any) => props.theme.padding.small || "1rem"};
     color: ${(props: any) => props.theme.color.main || "none"};
     border: none;
     cursor: pointer;
@@ -21,7 +21,7 @@ export const DropdownItem = styled.div`
   }
 `;
 
-const DropdownContainer = styled(FlexContainerColumn)`
+export const DropdownContainer = styled(FlexContainerColumn)`
   display: flex;
   position: absolute;
   background-color: ${(props: any) => props.theme.color.white || "none"};
@@ -43,7 +43,7 @@ const Outline = styled.div`
   align-items: center;
 `;
 
-const MenuContainer = styled.div`
+export const MenuContainer = styled.div`
   display: inline-block;
   justify-content: flex-end;
   align-items: center;
@@ -64,7 +64,7 @@ export const DropdownPreviewMenu: React.FC<{
   onPreviewClick,
   setSelectedPreviewIndex,
   previewUrl,
-  showAgain
+  showAgain,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -77,22 +77,21 @@ export const DropdownPreviewMenu: React.FC<{
   };
   return (
     <MenuContainer>
-        <Outline>
-          <Button
-            onClick={onPreviewClick}
-          >
-            <PreviewIcon />
-            {label}
-          </Button>
-          <Button
-            onClick={() => setOpen(!open)}
-          >
-            <VerticalDivider />
-            <DownIcon />
-          </Button>
-        </Outline>
+      <Outline>
+        <Button onClick={onPreviewClick}>
+          <PreviewIcon />
+          {label}
+        </Button>
+        <Button onClick={() => setOpen(!open)}>
+          <VerticalDivider />
+          <DownIcon />
+        </Button>
+      </Outline>
       {open ? (
-        <DropdownContainer justify={"flex-end"} onMouseLeave={() => setOpen(!open)}>
+        <DropdownContainer
+          justify={"flex-end"}
+          onMouseLeave={() => setOpen(!open)}
+        >
           {options.map((option: DropdownOption, index: number) => {
             return (
               <DropdownItem onClick={() => clickHandler(index)} key={index}>

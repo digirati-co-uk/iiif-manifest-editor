@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AddManifestModal } from "../../modals/AddManifestModal";
 import { Button } from "../../atoms/Button";
 import { useManifest } from "../../../hooks/useManifest";
@@ -7,6 +7,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../modals/ExportModal";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { NewManifestModal } from "../../modals/NewManifestModal";
+import ShellContext from "./ShellContext";
 
 export const ShellOptions: React.FC<{
   save: () => void;
@@ -15,6 +16,7 @@ export const ShellOptions: React.FC<{
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
   forceShowModal: boolean;
+  setForceShowModal: (boolean: boolean) => void;
 }> = ({
   save,
   previouslySaved,
@@ -22,7 +24,9 @@ export const ShellOptions: React.FC<{
   saveAsChoice,
   setSaveAsChoice,
   forceShowModal,
+  setForceShowModal,
 }) => {
+  const shellContext = useContext(ShellContext);
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
@@ -52,11 +56,15 @@ export const ShellOptions: React.FC<{
         <AddManifestModal
           manifest={manifest ? manifest?.id : ""}
           close={() => setaddModalVisible(false)}
+          save={save}
         />
       )}
       {(saveModalVisible || forceShowModal) && (
         <SaveModal
-          close={() => setSaveModalVisible(false)}
+          close={() => {
+            setSaveModalVisible(false);
+            setForceShowModal(false);
+          }}
           save={save}
           previouslySaved={previouslySaved}
           permalink={permalink}
@@ -69,7 +77,7 @@ export const ShellOptions: React.FC<{
       )}
 
       {newModalVisible && (
-        <NewManifestModal close={() => setNewModalVisible(false)} />
+        <NewManifestModal close={() => setNewModalVisible(false)} save={save} />
       )}
       <FlexContainer>
         <Dropdown>
@@ -77,14 +85,20 @@ export const ShellOptions: React.FC<{
           {fileOpen && (
             <DropdownContent onMouseLeave={() => setFileOpen(false)}>
               <Button
-                onClick={() => setNewModalVisible(!newModalVisible)}
+                onClick={() => {
+                  setFileOpen(false);
+                  setNewModalVisible(!newModalVisible);
+                }}
                 title="Start a new Manifest"
                 color={"#6b6b6b"}
               >
                 New
               </Button>
               <Button
-                onClick={() => setaddModalVisible(!addModalVisible)}
+                onClick={() => {
+                  setFileOpen(false);
+                  setaddModalVisible(!addModalVisible);
+                }}
                 title="Add an existing manifest to get started"
                 color={"#6b6b6b"}
               >
@@ -117,7 +131,7 @@ export const ShellOptions: React.FC<{
               <Button
                 onClick={() => {
                   setHelpOpen(!helpOpen);
-                  alert("About clicked");
+                  shellContext?.changeSelectedApplication("Splash");
                 }}
               >
                 About

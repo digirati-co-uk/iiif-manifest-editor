@@ -53,13 +53,12 @@ const handleImages = async (url: string) => {
 
   try {
     const response = await fetch(url, {
-      mode: 'cors',
-      cache: 'no-cache',
+      cache: "no-cache",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
     })
     if (!response.ok) {
       throw new Error(response.statusText)

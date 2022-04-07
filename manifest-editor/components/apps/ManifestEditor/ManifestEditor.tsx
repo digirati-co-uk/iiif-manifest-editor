@@ -4,9 +4,10 @@ import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Editor } from "../../atoms/Editor";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ExpandTab } from "../../atoms/ExpandTab";
-import { ContentSelector } from "../../layout/ContentSelector";
+import { ThumbnailStripView } from "../../layout/ThumbnailStripView";
 import { EditorPanel } from "../../layout/EditorPanel";
 import { Toolbar } from "../../layout/Toolbar";
+import { NewCanvasModal } from "../../modals/NewCanvasModal";
 import { CanvasView } from "../../organisms/CanvasView";
 import { GridView } from "../../organisms/GridView";
 import ManifestEditorContext from "./ManifestEditorContext";
@@ -18,8 +19,8 @@ export const ManifestEditor: React.FC<{
 }> = ({ defaultLanguages, behaviorProperties }) => {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
-
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
+  const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);
   const [view, setView] =
     useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("grid");
   const changeSelectedProperty = (property: string, panelNum?: number) => {
@@ -29,6 +30,8 @@ export const ManifestEditor: React.FC<{
     }
   };
 
+  const [thumbnailSize, setThumbnailSize] = useState({ w: 256, h: 256 });
+
   const editorSettings = {
     selectedProperty,
     changeSelectedProperty,
@@ -37,16 +40,23 @@ export const ManifestEditor: React.FC<{
     languages: defaultLanguages,
     behaviorProperties: behaviorProperties,
     selectedPanel,
+    addCanvasModalOpen,
+    setAddCanvasModalOpen,
+    thumbnailSize,
+    setThumbnailSize,
   };
 
   const manifest = useManifest();
 
   return (
     <>
+      {addCanvasModalOpen && (
+        <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />
+      )}
       {!manifest ? (
         <WarningMessage>
           Oops, it looks like you don't have a manifest loaded. Click File, then
-          open to get started.
+          new to get started.
         </WarningMessage>
       ) : (
         <ManifestEditorContext.Provider value={editorSettings}>
@@ -60,7 +70,7 @@ export const ManifestEditor: React.FC<{
           <Editor>
             {view !== "grid" && view !== "fullEditor" && (
               <ErrorBoundary>
-                <ContentSelector view={view} />
+                <ThumbnailStripView view={view} />
                 <ExpandTab />
                 <CanvasView />
                 <EditorPanel

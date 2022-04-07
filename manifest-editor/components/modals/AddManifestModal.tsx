@@ -12,11 +12,13 @@ import { HorizontalDivider } from "../atoms/HorizontalDivider";
 import ShellContext from "../apps/Shell/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { RecentFiles } from "../widgets/RecentFiles";
+import { WarningMessage } from "../atoms/callouts/WarningMessage";
 
 export const AddManifestModal: React.FC<{
   manifest: string;
   close: any;
-}> = ({ manifest, close }) => {
+  save: () => void;
+}> = ({ manifest, close, save }) => {
   const [inputValue, setInputValue] = useState(manifest);
   const [inputType, setInputType] = useState<string | undefined>();
   const [label, setLabel] = useState<string | undefined>();
@@ -57,7 +59,6 @@ export const AddManifestModal: React.FC<{
       (inputed && inputed.type === "Manifest") ||
       inputType === "Collection"
     ) {
-      shellContext?.setUnsavedChanges(true);
       shellContext?.changeResourceID(inputValue);
       if (
         shellContext?.selectedApplication === "ManifestEditor" &&
@@ -98,6 +99,12 @@ export const AddManifestModal: React.FC<{
             <CloseIcon />
           </Button>
         </FlexContainer>
+        {shellContext?.unsavedChanges && (
+          <WarningMessage $small={true}>
+            Adding a new manifest will mean you will loose your unsaved changes.
+            <Button onClick={() => save()}>Save Changes</Button>
+          </WarningMessage>
+        )}
         <InputLabel>
           From content
           <Input

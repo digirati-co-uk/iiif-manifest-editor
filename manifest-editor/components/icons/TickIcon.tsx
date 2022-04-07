@@ -3,7 +3,7 @@ import React from "react";
 export const TickIcon = (props: any) => (
   <svg
     width="24px"
-    height="20px"
+    height="1rem"
     viewBox="0 0 24 12"
     version="1.1"
     xmlnsXlink="http://www.w3.org/1999/xlink"

@@ -1,26 +1,55 @@
+import { useContext } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
+import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import { ErrorBoundary } from "./ErrorBoundary";
+import { RecentLabel } from "./RecentFilesWidget";
+import {
+  TemplateCardContainer,
+  TemplateCardNew,
+  TemplateCardPlaceholder,
+} from "./TemplateCard";
 
 export const ThumbnailImg = styled.img`
    {
     margin: 0.375rem;
     object-fit: contain;
     padding: 10px;
+    user-select: none;
   }
 `;
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+  const editorContext = useContext(ManifestEditorContext);
+
   const thumb = useThumbnail({
-    minWidth: 200,
-    minHeight: 200,
-    maxWidth: 300,
+    maxWidth: editorContext?.thumbnailSize?.w || 128,
+    maxHeight: editorContext?.thumbnailSize?.h || 128,
   });
 
   if (!thumb) {
-    return <div></div>;
+    return (
+      <TemplateCardContainer onClick={onClick}>
+        <TemplateCardNew>
+          <TemplateCardPlaceholder />
+        </TemplateCardNew>
+        <RecentLabel>No thumbnail</RecentLabel>
+      </TemplateCardContainer>
+    );
   }
 
   return (
-    <ThumbnailImg src={thumb.id} alt="" loading="lazy" onClick={onClick} />
+    <div key={editorContext?.thumbnailSize?.w}>
+      <ErrorBoundary>
+        <ThumbnailImg
+          src={thumb.id}
+          alt=""
+          loading="lazy"
+          onClick={onClick}
+          draggable="false"
+          height={editorContext?.thumbnailSize?.h || 256}
+        />
+      </ErrorBoundary>
+    </div>
   );
 };

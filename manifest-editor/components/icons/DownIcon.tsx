@@ -8,7 +8,7 @@ export const DownIcon: React.FC<{
     preserveAspectRatio="none"
     viewBox="0 0 24 24"
     width="20"
-    height="20"
+    height="1rem"
     style={{
       fill: "rgba(0, 0, 0, 0.6)",
       transform: `rotate(${rotate}deg)`,

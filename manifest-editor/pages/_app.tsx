@@ -3,7 +3,12 @@ import "../styles/globals.css";
 import { AppProps } from "next/app";
 import ShellContext from "../components/apps/Shell/ShellContext";
 
-import { VaultProvider, SimpleViewerProvider } from "react-iiif-vault";
+import {
+  VaultProvider,
+  useExistingVault,
+  ManifestContext,
+  CanvasContext,
+} from "react-iiif-vault";
 import { ManifestNormalized } from "@iiif/presentation-3";
 import { getManifestNomalized } from "../helpers/getManifestNormalized";
 
@@ -19,12 +24,11 @@ import { getManifestNomalized } from "../helpers/getManifestNormalized";
 // }
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
-  const [resourceID, setResouceID] = useState(
-    //   // We will want to actually implement some options/templates etc
-    //   // but just implementing with some examples for development purposes.
-    "https://digirati-co-uk.github.io/wunder.json"
-  );
+  const vault = useExistingVault();
+  const [resourceID, setResourceID] = useState("");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [manifest, setManifest] = useState<any>();
+  const [currentCanvasId, setCurrentCanvasId] = useState("");
 
   const [selectedApplication, setSelectedApplication] =
     useState<"ManifestEditor" | "Browser" | "Splash">("ManifestEditor");
@@ -61,9 +65,26 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       const manifests = JSON.parse(
         localStorage.getItem("recentManifests") || "{}"
       );
+      if (manifests.length > 0) {
+        setResourceID(manifests.splice(-1)[0].id);
+      }
       setRecentManifests(manifests);
     }
   }, []);
+
+  useEffect(() => {
+    const loadManifest = async () => {
+      if (!resourceID || resourceID === "") return;
+      const mani = await vault.loadManifest(resourceID);
+      setManifest(mani);
+      if (mani && mani.items && mani.items[0] && mani.items[0]?.id) {
+        setCurrentCanvasId(mani.items[0]?.id);
+      } else {
+        setCurrentCanvasId("");
+      }
+    };
+    loadManifest();
+  }, [resourceID]);
 
   useEffect(() => {
     // Send changes to localstorage
@@ -79,7 +100,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       try {
         const success = await fetch(id);
         if (success.ok) {
-          setResouceID(id);
+          setResourceID(id);
         }
       } catch (error) {
         console.log(
@@ -100,18 +121,21 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     updateRecentManifests,
     newTemplates: newManifestTemplates,
     setNewTemplates: setNewManifestsTemplates,
+    setCurrentCanvasId,
   };
 
   return (
-    <div key={resourceID}>
+    <div key={manifest?.id}>
       <ShellContext.Provider value={shellSettings}>
-        <VaultProvider>
-          <SimpleViewerProvider manifest={resourceID} pagingEnabled={false}>
-            <Component
-              {...pageProps}
-              selectedApplication={selectedApplication}
-            />
-          </SimpleViewerProvider>
+        <VaultProvider vault={vault}>
+          <ManifestContext manifest={manifest?.id}>
+            <CanvasContext canvas={currentCanvasId}>
+              <Component
+                {...pageProps}
+                selectedApplication={selectedApplication}
+              />
+            </CanvasContext>
+          </ManifestContext>
         </VaultProvider>
       </ShellContext.Provider>
     </div>
