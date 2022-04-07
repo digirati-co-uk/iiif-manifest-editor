@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ModalHeader = styled.h3<{ $color?: "manifest" | "canvas" }>`
+export const ModalHeader = styled.h3<{ $color?: string }>`
    {
     font-size: 18px;
     font-weight: normal;
