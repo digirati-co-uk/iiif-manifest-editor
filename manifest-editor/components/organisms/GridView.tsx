@@ -229,6 +229,7 @@ export const GridView: React.FC = () => {
         <ViewSelector />
         <HeightWidthSwitcher
           options={[
+            { h: 128, w: 128 },
             { h: 256, w: 256 },
             { h: 512, w: 512 },
             { h: 1024, w: 1024 },

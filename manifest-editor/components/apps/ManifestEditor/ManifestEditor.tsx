@@ -4,7 +4,7 @@ import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Editor } from "../../atoms/Editor";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ExpandTab } from "../../atoms/ExpandTab";
-import { ContentSelector } from "../../layout/ContentSelector";
+import { ThumbnailStripView } from "../../layout/ThumbnailStripView";
 import { EditorPanel } from "../../layout/EditorPanel";
 import { Toolbar } from "../../layout/Toolbar";
 import { NewCanvasModal } from "../../modals/NewCanvasModal";
@@ -70,7 +70,7 @@ export const ManifestEditor: React.FC<{
           <Editor>
             {view !== "grid" && view !== "fullEditor" && (
               <ErrorBoundary>
-                <ContentSelector view={view} />
+                <ThumbnailStripView view={view} />
                 <ExpandTab />
                 <CanvasView />
                 <EditorPanel

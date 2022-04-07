@@ -23,8 +23,8 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const editorContext = useContext(ManifestEditorContext);
 
   const thumb = useThumbnail({
-    maxWidth: editorContext?.thumbnailSize?.w || 256,
-    maxHeight: editorContext?.thumbnailSize?.h || 256,
+    maxWidth: editorContext?.thumbnailSize?.w || 128,
+    maxHeight: editorContext?.thumbnailSize?.h || 128,
   });
 
   if (!thumb) {

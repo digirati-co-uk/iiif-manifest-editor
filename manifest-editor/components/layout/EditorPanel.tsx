@@ -19,12 +19,11 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
 }>`
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
-  width: 1000px;
   z-index: 12;
+  width: 500px:
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
-  box-shadow: none;
   margin-bottom: 0.8em;
   &:focus {
     border-color: #333;

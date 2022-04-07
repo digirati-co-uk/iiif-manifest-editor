@@ -23,7 +23,7 @@ const ContentSelectorContainer = styled.div`
   }
 `;
 
-export const ContentSelector: React.FC<{
+export const ThumbnailStripView: React.FC<{
   view: "tree" | "thumbnails" | "grid" | "noNav" | "fullEditor";
 }> = ({ view }) => {
   return (
