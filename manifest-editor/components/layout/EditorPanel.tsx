@@ -64,7 +64,7 @@ export const EditorPanel: React.FC<{
                   <BackIcon />
                 </Button>
               )}
-              <ModalHeader>
+              <ModalHeader $color={editorContext?.selectedProperty}>
                 {editorContext?.selectedProperty} properties
               </ModalHeader>
               <Button onClick={close}>
