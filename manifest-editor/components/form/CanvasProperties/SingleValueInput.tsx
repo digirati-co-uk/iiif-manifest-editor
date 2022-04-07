@@ -4,7 +4,8 @@ import { useCanvas } from "react-iiif-vault";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
+import { FlexContainerColumn } from "../../layout/FlexContainer";
+import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 
 export const SingleValueInput: React.FC<{
@@ -50,13 +51,13 @@ export const SingleValueInput: React.FC<{
       <FlexContainerColumn style={{ overflow: "hidden" }}>
         {canvas && dispatchType === "rights" && (
           <ErrorBoundary>
-            <StringSelector
+            <RightsForm
               key={canvas.id}
               options={[
                 "http://creativecommons.org/licenses/by/4.0/",
                 "http://creativecommons.org/licenses/by-nc/4.0/",
               ]}
-              label={"Rights"}
+              label={"rights"}
               selected={
                 canvas && canvas[dispatchType] ? canvas[dispatchType] : []
               }

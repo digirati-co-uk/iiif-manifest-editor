@@ -5,6 +5,7 @@ import { useCanvas } from "react-iiif-vault";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 
 export const SingleValueInput: React.FC<{
@@ -45,7 +46,7 @@ export const SingleValueInput: React.FC<{
     <>
       {canvas && dispatchType === "rights" && (
         <ErrorBoundary>
-          <StringSelector
+          <RightsForm
             key={canvas.id}
             options={[
               "http://creativecommons.org/licenses/by/4.0/",
