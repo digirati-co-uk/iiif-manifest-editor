@@ -4,9 +4,11 @@ import {
   UseMetadataEditor,
 } from "../../hooks/useMetadataEditor";
 import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
+import { VerticalDivider } from "../atoms/VerticalDivider";
+import { CloseIcon } from "../icons/CloseIcon";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer } from "../layout/FlexContainer";
-import { Input } from "./Input";
+import { Input, InputBorderless } from "./Input";
 import { DropdownItem, StyledSelect } from "./LanguageSelector";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
@@ -39,51 +41,64 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   const allFields =
     showAllFields && firstItem ? (
       <div>
-        {fieldKeys.map((key) => {
-          const field = getFieldByKey(key);
+        {fieldKeys.length > 0 && (
+          <div
+            style={{
+              border: "1px solid lightgrey",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "5px",
+              margin: "10px 0",
+              padding: "5px",
+            }}
+          >
+            {fieldKeys.map((key) => {
+              const field = getFieldByKey(key);
 
-          // We can avoid rendering the `firstItem` twice here.
-          // This may not be desired in a popup (as in current madoc)
-          if (key === firstItem.id) {
-            return null;
-          }
+              // We can avoid rendering the `firstItem` twice here.
+              // This may not be desired in a popup (as in current madoc)
+              if (key === firstItem.id) {
+                return null;
+              }
 
-          const languages = [...availableLanguages];
-          // Even if we don't have the language in the `availableLanguages` we
-          // need to have the current language in the dropdown.
-          if (availableLanguages.indexOf(field.language) === -1) {
-            languages.push(field.language);
-          }
-          // We can also push on any fallbacks we might want always to be
-          // available.
-          if (availableLanguages.indexOf("none") === -1) {
-            languages.unshift("none");
-          }
+              const languages = [...availableLanguages];
+              // Even if we don't have the language in the `availableLanguages` we
+              // need to have the current language in the dropdown.
+              if (availableLanguages.indexOf(field.language) === -1) {
+                languages.push(field.language);
+              }
+              // We can also push on any fallbacks we might want always to be
+              // available.
+              if (availableLanguages.indexOf("none") === -1) {
+                languages.unshift("none");
+              }
 
-          return (
-            <FlexContainer key={key}>
-              <Button onClick={() => removeItem(key)}>
-                <DeleteIcon />
-              </Button>
-              <Input
-                type="text"
-                id={key}
-                value={field.value}
-                onChange={(e) => changeValue(key, e.currentTarget.value)}
-              />
-              <StyledSelect
-                value={field.language}
-                onChange={(e) => changeLanguage(key, e.currentTarget.value)}
-              >
-                {languages.map((lang) => (
-                  <DropdownItem key={lang} value={lang}>
-                    {lang}
-                  </DropdownItem>
-                ))}
-              </StyledSelect>
-            </FlexContainer>
-          );
-        })}
+              return (
+                <FlexContainer key={key}>
+                  <Button onClick={() => removeItem(key)}>
+                    <CloseIcon />
+                  </Button>
+                  <Input
+                    type="text"
+                    id={key}
+                    value={field.value}
+                    onChange={(e) => changeValue(key, e.currentTarget.value)}
+                  />
+                  <StyledSelect
+                    value={field.language}
+                    onChange={(e) => changeLanguage(key, e.currentTarget.value)}
+                  >
+                    {languages.map((lang) => (
+                      <DropdownItem key={lang} value={lang}>
+                        {lang}
+                      </DropdownItem>
+                    ))}
+                  </StyledSelect>
+                </FlexContainer>
+              );
+            })}
+          </div>
+        )}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
         <SecondaryButton onClick={() => createNewItem(true)}>
           Add new value
@@ -121,8 +136,14 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // Our default text box, we are provided with `firstItem` which is enough for
   // out on change event. For other resources we need to know what this "id" is.
   const defaultTextBox = (
-    <FlexContainer>
-      <Input
+    <FlexContainer
+      style={{
+        border: "1px solid lightgrey",
+        borderRadius: "5px",
+        padding: "none",
+      }}
+    >
+      <InputBorderless
         type="text"
         value={firstItem.field.value}
         onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
@@ -134,14 +155,21 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           saveChanges(props.index, props.property);
         }}
       />
-      <SecondaryButton
+      <Button
         onClick={() => setShowAllFields(true)}
         disabled={showAllFields}
+        style={{
+          borderLeft: "1px solid lightgrey",
+          display: "flex",
+          borderRadius: "0 5px 5px 0",
+          fontVariantNumeric: "tabular-nums",
+          whiteSpace: "nowrap",
+        }}
       >
-        {`(${firstItem.field.language}${
+        {`${firstItem.field.language}${
           fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
-        })`}
-      </SecondaryButton>
+        }`}
+      </Button>
     </FlexContainer>
   );
 

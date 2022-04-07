@@ -37,14 +37,20 @@ const GridViewContainer = styled.div`
   align-items: center;
   height: 80vh;
   .list {
-    padding: 2px;
     flex-direction: row;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: unset;
     max-height: 90vh;
     overflow-y: auto;
     width: 100%;
     flex-wrap: wrap;
+    margin: 0 -10px;
+    & > * {
+      margin: 10px;
+    }
+    a {
+      text-decoration: none;
+    }
   }
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     height: unset;
@@ -62,7 +68,21 @@ const ThumnbnailLabel = styled.small`
   max-width: 16rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: ${(props: any) => props.theme.padding.medium || "1rem"} 0 0 0;
+`;
+
+const ThumbnailContainer = styled.div<{ size?: number }>`
+  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  width: ${(props) => props.size && props.size + 50}px;
+  height: ${(props) => props.size && props.size + 50}px;
+  img {
+    max-width: 100%;
+  }
 `;
 
 const GridItem: React.FC<{
@@ -70,11 +90,12 @@ const GridItem: React.FC<{
   canvasId: string;
 }> = ({ handleChange, canvasId }) => {
   const canvas = useCanvas();
+  const editorContext = useContext(ManifestEditorContext);
 
   return (
-    <FlexContainerColumn
-      style={{ alignItems: "center", cursor: "grab" }}
+    <ThumbnailContainer
       onClick={(e: any) => handleChange(canvasId, e)}
+      size={editorContext?.thumbnailSize?.w}
     >
       <ThumnbnailLabel title={getValue(canvas?.label)}>
         {getValue(canvas?.label)}
@@ -82,7 +103,7 @@ const GridItem: React.FC<{
       <ErrorBoundary>
         <Thumbnail onClick={() => {}} />
       </ErrorBoundary>
-    </FlexContainerColumn>
+    </ThumbnailContainer>
   );
 };
 
