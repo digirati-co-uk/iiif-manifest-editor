@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ThumbnailContainer = styled.div`
+export const ThumbnailContainer = styled.div<{ size?: number }>`
    {
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
     color: ${(props: any) => props.color || "black"};
@@ -15,6 +15,13 @@ export const ThumbnailContainer = styled.div`
       flex-direction: row;
       width: 80%;
       overflow-x: auto;
+    }
+    align-items: center;
+    background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+    width: ${(props) => props.size && props.size + 50}px;
+    height: ${(props) => props.size && props.size + 50}px;
+    img {
+      max-width: 100%;
     }
   }
 `;
