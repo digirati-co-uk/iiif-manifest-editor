@@ -72,6 +72,7 @@ export const ManifestEditorToolbar: React.FC<{
             <Button
               onClick={() => {
                 setPropertiesOpen(!propertiesOpen);
+                setEditorPanelOpen(true);
                 editorContext?.changeSelectedProperty("manifest");
               }}
             >
@@ -80,6 +81,7 @@ export const ManifestEditorToolbar: React.FC<{
             <Button
               onClick={() => {
                 setPropertiesOpen(!propertiesOpen);
+                setEditorPanelOpen(true);
                 editorContext?.changeSelectedProperty("canvas");
               }}
             >
