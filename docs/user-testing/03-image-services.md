@@ -1,7 +1,7 @@
 
 ## Test 3: Creating a book from Image Services.
 
-<!-- Welcom message -->
+<!-- Welcome message -->
 The goal of this test is to create a Manifest for a book out of existing, hosted IIIF Image Services.
 
 ## Scenario
