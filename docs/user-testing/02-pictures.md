@@ -3,31 +3,27 @@
 
 The goal of this test is to create a simple manifest out of existing, hosted static images.
 
-## Materials
+## Scenario
+
+You've collected links to some interesting high resolution images and want to turn them into a IIIF Manifest to share with other people.
 
 To start, you need the URLs of 10 hi-res images, in JPEG format. These can be anything - artworks, your own photos - but they need to be on the web already.
 
 A good source might be [NASA image galleries](https://www.nasa.gov/multimedia/imagegallery/index.html), where all the images are public domain.
-For example, the from the [Apollo Image Gallery](https://www.nasa.gov/mission_pages/apollo/images.html), you might collect these 10 image URLs (you can use these ones if you want!):
 
-- https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg
-- https://www.nasa.gov/sites/default/files/as16-113-18339.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/as11-44-6552.jpeg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/hap_brennecke_1.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/as11-40-5944.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/billie_robertson_cropped_0.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/as17-134-20476orig.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/eugene_cernan.jpg
-- https://www.nasa.gov/sites/default/files/thumbnails/image/9460194568_b8f0110e97_o.jpg
-- https://www.nasa.gov/sites/default/files/images/610213main_S73-22871_full.jpg
+On this page we have collected 10 image links from the Apollo Image Gallery that you can copy into the Manifest Editor
+[https://digirati-co-uk.github.io/me-testing/02-images.html](https://digirati-co-uk.github.io/me-testing/02-images.html)
 
-The text to use is provided at each step of this test script.
+We recommend **opening this page in a separate window now**, as further links in the tasks ahead will replace it in the test browser window.
 
-## Steps
+Auto-open URL: https://digirati-co-uk.github.io/me-testing/02-images.html
+
+
+## Tasks
 
 ### 1. Open the Manifest Editor
 
-Visit [https://manifest-editor-testing.netlify.app/](https://manifest-editor-testing.netlify.app/).
+Auto-open URL: [https://manifest-editor-testing.netlify.app/](https://manifest-editor-testing.netlify.app/).
 
 If you have never been here before, you'll see a Splash Screen, which you can dismiss.
 If you have been here before, your settings might automatically load the manifest you last worked on.
@@ -55,7 +51,7 @@ Add the remaining images in the same way as before - as new canvases.
 Give your Manifest a _Label_.
 Give your Manifest a _Summary_.
 
-Pick a Rights Statement for your manifest.
+Pick a Rights Statement for your manifest from those available.
 
 Give each canvas a _Label_ (it doesn't matter what you call them).
 
@@ -79,7 +75,11 @@ Re-order the canvases. Try:
 
 Save the re-ordered manifest so that it replaces the original version with your original ordering.
 
-### 9. "Save as"
+### 9. Now change the order of the canvases again
 
-Now change the order of the canvases again, and this time save the Manifest to a new URL, so you don't overwrite the previous version.
+...and this time save the Manifest to a new URL, so you don't overwrite the previous version.
 Send both old and new URLs to a friend (or yourself) - as if to ask, "which order do you prefer?"
+
+### Final message
+
+Thank you for using the Manifest Editor!

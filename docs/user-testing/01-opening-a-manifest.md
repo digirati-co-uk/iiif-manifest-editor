@@ -1,30 +1,41 @@
 ## Test 1: Opening a Manifest
 
+This is a self-test.
+
+<!-- lb: welcome message -->
 The goal of this test is simply to open an existing Manifest and view its canvases.
 
-## Materials
+## Instructions
 
-This is the URL of a IIIF Manifest:
-https://iiif.wellcomecollection.org/presentation/b1932795x
+This is the URL of a IIIF Manifest: 
+https://iiif.wellcomecollection.org/presentation/b18725259
 
-(todo - one with canvas labels would be better)
+(You can open that URL and look at it if you want, but don't have to).
 
-### 1. Loading a Manifest
+Copy the Manifest URL above.
 
-Opening the URL above in the Manifest Editor.
+Now open the Manifest Editor, at
+https://manifest-editor-testing.netlify.app/
 
-### 2. Exploring
+Tell us what you are thinking as you look at the Manifest Editor and try the following:
 
-Trying out different views: can you get an overview of the whole manifest? A visual idea of how many _Canvases_ it contains?
+Can you open this URL in the Manifest Editor?
 
-Can you see information for an individual _Canvas_?
+Can you get a visual overview of the whole manifest?
+
+Can you see individual _canvases_ (pages)?
+
+Can you see information for an individual _canvas_?
 
 What other views are available, and what do you think they mean? What are they telling you? 
 What would you use them for?
 
-### 3. Loading a different Manifest
+**Loading a different Manifest**
 
 Outside of the Manifest Editor, find a different IIIF Manifest (from anywhere you like)
 
 Can you do the same things with this Manifest as you can with the first one?
 
+## Final message
+
+Thank you for participating. The next tests involve changing content.
