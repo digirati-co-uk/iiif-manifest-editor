@@ -30,7 +30,8 @@
     "react-i18next": "^11.15.6",
     "react-iiif-vault": "^0.9.6",
     "styled-components": "^5.3.3",
-    "universalviewer": "^4.0.0-pre.77"
+    "universalviewer": "^4.0.0-pre.77",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",
