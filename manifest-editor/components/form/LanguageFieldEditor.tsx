@@ -57,9 +57,9 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 
               // We can avoid rendering the `firstItem` twice here.
               // This may not be desired in a popup (as in current madoc)
-              if (key === firstItem.id) {
-                return null;
-              }
+              // if (key === firstItem.id) {
+              //   return null;
+              // }
 
               const languages = [...availableLanguages];
               // Even if we don't have the language in the `availableLanguages` we
@@ -101,7 +101,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
         )}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
         <SecondaryButton onClick={() => createNewItem(true)}>
-          Add new value
+          Add new {props.label}
         </SecondaryButton>
         <br />
         <FlexContainer style={{ justifyContent: "flex-end" }}>
@@ -153,6 +153,10 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           // but not after every character. Here I've set it on blur of the
           // first text box and also when you "close" the expanded view.
           saveChanges(props.index, props.property);
+        }}
+        disabled={showAllFields}
+        style={{
+          cursor: showAllFields ? "not-allowed" : "default",
         }}
       />
       <Button
