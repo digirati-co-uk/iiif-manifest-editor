@@ -309,9 +309,16 @@ export const NewCanvasModal: React.FC<{
               <HorizontalDivider />
               <FlexContainer>
                 <img
+                  src={inputValue + "/full/!200,200/0/default.jpg"}
+                  height={200}
+                />
+                <PaddingComponentLarge />
+
+                <img
                   src={"https://iiif.io/assets/images/logos/logo-sm.png"}
                   height={20}
                 />
+
                 <PaddingComponentLarge />
                 <small>
                   This image/service is {width} x {height}, the Manifest Editor
@@ -422,6 +429,11 @@ export const NewCanvasModal: React.FC<{
               </FlexContainer>
             </>
           )}
+        {/* FOR DEBUGGING STATE */}
+        {/* <Button onClick={() => console.log(JSON.stringify(vault.getState()))}>
+          {" "}
+          CLICK ME
+        </Button> */}
       </ModalContainer>
     </>
   );
