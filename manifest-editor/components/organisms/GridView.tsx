@@ -30,7 +30,7 @@ import {
   ThumbnailSize,
 } from "../atoms/HeightWidthSwitcher";
 
-const GridViewContainer = styled.div`
+export const GridViewContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,7 +62,7 @@ const GridViewContainer = styled.div`
   }
 `;
 
-const ThumnbnailLabel = styled.small`
+export const ThumnbnailLabel = styled.small`
   white-space: nowrap;
   text-align: center;
   max-width: 16rem;
@@ -70,7 +70,7 @@ const ThumnbnailLabel = styled.small`
   text-overflow: ellipsis;
 `;
 
-const ThumbnailContainer = styled.div<{ size?: number }>`
+export const ThumbnailContainer = styled.div<{ size?: number }>`
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   display: flex;
   flex-direction: column;

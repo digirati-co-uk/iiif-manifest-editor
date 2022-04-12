@@ -1,23 +1,30 @@
 import React, { useRef } from "react";
 import styled, { css } from "styled-components";
 
-export const InputLabel = styled.label<{ $caps?: boolean }>`
+export const InputLabel = styled.label<{
+  $caps?: boolean;
+}>`
   letter-spacing: -0.3px;
   font-weight: 500;
   line-height: 1.8em;
   display: flex;
-  align-items: center;
-
+  align-items: baseline;
+  width: 100%;
+  flex-direction: column;
+  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   ${(props: any) =>
     props.$caps &&
     css`
       text-transform: capitalize;
-    `}
+    `};
 `;
 
 export const MutliselectLabel = styled(InputLabel)<{
   $selected?: boolean;
 }>`
+  width: fit-content;
+  flex-direction: row;
+  align-items: center;
   padding: 0 ${(props: any) => props.theme.padding.small || "1rem"};
   margin: ${(props: any) => props.theme.padding.xs || "1rem"} ${(props: any) =>
   props.theme.padding.xs || "1rem"};

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const ThumbnailContainer = styled.div<{ size?: number }>`
    {
@@ -9,6 +9,7 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
     justify-content: flex-start;
     height: auto;
     overflow-y: auto;
+
     width: fit-content;
     @media (max-width: ${(props: any) =>
         props.theme.device.tablet || "770px"}) {
@@ -18,11 +19,16 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
     }
     align-items: center;
     background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
-    width: ${(props) => props.size && props.size + 50}px;
-    height: ${(props) => props.size && props.size + 50}px;
-    img {
-      max-width: 100%;
-    }
+    ${(props: any) =>
+      props.size &&
+      css`
+        padding: none;
+        img {
+          width: ${props.size && props.size}px;
+          height: ${props.size && props.size}px;
+          max-width: 100%;
+        }
+      `};
   }
 `;
 
