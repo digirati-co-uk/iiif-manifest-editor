@@ -9,7 +9,12 @@ export const InformationLink: React.FC<{ guidanceReference: string }> = ({
     <>
       <HorizontalDivider />
       <FlexContainer style={{ justifyContent: "flex-end" }}>
-        <a href={guidanceReference} target={"_blank"} rel="noopener noreferrer">
+        <a
+          aria-label="IIIF DOCUMENTATION"
+          href={guidanceReference}
+          target={"_blank"}
+          rel="noopener noreferrer"
+        >
           <InfoIcon />
         </a>
       </FlexContainer>

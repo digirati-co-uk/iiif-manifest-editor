@@ -60,6 +60,7 @@ export const EditorPanel: React.FC<{
                   onClick={() =>
                     editorContext?.changeSelectedProperty("manifest")
                   }
+                  aria-label="go back to manifest properties"
                 >
                   <BackIcon />
                 </Button>
@@ -67,7 +68,7 @@ export const EditorPanel: React.FC<{
               <ModalHeader $color={editorContext?.selectedProperty}>
                 {editorContext?.selectedProperty} properties
               </ModalHeader>
-              <Button onClick={close}>
+              <Button aria-label="close-panel" onClick={close}>
                 <CloseIcon />
               </Button>
             </FlexContainerRow>
@@ -92,6 +93,7 @@ export const EditorPanel: React.FC<{
               <Button
                 onClick={() => editorContext?.setView("tree")}
                 title="close"
+                aria-label="collapse fullscreen"
               >
                 <CollapseFullscreen />
               </Button>
@@ -99,6 +101,7 @@ export const EditorPanel: React.FC<{
               <Button
                 onClick={() => editorContext?.setView("fullEditor")}
                 title="Expand to full"
+                aria-label="expand to fullscreen"
               >
                 <OpenFullscreen />
               </Button>

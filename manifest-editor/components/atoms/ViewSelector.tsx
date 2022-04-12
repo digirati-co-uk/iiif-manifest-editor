@@ -13,18 +13,21 @@ export const ViewSelector: React.FC = () => {
       <Button
         onClick={() => editorContext?.setView("tree")}
         title="Switch to outline view"
+        aria-label="Switch to outline view"
       >
         <TreeIcon />
       </Button>
       <Button
         onClick={() => editorContext?.setView("grid")}
         title="Switch to thumbnails only"
+        aria-label="Switch to thumbnails only"
       >
         <GridIcon />
       </Button>
       <Button
         onClick={() => editorContext?.setView("thumbnails")}
         title="Switch to thumbnails with canvas"
+        aria-label="Switch to thumbnails with canvas"
       >
         <ThumbnailStripIcon />
       </Button>

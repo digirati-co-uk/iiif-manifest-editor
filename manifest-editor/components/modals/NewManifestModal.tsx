@@ -23,7 +23,7 @@ export const NewManifestModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>New Manifest</ModalHeader>
-          <Button onClick={close}>
+          <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
@@ -31,7 +31,9 @@ export const NewManifestModal: React.FC<{
           <WarningMessage $small={true}>
             Loading a manifest from a template will mean you will loose your
             unsaved changes.
-            <Button onClick={() => save()}>Save Changes</Button>
+            <Button aria-label="save changes" onClick={() => save()}>
+              Save Changes
+            </Button>
           </WarningMessage>
         )}
         <NewTemplates

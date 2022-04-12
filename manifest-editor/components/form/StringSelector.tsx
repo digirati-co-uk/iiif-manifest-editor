@@ -1,4 +1,3 @@
-import { ButtonGroup } from "../atoms/Button";
 import { InformationLink } from "../atoms/InformationLink";
 import { AddIcon } from "../icons/AddIcon";
 import { CheckIcon } from "../icons/CheckIcon";

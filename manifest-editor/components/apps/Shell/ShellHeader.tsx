@@ -72,11 +72,15 @@ export const ShellHeader: React.FC<{
         <FlexContainer>
           <Button
             onClick={() => shellContext?.changeSelectedApplication("Splash")}
+            aria-label="Go to the homepage"
           >
             <ManifestEditorIcon />
           </Button>
           <Dropdown>
-            <Button onClick={() => setAppMenuOpen(!appMenuOpen)}>
+            <Button
+              aria-label="See app choices"
+              onClick={() => setAppMenuOpen(!appMenuOpen)}
+            >
               <DownIcon />
             </Button>
             {appMenuOpen && (
@@ -87,6 +91,7 @@ export const ShellHeader: React.FC<{
                     shellContext?.changeSelectedApplication("ManifestEditor");
                   }}
                   title="Open the Manifest Editor"
+                  aria-label="Open the manifest editor"
                 >
                   Manifest Editor
                 </Button>
@@ -96,6 +101,7 @@ export const ShellHeader: React.FC<{
                     shellContext?.changeSelectedApplication("Browser");
                   }}
                   title="Open the IIIF Browser"
+                  aria-label="Open the IIIF browser"
                 >
                   IIIF Browser
                 </Button>

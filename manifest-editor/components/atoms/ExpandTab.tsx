@@ -31,6 +31,7 @@ export const ExpandTab: React.FC = () => {
     <ExpandTabContainer>
       {editorContext?.view === "noNav" ? (
         <SmallButton
+          aria-label="expand"
           onClick={() => editorContext?.setView("tree")}
           title="Navigation panel"
         >
@@ -38,6 +39,7 @@ export const ExpandTab: React.FC = () => {
         </SmallButton>
       ) : (
         <SmallButton
+          aria-label="close"
           onClick={() => editorContext?.setView("noNav")}
           title="Close navigation panel"
         >

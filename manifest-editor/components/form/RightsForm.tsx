@@ -36,7 +36,7 @@ export const RightsForm: React.FC<{
           onClick={() => setOpen(!open)}
         >
           <div>{selected}</div>
-          <Button onClick={() => setOpen(!open)}>
+          <Button aria-label="open/close" onClick={() => setOpen(!open)}>
             <VerticalDivider />
             <DownIcon />
           </Button>

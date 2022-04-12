@@ -76,7 +76,7 @@ export const ExportModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>Export Manifest</ModalHeader>
-          <Button onClick={close}>
+          <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
@@ -134,6 +134,7 @@ export const ExportModal: React.FC<{
 
         <FlexContainer style={{ justifyContent: "flex-end" }}>
           <CalltoButton
+            aria-label="copy"
             onClick={() => {
               copyToClipboard();
             }}
@@ -144,6 +145,7 @@ export const ExportModal: React.FC<{
             onClick={(e: any) => {
               exportToJson(e);
             }}
+            aria-label="download json"
           >
             DOWNLOAD JSON
           </CalltoButton>

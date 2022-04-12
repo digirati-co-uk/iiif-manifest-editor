@@ -26,7 +26,7 @@ export const PreviewModal: React.FC<{
         <FlexContainerColumn justify={"flex-start"}>
           <FlexContainerRow justify={"space-between"}>
             <h3>Preview IIIF Manifest</h3>
-            <Button onClick={close}>
+            <Button aria-label="close" onClick={close}>
               <CloseIcon />
             </Button>
           </FlexContainerRow>
@@ -47,7 +47,7 @@ export const PreviewModal: React.FC<{
               />
               <span>Don't show this again</span>
             </InputLabel>
-            <CalltoButton>
+            <CalltoButton aria-label="preview">
               <Link
                 href={link}
                 target={"_blank"}

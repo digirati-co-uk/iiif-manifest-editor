@@ -193,7 +193,7 @@ export const NewCanvasModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>Add canvas</ModalHeader>
-          <Button onClick={close}>
+          <Button aria="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
@@ -209,7 +209,7 @@ export const NewCanvasModal: React.FC<{
                   if (e.key === "Enter") runAnalyser();
                 }}
               />
-              <Button onClick={() => runAnalyser()}>
+              <Button aria-label="validate url" onClick={() => runAnalyser()}>
                 <TickIcon />
               </Button>
             </FlexContainer>
@@ -340,12 +340,15 @@ export const NewCanvasModal: React.FC<{
             Empty Canvas
           </InputLabel>
           <FlexContainer>
-            <SecondaryButton onClick={() => close()}>CANCEL</SecondaryButton>
+            <SecondaryButton aria-label="cancel" onClick={() => close()}>
+              CANCEL
+            </SecondaryButton>
             {emptyCanvas && (
               <CalltoButton
                 // @ts-ignore
                 disabled={!(width && height)}
                 onClick={() => handleChange()}
+                aria-label="add"
               >
                 ADD
               </CalltoButton>
@@ -354,6 +357,7 @@ export const NewCanvasModal: React.FC<{
               <CalltoButton
                 disabled={!inputValue && inputType === "ImageService"}
                 onClick={() => handleChange()}
+                aria-label="add"
               >
                 ADD
               </CalltoButton>
@@ -387,6 +391,7 @@ export const NewCanvasModal: React.FC<{
                   Browser App?
                 </small>
                 <Button
+                  aria-label="launch application"
                   onClick={() => {
                     shellContext?.changeSelectedApplication("Browser");
                     if (inputValue) {
@@ -416,6 +421,7 @@ export const NewCanvasModal: React.FC<{
                   manifest from this resource?
                 </small>
                 <Button
+                  aria-label="load-manifest"
                   onClick={() => {
                     if (inputValue) {
                       shellContext?.changeResourceID(inputValue);

@@ -95,14 +95,16 @@ export const AddManifestModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>Add content</ModalHeader>
-          <Button onClick={close}>
+          <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
         {shellContext?.unsavedChanges && (
           <WarningMessage $small={true}>
             Adding a new manifest will mean you will loose your unsaved changes.
-            <Button onClick={() => save()}>Save Changes</Button>
+            <Button aria-label="save changes" onClick={() => save()}>
+              Save Changes
+            </Button>
           </WarningMessage>
         )}
         <InputLabel>
@@ -113,12 +115,16 @@ export const AddManifestModal: React.FC<{
           />
         </InputLabel>
         <small>
-          Any image, IIIF Image Service, IIIF Manifest or IIIF Collection.
+          <i>Any IIIF Manifest.</i>
         </small>
         <HorizontalDivider />
         <FlexContainer style={{ justifyContent: "flex-end" }}>
-          <SecondaryButton onClick={() => close()}>CANCEL</SecondaryButton>
-          <CalltoButton onClick={() => handleChange()}>ADD</CalltoButton>
+          <SecondaryButton aria-label="cancel" onClick={() => close()}>
+            CANCEL
+          </SecondaryButton>
+          <CalltoButton aria-label="add" onClick={() => handleChange()}>
+            ADD
+          </CalltoButton>
         </FlexContainer>
         <br />
         {inputType !== "Manifest" &&
@@ -151,6 +157,7 @@ export const AddManifestModal: React.FC<{
                   Browser App?
                 </small>
                 <Button
+                  aria-label="launch application"
                   onClick={() => {
                     shellContext?.changeSelectedApplication("Browser");
                     shellContext?.changeResourceID(inputValue);
@@ -174,6 +181,7 @@ export const AddManifestModal: React.FC<{
                   Manifest Editor App?
                 </small>
                 <Button
+                  aria-label="launch application"
                   onClick={() => {
                     shellContext?.changeSelectedApplication("ManifestEditor");
                     close();

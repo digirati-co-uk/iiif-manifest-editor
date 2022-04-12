@@ -81,7 +81,12 @@ export const ShellOptions: React.FC<{
       )}
       <FlexContainer>
         <Dropdown>
-          <Button onClick={() => setFileOpen(!fileOpen)}>File</Button>
+          <Button
+            aria-label="open file menu"
+            onClick={() => setFileOpen(!fileOpen)}
+          >
+            File
+          </Button>
           {fileOpen && (
             <DropdownContent onMouseLeave={() => setFileOpen(false)}>
               <Button
@@ -89,6 +94,7 @@ export const ShellOptions: React.FC<{
                   setFileOpen(false);
                   setNewModalVisible(!newModalVisible);
                 }}
+                aria-label="Start a new manifest"
                 title="Start a new Manifest"
                 color={"#6b6b6b"}
               >
@@ -99,13 +105,17 @@ export const ShellOptions: React.FC<{
                   setFileOpen(false);
                   setaddModalVisible(!addModalVisible);
                 }}
-                title="Add an existing manifest to get started"
+                aria-label="Load an existing manifest"
+                title="Load an existing manifest"
                 color={"#6b6b6b"}
               >
                 Open
               </Button>
-              <Button onClick={() => saveClickHandler()}>Save</Button>
+              <Button aria-label="Save" onClick={() => saveClickHandler()}>
+                Save
+              </Button>
               <Button
+                aria-label="Save as"
                 onClick={() => {
                   setFileOpen(!fileOpen);
                   setSaveModalVisible(!saveModalVisible);
@@ -118,6 +128,7 @@ export const ShellOptions: React.FC<{
                   setFileOpen(!fileOpen);
                   setExportModalVisible(!exportModalVisible);
                 }}
+                aria-label="Export"
               >
                 Export
               </Button>
@@ -125,10 +136,13 @@ export const ShellOptions: React.FC<{
           )}
         </Dropdown>
         <Dropdown onMouseLeave={() => setHelpOpen(false)}>
-          <Button onClick={() => setHelpOpen(!helpOpen)}>Help</Button>
+          <Button aria-label="Help menu" onClick={() => setHelpOpen(!helpOpen)}>
+            Help
+          </Button>
           {helpOpen && (
             <DropdownContent>
               <Button
+                aria-label="About"
                 onClick={() => {
                   setHelpOpen(!helpOpen);
                   shellContext?.changeSelectedApplication("Splash");

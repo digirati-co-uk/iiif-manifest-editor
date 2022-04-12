@@ -76,7 +76,10 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                               property={"value"}
                             />
                           </FlexContainerColumn>
-                          <Button onClick={() => removeItem(index)}>
+                          <Button
+                            aria-label="delete"
+                            onClick={() => removeItem(index)}
+                          >
                             <DeleteIcon />
                           </Button>
                         </FlexContainer>

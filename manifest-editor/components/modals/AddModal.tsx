@@ -27,8 +27,10 @@ export const AddModal: React.FC<{
           placeholder={manifest}
           onChange={(e: any) => setInputValue(e.target.value)}
         />
-        <Button onClick={() => onChange()}>Load Manifest</Button>
-        <Button onClick={close}>
+        <Button aria-label="load manifest" onClick={() => onChange()}>
+          Load Manifest
+        </Button>
+        <Button aria-label="close icon" onClick={close}>
           <CloseIcon />
         </Button>
       </ModalContainer>

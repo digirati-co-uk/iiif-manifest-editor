@@ -32,7 +32,7 @@ export const SaveModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>Permalink</ModalHeader>
-          <Button onClick={close}>
+          <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
@@ -62,8 +62,11 @@ export const SaveModal: React.FC<{
         <HorizontalDivider />
 
         <FlexContainer style={{ justifyContent: "flex-end" }}>
-          <SecondaryButton onClick={() => close()}>CANCEL</SecondaryButton>
+          <SecondaryButton aria-label="cancel" onClick={() => close()}>
+            CANCEL
+          </SecondaryButton>
           <CalltoButton
+            aria-label="save"
             onClick={() => {
               save();
               setSaveClicked(true);

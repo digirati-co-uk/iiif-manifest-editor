@@ -125,7 +125,10 @@ export const ExternalResource: React.FC<{
                                 />
                               )}
                             </FlexContainerColumn>
-                            <Button onClick={() => removeItem(index)}>
+                            <Button
+                              aria-label="delete"
+                              onClick={() => removeItem(index)}
+                            >
                               <DeleteIcon />
                             </Button>
                           </FlexContainer>
@@ -142,7 +145,10 @@ export const ExternalResource: React.FC<{
         </Droppable>
       </DragDropContext>
       <FlexContainer>
-        <SecondaryButton onClick={() => addNew()}>
+        <SecondaryButton
+          onClick={() => addNew()}
+          aria-label={`add new ${dispatchType}`}
+        >
           Add new {dispatchType}
         </SecondaryButton>
       </FlexContainer>

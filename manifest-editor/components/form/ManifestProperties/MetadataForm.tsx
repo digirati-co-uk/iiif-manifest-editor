@@ -89,7 +89,10 @@ export const MetadataForm: React.FC<{}> = () => {
         <InformationLink guidanceReference={guidanceReference} />
       )}
       <FlexContainer style={{ justifyContent: "center" }}>
-        <CalltoButton onClick={() => addNew()}>
+        <CalltoButton
+          aria-label="add new metadata pair"
+          onClick={() => addNew()}
+        >
           + Add new metadata pair
         </CalltoButton>
       </FlexContainer>

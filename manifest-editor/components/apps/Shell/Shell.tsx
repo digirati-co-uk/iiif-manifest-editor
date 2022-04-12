@@ -156,6 +156,7 @@ export const Shell: React.FC<{
               onClick={
                 previouslySaved ? () => save() : () => setShowSaveModal(true)
               }
+              aria-label="Save changes"
             >
               Save Changes
             </Button>

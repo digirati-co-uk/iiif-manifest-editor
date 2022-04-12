@@ -78,11 +78,11 @@ export const DropdownPreviewMenu: React.FC<{
   return (
     <MenuContainer>
       <Outline>
-        <Button onClick={onPreviewClick}>
+        <Button aria-label="Preview" onClick={onPreviewClick}>
           <PreviewIcon />
           {label}
         </Button>
-        <Button onClick={() => setOpen(!open)}>
+        <Button aria-label="Preview choices" onClick={() => setOpen(!open)}>
           <VerticalDivider />
           <DownIcon />
         </Button>
@@ -94,11 +94,20 @@ export const DropdownPreviewMenu: React.FC<{
         >
           {options.map((option: DropdownOption, index: number) => {
             return (
-              <DropdownItem onClick={() => clickHandler(index)} key={index}>
+              <DropdownItem
+                aria-label="Open the preview"
+                onClick={() => clickHandler(index)}
+                key={index}
+              >
                 {showAgain ? (
                   option.label
                 ) : (
-                  <a href={previewUrl} target={"_blank"} rel="noreferrer">
+                  <a
+                    href={previewUrl}
+                    target={"_blank"}
+                    rel="noreferrer"
+                    aria-label="Open the preview"
+                  >
                     {option.label}
                   </a>
                 )}

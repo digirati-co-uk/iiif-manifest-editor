@@ -1,5 +1,4 @@
 import { useContext, useEffect } from "react";
-import { CalltoButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import ShellContext from "../Shell/ShellContext";
 import { RecentFiles } from "../../widgets/RecentFiles";

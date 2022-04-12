@@ -3,10 +3,8 @@ import {
   useMetadataEditor,
   UseMetadataEditor,
 } from "../../hooks/useMetadataEditor";
-import { Button, CalltoButton, SecondaryButton } from "../atoms/Button";
-import { VerticalDivider } from "../atoms/VerticalDivider";
+import { Button, SecondaryButton } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
-import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import { Input, InputBorderless } from "./Input";
 import { DropdownItem, StyledSelect } from "./LanguageSelector";
@@ -75,7 +73,11 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 
               return (
                 <FlexContainer key={key}>
-                  <Button onClick={() => removeItem(key)}>
+                  <Button
+                    aria-label="remove"
+                    onClick={() => removeItem(key)}
+                    title="delete"
+                  >
                     <CloseIcon />
                   </Button>
                   <Input
@@ -100,7 +102,10 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           </div>
         )}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-        <SecondaryButton onClick={() => createNewItem(true)}>
+        <SecondaryButton
+          aria-label="create-new"
+          onClick={() => createNewItem(true)}
+        >
           Add new {props.label}
         </SecondaryButton>
         <br />
@@ -110,6 +115,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
               setShowAllFields(false);
               saveChanges(props.index, props.property);
             }}
+            aria-label="save"
           >
             Save changes to {props.label}
           </SecondaryButton>
@@ -126,7 +132,10 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     return (
       <div>
         {props.label}
-        <SecondaryButton onClick={() => createNewItem(false)}>
+        <SecondaryButton
+          aria-label="create"
+          onClick={() => createNewItem(false)}
+        >
           Create
         </SecondaryButton>
       </div>
@@ -136,45 +145,50 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // Our default text box, we are provided with `firstItem` which is enough for
   // out on change event. For other resources we need to know what this "id" is.
   const defaultTextBox = (
-    <FlexContainer
-      style={{
-        border: "1px solid lightgrey",
-        borderRadius: "5px",
-        padding: "none",
-      }}
-    >
-      <InputBorderless
-        type="text"
-        value={firstItem.field.value}
-        onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
-        onBlur={() => {
-          // Saving is slightly intensive, this is a sort of semi-controlled
-          // input, we will call onChange to the component using this component
-          // but not after every character. Here I've set it on blur of the
-          // first text box and also when you "close" the expanded view.
-          saveChanges(props.index, props.property);
-        }}
-        disabled={showAllFields}
+    <label>
+      <FlexContainer
         style={{
-          cursor: showAllFields ? "not-allowed" : "default",
-        }}
-      />
-      <Button
-        onClick={() => setShowAllFields(true)}
-        disabled={showAllFields}
-        style={{
-          borderLeft: "1px solid lightgrey",
-          display: "flex",
-          borderRadius: "0 5px 5px 0",
-          fontVariantNumeric: "tabular-nums",
-          whiteSpace: "nowrap",
+          border: "1px solid lightgrey",
+          borderRadius: "5px",
+          padding: "none",
         }}
       >
-        {`${firstItem.field.language}${
-          fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
-        }`}
-      </Button>
-    </FlexContainer>
+        <InputBorderless
+          type="text"
+          value={firstItem.field.value}
+          onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
+          onBlur={() => {
+            // Saving is slightly intensive, this is a sort of semi-controlled
+            // input, we will call onChange to the component using this component
+            // but not after every character. Here I've set it on blur of the
+            // first text box and also when you "close" the expanded view.
+            saveChanges(props.index, props.property);
+          }}
+          disabled={showAllFields}
+          style={{
+            cursor: showAllFields ? "not-allowed" : "default",
+          }}
+        />
+        <Button
+          onClick={() => setShowAllFields(true)}
+          disabled={showAllFields}
+          aria-label={`${firstItem.field.language}${
+            fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
+          }`}
+          style={{
+            borderLeft: "1px solid lightgrey",
+            display: "flex",
+            borderRadius: "0 5px 5px 0",
+            fontVariantNumeric: "tabular-nums",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {`${firstItem.field.language}${
+            fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""
+          }`}
+        </Button>
+      </FlexContainer>
+    </label>
   );
 
   return (

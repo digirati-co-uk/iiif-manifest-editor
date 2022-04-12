@@ -18,6 +18,7 @@ export const ManifestEditorToolbar: React.FC<{
         // This will change but just to get some MVP
         onClick={() => editorContext?.setAddCanvasModalOpen(true)}
         title="Add a new canvas"
+        aria-label="Add a new canvas"
       >
         <AddIcon />
       </Button>
@@ -25,6 +26,7 @@ export const ManifestEditorToolbar: React.FC<{
         // This will change but just to get some MVP
         onClick={() => setEditorPanelOpen(true)}
         title="Open editor panel"
+        aria-label="Open editor panel"
       >
         Open editor panel
       </Button>
@@ -38,6 +40,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setViewOpen(!viewOpen);
                 editorContext?.setView("tree");
               }}
+              aria-label="Change view to outline"
             >
               Outline View
               {editorContext?.view === "tree" && <CheckIcon />}
@@ -47,6 +50,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setViewOpen(!viewOpen);
                 editorContext?.setView("thumbnails");
               }}
+              aria-label="Change view to thumbnails with canvas"
             >
               Thumbnails with Canvas
               {editorContext?.view === "thumbnails" && <CheckIcon />}
@@ -56,6 +60,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setViewOpen(!viewOpen);
                 editorContext?.setView("grid");
               }}
+              aria-label="Change view to thumbnails only"
             >
               Thumbnails Only
               {editorContext?.view === "grid" && <CheckIcon />}
@@ -75,6 +80,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setEditorPanelOpen(true);
                 editorContext?.changeSelectedProperty("manifest");
               }}
+              aria-label="Edit manifest properties"
             >
               Edit Manifest Properties
             </Button>
@@ -84,6 +90,7 @@ export const ManifestEditorToolbar: React.FC<{
                 setEditorPanelOpen(true);
                 editorContext?.changeSelectedProperty("canvas");
               }}
+              aria-label="Edit canvas properties"
             >
               Edit Canvas Properties
             </Button>

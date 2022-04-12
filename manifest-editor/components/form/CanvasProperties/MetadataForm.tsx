@@ -85,7 +85,7 @@ export const MetadataForm: React.FC<{}> = () => {
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-      <CalltoButton onClick={() => addNew()}>
+      <CalltoButton onClick={() => addNew()} aria-label="new metadata property">
         Add new metadata property
       </CalltoButton>
     </>

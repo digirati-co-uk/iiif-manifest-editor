@@ -19,16 +19,19 @@ const HiddenElement = styled.textarea`
   display: none;
 `;
 
-export const CopyURL: React.FC<{manifest: string, link: string}> = ({manifest, link}) => {
-    const [copySuccess, setCopySuccess] = useState("");
-    const textAreaRef = useRef(null);
+export const CopyURL: React.FC<{ manifest: string; link: string }> = ({
+  manifest,
+  link,
+}) => {
+  const [copySuccess, setCopySuccess] = useState("");
+  const textAreaRef = useRef(null);
 
-    function copyToClipboard() {
-      if (textAreaRef && textAreaRef.current) {
-        navigator.clipboard.writeText(manifest);
-        setCopySuccess("Copied!");
-      }
+  function copyToClipboard() {
+    if (textAreaRef && textAreaRef.current) {
+      navigator.clipboard.writeText(manifest);
+      setCopySuccess("Copied!");
     }
+  }
   return (
     <FlexContainerRow
       justify={"space-between"}
@@ -40,11 +43,11 @@ export const CopyURL: React.FC<{manifest: string, link: string}> = ({manifest, l
         </a>
       </LinkBox>
       <HiddenElement ref={textAreaRef} defaultValue={manifest} />
-      <SecondaryButton onClick={() => copyToClipboard()}>
+      <SecondaryButton onClick={() => copyToClipboard()} aria-label="copy url">
         <CopyIcon />
         Copy Link
       </SecondaryButton>
       <small>{copySuccess}</small>
     </FlexContainerRow>
   );
-}
+};

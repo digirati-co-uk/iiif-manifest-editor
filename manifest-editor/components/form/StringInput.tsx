@@ -34,7 +34,9 @@ export const StringInput: React.FC<{
         onChange={(e: any) => setInputValue(e.target.value)}
       />
       <FlexContainer>
-        <CalltoButton onClick={() => setSave(1 + save)}>Save</CalltoButton>
+        <CalltoButton aria-label="save" onClick={() => setSave(1 + save)}>
+          Save
+        </CalltoButton>
       </FlexContainer>
     </>
   );
