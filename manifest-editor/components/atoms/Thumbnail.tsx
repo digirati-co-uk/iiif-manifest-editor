@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
@@ -21,11 +21,13 @@ export const ThumbnailImg = styled.img`
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const editorContext = useContext(ManifestEditorContext);
+  const [error, setError] = useState(false);
 
   const thumb = useThumbnail({
     maxWidth: editorContext?.thumbnailSize?.w || 128,
     maxHeight: editorContext?.thumbnailSize?.h || 128,
   });
+  console.log(thumb);
 
   if (!thumb) {
     return (
@@ -41,14 +43,25 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <div key={editorContext?.thumbnailSize?.w}>
       <ErrorBoundary>
-        <ThumbnailImg
-          src={thumb.id}
-          alt=""
-          loading="lazy"
-          onClick={onClick}
-          draggable="false"
-          height={editorContext?.thumbnailSize?.h || 256}
-        />
+        {!error && (
+          <ThumbnailImg
+            src={thumb.id}
+            alt=""
+            loading="lazy"
+            onClick={onClick}
+            draggable="false"
+            height={editorContext?.thumbnailSize?.h || 256}
+            onError={() => setError(true)}
+          />
+        )}
+        {error && (
+          <TemplateCardContainer onClick={onClick}>
+            <TemplateCardNew>
+              <TemplateCardPlaceholder />
+            </TemplateCardNew>
+            <RecentLabel>No thumbnail</RecentLabel>
+          </TemplateCardContainer>
+        )}
       </ErrorBoundary>
     </div>
   );
