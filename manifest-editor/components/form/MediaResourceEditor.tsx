@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "../atoms/Button";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../atoms/Thumbnail";
@@ -102,7 +103,7 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
       <ErrorBoundary>
         <InputLabel>
           service
-          {serviceID.map((service: any) => {
+          {serviceID?.map((service: any) => {
             return (
               <Input
                 type="string"
