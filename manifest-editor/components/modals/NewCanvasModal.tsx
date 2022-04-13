@@ -109,16 +109,14 @@ export const NewCanvasModal: React.FC<{
           can.createAnnotation(`${newCanvasID}/painting`, {
             id: `${newCanvasID}/painting`,
             type: "Annotation",
-            motivation: ["painting"],
-            body: [
-              {
-                id: inputValue,
-                type: "Image",
-                format: inputed?.format,
-                height: inputed?.height,
-                width: inputed?.width,
-              },
-            ],
+            motivation: "painting",
+            body: {
+              id: inputValue,
+              type: "Image",
+              format: inputed?.format,
+              height: inputed?.height,
+              width: inputed?.width,
+            },
           });
         });
       });
@@ -156,17 +154,15 @@ export const NewCanvasModal: React.FC<{
           can.createAnnotation(`${newCanvasID}/painting`, {
             id: `${newCanvasID}/painting`,
             type: "Annotation",
-            motivation: ["painting"],
-            body: [
-              {
-                id: inputValue,
-                type: "Image",
-                format: inputed?.format,
-                height: inputed?.height,
-                width: inputed?.width,
-                service: [inputed],
-              },
-            ],
+            motivation: "painting",
+            body: {
+              id: inputValue,
+              type: "Image",
+              format: inputed?.format,
+              height: inputed?.height,
+              width: inputed?.width,
+              service: [inputed],
+            },
           });
         });
       });
