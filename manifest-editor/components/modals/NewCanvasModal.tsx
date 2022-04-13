@@ -84,25 +84,8 @@ export const NewCanvasModal: React.FC<{
       setImageServiceJSON(inputed);
     }
     if (inputed && inputed.type === "Image" && !emptyCanvas && manifest) {
-      if (inputValue) {
-        vault.dispatch(
-          importEntities({
-            entities: {
-              [newCanvasID]: {
-                [inputValue]: {
-                  id: inputValue,
-                  type: "Image",
-                  format: inputed?.format,
-                  height: inputed?.height,
-                  width: inputed?.width,
-                },
-              },
-            },
-          })
-        );
-      }
       const builder = new IIIFBuilder(vault);
-      builder.editManifest(manifest.id, (mani) => {
+      builder.editManifest(manifest.id, (mani: any) => {
         mani.createCanvas(newCanvasID, (can: any) => {
           can.height = inputed?.height;
           can.width = inputed?.width;
@@ -129,23 +112,6 @@ export const NewCanvasModal: React.FC<{
       !emptyCanvas &&
       manifest
     ) {
-      if (inputValue) {
-        vault.dispatch(
-          importEntities({
-            entities: {
-              [newCanvasID]: {
-                [inputValue]: {
-                  id: inputValue,
-                  type: "Image",
-                  format: inputed?.format,
-                  height: inputed?.height,
-                  width: inputed?.width,
-                },
-              },
-            },
-          })
-        );
-      }
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (can: any) => {
@@ -155,14 +121,16 @@ export const NewCanvasModal: React.FC<{
             id: `${newCanvasID}/painting`,
             type: "Annotation",
             motivation: "painting",
-            body: {
-              id: inputValue,
-              type: "Image",
-              format: inputed?.format,
-              height: inputed?.height,
-              width: inputed?.width,
-              service: [inputed],
-            },
+            body: [
+              {
+                id: inputValue,
+                type: "Image",
+                format: inputed?.format,
+                height: inputed?.height,
+                width: inputed?.width,
+                service: [inputed],
+              },
+            ],
           });
         });
       });

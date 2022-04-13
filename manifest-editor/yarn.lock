@@ -1534,7 +1534,7 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@^1.0.2", "@iiif/parser@^1.0.4", "@iiif/parser@^1.0.6":
+"@iiif/parser@1.x", "@iiif/parser@^1.0.2", "@iiif/parser@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.6.tgz#0f5252b94ba586aade3d6558b5a649fa265fe217"
   integrity sha512-bIdmqe3JwPopL7qEeZk193YNkGaEkkfSR9i/+B7I3MVXkKGE6G80tOWhfQRs/EY3fMzOS8OUFxzAu+aS6CXvEg==
@@ -1548,7 +1548,7 @@
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
   integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
 
-"@iiif/presentation-3@*", "@iiif/presentation-3@^1.0.4":
+"@iiif/presentation-3@*", "@iiif/presentation-3@1.x", "@iiif/presentation-3@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.4.tgz#9433c38c6a26e95ef94d1f9e0232962398611d70"
   integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
@@ -1567,7 +1567,7 @@
     "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
 
-"@iiif/vault@^0.9.11", "@iiif/vault@^0.9.16", "@iiif/vault@^0.9.17", "@iiif/vault@^0.9.8":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.16", "@iiif/vault@^0.9.17", "@iiif/vault@^0.9.8":
   version "0.9.17"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.17.tgz#9ea201d027cded42d3cee02825def1bc815c115e"
   integrity sha512-kCg9UU5p1DtRvShZxO7Q2m5BHV+YQ0ZXID4Bg3AKt3DKGGa/5EcSnJGN9l45EYWrql1co3v77tjtWY7/BXYBJw==
@@ -7921,14 +7921,14 @@ ignore@^5.1.8, ignore@^5.2.0:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
   integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
 
-iiif-builder@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/iiif-builder/-/iiif-builder-1.0.2.tgz#59bb3078df28a151f0adcf6f6b5085310181297f"
-  integrity sha512-Wu28nQfU+j/AhSiP1qdFqfKrQF2aIPB5cLYE4flDjQQEmhGjBkZlb3UGdUqqDugrR3kz2i3Qts+RWta6Ph1eaQ==
+iiif-builder@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/iiif-builder/-/iiif-builder-1.0.3.tgz#26d95676eb6bdedb1093ece041086dcc5335d1b2"
+  integrity sha512-ydMq6U6Un3FLJj9l2EMQp/615gEQsEsyR6HHOIv67If3jsazSjf9TjPxLbjbiyOPVq+WqaAuODTgKoAqDKZAsA==
   dependencies:
-    "@iiif/parser" "^1.0.4"
-    "@iiif/presentation-3" "^1.0.4"
-    "@iiif/vault" "^0.9.11"
+    "@iiif/parser" "1.x"
+    "@iiif/presentation-3" "1.x"
+    "@iiif/vault" "0.9.x || 1.x"
 
 image-size@~0.5.0:
   version "0.5.5"
