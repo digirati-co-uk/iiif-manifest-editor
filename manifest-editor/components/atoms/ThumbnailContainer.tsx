@@ -24,8 +24,8 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
       css`
         padding: none;
         img {
-          width: ${props.size && props.size}px;
-          height: ${props.size && props.size}px;
+          width: ${props.size}px;
+          height: ${props.size}px;
           max-width: 100%;
         }
       `};
