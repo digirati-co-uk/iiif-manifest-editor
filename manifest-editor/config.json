@@ -36,6 +36,8 @@
     "individuals",
     "continuous",
     "paged",
+    "non-paged",
+    "facing-pages",
     "multi-part",
     "together",
     "sequence",

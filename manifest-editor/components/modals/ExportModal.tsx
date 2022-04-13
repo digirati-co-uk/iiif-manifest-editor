@@ -90,6 +90,7 @@ export const ExportModal: React.FC<{
           )}
           {manifest && (
             <TabPanel
+              style={{ width: "unset" }}
               menu={[
                 {
                   label: "IIIF Presentation 3",
