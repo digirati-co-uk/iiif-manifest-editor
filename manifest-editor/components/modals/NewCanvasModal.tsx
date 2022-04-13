@@ -193,7 +193,7 @@ export const NewCanvasModal: React.FC<{
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
           <ModalHeader>Add canvas</ModalHeader>
-          <Button aria="close" onClick={close}>
+          <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
