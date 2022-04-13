@@ -88,6 +88,13 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     // Send changes to localstorage
+
+    const manifests = JSON.parse(
+      localStorage.getItem("recentManifests") || "[]"
+    );
+
+    manifests.push(recentManifests);
+
     localStorage.setItem("recentManifests", JSON.stringify(recentManifests));
   }, [recentManifests]);
 
