@@ -42,7 +42,6 @@ const GridViewContainer = styled.div`
     justify-content: unset;
     max-height: 90vh;
     overflow-y: auto;
-    width: 100%;
     flex-wrap: wrap;
     margin: 0 -10px;
     & > * {
