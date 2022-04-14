@@ -295,13 +295,13 @@ export const NewCanvasModal: React.FC<{
         <HorizontalDivider />
 
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <InputLabel>
+          <InputLabel $inline={true}>
+            Empty Canvas
             <Input
               type={"checkbox"}
               onChange={(e: any) => setEmptyCanvas(!emptyCanvas)}
               checked={emptyCanvas}
             />
-            Empty Canvas
           </InputLabel>
           <FlexContainer>
             <SecondaryButton aria-label="cancel" onClick={() => close()}>

@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 
 export const InputLabel = styled.label<{
   $caps?: boolean;
+  $inline?: boolean;
 }>`
   letter-spacing: -0.3px;
   font-weight: 500;
@@ -16,6 +17,13 @@ export const InputLabel = styled.label<{
     props.$caps &&
     css`
       text-transform: capitalize;
+    `};
+  ${(props: any) =>
+    props.$inline &&
+    css`
+      flex-direction: row;
+      align-items: center;
+      width: unset;
     `};
 `;
 
