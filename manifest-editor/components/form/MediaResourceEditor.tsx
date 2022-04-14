@@ -1,10 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../atoms/Button";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../atoms/Thumbnail";
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
 import { BackIcon } from "../icons/BackIcon";
-import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
+import {
+  FlexContainer,
+  FlexContainerColumn,
+  FlexContainerRow,
+} from "../layout/FlexContainer";
 import { InputLabel, Input } from "./Input";
 
 interface MediaResourceEditorProps {
@@ -32,6 +36,32 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
   changeThumbnailSrc,
   serviceID,
 }) => {
+  const [open, setOpen] = useState(false);
+
+  if (!open)
+    return (
+      <div>
+        <FlexContainerColumn>
+          <FlexContainerRow style={{ alignItems: "center" }}>
+            <ThumbnailContainer size={64} style={{ flexShrink: 2 }}>
+              <ThumbnailImg
+                style={{ padding: "unset" }}
+                src={thumbnailSrc}
+                alt="thumbnail"
+              />
+            </ThumbnailContainer>
+            <FlexContainerColumn>
+              <div>{thumbnailSrc}</div>
+            </FlexContainerColumn>
+          </FlexContainerRow>
+          <FlexContainerRow
+            style={{ justifyContent: "flex-end", width: "100%" }}
+          >
+            <Button onClick={() => setOpen(!open)}>Edit</Button>
+          </FlexContainerRow>
+        </FlexContainerColumn>
+      </div>
+    );
   return (
     <FlexContainerColumn
       style={{
@@ -41,9 +71,9 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
       }}
       key={thumbnailSrc}
     >
-      {backFunction && (
+      {open && (
         <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
-          <Button onClick={backFunction} aria-label="go back">
+          <Button onClick={() => setOpen(!open)} aria-label="go back">
             <BackIcon />
           </Button>
         </FlexContainer>
