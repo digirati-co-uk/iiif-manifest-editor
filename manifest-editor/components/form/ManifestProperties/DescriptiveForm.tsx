@@ -4,6 +4,7 @@ import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorConte
 import { SingleValueInput } from "./SingleValueInput";
 import { DateForm } from "./DateForm";
 import { ThumbnailForm } from "./ThumbnailForm";
+import { LogoForm } from "./LogoForm";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -31,6 +32,7 @@ export const DescriptiveForm = () => {
       <DateForm />
       {/* <div>Time</div> */}
       <ThumbnailForm />
+      <LogoForm />
     </>
   );
 };

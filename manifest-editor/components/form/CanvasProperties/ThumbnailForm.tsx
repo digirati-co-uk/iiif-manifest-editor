@@ -1,14 +1,12 @@
 import { useContext, useState } from "react";
-import { useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault";
 import { analyse } from "../../../helpers/analyse";
-import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { Button, SecondaryButton } from "../../atoms/Button";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { MenuIcon } from "../../icons/MenuIcon";
 import { InputLabel } from "../Input";
 import { MediaResourceEditor } from "../MediaResourceEditor";
 
@@ -110,16 +108,16 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
 // TODO implement delete, reorder and the services.
 export const ThumbnailForm = () => {
   const shellContext = useContext(ShellContext);
-  const manifest = useManifest();
+  const canvas = useCanvas();
   const vault = useVault();
 
   const addNew = () => {
-    const withNew = manifest ? [...manifest.thumbnail] : [];
+    const withNew = canvas ? [...canvas.thumbnail] : [];
     // @ts-ignore
     withNew.push({ id: "", height: 0, width: 0, type: "Image" });
-    if (manifest) {
+    if (canvas) {
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(manifest, "thumbnail", withNew);
+      vault.modifyEntityField(canvas, "thumbnail", withNew);
     }
   };
 
@@ -128,31 +126,29 @@ export const ThumbnailForm = () => {
     index?: number,
     property?: "id" | "height" | "width" | "type"
   ) => {
-    const newImage =
-      manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
-    if (manifest && (index || index === 0) && property) {
+    const newImage = canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
+    if (canvas && (index || index === 0) && property) {
       // @ts-ignore
       newImage[index][property] = data;
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(manifest, "thumbnail", newImage);
+      vault.modifyEntityField(canvas, "thumbnail", newImage);
     }
   };
-
   const removeItem = (index: number) => {
     const newThumbnail =
-      manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
+      canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
 
-    if (manifest && (index || index === 0)) {
+    if (canvas && (index || index === 0)) {
       newThumbnail.splice(index, 1);
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(manifest, "thumbnail", newThumbnail);
+      vault.modifyEntityField(canvas, "thumbnail", newThumbnail);
     }
   };
   return (
     <>
-      <InputLabel>thumbnail</InputLabel>
-      {manifest &&
-        manifest.thumbnail.map((thumb: any, index: number) => {
+      <InputLabel>Thumbnail</InputLabel>
+      {canvas &&
+        canvas.thumbnail.map((thumb: any, index: number) => {
           return (
             <div>
               <div
@@ -172,12 +168,12 @@ export const ThumbnailForm = () => {
                   <DeleteIcon />
                 </Button>
               </div>
-              {index !== manifest.thumbnail.length - 1 && <HorizontalDivider />}
+              {index !== canvas.thumbnail.length - 1 && <HorizontalDivider />}
             </div>
           );
         })}
       <SecondaryButton onClick={addNew}>
-        {manifest && manifest.thumbnail.length > 0 ? "Add another" : "Create"}
+        {canvas && canvas.thumbnail.length > 0 ? "Add another" : "Create"}
       </SecondaryButton>
       <InformationLink
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}

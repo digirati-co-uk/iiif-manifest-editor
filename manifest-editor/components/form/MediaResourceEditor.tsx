@@ -38,32 +38,8 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  if (!open)
-    return (
-      <div>
-        <FlexContainerColumn>
-          <FlexContainerRow style={{ alignItems: "center" }}>
-            <ThumbnailContainer size={64} style={{ flexShrink: 2 }}>
-              <ThumbnailImg
-                style={{ padding: "unset" }}
-                src={thumbnailSrc}
-                alt="thumbnail"
-              />
-            </ThumbnailContainer>
-            <FlexContainerColumn>
-              <div>{thumbnailSrc}</div>
-            </FlexContainerColumn>
-          </FlexContainerRow>
-          <FlexContainerRow
-            style={{ justifyContent: "flex-end", width: "100%" }}
-          >
-            <Button onClick={() => setOpen(!open)}>Edit</Button>
-          </FlexContainerRow>
-        </FlexContainerColumn>
-      </div>
-    );
   return (
-    <FlexContainerColumn
+    <FlexContainer
       style={{
         justifyContent: "space-between",
         alignItems: "center",
@@ -71,81 +47,82 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
       }}
       key={thumbnailSrc}
     >
-      {open && (
-        <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
-          <Button onClick={() => setOpen(!open)} aria-label="go back">
-            <BackIcon />
-          </Button>
-        </FlexContainer>
-      )}
-
-      <ThumbnailContainer size={128}>
-        <ThumbnailImg src={thumbnailSrc} alt="thumbnail" />
-      </ThumbnailContainer>
-      <ErrorBoundary>
-        <InputLabel>
-          id
-          <Input
-            type="string"
-            onBlur={(e: any) => {
-              changeThumbnailSrc(e.target.value);
-            }}
-            defaultValue={thumbnailSrc}
-          />
-        </InputLabel>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <InputLabel>
-          height
-          <Input
-            type="number"
-            onChange={(e: any) => {
-              changeHeight(e.target.value);
-            }}
-            defaultValue={height}
-          />
-        </InputLabel>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <InputLabel>
-          width
-          <Input
-            type="number"
-            onChange={(e: any) => {
-              changeWidth(e.target.value);
-            }}
-            defaultValue={width}
-          />
-        </InputLabel>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <InputLabel>
-          type
-          <Input
-            type="string"
-            onBlur={(e: any) => {
-              changeType(e.target.value);
-            }}
-            defaultValue={type}
-          />
-        </InputLabel>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <InputLabel>
-          service
-          {serviceID?.map((service: any) => {
-            return (
+      <FlexContainerColumn style={{ width: "20%" }}>
+        {thumbnailSrc && thumbnailSrc !== "" && (
+          <ThumbnailContainer size={128}>
+            <ThumbnailImg src={thumbnailSrc} alt="thumbnail" />
+          </ThumbnailContainer>
+        )}
+      </FlexContainerColumn>
+      <FlexContainerColumn style={{ width: "80%" }}>
+        <ErrorBoundary>
+          <InputLabel>
+            id
+            <Input
+              type="string"
+              onBlur={(e: any) => {
+                changeThumbnailSrc(e.target.value);
+              }}
+              defaultValue={thumbnailSrc}
+            />
+          </InputLabel>
+        </ErrorBoundary>
+        <FlexContainer>
+          <ErrorBoundary>
+            <InputLabel>
+              height
+              <Input
+                type="number"
+                onChange={(e: any) => {
+                  changeHeight(e.target.value);
+                }}
+                defaultValue={height}
+              />
+            </InputLabel>
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <InputLabel>
+              width
+              <Input
+                type="number"
+                onChange={(e: any) => {
+                  changeWidth(e.target.value);
+                }}
+                defaultValue={width}
+              />
+            </InputLabel>
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <InputLabel>
+              type
               <Input
                 type="string"
                 onBlur={(e: any) => {
-                  console.log("NOT YET IMPLIMENTED");
+                  changeType(e.target.value);
                 }}
-                defaultValue={service["@id"]}
+                defaultValue={type}
               />
-            );
-          })}
-        </InputLabel>
-      </ErrorBoundary>
-    </FlexContainerColumn>
+            </InputLabel>
+          </ErrorBoundary>
+        </FlexContainer>
+
+        <ErrorBoundary>
+          <InputLabel>
+            {serviceID &&
+              serviceID?.map((service: any) => {
+                return (
+                  <Input
+                    type="string"
+                    onBlur={(e: any) => {
+                      console.log("NOT YET IMPLIMENTED");
+                    }}
+                    defaultValue={service["@id"]}
+                  />
+                );
+              })}
+          </InputLabel>
+        </ErrorBoundary>
+      </FlexContainerColumn>
+    </FlexContainer>
   );
 };

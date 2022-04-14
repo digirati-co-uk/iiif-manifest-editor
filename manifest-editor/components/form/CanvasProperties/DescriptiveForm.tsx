@@ -4,6 +4,7 @@ import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorConte
 import { SingleValueInput } from "./SingleValueInputCanvas";
 import { MetadataEditor } from "../MetadataEditor";
 import { DateForm } from "../ManifestProperties/DateForm";
+import { ThumbnailForm } from "./ThumbnailForm";
 
 export const DescriptiveForm = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -24,8 +25,8 @@ export const DescriptiveForm = () => {
       <SingleValueInput dispatchType={"rights"} />
       <SingleValueInput dispatchType={"behavior"} />
       <DateForm />
-      {/* <div>Date</div>
-      <div>Time</div> */}
+      <ThumbnailForm />
+      {/* <div>Time</div>  */}
     </>
   );
 };

@@ -12,7 +12,6 @@ import {
 
 export const ThumbnailImg = styled.img`
    {
-    margin: 0.375rem;
     object-fit: contain;
     padding: 10px;
     user-select: none;
@@ -27,7 +26,6 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
     maxWidth: editorContext?.thumbnailSize?.w || 128,
     maxHeight: editorContext?.thumbnailSize?.h || 128,
   });
-  console.log(thumb);
 
   if (!thumb) {
     return (
