@@ -16,7 +16,7 @@ The image services you'll need are listed on this page, ready for copying:
 
 We recommend **re-opening this page in a separate window** now, as further links in the tasks ahead will replace it in the test browser window.
 
-Auto-open URL: https://digirati-co-uk.github.io/me-testing/03-image-services.html
+<!--Auto-open URL: https://digirati-co-uk.github.io/me-testing/03-image-services.html-->
 
 ## Tasks
 
@@ -94,7 +94,7 @@ Also provide the label in English:
 A modification in surgical scissors
 ```
 
-Give your Manifest a _Description_, in English.
+Give your Manifest a _Summary_, in English.
 
 ```
 By Fabrizj, Paolo, 1806-1859. 13 pages, 1 unnumbered folded plate : illustrations ; 23 cm
