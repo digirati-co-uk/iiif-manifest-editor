@@ -6,11 +6,6 @@
       "label": "Raw Manifest"
     },
     {
-      "baseUrl": "/preview?manifest=",
-      "mechanism": "previewService",
-      "label": "Hosted Universal Viewer"
-    },
-    {
       "baseUrl": "http://universalviewer.io/examples/#?manifest=",
       "mechanism": "previewService",
       "label": "Universal Viewer"
