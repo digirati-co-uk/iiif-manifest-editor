@@ -27,7 +27,6 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
     maxWidth: editorContext?.thumbnailSize?.w || 128,
     maxHeight: editorContext?.thumbnailSize?.h || 128,
   });
-  console.log(thumb);
 
   if (!thumb) {
     return (
