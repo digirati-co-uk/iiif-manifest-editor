@@ -37,7 +37,7 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   ${(props: any) =>
     props.wide &&
     css`
-      z-index: 15;
+      z-index: 14;
       width: 98%;
       position: absolute;
       background-color: white;
@@ -58,7 +58,7 @@ export const EditorPanel: React.FC<{
     <>
       {open && (
         <EditorPanelContainerOpen justify={"space-between"} wide={fullScreen}>
-          <div>
+          <div style={{ width: fullScreen ? "unset" : "40vw" }}>
             <FlexContainerRow
               justify="space-between"
               style={{ alignItems: "center" }}
