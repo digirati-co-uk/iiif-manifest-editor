@@ -40,6 +40,11 @@ export const SingleValueInput: React.FC<{
         newValue = prev;
       }
     }
+    if (manifest) {
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(manifest, dispatchType, newValue);
+    }
+
     setSelected(newValue);
   };
 

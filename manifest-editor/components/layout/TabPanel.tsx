@@ -25,10 +25,10 @@ const TabPanelOptions = styled.div`
   flex-wrap: wrap;
 `;
 
-const TabPanelContainer = styled.div`
+const TabPanelContainer = styled.div<{ $width?: any }>`
   display: flex;
   flex-direction: column;
-  width: 40vw;
+  width: 100%;
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     width: 100vw;
     border-top: 1px solid rgba(5, 42, 68, 0.2);

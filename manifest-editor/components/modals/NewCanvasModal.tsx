@@ -22,6 +22,7 @@ import {
   PaddingComponentMedium,
 } from "../atoms/PaddingComponent";
 import { TickIcon } from "../icons/TickIcon";
+import { Loading } from "../atoms/Loading";
 
 var uuid = require("uuid");
 
@@ -35,8 +36,9 @@ export const NewCanvasModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>(1000);
   const [duration, setDuration] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
-  const [newCanvasID, setNewCanvasID] = useState(`vault://${uuid.v4()}`);
+  const newCanvasID = `vault://${uuid.v4()}`;
   const [emptyCanvas, setEmptyCanvas] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const vault = useExistingVault();
 
@@ -44,6 +46,7 @@ export const NewCanvasModal: React.FC<{
   const manifest = useManifest();
 
   const runAnalyser = async () => {
+    setIsLoading(true);
     let inputed: any;
     if (inputValue) {
       inputed = await analyse(inputValue);
@@ -62,9 +65,11 @@ export const NewCanvasModal: React.FC<{
     ) {
       setImageServiceJSON(inputed);
     }
+    setIsLoading(false);
   };
 
   const handleChange = async () => {
+    setIsLoading(true);
     let inputed: any;
     if (inputValue) {
       inputed = await analyse(inputValue);
@@ -83,6 +88,7 @@ export const NewCanvasModal: React.FC<{
     ) {
       setImageServiceJSON(inputed);
     }
+    setIsLoading(false);
     if (inputed && inputed.type === "Image" && !emptyCanvas && manifest) {
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani: any) => {
@@ -183,6 +189,7 @@ export const NewCanvasModal: React.FC<{
             </small>
           </div>
         )}
+        {isLoading && <Loading />}
         {emptyCanvas && (
           <>
             <InputLabel>Canvas dimensions</InputLabel>
@@ -293,15 +300,14 @@ export const NewCanvasModal: React.FC<{
             </>
           )}
         <HorizontalDivider />
-
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <InputLabel>
+          <InputLabel $inline={true}>
+            Empty Canvas
             <Input
               type={"checkbox"}
               onChange={(e: any) => setEmptyCanvas(!emptyCanvas)}
               checked={emptyCanvas}
             />
-            Empty Canvas
           </InputLabel>
           <FlexContainer>
             <SecondaryButton aria-label="cancel" onClick={() => close()}>

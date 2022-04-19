@@ -94,7 +94,7 @@ export const AddManifestModal: React.FC<{
       <ModalBackground />
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <ModalHeader>Add content</ModalHeader>
+          <ModalHeader>Open Manifest</ModalHeader>
           <Button aria-label="close" onClick={close}>
             <CloseIcon />
           </Button>

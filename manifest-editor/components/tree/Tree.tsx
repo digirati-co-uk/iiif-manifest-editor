@@ -18,6 +18,7 @@ const TreeContainer = styled.div`
   font-size: 0.75rem;
   max-height: 100%;
   overflow-y: auto;
+  width: 350px;
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     width: 100%;
     border-right: none;
