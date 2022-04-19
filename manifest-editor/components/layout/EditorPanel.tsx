@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../atoms/Button";
 import { CloseIcon } from "../icons/CloseIcon";
@@ -6,7 +6,7 @@ import { LanguageMapInput } from "../form/LanguageMapInput";
 
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { OpenFullscreen } from "../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../icons/CollapseFullscreen";
 import { ManifestForm } from "../form/ManifestProperties/ManifestForm";
@@ -34,6 +34,16 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
     border-top: 1px solid rgba(5, 42, 68, 0.2);
     border-left: none;
   }
+  ${(props: any) =>
+    props.wide &&
+    css`
+      z-index: 15;
+      width: 98%;
+      position: absolute;
+      background-color: white;
+      height: 85vh;
+      border-left: none;
+    `};
 `;
 
 export const EditorPanel: React.FC<{
@@ -42,14 +52,12 @@ export const EditorPanel: React.FC<{
   languages: Array<string>;
 }> = ({ close, open }) => {
   const editorContext = useContext(ManifestEditorContext);
+  const [fullScreen, setFullScreen] = useState(false);
 
   return (
     <>
-      {open ? (
-        <EditorPanelContainerOpen
-          justify={"space-between"}
-          wide={editorContext?.view === "fullEditor"}
-        >
+      {open && (
+        <EditorPanelContainerOpen justify={"space-between"} wide={fullScreen}>
           <div>
             <FlexContainerRow
               justify="space-between"
@@ -74,24 +82,11 @@ export const EditorPanel: React.FC<{
             </FlexContainerRow>
             {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
             {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
-            {/*
-            {(editorContext?.selectedProperty === "type" ||
-              editorContext?.selectedProperty === "viewingDirection" ||
-              editorContext?.selectedProperty === "@context") && (
-              <StringInput dispatchType={editorContext?.selectedProperty} />
-            )} */}
-            {/* {(editorContext?.selectedProperty === "label" ||
-              editorContext?.selectedProperty === "summary") && (
-              <LanguageMapInput
-                dispatchType={editorContext?.selectedProperty}
-                languages={languages}
-              />
-            )} */}
           </div>
           <FlexContainerRow justify="flex-end">
-            {editorContext?.view === "fullEditor" ? (
+            {fullScreen ? (
               <Button
-                onClick={() => editorContext?.setView("tree")}
+                onClick={() => setFullScreen(false)}
                 title="close"
                 aria-label="collapse fullscreen"
               >
@@ -99,7 +94,7 @@ export const EditorPanel: React.FC<{
               </Button>
             ) : (
               <Button
-                onClick={() => editorContext?.setView("fullEditor")}
+                onClick={() => setFullScreen(true)}
                 title="Expand to full"
                 aria-label="expand to fullscreen"
               >
@@ -108,8 +103,6 @@ export const EditorPanel: React.FC<{
             )}
           </FlexContainerRow>
         </EditorPanelContainerOpen>
-      ) : (
-        <></>
       )}
     </>
   );
