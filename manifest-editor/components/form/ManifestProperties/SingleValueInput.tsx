@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../../hooks/useManifest";
@@ -38,6 +38,7 @@ export const SingleValueInput: React.FC<{
       } else {
         prev.push(value);
         newValue = prev;
+        if (manifest) vault.modifyEntityField(manifest, dispatchType, newValue);
       }
     }
     setSelected(newValue);
