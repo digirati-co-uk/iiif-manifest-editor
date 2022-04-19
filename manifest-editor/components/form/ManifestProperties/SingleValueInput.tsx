@@ -38,9 +38,13 @@ export const SingleValueInput: React.FC<{
       } else {
         prev.push(value);
         newValue = prev;
-        if (manifest) vault.modifyEntityField(manifest, dispatchType, newValue);
       }
     }
+    if (manifest) {
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(manifest, dispatchType, newValue);
+    }
+
     setSelected(newValue);
   };
 
