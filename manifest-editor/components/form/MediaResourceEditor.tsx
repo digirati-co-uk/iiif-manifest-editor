@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
-import { Button } from "../atoms/Button";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../atoms/Thumbnail";
 import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
-import { BackIcon } from "../icons/BackIcon";
-import {
-  FlexContainer,
-  FlexContainerColumn,
-  FlexContainerRow,
-} from "../layout/FlexContainer";
+import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { InputLabel, Input } from "./Input";
 
 interface MediaResourceEditorProps {
@@ -25,7 +18,6 @@ interface MediaResourceEditorProps {
 }
 
 export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
-  backFunction,
   thumbnailSrc,
   changeHeight,
   changeWidth,
@@ -36,8 +28,6 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
   changeThumbnailSrc,
   serviceID,
 }) => {
-  const [open, setOpen] = useState(false);
-
   return (
     <FlexContainer
       style={{

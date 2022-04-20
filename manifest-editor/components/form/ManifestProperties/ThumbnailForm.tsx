@@ -4,11 +4,11 @@ import { analyse } from "../../../helpers/analyse";
 import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { Button, SecondaryButton } from "../../atoms/Button";
+import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { MenuIcon } from "../../icons/MenuIcon";
 import { InputLabel } from "../Input";
 import { MediaResourceEditor } from "../MediaResourceEditor";
 
@@ -40,23 +40,28 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
 }) => {
   const [properties, setProperties] = useState<any>();
   const [message, setMessage] = useState<string>();
+  const [error, setError] = useState(false);
 
   // Triggered on blur of the URL value.
-  const analyser = async (
-    url: any,
-    idx?: number,
-    property?: "id" | "height" | "width" | "type"
-  ) => {
+  const analyser = async (url: any) => {
     // We want to clear these values if they already exist.
     setProperties(undefined);
     setMessage(undefined);
+    setError(false);
     let analysed: any;
     if (url) {
       analysed = await analyse(url);
       setProperties(analysed);
-      setMessage(
-        `The URL provided is a ${analysed.width}x${analysed.height} ${analysed.type}.`
-      );
+      if (
+        !["Image", "ContentResource", "ImageService"].includes(analysed?.type)
+      ) {
+        setError(true);
+      }
+      if (analysed) {
+        setMessage(
+          `The URL provided is a ${analysed.width}x${analysed.height} ${analysed.type}.`
+        );
+      }
       // Regardless we want to update the vault with the new value.
       changeHandler(url, index, "id");
     }
@@ -66,14 +71,20 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     // Update the vault
     changeHandler(properties.height, index, "height");
     changeHandler(properties.width, index, "width");
+    changeHandler(
+      properties.type === "ImageService" ? "ContentResource" : properties.type,
+      index,
+      "type"
+    );
+
     // Empty the temp state
     setProperties(undefined);
     setMessage(undefined);
   };
 
   return (
-    <>
-      {message && (
+    <div>
+      {message && !error && (
         <SuccessMessage>
           <div>
             {message}
@@ -83,10 +94,15 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
           </div>
         </SuccessMessage>
       )}
+      {error && (
+        <ErrorMessage>
+          <div>Please insert a valid image or IIIF image service URL.</div>
+        </ErrorMessage>
+      )}
       <MediaResourceEditor
         thumbnailSrc={thumbnailSrc}
         changeThumbnailSrc={(newID: string) => {
-          analyser(newID, index, "id");
+          analyser(newID);
         }}
         changeHeight={(newHeight: Number) => {
           changeHandler(newHeight, index, "height");
@@ -102,12 +118,11 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
         }}
         serviceID={serviceID}
       />
-    </>
+    </div>
   );
 };
 
 // Handles the whole list and speaks to the vault.
-// TODO implement delete, reorder and the services.
 export const ThumbnailForm = () => {
   const shellContext = useContext(ShellContext);
   const manifest = useManifest();
@@ -116,7 +131,7 @@ export const ThumbnailForm = () => {
   const addNew = () => {
     const withNew = manifest ? [...manifest.thumbnail] : [];
     // @ts-ignore
-    withNew.push({ id: "", height: 0, width: 0, type: "Image" });
+    withNew.push({ id: "", height: 0, width: 0 });
     if (manifest) {
       shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, "thumbnail", withNew);
@@ -128,6 +143,10 @@ export const ThumbnailForm = () => {
     index?: number,
     property?: "id" | "height" | "width" | "type"
   ) => {
+    console.log("vault.get", vault.get(manifest.thumbnail));
+    console.log("manifest.thumbail", manifest.thumbnail);
+    console.log(vault.get(manifest).thumbnail);
+
     const newImage =
       manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
     if (manifest && (index || index === 0) && property) {
@@ -154,9 +173,9 @@ export const ThumbnailForm = () => {
       {manifest &&
         manifest.thumbnail.map((thumb: any, index: number) => {
           return (
-            <div>
+            <>
               <div
-                key={index + thumb?.width + thumb?.height}
+                key={index + thumb?.width + thumb?.height + thumb?.type}
                 style={{ display: "flex", alignItems: "center" }}
               >
                 <ThumbnailWrapper
@@ -173,7 +192,7 @@ export const ThumbnailForm = () => {
                 </Button>
               </div>
               {index !== manifest.thumbnail.length - 1 && <HorizontalDivider />}
-            </div>
+            </>
           );
         })}
       <SecondaryButton onClick={addNew}>

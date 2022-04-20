@@ -1,10 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useCanvas } from "react-iiif-vault";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { TabPanel } from "../../layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
+import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
 // import { TechnicalForm } from "./TechnicalForm";
 
@@ -34,14 +35,10 @@ export const CanvasForm = () => {
             label: "Technical",
             component: <TechnicalForm />,
           },
-          // {
-          //   label: "Structural",
-          //   component: <div>I will be the structural panel</div>,
-          // },
-          // {
-          //   label: "Annotations",
-          //   component: <div>I will be the annotations panel</div>,
-          // },
+          {
+            label: "Structural",
+            component: <StructuralForm />,
+          },
         ]}
         switchPanel={(idx) =>
           editorContext?.changeSelectedProperty("canvas", idx)
