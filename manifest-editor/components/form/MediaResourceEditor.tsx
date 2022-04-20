@@ -35,7 +35,7 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
         alignItems: "center",
         width: "100%",
       }}
-      key={thumbnailSrc}
+      key={thumbnailSrc + width + height}
     >
       <FlexContainerColumn style={{ width: "20%" }}>
         {thumbnailSrc && thumbnailSrc !== "" && (

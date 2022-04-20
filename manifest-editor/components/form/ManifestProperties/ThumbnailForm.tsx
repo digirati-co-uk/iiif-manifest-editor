@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { analyse } from "../../../helpers/analyse";
 import { useManifest } from "../../../hooks/useManifest";
@@ -11,6 +11,7 @@ import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { InputLabel } from "../Input";
 import { MediaResourceEditor } from "../MediaResourceEditor";
+import { addMapping, importEntities } from "@iiif/vault/actions";
 
 interface ThumbnailWrapperProps {
   thumbnailSrc: string;
@@ -24,6 +25,8 @@ interface ThumbnailWrapperProps {
   width: number;
   type: string;
   serviceID: any[];
+  placeholder?: boolean;
+  forceUpdate?: () => void;
 }
 
 // Wrapper layer required to handle the logic of showing option to pre-populate
@@ -37,12 +40,21 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
   width,
   type,
   serviceID,
+  placeholder = false,
+  forceUpdate = () => {},
 }) => {
   const [properties, setProperties] = useState<any>();
   const [message, setMessage] = useState<string>();
   const [error, setError] = useState(false);
+  const [src, setSrc] = useState(thumbnailSrc);
 
-  // Triggered on blur of the URL value.
+  useEffect(() => {
+    if (!placeholder) {
+      analyser(thumbnailSrc);
+    }
+  }, []);
+
+  // Triggered on blur of the URL value OR on mount if not placeholder.
   const analyser = async (url: any) => {
     // We want to clear these values if they already exist.
     setProperties(undefined);
@@ -50,6 +62,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     setError(false);
     let analysed: any;
     if (url) {
+      setSrc(url);
       analysed = await analyse(url);
       setProperties(analysed);
       if (
@@ -58,6 +71,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
         setError(true);
       }
       if (analysed) {
+        if (analysed.width === width && analysed.height === height) return;
         setMessage(
           `The URL provided is a ${analysed.width}x${analysed.height} ${analysed.type}.`
         );
@@ -80,10 +94,11 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     // Empty the temp state
     setProperties(undefined);
     setMessage(undefined);
+    setTimeout(() => forceUpdate(), 100);
   };
 
   return (
-    <div>
+    <div key={index + thumbnailSrc + height + width}>
       {message && !error && (
         <SuccessMessage>
           <div>
@@ -100,7 +115,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
         </ErrorMessage>
       )}
       <MediaResourceEditor
-        thumbnailSrc={thumbnailSrc}
+        thumbnailSrc={src}
         changeThumbnailSrc={(newID: string) => {
           analyser(newID);
         }}
@@ -127,33 +142,56 @@ export const ThumbnailForm = () => {
   const shellContext = useContext(ShellContext);
   const manifest = useManifest();
   const vault = useVault();
+  const [emptyValue, setEmptyValue] = useState(false);
+  const [render, setRender] = useState(0);
 
   const addNew = () => {
-    const withNew = manifest ? [...manifest.thumbnail] : [];
-    // @ts-ignore
-    withNew.push({ id: "", height: 0, width: 0 });
-    if (manifest) {
-      shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(manifest, "thumbnail", withNew);
-    }
+    setEmptyValue(true);
   };
 
   const changeHandler = (
     data: any,
-    index?: number,
-    property?: "id" | "height" | "width" | "type"
+    index: number,
+    property: "id" | "height" | "width" | "type"
   ) => {
-    console.log("vault.get", vault.get(manifest.thumbnail));
-    console.log("manifest.thumbail", manifest.thumbnail);
-    console.log(vault.get(manifest).thumbnail);
+    // If the property is the id, we want to add ref to this to the vault
+    if (property === "id") {
+      vault.dispatch(
+        importEntities({
+          entities: {
+            ContentResource: {
+              [data]: {
+                id: data,
+                type: "Image",
+              },
+            },
+          },
+        })
+      );
+      // We want to add the mapping in
+      vault.dispatch(
+        addMapping({
+          id: data,
+          type: "ContentResource",
+        })
+      );
 
-    const newImage =
-      manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
-    if (manifest && (index || index === 0) && property) {
-      // @ts-ignore
-      newImage[index][property] = data;
+      // Remove the empty UI component
+      setEmptyValue(false);
+      // And finally tell the vault to update which references are associated with the parent property
+      const newThumbnailReferences =
+        manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
+      if (manifest && (index || index === 0)) {
+        newThumbnailReferences[index] = { id: data, type: "ContentResource" };
+        shellContext?.setUnsavedChanges(true);
+        vault.modifyEntityField(manifest, "thumbnail", newThumbnailReferences);
+      }
+    } else {
+      // get the ref we need using the index:
+      const reference = manifest?.thumbnail[index];
+      // dispatch a change to this reference
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(manifest, "thumbnail", newImage);
+      if (reference) vault.modifyEntityField(reference, property, data);
     }
   };
 
@@ -164,43 +202,70 @@ export const ThumbnailForm = () => {
     if (manifest && (index || index === 0)) {
       newThumbnail.splice(index, 1);
       shellContext?.setUnsavedChanges(true);
+      // Provide the vault with an updated list of content resources
       vault.modifyEntityField(manifest, "thumbnail", newThumbnail);
     }
   };
+
+  if (!manifest || !vault) {
+    return <div>Something went wrong</div>;
+  }
   return (
-    <>
+    <div key={render}>
       <InputLabel>thumbnail</InputLabel>
-      {manifest &&
-        manifest.thumbnail.map((thumb: any, index: number) => {
-          return (
-            <>
-              <div
-                key={index + thumb?.width + thumb?.height + thumb?.type}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <ThumbnailWrapper
-                  index={index}
-                  thumbnailSrc={thumb?.id}
-                  changeHandler={changeHandler}
-                  height={thumb?.height}
-                  width={thumb?.width}
-                  type={thumb?.type}
-                  serviceID={thumb?.service}
-                />
-                <Button onClick={() => removeItem(index)}>
-                  <DeleteIcon />
-                </Button>
-              </div>
-              {index !== manifest.thumbnail.length - 1 && <HorizontalDivider />}
-            </>
-          );
-        })}
+      {vault.get(manifest.thumbnail).map((thumb: any, index: number) => {
+        return (
+          <>
+            <div
+              key={index + thumb?.id}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <ThumbnailWrapper
+                index={index}
+                thumbnailSrc={thumb?.id}
+                changeHandler={changeHandler}
+                height={thumb?.height}
+                width={thumb?.width}
+                type={thumb?.type}
+                serviceID={thumb?.service}
+                forceUpdate={() => setRender(render + 1)}
+              />
+              <Button onClick={() => removeItem(index)}>
+                <DeleteIcon />
+              </Button>
+            </div>
+            {index !== manifest.thumbnail.length - 1 && <HorizontalDivider />}
+          </>
+        );
+      })}
+      {/* If we want to add new we want to render a placeholder which once populated will
+        go to vault  */}
+      {emptyValue && (
+        <div
+          key={"new placeholder"}
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <ThumbnailWrapper
+            placeholder={true}
+            index={manifest.thumbnail.length}
+            thumbnailSrc={""}
+            changeHandler={changeHandler}
+            height={0}
+            width={0}
+            type={"Image"}
+            serviceID={[]}
+          />
+          <Button onClick={() => setEmptyValue(false)}>
+            <DeleteIcon />
+          </Button>
+        </div>
+      )}
       <SecondaryButton onClick={addNew}>
         {manifest && manifest.thumbnail.length > 0 ? "Add another" : "Create"}
       </SecondaryButton>
       <InformationLink
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
       />
-    </>
+    </div>
   );
 };
