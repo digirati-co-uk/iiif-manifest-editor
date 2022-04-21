@@ -1,8 +1,12 @@
 import { useContext, useEffect, useState } from "react";
+// hooks & context
 import { useVault } from "react-iiif-vault";
 import { analyse } from "../../../helpers/analyse";
 import { useManifest } from "../../../hooks/useManifest";
+import { addMapping, importEntities } from "@iiif/vault/actions";
 import ShellContext from "../../apps/Shell/ShellContext";
+// UI
+import { MediaResourceEditor } from "../MediaResourceEditor";
 import { Button, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
@@ -10,8 +14,6 @@ import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { InputLabel } from "../Input";
-import { MediaResourceEditor } from "../MediaResourceEditor";
-import { addMapping, importEntities } from "@iiif/vault/actions";
 
 interface ThumbnailWrapperProps {
   thumbnailSrc: string;
@@ -30,7 +32,7 @@ interface ThumbnailWrapperProps {
 }
 
 // Wrapper layer required to handle the logic of showing option to pre-populate
-// from the url analyser whilst keeping Media ResourceEditor logic and state free
+// from the url analyser whilst keeping MediaResourceEditor logic and state free
 
 const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
   thumbnailSrc,

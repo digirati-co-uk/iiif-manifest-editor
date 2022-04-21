@@ -1,8 +1,10 @@
-import { useContext, useState } from "react";
-import { getValue } from "@iiif/vault-helpers";
+import { importEntities, addMapping } from "@iiif/vault/actions";
+import { useContext, useEffect, useState } from "react";
+// hooks & context
 import { useCanvas, useVault } from "react-iiif-vault";
 import { analyse } from "../../../helpers/analyse";
 import ShellContext from "../../apps/Shell/ShellContext";
+// UI
 import { Button, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
@@ -24,10 +26,12 @@ interface ThumbnailWrapperProps {
   width: number;
   type: string;
   serviceID: any[];
+  placeholder?: boolean;
+  forceUpdate?: () => void;
 }
 
 // Wrapper layer required to handle the logic of showing option to pre-populate
-// from the url analyser whilst keeping Media ResourceEditor logic and state free
+// from the url analyser whilst keeping MediaResourceEditor logic and state free
 
 const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
   thumbnailSrc,
@@ -37,11 +41,19 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
   width,
   type,
   serviceID,
+  placeholder = false,
+  forceUpdate = () => {},
 }) => {
   const [properties, setProperties] = useState<any>();
   const [message, setMessage] = useState<string>();
   const [error, setError] = useState(false);
+  const [src, setSrc] = useState(thumbnailSrc);
 
+  useEffect(() => {
+    if (!placeholder) {
+      analyser(thumbnailSrc);
+    }
+  }, []);
   // Triggered on blur of the URL value.
   const analyser = async (url: any) => {
     // We want to clear these values if they already exist.
@@ -50,6 +62,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     setError(false);
     let analysed: any;
     if (url) {
+      setSrc(url);
       analysed = await analyse(url);
       setProperties(analysed);
       if (
@@ -58,6 +71,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
         setError(true);
       }
       if (analysed) {
+        if (analysed.width === width && analysed.height === height) return;
         setMessage(
           `The URL provided is a ${analysed.width}x${analysed.height} ${analysed.type}.`
         );
@@ -79,10 +93,11 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     // Empty the temp state
     setProperties(undefined);
     setMessage(undefined);
+    setTimeout(() => forceUpdate(), 100);
   };
 
   return (
-    <div>
+    <div key={index + thumbnailSrc + height + width}>
       {message && !error && (
         <SuccessMessage>
           <div>
@@ -99,7 +114,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
         </ErrorMessage>
       )}
       <MediaResourceEditor
-        thumbnailSrc={thumbnailSrc}
+        thumbnailSrc={src}
         changeThumbnailSrc={(newID: string) => {
           analyser(newID);
         }}
@@ -126,36 +141,59 @@ export const ThumbnailForm = () => {
   const shellContext = useContext(ShellContext);
   const canvas = useCanvas();
   const vault = useVault();
+  const [emptyValue, setEmptyValue] = useState(false);
+  const [render, setRender] = useState(0);
 
   const addNew = () => {
-    console.log("here");
-    if (canvas) console.log(vault.get(canvas.thumbnail));
-    // @ts-ignore
-    const withNew = canvas ? Array.from(vault.get(canvas).thumbnail) : [];
-    withNew.push({ id: "", height: 0, width: 0, type: "Image" });
-    if (canvas) {
-      shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(canvas, "thumbnail", withNew);
-    }
+    setEmptyValue(true);
   };
 
   const changeHandler = (
     data: any,
-    index?: number,
-    property?: "id" | "height" | "width" | "type"
+    index: number,
+    property: "id" | "height" | "width" | "type"
   ) => {
-    const newImage =
-      canvas && canvas.thumbnail
-        ? // @ts-ignore
-          Array.from(vault.get(canvas).thumbnail)
-        : ([] as any);
-    if (canvas && (index || index === 0) && property) {
-      newImage[index][property] = data;
-      console.log(newImage);
+    // If the property is the id, we want to add ref to this to the vault
+    if (property === "id") {
+      vault.dispatch(
+        importEntities({
+          entities: {
+            ContentResource: {
+              [data]: {
+                id: data,
+                type: "Image",
+              },
+            },
+          },
+        })
+      );
+      // We want to add the mapping in
+      vault.dispatch(
+        addMapping({
+          id: data,
+          type: "ContentResource",
+        })
+      );
+
+      // Remove the empty UI component
+      setEmptyValue(false);
+      // And finally tell the vault to update which references are associated with the parent property
+      const newThumbnailReferences =
+        canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
+      if (canvas && (index || index === 0)) {
+        newThumbnailReferences[index] = { id: data, type: "ContentResource" };
+        shellContext?.setUnsavedChanges(true);
+        vault.modifyEntityField(canvas, "thumbnail", newThumbnailReferences);
+      }
+    } else {
+      // get the ref we need using the index:
+      const reference = canvas?.thumbnail[index];
+      // dispatch a change to this reference
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(canvas, "thumbnail", newImage);
+      if (reference) vault.modifyEntityField(reference, property, data);
     }
   };
+
   const removeItem = (index: number) => {
     const newThumbnail =
       canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
@@ -163,37 +201,63 @@ export const ThumbnailForm = () => {
     if (canvas && (index || index === 0)) {
       newThumbnail.splice(index, 1);
       shellContext?.setUnsavedChanges(true);
+      // Provide the vault with an updated list of content resources
       vault.modifyEntityField(canvas, "thumbnail", newThumbnail);
     }
   };
+  if (!canvas || !vault) {
+    return <div>Something went wrong</div>;
+  }
   return (
     <>
       <InputLabel>Thumbnail</InputLabel>
-      {canvas &&
-        canvas.thumbnail.map((thumb: any, index: number) => {
-          return (
-            <>
-              <div
-                key={index + thumb?.width + thumb?.height + thumb?.type}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <ThumbnailWrapper
-                  index={index}
-                  thumbnailSrc={thumb?.id}
-                  changeHandler={changeHandler}
-                  height={thumb?.height}
-                  width={thumb?.width}
-                  type={thumb?.type}
-                  serviceID={thumb?.service}
-                />
-                <Button onClick={() => removeItem(index)}>
-                  <DeleteIcon />
-                </Button>
-              </div>
-              {index !== canvas.thumbnail.length - 1 && <HorizontalDivider />}
-            </>
-          );
-        })}
+      {vault.get(canvas.thumbnail).map((thumb: any, index: number) => {
+        return (
+          <>
+            <div
+              key={index + thumb?.width + thumb?.height + thumb?.type}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <ThumbnailWrapper
+                index={index}
+                thumbnailSrc={thumb?.id}
+                changeHandler={changeHandler}
+                height={thumb?.height}
+                width={thumb?.width}
+                type={thumb?.type}
+                serviceID={thumb?.service}
+                forceUpdate={() => setRender(render + 1)}
+              />
+              <Button onClick={() => removeItem(index)}>
+                <DeleteIcon />
+              </Button>
+            </div>
+            {index !== canvas.thumbnail.length - 1 && <HorizontalDivider />}
+          </>
+        );
+      })}
+      {/* If we want to add new we want to render a placeholder which once populated will
+        go to vault  */}
+      {emptyValue && (
+        <div
+          key={"new placeholder"}
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <ThumbnailWrapper
+            placeholder={true}
+            index={canvas.thumbnail.length}
+            thumbnailSrc={""}
+            changeHandler={changeHandler}
+            height={0}
+            width={0}
+            type={"Image"}
+            serviceID={[]}
+          />
+          <Button onClick={() => setEmptyValue(false)}>
+            <DeleteIcon />
+          </Button>
+        </div>
+      )}
       <SecondaryButton onClick={addNew}>
         {canvas && canvas.thumbnail.length > 0 ? "Add another" : "Create"}
       </SecondaryButton>

@@ -7,8 +7,8 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    height: auto;
-    // overflow-y: auto;
+    // height: 80vh;
+    overflow-y: auto;
     width: 100%;
     @media (max-width: ${(props: any) =>
         props.theme.device.tablet || "770px"}) {
