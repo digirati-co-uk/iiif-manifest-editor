@@ -39,7 +39,7 @@ const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
           <ContainerColumn>
             {range &&
               Object.entries(range).map(([key, value]) => {
-                if (typeof value === "string") {
+                if (typeof value === "string" || typeof value === "number") {
                   return (
                     <KeyValuePairString
                       key={key}

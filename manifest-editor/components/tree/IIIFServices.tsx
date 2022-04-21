@@ -7,7 +7,7 @@ import {
   KeyValuePairString,
   Expanded,
   KeyService,
-  Indentation
+  Indentation,
 } from "./IIIFElementsShared";
 
 import { DownIcon } from "../icons/DownIcon";
@@ -33,7 +33,7 @@ const Service: React.FC<KeyObjectPairing> = ({ object }) => {
         <ContainerColumn>
           {object &&
             Object.entries(object).map(([key, value]) => {
-              if (typeof value === "string") {
+              if (typeof value === "string" || typeof value === "number") {
                 return (
                   <KeyValuePairString
                     key={key}

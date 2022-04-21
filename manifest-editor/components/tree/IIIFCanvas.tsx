@@ -14,7 +14,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault";
 import { Subdirectory } from "../icons/Subdirectory";
 import { FlexContainer } from "../layout/FlexContainer";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
@@ -25,6 +25,7 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
     const canvas = useCanvas({ id: id });
     const label = getValue(canvas?.label);
     const [open, setOpen] = useState(false);
+    const vault = useVault();
     const shellContext = useContext(ShellContext);
     const editorContext = useContext(ManifestEditorContext);
 
@@ -71,7 +72,8 @@ const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
                       <KeyValuePairArray
                         key={key}
                         propertyName={key}
-                        array={value}
+                        // @ts-ignore
+                        array={vault.get(canvas)[key]}
                         onClick={() => {
                           if (key === "metadata") {
                             editorContext?.changeSelectedProperty("canvas", 1);

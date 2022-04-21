@@ -54,7 +54,7 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
               <Indentation />
               <ContainerColumn>
                 {Object.entries(object).map(([key, value]) => {
-                  if (typeof value === "string") {
+                  if (typeof value === "string" || typeof value === "number") {
                     return (
                       <KeyValuePairString
                         key={key}
@@ -94,7 +94,7 @@ export const KeyObjectPairing: React.FC<KeyObjectPairing> = ({
             <Indentation />
             <ContainerColumn>
               {Object.entries(object).map(([key, value]) => {
-                if (typeof value === "string") {
+                if (typeof value === "string" || typeof value === "number") {
                   return (
                     <KeyValuePairString
                       key={key}

@@ -39,11 +39,11 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
       </Container>
       {open && (
         <FlexContainer>
-          <Indentation/>
+          <Indentation />
           <ContainerColumn>
             {content &&
               Object.entries(content).map(([key, value]) => {
-                if (typeof value === "string") {
+                if (typeof value === "string" || typeof value === "number") {
                   return (
                     <KeyValuePairString
                       key={key}

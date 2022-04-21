@@ -102,7 +102,10 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                     return <ValueSolo>{val}</ValueSolo>;
                   } else {
                     return Object.entries(val).map(([key, value]) => {
-                      if (typeof value === "string") {
+                      if (
+                        typeof value === "string" ||
+                        typeof value === "number"
+                      ) {
                         return (
                           <KeyValuePairString
                             key={key}
