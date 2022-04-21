@@ -2,3 +2,4 @@
 node_modules
 manifest-editor/node_modules
 manifest-editor/storybook-static
+settings.json

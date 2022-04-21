@@ -87,11 +87,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
     // Update the vault
     changeHandler(properties.height, index, "height");
     changeHandler(properties.width, index, "width");
-    changeHandler(
-      properties.type === "ImageService" ? "ContentResource" : properties.type,
-      index,
-      "type"
-    );
+    changeHandler(properties.type, index, "type");
 
     // Empty the temp state
     setProperties(undefined);
