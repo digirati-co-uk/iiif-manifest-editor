@@ -68,7 +68,7 @@ export const NewCanvasModal: React.FC<{
     setIsLoading(false);
   };
 
-  const handleChange = async () => {
+  const handleChange = async (addAnother?: boolean) => {
     setIsLoading(true);
     let inputed: any;
     if (inputValue) {
@@ -110,8 +110,7 @@ export const NewCanvasModal: React.FC<{
         });
       });
       shellContext?.setUnsavedChanges(true);
-
-      close();
+      if (!addAnother) close();
     } else if (
       inputed &&
       inputed.type === "ImageService" &&
@@ -142,7 +141,7 @@ export const NewCanvasModal: React.FC<{
       });
       shellContext?.setUnsavedChanges(true);
 
-      close();
+      if (!addAnother) close();
     } else if (emptyCanvas && height && width && manifest) {
       const builder = new IIIFBuilder(vault);
 
@@ -153,7 +152,11 @@ export const NewCanvasModal: React.FC<{
         });
       });
       shellContext?.setUnsavedChanges(true);
-      close();
+      if (!addAnother) close();
+    }
+    if (addAnother) {
+      setInputValue("Paste URL of Media to create Canvas");
+      setInputType(undefined);
     }
   };
 
@@ -172,7 +175,8 @@ export const NewCanvasModal: React.FC<{
             <InputLabel>From content</InputLabel>
             <FlexContainer>
               <Input
-                placeholder="Paste URL of Media to create Canvas"
+                placeholder={inputValue}
+                value={inputValue}
                 onChange={(e: any) => setInputValue(e.target.value)}
                 onBlur={() => runAnalyser()}
                 onKeyPress={(e: any) => {
@@ -315,7 +319,24 @@ export const NewCanvasModal: React.FC<{
             </SecondaryButton>
             {emptyCanvas && (
               <CalltoButton
-                // @ts-ignore
+                disabled={!(width && height)}
+                onClick={() => handleChange(true)}
+                aria-label="add"
+              >
+                ADD & ADD ANOTHER
+              </CalltoButton>
+            )}
+            {!emptyCanvas && (
+              <CalltoButton
+                disabled={!inputValue}
+                onClick={() => handleChange(true)}
+                aria-label="add"
+              >
+                ADD & ADD ANOTHER
+              </CalltoButton>
+            )}
+            {emptyCanvas && (
+              <CalltoButton
                 disabled={!(width && height)}
                 onClick={() => handleChange()}
                 aria-label="add"
@@ -325,7 +346,7 @@ export const NewCanvasModal: React.FC<{
             )}
             {!emptyCanvas && (
               <CalltoButton
-                disabled={!inputValue && inputType === "ImageService"}
+                disabled={!inputValue}
                 onClick={() => handleChange()}
                 aria-label="add"
               >
