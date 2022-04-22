@@ -20,90 +20,94 @@ import { FlexContainer } from "../layout/FlexContainer";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../apps/Shell/ShellContext";
 
-const IIIFCanvas: React.FC<{ type: string; id: string; onClick: () => void }> =
-  ({ type, id, onClick }) => {
-    const canvas = useCanvas({ id: id });
-    const label = getValue(canvas?.label);
-    const [open, setOpen] = useState(false);
-    const vault = useVault();
-    const shellContext = useContext(ShellContext);
-    const editorContext = useContext(ManifestEditorContext);
-
-    return (
-      <>
-        <Container
-          onClick={() => {
-            shellContext?.setCurrentCanvasId(id);
-            setOpen(!open);
-          }}
-        >
-          <FlexContainer>
-            <Subdirectory />
-            <KeyCanvas onClick={() => onClick()}>{type}</KeyCanvas>
-            {label}
-          </FlexContainer>
-          <DownIcon rotate={open ? 180 : 0} />
-        </Container>
-        {open && (
-          <FlexContainer>
-            <Indentation />
-            <ContainerColumn>
-              {canvas &&
-                Object.entries(canvas).map(([key, value]) => {
-                  if (typeof value === "string" || typeof value === "number") {
-                    return (
-                      <KeyValuePairString
-                        key={key}
-                        onClick={() => {
-                          if (
-                            key === "height" ||
-                            key === "width" ||
-                            key === "duration"
-                          ) {
-                            editorContext?.changeSelectedProperty("canvas", 3);
-                          }
-                        }}
-                        propertyName={key}
-                        value={value}
-                      />
-                    );
-                  } else if (Array.isArray(value)) {
-                    return (
-                      <KeyValuePairArray
-                        key={key}
-                        propertyName={key}
-                        // @ts-ignore
-                        array={vault.get(canvas)[key]}
-                        onClick={() => {
-                          if (key === "metadata") {
-                            editorContext?.changeSelectedProperty("canvas", 1);
-                          } else if (key === "behavior") {
-                            editorContext?.changeSelectedProperty("canvas", 3);
-                          }
-                        }}
-                      />
-                    );
-                  } else {
-                    return (
-                      <KeyObjectPairing
-                        key={key}
-                        onClick={() => {
-                          if (key === "summary" || "label" || "rights") {
-                            editorContext?.changeSelectedProperty("canvas", 0);
-                          }
-                        }}
-                        propertyName={key}
-                        object={value}
-                      />
-                    );
-                  }
-                })}
-            </ContainerColumn>
-          </FlexContainer>
-        )}
-      </>
-    );
-  };
+export const IIIFCanvas: React.FC<{
+  type: string;
+  id: string;
+  onClick: () => void;
+}> = ({ type, id, onClick }) => {
+  const canvas = useCanvas({ id: id });
+  const label = getValue(canvas?.label);
+  const [open, setOpen] = useState(false);
+  const vault = useVault();
+  const shellContext = useContext(ShellContext);
+  const editorContext = useContext(ManifestEditorContext);
+  return (
+    <>
+      <div>HELLO</div>
+      <Container
+        onClick={() => {
+          shellContext?.setCurrentCanvasId(id);
+          setOpen(!open);
+        }}
+      >
+        <FlexContainer>
+          <Subdirectory />
+          <KeyCanvas onClick={() => onClick()}>{type}</KeyCanvas>
+          {label}
+        </FlexContainer>
+        <DownIcon rotate={open ? 180 : 0} />
+      </Container>
+      {open && (
+        <FlexContainer>
+          <Indentation />
+          <ContainerColumn>
+            {canvas &&
+              Object.entries(vault.get(canvas)).map(([key, value]) => {
+                if (typeof value === "string" || typeof value === "number") {
+                  return (
+                    <KeyValuePairString
+                      key={key}
+                      onClick={() => {
+                        if (
+                          key === "height" ||
+                          key === "width" ||
+                          key === "duration"
+                        ) {
+                          editorContext?.changeSelectedProperty("canvas", 3);
+                        }
+                      }}
+                      propertyName={key}
+                      value={value}
+                    />
+                  );
+                } else if (Array.isArray(value)) {
+                  return (
+                    <KeyValuePairArray
+                      key={key}
+                      propertyName={key}
+                      // @ts-ignore
+                      array={vault.get(canvas)[key]}
+                      onClick={() => {
+                        if (key === "metadata") {
+                          editorContext?.changeSelectedProperty("canvas", 1);
+                        } else if (key === "behavior") {
+                          editorContext?.changeSelectedProperty("canvas", 3);
+                        }
+                      }}
+                    />
+                  );
+                } else {
+                  return (
+                    <KeyObjectPairing
+                      key={key}
+                      onClick={() => {
+                        if (key === "summary" || "label" || "rights") {
+                          editorContext?.changeSelectedProperty("canvas", 0);
+                        }
+                      }}
+                      propertyName={key}
+                      // @ts-ignore
+                      object={vault.get(canvas)[key]}
+                    />
+                  );
+                }
+              })}
+          </ContainerColumn>
+        </FlexContainer>
+      )}
+    </>
+  );
+};
 
 export const Canvases: React.FC<KeyObjectPairing> = ({ object, onClick }) => {
   return (

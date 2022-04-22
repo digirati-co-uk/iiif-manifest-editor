@@ -12,6 +12,7 @@ import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext"
 
 import styled from "styled-components";
 import { FlexContainer } from "../layout/FlexContainer";
+import { useVault } from "react-iiif-vault";
 
 const TreeContainer = styled.div`
   z-index: 12;
@@ -48,10 +49,10 @@ export const Tree: React.FC = () => {
   const manifest = useManifest();
   const editorContext = useContext(ManifestEditorContext);
   const [open, setOpen] = useState(true);
+  const vault = useVault();
 
   return (
-    // @ts-ignore
-    <TreeContainer key={manifest}>
+    <TreeContainer key={manifest?.id}>
       <HeaderPanel onClick={() => setOpen(!open)}>
         <FlexContainer>
           <KeyManifest
@@ -114,7 +115,7 @@ export const Tree: React.FC = () => {
                 : () => {}
             }
             propertyName={"items"}
-            array={manifest?.items || []}
+            array={vault.get(manifest).items || []}
           />
 
           <KeyValuePairArray
@@ -289,7 +290,7 @@ export const Tree: React.FC = () => {
                 : () => {}
             }
             propertyName={"thumbnail"}
-            array={manifest?.thumbnail || []}
+            array={vault.get(manifest) || []}
           />
           <KeyValuePairString
             onClick={

@@ -2,12 +2,12 @@ import { useContext } from "react";
 import { useCanvas } from "react-iiif-vault";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 import { TabPanel } from "../../layout/TabPanel";
+import { AnnotationForm } from "./AnnotationForm";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { LinkingForm } from "./LinkingForm";
+import { MediaForm } from "./MediaForm";
 import { MetadataForm } from "./MetadataForm";
-import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
-// import { TechnicalForm } from "./TechnicalForm";
 
 export const CanvasForm = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -16,7 +16,7 @@ export const CanvasForm = () => {
 
   return (
     <>
-      {/* <small>CanvasID: {canvas?.id}</small> */}
+      <small>CanvasID: {canvas?.id}</small>
       <TabPanel
         menu={[
           {
@@ -28,6 +28,10 @@ export const CanvasForm = () => {
             component: <MetadataForm />,
           },
           {
+            label: "Media",
+            component: <MediaForm />,
+          },
+          {
             label: "Linking",
             component: <LinkingForm />,
           },
@@ -36,8 +40,8 @@ export const CanvasForm = () => {
             component: <TechnicalForm />,
           },
           {
-            label: "Structural",
-            component: <StructuralForm />,
+            label: "Annotations",
+            component: <AnnotationForm />,
           },
         ]}
         switchPanel={(idx) =>

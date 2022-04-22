@@ -210,6 +210,12 @@ export const ThumbnailForm = () => {
   }
   return (
     <>
+      {/* <pre
+        // @ts-ignore
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(vault.get(canvas.thumbnail), null, 2),
+        }}
+      ></pre> */}
       <InputLabel>Thumbnail</InputLabel>
       {vault.get(canvas.thumbnail).map((thumb: any, index: number) => {
         return (

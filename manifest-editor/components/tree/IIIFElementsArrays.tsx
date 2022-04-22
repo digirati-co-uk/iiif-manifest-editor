@@ -114,6 +114,15 @@ export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({
                             value={value}
                           />
                         );
+                      } else if (Array.isArray(value)) {
+                        return (
+                          <KeyValuePairArray
+                            key={key}
+                            onClick={() => console.log("clicked", key)}
+                            propertyName={key}
+                            array={value}
+                          />
+                        );
                       } else {
                         return (
                           <KeyObjectPairing
