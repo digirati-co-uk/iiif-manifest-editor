@@ -4,6 +4,7 @@ import {
   UseMetadataEditor,
 } from "../../hooks/useMetadataEditor";
 import { Button, SecondaryButton } from "../atoms/Button";
+import { EmptyProperty } from "../atoms/EmptyProperty";
 import { CloseIcon } from "../icons/CloseIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import { Input, InputBorderless } from "./Input";
@@ -130,15 +131,10 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     // We could either create an empty value automatically, or, as in this case give that
     // information to the user and propmt to add a new one.
     return (
-      <div>
-        {props.label}
-        <SecondaryButton
-          aria-label="create"
-          onClick={() => createNewItem(false)}
-        >
-          Create
-        </SecondaryButton>
-      </div>
+      <EmptyProperty
+        label={props.label}
+        createNew={() => createNewItem(false)}
+      />
     );
   }
 
@@ -193,7 +189,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 
   return (
     <div style={{ width: "100%}" }}>
-      <div>{props.label}</div>
+      <h4>{props.label}</h4>
       <div>{defaultTextBox}</div>
       <div>{allFields}</div>
     </div>

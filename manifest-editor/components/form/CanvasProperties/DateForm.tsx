@@ -4,7 +4,7 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
-import { Input, InputLabel } from "../Input";
+import { Input } from "../Input";
 
 export const DateForm: React.FC<{}> = () => {
   const shellContext = useContext(ShellContext);
@@ -26,7 +26,7 @@ export const DateForm: React.FC<{}> = () => {
   return (
     <>
       <ErrorBoundary>
-        <InputLabel>{dispatchType}</InputLabel>
+        <h4>{dispatchType}</h4>
         <Input
           type="string"
           onChange={(e: any) => {

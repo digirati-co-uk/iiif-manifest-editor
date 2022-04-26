@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, ButtonGroup } from "../atoms/Button";
-import { Dropdown, DropdownContent } from "../atoms/Dropdown";
+import { Button } from "../atoms/Button";
+import { DropdownContent } from "../atoms/Dropdown";
 import { DropdownContainer, MenuContainer } from "../atoms/DropdownPreviewMenu";
 import { InformationLink } from "../atoms/InformationLink";
 import { VerticalDivider } from "../atoms/VerticalDivider";
@@ -29,7 +29,7 @@ export const RightsForm: React.FC<{
   return (
     <>
       <MenuContainer style={{ width: "100%" }}>
-        <InputLabel>{label}</InputLabel>
+        <h4>{label}</h4>
 
         <FlexContainer
           style={{ width: "100%", justifyContent: "space-between" }}

@@ -28,7 +28,7 @@ export const DateForm: React.FC<{}> = () => {
   return (
     <>
       <ErrorBoundary>
-        <InputLabel>{dispatchType}</InputLabel>
+        <h4>{dispatchType}</h4>
         <Input
           type="string"
           onChange={(e: any) => {

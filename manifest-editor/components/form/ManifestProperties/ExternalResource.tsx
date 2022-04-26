@@ -15,6 +15,7 @@ import { MenuIcon } from "../../icons/MenuIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { LanguageFieldEditor } from "../LanguageFieldEditor";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
+import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const ExternalResource: React.FC<{
   dispatchType: "homepage" | "service" | "services" | "seeAlso" | "rendering";
@@ -77,6 +78,7 @@ export const ExternalResource: React.FC<{
   };
   return (
     <>
+      <EmptyProperty label={dispatchType} createNew={addNew} />
       <DragDropContext onDragEnd={onDragEnd} key={redraw}>
         <Droppable droppableId="droppable">
           {(provided) => (
@@ -144,14 +146,6 @@ export const ExternalResource: React.FC<{
           )}
         </Droppable>
       </DragDropContext>
-      <FlexContainer style={{ justifyContent: "center" }}>
-        <SecondaryButton
-          aria-label={`add new ${dispatchType}`}
-          onClick={() => addNew()}
-        >
-          Add new {dispatchType}
-        </SecondaryButton>
-      </FlexContainer>
     </>
   );
 };

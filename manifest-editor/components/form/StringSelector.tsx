@@ -21,7 +21,7 @@ export const StringSelector: React.FC<{
 }) => {
   return (
     <>
-      <InputLabel>{label}</InputLabel>
+      <h4>{label}</h4>
       <FlexContainer style={{ flexWrap: "wrap" }}>
         {options &&
           options.map((choice) => {

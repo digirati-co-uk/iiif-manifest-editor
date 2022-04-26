@@ -9,24 +9,20 @@ export const LinkingForm: React.FC<{}> = () => {
   return (
     <FlexContainerColumn key={canvas?.id}>
       <>
-        <h3>homepage</h3>
         <ExternalResource dispatchType={"homepage"} />
         <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#homepage" />
       </>
       <>
-        <h3>rendering</h3>
         <ExternalResource dispatchType={"rendering"} />
         <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#rendering" />
       </>
       <>
-        <h3>seeAlso</h3>
         <ExternalResource dispatchType={"seeAlso"} />
         <InformationLink
           guidanceReference={"https://iiif.io/api/presentation/3.0/#seeAlso"}
         />
       </>
       <>
-        <h3>service</h3>
         <ExternalResource dispatchType={"service"} />
         <InformationLink
           guidanceReference={"https://iiif.io/api/presentation/3.0/#service"}

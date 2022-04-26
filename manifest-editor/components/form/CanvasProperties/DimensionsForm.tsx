@@ -2,31 +2,28 @@ import { useContext } from "react";
 
 import { useCanvas, useVault } from "react-iiif-vault";
 import ShellContext from "../../apps/Shell/ShellContext";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { InformationLink } from "../../atoms/InformationLink";
-import { Input, InputLabel } from "../Input";
-import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
+import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
 
 export const DimensionsForm: React.FC<{}> = () => {
   const shellContext = useContext(ShellContext);
   const canvas = useCanvas();
   const vault = useVault();
 
-  const changeHeight = (data: string) => {
+  const changeHeight = (data: number) => {
     if (canvas) {
       shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "height", data);
     }
   };
 
-  const changeWidth = (data: string) => {
+  const changeWidth = (data: number) => {
     if (canvas) {
       shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "width", data);
     }
   };
 
-  const changeDuration = (data: string) => {
+  const changeDuration = (data: number) => {
     if (canvas) {
       shellContext?.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "duration", data);
@@ -34,54 +31,13 @@ export const DimensionsForm: React.FC<{}> = () => {
   };
 
   return (
-    <>
-      <FlexContainer>
-        <ErrorBoundary>
-          <FlexContainerColumn style={{ width: "100%" }}>
-            <InputLabel>{"height"}</InputLabel>
-            <Input
-              type="number"
-              onChange={(e: any) => {
-                changeHeight(e.target.value);
-              }}
-              value={canvas && canvas.height ? canvas.height : ""}
-            />
-            <InformationLink
-              guidanceReference={"https://iiif.io/api/presentation/3.0/#height"}
-            />
-          </FlexContainerColumn>
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <FlexContainerColumn style={{ width: "100%" }}>
-            <InputLabel>{"width"}</InputLabel>
-            <Input
-              type="number"
-              onChange={(e: any) => {
-                changeWidth(e.target.value);
-              }}
-              value={canvas && canvas.width ? canvas.width : ""}
-            />
-            <InformationLink
-              guidanceReference={"https://iiif.io/api/presentation/3.0/#width"}
-            />
-          </FlexContainerColumn>
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <FlexContainerColumn style={{ width: "100%" }}>
-            <InputLabel>{"duration"}</InputLabel>
-            <Input
-              type="number"
-              onChange={(e: any) => {
-                changeDuration(e.target.value);
-              }}
-              value={canvas && canvas.duration ? canvas.duration : ""}
-            />
-            <InformationLink
-              guidanceReference={"https://iiif.io/api/presentation/3.0/#width"}
-            />
-          </FlexContainerColumn>
-        </ErrorBoundary>
-      </FlexContainer>
-    </>
+    <DimensionsTriplet
+      width={canvas && canvas.width ? canvas.width : 0}
+      changeWidth={changeWidth}
+      height={canvas && canvas.height ? canvas.height : 0}
+      changeHeight={changeHeight}
+      duration={canvas && canvas.duration ? canvas.duration : 0}
+      changeDuration={changeDuration}
+    />
   );
 };
