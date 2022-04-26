@@ -1,5 +1,6 @@
 import { InfoIcon } from "../icons/InfoIcon";
 import { FlexContainer } from "../layout/FlexContainer";
+import { Button } from "./Button";
 import { HorizontalDivider } from "./HorizontalDivider";
 
 export const InformationLink: React.FC<{ guidanceReference: string }> = ({
@@ -9,14 +10,16 @@ export const InformationLink: React.FC<{ guidanceReference: string }> = ({
     <>
       <HorizontalDivider />
       <FlexContainer style={{ justifyContent: "flex-end" }}>
-        <a
-          aria-label="IIIF DOCUMENTATION"
-          href={guidanceReference}
-          target={"_blank"}
-          rel="noopener noreferrer"
-        >
-          <InfoIcon />
-        </a>
+        <Button>
+          <a
+            aria-label="IIIF DOCUMENTATION"
+            href={guidanceReference}
+            target={"_blank"}
+            rel="noopener noreferrer"
+          >
+            <InfoIcon />
+          </a>
+        </Button>
       </FlexContainer>
     </>
   );
