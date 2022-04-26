@@ -2,15 +2,17 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { InputLabel } from "../Input";
+import { Input, InputLabel } from "../Input";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
+  changeImageSrc: (newImageURL: string) => void;
 }
 
 export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({
   thumbnailSrc,
+  changeImageSrc,
 }) => {
   const vault = useVault();
   const canvas = useCanvas();
@@ -40,7 +42,11 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({
               <FlexContainerColumn style={{ width: "80%" }}>
                 <ErrorBoundary>
                   <InputLabel>
-                    id: <div>{annotationBody.id}</div>
+                    id
+                    <Input
+                      value={annotationBody.id}
+                      onBlur={(e: any) => changeImageSrc(e.target.value)}
+                    />
                   </InputLabel>
                   <InputLabel>
                     target:

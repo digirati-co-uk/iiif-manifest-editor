@@ -8,10 +8,10 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { Button, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
+import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { InputLabel } from "../Input";
 import { MediaResourceEditor } from "../MediaResourceEditor";
 
 interface ThumbnailWrapperProps {
@@ -54,6 +54,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
       analyser(thumbnailSrc);
     }
   }, []);
+
   // Triggered on blur of the URL value.
   const analyser = async (url: any) => {
     // We want to clear these values if they already exist.
@@ -216,7 +217,7 @@ export const ThumbnailForm = () => {
           __html: JSON.stringify(vault.get(canvas.thumbnail), null, 2),
         }}
       ></pre> */}
-      <InputLabel>Thumbnail</InputLabel>
+      <EmptyProperty label={"thumbnail"} createNew={addNew} />
       {vault.get(canvas.thumbnail).map((thumb: any, index: number) => {
         return (
           <>
@@ -264,9 +265,6 @@ export const ThumbnailForm = () => {
           </Button>
         </div>
       )}
-      <SecondaryButton onClick={addNew}>
-        {canvas && canvas.thumbnail.length > 0 ? "Add another" : "Create"}
-      </SecondaryButton>
       <InformationLink
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
       />

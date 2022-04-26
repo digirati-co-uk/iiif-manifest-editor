@@ -23,8 +23,9 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
   changeWidth,
   height,
   width,
-  changeType,
-  type,
+
+  // changeType,
+  // type,
   changeThumbnailSrc,
   serviceID,
 }) => {
@@ -82,7 +83,8 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
               />
             </InputLabel>
           </ErrorBoundary>
-          <ErrorBoundary>
+          {/* Commenting out as these are showing as ContentResource */}
+          {/* <ErrorBoundary>
             <InputLabel>
               type
               <Input
@@ -93,7 +95,7 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
                 defaultValue={type}
               />
             </InputLabel>
-          </ErrorBoundary>
+          </ErrorBoundary> */}
         </FlexContainer>
 
         <ErrorBoundary>
