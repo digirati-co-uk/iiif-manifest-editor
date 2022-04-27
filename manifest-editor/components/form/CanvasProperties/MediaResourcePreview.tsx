@@ -1,8 +1,6 @@
 import { useCanvas, useVault } from "react-iiif-vault";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { Input, InputLabel } from "../Input";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 interface MediaResourceEditorProps {
@@ -13,9 +11,7 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({
   thumbnailSrc,
 }) => {
   const vault = useVault();
-  const canvas = useCanvas();
   const image = vault.get(thumbnailSrc) as any;
-  console.log(image);
   return (
     <>
       {image &&

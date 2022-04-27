@@ -21,7 +21,13 @@ export const StringSelector: React.FC<{
 }) => {
   return (
     <>
-      <h4>{label}</h4>
+      <FlexContainer>
+        <h4>{label}</h4>
+        {guidanceReference && (
+          <InformationLink guidanceReference={guidanceReference} />
+        )}
+      </FlexContainer>
+
       <FlexContainer style={{ flexWrap: "wrap" }}>
         {options &&
           options.map((choice) => {
@@ -43,10 +49,6 @@ export const StringSelector: React.FC<{
             );
           })}
       </FlexContainer>
-
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
-      )}
     </>
   );
 };

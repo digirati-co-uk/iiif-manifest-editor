@@ -19,7 +19,8 @@ import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const ExternalResource: React.FC<{
   dispatchType: "homepage" | "service" | "seeAlso" | "rendering";
-}> = ({ dispatchType }) => {
+  guidanceReference?: string;
+}> = ({ dispatchType, guidanceReference }) => {
   const shellContext = useContext(ShellContext);
   const canvas = useCanvas();
   const vault = useVault();
@@ -78,7 +79,11 @@ export const ExternalResource: React.FC<{
   };
   return (
     <>
-      <EmptyProperty label={dispatchType} createNew={addNew} />
+      <EmptyProperty
+        label={dispatchType}
+        createNew={addNew}
+        guidanceReference={guidanceReference}
+      />
 
       <DragDropContext onDragEnd={onDragEnd} key={redraw}>
         <Droppable droppableId="droppable">

@@ -217,7 +217,11 @@ export const ThumbnailForm = () => {
           __html: JSON.stringify(vault.get(canvas.thumbnail), null, 2),
         }}
       ></pre> */}
-      <EmptyProperty label={"thumbnail"} createNew={addNew} />
+      <EmptyProperty
+        label={"thumbnail"}
+        createNew={addNew}
+        guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
+      />
       {vault.get(canvas.thumbnail).map((thumb: any, index: number) => {
         return (
           <>
@@ -265,9 +269,6 @@ export const ThumbnailForm = () => {
           </Button>
         </div>
       )}
-      <InformationLink
-        guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
-      />
     </>
   );
 };

@@ -1,6 +1,5 @@
 import { FlexContainerColumn } from "../../layout/FlexContainer";
 import { ExternalResource } from "./ExternalResource";
-import { InformationLink } from "../../atoms/InformationLink";
 import { useCanvas } from "react-iiif-vault";
 
 export const LinkingForm: React.FC<{}> = () => {
@@ -9,22 +8,26 @@ export const LinkingForm: React.FC<{}> = () => {
   return (
     <FlexContainerColumn key={canvas?.id}>
       <>
-        <ExternalResource dispatchType={"homepage"} />
-        <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#homepage" />
+        <ExternalResource
+          dispatchType={"homepage"}
+          guidanceReference="https://iiif.io/api/presentation/3.0/#homepage"
+        />
       </>
       <>
-        <ExternalResource dispatchType={"rendering"} />
-        <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#rendering" />
+        <ExternalResource
+          dispatchType={"rendering"}
+          guidanceReference="https://iiif.io/api/presentation/3.0/#rendering"
+        />
       </>
       <>
-        <ExternalResource dispatchType={"seeAlso"} />
-        <InformationLink
+        <ExternalResource
+          dispatchType={"seeAlso"}
           guidanceReference={"https://iiif.io/api/presentation/3.0/#seeAlso"}
         />
       </>
       <>
-        <ExternalResource dispatchType={"service"} />
-        <InformationLink
+        <ExternalResource
+          dispatchType={"service"}
           guidanceReference={"https://iiif.io/api/presentation/3.0/#service"}
         />
       </>

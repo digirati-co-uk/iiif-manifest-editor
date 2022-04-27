@@ -4,6 +4,7 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
+import { FlexContainer } from "../../layout/FlexContainer";
 import { Input } from "../Input";
 
 export const DateForm: React.FC<{}> = () => {
@@ -26,7 +27,13 @@ export const DateForm: React.FC<{}> = () => {
   return (
     <>
       <ErrorBoundary>
-        <h4>{dispatchType}</h4>
+        <FlexContainer>
+          <h4>{dispatchType}</h4>
+          {guidanceReference && (
+            <InformationLink guidanceReference={guidanceReference} />
+          )}
+        </FlexContainer>
+
         <Input
           type="string"
           onChange={(e: any) => {
@@ -35,7 +42,6 @@ export const DateForm: React.FC<{}> = () => {
           // @ts-ignore
           value={canvas && canvas[dispatchType] ? canvas[dispatchType] : ""}
         />
-        <InformationLink guidanceReference={guidanceReference} />
       </ErrorBoundary>
     </>
   );

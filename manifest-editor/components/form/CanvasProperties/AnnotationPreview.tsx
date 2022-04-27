@@ -1,7 +1,5 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { InputLabel } from "../Input";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 

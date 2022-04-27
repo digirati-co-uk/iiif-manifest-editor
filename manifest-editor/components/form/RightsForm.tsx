@@ -29,7 +29,12 @@ export const RightsForm: React.FC<{
   return (
     <>
       <MenuContainer style={{ width: "100%" }}>
-        <h4>{label}</h4>
+        <FlexContainer>
+          <h4>{label}</h4>
+          {guidanceReference && (
+            <InformationLink guidanceReference={guidanceReference} />
+          )}
+        </FlexContainer>
 
         <FlexContainer
           style={{ width: "100%", justifyContent: "space-between" }}
@@ -69,9 +74,6 @@ export const RightsForm: React.FC<{
                 })}
             </DropdownContent>
           </DropdownContainer>
-        )}
-        {guidanceReference && (
-          <InformationLink guidanceReference={guidanceReference} />
         )}
       </MenuContainer>
     </>

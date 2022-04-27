@@ -5,6 +5,7 @@ import {
 } from "../../hooks/useMetadataEditor";
 import { Button, SecondaryButton } from "../atoms/Button";
 import { EmptyProperty } from "../atoms/EmptyProperty";
+import { InformationLink } from "../atoms/InformationLink";
 import { CloseIcon } from "../icons/CloseIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import { Input, InputBorderless } from "./Input";
@@ -14,6 +15,7 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
   index?: number;
   property?: "label" | "value";
+  guidanceReference?: string;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -34,6 +36,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // The `firstItem` will be based on the i18n of the user's browser.
   // ...
   const availableLanguages = props.availableLanguages || ["en", "none"];
+  const guidanceReference = props.guidanceReference;
 
   // The hidden fields.
   const [showAllFields, setShowAllFields] = useState(false);
@@ -134,6 +137,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
       <EmptyProperty
         label={props.label}
         createNew={() => createNewItem(false)}
+        guidanceReference={guidanceReference}
       />
     );
   }
@@ -189,7 +193,12 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 
   return (
     <div style={{ width: "100%}" }}>
-      <h4>{props.label}</h4>
+      <FlexContainer>
+        <h4>{props.label}</h4>
+        {guidanceReference && (
+          <InformationLink guidanceReference={guidanceReference} />
+        )}
+      </FlexContainer>
       <div>{defaultTextBox}</div>
       <div>{allFields}</div>
     </div>

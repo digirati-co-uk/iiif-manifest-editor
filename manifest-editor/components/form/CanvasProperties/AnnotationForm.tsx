@@ -7,6 +7,7 @@ import ShellContext from "../../apps/Shell/ShellContext";
 import { CalltoButton } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { InformationLink } from "../../atoms/InformationLink";
+import { FlexContainer } from "../../layout/FlexContainer";
 import { AnnotationPreview } from "./AnnotationPreview";
 import { MediaResourcePreview } from "./MediaResourcePreview";
 
@@ -48,7 +49,12 @@ export const AnnotationForm = () => {
     <>
       <EmptyProperty label={"annotations"} createNew={addNew} />
       <div>
-        THE CANVAS ANNOTATIONS
+        <FlexContainer>
+          <h4>annotations</h4>
+          {guidanceReference && (
+            <InformationLink guidanceReference={guidanceReference} />
+          )}
+        </FlexContainer>
         <pre
           // @ts-ignore
           dangerouslySetInnerHTML={{
@@ -68,9 +74,6 @@ export const AnnotationForm = () => {
             return <AnnotationPreview thumbnailSrc={NESTEDITEM.id} />;
           });
         })}
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
-      )}
     </>
   );
 };

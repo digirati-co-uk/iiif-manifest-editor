@@ -3,7 +3,6 @@ import { useCanvas, useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import ShellContext from "../../apps/Shell/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { LanguageFieldEditor } from "../LanguageFieldEditor";
 
@@ -36,11 +35,9 @@ export const LanguageMapInputCanvas: React.FC<{
             fields={canvas[dispatchType] || {}}
             onSave={(data: any) => changeHandler(data)}
             availableLanguages={languages}
+            guidanceReference={guidanceReference}
           />
         </ErrorBoundary>
-      )}
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
       )}
     </div>
   );

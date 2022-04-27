@@ -64,7 +64,11 @@ export const MetadataForm: React.FC<{}> = () => {
 
   return (
     <>
-      <EmptyProperty label={"metadata"} createNew={addNew} />
+      <EmptyProperty
+        label={"metadata"}
+        createNew={addNew}
+        guidanceReference={guidanceReference}
+      />
       <div key={canvas?.id}>
         {canvas && (
           <ErrorBoundary>
@@ -84,9 +88,6 @@ export const MetadataForm: React.FC<{}> = () => {
           </ErrorBoundary>
         )}
       </div>
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
-      )}
     </>
   );
 };
