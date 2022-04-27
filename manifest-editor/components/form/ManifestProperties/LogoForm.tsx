@@ -53,7 +53,7 @@ const LogoWrapper: React.FC<LogoWrapperProps> = ({
   const [properties, setProperties] = useState<any>();
   const [message, setMessage] = useState<string>();
   const [error, setError] = useState(false);
-  const [src, setSrc] = useState(thumbnailSrc);
+  const [src, setSrc] = useState(logoSrc);
 
   // Triggered on blur of the URL value.
   const analyser = async (url: any) => {
@@ -94,7 +94,7 @@ const LogoWrapper: React.FC<LogoWrapperProps> = ({
   };
 
   return (
-    <div key={index + thumbnailSrc + height + width}>
+    <div key={index + logoSrc + height + width}>
       {message && !error && (
         <SuccessMessage>
           <div>

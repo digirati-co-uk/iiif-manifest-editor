@@ -115,6 +115,7 @@ export const Tree: React.FC = () => {
                 : () => {}
             }
             propertyName={"items"}
+            // @ts-ignore
             array={vault.get(manifest).items || []}
           />
 
@@ -290,6 +291,7 @@ export const Tree: React.FC = () => {
                 : () => {}
             }
             propertyName={"thumbnail"}
+            // @ts-ignore
             array={vault.get(manifest) || []}
           />
           <KeyValuePairString

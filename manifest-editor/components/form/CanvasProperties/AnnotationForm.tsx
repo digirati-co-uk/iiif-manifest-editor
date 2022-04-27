@@ -58,7 +58,8 @@ export const AnnotationForm = () => {
         <pre
           // @ts-ignore
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(vault.get(canvas.annotations), null, 3),
+            // @ts-ignore
+            __html: JSON.stringify(vault.get(canvas?.annotations), null, 3),
           }}
         ></pre>
       </div>
@@ -69,7 +70,8 @@ export const AnnotationForm = () => {
         vault.get(canvas.annotations).map((item: any) => {
           // @ts-ignore
           console.log(item);
-          return vault.get(item.id).items.map((NESTEDITEM: any) => {
+          // @ts-ignore
+          return vault.get(item.id)?.items.map((NESTEDITEM: any) => {
             // console.log(NESTEDITEM);
             return <AnnotationPreview thumbnailSrc={NESTEDITEM.id} />;
           });
