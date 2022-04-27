@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useCanvas } from "react-iiif-vault";
 import ShellContext from "../../apps/Shell/ShellContext";
-import { Button, SecondaryButton } from "../../atoms/Button";
+import { Button } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import { Input } from "../Input";
 import {

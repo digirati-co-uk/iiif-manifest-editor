@@ -205,7 +205,12 @@ export const LogoForm = () => {
   }
   return (
     <>
-      <InputLabel>logo</InputLabel>
+      <InputLabel $inline={true}>
+        logo
+        <InformationLink
+          guidanceReference={"https://iiif.io/api/presentation/3.0/#logonail"}
+        />
+      </InputLabel>
       {manifest &&
         vault.get(manifest.logo).map((logo: any, index: number) => {
           return (
@@ -257,9 +262,6 @@ export const LogoForm = () => {
       <SecondaryButton onClick={addNew}>
         {manifest && manifest.logo.length > 0 ? "Add another" : "Create"}
       </SecondaryButton>
-      <InformationLink
-        guidanceReference={"https://iiif.io/api/presentation/3.0/#logonail"}
-      />
     </>
   );
 };

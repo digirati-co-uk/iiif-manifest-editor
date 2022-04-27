@@ -14,6 +14,7 @@ import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { InformationLink } from "../../atoms/InformationLink";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { InputLabel } from "../Input";
+import { FlexContainer } from "../../layout/FlexContainer";
 
 interface ThumbnailWrapperProps {
   thumbnailSrc: string;
@@ -210,7 +211,12 @@ export const ThumbnailForm = () => {
   }
   return (
     <div key={render}>
-      <InputLabel>thumbnail</InputLabel>
+      <FlexContainer>
+        <InputLabel>thumbnail</InputLabel>
+        <InformationLink
+          guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
+        />
+      </FlexContainer>
       {vault.get(manifest.thumbnail).map((thumb: any, index: number) => {
         return (
           <>
@@ -261,9 +267,6 @@ export const ThumbnailForm = () => {
       <SecondaryButton onClick={addNew}>
         {manifest && manifest.thumbnail.length > 0 ? "Add another" : "Create"}
       </SecondaryButton>
-      <InformationLink
-        guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
-      />
     </div>
   );
 };

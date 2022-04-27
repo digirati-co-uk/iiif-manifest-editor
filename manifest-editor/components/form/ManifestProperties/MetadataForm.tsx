@@ -10,6 +10,7 @@ import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
 import { CalltoButton } from "../../atoms/Button";
 import { FlexContainer } from "../../layout/FlexContainer";
+import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const MetadataForm: React.FC<{}> = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -66,6 +67,11 @@ export const MetadataForm: React.FC<{}> = () => {
 
   return (
     <>
+      <EmptyProperty
+        label={"metadata"}
+        createNew={addNew}
+        guidanceReference={guidanceReference}
+      />
       <div key={manifest?.id}>
         {manifest && (
           <ErrorBoundary>
@@ -85,9 +91,6 @@ export const MetadataForm: React.FC<{}> = () => {
           </ErrorBoundary>
         )}
       </div>
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
-      )}
       <FlexContainer style={{ justifyContent: "center" }}>
         <CalltoButton
           aria-label="add new metadata pair"

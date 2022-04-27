@@ -37,11 +37,9 @@ export const LanguageMapInput: React.FC<{
             fields={manifest[dispatchType] || {}}
             onSave={(data: any) => changeHandler(data)}
             availableLanguages={languages}
+            guidanceReference={guidanceReference}
           />
         </ErrorBoundary>
-      )}
-      {guidanceReference && (
-        <InformationLink guidanceReference={guidanceReference} />
       )}
     </>
   );

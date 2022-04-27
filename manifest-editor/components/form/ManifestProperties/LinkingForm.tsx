@@ -2,7 +2,6 @@ import { FlexContainerColumn } from "../../layout/FlexContainer";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../../hooks/useManifest";
 import { ExternalResource } from "./ExternalResource";
-import { InformationLink } from "../../atoms/InformationLink";
 
 export const LinkingForm: React.FC<{}> = () => {
   const manifest = useManifest();
@@ -10,28 +9,32 @@ export const LinkingForm: React.FC<{}> = () => {
   return (
     <FlexContainerColumn key={manifest?.id}>
       <>
-        <ExternalResource dispatchType={"homepage"} />
-        <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#homepage" />
+        <ExternalResource
+          dispatchType={"homepage"}
+          guidanceReference="https://iiif.io/api/presentation/3.0/#homepage"
+        />
       </>
       <>
-        <ExternalResource dispatchType={"rendering"} />
-        <InformationLink guidanceReference="https://iiif.io/api/presentation/3.0/#rendering" />
+        <ExternalResource
+          dispatchType={"rendering"}
+          guidanceReference="https://iiif.io/api/presentation/3.0/#rendering"
+        />
       </>
       <>
-        <ExternalResource dispatchType={"seeAlso"} />
-        <InformationLink
+        <ExternalResource
+          dispatchType={"seeAlso"}
           guidanceReference={"https://iiif.io/api/presentation/3.0/#seeAlso"}
         />
       </>
       <>
-        <ExternalResource dispatchType={"service"} />
-        <InformationLink
+        <ExternalResource
+          dispatchType={"service"}
           guidanceReference={"https://iiif.io/api/presentation/3.0/#service"}
         />
       </>
       <>
-        <ExternalResource dispatchType={"services"} />
-        <InformationLink
+        <ExternalResource
+          dispatchType={"services"}
           guidanceReference={"https://iiif.io/api/presentation/3.0/#services"}
         />
       </>
