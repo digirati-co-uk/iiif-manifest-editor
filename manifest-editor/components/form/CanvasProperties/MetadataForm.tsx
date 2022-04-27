@@ -7,6 +7,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
 import { CalltoButton } from "../../atoms/Button";
+import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const MetadataForm: React.FC<{}> = () => {
   const editorContext = useContext(ManifestEditorContext);
@@ -63,6 +64,7 @@ export const MetadataForm: React.FC<{}> = () => {
 
   return (
     <>
+      <EmptyProperty label={"metadata"} createNew={addNew} />
       <div key={canvas?.id}>
         {canvas && (
           <ErrorBoundary>
@@ -85,9 +87,6 @@ export const MetadataForm: React.FC<{}> = () => {
       {guidanceReference && (
         <InformationLink guidanceReference={guidanceReference} />
       )}
-      <CalltoButton onClick={() => addNew()} aria-label="new metadata property">
-        Add new metadata property
-      </CalltoButton>
     </>
   );
 };

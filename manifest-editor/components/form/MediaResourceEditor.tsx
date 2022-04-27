@@ -1,6 +1,9 @@
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { ThumbnailImg } from "../atoms/Thumbnail";
-import { ThumbnailContainer } from "../atoms/ThumbnailContainer";
+import {
+  ThumbnailContainer,
+  ThumbnailContainerSmall,
+} from "../atoms/ThumbnailContainer";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { InputLabel, Input } from "./Input";
 
@@ -23,9 +26,6 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
   changeWidth,
   height,
   width,
-
-  // changeType,
-  // type,
   changeThumbnailSrc,
   serviceID,
 }) => {
@@ -38,14 +38,14 @@ export const MediaResourceEditor: React.FC<MediaResourceEditorProps> = ({
       }}
       key={thumbnailSrc + width + height}
     >
-      <FlexContainerColumn style={{ width: "20%" }}>
+      <FlexContainerColumn style={{ width: "50%" }}>
         {thumbnailSrc && thumbnailSrc !== "" && (
-          <ThumbnailContainer size={128}>
+          <ThumbnailContainerSmall size={128}>
             <ThumbnailImg src={thumbnailSrc} alt="thumbnail" />
-          </ThumbnailContainer>
+          </ThumbnailContainerSmall>
         )}
       </FlexContainerColumn>
-      <FlexContainerColumn style={{ width: "80%" }}>
+      <FlexContainerColumn style={{ width: "50%" }}>
         <ErrorBoundary>
           <InputLabel>
             id

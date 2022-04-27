@@ -7,66 +7,41 @@ import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
-  changeImageSrc: (newImageURL: string) => void;
 }
 
 export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({
   thumbnailSrc,
-  changeImageSrc,
 }) => {
   const vault = useVault();
   const canvas = useCanvas();
-  const image = vault.get(thumbnailSrc);
+  const image = vault.get(thumbnailSrc) as any;
+  console.log(image);
   return (
     <>
-      {
-        // @ts-ignore
+      {image &&
+        image?.body &&
+        Array.isArray(image.body) &&
         image.body.map((annotationBody: any) => {
-          console.log(annotationBody);
+          const body = vault.get(annotationBody.id) as any;
           return (
             <FlexContainer
               style={{
-                justifyContent: "space-between",
                 alignItems: "center",
                 width: "100%",
               }}
               key={thumbnailSrc}
             >
-              <FlexContainerColumn style={{ width: "20%" }}>
+              <FlexContainerColumn>
                 {thumbnailSrc && thumbnailSrc !== "" && (
-                  <ThumbnailContainer size={128}>
+                  <ThumbnailContainer size={32}>
                     <ThumbnailImg src={annotationBody.id} alt="thumbnail" />
                   </ThumbnailContainer>
                 )}
               </FlexContainerColumn>
-              <FlexContainerColumn style={{ width: "80%" }}>
-                <ErrorBoundary>
-                  <InputLabel>
-                    id
-                    <Input
-                      value={annotationBody.id}
-                      onBlur={(e: any) => changeImageSrc(e.target.value)}
-                    />
-                  </InputLabel>
-                  <InputLabel>
-                    target:
-                    <div>
-                      {
-                        // @ts-ignore
-                        canvas.id === image?.target
-                          ? "Whole Canvas"
-                          : // @ts-ignore
-                            image?.canvas
-                      }
-                    </div>
-                  </InputLabel>
-                </ErrorBoundary>
-                <FlexContainer></FlexContainer>
-              </FlexContainerColumn>
+              <div style={{ padding: "10px" }}>{body.type}</div>
             </FlexContainer>
           );
-        })
-      }
+        })}
     </>
   );
 };

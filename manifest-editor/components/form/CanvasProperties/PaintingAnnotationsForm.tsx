@@ -1,21 +1,48 @@
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import { useContext, useState } from "react";
+import { IIIFBuilder } from "iiif-builder";
+import { useContext, useReducer, useState } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
+import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
+import { Button } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { InformationLink } from "../../atoms/InformationLink";
 import { MediaResouceEditorModal } from "../ModalForms/MediaResource";
 import { MediaResourcePreview } from "./MediaResourcePreview";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { DeleteIcon } from "../../icons/DeleteIcon";
+import { FlexContainerRow } from "../../layout/FlexContainer";
+import { LightBox, LightBoxWithoutSides } from "../../atoms/LightBox";
+import { EditIcon } from "../../icons/EditIcon";
+import { EditableContainer } from "../../atoms/EditableContainer";
+import { PaddingComponentMedium } from "../../atoms/PaddingComponent";
+import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
 
 var uuid = require("uuid");
 
 export const PaintingAnnotationsForm: React.FC = () => {
   const canvas = useCanvas();
   const vault = useVault();
+  const manifest = useManifest();
   const shellContext = useContext(ShellContext);
+  const editorContext = useContext(ManifestEditorContext);
 
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState<number | boolean>(false);
+  // const [, forceUpdate] = useReducer(() => [], []);
+
+  const onDragEnd = (result: DropResult) => {
+    const destination = result.destination;
+    if (!destination) {
+      return;
+    }
+    // forceUpdate();
+    reorder(result.source.index, destination.index);
+  };
 
   const editImage = (newUrl: string) => {
     // Handle updating the image
@@ -27,140 +54,130 @@ export const PaintingAnnotationsForm: React.FC = () => {
     // bring up the media resource input form
     // setShowModal(true);
     const newID = `vault://${uuid.v4()}`;
-    const nestedID = `vault://${uuid.v4()}`;
-    if (!canvas) return;
-
-    vault.dispatch(
-      importEntities({
-        entities: {
-          ContentResource: {
-            "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg":
-              {
-                id: "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg",
-                type: "Image",
-              },
+    if (!canvas || !manifest) return;
+    const builder = new IIIFBuilder(vault);
+    builder.editManifest(manifest.id, (mani: any) => {
+      mani.editCanvas(canvas.id, (can: any) => {
+        can.createAnnotation(canvas.id, {
+          id: `${newID}/painting`,
+          type: "Annotation",
+          motivation: "painting",
+          body: {
+            id: "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg",
+            type: "Image",
+            format: "jpg",
+            height: 1000,
+            width: 2000,
           },
-        },
-      })
-    );
-
-    vault.dispatch(
-      importEntities({
-        entities: {
-          Annotation: {
-            [nestedID]: {
-              id: "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg",
-              type: "Annotation",
-              body: vault.get(
-                "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg"
-              ),
-              target: vault.get(canvas),
-            },
-          },
-        },
-      })
-    );
-
-    vault.dispatch(
-      addMapping({
-        id: nestedID,
-        type: "ContentResource",
-      })
-    );
-    vault.dispatch(
-      importEntities({
-        entities: {
-          AnnotationPage: {
-            [newID]: {
-              id: newID,
-              type: "AnnotationPage",
-              behavior: [],
-              motivation: null,
-              label: null,
-              thumbnail: [],
-              summary: null,
-              requiredStatement: null,
-              metadata: [],
-              rights: null,
-              provider: [],
-              items: [
-                {
-                  id: nestedID,
-                  type: "Annotation",
-                },
-              ],
-              seeAlso: [],
-              homepage: [],
-              logo: [],
-              rendering: [],
-              service: [],
-            },
-          },
-        },
-      })
-    );
-    vault.dispatch(
-      addMapping({
-        id: newID,
-        type: "ContentResource",
-      })
-    );
-
-    console.log(
-      vault.get({
-        id: "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg",
-      })
-    );
-
-    // And finally tell the vault to update which references are associated with the parent property
-    const newMediaItem = canvas && canvas.items ? [...canvas.items] : [];
-    if (canvas) {
-      newMediaItem.push({
-        id: newID,
-        type: "AnnotationPage",
+        });
       });
+    });
+    shellContext?.setUnsavedChanges(true);
+  };
+
+  const reorder = (fromPosition: number, toPosition: number) => {
+    const newOrder = canvas ? [...canvas.items] : [];
+    const [removed] = newOrder.splice(fromPosition, 1);
+    newOrder.splice(toPosition, 0, removed);
+    if (canvas) {
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(canvas, "items", newMediaItem);
+      vault.modifyEntityField(canvas, "items", newOrder);
+    }
+  };
+
+  const remove = (index: number) => {
+    const copy = canvas && canvas.items ? [...canvas.items] : [];
+    if (canvas && (index || index === 0)) {
+      copy.splice(index, 1);
+      shellContext?.setUnsavedChanges(true);
+      // Provide the vault with an updated list of content resources
+      // with the item removed
+      vault.modifyEntityField(canvas, "items", copy);
     }
   };
 
   return (
-    <div>
-      <pre
-        // @ts-ignore
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(vault.get(canvas.items), null, 2),
-        }}
-      ></pre>
+    <EditableContainer>
       {showModal && (
         <MediaResouceEditorModal close={() => setShowModal(false)} />
       )}
-      <EmptyProperty label={"items"} createNew={addNew} />
-      {vault &&
-        // @ts-ignore
-        vault.get(canvas.items).map((item: any) => {
-          // console.log("ITEM", vault.get(item));
-          const items = vault.get(item?.id);
-          return (
-            items &&
-            item.items.map((NESTEDITEM: any, index: number) => {
-              return (
-                <MediaResourcePreview
-                  changeImageSrc={(newimage: string) => {
-                    setSelected(index);
-                    editImage(newimage);
-                  }}
-                  thumbnailSrc={NESTEDITEM.id}
-                />
-              );
-            })
-          );
-        })}
-      <InformationLink
+      <EmptyProperty
         guidanceReference={
           "https://iiif.io/api/presentation/3.0/#55-annotation-page "
         }
+        label={"items"}
+        createNew={() =>
+          editorContext?.changeSelectedProperty("canvas item", -1)
+        }
       />
-    </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "column",
+              }}
+            >
+              {vault &&
+                canvas &&
+                vault.get(canvas.items).map((item: any, index) => {
+                  const items = vault.get(item?.id);
+                  return (
+                    items &&
+                    item.items.map((NESTEDITEM: any, idx: number) => {
+                      return (
+                        <Draggable
+                          key={NESTEDITEM.toString() + "--HASH--"}
+                          draggableId={index.toString() + "--HASH--"}
+                          index={index}
+                        >
+                          {(innerProvided: any) => (
+                            <LightBoxWithoutSides
+                              ref={innerProvided.innerRef}
+                              {...innerProvided.draggableProps}
+                              {...innerProvided.dragHandleProps}
+                              key={item.id}
+                            >
+                              <FlexContainerRow
+                                style={{ alignItems: "center", width: "100%" }}
+                              >
+                                <Button
+                                  onClick={() => remove(index)}
+                                  title="remove"
+                                >
+                                  <DeleteIcon />
+                                </Button>
+                                <MediaResourcePreview
+                                  thumbnailSrc={NESTEDITEM.id}
+                                />
+                                <Button
+                                  onClick={() =>
+                                    editorContext?.changeSelectedProperty(
+                                      "canvas item",
+                                      index
+                                    )
+                                  }
+                                  title="edit"
+                                >
+                                  <EditIcon />
+                                </Button>
+                              </FlexContainerRow>
+                            </LightBoxWithoutSides>
+                          )}
+                        </Draggable>
+                      );
+                    })
+                  );
+                })}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      {/* <PaddingComponentMedium /> */}
+    </EditableContainer>
   );
 };

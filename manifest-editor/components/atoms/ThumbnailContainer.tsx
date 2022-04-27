@@ -7,7 +7,35 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    // height: 80vh;
+    overflow-y: auto;
+    width: 100%;
+    @media (max-width: ${(props: any) =>
+        props.theme.device.tablet || "770px"}) {
+      flex-direction: row;
+      width: 80%;
+      overflow-x: auto;
+    }
+    align-items: center;
+    background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+    ${(props: any) =>
+      props.size &&
+      css`
+        padding: none;
+        img {
+          width: ${props.size}px;
+          height: ${props.size}px;
+          max-width: 100%;
+        }
+      `};
+  }
+`;
+export const ThumbnailContainerSmall = styled.div<{ size?: number }>`
+   {
+    padding: ${(props: any) => props.theme.padding.xs || "0.25rem"};
+    color: ${(props: any) => props.color || "black"};
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     overflow-y: auto;
     width: 100%;
     @media (max-width: ${(props: any) =>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { useCanvas } from "react-iiif-vault";
 import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
 import { useManifest } from "../../hooks/useManifest";
@@ -12,7 +12,7 @@ export const CanvasView: React.FC = () => {
   if (!canvas) {
     return (
       <CanvasContainer>
-        <GhostCanvas></GhostCanvas>
+        <GhostCanvas />
       </CanvasContainer>
     );
   }
@@ -27,6 +27,7 @@ export const CanvasView: React.FC = () => {
           ref={viewer}
           canvas-id={canvas?.id}
           manifest-id={manifest?.id}
+          key={canvas?.id}
         />
       </ErrorBoundary>
     </CanvasContainer>

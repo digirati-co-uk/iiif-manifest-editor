@@ -2,7 +2,7 @@ import { InformationLink } from "../atoms/InformationLink";
 import { AddIcon } from "../icons/AddIcon";
 import { CheckIcon } from "../icons/CheckIcon";
 import { FlexContainer } from "../layout/FlexContainer";
-import { HiddenCheckbox, InputLabel, MutliselectLabel } from "./Input";
+import { HiddenCheckbox, MutliselectLabel } from "./Input";
 
 export const StringSelector: React.FC<{
   options: string[] | null;

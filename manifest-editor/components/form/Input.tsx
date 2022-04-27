@@ -12,7 +12,7 @@ export const InputLabel = styled.label<{
   align-items: baseline;
   width: 100%;
   flex-direction: column;
-  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  // padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   ${(props: any) =>
     props.$caps &&
     css`

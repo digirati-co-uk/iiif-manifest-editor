@@ -3,6 +3,7 @@ import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { InformationLink } from "./InformationLink";
 import { Input } from "../form/Input";
+import { EmptyProperty } from "./EmptyProperty";
 
 type Dimensions = {
   width: number;
@@ -25,7 +26,12 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
     <FlexContainer>
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%" }}>
-          <InputLabel>{"height"}</InputLabel>
+          <InputLabel $inline={true}>
+            {"height"}
+            <InformationLink
+              guidanceReference={"https://iiif.io/api/presentation/3.0/#height"}
+            />
+          </InputLabel>
           <Input
             type="number"
             onChange={(e: any) => {
@@ -33,14 +39,16 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
             }}
             value={height}
           />
-          <InformationLink
-            guidanceReference={"https://iiif.io/api/presentation/3.0/#height"}
-          />
         </FlexContainerColumn>
       </ErrorBoundary>
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%" }}>
-          <InputLabel>{"width"}</InputLabel>
+          <InputLabel $inline={true}>
+            {"width"}
+            <InformationLink
+              guidanceReference={"https://iiif.io/api/presentation/3.0/#width"}
+            />
+          </InputLabel>
           <Input
             type="number"
             onChange={(e: any) => {
@@ -48,23 +56,24 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
             }}
             value={width}
           />
-          <InformationLink
-            guidanceReference={"https://iiif.io/api/presentation/3.0/#width"}
-          />
         </FlexContainerColumn>
       </ErrorBoundary>
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%" }}>
-          <InputLabel>{"duration"}</InputLabel>
+          <InputLabel $inline={true}>
+            {"duration"}
+            <InformationLink
+              guidanceReference={
+                "https://iiif.io/api/presentation/3.0/#duration"
+              }
+            />
+          </InputLabel>
           <Input
             type="number"
             onChange={(e: any) => {
               changeDuration(e.target.value);
             }}
             value={duration}
-          />
-          <InformationLink
-            guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"}
           />
         </FlexContainerColumn>
       </ErrorBoundary>

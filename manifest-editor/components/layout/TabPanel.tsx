@@ -8,6 +8,8 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
   background: ${(props: any) => props.theme.color.white || "white"};
   color: ${(props: any) => props.theme.color.main || "blue"};
   cursor: pointer;
+  border-bottom: 1px solid
+    ${(props: any) => props.theme.color.mediumgrey || "grey"};
   ${(props) =>
     props.$active &&
     css`

@@ -13,7 +13,6 @@ import {
 export const ThumbnailImg = styled.img`
    {
     object-fit: contain;
-    padding: 10px;
     user-select: none;
   }
 `;

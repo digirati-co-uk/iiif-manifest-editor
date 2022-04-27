@@ -3,13 +3,8 @@ import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 
 interface EditorContextInterface {
   selectedProperty: string;
-  // This list will grow
   selectedPanel?: number;
-  changeSelectedProperty: (
-    property: string,
-    // This list will grow
-    key?: number
-  ) => void;
+  changeSelectedProperty: (property: string, key?: number) => void;
   setView: (
     view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"
   ) => void;
