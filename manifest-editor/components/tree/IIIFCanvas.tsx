@@ -15,7 +15,7 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { Subdirectory } from "../icons/Subdirectory";
+import { SubdirectoryIcon } from "../icons/SubdirectoryIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
 import ShellContext from "../apps/Shell/ShellContext";
@@ -33,7 +33,6 @@ export const IIIFCanvas: React.FC<{
   const editorContext = useContext(ManifestEditorContext);
   return (
     <>
-      <div>HELLO</div>
       <Container
         onClick={() => {
           shellContext?.setCurrentCanvasId(id);
@@ -41,7 +40,7 @@ export const IIIFCanvas: React.FC<{
         }}
       >
         <FlexContainer>
-          <Subdirectory />
+          <SubdirectoryIcon />
           <KeyCanvas onClick={() => onClick()}>{type}</KeyCanvas>
           {label}
         </FlexContainer>

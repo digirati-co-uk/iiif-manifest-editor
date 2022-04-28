@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "./Button";
 import { FlexContainerColumn } from "../layout/FlexContainer";
-import { PreviewIcon } from "../icons/Preview";
+import { PreviewIcon } from "../icons/PreviewIcon";
 import { DownIcon } from "../icons/DownIcon";
 import { VerticalDivider } from "./VerticalDivider";
 

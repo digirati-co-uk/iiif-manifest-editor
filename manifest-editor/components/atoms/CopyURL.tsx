@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { CopyIcon } from "../icons/Copy";
+import { CopyIcon } from "../icons/CopyIcon";
 import styled from "styled-components";
 import { FlexContainerRow } from "../layout/FlexContainer";
 import { SecondaryButton } from "./Button";

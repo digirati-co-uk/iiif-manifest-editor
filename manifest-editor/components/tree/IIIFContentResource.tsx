@@ -15,7 +15,7 @@ import { DownIcon } from "../icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { Subdirectory } from "../icons/Subdirectory";
+import { SubdirectoryIcon } from "../icons/SubdirectoryIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 
 const ContentResource: React.FC<{ type: string; id: string }> = ({
@@ -31,7 +31,7 @@ const ContentResource: React.FC<{ type: string; id: string }> = ({
     <>
       <Container onClick={() => setOpen(!open)}>
         <FlexContainer>
-          <Subdirectory />
+          <SubdirectoryIcon />
           <KeyContentResource>{type}</KeyContentResource>
           {label}
         </FlexContainer>

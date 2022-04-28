@@ -1,4 +1,4 @@
-export const Subdirectory: React.FC = () => (
+export const SubdirectoryIcon: React.FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height="1rem"

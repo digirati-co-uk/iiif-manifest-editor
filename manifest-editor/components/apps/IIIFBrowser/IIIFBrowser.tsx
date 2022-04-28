@@ -16,8 +16,6 @@ export const IIIFBrowser: React.FC = () => {
     waitData();
   });
 
-  // https://ryanfb.github.io/iiif-universe/iiif-universe.json
-
   return (
     <ul>
       <h4>

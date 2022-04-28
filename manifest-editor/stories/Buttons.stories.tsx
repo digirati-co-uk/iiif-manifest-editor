@@ -7,7 +7,7 @@ import {
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
-  title: "Manifest Editor/Atoms",
+  title: "Manifest Editor/Buttons",
   component: Button,
 } as ComponentMeta<typeof Button>;
 
@@ -17,7 +17,6 @@ const Template: ComponentStory<typeof Button> = (args) => {
       <Button>This is a plain button for housing icons/text etc.</Button>
       <br />
       <CalltoButton>A call to action button</CalltoButton>
-      <br />
       <br />
       <SecondaryButton>A secondary button</SecondaryButton>
     </div>

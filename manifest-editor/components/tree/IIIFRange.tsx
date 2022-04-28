@@ -15,7 +15,7 @@ import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
 import { ErrorBoundary } from "../atoms/ErrorBoundary";
 import { useRange } from "react-iiif-vault";
-import { Subdirectory } from "../icons/Subdirectory";
+import { SubdirectoryIcon } from "../icons/SubdirectoryIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 
 const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
@@ -27,7 +27,7 @@ const IIIFRange: React.FC<{ type: string; id: string }> = ({ type, id }) => {
     <>
       <Container onClick={() => setOpen(!open)}>
         <FlexContainer>
-          <Subdirectory />
+          <SubdirectoryIcon />
           <KeyRanges>{type}</KeyRanges>
           {label}
         </FlexContainer>
