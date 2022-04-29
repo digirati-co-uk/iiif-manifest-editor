@@ -7,9 +7,10 @@ import { MediaBody } from "../../../types/media-body";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
+import { addMapping, importEntities } from "@iiif/vault/actions";
 var uuid = require("uuid");
 
-export const MediaForm = () => {
+export const CanvasThumbnailForm = () => {
   const editorContext = useContext(ManifestEditorContext);
   const shellContext = useContext(ShellContext);
   const canvas = useCanvas();
@@ -17,41 +18,66 @@ export const MediaForm = () => {
   const vault = useVault();
 
   const addNew = (body: MediaBody) => {
-    console.log(body);
-    const newID = `vault://${uuid.v4()}`;
-    if (!canvas || !manifest) return;
-    const builder = new IIIFBuilder(vault);
-    builder.editManifest(manifest.id, (mani: any) => {
-      mani.editCanvas(canvas.id, (can: any) => {
-        can.createAnnotation(newID, {
-          id: `${newID}/painting`,
-          type: "Annotation",
-          motivation: "painting",
-          body: body,
-        });
-      });
-    });
+    const index = editorContext?.selectedPanel || canvas?.thumbnail.length || 0;
+    // Add new ref to the vault
+    vault.dispatch(
+      importEntities({
+        entities: {
+          ContentResource: {
+            [body.id]: {
+              id: body.id,
+              type: "Image",
+            },
+          },
+        },
+      })
+    );
+    // Add the mapping in
+    vault.dispatch(
+      addMapping({
+        id: body.id,
+        type: "ContentResource",
+      })
+    );
+    // Tell the vault to update which references are associated with the parent property
+    const newThumbnailReferences =
+      canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
+    if (canvas) {
+      newThumbnailReferences.push({ id: body.id, type: "ContentResource" });
+      shellContext?.setUnsavedChanges(true);
+      vault.modifyEntityField(canvas, "thumbnail", newThumbnailReferences);
+    }
+    // get the ref we need using the index:
+    const reference = canvas?.thumbnail[-1];
+    // dispatch a change to this reference
+    shellContext?.setUnsavedChanges(true);
+    if (reference) {
+      vault.modifyEntityField(reference, "width", body.width);
+      vault.modifyEntityField(reference, "height", body.height);
+      vault.modifyEntityField(reference, "format", body.format);
+      vault.modifyEntityField(reference, "type", body.type);
+    }
     shellContext?.setUnsavedChanges(true);
   };
 
   const reorder = (fromPosition: number, toPosition: number) => {
-    const newOrder = canvas ? [...canvas.items] : [];
+    const newOrder = canvas ? [...canvas.thumbnail] : [];
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
       shellContext?.setUnsavedChanges(true);
-      vault.modifyEntityField(canvas, "items", newOrder);
+      vault.modifyEntityField(canvas, "thumbnail", newOrder);
     }
   };
 
   const remove = (index: number) => {
-    const copy = canvas && canvas.items ? [...canvas.items] : [];
+    const copy = canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
     if (canvas && (index || index === 0)) {
       copy.splice(index, 1);
       shellContext?.setUnsavedChanges(true);
       // Provide the vault with an updated list of content resources
       // with the item removed
-      vault.modifyEntityField(canvas, "items", copy);
+      vault.modifyEntityField(canvas, "thumbnail", copy);
     }
   };
 
@@ -63,9 +89,9 @@ export const MediaForm = () => {
     // Add a new annotation
     addNew(body);
     // Reorder the annotations, so new one is in the index that we wanted to replace
-    reorder(canvas.items.length, index);
+    reorder(canvas.thumbnail.length, index);
     // Remove the last one which should now be the one we wanted to replace.
-    remove(canvas.items.length);
+    remove(canvas.thumbnail.length);
     shellContext?.setUnsavedChanges(true);
     editorContext?.changeSelectedProperty("canvas", 2);
   };
@@ -84,19 +110,20 @@ export const MediaForm = () => {
   if (!vault || !canvas) return <></>;
   if (typeof editorContext?.selectedPanel === "undefined") return <></>;
 
-  const prevItem = vault.get(canvas.items)[editorContext?.selectedPanel] as any;
-  const prevAnnotation = vault.get(prevItem.items[0].id) as any;
-  const prevBody = vault.get(prevAnnotation.body[0].id) as any;
+  const prevThumbnail = vault.get(canvas.thumbnail)[
+    editorContext?.selectedPanel
+  ] as any;
+
   return (
     <EditMediaForm
       edit={edit}
       close={() => editorContext?.changeSelectedProperty("canvas", 2)}
-      prevHeight={prevBody.height || 0}
-      prevWidth={prevBody.width || 0}
+      prevHeight={prevThumbnail.height || 0}
+      prevWidth={prevThumbnail.width || 0}
       prevDuration={0}
-      prevSrc={prevBody.id || ""}
-      prevType={prevBody.type || ""}
-      prevFormat={prevBody.format || ""}
+      prevSrc={prevThumbnail.id || ""}
+      prevType={prevThumbnail.type || ""}
+      prevFormat={prevThumbnail.format || ""}
     />
   );
 };

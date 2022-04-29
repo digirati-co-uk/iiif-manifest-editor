@@ -2,7 +2,6 @@ import { useState } from "react";
 import { analyse } from "../../../helpers/analyse";
 import { MediaBody } from "../../../types/media-body";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
-import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
 import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
@@ -11,36 +10,21 @@ import { TickIcon } from "../../icons/TickIcon";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import { InputLabel, Input } from "../Input";
 
-interface EditMediaForm {
-  edit: (body: MediaBody) => void;
+interface NewMediaProps {
+  addNew: (body: MediaBody) => void;
   close: () => void;
-  prevHeight: number;
-  prevWidth: number;
-  prevDuration: number;
-  prevSrc: string;
-  prevType: string;
-  prevFormat: string;
 }
 
-export const EditMediaForm: React.FC<EditMediaForm> = ({
-  edit,
-  close,
-  prevHeight,
-  prevWidth,
-  prevDuration,
-  prevSrc,
-  prevType,
-  prevFormat,
-}) => {
-  const [inputValue, setInputValue] = useState<string>(prevSrc);
+export const NewMediaForm: React.FC<NewMediaProps> = ({ addNew, close }) => {
+  const [inputValue, setInputValue] = useState<string>();
   const [message, setMessage] = useState<string>();
   const [error, setError] = useState(false);
   const [properties, setProperties] = useState<any>();
-  const [type, setType] = useState<string>(prevType);
-  const [format, setFormat] = useState<string>(prevFormat);
-  const [height, setHeight] = useState<number>(prevHeight);
-  const [width, setWidth] = useState<number>(prevWidth);
-  const [duration, setDuration] = useState<number>(prevDuration);
+  const [type, setType] = useState<string>();
+  const [format, setFormat] = useState<string>();
+  const [height, setHeight] = useState<number>();
+  const [width, setWidth] = useState<number>();
+  const [duration, setDuration] = useState<number>();
   const [isLoading, setIsLoading] = useState(false);
 
   // Triggered on blur of the URL value.
@@ -54,10 +38,12 @@ export const EditMediaForm: React.FC<EditMediaForm> = ({
     if (inputValue) {
       analysed = await analyse(inputValue);
       setProperties(analysed);
-      if (!["Image"].includes(analysed?.type)) {
+      if (
+        !["Image", "ContentResource", "ImageService"].includes(analysed?.type)
+      ) {
         setError(true);
-        setMessage(`The format that you have provided is not yet supported`);
-      } else if (!error && analysed) {
+      }
+      if (analysed) {
         setMessage(
           `The URL provided is a ${analysed.width}x${analysed.height} ${analysed.type}.`
         );
@@ -69,7 +55,7 @@ export const EditMediaForm: React.FC<EditMediaForm> = ({
   const save = () => {
     if (!inputValue || !type || !format || !height || !width) return;
     const body = { id: inputValue, type, format, height, width };
-    edit(body);
+    addNew(body);
   };
 
   const populateValues = () => {
@@ -107,14 +93,12 @@ export const EditMediaForm: React.FC<EditMediaForm> = ({
               style={{ transition: "all 0.3s ease-in" }}
             />
             {message}
-
             <SecondaryButton onClick={() => populateValues()}>
               Use values
             </SecondaryButton>
           </div>
         </SuccessMessage>
       )}
-      {error && message && <ErrorMessage>{message}</ErrorMessage>}
       <HorizontalDivider />
       <InputLabel>
         Media Dimensions

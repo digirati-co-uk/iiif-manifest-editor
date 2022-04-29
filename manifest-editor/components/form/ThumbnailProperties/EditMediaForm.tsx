@@ -73,6 +73,8 @@ export const EditMediaForm: React.FC<EditMediaForm> = ({
   };
 
   const populateValues = () => {
+    // changeHandler(properties.height, index, "height");
+    console.log(properties);
     setHeight(properties.height);
     setWidth(properties.width);
     setType(properties.type);

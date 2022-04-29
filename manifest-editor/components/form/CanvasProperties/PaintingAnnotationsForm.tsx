@@ -1,8 +1,7 @@
 import { addMapping, importEntities } from "@iiif/vault/actions";
 import { IIIFBuilder } from "iiif-builder";
-import { useContext, useReducer, useState } from "react";
+import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { Button } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
@@ -15,22 +14,16 @@ import {
 } from "react-beautiful-dnd";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { FlexContainerRow } from "../../layout/FlexContainer";
-import { LightBox, LightBoxWithoutSides } from "../../atoms/LightBox";
+import { LightBoxWithoutSides } from "../../atoms/LightBox";
 import { EditIcon } from "../../icons/EditIcon";
 import { EditableContainer } from "../../atoms/EditableContainer";
-import { PaddingComponentMedium } from "../../atoms/PaddingComponent";
 import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-
-var uuid = require("uuid");
 
 export const PaintingAnnotationsForm: React.FC = () => {
   const canvas = useCanvas();
   const vault = useVault();
-  const manifest = useManifest();
   const shellContext = useContext(ShellContext);
   const editorContext = useContext(ManifestEditorContext);
-
-  const [selected, setSelected] = useState<number | boolean>(false);
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -38,37 +31,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
       return;
     }
     reorder(result.source.index, destination.index);
-  };
-
-  const editImage = (newUrl: string) => {
-    // Handle updating the image
-  };
-
-  const addNew = () => {
-    // set the selected resource to false so we know we're editing a new one.
-    setSelected(false);
-    // bring up the media resource input form
-    // setShowModal(true);
-    const newID = `vault://${uuid.v4()}`;
-    if (!canvas || !manifest) return;
-    const builder = new IIIFBuilder(vault);
-    builder.editManifest(manifest.id, (mani: any) => {
-      mani.editCanvas(canvas.id, (can: any) => {
-        can.createAnnotation(canvas.id, {
-          id: `${newID}/painting`,
-          type: "Annotation",
-          motivation: "painting",
-          body: {
-            id: "https://www.nasa.gov/sites/default/files/images/628035main_as09-20-3064_full.jpg",
-            type: "Image",
-            format: "jpg",
-            height: 1000,
-            width: 2000,
-          },
-        });
-      });
-    });
-    shellContext?.setUnsavedChanges(true);
   };
 
   const reorder = (fromPosition: number, toPosition: number) => {
@@ -170,7 +132,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
           )}
         </Droppable>
       </DragDropContext>
-      {/* <PaddingComponentMedium /> */}
     </EditableContainer>
   );
 };
