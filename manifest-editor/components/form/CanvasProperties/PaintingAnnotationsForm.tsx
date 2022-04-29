@@ -6,7 +6,6 @@ import { useManifest } from "../../../hooks/useManifest";
 import ShellContext from "../../apps/Shell/ShellContext";
 import { Button } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { MediaResouceEditorModal } from "../ModalForms/MediaResource";
 import { MediaResourcePreview } from "./MediaResourcePreview";
 import {
   DragDropContext,
@@ -31,16 +30,13 @@ export const PaintingAnnotationsForm: React.FC = () => {
   const shellContext = useContext(ShellContext);
   const editorContext = useContext(ManifestEditorContext);
 
-  const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState<number | boolean>(false);
-  // const [, forceUpdate] = useReducer(() => [], []);
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
     if (!destination) {
       return;
     }
-    // forceUpdate();
     reorder(result.source.index, destination.index);
   };
 
@@ -98,9 +94,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
 
   return (
     <EditableContainer>
-      {showModal && (
-        <MediaResouceEditorModal close={() => setShowModal(false)} />
-      )}
       <EmptyProperty
         guidanceReference={
           "https://iiif.io/api/presentation/3.0/#55-annotation-page "
@@ -122,6 +115,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
                 flexDirection: "column",
               }}
             >
+              {console.log(vault.get(canvas.items))}
               {vault &&
                 canvas &&
                 vault.get(canvas.items).map((item: any, index) => {
