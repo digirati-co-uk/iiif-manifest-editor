@@ -115,7 +115,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
                 flexDirection: "column",
               }}
             >
-              {console.log(vault.get(canvas.items))}
               {vault &&
                 canvas &&
                 vault.get(canvas.items).map((item: any, index) => {
