@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
 import { DownIcon } from "../icons/DownIcon";
 import { SmallButton } from "./Button";
 
@@ -26,7 +26,7 @@ const ExpandTabContainer = styled.div`
 `;
 
 export const ExpandTab: React.FC = () => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
   return (
     <ExpandTabContainer>
       {editorContext?.view === "noNav" ? (

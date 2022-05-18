@@ -10,8 +10,8 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { SubdirectoryIcon } from "../../icons/SubdirectoryIcon";
 import { FlexContainer } from "../../components/layout/FlexContainer";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 export const IIIFCanvas: React.FC<{
   type: string;
@@ -22,13 +22,13 @@ export const IIIFCanvas: React.FC<{
   const label = getValue(canvas?.label);
   const [open, setOpen] = useState(false);
   const vault = useVault();
-  const shellContext = useContext(ShellContext);
-  const editorContext = useContext(ManifestEditorContext);
+  const shellContext = useShell();
+  const editorContext = useManifestEditor();
   return (
     <>
       <Container
         onClick={() => {
-          shellContext?.setCurrentCanvasId(id);
+          shellContext.setCurrentCanvasId(id);
           setOpen(!open);
         }}
       >

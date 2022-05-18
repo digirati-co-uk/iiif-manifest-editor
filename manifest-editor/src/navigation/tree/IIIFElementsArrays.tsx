@@ -19,7 +19,7 @@ import { Canvases } from "./IIIFCanvas";
 import { Ranges } from "./IIIFRange";
 import { Services } from "./IIIFServices";
 import { IIIFService } from "./IIIFService";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 export type KeyArrayPairing = {
   propertyName: string;
@@ -29,7 +29,7 @@ export type KeyArrayPairing = {
 
 export const KeyValuePairArray: React.FC<KeyArrayPairing> = ({ propertyName, array, onClick }) => {
   const [open, setOpen] = useState(false);
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   return (
     <ContainerColumn>

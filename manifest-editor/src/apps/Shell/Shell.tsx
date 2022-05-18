@@ -11,7 +11,7 @@ import { useVault } from "react-iiif-vault";
 import { usePreviewLink, useUpdatePermalink } from "../../hooks/useSave";
 import { usePermalink } from "../../hooks/useSave";
 import { useManifest } from "../../hooks/useManifest";
-import ShellContext from "./ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Button } from "../../atoms/Button";
 
@@ -40,7 +40,7 @@ export const Shell: React.FC<{
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previouslySaved, setPreviouslySaved] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
   const manifest = useManifest();
   const vault = useVault();
@@ -51,7 +51,7 @@ export const Shell: React.FC<{
   }, [selectedPreviewIndex]);
 
   useEffect(() => {
-    shellContext?.setNewTemplates(JSON.parse(newTemplates));
+    shellContext.setNewTemplates(JSON.parse(newTemplates));
   }, []);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const Shell: React.FC<{
 
   useEffect(() => {
     if (manifestPermalink && manifestPermalink.location) {
-      shellContext?.changeResourceID(manifestPermalink.location);
+      shellContext.changeResourceID(manifestPermalink.location);
     }
   }, [manifestPermalink]);
 
@@ -95,16 +95,16 @@ export const Shell: React.FC<{
       if (saveAsChoice === 0) {
         const perma = await useUpdatePermalink(manifestPermalink?.updateLocation, man);
         setManifestPermalink(perma ? perma : undefined);
-        shellContext?.setUnsavedChanges(false);
+        shellContext.setUnsavedChanges(false);
       }
       // save as choice 1 is save new;
       else if (saveAsChoice === 1) {
         const perma = await usePermalink(man);
         setManifestPermalink(perma ? perma : undefined);
         if (perma && perma.location) {
-          await shellContext?.updateRecentManifests(perma?.location);
+          await shellContext.updateRecentManifests(perma?.location);
         }
-        shellContext?.setUnsavedChanges(false);
+        shellContext.setUnsavedChanges(false);
       }
       // save as choice 2 is save to localStorage;
       else if (saveAsChoice === 2) {
@@ -137,7 +137,7 @@ export const Shell: React.FC<{
           forceShowModal={showSaveModal}
           setForceShowModal={setShowSaveModal}
         />
-        {shellContext?.unsavedChanges && (
+        {shellContext.unsavedChanges && (
           <WarningMessage $small={true}>
             You have unsaved changes
             <Button onClick={previouslySaved ? () => save() : () => setShowSaveModal(true)} aria-label="Save changes">

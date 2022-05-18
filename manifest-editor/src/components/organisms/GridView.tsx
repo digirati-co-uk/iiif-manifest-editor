@@ -2,14 +2,14 @@ import { getValue } from "@iiif/vault-helpers";
 import { useContext, useState } from "react";
 import { CanvasContext, useCanvas, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import { Thumbnail } from "../../atoms/Thumbnail";
 import { ViewSelector } from "../../atoms/ViewSelector";
 import { FlexContainer, FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
 
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RecentLabel } from "../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../atoms/TemplateCard";
@@ -77,7 +77,7 @@ const GridItem: React.FC<{
   canvasId: string;
 }> = ({ handleChange, canvasId }) => {
   const canvas = useCanvas();
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   return (
     <ThumbnailContainer onClick={(e: any) => handleChange(canvasId, e)} size={editorContext?.thumbnailSize?.w}>
@@ -95,18 +95,18 @@ export const GridView: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const manifest = useManifest();
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   const handleChange = (itemId: string, e: any) => {
     switch (e.detail) {
       case 1:
-        shellContext?.setCurrentCanvasId(itemId);
+        shellContext.setCurrentCanvasId(itemId);
         editorContext?.changeSelectedProperty("canvas");
         break;
       case 2:
-        shellContext?.setCurrentCanvasId(itemId);
+        shellContext.setCurrentCanvasId(itemId);
         editorContext?.changeSelectedProperty("canvas");
         editorContext?.setView("thumbnails");
         break;
@@ -121,7 +121,7 @@ export const GridView: React.FC = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };

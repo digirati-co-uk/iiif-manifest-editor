@@ -4,7 +4,7 @@ import { useVault } from "react-iiif-vault";
 import { analyse } from "../../helpers/analyse";
 import { useManifest } from "../../hooks/useManifest";
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 // UI
 import { MediaResourceEditor } from "../MediaResourceEditor";
 import { Button, SecondaryButton } from "../../atoms/Button";
@@ -130,7 +130,7 @@ const ThumbnailWrapper: React.FC<ThumbnailWrapperProps> = ({
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
   const [emptyValue, setEmptyValue] = useState(false);
@@ -169,14 +169,14 @@ export const ThumbnailForm = () => {
       const newThumbnailReferences = manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
       if (manifest && (index || index === 0)) {
         newThumbnailReferences[index] = { id: data, type: "ContentResource" };
-        shellContext?.setUnsavedChanges(true);
+        shellContext.setUnsavedChanges(true);
         vault.modifyEntityField(manifest, "thumbnail", newThumbnailReferences);
       }
     } else {
       // get the ref we need using the index:
       const reference = manifest?.thumbnail[index];
       // dispatch a change to this reference
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       if (reference) {
         vault.modifyEntityField(reference, property, data);
       }
@@ -188,7 +188,7 @@ export const ThumbnailForm = () => {
 
     if (manifest && (index || index === 0)) {
       newThumbnail.splice(index, 1);
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       // Provide the vault with an updated list of content resources
       vault.modifyEntityField(manifest, "thumbnail", newThumbnail);
     }

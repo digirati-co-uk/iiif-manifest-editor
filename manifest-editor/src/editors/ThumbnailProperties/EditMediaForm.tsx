@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { analyse } from "../../helpers/analyse";
-import { MediaBody } from "../../../types/media-body";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
@@ -10,6 +9,7 @@ import { Loading } from "../../atoms/Loading";
 import { TickIcon } from "../../icons/TickIcon";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { InputLabel, Input } from "../Input";
+import { MediaBody } from "../../types/media-body";
 
 interface EditMediaForm {
   edit: (body: MediaBody) => void;

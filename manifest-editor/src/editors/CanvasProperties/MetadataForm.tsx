@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import { useCanvas, useVault } from "react-iiif-vault";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
@@ -10,8 +10,8 @@ import { CalltoButton } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const MetadataForm: React.FC<{}> = () => {
-  const editorContext = useContext(ManifestEditorContext);
-  const shellContext = useContext(ShellContext);
+  const editorContext = useManifestEditor();
+  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
 
@@ -20,7 +20,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const newMetaData = canvas && canvas[dispatchType] ? [...canvas[dispatchType]] : [];
     if (canvas && (index || index === 0) && property) {
       newMetaData[index][property] = data.toInternationalString();
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newMetaData);
     }
   };
@@ -30,7 +30,7 @@ export const MetadataForm: React.FC<{}> = () => {
 
     if (canvas && (index || index === 0)) {
       newMetaData.splice(index, 1);
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newMetaData);
     }
   };
@@ -39,7 +39,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const withNew = canvas ? [...canvas[dispatchType]] : [];
     withNew.push({ label: {}, value: {} });
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, withNew);
     }
   };
@@ -49,7 +49,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newOrder);
     }
   };

@@ -25,7 +25,8 @@ const TemplateCard: React.FC<{
       setManifest(data);
     };
     waitData();
-  }, []);
+  }, [manifestUrl]);
+
   return (
     <TemplateCardContainer onClick={() => changeManifest(window.location.href + manifest.id)}>
       <TemplateCardNew>
@@ -44,15 +45,13 @@ export const NewTemplates: React.FC<NewTemplates> = ({ newTemplates, changeManif
       <RecentThumbnails>
         {newTemplates &&
           // @ts-ignore
-          newTemplates?.items.map((manifest) => {
+          newTemplates?.items.map((manifest, key) => {
             return (
-              <>
-                <TemplateCard
-                  key={manifest.id}
-                  manifestUrl={window.location.href + manifest.id}
-                  changeManifest={changeManifest}
-                />
-              </>
+              <TemplateCard
+                key={manifest.id}
+                manifestUrl={window.location.href + manifest.id}
+                changeManifest={changeManifest}
+              />
             );
           })}
       </RecentThumbnails>

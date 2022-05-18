@@ -188,6 +188,17 @@ export const createInitialValues = ({
   } as MetadataEditorState;
 };
 
+export type MetadataSave = (
+  data: {
+    getDiff: () => MetadataDiff;
+    key: string;
+    items: MetadataDefinition[];
+    toInternationalString: () => InternationalString;
+  },
+  index?: number,
+  property?: "label" | "value"
+) => void;
+
 export interface UseMetadataEditor {
   fields: InternationalString | MetadataDefinition[];
   availableLanguages?: string[];
@@ -195,16 +206,7 @@ export interface UseMetadataEditor {
   defaultLocale?: string;
   allowCustomLanguage?: boolean;
   // Actions.
-  onSave?: (
-    data: {
-      getDiff: () => MetadataDiff;
-      key: string;
-      items: MetadataDefinition[];
-      toInternationalString: () => InternationalString;
-    },
-    index?: number,
-    property?: "label" | "value"
-  ) => void;
+  onSave?: MetadataSave;
 }
 
 export function useMetadataEditor({

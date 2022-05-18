@@ -8,7 +8,7 @@ import { KeyObjectPairing } from "./IIIFElementsObject";
 import { Annotations } from "./IIIFAnnotationPages";
 import { DownIcon } from "../../icons/DownIcon";
 
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import styled from "styled-components";
 import { FlexContainer } from "../../components/layout/FlexContainer";
@@ -46,7 +46,7 @@ const IIIFTitle = styled.div`
 
 export const Tree: React.FC = () => {
   const manifest = useManifest();
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
   const [open, setOpen] = useState(true);
   const vault = useVault();
 

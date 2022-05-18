@@ -3,7 +3,7 @@ import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../../atoms/Button";
 import { CloseIcon } from "../../icons/CloseIcon";
 
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import styled, { css } from "styled-components";
 import { OpenFullscreen } from "../../icons/OpenFullscreen";
@@ -52,7 +52,7 @@ export const EditorPanel: React.FC<{
   close: () => void;
   languages: Array<string>;
 }> = ({ close, open }) => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
   const [fullScreen, setFullScreen] = useState(false);
 
   return (

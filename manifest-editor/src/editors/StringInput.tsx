@@ -5,13 +5,13 @@ import { useManifest } from "../hooks/useManifest";
 import { useContext, useEffect, useState } from "react";
 import { CalltoButton } from "../atoms/Button";
 import { FlexContainer } from "../components/layout/FlexContainer";
-import ShellContext from "../apps/Shell/ShellContext";
+import { useShell } from "../context/ShellContext/ShellContext";
 
 export const StringInput: React.FC<{
   // Add to this list as we go
   dispatchType: "type" | "viewingDirection" | "@context";
 }> = ({ dispatchType }) => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
   const [save, setSave] = useState(0);
@@ -19,7 +19,7 @@ export const StringInput: React.FC<{
 
   useEffect(() => {
     if (manifest && save >= 1) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, inputValue);
     }
   }, [save]);

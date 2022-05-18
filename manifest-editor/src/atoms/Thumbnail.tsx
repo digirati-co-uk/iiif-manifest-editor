@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { RecentLabel } from "./RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew, TemplateCardPlaceholder } from "./TemplateCard";
@@ -14,7 +14,7 @@ export const ThumbnailImg = styled.img`
 `;
 
 export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
   const [error, setError] = useState(false);
 
   const thumb = useThumbnail({

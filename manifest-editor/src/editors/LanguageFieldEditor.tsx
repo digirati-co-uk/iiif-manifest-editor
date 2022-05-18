@@ -141,7 +141,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           }}
           disabled={showAllFields}
           style={{
-            cursor: showAllFields ? "not-allowed" : "default",
+            cursor: showAllFields ? "not-allowed" : undefined,
           }}
         />
         <Button

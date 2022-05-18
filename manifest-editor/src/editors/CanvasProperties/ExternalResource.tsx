@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useCanvas } from "react-iiif-vault";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { Button } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { Input } from "../Input";
@@ -16,7 +16,7 @@ export const ExternalResource: React.FC<{
   dispatchType: "homepage" | "service" | "seeAlso" | "rendering";
   guidanceReference?: string;
 }> = ({ dispatchType, guidanceReference }) => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
   const [redraw, setRedraw] = useState(0);
@@ -28,7 +28,7 @@ export const ExternalResource: React.FC<{
         id: newValue,
         type: "ContentResource",
       };
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newContentResource);
     }
   };
@@ -38,7 +38,7 @@ export const ExternalResource: React.FC<{
 
     if (canvas && (index || index === 0)) {
       newContentResource.splice(index, 1);
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newContentResource);
     }
   };
@@ -47,7 +47,7 @@ export const ExternalResource: React.FC<{
     const newContentResource = canvas ? [...canvas[dispatchType]] : [];
     newContentResource.push({ id: "", type: "ContentResource" });
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newContentResource);
     }
   };
@@ -57,7 +57,7 @@ export const ExternalResource: React.FC<{
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, newOrder);
     }
   };

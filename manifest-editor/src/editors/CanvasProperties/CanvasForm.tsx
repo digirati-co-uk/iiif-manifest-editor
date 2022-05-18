@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useCanvas } from "react-iiif-vault";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { AnnotationForm } from "./AnnotationForm";
 import { DescriptiveForm } from "./DescriptiveForm";
@@ -10,7 +10,7 @@ import { MetadataForm } from "./MetadataForm";
 import { TechnicalForm } from "./TechnicalForm";
 
 export const CanvasForm = () => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   const canvas = useCanvas();
 

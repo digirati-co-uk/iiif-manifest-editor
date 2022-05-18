@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { InformationLink } from "../../atoms/InformationLink";
@@ -13,8 +13,8 @@ import { FlexContainer } from "../../components/layout/FlexContainer";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 
 export const MetadataForm: React.FC<{}> = () => {
-  const editorContext = useContext(ManifestEditorContext);
-  const shellContext = useContext(ShellContext);
+  const editorContext = useManifestEditor();
+  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
 
@@ -23,7 +23,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const newMetaData = manifest && manifest[dispatchType] ? [...manifest[dispatchType]] : [];
     if (manifest && (index || index === 0) && property) {
       newMetaData[index][property] = data.toInternationalString();
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newMetaData);
     }
   };
@@ -33,7 +33,7 @@ export const MetadataForm: React.FC<{}> = () => {
 
     if (manifest && (index || index === 0)) {
       newMetaData.splice(index, 1);
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newMetaData);
     }
   };
@@ -42,7 +42,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const withNew = manifest ? [...manifest[dispatchType]] : [];
     withNew.push({ label: {}, value: {} });
     if (manifest) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, withNew);
     }
   };
@@ -52,7 +52,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };

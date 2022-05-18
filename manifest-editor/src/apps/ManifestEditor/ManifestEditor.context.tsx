@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
+import invariant from "tiny-invariant";
 
 interface EditorContextInterface {
   selectedProperty: string;
@@ -15,6 +16,14 @@ interface EditorContextInterface {
   setThumbnailSize: (size: ThumbnailSize) => void;
 }
 
-const ManifestEditorContext = React.createContext<EditorContextInterface | null>(null);
+export const ManifestEditorContext = React.createContext<EditorContextInterface | null>(null);
+
+export function useManifestEditor() {
+  const ctx = useContext(ManifestEditorContext);
+
+  invariant(ctx, "Can only be called from <ManifestEditorProvider />");
+
+  return ctx;
+}
 
 export default ManifestEditorContext;

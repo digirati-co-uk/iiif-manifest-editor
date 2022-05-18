@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
-import ShellContext from "../Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 export const IIIFBrowser: React.FC = () => {
   const vault = useVault();
   const [collection, setCollection] = useState<any>({});
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
   useEffect(() => {
     const waitData = async () => {
-      const data = await vault.load(shellContext?.resourceID || "");
+      const data = await vault.load(shellContext.resourceID || "");
       setCollection(data);
     };
     waitData();
@@ -20,7 +20,7 @@ export const IIIFBrowser: React.FC = () => {
     <ul>
       <h4>
         You are browsing:
-        <a href={shellContext?.resourceID || ""}>{shellContext?.resourceID} </a>
+        <a href={shellContext.resourceID || ""}>{shellContext.resourceID} </a>
       </h4>
       {collection &&
         collection.items &&

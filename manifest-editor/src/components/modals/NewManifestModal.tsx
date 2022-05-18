@@ -6,7 +6,7 @@ import { ModalContainer } from "../layout/ModalContainer";
 import { FlexContainer } from "../layout/FlexContainer";
 import { ModalHeader } from "../../atoms/ModalHeader";
 
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 import { NewTemplates } from "../widgets/NewTemplates";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
@@ -15,7 +15,7 @@ export const NewManifestModal: React.FC<{
   close: any;
   save: () => void;
 }> = ({ close, save }) => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
   return (
     <>
@@ -27,7 +27,7 @@ export const NewManifestModal: React.FC<{
             <CloseIcon />
           </Button>
         </FlexContainer>
-        {shellContext?.unsavedChanges && (
+        {shellContext.unsavedChanges && (
           <WarningMessage $small={true}>
             Loading a manifest from a template will mean you will loose your unsaved changes.
             <Button aria-label="save changes" onClick={() => save()}>
@@ -37,11 +37,11 @@ export const NewManifestModal: React.FC<{
         )}
         <NewTemplates
           changeManifest={(id: string) => {
-            shellContext?.changeSelectedApplication("ManifestEditor");
-            shellContext?.changeResourceID(id);
+            shellContext.changeSelectedApplication("ManifestEditor");
+            shellContext.changeResourceID(id);
             close();
           }}
-          newTemplates={shellContext?.newTemplates}
+          newTemplates={shellContext.newTemplates}
         />
       </ModalContainer>
     </>

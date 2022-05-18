@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { analyse } from "../../helpers/analyse";
-import { MediaBody } from "../../../types/media-body";
+import { MediaBody } from "../../types/media-body";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";

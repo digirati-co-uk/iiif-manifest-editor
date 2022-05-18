@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import ManifestEditorContext from "../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
 import { GridIcon } from "../icons/GridIcon";
 import { ThumbnailStripIcon } from "../icons/ThumbnailStripIcon";
 import { TreeIcon } from "../icons/TreeIcon";
@@ -7,7 +7,7 @@ import { FlexContainer } from "../components/layout/FlexContainer";
 import { Button } from "./Button";
 
 export const ViewSelector: React.FC = () => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
   return (
     <FlexContainer>
       <Button

@@ -1,6 +1,8 @@
+const { mergeConfig } = require('vite');
+
 module.exports = {
   stories: [
-    "../src/**/*.stories.mdx",
+    // "../src/**/*.stories.mdx",
     "../src/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   addons: [
@@ -12,5 +14,15 @@ module.exports = {
   framework: "@storybook/react",
   core: {
     builder: "@storybook/builder-vite"
-  }
+  },
+  async viteFinal(config, { configType }) {
+    for (const conf of config.plugins) {
+      if (conf.name === 'vite-plugin-mdx') {
+        config.plugins.splice(config.plugins.indexOf(conf), 1);
+      }
+    }
+
+    // return the customized config
+    return config;
+  },
 };

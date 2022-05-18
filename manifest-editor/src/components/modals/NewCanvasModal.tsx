@@ -9,7 +9,7 @@ import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { ModalHeader } from "../../atoms/ModalHeader";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
@@ -38,7 +38,7 @@ export const NewCanvasModal: React.FC<{
 
   const vault = useExistingVault();
 
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const manifest = useManifest();
 
   const runAnalyser = async () => {
@@ -91,7 +91,7 @@ export const NewCanvasModal: React.FC<{
           });
         });
       });
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       if (!addAnother) {
         close();
       }
@@ -118,7 +118,7 @@ export const NewCanvasModal: React.FC<{
           });
         });
       });
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
 
       if (!addAnother) {
         close();
@@ -132,7 +132,7 @@ export const NewCanvasModal: React.FC<{
           canvas.width = width;
         });
       });
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       if (!addAnother) {
         close();
       }
@@ -226,7 +226,7 @@ export const NewCanvasModal: React.FC<{
             </FlexContainer>
           </>
         )}
-        {inputType && !emptyCanvas && inputType === "Image" && shellContext?.selectedApplication === "ManifestEditor" && (
+        {inputType && !emptyCanvas && inputType === "Image" && shellContext.selectedApplication === "ManifestEditor" && (
           <>
             <HorizontalDivider />
             <FlexContainer>
@@ -242,7 +242,7 @@ export const NewCanvasModal: React.FC<{
         {inputType &&
           !emptyCanvas &&
           inputType === "ImageService" &&
-          shellContext?.selectedApplication === "ManifestEditor" && (
+          shellContext.selectedApplication === "ManifestEditor" && (
             <>
               <HorizontalDivider />
               <FlexContainer>
@@ -294,14 +294,14 @@ export const NewCanvasModal: React.FC<{
         <br />
         {!(inputType === "Image" || inputType === "ImageService") &&
           inputType &&
-          shellContext?.selectedApplication === "ManifestEditor" && (
+          shellContext.selectedApplication === "ManifestEditor" && (
             <FlexContainerColumn justify={"flex-start"}>
               <p>This resource is not an image.</p>
               <small>{inputType}</small>
               <small>{label}</small>
             </FlexContainerColumn>
           )}
-        {inputType === "Collection" && inputType && shellContext?.selectedApplication === "ManifestEditor" && (
+        {inputType === "Collection" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
           <>
             <HorizontalDivider />
             <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -314,9 +314,9 @@ export const NewCanvasModal: React.FC<{
               <Button
                 aria-label="launch application"
                 onClick={() => {
-                  shellContext?.changeSelectedApplication("Browser");
+                  shellContext.changeSelectedApplication("Browser");
                   if (inputValue) {
-                    shellContext?.changeResourceID(inputValue);
+                    shellContext.changeResourceID(inputValue);
                   }
                   close();
                 }}
@@ -326,7 +326,7 @@ export const NewCanvasModal: React.FC<{
             </FlexContainer>
           </>
         )}
-        {inputType === "Manifest" && inputType && shellContext?.selectedApplication === "ManifestEditor" && (
+        {inputType === "Manifest" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
           <>
             <HorizontalDivider />
             <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -337,9 +337,9 @@ export const NewCanvasModal: React.FC<{
                 aria-label="load-manifest"
                 onClick={() => {
                   if (inputValue) {
-                    shellContext?.changeResourceID(inputValue);
+                    shellContext.changeResourceID(inputValue);
                   }
-                  shellContext?.changeSelectedApplication("ManifestEditor");
+                  shellContext.changeSelectedApplication("ManifestEditor");
                   close();
                 }}
               >

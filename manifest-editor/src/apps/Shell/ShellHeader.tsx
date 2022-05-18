@@ -12,7 +12,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { DownIcon } from "../../icons/DownIcon";
 
 import { getValue } from "@iiif/vault-helpers";
-import ShellContext from "./ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 export const ShellHeader: React.FC<{
   savePreviewLink: () => Promise<void>;
@@ -37,7 +37,7 @@ export const ShellHeader: React.FC<{
 }) => {
   const manifest = useManifest();
   const [appMenuOpen, setAppMenuOpen] = useState(false);
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
   const getTitle = () => {
     if (manifest) {
@@ -63,7 +63,7 @@ export const ShellHeader: React.FC<{
       )}
       <ShellHeaderStrip>
         <FlexContainer>
-          <Button onClick={() => shellContext?.changeSelectedApplication("Splash")} aria-label="Go to the homepage">
+          <Button onClick={() => shellContext.changeSelectedApplication("Splash")} aria-label="Go to the homepage">
             <ManifestEditorIcon />
           </Button>
           <Dropdown>
@@ -75,7 +75,7 @@ export const ShellHeader: React.FC<{
                 <Button
                   onClick={() => {
                     setAppMenuOpen(!appMenuOpen);
-                    shellContext?.changeSelectedApplication("ManifestEditor");
+                    shellContext.changeSelectedApplication("ManifestEditor");
                   }}
                   title="Open the Manifest Editor"
                   aria-label="Open the manifest editor"
@@ -85,7 +85,7 @@ export const ShellHeader: React.FC<{
                 <Button
                   onClick={() => {
                     setAppMenuOpen(!appMenuOpen);
-                    shellContext?.changeSelectedApplication("Browser");
+                    shellContext.changeSelectedApplication("Browser");
                   }}
                   title="Open the IIIF Browser"
                   aria-label="Open the IIIF browser"

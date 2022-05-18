@@ -7,7 +7,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../components/modals/ExportModal";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { NewManifestModal } from "../../components/modals/NewManifestModal";
-import ShellContext from "./ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 export const ShellOptions: React.FC<{
   save: () => void;
@@ -18,7 +18,7 @@ export const ShellOptions: React.FC<{
   forceShowModal: boolean;
   setForceShowModal: (boolean: boolean) => void;
 }> = ({ save, previouslySaved, permalink, saveAsChoice, setSaveAsChoice, forceShowModal, setForceShowModal }) => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
@@ -126,7 +126,7 @@ export const ShellOptions: React.FC<{
                 aria-label="About"
                 onClick={() => {
                   setHelpOpen(!helpOpen);
-                  shellContext?.changeSelectedApplication("Splash");
+                  shellContext.changeSelectedApplication("Splash");
                 }}
               >
                 About

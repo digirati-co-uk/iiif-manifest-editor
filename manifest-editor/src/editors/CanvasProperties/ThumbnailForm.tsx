@@ -2,8 +2,8 @@ import { useContext } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 // hooks & context
 import { useCanvas, useVault } from "react-iiif-vault";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useShell } from "../../context/ShellContext/ShellContext";
 // UI
 import { Button } from "../../atoms/Button";
 import { EditableContainer } from "../../atoms/EditableContainer";
@@ -17,10 +17,10 @@ import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexCon
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -35,7 +35,7 @@ export const ThumbnailForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "thumbnail", newOrder);
     }
   };
@@ -45,7 +45,7 @@ export const ThumbnailForm = () => {
 
     if (canvas && (index || index === 0)) {
       newThumbnail.splice(index, 1);
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       // Provide the vault with an updated list of content resources
       vault.modifyEntityField(canvas, "thumbnail", newThumbnail);
     }

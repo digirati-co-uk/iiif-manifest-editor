@@ -38,7 +38,7 @@ export const MutliselectLabel = styled(InputLabel)<{
   background-color: ${(props: any) => props.theme.color.white || "white"};
   color: ${(props: any) => props.theme.color.main || "#347cff;"};
   border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
-  border-radius 20px;
+  border-radius: 20px;
   cursor: pointer;
   height: 2rem;
   display: flex;

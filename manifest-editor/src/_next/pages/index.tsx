@@ -4,6 +4,8 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ManifestEditor } from "../../apps/ManifestEditor/ManifestEditor";
 import { Splash } from "../../apps/Splash/Splash";
 import styled, { ThemeProvider } from "styled-components";
+import { useShell } from "../../context/ShellContext/ShellContext";
+import { useManifest } from "react-iiif-vault";
 
 const Main = styled.main`
    {
@@ -22,20 +24,25 @@ const Container = styled.div`
 `;
 
 const IndexPage = (props: any) => {
+  const { selectedApplication } = useShell();
+  const manifest = useManifest();
+
   return (
     <Container>
       <ThemeProvider theme={props.theme}>
         <ErrorBoundary>
           <Main>
             <Shell previewConfig={props.config.preview} newTemplates={props.templates} />
-            {props.selectedApplication === "ManifestEditor" && (
+            {selectedApplication === "ManifestEditor" && (
               <ManifestEditor
+                // @todo Removing this, and the <ManifestEditor /> not loading, this is a bug.
+                key={manifest?.id}
                 defaultLanguages={props.config.defaultLanguages}
                 behaviorProperties={props.config.behaviorPresets}
               />
             )}
-            {props.selectedApplication === "Browser" && <IIIFBrowser />}
-            {props.selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
+            {selectedApplication === "Browser" && <IIIFBrowser />}
+            {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
           </Main>
         </ErrorBoundary>
         {/*<footer className={styles.footer}></footer>*/}

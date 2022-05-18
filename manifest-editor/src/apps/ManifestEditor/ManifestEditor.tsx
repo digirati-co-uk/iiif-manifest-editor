@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Editor } from "../../atoms/Editor";
@@ -10,8 +10,8 @@ import { Toolbar } from "../../components/layout/Toolbar";
 import { NewCanvasModal } from "../../components/modals/NewCanvasModal";
 import { CanvasView } from "../../components/organisms/CanvasView";
 import { GridView } from "../../components/organisms/GridView";
-import ManifestEditorContext from "./ManifestEditorContext";
-import { ManifestEditorToolbar } from "./ManifestEditorToolbar";
+import { ManifestEditorContext } from "./ManifestEditor.context";
+import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 
 export const ManifestEditor: React.FC<{
   defaultLanguages: string[];
@@ -31,21 +31,24 @@ export const ManifestEditor: React.FC<{
 
   const [thumbnailSize, setThumbnailSize] = useState({ w: 256, h: 256 });
 
-  const editorSettings = {
-    selectedProperty,
-    changeSelectedProperty,
-    view,
-    setView,
-    languages: defaultLanguages,
-    behaviorProperties: behaviorProperties,
-    selectedPanel,
-    addCanvasModalOpen,
-    setAddCanvasModalOpen,
-    thumbnailSize,
-    setThumbnailSize,
-  };
-
   const manifest = useManifest();
+
+  const editorSettings = useMemo(
+    () => ({
+      selectedProperty,
+      view,
+      selectedPanel,
+      addCanvasModalOpen,
+      thumbnailSize,
+      languages: defaultLanguages,
+      behaviorProperties: behaviorProperties,
+      changeSelectedProperty,
+      setView,
+      setAddCanvasModalOpen,
+      setThumbnailSize,
+    }),
+    [addCanvasModalOpen, behaviorProperties, defaultLanguages, selectedPanel, selectedProperty, thumbnailSize, view]
+  );
 
   return (
     <>

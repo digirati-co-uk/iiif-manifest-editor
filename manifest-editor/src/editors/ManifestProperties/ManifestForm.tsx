@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { LinkingForm } from "./LinkingForm";
@@ -8,7 +8,7 @@ import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
 
 export const ManifestForm: React.FC<{}> = () => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   return (
     <TabPanel

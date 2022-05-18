@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import { LanguageMapInputCanvas } from "./LanguageMapInputCanvas";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { SingleValueInput } from "./SingleValueInputCanvas";
 import { DateForm } from "./DateForm";
 
 export const DescriptiveForm = () => {
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   return (
     <>

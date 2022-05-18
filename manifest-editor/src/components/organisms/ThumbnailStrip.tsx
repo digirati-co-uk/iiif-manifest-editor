@@ -3,9 +3,9 @@ import { CanvasContext, useManifest } from "react-iiif-vault";
 import { SmallThumbnailStripContainer, ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { Thumbnail } from "../../atoms/Thumbnail";
 import { useContext } from "react";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { RecentLabel } from "../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../atoms/TemplateCard";
 import { AddIcon } from "../../icons/AddIcon";
@@ -13,11 +13,11 @@ import { FlexContainer } from "../layout/FlexContainer";
 
 export const ThumbnailStrip: React.FC = () => {
   const manifest = useManifest();
-  const editorContext = useContext(ManifestEditorContext);
-  const shellContext = useContext(ShellContext);
+  const editorContext = useManifestEditor();
+  const shellContext = useShell();
 
   const handleChange = (itemId: string) => {
-    shellContext?.setCurrentCanvasId(itemId);
+    shellContext.setCurrentCanvasId(itemId);
     editorContext?.changeSelectedProperty("canvas");
   };
 
@@ -53,11 +53,11 @@ export const ThumbnailStrip: React.FC = () => {
 
 export const SmallThumbnailStrip: React.FC = () => {
   const manifest = useManifest();
-  const shellContext = useContext(ShellContext);
-  const editorContext = useContext(ManifestEditorContext);
+  const shellContext = useShell();
+  const editorContext = useManifestEditor();
 
   const handleChange = (itemId: string) => {
-    shellContext?.setCurrentCanvasId(itemId);
+    shellContext.setCurrentCanvasId(itemId);
     editorContext?.changeSelectedProperty("canvas");
   };
 

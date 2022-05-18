@@ -23,7 +23,7 @@ export const StringSelector: React.FC<{
         {options &&
           options.map((choice) => {
             return (
-              <MutliselectLabel $selected={selected?.includes(choice)}>
+              <MutliselectLabel key={choice} $selected={selected?.includes(choice)}>
                 {choice}
                 {selected?.includes(choice) && multi ? <CheckIcon /> : multi && <AddIcon />}
                 {selected?.includes(choice) && !multi && <CheckIcon />}

@@ -1,14 +1,14 @@
 import { useContext } from "react";
 
 import { useCanvas, useVault } from "react-iiif-vault";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { Input } from "../Input";
 
 export const DateForm: React.FC<{}> = () => {
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
 
@@ -17,7 +17,7 @@ export const DateForm: React.FC<{}> = () => {
   const dispatchType = "navDate";
   const changeHandler = (data: string) => {
     if (canvas) {
-      shellContext?.setUnsavedChanges(true);
+      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, data);
     }
   };

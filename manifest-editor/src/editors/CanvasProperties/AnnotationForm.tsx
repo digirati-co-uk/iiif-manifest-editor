@@ -2,8 +2,8 @@ import { IIIFBuilder } from "iiif-builder";
 import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import ManifestEditorContext from "../../apps/ManifestEditor/ManifestEditorContext";
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { InformationLink } from "../../atoms/InformationLink";
 import { FlexContainer } from "../../components/layout/FlexContainer";
@@ -11,12 +11,11 @@ import { AnnotationPreview } from "./AnnotationPreview";
 import { v4 } from "uuid";
 
 export const AnnotationForm = () => {
-  const editorContext = useContext(ManifestEditorContext);
-  const shellContext = useContext(ShellContext);
+  const editorContext = useManifestEditor();
+  const shellContext = useShell();
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
-  console.log(canvas && vault.get(canvas.annotations));
 
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
 

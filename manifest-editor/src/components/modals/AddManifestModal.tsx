@@ -9,7 +9,7 @@ import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
 import { ModalHeader } from "../../atoms/ModalHeader";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 
-import ShellContext from "../../apps/Shell/ShellContext";
+import { useShell } from "../../context/ShellContext/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { RecentFiles } from "../widgets/RecentFiles";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
@@ -26,7 +26,7 @@ export const AddManifestModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
 
-  const shellContext = useContext(ShellContext);
+  const shellContext = useShell();
 
   useEffect(() => {
     // Clear the populated value if we use a new url
@@ -49,19 +49,19 @@ export const AddManifestModal: React.FC<{
 
     // Only handling manifest & collection for now.
     if ((inputed && inputed.type === "Manifest") || inputType === "Collection") {
-      shellContext?.changeResourceID(inputValue);
-      if (shellContext?.selectedApplication === "ManifestEditor" && inputed.type === "Manifest") {
-        await shellContext?.updateRecentManifests(inputValue);
+      shellContext.changeResourceID(inputValue);
+      if (shellContext.selectedApplication === "ManifestEditor" && inputed.type === "Manifest") {
+        await shellContext.updateRecentManifests(inputValue);
         close();
-      } else if (shellContext?.selectedApplication === "Browser" && inputed.type === "Collection") {
+      } else if (shellContext.selectedApplication === "Browser" && inputed.type === "Collection") {
         close();
-      } else if (shellContext?.selectedApplication === "Splash" && inputed.type === "Manifest") {
-        shellContext?.changeSelectedApplication("ManifestEditor");
-        shellContext?.changeResourceID(inputValue);
+      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Manifest") {
+        shellContext.changeSelectedApplication("ManifestEditor");
+        shellContext.changeResourceID(inputValue);
         close();
-      } else if (shellContext?.selectedApplication === "Splash" && inputed.type === "Collection") {
-        shellContext?.changeSelectedApplication("Browser");
-        shellContext?.changeResourceID(inputValue);
+      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Collection") {
+        shellContext.changeSelectedApplication("Browser");
+        shellContext.changeResourceID(inputValue);
         close();
       }
     }
@@ -77,7 +77,7 @@ export const AddManifestModal: React.FC<{
             <CloseIcon />
           </Button>
         </FlexContainer>
-        {shellContext?.unsavedChanges && (
+        {shellContext.unsavedChanges && (
           <WarningMessage $small={true}>
             Adding a new manifest will mean you will loose your unsaved changes.
             <Button aria-label="save changes" onClick={() => save()}>
@@ -102,7 +102,7 @@ export const AddManifestModal: React.FC<{
           </CalltoButton>
         </FlexContainer>
         <br />
-        {inputType !== "Manifest" && inputType && shellContext?.selectedApplication === "ManifestEditor" && (
+        {inputType !== "Manifest" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
           <FlexContainerColumn justify={"flex-start"}>
             <p>This resource is not a manifest.</p>
             <small>{inputType}</small>
@@ -118,7 +118,7 @@ export const AddManifestModal: React.FC<{
             )}
           </FlexContainerColumn>
         )}
-        {inputType === "Collection" && inputType && shellContext?.selectedApplication === "ManifestEditor" && (
+        {inputType === "Collection" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
           <>
             <HorizontalDivider />
             <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -129,8 +129,8 @@ export const AddManifestModal: React.FC<{
               <Button
                 aria-label="launch application"
                 onClick={() => {
-                  shellContext?.changeSelectedApplication("Browser");
-                  shellContext?.changeResourceID(inputValue);
+                  shellContext.changeSelectedApplication("Browser");
+                  shellContext.changeResourceID(inputValue);
                   close();
                 }}
               >
@@ -139,7 +139,7 @@ export const AddManifestModal: React.FC<{
             </FlexContainer>
           </>
         )}
-        {inputType === "Manifest" && inputType && shellContext?.selectedApplication === "Browser" && (
+        {inputType === "Manifest" && inputType && shellContext.selectedApplication === "Browser" && (
           <>
             <HorizontalDivider />
             <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -150,7 +150,7 @@ export const AddManifestModal: React.FC<{
               <Button
                 aria-label="launch application"
                 onClick={() => {
-                  shellContext?.changeSelectedApplication("ManifestEditor");
+                  shellContext.changeSelectedApplication("ManifestEditor");
                   close();
                 }}
               >
@@ -162,11 +162,11 @@ export const AddManifestModal: React.FC<{
         <HorizontalDivider />
         <RecentFiles
           changeManifest={(id: string) => {
-            shellContext?.changeSelectedApplication("ManifestEditor");
-            shellContext?.changeResourceID(id);
+            shellContext.changeSelectedApplication("ManifestEditor");
+            shellContext.changeResourceID(id);
             close();
           }}
-          recentManifests={shellContext?.recentManifests}
+          recentManifests={shellContext.recentManifests}
         />
       </ModalContainer>
     </>

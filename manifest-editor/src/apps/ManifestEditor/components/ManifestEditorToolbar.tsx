@@ -1,16 +1,16 @@
 import { useContext, useState } from "react";
-import { Button } from "../../atoms/Button";
-import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
-import { AddIcon } from "../../icons/AddIcon";
-import { CheckIcon } from "../../icons/CheckIcon";
-import ManifestEditorContext from "./ManifestEditorContext";
+import { Button } from "../../../atoms/Button";
+import { Dropdown, DropdownContent } from "../../../atoms/Dropdown";
+import { AddIcon } from "../../../icons/AddIcon";
+import { CheckIcon } from "../../../icons/CheckIcon";
+import { useManifestEditor } from "../ManifestEditor.context";
 
 export const ManifestEditorToolbar: React.FC<{
   setEditorPanelOpen: (bool: boolean) => void;
 }> = ({ setEditorPanelOpen }) => {
   const [viewOpen, setViewOpen] = useState(false);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
-  const editorContext = useContext(ManifestEditorContext);
+  const editorContext = useManifestEditor();
 
   return (
     <>
