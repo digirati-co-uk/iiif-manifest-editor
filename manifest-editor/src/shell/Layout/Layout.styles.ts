@@ -1,13 +1,15 @@
 import styled, { css } from "styled-components";
+import { MenuPositions } from "./Layout.types";
 
 export const OuterWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
 `;
 
 export const Header = styled.header`
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  z-index: 1;
+  z-index: 11;
 `;
 
 export const Footer = styled.div`
@@ -21,31 +23,24 @@ export const Main = styled.div`
 
 export const LeftPanel = styled.div`
   background: #fff;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const CenterPanel = styled.div`
   flex: 1 1 0;
   background: #efefef;
+  min-width: 0;
 `;
 
 export const RightPanel = styled.div`
   background: #fff;
 `;
 
-export const RightPanelHandle = styled.div`
-  background: bisque;
-  width: 20px;
-`;
-
-export const LeftPanelHandle = styled.div`
-  background: bisque;
-  width: 20px;
-`;
-
-// Panel inners
-
-export const PanelContainer = styled.div<{ $menu?: "left" | "right" | "bottom" | "top" }>`
+export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`
   display: flex;
+  flex: 1;
+  height: 100%;
 
   ${(props) => {
     switch (props.$menu) {
@@ -82,19 +77,22 @@ export const PanelContainer = styled.div<{ $menu?: "left" | "right" | "bottom" |
   }}
 `;
 
-export const PanelMenu = styled.div`
+export const PanelMenu = styled.div<{ $position: "bottom" | "top" | "left" | "right"; $open: boolean }>`
   display: flex;
-  background: green;
+  box-shadow: 0 -3px 2px 0 rgba(0, 0, 0, 0.04), 0 -1px 0 0 rgba(0, 0, 0, 0.17);
+
+  ${(props) =>
+    !props.$open && (props.$position === "top" || props.$position === "bottom")
+      ? css`
+          background: red;
+          display: none;
+        `
+      : ""}
 `;
 
-export const PanelContent = styled.div``;
-
-// Panel Content Transitions
-// - Slide left (left panel)
-// - Slide right (right panel)
-// - Slide up/down (show/hide)
-//
-// Inner transitions (state -> state)
-// - Slide left
-// - Slide right
-// - Fade
+export const PanelContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+`;

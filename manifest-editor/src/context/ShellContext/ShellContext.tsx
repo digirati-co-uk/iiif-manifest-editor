@@ -3,6 +3,7 @@ import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState
 import { CanvasContext, ManifestContext, useExistingVault, VaultProvider } from "react-iiif-vault";
 import { getManifestNomalized } from "../../helpers/getManifestNormalized";
 import invariant from "tiny-invariant";
+import { LayoutProvider } from "../../shell/Layout/Layout.context";
 
 // @todo maybe split this into an internal and normal context
 interface ShellContextInterface {
@@ -145,12 +146,14 @@ export const ShellProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return (
-    <ShellContext.Provider value={shellSettings}>
-      <VaultProvider vault={vault}>
-        <ManifestContext manifest={manifest?.id}>
-          <CanvasContext canvas={currentCanvasId}>{children}</CanvasContext>
-        </ManifestContext>
-      </VaultProvider>
-    </ShellContext.Provider>
+    <LayoutProvider>
+      <ShellContext.Provider value={shellSettings}>
+        <VaultProvider vault={vault}>
+          <ManifestContext manifest={manifest?.id}>
+            <CanvasContext canvas={currentCanvasId}>{children}</CanvasContext>
+          </ManifestContext>
+        </VaultProvider>
+      </ShellContext.Provider>
+    </LayoutProvider>
   );
 };

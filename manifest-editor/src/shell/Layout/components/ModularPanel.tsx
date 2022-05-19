@@ -18,6 +18,7 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   flex-direction: column;
   min-width: 20em;
   margin-bottom: 1em;
+  height: 100%;
   ${(props) =>
     props.$floating &&
     css`
@@ -56,7 +57,7 @@ const ModularPanelHeader = styled.div`
   display: flex;
   height: 2.8em;
   box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  z-index: 2;
+  z-index: 12;
 `;
 
 const ModulePanelButton = styled.button`

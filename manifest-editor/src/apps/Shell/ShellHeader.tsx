@@ -92,6 +92,16 @@ export const ShellHeader: React.FC<{
                 >
                   IIIF Browser
                 </Button>
+                <Button
+                  onClick={() => {
+                    setAppMenuOpen(!appMenuOpen);
+                    shellContext.changeSelectedApplication("Labels" as any);
+                  }}
+                  title="Label editor"
+                  aria-label="Label editor"
+                >
+                  Labels
+                </Button>
               </DropdownContent>
             )}
           </Dropdown>

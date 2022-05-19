@@ -6,6 +6,9 @@ import { Splash } from "../../apps/Splash/Splash";
 import styled, { ThemeProvider } from "styled-components";
 import { useShell } from "../../context/ShellContext/ShellContext";
 import { useManifest } from "react-iiif-vault";
+import { LabelEditor } from "../../apps/LabelEditor/LabelEditor";
+import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { Fragment } from "react";
 
 const Main = styled.main`
    {
@@ -33,15 +36,21 @@ const IndexPage = (props: any) => {
         <ErrorBoundary>
           <Main>
             <Shell previewConfig={props.config.preview} newTemplates={props.templates} />
-            {selectedApplication === "ManifestEditor" && (
-              <ManifestEditor
-                // @todo Removing this, and the <ManifestEditor /> not loading, this is a bug.
-                key={manifest?.id}
-                defaultLanguages={props.config.defaultLanguages}
-                behaviorProperties={props.config.behaviorPresets}
-              />
-            )}
+            <ManifestEditorProvider
+              defaultLanguages={props.config.defaultLanguages}
+              behaviorProperties={props.config.behaviorPresets}
+            >
+              {selectedApplication === "ManifestEditor" ? (
+                <ManifestEditor
+                  // @todo Removing this, and the <ManifestEditor /> not loading, this is a bug.
+                  key={manifest?.id}
+                />
+              ) : (
+                <Fragment />
+              )}
+            </ManifestEditorProvider>
             {selectedApplication === "Browser" && <IIIFBrowser />}
+            {(selectedApplication as any) === "Labels" && <LabelEditor />}
             {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
           </Main>
         </ErrorBoundary>

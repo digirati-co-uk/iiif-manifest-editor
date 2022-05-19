@@ -16,9 +16,14 @@ export default {
       {
         id: "left-2",
         label: "Left 2",
-        hideHeader: true,
         icon: null,
         render: () => <div>left panel 2</div>,
+      },
+      {
+        id: "left-3",
+        label: "Left 3",
+        icon: null,
+        render: () => <div>left panel 3</div>,
       },
     ],
     rightPanels: [
@@ -51,6 +56,7 @@ export default {
     ],
     footer: <div>footer</div>,
     header: <h5 style={{ margin: 10 }}>Manifest editor</h5>,
+    leftPanelMenu: <ExampleLeftIconMenu />,
   } as LayoutProps,
 };
 
@@ -61,6 +67,18 @@ const Template = (props: LayoutProps) => (
 );
 
 const staticSomething = { something: "something" };
+
+function ExampleLeftIconMenu() {
+  const { actions, state, leftPanels } = useLayoutProvider();
+
+  return (
+    <div style={{ display: "flex" }}>
+      {leftPanels.map((panel) => (
+        <button onClick={() => actions.leftPanel.open({ id: panel.id })}>{panel.label}</button>
+      ))}
+    </div>
+  );
+}
 
 function ExampleControls() {
   const { actions, state } = useLayoutProvider();

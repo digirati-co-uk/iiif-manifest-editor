@@ -76,6 +76,8 @@ export interface LayoutPanel {
   hideHeader?: boolean;
 }
 
+export type MenuPositions = "left" | "right" | "bottom" | "top";
+
 export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
   pinned: true;
   state: T;
@@ -87,10 +89,13 @@ export interface LayoutProps {
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
   footer?: ReactElement;
-  menu: ReactElement;
-  header: ReactElement;
+  menu?: ReactElement;
+  header?: ReactElement;
   // Menus
   leftPanelMenu?: ReactElement;
-  rightPanelMenu?: ReactElement;
   centerPanelMenu?: ReactElement;
+  rightPanelMenu?: ReactElement;
+  leftPanelMenuPosition?: MenuPositions;
+  centerPanelMenuPosition?: MenuPositions;
+  rightPanelMenuPosition?: MenuPositions;
 }

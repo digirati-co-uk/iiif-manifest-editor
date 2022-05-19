@@ -47,8 +47,6 @@ export function useResizeLayout(
   });
   const { loading = false } = options;
 
-  console.log("uRL", options.loading);
-
   useEventHandler(
     resizer,
     "mousedown",
