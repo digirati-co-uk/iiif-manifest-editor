@@ -1,9 +1,15 @@
 import { LayoutProps } from "./Layout.types";
 import { useLayoutProvider } from "./Layout.context";
 import { memo, useEffect } from "react";
+import * as L from "./Layout.styles";
+import { ModularPanel } from "./components/ModularPanel";
+import { HandleControls } from "./components/HandleControls";
+import { useResizeLayout } from "../../madoc/use-resize-layouts";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const { loading, state, leftPanels, centerPanels, rightPanels, actions } = useLayoutProvider();
+  const leftPanelResizer = useResizeLayout("left-panel", { left: true, minWidthPx: 320, maxWidthPx: 500, loading });
+  const rightPanelResizer = useResizeLayout("right-panel", { left: false, minWidthPx: 320, maxWidthPx: 500, loading });
 
   // @todo create new custom hooks.
   // This layout is intended to be one of many using the same hooks.
@@ -14,6 +20,18 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
     : undefined;
+
+  // Pinned state
+  const showRightPanel =
+    rightPanel && (pinnedRightPanel?.id !== rightPanel.id || state.pinnedRightPanel.state !== state.rightPanel.state);
+  const resetLeftPanel =
+    leftPanelResizer.widthB !== "auto"
+      ? () => leftPanelResizer.setWidths({ widthA: "auto", widthB: "auto" } as any)
+      : undefined;
+  const resetRightPanel =
+    rightPanelResizer.widthB !== "auto"
+      ? () => rightPanelResizer.setWidths({ widthA: "auto", widthB: "auto" } as any)
+      : undefined;
 
   useEffect(() => {
     // @todo to enable dynamic layouts, we need this effect to run IF the props change.
@@ -32,41 +50,97 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     return null;
   }
 
+  console.log(leftPanelResizer);
+
   // This is a big ol' work in progress.
   return (
-    <>
-      <header>{props.header || null}</header>
-      <menu>{props.menu || null}</menu>
-      <div style={{ display: "flex" }}>
-        {state.leftPanel.open ? (
-          <div>
-            <h3>LEFT</h3>
-            {leftPanel ? <div>{leftPanel.render(state.leftPanel.state)}</div> : null}
-          </div>
-        ) : null}
-        {state.centerPanel.open ? (
-          <div>
-            <h3>CENTER</h3>
-            {centerPanel ? <div>{centerPanel.render(state.centerPanel.state)}</div> : null}
-          </div>
-        ) : null}
-        {state.rightPanel.open ? (
-          <div>
-            <h3>RIGHT</h3>
-            {pinnedRightPanel ? (
-              <div>
-                <h4>PINNED</h4>
-                {pinnedRightPanel.render(state.pinnedRightPanel.state)}
-              </div>
-            ) : null}
-            {rightPanel &&
-            (pinnedRightPanel?.id !== rightPanel.id || state.pinnedRightPanel.state !== state.rightPanel.state) ? (
-              <div>{rightPanel.render(state.rightPanel.state)}</div>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-      <footer>{props.footer || null}</footer>
-    </>
+    <L.OuterWrapper className={props.className}>
+      <L.Header>
+        {props.header || null}
+        {props.menu ? <menu>{props.menu}</menu> : null}
+      </L.Header>
+      <L.Main
+        ref={(div) => {
+          leftPanelResizer.refs.container.current = div;
+          rightPanelResizer.refs.container.current = div;
+        }}
+      >
+        <L.LeftPanel
+          ref={leftPanelResizer.refs.resizableDiv}
+          style={{ width: state.leftPanel.open ? leftPanelResizer.widthB : undefined }}
+        >
+          <L.PanelContainer $menu="bottom">
+            {props.leftPanelMenu ? <L.PanelMenu>{props.leftPanelMenu}</L.PanelMenu> : null}
+            <L.PanelContent>
+              {state.leftPanel.open ? (
+                <>
+                  {leftPanel ? (
+                    <ModularPanel panel={leftPanel} state={state.leftPanel} actions={actions.leftPanel} />
+                  ) : null}
+                </>
+              ) : null}
+            </L.PanelContent>
+          </L.PanelContainer>
+        </L.LeftPanel>
+        <HandleControls
+          ref={leftPanelResizer.refs.resizer}
+          reset={resetLeftPanel}
+          dir="left"
+          open={state.leftPanel.open}
+          actions={actions.leftPanel}
+        />
+        <L.CenterPanel>
+          <L.PanelContainer $menu="bottom">
+            {props.centerPanelMenu ? <L.PanelMenu>{props.centerPanelMenu}</L.PanelMenu> : null}
+            <L.PanelContent>
+              {state.centerPanel.open ? (
+                centerPanel ? (
+                  <div>{centerPanel.render(state.centerPanel.state)}</div>
+                ) : null
+              ) : null}
+            </L.PanelContent>
+          </L.PanelContainer>
+        </L.CenterPanel>
+        <HandleControls
+          ref={rightPanelResizer.refs.resizer}
+          dir="right"
+          reset={resetRightPanel}
+          open={state.rightPanel.open}
+          actions={actions.rightPanel}
+        />
+        <L.RightPanel
+          ref={rightPanelResizer.refs.resizableDiv}
+          style={{ width: state.rightPanel.open ? rightPanelResizer.widthB : undefined }}
+        >
+          <L.PanelContainer $menu="bottom">
+            {props.rightPanelMenu ? <L.PanelMenu>{props.rightPanelMenu}</L.PanelMenu> : null}
+            <L.PanelContent>
+              {state.rightPanel.open ? (
+                <>
+                  {pinnedRightPanel ? (
+                    <ModularPanel
+                      panel={pinnedRightPanel}
+                      state={state.pinnedRightPanel}
+                      actions={actions.pinnedRightPanel}
+                      close={actions.rightPanel.close}
+                    />
+                  ) : null}
+
+                  {showRightPanel ? (
+                    <ModularPanel
+                      panel={rightPanel}
+                      state={state.rightPanel}
+                      actions={actions.rightPanel}
+                      pinActions={actions.pinnedRightPanel}
+                    />
+                  ) : null}
+                </>
+              ) : null}
+            </L.PanelContent>
+          </L.PanelContainer>
+        </L.RightPanel>
+      </L.Main>
+      <L.Footer>{props.footer || null}</L.Footer>
+    </L.OuterWrapper>
   );
 });

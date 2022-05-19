@@ -73,6 +73,7 @@ export interface LayoutPanel {
   icon: null | string | ReactElement; // SVG?
   render: (state?: any) => ReactElement;
   pinnable?: boolean;
+  hideHeader?: boolean;
 }
 
 export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
@@ -81,10 +82,15 @@ export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
 }
 
 export interface LayoutProps {
+  className?: string;
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
   footer?: ReactElement;
   menu: ReactElement;
   header: ReactElement;
+  // Menus
+  leftPanelMenu?: ReactElement;
+  rightPanelMenu?: ReactElement;
+  centerPanelMenu?: ReactElement;
 }
