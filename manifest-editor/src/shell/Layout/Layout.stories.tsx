@@ -9,7 +9,6 @@ export default {
     leftPanels: [
       {
         id: "left-1",
-        hideHeader: true,
         label: "Left 1",
         icon: null,
         render: () => <div>left panel 1</div>,
@@ -17,6 +16,7 @@ export default {
       {
         id: "left-2",
         label: "Left 2",
+        hideHeader: true,
         icon: null,
         render: () => <div>left panel 2</div>,
       },
@@ -52,26 +52,6 @@ export default {
     footer: <div>footer</div>,
     header: <h5 style={{ margin: 10 }}>Manifest editor</h5>,
   } as LayoutProps,
-};
-
-const Tempalte2 = () => {
-  return (
-    <Layout
-      //
-      leftPanels={[
-        {
-          id: "1",
-          label: "thumbnails",
-          icon: null,
-          render: () => <div>thumbs</div>,
-        },
-      ]}
-      rightPanels={[]}
-      centerPanels={[]}
-      menu={<div>a</div>}
-      header={<div>a</div>}
-    />
-  );
 };
 
 const Template = (props: LayoutProps) => (
