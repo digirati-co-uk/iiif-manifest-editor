@@ -52,9 +52,7 @@ function mergeList(inputList: string[], outputList: string[]) {
 }
 
 export async function analyse(url: string, ...expectedTypes: string[]) {
-  const tryList = makeTryList(expectedTypes);
-  console.log("User's suggestions indicate likely types");
-  console.log(tryList);
+  // const tryList = makeTryList(expectedTypes);
 
   if (!url) {
     return;
@@ -70,6 +68,7 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
     // can handle the error better, but maybe CORS error happened so:
     return handleNonFetchableUrl(url);
   }
+  console.log(response)
 
   if (!response.ok) {
     response = await fetch(url + "/info.json");
@@ -92,7 +91,7 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
   } catch {
     return null;
   }
-
+  console.log(analyseJson(data, url))
   return await analyseJson(data, url);
 }
 
@@ -177,7 +176,7 @@ async function handleNonFetchableUrl(url: string, capturedContentType?: string) 
       format: await getFormat(url, capturedContentType),
     };
     return data;
-  } catch {}
+  } catch { }
 
   return null;
 }

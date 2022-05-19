@@ -54,7 +54,7 @@ export const EditMediaForm: React.FC<EditMediaForm> = ({
     if (inputValue) {
       analysed = await analyse(inputValue);
       setProperties(analysed);
-      if (!["Image"].includes(analysed?.type)) {
+      if (!["Image", "ImageService"].includes(analysed?.type)) {
         setError(true);
         setMessage(`The format that you have provided is not yet supported`);
       } else if (!error && analysed) {
