@@ -30,7 +30,7 @@ export const LeftPanel = styled.div`
 export const CenterPanel = styled.div`
   flex: 1 1 0;
   background: #efefef;
-  min-width: 0;
+  min-width: 320px;
 `;
 
 export const RightPanel = styled.div`

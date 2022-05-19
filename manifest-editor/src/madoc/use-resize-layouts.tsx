@@ -42,8 +42,8 @@ export function useResizeLayout(
   const isEventTimeout = useRef<number>(0);
   const startPos = useRef({ x: 0, y: 0 });
   const [{ widthA, widthB }, setWidths] = useLocalStorage(`resize-layout/${name}`, {
-    widthA: options.widthA || "50%",
-    widthB: options.widthB || "50%",
+    widthA: options.widthA || "auto",
+    widthB: options.widthB || "auto",
   });
   const { loading = false } = options;
 

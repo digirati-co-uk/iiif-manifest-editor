@@ -9,8 +9,18 @@ import equal from "shallowequal";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const { loading, state, leftPanels, centerPanels, rightPanels, actions } = useLayoutProvider();
-  const leftPanelResizer = useResizeLayout("left-panel", { left: true, minWidthPx: 320, maxWidthPx: 500, loading });
-  const rightPanelResizer = useResizeLayout("right-panel", { left: false, minWidthPx: 320, maxWidthPx: 500, loading });
+  const leftPanelResizer = useResizeLayout("left-panel", {
+    left: true,
+    minWidthPx: 320,
+    maxWidthPx: 600,
+    loading,
+  });
+  const rightPanelResizer = useResizeLayout("right-panel", {
+    left: false,
+    minWidthPx: 320,
+    maxWidthPx: 600,
+    loading,
+  });
 
   // @todo create new custom hooks.
   // This layout is intended to be one of many using the same hooks.

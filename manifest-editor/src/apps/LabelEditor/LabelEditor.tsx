@@ -43,7 +43,6 @@ export function LabelEditor() {
         leftPanels={leftPanels}
         centerPanels={centerPanels}
         rightPanels={rightPanels}
-        menu={<div>menu</div>}
       />
     </ManifestEditorProvider>
   );
