@@ -14,6 +14,7 @@ import { ModalHeader } from "../../atoms/ModalHeader";
 import { BackIcon } from "../../icons/BackIcon";
 import { MediaForm } from "../../editors/MediaProperties/MediaForm";
 import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThumbnailForm";
+import { ManifestThumbnailForm } from "../../editors/ThumbnailProperties/ManifestThumbnailForm";
 
 export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   wide?: boolean;
@@ -85,6 +86,14 @@ export const EditorPanel: React.FC<{
                   <BackIcon />
                 </Button>
               )}
+              {editorContext?.selectedProperty === "manifest thumbnail" && (
+                <Button
+                  onClick={() => editorContext?.changeSelectedProperty("manifest", 0)}
+                  aria-label="go back to manifest properties"
+                >
+                  <BackIcon />
+                </Button>
+              )}
               <ModalHeader $color={editorContext?.selectedProperty}>
                 {editorContext?.selectedProperty} properties
               </ModalHeader>
@@ -96,6 +105,7 @@ export const EditorPanel: React.FC<{
             {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
             {editorContext?.selectedProperty === "canvas item" && <MediaForm />}
             {editorContext?.selectedProperty === "canvas thumbnail" && <CanvasThumbnailForm />}
+            {editorContext?.selectedProperty === "manifest thumbnail" && <ManifestThumbnailForm />}
           </div>
           <FlexContainerRow justify="flex-end">
             {fullScreen ? (

@@ -77,11 +77,6 @@ export const MetadataForm: React.FC<{}> = () => {
           </ErrorBoundary>
         )}
       </div>
-      <FlexContainer style={{ justifyContent: "center" }}>
-        <CalltoButton aria-label="add new metadata pair" onClick={() => addNew()}>
-          + Add new metadata pair
-        </CalltoButton>
-      </FlexContainer>
     </>
   );
 };

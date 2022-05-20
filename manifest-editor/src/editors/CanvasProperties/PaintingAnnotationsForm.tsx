@@ -1,6 +1,3 @@
-import { addMapping, importEntities } from "@iiif/vault/actions";
-import { IIIFBuilder } from "iiif-builder";
-import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useShell } from "../../context/ShellContext/ShellContext";
 import { Button } from "../../atoms/Button";
