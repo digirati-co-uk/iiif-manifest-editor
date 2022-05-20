@@ -3,3 +3,5 @@ declare namespace JSX {
     "canvas-panel": any;
   }
 }
+
+declare module '*.html?raw'
