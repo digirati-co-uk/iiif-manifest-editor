@@ -126,7 +126,7 @@ export const ShellOptions: React.FC<{
                 aria-label="About"
                 onClick={() => {
                   setHelpOpen(!helpOpen);
-                  shellContext.changeSelectedApplication("Splash");
+                  shellContext.changeSelectedApplication("About");
                 }}
               >
                 About
