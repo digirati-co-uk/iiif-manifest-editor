@@ -12,19 +12,20 @@ import { CanvasView } from "../../components/organisms/CanvasView";
 import { GridView } from "../../components/organisms/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
+import { useShell } from "../../context/ShellContext/ShellContext";
+import { Splash } from "../Splash/Splash";
 
 export function ManifestEditor() {
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const manifest = useManifest();
   const { addCanvasModalOpen, setAddCanvasModalOpen, view, languages } = useManifestEditor();
+  const shell = useShell();
 
   return (
     <>
       {addCanvasModalOpen && <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />}
       {!manifest ? (
-        <WarningMessage>
-          Oops, it looks like you don't have a manifest loaded. Click File, then new to get started.
-        </WarningMessage>
+        <Splash />
       ) : (
         <>
           <ErrorBoundary>
