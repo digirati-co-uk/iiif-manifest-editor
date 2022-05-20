@@ -8,36 +8,36 @@ import { Layout } from "../../shell/Layout/Layout";
 import { LayoutPanel } from "../../shell/Layout/Layout.types";
 import { ManifestEditorProvider } from "../ManifestEditor/ManifestEditor.context";
 
-const shellContext = useShell();
-
-const handleClick = (id: string) => {
-  shellContext.changeResourceID(id);
-  shellContext.changeSelectedApplication("ManifestEditor");
-};
-const leftPanels: LayoutPanel[] = [];
-
-const centerPanels: LayoutPanel[] = [
-  {
-    id: "current-canvas",
-    label: "Current canvas",
-    icon: "",
-    render: () => (
-      <FlexContainerColumn justify="flex-start" style={{ width: "80%", margin: "auto" }}>
-        <PaddingComponentLarge />
-        <LoadManifest />
-        <PaddingComponentLarge />
-        <NewTemplates newTemplates={shellContext.newTemplates} changeManifest={handleClick} />
-        <PaddingComponentLarge />
-        <RecentFiles recentManifests={shellContext.recentManifests} changeManifest={handleClick} />
-        <PaddingComponentLarge />
-      </FlexContainerColumn>
-    ),
-  },
-];
-
-const rightPanels: LayoutPanel[] = [];
-
 export function Splash() {
+  const shellContext = useShell();
+
+  const handleClick = (id: string) => {
+    shellContext.changeResourceID(id);
+    shellContext.changeSelectedApplication("ManifestEditor");
+  };
+  const leftPanels: LayoutPanel[] = [];
+
+  const centerPanels: LayoutPanel[] = [
+    {
+      id: "current-canvas",
+      label: "Current canvas",
+      icon: "",
+      render: () => (
+        <FlexContainerColumn justify="flex-start" style={{ width: "80%", margin: "auto" }}>
+          <PaddingComponentLarge />
+          <LoadManifest />
+          <PaddingComponentLarge />
+          <NewTemplates newTemplates={shellContext.newTemplates} changeManifest={handleClick} />
+          <PaddingComponentLarge />
+          <RecentFiles recentManifests={shellContext.recentManifests} changeManifest={handleClick} />
+          <PaddingComponentLarge />
+        </FlexContainerColumn>
+      ),
+    },
+  ];
+
+  const rightPanels: LayoutPanel[] = [];
+
   return (
     <ManifestEditorProvider defaultLanguages={[]} behaviorProperties={[]}>
       <Layout
