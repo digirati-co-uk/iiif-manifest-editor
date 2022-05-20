@@ -3,6 +3,7 @@ import { useShell } from "../../context/ShellContext/ShellContext";
 import { RecentFiles } from "../../components/widgets/RecentFiles";
 import { NewTemplates } from "../../components/widgets/NewTemplates";
 import { PaddingComponentLarge } from "../../atoms/PaddingComponent";
+import { LoadManifest } from "../../components/widgets/LoadManifest";
 
 export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   const shellContext = useShell();
@@ -13,14 +14,13 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
   };
 
   return (
-    <FlexContainerColumn justify="flex-start" style={{ maxWidth: "80%", margin: "auto" }}>
-      <div dangerouslySetInnerHTML={{ __html: welcome }} />
+    <FlexContainerColumn justify="flex-start" style={{ width: "80%", margin: "auto" }}>
+      <PaddingComponentLarge />
+      <LoadManifest />
       <PaddingComponentLarge />
       <NewTemplates newTemplates={shellContext.newTemplates} changeManifest={handleClick} />
       <PaddingComponentLarge />
-
       <RecentFiles recentManifests={shellContext.recentManifests} changeManifest={handleClick} />
-
       <PaddingComponentLarge />
     </FlexContainerColumn>
   );
