@@ -6,7 +6,6 @@ export default {
   title: "Shell / Layout",
   component: Layout,
   args: {
-    menu: <div>menu</div>,
     leftPanels: [
       {
         id: "left-1",
@@ -19,6 +18,12 @@ export default {
         label: "Left 2",
         icon: null,
         render: () => <div>left panel 2</div>,
+      },
+      {
+        id: "left-3",
+        label: "Left 3",
+        icon: null,
+        render: () => <div>left panel 3</div>,
       },
     ],
     rightPanels: [
@@ -50,7 +55,8 @@ export default {
       },
     ],
     footer: <div>footer</div>,
-    header: <div>header</div>,
+    header: <h5 style={{ margin: 10 }}>Manifest editor</h5>,
+    leftPanelMenu: <ExampleLeftIconMenu />,
   } as LayoutProps,
 };
 
@@ -62,15 +68,32 @@ const Template = (props: LayoutProps) => (
 
 const staticSomething = { something: "something" };
 
+function ExampleLeftIconMenu() {
+  const { actions, state, leftPanels } = useLayoutProvider();
+
+  return (
+    <div style={{ display: "flex" }}>
+      {leftPanels.map((panel) => (
+        <button onClick={() => actions.leftPanel.open({ id: panel.id })}>{panel.label}</button>
+      ))}
+    </div>
+  );
+}
+
 function ExampleControls() {
   const { actions, state } = useLayoutProvider();
 
   console.log(state);
 
   return (
-    <div>
+    <div style={{ height: 800, padding: 40 }}>
       <button onClick={actions.leftPanel.toggle}>toggle left</button>
       <button onClick={actions.rightPanel.toggle}>toggle right</button>
+      <button onClick={actions.pinnedRightPanel.toggle}>toggle right2</button>
+      <div>
+        <button onClick={() => actions.leftPanel.change({ id: "left-1" })}>left 1</button>
+        <button onClick={() => actions.leftPanel.change({ id: "left-2" })}>left 2</button>
+      </div>
       <div>
         <button onClick={() => actions.rightPanel.change({ id: "right-1" })}>right 1</button>
         <button onClick={() => actions.rightPanel.change({ id: "right-2", state: staticSomething })}>right 2</button>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "styled-components";
 import { defaultTheme } from "../src/themes/default-theme";
 import { ShellProvider } from "../src/context/ShellContext/ShellContext";
 import { createElement } from "react";
+import { GlobalStyle } from "../src/atoms/GlobalStyle";
 
 const themes = [defaultTheme];
 
@@ -12,7 +13,7 @@ const themes = [defaultTheme];
 addDecorator(withThemesProvider(themes, ThemeProvider));
 
 addDecorator((story) => {
-  return createElement(ShellProvider, {}, story());
+  return createElement(ShellProvider, {}, createElement(GlobalStyle), story());
 })
 
 export const parameters = {

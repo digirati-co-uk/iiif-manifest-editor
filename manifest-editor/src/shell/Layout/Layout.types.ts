@@ -73,7 +73,10 @@ export interface LayoutPanel {
   icon: null | string | ReactElement; // SVG?
   render: (state?: any) => ReactElement;
   pinnable?: boolean;
+  hideHeader?: boolean;
 }
+
+export type MenuPositions = "left" | "right" | "bottom" | "top";
 
 export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
   pinned: true;
@@ -81,10 +84,18 @@ export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
 }
 
 export interface LayoutProps {
+  className?: string;
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
   footer?: ReactElement;
-  menu: ReactElement;
-  header: ReactElement;
+  menu?: ReactElement;
+  header?: ReactElement;
+  // Menus
+  leftPanelMenu?: ReactElement;
+  centerPanelMenu?: ReactElement;
+  rightPanelMenu?: ReactElement;
+  leftPanelMenuPosition?: MenuPositions;
+  centerPanelMenuPosition?: MenuPositions;
+  rightPanelMenuPosition?: MenuPositions;
 }
