@@ -5,7 +5,7 @@ import { NewTemplates } from "../../components/widgets/NewTemplates";
 import { PaddingComponentLarge } from "../../atoms/PaddingComponent";
 import { LoadManifest } from "../../components/widgets/LoadManifest";
 
-export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
+export function Splash() {
   const shellContext = useShell();
 
   const handleClick = (id: string) => {
@@ -24,4 +24,4 @@ export const Splash: React.FC<{ welcome: any }> = ({ welcome }) => {
       <PaddingComponentLarge />
     </FlexContainerColumn>
   );
-};
+}
