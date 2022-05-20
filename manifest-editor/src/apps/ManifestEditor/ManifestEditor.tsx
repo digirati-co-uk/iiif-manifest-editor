@@ -13,7 +13,6 @@ import { GridView } from "../../components/organisms/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 import { useShell } from "../../context/ShellContext/ShellContext";
-import { Splash } from "../Splash/Splash";
 
 export function ManifestEditor() {
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
@@ -25,7 +24,7 @@ export function ManifestEditor() {
     <>
       {addCanvasModalOpen && <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />}
       {!manifest ? (
-        <Splash />
+        shell.changeSelectedApplication("Splash")
       ) : (
         <>
           <ErrorBoundary>

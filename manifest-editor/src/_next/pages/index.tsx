@@ -51,7 +51,7 @@ const IndexPage = (props: any) => {
             </ManifestEditorProvider>
             {selectedApplication === "Browser" && <IIIFBrowser />}
             {(selectedApplication as any) === "Labels" && <LabelEditor />}
-            {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
+            {selectedApplication === "Splash" && <Splash />}
           </Main>
         </ErrorBoundary>
         {/*<footer className={styles.footer}></footer>*/}
