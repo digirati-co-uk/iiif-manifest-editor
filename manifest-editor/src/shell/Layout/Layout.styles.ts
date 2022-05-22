@@ -29,7 +29,9 @@ export const LeftPanel = styled.div`
 
 export const CenterPanel = styled.div`
   flex: 1 1 0;
-  background: #efefef;
+  //background: #efefef;
+  background: linear-gradient(0deg, rgba(251, 242, 237, 1) 0%, rgba(240, 229, 245, 1) 50%, rgba(236, 245, 255, 1) 100%);
+
   min-width: 320px;
 `;
 

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../components/layout/FlexContainer";
@@ -13,6 +13,7 @@ import { DownIcon } from "../../icons/DownIcon";
 
 import { getValue } from "@iiif/vault-helpers";
 import { useShell } from "../../context/ShellContext/ShellContext";
+import { getApps } from "../app-loader";
 
 export const ShellHeader: React.FC<{
   savePreviewLink: () => Promise<void>;
@@ -38,6 +39,7 @@ export const ShellHeader: React.FC<{
   const manifest = useManifest();
   const [appMenuOpen, setAppMenuOpen] = useState(false);
   const shellContext = useShell();
+  const { allAppNames } = useMemo(getApps, []);
 
   const getTitle = () => {
     if (manifest) {
@@ -92,16 +94,18 @@ export const ShellHeader: React.FC<{
                 >
                   IIIF Browser
                 </Button>
-                <Button
-                  onClick={() => {
-                    setAppMenuOpen(!appMenuOpen);
-                    shellContext.changeSelectedApplication("Labels" as any);
-                  }}
-                  title="Label editor"
-                  aria-label="Label editor"
-                >
-                  Labels
-                </Button>
+
+                {allAppNames.map((name) => (
+                  <Button
+                    key={name}
+                    onClick={() => {
+                      setAppMenuOpen(!appMenuOpen);
+                      shellContext.changeSelectedApplication(name as any);
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
               </DropdownContent>
             )}
           </Dropdown>

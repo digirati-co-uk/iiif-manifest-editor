@@ -6,9 +6,9 @@ import { Splash } from "../../apps/Splash/Splash";
 import styled, { ThemeProvider } from "styled-components";
 import { useShell } from "../../context/ShellContext/ShellContext";
 import { useManifest } from "react-iiif-vault";
-import { LabelEditor } from "../../apps/LabelEditor/LabelEditor";
 import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { Fragment } from "react";
+import { RenderApp } from "./render-app";
 
 const Main = styled.main`
    {
@@ -20,11 +20,7 @@ const Main = styled.main`
   }
 `;
 
-const Container = styled.div`
-   {
-    padding: 0 1rem;
-  }
-`;
+const Container = styled.div``;
 
 const IndexPage = (props: any) => {
   const { selectedApplication } = useShell();
@@ -50,8 +46,9 @@ const IndexPage = (props: any) => {
               )}
             </ManifestEditorProvider>
             {selectedApplication === "Browser" && <IIIFBrowser />}
-            {(selectedApplication as any) === "Labels" && <LabelEditor />}
             {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
+
+            <RenderApp selectedApplication={selectedApplication} />
           </Main>
         </ErrorBoundary>
         {/*<footer className={styles.footer}></footer>*/}

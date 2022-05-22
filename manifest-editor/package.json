@@ -28,8 +28,10 @@
     "react-i18next": "^11.16.9",
     "react-iiif-vault": "^0.9.6",
     "shallowequal": "^1.1.0",
+    "slugify": "^1.6.5",
     "styled-components": "^5.3.5",
     "tiny-invariant": "^1.2.0",
+    "tiny-use-debounce": "^1.0.4",
     "universalviewer": "^4.0.0-pre.77",
     "uuid": "^8.3.2"
   },
