@@ -77,7 +77,6 @@ export const ThumbnailForm = () => {
               {vault &&
                 canvas &&
                 vault.get(canvas.thumbnail).map((thumbnail: any, index) => {
-                  console.log(thumbnail);
                   return (
                     <Draggable
                       key={thumbnail.toString() + "--HASH--"}

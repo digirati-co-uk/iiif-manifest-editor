@@ -7,6 +7,7 @@ import { CloseIcon } from "../icons/CloseIcon";
 import { FlexContainer } from "../components/layout/FlexContainer";
 import { Input, InputBorderless } from "./Input";
 import { DropdownItem, StyledSelect } from "./LanguageSelector";
+import { useDebounce } from "tiny-use-debounce";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -19,6 +20,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // This hook does the heavily lifting on the data side.
   const { firstItem, createNewItem, fieldKeys, changeValue, getFieldByKey, changeLanguage, saveChanges, removeItem } =
     useMetadataEditor(props);
+  const debounceSave = useDebounce(saveChanges, 400);
 
   // We can set these up from config, or the browser or just allow them to be passed down.
   // This is where we choose a default for which languages will appear in the dropdown.
@@ -73,7 +75,10 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                     type="text"
                     id={key}
                     value={field.value}
-                    onChange={(e) => changeValue(key, e.currentTarget.value)}
+                    onChange={(e) => {
+                      changeValue(key, e.currentTarget.value);
+                      debounceSave(props.index, props.property);
+                    }}
                   />
                   <StyledSelect value={field.language} onChange={(e) => changeLanguage(key, e.currentTarget.value)}>
                     {languages.map((lang) => (
@@ -131,13 +136,9 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
         <InputBorderless
           type="text"
           value={firstItem.field.value}
-          onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
-          onBlur={() => {
-            // Saving is slightly intensive, this is a sort of semi-controlled
-            // input, we will call onChange to the component using this component
-            // but not after every character. Here I've set it on blur of the
-            // first text box and also when you "close" the expanded view.
-            saveChanges(props.index, props.property);
+          onChange={(e) => {
+            changeValue(firstItem.id, e.currentTarget.value);
+            debounceSave(props.index, props.property);
           }}
           disabled={showAllFields}
           style={{
