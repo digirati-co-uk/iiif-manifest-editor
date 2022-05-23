@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Editor } from "../../atoms/Editor";
@@ -20,41 +20,41 @@ export function ManifestEditor() {
   const { addCanvasModalOpen, setAddCanvasModalOpen, view, languages } = useManifestEditor();
   const shell = useShell();
 
+  useEffect(() => {
+    if (!manifest) {
+      shell.changeSelectedApplication("Splash");
+    }
+  }, [manifest]);
+
   return (
     <>
       {addCanvasModalOpen && <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />}
-      {!manifest ? (
-        shell.changeSelectedApplication("Splash")
-      ) : (
-        <>
+      <ErrorBoundary>
+        <Toolbar>
+          <ManifestEditorToolbar setEditorPanelOpen={(bool: boolean) => setEditorPanelOpen(bool)} />
+        </Toolbar>
+      </ErrorBoundary>
+      <Editor>
+        {view !== "grid" && view !== "fullEditor" && (
           <ErrorBoundary>
-            <Toolbar>
-              <ManifestEditorToolbar setEditorPanelOpen={(bool: boolean) => setEditorPanelOpen(bool)} />
-            </Toolbar>
+            <ThumbnailStripView view={view} />
+            <ExpandTab />
+            <CanvasView />
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
           </ErrorBoundary>
-          <Editor>
-            {view !== "grid" && view !== "fullEditor" && (
-              <ErrorBoundary>
-                <ThumbnailStripView view={view} />
-                <ExpandTab />
-                <CanvasView />
-                <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
-              </ErrorBoundary>
-            )}
-            {view === "grid" && (
-              <ErrorBoundary>
-                <GridView />
-                <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
-              </ErrorBoundary>
-            )}
-            {view === "fullEditor" && (
-              <ErrorBoundary>
-                <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
-              </ErrorBoundary>
-            )}
-          </Editor>
-        </>
-      )}
+        )}
+        {view === "grid" && (
+          <ErrorBoundary>
+            <GridView />
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
+          </ErrorBoundary>
+        )}
+        {view === "fullEditor" && (
+          <ErrorBoundary>
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
+          </ErrorBoundary>
+        )}
+      </Editor>
     </>
   );
 }
