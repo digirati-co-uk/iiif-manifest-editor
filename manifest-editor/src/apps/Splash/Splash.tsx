@@ -19,11 +19,11 @@ export function Splash() {
 
   const centerPanels: LayoutPanel[] = [
     {
-      id: "current-canvas",
-      label: "Current canvas",
+      id: "splash",
+      label: "Splash Screen",
       icon: "",
       render: () => (
-        <FlexContainerColumn justify="flex-start" style={{ width: "80%", margin: "auto" }}>
+        <FlexContainerColumn>
           <PaddingComponentLarge />
           <LoadManifest />
           <PaddingComponentLarge />

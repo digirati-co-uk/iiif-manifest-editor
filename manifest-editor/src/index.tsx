@@ -18,7 +18,6 @@ render(
         // left these in for now.
         config={data}
         theme={defaultTheme}
-        welcome={{}}
         templates={JSON.stringify(config)}
       />
     </ShellProvider>

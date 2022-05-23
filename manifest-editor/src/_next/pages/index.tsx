@@ -23,7 +23,7 @@ const Main = styled.main`
 
 const Container = styled.div`
    {
-    padding: 0 1rem;
+    // padding: 0 1rem;
   }
 `;
 
