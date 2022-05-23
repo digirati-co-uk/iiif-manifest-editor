@@ -1,7 +1,7 @@
 import { IIIFBuilder } from "iiif-builder";
 import { ManifestNormalized } from "@iiif/presentation-3";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { RecentFilesWidget, RecentLabel, RecentManifestCard, RecentThumbnails } from "../../atoms/RecentFilesWidget";
+import { RecentLabel, RecentManifestCard, RecentThumbnails } from "../../atoms/RecentFilesWidget";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 
 type RecentFiles = {
@@ -31,8 +31,8 @@ export const RecentFiles: React.FC<RecentFiles> = ({ recentManifests, changeMani
     }
   });
   return (
-    <RecentFilesWidget>
-      <h4>Open Recent </h4>
+    <>
+      <h4>Recently opened </h4>
       <RecentThumbnails>
         {IIIFCollection.items.map((manifest) => {
           return (
@@ -63,6 +63,6 @@ export const RecentFiles: React.FC<RecentFiles> = ({ recentManifests, changeMani
           );
         })}
       </RecentThumbnails>
-    </RecentFilesWidget>
+    </>
   );
 };

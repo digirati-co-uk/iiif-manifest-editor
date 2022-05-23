@@ -45,7 +45,7 @@ export const NewTemplates: React.FC<NewTemplates> = ({ newTemplates, changeManif
       <RecentThumbnails>
         {newTemplates &&
           // @ts-ignore
-          newTemplates?.items.map((manifest, key) => {
+          newTemplates?.items.map((manifest) => {
             return (
               <TemplateCard
                 key={manifest.id}

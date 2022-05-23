@@ -13,6 +13,7 @@ import { useShell } from "../../context/ShellContext/ShellContext";
 import { analyse } from "../../helpers/analyse";
 import { RecentFiles } from "../widgets/RecentFiles";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
+import { RecentFilesWidget } from "../../atoms/RecentFilesWidget";
 
 export const AddManifestModal: React.FC<{
   manifest: string;
@@ -160,14 +161,16 @@ export const AddManifestModal: React.FC<{
           </>
         )}
         <HorizontalDivider />
-        <RecentFiles
-          changeManifest={(id: string) => {
-            shellContext.changeSelectedApplication("ManifestEditor");
-            shellContext.changeResourceID(id);
-            close();
-          }}
-          recentManifests={shellContext.recentManifests}
-        />
+        <RecentFilesWidget>
+          <RecentFiles
+            changeManifest={(id: string) => {
+              shellContext.changeSelectedApplication("ManifestEditor");
+              shellContext.changeResourceID(id);
+              close();
+            }}
+            recentManifests={shellContext.recentManifests}
+          />
+        </RecentFilesWidget>
       </ModalContainer>
     </>
   );
