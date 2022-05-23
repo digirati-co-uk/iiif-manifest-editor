@@ -1,7 +1,7 @@
 import { getValue } from "@iiif/vault-helpers";
 import { useContext, useState } from "react";
 import { CanvasContext, useCanvas, useManifest, useVault } from "react-iiif-vault";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import { Thumbnail } from "../../atoms/Thumbnail";
@@ -57,11 +57,17 @@ export const ThumnbnailLabel = styled.small`
   text-overflow: ellipsis;
 `;
 
-export const ThumbnailContainer = styled.div<{ size?: number }>`
+export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean }>`
+  ${(props: any) =>
+    props.selected &&
+    css`
+      border: 2px solid pink
+      }
+    `}
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   display: flex;
   flex-direction: column;
-  border-radius: 3px;
+  border-radius: 5px;
   justify-content: center;
   align-items: center;
   background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
@@ -78,9 +84,16 @@ const GridItem: React.FC<{
 }> = ({ handleChange, canvasId }) => {
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
+  const { currentCanvasId } = useShell();
+
+  console.log(currentCanvasId);
 
   return (
-    <ThumbnailContainer onClick={(e: any) => handleChange(canvasId, e)} size={editorContext?.thumbnailSize?.w}>
+    <ThumbnailContainer
+      onClick={(e: any) => handleChange(canvasId, e)}
+      size={editorContext?.thumbnailSize?.w}
+      selected={canvasId === currentCanvasId}
+    >
       <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
       <ErrorBoundary>
         <Thumbnail onClick={() => {}} />
