@@ -12,13 +12,6 @@
       "label": {
         "en": ["Blank Manifest"]
       }
-    },
-    {
-      "id": "config/manifest-templates/with-provider.json",
-      "type": "Manifest",
-      "label": {
-        "en": ["Manifest with Provider (publisher information)"]
-      }
     }
   ]
 }

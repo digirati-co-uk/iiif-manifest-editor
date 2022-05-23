@@ -8,7 +8,10 @@ import { useShell } from "../../context/ShellContext/ShellContext";
 import { useManifest } from "react-iiif-vault";
 import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { Fragment } from "react";
+
 import { RenderApp } from "./render-app";
+
+import { About } from "../../apps/About/About";
 
 const Main = styled.main`
    {
@@ -20,7 +23,11 @@ const Main = styled.main`
   }
 `;
 
-const Container = styled.div``;
+const Container = styled.div`
+   {
+    background-color: white;
+  }
+`;
 
 const IndexPage = (props: any) => {
   const { selectedApplication } = useShell();
@@ -46,9 +53,11 @@ const IndexPage = (props: any) => {
               )}
             </ManifestEditorProvider>
             {selectedApplication === "Browser" && <IIIFBrowser />}
-            {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
 
             <RenderApp selectedApplication={selectedApplication} />
+
+            {selectedApplication === "Splash" && <Splash />}
+            {selectedApplication === "About" && <About />}
           </Main>
         </ErrorBoundary>
         {/*<footer className={styles.footer}></footer>*/}

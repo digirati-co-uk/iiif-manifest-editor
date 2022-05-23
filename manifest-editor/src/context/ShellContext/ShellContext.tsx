@@ -16,8 +16,8 @@ interface ShellContextInterface {
   setCurrentCanvasId: (id: string) => void; // @todo this will be more contextual
 
   // Internal (i.e. should only be called from Shell UI)
-  selectedApplication: "ManifestEditor" | "Browser" | "Splash"; // @todo maybe change to just string?
-  changeSelectedApplication: (application: "ManifestEditor" | "Browser" | "Splash") => void;
+  selectedApplication: "ManifestEditor" | "Browser" | "Splash" | "About"; // @todo maybe change to just string?
+  changeSelectedApplication: (application: "ManifestEditor" | "Browser" | "Splash" | "About") => void;
   setUnsavedChanges: (bol: boolean) => void;
   updateRecentManifests: (manifest: string) => Promise<void>;
   newTemplates: any; // @todo this needs a type.
@@ -42,13 +42,13 @@ export const ShellProvider = ({ children }: { children: ReactNode }) => {
 
   const [currentCanvasId, setCurrentCanvasId] = useState("");
 
-  const [selectedApplication, setSelectedApplication] = useState<"ManifestEditor" | "Browser" | "Splash">(
+  const [selectedApplication, setSelectedApplication] = useState<"ManifestEditor" | "Browser" | "Splash" | "About">(
     "ManifestEditor"
   );
 
   const [newManifestTemplates, setNewManifestsTemplates] = useState<any>();
 
-  const changeSelectedApplication = (app: "ManifestEditor" | "Browser" | "Splash") => {
+  const changeSelectedApplication = (app: "ManifestEditor" | "Browser" | "Splash" | "About") => {
     setSelectedApplication(app);
   };
 
