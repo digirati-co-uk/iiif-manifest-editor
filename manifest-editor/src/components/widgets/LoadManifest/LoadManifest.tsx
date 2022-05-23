@@ -90,13 +90,7 @@ export const LoadManifest: React.FC<{}> = () => {
           <small>{label}</small>
           <small>{width && `Image width: ${width}`}</small>
           <small>{height && `Image height: ${height}`}</small>
-          {imageServiceJSON && (
-            <small
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(imageServiceJSON),
-              }}
-            />
-          )}
+          {imageServiceJSON && <small>{JSON.stringify(imageServiceJSON)}</small>}
         </FlexContainerColumn>
       )}
       {inputType === "Collection" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
