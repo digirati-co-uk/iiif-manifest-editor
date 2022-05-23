@@ -9,6 +9,7 @@ import { useManifest } from "react-iiif-vault";
 import { LabelEditor } from "../../apps/LabelEditor/LabelEditor";
 import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { Fragment } from "react";
+import { About } from "../../apps/About/About";
 
 const Main = styled.main`
    {
@@ -22,7 +23,7 @@ const Main = styled.main`
 
 const Container = styled.div`
    {
-    padding: 0 1rem;
+    background-color: white;
   }
 `;
 
@@ -51,7 +52,8 @@ const IndexPage = (props: any) => {
             </ManifestEditorProvider>
             {selectedApplication === "Browser" && <IIIFBrowser />}
             {(selectedApplication as any) === "Labels" && <LabelEditor />}
-            {selectedApplication === "Splash" && <Splash welcome={props.welcome} />}
+            {selectedApplication === "Splash" && <Splash />}
+            {selectedApplication === "About" && <About />}
           </Main>
         </ErrorBoundary>
         {/*<footer className={styles.footer}></footer>*/}

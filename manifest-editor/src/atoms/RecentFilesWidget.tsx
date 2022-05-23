@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const RecentFilesWidget = styled.div`
-  height: 20rem;
+  min-height: 10rem;
   width: 100%;
   display: flex;
   flex-direction: column;
