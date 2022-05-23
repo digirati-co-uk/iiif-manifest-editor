@@ -5,7 +5,7 @@ export class LocalStorageBackend implements ProjectBackend {
   saveInterval: number;
 
   constructor(settings?: { namespace?: string }) {
-    this.namespace = settings?.namespace || "default";
+    this.namespace = settings?.namespace || "default-v1.0";
     this.saveInterval = 5000;
   }
 

@@ -19,19 +19,19 @@ export class LocalStorageLoader implements ProjectStorage<ManifestStorage> {
     return true;
   }
 
-  createVaultInstance(project: EditorProject): [Vault, Reference, Promise<void>] {
+  createVaultInstance(project: EditorProject): [Vault, Promise<void>] {
     const data = project.storage.data;
 
     if (this.vaults[project.id]) {
-      return [this.vaults[project.id], { id: data.id, type: "Manifest" }, Promise.resolve()];
+      return [this.vaults[project.id], Promise.resolve()];
     }
 
     const vault = new Vault();
 
-    const promise = vault.loadManifest(data.id, JSON.parse(JSON.stringify(data)));
+    const promise = vault.loadManifest(project.resource.id, JSON.parse(JSON.stringify(data)));
     this.vaults[project.id] = vault;
 
-    return [vault, { id: data.id, type: "Manifest" }, promise as Promise<void>];
+    return [vault, promise as Promise<void>];
   }
 
   async getStorage(id: string): Promise<ManifestStorage | null> {

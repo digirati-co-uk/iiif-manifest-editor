@@ -15,6 +15,10 @@ export function projectFromManifest(manifest: Manifest, details: Partial<EditorP
       created: Date.now(),
       modified: Date.now(),
     },
+    resource: {
+      id: manifest.id,
+      type: "Manifest",
+    },
     publications: [],
     previews: [],
     settings: {},
@@ -22,10 +26,6 @@ export function projectFromManifest(manifest: Manifest, details: Partial<EditorP
       type: "manifest-storage",
       data: manifest,
     } as ManifestStorage,
-    source: {
-      id: manifest.id,
-      type: "Manifest",
-    },
     ...details,
   };
 }

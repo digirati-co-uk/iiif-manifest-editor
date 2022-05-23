@@ -63,8 +63,8 @@ export interface EditorProject {
   name: string;
   filename?: string;
   thumbnail?: string;
+  resource: { id: string; type: "Manifest" }; // @todo at the moment, only Manifest
   storage: Storage;
-  source: Source;
   settings: Record<string, never>;
   publications: Publication[];
   previews: Preview[];
@@ -72,17 +72,6 @@ export interface EditorProject {
     created: number;
     modified: number;
   };
-}
-
-export interface ProjectPreview {
-  // Stages / events
-  // - Creation
-  // - Sync/update/save
-  // - Expire
-  // - Refresh
-  // - Delete
-  // - Error?
-  // - Debounce timeout
 }
 
 export interface ProjectBackend {
@@ -106,6 +95,6 @@ export interface ProjectStorage<S extends Storage> {
 
   // Runtime
   getLatestStorage(project: EditorProject): S;
-  createVaultInstance(project: EditorProject): [Vault, Reference, Promise<void>];
+  createVaultInstance(project: EditorProject): [Vault, Promise<void>];
   shouldUpdateWithVault(): boolean;
 }

@@ -168,17 +168,16 @@ export function useProjectLoader<T extends Storage = any>(
   // The loader is responsible for creating Vault instances.
   // In the future this Vault instance could be remote and "clever"
   // Offering collaboration or similar features.
-  const { manifest, vault, promise } = useMemo(() => {
+  const { vault, promise } = useMemo(() => {
     if (current) {
-      const [vault, manifest, promise] = storage.createVaultInstance(current);
+      const [vault, promise] = storage.createVaultInstance(current);
       return {
-        manifest: manifest.id,
         vault,
         promise,
       };
     }
 
-    return { manifest: null, vault: null, promise: null };
+    return { vault: null, promise: null };
   }, [storage, current]);
 
   // If the vault takes some time to load from an external source we might have
@@ -226,7 +225,6 @@ export function useProjectLoader<T extends Storage = any>(
 
   return {
     vault,
-    manifest,
     ready,
   };
 }
