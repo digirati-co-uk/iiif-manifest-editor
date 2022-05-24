@@ -20,6 +20,7 @@ export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsTy
     backend.createProject(payload).then(() => {
       // @todo notification?
       console.log("Loader: project created");
+      switchProject(payload.id);
     });
   }
   function deleteProject(payload: string) {
@@ -78,11 +79,8 @@ export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsTy
     dispatch({ type: "load", payload });
   }
 
-  function createPreview(publication: Preview) {
-    dispatch({ type: "createPreview", payload: publication });
-  }
-  function updatePreview(publication: Preview) {
-    dispatch({ type: "updatePreview", payload: publication });
+  function setPreview(publication: Preview) {
+    dispatch({ type: "setPreview", payload: publication });
   }
   function removePreview(id: string) {
     dispatch({ type: "removePreview", payload: id });
@@ -105,8 +103,7 @@ export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsTy
       updateSettings,
       updateThumbnail,
       updateStorage,
-      createPreview,
-      updatePreview,
+      setPreview,
       removePreview,
     }),
     // Dispatch always stable.
@@ -178,7 +175,8 @@ export function useProjectLoader<T extends Storage = any>(
     }
 
     return { vault: null, promise: null };
-  }, [storage, current]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storage, currentId]);
 
   // If the vault takes some time to load from an external source we might have
   // some time to wait. This will listen to the "Vault is ready" promise.

@@ -8,8 +8,14 @@ import { useShell } from "../../../context/ShellContext/ShellContext";
 import { analyse } from "../../../helpers/analyse";
 import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { LoadManifestWidget } from "./LoadManifest.style";
+import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
+import { projectFromManifest } from "../../../shell/ProjectContext/helpers/project-from-manifest";
+import { getManifestNomalized } from "../../../helpers/getManifestNormalized";
+import { convertPresentation2 } from "@iiif/parser/presentation-2";
 
 export const LoadManifest: React.FC<{}> = () => {
+  const { actions } = useProjectContext();
+
   const [inputValue, setInputValue] = useState("");
   const [inputType, setInputType] = useState<string | undefined>();
   const [label, setLabel] = useState<string | undefined>();
@@ -38,27 +44,52 @@ export const LoadManifest: React.FC<{}> = () => {
       setImageServiceJSON(inputed);
     }
 
-    // Only handling manifest & collection for now.
     if (inputed && inputed.type === "Manifest") {
-      await shellContext.changeResourceID(inputValue);
-      await shellContext.changeSelectedApplication("ManifestEditor");
-      if (shellContext.selectedApplication === "ManifestEditor" && inputed.type === "Manifest") {
-        await shellContext.updateRecentManifests(inputValue);
-      } else if (shellContext.selectedApplication === "Browser" && inputed.type === "Collection") {
-      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Manifest") {
-        await shellContext.changeResourceID(inputValue);
-        await shellContext.changeSelectedApplication("ManifestEditor");
-      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Collection") {
-        await shellContext.changeResourceID(inputValue);
-        await shellContext.changeSelectedApplication("Browser");
+      let full = await getManifestNomalized(inputed.id);
+      if (full) {
+        if ((full as any)["@id"]) {
+          full = convertPresentation2(full) as any;
+        }
+        if (full) {
+          actions.createProject(projectFromManifest(full as any));
+          shellContext.changeSelectedApplication("ManifestEditor");
+        }
       }
     }
+
+    // Only handling manifest & collection for now.
+    // if (inputed && inputed.type === "Manifest") {
+    //   // await shellContext.changeResourceID(inputValue);
+    //   await shellContext.changeSelectedApplication("ManifestEditor");
+    //   if (shellContext.selectedApplication === "ManifestEditor" && inputed.type === "Manifest") {
+    //     await shellContext.updateRecentManifests(inputValue);
+    //   } else if (shellContext.selectedApplication === "Browser" && inputed.type === "Collection") {
+    //   } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Manifest") {
+    //     await shellContext.changeResourceID(inputValue);
+    //     await shellContext.changeSelectedApplication("ManifestEditor");
+    //   } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Collection") {
+    //     await shellContext.changeResourceID(inputValue);
+    //     await shellContext.changeSelectedApplication("Browser");
+    //   }
+    // }
   };
 
   const newBlankTemplateUrl = window.location.href + shellContext.newTemplates.items[0].id;
 
   function loadBlankTemplate() {
-    shellContext.changeResourceID(newBlankTemplateUrl);
+    actions.createProject(
+      projectFromManifest({
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        id: "/config/manifest-templates/blank.json",
+        type: "Manifest",
+        label: {
+          en: ["Blank Manifest"],
+        },
+        items: [],
+      })
+    );
+
+    // shellContext.changeResourceID(newBlankTemplateUrl);
     shellContext.changeSelectedApplication("ManifestEditor");
   }
 

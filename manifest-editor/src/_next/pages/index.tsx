@@ -14,13 +14,13 @@ import { RenderApp } from "./render-app";
 import { About } from "../../apps/About/About";
 
 const Main = styled.main`
-   {
-    height: 100vh;
-    padding: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Container = styled.div`

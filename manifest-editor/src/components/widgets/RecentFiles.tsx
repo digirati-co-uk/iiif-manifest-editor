@@ -3,6 +3,9 @@ import { ManifestNormalized } from "@iiif/presentation-3";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { RecentLabel, RecentManifestCard, RecentThumbnails } from "../../atoms/RecentFilesWidget";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useShell } from "../../context/ShellContext/ShellContext";
 
 type RecentFiles = {
   recentManifests: ManifestNormalized[] | undefined;
@@ -10,55 +13,27 @@ type RecentFiles = {
 };
 
 export const RecentFiles: React.FC<RecentFiles> = ({ recentManifests, changeManifest }) => {
-  const builder = new IIIFBuilder();
+  const { changeSelectedApplication } = useShell();
+  const { allProjects, actions } = useProjectContext();
 
-  const IIIFCollection = builder.createCollection("https://example.com/recent-manifests", (collection) => {
-    collection.addLabel("Recently Used Manifests", "none");
-    if (recentManifests) {
-      recentManifests.map((recent) => {
-        collection.createManifest(recent.id, (manifest) => {
-          manifest.addLabel(recent.id);
-          // @ts-ignore
-          if (recent && recent.thumbnail && recent.thumbnail[0]) {
-            manifest.addThumbnail({
-              id: recent.thumbnail[0].id,
-              type: "Image",
-              format: "image/jpg",
-            });
-          }
-        });
-      });
-    }
-  });
+  function switchProject(id: string) {
+    actions.switchProject(id);
+    changeSelectedApplication("ManifestEditor");
+  }
+
   return (
     <>
       <h4>Recently opened </h4>
       <RecentThumbnails>
-        {IIIFCollection.items.map((manifest) => {
+        {allProjects.map((project) => {
           return (
             <RecentManifestCard>
               <ErrorBoundary>
-                <ThumbnailImg
-                  // @ts-ignore
-                  src={
-                    manifest &&
-                    // @ts-ignore
-                    manifest?.thumbnail &&
-                    // @ts-ignore
-                    manifest?.thumbnail[0] &&
-                    // @ts-ignore
-                    manifest?.thumbnail[0].id
-                      ? // @ts-ignore
-                        manifest?.thumbnail[0].id
-                      : ""
-                  }
-                  alt={manifest.id}
-                  loading="lazy"
-                  onClick={() => changeManifest(manifest.id)}
-                  title={manifest.id}
-                />
+                {project.thumbnail ? (
+                  <ThumbnailImg src={project.thumbnail} loading="lazy" onClick={() => switchProject(project.id)} />
+                ) : null}
               </ErrorBoundary>
-              <RecentLabel>{manifest.id}</RecentLabel>
+              <RecentLabel onClick={() => switchProject(project.id)}>{project.name}</RecentLabel>
             </RecentManifestCard>
           );
         })}

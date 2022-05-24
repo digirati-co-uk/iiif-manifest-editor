@@ -18,6 +18,15 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
     this.serviceUrl = config.url;
   }
 
+  isPreviewValid(project: EditorProject): boolean {
+    const current = this.windows[project.id];
+    if (current && current.window && !current.window.closed) {
+      return true;
+    }
+
+    return false;
+  }
+
   getRequires(): string[] {
     return ["readOnlyManifest"];
   }
@@ -28,8 +37,8 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
 
   async createPreview(project: EditorProject, vault: Vault, ctx: { readOnlyManifest: string }): Promise<Preview> {
     // @todo change this to be a template, with more features.
-    const location = `${this.serviceUrl}?#manifest=${ctx.readOnlyManifest}`;
-    const opened = window.open(location, undefined, "noopener noreferrer");
+    const location = `${this.serviceUrl}`.replace(/\{manifestId}/, ctx.readOnlyManifest);
+    const opened = window.open(location, this.id);
 
     this.windows[project.id] = { location, window: opened };
 
@@ -55,17 +64,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
   ): Promise<Preview | null> {
     const found = this.windows[project.id];
 
-    if (!found || !found.window || found.window.closed) {
-      return this.createPreview(project, vault, ctx);
-    }
-
-    found.window.location.reload();
-
-    return {
-      id: this.id,
-      type: "external-manifest-preview",
-      data: { url: found.location },
-    };
+    return this.createPreview(project, vault, ctx);
   }
 
   async deletePreview(id: string): Promise<void> {

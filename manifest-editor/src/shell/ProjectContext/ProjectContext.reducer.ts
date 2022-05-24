@@ -40,6 +40,23 @@ export const projectContextReducer = produce(function projectContextReducer(
         }
         break;
       }
+      case "removePreview": {
+        const existing = state.current.previews?.findIndex((p) => p.id === action.payload);
+        if (existing !== -1) {
+          state.current.previews.splice(existing, 1);
+        }
+        break;
+      }
+      case "setPreview": {
+        const existing = state.current.previews?.findIndex((p) => p.id === action.payload.id);
+        if (existing !== -1) {
+          state.current.previews.splice(existing, 1, action.payload);
+        } else {
+          state.current.previews.push(action.payload);
+        }
+
+        break;
+      }
     }
   }
   switch (action.type) {

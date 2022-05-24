@@ -12,13 +12,13 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const leftPanelResizer = useResizeLayout("left-panel", {
     left: true,
     minWidthPx: 320,
-    maxWidthPx: 600,
+    maxWidthPx: 720,
     loading,
   });
   const rightPanelResizer = useResizeLayout("right-panel", {
     left: false,
     minWidthPx: 320,
-    maxWidthPx: 600,
+    maxWidthPx: 720,
     loading,
   });
 
@@ -115,7 +115,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
               </L.PanelMenu>
             ) : null}
             <L.PanelContent>
-              {state.centerPanel.open ? (centerPanel ? centerPanel.render(state.centerPanel.state) : null) : null}
+              {state.centerPanel.open
+                ? centerPanel
+                  ? centerPanel.render(state.centerPanel.state || centerPanel.defaultState || {}, actions.centerPanel)
+                  : null
+                : null}
             </L.PanelContent>
           </L.PanelContainer>
         </L.CenterPanel>

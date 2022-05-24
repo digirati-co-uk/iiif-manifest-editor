@@ -33,10 +33,7 @@ export const rightPanels: LayoutPanel[] = [
     label: "Label editor",
     icon: <PreviewIcon />,
     pinnable: true,
-    render: (state) => (
-      <ManifestEditorProvider defaultLanguages={[]} behaviorProperties={[]}>
-        <SingleLabelEditor resource={state} />
-      </ManifestEditorProvider>
-    ),
+    render: ({ id, type }) => <SingleLabelEditor resource={id ? { id, type: "Canvas" } : undefined} />,
+    // render: (state) => <SingleLabelEditor resource={state} />,
   },
 ];

@@ -13,18 +13,24 @@ import { GridView } from "../../components/organisms/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 import { useShell } from "../../context/ShellContext/ShellContext";
+import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
 
 export function ManifestEditor() {
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const manifest = useManifest();
+  const project = useProjectContext();
   const { addCanvasModalOpen, setAddCanvasModalOpen, view, languages } = useManifestEditor();
   const shell = useShell();
 
   useEffect(() => {
     if (!manifest) {
-      shell.changeSelectedApplication("Splash");
+      // shell.changeSelectedApplication("Splash");
     }
-  }, [manifest]);
+  }, [manifest, shell]);
+
+  if (!manifest) {
+    return null;
+  }
 
   return (
     <>

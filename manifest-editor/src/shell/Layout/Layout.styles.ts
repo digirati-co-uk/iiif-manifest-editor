@@ -5,6 +5,7 @@ export const OuterWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
 `;
 
 export const Header = styled.header`
@@ -19,12 +20,15 @@ export const Footer = styled.div`
 export const Main = styled.div`
   display: flex;
   flex: 1 1 0;
+  min-height: 0;
 `;
 
 export const LeftPanel = styled.div`
   background: #fff;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-width: 720px;
 `;
 
 export const CenterPanel = styled.div`
@@ -37,6 +41,10 @@ export const CenterPanel = styled.div`
 
 export const RightPanel = styled.div`
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-width: 720px;
 `;
 
 export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`

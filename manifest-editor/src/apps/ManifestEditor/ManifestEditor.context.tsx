@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useMemo, useState } from "react";
+import React, { ReactElement, ReactNode, useContext, useMemo, useState } from "react";
 import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 import invariant from "tiny-invariant";
 import { useManifest } from "../../hooks/useManifest";
@@ -34,7 +34,7 @@ export function ManifestEditorProvider({
 }: {
   defaultLanguages: string[];
   behaviorProperties: string[];
-  children: ReactElement;
+  children: ReactNode;
 }) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);

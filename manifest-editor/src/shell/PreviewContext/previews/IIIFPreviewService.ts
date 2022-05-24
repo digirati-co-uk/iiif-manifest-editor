@@ -14,7 +14,7 @@ type IIIFPreviewResponse = {
 export class IIIFPreviewService implements PreviewHandler {
   id: string;
   label: string;
-  type = "external-manifest-preview";
+  type = "iiif-preview-service";
   focusable = false;
 
   private readonly serviceUrl: string;
@@ -32,6 +32,10 @@ export class IIIFPreviewService implements PreviewHandler {
 
   getProvides(): string[] {
     return ["readOnlyManifest"];
+  }
+
+  isPreviewValid(project: EditorProject): boolean {
+    return !!this.cache[project.id];
   }
 
   async createPreview(project: EditorProject, vault: Vault): Promise<Preview> {
@@ -90,6 +94,10 @@ export class IIIFPreviewService implements PreviewHandler {
 
     invariant(json.location);
 
+    if (json.updateLocation) {
+      cached.updateLocation = json.updateLocation;
+    }
+
     return {
       id: this.id,
       type: "external-manifest-preview",
@@ -102,13 +110,17 @@ export class IIIFPreviewService implements PreviewHandler {
   async deletePreview(id: string): Promise<void> {
     const cached = this.cache[id];
     if (cached && cached.deleteLocation) {
-      await fetch(cached.deleteLocation, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "*",
-        },
-      });
+      try {
+        await fetch(cached.deleteLocation, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "*",
+          },
+        });
+      } catch (e) {
+        // no-op, we tried.
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
 import { ResourceEditingProvider } from "../../../context/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "../../../editors/generic/DescriptiveProperties/DescriptiveProperties";
 
-export function SingleLabelEditor({ resource }: { resource: { id: string; type: "Canvas" } }) {
-  if (!resource) {
+export function SingleLabelEditor({ resource }: { resource?: { id: string; type: "Canvas" } }) {
+  if (!resource?.id) {
     return <div style={{ padding: "1em", textAlign: "center" }}>Select a resource</div>;
   }
 

@@ -5,6 +5,10 @@ import { getManifestNomalized } from "../../helpers/getManifestNormalized";
 import invariant from "tiny-invariant";
 import { LayoutProvider } from "../../shell/Layout/Layout.context";
 import { ProjectProvider } from "../../shell/ProjectContext/ProjectContext";
+import { PreviewProvider } from "../../shell/PreviewContext/PreviewContext";
+import { PreviewConfiguration } from "../../shell/PreviewContext/PreviewContext.types";
+import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useLocalStorage } from "../../madoc/use-local-storage";
 
 // @todo maybe split this into an internal and normal context
 interface ShellContextInterface {
@@ -34,6 +38,27 @@ export function useShell() {
   return ctx;
 }
 
+const previewConfigs: PreviewConfiguration[] = [
+  {
+    id: "universal-viewer",
+    config: { url: "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}" },
+    type: "external-manifest-preview",
+    label: "Universal viewer 4",
+  },
+  {
+    id: "universal-viewer-3",
+    config: { url: "https://uv-v3.netlify.app/#?manifest={manifestId}" },
+    type: "external-manifest-preview",
+    label: "Universal viewer 3",
+  },
+  {
+    id: "iiif-preview",
+    config: { url: "https://iiif-preview.stephen.wf/store" },
+    type: "iiif-preview-service",
+    label: "IIIF Preview",
+  },
+];
+
 export const ShellProvider = ({ children }: { children: ReactNode }) => {
   // const vault = useExistingVault();
   const [resourceID, setResourceID] = useState("");
@@ -42,9 +67,9 @@ export const ShellProvider = ({ children }: { children: ReactNode }) => {
 
   const [currentCanvasId, setCurrentCanvasId] = useState("");
 
-  const [selectedApplication, setSelectedApplication] = useState<"ManifestEditor" | "Browser" | "Splash" | "About">(
-    "ManifestEditor"
-  );
+  const [selectedApplication, setSelectedApplication] = useLocalStorage<
+    "ManifestEditor" | "Browser" | "Splash" | "About"
+  >("SelectedApplication", "ManifestEditor");
 
   const [newManifestTemplates, setNewManifestsTemplates] = useState<any>();
 
@@ -105,7 +130,11 @@ export const ShellProvider = ({ children }: { children: ReactNode }) => {
     <LayoutProvider>
       <ShellContext.Provider value={shellSettings}>
         <ProjectProvider>
-          {currentCanvasId ? <CanvasContext canvas={currentCanvasId}>{children}</CanvasContext> : children}
+          <PreviewProvider configs={previewConfigs}>
+            <ManifestEditorProvider defaultLanguages={["en"]} behaviorProperties={[]}>
+              {currentCanvasId ? <CanvasContext canvas={currentCanvasId}>{children}</CanvasContext> : children}
+            </ManifestEditorProvider>
+          </PreviewProvider>
         </ProjectProvider>
       </ShellContext.Provider>
     </LayoutProvider>

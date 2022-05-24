@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
@@ -6,10 +6,12 @@ import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
 import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
+import { useLayoutProvider } from "../../shell/Layout/Layout.context";
 
-export const ManifestForm: React.FC<{}> = () => {
-  const editorContext = useManifestEditor();
-
+export const ManifestForm: React.FC<{ current: number; setCurrent: (idx: number) => void }> = ({
+  current = 0,
+  setCurrent,
+}) => {
   return (
     <TabPanel
       menu={[
@@ -38,8 +40,8 @@ export const ManifestForm: React.FC<{}> = () => {
         //   component: <div>I will be the annotations panel</div>,
         // },
       ]}
-      switchPanel={(idx) => editorContext?.changeSelectedProperty("manifest", idx)}
-      selected={editorContext?.selectedPanel || 0}
+      selected={current}
+      switchPanel={setCurrent}
     />
   );
 };

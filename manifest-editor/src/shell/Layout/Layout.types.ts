@@ -70,9 +70,10 @@ export interface PinnablePanelActions extends PanelActions {
 export interface LayoutPanel {
   id: string;
   label: string;
-  icon: null | string | ReactElement; // SVG?
-  render: (state?: any) => ReactElement;
+  icon?: null | string | ReactElement; // SVG?
+  render: (state: any, actions: PanelActions) => ReactElement;
   pinnable?: boolean;
+  defaultState?: any;
   hideHeader?: boolean;
 }
 
@@ -85,6 +86,7 @@ export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
 
 export interface LayoutProps {
   className?: string;
+  provider?: React.FC;
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;

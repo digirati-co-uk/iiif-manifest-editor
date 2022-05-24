@@ -1,7 +1,7 @@
 import produce, { Draft } from "immer";
 import { PreviewActionsType, PreviewContext, PreviewState } from "./PreviewContext.types";
 
-const previewContextReducer = produce(function reducer(state: Draft<PreviewState>, action: PreviewActionsType) {
+export const previewContextReducer = produce(function reducer(state: Draft<PreviewState>, action: PreviewActionsType) {
   switch (action.type) {
     case "focusPreview": {
       break;
@@ -31,3 +31,10 @@ const previewContextReducer = produce(function reducer(state: Draft<PreviewState
     }
   }
 });
+
+export function getDefaultPreviewState(): PreviewState {
+  return {
+    active: [],
+    selected: null,
+  };
+}

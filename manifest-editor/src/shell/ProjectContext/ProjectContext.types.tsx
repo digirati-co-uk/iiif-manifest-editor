@@ -39,8 +39,7 @@ export interface ProjectActions {
   updatePublication(publication: Publication): void;
   removePublication(id: string): void;
 
-  createPreview(publication: Preview): void;
-  updatePreview(publication: Preview): void;
+  setPreview(publication: Preview): void;
   removePreview(id: string): void;
 
   // Settings

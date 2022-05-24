@@ -101,7 +101,12 @@ export const EditorPanel: React.FC<{
                 <CloseIcon />
               </Button>
             </FlexContainerRow>
-            {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
+            {editorContext?.selectedProperty === "manifest" && (
+              <ManifestForm
+                current={editorContext.selectedPanel || 0}
+                setCurrent={(idx) => editorContext?.changeSelectedProperty("manifest", idx)}
+              />
+            )}
             {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
             {editorContext?.selectedProperty === "canvas item" && <MediaForm />}
             {editorContext?.selectedProperty === "canvas thumbnail" && <CanvasThumbnailForm />}

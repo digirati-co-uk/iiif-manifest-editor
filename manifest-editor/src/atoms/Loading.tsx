@@ -4,7 +4,7 @@ const Load = styled.div`
    {
     z-index: 15;
     .loader {
-      color: ${(props: any) => props.theme.color.main || "black"};
+      //color: ${(props: any) => props.theme.color.main || "black"};
       font-size: 10px;
       margin: 30px auto;
       width: 1em;

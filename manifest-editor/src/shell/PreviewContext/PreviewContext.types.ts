@@ -2,10 +2,11 @@ import { EditorProject } from "../ProjectContext/ProjectContext.types";
 import { Vault } from "@iiif/vault";
 import { Preview } from "../ProjectContext/types/Preview";
 
-export type PreviewContext = {
+export type PreviewContext = PreviewState & {
   handlers: Array<PreviewHandler>;
-} & PreviewState &
-  PreviewActions;
+  actions: PreviewActions;
+  configs: Array<PreviewConfiguration>;
+};
 
 export interface PreviewState {
   selected: string | null;
@@ -14,6 +15,7 @@ export interface PreviewState {
 
 export interface PreviewActions {
   activatePreview(id: string): void;
+  updatePreviews(): void;
   selectPreview(id: string): void;
   deletePreview(id: string): void;
   focusPreview(id: string): void;
@@ -42,6 +44,8 @@ export interface PreviewHandler {
   getRequires(): string[];
 
   getProvides(): string[];
+
+  isPreviewValid(project: EditorProject): boolean;
 
   createPreview(project: EditorProject, vault: Vault, ctx: any): Promise<Preview>;
 
