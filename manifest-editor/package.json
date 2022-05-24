@@ -10,7 +10,8 @@
     "test": "vitest"
   },
   "resolutions": {
-    "@iiif/vault": "0.9.18"
+    "@iiif/vault": "0.9.18",
+    "@atlas-viewer/iiif-image-api": "^2.0.3"
   },
   "dependencies": {
     "@digirati/canvas-panel-web-components": "^v1.0.47",
