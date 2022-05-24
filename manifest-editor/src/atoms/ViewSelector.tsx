@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
 import { GridIcon } from "../icons/GridIcon";
 import { ThumbnailStripIcon } from "../icons/ThumbnailStripIcon";
