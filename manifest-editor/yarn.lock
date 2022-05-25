@@ -14,6 +14,29 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
+"@atlas-viewer/atlas@^2.0.0-alpha.10":
+  version "2.0.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.10.tgz#526916ee0a284e8b0137158c42d8617964004900"
+  integrity sha512-cqYBMl0VxoE0XSe+zdZLrnHdc4c22Bcojn6nsu3m9i66tZl50mD5Qj08C1cAySeP6GYF96DRtu4BX2usyMhqUA==
+  dependencies:
+    "@atlas-viewer/dna" "^0.5.0"
+    "@atlas-viewer/iiif-image-api" "^1.2.5"
+    "@hyperion-framework/types" "^1.0.0"
+    "@hyperion-framework/vault" "^1.0.0"
+    "@popmotion/popcorn" "^0.4.4"
+    bezier-easing "^2.1.0"
+    nanoid "^3.1.9"
+    normalize-wheel "^1.0.1"
+    popmotion "^8.7.6"
+    react "^16.12.0"
+    react-dom "^16.12.0"
+    react-reconciler "^0.26.2"
+    react-use-measure "^2.0.1"
+    scheduler "^0.20.2"
+    stats.js "^0.17.0"
+    style-value-types "^3.1.7"
+    typescript-memoize "^1.0.0-alpha.3"
+
 "@atlas-viewer/atlas@^2.0.0-alpha.9":
   version "2.0.0-alpha.9"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.9.tgz#898359d404dc8a03f045da36921db3e3d49bf03d"
@@ -42,25 +65,10 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@2.*":
+"@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^1.2.6", "@atlas-viewer/iiif-image-api@^2.0.1", "@atlas-viewer/iiif-image-api@^2.0.2", "@atlas-viewer/iiif-image-api@^2.0.3":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.3.tgz#7a4c16ebaddbd762befa6e744ec97793f0eba888"
   integrity sha512-Tn4KMcN6wp2AjyvYoie2ynGX7ufF8gIJuaZSqdQvqocRJcOrvHI0LxJb6ipV7zWWEyrHpGOKRxrPbYuJ4gcLzQ==
-  dependencies:
-    "@iiif/presentation-3" "*"
-    node-fetch "^3.2.0"
-
-"@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^1.2.6":
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-1.2.6.tgz#ccb91668756a3efc9523bb7392a4b9b24eec6d38"
-  integrity sha512-WD0XZUI6ONiexPaeoT5/E5bn7fcIvEOZo5NmqgJSEYrmIEKaahCs7w/T+idLq9+xvgVJCMAQmnZ8azidMI6Img==
-  dependencies:
-    "@hyperion-framework/types" "^1.0.0-alpha.14"
-
-"@atlas-viewer/iiif-image-api@^2.0.1", "@atlas-viewer/iiif-image-api@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.2.tgz#b713b033da6f4d967d0826d06d5ffbad70458567"
-  integrity sha512-SIzDGz2dLVnrRKYnRsN5xv66sTmtbrvr8BoyuNsE7Ykhz9BkbFLKDhDBkaQZH/2XL3se6gzc9kpiB35imVDMig==
   dependencies:
     "@iiif/presentation-3" "*"
     node-fetch "^3.2.0"
@@ -1254,6 +1262,13 @@
     pirates "^4.0.5"
     source-map-support "^0.5.16"
 
+"@babel/runtime@^7.0.0":
+  version "7.18.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.0.tgz#6d77142a19cb6088f0af662af1ada37a604d34ae"
+  integrity sha512-YMQvx/6nKEaucl0MY56mwIG483xk8SDNdlUwb2Ts6FUpr7fm85DxEmsY18LXBNhcTz6tO6JwZV8w1W06v8UKeg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.3.1", "@babel/runtime@^7.5.0", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.17.8"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
@@ -1497,7 +1512,7 @@
     rollup "^2.36.1"
     typesafe-actions "^5.1.0"
 
-"@hyperion-framework/types@^1.0.0", "@hyperion-framework/types@^1.0.0-alpha.14", "@hyperion-framework/types@^1.1.0":
+"@hyperion-framework/types@^1.0.0", "@hyperion-framework/types@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-1.1.0.tgz#c2020040d0d46a78afbe125261ebde1a1ea19dd5"
   integrity sha512-uwqumcFUrpy85u69T/fNKaKQ5z2ct9Zt4gAuP/WfPij1ixYVpjS+YIwDnIf+niyDr+XSOZDptW7HvQOu1ay1LQ==
@@ -8365,7 +8380,7 @@ memfs@^3.1.2:
   dependencies:
     fs-monkey "1.0.3"
 
-memoize-one@^5.1.1:
+"memoize-one@>=3.1.1 <6", memoize-one@^5.1.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
   integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
@@ -9828,6 +9843,11 @@ raw-loader@^4.0.2:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
+react-accessible-dropdown-menu-hook@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-accessible-dropdown-menu-hook/-/react-accessible-dropdown-menu-hook-3.2.0.tgz#fd3ec0ee97350ac0dd46c2d56ad814ca491f6d6e"
+  integrity sha512-DilA+bEX1Jznu81Y7aVZyC2bWktuIHmMDW8OIGb0wmdfiP0mQEkklgxGaMJigwM6SssBghiKTRmoQIXkoS6YkQ==
+
 react-beautiful-dnd@^13.1.0:
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.0.tgz#ec97c81093593526454b0de69852ae433783844d"
@@ -9920,6 +9940,11 @@ react-error-boundary@^3.1.4:
   integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
   dependencies:
     "@babel/runtime" "^7.12.5"
+
+react-functional-select@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-3.3.3.tgz#276959658702167b8132b94b3c708c72dc843ed6"
+  integrity sha512-OLYfZe4setjvuNR35V8KXK/iCbEh1PTxZIrPKcqmFKnwoKqLDEz1reoJmpm0mjw+UycYwe149FrfsWkI9NfQfg==
 
 react-i18next@^11.16.9:
   version "11.16.9"
@@ -10019,6 +10044,14 @@ react-use-measure@^2.0.1:
   integrity sha512-nocZhN26cproIiIduswYpV5y5lQpSQS1y/4KuvUCjSKmw7ZWIS/+g3aFnX3WdBkyuGUtTLif3UTqnLLhbDoQig==
   dependencies:
     debounce "^1.2.1"
+
+react-window@^1.8.7:
+  version "1.8.7"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.7.tgz#5e9fd0d23f48f432d7022cdb327219353a15f0d4"
+  integrity sha512-JHEZbPXBpKMmoNO1bNhoXOOLg/ujhL/BU4IqVU9r8eQPcy5KQnGHIHDRkJ0ns9IM5+Aq5LNwt3j8t3tIrePQzA==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 "react@^16.10.2 || ^17.0.2", react@^17.0.2:
   version "17.0.2"

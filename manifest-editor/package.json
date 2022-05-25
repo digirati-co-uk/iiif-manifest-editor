@@ -10,9 +10,12 @@
     "test": "vitest"
   },
   "resolutions": {
-    "@iiif/vault": "0.9.18"
+    "@iiif/vault": "0.9.18",
+    "@atlas-viewer/iiif-image-api": "^2.0.3"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "^2.0.0-alpha.10",
+    "@atlas-viewer/iiif-image-api": "^2.0.3",
     "@digirati/canvas-panel-web-components": "^v1.0.47",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.18",
@@ -22,11 +25,14 @@
     "immer": "^9.0.14",
     "mitt": "^3.0.0",
     "react": "^17.0.2",
+    "react-accessible-dropdown-menu-hook": "^3.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-easy-sort": "^1.4.1",
+    "react-functional-select": "^3.3.3",
     "react-i18next": "^11.16.9",
     "react-iiif-vault": "^0.9.6",
+    "react-window": "^1.8.7",
     "shallowequal": "^1.1.0",
     "slugify": "^1.6.5",
     "styled-components": "^5.3.5",
