@@ -55,3 +55,9 @@ We don't want to needlessly throw away the capabilities we have, but we want to 
  
  We're using [GitHub discussions](https://github.com/digirati-co-uk/iiif-manifest-editor/discussions) to explore ideas, and the [Wiki](https://github.com/digirati-co-uk/iiif-manifest-editor/wiki) to think about implementation.
  
+ ## Acknowledgements
+
+The development of the iiif-manifest-editor has been supported by:
+
+- [Delft University of Technology Library](https://www.tudelft.nl/library)
+- [The National Gallery](https://www.nationalgallery.org.uk/), [Practical applications of IIIF](https://tanc-ahrc.github.io/IIIF-TNC/) project funded by [AHRC](https://ahrc.ukri.org/) as a [Foundation Project](https://www.nationalcollection.org.uk/Foundation-Projects) within the [Towards a National Collection](https://www.nationalcollection.org.uk/) programme. [Dec 2021 - Apr 2022]
