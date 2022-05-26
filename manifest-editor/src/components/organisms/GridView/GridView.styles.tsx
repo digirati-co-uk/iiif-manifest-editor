@@ -69,13 +69,13 @@ export const ThumnbnailLabel = styled.small`
   text-overflow: ellipsis;
 `;
 
-export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean }>`
+export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean; $cover?: boolean }>`
+  border: 5px solid transparent;
   ${(props: any) =>
     props.selected &&
     css`
-      border: 5px solid ${props.theme.color.main};
+      border-color: ${props.theme.color.main};
     `}
-  padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   display: flex;
   flex-direction: column;
   border-radius: 5px;
@@ -86,5 +86,10 @@ export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean
   height: ${(props) => props.size && props.size + 10}px;
   img {
     max-width: 100%;
+    ${(props) =>
+      props.$cover &&
+      css`
+        object-fit: cover;
+      `}
   }
 `;
