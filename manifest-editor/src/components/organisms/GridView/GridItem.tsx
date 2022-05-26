@@ -11,6 +11,8 @@ import { MoreVertical } from "../../../icons/MoreVertical";
 import { FlexContainerColumn } from "../../layout/FlexContainer";
 import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
 import { useAppState } from "../../../shell/AppContext/AppContext";
+import { ModalButton } from "../../../madoc/components/ModalButton";
+import { NewCanvas } from "../../widgets/NewCanvas";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
@@ -50,13 +52,20 @@ export const GridItem: React.FC<{
           style={{ top: anchorPoint.y, left: anchorPoint.x }}
           onMouseLeave={() => setContextMenuVisible(false)}
         >
-          <DropdownItem
-            onClick={() => {
-              editorContext.setAddCanvasModalOpen(true);
-            }}
+          <ModalButton
+            as={DropdownItem}
+            render={({ close }) => (
+              <NewCanvas
+                close={() => {
+                  close();
+                  setContextMenuVisible(false);
+                }}
+              />
+            )}
+            title="New Canvas"
           >
             New canvas
-          </DropdownItem>
+          </ModalButton>
           <HorizontalDivider />
           <DropdownItem
             onClick={() => {
