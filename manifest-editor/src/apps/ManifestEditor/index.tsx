@@ -1,6 +1,5 @@
 import { LayoutPanel } from "../../shell/Layout/Layout.types";
 import { ManifestForm } from "../../editors/ManifestProperties/ManifestForm";
-import { ThumbnailStrip } from "../../components/organisms/ThumbnailStrip";
 import { CanvasForm } from "../../editors/CanvasProperties/CanvasForm";
 import { CanvasContext } from "react-iiif-vault";
 import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
@@ -18,7 +17,8 @@ export const leftPanels: LayoutPanel[] = [
     defaultState: { width: 128 },
     render: (state, { actions }, ctx) => {
       return (
-        <ThumbnailStrip
+        <GridView
+          strip={true}
           width={state.width}
           handleChange={(canvasId) => {
             ctx.setState({ canvasId });

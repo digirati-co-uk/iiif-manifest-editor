@@ -7,8 +7,9 @@ import { AddIcon } from "../../../icons/AddIcon";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { GridItem } from "./GridItem";
 
-export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolean) => void }> = ({
+export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolean) => void; strip?: boolean }> = ({
   handleChange: _handleChange,
+  strip,
 }) => {
   const manifest = useManifest();
   const editorContext = useManifestEditor();
