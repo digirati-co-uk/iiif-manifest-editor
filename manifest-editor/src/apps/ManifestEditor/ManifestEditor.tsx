@@ -12,7 +12,7 @@ import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
 import { useAppState } from "../../shell/AppContext/AppContext";
-import { CanvasContext } from "../../../../../react-iiif-vault";
+import { CanvasContext } from "react-iiif-vault";
 
 export function ManifestEditor() {
   const editorContext = useManifestEditor();
