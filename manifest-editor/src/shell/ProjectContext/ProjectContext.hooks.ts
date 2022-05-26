@@ -13,6 +13,11 @@ import { Storage } from "./types/Storage";
 import shallowEqual from "shallowequal";
 import { useDebounce } from "tiny-use-debounce";
 import { Preview } from "./types/Preview";
+import { getManifestNomalized } from "../../helpers/getManifestNormalized";
+import { projectFromManifest } from "./helpers/project-from-manifest";
+import { convertPresentation2 } from "@iiif/parser/presentation-2";
+import { useProjectContext } from "./ProjectContext";
+import { useApps } from "../AppContext/AppContext";
 
 export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsType>, backend: ProjectBackend) {
   function createProject(payload: EditorProject) {
@@ -224,5 +229,52 @@ export function useProjectLoader<T extends Storage = any>(
   return {
     vault,
     ready,
+  };
+}
+
+export function useProjectCreators() {
+  const { changeApp } = useApps();
+  const { actions } = useProjectContext();
+
+  const createBlankManifest = useCallback(function createBlankManifest() {
+    actions.createProject(
+      projectFromManifest({
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        id: "/config/manifest-templates/blank.json",
+        type: "Manifest",
+        label: {
+          en: ["Blank Manifest"],
+        },
+        items: [],
+      })
+    );
+
+    changeApp({ id: "manifest-editor" });
+
+    // Actions are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const createProjectFromManifestId = useCallback(
+    async function createProjectFromManifestId(id: string) {
+      let full = await getManifestNomalized(id);
+      if (full) {
+        if ((full as any)["@id"]) {
+          full = convertPresentation2(full) as any;
+        }
+        if (full) {
+          actions.createProject(projectFromManifest(full as any));
+          changeApp({ id: "manifest-editor" });
+        }
+      }
+    },
+    // Actions are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  return {
+    createProjectFromManifestId,
+    createBlankManifest,
   };
 }

@@ -6,10 +6,8 @@ import {
   PreviewHandler,
   PreviewState,
 } from "./PreviewContext.types";
-import { EditorProject } from "../ProjectContext/ProjectContext.types";
 import { ExternalManifestUrlPreview } from "./previews/ExternalManifestUrlPreview";
 import { IIIFPreviewService } from "./previews/IIIFPreviewService";
-import { hasJSXAncestor } from "@typescript-eslint/typescript-estree/dist/node-utils";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import invariant from "tiny-invariant";
 import { useVault } from "react-iiif-vault";

@@ -17,6 +17,16 @@ export interface ManifestStorage {
   data: Manifest;
 }
 
+export interface ManifestKeyedStorage {
+  type: "manifest-keyed-storage";
+  // Possibly annotation pages, or other things editable in the editor.
+  // Should only be for content, not configuration.
+  data: {
+    id: string;
+    key: string;
+  };
+}
+
 export interface VaultManifestStorage {
   type: "vault-storage";
   data: {

@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import { ReactNode } from "react";
+import { AppState } from "../AppContext/AppContext";
 
 export interface LayoutProviderProps {
   loading?: true;
@@ -21,6 +22,19 @@ export interface LayoutState {
 
 export interface LayoutActions {
   setAvailable(panels: LayoutProviderProps): void;
+
+  open(id: string, state?: any): void;
+  open(args: { id: string; state?: any }): void;
+
+  change(id: string, state?: any): void;
+  change(args: { id: string; state?: any }): void;
+
+  close(id: string, state?: any): void;
+  close(args: { id: string; state?: any }): void;
+
+  toggle(id: string, state?: any): void;
+  toggle(args: { id: string; state?: any }): void;
+
   leftPanel: PanelActions;
   centerPanel: PanelActions;
   rightPanel: PanelActions;
@@ -67,14 +81,28 @@ export interface PinnablePanelActions extends PanelActions {
   unpin(): void;
 }
 
+export type LayoutPanelContext = {
+  global: { currentCanvasId: string | null };
+  current: { actions: PanelActions; state: any };
+  actions: LayoutActions;
+  state: LayoutState;
+};
+
 export interface LayoutPanel {
   id: string;
   label: string;
-  icon?: null | string | ReactElement; // SVG?
-  render: (state: any, actions: PanelActions) => ReactElement;
-  pinnable?: boolean;
+  icon?: null | string | ReactNode; // SVG?
+
+  render: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => ReactNode;
   defaultState?: any;
-  hideHeader?: boolean;
+  backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
+  options?: {
+    minWidth?: number;
+    maxWidth?: number;
+    hideHeader?: boolean;
+    pinnable?: boolean;
+    tabs?: boolean;
+  };
 }
 
 export type MenuPositions = "left" | "right" | "bottom" | "top";
@@ -90,13 +118,13 @@ export interface LayoutProps {
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
-  footer?: ReactElement;
-  menu?: ReactElement;
-  header?: ReactElement;
+  footer?: ReactNode;
+  menu?: ReactNode;
+  header?: ReactNode;
   // Menus
-  leftPanelMenu?: ReactElement;
-  centerPanelMenu?: ReactElement;
-  rightPanelMenu?: ReactElement;
+  leftPanelMenu?: ReactNode;
+  centerPanelMenu?: ReactNode;
+  rightPanelMenu?: ReactNode;
   leftPanelMenuPosition?: MenuPositions;
   centerPanelMenuPosition?: MenuPositions;
   rightPanelMenuPosition?: MenuPositions;

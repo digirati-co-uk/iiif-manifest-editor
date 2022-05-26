@@ -9,8 +9,8 @@ export const OuterWrapper = styled.div`
 `;
 
 export const Header = styled.header`
-  box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  z-index: 11;
+  //box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 rgba(0, 0, 0, 0.17);
+  z-index: 200;
 `;
 
 export const Footer = styled.div`
@@ -34,6 +34,8 @@ export const LeftPanel = styled.div`
 export const CenterPanel = styled.div`
   flex: 1 1 0;
   //background: #efefef;
+  box-shadow: inset 0 3px 2px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(0, 0, 0, 0.14);
+  padding-top: 1px;
   background: linear-gradient(0deg, rgba(251, 242, 237, 1) 0%, rgba(240, 229, 245, 1) 50%, rgba(236, 245, 255, 1) 100%);
 
   min-width: 320px;
@@ -94,7 +96,6 @@ export const PanelMenu = styled.div<{ $position: "bottom" | "top" | "left" | "ri
   ${(props) =>
     !props.$open && (props.$position === "top" || props.$position === "bottom")
       ? css`
-          background: red;
           display: none;
         `
       : ""}

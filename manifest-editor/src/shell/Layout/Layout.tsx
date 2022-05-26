@@ -6,31 +6,32 @@ import { ModularPanel } from "./components/ModularPanel";
 import { HandleControls } from "./components/HandleControls";
 import { useResizeLayout } from "../../madoc/use-resize-layouts";
 import equal from "shallowequal";
+import { useAppState } from "../AppContext/AppContext";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
-  const { loading, state, leftPanels, centerPanels, rightPanels, actions } = useLayoutProvider();
-  const leftPanelResizer = useResizeLayout("left-panel", {
-    left: true,
-    minWidthPx: 320,
-    maxWidthPx: 720,
-    loading,
-  });
-  const rightPanelResizer = useResizeLayout("right-panel", {
-    left: false,
-    minWidthPx: 320,
-    maxWidthPx: 720,
-    loading,
-  });
-
-  // @todo create new custom hooks.
-  // This layout is intended to be one of many using the same hooks.
-  // So you could have an iPad layout, or iPhone layout, or completely different layouts
+  const layout = useLayoutProvider();
+  const appState = useAppState();
+  const { loading, state, leftPanels, centerPanels, rightPanels, actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
   const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
     : undefined;
+
+  // Resizers
+  const leftPanelResizer = useResizeLayout(`left-panel/${leftPanel?.id}`, {
+    left: true,
+    minWidthPx: leftPanel?.options?.minWidth || 320,
+    maxWidthPx: leftPanel?.options?.maxWidth || 720,
+    loading,
+  });
+  const rightPanelResizer = useResizeLayout(`right-panel/${rightPanel?.id}`, {
+    left: false,
+    minWidthPx: rightPanel?.options?.minWidth || 320,
+    maxWidthPx: rightPanel?.options?.maxWidth || 720,
+    loading,
+  });
 
   // Pinned state
   const showRightPanel =
@@ -117,7 +118,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
             <L.PanelContent>
               {state.centerPanel.open
                 ? centerPanel
-                  ? centerPanel.render(state.centerPanel.state || centerPanel.defaultState || {}, actions.centerPanel)
+                  ? centerPanel.render(
+                      state.centerPanel.state || centerPanel.defaultState || {},
+                      { ...layout, current: actions.centerPanel },
+                      appState
+                    )
                   : null
                 : null}
             </L.PanelContent>

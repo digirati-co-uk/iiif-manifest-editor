@@ -1,6 +1,6 @@
 import { Layout } from "./Layout";
 import { LayoutProps } from "./Layout.types";
-import { LayoutProvider, useLayoutProvider } from "./Layout.context";
+import { LayoutProvider, useAvailableLayouts, useLayoutActions, useLayoutState } from "./Layout.context";
 
 export default {
   title: "Shell / Layout",
@@ -10,19 +10,16 @@ export default {
       {
         id: "left-1",
         label: "Left 1",
-        icon: null,
         render: () => <div>left panel 1</div>,
       },
       {
         id: "left-2",
         label: "Left 2",
-        icon: null,
         render: () => <div>left panel 2</div>,
       },
       {
         id: "left-3",
         label: "Left 3",
-        icon: null,
         render: () => <div>left panel 3</div>,
       },
     ],
@@ -30,15 +27,17 @@ export default {
       {
         id: "right-1",
         label: "Right 1",
-        pinnable: true,
-        icon: null,
+        options: {
+          pinnable: true,
+        },
         render: () => <div>right panel 1</div>,
       },
       {
         id: "right-2",
         label: "Right 2",
-        pinnable: true,
-        icon: null,
+        options: {
+          pinnable: true,
+        },
         render: (state) => <div>right panel 2 {JSON.stringify(state)}</div>,
       },
     ],
@@ -46,7 +45,6 @@ export default {
       {
         id: "center-1",
         label: "Center 1",
-        icon: null,
         render: () => (
           <div>
             <ExampleControls />
@@ -69,7 +67,8 @@ const Template = (props: LayoutProps) => (
 const staticSomething = { something: "something" };
 
 function ExampleLeftIconMenu() {
-  const { actions, state, leftPanels } = useLayoutProvider();
+  const actions = useLayoutActions();
+  const { leftPanels } = useAvailableLayouts();
 
   return (
     <div style={{ display: "flex" }}>
@@ -81,7 +80,8 @@ function ExampleLeftIconMenu() {
 }
 
 function ExampleControls() {
-  const { actions, state } = useLayoutProvider();
+  const actions = useLayoutActions();
+  const state = useLayoutState();
 
   console.log(state);
 

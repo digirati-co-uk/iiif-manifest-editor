@@ -6,17 +6,16 @@ import invariant from "tiny-invariant";
 import { ManifestContext, VaultProvider } from "react-iiif-vault";
 import { LocalStorageLoader } from "./storage/LocalStorageLoader";
 import { LocalStorageBackend } from "./backend/LocalStorageBackend";
-import { Loading } from "../../atoms/Loading";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useApps } from "../AppContext/AppContext";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
 export function ProjectProvider(props: { children: ReactNode }) {
+  const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
   const backend = useMemo(() => new LocalStorageBackend(), []);
   const storage = useMemo(() => new LocalStorageLoader(), []);
-  const shell = useShell();
   const [state, dispatch] = useReducer(projectContextReducer, undefined, getDefaultProjectContextState);
   const actions = useProjectActionsWithBackend(dispatch, backend);
   const context: ProjectContext = useMemo(() => ({ actions, ...state }), [actions, state]);
@@ -31,10 +30,9 @@ export function ProjectProvider(props: { children: ReactNode }) {
       state.loadingStatus.loaded &&
       ready &&
       (!vault || !manifest) &&
-      shell.selectedApplication !== "Splash"
+      currentApp?.id !== "splash"
     ) {
-      console.log("Changed to splash?");
-      shell.changeSelectedApplication("Splash");
+      changeApp({ id: "splash" });
     }
   }, []);
 
