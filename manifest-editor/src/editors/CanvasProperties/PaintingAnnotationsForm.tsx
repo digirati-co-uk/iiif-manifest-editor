@@ -9,11 +9,12 @@ import { LightBoxWithoutSides } from "../../atoms/LightBox";
 import { EditIcon } from "../../icons/EditIcon";
 import { EditableContainer } from "../../atoms/EditableContainer";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useLayoutActions } from "../../shell/Layout/Layout.context";
 
 export const PaintingAnnotationsForm: React.FC = () => {
   const canvas = useCanvas();
   const vault = useVault();
-  const editorContext = useManifestEditor();
+  const layouts = useLayoutActions();
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -48,7 +49,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
       <EmptyProperty
         guidanceReference={"https://iiif.io/api/presentation/3.0/#55-annotation-page "}
         label={"items"}
-        createNew={() => editorContext?.changeSelectedProperty("canvas item", -1)}
+        createNew={() => layouts.change("new-annotation-page")}
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
