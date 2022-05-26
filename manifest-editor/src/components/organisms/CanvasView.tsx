@@ -18,8 +18,6 @@ export const CanvasView: React.FC = () => {
     );
   }
 
-  console.log({ manifest, canvas });
-
   if (!manifest || manifest.id === "") {
     return <></>;
   }

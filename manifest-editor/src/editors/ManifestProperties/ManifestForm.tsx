@@ -29,10 +29,10 @@ export const ManifestForm: React.FC<{}> = () => {
           label: "Technical",
           component: <TechnicalForm />,
         },
-        {
-          label: "Structural",
-          component: <StructuralForm />,
-        },
+        // {
+        //   label: "Structural",
+        //   component: <StructuralForm />,
+        // },
         // {
         //   label: "Annotations",
         //   component: <div>I will be the annotations panel</div>,

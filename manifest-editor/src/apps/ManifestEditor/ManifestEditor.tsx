@@ -9,7 +9,7 @@ import { EditorPanel } from "../../components/layout/EditorPanel";
 import { Toolbar } from "../../components/layout/Toolbar";
 import { NewCanvasModal } from "../../components/modals/NewCanvasModal";
 import { CanvasView } from "../../components/organisms/CanvasView";
-import { GridView } from "../../components/organisms/GridView";
+import { GridView } from "../../components/organisms/GridView/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 import { useShell } from "../../context/ShellContext/ShellContext";

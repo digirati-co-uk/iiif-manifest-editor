@@ -13,6 +13,7 @@ interface ShellContextInterface {
   changeResourceID: (id: string | null) => void;
   recentManifests: ManifestNormalized[];
   setCurrentCanvasId: (id: string) => void; // @todo this will be more contextual
+  currentCanvasId: string;
 
   // Internal (i.e. should only be called from Shell UI)
   selectedApplication: "ManifestEditor" | "Browser" | "Splash" | "About"; // @todo maybe change to just string?
@@ -140,9 +141,18 @@ export const ShellProvider = ({ children }: { children: ReactNode }) => {
       updateRecentManifests,
       newTemplates: newManifestTemplates,
       setNewTemplates: setNewManifestsTemplates,
+      currentCanvasId,
       setCurrentCanvasId,
     }),
-    [newManifestTemplates, recentManifests, resourceID, selectedApplication, unsavedChanges, updateRecentManifests]
+    [
+      newManifestTemplates,
+      recentManifests,
+      resourceID,
+      selectedApplication,
+      unsavedChanges,
+      updateRecentManifests,
+      currentCanvasId,
+    ]
   );
 
   return (

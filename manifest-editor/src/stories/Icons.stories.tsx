@@ -23,6 +23,7 @@ import { TreeIcon } from "../icons/TreeIcon";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { FlexContainerColumn } from "../components/layout/FlexContainer";
 import { LightBoxWithoutSides } from "../atoms/LightBox";
+import { MoreVetical } from "../icons/MoreVertical";
 
 export default {
   title: "Manifest Editor/Icons",
@@ -156,6 +157,15 @@ const Template: ComponentStory<typeof AddIcon> = (args) => {
       >
         <MoreMenu />
         MoreMenu
+      </LightBoxWithoutSides>
+      <LightBoxWithoutSides
+        style={{
+          margin: "10px",
+          justifyContent: "space-between",
+        }}
+      >
+        <MoreVetical />
+        MoreVertical
       </LightBoxWithoutSides>
       <LightBoxWithoutSides
         style={{

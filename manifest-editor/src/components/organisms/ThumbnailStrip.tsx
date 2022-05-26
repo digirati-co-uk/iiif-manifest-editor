@@ -2,7 +2,6 @@ import { CanvasContext, useManifest } from "react-iiif-vault";
 
 import { SmallThumbnailStripContainer, ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { Thumbnail } from "../../atoms/Thumbnail";
-import { useContext } from "react";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { useShell } from "../../context/ShellContext/ShellContext";

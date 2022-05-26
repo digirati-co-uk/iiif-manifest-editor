@@ -9,11 +9,12 @@ import { VerticalDivider } from "./VerticalDivider";
 export const DropdownItem = styled.div`
    {
     padding: ${(props: any) => props.theme.padding.small || "1rem"};
-    color: ${(props: any) => props.theme.color.main || "none"};
+    color: ${(props: any) => props.theme.color.black || "black"};
     border: none;
     cursor: pointer;
     display: block;
     right: 0;
+    font-size: 0.75rem;
     &:hover {
       background-color: ${(props: any) => props.theme.color.lightgrey || "lightgrey"};
     }
