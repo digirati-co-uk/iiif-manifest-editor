@@ -14,7 +14,7 @@ export const DropdownContent = styled.div`
     background-color: ${(props: any) => props.theme.color.white || "white"};
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 15;
+    z-index: 150;
     button {
       &:hover {
         background-color: ${(props: any) => props.theme.color.lightgrey || "lightgrey"};
