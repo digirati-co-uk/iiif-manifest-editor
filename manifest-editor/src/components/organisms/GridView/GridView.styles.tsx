@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const GridViewContainer = styled.div`
+export const GridViewContainer = styled.div<{ strip?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -10,11 +10,18 @@ export const GridViewContainer = styled.div`
     flex-direction: row;
     display: flex;
     justify-content: unset;
-    max-height: 90vh;
+    max-height: 100%;
     overflow-y: auto;
     flex-wrap: wrap;
     margin: 0 -10px;
     justify-content: space-evenly;
+    ${(props: any) =>
+      props.strip &&
+      css`
+        flex-direction: column;
+        flex-wrap: nowrap;
+        max-height: unset;
+      `}
     & > * {
       margin: 10px;
     }

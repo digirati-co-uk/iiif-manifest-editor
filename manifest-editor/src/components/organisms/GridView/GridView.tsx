@@ -9,14 +9,15 @@ import { RecentLabel } from "../../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
 import { AddIcon } from "../../../icons/AddIcon";
 
-import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSwitcher";
-
 import { GridViewContainer } from "./GridView.styles";
 import { GridList } from "./GridList";
+import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSwitcher";
 
-export const GridView: React.FC<{ handleChange: (canvasId: string, thumbnail?: boolean) => void }> = ({
-  handleChange,
-}) => {
+export const GridView: React.FC<{
+  handleChange: (canvasId: string, thumbnail?: boolean) => void;
+  width?: number;
+  strip?: boolean;
+}> = ({ handleChange, width, strip }) => {
   const manifest = useManifest();
 
   const editorContext = useManifestEditor();
@@ -42,19 +43,21 @@ export const GridView: React.FC<{ handleChange: (canvasId: string, thumbnail?: b
   return (
     <GridViewContainer>
       <GridList handleChange={handleChange} />
-      <FlexContainerRow>
-        <ViewSelector />
-        <HeightWidthSwitcher
-          options={[
-            { h: 128, w: 128 },
-            { h: 256, w: 256 },
-            { h: 512, w: 512 },
-            { h: 1024, w: 1024 },
-          ]}
-          label={`${editorContext?.thumbnailSize?.w}x${editorContext?.thumbnailSize?.h}`}
-          onOptionClick={(selected: ThumbnailSize) => editorContext?.setThumbnailSize(selected)}
-        />
-      </FlexContainerRow>
+      {!strip && (
+        <FlexContainerRow>
+          <ViewSelector />
+          <HeightWidthSwitcher
+            options={[
+              { h: 128, w: 128 },
+              { h: 256, w: 256 },
+              { h: 512, w: 512 },
+              { h: 1024, w: 1024 },
+            ]}
+            label={`${editorContext?.thumbnailSize?.w}x${editorContext?.thumbnailSize?.h}`}
+            onOptionClick={(selected: ThumbnailSize) => editorContext?.setThumbnailSize(selected)}
+          />
+        </FlexContainerRow>
+      )}
     </GridViewContainer>
   );
 };

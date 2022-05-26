@@ -41,7 +41,7 @@ export function ManifestEditorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const [thumbnailSize, setThumbnailSize] = useState({ w: 256, h: 256 });
+  const [thumbnailSize, setThumbnailSize] = useState({ w: 128, h: 128 });
 
   const editorSettings = useMemo(
     () => ({

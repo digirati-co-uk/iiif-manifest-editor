@@ -37,7 +37,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
   }
 
   return (
-    <div key={`${width}`}>
+    <div key={`${width + thumb.id}`}>
       <ErrorBoundary>
         {!error && (
           <ThumbnailImg
@@ -55,7 +55,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
             <TemplateCardNew>
               <TemplateCardPlaceholder />
             </TemplateCardNew>
-            <RecentLabel>No thumbnail</RecentLabel>
+            <RecentLabel>ERROR</RecentLabel>
           </TemplateCardContainer>
         )}
       </ErrorBoundary>
