@@ -1,11 +1,12 @@
 import { LayoutPanel } from "../../shell/Layout/Layout.types";
 import { ManifestForm } from "../../editors/ManifestProperties/ManifestForm";
 import { CanvasForm } from "../../editors/CanvasProperties/CanvasForm";
-import { CanvasContext } from "react-iiif-vault";
+import { AnnotationContext, CanvasContext } from "react-iiif-vault";
 import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
 import { LeftPanelMenu } from "./components/LeftPanelMenu";
 import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
+import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 
 export default { id: "manifest-editor-layouts", title: "Manifest editor (layout)", project: true };
 
@@ -97,7 +98,18 @@ export const rightPanels: LayoutPanel[] = [
   {
     id: "new-annotation-page",
     label: "Create new annotation page",
+    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
     render: () => <NewAnnotationPage />,
+  },
+  {
+    id: "canvas-media",
+    label: "Edit canvas media",
+    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
+    render: (state: { annotation: string }) => (
+      <AnnotationContext annotation={state.annotation}>
+        <CanvasMedia />
+      </AnnotationContext>
+    ),
   },
   // {
   //   id: "media-properties",

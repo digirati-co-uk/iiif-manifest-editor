@@ -1,9 +1,11 @@
 import { CanvasPanel, CanvasContext, useCanvas } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { Runtime } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
+import { ErrorBoundary } from "react-error-boundary";
+import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 
 const Container = styled.div`
   position: relative;
@@ -25,9 +27,8 @@ export function CanvasPanelViewer() {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const _canvas = useCanvas(); // @todo remove.
-  const canvas = state?.canvasId || _canvas?.id;
-
-  console.log("state", state);
+  const canvas = state.canvasId || _canvas?.id;
+  const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
   const goHome = () => runtime.current?.world.goHome();
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
@@ -42,22 +43,31 @@ export function CanvasPanelViewer() {
   }
 
   return (
-    <Container>
-      <ViewControls goHome={goHome} zoomIn={zoomIn} zoomOut={zoomOut} />
-      <style>{`
+    <ErrorBoundary
+      resetKeys={[canvas.id, refreshKey]}
+      fallbackRender={() => (
+        <CanvasContainer>
+          <GhostCanvas />
+        </CanvasContainer>
+      )}
+    >
+      <Container key={refreshKey}>
+        <ViewControls goHome={goHome} zoomIn={zoomIn} zoomOut={zoomOut} refresh={refresh} />
+        <style>{`
         .atlas-container {
           min-width: 0;
           --atlas-container-flex: 1 1 0px;
           --atlas-background:  #f9f9f9;
         }
       `}</style>
-      <ViewerContainer>
-        <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
-          <CanvasContext canvas={canvas}>
-            <CanvasPanel.RenderCanvas />
-          </CanvasContext>
-        </CanvasPanel.Viewer>
-      </ViewerContainer>
-    </Container>
+        <ViewerContainer>
+          <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
+            <CanvasContext canvas={canvas}>
+              <CanvasPanel.RenderCanvas />
+            </CanvasContext>
+          </CanvasPanel.Viewer>
+        </ViewerContainer>
+      </Container>
+    </ErrorBoundary>
   );
 }

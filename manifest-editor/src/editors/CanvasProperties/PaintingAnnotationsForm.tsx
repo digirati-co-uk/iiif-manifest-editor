@@ -78,14 +78,25 @@ export const PaintingAnnotationsForm: React.FC = () => {
                               {...innerProvided.draggableProps}
                               {...innerProvided.dragHandleProps}
                               key={item.id}
+                              onClick={() =>
+                                layouts.open("canvas-media", { annotationPage: item.id, annotation: nested.id })
+                              }
                             >
                               <FlexContainerRow style={{ alignItems: "center", width: "100%" }}>
-                                <Button onClick={() => remove(index)} title="remove">
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    remove(index);
+                                  }}
+                                  title="remove"
+                                >
                                   <DeleteIcon />
                                 </Button>
                                 <MediaResourcePreview thumbnailSrc={nested.id} />
                                 <Button
-                                  onClick={() => editorContext?.changeSelectedProperty("canvas item", index)}
+                                  onClick={() =>
+                                    layouts.open("canvas-media", { annotationPage: item.id, annotation: nested.id })
+                                  }
                                   title="edit"
                                 >
                                   <EditIcon />
