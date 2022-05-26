@@ -1,5 +1,19 @@
 import styled from "styled-components";
 
+export const ButtonReset = styled.button`
+  border: none;
+  outline: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+  &:hover {
+    color: inherit;
+  }
+`;
+
 export const Button = styled.button`
    {
     padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};

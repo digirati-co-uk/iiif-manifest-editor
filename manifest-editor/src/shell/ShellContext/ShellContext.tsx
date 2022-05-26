@@ -16,13 +16,15 @@ const previewConfigs: PreviewConfiguration[] = [
     id: "universal-viewer",
     config: { url: "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}" },
     type: "external-manifest-preview",
-    label: "Universal viewer 4",
+    label: "Universal viewer",
   },
   {
-    id: "universal-viewer-3",
-    config: { url: "https://uv-v3.netlify.app/#?manifest={manifestId}" },
+    id: "mirador-3",
     type: "external-manifest-preview",
-    label: "Universal viewer 3",
+    label: "Mirador 3",
+    config: {
+      url: "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}",
+    },
   },
   {
     id: "iiif-preview",
@@ -51,7 +53,7 @@ export const ShellProvider = ({
             <LayoutProvider>
               <ProjectProvider>
                 {/* @todo swap these out for (config?.previews || []) */}
-                <PreviewProvider configs={previewConfigs}>
+                <PreviewProvider configs={config?.previews || previewConfigs}>
                   <ManifestEditorProvider>{children}</ManifestEditorProvider>
                 </PreviewProvider>
               </ProjectProvider>
