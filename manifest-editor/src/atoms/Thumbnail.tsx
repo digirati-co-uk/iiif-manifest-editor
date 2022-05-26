@@ -13,13 +13,16 @@ export const ThumbnailImg = styled.img`
   }
 `;
 
-export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  const editorContext = useManifestEditor();
+export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?: number }> = ({
+  onClick,
+  width,
+  height,
+}) => {
   const [error, setError] = useState(false);
 
   const thumb = useThumbnail({
-    maxWidth: editorContext?.thumbnailSize?.w || 128,
-    maxHeight: editorContext?.thumbnailSize?.h || 128,
+    maxWidth: width || 128,
+    maxHeight: height ? height : typeof width !== "undefined" ? width : 128,
   });
 
   if (!thumb) {
@@ -34,7 +37,7 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   }
 
   return (
-    <div key={editorContext?.thumbnailSize?.w}>
+    <div key={`${width}`}>
       <ErrorBoundary>
         {!error && (
           <ThumbnailImg
@@ -43,7 +46,7 @@ export const Thumbnail: React.FC<{ onClick: () => void }> = ({ onClick }) => {
             loading="lazy"
             onClick={onClick}
             draggable="false"
-            height={editorContext?.thumbnailSize?.h || 256}
+            height={width || 256}
             onError={() => setError(true)}
           />
         )}
