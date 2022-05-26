@@ -5,7 +5,7 @@ import { CanvasForm } from "../../editors/CanvasProperties/CanvasForm";
 import { CanvasContext } from "react-iiif-vault";
 import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
 import { LeftPanelMenu } from "./components/LeftPanelMenu";
-import { GridView } from "../../components/organisms/GridView";
+import { GridView } from "../../components/organisms/GridView/GridView";
 
 export default { id: "manifest-editor-layouts", title: "Manifest editor (layout)", project: true };
 
