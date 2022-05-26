@@ -8,7 +8,7 @@ import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
 import { HorizontalDivider } from "../../../atoms/HorizontalDivider";
 import { Thumbnail } from "../../../atoms/Thumbnail";
 import { useShell } from "../../../context/ShellContext/ShellContext";
-import { MoreVetical } from "../../../icons/MoreVertical";
+import { MoreVertical } from "../../../icons/MoreVertical";
 import { FlexContainerColumn } from "../../layout/FlexContainer";
 import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
 
@@ -107,7 +107,7 @@ export const GridItem: React.FC<{
         <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
       </FlexContainerColumn>
       <div className="item" onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}>
-        <MoreVetical color={"white"} />
+        <MoreVertical color={"white"} />
       </div>
     </Group>
   );
