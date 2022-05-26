@@ -32,7 +32,7 @@ export function useAppState<S = any>() {
 }
 
 export function AppStateProvider(props: { appId: string; initialValue?: any; children: ReactNode }) {
-  const [state, _setState, stateRef] = useLocalStorage(`app-state/${props.appId}`, props.initialValue || {});
+  const [state, _setState, stateRef] = useLocalStorage(`app-state`, props.initialValue || {});
 
   const setState = useCallback((partial: any) => {
     const existing = stateRef.current ? JSON.parse(stateRef.current || "{}") : {};
