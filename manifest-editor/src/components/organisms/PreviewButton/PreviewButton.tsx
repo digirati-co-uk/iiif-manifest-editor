@@ -14,7 +14,7 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { DownIcon } from "../../../icons/DownIcon";
 import { useApps } from "../../../shell/AppContext/AppContext";
-import { CloseIcon } from "../../../madoc/components/CloseIcon";
+import { CloseIcon } from "../../../madoc/components/icons/CloseIcon";
 
 export function PreviewButton() {
   const { current } = useProjectContext();
