@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Button } from "../atoms/Button";
 import { DropdownContent } from "../atoms/Dropdown";
-import { HorizontalDivider } from "../atoms/HorizontalDivider";
+import { PaddingComponentSmall } from "../atoms/PaddingComponent";
 import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
-import { DeleteIcon } from "../icons/DeleteIcon";
-import { MoreVertical } from "../icons/MoreVertical";
+import { MenuIcon } from "../icons/MenuIcon";
+import { MoreHorizontal } from "../icons/MoreHorizontal";
 import { LanguageFieldEditor } from "./LanguageFieldEditor";
 import { DropdownItem } from "./LanguageSelector";
 
@@ -45,12 +44,14 @@ export const MetadataPair: React.FC<MetadataPairProps> = ({
   };
   return (
     <div>
-      <div style={{ justifyContent: "flex-end", display: "flex" }}>
+      <div style={{ justifyContent: "space-between", display: "flex", alignItems: "center" }}>
+        <div />
+        <MenuIcon />
         <div
-          style={{ padding: "1rem", cursor: "pointer" }}
+          style={{ padding: "0.25rem", cursor: "pointer" }}
           onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}
         >
-          <MoreVertical color={"black"} />
+          <MoreHorizontal />
         </div>
       </div>
 
