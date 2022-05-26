@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Button } from "../atoms/Button";
+import { Button, SmallButton } from "../atoms/Button";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
 import { LanguageFieldEditor } from "./LanguageFieldEditor";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { LightBox } from "../atoms/LightBox";
+import { MetadataPair } from "./MetadataPair";
 
 interface MetadataEditorProps {
   availableLanguages: string[];
@@ -30,6 +31,12 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
     setRedraw(redraw + 1);
     reorder(result.source.index, destination.index);
   };
+
+  const reorderAndRedraw = (fromPosition: number, toPosition: number) => {
+    setRedraw(redraw + 1);
+    reorder(fromPosition, toPosition);
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd} key={redraw}>
       <Droppable droppableId="droppable">
@@ -39,7 +46,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
               fields.map((field, index) => {
                 return (
                   <Draggable
-                    key={field.toString() + "--HASH--"}
+                    key={field.label.toString() + "--HASH--"}
                     draggableId={index.toString() + "--HASH--"}
                     index={index}
                   >
@@ -49,30 +56,17 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                         {...innerProvided.draggableProps}
                         {...innerProvided.dragHandleProps}
                         key={index}
+                        style={{ paddingBottom: "1rem" }}
                       >
-                        <FlexContainer style={{ justifyContent: "space-between" }}>
-                          <FlexContainerColumn style={{ width: "100%" }}>
-                            <LanguageFieldEditor
-                              label={"label"}
-                              fields={field.label}
-                              availableLanguages={availableLanguages}
-                              onSave={onSave}
-                              index={index}
-                              property={"label"}
-                            />
-                            <LanguageFieldEditor
-                              label={"value"}
-                              fields={field.value}
-                              availableLanguages={availableLanguages}
-                              onSave={onSave}
-                              index={index}
-                              property={"value"}
-                            />
-                          </FlexContainerColumn>
-                          <Button aria-label="delete" onClick={() => removeItem(index)}>
-                            <DeleteIcon />
-                          </Button>
-                        </FlexContainer>
+                        <MetadataPair
+                          removeItem={removeItem}
+                          index={index}
+                          availableLanguages={availableLanguages}
+                          field={field}
+                          onSave={onSave}
+                          reorder={reorderAndRedraw}
+                          size={fields.length}
+                        />
                       </LightBox>
                     )}
                   </Draggable>

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useMetadataEditor, UseMetadataEditor } from "../hooks/useMetadataEditor";
-import { Button, SecondaryButton } from "../atoms/Button";
+import { Button, SecondaryButton, SmallButton } from "../atoms/Button";
 import { EmptyProperty } from "../atoms/EmptyProperty";
 import { InformationLink } from "../atoms/InformationLink";
 import { CloseIcon } from "../icons/CloseIcon";
-import { FlexContainer } from "../components/layout/FlexContainer";
-import { Input, InputBorderless } from "./Input";
+import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
+import { InputGroup, InputWithDropdown } from "./Input";
 import { DropdownItem, StyledSelect } from "./LanguageSelector";
+import { PaddingComponentSmall } from "../atoms/PaddingComponent";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -28,19 +29,18 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   const guidanceReference = props.guidanceReference;
 
   // The hidden fields.
-  const [showAllFields, setShowAllFields] = useState(false);
+  const [showAllFields, setShowAllFields] = useState(true);
   const allFields =
     showAllFields && firstItem ? (
-      <div>
+      <FlexContainerColumn style={{ alignItems: "center" }}>
         {fieldKeys.length > 0 && (
           <div
             style={{
-              border: "1px solid lightgrey",
+              // border: "1px solid lightgrey",
               display: "flex",
               flexDirection: "column",
               borderRadius: "5px",
-              margin: "10px 0",
-              padding: "5px",
+              width: "100%",
             }}
           >
             {fieldKeys.map((key) => {
@@ -65,15 +65,19 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
               }
 
               return (
-                <FlexContainer key={key}>
-                  <Button aria-label="remove" onClick={() => removeItem(key)} title="delete">
-                    <CloseIcon />
-                  </Button>
-                  <Input
+                <InputGroup key={key}>
+                  {/* Reorderable tab will go here */}
+                  <PaddingComponentSmall />
+                  <InputWithDropdown
                     type="text"
                     id={key}
                     value={field.value}
-                    onChange={(e) => changeValue(key, e.currentTarget.value)}
+                    onChange={(e) => {
+                      changeValue(key, e.currentTarget.value);
+                    }}
+                    onBlur={(e: any) => {
+                      saveChanges(props.index, props.property);
+                    }}
                   />
                   <StyledSelect value={field.language} onChange={(e) => changeLanguage(key, e.currentTarget.value)}>
                     {languages.map((lang) => (
@@ -82,17 +86,28 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                       </DropdownItem>
                     ))}
                   </StyledSelect>
-                </FlexContainer>
+                  <SmallButton
+                    className="remove"
+                    aria-label="remove"
+                    onClick={() => {
+                      removeItem(key);
+                      saveChanges(props.index, props.property);
+                    }}
+                    title="delete"
+                  >
+                    <CloseIcon />
+                  </SmallButton>
+                </InputGroup>
               );
             })}
           </div>
         )}
         {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-        <SecondaryButton aria-label="create-new" onClick={() => createNewItem(true)}>
-          Add new {props.label}
-        </SecondaryButton>
+        <SmallButton aria-label="create-new" onClick={() => createNewItem(true)}>
+          Add another
+        </SmallButton>
         <br />
-        <FlexContainer style={{ justifyContent: "flex-end" }}>
+        {/* <FlexContainer style={{ justifyContent: "flex-end" }}>
           <SecondaryButton
             onClick={() => {
               setShowAllFields(false);
@@ -102,8 +117,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           >
             Save changes to {props.label}
           </SecondaryButton>
-        </FlexContainer>
-      </div>
+        </FlexContainer> */}
+      </FlexContainerColumn>
     ) : null;
 
   if (!firstItem) {
@@ -119,48 +134,50 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 
   // Our default text box, we are provided with `firstItem` which is enough for
   // out on change event. For other resources we need to know what this "id" is.
-  const defaultTextBox = (
-    <label>
-      <FlexContainer
-        style={{
-          border: "1px solid lightgrey",
-          borderRadius: "5px",
-          padding: "none",
-        }}
-      >
-        <InputBorderless
-          type="text"
-          value={firstItem.field.value}
-          onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
-          onBlur={() => {
-            // Saving is slightly intensive, this is a sort of semi-controlled
-            // input, we will call onChange to the component using this component
-            // but not after every character. Here I've set it on blur of the
-            // first text box and also when you "close" the expanded view.
-            saveChanges(props.index, props.property);
-          }}
-          disabled={showAllFields}
-          style={{
-            cursor: showAllFields ? "not-allowed" : undefined,
-          }}
-        />
-        <Button
-          onClick={() => setShowAllFields(true)}
-          disabled={showAllFields}
-          aria-label={`${firstItem.field.language}${fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""}`}
-          style={{
-            borderLeft: "1px solid lightgrey",
-            display: "flex",
-            borderRadius: "0 5px 5px 0",
-            fontVariantNumeric: "tabular-nums",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {`${firstItem.field.language}${fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""}`}
-        </Button>
-      </FlexContainer>
-    </label>
-  );
+  // Removed from UI in this variation but holding code incase we decide to revert
+  // to more compact view
+  // const defaultTextBox = (
+  //   <label>
+  //     <FlexContainer
+  //       style={{
+  //         border: "1px solid lightgrey",
+  //         borderRadius: "5px",
+  //         padding: "none",
+  //       }}
+  //     >
+  //       <InputBorderless
+  //         type="text"
+  //         value={firstItem.field.value}
+  //         onChange={(e) => changeValue(firstItem.id, e.currentTarget.value)}
+  //         onBlur={() => {
+  //           // Saving is slightly intensive, this is a sort of semi-controlled
+  //           // input, we will call onChange to the component using this component
+  //           // but not after every character. Here I've set it on blur of the
+  //           // first text box and also when you "close" the expanded view.
+  //           saveChanges(props.index, props.property);
+  //         }}
+  //         disabled={showAllFields}
+  //         style={{
+  //           cursor: showAllFields ? "not-allowed" : undefined,
+  //         }}
+  //       />
+  //       <Button
+  //         onClick={() => setShowAllFields(true)}
+  //         disabled={showAllFields}
+  //         aria-label={`${firstItem.field.language}${fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""}`}
+  //         style={{
+  //           borderLeft: "1px solid lightgrey",
+  //           display: "flex",
+  //           borderRadius: "0 5px 5px 0",
+  //           fontVariantNumeric: "tabular-nums",
+  //           whiteSpace: "nowrap",
+  //         }}
+  //       >
+  //         {`${firstItem.field.language}${fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ""}`}
+  //       </Button>
+  //     </FlexContainer>
+  //   </label>
+  // );
 
   return (
     <div style={{ width: "100%}" }}>
@@ -168,7 +185,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
         <h4>{props.label}</h4>
         {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
       </FlexContainer>
-      <div>{defaultTextBox}</div>
+      {/* <div>{defaultTextBox}</div> */}
       <div>{allFields}</div>
     </div>
   );
