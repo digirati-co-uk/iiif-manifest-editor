@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { HomeIcon } from "../../../../icons/HomeIcon";
 import { MinusIcon } from "../../../../icons/MinusIcon";
 import { PlusIcon } from "../../../../icons/PlusIcon";
+import { RefreshIcon } from "../../../../icons/RefreshIcon";
 
 export const CanvasViewerButton = styled.button`
   padding: 0.8em;
@@ -38,13 +39,18 @@ export function ViewControls({
   goHome,
   zoomIn,
   zoomOut,
+  refresh,
 }: {
   goHome: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  refresh: () => void;
 }) {
   return (
     <CanvasViewerControls>
+      <CanvasViewerButton onClick={refresh}>
+        <RefreshIcon title={"Refresh viewer"} />
+      </CanvasViewerButton>
       <CanvasViewerButton onClick={goHome}>
         <HomeIcon title={"Home"} />
       </CanvasViewerButton>

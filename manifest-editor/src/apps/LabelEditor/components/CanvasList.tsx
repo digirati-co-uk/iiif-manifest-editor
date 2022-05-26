@@ -1,6 +1,7 @@
 import { CanvasContext, useManifest } from "react-iiif-vault";
 import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { SingleCanvas } from "./SingleCanvas";
+import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 
 export function CanvasList() {
   const manifest = useManifest();
@@ -13,7 +14,7 @@ export function CanvasList() {
   }
 
   return (
-    <div style={{ padding: "1em" }}>
+    <PaddedSidebarContainer>
       {manifest.items.map((canvas) => {
         return (
           <CanvasContext canvas={canvas.id}>
@@ -21,6 +22,6 @@ export function CanvasList() {
           </CanvasContext>
         );
       })}
-    </div>
+    </PaddedSidebarContainer>
   );
 }

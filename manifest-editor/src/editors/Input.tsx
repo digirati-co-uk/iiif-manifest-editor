@@ -85,6 +85,11 @@ export const _Input = styled.input`
     border-color: ${(props: any) => props.theme.color.main || "main"};
     outline: none;
   }
+
+  &:disabled {
+    background: #eee;
+    cursor: not-allowed;
+  }
 `;
 
 export const InputUnderlined = styled(_Input)`

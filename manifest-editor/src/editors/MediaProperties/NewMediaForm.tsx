@@ -37,7 +37,6 @@ export const NewMediaForm: React.FC<NewMediaProps> = ({ addNew, close }) => {
     let analysed: any;
     if (inputValue) {
       analysed = await analyse(inputValue);
-      console.log(analysed);
       setProperties(analysed);
       if (!["Image", "ContentResource", "ImageService"].includes(analysed?.type)) {
         setError(true);
@@ -53,8 +52,8 @@ export const NewMediaForm: React.FC<NewMediaProps> = ({ addNew, close }) => {
     if (!inputValue || !type || !format || !height || !width) {
       return;
     }
-    const body = { id: inputValue, type, format, height, width };
-    addNew(body);
+
+    addNew({ id: inputValue, type, format, height, width });
   };
 
   const populateValues = () => {

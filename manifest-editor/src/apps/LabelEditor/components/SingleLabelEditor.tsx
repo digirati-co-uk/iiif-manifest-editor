@@ -1,5 +1,6 @@
 import { ResourceEditingProvider } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "../../../editors/generic/DescriptiveProperties/DescriptiveProperties";
+import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 
 export function SingleLabelEditor({ resource }: { resource?: { id: string; type: "Canvas" } }) {
   if (!resource?.id) {
@@ -7,10 +8,10 @@ export function SingleLabelEditor({ resource }: { resource?: { id: string; type:
   }
 
   return (
-    <div style={{ padding: "1em" }}>
+    <PaddedSidebarContainer>
       <ResourceEditingProvider resource={resource}>
         <DescriptiveProperties supported={["label"]} />
       </ResourceEditingProvider>
-    </div>
+    </PaddedSidebarContainer>
   );
 }
