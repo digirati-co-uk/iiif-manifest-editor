@@ -20,6 +20,8 @@ export const Button = styled.button`
 
 export const SmallButton = styled(Button)`
   padding: 0 ${(props: any) => props.theme.padding.xs || "0.25rem"};
+  height: unset;
+  background: none;
 `;
 
 export const SecondaryButton = styled(Button)`
@@ -34,6 +36,7 @@ export const SecondaryButton = styled(Button)`
     display: flex;
     align-items: center;
     white-space: nowrap;
+    font-size: 0.75rem;
 
     :disabled {
       opacity: 0.65;

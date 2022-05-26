@@ -7,7 +7,7 @@ import { ThumbnailStripView } from "../../components/layout/ThumbnailStripView";
 import { EditorPanel } from "../../components/layout/EditorPanel";
 import { Toolbar } from "../../components/layout/Toolbar";
 import { NewCanvasModal } from "../../components/modals/NewCanvasModal";
-import { GridView } from "../../components/organisms/GridView";
+import { GridView } from "../../components/organisms/GridView/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
 import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";

@@ -12,6 +12,8 @@ export const defaultTheme = {
     lightdanger: "#ffeaea",
     lightsuccess: "#c5e8c5",
     success: "#6ccd55",
+    greyOverlay: "rgba(0, 0, 0, 0.2)",
+    highlight: "#faeed7"
   },
   iiifColor: {
     manifest: "rgba(0, 0, 0, 0.2)",

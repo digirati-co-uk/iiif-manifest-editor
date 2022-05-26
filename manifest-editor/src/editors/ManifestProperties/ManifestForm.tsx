@@ -2,7 +2,6 @@ import { TabPanel } from "../../components/layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
-import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
 import { ErrorBoundary } from "react-error-boundary";
 import { useManifest } from "../../hooks/useManifest";
@@ -37,10 +36,10 @@ export const ManifestForm: React.FC<{ current: number; setCurrent: (idx: number)
             label: "Technical",
             component: <TechnicalForm />,
           },
-          {
-            label: "Structural",
-            component: <StructuralForm />,
-          },
+          // {
+          //   label: "Structural",
+          //   component: <StructuralForm />,
+          // },
           // {
           //   label: "Annotations",
           //   component: <div>I will be the annotations panel</div>,

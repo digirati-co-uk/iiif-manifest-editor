@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import { ThumbnailStrip } from "../organisms/ThumbnailStrip";
 import { Tree } from "../../navigation/tree/Tree";
 import { ViewSelector } from "../../atoms/ViewSelector";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { useAppState } from "../../shell/AppContext/AppContext";
+import { GridList } from "../organisms/GridView/GridList";
+import { FlexContainerColumn } from "./FlexContainer";
 
 const ContentSelectorContainer = styled.div`
    {
@@ -12,9 +13,10 @@ const ContentSelectorContainer = styled.div`
     border-right: 0.016rem solid #dddddd;
     justify-content: space-between;
     align-items: center;
-    margin: 0.375rem 0;
+    margin: 0.375rem;
+    overflow-y: scroll;
     padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
-    height: 80vh;
+    height: 75vh;
     @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
       width: 100%;
       border-right: none;
@@ -29,19 +31,25 @@ export const ThumbnailStripView: React.FC<{
   const editorContext = useManifestEditor();
   const appState = useAppState();
 
-  const handleChange = (itemId: string) => {
+  const handleChange = (itemId: string, thumbnail?: boolean) => {
     appState.setState({ canvasId: itemId });
     editorContext?.changeSelectedProperty("canvas");
+    if (thumbnail) {
+      editorContext?.setView("thumbnails");
+    }
   };
 
   return (
     <>
       {(view === "thumbnails" || view === "tree") && (
-        <ContentSelectorContainer>
-          {view === "thumbnails" && <ThumbnailStrip handleChange={handleChange} />}
-          {view === "tree" && <Tree />}
+        <FlexContainerColumn style={{ alignItems: "center" }}>
+          <ContentSelectorContainer>
+            {view === "thumbnails" && <GridList handleChange={handleChange} />}
+            {view === "tree" && <Tree />}
+          </ContentSelectorContainer>
+
           <ViewSelector />
-        </ContentSelectorContainer>
+        </FlexContainerColumn>
       )}
     </>
   );
