@@ -1,15 +1,14 @@
 import { getValue } from "@iiif/vault-helpers";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { CanvasContext, useCanvas, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 
 import { Thumbnail } from "../../atoms/Thumbnail";
 import { ViewSelector } from "../../atoms/ViewSelector";
-import { FlexContainer, FlexContainerColumn, FlexContainerRow } from "../layout/FlexContainer";
+import { FlexContainer, FlexContainerRow } from "../layout/FlexContainer";
 
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RecentLabel } from "../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../atoms/TemplateCard";
@@ -89,28 +88,19 @@ const GridItem: React.FC<{
   );
 };
 
-export const GridView: React.FC = () => {
+export const GridView: React.FC<{ handleChange: (canvasId: string, thumbnails: boolean) => void }> = ({
+  handleChange: _handleChange,
+}) => {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   // For the context menu to know where to send
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const manifest = useManifest();
-  const shellContext = useShell();
 
   const editorContext = useManifestEditor();
 
   const handleChange = (itemId: string, e: any) => {
-    switch (e.detail) {
-      case 1:
-        shellContext.setCurrentCanvasId(itemId);
-        editorContext?.changeSelectedProperty("canvas");
-        break;
-      case 2:
-        shellContext.setCurrentCanvasId(itemId);
-        editorContext?.changeSelectedProperty("canvas");
-        editorContext?.setView("thumbnails");
-        break;
-    }
+    _handleChange(itemId, e.detail === 2);
   };
 
   const dispatchType = "items";
@@ -121,7 +111,6 @@ export const GridView: React.FC = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };

@@ -1,7 +1,3 @@
-// Listing all projects, order by recent
-// Create new project
-// Listing all templates
-
 import { useProjectContext } from "../../../../shell/ProjectContext/ProjectContext";
 import { projectFromManifest } from "../../../../shell/ProjectContext/helpers/project-from-manifest";
 import { getManifestNomalized } from "../../../../helpers/getManifestNormalized";

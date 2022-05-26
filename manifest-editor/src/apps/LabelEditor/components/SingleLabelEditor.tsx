@@ -1,4 +1,4 @@
-import { ResourceEditingProvider } from "../../../context/ResourceEditingContext/ResourceEditingContext";
+import { ResourceEditingProvider } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "../../../editors/generic/DescriptiveProperties/DescriptiveProperties";
 
 export function SingleLabelEditor({ resource }: { resource?: { id: string; type: "Canvas" } }) {

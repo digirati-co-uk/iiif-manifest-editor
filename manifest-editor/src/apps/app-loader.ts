@@ -1,7 +1,12 @@
 import { LayoutProps } from "../shell/Layout/Layout.types";
 
 type LoadedApp = Partial<LayoutProps> & {
-  default: { title: string };
+  default: { id: string; title: string; type?: "manifest" | "launcher"; project?: boolean };
+};
+
+export type MappedApp = {
+  metadata: LoadedApp["default"];
+  layout: LayoutProps;
 };
 
 const state = internalGetApps(import.meta.globEager("./**/index.ts*"));
@@ -11,26 +16,28 @@ export function getApps() {
 }
 
 function internalGetApps(appMap: Record<string, LoadedApp>) {
-  const allApps: Record<string, LayoutProps> = {};
-  const allAppNames: string[] = [];
+  const allApps: Record<string, MappedApp> = {};
+  const allAppIds: string[] = [];
   const allPaths: string[] = [];
 
   for (const path of Object.keys(appMap)) {
-    const { default: details, ...props }: LoadedApp = appMap[path] as any;
-    const name = details?.title;
+    const { default: metadata, ...props }: LoadedApp = appMap[path] as any;
     allPaths.push(path);
-    if (!name) {
+    if (!metadata || !metadata.id) {
       continue;
     }
 
-    allAppNames.push(name);
-    allApps[name] = {
-      leftPanels: [],
-      rightPanels: [],
-      centerPanels: [],
-      ...props,
+    allAppIds.push(metadata.id);
+    allApps[metadata.id] = {
+      metadata: metadata as any,
+      layout: {
+        leftPanels: [],
+        rightPanels: [],
+        centerPanels: [],
+        ...props,
+      },
     };
   }
 
-  return { allApps, allAppNames, allPaths };
+  return { allApps, allAppIds, allPaths };
 }

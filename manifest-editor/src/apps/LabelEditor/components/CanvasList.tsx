@@ -1,13 +1,12 @@
 import { CanvasContext, useManifest } from "react-iiif-vault";
-import { useLayoutProvider } from "../../../shell/Layout/Layout.context";
-import equal from "shallowequal";
+import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { SingleCanvas } from "./SingleCanvas";
 
 export function CanvasList() {
   const manifest = useManifest();
-  const { state } = useLayoutProvider();
+  const { rightPanel } = useLayoutState();
 
-  const isLabelEditor = state.rightPanel.current === "label-editor";
+  const isLabelEditor = rightPanel.current === "label-editor";
 
   if (!manifest) {
     return null;
@@ -18,9 +17,7 @@ export function CanvasList() {
       {manifest.items.map((canvas) => {
         return (
           <CanvasContext canvas={canvas.id}>
-            <SingleCanvas
-              selected={isLabelEditor && state.rightPanel.state && state.rightPanel.state.id === canvas.id}
-            />
+            <SingleCanvas selected={isLabelEditor && rightPanel.state && rightPanel.state.id === canvas.id} />
           </CanvasContext>
         );
       })}

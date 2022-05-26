@@ -1,20 +1,22 @@
-import React, { ReactElement, ReactNode, useContext, useMemo, useState } from "react";
+import React, { ReactNode, useContext, useMemo, useState } from "react";
 import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 import invariant from "tiny-invariant";
-import { useManifest } from "../../hooks/useManifest";
 
 interface EditorContextInterface {
-  selectedProperty: string;
-  selectedPanel?: number;
-  changeSelectedProperty: (property: string, key?: number) => void;
-  setView: (view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor") => void;
-  view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor";
-  languages: string[];
-  behaviorProperties: string[] | null;
-  addCanvasModalOpen: boolean;
-  setAddCanvasModalOpen: (boolean: boolean) => void;
-  thumbnailSize: ThumbnailSize;
-  setThumbnailSize: (size: ThumbnailSize) => void;
+  // Layouts
+  selectedProperty: string; // 11 usages
+  selectedPanel?: number; // 16 usages
+  changeSelectedProperty: (property: string, key?: number) => void; // 62 usages
+  setView: (view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor") => void; // 9 usages
+  view: "thumbnails" | "tree" | "grid" | "noNav" | "fullEditor"; // 10 usages
+
+  // This is just a modal.
+  addCanvasModalOpen: boolean; // 2 usages
+  setAddCanvasModalOpen: (boolean: boolean) => void; // 4 usages
+
+  // This is panel state.
+  thumbnailSize: ThumbnailSize; // 8 usages
+  setThumbnailSize: (size: ThumbnailSize) => void; // 1 usages
 }
 
 export const ManifestEditorContext = React.createContext<EditorContextInterface | null>(null);
@@ -27,15 +29,7 @@ export function useManifestEditor() {
   return ctx;
 }
 
-export function ManifestEditorProvider({
-  defaultLanguages,
-  behaviorProperties,
-  children,
-}: {
-  defaultLanguages: string[];
-  behaviorProperties: string[];
-  children: ReactNode;
-}) {
+export function ManifestEditorProvider({ children }: { children: ReactNode }) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
   const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);
@@ -56,14 +50,14 @@ export function ManifestEditorProvider({
       selectedPanel,
       addCanvasModalOpen,
       thumbnailSize,
-      languages: defaultLanguages,
-      behaviorProperties: behaviorProperties,
+      languages: [],
+      behaviorProperties: [],
       changeSelectedProperty,
       setView,
       setAddCanvasModalOpen,
       setThumbnailSize,
     }),
-    [addCanvasModalOpen, behaviorProperties, defaultLanguages, selectedPanel, selectedProperty, thumbnailSize, view]
+    [addCanvasModalOpen, selectedPanel, selectedProperty, thumbnailSize, view]
   );
 
   return <ManifestEditorContext.Provider value={editorSettings}>{children}</ManifestEditorContext.Provider>;
