@@ -103,7 +103,11 @@ export const GridItem: React.FC<{
           selected={canvasId === currentCanvasId}
         >
           <ErrorBoundary>
-            <Thumbnail onClick={() => appState.setState({ canvasId })} />
+            <Thumbnail
+              onClick={() => appState.setState({ canvasId })}
+              width={editorContext?.thumbnailSize?.w}
+              height={editorContext?.thumbnailSize?.h}
+            />
           </ErrorBoundary>
         </ThumbnailContainer>
         <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
