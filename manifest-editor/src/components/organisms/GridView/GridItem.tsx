@@ -7,7 +7,6 @@ import { DropdownItem } from "../../../atoms/DropdownPreviewMenu";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
 import { HorizontalDivider } from "../../../atoms/HorizontalDivider";
 import { Thumbnail } from "../../../atoms/Thumbnail";
-import { useShell } from "../../../context/ShellContext/ShellContext";
 import { MoreVertical } from "../../../icons/MoreVertical";
 import { FlexContainerColumn } from "../../layout/FlexContainer";
 import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
@@ -103,7 +102,11 @@ export const GridItem: React.FC<{
           selected={canvasId === currentCanvasId}
         >
           <ErrorBoundary>
-            <Thumbnail onClick={() => appState.setState({ canvasId })} />
+            <Thumbnail
+              onClick={() => appState.setState({ canvasId })}
+              width={editorContext?.thumbnailSize?.w}
+              height={editorContext?.thumbnailSize?.h}
+            />
           </ErrorBoundary>
         </ThumbnailContainer>
         <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
