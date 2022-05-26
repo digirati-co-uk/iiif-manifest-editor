@@ -1,5 +1,4 @@
 import { useCanvas, useVault } from "react-iiif-vault";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { Button } from "../../atoms/Button";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { MediaResourcePreview } from "./MediaResourcePreview";
@@ -14,7 +13,6 @@ import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.cont
 export const PaintingAnnotationsForm: React.FC = () => {
   const canvas = useCanvas();
   const vault = useVault();
-  const shellContext = useShell();
   const editorContext = useManifestEditor();
 
   const onDragEnd = (result: DropResult) => {
@@ -30,7 +28,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "items", newOrder);
     }
   };
@@ -39,7 +36,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
     const copy = canvas && canvas.items ? [...canvas.items] : [];
     if (canvas && (index || index === 0)) {
       copy.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       // with the item removed
       vault.modifyEntityField(canvas, "items", copy);
@@ -71,13 +68,9 @@ export const PaintingAnnotationsForm: React.FC = () => {
                   const items = vault.get(item?.id);
                   return (
                     items &&
-                    item.items.map((NESTEDITEM: any, idx: number) => {
+                    item.items.map((nested: any, idx: number) => {
                       return (
-                        <Draggable
-                          key={NESTEDITEM.toString() + "--HASH--"}
-                          draggableId={index.toString() + "--HASH--"}
-                          index={index}
-                        >
+                        <Draggable key={nested.id} draggableId={item?.id} index={index * (idx + 1)}>
                           {(innerProvided: any) => (
                             <LightBoxWithoutSides
                               ref={innerProvided.innerRef}
@@ -89,7 +82,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
                                 <Button onClick={() => remove(index)} title="remove">
                                   <DeleteIcon />
                                 </Button>
-                                <MediaResourcePreview thumbnailSrc={NESTEDITEM.id} />
+                                <MediaResourcePreview thumbnailSrc={nested.id} />
                                 <Button
                                   onClick={() => editorContext?.changeSelectedProperty("canvas item", index)}
                                   title="edit"

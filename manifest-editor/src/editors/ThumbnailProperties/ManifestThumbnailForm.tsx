@@ -1,7 +1,6 @@
 import { useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { addMapping, importEntities } from "@iiif/vault/actions";
@@ -9,7 +8,6 @@ import { MediaBody } from "../../types/media-body";
 
 export const ManifestThumbnailForm = () => {
   const editorContext = useManifestEditor();
-  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
 
@@ -39,20 +37,19 @@ export const ManifestThumbnailForm = () => {
     const newThumbnailReferences = manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
     if (manifest) {
       newThumbnailReferences.push({ id: body.id, type: "ContentResource" });
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, "thumbnail", newThumbnailReferences);
     }
     // get the ref we need using the index:
     const reference = manifest?.thumbnail[-1];
     // dispatch a change to this reference
-    shellContext.setUnsavedChanges(true);
+
     if (reference) {
       vault.modifyEntityField(reference, "width", body.width);
       vault.modifyEntityField(reference, "height", body.height);
       vault.modifyEntityField(reference, "format", body.format);
       vault.modifyEntityField(reference, "type", body.type);
     }
-    shellContext.setUnsavedChanges(true);
   };
 
   const reorder = (fromPosition: number, toPosition: number) => {
@@ -60,7 +57,6 @@ export const ManifestThumbnailForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, "thumbnail", newOrder);
     }
   };
@@ -69,7 +65,7 @@ export const ManifestThumbnailForm = () => {
     const copy = manifest && manifest.thumbnail ? [...manifest.thumbnail] : [];
     if (manifest && (index || index === 0)) {
       copy.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       // with the item removed
       vault.modifyEntityField(manifest, "thumbnail", copy);
@@ -91,7 +87,7 @@ export const ManifestThumbnailForm = () => {
     reorder(manifest.thumbnail.length, index);
     // Remove the last one which should now be the one we wanted to replace.
     remove(manifest.thumbnail.length);
-    shellContext.setUnsavedChanges(true);
+
     editorContext?.changeSelectedProperty("manifest", 2);
   };
 

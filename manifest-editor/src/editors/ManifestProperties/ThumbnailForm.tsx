@@ -1,22 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-// hooks & context
 import { useVault } from "react-iiif-vault";
-import { analyse } from "../../helpers/analyse";
 import { useManifest } from "../../hooks/useManifest";
-import { addMapping, importEntities } from "@iiif/vault/actions";
-import { useShell } from "../../context/ShellContext/ShellContext";
-// UI
-import { MediaResourceEditor } from "../MediaResourceEditor";
-import { Button, SecondaryButton } from "../../atoms/Button";
-import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
-import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
-import { InformationLink } from "../../atoms/InformationLink";
+import { Button } from "../../atoms/Button";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { InputLabel } from "../Input";
 import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexContainer";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
-import { render } from "react-dom";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { EditableContainer } from "../../atoms/EditableContainer";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
@@ -27,7 +14,6 @@ import { EditIcon } from "../../icons/EditIcon";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
-  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
   const editorContext = useManifestEditor();
@@ -45,7 +31,6 @@ export const ThumbnailForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, "thumbnail", newOrder);
     }
   };
@@ -55,7 +40,7 @@ export const ThumbnailForm = () => {
 
     if (manifest && (index || index === 0)) {
       newThumbnail.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       vault.modifyEntityField(manifest, "thumbnail", newThumbnail);
     }

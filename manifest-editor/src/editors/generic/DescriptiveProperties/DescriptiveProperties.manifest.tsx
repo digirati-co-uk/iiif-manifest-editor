@@ -1,5 +1,5 @@
 import { useManifest } from "react-iiif-vault";
-import { ResourceEditingProvider } from "../../../context/ResourceEditingContext/ResourceEditingContext";
+import { ResourceEditingProvider } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "./DescriptiveProperties";
 import { DescriptivePropertiesProps } from "./DescriptiveProperties.types";
 

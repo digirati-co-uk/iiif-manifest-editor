@@ -1,13 +1,9 @@
-import { useContext, useState } from "react";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { DescriptiveForm } from "./DescriptiveForm";
 import { LinkingForm } from "./LinkingForm";
 import { MetadataForm } from "./MetadataForm";
 import { StructuralForm } from "./StructuralForm";
 import { TechnicalForm } from "./TechnicalForm";
-import { useLayoutProvider } from "../../shell/Layout/Layout.context";
-import { useOptionalResource } from "../../context/ResourceEditingContext/ResourceEditingContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { useManifest } from "../../hooks/useManifest";
 

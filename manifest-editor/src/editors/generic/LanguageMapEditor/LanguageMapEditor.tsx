@@ -1,21 +1,20 @@
-import { useMemo } from "react";
 import { useVault } from "react-iiif-vault";
-import { useShell } from "../../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
 import { LanguageFieldEditor } from "../../LanguageFieldEditor";
-import { useResource } from "../../../context/ResourceEditingContext/ResourceEditingContext";
-import { DescriptiveProperties, Reference } from "@iiif/presentation-3";
+import { useResource } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
+import { DescriptiveProperties } from "@iiif/presentation-3";
 import { LanguageMapEditorProps } from "./LanguageMapEditor.types";
 import { Container } from "./LanguageMapEditor.styles";
 import { MetadataSave } from "../../../hooks/useMetadataEditor";
 import invariant from "tiny-invariant";
+import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
 
 export const supported: LanguageMapEditorProps["dispatchType"][] = ["label", "summary"];
 
 export function LanguageMapEditor({ dispatchType, languages, guidanceReference }: LanguageMapEditorProps) {
-  const shellContext = useShell();
   const resource = useResource<Partial<DescriptiveProperties>>();
   const vault = useVault();
+  const { defaultLanguages } = useConfig();
 
   invariant(
     supported.includes(dispatchType),
@@ -24,7 +23,6 @@ export function LanguageMapEditor({ dispatchType, languages, guidanceReference }
 
   const changeHandler: MetadataSave = (data) => {
     if (resource) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(resource, dispatchType, data.toInternationalString());
     }
   };
@@ -37,7 +35,7 @@ export function LanguageMapEditor({ dispatchType, languages, guidanceReference }
             label={dispatchType}
             fields={resource[dispatchType] || {}}
             onSave={changeHandler}
-            availableLanguages={languages}
+            availableLanguages={languages || defaultLanguages}
             guidanceReference={guidanceReference}
           />
         </ErrorBoundary>

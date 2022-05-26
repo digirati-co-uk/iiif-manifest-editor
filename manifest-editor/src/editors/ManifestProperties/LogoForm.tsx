@@ -1,11 +1,8 @@
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import { useContext, useEffect, useState } from "react";
-// hooks & context
+import { useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { analyse } from "../../helpers/analyse";
 import { useManifest } from "../../hooks/useManifest";
-import { useShell } from "../../context/ShellContext/ShellContext";
-// UI
 import { Button, SecondaryButton } from "../../atoms/Button";
 import { ErrorMessage } from "../../atoms/callouts/ErrorMessage";
 import { SuccessMessage } from "../../atoms/callouts/SuccessMessage";
@@ -127,7 +124,6 @@ const LogoWrapper: React.FC<LogoWrapperProps> = ({
 
 // Handles the whole list and speaks to the vault.
 export const LogoForm = () => {
-  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
   const [emptyValue, setEmptyValue] = useState(false);
@@ -166,14 +162,14 @@ export const LogoForm = () => {
       const newLogoReference = manifest && manifest.logo ? [...manifest.logo] : [];
       if (manifest && (index || index === 0)) {
         newLogoReference[index] = { id: data, type: "ContentResource" };
-        shellContext.setUnsavedChanges(true);
+
         vault.modifyEntityField(manifest, "logo", newLogoReference);
       }
     } else {
       // get the ref we need using the index:
       const reference = manifest?.logo[index];
       // dispatch a change to this reference
-      shellContext.setUnsavedChanges(true);
+
       if (reference) {
         vault.modifyEntityField(reference, property, data);
       }
@@ -185,7 +181,7 @@ export const LogoForm = () => {
 
     if (manifest && (index || index === 0)) {
       newLogo.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, "logo", newLogo);
     }
   };
