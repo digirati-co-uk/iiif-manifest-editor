@@ -10,6 +10,7 @@ import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext"
 import { useProjectCreators } from "../../../shell/ProjectContext/ProjectContext.hooks";
 import { useApps } from "../../../shell/AppContext/AppContext";
 import { SuccessMessage } from "../../../atoms/callouts/SuccessMessage";
+import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
 
 export const LoadManifest: React.FC = () => {
   const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();
@@ -50,12 +51,12 @@ export const LoadManifest: React.FC = () => {
   return (
     <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
       {currentProject ? (
-        <SuccessMessage>
+        <InfoMessage $banner>
           {currentProject.name}{" "}
           <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor-layouts" })}>
             Continue editing
           </Button>
-        </SuccessMessage>
+        </InfoMessage>
       ) : null}
       <h1>Get started</h1>
       <p>Load an existing IIIF Manifest</p>
