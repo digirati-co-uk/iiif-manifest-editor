@@ -6,6 +6,12 @@ import { CloseIcon } from "../../../icons/CloseIcon";
 import { BackIcon } from "../../../icons/BackIcon";
 import { useLayoutProvider } from "../Layout.context";
 import { useAppState } from "../../AppContext/AppContext";
+import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
+import { useEffect, useState } from "react";
+import { ErrorMessage } from "../../../madoc/components/callouts/ErrorMessage";
+import { Button, CalltoButton } from "../../../atoms/Button";
+import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
+import { PanelError } from "./PanelError";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -54,7 +60,7 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   }}
 `;
 
-const ModularPanelHeader = styled.div<{ $tabs?: boolean }>`
+const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
   background: #fff;
   display: flex;
   height: 2.8em;
@@ -67,6 +73,14 @@ const ModularPanelHeader = styled.div<{ $tabs?: boolean }>`
           box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
         `}
   z-index: 12;
+
+  ${(props) =>
+    props.$error &&
+    css`
+      color: #b61717;
+      background: #ffc2d2;
+      box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
+    `}
 `;
 
 const ModulePanelButton = styled.button`
@@ -108,9 +122,13 @@ export function ModularPanel({
   transition,
   close,
 }: ModularPanelProps) {
+  const [didError, setDidError] = useState(false);
   const appState = useAppState();
   const layout = useLayoutProvider();
   const { tabs, pinnable, hideHeader } = panel?.options || {};
+  const resetKeys = [appState.state.canvasId, panel?.id];
+
+  useEffect(() => setDidError(false), resetKeys);
 
   if (!panel || !state.current) {
     return null;
@@ -118,7 +136,7 @@ export function ModularPanel({
 
   return (
     <ModularPanelWrapper $state={transition}>
-      <ModularPanelHeader $tabs={tabs}>
+      <ModularPanelHeader $tabs={tabs} $error={didError}>
         {panel.backAction ? (
           <ModulePanelButton
             onClick={() =>
@@ -145,7 +163,14 @@ export function ModularPanel({
         </ModulePanelButton>
       </ModularPanelHeader>
       <ModularPanelContent>
-        {panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions }, appState)}
+        <ErrorBoundary
+          onResetKeysChange={() => setDidError(false)}
+          onError={() => setDidError(true)}
+          FallbackComponent={PanelError}
+          resetKeys={resetKeys}
+        >
+          {panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions }, appState)}
+        </ErrorBoundary>
       </ModularPanelContent>
     </ModularPanelWrapper>
   );
