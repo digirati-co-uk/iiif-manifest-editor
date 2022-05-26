@@ -6,6 +6,7 @@ import { LanguageFieldEditor } from "./LanguageFieldEditor";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { LightBox } from "../atoms/LightBox";
 import { MetadataPair } from "./MetadataPair";
+import { MenuIcon } from "../icons/MenuIcon";
 
 interface MetadataEditorProps {
   availableLanguages: string[];
@@ -46,28 +47,30 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
               fields.map((field, index) => {
                 return (
                   <Draggable
-                    key={field.label.toString() + "--HASH--"}
-                    draggableId={index.toString() + "--HASH--"}
+                    key={JSON.stringify(field.label).toString() + "--HASH--"}
+                    draggableId={JSON.stringify(field.label).toString() + "--HASH--"}
                     index={index}
                   >
                     {(innerProvided) => (
-                      <LightBox
-                        ref={innerProvided.innerRef}
-                        {...innerProvided.draggableProps}
-                        {...innerProvided.dragHandleProps}
-                        key={index}
-                        style={{ paddingBottom: "1rem" }}
-                      >
-                        <MetadataPair
-                          removeItem={removeItem}
-                          index={index}
-                          availableLanguages={availableLanguages}
-                          field={field}
-                          onSave={onSave}
-                          reorder={reorderAndRedraw}
-                          size={fields.length}
-                        />
-                      </LightBox>
+                      <>
+                        <LightBox
+                          ref={innerProvided.innerRef}
+                          {...innerProvided.draggableProps}
+                          {...innerProvided.dragHandleProps}
+                          key={JSON.stringify(field.label).toString() + "--HASH--"}
+                          id={JSON.stringify(field.label).toString() + "--HASH--"}
+                        >
+                          <MetadataPair
+                            removeItem={removeItem}
+                            index={index}
+                            availableLanguages={availableLanguages}
+                            field={field}
+                            onSave={onSave}
+                            reorder={reorderAndRedraw}
+                            size={fields.length}
+                          />
+                        </LightBox>
+                      </>
                     )}
                   </Draggable>
                 );

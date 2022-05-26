@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { useMetadataEditor, UseMetadataEditor } from "../hooks/useMetadataEditor";
-import { Button, SecondaryButton, SmallButton } from "../atoms/Button";
+import { SmallButton } from "../atoms/Button";
 import { EmptyProperty } from "../atoms/EmptyProperty";
 import { InformationLink } from "../atoms/InformationLink";
 import { CloseIcon } from "../icons/CloseIcon";
 import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
-import { InputBorderless, InputGroup, InputWithDropdown } from "./Input";
+import { InputGroup, InputUnderlined } from "./Input";
 import { DropdownItem, StyledSelect } from "./LanguageSelector";
 import { useDebounce } from "tiny-use-debounce";
 import { PaddingComponentSmall } from "../atoms/PaddingComponent";
-import { shuffle } from "ionicons/icons";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -71,7 +70,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                 <InputGroup key={key}>
                   {/* Reorderable tab will go here */}
                   <PaddingComponentSmall />
-                  <InputWithDropdown
+                  <InputUnderlined
                     type="text"
                     id={key}
                     value={field.value}

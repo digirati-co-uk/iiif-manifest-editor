@@ -87,12 +87,13 @@ export const _Input = styled.input`
   }
 `;
 
-export const InputWithDropdown = styled(_Input)`
+export const InputUnderlined = styled(_Input)`
   border-radius: unset;
   height: 2rem;
   background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
   border-top: none;
   border-left: none;
+  border-right: none;
 `;
 
 export const InputGroup = styled(FlexContainer)`
@@ -110,13 +111,13 @@ export const InputGroup = styled(FlexContainer)`
 `;
 
 export const Input: typeof _Input = ((props: any) =>
-  props.type === "checkbox" ? <CheckboxInput {...props} /> : <_Input {...props} />) as any;
+  props.type === "checkbox" ? <CheckboxInput {...props} /> : <InputUnderlined {...props} />) as any;
 
 export const HighlightInput: typeof _Input = ((props: any) => {
   const ref = useRef<HTMLInputElement>(null);
 
   return (
-    <Input
+    <InputUnderlined
       ref={ref}
       onFocus={() => {
         if (ref.current) {

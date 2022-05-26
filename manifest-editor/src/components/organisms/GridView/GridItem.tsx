@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/vault-helpers";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useCanvas, useManifest } from "react-iiif-vault";
 import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
 import { DropdownContent } from "../../../atoms/Dropdown";
@@ -13,12 +13,13 @@ import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import { ModalButton } from "../../../madoc/components/ModalButton";
 import { NewCanvas } from "../../widgets/NewCanvas";
+import { Reference } from "@iiif/presentation-3";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
   canvasId: string;
   reorder: (fromPosition: number, toPosition: number) => void;
-  remove: (fromPosition: number) => void;
+  remove: (fromPosition: number, ref: Reference) => void;
   index: number;
 }> = ({ handleChange, canvasId, reorder, remove, index }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
@@ -27,8 +28,8 @@ export const GridItem: React.FC<{
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
   const manifest = useManifest();
-  const appState = useAppState();
-  const currentCanvasId = appState.state.canvasId;
+  const { state, setState } = useAppState();
+  const currentCanvasId = state.canvasId;
   const dispatchType = "items";
 
   const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -45,8 +46,10 @@ export const GridItem: React.FC<{
     setContextMenuVisible(true);
   };
 
+  const changeCanvas = useCallback(() => setState({ canvasId }), [canvasId, setState]);
+
   return (
-    <Group onClick={() => appState.setState({ canvasId })}>
+    <Group onClick={changeCanvas}>
       {contextMenuVisible && (
         <DropdownContent
           style={{ top: anchorPoint.y, left: anchorPoint.x }}
@@ -93,7 +96,7 @@ export const GridItem: React.FC<{
           <HorizontalDivider />
           <DropdownItem
             onClick={() => {
-              remove(index);
+              remove(index, { id: canvasId, type: "Canvas" });
               setContextMenuVisible(false);
             }}
           >
@@ -112,7 +115,7 @@ export const GridItem: React.FC<{
         >
           <ErrorBoundary>
             <Thumbnail
-              onClick={() => appState.setState({ canvasId })}
+              onClick={changeCanvas}
               width={editorContext?.thumbnailSize?.w}
               height={editorContext?.thumbnailSize?.h}
             />
