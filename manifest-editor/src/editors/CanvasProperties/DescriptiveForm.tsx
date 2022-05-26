@@ -1,8 +1,7 @@
-import { useContext } from "react";
 import { LanguageMapInputCanvas } from "./LanguageMapInputCanvas";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { SingleValueInput } from "./SingleValueInputCanvas";
 import { DateForm } from "./DateForm";
+import { ThumbnailForm } from "./ThumbnailForm";
 
 export const DescriptiveForm = () => {
   return (
@@ -18,7 +17,7 @@ export const DescriptiveForm = () => {
       <SingleValueInput dispatchType={"rights"} />
       <SingleValueInput dispatchType={"behavior"} />
       <DateForm />
-      {/* <div>Time</div>  */}
+      <ThumbnailForm />
     </>
   );
 };
