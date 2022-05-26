@@ -15,6 +15,7 @@ import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { useState } from "react";
 import { MenuIcon } from "../../icons/MenuIcon";
+import { PreviewButton } from "../../components/organisms/PreviewButton/PreviewButton";
 
 export function AppHeader() {
   const { current: currentProject } = useProjectContext();
@@ -82,6 +83,8 @@ export function AppHeader() {
         </Draft>
         {/*<ContextButton>{state.canvasId ? "Canvas" : "Manifest"}</ContextButton>*/}
       </ProjectPreview>
+
+      <PreviewButton />
 
       {/*<IconButton>•</IconButton>*/}
     </Container>
