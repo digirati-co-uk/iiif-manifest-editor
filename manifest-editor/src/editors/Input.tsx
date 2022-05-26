@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import styled, { css } from "styled-components";
+import { FlexContainer } from "../components/layout/FlexContainer";
 
 export const InputLabel = styled.label<{
   $caps?: boolean;
@@ -83,6 +84,28 @@ export const _Input = styled.input`
   &:focus {
     border-color: ${(props: any) => props.theme.color.main || "main"};
     outline: none;
+  }
+`;
+
+export const InputWithDropdown = styled(_Input)`
+  border-radius: unset;
+  height: 2rem;
+  background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  border-top: none;
+  border-left: none;
+`;
+
+export const InputGroup = styled(FlexContainer)`
+  width: 100%;
+  padding: none;
+  .remove {
+    visibility: hidden;
+  }
+  :hover {
+    background-color: ${(props: any) => props.theme.color.highlight || "yellow"};
+    .remove {
+      visibility: visible;
+    }
   }
 `;
 
