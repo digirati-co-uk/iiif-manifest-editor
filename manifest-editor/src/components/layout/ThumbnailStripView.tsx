@@ -1,8 +1,9 @@
+import styled from "styled-components";
 import { ThumbnailStrip } from "../organisms/ThumbnailStrip";
 import { Tree } from "../../navigation/tree/Tree";
-
-import styled from "styled-components";
 import { ViewSelector } from "../../atoms/ViewSelector";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useAppState } from "../../shell/AppContext/AppContext";
 
 const ContentSelectorContainer = styled.div`
    {
@@ -25,11 +26,19 @@ const ContentSelectorContainer = styled.div`
 export const ThumbnailStripView: React.FC<{
   view: "tree" | "thumbnails" | "grid" | "noNav" | "fullEditor";
 }> = ({ view }) => {
+  const editorContext = useManifestEditor();
+  const appState = useAppState();
+
+  const handleChange = (itemId: string) => {
+    appState.setState({ canvasId: itemId });
+    editorContext?.changeSelectedProperty("canvas");
+  };
+
   return (
     <>
       {(view === "thumbnails" || view === "tree") && (
         <ContentSelectorContainer>
-          {view === "thumbnails" && <ThumbnailStrip />}
+          {view === "thumbnails" && <ThumbnailStrip handleChange={handleChange} />}
           {view === "tree" && <Tree />}
           <ViewSelector />
         </ContentSelectorContainer>

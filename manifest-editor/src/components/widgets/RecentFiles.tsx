@@ -1,24 +1,16 @@
-import { IIIFBuilder } from "iiif-builder";
-import { ManifestNormalized } from "@iiif/presentation-3";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { RecentLabel, RecentManifestCard, RecentThumbnails } from "../../atoms/RecentFilesWidget";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useApps } from "../../shell/AppContext/AppContext";
 
-type RecentFiles = {
-  recentManifests: ManifestNormalized[] | undefined;
-  changeManifest: (id: string) => void;
-};
-
-export const RecentFiles: React.FC<RecentFiles> = ({ recentManifests, changeManifest }) => {
-  const { changeSelectedApplication } = useShell();
+export const RecentFiles: React.FC = () => {
+  const { changeApp } = useApps();
   const { allProjects, actions } = useProjectContext();
 
   function switchProject(id: string) {
     actions.switchProject(id);
-    changeSelectedApplication("ManifestEditor");
+    changeApp({ id: "manifest-editor" });
   }
 
   return (

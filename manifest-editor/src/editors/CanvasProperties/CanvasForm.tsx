@@ -9,14 +9,14 @@ import { MediaForm } from "./MediaForm";
 import { MetadataForm } from "./MetadataForm";
 import { TechnicalForm } from "./TechnicalForm";
 
-export const CanvasForm = () => {
-  const editorContext = useManifestEditor();
-
+export const CanvasForm: React.FC<{ current: number; setCurrent: (idx: number) => void }> = ({
+  current = 0,
+  setCurrent,
+}) => {
   const canvas = useCanvas();
 
   return (
     <>
-      <small>CanvasID: {canvas?.id}</small>
       <TabPanel
         menu={[
           {
@@ -44,8 +44,8 @@ export const CanvasForm = () => {
             component: <AnnotationForm />,
           },
         ]}
-        switchPanel={(idx) => editorContext?.changeSelectedProperty("canvas", idx)}
-        selected={editorContext?.selectedPanel || 0}
+        selected={current}
+        switchPanel={setCurrent}
         key={canvas?.id}
       />
     </>
