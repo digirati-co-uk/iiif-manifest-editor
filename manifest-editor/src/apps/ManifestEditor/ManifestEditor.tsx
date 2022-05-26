@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
-import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { Editor } from "../../atoms/Editor";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { ExpandTab } from "../../atoms/ExpandTab";
@@ -8,26 +7,26 @@ import { ThumbnailStripView } from "../../components/layout/ThumbnailStripView";
 import { EditorPanel } from "../../components/layout/EditorPanel";
 import { Toolbar } from "../../components/layout/Toolbar";
 import { NewCanvasModal } from "../../components/modals/NewCanvasModal";
-import { CanvasView } from "../../components/organisms/CanvasView";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
+import { useAppState } from "../../shell/AppContext/AppContext";
+import { CanvasContext } from "react-iiif-vault";
 
 export function ManifestEditor() {
+  const editorContext = useManifestEditor();
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const manifest = useManifest();
-  const { addCanvasModalOpen, setAddCanvasModalOpen, view, languages } = useManifestEditor();
-  const shell = useShell();
+  const { addCanvasModalOpen, setAddCanvasModalOpen, view } = useManifestEditor();
+  const appState = useAppState();
 
-  useEffect(() => {
-    if (!manifest) {
-      shell.changeSelectedApplication("Splash");
-    }
-  }, [manifest]);
+  if (!manifest) {
+    return null;
+  }
 
   return (
-    <>
+    <CanvasContext canvas={appState.state?.canvasId}>
       {addCanvasModalOpen && <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />}
       <ErrorBoundary>
         <Toolbar>
@@ -39,22 +38,30 @@ export function ManifestEditor() {
           <ErrorBoundary>
             <ThumbnailStripView view={view} />
             <ExpandTab />
-            <CanvasView />
-            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
+            <CanvasPanelViewer />
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} />
           </ErrorBoundary>
         )}
         {view === "grid" && (
           <ErrorBoundary>
-            <GridView />
-            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
+            <GridView
+              handleChange={(itemId, thumbnail) => {
+                appState.setState({ canvasId: itemId });
+                editorContext?.changeSelectedProperty("canvas");
+                if (thumbnail) {
+                  editorContext?.setView("thumbnails");
+                }
+              }}
+            />
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} />
           </ErrorBoundary>
         )}
         {view === "fullEditor" && (
           <ErrorBoundary>
-            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} languages={languages} />
+            <EditorPanel open={editorPanelOpen} close={() => setEditorPanelOpen(false)} />
           </ErrorBoundary>
         )}
       </Editor>
-    </>
+    </CanvasContext>
   );
 }

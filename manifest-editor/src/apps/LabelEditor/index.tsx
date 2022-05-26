@@ -1,13 +1,13 @@
-import { Layout } from "../../shell/Layout/Layout";
 import { LayoutPanel } from "../../shell/Layout/Layout.types";
 import { GridIcon } from "../../icons/GridIcon";
 import { PreviewIcon } from "../../icons/PreviewIcon";
-import { ManifestEditorProvider } from "../ManifestEditor/ManifestEditor.context";
 import { SingleLabelEditor } from "./components/SingleLabelEditor";
 import { CanvasList } from "./components/CanvasList";
 import { CurrentCanvas } from "./components/CurrentCanvas";
 
-const leftPanels: LayoutPanel[] = [
+export default { id: "label-editor", title: "Labels", project: true };
+
+export const leftPanels: LayoutPanel[] = [
   {
     id: "canvas-list",
     label: "Canvas list",
@@ -16,7 +16,7 @@ const leftPanels: LayoutPanel[] = [
   },
 ];
 
-const centerPanels: LayoutPanel[] = [
+export const centerPanels: LayoutPanel[] = [
   {
     id: "current-canvas",
     label: "Current canvas",
@@ -25,25 +25,14 @@ const centerPanels: LayoutPanel[] = [
   },
 ];
 
-const rightPanels: LayoutPanel[] = [
+export const rightPanels: LayoutPanel[] = [
   {
     id: "label-editor",
     label: "Label editor",
     icon: <PreviewIcon />,
-    pinnable: true,
-    render: (state) => <SingleLabelEditor resource={state} />,
+    render: ({ id }) => <SingleLabelEditor resource={id ? { id, type: "Canvas" } : undefined} />,
+    options: {
+      pinnable: true,
+    },
   },
 ];
-
-export function LabelEditor() {
-  return (
-    <ManifestEditorProvider defaultLanguages={[]} behaviorProperties={[]}>
-      <Layout
-        //
-        leftPanels={leftPanels}
-        centerPanels={centerPanels}
-        rightPanels={rightPanels}
-      />
-    </ManifestEditorProvider>
-  );
-}

@@ -1,7 +1,8 @@
-import { Tree } from "../../navigation/tree/Tree";
-
 import styled from "styled-components";
+import { Tree } from "../../navigation/tree/Tree";
 import { ViewSelector } from "../../atoms/ViewSelector";
+import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useAppState } from "../../shell/AppContext/AppContext";
 import { GridList } from "../organisms/GridView/GridList";
 import { FlexContainerColumn } from "./FlexContainer";
 
@@ -27,14 +28,26 @@ const ContentSelectorContainer = styled.div`
 export const ThumbnailStripView: React.FC<{
   view: "tree" | "thumbnails" | "grid" | "noNav" | "fullEditor";
 }> = ({ view }) => {
+  const editorContext = useManifestEditor();
+  const appState = useAppState();
+
+  const handleChange = (itemId: string, thumbnail?: boolean) => {
+    appState.setState({ canvasId: itemId });
+    editorContext?.changeSelectedProperty("canvas");
+    if (thumbnail) {
+      editorContext?.setView("thumbnails");
+    }
+  };
+
   return (
     <>
       {(view === "thumbnails" || view === "tree") && (
         <FlexContainerColumn style={{ alignItems: "center" }}>
           <ContentSelectorContainer>
-            {view === "thumbnails" && <GridList />}
+            {view === "thumbnails" && <GridList handleChange={handleChange} />}
             {view === "tree" && <Tree />}
           </ContentSelectorContainer>
+
           <ViewSelector />
         </FlexContainerColumn>
       )}

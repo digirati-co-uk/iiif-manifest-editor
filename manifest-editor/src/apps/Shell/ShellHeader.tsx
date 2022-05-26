@@ -1,18 +1,15 @@
-import { useContext, useState } from "react";
-
+import { useState } from "react";
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
-import { useManifest } from "../../hooks/useManifest";
 import { PreviewModal } from "../../components/modals/PreviewModal";
 import { Persistance } from "./Shell";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { DownIcon } from "../../icons/DownIcon";
-
-import { getValue } from "@iiif/vault-helpers";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useApps } from "../../shell/AppContext/AppContext";
+import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
 
 export const ShellHeader: React.FC<{
   savePreviewLink: () => Promise<void>;
@@ -35,17 +32,13 @@ export const ShellHeader: React.FC<{
   showAgain,
   setShowPreviewModal,
 }) => {
-  const manifest = useManifest();
+  const { current: currentProject } = useProjectContext();
+  const { apps, changeApp } = useApps();
   const [appMenuOpen, setAppMenuOpen] = useState(false);
-  const shellContext = useShell();
 
   const getTitle = () => {
-    if (manifest) {
-      return (
-        <h5>
-          IIIF {manifest.type} : {getValue(manifest.label)}
-        </h5>
-      );
+    if (currentProject) {
+      return <h5>{currentProject.name}</h5>;
     }
     return <h5>IIIF Manifest Editor</h5>;
   };
@@ -63,7 +56,7 @@ export const ShellHeader: React.FC<{
       )}
       <ShellHeaderStrip>
         <FlexContainer>
-          <Button onClick={() => shellContext.changeSelectedApplication("Splash")} aria-label="Go to the homepage">
+          <Button onClick={() => changeApp({ id: "splash" })} aria-label="Go to the homepage">
             <ManifestEditorIcon />
           </Button>
           <Dropdown>
@@ -72,36 +65,40 @@ export const ShellHeader: React.FC<{
             </Button>
             {appMenuOpen && (
               <DropdownContent onMouseLeave={() => setAppMenuOpen(false)}>
-                <Button
-                  onClick={() => {
-                    setAppMenuOpen(!appMenuOpen);
-                    shellContext.changeSelectedApplication("ManifestEditor");
-                  }}
-                  title="Open the Manifest Editor"
-                  aria-label="Open the manifest editor"
-                >
-                  Manifest Editor
-                </Button>
-                <Button
-                  onClick={() => {
-                    setAppMenuOpen(!appMenuOpen);
-                    shellContext.changeSelectedApplication("Browser");
-                  }}
-                  title="Open the IIIF Browser"
-                  aria-label="Open the IIIF browser"
-                >
-                  IIIF Browser
-                </Button>
-                <Button
-                  onClick={() => {
-                    setAppMenuOpen(!appMenuOpen);
-                    shellContext.changeSelectedApplication("Labels" as any);
-                  }}
-                  title="Label editor"
-                  aria-label="Label editor"
-                >
-                  Labels
-                </Button>
+                {currentProject ? (
+                  <Button
+                    onClick={() => {
+                      setAppMenuOpen(!appMenuOpen);
+                      changeApp({ id: "manifest-editor" });
+                    }}
+                    title="Open the Manifest Editor"
+                    aria-label="Open the manifest editor"
+                  >
+                    Manifest Editor
+                  </Button>
+                ) : null}
+
+                {Object.values(apps).map((app) => {
+                  if (!currentProject && app.metadata.project) {
+                    return null;
+                  }
+
+                  if (app.metadata.type === "launcher") {
+                    return null;
+                  }
+
+                  return (
+                    <Button
+                      key={app.metadata.title}
+                      onClick={() => {
+                        setAppMenuOpen(!appMenuOpen);
+                        changeApp({ id: app.metadata.id });
+                      }}
+                    >
+                      {app.metadata.title}
+                    </Button>
+                  );
+                })}
               </DropdownContent>
             )}
           </Dropdown>

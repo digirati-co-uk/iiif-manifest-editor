@@ -1,8 +1,7 @@
 import { Reference } from "@iiif/presentation-3";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import invariant from "tiny-invariant";
-import { useVault } from "react-iiif-vault";
-import { expect } from "vitest";
+import { useVault, useVaultSelector } from "react-iiif-vault";
 
 interface ResourceEditingContext {
   resource: Reference<any> | null;
@@ -29,9 +28,9 @@ export function useResource<T = Record<string, never>>(): T & Reference<any> {
 
   const { id, type } = resource;
 
-  const fullResource = useMemo(() => {
+  const fullResource = useVaultSelector(() => {
     return vault.get({ id, type });
-  }, [vault, id, type]);
+  }, [id, type]);
 
   return fullResource as T & Reference<any>;
 }

@@ -1,17 +1,13 @@
-import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import { v4 } from "uuid";
 import { MediaBody } from "../../types/media-body";
 
 export const CanvasThumbnailForm = () => {
   const editorContext = useManifestEditor();
-  const shellContext = useShell();
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
@@ -42,20 +38,19 @@ export const CanvasThumbnailForm = () => {
     const newThumbnailReferences = canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
     if (canvas) {
       newThumbnailReferences.push({ id: body.id, type: "ContentResource" });
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(canvas, "thumbnail", newThumbnailReferences);
     }
     // get the ref we need using the index:
     const reference = canvas?.thumbnail[-1];
     // dispatch a change to this reference
-    shellContext.setUnsavedChanges(true);
+
     if (reference) {
       vault.modifyEntityField(reference, "width", body.width);
       vault.modifyEntityField(reference, "height", body.height);
       vault.modifyEntityField(reference, "format", body.format);
       vault.modifyEntityField(reference, "type", body.type);
     }
-    shellContext.setUnsavedChanges(true);
   };
 
   const reorder = (fromPosition: number, toPosition: number) => {
@@ -63,7 +58,6 @@ export const CanvasThumbnailForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "thumbnail", newOrder);
     }
   };
@@ -72,7 +66,7 @@ export const CanvasThumbnailForm = () => {
     const copy = canvas && canvas.thumbnail ? [...canvas.thumbnail] : [];
     if (canvas && (index || index === 0)) {
       copy.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       // with the item removed
       vault.modifyEntityField(canvas, "thumbnail", copy);
@@ -94,7 +88,7 @@ export const CanvasThumbnailForm = () => {
     reorder(canvas.thumbnail.length, index);
     // Remove the last one which should now be the one we wanted to replace.
     remove(canvas.thumbnail.length);
-    shellContext.setUnsavedChanges(true);
+
     editorContext?.changeSelectedProperty("canvas", 2);
   };
 

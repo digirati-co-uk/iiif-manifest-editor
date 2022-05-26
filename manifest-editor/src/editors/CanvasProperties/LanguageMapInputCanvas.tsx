@@ -1,23 +1,19 @@
-import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
-// NB remember to switch this out when "react-iiif-vault bug fixed"
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { InformationLink } from "../../atoms/InformationLink";
 import { LanguageFieldEditor } from "../LanguageFieldEditor";
+import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 
 export const LanguageMapInputCanvas: React.FC<{
   // Add to this list as we go
   dispatchType: "label" | "summary";
-  languages: Array<string>;
+  languages?: Array<string>;
   guidanceReference?: string;
 }> = ({ dispatchType, languages, guidanceReference }) => {
-  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
+  const { defaultLanguages } = useConfig();
   const changeHandler = (data: any) => {
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, data.toInternationalString());
     }
   };
@@ -30,7 +26,7 @@ export const LanguageMapInputCanvas: React.FC<{
             label={dispatchType}
             fields={canvas[dispatchType] || {}}
             onSave={(data: any) => changeHandler(data)}
-            availableLanguages={languages}
+            availableLanguages={languages || defaultLanguages}
             guidanceReference={guidanceReference}
           />
         </ErrorBoundary>

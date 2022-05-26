@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import { useShell } from "../../context/ShellContext/ShellContext";
-import { Button, SecondaryButton } from "../../atoms/Button";
+import { Button } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { Input } from "../Input";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
@@ -17,7 +16,6 @@ export const ExternalResource: React.FC<{
 
   guidanceReference?: string;
 }> = ({ dispatchType, guidanceReference }) => {
-  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
   const [redraw, setRedraw] = useState(0);
@@ -29,7 +27,7 @@ export const ExternalResource: React.FC<{
         id: newValue,
         type: "ContentResource",
       };
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, dispatchType, newContentResource);
     }
   };
@@ -39,7 +37,7 @@ export const ExternalResource: React.FC<{
 
     if (manifest && (index || index === 0)) {
       newContentResource.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, dispatchType, newContentResource);
     }
   };
@@ -48,7 +46,6 @@ export const ExternalResource: React.FC<{
     const newContentResource = manifest ? [...manifest[dispatchType]] : [];
     newContentResource.push({ id: "", type: "ContentResource" });
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newContentResource);
     }
   };
@@ -58,7 +55,6 @@ export const ExternalResource: React.FC<{
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };

@@ -1,26 +1,22 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useVault } from "react-iiif-vault";
+import React from "react";
+import { useExternalCollection } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useApps } from "../../shell/AppContext/AppContext";
+import { Loading } from "../../atoms/Loading";
 
 export const IIIFBrowser: React.FC = () => {
-  const vault = useVault();
-  const [collection, setCollection] = useState<any>({});
-  const shellContext = useShell();
+  const { currentApp } = useApps();
+  const collectionSnippet = currentApp?.args;
+  const { manifest: collection, isLoaded } = useExternalCollection(collectionSnippet);
 
-  useEffect(() => {
-    const waitData = async () => {
-      const data = await vault.load(shellContext.resourceID || "");
-      setCollection(data);
-    };
-    waitData();
-  });
+  if (!isLoaded || !collection) {
+    return <Loading />;
+  }
 
   return (
     <ul>
       <h4>
-        You are browsing:
-        <a href={shellContext.resourceID || ""}>{shellContext.resourceID} </a>
+        You are browsing: <a href={collection.id || ""}>{getValue(collection.label) || collection.id} </a>
       </h4>
       {collection &&
         collection.items &&

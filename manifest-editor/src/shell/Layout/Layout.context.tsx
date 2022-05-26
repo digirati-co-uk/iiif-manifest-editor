@@ -1,17 +1,44 @@
 import { createContext, memo, ReactNode, useContext, useMemo, useReducer, useState } from "react";
-import { LayoutContext, LayoutProviderProps, PinnablePanelActions } from "./Layout.types";
+import { LayoutContext, LayoutProps, LayoutProviderProps, PinnablePanelActions } from "./Layout.types";
 import { getDefaultLayoutState, layoutReducer } from "./Layout.reducer";
 import { usePanelActions } from "./Layout.hooks";
 import invariant from "tiny-invariant";
+import { useConfig } from "../ConfigContext/ConfigContext";
 
-const LayoutReactContext = createContext<LayoutContext | null>(null);
+const LayoutPropsReactContext = createContext<LayoutProviderProps & { loading?: true }>(null as any);
+const LayoutActionsReactContext = createContext<LayoutContext["actions"]>(null as any);
+const LayoutStateReactContext = createContext<LayoutContext["state"]>(null as any);
 
 export function useLayoutProvider() {
-  const context = useContext(LayoutReactContext);
+  const available = useContext(LayoutPropsReactContext);
+  const actions = useContext(LayoutActionsReactContext);
+  const state = useContext(LayoutStateReactContext);
 
-  invariant(context, "Cannot set layouts outside of <LayoutProvider />");
+  return useMemo(() => {
+    return { actions, state, ...available };
 
-  return context;
+    // The actions have a fully stable identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [available, state]);
+}
+
+export function useLayoutState() {
+  return useContext(LayoutStateReactContext);
+}
+
+export function useLayoutActions() {
+  return useContext(LayoutActionsReactContext);
+}
+
+export function useAvailableLayouts() {
+  return useContext(LayoutPropsReactContext);
+}
+
+function parse(args: string | { id: string; state?: any }, _state?: any) {
+  if (typeof args === "string") {
+    return { id: args, state: _state };
+  }
+  return args;
 }
 
 // There should only ever be one of these, this is for holding the state at the top.
@@ -23,9 +50,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     rightPanels: [],
   });
   const [state, dispatch] = useReducer(layoutReducer, undefined, getDefaultLayoutState);
-
-  // Fully stable identity.
-  const actions: LayoutContext["actions"] = {
+  const actions = {
     setAvailable,
     centerPanel: usePanelActions("centerPanel", dispatch),
     leftPanel: usePanelActions("leftPanel", dispatch),
@@ -33,12 +58,67 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     pinnedRightPanel: usePanelActions("pinnedRightPanel", dispatch) as PinnablePanelActions,
   };
 
-  const context: LayoutContext = useMemo(() => {
-    return { actions, state, ...available };
+  function find(id: any) {
+    const right = available.rightPanels.find((r) => r.id === id);
+    if (right) {
+      return [right, actions.rightPanel] as const;
+    }
 
-    // The actions have a fully stable identity.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [available, state]);
+    const center = available.centerPanels.find((r) => r.id === id);
+    if (center) {
+      return [center, actions.centerPanel] as const;
+    }
 
-  return <LayoutReactContext.Provider value={context}>{props.children}</LayoutReactContext.Provider>;
+    const left = available.leftPanels.find((r) => r.id === id);
+    if (left) {
+      return [left, actions.leftPanel] as const;
+    }
+
+    invariant(false, `Was not able to find panel with id "${id}"`);
+  }
+
+  function open(args: string | { id: string; state?: any }, _state?: any): void {
+    const { id, state } = parse(args, _state);
+    const [found, actions] = find(id);
+    actions.open({
+      id,
+      state: { ...(found.defaultState || {}), ...(state || {}) },
+    });
+  }
+
+  function change(args: string | { id: string; state?: any }, _state?: any): void {
+    const { id, state } = parse(args, _state);
+    const [found, actions] = find(id);
+    actions.change({
+      id,
+      state: { ...(found.defaultState || {}), ...(state || {}) },
+    });
+  }
+
+  function close(args: string | { id: string; state?: any }, _state?: any): void {
+    const { id } = parse(args, _state);
+    const [, actions] = find(id);
+    actions.close();
+  }
+
+  function toggle(args: string | { id: string; state?: any }, _state?: any): void {
+    const { id } = parse(args, _state);
+    const [, actions] = find(id);
+    actions.toggle();
+  }
+
+  const otherActions = {
+    open,
+    change,
+    close,
+    toggle,
+  };
+
+  return (
+    <LayoutPropsReactContext.Provider value={available}>
+      <LayoutActionsReactContext.Provider value={useMemo(() => ({ ...actions, ...otherActions }), [available])}>
+        <LayoutStateReactContext.Provider value={state}>{props.children}</LayoutStateReactContext.Provider>
+      </LayoutActionsReactContext.Provider>
+    </LayoutPropsReactContext.Provider>
+  );
 });

@@ -1,20 +1,12 @@
-import { useContext } from "react";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-
 import { useVault } from "react-iiif-vault";
-// NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
-import { InformationLink } from "../../atoms/InformationLink";
-import { CalltoButton } from "../../atoms/Button";
-import { FlexContainer } from "../../components/layout/FlexContainer";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
+import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 
 export const MetadataForm: React.FC<{}> = () => {
-  const editorContext = useManifestEditor();
-  const shellContext = useShell();
+  const { defaultLanguages } = useConfig();
   const manifest = useManifest();
   const vault = useVault();
 
@@ -23,7 +15,7 @@ export const MetadataForm: React.FC<{}> = () => {
     const newMetaData = manifest && manifest[dispatchType] ? [...manifest[dispatchType]] : [];
     if (manifest && (index || index === 0) && property) {
       newMetaData[index][property] = data.toInternationalString();
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, dispatchType, newMetaData);
     }
   };
@@ -33,7 +25,7 @@ export const MetadataForm: React.FC<{}> = () => {
 
     if (manifest && (index || index === 0)) {
       newMetaData.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       vault.modifyEntityField(manifest, dispatchType, newMetaData);
     }
   };
@@ -42,7 +34,6 @@ export const MetadataForm: React.FC<{}> = () => {
     const withNew = manifest ? [...manifest[dispatchType]] : [];
     withNew.push({ label: {}, value: {} });
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, withNew);
     }
   };
@@ -52,11 +43,9 @@ export const MetadataForm: React.FC<{}> = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };
-  const languages = editorContext?.languages || ["en", "none"];
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#metadata";
 
   return (
@@ -66,11 +55,9 @@ export const MetadataForm: React.FC<{}> = () => {
         {manifest && (
           <ErrorBoundary>
             <MetadataEditor
-              // @ts-ignore
-              key={manifest.metadata}
               fields={manifest[dispatchType]}
               onSave={(data: any, index?: number, property?: "label" | "value") => changeHandler(data, index, property)}
-              availableLanguages={languages}
+              availableLanguages={defaultLanguages}
               removeItem={removeItem}
               reorder={reorder}
             />

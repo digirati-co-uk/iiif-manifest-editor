@@ -9,7 +9,7 @@ export const StructuralForm = () => {
     <>
       <>
         <h3>items</h3>
-        <SmallThumbnailStrip />
+        {/*<SmallThumbnailStrip  />*/}
       </>
       <>
         <h3>annotations</h3>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { AddManifestModal } from "../../components/modals/AddManifestModal";
 import { Button } from "../../atoms/Button";
 import { useManifest } from "../../hooks/useManifest";
@@ -7,10 +7,11 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { ExportModal } from "../../components/modals/ExportModal";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { NewManifestModal } from "../../components/modals/NewManifestModal";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useApps } from "../../shell/AppContext/AppContext";
+import { ModalButton } from "../../madoc/components/ModalButton";
 
 export const ShellOptions: React.FC<{
-  save: () => void;
+  save: null | (() => void);
   previouslySaved: boolean;
   permalink: string | undefined;
   saveAsChoice: number;
@@ -18,8 +19,8 @@ export const ShellOptions: React.FC<{
   forceShowModal: boolean;
   setForceShowModal: (boolean: boolean) => void;
 }> = ({ save, previouslySaved, permalink, saveAsChoice, setSaveAsChoice, forceShowModal, setForceShowModal }) => {
-  const shellContext = useShell();
-  const [addModalVisible, setaddModalVisible] = useState(false);
+  const { changeApp } = useApps();
+  const [addModalVisible, setAddModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
   const [newModalVisible, setNewModalVisible] = useState(false);
@@ -30,13 +31,15 @@ export const ShellOptions: React.FC<{
   const manifest = useManifest();
 
   useEffect(() => {
-    setaddModalVisible(false);
+    setAddModalVisible(false);
   }, [manifest]);
 
   const saveClickHandler = () => {
     setFileOpen(!fileOpen);
     if (previouslySaved) {
-      save();
+      if (save) {
+        save();
+      }
     } else {
       setSaveModalVisible(true);
     }
@@ -44,10 +47,10 @@ export const ShellOptions: React.FC<{
 
   return (
     <>
-      {addModalVisible && (
-        <AddManifestModal manifest={manifest ? manifest?.id : ""} close={() => setaddModalVisible(false)} save={save} />
+      {addModalVisible && save && (
+        <AddManifestModal manifest={manifest ? manifest?.id : ""} close={() => setAddModalVisible(false)} />
       )}
-      {(saveModalVisible || forceShowModal) && (
+      {(saveModalVisible || forceShowModal) && save && (
         <SaveModal
           close={() => {
             setSaveModalVisible(false);
@@ -62,29 +65,27 @@ export const ShellOptions: React.FC<{
       )}
       {exportModalVisible && <ExportModal close={() => setExportModalVisible(false)} />}
 
-      {newModalVisible && <NewManifestModal close={() => setNewModalVisible(false)} save={save} />}
       <FlexContainer>
         <Dropdown>
           <Button aria-label="open file menu" onClick={() => setFileOpen(!fileOpen)}>
             File
           </Button>
-          {fileOpen && (
+          <div style={fileOpen ? { opacity: 1, pointerEvents: "visible" } : { visibility: "hidden", opacity: 0 }}>
             <DropdownContent onMouseLeave={() => setFileOpen(false)}>
-              <Button
-                onClick={() => {
-                  setFileOpen(false);
-                  setNewModalVisible(!newModalVisible);
-                }}
+              <ModalButton
+                as={Button}
                 aria-label="Start a new manifest"
                 title="Start a new Manifest"
-                color={"#6b6b6b"}
+                modalSize="lg"
+                onOpen={() => setFileOpen(false)}
+                render={(props) => <NewManifestModal {...props} />}
               >
                 New
-              </Button>
+              </ModalButton>
               <Button
                 onClick={() => {
                   setFileOpen(false);
-                  setaddModalVisible(!addModalVisible);
+                  setAddModalVisible(!addModalVisible);
                 }}
                 aria-label="Load an existing manifest"
                 title="Load an existing manifest"
@@ -92,7 +93,7 @@ export const ShellOptions: React.FC<{
               >
                 Open
               </Button>
-              <Button aria-label="Save" onClick={() => saveClickHandler()}>
+              <Button aria-label="Save" disabled={!save} onClick={() => saveClickHandler()}>
                 Save
               </Button>
               <Button
@@ -114,7 +115,7 @@ export const ShellOptions: React.FC<{
                 Export
               </Button>
             </DropdownContent>
-          )}
+          </div>
         </Dropdown>
         <Dropdown onMouseLeave={() => setHelpOpen(false)}>
           <Button aria-label="Help menu" onClick={() => setHelpOpen(!helpOpen)}>
@@ -126,7 +127,7 @@ export const ShellOptions: React.FC<{
                 aria-label="About"
                 onClick={() => {
                   setHelpOpen(!helpOpen);
-                  shellContext.changeSelectedApplication("About");
+                  changeApp({ id: "about" });
                 }}
               >
                 About

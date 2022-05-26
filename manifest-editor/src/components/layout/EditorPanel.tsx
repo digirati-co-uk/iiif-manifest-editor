@@ -22,7 +22,6 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
   padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   height: 100%;
   z-index: 12;
-  width: 500px:
   background: ${(props: any) => props.theme.color.white || "white"};
   border-left: 1px solid rgba(5, 42, 68, 0.2);
   font-size: 0.85em;
@@ -51,7 +50,6 @@ export const EditorPanelContainerOpen = styled(FlexContainerColumn)<{
 export const EditorPanel: React.FC<{
   open: boolean;
   close: () => void;
-  languages: Array<string>;
 }> = ({ close, open }) => {
   const editorContext = useManifestEditor();
   const [fullScreen, setFullScreen] = useState(false);
@@ -101,8 +99,18 @@ export const EditorPanel: React.FC<{
                 <CloseIcon />
               </Button>
             </FlexContainerRow>
-            {editorContext?.selectedProperty === "manifest" && <ManifestForm />}
-            {editorContext?.selectedProperty === "canvas" && <CanvasForm />}
+            {editorContext?.selectedProperty === "manifest" && (
+              <ManifestForm
+                current={editorContext.selectedPanel || 0}
+                setCurrent={(idx) => editorContext?.changeSelectedProperty("manifest", idx)}
+              />
+            )}
+            {editorContext?.selectedProperty === "canvas" && (
+              <CanvasForm
+                current={editorContext?.selectedPanel || 0}
+                setCurrent={(idx) => editorContext?.changeSelectedProperty("canvas", idx)}
+              />
+            )}
             {editorContext?.selectedProperty === "canvas item" && <MediaForm />}
             {editorContext?.selectedProperty === "canvas thumbnail" && <CanvasThumbnailForm />}
             {editorContext?.selectedProperty === "manifest thumbnail" && <ManifestThumbnailForm />}

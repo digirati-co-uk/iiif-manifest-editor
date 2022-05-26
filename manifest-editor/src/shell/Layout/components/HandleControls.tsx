@@ -9,6 +9,7 @@ export const HandleContainer = styled.div`
   position: relative;
   width: 1px;
   background: rgba(0, 0, 0, 0.2);
+  z-index: 50;
 `;
 
 const HandleControl = styled.div`
@@ -55,7 +56,7 @@ const OpenControl = styled(HandleControl)<{ $dir: "left" | "right" }>`
   pointer-events: visible;
   width: 21px;
   margin-bottom: auto;
-  margin-top: 3em;
+  margin-top: 4.5em;
   cursor: pointer;
   border-radius: ${(props) => (props.$dir === "right" ? "5px 0 0 5px" : "0 5px 5px 0")};
 

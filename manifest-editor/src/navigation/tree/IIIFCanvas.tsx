@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/vault-helpers";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { Container, ContainerColumn, KeyValuePairString, Expanded, KeyCanvas, Indentation } from "./IIIFElementsShared";
 
@@ -11,7 +11,7 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import { SubdirectoryIcon } from "../../icons/SubdirectoryIcon";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
+import { useAppState } from "../../shell/AppContext/AppContext";
 
 export const IIIFCanvas: React.FC<{
   type: string;
@@ -22,13 +22,14 @@ export const IIIFCanvas: React.FC<{
   const label = getValue(canvas?.label);
   const [open, setOpen] = useState(false);
   const vault = useVault();
-  const shellContext = useShell();
   const editorContext = useManifestEditor();
+  const appState = useAppState();
+
   return (
     <>
       <Container
         onClick={() => {
-          shellContext.setCurrentCanvasId(id);
+          appState.setState({ canvasId: id });
           setOpen(!open);
         }}
       >

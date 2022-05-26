@@ -8,23 +8,23 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
   background: ${(props: any) => props.theme.color.white || "white"};
   color: ${(props: any) => props.theme.color.main || "blue"};
   cursor: pointer;
-  border-bottom: 1px solid ${(props: any) => props.theme.color.mediumgrey || "grey"};
+  border-bottom: 2px solid ${(props: any) => props.theme.color.mediumgrey || "grey"};
+  overflow: hidden;
+  text-overflow: ellipsis;
   ${(props) =>
     props.$active &&
     css`
       color: ${props.theme.color.black || "black"};
-      border-top: 1px solid ${props.theme.color.mediumgrey || "grey"};
-      border-left: 1px solid ${props.theme.color.mediumgrey || "grey"};
-      border-right: 1px solid ${props.theme.color.mediumgrey || "grey"};
-      border-bottom: none;
+      border-bottom: 2px solid #ff9999;
       border-radius: 0.25rem 0.25rem 0 0;
     `};
 `;
 
 const TabPanelOptions = styled.div`
   display: flex;
+  flex-wrap: nowrap;
   background-color: ${(props: any) => props.theme.color.white || "white"};
-  flex-wrap: wrap;
+  box-shadow: inset 0 -2px 0 0 ${(props: any) => props.theme.color.mediumgrey || "grey"};
 `;
 
 const TabPanelContainer = styled.div<{ $width?: any }>`
@@ -55,7 +55,7 @@ export const TabPanel: React.FC<{
       <TabPanelOptions>
         {menu.map((item: any, idx: number) => {
           return (
-            <PanelHeader key={idx} $active={idx === selected} onClick={() => switchPanel(idx)}>
+            <PanelHeader tabIndex={-1} key={idx} $active={idx === selected} onClick={() => switchPanel(idx)}>
               {item.label}
             </PanelHeader>
           );

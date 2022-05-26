@@ -1,16 +1,11 @@
-import { useContext } from "react";
-
 import { useVault } from "react-iiif-vault";
-// NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { FlexContainer } from "../../components/layout/FlexContainer";
-import { Input, InputLabel } from "../Input";
+import { Input } from "../Input";
 
 export const DateForm: React.FC<{}> = () => {
-  const shellContext = useShell();
   const manifest = useManifest();
   const vault = useVault();
 
@@ -19,7 +14,6 @@ export const DateForm: React.FC<{}> = () => {
   const dispatchType = "navDate";
   const changeHandler = (data: string) => {
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, data);
     }
   };

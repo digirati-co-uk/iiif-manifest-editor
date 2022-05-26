@@ -1,5 +1,5 @@
 export interface LanguageMapEditorProps {
   dispatchType: "label" | "summary";
-  languages: Array<string>;
+  languages?: Array<string>;
   guidanceReference?: string;
 }

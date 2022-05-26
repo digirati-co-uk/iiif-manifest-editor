@@ -1,10 +1,7 @@
 import { useContext } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
-// hooks & context
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
-// UI
 import { Button } from "../../atoms/Button";
 import { EditableContainer } from "../../atoms/EditableContainer";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
@@ -17,7 +14,6 @@ import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexCon
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
-  const shellContext = useShell();
   const canvas = useCanvas();
   const vault = useVault();
   const editorContext = useManifestEditor();
@@ -35,7 +31,6 @@ export const ThumbnailForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "thumbnail", newOrder);
     }
   };
@@ -45,7 +40,7 @@ export const ThumbnailForm = () => {
 
     if (canvas && (index || index === 0)) {
       newThumbnail.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       vault.modifyEntityField(canvas, "thumbnail", newThumbnail);
     }
@@ -77,7 +72,6 @@ export const ThumbnailForm = () => {
               {vault &&
                 canvas &&
                 vault.get(canvas.thumbnail).map((thumbnail: any, index) => {
-                  console.log(thumbnail);
                   return (
                     <Draggable
                       key={thumbnail.toString() + "--HASH--"}

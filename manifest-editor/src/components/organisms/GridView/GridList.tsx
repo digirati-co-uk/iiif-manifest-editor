@@ -3,29 +3,18 @@ import { useManifest, useVault, CanvasContext } from "react-iiif-vault";
 import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
 import { RecentLabel } from "../../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
-import { useShell } from "../../../context/ShellContext/ShellContext";
 import { AddIcon } from "../../../icons/AddIcon";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { GridItem } from "./GridItem";
 
-export const GridList: React.FC = () => {
+export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolean) => void }> = ({
+  handleChange: _handleChange,
+}) => {
   const manifest = useManifest();
-  const shellContext = useShell();
-
   const editorContext = useManifestEditor();
 
   const handleChange = (itemId: string, e: any) => {
-    switch (e.detail) {
-      case 1:
-        shellContext.setCurrentCanvasId(itemId);
-        editorContext?.changeSelectedProperty("canvas");
-        break;
-      case 2:
-        shellContext.setCurrentCanvasId(itemId);
-        editorContext?.changeSelectedProperty("canvas");
-        editorContext?.setView("thumbnails");
-        break;
-    }
+    _handleChange(itemId, e.detail === 2);
   };
 
   const dispatchType = "items";
@@ -36,7 +25,6 @@ export const GridList: React.FC = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };
@@ -45,7 +33,6 @@ export const GridList: React.FC = () => {
     const newOrder = manifest ? [...manifest[dispatchType]] : [];
     newOrder.splice(fromPosition, 1);
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newOrder);
     }
   };

@@ -3,21 +3,25 @@ import { Input } from "../../../editors/Input";
 import { Button, CalltoButton, SecondaryButton } from "../../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import { HorizontalDivider } from "../../../atoms/HorizontalDivider";
-
-import { useShell } from "../../../context/ShellContext/ShellContext";
 import { analyse } from "../../../helpers/analyse";
 import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { LoadManifestWidget } from "./LoadManifest.style";
+import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
+import { useProjectCreators } from "../../../shell/ProjectContext/ProjectContext.hooks";
+import { useApps } from "../../../shell/AppContext/AppContext";
+import { SuccessMessage } from "../../../atoms/callouts/SuccessMessage";
 
-export const LoadManifest: React.FC<{}> = () => {
+export const LoadManifest: React.FC = () => {
+  const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();
+  const { currentApp, changeApp } = useApps();
+  const { current: currentProject } = useProjectContext();
+
   const [inputValue, setInputValue] = useState("");
   const [inputType, setInputType] = useState<string | undefined>();
   const [label, setLabel] = useState<string | undefined>();
   const [width, setWidth] = useState<number | undefined>();
   const [height, setHeight] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
-
-  const shellContext = useShell();
 
   useEffect(() => {
     // Clear the populated value if we use a new url
@@ -38,32 +42,21 @@ export const LoadManifest: React.FC<{}> = () => {
       setImageServiceJSON(inputed);
     }
 
-    // Only handling manifest & collection for now.
     if (inputed && inputed.type === "Manifest") {
-      await shellContext.changeResourceID(inputValue);
-      await shellContext.changeSelectedApplication("ManifestEditor");
-      if (shellContext.selectedApplication === "ManifestEditor" && inputed.type === "Manifest") {
-        await shellContext.updateRecentManifests(inputValue);
-      } else if (shellContext.selectedApplication === "Browser" && inputed.type === "Collection") {
-      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Manifest") {
-        await shellContext.changeResourceID(inputValue);
-        await shellContext.changeSelectedApplication("ManifestEditor");
-      } else if (shellContext.selectedApplication === "Splash" && inputed.type === "Collection") {
-        await shellContext.changeResourceID(inputValue);
-        await shellContext.changeSelectedApplication("Browser");
-      }
+      await createProjectFromManifestId(inputed.id);
     }
   };
 
-  const newBlankTemplateUrl = window.location.href + shellContext.newTemplates.items[0].id;
-
-  function loadBlankTemplate() {
-    shellContext.changeResourceID(newBlankTemplateUrl);
-    shellContext.changeSelectedApplication("ManifestEditor");
-  }
-
   return (
     <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
+      {currentProject ? (
+        <SuccessMessage>
+          {currentProject.name}{" "}
+          <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor-layouts" })}>
+            Continue editing
+          </Button>
+        </SuccessMessage>
+      ) : null}
       <h1>Get started</h1>
       <p>Load an existing IIIF Manifest</p>
       <LoadManifestWidget>
@@ -77,13 +70,13 @@ export const LoadManifest: React.FC<{}> = () => {
           <PaddingComponentSmall />
           <p>or</p>
           <PaddingComponentSmall />
-          <SecondaryButton aria-label="add" onClick={() => loadBlankTemplate()}>
+          <SecondaryButton aria-label="add" onClick={() => createBlankManifest()}>
             CREATE NEW
           </SecondaryButton>
         </FlexContainer>
       </LoadManifestWidget>
       <br />
-      {inputType !== "Manifest" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
+      {inputType !== "Manifest" && inputType && currentApp.id === "manifest-editor" && (
         <FlexContainerColumn justify={"flex-start"}>
           <p>This resource is not a manifest.</p>
           <small>{inputType}</small>
@@ -93,7 +86,7 @@ export const LoadManifest: React.FC<{}> = () => {
           {imageServiceJSON && <small>{JSON.stringify(imageServiceJSON)}</small>}
         </FlexContainerColumn>
       )}
-      {inputType === "Collection" && inputType && shellContext.selectedApplication === "ManifestEditor" && (
+      {inputType === "Collection" && inputType && currentApp.id === "manifest-editor" && (
         <>
           <HorizontalDivider />
           <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -103,17 +96,14 @@ export const LoadManifest: React.FC<{}> = () => {
             </small>
             <Button
               aria-label="launch application"
-              onClick={() => {
-                shellContext.changeSelectedApplication("Browser");
-                shellContext.changeResourceID(inputValue);
-              }}
+              onClick={() => changeApp({ id: "collection-explorer", args: inputValue })}
             >
               Launch Application
             </Button>
           </FlexContainer>
         </>
       )}
-      {inputType === "Manifest" && inputType && shellContext.selectedApplication === "Browser" && (
+      {inputType === "Manifest" && inputType && currentApp.id === "collection-explorer" && (
         <>
           <HorizontalDivider />
           <FlexContainer style={{ justifyContent: "space-between" }}>
@@ -121,12 +111,7 @@ export const LoadManifest: React.FC<{}> = () => {
               {/* This UI will change again */}
               This resource is a manifest, do you want to launch the Manifest Editor App?
             </small>
-            <Button
-              aria-label="launch application"
-              onClick={() => {
-                shellContext.changeSelectedApplication("ManifestEditor");
-              }}
-            >
+            <Button aria-label="launch application" onClick={() => changeApp({ id: "manifest-editor" })}>
               Launch Application
             </Button>
           </FlexContainer>

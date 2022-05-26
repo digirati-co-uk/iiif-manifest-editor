@@ -5,3 +5,4 @@ declare namespace JSX {
 }
 
 declare module '*.html?raw'
+declare module '*.json?import'

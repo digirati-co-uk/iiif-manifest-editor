@@ -1,9 +1,6 @@
 import { IIIFBuilder } from "iiif-builder";
-import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { InformationLink } from "../../atoms/InformationLink";
 import { FlexContainer } from "../../components/layout/FlexContainer";
@@ -11,8 +8,6 @@ import { AnnotationPreview } from "./AnnotationPreview";
 import { v4 } from "uuid";
 
 export const AnnotationForm = () => {
-  const editorContext = useManifestEditor();
-  const shellContext = useShell();
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();

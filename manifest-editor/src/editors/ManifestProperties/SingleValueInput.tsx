@@ -1,25 +1,22 @@
 import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
-// NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useManifest } from "../../hooks/useManifest";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
+import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go
   dispatchType: "rights" | "viewingDirection" | "behavior";
 }> = ({ dispatchType }) => {
-  const shellContext = useShell();
-  const manifestEditorContext = useManifestEditor();
+  const { behaviorPresets } = useConfig();
   const manifest = useManifest();
   const vault = useVault();
 
   const changeHandler = (data: any) => {
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, data);
     }
   };
@@ -39,7 +36,6 @@ export const SingleValueInput: React.FC<{
       }
     }
     if (manifest) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(manifest, dispatchType, newValue);
     }
 
@@ -79,7 +75,7 @@ export const SingleValueInput: React.FC<{
           <StringSelector
             key={manifest.id}
             label="Behavior"
-            options={manifestEditorContext?.behaviorProperties || []}
+            options={behaviorPresets}
             selected={selected}
             multi={true}
             guidanceReference="https://iiif.io/api/presentation/3.0/#behavior"

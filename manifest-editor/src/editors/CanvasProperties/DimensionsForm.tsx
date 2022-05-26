@@ -1,31 +1,24 @@
-import { useContext } from "react";
-
 import { useCanvas, useVault } from "react-iiif-vault";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
 
-export const DimensionsForm: React.FC<{}> = () => {
-  const shellContext = useShell();
+export const DimensionsForm: React.FC = () => {
   const canvas = useCanvas();
   const vault = useVault();
 
   const changeHeight = (data: number) => {
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "height", data);
     }
   };
 
   const changeWidth = (data: number) => {
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "width", data);
     }
   };
 
   const changeDuration = (data: number) => {
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "duration", data);
     }
   };

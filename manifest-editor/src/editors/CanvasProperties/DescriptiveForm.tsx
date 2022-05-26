@@ -5,18 +5,14 @@ import { SingleValueInput } from "./SingleValueInputCanvas";
 import { DateForm } from "./DateForm";
 
 export const DescriptiveForm = () => {
-  const editorContext = useManifestEditor();
-
   return (
     <>
       <LanguageMapInputCanvas
         dispatchType={"label"}
-        languages={editorContext?.languages || []}
         guidanceReference={"https://iiif.io/api/presentation/3.0/#label"}
       />
       <LanguageMapInputCanvas
         dispatchType={"summary"}
-        languages={editorContext?.languages || []}
         guidanceReference={"https://iiif.io/api/presentation/3.0/#summary"}
       />
       <SingleValueInput dispatchType={"rights"} />

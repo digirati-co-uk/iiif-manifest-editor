@@ -1,9 +1,7 @@
-import { useContext } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { MediaBody } from "../../types/media-body";
@@ -11,7 +9,6 @@ import { v4 } from "uuid";
 
 export const MediaForm = () => {
   const editorContext = useManifestEditor();
-  const shellContext = useShell();
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
@@ -32,7 +29,6 @@ export const MediaForm = () => {
         });
       });
     });
-    shellContext.setUnsavedChanges(true);
   };
 
   const reorder = (fromPosition: number, toPosition: number) => {
@@ -40,7 +36,6 @@ export const MediaForm = () => {
     const [removed] = newOrder.splice(fromPosition, 1);
     newOrder.splice(toPosition, 0, removed);
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, "items", newOrder);
     }
   };
@@ -49,7 +44,7 @@ export const MediaForm = () => {
     const copy = canvas && canvas.items ? [...canvas.items] : [];
     if (canvas && (index || index === 0)) {
       copy.splice(index, 1);
-      shellContext.setUnsavedChanges(true);
+
       // Provide the vault with an updated list of content resources
       // with the item removed
       vault.modifyEntityField(canvas, "items", copy);
@@ -71,7 +66,7 @@ export const MediaForm = () => {
     reorder(canvas.items.length, index);
     // Remove the last one which should now be the one we wanted to replace.
     remove(canvas.items.length);
-    shellContext.setUnsavedChanges(true);
+
     editorContext?.changeSelectedProperty("canvas", 2);
   };
 

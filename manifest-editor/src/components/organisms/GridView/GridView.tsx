@@ -14,7 +14,9 @@ import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSw
 import { GridViewContainer } from "./GridView.styles";
 import { GridList } from "./GridList";
 
-export const GridView: React.FC = () => {
+export const GridView: React.FC<{ handleChange: (canvasId: string, thumbnail?: boolean) => void }> = ({
+  handleChange,
+}) => {
   const manifest = useManifest();
 
   const editorContext = useManifestEditor();
@@ -39,7 +41,7 @@ export const GridView: React.FC = () => {
   }
   return (
     <GridViewContainer>
-      <GridList />
+      <GridList handleChange={handleChange} />
       <FlexContainerRow>
         <ViewSelector />
         <HeightWidthSwitcher

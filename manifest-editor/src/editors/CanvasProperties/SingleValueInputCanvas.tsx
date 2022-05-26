@@ -3,22 +3,20 @@ import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useCanvas } from "react-iiif-vault";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useShell } from "../../context/ShellContext/ShellContext";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
+import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go
   dispatchType: "rights" | "behavior";
 }> = ({ dispatchType }) => {
-  const shellContext = useShell();
-  const manifestEditorContext = useManifestEditor();
+  const { behaviorPresets } = useConfig();
   const canvas = useCanvas();
   const vault = useVault();
   const changeHandler = (data: any) => {
     if (canvas) {
-      shellContext.setUnsavedChanges(true);
       vault.modifyEntityField(canvas, dispatchType, data);
     }
   };
@@ -59,7 +57,7 @@ export const SingleValueInput: React.FC<{
           <StringSelector
             key={canvas.id}
             label="Behavior"
-            options={manifestEditorContext?.behaviorProperties || []}
+            options={behaviorPresets}
             selected={selected}
             multi={true}
             guidanceReference="https://iiif.io/api/presentation/3.0/#behavior"

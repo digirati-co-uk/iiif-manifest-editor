@@ -4,36 +4,35 @@ import { SmallThumbnailStripContainer, ThumbnailContainer } from "../../atoms/Th
 import { Thumbnail } from "../../atoms/Thumbnail";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { useShell } from "../../context/ShellContext/ShellContext";
+
 import { RecentLabel } from "../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../atoms/TemplateCard";
 import { AddIcon } from "../../icons/AddIcon";
 import { FlexContainer } from "../layout/FlexContainer";
 
-export const ThumbnailStrip: React.FC = () => {
+export const ThumbnailStrip: React.FC<{ handleChange: (id: string) => void; width?: number }> = ({
+  handleChange,
+  width,
+}) => {
   const manifest = useManifest();
-  const editorContext = useManifestEditor();
-  const shellContext = useShell();
+  // const editorContext = useManifestEditor();
 
-  const handleChange = (itemId: string) => {
-    shellContext.setCurrentCanvasId(itemId);
-    editorContext?.changeSelectedProperty("canvas");
-  };
+  // if (!manifest || !manifest.items || manifest.items.length <= 0) {
+  //   return (
+  //     <ThumbnailContainer>
+  //       <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
+  //         <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
+  //           <TemplateCardNew>
+  //             <AddIcon />
+  //           </TemplateCardNew>
+  //           <RecentLabel>Add</RecentLabel>
+  //         </TemplateCardContainer>
+  //       </FlexContainer>
+  //     </ThumbnailContainer>
+  //   );
+  // }
 
-  if (!manifest || !manifest.items || manifest.items.length <= 0) {
-    return (
-      <ThumbnailContainer>
-        <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
-          <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
-            <TemplateCardNew>
-              <AddIcon />
-            </TemplateCardNew>
-            <RecentLabel>Add</RecentLabel>
-          </TemplateCardContainer>
-        </FlexContainer>
-      </ThumbnailContainer>
-    );
-  }
+  console.log(width);
 
   return (
     <ThumbnailContainer>
@@ -41,7 +40,7 @@ export const ThumbnailStrip: React.FC = () => {
         return (
           <CanvasContext key={item.id} canvas={item.id}>
             <ErrorBoundary>
-              <Thumbnail onClick={() => handleChange(item.id)} />
+              <Thumbnail onClick={() => handleChange(item.id)} width={width} />
             </ErrorBoundary>
           </CanvasContext>
         );
@@ -50,15 +49,11 @@ export const ThumbnailStrip: React.FC = () => {
   );
 };
 
-export const SmallThumbnailStrip: React.FC = () => {
+export const SmallThumbnailStrip: React.FC<{ handleChange: (id: string) => void; width?: number }> = ({
+  handleChange,
+  width,
+}) => {
   const manifest = useManifest();
-  const shellContext = useShell();
-  const editorContext = useManifestEditor();
-
-  const handleChange = (itemId: string) => {
-    shellContext.setCurrentCanvasId(itemId);
-    editorContext?.changeSelectedProperty("canvas");
-  };
 
   return (
     <SmallThumbnailStripContainer>
@@ -67,7 +62,7 @@ export const SmallThumbnailStrip: React.FC = () => {
           <ErrorBoundary>
             <CanvasContext key={item.id} canvas={item.id}>
               <ErrorBoundary>
-                <Thumbnail onClick={() => handleChange(item.id)} />
+                <Thumbnail onClick={() => handleChange(item.id)} width={width} />
               </ErrorBoundary>
             </CanvasContext>
           </ErrorBoundary>

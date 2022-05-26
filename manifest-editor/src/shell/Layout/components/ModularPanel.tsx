@@ -3,6 +3,9 @@ import { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePa
 import styled, { css } from "styled-components";
 import { StarIcon } from "../../../icons/StarIcon";
 import { CloseIcon } from "../../../icons/CloseIcon";
+import { BackIcon } from "../../../icons/BackIcon";
+import { useLayoutProvider } from "../Layout.context";
+import { useAppState } from "../../AppContext/AppContext";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -17,7 +20,6 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   display: flex;
   flex-direction: column;
   min-width: 20em;
-  margin-bottom: 1em;
   height: 100%;
   ${(props) =>
     props.$floating &&
@@ -52,11 +54,18 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   }}
 `;
 
-const ModularPanelHeader = styled.div`
+const ModularPanelHeader = styled.div<{ $tabs?: boolean }>`
   background: #fff;
   display: flex;
   height: 2.8em;
-  box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+  ${(props) =>
+    props.$tabs
+      ? css`
+          box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+        `
+      : css`
+          box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+        `}
   z-index: 12;
 `;
 
@@ -79,13 +88,16 @@ const ModulePanelSpacer = styled.div`
 `;
 
 const ModularPanelLabel = styled.h2`
-  font-size: 1em;
+  font-size: 0.875em;
   flex: 1 1 0px;
-  padding-left: 0.5em;
+  padding-left: 1em;
+  text-align: center;
 `;
 
 const ModularPanelContent = styled.div`
   flex: 1 1 0px;
+  overflow-y: auto;
+  padding-bottom: 1em;
 `;
 
 export function ModularPanel({
@@ -96,15 +108,28 @@ export function ModularPanel({
   transition,
   close,
 }: ModularPanelProps) {
+  const appState = useAppState();
+  const layout = useLayoutProvider();
+  const { tabs, pinnable, hideHeader } = panel?.options || {};
+
   if (!panel || !state.current) {
     return null;
   }
 
   return (
     <ModularPanelWrapper $state={transition}>
-      <ModularPanelHeader>
-        {panel.hideHeader ? <ModulePanelSpacer /> : <ModularPanelLabel>{panel.label}</ModularPanelLabel>}
-        {panel.pinnable ? (
+      <ModularPanelHeader $tabs={tabs}>
+        {panel.backAction ? (
+          <ModulePanelButton
+            onClick={() =>
+              panel && panel.backAction ? panel.backAction(state, { ...layout, current: actions }, appState) : null
+            }
+          >
+            <BackIcon />
+          </ModulePanelButton>
+        ) : null}
+        {hideHeader ? <ModulePanelSpacer /> : <ModularPanelLabel>{panel.label}</ModularPanelLabel>}
+        {pinnable ? (
           (state as PinnablePanelState).pinned ? (
             <ModulePanelButton onClick={pinActions.unpin}>
               <StarIcon fill="orange" />
@@ -119,7 +144,9 @@ export function ModularPanel({
           <CloseIcon />
         </ModulePanelButton>
       </ModularPanelHeader>
-      <ModularPanelContent>{panel.render(state.state)}</ModularPanelContent>
+      <ModularPanelContent>
+        {panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions }, appState)}
+      </ModularPanelContent>
     </ModularPanelWrapper>
   );
 }

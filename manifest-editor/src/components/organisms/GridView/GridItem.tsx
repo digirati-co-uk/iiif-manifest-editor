@@ -11,6 +11,7 @@ import { useShell } from "../../../context/ShellContext/ShellContext";
 import { MoreVertical } from "../../../icons/MoreVertical";
 import { FlexContainerColumn } from "../../layout/FlexContainer";
 import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
+import { useAppState } from "../../../shell/AppContext/AppContext";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
@@ -25,7 +26,8 @@ export const GridItem: React.FC<{
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
   const manifest = useManifest();
-  const { currentCanvasId, setCurrentCanvasId } = useShell();
+  const appState = useAppState();
+  const currentCanvasId = appState.state.canvasId;
   const dispatchType = "items";
 
   const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -43,7 +45,7 @@ export const GridItem: React.FC<{
   };
 
   return (
-    <Group onClick={() => setCurrentCanvasId(canvasId)}>
+    <Group onClick={() => appState.setState({ canvasId })}>
       {contextMenuVisible && (
         <DropdownContent
           style={{ top: anchorPoint.y, left: anchorPoint.x }}
@@ -101,7 +103,7 @@ export const GridItem: React.FC<{
           selected={canvasId === currentCanvasId}
         >
           <ErrorBoundary>
-            <Thumbnail onClick={() => setCurrentCanvasId(canvasId)} />
+            <Thumbnail onClick={() => appState.setState({ canvasId })} />
           </ErrorBoundary>
         </ThumbnailContainer>
         <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
