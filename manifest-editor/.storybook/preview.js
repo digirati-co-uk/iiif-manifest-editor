@@ -3,7 +3,7 @@ import { withThemesProvider } from "storybook-addon-styled-component-theme";
 import { ThemeProvider } from "styled-components";
 
 import { defaultTheme } from "../src/themes/default-theme";
-import { ShellProvider } from "../src/context/ShellContext/ShellContext";
+import { ShellProvider } from "../src/shell/ShellContext/ShellContext";
 import { createElement } from "react";
 import { GlobalStyle } from "../src/atoms/GlobalStyle";
 
