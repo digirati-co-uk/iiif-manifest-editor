@@ -9,7 +9,6 @@ import { LoadManifestWidget } from "./LoadManifest.style";
 import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
 import { useProjectCreators } from "../../../shell/ProjectContext/ProjectContext.hooks";
 import { useApps } from "../../../shell/AppContext/AppContext";
-import { SuccessMessage } from "../../../atoms/callouts/SuccessMessage";
 import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
 
 export const LoadManifest: React.FC = () => {
