@@ -16,6 +16,7 @@ import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { useState } from "react";
 import { MenuIcon } from "../../icons/MenuIcon";
 import { PreviewButton } from "../../components/organisms/PreviewButton/PreviewButton";
+import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 
 export function AppHeader() {
   const { current: currentProject } = useProjectContext();
@@ -74,7 +75,9 @@ export function AppHeader() {
         )}
       </Dropdown>
 
-      <Logo onClick={() => changeApp({ id: "splash" })}>Manifest editor</Logo>
+      <Logo onClick={() => changeApp({ id: "splash" })}>
+        <ManifestEditorIcon />
+      </Logo>
 
       <ProjectPreview>
         <Draft>
