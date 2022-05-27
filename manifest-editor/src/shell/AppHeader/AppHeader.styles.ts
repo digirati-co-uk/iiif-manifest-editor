@@ -2,9 +2,17 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  padding: 0.5em;
-  height: 3em;
   align-items: center;
+  height: 3em;
+  padding: 0.5em;
+
+`;
+
+export const Header = styled.div`
+  display: flex;
+  padding: 0.5em;
+  height: 6em;
+  flex-direction: column;
 `;
 
 export const IconButton = styled.button`
