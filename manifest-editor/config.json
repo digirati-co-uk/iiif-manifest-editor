@@ -1,27 +1,63 @@
 {
-  "preview": [
+  "previews": [
     {
-      "baseUrl": "",
-      "mechanism": "previewService",
-      "label": "Raw Manifest"
+      "id": "universal-viewer",
+      "type": "external-manifest-preview",
+      "label": "Universal viewer",
+      "config": {
+        "url": "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}"
+      }
     },
     {
-      "baseUrl": "http://universalviewer.io/examples/#?manifest=",
-      "mechanism": "previewService",
-      "label": "Universal Viewer"
+      "id": "mirador-3",
+      "type": "external-manifest-preview",
+      "label": "Mirador 3",
+      "config": {
+        "url": "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}"
+      }
     },
     {
-      "baseUrl": "https://tomcrane.github.io/scratch/mirador3/?iiif-content=",
-      "mechanism": "previewService",
-      "label": "Mirador 3"
-    },
-    {
+      "id": "ocean-liners",
+      "type": "external-manifest-preview",
       "label": "Ocean Liners",
-      "mechanism": "previewService",
-      "baseUrl": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest="
+      "config": {
+        "url": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest={manifestId}"
+      }
+    },
+    {
+      "id": "raw-manifest",
+      "type": "external-manifest-preview",
+      "label": "Raw Manifest",
+      "config": {
+        "url": "{manifestId}"
+      }
+    },
+    {
+      "id": "universal-viewer-3",
+      "type": "external-manifest-preview",
+      "label": "Universal viewer (v3)",
+      "config": {
+        "url": "https://uv-v3.netlify.app/#?manifest={manifestId}"
+      }
+    },
+    {
+      "id": "iiif-preview",
+      "type": "iiif-preview-service",
+      "label": "IIIF Preview",
+      "config": {
+        "url": "https://iiif-preview.stephen.wf/store"
+      }
     }
   ],
-  "defaultLanguages": ["en", "fr", "de", "es", "it", "cy", "none"],
+  "defaultLanguages": [
+    "en",
+    "fr",
+    "de",
+    "es",
+    "it",
+    "cy",
+    "none"
+  ],
   "behaviorPresets": [
     "auto-advance",
     "no-auto-advance",
