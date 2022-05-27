@@ -8,7 +8,7 @@ import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 
-export default { id: "manifest-editor-layouts", title: "Manifest editor (layout)", project: true };
+export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
 export const leftPanelMenu = <LeftPanelMenu />;
 

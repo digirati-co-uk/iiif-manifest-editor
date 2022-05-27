@@ -7,7 +7,7 @@ import { Input } from "../Input";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { MenuIcon } from "../../icons/MenuIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { LanguageFieldEditor } from "../LanguageFieldEditor";
+import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 

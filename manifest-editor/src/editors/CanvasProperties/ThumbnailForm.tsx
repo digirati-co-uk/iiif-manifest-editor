@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";

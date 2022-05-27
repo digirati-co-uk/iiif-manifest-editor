@@ -1,6 +1,6 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { LanguageFieldEditor } from "../LanguageFieldEditor";
+import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 
 export const LanguageMapInputCanvas: React.FC<{

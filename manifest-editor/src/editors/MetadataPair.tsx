@@ -4,7 +4,7 @@ import { PaddingComponentSmall } from "../atoms/PaddingComponent";
 import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
 import { MenuIcon } from "../icons/MenuIcon";
 import { MoreHorizontal } from "../icons/MoreHorizontal";
-import { LanguageFieldEditor } from "./LanguageFieldEditor";
+import { LanguageFieldEditor } from "./generic/LanguageFieldEditor/LanguageFieldEditor";
 import { DropdownItem } from "./LanguageSelector";
 
 interface MetadataPairProps {
@@ -85,7 +85,7 @@ export const MetadataPair: React.FC<MetadataPairProps> = ({
         <FlexContainerColumn style={{ width: "100%" }}>
           <LanguageFieldEditor
             label={"label"}
-            fields={field.label}
+            fields={field.label || { none: [""] }}
             availableLanguages={availableLanguages}
             onSave={onSave}
             index={index}
@@ -93,7 +93,8 @@ export const MetadataPair: React.FC<MetadataPairProps> = ({
           />
           <LanguageFieldEditor
             label={"value"}
-            fields={field.value}
+            multiline
+            fields={field.value || { none: [""] }}
             availableLanguages={availableLanguages}
             onSave={onSave}
             index={index}

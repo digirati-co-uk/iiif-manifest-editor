@@ -5,9 +5,11 @@ import { FlexContainer } from "../components/layout/FlexContainer";
 export const InputLabel = styled.label<{
   $caps?: boolean;
   $inline?: boolean;
+  $margin?: boolean;
 }>`
   letter-spacing: -0.3px;
   font-weight: 500;
+  font-size: 0.875em;
   line-height: 1.8em;
   display: flex;
   align-items: baseline;
@@ -63,18 +65,18 @@ export const CheckboxInput = styled.input.attrs({ type: "checkbox" })``;
 export const _Input = styled.input`
   background: ${(props: any) => props.theme.color.white || "white"};
   border: 1px solid rgba(5, 42, 68, 0.2);
-  padding: ${(props: any) => props.theme.padding.small || "0.5rem"}
-    ${(props: any) => props.theme.padding.medium || "1rem"};
+  padding: 0.75em 1em;
   font-size: 0.85em;
   line-height: 1.2em;
   border-radius: 3px;
+
   width: 100%;
   box-shadow: 0 0 0 0 transparent inset;
   &:focus {
     border-color: ${(props: any) => props.theme.color.black || "black"};
     outline: none;
   }
-  margin: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
+  margin: 0;
   display: block;
   outline: 0;
   font-family: inherit;
@@ -94,25 +96,29 @@ export const _Input = styled.input`
 
 export const InputUnderlined = styled(_Input)`
   border-radius: unset;
-  height: 2rem;
   background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
   border-top: none;
   border-left: none;
   border-right: none;
+  &:focus {
+    background: #eee;
+  }
 `;
 
-export const InputGroup = styled(FlexContainer)`
+export const InputGroup = styled(FlexContainer)<{ $active?: boolean }>`
+  display: flex;
   width: 100%;
-  padding: none;
-  .remove {
-    visibility: hidden;
-  }
-  :hover {
-    background-color: ${(props: any) => props.theme.color.highlight || "yellow"};
-    .remove {
-      visibility: visible;
-    }
-  }
+  padding: 0.5em;
+
+  ${(props) =>
+    props.$active &&
+    css`
+      border-radius: 5px;
+      transition: background 200ms;
+      &:hover {
+        background-color: ${(props: any) => props.theme.color.highlight || "yellow"};
+      }
+    `}
 `;
 
 export const Input: typeof _Input = ((props: any) =>
@@ -158,7 +164,6 @@ export const InputContainer = styled.div<{
   flex-direction: column;
   max-width: ${(props: any) => (props.fluid ? "100%" : props.wide ? "550px" : "360px")};
   margin-bottom: 1em;
-  margin: ${(props: any) => props.theme.padding.small || "0.5rem"};
 
   ${(props: any) =>
     props.$error &&

@@ -53,7 +53,7 @@ export const LoadManifest: React.FC = () => {
       {currentProject ? (
         <InfoMessage $banner>
           {currentProject.name}{" "}
-          <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor-layouts" })}>
+          <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
             Continue editing
           </Button>
         </InfoMessage>

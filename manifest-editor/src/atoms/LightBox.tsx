@@ -1,7 +1,9 @@
 import styled from "styled-components";
 
 export const LightBox = styled.div`
-  padding: 1rem;
+  padding: 0.5em;
+  margin-bottom: 1em;
+  background: #fff;
   border: 1px solid ${(props: any) => props.theme.color.mediumgrey || "grey"};
   border-radius: 5px;
   & h4 {

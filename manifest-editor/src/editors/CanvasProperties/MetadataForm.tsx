@@ -32,7 +32,7 @@ export const MetadataForm: React.FC = () => {
 
   const addNew = () => {
     const withNew = canvas ? [...canvas[dispatchType]] : [];
-    withNew.push({ label: {}, value: {} });
+    withNew.push({ label: { none: [""] }, value: { none: [""] } });
     if (canvas) {
       vault.modifyEntityField(canvas, dispatchType, withNew);
     }

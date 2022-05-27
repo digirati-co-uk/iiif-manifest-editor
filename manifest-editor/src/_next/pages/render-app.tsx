@@ -6,10 +6,6 @@ export function RenderApp() {
   const { apps, changeApp, currentApp } = useApps();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
 
-  if (currentApp?.id === "manifest-editor") {
-    return null;
-  }
-
   return selectedApp ? (
     <AppStateProvider appId={currentApp.id} key={currentApp.id}>
       <Layout header={<AppHeader />} {...(selectedApp.layout || {})} />

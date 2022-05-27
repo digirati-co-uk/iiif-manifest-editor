@@ -82,13 +82,15 @@ export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolea
               <div>
                 <CanvasContext canvas={item.id}>
                   <SortableKnob>
-                    <GridItem
-                      canvasId={item.id}
-                      handleChange={handleChange}
-                      reorder={reorder}
-                      remove={remove}
-                      index={index}
-                    />
+                    <div>
+                      <GridItem
+                        canvasId={item.id}
+                        handleChange={handleChange}
+                        reorder={reorder}
+                        remove={remove}
+                        index={index}
+                      />
+                    </div>
                   </SortableKnob>
                 </CanvasContext>
               </div>

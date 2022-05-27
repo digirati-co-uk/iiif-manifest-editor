@@ -1,7 +1,7 @@
 import { CanvasPanel, CanvasContext, useCanvas } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { Runtime } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
 import { ErrorBoundary } from "react-error-boundary";

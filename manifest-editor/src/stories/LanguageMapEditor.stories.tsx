@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LanguageFieldEditor } from "../editors/LanguageFieldEditor";
+import { LanguageFieldEditor } from "../editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 
 export default {
   title: "Manifest Editor/Language Field Editor",

@@ -22,14 +22,15 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
   changeDuration,
 }) => {
   return (
-    <FlexContainer>
+    <FlexContainer style={{ marginBottom: "1em" }}>
       <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%", padding: "0.2em" }}>
-          <InputLabel $inline={true}>
+        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
+          <InputLabel $inline={true} htmlFor="dims-height">
             {"height"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#height"} />
           </InputLabel>
           <Input
+            id="dims-height"
             min={0}
             type="number"
             onChange={(e: any) => {
@@ -40,12 +41,13 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
         </FlexContainerColumn>
       </ErrorBoundary>
       <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%", padding: "0.2em" }}>
-          <InputLabel $inline={true}>
+        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
+          <InputLabel $inline={true} htmlFor="dims-width">
             {"width"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#width"} />
           </InputLabel>
           <Input
+            id="dims-width"
             min={0}
             type="number"
             onChange={(e: any) => {
@@ -56,12 +58,13 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
         </FlexContainerColumn>
       </ErrorBoundary>
       <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%", padding: "0.2em" }}>
-          <InputLabel $inline={true}>
+        <FlexContainerColumn style={{ width: "100%" }}>
+          <InputLabel $inline={true} htmlFor="dims-duration">
             {"duration"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"} />
           </InputLabel>
           <Input
+            id="dims-duration"
             min={0}
             type="number"
             onChange={(e: any) => {

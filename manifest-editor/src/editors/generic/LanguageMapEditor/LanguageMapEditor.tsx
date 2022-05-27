@@ -1,6 +1,6 @@
 import { useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
-import { LanguageFieldEditor } from "../../LanguageFieldEditor";
+import { LanguageFieldEditor } from "../LanguageFieldEditor/LanguageFieldEditor";
 import { useResource } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "@iiif/presentation-3";
 import { LanguageMapEditorProps } from "./LanguageMapEditor.types";

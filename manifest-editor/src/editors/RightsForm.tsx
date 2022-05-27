@@ -8,7 +8,7 @@ import { AddIcon } from "../icons/AddIcon";
 import { CheckIcon } from "../icons/CheckIcon";
 import { DownIcon } from "../icons/DownIcon";
 import { FlexContainer } from "../components/layout/FlexContainer";
-import { HiddenCheckbox, InputLabel, MutliselectLabel } from "./Input";
+import { HiddenCheckbox, MutliselectLabel } from "./Input";
 
 export const RightsForm: React.FC<{
   options: string[] | null;

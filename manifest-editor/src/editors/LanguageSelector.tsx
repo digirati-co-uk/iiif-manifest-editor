@@ -17,10 +17,17 @@ export const StyledSelect = styled.select`
   background-color: ${(props: any) => props.theme.color.white || "white"};
   display: flex;
   align-items: center;
-  height: 2rem;
-  border: 0.06rem solid ${(props: any) => props.theme.color.grey || "grey"};
-  border-radius: 0 0.25rem 0.25rem 0;
-  padding: ${(props: any) => props.theme.padding.small || "0.5rem"} 0;
+  border: 1px solid #c9cfd5;
+  padding-left: 0.5em;
+  padding-right: 0.4em;
+  border-radius: 0 5px 5px 0;
+  align-self: stretch;
+  margin: 0;
+
+  &:focus {
+    outline: none;
+    border: 1px solid ${(props: any) => props.theme.color.main || "main"};
+  }
 `;
 
 export const SelectMenuContainer = styled.div`

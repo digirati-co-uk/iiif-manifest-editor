@@ -48,7 +48,6 @@ export const MenuContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  height: 2rem;
 `;
 
 export const DropdownPreviewMenu: React.FC<{

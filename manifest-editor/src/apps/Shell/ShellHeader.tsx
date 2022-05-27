@@ -65,19 +65,6 @@ export const ShellHeader: React.FC<{
             </Button>
             {appMenuOpen && (
               <DropdownContent onMouseLeave={() => setAppMenuOpen(false)}>
-                {currentProject ? (
-                  <Button
-                    onClick={() => {
-                      setAppMenuOpen(!appMenuOpen);
-                      changeApp({ id: "manifest-editor" });
-                    }}
-                    title="Open the Manifest Editor"
-                    aria-label="Open the manifest editor"
-                  >
-                    Manifest Editor
-                  </Button>
-                ) : null}
-
                 {Object.values(apps).map((app) => {
                   if (!currentProject && app.metadata.project) {
                     return null;

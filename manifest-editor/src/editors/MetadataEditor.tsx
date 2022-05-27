@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, SmallButton } from "../atoms/Button";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { FlexContainer, FlexContainerColumn } from "../components/layout/FlexContainer";
-import { LanguageFieldEditor } from "./LanguageFieldEditor";
+import { LanguageFieldEditor } from "./generic/LanguageFieldEditor/LanguageFieldEditor";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { LightBox } from "../atoms/LightBox";
 import { MetadataPair } from "./MetadataPair";

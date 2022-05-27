@@ -3,10 +3,10 @@ import styled, { css } from "styled-components";
 
 const PanelHeader = styled.div<{ $active?: boolean }>`
   overflow: hidden;
-  font-size: 14px;
+  font-size: 0.875em;
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
   background: ${(props: any) => props.theme.color.white || "white"};
-  color: ${(props: any) => props.theme.color.main || "blue"};
+  color: ${(props: any) => props.theme.color.gray || "gray"};
   cursor: pointer;
   border-bottom: 2px solid ${(props: any) => props.theme.color.mediumgrey || "grey"};
   overflow: hidden;
@@ -14,8 +14,8 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
   ${(props) =>
     props.$active &&
     css`
-      color: ${props.theme.color.black || "black"};
-      border-bottom: 2px solid #ff9999;
+      color: ${props.theme.color.main || "blue"};
+      border-bottom: ${`2px solid ${props.theme.color.main || "blue"}`};
       border-radius: 0.25rem 0.25rem 0 0;
     `};
 `;
