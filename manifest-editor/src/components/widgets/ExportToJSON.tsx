@@ -1,11 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Button, CalltoButton } from "../../atoms/Button";
-import { CloseIcon } from "../../icons/CloseIcon";
-import { ModalBackground } from "../layout/ModalBackground";
-import { ModalContainer } from "../layout/ModalContainer";
+import { CalltoButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
-import { ModalHeader } from "../../atoms/ModalHeader";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { TabPanel } from "../layout/TabPanel";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { useManifest } from "../../hooks/useManifest";
@@ -13,7 +8,9 @@ import { JSONPreview } from "../../atoms/JSONPreview";
 import { useVault } from "react-iiif-vault";
 import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
 
-export const ExportToJson: React.FC<{}> = () => {
+export const ExportToJson: React.FC<{
+  close: any;
+}> = ({ close }) => {
   const [selected, setSelected] = useState(0);
 
   const [copySuccess, setCopySuccess] = useState("");
