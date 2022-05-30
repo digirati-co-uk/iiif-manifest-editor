@@ -1,7 +1,7 @@
 export const defaultTheme = {
   color: {
     main: "#3498db",
-    logoPink: "#fe4081",
+    logoPink: "#E94581",
     white: "white",
     grey: "grey",
     black: "black",
@@ -13,7 +13,7 @@ export const defaultTheme = {
     lightsuccess: "#c5e8c5",
     success: "#6ccd55",
     greyOverlay: "rgba(0, 0, 0, 0.2)",
-    highlight: "#faeed7"
+    highlight: "#faeed7",
   },
   iiifColor: {
     manifest: "rgba(0, 0, 0, 0.2)",

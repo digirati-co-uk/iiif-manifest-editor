@@ -5,12 +5,11 @@ export const Container = styled.div`
   align-items: center;
   height: 3em;
   padding: 0.5em;
-
 `;
 
 export const Header = styled.div`
   display: flex;
-  padding: 0.5em;
+  padding: 0.25em;
   height: 6em;
   flex-direction: column;
 `;
@@ -28,7 +27,7 @@ export const IconButton = styled.button`
   justify-content: center;
 
   &:focus {
-    background: #ec5681;
+    background: #e94581;
     color: #fff;
     svg {
       fill: #fff;

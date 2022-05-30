@@ -18,6 +18,7 @@ import { useState } from "react";
 import { MenuIcon } from "../../icons/MenuIcon";
 import { PreviewButton } from "../../components/organisms/PreviewButton/PreviewButton";
 import { ShellOptions } from "../../apps/Shell/ShellOptions";
+import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
 
 export function AppHeader() {
   const { current: currentProject } = useProjectContext();
@@ -77,7 +78,9 @@ export function AppHeader() {
           )}
         </Dropdown>
 
-        <Logo onClick={() => changeApp({ id: "splash" })}>Manifest editor</Logo>
+        <Logo onClick={() => changeApp({ id: "splash" })}>
+          <ManifestEditorLogo height={27} width={200} />
+        </Logo>
 
         <ProjectPreview>
           <Draft>
