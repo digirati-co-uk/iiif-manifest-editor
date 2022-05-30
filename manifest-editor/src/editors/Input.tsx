@@ -121,6 +121,21 @@ export const InputGroup = styled(FlexContainer)<{ $active?: boolean }>`
     `}
 `;
 
+export const Submit = styled.input.attrs({
+  type: "submit",
+  value: "Load",
+})`
+  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  color: ${(props: any) => props.theme.color.white || "white"};
+  background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+`;
+
 export const Input: typeof _Input = ((props: any) =>
   props.type === "checkbox" ? <CheckboxInput {...props} /> : <InputUnderlined {...props} />) as any;
 

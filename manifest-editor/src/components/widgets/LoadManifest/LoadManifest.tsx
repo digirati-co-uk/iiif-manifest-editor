@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Input } from "../../../editors/Input";
-import { Button, CalltoButton, SecondaryButton } from "../../../atoms/Button";
+import { Input, Submit } from "../../../editors/Input";
+import { Button, SecondaryButton } from "../../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
-import { HorizontalDivider } from "../../../atoms/HorizontalDivider";
 import { analyse } from "../../../helpers/analyse";
 import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { LoadManifestWidget } from "./LoadManifest.style";
@@ -10,6 +9,8 @@ import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext"
 import { useProjectCreators } from "../../../shell/ProjectContext/ProjectContext.hooks";
 import { useApps } from "../../../shell/AppContext/AppContext";
 import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
+import { TickIcon } from "../../../icons/TickIcon";
+import { BlockIcon } from "../../../icons/BlockIcon";
 
 export const LoadManifest: React.FC = () => {
   const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();
@@ -41,42 +42,41 @@ export const LoadManifest: React.FC = () => {
     if (inputed && !(inputed.type === "Manifest" || inputed.type === "Image" || inputed.type === "Collection")) {
       setImageServiceJSON(inputed);
     }
+  };
 
-    if (inputed && inputed.type === "Manifest") {
-      await createProjectFromManifestId(inputed.id);
+  const createProject = async () => {
+    await handleChange();
+    if (inputValue && inputType === "Manifest") {
+      await createProjectFromManifestId(inputValue);
     }
   };
 
-  return (
-    <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
-      {currentProject ? (
-        <InfoMessage $banner>
-          {currentProject.name}{" "}
-          <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
-            Continue editing
-          </Button>
-        </InfoMessage>
-      ) : null}
-      <h1>Get started</h1>
-      <p>Load an existing IIIF Manifest</p>
-      <LoadManifestWidget>
-        <Input placeholder={"Enter a IIIF manifest URL"} onChange={(e: any) => setInputValue(e.target.value)} />
-        <PaddingComponentSmall />
+  const currentProjectWarning = () => (
+    <InfoMessage $banner>
+      {currentProject?.name}
+      <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
+        Continue editing
+      </Button>
+    </InfoMessage>
+  );
 
+  const isCollection =
+    inputType === "Collection" && inputType && (currentApp.id === "manifest-editor" || currentApp.id === "splash") ? (
+      <FlexContainer>
+        <BlockIcon />
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <CalltoButton aria-label="add" onClick={() => handleChange()}>
-            LOAD
-          </CalltoButton>
-          <PaddingComponentSmall />
-          <p>or</p>
-          <PaddingComponentSmall />
-          <SecondaryButton aria-label="add" onClick={() => createBlankManifest()}>
-            CREATE NEW
-          </SecondaryButton>
+          <small>This resource is a collection, please provide a IIIF Manifest.</small>
         </FlexContainer>
-      </LoadManifestWidget>
-      <br />
-      {inputType !== "Manifest" && inputType && currentApp.id === "manifest-editor" && (
+      </FlexContainer>
+    ) : null;
+
+  const isNotManifest =
+    inputType &&
+    !["Manifest", "Collection"].includes(inputType) &&
+    inputValue !== "" &&
+    (currentApp.id === "manifest-editor" || currentApp.id === "splash") ? (
+      <FlexContainer>
+        <BlockIcon />
         <FlexContainerColumn justify={"flex-start"}>
           <p>This resource is not a manifest.</p>
           <small>{inputType}</small>
@@ -85,38 +85,47 @@ export const LoadManifest: React.FC = () => {
           <small>{height && `Image height: ${height}`}</small>
           {imageServiceJSON && <small>{JSON.stringify(imageServiceJSON)}</small>}
         </FlexContainerColumn>
-      )}
-      {inputType === "Collection" && inputType && currentApp.id === "manifest-editor" && (
-        <>
-          <HorizontalDivider />
-          <FlexContainer style={{ justifyContent: "space-between" }}>
-            <small>
-              {/* This UI will change again */}
-              This resource is a collection, do you want to launch the IIIF Browser App?
-            </small>
-            <Button
-              aria-label="launch application"
-              onClick={() => changeApp({ id: "collection-explorer", args: inputValue })}
-            >
-              Launch Application
-            </Button>
-          </FlexContainer>
-        </>
-      )}
-      {inputType === "Manifest" && inputType && currentApp.id === "collection-explorer" && (
-        <>
-          <HorizontalDivider />
-          <FlexContainer style={{ justifyContent: "space-between" }}>
-            <small>
-              {/* This UI will change again */}
-              This resource is a manifest, do you want to launch the Manifest Editor App?
-            </small>
-            <Button aria-label="launch application" onClick={() => changeApp({ id: "manifest-editor" })}>
-              Launch Application
-            </Button>
-          </FlexContainer>
-        </>
-      )}
+      </FlexContainer>
+    ) : null;
+
+  const isValidManifest =
+    inputType === "Manifest" && inputType && (currentApp.id === "manifest-editor" || currentApp.id === "splash") ? (
+      <div>
+        <TickIcon /> Valid IIIF Manifest
+      </div>
+    ) : null;
+
+  return (
+    <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
+      {currentProject && currentProjectWarning()}
+      <h1>Get started</h1>
+      <p>Load an existing IIIF Manifest</p>
+      <LoadManifestWidget
+        onSubmit={(e) => {
+          e.preventDefault();
+          createProject();
+        }}
+      >
+        <Input
+          placeholder={"Enter a IIIF manifest URL"}
+          onChange={(e: any) => setInputValue(e.target.value)}
+          onBlur={handleChange}
+        />
+        <PaddingComponentSmall />
+        <FlexContainer style={{ justifyContent: "space-between" }}>
+          <Submit aria-label="add" onClick={handleChange} />
+          <PaddingComponentSmall />
+          <p>or</p>
+          <PaddingComponentSmall />
+          <SecondaryButton aria-label="add" onClick={createBlankManifest}>
+            CREATE NEW
+          </SecondaryButton>
+        </FlexContainer>
+      </LoadManifestWidget>
+      <PaddingComponentSmall />
+      {isValidManifest}
+      {isNotManifest}
+      {isCollection}
     </FlexContainerColumn>
   );
 };

@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { FlexContainer } from "../../layout/FlexContainer";
 
-export const LoadManifestWidget = styled(FlexContainer)`
+export const LoadManifestWidget = styled.form`
+  display: flex;
   width: 100%;
   justify-content: space-between;
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {

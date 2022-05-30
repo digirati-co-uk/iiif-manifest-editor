@@ -12,6 +12,7 @@ import { AddAnother, FormFieldWrapper, Label, EmptyLanguageField } from "./Langu
 import { useDecayState } from "../../../hooks/useDecayState";
 import { flushSync } from "react-dom";
 import Textarea from "react-textarea-autosize";
+import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -121,7 +122,9 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                     >
                       <CloseIcon />
                     </SmallButton>
-                  ) : null}
+                  ) : (
+                    <PaddingComponentMedium />
+                  )}
                 </InputGroup>
               );
             })}

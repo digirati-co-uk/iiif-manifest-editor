@@ -31,6 +31,7 @@ const TabPanelContainer = styled.div<{ $width?: any }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     width: 100vw;
     border-top: 1px solid rgba(5, 42, 68, 0.2);
@@ -40,7 +41,6 @@ const TabPanelContainer = styled.div<{ $width?: any }>`
 
 const Content = styled.div`
   padding: ${(props: any) => props.theme.padding.small || "0.5rem"};
-  max-height: 60vh;
   overflow: auto;
 `;
 

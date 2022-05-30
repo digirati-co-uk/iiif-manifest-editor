@@ -33,10 +33,11 @@ export const LeftPanel = styled.div`
 
 export const CenterPanel = styled.div`
   flex: 1 1 0;
-  //background: #efefef;
+  background: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  // background: #efefef;
   box-shadow: inset 0 3px 2px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(0, 0, 0, 0.14);
   padding-top: 1px;
-  background: linear-gradient(0deg, rgba(251, 242, 237, 1) 0%, rgba(240, 229, 245, 1) 50%, rgba(236, 245, 255, 1) 100%);
+  // background: linear-gradient(0deg, rgba(251, 242, 237, 1) 0%, rgba(240, 229, 245, 1) 50%, rgba(236, 245, 255, 1) 100%);
 
   min-width: 320px;
 `;
