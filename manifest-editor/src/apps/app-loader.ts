@@ -1,7 +1,7 @@
 import { LayoutProps } from "../shell/Layout/Layout.types";
 
 type LoadedApp = Partial<LayoutProps> & {
-  default: { id: string; title: string; type?: "manifest" | "launcher"; project?: boolean };
+  default: { id: string; title: string; type?: "manifest" | "launcher"; project?: boolean; dev?: boolean };
 };
 
 export type MappedApp = {

@@ -7,6 +7,7 @@ import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor
 import { Fragment } from "react";
 import { RenderApp } from "./render-app";
 import { AppStateProvider, useApps } from "../../shell/AppContext/AppContext";
+import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
 
 const Main = styled.main`
   height: 100vh;
@@ -20,6 +21,7 @@ const Main = styled.main`
 
 const IndexPage = (props: any) => {
   const { currentApp } = useApps();
+  const { current } = useProjectContext();
   const selectedApplication = currentApp?.id;
   const manifest = useManifest();
 
@@ -40,7 +42,7 @@ const IndexPage = (props: any) => {
       </ManifestEditorProvider>
 
       {/* All that is required for rendering app. */}
-      <RenderApp />
+      <RenderApp key={current?.id || ""} />
     </Main>
   );
 };

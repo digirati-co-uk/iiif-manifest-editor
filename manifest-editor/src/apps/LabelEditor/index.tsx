@@ -5,7 +5,7 @@ import { SingleLabelEditor } from "./components/SingleLabelEditor";
 import { CanvasList } from "./components/CanvasList";
 import { CurrentCanvas } from "./components/CurrentCanvas";
 
-export default { id: "label-editor", title: "Labels", project: true };
+export default { id: "label-editor", title: "Labels", project: true, dev: true };
 
 export const leftPanels: LayoutPanel[] = [
   {

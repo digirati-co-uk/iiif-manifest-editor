@@ -2,7 +2,7 @@ import { LayoutPanel } from "../../shell/Layout/Layout.types";
 import { usePreviewContext } from "../../shell/PreviewContext/PreviewContext";
 import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
 
-export default { id: "preview-testing", title: "Preview testing", project: true };
+export default { id: "preview-testing", title: "Preview testing", project: true, dev: true };
 
 function TestingPreview() {
   const { current } = useProjectContext();
