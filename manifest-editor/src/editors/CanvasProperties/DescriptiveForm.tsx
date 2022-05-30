@@ -15,7 +15,6 @@ export const DescriptiveForm = () => {
         guidanceReference={"https://iiif.io/api/presentation/3.0/#summary"}
       />
       <SingleValueInput dispatchType={"rights"} />
-      <SingleValueInput dispatchType={"behavior"} />
       <DateForm />
       <ThumbnailForm />
     </>
