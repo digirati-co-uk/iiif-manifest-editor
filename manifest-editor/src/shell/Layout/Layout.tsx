@@ -22,7 +22,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   // Resizers
   const leftPanelResizer = useResizeLayout(`left-panel/${leftPanel?.id}`, {
     left: true,
-    minWidthPx: leftPanel?.options?.minWidth || 320,
+    minWidthPx: leftPanel?.options?.minWidth || 200,
     maxWidthPx: leftPanel?.options?.maxWidth || 720,
     loading,
   });
