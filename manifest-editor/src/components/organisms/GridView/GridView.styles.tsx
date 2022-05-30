@@ -13,7 +13,6 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
     max-height: 100%;
     overflow-y: auto;
     flex-wrap: wrap;
-    margin: 0 -10px;
     justify-content: space-evenly;
     ${(props: any) =>
       props.strip &&
