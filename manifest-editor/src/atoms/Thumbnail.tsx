@@ -1,8 +1,10 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
-import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
+import { FlexContainer } from "../components/layout/FlexContainer";
+import { BlockIcon } from "../icons/BlockIcon";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { PaddingComponentSmall } from "./PaddingComponent";
 import { RecentLabel } from "./RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew, TemplateCardPlaceholder } from "./TemplateCard";
 
@@ -28,10 +30,9 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
   if (!thumb) {
     return (
       <TemplateCardContainer onClick={onClick}>
-        <TemplateCardNew>
-          <TemplateCardPlaceholder />
-        </TemplateCardNew>
-        <RecentLabel>No thumbnail</RecentLabel>
+        <BlockIcon color="grey" />
+        <PaddingComponentSmall />
+        No thumbnail
       </TemplateCardContainer>
     );
   }
