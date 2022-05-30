@@ -6,6 +6,7 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
   justify-content: space-between;
   align-items: center;
   height: 80vh;
+  margin-right: -40px;
   .list {
     flex-direction: row;
     display: flex;
@@ -43,6 +44,7 @@ export const Group = styled.div`
   display: flex;
   flex-direction: row;
   margin: 1rem 0;
+  max-width: 20em;
   .item {
     visibility: hidden;
     float: right;
