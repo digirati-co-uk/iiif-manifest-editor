@@ -5,7 +5,7 @@ import { ImageService2Editor } from "./ImageService2Editor";
 import { useVaultSelector } from "../../hooks/useVaultSelector";
 import { ImageService3Editor } from "./ImageService3Editor";
 
-const supportedKeys = ["id", "type", "@id", "@type", "height", "width", "profile"];
+const supportedKeys = ["id", "type", "@id", "@type", "height", "width", "profile", "protocol"];
 
 export function ServiceEditor({ id, resourceId }: { id: string; resourceId: string }) {
   const resource = useVaultSelector((s) => s.iiif.entities.ContentResource[resourceId]);

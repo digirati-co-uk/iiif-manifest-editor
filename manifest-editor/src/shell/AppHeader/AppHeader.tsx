@@ -22,7 +22,6 @@ import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
 import { MappedApp } from "../../apps/app-loader";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { useLocalStorage } from "../../madoc/use-local-storage";
-import { Input } from "../../atoms/Input";
 import { FormEvent, useState } from "react";
 import { flushSync } from "react-dom";
 

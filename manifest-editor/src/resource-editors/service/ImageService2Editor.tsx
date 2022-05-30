@@ -52,6 +52,13 @@ export function ImageService2Editor(props: ImageService2EditorProps) {
       </InputContainer>
 
       <InputContainer wide>
+        <InputLabel $margin htmlFor="type">
+          Protocol
+        </InputLabel>
+        <Input id="protocol" value={service.protocol} disabled />
+      </InputContainer>
+
+      <InputContainer wide>
         <DimensionsTriplet
           width={service.width || 0}
           changeWidth={(w) => setValue("width", w)}
