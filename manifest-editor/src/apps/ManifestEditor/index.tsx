@@ -7,6 +7,7 @@ import { LeftPanelMenu } from "./components/LeftPanelMenu";
 import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
+import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -104,12 +105,20 @@ export const rightPanels: LayoutPanel[] = [
   {
     id: "canvas-media",
     label: "Edit canvas media",
-    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
-    render: (state: { annotation: string }) => (
+    render: (state: { annotation: string }, _, app) => (
       <AnnotationContext annotation={state.annotation}>
-        <CanvasMedia />
+        <CanvasContext canvas={app.state.canvasId}>
+          <CanvasMedia />
+        </CanvasContext>
       </AnnotationContext>
     ),
+  },
+  {
+    id: "service-editor",
+    label: "Edit service",
+    render: (state) => {
+      return <ServiceEditor id={state.service} resourceId={state.resourceId} />;
+    },
   },
   // {
   //   id: "media-properties",
