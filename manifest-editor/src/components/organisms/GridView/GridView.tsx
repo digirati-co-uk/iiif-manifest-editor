@@ -12,6 +12,8 @@ import { AddIcon } from "../../../icons/AddIcon";
 import { GridViewContainer } from "./GridView.styles";
 import { GridList } from "./GridList";
 import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSwitcher";
+import { ModalButton } from "../../../madoc/components/ModalButton";
+import { NewCanvas } from "../../widgets/NewCanvas";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
@@ -29,9 +31,19 @@ export const GridView: React.FC<{
       <GridViewContainer>
         <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
           <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
-            <TemplateCardNew>
+            <ModalButton
+              as={TemplateCardNew}
+              render={({ close }) => (
+                <NewCanvas
+                  close={() => {
+                    close();
+                  }}
+                />
+              )}
+              title="New Canvas"
+            >
               <AddIcon />
-            </TemplateCardNew>
+            </ModalButton>
             <RecentLabel>Add</RecentLabel>
           </TemplateCardContainer>
         </FlexContainer>
