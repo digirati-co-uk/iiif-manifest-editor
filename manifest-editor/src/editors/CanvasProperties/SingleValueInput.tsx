@@ -65,7 +65,7 @@ export const SingleValueInput: React.FC<{
           <ErrorBoundary>
             <StringSelector
               key={canvas.id}
-              label="Behavior"
+              label="behavior"
               options={behaviorPresets || []}
               selected={selected}
               multi={true}
