@@ -45,7 +45,7 @@ export const SingleValueInput: React.FC<{
           <RightsForm
             key={canvas.id}
             options={["http://creativecommons.org/licenses/by/4.0/", "http://creativecommons.org/licenses/by-nc/4.0/"]}
-            label={"Rights"}
+            label={"rights"}
             selected={canvas && canvas[dispatchType] ? canvas[dispatchType] : []}
             changeHandler={(e: any) => changeHandler(e)}
             guidanceReference={"https://iiif.io/api/presentation/3.0/#rights"}
@@ -56,7 +56,7 @@ export const SingleValueInput: React.FC<{
         <ErrorBoundary>
           <StringSelector
             key={canvas.id}
-            label="Behavior"
+            label="behavior"
             options={behaviorPresets}
             selected={selected}
             multi={true}
