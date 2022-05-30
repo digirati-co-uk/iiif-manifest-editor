@@ -40,20 +40,20 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
 
 export const Group = styled.div`
   z-index: 2;
-  display: flex;
-  flex-direction: row;
+  // display: flex;
+  // flex-direction: row;
   margin: 1rem 0;
-  max-width: 20em;
-  margin-right: -40px;
+  // max-width: 20em;
+  position: relative;
 
   .item {
     visibility: hidden;
-    float: right;
     border-radius: 5px;
     padding: 5px;
-    transform: translateX(-40px);
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background-color: ${(props: any) => props.theme.color.greyOverlay || "grey"};
-    height: fit-content;
   }
   &:hover {
     .item {

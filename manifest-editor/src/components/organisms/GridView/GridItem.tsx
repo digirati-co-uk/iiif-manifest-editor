@@ -24,7 +24,6 @@ export const GridItem: React.FC<{
 }> = ({ handleChange, canvasId, reorder, remove, index }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
 
-  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
   const manifest = useManifest();
@@ -36,13 +35,6 @@ export const GridItem: React.FC<{
     // Disable the default context menu
     event.preventDefault();
 
-    setContextMenuVisible(false);
-    const newPosition = {
-      x: event.pageX,
-      y: event.pageY,
-    };
-
-    setAnchorPoint(newPosition);
     setContextMenuVisible(true);
   };
 
@@ -50,11 +42,30 @@ export const GridItem: React.FC<{
 
   return (
     <Group onClick={changeCanvas}>
-      {contextMenuVisible && (
-        <DropdownContent
-          style={{ top: anchorPoint.y, left: anchorPoint.x }}
-          onMouseLeave={() => setContextMenuVisible(false)}
+      <FlexContainerColumn>
+        <ThumbnailContainer
+          onClick={(e: any) => {
+            handleChange(canvasId, e);
+            setContextMenuVisible(false);
+          }}
+          size={editorContext?.thumbnailSize?.w}
+          selected={canvasId === currentCanvasId}
         >
+          <ErrorBoundary>
+            <Thumbnail
+              onClick={changeCanvas}
+              width={editorContext?.thumbnailSize?.w}
+              height={editorContext?.thumbnailSize?.h}
+            />
+          </ErrorBoundary>
+        </ThumbnailContainer>
+        <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
+      </FlexContainerColumn>
+      <div className="item" onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}>
+        <MoreVertical color={"white"} />
+      </div>
+      {contextMenuVisible && (
+        <DropdownContent style={{ top: 0, right: 0, zIndex: 8 }} onMouseLeave={() => setContextMenuVisible(false)}>
           <ModalButton
             as={DropdownItem}
             render={({ close }) => (
@@ -104,28 +115,6 @@ export const GridItem: React.FC<{
           </DropdownItem>
         </DropdownContent>
       )}
-      <FlexContainerColumn>
-        <ThumbnailContainer
-          onClick={(e: any) => {
-            handleChange(canvasId, e);
-            setContextMenuVisible(false);
-          }}
-          size={editorContext?.thumbnailSize?.w}
-          selected={canvasId === currentCanvasId}
-        >
-          <ErrorBoundary>
-            <Thumbnail
-              onClick={changeCanvas}
-              width={editorContext?.thumbnailSize?.w}
-              height={editorContext?.thumbnailSize?.h}
-            />
-          </ErrorBoundary>
-        </ThumbnailContainer>
-        <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
-      </FlexContainerColumn>
-      <div className="item" onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}>
-        <MoreVertical color={"white"} />
-      </div>
     </Group>
   );
 };
