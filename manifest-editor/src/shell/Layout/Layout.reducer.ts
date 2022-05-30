@@ -1,10 +1,44 @@
-import produce, { Draft } from "immer";
+import produce, { Draft, original } from "immer";
 import { LayoutState, PanelActionType, PanelState, PinnablePanelState } from "./Layout.types";
 import { isPinnableState } from "./Layout.helpers";
 
+function pushStack<T>(
+  state: Draft<PinnablePanelState | PanelState>,
+  action: T extends { payload: { stacked?: boolean } } ? T : never
+) {
+  if (action.payload && action.payload.stacked) {
+    if (state.current) {
+      const latest = state.stack[state.stack.length - 1];
+      if (latest && latest.id === state.current) {
+        return;
+      }
+
+      state.stack.push({
+        id: state.current,
+        state: { ...original(state.state) },
+      });
+    }
+  } else {
+    state.stack = [];
+  }
+}
+
 function panelReducer(state: Draft<PinnablePanelState | PanelState>, action: PanelActionType) {
   switch (action.type) {
+    case "popStack": {
+      if (state.stack.length) {
+        const latest = state.stack[state.stack.length - 1];
+        if (latest) {
+          state.current = latest.id;
+          state.state = latest.state;
+        }
+        state.stack = state.stack.slice(0, -1);
+      }
+      break;
+    }
+
     case "change": {
+      pushStack(state, action);
       state.state = action.payload.state;
       state.current = action.payload.id;
       break;
@@ -16,6 +50,7 @@ function panelReducer(state: Draft<PinnablePanelState | PanelState>, action: Pan
     case "open": {
       state.open = true;
       if (action.payload) {
+        pushStack<any>(state, action);
         state.state = action.payload.state;
         state.current = action.payload.id;
       }
@@ -91,6 +126,7 @@ export function getDefaultPanelState(): PanelState {
     open: true,
     current: null,
     state: null,
+    stack: [],
   };
 }
 

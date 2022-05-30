@@ -23,11 +23,14 @@ export interface LayoutState {
 export interface LayoutActions {
   setAvailable(panels: LayoutProviderProps): void;
 
+  stack(id: string, state?: any): void;
+  stack(args: { id: string; state?: any }): void;
+
   open(id: string, state?: any): void;
-  open(args: { id: string; state?: any }): void;
+  open(args: { id: string; state?: any; stacked?: boolean }): void;
 
   change(id: string, state?: any): void;
-  change(args: { id: string; state?: any }): void;
+  change(args: { id: string; state?: any; stacked?: boolean }): void;
 
   close(id: string, state?: any): void;
   close(args: { id: string; state?: any }): void;
@@ -47,17 +50,19 @@ export interface PanelState {
   open: boolean;
   minimised: boolean;
   customWidth?: number;
+  stack: Array<{ id: string; state: any }>;
 }
 
 export interface PanelActions {
-  change(args: { id: string; state?: any }): void;
-  open(args?: { id: string; state?: any }): void;
+  change(args: { id: string; state?: any; stacked?: boolean }): void;
+  open(args?: { id: string; state?: any; stacked?: boolean }): void;
   close(): void;
   toggle(): void;
   minimise(): void;
   maximise(args?: { id: string; state?: any }): void;
   setCustomWidth(size: number): void;
   resetSize(): void;
+  popStack(): void;
 }
 
 // Ugly type, but saves duplicating the above into:

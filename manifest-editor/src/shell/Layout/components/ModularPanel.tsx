@@ -145,6 +145,10 @@ export function ModularPanel({
           >
             <BackIcon />
           </ModulePanelButton>
+        ) : state.stack.length ? (
+          <ModulePanelButton onClick={actions.popStack}>
+            <BackIcon />
+          </ModulePanelButton>
         ) : null}
         {hideHeader ? <ModulePanelSpacer /> : <ModularPanelLabel>{panel.label}</ModularPanelLabel>}
         {pinnable ? (

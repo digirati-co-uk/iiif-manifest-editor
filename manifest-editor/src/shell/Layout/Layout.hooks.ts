@@ -5,10 +5,13 @@ export function usePanelActions(
   panel: keyof LayoutState,
   dispatch: Dispatch<PanelActionType>
 ): PanelActions | PinnablePanelActions {
-  function change(payload: { id: string; state?: any }) {
+  function popStack() {
+    dispatch({ type: "popStack", panel, payload: undefined });
+  }
+  function change(payload: { id: string; state?: any; stacked?: boolean }) {
     dispatch({ type: "change", panel, payload });
   }
-  function open(payload?: { id: string; state?: any }) {
+  function open(payload?: { id: string; state?: any; stacked?: boolean }) {
     dispatch({ type: "open", panel, payload });
   }
   function close() {
@@ -38,6 +41,7 @@ export function usePanelActions(
 
   return useMemo(
     () => ({
+      popStack,
       change,
       open,
       close,

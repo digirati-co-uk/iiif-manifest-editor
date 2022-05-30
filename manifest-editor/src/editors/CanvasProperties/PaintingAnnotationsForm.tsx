@@ -79,7 +79,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
                               {...innerProvided.dragHandleProps}
                               key={item.id}
                               onClick={() =>
-                                layouts.open("canvas-media", { annotationPage: item.id, annotation: nested.id })
+                                layouts.stack("canvas-media", { annotationPage: item.id, annotation: nested.id })
                               }
                             >
                               <FlexContainerRow style={{ alignItems: "center", width: "100%" }}>
@@ -95,7 +95,7 @@ export const PaintingAnnotationsForm: React.FC = () => {
                                 <MediaResourcePreview thumbnailSrc={nested.id} />
                                 <Button
                                   onClick={() =>
-                                    layouts.open("canvas-media", { annotationPage: item.id, annotation: nested.id })
+                                    layouts.stack("canvas-media", { annotationPage: item.id, annotation: nested.id })
                                   }
                                   title="edit"
                                 >
