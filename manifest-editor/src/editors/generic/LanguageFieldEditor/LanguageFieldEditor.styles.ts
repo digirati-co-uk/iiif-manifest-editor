@@ -17,7 +17,6 @@ export const AddAnother = styled.div<{ $active?: boolean }>`
 
 export const FormFieldWrapper = styled.div`
   width: 100%;
-  max-width: 30rem;
   margin-bottom: 0.5em;
 `;
 
@@ -35,6 +34,5 @@ export const EmptyLanguageField = styled(ButtonReset)`
   border-bottom: 1px solid rgba(5, 42, 68, 0.2);
   width: 100%;
   display: flex;
-  max-width: 30rem;
   margin-bottom: 1rem;
 `;
