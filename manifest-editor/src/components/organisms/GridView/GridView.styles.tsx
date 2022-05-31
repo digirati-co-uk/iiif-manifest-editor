@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 export const GridViewContainer = styled.div<{ strip?: boolean }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   height: 80vh;
   .list {
