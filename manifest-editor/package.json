@@ -11,11 +11,11 @@
   },
   "resolutions": {
     "@iiif/vault": "0.9.18",
-    "@atlas-viewer/iiif-image-api": "^2.0.3"
+    "@atlas-viewer/iiif-image-api": "^2.0.4"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "^2.0.0-alpha.10",
-    "@atlas-viewer/iiif-image-api": "^2.0.3",
+    "@atlas-viewer/iiif-image-api": "^2.0.4",
     "@digirati/canvas-panel-web-components": "^v1.0.47",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.18",

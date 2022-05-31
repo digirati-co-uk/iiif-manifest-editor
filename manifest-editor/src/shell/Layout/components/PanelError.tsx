@@ -3,12 +3,13 @@ import { ErrorMessage } from "../../../madoc/components/callouts/ErrorMessage";
 import { CalltoButton } from "../../../atoms/Button";
 import { ExperimentalMessage } from "../../../madoc/components/callouts/ExperimentalMessage";
 import { ExperimentalIcon } from "../../../madoc/components/icons/ExperimentalIcon";
+import { LimitationError } from "../../../helpers/limitation";
 
 export function PanelError(props: { error: Error; resetErrorBoundary: () => void }) {
   let error = props.error.toString();
 
-  if (error.startsWith("Error: Invariant failed: ")) {
-    error = error.slice("Error: Invariant failed: ".length);
+  if (props.error instanceof LimitationError) {
+    error = props.error.message;
 
     return (
       <PaddedSidebarContainer>

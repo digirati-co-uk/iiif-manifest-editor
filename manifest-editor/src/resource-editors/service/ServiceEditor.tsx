@@ -4,6 +4,7 @@ import { PaddedSidebarContainer } from "../../atoms/PaddedSidebarContainer";
 import { ImageService2Editor } from "./ImageService2Editor";
 import { useVaultSelector } from "../../hooks/useVaultSelector";
 import { ImageService3Editor } from "./ImageService3Editor";
+import { limitation } from "../../helpers/limitation";
 
 const supportedKeys = ["id", "type", "@id", "@type", "height", "width", "profile", "protocol"];
 
@@ -29,11 +30,11 @@ export function ServiceEditor({ id, resourceId }: { id: string; resourceId: stri
   const type = service.type || service["@type"];
 
   invariant(service, "Service not found");
-  invariant(
+  limitation(
     type === "ImageService2" || type === "ImageService3",
     `Only image services are currently supported, found type: ${service.type}`
   );
-  invariant(
+  limitation(
     Object.keys(service).every((s) => {
       return supportedKeys.includes(s);
     }),
@@ -41,11 +42,11 @@ export function ServiceEditor({ id, resourceId }: { id: string; resourceId: stri
       .filter((s) => !supportedKeys.includes(s))
       .join(", ")})`
   );
-  invariant(
+  limitation(
     !service["@context"] || typeof service["@context"] === "string",
     "Complex context properties not yet supported"
   );
-  invariant(!service.profile || typeof service.profile === "string", "Complex profiles are not yet supported");
+  limitation(!service.profile || typeof service.profile === "string", "Complex profiles are not yet supported");
 
   if (service["@id"]) {
     return (
