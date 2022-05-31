@@ -65,10 +65,10 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^1.2.6", "@atlas-viewer/iiif-image-api@^2.*", "@atlas-viewer/iiif-image-api@^2.0.1", "@atlas-viewer/iiif-image-api@^2.0.2", "@atlas-viewer/iiif-image-api@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.3.tgz#7a4c16ebaddbd762befa6e744ec97793f0eba888"
-  integrity sha512-Tn4KMcN6wp2AjyvYoie2ynGX7ufF8gIJuaZSqdQvqocRJcOrvHI0LxJb6ipV7zWWEyrHpGOKRxrPbYuJ4gcLzQ==
+"@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^1.2.6", "@atlas-viewer/iiif-image-api@^2.*", "@atlas-viewer/iiif-image-api@^2.0.1", "@atlas-viewer/iiif-image-api@^2.0.2", "@atlas-viewer/iiif-image-api@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.4.tgz#4b43ad86224e9a5d17b6d04230da12d92b94fe5d"
+  integrity sha512-KVuxnYXLxrHLHH0FrrNOCGDf9bNCPxn+yzOq5e6J8NNu5CmbqF31gKmGntHLsv7E3WJlGOVYTpjXM1SotB2IIA==
   dependencies:
     "@iiif/presentation-3" "*"
     node-fetch "^3.2.0"
