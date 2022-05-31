@@ -102,7 +102,7 @@ export const GridItem: React.FC<{
           </DropdownItem>
         </DropdownContent>
       )}
-      <FlexContainerColumn>
+      <FlexContainerColumn style={{ maxWidth: editorContext?.thumbnailSize?.w + 10 }}>
         <ThumbnailContainer
           onClick={(e: any) => {
             handleChange(canvasId, e);
