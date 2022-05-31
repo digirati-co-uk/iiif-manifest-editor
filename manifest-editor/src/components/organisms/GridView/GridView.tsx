@@ -28,7 +28,7 @@ export const GridView: React.FC<{
 
   if (!manifest || !manifest[dispatchType] || manifest[dispatchType].length <= 0) {
     return (
-      <GridViewContainer>
+      <GridViewContainer style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem" }}>
         <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
           <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
             <ModalButton
@@ -42,13 +42,11 @@ export const GridView: React.FC<{
               )}
               title="New Canvas"
             >
-              <AddIcon />
+              <AddIcon height={300} />
             </ModalButton>
-            <RecentLabel>Add</RecentLabel>
+            <RecentLabel>Add Canvas</RecentLabel>
           </TemplateCardContainer>
         </FlexContainer>
-
-        <ViewSelector />
       </GridViewContainer>
     );
   }
