@@ -1,17 +1,16 @@
 import styled from "styled-components";
+import { Button, SmallButton } from "../../atoms/Button";
 
 export const Container = styled.div`
   display: flex;
   align-items: center;
   height: 3em;
   padding: 0.5em;
-
 `;
 
 export const Header = styled.div`
   display: flex;
-  padding: 0.5em;
-  height: 6em;
+  padding: 0.25em;
   flex-direction: column;
 `;
 
@@ -28,7 +27,7 @@ export const IconButton = styled.button`
   justify-content: center;
 
   &:focus {
-    background: #ec5681;
+    background: #e94581;
     color: #fff;
     svg {
       fill: #fff;
@@ -76,6 +75,26 @@ export const Draft = styled.div`
 export const DraftsText = styled.div`
   color: #828282;
   padding-right: 1em;
+`;
+
+export const DraftTitleEdit = styled.form`
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex: 1;
+`;
+
+export const DraftTitleEditInput = styled.input`
+  font-size: 1em;
+  flex: 1;
+  border: 1px solid #999;
+  padding: 0.2em;
+  margin: -0.2em 0;
+`;
+
+export const DraftTitleEditButton = styled(SmallButton)`
+  font-size: 1em;
+  display: inline-block;
 `;
 
 export const DraftTitle = styled.div`

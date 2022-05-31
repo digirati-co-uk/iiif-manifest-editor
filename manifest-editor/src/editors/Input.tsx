@@ -10,7 +10,7 @@ export const InputLabel = styled.label<{
   letter-spacing: -0.3px;
   font-weight: 500;
   font-size: 0.875em;
-  line-height: 1.8em;
+  line-height: 2.4em;
   display: flex;
   align-items: baseline;
   width: 100%;

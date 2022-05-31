@@ -40,6 +40,7 @@
     "tiny-invariant": "^1.2.0",
     "tiny-use-debounce": "^1.0.4",
     "universalviewer": "^4.0.0-pre.77",
+    "use-sync-external-store": "^1.1.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -53,6 +54,7 @@
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-transition-group": "^4.4.4",
     "@types/shallowequal": "^1.1.1",
+    "@types/use-sync-external-store": "^0.0.3",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",

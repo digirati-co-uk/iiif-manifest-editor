@@ -4,6 +4,8 @@ import { FlexContainer, FlexContainerColumn } from "../../components/layout/Flex
 import { Input, InputContainer, InputLabel } from "../../editors/Input";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
+import { RichMediaLink } from "../../components/organisms/RichMediaLink/RichMediaLink";
+import { ServiceList } from "../../navigation/ServiceList/ServiceList";
 
 export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
   const resource = useContentResource<any>({ id: props.id });
@@ -60,6 +62,8 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
           onChange={(e: any) => setValue("format", e.target.value)}
         />
       </InputContainer>
+
+      {resource.service ? <ServiceList resourceId={props.id} services={resource.service} /> : null}
     </FlexContainerColumn>
   );
 }

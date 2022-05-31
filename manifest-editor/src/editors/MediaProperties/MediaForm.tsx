@@ -1,4 +1,4 @@
-import { SupportedTarget, useAnnotation } from "react-iiif-vault";
+import { SupportedTarget, useAnnotation, useRenderingStrategy } from "react-iiif-vault";
 import { ContentResource } from "@iiif/presentation-3";
 import { WarningMessage } from "../../madoc/components/callouts/WarningMessage";
 import { EditAnnotationBodyWithoutTarget } from "../../resource-editors/annotation/EditAnnotationBodyWithoutTarget";

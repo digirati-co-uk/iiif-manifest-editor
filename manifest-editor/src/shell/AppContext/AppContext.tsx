@@ -2,6 +2,7 @@ import { createContext, ReactNode, SetStateAction, useCallback, useContext, useM
 import { MappedApp } from "../../apps/app-loader";
 import { useLocalStorage } from "../../madoc/use-local-storage";
 import invariant from "tiny-invariant";
+import { useCurrentProject, useProjectContext } from "../ProjectContext/ProjectContext";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
@@ -32,7 +33,8 @@ export function useAppState<S = any>() {
 }
 
 export function AppStateProvider(props: { appId: string; initialValue?: any; children: ReactNode }) {
-  const [state, _setState, stateRef] = useLocalStorage(`app-state`, props.initialValue || {});
+  const { current } = useProjectContext();
+  const [state, _setState, stateRef] = useLocalStorage(`app-state/${current?.id}`, props.initialValue || {});
 
   const setState = useCallback((partial: any) => {
     const existing = stateRef.current ? JSON.parse(stateRef.current || "{}") : {};

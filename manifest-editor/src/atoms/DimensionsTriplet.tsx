@@ -9,8 +9,8 @@ type Dimensions = {
   changeWidth: (newNumber: number) => void;
   height: number;
   changeHeight: (newHeight: number) => void;
-  duration: number;
-  changeDuration: (newDuration: number) => void;
+  duration?: number;
+  changeDuration?: (newDuration: number) => void;
 };
 
 export const DimensionsTriplet: React.FC<Dimensions> = ({
@@ -57,23 +57,25 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
           />
         </FlexContainerColumn>
       </ErrorBoundary>
-      <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%" }}>
-          <InputLabel $inline={true} htmlFor="dims-duration">
-            {"duration"}
-            <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"} />
-          </InputLabel>
-          <Input
-            id="dims-duration"
-            min={0}
-            type="number"
-            onChange={(e: any) => {
-              changeDuration(e.target.valueAsNumber);
-            }}
-            value={duration}
-          />
-        </FlexContainerColumn>
-      </ErrorBoundary>
+      {changeDuration ? (
+        <ErrorBoundary>
+          <FlexContainerColumn style={{ width: "100%" }}>
+            <InputLabel $inline={true} htmlFor="dims-duration">
+              {"duration"}
+              <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"} />
+            </InputLabel>
+            <Input
+              id="dims-duration"
+              min={0}
+              type="number"
+              onChange={(e: any) => {
+                changeDuration(e.target.valueAsNumber);
+              }}
+              value={duration}
+            />
+          </FlexContainerColumn>
+        </ErrorBoundary>
+      ) : null}
     </FlexContainer>
   );
 };

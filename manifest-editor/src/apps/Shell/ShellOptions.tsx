@@ -6,6 +6,7 @@ import { NewManifestModal } from "../../components/modals/NewManifestModal";
 import { useApps } from "../../shell/AppContext/AppContext";
 import { ModalButton } from "../../madoc/components/ModalButton";
 import { ExportToJson } from "../../components/widgets/ExportToJSON";
+import { useLocalStorage } from "../../madoc/use-local-storage";
 
 export const ShellOptions: React.FC<{}> = () => {
   const { changeApp } = useApps();

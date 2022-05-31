@@ -4,6 +4,7 @@ import { PanelActions } from "../Layout.types";
 import { forwardRef } from "react";
 import { ResetIcon } from "../../../icons/ResetIcon";
 import { DownIcon } from "../../../icons/DownIcon";
+import { ButtonReset } from "../../../atoms/Button";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -12,13 +13,16 @@ export const HandleContainer = styled.div`
   z-index: 50;
 `;
 
-const HandleControl = styled.div`
+const HandleControl = styled(ButtonReset)`
   transition: opacity 300ms, transform 300ms;
   margin-block-start: 0.2em;
   margin-block-end: 0.2em;
   user-select: none;
   opacity: 0;
   transform: scaleY(70%);
+  &:focus {
+    outline: 2px solid salmon;
+  }
 `;
 
 const ResizeHandle = styled(HandleControl)`
