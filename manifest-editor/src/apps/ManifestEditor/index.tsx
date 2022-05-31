@@ -8,6 +8,8 @@ import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
+import { ThumbnailForm } from "../../editors/ManifestProperties/ThumbnailForm";
+import { ThumbnailPage } from "./components/ThumbnailPage";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -112,6 +114,14 @@ export const rightPanels: LayoutPanel[] = [
         </CanvasContext>
       </AnnotationContext>
     ),
+  },
+  {
+    id: "new-manifest-thumbnail",
+    label: "Create new thumbnail",
+    backAction: (state, { actions }) => actions.open("manifest-properties", { current: 0 }),
+    render: () => {
+      return <ThumbnailPage level={"manifest"} />;
+    },
   },
   {
     id: "service-editor",

@@ -11,12 +11,15 @@ import { LightBoxWithoutSides } from "../../atoms/LightBox";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { EditIcon } from "../../icons/EditIcon";
+import { useLayoutActions } from "../../shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
   const manifest = useManifest();
   const vault = useVault();
   const editorContext = useManifestEditor();
+
+  const layouts = useLayoutActions();
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -55,7 +58,7 @@ export const ThumbnailForm = () => {
       <EmptyProperty
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
         label={"thumbnails"}
-        createNew={() => editorContext?.changeSelectedProperty("manifest thumbnail", -1)}
+        createNew={() => layouts.change("new-manifest-thumbnail")}
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
