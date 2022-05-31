@@ -23,7 +23,7 @@ export const GridItem: React.FC<{
   index: number;
 }> = ({ handleChange, canvasId, reorder, remove, index }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
-
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
   const manifest = useManifest();
@@ -34,6 +34,12 @@ export const GridItem: React.FC<{
   const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     // Disable the default context menu
     event.preventDefault();
+    setContextMenuVisible(false);
+    const newPosition = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+    setAnchorPoint(newPosition);
 
     setContextMenuVisible(true);
   };
@@ -42,30 +48,11 @@ export const GridItem: React.FC<{
 
   return (
     <Group onClick={changeCanvas}>
-      <FlexContainerColumn>
-        <ThumbnailContainer
-          onClick={(e: any) => {
-            handleChange(canvasId, e);
-            setContextMenuVisible(true);
-          }}
-          size={editorContext?.thumbnailSize?.w}
-          selected={canvasId === currentCanvasId}
-        >
-          <ErrorBoundary>
-            <Thumbnail
-              onClick={changeCanvas}
-              width={editorContext?.thumbnailSize?.w}
-              height={editorContext?.thumbnailSize?.h}
-            />
-          </ErrorBoundary>
-        </ThumbnailContainer>
-        <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
-      </FlexContainerColumn>
-      <div className="item" onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}>
-        <MoreVertical color={"white"} />
-      </div>
       {contextMenuVisible && (
-        <DropdownContent style={{ bottom: 0 }} onMouseLeave={() => setContextMenuVisible(false)}>
+        <DropdownContent
+          style={{ top: anchorPoint.y, left: anchorPoint.x }}
+          onMouseLeave={() => setContextMenuVisible(false)}
+        >
           <ModalButton
             as={DropdownItem}
             render={({ close }) => (
@@ -115,6 +102,28 @@ export const GridItem: React.FC<{
           </DropdownItem>
         </DropdownContent>
       )}
+      <FlexContainerColumn>
+        <ThumbnailContainer
+          onClick={(e: any) => {
+            handleChange(canvasId, e);
+            setContextMenuVisible(true);
+          }}
+          size={editorContext?.thumbnailSize?.w}
+          selected={canvasId === currentCanvasId}
+        >
+          <ErrorBoundary>
+            <Thumbnail
+              onClick={changeCanvas}
+              width={editorContext?.thumbnailSize?.w}
+              height={editorContext?.thumbnailSize?.h}
+            />
+          </ErrorBoundary>
+        </ThumbnailContainer>
+        <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>
+      </FlexContainerColumn>
+      <div className="item" onClick={(e: React.MouseEvent<HTMLDivElement>) => showContextMenu(e)}>
+        <MoreVertical color={"white"} />
+      </div>
     </Group>
   );
 };

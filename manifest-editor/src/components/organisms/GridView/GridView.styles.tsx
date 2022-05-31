@@ -12,6 +12,7 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
     justify-content: unset;
     max-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     flex-wrap: wrap;
     justify-content: space-evenly;
     ${(props: any) =>
@@ -40,20 +41,18 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
 
 export const Group = styled.div`
   z-index: 2;
-  // display: flex;
-  // flex-direction: row;
-  margin: 1rem 0;
-  // max-width: 20em;
-  position: relative;
-
+  display: flex;
+  flex-direction: row;
+  margin-right: -40px;
+  overflow: hidden;
   .item {
     visibility: hidden;
+    float: right;
     border-radius: 5px;
     padding: 5px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    transform: translateX(-40px);
     background-color: ${(props: any) => props.theme.color.greyOverlay || "grey"};
+    height: fit-content;
   }
   &:hover {
     .item {
