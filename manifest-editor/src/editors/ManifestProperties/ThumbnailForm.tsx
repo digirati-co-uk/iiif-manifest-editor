@@ -107,12 +107,12 @@ export const ThumbnailForm = () => {
                                 <div style={{ padding: "10px" }}>{thumbnail.type}</div>
                               </FlexContainer>
                             </FlexContainer>
-                            <Button
+                            {/* <Button
                               onClick={() => editorContext?.changeSelectedProperty("canvas thumbnail", index)}
                               title="edit"
                             >
                               <EditIcon />
-                            </Button>
+                            </Button> */}
                           </FlexContainerRow>
                         </LightBoxWithoutSides>
                       )}
