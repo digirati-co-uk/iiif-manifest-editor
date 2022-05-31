@@ -290,10 +290,12 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
               </CalltoButton>
             )}
           </FlexContainer>
-          <InputLabel $inline={true} style={{ justifySelf: "flex-end" }}>
-            Add another
-            <Input type={"checkbox"} onChange={(e: any) => setAddAnother(!addAnother)} checked={addAnother} />
-          </InputLabel>
+          <PaddingComponentSmall>
+            <InputLabel $inline={true} style={{ justifySelf: "flex-end" }}>
+              Add another
+              <Input type={"checkbox"} onChange={(e: any) => setAddAnother(!addAnother)} checked={addAnother} />
+            </InputLabel>
+          </PaddingComponentSmall>
         </FlexContainerColumn>
       </FlexContainer>
       <br />
