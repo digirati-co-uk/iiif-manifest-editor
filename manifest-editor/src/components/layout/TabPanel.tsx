@@ -32,7 +32,7 @@ const TabPanelContainer = styled.div<{ $width?: any }>`
   flex-direction: column;
   width: 100%;
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   @media (max-width: ${(props: any) => props.theme.device.tablet || "770px"}) {
     width: 100vw;
     border-top: 1px solid rgba(5, 42, 68, 0.2);
