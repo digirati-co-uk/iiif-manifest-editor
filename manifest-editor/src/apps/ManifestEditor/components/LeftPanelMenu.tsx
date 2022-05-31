@@ -25,7 +25,7 @@ export function LeftPanelMenu() {
     //     />
     //   ) : null}
     // </FlexContainerRow>
-    <FlexContainerRow>
+    <FlexContainerRow justify="center">
       <Button
         onClick={() => actions.change("outline-view")}
         title="Switch to outline view"
