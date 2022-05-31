@@ -20,7 +20,7 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   property?: "label" | "value";
   focusId?: string;
   guidanceReference?: string;
-  multiline?: boolean;
+  disableMultiline?: boolean;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -83,7 +83,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                   onMouseLeave={() => activeState.clear()}
                 >
                   <InputUnderlined
-                    as={props.multiline ? Textarea : "input"}
+                    as={props.disableMultiline ? "input" : Textarea}
                     type="text"
                     id={n === 0 ? focusId : undefined}
                     value={field.value}
