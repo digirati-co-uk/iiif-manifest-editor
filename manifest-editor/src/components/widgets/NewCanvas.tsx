@@ -30,7 +30,9 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
   const newCanvasID = `vault://${v4()}`;
   const [emptyCanvas, setEmptyCanvas] = useState(false);
+  const [addAnother, setAddAnother] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const selectedApplication = currentApp?.id;
 
   const vault = useExistingVault();
@@ -71,7 +73,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
     }
   };
 
-  const handleChange = async (addAnother?: boolean) => {
+  const handleChange = async () => {
     setIsLoading(true);
     let inputed: any;
     if (inputValue) {
@@ -264,40 +266,37 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         </>
       )}
       <HorizontalDivider />
-      <FlexContainer style={{ justifyContent: "space-between" }}>
+      <FlexContainer style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
         <InputLabel $inline={true}>
-          Empty Canvas
           <Input type={"checkbox"} onChange={(e: any) => setEmptyCanvas(!emptyCanvas)} checked={emptyCanvas} />
+          Empty Canvas
         </InputLabel>
-        <FlexContainer>
-          <SecondaryButton aria-label="cancel" onClick={() => close()}>
-            CANCEL
-          </SecondaryButton>
-          <PaddingComponentSmall />
+        <FlexContainerColumn justify="flex-end" style={{ alignItems: "flex-end" }}>
+          <FlexContainer>
+            <SecondaryButton aria-label="cancel" onClick={() => close()}>
+              CANCEL
+            </SecondaryButton>
+            <PaddingComponentSmall />
+            <PaddingComponentSmall />
 
-          {emptyCanvas && (
-            <CalltoButton disabled={!(width && height)} onClick={() => handleChange(true)} aria-label="add">
-              ADD & ADD ANOTHER
-            </CalltoButton>
-          )}
-          {!emptyCanvas && (
-            <CalltoButton disabled={!inputValue} onClick={() => handleChange(true)} aria-label="add">
-              ADD & ADD ANOTHER
-            </CalltoButton>
-          )}
-          <PaddingComponentSmall />
-
-          {emptyCanvas && (
-            <CalltoButton disabled={!(width && height)} onClick={() => handleChange()} aria-label="add">
-              ADD
-            </CalltoButton>
-          )}
-          {!emptyCanvas && (
-            <CalltoButton disabled={!inputValue} onClick={() => handleChange()} aria-label="add">
-              ADD
-            </CalltoButton>
-          )}
-        </FlexContainer>
+            {emptyCanvas && (
+              <CalltoButton disabled={!(width && height)} onClick={() => handleChange()} aria-label="add">
+                ADD
+              </CalltoButton>
+            )}
+            {!emptyCanvas && (
+              <CalltoButton disabled={!inputValue} onClick={() => handleChange()} aria-label="add">
+                ADD
+              </CalltoButton>
+            )}
+          </FlexContainer>
+          <PaddingComponentSmall>
+            <InputLabel $inline={true} style={{ justifySelf: "flex-end" }}>
+              Add another
+              <Input type={"checkbox"} onChange={(e: any) => setAddAnother(!addAnother)} checked={addAnother} />
+            </InputLabel>
+          </PaddingComponentSmall>
+        </FlexContainerColumn>
       </FlexContainer>
       <br />
       {!(inputType === "Image" || inputType === "ImageService") &&

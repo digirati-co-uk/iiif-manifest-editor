@@ -12,7 +12,6 @@ import { Reference } from "@iiif/presentation-3";
 
 export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolean) => void; strip?: boolean }> = ({
   handleChange: _handleChange,
-  strip,
 }) => {
   const manifest = useManifest();
   const editorContext = useManifestEditor();

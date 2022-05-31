@@ -23,7 +23,6 @@ export const GridItem: React.FC<{
   index: number;
 }> = ({ handleChange, canvasId, reorder, remove, index }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
-
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const canvas = useCanvas();
   const editorContext = useManifestEditor();
@@ -35,21 +34,20 @@ export const GridItem: React.FC<{
   const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     // Disable the default context menu
     event.preventDefault();
-
     setContextMenuVisible(false);
     const newPosition = {
       x: event.pageX,
       y: event.pageY,
     };
-
     setAnchorPoint(newPosition);
+
     setContextMenuVisible(true);
   };
 
   const changeCanvas = useCallback(() => setState({ canvasId }), [canvasId, setState]);
 
   return (
-    <Group onClick={changeCanvas}>
+    <Group onClick={changeCanvas} onMouseLeave={() => setContextMenuVisible(false)}>
       {contextMenuVisible && (
         <DropdownContent
           style={{ top: anchorPoint.y, left: anchorPoint.x }}
@@ -104,11 +102,10 @@ export const GridItem: React.FC<{
           </DropdownItem>
         </DropdownContent>
       )}
-      <FlexContainerColumn>
+      <FlexContainerColumn style={{ maxWidth: editorContext?.thumbnailSize?.w + 10 }}>
         <ThumbnailContainer
           onClick={(e: any) => {
             handleChange(canvasId, e);
-            setContextMenuVisible(false);
           }}
           size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}

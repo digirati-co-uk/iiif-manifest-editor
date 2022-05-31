@@ -3,9 +3,10 @@ import { FlexContainerColumn } from "../components/layout/FlexContainer";
 
 export const TemplateCardContainer = styled(FlexContainerColumn)`
   align-items: center;
-  padding: ${(props: any) => props.theme.padding.medium || "1rem"};
   max-width: 10rem;
   height: fit-content;
+  color: grey;
+  font-size: 0.75rem;
 `;
 
 export const TemplateCardNew = styled.div`

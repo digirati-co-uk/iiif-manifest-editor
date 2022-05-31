@@ -61,7 +61,7 @@ export const SingleValueInput: React.FC<{
         <ErrorBoundary>
           <StringSelector
             key={manifest.id}
-            label="Viewing direction"
+            label="viewingDirection"
             options={["left to right", "right to left", "top to bottom", "bottom to top"]}
             selected={manifest && manifest[dispatchType] ? manifest[dispatchType] : []}
             multi={false}
@@ -74,7 +74,7 @@ export const SingleValueInput: React.FC<{
         <ErrorBoundary>
           <StringSelector
             key={manifest.id}
-            label="Behavior"
+            label="behavior"
             options={behaviorPresets}
             selected={selected}
             multi={true}

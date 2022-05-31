@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 export const GridViewContainer = styled.div<{ strip?: boolean }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   height: 80vh;
   .list {
@@ -12,9 +12,9 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
     justify-content: unset;
     max-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     flex-wrap: wrap;
-    margin: 0 -10px;
-    justify-content: space-evenly;
+    justify-content: center;
     ${(props: any) =>
       props.strip &&
       css`
@@ -43,7 +43,8 @@ export const Group = styled.div`
   z-index: 2;
   display: flex;
   flex-direction: row;
-  margin: 1rem 0;
+  margin-right: -40px;
+  overflow: hidden;
   .item {
     visibility: hidden;
     float: right;

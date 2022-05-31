@@ -16,7 +16,7 @@ export const leftPanelMenu = <LeftPanelMenu />;
 export const leftPanels: LayoutPanel[] = [
   {
     id: "thumbnail-view",
-    label: "Thumbnail strip",
+    label: "Canvases",
     defaultState: { width: 128 },
     render: (state, { actions }, ctx) => {
       return (

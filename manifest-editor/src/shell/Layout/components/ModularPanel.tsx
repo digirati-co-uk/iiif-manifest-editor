@@ -25,7 +25,6 @@ interface ModularPanelProps {
 const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus }>`
   display: flex;
   flex-direction: column;
-  min-width: 20em;
   height: 100%;
   ${(props) =>
     props.$floating &&
@@ -110,7 +109,6 @@ const ModularPanelLabel = styled.h2`
 
 const ModularPanelContent = styled.div`
   flex: 1 1 0px;
-  overflow-y: auto;
   padding-bottom: 1em;
 `;
 
