@@ -14,7 +14,7 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
     overflow-y: auto;
     overflow-x: hidden;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: center;
     ${(props: any) =>
       props.strip &&
       css`
