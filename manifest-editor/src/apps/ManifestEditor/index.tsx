@@ -124,6 +124,14 @@ export const rightPanels: LayoutPanel[] = [
     },
   },
   {
+    id: "new-canvas-thumbnail",
+    label: "Create new thumbnail",
+    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 0 }),
+    render: () => {
+      return <ThumbnailPage level={"canvas"} />;
+    },
+  },
+  {
     id: "service-editor",
     label: "Edit service",
     render: (state) => {
