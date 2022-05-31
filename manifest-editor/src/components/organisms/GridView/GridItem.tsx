@@ -46,7 +46,7 @@ export const GridItem: React.FC<{
         <ThumbnailContainer
           onClick={(e: any) => {
             handleChange(canvasId, e);
-            setContextMenuVisible(false);
+            setContextMenuVisible(true);
           }}
           size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}
@@ -65,7 +65,7 @@ export const GridItem: React.FC<{
         <MoreVertical color={"white"} />
       </div>
       {contextMenuVisible && (
-        <DropdownContent style={{ top: 0, right: 0, zIndex: 8 }} onMouseLeave={() => setContextMenuVisible(false)}>
+        <DropdownContent style={{ bottom: 0 }} onMouseLeave={() => setContextMenuVisible(false)}>
           <ModalButton
             as={DropdownItem}
             render={({ close }) => (
