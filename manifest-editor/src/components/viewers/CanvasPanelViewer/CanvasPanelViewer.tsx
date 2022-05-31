@@ -6,6 +6,7 @@ import { Runtime } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
 import { ErrorBoundary } from "react-error-boundary";
 import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
+import { BlockIcon } from "../../../icons/BlockIcon";
 
 const Container = styled.div`
   position: relative;
@@ -39,7 +40,13 @@ export function CanvasPanelViewer() {
   }, [canvas]);
 
   if (!canvas) {
-    return <div>No canvas</div>;
+    return (
+      <CanvasContainer>
+        <GhostCanvas>
+          <BlockIcon color="grey" /> No canvas selected
+        </GhostCanvas>
+      </CanvasContainer>
+    );
   }
 
   return (
