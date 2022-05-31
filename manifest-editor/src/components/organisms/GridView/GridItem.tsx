@@ -47,7 +47,7 @@ export const GridItem: React.FC<{
   const changeCanvas = useCallback(() => setState({ canvasId }), [canvasId, setState]);
 
   return (
-    <Group onClick={changeCanvas}>
+    <Group onClick={changeCanvas} onMouseLeave={() => setContextMenuVisible(false)}>
       {contextMenuVisible && (
         <DropdownContent
           style={{ top: anchorPoint.y, left: anchorPoint.x }}
@@ -106,7 +106,6 @@ export const GridItem: React.FC<{
         <ThumbnailContainer
           onClick={(e: any) => {
             handleChange(canvasId, e);
-            setContextMenuVisible(true);
           }}
           size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}
