@@ -37,7 +37,9 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
 
   async createPreview(project: EditorProject, vault: Vault, ctx: { readOnlyManifest: string }): Promise<Preview> {
     // @todo change this to be a template, with more features.
-    const location = `${this.serviceUrl}`.replace(/\{manifestId}/, ctx.readOnlyManifest);
+    const location = `${this.serviceUrl}`
+      .replace(/\{manifestId}/, ctx.readOnlyManifest)
+      .replace(/\{time}/, `${Date.now()}`);
     const opened = window.open(location, this.id);
 
     this.windows[project.id] = { location, window: opened };
