@@ -61,7 +61,7 @@ export class IIIFPreviewService implements PreviewHandler {
       id: this.id,
       type: "external-manifest-preview",
       data: {
-        readOnlyManifest: json.location,
+        readOnlyManifest: `${json.location}/${Date.now()}`,
       },
     };
   }
@@ -102,7 +102,7 @@ export class IIIFPreviewService implements PreviewHandler {
       id: this.id,
       type: "external-manifest-preview",
       data: {
-        readOnlyManifest: json.location,
+        readOnlyManifest: `${json.location}/${Date.now()}`,
       },
     };
   }
