@@ -41,6 +41,7 @@ export const ViewSelector: React.FC = () => {
       <Button
         onClick={() => {
           actions.change("thumbnail-view");
+          actions.leftPanel.open();
           actions.change("current-canvas");
         }}
         title="Switch to thumbnails with canvas"
