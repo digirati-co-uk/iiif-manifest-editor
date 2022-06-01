@@ -135,6 +135,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         });
       });
       insertAfterSelected();
+      setState({ canvasId: newCanvasID });
 
       if (!addAnother) {
         close();
@@ -149,13 +150,14 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         });
       });
       insertAfterSelected();
+      setState({ canvasId: newCanvasID });
 
       if (!addAnother) {
         close();
       }
     }
     if (addAnother) {
-      setInputValue("Paste URL of Media to create Canvas");
+      setInputValue("");
       setInputType(undefined);
     }
   };
