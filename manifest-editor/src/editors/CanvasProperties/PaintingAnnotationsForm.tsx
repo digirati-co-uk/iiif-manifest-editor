@@ -78,9 +78,6 @@ export const PaintingAnnotationsForm: React.FC = () => {
                               {...innerProvided.draggableProps}
                               {...innerProvided.dragHandleProps}
                               key={item.id}
-                              onClick={() =>
-                                layouts.stack("canvas-media", { annotationPage: item.id, annotation: nested.id })
-                              }
                             >
                               <FlexContainerRow style={{ alignItems: "center", width: "100%" }}>
                                 <Button
