@@ -107,8 +107,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         });
       });
       insertAfterSelected();
-      const canv = vault.get(newCanvasID);
-      setState({ newCanvasID });
+      setState({ canvasId: newCanvasID });
       if (!addAnother) {
         close();
       }
