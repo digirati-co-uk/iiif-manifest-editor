@@ -2,13 +2,14 @@ export const AddIcon: React.FC<{
   inline?: boolean;
   height?: number;
   className?: string;
-}> = ({ className, inline, height = 16 }) => (
+  color?: string;
+}> = ({ className, inline, height = 16, color = "black" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height={`${height}px`}
     viewBox="0 0 24 24"
     width="24px"
-    fill="#000000"
+    fill={color}
     style={{ verticalAlign: inline ? "bottom" : undefined }}
     className={className}
   >
