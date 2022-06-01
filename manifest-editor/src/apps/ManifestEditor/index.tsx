@@ -111,7 +111,7 @@ export const rightPanels: LayoutPanel[] = [
   },
   {
     id: "canvas-media",
-    label: "Edit canvas media",
+    label: "Edit media item",
     render: (state: { annotation: string }, _, app) => (
       <AnnotationContext annotation={state.annotation}>
         <CanvasContext canvas={app.state.canvasId}>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
 export const JSONPreview = styled.div`
-  height: 100%;
+  max-height: 400px;
   overflow-y: scroll;
 `;
