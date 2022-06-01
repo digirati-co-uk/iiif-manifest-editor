@@ -28,7 +28,10 @@ export const GridView: React.FC<{
 
   if (!manifest || !manifest[dispatchType] || manifest[dispatchType].length <= 0) {
     return (
-      <GridViewContainer style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem", height: "80vh" }}>
+      <GridViewContainer
+        strip={strip}
+        style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem", height: "80vh" }}
+      >
         <FlexContainer style={{ justifyContent: "center", width: "100%" }}>
           <ModalButton
             as={CalltoButton}
@@ -50,11 +53,11 @@ export const GridView: React.FC<{
     );
   }
   return (
-    <GridViewContainer style={{ height: "80vh", overflowY: "hidden" }}>
+    <GridViewContainer style={{ height: "80vh", overflowY: "hidden" }} strip={strip}>
       <GridList handleChange={handleChange} />
       {!strip && (
         <FlexContainerRow>
-          <ViewSelector />
+          {/* <ViewSelector /> */}
           <HeightWidthSwitcher
             options={[
               { h: 128, w: 128 },
