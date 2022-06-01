@@ -72,7 +72,6 @@ export const ThumbnailForm = () => {
               {vault &&
                 manifest &&
                 vault.get(manifest.thumbnail).map((thumbnail: any, index) => {
-                  console.log(thumbnail);
                   return (
                     <Draggable
                       key={thumbnail.toString() + "--HASH--"}

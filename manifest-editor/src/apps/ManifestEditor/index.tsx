@@ -8,8 +8,9 @@ import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
-import { ThumbnailForm } from "../../editors/ManifestProperties/ThumbnailForm";
 import { ThumbnailPage } from "./components/ThumbnailPage";
+import { limitation } from "../../helpers/limitation";
+import { PanelError } from "../../shell/Layout/components/PanelError";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -36,11 +37,15 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: "outline-view",
     label: "Outline view",
-    render() {
-      return <div>Outline view</div>;
-    },
+    render: () => <OutlinePlaceholder />,
   },
 ];
+
+function OutlinePlaceholder() {
+  limitation(false, "Outline view feature is not yet complete");
+
+  return null;
+}
 
 export const centerPanels: LayoutPanel[] = [
   // CanvasPanel
