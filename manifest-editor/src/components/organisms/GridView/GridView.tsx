@@ -28,7 +28,7 @@ export const GridView: React.FC<{
 
   if (!manifest || !manifest[dispatchType] || manifest[dispatchType].length <= 0) {
     return (
-      <GridViewContainer style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem" }}>
+      <GridViewContainer style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem", height: "80vh" }}>
         <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
           <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
             <ModalButton

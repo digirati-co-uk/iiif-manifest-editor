@@ -9,6 +9,7 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
   .list {
     flex-direction: row;
     display: flex;
+    height: 100%;
     justify-content: unset;
     max-height: 100%;
     overflow-y: auto;
