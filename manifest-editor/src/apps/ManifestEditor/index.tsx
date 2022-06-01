@@ -38,7 +38,13 @@ export const leftPanels: LayoutPanel[] = [
     id: "outline-view",
     label: "Outline view",
     render() {
-      limitation(false, "my message");
+      limitation(true, "my message");
+      return (
+        <PanelError
+          error={{ message: "blah", name: "error" }}
+          resetErrorBoundary={() => limitation(true, "my message")}
+        />
+      );
     },
   },
 ];
