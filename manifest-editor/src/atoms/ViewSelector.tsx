@@ -3,28 +3,40 @@ import { ThumbnailStripIcon } from "../icons/ThumbnailStripIcon";
 import { TreeIcon } from "../icons/TreeIcon";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { Button } from "./Button";
-import { useLayoutActions } from "../shell/Layout/Layout.context";
+import { useLayoutActions, useLayoutState } from "../shell/Layout/Layout.context";
+import { useEffect, useState } from "react";
+import { VerticalDivider } from "./VerticalDivider";
+import { PaddingComponentSmall } from "./PaddingComponent";
 
 export const ViewSelector: React.FC = () => {
   const actions = useLayoutActions();
+  const layout = useLayoutState();
+  const [activeLeftPanelState, setActiveLeftPanelState] = useState(layout.leftPanel.current);
+  const [activeCenterPanelState, setActiveCenterPanelState] = useState(layout.centerPanel.current);
+  const [leftPanelIsOpen, setActiveLeftIsOpen] = useState(false);
+
+  useEffect(() => {
+    setActiveLeftIsOpen(layout.leftPanel.open);
+    setActiveLeftPanelState(layout.leftPanel.current);
+    setActiveCenterPanelState(layout.centerPanel.current);
+  }, [layout]);
 
   return (
     <FlexContainerRow justify="center">
       <Button
-        onClick={() => actions.change("outline-view")}
+        onClick={() => {
+          actions.change("outline-view");
+          actions.open("outline-view");
+        }}
         title="Switch to outline view"
         aria-label="Switch to outline view"
+        style={
+          leftPanelIsOpen && activeLeftPanelState === "outline-view"
+            ? { background: "lightgrey" }
+            : { background: "white" }
+        }
       >
         <TreeIcon />
-      </Button>
-      <Button
-        onClick={() => {
-          actions.centerPanel.change({ id: "thumbnail-grid" });
-        }}
-        title="Switch to thumbnails only"
-        aria-label="Switch to thumbnails only"
-      >
-        <GridIcon />
       </Button>
       <Button
         onClick={() => {
@@ -33,8 +45,24 @@ export const ViewSelector: React.FC = () => {
         }}
         title="Switch to thumbnails with canvas"
         aria-label="Switch to thumbnails with canvas"
+        style={
+          leftPanelIsOpen && activeLeftPanelState === "thumbnail-view"
+            ? { background: "lightgrey" }
+            : { background: "white" }
+        }
       >
         <ThumbnailStripIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          actions.centerPanel.change({ id: "thumbnail-grid" });
+          actions.leftPanel.close();
+        }}
+        title="Switch to thumbnails only"
+        aria-label="Switch to thumbnails only"
+        style={activeCenterPanelState === "thumbnail-grid" ? { background: "lightgrey" } : { background: "white" }}
+      >
+        <GridIcon />
       </Button>
     </FlexContainerRow>
   );

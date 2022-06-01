@@ -8,7 +8,6 @@ import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
-import { ThumbnailForm } from "../../editors/ManifestProperties/ThumbnailForm";
 import { ThumbnailPage } from "./components/ThumbnailPage";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
