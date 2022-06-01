@@ -25,7 +25,6 @@ export const ViewSelector: React.FC = () => {
     <FlexContainerRow justify="center">
       <Button
         onClick={() => {
-          actions.change("outline-view");
           actions.open("outline-view");
         }}
         title="Switch to outline view"
