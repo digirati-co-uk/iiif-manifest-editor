@@ -22,9 +22,6 @@ export const RecentManifestCard = styled.div`
   flex-direction: column;
   align-items: center;
   margin: ${(props: any) => props.theme.padding.xs || "0.25rem"};
-  word-break: break-all;
-  overflow-y: clip;
-  max-width: 8rem;
 `;
 
 export const RecentLabel = styled.small`
