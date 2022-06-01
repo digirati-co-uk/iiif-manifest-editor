@@ -1,6 +1,5 @@
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { Button } from "../../atoms/Button";
 import { EditableContainer } from "../../atoms/EditableContainer";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
@@ -8,14 +7,14 @@ import { LightBoxWithoutSides } from "../../atoms/LightBox";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { EditIcon } from "../../icons/EditIcon";
 import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexContainer";
+import { useLayoutActions } from "../../shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
   const canvas = useCanvas();
   const vault = useVault();
-  const editorContext = useManifestEditor();
+  const layouts = useLayoutActions();
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -54,7 +53,7 @@ export const ThumbnailForm = () => {
       <EmptyProperty
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
         label={"thumbnails"}
-        createNew={() => editorContext?.changeSelectedProperty("canvas thumbnail", -1)}
+        createNew={() => layouts.change("new-canvas-thumbnail")}
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
@@ -102,12 +101,12 @@ export const ThumbnailForm = () => {
                                 <div style={{ padding: "10px" }}>{thumbnail.type}</div>
                               </FlexContainer>
                             </FlexContainer>
-                            <Button
+                            {/* <Button
                               onClick={() => editorContext?.changeSelectedProperty("canvas thumbnail", index)}
                               title="edit"
                             >
                               <EditIcon />
-                            </Button>
+                            </Button> */}
                           </FlexContainerRow>
                         </LightBoxWithoutSides>
                       )}
