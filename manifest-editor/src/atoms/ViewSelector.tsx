@@ -20,7 +20,6 @@ export const ViewSelector: React.FC = () => {
       <Button
         onClick={() => {
           actions.centerPanel.change({ id: "thumbnail-grid" });
-          actions.leftPanel.close();
         }}
         title="Switch to thumbnails only"
         aria-label="Switch to thumbnails only"
