@@ -9,6 +9,8 @@ import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
 import { ThumbnailPage } from "./components/ThumbnailPage";
+import { limitation } from "../../helpers/limitation";
+import { PanelError } from "../../shell/Layout/components/PanelError";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -36,7 +38,7 @@ export const leftPanels: LayoutPanel[] = [
     id: "outline-view",
     label: "Outline view",
     render() {
-      return <div>Outline view</div>;
+      limitation(false, "my message");
     },
   },
 ];
