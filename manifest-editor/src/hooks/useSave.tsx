@@ -1,5 +1,5 @@
 const PERSISTENCEURL = {
-  prod: "https://iiif-preview.stephen.wf/store",
+  prod: "http://iiif.preview.digirati.services/",
   // Need iiif-preview to be running locally.
   local: "http://127.0.0.1:8787/store",
 };
