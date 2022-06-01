@@ -37,17 +37,15 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: "outline-view",
     label: "Outline view",
-    render() {
-      limitation(true, "my message");
-      return (
-        <PanelError
-          error={{ message: "blah", name: "error" }}
-          resetErrorBoundary={() => limitation(true, "my message")}
-        />
-      );
-    },
+    render: () => <OutlinePlaceholder />,
   },
 ];
+
+function OutlinePlaceholder() {
+  limitation(false, "Outline view feature is not yet complete");
+
+  return null;
+}
 
 export const centerPanels: LayoutPanel[] = [
   // CanvasPanel
