@@ -7,6 +7,7 @@ import { AddIcon } from "../../../icons/AddIcon";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { GridItem } from "./GridItem";
 import { useCallback } from "react";
+import { unstable_batchedUpdates } from "react-dom";
 import { reorderEntityField, removeReference } from "@iiif/vault/actions";
 import { Reference } from "@iiif/presentation-3";
 
@@ -27,15 +28,19 @@ export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolea
   const reorder = useCallback(
     (fromPosition: number, toPosition: number) => {
       if (manifest) {
-        vault.dispatch(
-          reorderEntityField({
-            id: manifest.id,
-            type: manifest.type,
-            endIndex: toPosition,
-            startIndex: fromPosition,
-            key: dispatchType,
-          })
-        );
+        console.time(`Change ${fromPosition}, ${toPosition}`);
+        unstable_batchedUpdates(() => {
+          vault.dispatch(
+            reorderEntityField({
+              id: manifest.id,
+              type: manifest.type,
+              endIndex: toPosition,
+              startIndex: fromPosition,
+              key: dispatchType,
+            })
+          );
+        });
+        console.timeEnd(`Change ${fromPosition}, ${toPosition}`);
       }
     },
     [manifest, vault]

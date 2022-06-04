@@ -82,9 +82,8 @@ export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean
   border-radius: 5px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => props.theme.color.black || "grey"};
-  width: ${(props) => props.size && props.size + 10}px;
-  height: ${(props) => props.size && props.size + 10}px;
+  background-color: #000;
+
   img {
     max-width: 100%;
     ${(props) =>
