@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const GridViewContainer = styled.div<{ strip?: boolean }>`
+export const GridViewContainer = styled.div<{ strip?: boolean; $column?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -9,7 +9,6 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
   .list {
     flex-direction: row;
     display: flex;
-    justify-content: unset;
     max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -26,6 +25,13 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
       `}
     & > * {
       margin: 10px;
+      ${(props) =>
+        props.$column &&
+        css`
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        `}
     }
     a {
       text-decoration: none;
@@ -84,9 +90,8 @@ export const ThumbnailContainer = styled.div<{ size?: number; selected?: boolean
   border-radius: 5px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => props.theme.color.black || "grey"};
-  width: ${(props) => props.size && props.size + 10}px;
-  height: ${(props) => props.size && props.size + 10}px;
+  background-color: #000;
+
   img {
     max-width: 100%;
     ${(props) =>

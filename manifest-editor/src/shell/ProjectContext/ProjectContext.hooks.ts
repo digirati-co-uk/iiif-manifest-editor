@@ -18,6 +18,7 @@ import { projectFromManifest } from "./helpers/project-from-manifest";
 import { convertPresentation2 } from "@iiif/parser/presentation-2";
 import { useProjectContext } from "./ProjectContext";
 import { useApps } from "../AppContext/AppContext";
+import { v4 } from "uuid";
 
 export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsType>, backend: ProjectBackend) {
   function createProject(payload: EditorProject) {
@@ -240,7 +241,7 @@ export function useProjectCreators() {
     actions.createProject(
       projectFromManifest({
         "@context": "http://iiif.io/api/presentation/3/context.json",
-        id: "/config/manifest-templates/blank.json",
+        id: `https://example.org/${v4()}`,
         type: "Manifest",
         label: {
           en: ["Blank Manifest"],

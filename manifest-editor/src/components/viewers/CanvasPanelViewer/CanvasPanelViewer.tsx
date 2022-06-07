@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useCanvas } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useCanvas, useManifest } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef } from "react";
@@ -8,6 +8,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
+import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
 
 const Container = styled.div`
   position: relative;
@@ -29,6 +30,7 @@ export function CanvasPanelViewer() {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const _canvas = useCanvas(); // @todo remove.
+  const manifest = useManifest(); // @todo remove.
   const canvas = state.canvasId || _canvas?.id;
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
@@ -39,6 +41,10 @@ export function CanvasPanelViewer() {
   useEffect(() => {
     runtime.current?.goHome();
   }, [canvas]);
+
+  if (!canvas && manifest?.items.length === 0) {
+    return <EmptyCanvasState />;
+  }
 
   if (!canvas) {
     return (

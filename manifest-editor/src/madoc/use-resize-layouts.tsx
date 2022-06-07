@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useEventHandler } from "./use-event-handler";
 import { useLocalStorage } from "./use-local-storage";
+import { panelSizing } from "../shell/Layout/Layout.helpers";
 
 function distance(x1: number, y1: number, x2: number, y2: number) {
   return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));
@@ -42,8 +43,12 @@ export function useResizeLayout(
   const isEventTimeout = useRef<number>(0);
   const startPos = useRef({ x: 0, y: 0 });
   const [{ widthA, widthB }, setWidths] = useLocalStorage(`resize-layout/${name}`, {
-    widthA: options.widthA || "auto",
-    widthB: options.widthB || "auto",
+    widthA: "auto",
+    widthB: `${panelSizing({
+      initial: options.widthA,
+      fallback: 320,
+      options: { minWidth: options.minWidthPx, maxWidth: options.maxWidthPx },
+    })}px`,
   });
   const { loading = false } = options;
 
@@ -80,7 +85,7 @@ export function useResizeLayout(
           const newWidthB = newPct.current * width;
 
           setWidths({
-            widthA: `${(1 - newPct.current) * width}px`,
+            widthA: `${(1 - newPct.current) * width}`,
             widthB: `${newWidthB > maxWidthPct ? maxWidthPct : newWidthB < minWidthPct ? minWidthPct : newWidthB}px`,
           });
         } else {

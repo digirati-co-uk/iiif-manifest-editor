@@ -9,6 +9,7 @@ import { RecentLabel } from "../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../atoms/TemplateCard";
 import { AddIcon } from "../../icons/AddIcon";
 import { FlexContainer } from "../layout/FlexContainer";
+import { CanvasThumbnail } from "./CanvasThumbnail/CanvasThumbnail";
 
 export const ThumbnailStrip: React.FC<{ handleChange: (id: string) => void; width?: number }> = ({
   handleChange,
@@ -32,15 +33,13 @@ export const ThumbnailStrip: React.FC<{ handleChange: (id: string) => void; widt
   //   );
   // }
 
-  console.log(width);
-
   return (
     <ThumbnailContainer>
       {manifest?.items.map((item: any) => {
         return (
           <CanvasContext key={item.id} canvas={item.id}>
             <ErrorBoundary>
-              <Thumbnail onClick={() => handleChange(item.id)} width={width} />
+              <CanvasThumbnail onClick={() => handleChange(item.id)} size={width} />
             </ErrorBoundary>
           </CanvasContext>
         );
@@ -62,7 +61,7 @@ export const SmallThumbnailStrip: React.FC<{ handleChange: (id: string) => void;
           <ErrorBoundary>
             <CanvasContext key={item.id} canvas={item.id}>
               <ErrorBoundary>
-                <Thumbnail onClick={() => handleChange(item.id)} width={width} />
+                <CanvasThumbnail onClick={() => handleChange(item.id)} size={width} />
               </ErrorBoundary>
             </CanvasContext>
           </ErrorBoundary>

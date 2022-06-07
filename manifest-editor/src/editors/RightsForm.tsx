@@ -27,7 +27,10 @@ export const RightsForm: React.FC<{
           {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
         </FlexContainer>
 
-        <FlexContainer style={{ width: "100%", justifyContent: "space-between" }} onClick={() => setOpen(!open)}>
+        <FlexContainer
+          style={{ width: "100%", justifyContent: "space-between", background: "#eee" }}
+          onClick={() => setOpen(!open)}
+        >
           <div>{selected}</div>
           <Button aria-label="open/close" onClick={() => setOpen(!open)}>
             <VerticalDivider />
