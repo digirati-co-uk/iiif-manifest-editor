@@ -69,7 +69,7 @@ export function EmptyCanvasState() {
           </FloatingPanel>
         </FloatingPanelContainer>
         <TextOverlay style={{ textAlign: "center" }}>
-          <h1>Test</h1>
+          <h1>No canvases</h1>
         </TextOverlay>
       </div>
     </div>

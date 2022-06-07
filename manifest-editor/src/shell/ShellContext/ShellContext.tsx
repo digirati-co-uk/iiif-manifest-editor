@@ -28,7 +28,7 @@ const previewConfigs: PreviewConfiguration[] = [
   },
   {
     id: "iiif-preview",
-    config: { url: "https://iiif-preview.stephen.wf/store" },
+    config: { url: "https://iiif-preview.digirati.services/store" },
     type: "iiif-preview-service",
     label: "IIIF Preview",
   },

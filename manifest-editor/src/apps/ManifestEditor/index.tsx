@@ -8,6 +8,7 @@ import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
+import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThumbnailForm";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -118,6 +119,13 @@ export const rightPanels: LayoutPanel[] = [
     label: "Edit service",
     render: (state) => {
       return <ServiceEditor id={state.service} resourceId={state.resourceId} />;
+    },
+  },
+  {
+    id: "canvas-thumbnail",
+    label: "Edit canvas thumbnail",
+    render: (state) => {
+      return <CanvasThumbnailForm />;
     },
   },
   // {

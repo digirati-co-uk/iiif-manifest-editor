@@ -10,12 +10,15 @@ import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { EditIcon } from "../../icons/EditIcon";
 import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexContainer";
+import { usePanelActions } from "../../shell/Layout/Layout.hooks";
+import { useLayoutActions } from "../../shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
   const canvas = useCanvas();
   const vault = useVault();
   const editorContext = useManifestEditor();
+  const layouts = useLayoutActions();
 
   const onDragEnd = (result: DropResult) => {
     const destination = result.destination;
@@ -54,7 +57,7 @@ export const ThumbnailForm = () => {
       <EmptyProperty
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
         label={"thumbnails"}
-        createNew={() => editorContext?.changeSelectedProperty("canvas thumbnail", -1)}
+        createNew={() => layouts.stack("canvas-thumbnail")}
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">

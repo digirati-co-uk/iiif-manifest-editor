@@ -28,7 +28,6 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
   const [height, setHeight] = useState<number | undefined>(1000);
   const [duration, setDuration] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
-  const newCanvasID = `vault://${v4()}`;
   const [emptyCanvas, setEmptyCanvas] = useState(false);
   const [addAnother, setAddAnother] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,13 +66,16 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         const newOrder = latestManifest ? [...latestManifest.items] : [];
         // The new canvas will by default be on the end
         const newCanvas = newOrder.pop();
-        if (newCanvas) newOrder.splice(index + 1, 0, newCanvas);
+        if (newCanvas) {
+          newOrder.splice(index + 1, 0, newCanvas);
+        }
         vault.modifyEntityField(latestManifest, "items", newOrder);
       }
     }
   };
 
   const handleChange = async () => {
+    const newCanvasID = `https://example.org/canvas/${v4()}`;
     setIsLoading(true);
     let inputed: any;
     if (inputValue) {
@@ -91,6 +93,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani: any) => {
         mani.createCanvas(newCanvasID, (can: any) => {
+          can.entity.id = newCanvasID;
           can.height = inputed?.height;
           can.width = inputed?.width;
           can.createAnnotation(`${newCanvasID}/painting`, {
@@ -105,8 +108,15 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
               width: inputed?.width,
             },
           });
+          console.log({ ...can });
         });
+
+        console.log({ ...mani });
       });
+
+      console.log(JSON.stringify(builder.toPresentation3({ id: manifest.id, type: "Manifest" })));
+      console.log(JSON.stringify(builder.vault.getState()));
+
       insertAfterSelected();
       if (!addAnother) {
         close();
@@ -115,6 +125,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (can: any) => {
+          can.entity.id = newCanvasID;
           can.height = inputed?.height;
           can.width = inputed?.width;
           can.createAnnotation(`${newCanvasID}/painting`, {
@@ -144,6 +155,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
 
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (canvas) => {
+          canvas.entity.id = newCanvasID;
           canvas.height = height;
           canvas.width = width;
         });

@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const GridViewContainer = styled.div<{ strip?: boolean }>`
+export const GridViewContainer = styled.div<{ strip?: boolean; $column?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -9,7 +9,6 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
   .list {
     flex-direction: row;
     display: flex;
-    justify-content: unset;
     max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -24,6 +23,13 @@ export const GridViewContainer = styled.div<{ strip?: boolean }>`
       `}
     & > * {
       margin: 10px;
+      ${(props) =>
+        props.$column &&
+        css`
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        `}
     }
     a {
       text-decoration: none;

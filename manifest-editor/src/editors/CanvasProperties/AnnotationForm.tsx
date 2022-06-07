@@ -15,7 +15,7 @@ export const AnnotationForm = () => {
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
 
   const addNew = () => {
-    const newID = `vault://${v4()}`;
+    const newID = `https://example.org/annotation/${v4()}`;
 
     if (!canvas || !manifest) {
       return;

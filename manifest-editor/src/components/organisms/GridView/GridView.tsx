@@ -19,7 +19,8 @@ export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
   width?: number;
   strip?: boolean;
-}> = ({ handleChange, width, strip }) => {
+  column?: boolean;
+}> = ({ handleChange, width, strip, column }) => {
   const manifest = useManifest();
 
   const editorContext = useManifestEditor();
@@ -51,7 +52,7 @@ export const GridView: React.FC<{
     );
   }
   return (
-    <GridViewContainer>
+    <GridViewContainer $column={strip}>
       <GridList handleChange={handleChange} />
       {!strip && (
         <FlexContainerRow>

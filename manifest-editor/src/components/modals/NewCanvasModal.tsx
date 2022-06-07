@@ -32,7 +32,6 @@ export const NewCanvasModal: React.FC<{
   const [height, setHeight] = useState<number | undefined>(1000);
   const [duration, setDuration] = useState<number | undefined>();
   const [imageServiceJSON, setImageServiceJSON] = useState<any>();
-  const newCanvasID = `vault://${v4()}`;
   const [emptyCanvas, setEmptyCanvas] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const selectedApplication = currentApp?.id;
@@ -57,6 +56,7 @@ export const NewCanvasModal: React.FC<{
   };
 
   const handleChange = async (addAnother?: boolean) => {
+    const newCanvasID = `https://example.org/canvas/${v4()}`;
     setIsLoading(true);
     let inputed: any;
     if (inputValue) {
@@ -74,6 +74,7 @@ export const NewCanvasModal: React.FC<{
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani: any) => {
         mani.createCanvas(newCanvasID, (can: any) => {
+          can.entity.id = newCanvasID;
           can.height = inputed?.height;
           can.width = inputed?.width;
           can.createAnnotation(`${newCanvasID}/painting`, {
@@ -98,6 +99,7 @@ export const NewCanvasModal: React.FC<{
       const builder = new IIIFBuilder(vault);
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (can: any) => {
+          can.entity.id = newCanvasID;
           can.height = inputed?.height;
           can.width = inputed?.width;
           can.createAnnotation(`${newCanvasID}/painting`, {
@@ -126,6 +128,7 @@ export const NewCanvasModal: React.FC<{
 
       builder.editManifest(manifest.id, (mani) => {
         mani.createCanvas(newCanvasID, (canvas) => {
+          canvas.entity.id = newCanvasID;
           canvas.height = height;
           canvas.width = width;
         });

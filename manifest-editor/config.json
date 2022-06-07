@@ -17,22 +17,6 @@
       }
     },
     {
-      "id": "ocean-liners",
-      "type": "external-manifest-preview",
-      "label": "Ocean Liners",
-      "config": {
-        "url": "https://canvas-panel.digirati.com/#/examples/fullpage?manifest={manifestId}"
-      }
-    },
-    {
-      "id": "raw-manifest",
-      "type": "external-manifest-preview",
-      "label": "Raw Manifest",
-      "config": {
-        "url": "{manifestId}"
-      }
-    },
-    {
       "id": "universal-viewer-3",
       "type": "external-manifest-preview",
       "label": "Universal viewer (v3)",
@@ -46,6 +30,14 @@
       "label": "IIIF Preview",
       "config": {
         "url": "https://iiif-preview.stephen.wf/store"
+      }
+    },
+    {
+      "id": "raw-manifest",
+      "type": "external-manifest-preview",
+      "label": "Raw Manifest",
+      "config": {
+        "url": "{manifestId}"
       }
     }
   ],

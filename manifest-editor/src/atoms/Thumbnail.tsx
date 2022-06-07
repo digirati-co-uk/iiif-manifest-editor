@@ -25,7 +25,6 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
   const thumb = useThumbnail({
     maxWidth: width || 128,
     maxHeight: height ? height : typeof width !== "undefined" ? width : 128,
-    unsafeImageService: true,
   });
 
   if (!thumb || (thumb as any).width > (width || 128)) {
