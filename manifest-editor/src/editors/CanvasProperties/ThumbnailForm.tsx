@@ -8,20 +8,13 @@ import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexContainer";
-<<<<<<< HEAD
 import { usePanelActions } from "../../shell/Layout/Layout.hooks";
-=======
->>>>>>> main
 import { useLayoutActions } from "../../shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {
   const canvas = useCanvas();
   const vault = useVault();
-<<<<<<< HEAD
-  const editorContext = useManifestEditor();
-=======
->>>>>>> main
   const layouts = useLayoutActions();
 
   const onDragEnd = (result: DropResult) => {
