@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Input, InputLabel } from "../../editors/Input";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
@@ -15,12 +15,11 @@ import { Loading } from "../../atoms/Loading";
 import { v4 } from "uuid";
 import { useApps, useAppState } from "../../shell/AppContext/AppContext";
 import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
-import { latest } from "immer/dist/internal";
 
 export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
   const { createProjectFromManifestId } = useProjectCreators();
   const { currentApp, changeApp } = useApps();
-  const appState = useAppState();
+  const { state, setState } = useAppState();
   const [inputValue, setInputValue] = useState<string | undefined>();
   const [inputType, setInputType] = useState<string | undefined>();
   const [label, setLabel] = useState<string | undefined>();
@@ -54,7 +53,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
   };
 
   const insertAfterSelected = () => {
-    const canvas = appState.state.canvasId;
+    const canvas = state.canvasId;
     if (manifest) {
       const latestManifest = vault.get(manifest.id);
       if (canvas && latestManifest) {
@@ -118,6 +117,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
       console.log(JSON.stringify(builder.vault.getState()));
 
       insertAfterSelected();
+      setState({ canvasId: newCanvasID });
       if (!addAnother) {
         close();
       }
@@ -146,6 +146,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         });
       });
       insertAfterSelected();
+      setState({ canvasId: newCanvasID });
 
       if (!addAnother) {
         close();
@@ -161,13 +162,14 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         });
       });
       insertAfterSelected();
+      setState({ canvasId: newCanvasID });
 
       if (!addAnother) {
         close();
       }
     }
     if (addAnother) {
-      setInputValue("Paste URL of Media to create Canvas");
+      setInputValue("");
       setInputType(undefined);
     }
   };

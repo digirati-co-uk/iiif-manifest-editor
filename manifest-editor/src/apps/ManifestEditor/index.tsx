@@ -9,6 +9,9 @@ import { GridView } from "../../components/organisms/GridView/GridView";
 import { CanvasMedia } from "../../resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
 import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThumbnailForm";
+import { ThumbnailPage } from "./components/ThumbnailPage";
+import { limitation } from "../../helpers/limitation";
+import { PanelError } from "../../shell/Layout/components/PanelError";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -35,11 +38,15 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: "outline-view",
     label: "Outline view",
-    render() {
-      return <div>Outline view</div>;
-    },
+    render: () => <OutlinePlaceholder />,
   },
 ];
+
+function OutlinePlaceholder() {
+  limitation(false, "Outline view feature is not yet complete");
+
+  return null;
+}
 
 export const centerPanels: LayoutPanel[] = [
   // CanvasPanel
@@ -99,13 +106,13 @@ export const rightPanels: LayoutPanel[] = [
   },
   {
     id: "new-annotation-page",
-    label: "Create new annotation page",
+    label: "Add new media",
     backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
     render: () => <NewAnnotationPage />,
   },
   {
     id: "canvas-media",
-    label: "Edit canvas media",
+    label: "Edit media item",
     render: (state: { annotation: string }, _, app) => (
       <AnnotationContext annotation={state.annotation}>
         <CanvasContext canvas={app.state.canvasId}>
@@ -113,6 +120,22 @@ export const rightPanels: LayoutPanel[] = [
         </CanvasContext>
       </AnnotationContext>
     ),
+  },
+  {
+    id: "new-manifest-thumbnail",
+    label: "Create new thumbnail",
+    backAction: (state, { actions }) => actions.open("manifest-properties", { current: 0 }),
+    render: () => {
+      return <ThumbnailPage level={"manifest"} />;
+    },
+  },
+  {
+    id: "new-canvas-thumbnail",
+    label: "Create new thumbnail",
+    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 0 }),
+    render: () => {
+      return <ThumbnailPage level={"canvas"} />;
+    },
   },
   {
     id: "service-editor",

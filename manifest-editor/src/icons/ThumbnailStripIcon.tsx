@@ -1,9 +1,9 @@
 export const ThumbnailStripIcon: React.FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    height="1rem"
+    height="24px"
     viewBox="0 0 24 24"
-    width="1rem"
+    width="24px"
     fill="#000000"
     transform="scale(-1, 1)"
   >

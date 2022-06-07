@@ -2,7 +2,7 @@ export const TreeIcon: React.FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     enableBackground="new 0 0 24 24"
-    height="1rem"
+    height="24px"
     viewBox="0 0 24 24"
     width="24px"
     fill="#000000"

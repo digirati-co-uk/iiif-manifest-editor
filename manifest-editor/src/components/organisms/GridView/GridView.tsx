@@ -5,8 +5,6 @@ import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.c
 import { ViewSelector } from "../../../atoms/ViewSelector";
 import { FlexContainer, FlexContainerRow } from "../../layout/FlexContainer";
 
-import { RecentLabel } from "../../../atoms/RecentFilesWidget";
-import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
 import { AddIcon } from "../../../icons/AddIcon";
 
 import { GridViewContainer } from "./GridView.styles";
@@ -14,6 +12,8 @@ import { GridList } from "./GridList";
 import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSwitcher";
 import { ModalButton } from "../../../madoc/components/ModalButton";
 import { NewCanvas } from "../../widgets/NewCanvas";
+import { CalltoButton } from "../../../atoms/Button";
+import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
@@ -29,24 +29,26 @@ export const GridView: React.FC<{
 
   if (!manifest || !manifest[dispatchType] || manifest[dispatchType].length <= 0) {
     return (
-      <GridViewContainer style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem" }}>
-        <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
-          <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
-            <ModalButton
-              as={TemplateCardNew}
-              render={({ close }) => (
-                <NewCanvas
-                  close={() => {
-                    close();
-                  }}
-                />
-              )}
-              title="New Canvas"
-            >
-              <AddIcon height={300} />
-            </ModalButton>
-            <RecentLabel>Add Canvas</RecentLabel>
-          </TemplateCardContainer>
+      <GridViewContainer
+        strip={strip}
+        style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem", height: "80vh" }}
+      >
+        <FlexContainer style={{ justifyContent: "center", width: "100%" }}>
+          <ModalButton
+            as={CalltoButton}
+            render={({ close }) => (
+              <NewCanvas
+                close={() => {
+                  close();
+                }}
+              />
+            )}
+            title="New Canvas"
+          >
+            <AddIcon height={300} color={"white"} />
+            <PaddingComponentSmall />
+            Add Canvas
+          </ModalButton>
         </FlexContainer>
       </GridViewContainer>
     );
@@ -56,7 +58,7 @@ export const GridView: React.FC<{
       <GridList handleChange={handleChange} />
       {!strip && (
         <FlexContainerRow>
-          <ViewSelector />
+          {/* <ViewSelector /> */}
           <HeightWidthSwitcher
             options={[
               { h: 128, w: 128 },
@@ -68,6 +70,26 @@ export const GridView: React.FC<{
             onOptionClick={(selected: ThumbnailSize) => editorContext?.setThumbnailSize(selected)}
           />
         </FlexContainerRow>
+      )}
+      {strip && (
+        <>
+          <PaddingComponentSmall />
+          <ModalButton
+            as={CalltoButton}
+            render={({ close }) => (
+              <NewCanvas
+                close={() => {
+                  close();
+                }}
+              />
+            )}
+            title="New Canvas"
+          >
+            <AddIcon height={300} color={"white"} />
+            <PaddingComponentSmall />
+            Add Canvas
+          </ModalButton>
+        </>
       )}
     </GridViewContainer>
   );

@@ -28,7 +28,7 @@ export const DescriptiveForm = () => {
       <DateForm />
       {/* <div>Time</div> */}
       <ThumbnailForm />
-      <LogoForm />
+      {/* <LogoForm /> */}
     </>
   );
 };

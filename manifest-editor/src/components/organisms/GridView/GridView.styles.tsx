@@ -14,12 +14,14 @@ export const GridViewContainer = styled.div<{ strip?: boolean; $column?: boolean
     overflow-x: hidden;
     flex-wrap: wrap;
     justify-content: center;
+    min-width: 180px;
     ${(props: any) =>
       props.strip &&
       css`
         flex-direction: column;
         flex-wrap: nowrap;
-        max-height: unset;
+        height: 100%;
+        justify-content: flex-start;
       `}
     & > * {
       margin: 10px;
