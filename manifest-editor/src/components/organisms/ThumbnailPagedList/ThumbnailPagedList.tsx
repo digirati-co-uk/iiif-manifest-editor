@@ -1,8 +1,8 @@
-import { CanvasContext, useManifest, useSimpleViewer, useVault, VisibleCanvasReactContext } from 'react-iiif-vault';
-import { SingleCanvasThumbnail } from '../SingleCanvasThumbnail/SingleCanvasThumbnail';
-import { ThumbnailViewer, Thumbnail, ThumbnailCover } from './ThumbnailPageList.styles';
-import { useContext, useLayoutEffect } from 'react';
-import { CanvasNormalized } from '@iiif/presentation-3';
+import { CanvasContext, useManifest, useSimpleViewer, useVault, VisibleCanvasReactContext } from "react-iiif-vault";
+import { SingleCanvasThumbnail } from "../SingleCanvasThumbnail/SingleCanvasThumbnail";
+import { ThumbnailViewer, Thumbnail, ThumbnailCover } from "./ThumbnailPageList.styles";
+import { useContext, useLayoutEffect } from "react";
+import { CanvasNormalized } from "@iiif/presentation-3";
 
 export function ThumbnailPagedList() {
   const manifest = useManifest();
@@ -14,8 +14,8 @@ export function ThumbnailPagedList() {
     const found = document.querySelector(`[data-canvas-thumbnail-index="${currentCanvasIndex}"]`);
     if (found) {
       found.scrollIntoView({
-        block: 'nearest',
-        behavior: 'auto',
+        block: "nearest",
+        behavior: "auto",
       });
     }
   }, [currentCanvasIndex]);
@@ -25,7 +25,7 @@ export function ThumbnailPagedList() {
       {manifest.items.map((canvasRef, idx) => {
         const canvas = vault.get<CanvasNormalized>(canvasRef);
 
-        const T = canvas.behavior.indexOf('non-paged') !== -1 || idx === 0 ? ThumbnailCover : Thumbnail;
+        const T = canvas.behavior.indexOf("non-paged") !== -1 || idx === 0 ? ThumbnailCover : Thumbnail;
 
         return (
           <CanvasContext key={canvas.id} canvas={canvas.id}>

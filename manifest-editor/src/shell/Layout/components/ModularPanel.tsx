@@ -110,6 +110,11 @@ const ModularPanelLabel = styled.h2`
 const ModularPanelContent = styled.div`
   flex: 1 1 0px;
   padding-bottom: 1em;
+  display: flex;
+
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export function ModularPanel({

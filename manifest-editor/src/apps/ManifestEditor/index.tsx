@@ -12,6 +12,8 @@ import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThu
 import { ThumbnailPage } from "./components/ThumbnailPage";
 import { limitation } from "../../helpers/limitation";
 import { PanelError } from "../../shell/Layout/components/PanelError";
+import { CanvasList } from "../../navigation/CanvasList/CanvasList";
+import { RangeNavigation } from "../../navigation/RangeNavigation/RangeNavigation";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -39,6 +41,16 @@ export const leftPanels: LayoutPanel[] = [
     id: "outline-view",
     label: "Outline view",
     render: () => <OutlinePlaceholder />,
+  },
+  {
+    id: "canvas-list-view",
+    label: "Canvas list view",
+    render: () => <CanvasList />,
+  },
+  {
+    id: "canvas-range-view",
+    label: "Structure",
+    render: () => <RangeNavigation />,
   },
 ];
 
