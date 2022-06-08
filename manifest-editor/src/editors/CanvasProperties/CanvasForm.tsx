@@ -39,10 +39,10 @@ export const CanvasForm: React.FC<{ current: number; setCurrent: (idx: number) =
             label: "Technical",
             component: <TechnicalForm />,
           },
-          // {
-          //   label: "Annotations",
-          //   component: <AnnotationForm />,
-          // },
+          {
+            label: "Annotations",
+            component: <AnnotationForm />,
+          },
         ]}
         selected={current}
         switchPanel={setCurrent}

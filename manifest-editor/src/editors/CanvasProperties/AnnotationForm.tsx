@@ -4,11 +4,15 @@ import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { AnnotationPreview } from "./Annotation";
 import { v4 } from "uuid";
+import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
+import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { InputLabel } from "../Input";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
+  const { defaultLanguages } = useConfig();
 
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
 
@@ -43,13 +47,27 @@ export const AnnotationForm = () => {
         canvas &&
         // @ts-ignore
         vault.get(canvas.annotations).map((item: any) => {
-          // @ts-ignore
           console.log(item);
-          // @ts-ignore
-          return vault.get(item.id)?.items.map((NESTEDITEM: any) => {
-            // console.log(NESTEDITEM);
-            return <AnnotationPreview id={NESTEDITEM.id} />;
-          });
+          return (
+            <>
+              <LanguageFieldEditor
+                label={"label"}
+                fields={item.label}
+                availableLanguages={defaultLanguages}
+                onSave={() => {
+                  //DO Something
+                }}
+                property={"label"}
+              />
+              <InputLabel>items</InputLabel>
+              {
+                //@ts-ignore
+                vault.get(item.id)?.items.map((NESTEDITEM: any) => {
+                  return <AnnotationPreview id={NESTEDITEM.id} />;
+                })
+              }
+            </>
+          );
         })}
     </>
   );

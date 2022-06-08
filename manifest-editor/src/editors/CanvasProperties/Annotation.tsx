@@ -1,8 +1,8 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { Input, InputLabel, InputUnderlined } from "../Input";
+import { InputLabel } from "../Input";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
-import Textarea from "react-textarea-autosize";
+import { AnnotationSnippet } from "../../components/organisms/Annotation/AnnotationSnippet";
 
 interface AnnotationBodyProps {
   id: string;
@@ -10,8 +10,9 @@ interface AnnotationBodyProps {
 
 export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
   const vault = useVault();
-  const canvas = useCanvas();
   const annotation = vault.get(id) as any;
+  console.log(annotation);
+
   return (
     <>
       {annotation.body.map((annotationBody: any) => {
@@ -27,21 +28,14 @@ export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
           >
             <FlexContainerColumn style={{ width: "100%" }}>
               <ErrorBoundary>
-                <InputLabel>{annotation.target.id}</InputLabel>
-                <InputLabel>
-                  <InputUnderlined
-                    // id={annoBody.id}
-                    onFocus={() => {}}
-                    onChange={() => {
-                      // DO SOMETHING
-                    }}
-                    onBlur={() => {
-                      // DO SOMETHING
-                    }}
-                    as={Textarea}
-                    value={annoBody.value}
-                  />
-                </InputLabel>
+                <AnnotationSnippet
+                  type={annoBody.type}
+                  body={annoBody.value}
+                  id={annotation.id}
+                  onClick={(id: any) => console.log(id)}
+                  edit={() => {}}
+                  target={annotation.target.id}
+                />
               </ErrorBoundary>
             </FlexContainerColumn>
           </FlexContainer>
