@@ -6,6 +6,9 @@ export interface ManifestLinkingProps {
 }
 
 export function ManifestLinking(props: ManifestLinkingProps) {
+  // Resource ID for adding/removing
+  // Just content resource ID for updating
+
   // SeeAlso
   // Service
   // Services
@@ -13,5 +16,11 @@ export function ManifestLinking(props: ManifestLinkingProps) {
   // Rendering
   // partOf
   // Start
+
+  // Features
+  // - Listing all linking properties
+  // - Adding new link (panel)
+  // - Removing property
+  // - Edit single link (panel)
   return <div>Manifest linking</div>;
 }

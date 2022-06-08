@@ -7,6 +7,7 @@ import { HandleControls } from "./components/HandleControls";
 import { useResizeLayout } from "../../madoc/use-resize-layouts";
 import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
+import { panelSizing } from "./Layout.helpers";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
@@ -39,11 +40,25 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     (pinnedRightPanel?.id !== rightPanel.id || !equal(state.pinnedRightPanel.state, state.rightPanel.state));
   const resetLeftPanel =
     leftPanelResizer.widthB !== "auto"
-      ? () => leftPanelResizer.setWidths({ widthA: "auto", widthB: "auto" } as any)
+      ? () =>
+          leftPanelResizer.setWidths({
+            widthA: "auto",
+            widthB: panelSizing({
+              options: leftPanel?.options,
+              fallback: 320,
+            }),
+          } as any)
       : undefined;
   const resetRightPanel =
     rightPanelResizer.widthB !== "auto"
-      ? () => rightPanelResizer.setWidths({ widthA: "auto", widthB: "auto" } as any)
+      ? () =>
+          rightPanelResizer.setWidths({
+            widthA: "auto",
+            widthB: panelSizing({
+              options: rightPanel?.options,
+              fallback: 320,
+            }),
+          } as any)
       : undefined;
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import { useAppState } from "../../../shell/AppContext/AppContext";
 import { ModalButton } from "../../../madoc/components/ModalButton";
 import { NewCanvas } from "../../widgets/NewCanvas";
 import { Reference } from "@iiif/presentation-3";
+import { CanvasThumbnail } from "../CanvasThumbnail/CanvasThumbnail";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
@@ -107,15 +108,11 @@ export const GridItem: React.FC<{
           onClick={(e: any) => {
             handleChange(canvasId, e);
           }}
-          size={editorContext?.thumbnailSize?.w}
+          // size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}
         >
           <ErrorBoundary>
-            <Thumbnail
-              onClick={changeCanvas}
-              width={editorContext?.thumbnailSize?.w}
-              height={editorContext?.thumbnailSize?.h}
-            />
+            <CanvasThumbnail onClick={changeCanvas} size={editorContext?.thumbnailSize?.w} />
           </ErrorBoundary>
         </ThumbnailContainer>
         <ThumnbnailLabel title={getValue(canvas?.label)}>{getValue(canvas?.label)}</ThumnbnailLabel>

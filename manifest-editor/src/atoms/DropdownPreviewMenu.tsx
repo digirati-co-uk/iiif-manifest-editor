@@ -29,6 +29,7 @@ export const DropdownContainer = styled(FlexContainerColumn)`
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 13;
   right: 0;
+
 `;
 
 type DropdownOption = {

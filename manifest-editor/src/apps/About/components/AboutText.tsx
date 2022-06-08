@@ -1,6 +1,7 @@
 import { FlexContainerColumn } from "../../../components/layout/FlexContainer";
 import { RecentFilesWidget } from "../../../atoms/RecentFilesWidget";
 import htmlAsString from "../../../../public/welcome.html?raw";
+import { EmptyCanvasState } from "../../../components/organisms/EmptyCanvasState/EmptyCanvasState";
 
 export function AboutText() {
   return (

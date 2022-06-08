@@ -16,7 +16,7 @@ export function NewAnnotationPage() {
   const canvasId = state.canvasId;
 
   const addNew = (body: MediaBody) => {
-    const newID = `vault://${v4()}`;
+    const newID = `https://example.org/annotation-page/${v4()}`;
     if (!canvasId || !manifest) {
       return;
     }

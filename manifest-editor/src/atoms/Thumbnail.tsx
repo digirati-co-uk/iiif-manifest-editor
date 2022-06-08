@@ -27,7 +27,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
     maxHeight: height ? height : typeof width !== "undefined" ? width : 128,
   });
 
-  if (!thumb) {
+  if (!thumb || (thumb as any).width > (width || 128)) {
     return (
       <TemplateCardContainer onClick={onClick}>
         <BlockIcon color="grey" />
