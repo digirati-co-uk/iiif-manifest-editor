@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useCanvas, useManifest } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef } from "react";
@@ -39,13 +39,13 @@ export function CanvasPanelViewer() {
 
   useEffect(() => {
     runtime.current?.goHome();
-  }, [state.canvas]);
+  }, [state.canvasId]);
 
   if (manifest?.items.length === 0) {
     return <EmptyCanvasState />;
   }
 
-  if (!state.canvas) {
+  if (!state.canvasId) {
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -61,7 +61,7 @@ export function CanvasPanelViewer() {
 
   return (
     <ErrorBoundary
-      resetKeys={[state.canvas, refreshKey]}
+      resetKeys={[state.canvasId, refreshKey]}
       fallbackRender={() => (
         <CanvasContainer>
           <GhostCanvas />
@@ -78,8 +78,8 @@ export function CanvasPanelViewer() {
         }
       `}</style>
         <ViewerContainer>
-          <CanvasPanel.Viewer key={state.canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
-            <CanvasContext canvas={state.canvas}>
+          <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
+            <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
           </CanvasPanel.Viewer>

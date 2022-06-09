@@ -47,10 +47,10 @@ export const AnnotationForm = () => {
         canvas &&
         // @ts-ignore
         vault.get(canvas.annotations).map((item: any) => {
-          console.log(item);
           return (
             <>
               <LanguageFieldEditor
+                key={item.id}
                 label={"label"}
                 fields={item.label}
                 availableLanguages={defaultLanguages}
@@ -63,7 +63,7 @@ export const AnnotationForm = () => {
               {
                 //@ts-ignore
                 vault.get(item.id)?.items.map((NESTEDITEM: any) => {
-                  return <AnnotationPreview id={NESTEDITEM.id} />;
+                  return <AnnotationPreview key={NESTEDITEM.id} id={NESTEDITEM.id} />;
                 })
               }
             </>

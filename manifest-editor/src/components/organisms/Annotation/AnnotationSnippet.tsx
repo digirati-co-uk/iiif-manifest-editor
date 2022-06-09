@@ -4,10 +4,11 @@ import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { AnnotationType, BodySnippet } from "./Annotation.styles";
 import Textarea from "react-textarea-autosize";
 import { InputUnderlined } from "../../../editors/Input";
-import { FlexContainerRow } from "../../layout/FlexContainer";
+import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 import { CloseIcon } from "../../../icons/CloseIcon";
 import { Button } from "../../../atoms/Button";
 import { AnnotationTarget } from "./AnnotationTarget";
+import { AnnotationPreview } from "./AnnotationPreview";
 
 type AnnotationSnippetProps = {
   type: string;
@@ -22,31 +23,37 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
   const [expand, setExpand] = useState(false);
   return (
     <LightBox onClick={() => onClick(id)}>
-      {!expand && <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>}
-      {expand && (
-        <FlexContainerRow>
-          <InputUnderlined
-            id={id}
-            onFocus={() => {
-              // DO SOMETHING
-            }}
-            onChange={() => {
-              // DO SOMETHING
-            }}
-            onBlur={() => {
-              // DO SOMETHING
-            }}
-            as={Textarea}
-            value={body}
-          />
-          <Button onClick={() => setExpand(false)}>
-            <CloseIcon />
-          </Button>
-        </FlexContainerRow>
-      )}
-      <PaddingComponentSmall />
-      <AnnotationType>{type}</AnnotationType>
-      <AnnotationTarget id={target} />
+      <FlexContainerRow>
+        <AnnotationPreview region={target.split("#xywh=")[1]} />
+        <FlexContainerColumn style={{ maxWidth: "60%" }}>
+          {!expand && <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>}
+          {expand && (
+            <FlexContainerRow>
+              <InputUnderlined
+                id={id}
+                onFocus={() => {
+                  // DO SOMETHING
+                }}
+                onChange={() => {
+                  // DO SOMETHING
+                }}
+                onBlur={() => {
+                  // DO SOMETHING
+                }}
+                as={Textarea}
+                value={body}
+              />
+              <Button onClick={() => setExpand(false)}>
+                <CloseIcon />
+              </Button>
+            </FlexContainerRow>
+          )}
+
+          <PaddingComponentSmall />
+          <AnnotationType>{type}</AnnotationType>
+          <AnnotationTarget id={target} />
+        </FlexContainerColumn>
+      </FlexContainerRow>
     </LightBox>
   );
 };
