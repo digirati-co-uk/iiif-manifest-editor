@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { useCanvas } from "react-iiif-vault";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { AnnotationForm } from "./AnnotationForm";
 import { DescriptiveForm } from "./DescriptiveForm";

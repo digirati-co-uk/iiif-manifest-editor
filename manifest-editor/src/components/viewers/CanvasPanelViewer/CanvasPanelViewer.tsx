@@ -29,9 +29,8 @@ export const ViewerContainer = styled.div`
 export function CanvasPanelViewer() {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
-  const _canvas = useCanvas(); // @todo remove.
   const manifest = useManifest(); // @todo remove.
-  const canvas = state.canvasId || _canvas?.id;
+
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
   const goHome = () => runtime.current?.world.goHome();
@@ -40,13 +39,13 @@ export function CanvasPanelViewer() {
 
   useEffect(() => {
     runtime.current?.goHome();
-  }, [canvas]);
+  }, [state.canvas]);
 
-  if (!canvas && manifest?.items.length === 0) {
+  if (manifest?.items.length === 0) {
     return <EmptyCanvasState />;
   }
 
-  if (!canvas) {
+  if (!state.canvas) {
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -62,7 +61,7 @@ export function CanvasPanelViewer() {
 
   return (
     <ErrorBoundary
-      resetKeys={[canvas.id, refreshKey]}
+      resetKeys={[state.canvas, refreshKey]}
       fallbackRender={() => (
         <CanvasContainer>
           <GhostCanvas />
@@ -79,8 +78,8 @@ export function CanvasPanelViewer() {
         }
       `}</style>
         <ViewerContainer>
-          <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
-            <CanvasContext canvas={canvas}>
+          <CanvasPanel.Viewer key={state.canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
+            <CanvasContext canvas={state.canvas}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
           </CanvasPanel.Viewer>

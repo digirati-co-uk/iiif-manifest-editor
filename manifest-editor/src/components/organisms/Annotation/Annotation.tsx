@@ -1,8 +1,7 @@
-import { useCanvas, useVault } from "react-iiif-vault";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { InputLabel } from "../Input";
-import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
-import { AnnotationSnippet } from "../../components/organisms/Annotation/AnnotationSnippet";
+import { useVault } from "react-iiif-vault";
+import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
+import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
+import { AnnotationSnippet } from "./AnnotationSnippet";
 
 interface AnnotationBodyProps {
   id: string;
@@ -11,7 +10,6 @@ interface AnnotationBodyProps {
 export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
   const vault = useVault();
   const annotation = vault.get(id) as any;
-  console.log(annotation);
 
   return (
     <>

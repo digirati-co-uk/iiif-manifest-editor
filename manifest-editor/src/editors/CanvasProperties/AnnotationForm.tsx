@@ -2,7 +2,7 @@ import { IIIFBuilder } from "iiif-builder";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { AnnotationPreview } from "./Annotation";
+import { AnnotationPreview } from "../../components/organisms/Annotation/Annotation";
 import { v4 } from "uuid";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
