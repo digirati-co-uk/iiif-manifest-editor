@@ -16,6 +16,19 @@ export function findFirstCanvasFromRange(vault: Vault, range: RangeNormalized): 
   return null;
 }
 
+export function findAllCanvasesInRange(vault: Vault, range: RangeNormalized): Array<Reference<"Canvas">> {
+  const found = [];
+  for (const inner of range.items) {
+    if (inner.type === "Canvas") {
+      found.push(inner as Reference<"Canvas">);
+    }
+    if (inner.type === "Range") {
+      found.push(...findAllCanvasesInRange(vault, vault.get(inner)));
+    }
+  }
+  return found;
+}
+
 export function findManifestSelectedRange(
   vault: Vault,
   manifest: ManifestNormalized,

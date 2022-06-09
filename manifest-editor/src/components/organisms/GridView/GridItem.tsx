@@ -19,7 +19,7 @@ import { CanvasThumbnail } from "../CanvasThumbnail/CanvasThumbnail";
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
   canvasId: string;
-  reorder: (fromPosition: number, toPosition: number) => void;
+  reorder?: (fromPosition: number, toPosition: number) => void;
   remove: (fromPosition: number, ref: Reference) => void;
   index: number;
 }> = ({ handleChange, canvasId, reorder, remove, index }) => {
@@ -69,30 +69,34 @@ export const GridItem: React.FC<{
             New canvas
           </ModalButton>
           <HorizontalDivider />
-          <DropdownItem
-            onClick={() => {
-              reorder(index, 0);
-              setContextMenuVisible(false);
-            }}
-          >
-            Move to beginning
-          </DropdownItem>
-          <DropdownItem
-            onClick={() => {
-              if (
-                manifest &&
-                manifest[dispatchType] &&
-                Array.isArray(manifest[dispatchType]) &&
-                manifest[dispatchType]
-              ) {
-                reorder(index, manifest[dispatchType].length - 1);
-              }
-              setContextMenuVisible(false);
-            }}
-          >
-            Move to end
-          </DropdownItem>
-          <HorizontalDivider />
+          {reorder ? (
+            <>
+              <DropdownItem
+                onClick={() => {
+                  reorder(index, 0);
+                  setContextMenuVisible(false);
+                }}
+              >
+                Move to beginning
+              </DropdownItem>
+              <DropdownItem
+                onClick={() => {
+                  if (
+                    manifest &&
+                    manifest[dispatchType] &&
+                    Array.isArray(manifest[dispatchType]) &&
+                    manifest[dispatchType]
+                  ) {
+                    reorder(index, manifest[dispatchType].length - 1);
+                  }
+                  setContextMenuVisible(false);
+                }}
+              >
+                Move to end
+              </DropdownItem>
+              <HorizontalDivider />
+            </>
+          ) : null}
           <DropdownItem
             onClick={() => {
               remove(index, { id: canvasId, type: "Canvas" });

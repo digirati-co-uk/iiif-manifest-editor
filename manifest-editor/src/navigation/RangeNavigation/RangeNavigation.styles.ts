@@ -14,7 +14,6 @@ const ItemOuterContainer = styled.div`
 `;
 
 const ItemContainer = styled.div<{ $selected?: boolean; $leaf?: boolean; $withSelector?: boolean }>`
-  padding: 0.5em 1em;
   width: 100%;
   color: #333;
   border-radius: 3px;
@@ -71,7 +70,7 @@ const ItemLabel = styled.div<{ $unwrap?: boolean }>`
   white-space: nowrap;
   font-size: 0.9em;
   overflow: hidden;
-
+  padding: 0.5em 1em;
   > ${ItemIdentifier} {
     margin-block-start: 1em;
   }
@@ -98,6 +97,33 @@ const CurrentRange = styled.div`
   padding: 1em;
 `;
 
+const SplitLabel = styled.div`
+  display: flex;
+`;
+
+const Preview = styled.button`
+  display: flex;
+  align-self: center;
+  margin: 0.2em 0.2em 0.2em auto;
+  border-radius: 3px;
+  padding: 0.4em;
+  border: none;
+  background: transparent;
+  font-size: 1em;
+  cursor: pointer;
+
+  svg {
+    fill: rgba(255, 255, 255, 0.6);
+  }
+
+  &:hover {
+    background: #f9f9f9;
+    svg {
+      fill: ${mainColor};
+    }
+  }
+`;
+
 export const RangeNavigationStyles = {
   Container,
   ItemContainer,
@@ -106,4 +132,6 @@ export const RangeNavigationStyles = {
   ItemIdentifier,
   ItemLabel,
   CurrentRange,
+  SplitLabel,
+  Preview,
 };

@@ -75,6 +75,14 @@ export const centerPanels: LayoutPanel[] = [
     icon: "",
     render: (state, { actions }, ctx) => (
       <GridView
+        canvasIds={state.canvasIds}
+        clearCanvases={
+          state.canvasIds
+            ? () => {
+                actions.centerPanel.change({ id: "thumbnail-grid", state: { canvasIds: undefined } });
+              }
+            : undefined
+        }
         handleChange={(canvasId, thumbnails) => {
           ctx.setState({ canvasId });
           actions.open("canvas-properties");

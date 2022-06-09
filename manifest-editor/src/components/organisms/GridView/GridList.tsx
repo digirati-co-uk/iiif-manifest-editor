@@ -1,20 +1,25 @@
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
-import { useManifest, useVault, CanvasContext } from "react-iiif-vault";
+import { useManifest, useVault, CanvasContext, useResourceContext } from "react-iiif-vault";
 import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
 import { RecentLabel } from "../../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
 import { AddIcon } from "../../../icons/AddIcon";
 import { FlexContainer } from "../../layout/FlexContainer";
 import { GridItem } from "./GridItem";
-import { useCallback } from "react";
+import { Fragment, useCallback } from "react";
 import { unstable_batchedUpdates } from "react-dom";
 import { reorderEntityField, removeReference } from "@iiif/vault/actions";
 import { Reference } from "@iiif/presentation-3";
+import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 
-export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolean) => void; strip?: boolean }> = ({
-  handleChange: _handleChange,
-}) => {
-  const manifest = useManifest();
+export const GridList: React.FC<{
+  handleChange: (itemId: string, canvas?: boolean) => void;
+  strip?: boolean;
+  canvasIds?: Array<Reference | string>;
+}> = ({ handleChange: _handleChange, canvasIds }) => {
+  const ctx = useResourceContext();
+  const manifestId = ctx.manifest;
+  const canvases = useCanvasSubset(canvasIds);
   const editorContext = useManifestEditor();
 
   const handleChange = useCallback((itemId: string, e: any) => {
@@ -27,32 +32,30 @@ export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolea
 
   const reorder = useCallback(
     (fromPosition: number, toPosition: number) => {
-      if (manifest) {
-        console.time(`Change ${fromPosition}, ${toPosition}`);
+      if (manifestId) {
         unstable_batchedUpdates(() => {
           vault.dispatch(
             reorderEntityField({
-              id: manifest.id,
-              type: manifest.type,
+              id: manifestId,
+              type: "Manifest",
               endIndex: toPosition,
               startIndex: fromPosition,
               key: dispatchType,
             })
           );
         });
-        console.timeEnd(`Change ${fromPosition}, ${toPosition}`);
       }
     },
-    [manifest, vault]
+    [manifestId, vault]
   );
 
   const remove = useCallback(
     (fromPosition: number, reference: Reference) => {
-      if (manifest) {
+      if (manifestId) {
         vault.dispatch(
           removeReference({
-            id: manifest.id,
-            type: manifest.type,
+            id: manifestId,
+            type: "Manifest",
             key: dispatchType,
             index: fromPosition,
             reference,
@@ -60,10 +63,10 @@ export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolea
         );
       }
     },
-    [manifest, vault]
+    [manifestId, vault]
   );
 
-  if (!manifest || !manifest[dispatchType] || manifest[dispatchType].length <= 0) {
+  if (canvases.length === 0) {
     return (
       <FlexContainer style={{ justifyContent: "flex-start", width: "100%" }}>
         <TemplateCardContainer onClick={() => editorContext?.setAddCanvasModalOpen(true)}>
@@ -75,32 +78,41 @@ export const GridList: React.FC<{ handleChange: (itemId: string, canvas?: boolea
       </FlexContainer>
     );
   }
+  const Sortable = canvasIds
+    ? {
+        List: Fragment,
+        Item: Fragment,
+        Knob: Fragment,
+      }
+    : {
+        List: SortableList,
+        Item: SortableItem,
+        Knob: SortableKnob,
+      };
+
   return (
-    <SortableList onSortEnd={reorder} className="list" draggedItemClassName="dragged">
-      {manifest &&
-        manifest[dispatchType] &&
-        Array.isArray(manifest[dispatchType]) &&
-        manifest[dispatchType].map((item: any, index: number) => {
-          return (
-            <SortableItem key={item.id}>
-              <div>
-                <CanvasContext canvas={item.id}>
-                  <SortableKnob>
-                    <div>
-                      <GridItem
-                        canvasId={item.id}
-                        handleChange={handleChange}
-                        reorder={reorder}
-                        remove={remove}
-                        index={index}
-                      />
-                    </div>
-                  </SortableKnob>
-                </CanvasContext>
-              </div>
-            </SortableItem>
-          );
-        })}
-    </SortableList>
+    <Sortable.List onSortEnd={reorder} className="list" draggedItemClassName="dragged">
+      {canvases.map((item, index: number) => {
+        return (
+          <Sortable.Item key={item.id}>
+            <div>
+              <CanvasContext canvas={item.id}>
+                <Sortable.Knob>
+                  <div>
+                    <GridItem
+                      canvasId={item.id}
+                      handleChange={handleChange}
+                      reorder={canvasIds ? undefined : reorder}
+                      remove={remove}
+                      index={index}
+                    />
+                  </div>
+                </Sortable.Knob>
+              </CanvasContext>
+            </div>
+          </Sortable.Item>
+        );
+      })}
+    </Sortable.List>
   );
 };
