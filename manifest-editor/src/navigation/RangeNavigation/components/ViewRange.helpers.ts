@@ -17,10 +17,14 @@ export function findFirstCanvasFromRange(vault: Vault, range: RangeNormalized): 
 }
 
 export function findAllCanvasesInRange(vault: Vault, range: RangeNormalized): Array<Reference<"Canvas">> {
-  const found = [];
+  const found: Reference<"Canvas">[] = [];
   for (const inner of range.items) {
     if (inner.type === "Canvas") {
-      found.push(inner as Reference<"Canvas">);
+      if (inner.id.indexOf("#") !== -1) {
+        found.push({ id: inner.id.split("#")[0], type: "Canvas" });
+      } else {
+        found.push(inner as Reference<"Canvas">);
+      }
     }
     if (inner.type === "Range") {
       found.push(...findAllCanvasesInRange(vault, vault.get(inner)));

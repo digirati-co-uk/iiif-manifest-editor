@@ -71,6 +71,7 @@ const ItemLabel = styled.div<{ $unwrap?: boolean }>`
   font-size: 0.9em;
   overflow: hidden;
   padding: 0.5em 1em;
+  flex: 1;
   > ${ItemIdentifier} {
     margin-block-start: 1em;
   }
@@ -104,7 +105,7 @@ const SplitLabel = styled.div`
 const Preview = styled.button`
   display: flex;
   align-self: center;
-  margin: 0.2em 0.2em 0.2em auto;
+  margin: 0.2em;
   border-radius: 3px;
   padding: 0.4em;
   border: none;
@@ -113,7 +114,7 @@ const Preview = styled.button`
   cursor: pointer;
 
   svg {
-    fill: rgba(255, 255, 255, 0.6);
+    fill: rgba(0, 0, 0, 0.6);
   }
 
   &:hover {
