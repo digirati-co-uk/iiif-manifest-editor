@@ -1,5 +1,5 @@
 import { Vault } from "@iiif/vault";
-import { ManifestNormalized, RangeNormalized, Reference } from "@iiif/presentation-3";
+import { ManifestNormalized, RangeItems, RangeNormalized, Reference } from "@iiif/presentation-3";
 
 export function findFirstCanvasFromRange(vault: Vault, range: RangeNormalized): null | Reference<"Canvas"> {
   for (const inner of range.items) {
@@ -29,6 +29,9 @@ export function findAllCanvasesInRange(vault: Vault, range: RangeNormalized): Ar
     if (inner.type === "Range") {
       found.push(...findAllCanvasesInRange(vault, vault.get(inner)));
     }
+    if ((inner as any).type === "SpecificResource") {
+      found.push({ id: (inner as any).source, type: "Canvas" });
+    }
   }
   return found;
 }
@@ -51,6 +54,9 @@ export function findManifestSelectedRange(
 export function findSelectedRange(vault: Vault, range: RangeNormalized, canvasId: string): null | RangeNormalized {
   for (const inner of range.items) {
     const parsedId = inner.id?.split("#")[0];
+    if ((inner as any).type === "SpecificResource" && (inner as any).source === canvasId) {
+      return range;
+    }
     if (inner.type === "Canvas" && canvasId === parsedId) {
       return range;
     }
