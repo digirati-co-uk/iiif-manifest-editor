@@ -115,6 +115,10 @@ const ModularPanelContent = styled.div`
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+
+  > * {
+    min-width: 0;
+  }
 `;
 
 export function ModularPanel({

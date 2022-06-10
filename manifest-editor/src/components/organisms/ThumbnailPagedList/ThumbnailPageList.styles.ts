@@ -36,14 +36,20 @@ export const ThumbnailPlaceholder = styled.div`
   background: ${greyBg2};
 `;
 
-export const ThumbnailImage = styled(LazyLoadImage)`
+export const ThumbnailImage = styled(LazyLoadImage)<{ $fluid?: boolean }>`
   display: block;
   max-width: 100%;
   user-drag: none;
   object-fit: contain;
   object-position: center;
-  width: 128px;
-  height: 128px;
+
+  ${(props) =>
+    props.$fluid
+      ? css``
+      : css`
+          width: 128px;
+          height: 128px;
+        `}
 `;
 
 export const ThumbnailViewer = styled.div`
