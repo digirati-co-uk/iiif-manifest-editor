@@ -20,6 +20,7 @@ import { v4 } from "uuid";
 import { useApps } from "../../shell/AppContext/AppContext";
 import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
 import { createCanvasFromImage } from "../../iiif-builder-extensions/create-canvas-from-image";
+import { createCanvasFromImageService } from "../../iiif-builder-extensions/create-canvas-from-image-service";
 
 export const NewCanvasModal: React.FC<{
   close: any;
@@ -81,28 +82,8 @@ export const NewCanvasModal: React.FC<{
       }
     } else if (inputed && inputed.type === "ImageService" && !emptyCanvas && manifest) {
       const builder = new IIIFBuilder(vault);
-      builder.editManifest(manifest.id, (mani) => {
-        mani.createCanvas(newCanvasID, (can: any) => {
-          can.entity.id = newCanvasID;
-          can.height = inputed?.height;
-          can.width = inputed?.width;
-          can.createAnnotation(`${newCanvasID}/painting`, {
-            id: `${newCanvasID}/painting`,
-            type: "Annotation",
-            motivation: "painting",
-            body: [
-              {
-                id: inputValue,
-                type: "Image",
-                format: inputed?.format,
-                height: inputed?.height,
-                width: inputed?.width,
-                service: [inputed],
-              },
-            ],
-          });
-        });
-      });
+
+      createCanvasFromImageService(builder, manifest.id, inputed, { newCanvasId: newCanvasID });
 
       if (!addAnother) {
         close();
