@@ -6,7 +6,7 @@ import { AnnotationPreview } from "../../components/organisms/Annotation/Annotat
 import { v4 } from "uuid";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
-import { InputLabel } from "../Input";
+import { Input, InputLabel } from "../Input";
 import { Button, CalltoButton } from "../../atoms/Button";
 import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
 import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
@@ -101,6 +101,29 @@ export const AnnotationForm = () => {
             }}
             property={"label"}
           />
+          <InputLabel>
+            behavior
+            <Input
+              key={item.id}
+              value={item.behavior}
+              onChange={() => {
+                //DO Something
+              }}
+              property={"behavior"}
+            />
+          </InputLabel>
+          <InputLabel>
+            language
+            <Input
+              key={item.id}
+              value={item.language}
+              onChange={() => {
+                //DO Something
+              }}
+              property={"behavior"}
+            />
+          </InputLabel>
+
           {isExternal(item) && externalConvert(item)}
           <InputLabel>items</InputLabel>
 
