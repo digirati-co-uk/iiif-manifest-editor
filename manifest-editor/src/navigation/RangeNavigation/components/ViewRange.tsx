@@ -5,8 +5,9 @@ import { useAppState } from "../../../shell/AppContext/AppContext";
 import { useMemo } from "react";
 import { findAllCanvasesInRange, findFirstCanvasFromRange } from "./ViewRange.helpers";
 import { RangeNavigationStyles as S } from "../RangeNavigation.styles";
-import { useLayoutActions } from "../../../shell/Layout/Layout.context";
+import { useLayoutActions, useLayoutState } from "../../../shell/Layout/Layout.context";
 import { PreviewIcon } from "../../../icons/PreviewIcon";
+import { UniversalCopyTarget } from "../../../shell/Universal/UniversalCopyPaste";
 
 export function ViewRange() {
   const range = useRange();
@@ -16,6 +17,8 @@ export function ViewRange() {
   const parsedFirstId = first ? first.id?.split("#")[0] : null;
   const selected = first && parsedFirstId === appState.state.canvasId;
   const layouts = useLayoutActions();
+  const state = useLayoutState();
+
   const vault = useVault();
 
   invariant(range);
@@ -41,11 +44,20 @@ export function ViewRange() {
         appState.setState({ canvasId: parsedId });
       }
     }
+
+    if (state.centerPanel.state.canvasIds) {
+      onClickPreview();
+    }
   }
 
   return (
-    <S.ItemOuterContainer data-range-id={range.id}>
-      <S.ItemContainer $leaf={!hasSubsequentRanges} $selected={selected} $withSelector={first?.id.indexOf("#") !== -1}>
+    <UniversalCopyTarget as={S.ItemOuterContainer} reference={range}>
+      <S.ItemContainer
+        $leaf={!hasSubsequentRanges}
+        $selected={selected}
+        $withSelector={first?.id.indexOf("#") !== -1}
+        data-range-id={range.id}
+      >
         <S.SplitLabel>
           <S.ItemLabel onClick={onClick}>{getValue(range.label)}</S.ItemLabel>
           <S.Preview onClick={onClickPreview}>
@@ -68,6 +80,6 @@ export function ViewRange() {
           </S.NestedContainer>
         ) : null}
       </S.ItemContainer>
-    </S.ItemOuterContainer>
+    </UniversalCopyTarget>
   );
 }

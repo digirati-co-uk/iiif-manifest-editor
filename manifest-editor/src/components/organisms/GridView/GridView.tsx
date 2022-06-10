@@ -1,4 +1,4 @@
-import { useManifest } from "react-iiif-vault";
+import { useManifest, useResourceContext, useVault } from "react-iiif-vault";
 
 import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
 
@@ -17,6 +17,10 @@ import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 import { Reference } from "@iiif/presentation-3";
 import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
+import { UniversalCopyTarget } from "../../../shell/Universal/UniversalCopyPaste";
+import { IIIFBuilder } from "iiif-builder";
+import { useMemo } from "react";
+import { createCanvasFromImage } from "../../../iiif-builder-extensions/create-canvas-from-image";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
@@ -26,8 +30,11 @@ export const GridView: React.FC<{
   canvasIds?: Array<string | Reference>;
   clearCanvases?: () => void;
 }> = ({ handleChange, width, strip, column, canvasIds, clearCanvases }) => {
+  const vault = useVault();
+  const builder = useMemo(() => new IIIFBuilder(vault), [vault]);
   const canvases = useCanvasSubset(canvasIds);
   const editorContext = useManifestEditor();
+  const ctx = useResourceContext();
 
   if (canvases.length === 0) {
     return (
@@ -35,7 +42,15 @@ export const GridView: React.FC<{
         strip={strip}
         style={{ justifyContent: "flex-start", width: "100%", padding: "0.75rem", height: "80vh" }}
       >
-        <FlexContainer style={{ justifyContent: "center", width: "100%" }}>
+        <UniversalCopyTarget
+          as={FlexContainer}
+          onPasteAnalysis={(result) => {
+            if (ctx.manifest && result.type === "Image") {
+              createCanvasFromImage(builder, ctx.manifest, result);
+            }
+          }}
+          style={{ justifyContent: "center", width: "100%" }}
+        >
           <ModalButton
             as={CalltoButton}
             render={({ close }) => (
@@ -51,7 +66,7 @@ export const GridView: React.FC<{
             <PaddingComponentSmall />
             Add Canvas
           </ModalButton>
-        </FlexContainer>
+        </UniversalCopyTarget>
       </GridViewContainer>
     );
   }
@@ -66,7 +81,15 @@ export const GridView: React.FC<{
         </InfoMessage>
       ) : null}
 
-      <GridViewContainer $column={strip}>
+      <UniversalCopyTarget
+        as={GridViewContainer}
+        onPasteAnalysis={(result) => {
+          if (ctx.manifest && result.type === "Image") {
+            createCanvasFromImage(builder, ctx.manifest, result);
+          }
+        }}
+        $column={strip}
+      >
         <GridList handleChange={handleChange} canvasIds={canvasIds} />
 
         {!strip && (
@@ -104,7 +127,7 @@ export const GridView: React.FC<{
             </ModalButton>
           </>
         )}
-      </GridViewContainer>
+      </UniversalCopyTarget>
     </>
   );
 };
