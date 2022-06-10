@@ -80,9 +80,9 @@ export const GridList: React.FC<{
   }
   const Sortable = canvasIds
     ? {
-        List: Fragment,
-        Item: Fragment,
-        Knob: Fragment,
+        List: "div",
+        Item: "div",
+        Knob: "div",
       }
     : {
         List: SortableList,
