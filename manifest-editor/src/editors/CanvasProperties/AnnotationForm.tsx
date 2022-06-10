@@ -7,6 +7,10 @@ import { v4 } from "uuid";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 import { InputLabel } from "../Input";
+import { Button, CalltoButton } from "../../atoms/Button";
+import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
+import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
+import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
@@ -22,6 +26,7 @@ export const AnnotationForm = () => {
     if (!canvas || !manifest) {
       return;
     }
+    // @todo get this working
     const builder = new IIIFBuilder(vault);
     builder.editManifest(manifest.id, (mani: any) => {
       mani.editCanvas(canvas.id, (can: any) => {
@@ -40,35 +45,74 @@ export const AnnotationForm = () => {
       });
     });
   };
+
+  function items(item: any) {
+    // @ts-ignore
+    return vault.get(item.id)?.items.map((NESTEDITEM: any) => {
+      return <AnnotationPreview key={NESTEDITEM.id} id={NESTEDITEM.id} />;
+    });
+  }
+
+  function convert(item: string) {
+    vault.load(item);
+  }
+
+  function externalConvert(item: any) {
+    return (
+      <WarningMessage>
+        <FlexContainerColumn>
+          <small>
+            <a style={{ color: "unset" }} href={item.id} target="_blank" rel="noopener noreferrer">
+              {item.id}
+            </a>
+          </small>
+          <br />
+          <small>
+            This annotation page has no items, either create a new annotation or convert the external resource to
+            internal annotations for editing.
+          </small>
+          <FlexContainerRow>
+            <CalltoButton onClick={() => addNew()}>Create one</CalltoButton>
+            <PaddingComponentSmall />
+            <CalltoButton onClick={() => convert(item.id)}>Convert to internal AnnotationPage</CalltoButton>
+          </FlexContainerRow>
+        </FlexContainerColumn>
+      </WarningMessage>
+    );
+  }
+
+  function isExternal(item: any) {
+    // @ts-ignore
+    return vault.get(item)?.items.length === 0;
+  }
+
+  function annoPages() {
+    // @ts-ignore
+    return vault.get(canvas.annotations).map((item: any) => {
+      return (
+        <>
+          <LanguageFieldEditor
+            key={item.id}
+            label={"label"}
+            fields={item.label}
+            availableLanguages={defaultLanguages}
+            onSave={() => {
+              //DO Something
+            }}
+            property={"label"}
+          />
+          {isExternal(item) && externalConvert(item)}
+          <InputLabel>items</InputLabel>
+
+          {items(item)}
+        </>
+      );
+    });
+  }
   return (
     <>
       <EmptyProperty label={"annotations"} createNew={addNew} guidanceReference={guidanceReference} />
-      {vault &&
-        canvas &&
-        // @ts-ignore
-        vault.get(canvas.annotations).map((item: any) => {
-          return (
-            <>
-              <LanguageFieldEditor
-                key={item.id}
-                label={"label"}
-                fields={item.label}
-                availableLanguages={defaultLanguages}
-                onSave={() => {
-                  //DO Something
-                }}
-                property={"label"}
-              />
-              <InputLabel>items</InputLabel>
-              {
-                //@ts-ignore
-                vault.get(item.id)?.items.map((NESTEDITEM: any) => {
-                  return <AnnotationPreview key={NESTEDITEM.id} id={NESTEDITEM.id} />;
-                })
-              }
-            </>
-          );
-        })}
+      {annoPages()}
     </>
   );
 };

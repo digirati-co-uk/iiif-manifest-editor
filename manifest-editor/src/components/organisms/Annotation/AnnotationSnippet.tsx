@@ -24,8 +24,8 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
   return (
     <LightBox onClick={() => onClick(id)}>
       <FlexContainerRow>
-        <AnnotationPreview region={target.split("#xywh=")[1]} />
-        <FlexContainerColumn style={{ maxWidth: "60%" }}>
+        {target && <AnnotationPreview region={target.split("#xywh=")[1]} />}
+        <FlexContainerColumn style={target ? { maxWidth: "60%" } : { maxWidth: "100%" }}>
           {!expand && <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>}
           {expand && (
             <FlexContainerRow>
@@ -51,7 +51,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
 
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
-          <AnnotationTarget id={target} />
+          {target && <AnnotationTarget id={target} />}
         </FlexContainerColumn>
       </FlexContainerRow>
     </LightBox>
