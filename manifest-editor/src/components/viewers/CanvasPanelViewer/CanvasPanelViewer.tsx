@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useManifest } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef } from "react";
@@ -9,6 +9,7 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
+import { Vault } from "@iiif/vault/*";
 
 const Container = styled.div`
   position: relative;
@@ -30,6 +31,7 @@ export function CanvasPanelViewer() {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
+  const vault = useVault();
 
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
@@ -76,10 +78,19 @@ export function CanvasPanelViewer() {
           --atlas-container-flex: 1 1 0px;
           --atlas-background:  #f9f9f9;
         }
+        .annotation {
+          background: rgba(50, 0, 200, 0.4);
+        }
       `}</style>
         <ViewerContainer>
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
+              {vault &&
+                // @ts-ignore
+                vault.get(state.canvasId).annotations.map((annoPage) => {
+                  console.table(annoPage);
+                  return <CanvasPanel.RenderAnnotationPage page={annoPage} className="annotation" />;
+                })}
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
           </CanvasPanel.Viewer>
