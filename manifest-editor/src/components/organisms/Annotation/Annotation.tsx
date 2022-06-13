@@ -11,10 +11,13 @@ export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
   const vault = useVault();
   const annotation = vault.get(id) as any;
 
+  // console.log(annotation);
+
   return (
     <>
       {annotation.body.map((annotationBody: any) => {
         const annoBody = vault.get(annotationBody) as any;
+        // const body = vault.get(annoBody);
         return (
           <FlexContainer
             style={{
@@ -32,7 +35,7 @@ export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
                   id={annotation.id}
                   onClick={(id: any) => console.log(id)}
                   edit={() => {}}
-                  target={annotation.target.id}
+                  target={annotation.target}
                 />
               </ErrorBoundary>
             </FlexContainerColumn>
