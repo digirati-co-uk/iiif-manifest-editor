@@ -71,6 +71,7 @@ export const AnnotationForm = () => {
             This annotation page has no items, either create a new annotation or convert the external resource to
             internal annotations for editing.
           </small>
+          <PaddingComponentSmall />
           <FlexContainerRow>
             <CalltoButton onClick={() => addNew()}>Create one</CalltoButton>
             <PaddingComponentSmall />
@@ -123,8 +124,10 @@ export const AnnotationForm = () => {
               property={"behavior"}
             />
           </InputLabel>
+          <PaddingComponentSmall />
 
           {isExternal(item) && externalConvert(item)}
+
           <InputLabel>items</InputLabel>
 
           {items(item)}
