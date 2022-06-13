@@ -17,7 +17,6 @@ export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
     <>
       {annotation.body.map((annotationBody: any) => {
         const annoBody = vault.get(annotationBody) as any;
-        // const body = vault.get(annoBody);
         return (
           <FlexContainer
             style={{

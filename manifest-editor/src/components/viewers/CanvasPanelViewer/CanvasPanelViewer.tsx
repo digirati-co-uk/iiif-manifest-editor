@@ -9,7 +9,6 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
-import { Vault } from "@iiif/vault/*";
 
 const Container = styled.div`
   position: relative;
