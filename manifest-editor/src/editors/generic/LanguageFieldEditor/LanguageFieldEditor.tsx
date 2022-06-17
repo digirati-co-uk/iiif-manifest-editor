@@ -1,10 +1,9 @@
-import React, { ChangeEvent, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import { useMetadataEditor, UseMetadataEditor } from "../../../hooks/useMetadataEditor";
 import { SmallButton } from "../../../atoms/Button";
-import { EmptyProperty } from "../../../atoms/EmptyProperty";
 import { InformationLink } from "../../../atoms/InformationLink";
 import { CloseIcon } from "../../../icons/CloseIcon";
-import { FlexContainer, FlexContainerColumn } from "../../../components/layout/FlexContainer";
+import { FlexContainer } from "../../../components/layout/FlexContainer";
 import { InputGroup, InputUnderlined } from "../../Input";
 import { DropdownItem, StyledSelect } from "../../LanguageSelector";
 import { useDebounce } from "tiny-use-debounce";
@@ -12,7 +11,7 @@ import { AddAnother, FormFieldWrapper, Label, EmptyLanguageField } from "./Langu
 import { useDecayState } from "../../../hooks/useDecayState";
 import { flushSync } from "react-dom";
 import Textarea from "react-textarea-autosize";
-import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
+import { PaddingComponentMedium } from "../../../atoms/PaddingComponent";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;

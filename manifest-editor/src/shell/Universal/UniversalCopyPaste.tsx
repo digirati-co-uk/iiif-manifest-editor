@@ -44,6 +44,10 @@ export function UniversalCopyTarget<T>({
     }
     e.preventDefault();
     if (e.clipboardData) {
+      if (props.onLoading) {
+        props.onLoading();
+      }
+
       if (onPasteReference) {
         const data = e.clipboardData.getData("application/json+vault");
         if (data) {
@@ -54,7 +58,6 @@ export function UniversalCopyTarget<T>({
             }
           } catch (e) {
             // ignore.
-            return;
           }
         }
       }
@@ -80,6 +83,9 @@ export function UniversalCopyTarget<T>({
             }
           }
         }
+      }
+      if (props.onComplete) {
+        props.onComplete();
       }
     }
   }, []);

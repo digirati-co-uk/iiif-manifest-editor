@@ -15,6 +15,7 @@ import { PanelError } from "../../shell/Layout/components/PanelError";
 import { CanvasList } from "../../navigation/CanvasList/CanvasList";
 import { RangeNavigation } from "../../navigation/RangeNavigation/RangeNavigation";
 import { CanvasVerticalThumbnails } from "../../navigation/CanvasVerticalThumbnails/CanvasVerticalThumbnails";
+import { ManifestDescriptive } from "../../resource-editors/manifest/ManifestDescriptive";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
