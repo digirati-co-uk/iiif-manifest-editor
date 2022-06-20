@@ -11,6 +11,7 @@ import { useApps } from "../../../shell/AppContext/AppContext";
 import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
 import { TickIcon } from "../../../icons/TickIcon";
 import { BlockIcon } from "../../../icons/BlockIcon";
+import { CloseIcon } from "../../../icons/CloseIcon";
 
 export const LoadManifest: React.FC = () => {
   const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();
@@ -93,7 +94,11 @@ export const LoadManifest: React.FC = () => {
       <div>
         <TickIcon /> Valid IIIF Manifest
       </div>
-    ) : null;
+    ) : (
+      <div>
+        <CloseIcon /> Invalid IIIF Manifest
+      </div>
+    );
 
   return (
     <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
@@ -110,6 +115,7 @@ export const LoadManifest: React.FC = () => {
           placeholder={"Enter a IIIF manifest URL"}
           onChange={(e: any) => setInputValue(e.target.value)}
           onBlur={handleChange}
+          onPaste={handleChange}
         />
         <PaddingComponentSmall />
         <FlexContainer style={{ justifyContent: "space-between" }}>
