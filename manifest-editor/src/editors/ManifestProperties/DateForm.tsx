@@ -4,6 +4,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { Input } from "../Input";
+import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
 
 export const DateForm: React.FC<{}> = () => {
   const manifest = useManifest();
@@ -27,14 +28,18 @@ export const DateForm: React.FC<{}> = () => {
           <h4>{dispatchType}</h4>
           {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
         </FlexContainer>
-        <Input
-          type="string"
-          onChange={(e: any) => {
-            changeHandler(e.target.value);
-          }}
-          // @ts-ignore
-          value={manifest && manifest[dispatchType] ? manifest[dispatchType] : ""}
-        />
+        <FlexContainer>
+          <Input
+            type="string"
+            onChange={(e: any) => {
+              changeHandler(e.target.value);
+            }}
+            // @ts-ignore
+            value={manifest && manifest[dispatchType] ? manifest[dispatchType] : ""}
+          />
+          <PaddingComponentMedium />
+        </FlexContainer>
+        <PaddingComponentSmall />
       </ErrorBoundary>
     </>
   );
