@@ -7,6 +7,10 @@ import { useLayoutActions, useLayoutState } from "../shell/Layout/Layout.context
 import { useEffect, useState } from "react";
 import { VerticalDivider } from "./VerticalDivider";
 import { PaddingComponentSmall } from "./PaddingComponent";
+import { MenuIcon } from "../icons/MenuIcon";
+import { ExperimentalIcon } from "../madoc/components/icons/ExperimentalIcon";
+import { BlockIcon } from "../icons/BlockIcon";
+import { CopyIcon } from "../icons/CopyIcon";
 
 export const ViewSelector: React.FC = () => {
   const actions = useLayoutActions();
@@ -63,6 +67,30 @@ export const ViewSelector: React.FC = () => {
         style={activeCenterPanelState === "thumbnail-grid" ? { background: "lightgrey" } : { background: "white" }}
       >
         <GridIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          actions.leftPanel.open({ id: "canvas-list-view" });
+        }}
+        title="Switch to canvas list"
+      >
+        <MenuIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          actions.leftPanel.open({ id: "canvas-range-view" });
+        }}
+        title="Switch to structure"
+      >
+        <ExperimentalIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          actions.leftPanel.open({ id: "canvas-vertical-list" });
+        }}
+        title="Vertical list"
+      >
+        <CopyIcon />
       </Button>
     </FlexContainerRow>
   );

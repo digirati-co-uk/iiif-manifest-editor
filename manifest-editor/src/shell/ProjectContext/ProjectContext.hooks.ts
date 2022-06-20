@@ -19,22 +19,37 @@ import { convertPresentation2 } from "@iiif/parser/presentation-2";
 import { useProjectContext } from "./ProjectContext";
 import { useApps } from "../AppContext/AppContext";
 import { v4 } from "uuid";
+import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 
-export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsType>, backend: ProjectBackend) {
-  function createProject(payload: EditorProject) {
-    dispatch({ type: "createProject", payload });
-    backend.createProject(payload).then(() => {
-      // @todo notification?
-      console.log("Loader: project created");
-      switchProject(payload.id);
-    });
+export function useProjectActionsWithBackend(
+  dispatch: Dispatch<ProjectActionsType>,
+  backend: ProjectBackend,
+  storage: ProjectStorage<any>
+) {
+  async function createProject(payload: EditorProject) {
+    const allProjects = await backend.getAllProjects(true);
+
+    const project = { ...payload }; // avoid readonly payload.
+
+    ensureUniqueFilename(project, allProjects);
+
+    const backendStorage = await storage.create(project, project.storage.data);
+    const createdProject = { ...project, storage: backendStorage };
+    await backend.createProject(createdProject);
+
+    dispatch({ type: "createProject", payload: createdProject });
+
+    switchProject(project.id);
   }
   function deleteProject(payload: string) {
-    dispatch({ type: "deleteProject", payload });
-    backend.deleteProject(payload).then(() => {
-      // @todo notification?
-      console.log("Loader: project deleted");
-    });
+    if (backend.canDelete()) {
+      dispatch({ type: "deleteProject", payload });
+
+      backend.deleteProject(payload).then(() => {
+        // @todo notification?
+        console.log("Loader: project deleted");
+      });
+    }
   }
   function switchProject(payload: string) {
     dispatch({ type: "switchProject", payload });
@@ -55,7 +70,11 @@ export function useProjectActionsWithBackend(dispatch: Dispatch<ProjectActionsTy
   function saveProject(project: EditorProject) {
     dispatch({ type: "saveProject", payload: project });
 
-    backend.updateProject(project).then(() => {
+    Promise.all([
+      //
+      backend.updateProject(project),
+      storage.saveStorage(project.storage),
+    ]).then(() => {
       // @todo notification?
       console.log("Loader: project saved");
     });
@@ -147,18 +166,17 @@ export function useProjectLoader<T extends Storage = any>(
   const currentRef = useRef<EditorProject | null>(null);
   const [ready, setIsReady] = useState(false);
   const saveChanges = useCallback(() => {
-    if (currentRef.current) {
-      const newStorage = storage.getLatestStorage(currentRef.current);
-      if (!shallowEqual(newStorage, currentRef.current.storage)) {
-        // @todo Ideally this would be actions.updateStorage()
-        //   but currently the actions don't map fully to the
-        //   loader. The loader is only updated when saveProject()
-        //   is explicity called.
-        actions.saveProject({
-          ...currentRef.current,
-          storage: newStorage,
-        });
-      }
+    const project = currentRef.current;
+    if (project) {
+      storage.saveStorage(project.storage).then(() => {
+        const newStorage = storage.getBackendStorage(project);
+        if (!shallowEqual(newStorage, project.storage)) {
+          actions.saveProject({
+            ...project,
+            storage: newStorage,
+          });
+        }
+      });
     }
   }, [actions, storage]);
   const debounceSaveChanges = useDebounce(saveChanges, storage.saveInterval);
@@ -274,7 +292,26 @@ export function useProjectCreators() {
     []
   );
 
+  const createProjectFromManifestJson = useCallback(
+    async function createProjectFromManifestId(json: string) {
+      let full = JSON.parse(json);
+      if (full) {
+        if ((full as any)["@id"]) {
+          full = convertPresentation2(full) as any;
+        }
+        if (full) {
+          actions.createProject(projectFromManifest(full as any));
+          changeApp({ id: "manifest-editor" });
+        }
+      }
+    },
+    // Actions are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   return {
+    createProjectFromManifestJson,
     createProjectFromManifestId,
     createBlankManifest,
   };

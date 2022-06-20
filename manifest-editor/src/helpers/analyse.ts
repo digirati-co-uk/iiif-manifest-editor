@@ -68,7 +68,6 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
     // can handle the error better, but maybe CORS error happened so:
     return handleNonFetchableUrl(url);
   }
-  console.log(response)
 
   if (!response.ok) {
     response = await fetch(url + "/info.json");
@@ -91,7 +90,7 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
   } catch {
     return null;
   }
-  console.log(analyseJson(data, url))
+
   return await analyseJson(data, url);
 }
 
@@ -119,7 +118,7 @@ async function analyseJson(data: any, url: string) {
     return null;
   }
   const vault = new IIIFVault.Vault();
-  const vaultData = await vault.load(url); // we could use dataId here, but just in case it's wrong...
+  const vaultData = await vault.load(url, data); // we could use dataId here, but just in case it's wrong...
   if (!vaultData) {
     return;
   }

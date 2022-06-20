@@ -40,6 +40,15 @@ export const CenterPanel = styled.div`
   // background: linear-gradient(0deg, rgba(251, 242, 237, 1) 0%, rgba(240, 229, 245, 1) 50%, rgba(236, 245, 255, 1) 100%);
 
   min-width: 320px;
+  display: flex;
+
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  > * {
+    min-width: 0;
+  }
 `;
 
 export const RightPanel = styled.div`

@@ -32,7 +32,8 @@ export const EmptyLanguageField = styled(ButtonReset)`
   color: #999;
   font-size: 0.8em;
   border-bottom: 1px solid rgba(5, 42, 68, 0.2);
-  width: 100%;
-  display: flex;
-  margin-bottom: 1rem;
+  margin: 0.35em 0.5em 1rem;
+  width: calc(100% - 1em);
+  display: block;
+  text-align: left;
 `;
