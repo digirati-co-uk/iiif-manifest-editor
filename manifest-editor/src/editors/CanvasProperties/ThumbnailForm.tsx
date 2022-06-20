@@ -53,7 +53,7 @@ export const ThumbnailForm = () => {
     <EditableContainer>
       <EmptyProperty
         guidanceReference={"https://iiif.io/api/presentation/3.0/#thumbnail"}
-        label={"thumbnails"}
+        label={"thumbnail"}
         createNew={() => layouts.change("new-canvas-thumbnail")}
       />
       <DragDropContext onDragEnd={onDragEnd}>
