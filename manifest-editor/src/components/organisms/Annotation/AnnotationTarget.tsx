@@ -25,13 +25,29 @@ export const CanvasTargetEditor: React.FC<Target> = ({ id, onChange }) => {
   return (
     <FlexContainerRow>
       <InputLabel>x</InputLabel>
-      <Input value={target[0]} onChange={(e: any) => update(0, e.target.value)} />
+      <Input
+        style={{ minWidth: "3rem", padding: "unset" }}
+        value={target[0]}
+        onChange={(e: any) => update(0, e.target.value)}
+      />
       <InputLabel>y</InputLabel>
-      <Input value={target[1]} onChange={(e: any) => update(1, e.target.value)} />
+      <Input
+        style={{ minWidth: "3rem", padding: "unset" }}
+        value={target[1]}
+        onChange={(e: any) => update(1, e.target.value)}
+      />
       <InputLabel>w</InputLabel>
-      <Input value={target[2]} onChange={(e: any) => update(2, e.target.value)} />
+      <Input
+        style={{ minWidth: "3rem", padding: "unset" }}
+        value={target[2]}
+        onChange={(e: any) => update(2, e.target.value)}
+      />
       <InputLabel>h</InputLabel>
-      <Input value={target[3]} onChange={(e: any) => update(3, e.target.value)} />
+      <Input
+        style={{ minWidth: "3rem", padding: "unset" }}
+        value={target[3]}
+        onChange={(e: any) => update(3, e.target.value)}
+      />
     </FlexContainerRow>
   );
 };
