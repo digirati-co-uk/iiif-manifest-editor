@@ -10,15 +10,18 @@ import { useApps } from "../AppContext/AppContext";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
-export function ProjectProvider(props: { children: ReactNode }) {
+export function ProjectProvider(props: { children: ReactNode; defaultApp?: string }) {
   const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
   const backend = useMemo(() => new LocalStorageBackend(), []);
   const storage = useMemo(() => new LocalStorageLoader(), []);
   const [state, dispatch] = useReducer(projectContextReducer, undefined, getDefaultProjectContextState);
-  const actions = useProjectActionsWithBackend(dispatch, backend);
-  const context: ProjectContext = useMemo(() => ({ actions, ...state }), [actions, state]);
+  const actions = useProjectActionsWithBackend(dispatch, backend, storage);
+  const context: ProjectContext = useMemo(
+    () => ({ actions, canDelete: backend.canDelete(), ...state }),
+    [actions, backend, state]
+  );
   const { vault, ready } = useProjectLoader(context, storage);
   const manifest = context.current?.resource;
 
@@ -30,9 +33,9 @@ export function ProjectProvider(props: { children: ReactNode }) {
       state.loadingStatus.loaded &&
       ready &&
       (!vault || !manifest) &&
-      currentApp?.id !== "splash"
+      currentApp?.id !== (props.defaultApp || "splash")
     ) {
-      changeApp({ id: "splash" });
+      changeApp({ id: props.defaultApp || "splash" });
     }
   }, []);
 

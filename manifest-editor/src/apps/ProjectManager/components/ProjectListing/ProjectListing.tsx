@@ -3,9 +3,7 @@ import { projectFromManifest } from "../../../../shell/ProjectContext/helpers/pr
 import { getManifestNomalized } from "../../../../helpers/getManifestNormalized";
 
 export function ProjectListing() {
-  const { allProjects, current, loadingStatus, actions } = useProjectContext();
-
-  console.log({ allProjects, current });
+  const { allProjects, current, loadingStatus, actions, canDelete } = useProjectContext();
 
   if (loadingStatus && loadingStatus.loading) {
     return <div>Loading...</div>;
@@ -21,7 +19,9 @@ export function ProjectListing() {
             <button disabled={current?.id === project.id} onClick={() => actions.switchProject(project.id)}>
               select
             </button>
-            <button onClick={() => actions.deleteProject(project.id)}>delete</button>
+            <button disabled={!canDelete} onClick={() => actions.deleteProject(project.id)}>
+              delete
+            </button>
           </li>
         );
       })}

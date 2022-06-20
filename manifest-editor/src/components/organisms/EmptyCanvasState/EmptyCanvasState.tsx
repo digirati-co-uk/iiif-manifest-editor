@@ -1,8 +1,12 @@
 import { FloatingPanel, FloatingPanelContainer, FloatingPanelInner, TextOverlay } from "./EmptyCanvasState.styles";
+import { UniversalCopyTarget } from "../../../shell/Universal/UniversalCopyPaste";
+import { usePasteCanvas } from "../../../hooks/usePasteCanvas";
 
 export function EmptyCanvasState() {
+  const onPasteCanvas = usePasteCanvas();
+
   return (
-    <div style={{ flex: 1, background: "#fff" }}>
+    <UniversalCopyTarget style={{ flex: 1, background: "#fff" }} onPasteAnalysis={onPasteCanvas}>
       <div
         style={{
           overflow: "hidden",
@@ -72,6 +76,6 @@ export function EmptyCanvasState() {
           <h1>No canvases</h1>
         </TextOverlay>
       </div>
-    </div>
+    </UniversalCopyTarget>
   );
 }

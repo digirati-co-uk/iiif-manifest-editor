@@ -1,12 +1,11 @@
-import { Source } from "./types/Source";
 import { Storage } from "./types/Storage";
 import { Publication } from "./types/Publication";
-import { Reference } from "@iiif/presentation-3";
 import { Vault } from "@iiif/vault";
 import { Preview } from "./types/Preview";
 
 export type ProjectContext = ProjectState & {
   actions: ProjectActions;
+  canDelete: boolean;
 };
 
 export interface ProjectState {
@@ -75,25 +74,27 @@ export interface EditorProject {
 
 export interface ProjectBackend {
   saveInterval: number;
-  getAllProjects(): Promise<EditorProject[]>;
+  getAllProjects(fresh?: boolean): Promise<EditorProject[]>;
   getLastProject(): Promise<string | null>;
   setLastProject(id: string): Promise<void>;
+  canDelete(): boolean;
   createProject(project: EditorProject): Promise<void>;
   updateProject(project: EditorProject): Promise<void>;
   deleteProject(id: string): Promise<void>;
 }
 
-export interface ProjectStorage<S extends Storage> {
+export interface ProjectStorage<S extends Storage, DataType = any, Ref extends Storage = any> {
   type: string;
   saveInterval: number;
 
   // Fetching
-  getStorage(id: string): Promise<S | null>;
-  updateStorage(id: string, storage: S): Promise<void>;
-  deleteStorage(id: string): Promise<void>;
+  create(project: EditorProject, data: DataType): Promise<Ref | void>;
+  getStorage(ref: Ref): Promise<S | null>;
+  saveStorage(ref: Ref): Promise<void>;
+  deleteStorage(ref: Ref): Promise<void>;
 
   // Runtime
-  getLatestStorage(project: EditorProject): S;
+  getBackendStorage(project: EditorProject): Ref;
   createVaultInstance(project: EditorProject): [Vault, Promise<void>];
   shouldUpdateWithVault(): boolean;
 }

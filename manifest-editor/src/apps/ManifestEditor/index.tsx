@@ -12,6 +12,10 @@ import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThu
 import { ThumbnailPage } from "./components/ThumbnailPage";
 import { limitation } from "../../helpers/limitation";
 import { PanelError } from "../../shell/Layout/components/PanelError";
+import { CanvasList } from "../../navigation/CanvasList/CanvasList";
+import { RangeNavigation } from "../../navigation/RangeNavigation/RangeNavigation";
+import { CanvasVerticalThumbnails } from "../../navigation/CanvasVerticalThumbnails/CanvasVerticalThumbnails";
+import { ManifestDescriptive } from "../../resource-editors/manifest/ManifestDescriptive";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -36,9 +40,24 @@ export const leftPanels: LayoutPanel[] = [
     },
   },
   {
+    id: "canvas-vertical-list",
+    label: "Canvases",
+    render: () => <CanvasVerticalThumbnails />,
+  },
+  {
     id: "outline-view",
     label: "Outline view",
     render: () => <OutlinePlaceholder />,
+  },
+  {
+    id: "canvas-list-view",
+    label: "Canvas list view",
+    render: () => <CanvasList />,
+  },
+  {
+    id: "canvas-range-view",
+    label: "Structure",
+    render: () => <RangeNavigation />,
   },
 ];
 
@@ -63,6 +82,14 @@ export const centerPanels: LayoutPanel[] = [
     icon: "",
     render: (state, { actions }, ctx) => (
       <GridView
+        canvasIds={state.canvasIds}
+        clearCanvases={
+          state.canvasIds
+            ? () => {
+                actions.centerPanel.change({ id: "thumbnail-grid", state: { canvasIds: undefined } });
+              }
+            : undefined
+        }
         handleChange={(canvasId, thumbnails) => {
           ctx.setState({ canvasId });
           actions.open("canvas-properties");

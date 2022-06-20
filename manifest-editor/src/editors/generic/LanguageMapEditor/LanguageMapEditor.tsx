@@ -11,7 +11,7 @@ import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
 
 export const supported: LanguageMapEditorProps["dispatchType"][] = ["label", "summary"];
 
-export function LanguageMapEditor({ dispatchType, languages, guidanceReference }: LanguageMapEditorProps) {
+export function LanguageMapEditor({ dispatchType, languages, guidanceReference, disableMultiline }: LanguageMapEditorProps) {
   const resource = useResource<Partial<DescriptiveProperties>>();
   const vault = useVault();
   const { defaultLanguages } = useConfig();
@@ -37,6 +37,7 @@ export function LanguageMapEditor({ dispatchType, languages, guidanceReference }
             onSave={changeHandler}
             availableLanguages={languages || defaultLanguages}
             guidanceReference={guidanceReference}
+            disableMultiline={disableMultiline}
           />
         </ErrorBoundary>
       )}

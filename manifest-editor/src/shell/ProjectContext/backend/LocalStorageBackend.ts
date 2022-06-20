@@ -24,6 +24,10 @@ export class LocalStorageBackend implements ProjectBackend {
     }
   }
 
+  canDelete() {
+    return true;
+  }
+
   async getAllProjects(): Promise<EditorProject[]> {
     try {
       const index = await this.getProjectIndex();
