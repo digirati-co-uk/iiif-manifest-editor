@@ -1,7 +1,15 @@
 import { LayoutProps } from "../shell/Layout/Layout.types";
 
 type LoadedApp = Partial<LayoutProps> & {
-  default: { id: string; title: string; type?: "manifest" | "launcher"; project?: boolean; dev?: boolean };
+  default: {
+    id: string;
+    title: string;
+    type?: "manifest" | "launcher";
+    project?: boolean;
+    dev?: boolean;
+    desktop?: boolean;
+    web?: boolean;
+  };
 };
 
 export type MappedApp = {
@@ -22,7 +30,17 @@ function internalGetApps(appMap: Record<string, LoadedApp>) {
 
   for (const path of Object.keys(appMap)) {
     const { default: metadata, ...props }: LoadedApp = appMap[path] as any;
+
+    if (window.__TAURI__ && metadata.web) {
+      continue;
+    }
+
+    if (!window.__TAURI__ && metadata.desktop) {
+      continue;
+    }
+
     allPaths.push(path);
+
     if (!metadata || !metadata.id) {
       continue;
     }
