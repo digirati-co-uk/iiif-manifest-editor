@@ -110,6 +110,7 @@ export const LoadManifest: React.FC = () => {
           placeholder={"Enter a IIIF manifest URL"}
           onChange={(e: any) => setInputValue(e.target.value)}
           onBlur={handleChange}
+          onPaste={handleChange}
         />
         <PaddingComponentSmall />
         <FlexContainer style={{ justifyContent: "space-between" }}>
