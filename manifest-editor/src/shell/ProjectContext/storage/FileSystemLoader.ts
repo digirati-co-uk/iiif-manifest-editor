@@ -5,7 +5,6 @@ import { homeDir, join } from "@tauri-apps/api/path";
 import { BaseDirectory, createDir, readTextFile, removeFile, writeTextFile } from "@tauri-apps/api/fs";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import invariant from "tiny-invariant";
-import { man } from "ionicons/icons";
 
 export interface FileSystemLoaderConfig {
   folderName: string;
