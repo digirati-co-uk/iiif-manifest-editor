@@ -93,7 +93,7 @@ export const ViewSelector: React.FC = () => {
       >
         <CopyIcon />
       </Button>
+      */}
     </FlexContainerRow>
-    */}
   );
 };
