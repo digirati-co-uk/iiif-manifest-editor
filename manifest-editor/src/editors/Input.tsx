@@ -102,6 +102,7 @@ export const InputUnderlined = styled(_Input)`
   border-right: none;
   min-height: 2rem;
   min-width: 70%;
+  white-space: pre-line;
   &:focus {
     background: #eee;
   }
