@@ -1,6 +1,7 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { InformationLink } from "../../atoms/InformationLink";
+import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
 import { FlexContainer } from "../../components/layout/FlexContainer";
 import { Input } from "../Input";
 
@@ -26,15 +27,18 @@ export const DateForm: React.FC = () => {
           <h4>{dispatchType}</h4>
           {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
         </FlexContainer>
-
-        <Input
-          type="string"
-          onChange={(e: any) => {
-            changeHandler(e.target.value);
-          }}
-          // @ts-ignore
-          value={canvas && canvas[dispatchType] ? canvas[dispatchType] : ""}
-        />
+        <FlexContainer>
+          <Input
+            type="string"
+            onChange={(e: any) => {
+              changeHandler(e.target.value);
+            }}
+            // @ts-ignore
+            value={canvas && canvas[dispatchType] ? canvas[dispatchType] : ""}
+          />
+          <PaddingComponentMedium />
+        </FlexContainer>
+        <PaddingComponentSmall />
       </ErrorBoundary>
     </>
   );

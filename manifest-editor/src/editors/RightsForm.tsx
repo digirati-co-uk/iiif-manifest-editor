@@ -9,6 +9,7 @@ import { CheckIcon } from "../icons/CheckIcon";
 import { DownIcon } from "../icons/DownIcon";
 import { FlexContainer } from "../components/layout/FlexContainer";
 import { HiddenCheckbox, MutliselectLabel } from "./Input";
+import { PaddingComponentMedium } from "../atoms/PaddingComponent";
 
 export const RightsForm: React.FC<{
   options: string[] | null;
@@ -26,16 +27,18 @@ export const RightsForm: React.FC<{
           <h4>{label}</h4>
           {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
         </FlexContainer>
-
-        <FlexContainer
-          style={{ width: "100%", justifyContent: "space-between", background: "#eee" }}
-          onClick={() => setOpen(!open)}
-        >
-          <div>{selected}</div>
-          <Button aria-label="open/close" onClick={() => setOpen(!open)}>
-            <VerticalDivider />
-            <DownIcon />
-          </Button>
+        <FlexContainer>
+          <FlexContainer style={{ background: "#eee" }} onClick={() => setOpen(!open)}>
+            <div>{selected}</div>
+            <Button
+              aria-label="open/close"
+              onClick={() => setOpen(!open)}
+              style={{ border: "0.5px solid lightgrey", borderRadius: "0 5px 5px 0", width: "4rem", height: "3rem" }}
+            >
+              <DownIcon />
+            </Button>
+          </FlexContainer>
+          <PaddingComponentMedium style={{ backgroundColor: "white" }} />
         </FlexContainer>
 
         {open && (
@@ -59,6 +62,7 @@ export const RightsForm: React.FC<{
             </DropdownContent>
           </DropdownContainer>
         )}
+        <PaddingComponentMedium />
       </MenuContainer>
     </>
   );
