@@ -109,7 +109,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                       </DropdownItem>
                     ))}
                   </StyledSelect>
-                  {fieldKeys.length > 1 ? (
+                  {fieldKeys.length > 0 ? (
                     <SmallButton
                       style={{ visibility: active ? "visible" : "hidden" }}
                       className="remove"
@@ -149,17 +149,20 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
       {firstItem ? (
         allFields
       ) : (
-        <EmptyLanguageField
-          id={focusId}
-          onClick={() => {
-            flushSync(() => {
-              createNewItem(false);
-            });
-            document.getElementById(focusId)?.focus();
-          }}
-        >
-          Add value
-        </EmptyLanguageField>
+        <FlexContainer>
+          <EmptyLanguageField
+            id={focusId}
+            onClick={() => {
+              flushSync(() => {
+                createNewItem(false);
+              });
+              document.getElementById(focusId)?.focus();
+            }}
+          >
+            Add value
+          </EmptyLanguageField>
+          <PaddingComponentMedium />
+        </FlexContainer>
       )}
     </FormFieldWrapper>
   );

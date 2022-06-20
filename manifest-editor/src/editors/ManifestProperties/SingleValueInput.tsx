@@ -6,6 +6,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { PaddingComponentMedium } from "../../atoms/PaddingComponent";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go
