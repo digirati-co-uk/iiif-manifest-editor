@@ -10,7 +10,7 @@ import { useApps } from "../AppContext/AppContext";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
-export function ProjectProvider(props: { children: ReactNode; defaultApp?: string; ignoreQueryString?: boolean }) {
+export function ProjectProvider(props: { children: ReactNode; defaultApp?: string }) {
   const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.

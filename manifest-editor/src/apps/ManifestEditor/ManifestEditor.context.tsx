@@ -31,7 +31,7 @@ export function useManifestEditor() {
   return ctx;
 }
 
-export function ManifestEditorProvider({ children }: { children: ReactNode }) {
+export function ManifestEditorProvider({ children, ignoreQueryString }: { children: ReactNode; ignoreQueryString?: boolean  }) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
   const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);
@@ -45,12 +45,14 @@ export function ManifestEditorProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const parsed = parse(window.location.hash.slice(1));
-    if (parsed && parsed.manifest && typeof parsed.manifest === "string") {
-      createProjectFromManifestId(parsed.manifest).then(() => {
-        window.location.hash = "";
-      });
-      return;
+    if (!ignoreQueryString) {
+      const parsed = parse(window.location.hash.slice(1));
+      if (parsed && parsed.manifest && typeof parsed.manifest === "string") {
+        createProjectFromManifestId(parsed.manifest).then(() => {
+          window.location.hash = "";
+        });
+        return;
+      }
     }
   }, []);
 
