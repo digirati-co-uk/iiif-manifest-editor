@@ -10206,10 +10206,10 @@ react-i18next@^11.16.9:
     html-escaper "^2.0.2"
     html-parse-stringify "^3.0.1"
 
-react-iiif-vault@^0.9.10:
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.10.tgz#0cf6cda0def8a5d947e63ae1c25efbebaf164cb7"
-  integrity sha512-6PSZLx/KLWPdsP9R9kKrX4BhZyLX1Xpg7GiBIQh+snk7XeSuNX4QwUwgriegYxQWIx0k/4HQcaUnBuGA1j5guw==
+react-iiif-vault@^0.9.11:
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.11.tgz#af0e45e6d8106ac9607a9a02cff33a1f083ff6cb"
+  integrity sha512-6MN8f16yuNjGipXrY1UFH+NB7lCoMxYN1xbovHrjpIGPoz7p3xpZnnXn5PTAicwq3dgLE1IY5ppkGg2VCkvsuA==
   dependencies:
     "@atlas-viewer/atlas" "^2.0.0-alpha.11"
     "@atlas-viewer/iiif-image-api" "^2.*"
