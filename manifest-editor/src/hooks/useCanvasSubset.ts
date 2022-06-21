@@ -1,6 +1,6 @@
 import { Reference } from "@iiif/presentation-3";
 import { useResourceContext, useVaultSelector } from "react-iiif-vault";
-import { IIIFStore } from "@iiif/vault/dist";
+import { IIIFStore } from "@iiif/vault";
 
 export function useCanvasSubset(idsOrRefs?: Array<string | Reference>) {
   const ctx = useResourceContext();
