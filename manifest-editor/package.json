@@ -24,6 +24,7 @@
     "iiif-builder": "^1.0.5",
     "immer": "^9.0.14",
     "mitt": "^3.0.0",
+    "query-string": "^7.1.1",
     "react": "^17.0.2",
     "react-accessible-dropdown-menu-hook": "^3.2.0",
     "react-beautiful-dnd": "^13.1.0",

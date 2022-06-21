@@ -1,16 +1,27 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useReducer } from "react";
 import { ProjectContext } from "./ProjectContext.types";
-import { useProjectActionsWithBackend, useProjectBackend, useProjectLoader } from "./ProjectContext.hooks";
+import {
+  useProjectActionsWithBackend,
+  useProjectBackend,
+  useProjectCreators,
+  useProjectLoader,
+} from "./ProjectContext.hooks";
 import { getDefaultProjectContextState, projectContextReducer } from "./ProjectContext.reducer";
 import invariant from "tiny-invariant";
 import { ManifestContext, VaultProvider } from "react-iiif-vault";
 import { LocalStorageLoader } from "./storage/LocalStorageLoader";
 import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { useApps } from "../AppContext/AppContext";
+<<<<<<< Updated upstream
+=======
+import { FileSystemFolderBackend } from "./backend/FileSystemFolderBackend";
+import { FileSystemLoader } from "./storage/FileSystemLoader";
+import { parse } from "query-string";
+>>>>>>> Stashed changes
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
-export function ProjectProvider(props: { children: ReactNode; defaultApp?: string }) {
+export function ProjectProvider(props: { children: ReactNode; defaultApp?: string; ignoreQueryString?: boolean }) {
   const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
