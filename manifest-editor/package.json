@@ -13,6 +13,7 @@
   },
   "resolutions": {
     "@iiif/vault": "0.9.18",
+    "@iiif/parser": "^1.0.10",
     "@atlas-viewer/iiif-image-api": "^2.0.5"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "@digirati/canvas-panel-web-components": "^v1.0.47",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.18",
+    "@iiif/parser": "^1.0.10",
     "@iiif/vault-helpers": "^0.9.5",
     "@octokit/rest": "^18.12.0",
     "@tauri-apps/api": "^1.0.1",

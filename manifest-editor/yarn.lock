@@ -1619,25 +1619,7 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@1.*":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.8.tgz#0d14c28bd40b52cd17045d03004d15504ae1a3d6"
-  integrity sha512-oVpakT2qxk7oyE1o/EIl71lt01el56LHeHoQoOkqvjRPxAJhmIUot+rfaGtOxW5o95zLsZap2wuIJenpOllkdQ==
-  dependencies:
-    "@iiif/presentation-2" "^1.0.1"
-    "@iiif/presentation-3" "^1.0.4"
-    "@types/geojson" "^7946.0.8"
-
-"@iiif/parser@1.x", "@iiif/parser@^1.0.2":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.6.tgz#0f5252b94ba586aade3d6558b5a649fa265fe217"
-  integrity sha512-bIdmqe3JwPopL7qEeZk193YNkGaEkkfSR9i/+B7I3MVXkKGE6G80tOWhfQRs/EY3fMzOS8OUFxzAu+aS6CXvEg==
-  dependencies:
-    "@iiif/presentation-2" "^1.0.1"
-    "@iiif/presentation-3" "^1.0.4"
-    "@types/geojson" "^7946.0.8"
-
-"@iiif/parser@>=v1.0.10":
+"@iiif/parser@1.*", "@iiif/parser@1.x", "@iiif/parser@>=v1.0.10", "@iiif/parser@^1.0.10", "@iiif/parser@^1.0.2":
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.10.tgz#8a3f8f70c1e284a4790704d415fa6f81ee214999"
   integrity sha512-z8b8a02ltoBoKGetfyM4rqIXQ+gnE5rjGXKqzZwvWSAN0hnzA5nghTqisogYo0bQx3ct/Q1bIysvpMMR64uIUQ==
