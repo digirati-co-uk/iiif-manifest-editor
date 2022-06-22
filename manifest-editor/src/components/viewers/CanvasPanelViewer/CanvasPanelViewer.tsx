@@ -2,13 +2,17 @@ import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-va
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef } from "react";
-import { Runtime } from "@atlas-viewer/atlas";
+import { ResizeWorldItem, Runtime } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
 import { ErrorBoundary } from "react-error-boundary";
 import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
+import { useLayoutState } from "../../../shell/Layout/Layout.context";
+import { EditAnnotations } from "../../../editors/EditAnnotations";
+import { BoxSelector } from "../../../madoc/components/BoxSelector";
+import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
 
 const Container = styled.div`
   position: relative;
@@ -31,6 +35,7 @@ export function CanvasPanelViewer() {
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
   const vault = useVault();
+  const { rightPanel } = useLayoutState();
 
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
@@ -65,7 +70,7 @@ export function CanvasPanelViewer() {
       resetKeys={[state.canvasId, refreshKey]}
       fallbackRender={() => (
         <CanvasContainer>
-          <GhostCanvas />
+          <GhostCanvas>Something went wrong</GhostCanvas>
         </CanvasContainer>
       )}
     >
@@ -84,14 +89,52 @@ export function CanvasPanelViewer() {
         <ViewerContainer>
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
-              {vault &&
-                // @ts-ignore
-                vault.get(state.canvasId).annotations.map((annoPage) => {
-                  console.table(annoPage);
-                  return <CanvasPanel.RenderAnnotationPage page={annoPage} className="annotation" />;
-                })}
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
+            {rightPanel.current === "canvas-properties" &&
+              rightPanel.state.current === 5 &&
+              vault &&
+              state.canvasId &&
+              // @ts-ignore
+              vault.get(state.canvasId).annotations.map((annoPage) => {
+                const annotationPage = vault.get(annoPage) as any;
+                return annotationPage.items.map((item: any, index: number) => {
+                  const annotation = vault.get(item) as any;
+                  const target = annotation.target.split("#xywh=")[1];
+                  const split = target.split(",").map((position: string) => parseInt(position));
+                  return (
+                    <ResizeWorldItem
+                      id={item.id}
+                      // type={"box-selector"}
+                      x={0}
+                      y={0}
+                      width={1000}
+                      height={2000}
+                      resizable={true}
+                      // onSave={(saveCallback)}
+                      // style={{ background: "rgba(50, 0, 200, 0.4)" }}
+                      // isEditing={false}
+                      onSave={() => {}}
+                      // onClick={() => {}}
+                    >
+                      <box
+                        interactive
+                        html
+                        id={`${item.id}/box`}
+                        relativeStyle
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          // onClick(region);
+                          console.table(e);
+                        }}
+                        style={{ background: "rgba(50, 0, 200, 0.2)" }}
+                        target={{ x: split[0], y: split[1], width: split[2], height: split[3] }}
+                      />
+                    </ResizeWorldItem>
+                  );
+                });
+              })}
           </CanvasPanel.Viewer>
         </ViewerContainer>
       </Container>

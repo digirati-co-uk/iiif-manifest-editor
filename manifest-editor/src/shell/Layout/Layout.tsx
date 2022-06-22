@@ -120,7 +120,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
               dir="left"
               open={state.leftPanel.open}
               actions={actions.leftPanel}
-            />{" "}
+            />
           </>
         ) : null}
         <L.CenterPanel>

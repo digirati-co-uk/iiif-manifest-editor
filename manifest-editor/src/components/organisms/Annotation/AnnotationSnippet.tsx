@@ -51,7 +51,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
 
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
-          {target && <AnnotationTarget id={target} onChange={(newValue: string) => console.log(newValue)} />}
+          {target && <AnnotationTarget id={target} onChange={(newValue: string) => {}} />}
         </FlexContainerColumn>
       </FlexContainerRow>
     </LightBox>
