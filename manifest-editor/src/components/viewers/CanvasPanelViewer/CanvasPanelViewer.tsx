@@ -1,8 +1,8 @@
 import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
-import React, { useEffect, useReducer, useRef } from "react";
-import { ResizeWorldItem, Runtime } from "@atlas-viewer/atlas";
+import React, { useEffect, useReducer, useRef, useState } from "react";
+import { DrawBox, ResizeWorldItem, Runtime, useControlledAnnotationList } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
 import { ErrorBoundary } from "react-error-boundary";
 import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
@@ -13,6 +13,28 @@ import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { EditAnnotations } from "../../../editors/EditAnnotations";
 import { BoxSelector } from "../../../madoc/components/BoxSelector";
 import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
+import { AnnotationPage } from "./components/Annotations";
+
+type FormattedAnnotation = {
+  id: string;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+};
+
+function getAnnotationTarget(annotation: any) {
+  // console.log(annotation);
+  const split = annotation.target.split("#xywh=")[1].split(",");
+  // console.log(split);
+  return {
+    id: annotation.id,
+    height: split[0],
+    width: split[1],
+    x: split[2],
+    y: split[3],
+  };
+}
 
 const Container = styled.div`
   position: relative;
@@ -36,16 +58,48 @@ export function CanvasPanelViewer() {
   const manifest = useManifest(); // @todo remove.
   const vault = useVault();
   const { rightPanel } = useLayoutState();
-
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
   const goHome = () => runtime.current?.world.goHome();
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
   const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
 
+  const [annotationList, setAnnotationsList] = useState<any[]>([]);
+  const [formattedAnnotationList, setFormattedAnnotationList] = useState<FormattedAnnotation[]>([]);
+
   useEffect(() => {
     runtime.current?.goHome();
+
+    const canvas = vault.get(state.canvasId) as any;
+    const annos: any[] = [];
+    if (canvas) {
+      canvas.annotations.map((annoPage: any) => {
+        console.log(annoPage);
+        const annotations = vault.get(annoPage) as any;
+        console.log(annotations);
+        annotations.items.map((anno: any) => annos.push(vault.get(anno)));
+      });
+    }
+    setAnnotationsList(annos);
   }, [state.canvasId]);
+
+  useEffect(() => {
+    const annos: any[] = annotationList.map((anno: any) => getAnnotationTarget(anno)) as FormattedAnnotation[];
+    setFormattedAnnotationList(annos);
+  }, [annotationList]);
+  console.log(formattedAnnotationList);
+  const {
+    isEditing,
+    onDeselect,
+    selectedAnnotation,
+    onCreateNewAnnotation,
+    annotations,
+    onUpdateAnnotation,
+    setIsEditing,
+    setSelectedAnnotation,
+    editAnnotation,
+    addNewAnnotation,
+  } = useControlledAnnotationList(formattedAnnotationList);
 
   if (manifest?.items.length === 0) {
     return <EmptyCanvasState />;
@@ -86,54 +140,33 @@ export function CanvasPanelViewer() {
           background: rgba(50, 0, 200, 0.4);
         }
       `}</style>
-        <ViewerContainer>
+        <ViewerContainer onClick={onDeselect}>
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
             {rightPanel.current === "canvas-properties" &&
+            rightPanel.state.current === 5 &&
+            isEditing &&
+            !selectedAnnotation ? (
+              <DrawBox onCreate={onCreateNewAnnotation} />
+            ) : null}
+            {rightPanel.current === "canvas-properties" &&
               rightPanel.state.current === 5 &&
-              vault &&
-              state.canvasId &&
-              // @ts-ignore
-              vault.get(state.canvasId).annotations.map((annoPage) => {
-                const annotationPage = vault.get(annoPage) as any;
-                return annotationPage.items.map((item: any, index: number) => {
-                  const annotation = vault.get(item) as any;
-                  const target = annotation.target.split("#xywh=")[1];
-                  const split = target.split(",").map((position: string) => parseInt(position));
-                  return (
-                    <ResizeWorldItem
-                      id={item.id}
-                      // type={"box-selector"}
-                      x={0}
-                      y={0}
-                      width={1000}
-                      height={2000}
-                      resizable={true}
-                      // onSave={(saveCallback)}
-                      // style={{ background: "rgba(50, 0, 200, 0.4)" }}
-                      // isEditing={false}
-                      onSave={() => {}}
-                      // onClick={() => {}}
-                    >
-                      <box
-                        interactive
-                        html
-                        id={`${item.id}/box`}
-                        relativeStyle
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          // onClick(region);
-                          console.table(e);
-                        }}
-                        style={{ background: "rgba(50, 0, 200, 0.2)" }}
-                        target={{ x: split[0], y: split[1], width: split[2], height: split[3] }}
-                      />
-                    </ResizeWorldItem>
-                  );
-                });
+              annotations.map((annotation) => {
+                return (
+                  <RegionHighlight
+                    key={annotation.id}
+                    region={annotation}
+                    isEditing={selectedAnnotation === annotation.id}
+                    onSave={onUpdateAnnotation}
+                    onClick={(anno) => {
+                      console.log("click annotation");
+                      setIsEditing(true);
+                      setSelectedAnnotation(anno.id);
+                    }}
+                  />
+                );
               })}
           </CanvasPanel.Viewer>
         </ViewerContainer>
