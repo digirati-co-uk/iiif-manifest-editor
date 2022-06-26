@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo, useReducer } from "react";
+import { createContext, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useReducer } from "react";
 import { ProjectContext } from "./ProjectContext.types";
 import { useProjectActionsWithBackend, useProjectBackend, useProjectLoader } from "./ProjectContext.hooks";
 import { getDefaultProjectContextState, projectContextReducer } from "./ProjectContext.reducer";
@@ -9,6 +9,7 @@ import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { useApps } from "../AppContext/AppContext";
 import { FileSystemFolderBackend } from "./backend/FileSystemFolderBackend";
 import { FileSystemLoader } from "./storage/FileSystemLoader";
+import { useLayoutState } from "../Layout/Layout.context";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 

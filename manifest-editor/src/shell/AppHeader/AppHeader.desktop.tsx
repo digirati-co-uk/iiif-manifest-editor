@@ -24,7 +24,7 @@ export function AppHeaderDesktop() {
   const { current: currentProject, actions } = useProjectContext();
   const [isMenuHidden, setIsMenuHidden] = useLocalStorage("menu-hidden");
   const [editingTitle, setIsEditingTitle] = useState(false);
-  const { apps, changeApp } = useApps();
+  const { apps, changeApp, initialApp } = useApps();
   const [currentMenuItem, setCurrentMenuItem] = useState("");
   const { current } = useProjectContext();
   const { createProjectFromManifestJson } = useProjectCreators();
@@ -95,7 +95,7 @@ export function AppHeaderDesktop() {
       <Container>
         <AppMenu hideMenu />
 
-        <Logo onClick={() => changeApp({ id: "splash" })}>
+        <Logo onClick={() => changeApp(initialApp)}>
           <ManifestEditorLogo height={27} width={200} />
         </Logo>
 
