@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Input, InputLabel } from "../../editors/Input";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
@@ -107,14 +107,8 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
               width: inputed?.width,
             },
           });
-          console.log({ ...can });
         });
-
-        console.log({ ...mani });
       });
-
-      console.log(JSON.stringify(builder.toPresentation3({ id: manifest.id, type: "Manifest" })));
-      console.log(JSON.stringify(builder.vault.getState()));
 
       insertAfterSelected();
       setState({ canvasId: newCanvasID });
@@ -184,7 +178,10 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
               placeholder={inputValue}
               value={inputValue}
               onChange={(e: any) => setInputValue(e.target.value)}
-              onPaste={() => runAnalyser()}
+              onPaste={(e: any) => {
+                e.stopPropagation();
+                runAnalyser();
+              }}
               onKeyPress={(e: any) => {
                 if (e.key === "Enter") {
                   runAnalyser();

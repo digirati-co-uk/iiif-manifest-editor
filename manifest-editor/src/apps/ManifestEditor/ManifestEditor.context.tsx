@@ -1,6 +1,8 @@
-import React, { ReactNode, useContext, useMemo, useState } from "react";
+import React, { ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
 import invariant from "tiny-invariant";
+import { parse } from "query-string";
+import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
 
 interface EditorContextInterface {
   // Layouts
@@ -29,17 +31,30 @@ export function useManifestEditor() {
   return ctx;
 }
 
-export function ManifestEditorProvider({ children }: { children: ReactNode }) {
+export function ManifestEditorProvider({ children, ignoreQueryString }: { children: ReactNode; ignoreQueryString?: boolean  }) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
   const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);
   const [view, setView] = useState<"thumbnails" | "tree" | "grid" | "noNav" | "fullEditor">("grid");
+  const { createProjectFromManifestId } = useProjectCreators();
   const changeSelectedProperty = (property: string, panelNum?: number) => {
     setSelectedProperty(property);
     if (panelNum || panelNum === 0) {
       setSelectedPanel(panelNum);
     }
   };
+
+  useEffect(() => {
+    if (!ignoreQueryString) {
+      const parsed = parse(window.location.hash.slice(1));
+      if (parsed && parsed.manifest && typeof parsed.manifest === "string") {
+        createProjectFromManifestId(parsed.manifest).then(() => {
+          window.location.hash = "";
+        });
+        return;
+      }
+    }
+  }, []);
 
   const [thumbnailSize, setThumbnailSize] = useState({ w: 128, h: 128 });
 
