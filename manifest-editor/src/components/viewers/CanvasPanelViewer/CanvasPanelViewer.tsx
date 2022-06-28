@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, useVault, useAnnotation } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef, useState } from "react";
@@ -13,7 +13,9 @@ import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { EditAnnotations } from "../../../editors/EditAnnotations";
 import { BoxSelector } from "../../../madoc/components/BoxSelector";
 import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
-import { AnnotationPage } from "./components/Annotations";
+import { Annotation, AnnotationPage } from "./components/Annotations";
+import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
+import { useAnnotationList } from "../../../hooks/useAnnotationsList";
 
 type FormattedAnnotation = {
   id: string;
@@ -24,15 +26,13 @@ type FormattedAnnotation = {
 };
 
 function getAnnotationTarget(annotation: any) {
-  // console.log(annotation);
   const split = annotation.target.split("#xywh=")[1].split(",");
-  // console.log(split);
   return {
     id: annotation.id,
-    height: parseInt(split[0]),
-    width: parseInt(split[1]),
-    x: parseInt(split[2]),
-    y: parseInt(split[3]),
+    x: parseInt(split[0]),
+    y: parseInt(split[1]),
+    width: parseInt(split[2]),
+    height: parseInt(split[3]),
   };
 }
 
@@ -64,42 +64,12 @@ export function CanvasPanelViewer() {
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
   const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
 
-  const [annotationList, setAnnotationsList] = useState<any[]>([]);
-  const [formattedAnnotationList, setFormattedAnnotationList] = useState<FormattedAnnotation[]>([]);
+  const annotations = useAnnotationList(state.canvasId);
+  console.log(annotations);
 
   useEffect(() => {
     runtime.current?.goHome();
-
-    const canvas = vault.get(state.canvasId) as any;
-    const annos: any[] = [];
-    if (canvas) {
-      canvas.annotations.map((annoPage: any) => {
-        console.log(annoPage);
-        const annotations = vault.get(annoPage) as any;
-        console.log(annotations);
-        annotations.items.map((anno: any) => annos.push(vault.get(anno)));
-      });
-    }
-    setAnnotationsList(annos);
   }, [state.canvasId]);
-
-  useEffect(() => {
-    const annos: any[] = annotationList.map((anno: any) => getAnnotationTarget(anno)) as FormattedAnnotation[];
-    setFormattedAnnotationList(annos);
-  }, [annotationList]);
-  console.log(formattedAnnotationList);
-  // const {
-  //   isEditing,
-  //   onDeselect,
-  //   selectedAnnotation,
-  //   onCreateNewAnnotation,
-  //   annotations,
-  //   onUpdateAnnotation,
-  //   setIsEditing,
-  //   setSelectedAnnotation,
-  //   editAnnotation,
-  //   addNewAnnotation,
-  // } = useControlledAnnotationList(formattedAnnotationList);
 
   if (manifest?.items.length === 0) {
     return <EmptyCanvasState />;
@@ -145,38 +115,40 @@ export function CanvasPanelViewer() {
             <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
-            {/* {rightPanel.current === "canvas-properties" &&
-            rightPanel.state.current === 5 &&
-            isEditing &&
-            !selectedAnnotation ? (
-              <DrawBox onCreate={onCreateNewAnnotation} />
-            ) : null} */}
-            {/* {console.log(annotations)} */}
-            {rightPanel.current === "canvas-properties" &&
-              rightPanel.state.current === 5 &&
-              formattedAnnotationList.map((annotation) => {
-                return (
-                  <ResizeWorldItem
-                    x={annotation.x}
-                    y={annotation.y}
-                    width={annotation.width}
-                    height={annotation.height}
-                    resizable={true}
-                    onSave={() => {}}
-                  >
-                    <box
-                      interactive={true}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // onClick(region);
-                      }}
-                      target={{ x: 0, y: 0, width: annotation.width, height: annotation.height }}
-                      backgroundColor={"rgba(0, 0, 0, 0.4"}
-                    />
-                  </ResizeWorldItem>
-                );
-              })}
+            {
+              // rightPanel.current === "canvas-properties" &&
+              //   rightPanel.state.current === 5 &&
+              annotations.map((annotation: any) => {
+                console.log(annotation);
+                if (annotation.target) {
+                  console.log(annotation.target);
+                  return (
+                    <world-object
+                      x={0}
+                      y={0}
+                      width={getAnnotationTarget(annotation).width}
+                      height={getAnnotationTarget(annotation).height}
+                    >
+                      <box
+                        interactive
+                        // onClick={(e) => {
+                        //   e.preventDefault();
+                        //   e.stopPropagation();
+                        //   // onClick(region);
+                        // }}
+                        target={{
+                          x: getAnnotationTarget(annotation).x,
+                          y: getAnnotationTarget(annotation).y,
+                          width: getAnnotationTarget(annotation).width,
+                          height: getAnnotationTarget(annotation).height,
+                        }}
+                        style={{ backgroundColor: "rgba(0, 0, 0, 0.4" }}
+                      />
+                    </world-object>
+                  );
+                }
+              })
+            }
           </CanvasPanel.Viewer>
         </ViewerContainer>
       </Container>

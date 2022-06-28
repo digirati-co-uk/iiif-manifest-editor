@@ -1,75 +1,69 @@
 import { DrawBox, RegionHighlight, ResizeWorldItem, useControlledAnnotationList } from "@atlas-viewer/atlas";
-import { useVault } from "react-iiif-vault";
+import { useAnnotation, useVault } from "react-iiif-vault";
+import { useAnnotationList } from "../../../../hooks/useAnnotationsList";
 
-export function Annotation({ props }: { props: any }) {}
+function getAnnotationTarget(annotation: any) {
+  if (annotation.target) {
+    return {
+      id: annotation.id,
+    };
+  }
+  const split = annotation.target.split("#xywh=")[1].split(",");
+  return {
+    id: annotation.id,
+    height: parseInt(split[0]),
+    width: parseInt(split[1]),
+    x: parseInt(split[2]),
+    y: parseInt(split[3]),
+  };
+}
 
-export function AnnotationPage({ annotationList }: { annotationList: any }) {
-  // const vault = useVault();
-  // const annoPage = vault.get(annotationPage) as any;
-  // const annotationList = annoPage.items.map((anno: any) => vault.get(anno));
+export function Annotation({ anno }: { anno: any }) {
+  // const annotation = useAnnotation(anno.id);
+  // console.log("here", anno);
+  return (
+    <world-object
+      x={0}
+      y={0}
+      width={getAnnotationTarget(anno).x}
+      height={getAnnotationTarget(anno).y}
+      // resizable={true}
+      // onSave={() => {}}
+    >
+      <box
+        interactive={true}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          // onClick(region);
+        }}
+        target={{
+          x: getAnnotationTarget(anno).x,
+          y: getAnnotationTarget(anno).y,
+          width: getAnnotationTarget(anno).width,
+          height: getAnnotationTarget(anno).height,
+        }}
+        backgroundColor={"rgba(0, 0, 0, 0.4"}
+      />
+    </world-object>
+  );
+}
 
-  const formattedAnnotationList = annotationList.map((anno: any) => getAnnotationTarget(anno)) as FormattedAnnotation[];
-  const {
-    isEditing,
-    onDeselect,
-    selectedAnnotation,
-    onCreateNewAnnotation,
-    annotations,
-    onUpdateAnnotation,
-    setIsEditing,
-    setSelectedAnnotation,
-    editAnnotation,
-    addNewAnnotation,
-  } = useControlledAnnotationList(formattedAnnotationList);
+export function AnnotationPage({ item, canvas }: { item: any; canvas: string }) {
+  console.log(item);
+  const vault = useVault();
+  const annoPage = vault.get(item) as any;
+  // console.log(annoPage);
+  // const annotationList = annoPage.annotations.map((anno: any) => vault.get(anno));
+  const annoList = useAnnotationList();
+  console.log(annoList);
 
   return (
-    <world
-    // onClick={onDeselect}
-    >
-      {annotations.map((item: any, index: number) => {
-        // const target = annotation.target.split("#xywh=")[1];
-        // const split = target.split(",").map((position: string) => parseInt(position));
-        // console.log(item);
-        return (
-          // {(isEditing && !selectedAnnotation) ? <DrawBox onCreate={onCreateNewAnnotation} /> : null}
-          <RegionHighlight
-            id={item.id}
-            key={item.id}
-            region={item}
-            // type={"box-selector"}
-            // x={0}
-            // y={0}
-            // width={1000}
-            // height={2000}
-            // resizable={true}
-            onSave={onUpdateAnnotation}
-            style={{ background: "rgba(50, 0, 200, 0.4)" }}
-            // isEditing={false}
-            // onClick={() => {}}
-            isEditing={selectedAnnotation === item.id}
-            onClick={(anno: any) => {
-              console.log("click annotation");
-              setIsEditing(true);
-              setSelectedAnnotation(anno.id);
-            }}
-          >
-            {/* <box
-              interactive
-              html
-              id={`${item.id}/box`}
-              relativeStyle
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                // onClick(region);
-                console.table(e);
-              }}
-              style={{ background: "rgba(50, 0, 200, 0.2)" }}
-              target={{ x: item.x, y: item.y, width: item.width, height: item.height }}
-            /> */}
-          </RegionHighlight>
-        );
-      })}
+    <world>
+      {/* {annotationList.map((annotation: any, index: number) => {
+        console.log(annotation);
+        return <Annotation anno={annotation} />;
+      })} */}
     </world>
   );
 }
