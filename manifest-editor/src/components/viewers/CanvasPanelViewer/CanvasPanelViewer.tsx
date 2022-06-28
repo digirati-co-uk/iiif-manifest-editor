@@ -13,28 +13,9 @@ import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { EditAnnotations } from "../../../editors/EditAnnotations";
 import { BoxSelector } from "../../../madoc/components/BoxSelector";
 import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
-import { Annotation, AnnotationPage } from "./components/Annotations";
+import { Annotation } from "./components/Annotations";
 import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
 import { useAnnotationList } from "../../../hooks/useAnnotationsList";
-
-type FormattedAnnotation = {
-  id: string;
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-};
-
-function getAnnotationTarget(annotation: any) {
-  const split = annotation.target.split("#xywh=")[1].split(",");
-  return {
-    id: annotation.id,
-    x: parseInt(split[0]),
-    y: parseInt(split[1]),
-    width: parseInt(split[2]),
-    height: parseInt(split[3]),
-  };
-}
 
 const Container = styled.div`
   position: relative;
@@ -64,7 +45,7 @@ export function CanvasPanelViewer() {
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
   const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
 
-  const annotations = useAnnotationList(state.canvasId);
+  const annotations = useAnnotationList();
   console.log(annotations);
 
   useEffect(() => {
@@ -122,30 +103,7 @@ export function CanvasPanelViewer() {
                 console.log(annotation);
                 if (annotation.target) {
                   console.log(annotation.target);
-                  return (
-                    <world-object
-                      x={0}
-                      y={0}
-                      width={getAnnotationTarget(annotation).width}
-                      height={getAnnotationTarget(annotation).height}
-                    >
-                      <box
-                        interactive
-                        // onClick={(e) => {
-                        //   e.preventDefault();
-                        //   e.stopPropagation();
-                        //   // onClick(region);
-                        // }}
-                        target={{
-                          x: getAnnotationTarget(annotation).x,
-                          y: getAnnotationTarget(annotation).y,
-                          width: getAnnotationTarget(annotation).width,
-                          height: getAnnotationTarget(annotation).height,
-                        }}
-                        style={{ backgroundColor: "rgba(0, 0, 0, 0.4" }}
-                      />
-                    </world-object>
-                  );
+                  return <Annotation annotation={annotation} />;
                 }
               })
             }
