@@ -1,5 +1,5 @@
 import { DrawBox, RegionHighlight, ResizeWorldItem, useControlledAnnotationList } from "@atlas-viewer/atlas";
-import { useAnnotation, useVault } from "react-iiif-vault";
+import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { useAnnotationList } from "../../../../hooks/useAnnotationsList";
 
 function getAnnotationTarget(annotation: any) {
@@ -40,21 +40,16 @@ export function Annotation({ annotation }: { annotation: any }) {
   );
 }
 
-// export function AnnotationPage({ item, canvas }: { item: any; canvas: string }) {
-//   console.log(item);
-//   const vault = useVault();
-//   const annoPage = vault.get(item) as any;
-//   // console.log(annoPage);
-//   // const annotationList = annoPage.annotations.map((anno: any) => vault.get(anno));
-//   const annoList = useAnnotationList();
-//   console.log(annoList);
-
-//   return (
-//     <world>
-//       {/* {annotationList.map((annotation: any, index: number) => {
-//         console.log(annotation);
-//         return <Annotation anno={annotation} />;
-//       })} */}
-//     </world>
-//   );
-// }
+export function Annotations({ canvasId }: { canvasId: string }) {
+  const annotations = useAnnotationList(canvasId);
+  const canvas = useCanvas({ id: canvasId }) as any;
+  return (
+    <world-object height={canvas.height} width={canvas.width}>
+      {annotations.map((annotation: any) => {
+        if (annotation.target) {
+          return <Annotation annotation={annotation} />;
+        }
+      })}
+    </world-object>
+  );
+}

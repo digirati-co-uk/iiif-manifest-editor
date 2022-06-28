@@ -13,7 +13,7 @@ import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { EditAnnotations } from "../../../editors/EditAnnotations";
 import { BoxSelector } from "../../../madoc/components/BoxSelector";
 import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
-import { Annotation } from "./components/Annotations";
+import { Annotation, Annotations } from "./components/Annotations";
 import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
 import { useAnnotationList } from "../../../hooks/useAnnotationsList";
 
@@ -45,8 +45,8 @@ export function CanvasPanelViewer() {
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
   const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
 
-  const annotations = useAnnotationList();
-  console.log(annotations);
+  // const annotations = useAnnotationList();
+  // console.log(annotations);
 
   useEffect(() => {
     runtime.current?.goHome();
@@ -99,13 +99,15 @@ export function CanvasPanelViewer() {
             {
               // rightPanel.current === "canvas-properties" &&
               //   rightPanel.state.current === 5 &&
-              annotations.map((annotation: any) => {
-                console.log(annotation);
-                if (annotation.target) {
-                  console.log(annotation.target);
-                  return <Annotation annotation={annotation} />;
-                }
-              })
+              <Annotations canvasId={state.canvasId} />
+
+              // annotations.map((annotation: any) => {
+              //   console.log(annotation);
+              //   if (annotation.target) {
+              //     console.log(annotation.target);
+              //     return <Annotation annotation={annotation} />;
+              //   }
+              // })
             }
           </CanvasPanel.Viewer>
         </ViewerContainer>

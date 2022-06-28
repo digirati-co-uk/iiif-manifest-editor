@@ -5,10 +5,12 @@ import { useAppState } from "../shell/AppContext/AppContext";
 import { useAnnotation } from "./useAnnotation";
 import { useAnnotationPage } from "./useAnnotationPage";
 
-export function useAnnotationList<T = AnnotationNormalized>(): AnnotationNormalized[] | T | undefined | [] | any {
-  const { state: appState } = useAppState();
+export function useAnnotationList<T = AnnotationNormalized>(
+  canvasId: string
+): AnnotationNormalized[] | T | undefined | [] | any {
+  // const { state: appState } = useAppState();
 
-  const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[appState.canvasId]);
+  const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);
   if (!canvas) return [];
   const vault = useVault();
 
