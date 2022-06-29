@@ -66,8 +66,8 @@ export const AnnotationForm = () => {
             <br />
             <small>
               <i>
-                This annotation page has no items, either create a new or make this page part of this manifest, for
-                editing.
+                This annotation page has no items, either create a new annotation or make this page part of this
+                manifest, for editing.
               </i>
             </small>
             <PaddingComponentSmall />
@@ -167,10 +167,12 @@ export const AnnotationForm = () => {
             <PaddingComponentSmall />
           </Accordian>
           <PaddingComponentMedium />
-
           {isExternal(page) && externalConvert(page)}
           <Accordian renderOpen={false} title="items">
             <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
+            <FlexContainerRow style={{ padding: "1rem" }}>
+              <i>No annotations yet! Add new annotations using the button below</i>
+            </FlexContainerRow>
             <Button onClick={addNewAnnotation}>Add new annotation</Button>
           </Accordian>
         </>
@@ -181,6 +183,17 @@ export const AnnotationForm = () => {
     <>
       <EmptyProperty label={"annotations"} guidanceReference={guidanceReference} />
       {showNewAnnotationPage ? <NewAnnotationPageForm /> : annoPages()}
+      <PaddingComponentSmall />
+      {
+        // @ts-ignore
+        !showNewAnnotationPage && vault.get(canvas?.annotations).length !== 0 && (
+          <FlexContainerRow justify="flex-end">
+            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>
+              Add another annotation page
+            </SecondaryButton>
+          </FlexContainerRow>
+        )
+      }
     </>
   );
 };
