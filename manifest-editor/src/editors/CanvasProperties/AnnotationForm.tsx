@@ -7,10 +7,15 @@ import { v4 } from "uuid";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 import { Input, InputLabel } from "../Input";
-import { Button, CalltoButton } from "../../atoms/Button";
+import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
-import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
+import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
+import { useAnnotationList } from "../../hooks/useAnnotationsList";
+import { useAnnotationPage } from "../../hooks/useAnnotationPage";
+import { LightBox } from "../../atoms/LightBox";
+import { getValue } from "@iiif/vault-helpers";
+import { Accordian } from "../../components/organisms/Accordian/Accordian";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
@@ -18,33 +23,19 @@ export const AnnotationForm = () => {
   const vault = useVault();
   const { defaultLanguages } = useConfig();
 
+  const {
+    annotations,
+    isEditing,
+    setIsEditing,
+    addNewAnnotation,
+    addNewAnnotationPage,
+    selectedAnnotation,
+    setSelectedAnnotation,
+    editAnnotation,
+    onDeselect,
+  } = useAnnotationList(canvas?.id);
+
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
-
-  const addNew = () => {
-    const newID = `https://example.org/annotation/${v4()}`;
-
-    if (!canvas || !manifest) {
-      return;
-    }
-    // @todo get this working
-    const builder = new IIIFBuilder(vault);
-    builder.editManifest(manifest.id, (mani: any) => {
-      mani.editCanvas(canvas.id, (can: any) => {
-        can.createAnnotation(canvas.id, {
-          id: `${newID}/annotation-page`,
-          type: "AnnotationPage",
-          motivation: "describing",
-          body: {
-            id: v4(),
-            type: "TextualBody",
-            format: "text/html",
-            height: 500,
-            width: 500,
-          },
-        });
-      });
-    });
-  };
 
   function items(item: any) {
     // @ts-ignore
@@ -59,27 +50,37 @@ export const AnnotationForm = () => {
 
   function externalConvert(item: any) {
     return (
-      <WarningMessage>
-        <FlexContainerColumn>
-          <small>
-            <a style={{ color: "unset" }} href={item.id} target="_blank" rel="noopener noreferrer">
-              {item.id}
-            </a>
-          </small>
-          <br />
-          <small>
-            This annotation page has no items, either create a new annotation or convert the external resource to
-            internal annotations for editing.
-          </small>
-          <PaddingComponentSmall />
-          <FlexContainerRow>
-            <CalltoButton onClick={() => addNew()}>Create one</CalltoButton>
+      <LightBox>
+        <PaddingComponentSmall>
+          <FlexContainerColumn>
+            <h3 style={{ margin: "0.5rem" }}>{getValue(item.label)}</h3>
+            <p>AnnotationPage</p>
+            <small>
+              <a style={{ color: "unset" }} href={item.id} target="_blank" rel="noopener noreferrer">
+                {item.id}
+              </a>
+              <PaddingComponentSmall />
+            </small>
+            <br />
+            <small>
+              <i>
+                This annotation page has no items, either create a new or make this page part of this manifest, for
+                editing.
+              </i>
+            </small>
             <PaddingComponentSmall />
-            <CalltoButton onClick={() => convert(item.id)}>Convert to internal AnnotationPage</CalltoButton>
-          </FlexContainerRow>
-        </FlexContainerColumn>
-      </WarningMessage>
+            <FlexContainerRow>
+              <CalltoButton onClick={() => convert(item.id)}>Convert to internal AnnotationPage</CalltoButton>
+            </FlexContainerRow>
+          </FlexContainerColumn>
+        </PaddingComponentSmall>
+      </LightBox>
     );
+  }
+
+  function createNewAnnotationPage() {
+    // @todo create the UI for creating new annotationPages
+    addNewAnnotationPage();
   }
 
   function isExternal(item: any) {
@@ -88,56 +89,94 @@ export const AnnotationForm = () => {
   }
 
   function annoPages() {
+    if (vault.get(canvas?.annotations).length === 0) {
+      return (
+        <small>
+          <i>
+            This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
+            new Annotation Page to hold your annotations within this Manifest.
+          </i>
+          <PaddingComponentMedium />
+          <FlexContainerRow justify="flex-end" onClick={createNewAnnotationPage}>
+            <SecondaryButton>Create an annotation page</SecondaryButton>
+          </FlexContainerRow>
+        </small>
+      );
+    }
     // @ts-ignore
-    return vault.get(canvas.annotations).map((item: any) => {
+    return vault.get(canvas.annotations).map((page: any) => {
       return (
         <>
-          <LanguageFieldEditor
-            key={item.id}
-            label={"label"}
-            fields={item.label}
-            availableLanguages={defaultLanguages}
-            onSave={() => {
-              //DO Something
-            }}
-            property={"label"}
-          />
-          <InputLabel>
-            behavior
-            <Input
-              key={item.id}
-              value={item.behavior}
-              onChange={() => {
+          <Accordian renderOpen={false} title={getValue(page.label) || "Annotation Page Properties"}>
+            <LanguageFieldEditor
+              key={page.id}
+              label={"label"}
+              fields={page.label}
+              availableLanguages={defaultLanguages}
+              onSave={() => {
                 //DO Something
               }}
-              property={"behavior"}
+              property={"label"}
             />
-          </InputLabel>
-          <InputLabel>
-            language
-            <Input
-              key={item.id}
-              value={item.language}
-              onChange={() => {
-                //DO Something
-              }}
-              property={"behavior"}
-            />
-          </InputLabel>
-          <PaddingComponentSmall />
+            <InputLabel>
+              identifier
+              <Input
+                key={page.id}
+                value={page.id}
+                onChange={() => {
+                  //DO Something
+                }}
+                property={"behavior"}
+              />
+            </InputLabel>
+            <InputLabel>
+              behavior
+              <Input
+                key={page.id}
+                value={page.behavior}
+                onChange={() => {
+                  //DO Something
+                }}
+                property={"behavior"}
+              />
+            </InputLabel>
+            <InputLabel>
+              format
+              <Input
+                key={page.id}
+                value={page.format}
+                onChange={() => {
+                  //DO Something
+                }}
+                property={"language"}
+              />
+            </InputLabel>
+            <InputLabel>
+              language
+              <Input
+                key={page.id}
+                value={page.language}
+                onChange={() => {
+                  //DO Something
+                }}
+                property={"behavior"}
+              />
+            </InputLabel>
+            <PaddingComponentSmall />
+          </Accordian>
+          <PaddingComponentMedium />
 
-          {isExternal(item) && externalConvert(item)}
+          {isExternal(page) && externalConvert(page)}
 
-          <InputLabel>items</InputLabel>
-
-          {items(item)}
+          <EmptyProperty label={"items"} createNew={addNewAnnotation} guidanceReference={guidanceReference} />
+          <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
         </>
       );
     });
   }
   return (
     <>
-      <EmptyProperty label={"annotations"} createNew={addNew} guidanceReference={guidanceReference} />
+      <EmptyProperty label={"annotations"} guidanceReference={guidanceReference} />
       {annoPages()}
     </>
   );
