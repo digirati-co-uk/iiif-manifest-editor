@@ -1,8 +1,8 @@
-import { CanvasPanel, CanvasContext, useManifest, useVault, useAnnotation } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import { DrawBox, ResizeWorldItem, Runtime, useControlledAnnotationList } from "@atlas-viewer/atlas";
+import React, { useEffect, useReducer, useRef } from "react";
+import { Runtime } from "@atlas-viewer/atlas";
 import { ViewControls } from "./components/ViewControls";
 import { ErrorBoundary } from "react-error-boundary";
 import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
