@@ -3,25 +3,26 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { AnnotationPreview } from "../../components/organisms/Annotation/Annotation";
-import { v4 } from "uuid";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 import { Input, InputLabel } from "../Input";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
-import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { useAnnotationList } from "../../hooks/useAnnotationsList";
-import { useAnnotationPage } from "../../hooks/useAnnotationPage";
 import { LightBox } from "../../atoms/LightBox";
 import { getValue } from "@iiif/vault-helpers";
 import { Accordian } from "../../components/organisms/Accordian/Accordian";
+import { useState } from "react";
+import { NewAnnotationPageForm } from "./NewAnnotationPageForm";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
   const { defaultLanguages } = useConfig();
+
+  const [showNewAnnotationPage, setShowNewAnnotationPage] = useState(false);
 
   const {
     annotations,
@@ -45,6 +46,7 @@ export const AnnotationForm = () => {
   }
 
   function convert(item: string) {
+    // @todo we are loosing the detail from the annotationPage here
     vault.load(item);
   }
 
@@ -97,8 +99,8 @@ export const AnnotationForm = () => {
             new Annotation Page to hold your annotations within this Manifest.
           </i>
           <PaddingComponentMedium />
-          <FlexContainerRow justify="flex-end" onClick={createNewAnnotationPage}>
-            <SecondaryButton>Create an annotation page</SecondaryButton>
+          <FlexContainerRow justify="flex-end">
+            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
           </FlexContainerRow>
         </small>
       );
@@ -167,9 +169,10 @@ export const AnnotationForm = () => {
           <PaddingComponentMedium />
 
           {isExternal(page) && externalConvert(page)}
-
-          <EmptyProperty label={"items"} createNew={addNewAnnotation} guidanceReference={guidanceReference} />
-          <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
+          <Accordian renderOpen={false} title="items">
+            <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
+            <Button onClick={addNewAnnotation}>Add new annotation</Button>
+          </Accordian>
         </>
       );
     });
@@ -177,7 +180,7 @@ export const AnnotationForm = () => {
   return (
     <>
       <EmptyProperty label={"annotations"} guidanceReference={guidanceReference} />
-      {annoPages()}
+      {showNewAnnotationPage ? <NewAnnotationPageForm /> : annoPages()}
     </>
   );
 };
