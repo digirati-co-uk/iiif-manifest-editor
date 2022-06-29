@@ -1,30 +1,64 @@
 import { AnnotationNormalized } from "@iiif/presentation-3";
-import { useEffect, useState } from "react";
-import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
-import { useAppState } from "../shell/AppContext/AppContext";
-import { useAnnotation } from "./useAnnotation";
-import { useAnnotationPage } from "./useAnnotationPage";
+import { useCallback, useState, useEffect } from "react";
+import { useVault, useVaultSelector } from "react-iiif-vault";
+import { v4 } from "uuid";
+
+export function getInitialAnnotationList(canvasId: string) {
+  const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);
+  if (!canvas) return [];
+  const vault = useVault();
+  const annoPages = canvas.annotations.map((annoPage) => {
+    return vault.get(annoPage);
+  });
+  const annos: any[] = [];
+
+  annoPages.map((annoPage: any) => {
+    if (annoPage) {
+      return annoPage.items.map((item: any) => {
+        annos.push(vault.get(item.id));
+      });
+    }
+  });
+  return annos;
+}
 
 export function useAnnotationList<T = AnnotationNormalized>(
   canvasId: string
 ): AnnotationNormalized[] | T | undefined | [] | any {
-  // const { state: appState } = useAppState();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [selectedAnnotation, setSelectedAnnotation] = useState<string>();
+  const [annotations, setAnnotations] = useState<any[]>(getInitialAnnotationList(canvasId));
 
-  const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);
-  if (!canvas) return [];
-  const vault = useVault();
+  const addNewAnnotation = useCallback((bounds: { x: number; y: number; width: number; height: number }) => {
+    const id = v4();
+    // we need more than these details here
+    setAnnotations((a) => [...a, { id, ...bounds }]);
+    setIsEditing(false);
+    setSelectedAnnotation(undefined);
+  }, []);
 
-  const annoPages = canvas.annotations.map((annoPage) => {
-    return vault.get(annoPage);
-  });
-  const annoList: any[] = [];
-  annoPages.map((annoPage: any) => {
-    if (annoPage) {
-      return annoPage.items.map((item: any) => {
-        annoList.push(vault.get(item.id));
-      });
-    }
-  });
+  useEffect(() => {
+    // Dispatch event to the vault when annotations change
+  }, [annotations]);
 
-  return annoList;
+  const editAnnotation = useCallback((id: string) => {
+    setIsEditing(true);
+    setSelectedAnnotation(id);
+  }, []);
+
+  const onDeselect = useCallback(() => {
+    setIsEditing(false);
+    setSelectedAnnotation(undefined);
+  }, []);
+
+  return {
+    isEditing,
+    annotations,
+    addNewAnnotation,
+    setIsEditing,
+    selectedAnnotation,
+    setSelectedAnnotation,
+    editAnnotation,
+    onDeselect,
+  };
 }

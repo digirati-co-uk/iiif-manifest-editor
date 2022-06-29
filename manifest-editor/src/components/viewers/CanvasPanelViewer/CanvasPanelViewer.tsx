@@ -10,12 +10,7 @@ import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
 import { useLayoutState } from "../../../shell/Layout/Layout.context";
-import { EditAnnotations } from "../../../editors/EditAnnotations";
-import { BoxSelector } from "../../../madoc/components/BoxSelector";
-import BoxSelectorAtlas, { RegionHighlight } from "../../../madoc/components/BoxSelector.Atlas";
-import { Annotation, Annotations } from "./components/Annotations";
-import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
-import { useAnnotationList } from "../../../hooks/useAnnotationsList";
+import { Annotations } from "./components/Annotations";
 
 const Container = styled.div`
   position: relative;
@@ -44,9 +39,6 @@ export function CanvasPanelViewer() {
   const goHome = () => runtime.current?.world.goHome();
   const zoomIn = () => runtime.current?.world.zoomTo(0.75);
   const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
-
-  // const annotations = useAnnotationList();
-  // console.log(annotations);
 
   useEffect(() => {
     runtime.current?.goHome();
@@ -87,28 +79,15 @@ export function CanvasPanelViewer() {
           --atlas-container-flex: 1 1 0px;
           --atlas-background:  #f9f9f9;
         }
-        .annotation {
-          background: rgba(50, 0, 200, 0.4);
-        }
       `}</style>
         <ViewerContainer>
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
-            {
-              // rightPanel.current === "canvas-properties" &&
-              //   rightPanel.state.current === 5 &&
+            {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
               <Annotations canvasId={state.canvasId} />
-
-              // annotations.map((annotation: any) => {
-              //   console.log(annotation);
-              //   if (annotation.target) {
-              //     console.log(annotation.target);
-              //     return <Annotation annotation={annotation} />;
-              //   }
-              // })
-            }
+            )}
           </CanvasPanel.Viewer>
         </ViewerContainer>
       </Container>
