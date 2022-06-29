@@ -3,6 +3,7 @@ import { useCanvas } from "react-iiif-vault";
 import { SecondaryButton } from "../../atoms/Button";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
 import { RadioButtons } from "../../atoms/RadioButtons";
+import { FlexContainerRow } from "../../components/layout/FlexContainer";
 import { useAnnotationList } from "../../hooks/useAnnotationsList";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
@@ -36,15 +37,17 @@ export function NewAnnotationPageForm() {
           }}
           property={"label"}
         />
-        <LanguageFieldEditor
-          label={"Annotation Page URL"}
-          fields={{}}
-          availableLanguages={defaultLanguages}
-          onSave={() => {
-            //DO Something
-          }}
-          property={"label"}
-        />
+        <FlexContainerRow>
+          <Input
+            placeholder={"Annotation Page URL"}
+            onChange={() => {
+              //DO Something
+            }}
+            property={"label"}
+          />
+          <PaddingComponentMedium />
+        </FlexContainerRow>
+        <PaddingComponentMedium />
         <SecondaryButton onClick={addNewAnnotationPage}> Create annotation page</SecondaryButton>
       </form>
     </>
