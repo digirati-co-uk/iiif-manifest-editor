@@ -41,15 +41,7 @@
       }
     }
   ],
-  "defaultLanguages": [
-    "en",
-    "fr",
-    "de",
-    "es",
-    "it",
-    "cy",
-    "none"
-  ],
+  "defaultLanguages": ["en", "nl", "fr", "de", "es", "it", "cy", "none"],
   "behaviorPresets": [
     "auto-advance",
     "no-auto-advance",
