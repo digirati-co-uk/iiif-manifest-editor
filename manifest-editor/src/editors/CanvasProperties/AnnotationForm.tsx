@@ -80,11 +80,6 @@ export const AnnotationForm = () => {
     );
   }
 
-  function createNewAnnotationPage() {
-    // @todo create the UI for creating new annotationPages
-    addNewAnnotationPage();
-  }
-
   function isExternal(item: any) {
     // @ts-ignore
     return vault.get(item)?.items.length === 0;

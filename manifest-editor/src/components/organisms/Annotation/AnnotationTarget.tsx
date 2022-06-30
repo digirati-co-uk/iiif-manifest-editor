@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Input, InputBorderless, InputLabel } from "../../../editors/Input";
-import { FlexContainerRow } from "../../layout/FlexContainer";
+import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 
 type Target = {
   id: string;
@@ -24,30 +24,38 @@ export const CanvasTargetEditor: React.FC<Target> = ({ id, onChange }) => {
 
   return (
     <FlexContainerRow>
-      <InputLabel>x</InputLabel>
-      <Input
-        style={{ minWidth: "3rem", padding: "unset" }}
-        value={target[0]}
-        onChange={(e: any) => update(0, e.target.value)}
-      />
-      <InputLabel>y</InputLabel>
-      <Input
-        style={{ minWidth: "3rem", padding: "unset" }}
-        value={target[1]}
-        onChange={(e: any) => update(1, e.target.value)}
-      />
-      <InputLabel>w</InputLabel>
-      <Input
-        style={{ minWidth: "3rem", padding: "unset" }}
-        value={target[2]}
-        onChange={(e: any) => update(2, e.target.value)}
-      />
-      <InputLabel>h</InputLabel>
-      <Input
-        style={{ minWidth: "3rem", padding: "unset" }}
-        value={target[3]}
-        onChange={(e: any) => update(3, e.target.value)}
-      />
+      <FlexContainerColumn>
+        <InputLabel>x</InputLabel>
+        <Input
+          style={{ minWidth: "3rem", padding: "unset" }}
+          value={target[0]}
+          onChange={(e: any) => update(0, e.target.value)}
+        />
+      </FlexContainerColumn>
+      <FlexContainerColumn>
+        <InputLabel>y</InputLabel>
+        <Input
+          style={{ minWidth: "3rem", padding: "unset" }}
+          value={target[1]}
+          onChange={(e: any) => update(1, e.target.value)}
+        />
+      </FlexContainerColumn>
+      <FlexContainerColumn>
+        <InputLabel>width</InputLabel>
+        <Input
+          style={{ minWidth: "3rem", padding: "unset" }}
+          value={target[2]}
+          onChange={(e: any) => update(2, e.target.value)}
+        />
+      </FlexContainerColumn>
+      <FlexContainerColumn>
+        <InputLabel>height</InputLabel>
+        <Input
+          style={{ minWidth: "3rem", padding: "unset" }}
+          value={target[3]}
+          onChange={(e: any) => update(3, e.target.value)}
+        />
+      </FlexContainerColumn>
     </FlexContainerRow>
   );
 };
