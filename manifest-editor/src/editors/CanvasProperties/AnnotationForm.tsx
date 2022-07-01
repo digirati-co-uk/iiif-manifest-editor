@@ -26,6 +26,7 @@ export const AnnotationForm = () => {
 
   const {
     annotations,
+    pagedAnnotations,
     isEditing,
     setIsEditing,
     addNewAnnotation,
@@ -87,18 +88,17 @@ export const AnnotationForm = () => {
 
   function annoPages() {
     if (vault.get(canvas?.annotations).length === 0) {
-      return (
-        <small>
-          <i>
-            This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
-            new Annotation Page to hold your annotations within this Manifest.
-          </i>
-          <PaddingComponentMedium />
-          <FlexContainerRow justify="flex-end">
-            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
-          </FlexContainerRow>
-        </small>
-      );
+      return;
+      <small>
+        <i>
+          This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
+          new Annotation Page to hold your annotations within this Manifest.
+        </i>
+        <PaddingComponentMedium />
+        <FlexContainerRow justify="flex-end">
+          <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
+        </FlexContainerRow>
+      </small>;
     }
     // @ts-ignore
     return vault.get(canvas.annotations).map((page: any) => {
@@ -165,9 +165,11 @@ export const AnnotationForm = () => {
           {isExternal(page) && externalConvert(page)}
           <Accordian renderOpen={false} title="items">
             <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
-            <FlexContainerRow style={{ padding: "1rem" }}>
-              <i>No annotations yet! Add new annotations using the button below</i>
-            </FlexContainerRow>
+            {page.items.length === 0 && (
+              <FlexContainerRow style={{ padding: "1rem" }}>
+                <i>No annotations yet! Add new annotations using the button below</i>
+              </FlexContainerRow>
+            )}
             <Button onClick={addNewAnnotation}>Add new annotation</Button>
           </Accordian>
         </>
