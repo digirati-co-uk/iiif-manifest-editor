@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react";
+import { useVault } from "react-iiif-vault";
 import { Input, InputBorderless, InputLabel } from "../../../editors/Input";
+import { useAnnotation } from "../../../hooks/useAnnotation";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 
 type Target = {
-  id: string;
+  canvasID: string;
+  annotationID: string;
   onChange: (newTarget: string) => void;
 };
 
-export const CanvasTargetEditor: React.FC<Target> = ({ id, onChange }) => {
-  const [target, setTarget] = useState<string[]>(id.split("#xywh=")[1].split(","));
-  const canvas = id.split("#xywh=");
+export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID, onChange }) => {
+  const [target, setTarget] = useState<string[]>(canvasID.split("#xywh=")[1].split(","));
+  const canvas = canvasID.split("#xywh=")[0];
+
+  const vault = useVault();
 
   useEffect(() => {
     const newValue = canvas + "#xywh=" + target.join(",");
     onChange(newValue);
-  }, [id, target]);
+    const annotation = vault.get(annotationID) as any;
+    console.log(annotation);
+    // console.log(vault.getState().iiif.entities.Annotation);
+    vault.modifyEntityField(annotation, "target", newValue);
+  }, [canvasID, target]);
 
   const update = (position: number, value: string) => {
     const targetCopy = [...target];
@@ -60,11 +69,17 @@ export const CanvasTargetEditor: React.FC<Target> = ({ id, onChange }) => {
   );
 };
 
-export function AnnotationTarget({ id, onChange }: Target) {
-  const isWhole = !id.includes("#xywh=");
+export function AnnotationTarget({ canvasID, onChange, annotationID }: Target) {
+  const isWhole = !canvasID.includes("#xywh=");
   return (
     <>
-      <div>{isWhole ? "Whole Canvas" : <CanvasTargetEditor id={id} onChange={onChange} />}</div>
+      <div>
+        {isWhole ? (
+          "Whole Canvas"
+        ) : (
+          <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} onChange={onChange} />
+        )}
+      </div>
     </>
   );
 }

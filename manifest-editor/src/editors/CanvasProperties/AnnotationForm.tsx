@@ -45,21 +45,21 @@ export const AnnotationForm = () => {
     });
   }
 
-  function convert(item: string) {
+  function convert(item: any) {
     // @todo we are loosing the detail from the annotationPage here
-    vault.load(item);
+    vault.load(item.id);
   }
 
-  function externalConvert(item: any) {
+  function externalConvert(annotationPage: any) {
     return (
       <LightBox>
         <PaddingComponentSmall>
           <FlexContainerColumn>
-            <h3 style={{ margin: "0.5rem" }}>{getValue(item.label)}</h3>
+            <h3 style={{ margin: "0.5rem" }}>{getValue(annotationPage.label)}</h3>
             <p>AnnotationPage</p>
             <small>
-              <a style={{ color: "unset" }} href={item.id} target="_blank" rel="noopener noreferrer">
-                {item.id}
+              <a style={{ color: "unset" }} href={annotationPage.id} target="_blank" rel="noopener noreferrer">
+                {annotationPage.id}
               </a>
               <PaddingComponentSmall />
             </small>
@@ -72,7 +72,7 @@ export const AnnotationForm = () => {
             </small>
             <PaddingComponentSmall />
             <FlexContainerRow>
-              <CalltoButton onClick={() => convert(item.id)}>Convert to internal AnnotationPage</CalltoButton>
+              <CalltoButton onClick={() => convert(annotationPage)}>Convert to internal AnnotationPage</CalltoButton>
             </FlexContainerRow>
           </FlexContainerColumn>
         </PaddingComponentSmall>
