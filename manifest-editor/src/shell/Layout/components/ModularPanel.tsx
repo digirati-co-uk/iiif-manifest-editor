@@ -113,7 +113,7 @@ const ModularPanelContent = styled.div`
   display: flex;
 
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 
   > * {
