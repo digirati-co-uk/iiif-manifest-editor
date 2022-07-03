@@ -7,6 +7,8 @@ import { ManifestContext, VaultProvider } from "react-iiif-vault";
 import { LocalStorageLoader } from "./storage/LocalStorageLoader";
 import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { useApps } from "../AppContext/AppContext";
+import { FileSystemFolderBackend } from "./backend/FileSystemFolderBackend";
+import { FileSystemLoader } from "./storage/FileSystemLoader";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
@@ -14,8 +16,8 @@ export function ProjectProvider(props: { children: ReactNode; defaultApp?: strin
   const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
-  const backend = useMemo(() => new LocalStorageBackend(), []);
-  const storage = useMemo(() => new LocalStorageLoader(), []);
+  const backend = useMemo(() => (window.__TAURI__ ? new FileSystemFolderBackend() : new LocalStorageBackend()), []);
+  const storage = useMemo(() => (window.__TAURI__ ? new FileSystemLoader() : new LocalStorageLoader()), []);
   const [state, dispatch] = useReducer(projectContextReducer, undefined, getDefaultProjectContextState);
   const actions = useProjectActionsWithBackend(dispatch, backend, storage);
   const context: ProjectContext = useMemo(

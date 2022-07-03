@@ -3,6 +3,7 @@ import { HomeIcon } from "../../../../icons/HomeIcon";
 import { MinusIcon } from "../../../../icons/MinusIcon";
 import { PlusIcon } from "../../../../icons/PlusIcon";
 import { RefreshIcon } from "../../../../icons/RefreshIcon";
+import { useViewerPreset } from "react-iiif-vault";
 
 export const CanvasViewerButton = styled.button`
   padding: 0.8em;
@@ -35,29 +36,20 @@ export const CanvasViewerControls = styled.div`
   }
 `;
 
-export function ViewControls({
-  goHome,
-  zoomIn,
-  zoomOut,
-  refresh,
-}: {
-  goHome: () => void;
-  zoomIn: () => void;
-  zoomOut: () => void;
-  refresh: () => void;
-}) {
+export function ViewControls({ refresh }: { refresh: () => void }) {
+  const preset = useViewerPreset();
   return (
     <CanvasViewerControls>
       <CanvasViewerButton onClick={refresh}>
         <RefreshIcon title={"Refresh viewer"} />
       </CanvasViewerButton>
-      <CanvasViewerButton onClick={goHome}>
+      <CanvasViewerButton onClick={() => preset?.runtime.world.goHome()}>
         <HomeIcon title={"Home"} />
       </CanvasViewerButton>
-      <CanvasViewerButton onClick={zoomOut}>
+      <CanvasViewerButton onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}>
         <MinusIcon title={"Zoom out"} />
       </CanvasViewerButton>
-      <CanvasViewerButton onClick={zoomIn}>
+      <CanvasViewerButton onClick={() => preset?.runtime.world.zoomTo(0.75)}>
         <PlusIcon title={"Zoom in"} />
       </CanvasViewerButton>
     </CanvasViewerControls>

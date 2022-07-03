@@ -9,6 +9,7 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
+import { MediaControls } from "./components/MediaControls";
 
 const Container = styled.div`
   position: relative;
@@ -34,10 +35,6 @@ export function CanvasPanelViewer() {
   const canvas = state.canvasId || _canvas?.id;
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
-  const goHome = () => runtime.current?.world.goHome();
-  const zoomIn = () => runtime.current?.world.zoomTo(0.75);
-  const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
-
   useEffect(() => {
     runtime.current?.goHome();
   }, [canvas]);
@@ -46,7 +43,7 @@ export function CanvasPanelViewer() {
     return <EmptyCanvasState />;
   }
 
-  if (!canvas) {
+  if (!canvas || !manifest) {
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -70,7 +67,6 @@ export function CanvasPanelViewer() {
       )}
     >
       <Container key={refreshKey}>
-        <ViewControls goHome={goHome} zoomIn={zoomIn} zoomOut={zoomOut} refresh={refresh} />
         <style>{`
         .atlas-container {
           min-width: 0;
@@ -81,7 +77,11 @@ export function CanvasPanelViewer() {
         <ViewerContainer>
           <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={canvas}>
-              <CanvasPanel.RenderCanvas />
+              <CanvasPanel.RenderCanvas
+                strategies={["images", "media"]}
+                renderViewerControls={() => <ViewControls refresh={refresh} />}
+                renderMediaControls={() => <MediaControls />}
+              />
             </CanvasContext>
           </CanvasPanel.Viewer>
         </ViewerContainer>

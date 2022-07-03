@@ -4,7 +4,7 @@ import { PaddingComponentLarge } from "../../atoms/PaddingComponent";
 import { LoadManifest } from "../../components/widgets/LoadManifest/LoadManifest";
 import { LayoutPanel } from "../../shell/Layout/Layout.types";
 
-export default { id: "splash", title: "Splash", type: "launcher" };
+export default { id: "splash", title: "Splash", type: "launcher", web: true };
 
 export const centerPanels: LayoutPanel[] = [
   {

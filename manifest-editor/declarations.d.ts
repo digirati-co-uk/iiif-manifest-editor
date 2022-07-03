@@ -6,3 +6,7 @@ declare namespace JSX {
 
 declare module '*.html?raw'
 declare module '*.json?import'
+
+declare interface Window {
+  __TAURI__: any
+}
