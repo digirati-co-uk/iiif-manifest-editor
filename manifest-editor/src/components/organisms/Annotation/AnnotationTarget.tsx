@@ -7,10 +7,9 @@ import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContaine
 type Target = {
   canvasID: string;
   annotationID: string;
-  onChange: (newTarget: string) => void;
 };
 
-export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID, onChange }) => {
+export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID }) => {
   const [target, setTarget] = useState<string[]>(canvasID.split("#xywh=")[1].split(","));
   const canvas = canvasID.split("#xywh=")[0];
 
@@ -18,10 +17,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID, o
 
   useEffect(() => {
     const newValue = canvas + "#xywh=" + target.join(",");
-    onChange(newValue);
     const annotation = vault.get(annotationID) as any;
-    console.log(annotation);
-    // console.log(vault.getState().iiif.entities.Annotation);
     vault.modifyEntityField(annotation, "target", newValue);
   }, [canvasID, target]);
 
@@ -69,17 +65,11 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID, o
   );
 };
 
-export function AnnotationTarget({ canvasID, onChange, annotationID }: Target) {
+export function AnnotationTarget({ canvasID, annotationID }: Target) {
   const isWhole = !canvasID.includes("#xywh=");
   return (
     <>
-      <div>
-        {isWhole ? (
-          "Whole Canvas"
-        ) : (
-          <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} onChange={onChange} />
-        )}
-      </div>
+      <div>{isWhole ? "Whole Canvas" : <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} />}</div>
     </>
   );
 }

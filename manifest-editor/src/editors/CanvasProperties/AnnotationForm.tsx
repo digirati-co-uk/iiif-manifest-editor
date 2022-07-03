@@ -87,18 +87,20 @@ export const AnnotationForm = () => {
   }
 
   function annoPages() {
+    // @ts-ignore
     if (vault.get(canvas?.annotations).length === 0) {
-      return;
-      <small>
-        <i>
-          This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
-          new Annotation Page to hold your annotations within this Manifest.
-        </i>
-        <PaddingComponentMedium />
-        <FlexContainerRow justify="flex-end">
-          <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
-        </FlexContainerRow>
-      </small>;
+      return (
+        <small>
+          <i>
+            This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
+            new Annotation Page to hold your annotations within this Manifest.
+          </i>
+          <PaddingComponentMedium />
+          <FlexContainerRow justify="flex-end">
+            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
+          </FlexContainerRow>
+        </small>
+      );
     }
     // @ts-ignore
     return vault.get(canvas.annotations).map((page: any) => {
@@ -110,29 +112,24 @@ export const AnnotationForm = () => {
               label={"label"}
               fields={page.label}
               availableLanguages={defaultLanguages}
-              onSave={() => {
-                //DO Something
+              onSave={(e: any) => {
+                // todo not working
+                vault.modifyEntityField(page.id, "target", e.toInternationalString());
               }}
               property={"label"}
             />
             <InputLabel>
               identifier
-              <Input
-                key={page.id}
-                value={page.id}
-                onChange={() => {
-                  //DO Something
-                }}
-                property={"behavior"}
-              />
+              <Input key={page.id} value={page.id} disabled={true} property={"behavior"} />
             </InputLabel>
             <InputLabel>
               behavior
               <Input
                 key={page.id}
                 value={page.behavior}
-                onChange={() => {
-                  //DO Something
+                onChange={(e: any) => {
+                  // todo not working
+                  vault.modifyEntityField(page.id, "behavior", e.target.value);
                 }}
                 property={"behavior"}
               />
@@ -142,10 +139,11 @@ export const AnnotationForm = () => {
               <Input
                 key={page.id}
                 value={page.format}
-                onChange={() => {
-                  //DO Something
+                onChange={(e: any) => {
+                  // todo not working
+                  vault.modifyEntityField(page.id, "format", e.target.value);
                 }}
-                property={"language"}
+                property={"format"}
               />
             </InputLabel>
             <InputLabel>
@@ -153,10 +151,11 @@ export const AnnotationForm = () => {
               <Input
                 key={page.id}
                 value={page.language}
-                onChange={() => {
-                  //DO Something
+                onChange={(e: any) => {
+                  // todo not working
+                  vault.modifyEntityField(page.id, "language", e.target.value);
                 }}
-                property={"behavior"}
+                property={"language"}
               />
             </InputLabel>
             <PaddingComponentSmall />

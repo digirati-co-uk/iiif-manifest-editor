@@ -9,6 +9,8 @@ import { CloseIcon } from "../../../icons/CloseIcon";
 import { Button } from "../../../atoms/Button";
 import { AnnotationTarget } from "./AnnotationTarget";
 import { AnnotationPreview } from "./AnnotationPreview";
+import { useVault } from "react-iiif-vault";
+import { useAnnotation } from "../../../hooks/useAnnotation";
 
 type AnnotationSnippetProps = {
   type: string;
@@ -21,6 +23,10 @@ type AnnotationSnippetProps = {
 
 export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body, onClick, id, target }) => {
   const [expand, setExpand] = useState(false);
+  const vault = useVault();
+  const annotation = useAnnotation({ id: id });
+  console.log(vault && annotation && vault.get(annotation.body[0].id));
+  console.log(body);
   return (
     <LightBox onClick={() => onClick(id)}>
       <FlexContainerRow>
@@ -31,14 +37,9 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
             <FlexContainerRow>
               <InputUnderlined
                 id={id}
-                onFocus={() => {
-                  // DO SOMETHING
-                }}
-                onChange={() => {
-                  // DO SOMETHING
-                }}
-                onBlur={() => {
-                  // DO SOMETHING
+                onChange={(e: any) => {
+                  // @todo not working
+                  vault.modifyEntityField(id, "value", e.target.value);
                 }}
                 as={Textarea}
                 value={body}
@@ -51,7 +52,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
 
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
-          {target && <AnnotationTarget canvasID={target} annotationID={id} onChange={(newValue: string) => {}} />}
+          {target && <AnnotationTarget canvasID={target} annotationID={id} />}
         </FlexContainerColumn>
       </FlexContainerRow>
     </LightBox>

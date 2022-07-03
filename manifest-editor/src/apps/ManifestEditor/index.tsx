@@ -11,11 +11,9 @@ import { ServiceEditor } from "../../resource-editors/service/ServiceEditor";
 import { CanvasThumbnailForm } from "../../editors/ThumbnailProperties/CanvasThumbnailForm";
 import { ThumbnailPage } from "./components/ThumbnailPage";
 import { limitation } from "../../helpers/limitation";
-import { PanelError } from "../../shell/Layout/components/PanelError";
 import { CanvasList } from "../../navigation/CanvasList/CanvasList";
 import { RangeNavigation } from "../../navigation/RangeNavigation/RangeNavigation";
 import { CanvasVerticalThumbnails } from "../../navigation/CanvasVerticalThumbnails/CanvasVerticalThumbnails";
-import { ManifestDescriptive } from "../../resource-editors/manifest/ManifestDescriptive";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -63,7 +61,6 @@ export const leftPanels: LayoutPanel[] = [
 
 function OutlinePlaceholder() {
   limitation(false, "Outline view feature is not yet complete");
-
   return null;
 }
 
