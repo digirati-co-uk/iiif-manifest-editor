@@ -1,4 +1,4 @@
-import { useCanvas, useVault } from "react-iiif-vault";
+import { AnnotationContext, useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { AnnotationPreview } from "../../components/organisms/Annotation/Annotation";
@@ -103,9 +103,9 @@ export const AnnotationForm = () => {
     }
     // @ts-ignore
     return vault.get(canvas.annotations).map((page: any) => {
-      console.log(page);
+      if (!page) return <></>;
       return (
-        <>
+        <LightBox>
           <Accordian renderOpen={false} title={getValue(page.label) || "Annotation Page Properties"}>
             <AnnotationPage id={page.id} />
           </Accordian>
@@ -118,9 +118,9 @@ export const AnnotationForm = () => {
                 <i>No annotations yet! Add new annotations using the button below</i>
               </FlexContainerRow>
             )}
-            <Button onClick={addNewAnnotation}>Add new annotation</Button>
+            <Button onClick={() => addNewAnnotation(page.id)}>Add new annotation</Button>
           </Accordian>
-        </>
+        </LightBox>
       );
     });
   }

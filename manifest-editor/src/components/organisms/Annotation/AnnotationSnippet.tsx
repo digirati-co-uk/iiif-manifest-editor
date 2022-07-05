@@ -39,6 +39,7 @@ const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID,
     vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
   }
   if (!annotation) return <></>;
+  console.log(annotation);
   return (
     <FlexContainerRow>
       <InputUnderlined

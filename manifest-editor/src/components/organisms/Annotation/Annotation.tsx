@@ -1,5 +1,7 @@
 import { AnnotationContext, useVault } from "react-iiif-vault";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
+import { useAnnotation } from "../../../hooks/useAnnotation";
+import { useVaultSelector } from "../../../hooks/useVaultSelector";
 import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
 import { AnnotationSnippet } from "./AnnotationSnippet";
 
@@ -9,9 +11,14 @@ interface AnnotationBodyProps {
 
 export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
   const vault = useVault();
-  const annotation = vault.get(id) as any;
+  const annotation = useVaultSelector((state) => state.iiif.entities.Annotation[id]);
 
-  // console.log(annotation);
+  console.log(id);
+  console.log(annotation);
+
+  if (!annotation) {
+    return <>Annotation not found</>;
+  }
 
   return (
     <>
@@ -34,7 +41,6 @@ export const AnnotationPreview: React.FC<AnnotationBodyProps> = ({ id }) => {
                     body={annoBody.value}
                     id={annotation.id}
                     onClick={(id: any) => console.log(id)}
-                    edit={() => {}}
                     target={annotation.target}
                   />
                 </AnnotationContext>
