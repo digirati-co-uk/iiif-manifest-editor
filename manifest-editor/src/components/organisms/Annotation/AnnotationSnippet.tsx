@@ -11,6 +11,7 @@ import { AnnotationTarget } from "./AnnotationTarget";
 import { AnnotationPreview } from "./AnnotationPreview";
 import { useVault } from "react-iiif-vault";
 import { useAnnotation } from "../../../hooks/useAnnotation";
+import { useVaultSelector } from "../../../hooks/useVaultSelector";
 
 type AnnotationSnippetProps = {
   type: string;
@@ -28,14 +29,11 @@ type BodyEditorProps = {
   close: () => void;
 };
 
-const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID, value, close }) => {
+const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID, close }) => {
   const annotation = useAnnotation({ id: annotationID });
   const vault = useVault();
-  console.log(value);
 
-  useEffect(() => {
-    vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", "TESTING");
-  }, []);
+  const body = useVaultSelector((state) => state.iiif.entities.ContentResource[bodyID]) as any;
 
   function updateAnnotation(newValue: string) {
     vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
@@ -47,20 +45,21 @@ const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID,
         id={annotation.id}
         onChange={(e: any) => updateAnnotation(e.target.value)}
         as={Textarea}
-        value={value}
+        value={body.value}
       />
       <Button onClick={close}>
-        <CloseIcon />
+        <CloseIcon /> close
       </Button>
     </FlexContainerRow>
   );
 };
 
-export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body, onClick, id, target }) => {
+export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, onClick, id, target }) => {
   const [expand, setExpand] = useState(false);
   const annotation = useAnnotation({ id: id });
-  const vault = useVault();
-  console.log(vault.get(annotation.body[0].id));
+  // @ts-ignore
+  const body = useVaultSelector((state) => state.iiif.entities.ContentResource[annotation?.body[0].id]) as any;
+
   if (!annotation) {
     return <></>;
   }
@@ -72,7 +71,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
         <FlexContainerColumn style={{ width: "80%" }}>
           {!expand && (
             // @ts-ignore
-            <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>
+            <BodySnippet onClick={() => setExpand(true)}>{body.value === "" ? "no value" : body.value}</BodySnippet>
           )}
           {expand && (
             <AnnotationBodyEditor
