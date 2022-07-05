@@ -1,7 +1,7 @@
+import { Reference } from "@iiif/presentation-3";
 import { useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
-import { Input, InputBorderless, InputLabel } from "../../../editors/Input";
-import { useAnnotation } from "../../../hooks/useAnnotation";
+import { Input, InputLabel } from "../../../editors/Input";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 
 type Target = {
@@ -10,6 +10,7 @@ type Target = {
 };
 
 export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID }) => {
+  console.log(canvasID);
   const [target, setTarget] = useState<string[]>(canvasID.split("#xywh=")[1].split(","));
   const canvas = canvasID.split("#xywh=")[0];
 
@@ -32,6 +33,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
       <FlexContainerColumn>
         <InputLabel>x</InputLabel>
         <Input
+          type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
           value={target[0]}
           onChange={(e: any) => update(0, e.target.value)}
@@ -40,6 +42,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
       <FlexContainerColumn>
         <InputLabel>y</InputLabel>
         <Input
+          type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
           value={target[1]}
           onChange={(e: any) => update(1, e.target.value)}
@@ -48,6 +51,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
       <FlexContainerColumn>
         <InputLabel>width</InputLabel>
         <Input
+          type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
           value={target[2]}
           onChange={(e: any) => update(2, e.target.value)}
@@ -56,6 +60,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
       <FlexContainerColumn>
         <InputLabel>height</InputLabel>
         <Input
+          type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
           value={target[3]}
           onChange={(e: any) => update(3, e.target.value)}
@@ -66,10 +71,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
 };
 
 export function AnnotationTarget({ canvasID, annotationID }: Target) {
+  // We want to offer the UI to not make the whole canvas?
   const isWhole = !canvasID.includes("#xywh=");
-  return (
-    <>
-      <div>{isWhole ? "Whole Canvas" : <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} />}</div>
-    </>
-  );
+  return <div>{isWhole ? "Whole Canvas" : <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} />}</div>;
 }

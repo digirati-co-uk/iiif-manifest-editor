@@ -25,24 +25,33 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
   const [expand, setExpand] = useState(false);
   const vault = useVault();
   const annotation = useAnnotation({ id: id });
-  console.log(vault && annotation && vault.get(annotation.body[0].id));
-  console.log(body);
+  // undefined
+  // console.log(annotation?.bodyValue);
+  // console.log(vault.get(annotation?.body[0].id));
+  // console.log(annotation?.target);
+  // console.log(target);
+
+  if (!annotation) {
+    return <></>;
+  }
   return (
     <LightBox onClick={() => onClick(id)}>
       <FlexContainerRow>
         {target && <AnnotationPreview region={target.split("#xywh=")[1]} />}
+        <PaddingComponentSmall />
         <FlexContainerColumn style={target ? { maxWidth: "60%" } : { maxWidth: "100%" }}>
-          {!expand && <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>}
+          {!expand && (
+            <BodySnippet onClick={() => setExpand(true)}>{vault.get(annotation.body[0].id).value}</BodySnippet>
+          )}
           {expand && (
             <FlexContainerRow>
               <InputUnderlined
-                id={id}
+                id={annotation.id}
                 onChange={(e: any) => {
-                  // @todo not working
-                  vault.modifyEntityField(id, "value", e.target.value);
+                  vault.modifyEntityField({ id: id, type: "Annotation" }, "value", e.target.value);
                 }}
                 as={Textarea}
-                value={body}
+                value={vault.get(annotation.body[0].id).value}
               />
               <Button onClick={() => setExpand(false)}>
                 <CloseIcon />
@@ -52,7 +61,8 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
 
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
-          {target && <AnnotationTarget canvasID={target} annotationID={id} />}
+          {/* @ts-ignore */}
+          {annotation.target && <AnnotationTarget canvasID={annotation.target} annotationID={annotation.id} />}
         </FlexContainerColumn>
       </FlexContainerRow>
     </LightBox>
