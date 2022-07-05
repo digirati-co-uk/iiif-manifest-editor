@@ -62,7 +62,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
           {/* @ts-ignore */}
-          {annotation.target && <AnnotationTarget canvasID={annotation.target} annotationID={annotation.id} />}
+          {annotation.target && <AnnotationTarget canvasTarget={annotation.target} annotationID={annotation.id} />}
         </FlexContainerColumn>
       </FlexContainerRow>
     </LightBox>

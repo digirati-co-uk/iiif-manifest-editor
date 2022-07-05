@@ -2,7 +2,16 @@ import { DrawBox, RegionHighlight, ResizeWorldItem, useControlledAnnotationList 
 import { useCanvas } from "react-iiif-vault";
 import { useAnnotationList } from "../../../../hooks/useAnnotationsList";
 
-function getAnnotationTarget(annotation: any) {
+function getAnnotationTarget(annotation: any, canvas: any) {
+  if (!annotation.target.includes("#xywh=")) {
+    return {
+      id: annotation.id,
+      x: 0,
+      y: 0,
+      width: canvas.width,
+      height: canvas.height,
+    };
+  }
   const split = annotation.target.split("#xywh=")[1].split(",");
   return {
     id: annotation.id,
@@ -35,11 +44,10 @@ export function Annotations({ canvasId }: { canvasId: string }) {
             <RegionHighlight
               interactive
               key={annotation.id}
-              region={getAnnotationTarget(annotation)}
+              region={getAnnotationTarget(annotation, canvas)}
               isEditing={isEditing && selectedAnnotation === annotation.id}
               onSave={editAnnotation}
               onClick={() => {
-                console.log(annotation);
                 setIsEditing(true);
                 setSelectedAnnotation(annotation.id);
               }}

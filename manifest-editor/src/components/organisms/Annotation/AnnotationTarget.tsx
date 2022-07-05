@@ -1,18 +1,17 @@
-import { Reference } from "@iiif/presentation-3";
 import { useEffect, useState } from "react";
-import { useVault } from "react-iiif-vault";
-import { Input, InputLabel } from "../../../editors/Input";
+import { useCanvas, useVault } from "react-iiif-vault";
+import { CheckboxInput, Input, InputLabel } from "../../../editors/Input";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
+import { Accordian } from "../Accordian/Accordian";
 
 type Target = {
-  canvasID: string;
+  canvasTarget: string;
   annotationID: string;
 };
 
-export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID }) => {
-  console.log(canvasID);
-  const [target, setTarget] = useState<string[]>(canvasID.split("#xywh=")[1].split(","));
-  const canvas = canvasID.split("#xywh=")[0];
+export const CanvasTargetEditor: React.FC<Target> = ({ canvasTarget, annotationID }) => {
+  const [target, setTarget] = useState<string[]>(canvasTarget.split("#xywh=")[1].split(","));
+  const canvas = canvasTarget.split("#xywh=")[0];
 
   const vault = useVault();
 
@@ -20,7 +19,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
     const newValue = canvas + "#xywh=" + target.join(",");
     const annotation = vault.get(annotationID) as any;
     vault.modifyEntityField(annotation, "target", newValue);
-  }, [canvasID, target]);
+  }, [canvasTarget, target]);
 
   const update = (position: number, value: string) => {
     const targetCopy = [...target];
@@ -70,8 +69,43 @@ export const CanvasTargetEditor: React.FC<Target> = ({ canvasID, annotationID })
   );
 };
 
-export function AnnotationTarget({ canvasID, annotationID }: Target) {
-  // We want to offer the UI to not make the whole canvas?
-  const isWhole = !canvasID.includes("#xywh=");
-  return <div>{isWhole ? "Whole Canvas" : <CanvasTargetEditor canvasID={canvasID} annotationID={annotationID} />}</div>;
+export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
+  const [showEditor, setShowEditor] = useState(false);
+  const canvas = useCanvas();
+  const vault = useVault();
+
+  const targetNotSpecified = !canvasTarget.includes("#xywh=");
+  const isWhole =
+    canvasTarget.includes("#xywh=") &&
+    canvasTarget.split("#xywh=")[1] &&
+    canvasTarget.split("#xywh=")[1] === `0,0,${canvas?.width},${canvas?.height}`;
+
+  function changeToFullCanvas() {
+    if (!canvas || !canvas.id) return;
+    const annotation = vault.get(annotationID) as any;
+    vault.modifyEntityField(annotation, "target", canvas.id);
+    setShowEditor(!showEditor);
+  }
+
+  return (
+    <Accordian renderOpen={true} title={"Target"}>
+      <InputLabel $inline={true}>
+        <CheckboxInput
+          style={{ minWidth: "3rem", padding: "unset" }}
+          defaultChecked={isWhole || targetNotSpecified}
+          onChange={() => changeToFullCanvas()}
+        />
+        Whole Canvas
+      </InputLabel>
+      {!(isWhole || targetNotSpecified || showEditor) && (
+        <CanvasTargetEditor canvasTarget={canvasTarget} annotationID={annotationID} />
+      )}
+      {showEditor && (
+        <CanvasTargetEditor
+          canvasTarget={canvasTarget + `#xywh=0,0,${canvas?.width},${canvas?.height}`}
+          annotationID={annotationID}
+        />
+      )}
+    </Accordian>
+  );
 }
