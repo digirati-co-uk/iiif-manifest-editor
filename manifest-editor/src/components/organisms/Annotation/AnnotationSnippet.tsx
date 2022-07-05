@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LightBox } from "../../../atoms/LightBox";
 import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { AnnotationType, BodySnippet } from "./Annotation.styles";
@@ -21,16 +21,46 @@ type AnnotationSnippetProps = {
   target: string;
 };
 
+type BodyEditorProps = {
+  annotationID: string;
+  bodyID: string;
+  value: any;
+  close: () => void;
+};
+
+const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID, value, close }) => {
+  const annotation = useAnnotation({ id: annotationID });
+  const vault = useVault();
+  console.log(value);
+
+  useEffect(() => {
+    vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", "TESTING");
+  }, []);
+
+  function updateAnnotation(newValue: string) {
+    vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
+  }
+  if (!annotation) return <></>;
+  return (
+    <FlexContainerRow>
+      <InputUnderlined
+        id={annotation.id}
+        onChange={(e: any) => updateAnnotation(e.target.value)}
+        as={Textarea}
+        value={value}
+      />
+      <Button onClick={close}>
+        <CloseIcon />
+      </Button>
+    </FlexContainerRow>
+  );
+};
+
 export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body, onClick, id, target }) => {
   const [expand, setExpand] = useState(false);
-  const vault = useVault();
   const annotation = useAnnotation({ id: id });
-  // undefined
-  // console.log(annotation?.bodyValue);
-  // console.log(vault.get(annotation?.body[0].id));
-  // console.log(annotation?.target);
-  // console.log(target);
-
+  const vault = useVault();
+  console.log(vault.get(annotation.body[0].id));
   if (!annotation) {
     return <></>;
   }
@@ -39,24 +69,18 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, body
       <FlexContainerRow>
         {target && <AnnotationPreview region={target.split("#xywh=")[1]} />}
         <PaddingComponentSmall />
-        <FlexContainerColumn style={target ? { maxWidth: "60%" } : { maxWidth: "100%" }}>
+        <FlexContainerColumn style={{ width: "80%" }}>
           {!expand && (
-            <BodySnippet onClick={() => setExpand(true)}>{vault.get(annotation.body[0].id).value}</BodySnippet>
+            // @ts-ignore
+            <BodySnippet onClick={() => setExpand(true)}>{body}</BodySnippet>
           )}
           {expand && (
-            <FlexContainerRow>
-              <InputUnderlined
-                id={annotation.id}
-                onChange={(e: any) => {
-                  vault.modifyEntityField({ id: id, type: "Annotation" }, "value", e.target.value);
-                }}
-                as={Textarea}
-                value={vault.get(annotation.body[0].id).value}
-              />
-              <Button onClick={() => setExpand(false)}>
-                <CloseIcon />
-              </Button>
-            </FlexContainerRow>
+            <AnnotationBodyEditor
+              annotationID={annotation.id}
+              bodyID={annotation.body[0].id}
+              value={body}
+              close={() => setExpand(false)}
+            />
           )}
 
           <PaddingComponentSmall />
