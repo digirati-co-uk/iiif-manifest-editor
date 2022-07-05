@@ -1,4 +1,3 @@
-import { IIIFBuilder } from "iiif-builder";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
@@ -15,12 +14,12 @@ import { getValue } from "@iiif/vault-helpers";
 import { Accordian } from "../../components/organisms/Accordian/Accordian";
 import { useState } from "react";
 import { NewAnnotationPageForm } from "./NewAnnotationPageForm";
+import { AnnotationPage } from "../../components/organisms/Annotation/AnnotationPage";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
-  const { defaultLanguages } = useConfig();
 
   const [showNewAnnotationPage, setShowNewAnnotationPage] = useState(false);
 
@@ -104,61 +103,11 @@ export const AnnotationForm = () => {
     }
     // @ts-ignore
     return vault.get(canvas.annotations).map((page: any) => {
+      console.log(page);
       return (
         <>
           <Accordian renderOpen={false} title={getValue(page.label) || "Annotation Page Properties"}>
-            <LanguageFieldEditor
-              key={page.id}
-              label={"label"}
-              fields={page.label}
-              availableLanguages={defaultLanguages}
-              onSave={(e: any) => {
-                // todo not working
-                vault.modifyEntityField(page.id, "target", e.toInternationalString());
-              }}
-              property={"label"}
-            />
-            <InputLabel>
-              identifier
-              <Input key={page.id} value={page.id} disabled={true} property={"behavior"} />
-            </InputLabel>
-            <InputLabel>
-              behavior
-              <Input
-                key={page.id}
-                value={page.behavior}
-                onChange={(e: any) => {
-                  // todo not working
-                  vault.modifyEntityField(page.id, "behavior", e.target.value);
-                }}
-                property={"behavior"}
-              />
-            </InputLabel>
-            <InputLabel>
-              format
-              <Input
-                key={page.id}
-                value={page.format}
-                onChange={(e: any) => {
-                  // todo not working
-                  vault.modifyEntityField(page.id, "format", e.target.value);
-                }}
-                property={"format"}
-              />
-            </InputLabel>
-            <InputLabel>
-              language
-              <Input
-                key={page.id}
-                value={page.language}
-                onChange={(e: any) => {
-                  // todo not working
-                  vault.modifyEntityField(page.id, "language", e.target.value);
-                }}
-                property={"language"}
-              />
-            </InputLabel>
-            <PaddingComponentSmall />
+            <AnnotationPage id={page.id} />
           </Accordian>
           <PaddingComponentMedium />
           {isExternal(page) && externalConvert(page)}

@@ -95,7 +95,7 @@ export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
           defaultChecked={isWhole || targetNotSpecified}
           onChange={() => changeToFullCanvas()}
         />
-        Whole Canvas
+        Target whole canvas
       </InputLabel>
       {!(isWhole || targetNotSpecified || showEditor) && (
         <CanvasTargetEditor canvasTarget={canvasTarget} annotationID={annotationID} />
