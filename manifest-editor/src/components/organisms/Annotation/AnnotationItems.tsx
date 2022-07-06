@@ -1,5 +1,5 @@
 import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
-import { AnnotationPreview } from "./Annotation";
+import { Annotation } from "./Annotation";
 
 export const AnnotationItems: React.FC<{ pageID: string }> = ({ pageID }) => {
   const annotationPage = useAnnotationPage({ id: pageID });
@@ -7,7 +7,7 @@ export const AnnotationItems: React.FC<{ pageID: string }> = ({ pageID }) => {
   return (
     <>
       {annotationPage.items.map((annotation: any) => {
-        return <AnnotationPreview key={annotation.id} id={annotation.id} pageId={pageID} />;
+        return <Annotation key={annotation.id} id={annotation.id} pageId={pageID} />;
       })}
     </>
   );

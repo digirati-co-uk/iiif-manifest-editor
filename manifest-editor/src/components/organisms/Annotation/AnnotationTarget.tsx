@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
+import { LightBox } from "../../../atoms/LightBox";
 import { CheckboxInput, Input, InputLabel } from "../../../editors/Input";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 import { Accordian } from "../Accordian/Accordian";
@@ -88,24 +89,27 @@ export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
   }
 
   return (
-    <Accordian renderOpen={true} title={"Target"}>
-      <InputLabel $inline={true}>
-        <CheckboxInput
-          style={{ minWidth: "3rem", padding: "unset" }}
-          defaultChecked={isWhole || targetNotSpecified}
-          onChange={() => changeToFullCanvas()}
-        />
-        Target whole canvas
-      </InputLabel>
-      {!(isWhole || targetNotSpecified || showEditor) && (
-        <CanvasTargetEditor canvasTarget={canvasTarget} annotationID={annotationID} />
-      )}
-      {showEditor && (
-        <CanvasTargetEditor
-          canvasTarget={canvasTarget + `#xywh=0,0,${canvas?.width},${canvas?.height}`}
-          annotationID={annotationID}
-        />
-      )}
-    </Accordian>
+    <InputLabel>
+      Target
+      <LightBox>
+        <InputLabel $inline={true}>
+          <CheckboxInput
+            style={{ padding: "unset" }}
+            defaultChecked={isWhole || targetNotSpecified}
+            onChange={() => changeToFullCanvas()}
+          />
+          Target whole canvas
+        </InputLabel>
+        {!(isWhole || targetNotSpecified || showEditor) && (
+          <CanvasTargetEditor canvasTarget={canvasTarget} annotationID={annotationID} />
+        )}
+        {showEditor && (
+          <CanvasTargetEditor
+            canvasTarget={canvasTarget + `#xywh=0,0,${canvas?.width},${canvas?.height}`}
+            annotationID={annotationID}
+          />
+        )}
+      </LightBox>
+    </InputLabel>
   );
 }

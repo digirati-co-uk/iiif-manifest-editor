@@ -66,7 +66,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, id, 
   return (
     <LightBox>
       <FlexContainerRow>
-        {target && <AnnotationPreview region={target.split("#xywh=")[1]} />}
+        {target ? <AnnotationPreview region={target.split("#xywh=")[1]} /> : "No target specified"}
         <PaddingComponentSmall />
         <FlexContainerColumn style={{ width: "80%" }}>
           {!expand && (
