@@ -1,10 +1,7 @@
-import { AnnotationContext, useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { AnnotationPreview } from "../../components/organisms/Annotation/Annotation";
-import { LanguageFieldEditor } from "../generic/LanguageFieldEditor/LanguageFieldEditor";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
-import { Input, InputLabel } from "../Input";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
@@ -13,8 +10,10 @@ import { LightBox } from "../../atoms/LightBox";
 import { getValue } from "@iiif/vault-helpers";
 import { Accordian } from "../../components/organisms/Accordian/Accordian";
 import { useState } from "react";
-import { NewAnnotationPageForm } from "./NewAnnotationPageForm";
+import { NewAnnotationPageForm } from "../../components/organisms/Annotation/NewAnnotationPageForm";
 import { AnnotationPage } from "../../components/organisms/Annotation/AnnotationPage";
+import { CloseIcon } from "../../icons/CloseIcon";
+import { AnnotationItems } from "../../components/organisms/Annotation/AnnotationItems";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
@@ -23,26 +22,12 @@ export const AnnotationForm = () => {
 
   const [showNewAnnotationPage, setShowNewAnnotationPage] = useState(false);
 
-  const {
-    annotations,
-    pagedAnnotations,
-    isEditing,
-    setIsEditing,
-    addNewAnnotation,
-    addNewAnnotationPage,
-    selectedAnnotation,
-    setSelectedAnnotation,
-    editAnnotation,
-    onDeselect,
-  } = useAnnotationList(canvas?.id);
+  const { addNewAnnotation, removeAnnotationPage } = useAnnotationList(canvas?.id);
 
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
 
   function items(item: any) {
-    // @ts-ignore
-    return vault.get(item.id)?.items.map((NESTEDITEM: any) => {
-      return <AnnotationPreview key={NESTEDITEM.id} id={NESTEDITEM.id} />;
-    });
+    return <AnnotationItems pageID={item.id} />;
   }
 
   function convert(item: any) {
@@ -105,7 +90,12 @@ export const AnnotationForm = () => {
     return vault.get(canvas.annotations).map((page: any) => {
       if (!page) return <></>;
       return (
-        <LightBox>
+        <LightBox key={page.id}>
+          <FlexContainerRow justify="flex-end">
+            <Button title="delete" onClick={() => removeAnnotationPage(page.id)}>
+              <CloseIcon />
+            </Button>
+          </FlexContainerRow>
           <Accordian renderOpen={false} title={getValue(page.label) || "Annotation Page Properties"}>
             <AnnotationPage id={page.id} />
           </Accordian>
@@ -127,7 +117,7 @@ export const AnnotationForm = () => {
   return (
     <>
       <EmptyProperty label={"annotations"} guidanceReference={guidanceReference} />
-      {showNewAnnotationPage ? <NewAnnotationPageForm /> : annoPages()}
+      {showNewAnnotationPage ? <NewAnnotationPageForm goBack={() => setShowNewAnnotationPage(false)} /> : annoPages()}
       <PaddingComponentSmall />
       {
         // @ts-ignore

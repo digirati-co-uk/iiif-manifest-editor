@@ -5,7 +5,7 @@ import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContaine
 import { Accordian } from "../Accordian/Accordian";
 
 type Target = {
-  canvasTarget: string;
+  canvasTarget: any;
   annotationID: string;
 };
 

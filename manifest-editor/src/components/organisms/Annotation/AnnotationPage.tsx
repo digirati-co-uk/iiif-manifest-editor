@@ -1,4 +1,4 @@
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault";
 import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { LanguageFieldEditor } from "../../../editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 import { InputLabel, Input } from "../../../editors/Input";
@@ -6,9 +6,7 @@ import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
 import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
 
 export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element => {
-  console.log(id);
   const annotationPage = useAnnotationPage({ id: id });
-  console.log(annotationPage);
   const vault = useVault();
   const { defaultLanguages } = useConfig();
 
@@ -56,7 +54,7 @@ export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element =>
           property={"format"}
         />
       </InputLabel> */}
-      <InputLabel>
+      {/* <InputLabel>
         language
         <Input
           key={annotationPage.id}
@@ -66,7 +64,7 @@ export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element =>
           }}
           property={"language"}
         />
-      </InputLabel>
+      </InputLabel> */}
       <PaddingComponentSmall />
     </>
   );

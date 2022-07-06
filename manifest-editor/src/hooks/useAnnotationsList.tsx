@@ -1,7 +1,7 @@
 import { AnnotationNormalized } from "@iiif/presentation-3";
 import { IIIFBuilder } from "iiif-builder";
 import { useCallback, useState, useEffect } from "react";
-import { importEntities } from "@iiif/vault/actions";
+import { importEntities, removeReference } from "@iiif/vault/actions";
 import { v4 } from "uuid";
 import { useAnnotationPage } from "./useAnnotationPage";
 import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
@@ -96,15 +96,17 @@ export function useAnnotationList<T = AnnotationNormalized>(
     );
   };
 
-  const addNewAnnotationPage = () => {
+  const addNewAnnotationPage = (id?: string, label?: any, importPage?: boolean, callback?: () => void) => {
     if (!canvas) return;
-    const newID = `https://example.org/annotation/${v4()}/annotation-page`;
+    const newID = id ? id : `https://example.org/annotation/${v4()}/annotation-page`;
+    const lab = label ? label : {};
     vault.dispatch(
       importEntities({
         entities: {
           [newID]: {
             ...emptyAnnotationPage,
             id: newID,
+            label: lab,
           },
         },
       })
@@ -117,6 +119,41 @@ export function useAnnotationList<T = AnnotationNormalized>(
         reference: {
           id: newID,
           type: "AnnotationPage",
+        },
+      })
+    );
+    if (importPage) {
+      vault.load(newID);
+    }
+    if (callback) callback();
+  };
+
+  const removeAnnotationPage = (id: string) => {
+    if (!canvas) return;
+
+    vault.dispatch(
+      removeReference({
+        id: canvas.id,
+        type: "Canvas",
+        key: "annotations",
+        reference: {
+          id: id,
+          type: "AnnotationPage",
+        },
+      })
+    );
+  };
+
+  const removeAnnotation = (id: string, pageId: string) => {
+    if (!canvas) return;
+    vault.dispatch(
+      removeReference({
+        id: pageId,
+        type: "AnnotationPage",
+        key: "items",
+        reference: {
+          id: id,
+          type: "Annotation",
         },
       })
     );
@@ -147,5 +184,7 @@ export function useAnnotationList<T = AnnotationNormalized>(
     editAnnotation,
     onDeselect,
     addNewAnnotationPage,
+    removeAnnotationPage,
+    removeAnnotation,
   };
 }

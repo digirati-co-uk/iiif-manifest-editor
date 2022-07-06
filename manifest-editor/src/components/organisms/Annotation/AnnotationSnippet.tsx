@@ -39,7 +39,6 @@ const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID,
     vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
   }
   if (!annotation) return <></>;
-  console.log(annotation);
   return (
     <FlexContainerRow>
       <InputUnderlined
@@ -55,7 +54,7 @@ const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID,
   );
 };
 
-export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, onClick, id, target }) => {
+export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, id, target }) => {
   const [expand, setExpand] = useState(false);
   const annotation = useAnnotation({ id: id });
   // @ts-ignore
@@ -65,7 +64,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, onCl
     return <></>;
   }
   return (
-    <LightBox onClick={() => onClick(id)}>
+    <LightBox>
       <FlexContainerRow>
         {target && <AnnotationPreview region={target.split("#xywh=")[1]} />}
         <PaddingComponentSmall />
@@ -85,7 +84,6 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, onCl
 
           <PaddingComponentSmall />
           <AnnotationType>{type}</AnnotationType>
-          {/* @ts-ignore */}
           {annotation.target && <AnnotationTarget canvasTarget={annotation.target} annotationID={annotation.id} />}
         </FlexContainerColumn>
       </FlexContainerRow>
