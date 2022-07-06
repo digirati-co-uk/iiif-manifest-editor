@@ -13,7 +13,7 @@ export const AnnotationBody: React.FC<BodyEditorProps> = ({ annotationID, bodyID
   const vault = useVault();
 
   const body = useVaultSelector((state) => state.iiif.entities.ContentResource[bodyID]) as any;
-  console.log(body);
+  // console.log(body);
   function updateAnnotation(newValue: string) {
     vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
   }

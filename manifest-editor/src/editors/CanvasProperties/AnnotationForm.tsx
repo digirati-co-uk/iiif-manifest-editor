@@ -1,7 +1,6 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { AnnotationPreview } from "../../components/organisms/Annotation/Annotation";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { FlexContainerColumn, FlexContainerRow } from "../../components/layout/FlexContainer";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";

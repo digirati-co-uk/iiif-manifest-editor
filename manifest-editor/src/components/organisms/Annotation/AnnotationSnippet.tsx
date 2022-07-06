@@ -22,38 +22,6 @@ type AnnotationSnippetProps = {
   target: string;
 };
 
-type BodyEditorProps = {
-  annotationID: string;
-  bodyID: string;
-  value: any;
-  close: () => void;
-};
-
-const AnnotationBodyEditor: React.FC<BodyEditorProps> = ({ annotationID, bodyID, close }) => {
-  const annotation = useAnnotation({ id: annotationID });
-  const vault = useVault();
-
-  const body = useVaultSelector((state) => state.iiif.entities.ContentResource[bodyID]) as any;
-
-  function updateAnnotation(newValue: string) {
-    vault.modifyEntityField({ id: bodyID, type: "ContentResource" }, "value", newValue);
-  }
-  if (!annotation) return <></>;
-  return (
-    <FlexContainerRow>
-      <InputUnderlined
-        id={annotation.id}
-        onChange={(e: any) => updateAnnotation(e.target.value)}
-        as={Textarea}
-        value={body.value}
-      />
-      <Button onClick={close}>
-        <CloseIcon /> close
-      </Button>
-    </FlexContainerRow>
-  );
-};
-
 export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, id, target }) => {
   const [expand, setExpand] = useState(false);
   const annotation = useAnnotation({ id: id });
@@ -65,7 +33,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, id, 
   }
   return (
     <LightBox>
-      <FlexContainerRow>
+      {/* <FlexContainerRow>
         {target ? <AnnotationPreview region={target.split("#xywh=")[1]} /> : "No target specified"}
         <PaddingComponentSmall />
         <FlexContainerColumn style={{ width: "80%" }}>
@@ -86,7 +54,7 @@ export const AnnotationSnippet: React.FC<AnnotationSnippetProps> = ({ type, id, 
           <AnnotationType>{type}</AnnotationType>
           {annotation.target && <AnnotationTarget canvasTarget={annotation.target} annotationID={annotation.id} />}
         </FlexContainerColumn>
-      </FlexContainerRow>
+      </FlexContainerRow> */}
     </LightBox>
   );
 };

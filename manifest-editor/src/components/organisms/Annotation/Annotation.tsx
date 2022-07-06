@@ -58,7 +58,6 @@ export const Annotation: React.FC<AnnotationProps> = ({ id, pageId }) => {
               })}
           </LightBox>
         </InputLabel>
-        {console.log(annotation.target)}
         {annotation.target && typeof annotation.target === "string" ? (
           <AnnotationPreview region={annotation.target.split("#xywh=")[1]} />
         ) : (
