@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { useCanvas } from "react-iiif-vault";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { TabPanel } from "../../components/layout/TabPanel";
 import { AnnotationForm } from "./AnnotationForm";
 import { DescriptiveForm } from "./DescriptiveForm";
@@ -39,10 +37,10 @@ export const CanvasForm: React.FC<{ current: number; setCurrent: (idx: number) =
             label: "Technical",
             component: <TechnicalForm />,
           },
-          // {
-          //   label: "Annotations",
-          //   component: <AnnotationForm />,
-          // },
+          {
+            label: "Annotations",
+            component: <AnnotationForm />,
+          },
         ]}
         selected={current}
         switchPanel={setCurrent}

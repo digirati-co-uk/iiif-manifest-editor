@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useCanvas, useManifest } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, useVault } from "react-iiif-vault";
 import styled from "styled-components";
 import { useAppState } from "../../../shell/AppContext/AppContext";
 import React, { useEffect, useReducer, useRef } from "react";
@@ -9,6 +9,8 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
+import { useLayoutState } from "../../../shell/Layout/Layout.context";
+import { Annotations } from "./components/Annotations";
 
 const Container = styled.div`
   position: relative;
@@ -29,9 +31,9 @@ export const ViewerContainer = styled.div`
 export function CanvasPanelViewer() {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
-  const _canvas = useCanvas(); // @todo remove.
   const manifest = useManifest(); // @todo remove.
-  const canvas = state.canvasId || _canvas?.id;
+  const vault = useVault();
+  const { rightPanel } = useLayoutState();
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
   const goHome = () => runtime.current?.world.goHome();
@@ -40,13 +42,13 @@ export function CanvasPanelViewer() {
 
   useEffect(() => {
     runtime.current?.goHome();
-  }, [canvas]);
+  }, [state.canvasId]);
 
-  if (!canvas && manifest?.items.length === 0) {
+  if (manifest?.items.length === 0) {
     return <EmptyCanvasState />;
   }
 
-  if (!canvas) {
+  if (!state.canvasId) {
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -62,10 +64,10 @@ export function CanvasPanelViewer() {
 
   return (
     <ErrorBoundary
-      resetKeys={[canvas.id, refreshKey]}
+      resetKeys={[state.canvasId, refreshKey]}
       fallbackRender={() => (
         <CanvasContainer>
-          <GhostCanvas />
+          <GhostCanvas>Something went wrong</GhostCanvas>
         </CanvasContainer>
       )}
     >
@@ -79,10 +81,13 @@ export function CanvasPanelViewer() {
         }
       `}</style>
         <ViewerContainer>
-          <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
-            <CanvasContext canvas={canvas}>
+          <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
+            <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
             </CanvasContext>
+            {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
+              <Annotations canvasId={state.canvasId} />
+            )}
           </CanvasPanel.Viewer>
         </ViewerContainer>
       </Container>

@@ -21,6 +21,8 @@ export const CanvasView: React.FC = () => {
   if (!manifest || manifest.id === "") {
     return <></>;
   }
+
+  // TO DO REMOVE THIS FILE NO LONGER IN USE - used by label editor app!!
   return (
     <CanvasContainer key={canvas?.id} style={{ padding: 0 }}>
       <style>{`
