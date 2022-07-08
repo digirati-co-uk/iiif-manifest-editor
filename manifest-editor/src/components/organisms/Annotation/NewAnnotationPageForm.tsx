@@ -49,10 +49,12 @@ export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack
         property={"label"}
         fields={{}}
       />
-      <FlexContainerRow>
-        <Input placeholder={"Annotation Page URL"} onChange={(e) => setUrl(e.target.value)} property={"label"} />
-        <PaddingComponentMedium />
-      </FlexContainerRow>
+      {selected === 1 && (
+        <FlexContainerRow>
+          <Input placeholder={"Annotation Page URL"} onChange={(e) => setUrl(e.target.value)} property={"label"} />
+          <PaddingComponentMedium />
+        </FlexContainerRow>
+      )}
       <PaddingComponentMedium />
       <SecondaryButton onClick={() => addNewAnnotationPage(url, label, selected === 0, goBack)}>
         Create annotation page
