@@ -1,0 +1,22 @@
+{
+  "name": "manifest-editor-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "manifest-editor"
+  },
+  "dependencies": {
+    "lighterhtml": "^4.2.0",
+    "manifest-editor": "file:../manifest-editor",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uhtml": "^3.0.1",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.3",
+    "vite": "^2.9.12"
+  }
+}

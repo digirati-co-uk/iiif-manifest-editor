@@ -4,7 +4,6 @@ import { FlexContainer } from "../../components/layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
 import { PreviewModal } from "../../components/modals/PreviewModal";
-import { Persistance } from "./Shell";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { DownIcon } from "../../icons/DownIcon";
@@ -17,7 +16,7 @@ export const ShellHeader: React.FC<{
   setSelectedPreviewIndex: (index: number) => void;
   previewConfig: any;
   selectedPreviewIndex: number;
-  previewLocation: Persistance | undefined;
+  previewLocation: any | undefined;
   showPreviewModal: boolean;
   setShowAgain: (show: boolean) => void;
   setShowPreviewModal: (show: boolean) => void;
@@ -33,7 +32,7 @@ export const ShellHeader: React.FC<{
   setShowPreviewModal,
 }) => {
   const { current: currentProject } = useProjectContext();
-  const { apps, changeApp } = useApps();
+  const { apps, changeApp, initialApp } = useApps();
   const [appMenuOpen, setAppMenuOpen] = useState(false);
 
   const getTitle = () => {
@@ -56,7 +55,7 @@ export const ShellHeader: React.FC<{
       )}
       <ShellHeaderStrip>
         <FlexContainer>
-          <Button onClick={() => changeApp({ id: "splash" })} aria-label="Go to the homepage">
+          <Button onClick={() => changeApp(initialApp)} aria-label="Go to the homepage">
             <ManifestEditorIcon />
           </Button>
           <Dropdown>

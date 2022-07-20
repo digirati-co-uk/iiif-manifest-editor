@@ -23,7 +23,13 @@ export function getApps() {
   return state;
 }
 
-function internalGetApps(appMap: Record<string, LoadedApp>) {
+export type AppDefinition = {
+  allApps: Record<string, MappedApp>;
+  allAppIds: string[];
+  allPaths: string[];
+};
+
+export function internalGetApps(appMap: Record<string, LoadedApp>): AppDefinition {
   const allApps: Record<string, MappedApp> = {};
   const allAppIds: string[] = [];
   const allPaths: string[] = [];

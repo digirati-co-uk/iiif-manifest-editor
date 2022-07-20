@@ -31,7 +31,13 @@ export function useManifestEditor() {
   return ctx;
 }
 
-export function ManifestEditorProvider({ children, ignoreQueryString }: { children: ReactNode; ignoreQueryString?: boolean  }) {
+export function ManifestEditorProvider({
+  children,
+  ignoreQueryString,
+}: {
+  children: ReactNode;
+  ignoreQueryString?: boolean;
+}) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
   const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);

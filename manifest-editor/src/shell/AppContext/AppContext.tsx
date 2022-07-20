@@ -8,6 +8,7 @@ import { DesktopContext } from "../DesktopContext/DesktopContext";
 export type AppContext = {
   apps: Record<string, MappedApp>;
   currentApp: { id: string; args?: any };
+  initialApp: { id: string; args?: any };
   changeApp: (app: { id: string; args?: any }) => void;
 };
 
@@ -67,8 +68,13 @@ export function AppProvider({
 }) {
   const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
   const ctx = useMemo<AppContext>(
-    () => ({ currentApp: currentApp || { id: "manifest-editor" }, apps, changeApp }),
-    [apps, currentApp]
+    () => ({
+      currentApp: currentApp || { id: "splash" },
+      initialApp: initialApp || { id: "splash" },
+      apps,
+      changeApp,
+    }),
+    [initialApp, apps, currentApp]
   );
 
   return <AppReactContext.Provider value={ctx}>{children}</AppReactContext.Provider>;

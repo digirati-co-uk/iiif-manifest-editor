@@ -5,7 +5,7 @@ import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
 import { AppProvider } from "../AppContext/AppContext";
-import { getApps } from "../../apps/app-loader";
+import { AppDefinition, getApps } from "../../apps/app-loader";
 import { Config, ConfigProvider } from "../ConfigContext/ConfigContext";
 import { defaultTheme } from "../../themes/default-theme";
 import { ThemeProvider } from "styled-components";
@@ -38,18 +38,20 @@ export const ShellProvider = ({
   config,
   children,
   theme,
+  apps,
+  initialApp,
 }: {
   config?: Partial<Config>;
   children: ReactNode;
   theme?: any;
+  apps: AppDefinition;
+  initialApp?: { id: string; args?: any };
 }) => {
-  const apps = useMemo(getApps, []);
-
   return (
     <ErrorBoundary>
       <ThemeProvider theme={theme || defaultTheme}>
         <ConfigProvider config={config}>
-          <AppProvider apps={apps.allApps}>
+          <AppProvider apps={apps.allApps} initialApp={initialApp}>
             <LayoutProvider>
               <ProjectProvider>
                 {/* @todo swap these out for (config?.previews || []) */}

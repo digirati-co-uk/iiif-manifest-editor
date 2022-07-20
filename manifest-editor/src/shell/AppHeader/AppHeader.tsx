@@ -9,14 +9,14 @@ import { AppMenu } from "./components/AppMenu";
 
 export function AppHeader() {
   const [isMenuHidden] = useLocalStorage("menu-hidden");
-  const { changeApp } = useApps();
+  const { changeApp, initialApp } = useApps();
 
   return (
     <Header>
       <Container>
         <AppMenu />
 
-        <Logo onClick={() => changeApp({ id: "splash" })}>
+        <Logo onClick={() => changeApp(initialApp)}>
           <ManifestEditorLogo height={27} width={200} />
         </Logo>
 
