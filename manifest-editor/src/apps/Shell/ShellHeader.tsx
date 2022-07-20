@@ -4,7 +4,6 @@ import { FlexContainer } from "../../components/layout/FlexContainer";
 import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
 import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
 import { PreviewModal } from "../../components/modals/PreviewModal";
-import { Persistance } from "./Shell";
 import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { DownIcon } from "../../icons/DownIcon";
@@ -17,7 +16,7 @@ export const ShellHeader: React.FC<{
   setSelectedPreviewIndex: (index: number) => void;
   previewConfig: any;
   selectedPreviewIndex: number;
-  previewLocation: Persistance | undefined;
+  previewLocation: any | undefined;
   showPreviewModal: boolean;
   setShowAgain: (show: boolean) => void;
   setShowPreviewModal: (show: boolean) => void;

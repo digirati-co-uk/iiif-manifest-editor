@@ -99,10 +99,14 @@ export interface LayoutPanel {
   label: string;
   icon?: null | string | ReactNode; // SVG?
 
-  render: (state: any, ctx: { current: PanelActions; vault?: Vault } & LayoutContext, app: AppState) => ReactNode;
+  render: (
+    state: any,
+    ctx: { current: PanelActions; vault?: Vault | null } & LayoutContext,
+    app: AppState
+  ) => ReactNode | string | HTMLElement;
   onMount?: (
     state: any,
-    ctx: { current: PanelActions; vault?: Vault } & LayoutContext,
+    ctx: { current: PanelActions; vault?: Vault | null } & LayoutContext,
     app: AppState
   ) => (() => void) | void;
   defaultState?: any;

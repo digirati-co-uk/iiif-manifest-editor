@@ -1,5 +1,5 @@
 import { CanvasContext, useManifest, useSimpleViewer, useVault, VisibleCanvasReactContext } from "react-iiif-vault";
-import { SingleCanvasThumbnail } from "../SingleCanvasThumbnail/SingleCanvasThumbnail";
+
 import { ThumbnailViewer, Thumbnail, ThumbnailCover } from "./ThumbnailPageList.styles";
 import { useContext, useLayoutEffect } from "react";
 import { CanvasNormalized } from "@iiif/presentation-3";
@@ -22,7 +22,7 @@ export function ThumbnailPagedList() {
 
   return (
     <ThumbnailViewer>
-      {manifest.items.map((canvasRef, idx) => {
+      {manifest?.items.map((canvasRef, idx) => {
         const canvas = vault.get<CanvasNormalized>(canvasRef);
 
         const T = canvas.behavior.indexOf("non-paged") !== -1 || idx === 0 ? ThumbnailCover : Thumbnail;
@@ -34,7 +34,7 @@ export function ThumbnailPagedList() {
               onClick={() => setCurrentCanvasId(canvas.id)}
               data-canvas-thumbnail-index={idx}
             >
-              <SingleCanvasThumbnail size={128} />
+              {/*<SingleCanvasThumbnail size={128} />*/}
             </T>
           </CanvasContext>
         );

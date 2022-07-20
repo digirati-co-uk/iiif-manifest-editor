@@ -1,6 +1,6 @@
 import { render } from "react-dom";
 import React, { StrictMode, useMemo } from "react";
-import config from "../config.json";
+import config from "./config.json";
 import templates from "../public/config/built-in-manifest-editor-templates.json?import";
 import { GlobalStyle } from "./atoms/GlobalStyle";
 import { ShellProvider } from "./shell/ShellContext/ShellContext";

@@ -13,7 +13,7 @@ import { ReactVaultContext } from "react-iiif-vault";
 export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const appState = useAppState();
-  const { vault } = useContext(ReactVaultContext);
+  const { vault } = useContext(ReactVaultContext) || {};
   const { loading, state, leftPanels, centerPanels, rightPanels, actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);

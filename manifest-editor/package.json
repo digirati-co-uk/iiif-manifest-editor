@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "author": "Kelsie Caldwell <kelsie.caldwell@digirati.com>",
+  "typings": "dist/types/npm/index.d.ts",
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": "./dist/npm/manifest-editor.es.js"
@@ -18,17 +20,20 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "build-desktop": "tauri build",
+    "build-exec": "vite build --config=vite/build.vite.ts && tsc -p .",
     "test": "vitest"
   },
   "resolutions": {
+    "@types/react": "18.0.14",
+    "@types/react-dom": "18.0.5",
     "@iiif/vault": "0.9.18",
     "@iiif/parser": "^1.0.10",
     "@atlas-viewer/iiif-image-api": "^2.0.5"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "^2.0.0-alpha.11",
+    "@atlas-viewer/atlas": "^2.0.0-alpha.17",
     "@atlas-viewer/iiif-image-api": "^2.0.5",
-    "@digirati/canvas-panel-web-components": "^v1.0.47",
+    "@digirati/canvas-panel-web-components": "^1.0.53",
     "@iiif/parser": "^1.0.10",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.18",
@@ -89,6 +94,7 @@
     "happy-dom": "^3.2.2",
     "prettier": "^2.6.2",
     "react-transition-group": "^4.4.2",
+    "rollup-plugin-dts": "^4.2.2",
     "storybook-addon-styled-component-theme": "^2.0.0",
     "typescript": "^4.6.4",
     "vite": "^2.9.9",

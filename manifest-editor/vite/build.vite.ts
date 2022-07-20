@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import { readFileSync } from "node:fs";
+import dts from "rollup-plugin-dts";
 import react from "@vitejs/plugin-react";
 
 const pkg = JSON.parse(readFileSync("./package.json").toString());
@@ -19,7 +20,7 @@ export default defineConfig({
     lib: {
       formats: ["es"],
       fileName: (format: string) => `manifest-editor.${format}.js`,
-      entry: "src/npm.tsx",
+      entry: "src/npm/index.tsx",
       name: "ManifestEditor",
     },
     manifest: true,
@@ -34,5 +35,6 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react({})],
+
+  plugins: [dts, react({})],
 });

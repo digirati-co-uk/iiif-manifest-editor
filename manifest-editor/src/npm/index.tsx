@@ -1,12 +1,12 @@
 import { render } from "react-dom";
 import React, { StrictMode } from "react";
-import templates from "../public/config/built-in-manifest-editor-templates.json?import";
-import { GlobalStyle } from "./atoms/GlobalStyle";
-import { ShellProvider } from "./shell/ShellContext/ShellContext";
-import { RenderApp } from "./_next/pages/render-app";
-import { Main } from "./atoms/Main";
-import { internalGetApps } from "./apps/app-loader";
-import { Config } from "./shell/ConfigContext/ConfigContext";
+import templates from "../../public/config/built-in-manifest-editor-templates.json?import";
+import { GlobalStyle } from "../atoms/GlobalStyle";
+import { ShellProvider } from "../shell/ShellContext/ShellContext";
+import { RenderApp } from "../_next/pages/render-app";
+import { Main } from "../atoms/Main";
+import { internalGetApps } from "../apps/app-loader";
+import { Config } from "../shell/ConfigContext/ConfigContext";
 
 export function init(
   element: HTMLElement,
@@ -42,3 +42,5 @@ export function init(
     element
   );
 }
+
+export * from './exports';

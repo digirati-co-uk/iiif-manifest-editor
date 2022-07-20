@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { ReactNode, useLayoutEffect, useRef, useState } from "react";
 import {
   InnerModalContainer,
   ModalBackground,
@@ -33,6 +33,7 @@ export const ModalButton: React.FC<{
   tabIndex?: number;
   role?: string;
   $disabled?: boolean;
+  children?: ReactNode;
 }> = React.forwardRef(function ModalButton(
   {
     as,

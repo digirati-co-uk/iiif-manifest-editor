@@ -32,8 +32,6 @@ async function createServer() {
     //
   }
 
-  console.log("viteBaseConfig", viteBaseConfig);
-
   // Create Vite server in middleware mode.
   const vite = await createViteServer(viteBaseConfig);
   // Use vite's connect instance as middleware
@@ -93,3 +91,5 @@ const [server] = await createServer({
 });
 
 await server.listen(3007);
+
+console.log(`Manifest editor: http://localhost:${3007}`);

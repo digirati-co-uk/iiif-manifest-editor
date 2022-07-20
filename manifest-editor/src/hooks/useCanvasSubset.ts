@@ -2,7 +2,7 @@ import { Reference } from "@iiif/presentation-3";
 import { useResourceContext, useVaultSelector } from "react-iiif-vault";
 import { IIIFStore } from "@iiif/vault";
 
-export function useCanvasSubset(idsOrRefs?: Array<string | Reference>) {
+export function useCanvasSubset(idsOrRefs?: Array<string | Reference>): Reference<"Canvas">[] {
   const ctx = useResourceContext();
   const manifestId = ctx.manifest;
   const refs = idsOrRefs ? idsOrRefs.map((item) => (typeof item === "string" ? item : item?.id)) : [];

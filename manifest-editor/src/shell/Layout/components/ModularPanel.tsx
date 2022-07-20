@@ -13,7 +13,7 @@ import { Button, CalltoButton } from "../../../atoms/Button";
 import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 import { PanelError } from "./PanelError";
 import { renderHelper } from "../Layout.helpers";
-import { useVault, VaultProvider } from "react-iiif-vault";
+import { ReactVaultContext, useVault, VaultProvider } from "react-iiif-vault";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -131,7 +131,7 @@ export function ModularPanel({
   transition,
   close,
 }: ModularPanelProps) {
-  const vault = useContext(VaultProvider);
+  const { vault } = useContext(ReactVaultContext) || {};
   const [didError, setDidError] = useState(false);
   const appState = useAppState();
   const layout = useLayoutProvider();
