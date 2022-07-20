@@ -1,7 +1,7 @@
 <template>
-  <div>This is from {{name}} (time: {{time}}) {{something_}}</div>
+  <div>This is from {{name}} (time: {{time}})</div>
   <button @click="ctx.actions.toggle('example-left-panel')">Toggle</button>
-  <button @click="ctx.actions.open('other-center')">Swap</button>
+  <button @click="ctx.actions.open('react')">Next panel</button>
 
   <button @click="ctx.actions.open('example-left-panel', {time: Date.now()})">Open (state)</button>
 </template>
@@ -12,7 +12,6 @@
     data() {
       return {
         name: 'VueJS',
-        something_: '',
       }
     },
     watch: {
@@ -22,12 +21,9 @@
         }
       }
     },
-      computed: {
+    computed: {
       time() {
         return this.time;
-      },
-      something() {
-        return this.something;
       }
     }
   }
