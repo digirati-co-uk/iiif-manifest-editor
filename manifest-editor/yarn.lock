@@ -37,28 +37,21 @@
     style-value-types "^3.1.7"
     typescript-memoize "^1.0.0-alpha.3"
 
-"@atlas-viewer/atlas@^2.0.0-alpha.11":
-  version "2.0.0-alpha.11"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.11.tgz#fa95c44ed024dfb89e0654f91a78fec6aa05cecf"
-  integrity sha512-uT1vVlGs00sg/jOKx/lhTE7f2SUTxRLCZFU/Tn6b2nnpxs0g4r3xPYA59XSwq9F4RGjNrax1g+iGE3hX08OiDw==
+"@atlas-viewer/atlas@^2.0.0-alpha.17":
+  version "2.0.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.17.tgz#b73b3847775f046744f149bd6e68409093994afb"
+  integrity sha512-zNI3gEtoQ72Xw0CdbXhvOhUx9OAZGEFv4FNWN2Zp7PuE6QqGDKOdSmT59yrUy+fi/NfLDwHX/PIs5wTgsyeBXg==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
-    "@atlas-viewer/iiif-image-api" "^1.2.5"
-    "@hyperion-framework/types" "^1.0.0"
-    "@hyperion-framework/vault" "^1.0.0"
-    "@popmotion/popcorn" "^0.4.4"
-    bezier-easing "^2.1.0"
+    "@atlas-viewer/iiif-image-api" "^2.0.5"
+    "@iiif/presentation-3" ">=1"
+    "@iiif/vault" "^0.9.18"
+    "@iiif/vault-helpers" "^0.9.7"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
-    popmotion "^8.7.6"
-    react "^16.12.0"
-    react-dom "^16.12.0"
     react-reconciler "^0.26.2"
     react-use-measure "^2.0.1"
-    scheduler "^0.20.2"
-    stats.js "^0.17.0"
-    style-value-types "^3.1.7"
-    typescript-memoize "^1.0.0-alpha.3"
+    scheduler "^0.21.0"
 
 "@atlas-viewer/atlas@^2.0.0-alpha.9":
   version "2.0.0-alpha.9"
@@ -1665,6 +1658,11 @@
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
   integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
 
+"@iiif/presentation-2@1.x":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.2.tgz#c712c4a40cc5b7291b8d92646b0ec8b8215b9b3d"
+  integrity sha512-EN/p+td5VrHvUsQXV26VkaDFW0HG2GPRaibPlxJRip8au8ABBrOYPIcBH69Hyk3I0UnW3xzK2VsZ9TcuQEn0Mw==
+
 "@iiif/presentation-3@*", "@iiif/presentation-3@1.*", "@iiif/presentation-3@^1.*":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.5.tgz#23208dd499a0bdc86328f32c82d6894f57fb51c1"
@@ -1676,6 +1674,13 @@
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.4.tgz#9433c38c6a26e95ef94d1f9e0232962398611d70"
   integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
+  dependencies:
+    "@types/geojson" "^7946.0.7"
+
+"@iiif/presentation-3@>=1":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.6.tgz#bec210e4df2549c363733dc3215b20c4e9160a46"
+  integrity sha512-00wzi4ocMe0bvxkYsv+SzWRPeN8ZHN2n86aJ2o2QpZiaVQ2AsewBPCMarGryAZ0x7CQv0yO9HV1xj6jiuhl9dQ==
   dependencies:
     "@types/geojson" "^7946.0.7"
 
@@ -1702,6 +1707,16 @@
     "@iiif/presentation-3" "^1.0.4"
     "@iiif/vault" "^0.9.8"
     tiny-invariant "^1.2.0"
+
+"@iiif/vault-helpers@^0.9.7":
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.8.tgz#6570073ff73bc5638255fca2f845ae484d7d208d"
+  integrity sha512-73rUenQUnrd+WIoJwlcL4X/Q1bEwABdr53IZMB7QukecyvTyYr2TsreEzKU56T/Wx1mSLPISPM4AX520bOe6SA==
+  dependencies:
+    "@iiif/presentation-2" "1.x"
+    "@iiif/presentation-3" "1.x"
+  optionalDependencies:
+    react-i18next "^11.18.0"
 
 "@iiif/vault@0.9.*", "@iiif/vault@0.9.18", "@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.*", "@iiif/vault@^0.9.16", "@iiif/vault@^0.9.18", "@iiif/vault@^0.9.8":
   version "0.9.18"
@@ -10027,6 +10042,14 @@ react-i18next@^11.16.9:
     html-escaper "^2.0.2"
     html-parse-stringify "^3.0.1"
 
+react-i18next@^11.18.0:
+  version "11.18.1"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.1.tgz#ba86ed09069e129b8623a28f2b9a03d7f105ea6f"
+  integrity sha512-S8cl4mvIOSA7OQCE5jNy2yhv705Vwi+7PinpqKIYcBmX/trJtHKqrf6CL67WJSA8crr2JU+oxE9jn9DQIrQezg==
+  dependencies:
+    "@babel/runtime" "^7.14.5"
+    html-parse-stringify "^3.0.1"
+
 react-iiif-vault@0.9.8:
   version "0.9.8"
   resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.8.tgz#e2c94edef45c944f8e0b6e997689d04b9be7ef4c"
@@ -10642,6 +10665,13 @@ scheduler@^0.20.2:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+scheduler@^0.21.0:
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.21.0.tgz#6fd2532ff5a6d877b6edb12f00d8ab7e8f308820"
+  integrity sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==
+  dependencies:
+    loose-envify "^1.1.0"
 
 schema-utils@2.7.0:
   version "2.7.0"
