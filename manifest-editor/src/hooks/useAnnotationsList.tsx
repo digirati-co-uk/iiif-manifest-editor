@@ -98,7 +98,7 @@ export function useAnnotationList<T = AnnotationNormalized>(
 
   const addNewAnnotationPage = (id?: string, label?: any, importPage?: boolean, callback?: () => void) => {
     if (!canvas) return;
-    const newID = id ? id : `https://example.org/annotation/${v4()}/annotation-page`;
+    const newID = id ? id : `https://example.org/annotations/${v4()}/annotation-page`;
     const lab = label ? label : {};
     vault.dispatch(
       importEntities({

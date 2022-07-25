@@ -4,21 +4,23 @@ import { Button, CalltoButton } from "../../../atoms/Button";
 import { LightBox } from "../../../atoms/LightBox";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { useAnnotationList } from "../../../hooks/useAnnotationsList";
+import { useVaultSelector } from "../../../hooks/useVaultSelector";
 import { CloseIcon } from "../../../icons/CloseIcon";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 import { Accordian } from "../Accordian/Accordian";
 import { AnnotationItems } from "./AnnotationItems";
 import { AnnotationPage } from "./AnnotationPage";
 
-export const AnnotationPages: React.FC<{ canvasID: string }> = ({ canvasID }) => {
+const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ annotationPageID, canvasID }) => {
+  const page = useVaultSelector((state) => state.iiif.entities.AnnotationPage[annotationPageID]);
+  if (!page) {
+    return <div>Vault cannot access details of: {annotationPageID}, please try refreshing the page</div>;
+  }
   const vault = useVault();
-  const canvas = useCanvas({ id: canvasID });
   const { addNewAnnotation, removeAnnotationPage } = useAnnotationList(canvasID);
-
   function items(item: any) {
     return <AnnotationItems pageID={item.id} />;
   }
-
   function convert(item: any) {
     // @todo we are loosing the detail from the annotationPage here
     vault.load(item.id);
@@ -59,32 +61,36 @@ export const AnnotationPages: React.FC<{ canvasID: string }> = ({ canvasID }) =>
     return vault.get(item)?.items.length === 0;
   }
   return (
+    <LightBox key={annotationPageID}>
+      <FlexContainerRow justify="flex-end">
+        <Button title="delete" onClick={() => removeAnnotationPage(page.id)}>
+          <CloseIcon />
+        </Button>
+      </FlexContainerRow>
+      <Accordian renderOpen={false} title={getValue(page?.label) || "Annotation Page Properties"}>
+        <AnnotationPage id={annotationPageID} />
+      </Accordian>
+      <PaddingComponentMedium />
+      {isExternal(page) && externalConvert(page)}
+      <Accordian renderOpen={false} title="items">
+        <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
+        {page.items.length === 0 && (
+          <FlexContainerRow style={{ padding: "1rem" }}>
+            <i>No annotations yet! Add new annotations using the button below</i>
+          </FlexContainerRow>
+        )}
+        <Button onClick={() => addNewAnnotation(page.id)}>Add new annotation</Button>
+      </Accordian>
+    </LightBox>
+  );
+};
+
+export const AnnotationPages: React.FC<{ canvasID: string }> = ({ canvasID }) => {
+  const canvas = useCanvas({ id: canvasID });
+  return (
     <>
-      {vault.get(canvas.annotations).map((page: any) => {
-        if (!page) return <></>;
-        return (
-          <LightBox key={page.id}>
-            <FlexContainerRow justify="flex-end">
-              <Button title="delete" onClick={() => removeAnnotationPage(page.id)}>
-                <CloseIcon />
-              </Button>
-            </FlexContainerRow>
-            <Accordian renderOpen={false} title={getValue(page.label) || "Annotation Page Properties"}>
-              <AnnotationPage id={page.id} />
-            </Accordian>
-            <PaddingComponentMedium />
-            {isExternal(page) && externalConvert(page)}
-            <Accordian renderOpen={false} title="items">
-              <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
-              {page.items.length === 0 && (
-                <FlexContainerRow style={{ padding: "1rem" }}>
-                  <i>No annotations yet! Add new annotations using the button below</i>
-                </FlexContainerRow>
-              )}
-              <Button onClick={() => addNewAnnotation(page.id)}>Add new annotation</Button>
-            </Accordian>
-          </LightBox>
-        );
+      {canvas?.annotations.map((page: any) => {
+        return <SinglePage annotationPageID={page.id} canvasID={canvasID} />;
       })}
     </>
   );
