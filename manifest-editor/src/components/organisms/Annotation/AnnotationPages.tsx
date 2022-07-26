@@ -34,7 +34,12 @@ const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ 
             <h3 style={{ margin: "0.5rem" }}>{getValue(annotationPage.label)}</h3>
             <p>AnnotationPage</p>
             <small>
-              <a style={{ color: "unset" }} href={annotationPage.id} target="_blank" rel="noopener noreferrer">
+              <a
+                style={{ color: "unset", width: "100%", wordWrap: "break-word" }}
+                href={annotationPage.id}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {annotationPage.id}
               </a>
               <PaddingComponentSmall />
