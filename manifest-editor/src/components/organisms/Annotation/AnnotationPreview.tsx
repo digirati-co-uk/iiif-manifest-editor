@@ -31,11 +31,11 @@ export function AnnotationPreview({ region }: { region: string }) {
       `}</style>
 
       <canvas-panel
-        debugging="true"
         ref={viewer}
         manifest-id={manifest?.id}
         canvas-id={state.canvasId}
         region={region}
+        render="static"
       />
     </Container>
   );
