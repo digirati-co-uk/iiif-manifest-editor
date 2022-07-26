@@ -77,7 +77,7 @@ const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ 
       </Accordian>
       <PaddingComponentMedium />
       {isExternal(page) && externalConvert(page)}
-      <Accordian renderOpen={false} title="items">
+      <Accordian renderOpen={false} title={`items (${page.items.length})`}>
         <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
         {page.items.length === 0 && (
           <FlexContainerRow style={{ padding: "1rem" }}>
