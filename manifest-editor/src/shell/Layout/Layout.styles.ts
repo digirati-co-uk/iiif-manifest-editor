@@ -30,8 +30,14 @@ export const LeftPanel = styled.div<{ $state?: TransitionStatus; $width: string;
   flex-direction: column;
   overflow-y: auto;
   max-width: 720px;
+  align-items: flex-end;
 
-  ${(props) => (props.$motion ? "transition: max-width 300ms;" : "")}
+  ${(props) =>
+    props.$motion
+      ? css`
+          transition: max-width 400ms;
+        `
+      : ""}
 
   ${(props) => {
     switch (props.$state) {
@@ -79,7 +85,7 @@ export const RightPanel = styled.div<{ $state?: TransitionStatus; $width: string
   overflow-y: auto;
   max-width: 720px;
 
-  ${(props) => (props.$motion ? "transition: max-width 300ms;" : "")}
+  ${(props) => (props.$motion ? "transition: max-width 400ms;" : "")}
 
   ${(props) => {
     switch (props.$state) {
@@ -104,6 +110,8 @@ export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`
   display: flex;
   flex: 1;
   height: 100%;
+  min-width: 50px;
+  transition: min-width 400ms;
 
   ${(props) => {
     switch (props.$menu) {

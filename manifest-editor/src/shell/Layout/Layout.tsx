@@ -107,7 +107,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         }}
       >
         {props.leftPanels.length > 0 ? (
-          <Transition in={state.leftPanel.open} timeout={enableMotion ? 300 : 0} unmountOnExit={false}>
+          <Transition in={state.leftPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
             {(transition) => (
               <>
                 <L.LeftPanel $width={leftPanelResizer.widthB} $state={transition} $motion={enableMotion}>
@@ -178,7 +178,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
           </L.PanelContainer>
         </L.CenterPanel>
         {props.rightPanels.length > 0 ? (
-          <Transition in={state.rightPanel.open} timeout={enableMotion ? 300 : 0} unmountOnExit={false}>
+          <Transition in={state.rightPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
             {(transition) => (
               <>
                 <HandleControls
