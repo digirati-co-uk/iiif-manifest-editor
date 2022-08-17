@@ -1,5 +1,5 @@
 import { Vault } from "@iiif/vault";
-import { ManifestNormalized, RangeItems, RangeNormalized, Reference } from "@iiif/presentation-3";
+import { ManifestNormalized, RangeNormalized, Reference } from "@iiif/presentation-3";
 
 export function findFirstCanvasFromRange(vault: Vault, range: RangeNormalized): null | Reference<"Canvas"> {
   for (const inner of range.items) {

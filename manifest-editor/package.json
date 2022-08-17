@@ -1,38 +1,54 @@
 {
   "name": "manifest-editor",
-  "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "author": "Kelsie Caldwell <kelsie.caldwell@digirati.com>",
+  "exports": {
+    ".": {
+      "import": "./dist/npm/manifest-editor.es.js"
+    }
+  },
+  "bin": {
+    "manifest-editor": "bin/manifest-editor.js"
+  },
   "scripts": {
     "build": "vite build",
     "start": "vite",
+    "app": "tauri dev",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "build-desktop": "tauri build",
     "test": "vitest"
   },
   "resolutions": {
     "@iiif/vault": "0.9.18",
+    "@iiif/parser": "^1.0.10",
     "@atlas-viewer/iiif-image-api": "^2.0.5"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "^2.0.0-alpha.17",
     "@atlas-viewer/iiif-image-api": "^2.0.5",
     "@digirati/canvas-panel-web-components": "^v1.0.47",
+    "@iiif/parser": "^1.0.10",
     "@iiif/presentation-3": "^1.0.4",
     "@iiif/vault": "^0.9.18",
     "@iiif/vault-helpers": "^0.9.5",
+    "@octokit/rest": "^18.12.0",
+    "@tauri-apps/api": "^1.0.1",
     "@types/styled-components": "^5.1.25",
+    "express": "^4.18.1",
     "iiif-builder": "^1.0.5",
     "immer": "^9.0.14",
     "mitt": "^3.0.0",
     "query-string": "^7.1.1",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-accessible-dropdown-menu-hook": "^3.2.0",
     "react-beautiful-dnd": "^13.1.0",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.2.0",
     "react-easy-sort": "^1.4.1",
     "react-functional-select": "^3.3.3",
     "react-i18next": "^11.16.9",
-    "react-iiif-vault": "0.9.8",
+    "react-iiif-vault": "^0.9.11",
     "react-lazy-load-image-component": "^1.5.4",
     "react-textarea-autosize": "^8.3.4",
     "react-window": "^1.8.7",
@@ -49,11 +65,13 @@
     "@mdx-js/preact": "^2.1.1",
     "@storybook/builder-vite": "^0.1.34",
     "@storybook/react": "^6.5.0",
+    "@tauri-apps/cli": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@types/node": "^17.0.34",
-    "@types/react": "17.0.38",
+    "@types/react": "18.0.14",
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-dom": "18.0.5",
     "@types/react-lazy-load-image-component": "^1.5.2",
     "@types/react-transition-group": "^4.4.4",
     "@types/shallowequal": "^1.1.1",

@@ -98,6 +98,13 @@ export class IIIFPreviewService implements PreviewHandler {
       cached.updateLocation = json.updateLocation;
     }
 
+    const readOnlyManifest = `${json.location}/${Date.now()}`;
+
+    // Make a fetch, fill the cache (preview may not)
+    await fetch(readOnlyManifest, {
+      cache: "no-cache",
+    });
+
     return {
       id: this.id,
       type: "external-manifest-preview",

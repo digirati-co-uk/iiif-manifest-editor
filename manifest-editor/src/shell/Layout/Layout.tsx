@@ -1,17 +1,19 @@
 import { LayoutProps } from "./Layout.types";
 import { useLayoutProvider } from "./Layout.context";
-import { memo, useEffect } from "react";
+import { memo, useContext, useEffect, useLayoutEffect } from "react";
 import * as L from "./Layout.styles";
 import { ModularPanel } from "./components/ModularPanel";
 import { HandleControls } from "./components/HandleControls";
 import { useResizeLayout } from "../../madoc/use-resize-layouts";
 import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
-import { panelSizing } from "./Layout.helpers";
+import { panelSizing, renderHelper } from "./Layout.helpers";
+import { ReactVaultContext } from "react-iiif-vault";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const appState = useAppState();
+  const { vault } = useContext(ReactVaultContext);
   const { loading, state, leftPanels, centerPanels, rightPanels, actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
@@ -71,6 +73,16 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     // actions are stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useLayoutEffect(() => {
+    if (centerPanel && centerPanel.onMount) {
+      return centerPanel.onMount(
+        state.centerPanel.state || centerPanel.defaultState || {},
+        { ...layout, current: actions.centerPanel, vault: vault as any },
+        appState
+      );
+    }
+  }, [state.centerPanel.current]);
 
   if (loading) {
     // It will render as soon as possible, downside of hoisting the layout provider
@@ -133,10 +145,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
             <L.PanelContent>
               {state.centerPanel.open
                 ? centerPanel
-                  ? centerPanel.render(
-                      state.centerPanel.state || centerPanel.defaultState || {},
-                      { ...layout, current: actions.centerPanel },
-                      appState
+                  ? renderHelper(
+                      centerPanel.render(
+                        state.centerPanel.state || centerPanel.defaultState || {},
+                        { ...layout, current: actions.centerPanel, vault },
+                        appState
+                      )
                     )
                   : null
                 : null}

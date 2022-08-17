@@ -7,11 +7,13 @@ import { BackIcon } from "../../../icons/BackIcon";
 import { useLayoutProvider } from "../Layout.context";
 import { useAppState } from "../../AppContext/AppContext";
 import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ErrorMessage } from "../../../madoc/components/callouts/ErrorMessage";
 import { Button, CalltoButton } from "../../../atoms/Button";
 import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 import { PanelError } from "./PanelError";
+import { renderHelper } from "../Layout.helpers";
+import { useVault, VaultProvider } from "react-iiif-vault";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -129,6 +131,7 @@ export function ModularPanel({
   transition,
   close,
 }: ModularPanelProps) {
+  const vault = useContext(VaultProvider);
   const [didError, setDidError] = useState(false);
   const appState = useAppState();
   const layout = useLayoutProvider();
@@ -180,7 +183,9 @@ export function ModularPanel({
           FallbackComponent={PanelError}
           resetKeys={resetKeys}
         >
-          {panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions }, appState)}
+          {renderHelper(
+            panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions, vault }, appState)
+          )}
         </ErrorBoundary>
       </ModularPanelContent>
     </ModularPanelWrapper>

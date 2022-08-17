@@ -11,6 +11,7 @@ import { IIIFPreviewService } from "./previews/IIIFPreviewService";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import invariant from "tiny-invariant";
 import { useVault } from "react-iiif-vault";
+import { DesktopManifestUrlPreview } from "./previews/DesktopManifestUrlPreview";
 
 export function usePreviewActions(
   state: PreviewState,
@@ -67,6 +68,7 @@ export function usePreviewActions(
       // Select
       const handler = handlerMap[selectedPreview.id];
       if (handler) {
+        console.log("newPreview?");
         const newPreview = await handler.updatePreview(currentProject, vault, context);
         if (newPreview) {
           projects.actions.setPreview(newPreview);
@@ -81,6 +83,7 @@ export function usePreviewActions(
   async function selectPreview(id: string) {
     const selectedHandler = handlerMap[id];
     if (selectedHandler && currentProject) {
+      console.log("selectPreview?");
       await activatePreview(id);
 
       dispatch({ type: "selectPreview", payload: id });
@@ -98,6 +101,7 @@ export function usePreviewActions(
   }
 
   async function focusPreview(id: string) {
+    console.log("focusPreview?");
     const selectedHandler = handlerMap[id];
     if (handlerMap[id] && currentProject) {
       await selectedHandler.focus(currentProject);
@@ -154,7 +158,11 @@ export function usePreviewHandlers(configs: PreviewConfiguration[]): PreviewHand
           handlers.push(new IIIFPreviewService(config));
           break;
         case "external-manifest-preview":
-          handlers.push(new ExternalManifestUrlPreview(config));
+          if (window.__TAURI__) {
+            handlers.push(new DesktopManifestUrlPreview(config));
+          } else {
+            handlers.push(new ExternalManifestUrlPreview(config));
+          }
           break;
       }
     }

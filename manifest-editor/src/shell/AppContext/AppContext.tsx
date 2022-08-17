@@ -3,10 +3,12 @@ import { MappedApp } from "../../apps/app-loader";
 import { useLocalStorage } from "../../madoc/use-local-storage";
 import invariant from "tiny-invariant";
 import { useCurrentProject, useProjectContext } from "../ProjectContext/ProjectContext";
+import { DesktopContext } from "../DesktopContext/DesktopContext";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
   currentApp: { id: string; args?: any };
+  initialApp: { id: string; args?: any };
   changeApp: (app: { id: string; args?: any }) => void;
 };
 
@@ -48,7 +50,11 @@ export function AppStateProvider(props: { appId: string; initialValue?: any; chi
 
   const ctx = useMemo(() => ({ state: state || {}, setState }), [setState, state]);
 
-  return <AppStateReactContext.Provider value={ctx}>{props.children}</AppStateReactContext.Provider>;
+  return (
+    <AppStateReactContext.Provider value={ctx}>
+      {window.__TAURI__ ? <DesktopContext>{props.children}</DesktopContext> : props.children}
+    </AppStateReactContext.Provider>
+  );
 }
 
 export function AppProvider({
@@ -62,8 +68,13 @@ export function AppProvider({
 }) {
   const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
   const ctx = useMemo<AppContext>(
-    () => ({ currentApp: currentApp || { id: "manifest-editor" }, apps, changeApp }),
-    [apps, currentApp]
+    () => ({
+      currentApp: currentApp || { id: "splash" },
+      initialApp: initialApp || { id: "splash" },
+      apps,
+      changeApp,
+    }),
+    [initialApp, apps, currentApp]
   );
 
   return <AppReactContext.Provider value={ctx}>{children}</AppReactContext.Provider>;

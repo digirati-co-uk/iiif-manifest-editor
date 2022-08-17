@@ -1,6 +1,5 @@
 import { CanvasContext, useManifest } from "react-iiif-vault";
 import invariant from "tiny-invariant";
-import { getValue } from "@iiif/vault-helpers";
 import { CanvasListItem } from "./components/CanvasListItem";
 import { CanvasListStyles } from "./CanvasList.styles";
 

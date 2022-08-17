@@ -1,10 +1,9 @@
 import { RangeContext, useManifest, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { ViewRange } from "./components/ViewRange";
-import { EmptyCanvasState } from "../../components/organisms/EmptyCanvasState/EmptyCanvasState";
 import { EmptyState } from "../../madoc/components/EmptyState";
 import { RangeNavigationStyles as S } from "./RangeNavigation.styles";
-import { findManifestSelectedRange, findSelectedRange } from "./components/ViewRange.helpers";
+import { findManifestSelectedRange } from "./components/ViewRange.helpers";
 import { useAppState } from "../../shell/AppContext/AppContext";
 import { getValue } from "@iiif/vault-helpers";
 import { useLayoutEffect } from "react";

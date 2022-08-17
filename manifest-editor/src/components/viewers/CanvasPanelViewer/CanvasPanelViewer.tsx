@@ -9,8 +9,12 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
+<<<<<<< HEAD
 import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { Annotations } from "./components/Annotations";
+=======
+import { MediaControls } from "./components/MediaControls";
+>>>>>>> feature/storybook-ish
 
 const Container = styled.div`
   position: relative;
@@ -36,10 +40,6 @@ export function CanvasPanelViewer() {
   const { rightPanel } = useLayoutState();
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
 
-  const goHome = () => runtime.current?.world.goHome();
-  const zoomIn = () => runtime.current?.world.zoomTo(0.75);
-  const zoomOut = () => runtime.current?.world.zoomTo(1 / 0.75);
-
   useEffect(() => {
     runtime.current?.goHome();
   }, [state.canvasId]);
@@ -48,7 +48,11 @@ export function CanvasPanelViewer() {
     return <EmptyCanvasState />;
   }
 
+<<<<<<< HEAD
   if (!state.canvasId) {
+=======
+  if (!canvas || !manifest) {
+>>>>>>> feature/storybook-ish
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -72,7 +76,6 @@ export function CanvasPanelViewer() {
       )}
     >
       <Container key={refreshKey}>
-        <ViewControls goHome={goHome} zoomIn={zoomIn} zoomOut={zoomOut} refresh={refresh} />
         <style>{`
         .atlas-container {
           min-width: 0;
@@ -81,9 +84,19 @@ export function CanvasPanelViewer() {
         }
       `}</style>
         <ViewerContainer>
+<<<<<<< HEAD
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
               <CanvasPanel.RenderCanvas />
+=======
+          <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
+            <CanvasContext canvas={canvas}>
+              <CanvasPanel.RenderCanvas
+                strategies={["images", "media"]}
+                renderViewerControls={() => <ViewControls refresh={refresh} />}
+                renderMediaControls={() => <MediaControls />}
+              />
+>>>>>>> feature/storybook-ish
             </CanvasContext>
             {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
               <Annotations canvasId={state.canvasId} />

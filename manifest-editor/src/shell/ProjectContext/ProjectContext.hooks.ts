@@ -20,6 +20,7 @@ import { useProjectContext } from "./ProjectContext";
 import { useApps } from "../AppContext/AppContext";
 import { v4 } from "uuid";
 import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
+import { once } from "@tauri-apps/api/event";
 
 export function useProjectActionsWithBackend(
   dispatch: Dispatch<ProjectActionsType>,
@@ -68,6 +69,7 @@ export function useProjectActionsWithBackend(
     dispatch({ type: "setLoadingStatus", payload });
   }
   function saveProject(project: EditorProject) {
+    console.log("trying to save project...");
     dispatch({ type: "saveProject", payload: project });
 
     Promise.all([
@@ -222,8 +224,15 @@ export function useProjectLoader<T extends Storage = any>(
   // This will ensure that the changes are saved before reloading or navigating away.
   useEffect(() => {
     window.addEventListener("beforeunload", saveChanges, false);
+    let tauriUnload: any = undefined;
+    if (window.__TAURI__) {
+      tauriUnload = once("tauri://close-requested", saveChanges);
+    }
     return () => {
       window.removeEventListener("beforeunload", saveChanges);
+      if (tauriUnload) {
+        tauriUnload();
+      }
     };
   }, [saveChanges]);
 
