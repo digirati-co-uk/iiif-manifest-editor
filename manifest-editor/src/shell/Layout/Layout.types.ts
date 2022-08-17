@@ -106,6 +106,7 @@ export interface LayoutPanel {
     app: AppState
   ) => (() => void) | void;
   defaultState?: any;
+  requiresState?: boolean;
   backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
   options?: {
     minWidth?: number;

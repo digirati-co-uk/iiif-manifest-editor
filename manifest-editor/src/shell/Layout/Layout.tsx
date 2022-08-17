@@ -9,15 +9,18 @@ import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import { ReactVaultContext } from "react-iiif-vault";
+import { Transition } from "react-transition-group";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const appState = useAppState();
-  const { vault } = useContext(ReactVaultContext);
+  const { vault: _vault } = useContext(ReactVaultContext);
+  const vault = _vault || undefined;
   const { loading, state, leftPanels, centerPanels, rightPanels, actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
   const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
+  const enableMotion = true;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
     : undefined;
@@ -104,36 +107,53 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         }}
       >
         {props.leftPanels.length > 0 ? (
-          <>
-            <L.LeftPanel
-              ref={leftPanelResizer.refs.resizableDiv}
-              style={{ width: state.leftPanel.open ? leftPanelResizer.widthB : undefined }}
-            >
-              <L.PanelContainer $menu={props.leftPanelMenuPosition || "bottom"}>
-                {props.leftPanelMenu ? (
-                  <L.PanelMenu $open={state.leftPanel.open} $position={props.leftPanelMenuPosition || "bottom"}>
-                    {props.leftPanelMenu}
-                  </L.PanelMenu>
-                ) : null}
-                <L.PanelContent>
-                  {state.leftPanel.open ? (
-                    <>
-                      {leftPanel ? (
-                        <ModularPanel panel={leftPanel} state={state.leftPanel} actions={actions.leftPanel} />
+          <Transition in={state.leftPanel.open} timeout={enableMotion ? 300 : 0} unmountOnExit={false}>
+            {(transition) => (
+              <>
+                <L.LeftPanel $width={leftPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                  <L.PanelContainer
+                    $menu={props.leftPanelMenuPosition || "bottom"}
+                    ref={leftPanelResizer.refs.resizableDiv}
+                    style={{
+                      width: state.leftPanel.open || transition !== "exited" ? leftPanelResizer.widthB : undefined,
+                      minWidth: leftPanel?.options?.minWidth,
+                    }}
+                  >
+                    {props.leftPanelMenu ? (
+                      <L.PanelMenu
+                        $open={state.leftPanel.open && transition !== "exited"}
+                        $position={props.leftPanelMenuPosition || "bottom"}
+                      >
+                        {props.leftPanelMenu}
+                      </L.PanelMenu>
+                    ) : null}
+                    <L.PanelContent>
+                      {state.leftPanel.open || transition !== "exited" ? (
+                        <>
+                          {leftPanel ? (
+                            <ModularPanel
+                              panel={leftPanel}
+                              state={state.leftPanel}
+                              actions={actions.leftPanel}
+                              available={leftPanels}
+                            />
+                          ) : null}
+                        </>
                       ) : null}
-                    </>
-                  ) : null}
-                </L.PanelContent>
-              </L.PanelContainer>
-            </L.LeftPanel>
-            <HandleControls
-              ref={leftPanelResizer.refs.resizer}
-              reset={resetLeftPanel}
-              dir="left"
-              open={state.leftPanel.open}
-              actions={actions.leftPanel}
-            />
-          </>
+                    </L.PanelContent>
+                  </L.PanelContainer>
+                </L.LeftPanel>
+                <HandleControls
+                  ref={leftPanelResizer.refs.resizer}
+                  reset={resetLeftPanel}
+                  dir="left"
+                  transition={transition}
+                  open={state.leftPanel.open || transition !== "exited"}
+                  actions={actions.leftPanel}
+                />
+              </>
+            )}
+          </Transition>
         ) : null}
         <L.CenterPanel>
           <L.PanelContainer $menu={props.centerPanelMenuPosition || "top"}>
@@ -148,7 +168,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                   ? renderHelper(
                       centerPanel.render(
                         state.centerPanel.state || centerPanel.defaultState || {},
-                        { ...layout, current: actions.centerPanel, vault },
+                        { ...layout, current: actions.centerPanel, vault: vault },
                         appState
                       )
                     )
@@ -158,50 +178,59 @@ export const Layout = memo(function Layout(props: LayoutProps) {
           </L.PanelContainer>
         </L.CenterPanel>
         {props.rightPanels.length > 0 ? (
-          <>
-            <HandleControls
-              ref={rightPanelResizer.refs.resizer}
-              dir="right"
-              reset={resetRightPanel}
-              open={state.rightPanel.open}
-              actions={actions.rightPanel}
-            />
-            <L.RightPanel
-              ref={rightPanelResizer.refs.resizableDiv}
-              style={{ width: state.rightPanel.open ? rightPanelResizer.widthB : undefined }}
-            >
-              <L.PanelContainer $menu={props.rightPanelMenuPosition || "bottom"}>
-                {props.rightPanelMenu ? (
-                  <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
-                    {props.rightPanelMenu}
-                  </L.PanelMenu>
-                ) : null}
-                <L.PanelContent>
-                  {state.rightPanel.open ? (
-                    <>
-                      {pinnedRightPanel ? (
-                        <ModularPanel
-                          panel={pinnedRightPanel}
-                          state={state.pinnedRightPanel}
-                          actions={actions.pinnedRightPanel}
-                          close={actions.rightPanel.close}
-                        />
-                      ) : null}
+          <Transition in={state.rightPanel.open} timeout={enableMotion ? 300 : 0} unmountOnExit={false}>
+            {(transition) => (
+              <>
+                <HandleControls
+                  ref={rightPanelResizer.refs.resizer}
+                  dir="right"
+                  reset={resetRightPanel}
+                  open={state.rightPanel.open}
+                  actions={actions.rightPanel}
+                />
+                <L.RightPanel $width={rightPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                  <L.PanelContainer
+                    $menu={props.rightPanelMenuPosition || "bottom"}
+                    ref={rightPanelResizer.refs.resizableDiv}
+                    style={{
+                      width: state.rightPanel.open || transition !== "exited" ? rightPanelResizer.widthB : undefined,
+                      minWidth: rightPanel?.options?.minWidth,
+                    }}
+                  >
+                    {props.rightPanelMenu ? (
+                      <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
+                        {props.rightPanelMenu}
+                      </L.PanelMenu>
+                    ) : null}
+                    <L.PanelContent>
+                      {state.rightPanel.open || transition !== "exited" ? (
+                        <>
+                          {pinnedRightPanel ? (
+                            <ModularPanel
+                              panel={pinnedRightPanel}
+                              state={state.pinnedRightPanel}
+                              actions={actions.pinnedRightPanel}
+                              close={actions.rightPanel.close}
+                            />
+                          ) : null}
 
-                      {showRightPanel ? (
-                        <ModularPanel
-                          panel={rightPanel}
-                          state={state.rightPanel}
-                          actions={actions.rightPanel}
-                          pinActions={actions.pinnedRightPanel}
-                        />
+                          {showRightPanel ? (
+                            <ModularPanel
+                              panel={rightPanel}
+                              state={state.rightPanel}
+                              actions={actions.rightPanel}
+                              pinActions={actions.pinnedRightPanel}
+                              available={rightPanels}
+                            />
+                          ) : null}
+                        </>
                       ) : null}
-                    </>
-                  ) : null}
-                </L.PanelContent>
-              </L.PanelContainer>
-            </L.RightPanel>
-          </>
+                    </L.PanelContent>
+                  </L.PanelContainer>
+                </L.RightPanel>
+              </>
+            )}
+          </Transition>
         ) : null}
       </L.Main>
       <L.Footer>{props.footer || null}</L.Footer>

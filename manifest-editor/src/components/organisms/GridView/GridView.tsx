@@ -16,12 +16,13 @@ import { usePasteCanvas } from "../../../hooks/usePasteCanvas";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
+  handleChangeDouble: (canvasId: string, thumbnail?: boolean) => void;
   width?: number;
   strip?: boolean;
   column?: boolean;
   canvasIds?: Array<string | Reference>;
   clearCanvases?: () => void;
-}> = ({ handleChange, width, strip, column, canvasIds, clearCanvases }) => {
+}> = ({ handleChange, handleChangeDouble, width, strip, column, canvasIds, clearCanvases }) => {
   const canvases = useCanvasSubset(canvasIds);
   const editorContext = useManifestEditor();
   const onPasteCanvas = usePasteCanvas();
@@ -68,7 +69,7 @@ export const GridView: React.FC<{
       ) : null}
 
       <UniversalCopyTarget as={GridViewContainer} onPasteAnalysis={onPasteCanvas} $column={strip}>
-        <GridList handleChange={handleChange} canvasIds={canvasIds} />
+        <GridList handleChange={handleChange} handleChangeDouble={handleChangeDouble} canvasIds={canvasIds} />
 
         {!strip && (
           <FlexContainerRow>

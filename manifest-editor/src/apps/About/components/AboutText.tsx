@@ -1,12 +1,11 @@
-import { FlexContainerColumn } from "../../../components/layout/FlexContainer";
-import { RecentFilesWidget } from "../../../atoms/RecentFilesWidget";
-import htmlAsString from "../../../../public/welcome.html?raw";
-import { EmptyCanvasState } from "../../../components/organisms/EmptyCanvasState/EmptyCanvasState";
+import { FlexContainerColumn } from "@/components/layout/FlexContainer";
+import htmlAsString from "./welcome.html?raw";
+import { RaisedEditorial } from "@/_components/surfaces/RaisedEditorial/RaisedEditorial";
 
 export function AboutText() {
   return (
-    <FlexContainerColumn justify="flex-start" style={{ width: "80%", margin: "auto" }}>
-      <RecentFilesWidget dangerouslySetInnerHTML={{ __html: htmlAsString }} />
+    <FlexContainerColumn justify="flex-start">
+      <RaisedEditorial dangerouslySetInnerHTML={{ __html: htmlAsString }} />
     </FlexContainerColumn>
   );
 }

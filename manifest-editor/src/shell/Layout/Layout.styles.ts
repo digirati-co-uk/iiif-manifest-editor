@@ -1,5 +1,6 @@
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { MenuPositions } from "./Layout.types";
+import { TransitionStatus } from "react-transition-group";
 
 export const OuterWrapper = styled.div`
   display: flex;
@@ -23,12 +24,32 @@ export const Main = styled.div`
   min-height: 0;
 `;
 
-export const LeftPanel = styled.div`
+export const LeftPanel = styled.div<{ $state?: TransitionStatus; $width: string; $motion?: boolean }>`
   background: #fff;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   max-width: 720px;
+
+  ${(props) => (props.$motion ? "transition: max-width 300ms;" : "")}
+
+  ${(props) => {
+    switch (props.$state) {
+      case "entering":
+        return css`
+          max-width: ${props.$width};
+        `;
+      case "exiting":
+        return css`
+          max-width: 0;
+        `;
+      case "unmounted":
+      case "exited":
+        return css`
+          max-width: 0;
+        `;
+    }
+  }}
 `;
 
 export const CenterPanel = styled.div`
@@ -51,12 +72,32 @@ export const CenterPanel = styled.div`
   }
 `;
 
-export const RightPanel = styled.div`
+export const RightPanel = styled.div<{ $state?: TransitionStatus; $width: string; $motion?: boolean }>`
   background: #fff;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   max-width: 720px;
+
+  ${(props) => (props.$motion ? "transition: max-width 300ms;" : "")}
+
+  ${(props) => {
+    switch (props.$state) {
+      case "entering":
+        return css`
+          max-width: ${props.$width};
+        `;
+      case "exiting":
+        return css`
+          max-width: 0;
+        `;
+      case "unmounted":
+      case "exited":
+        return css`
+          max-width: 0;
+        `;
+    }
+  }}
 `;
 
 export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`

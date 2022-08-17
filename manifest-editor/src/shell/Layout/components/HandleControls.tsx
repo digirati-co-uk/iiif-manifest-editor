@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { CloseIcon } from "../../../icons/CloseIcon";
 import { PanelActions } from "../Layout.types";
 import { forwardRef } from "react";
 import { ResetIcon } from "../../../icons/ResetIcon";
 import { DownIcon } from "../../../icons/DownIcon";
 import { ButtonReset } from "../../../atoms/Button";
+import { TransitionStatus } from "react-transition-group";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -125,6 +126,7 @@ export const HandleControls = forwardRef<
     dir: "left" | "right";
     open: boolean;
     actions: PanelActions;
+    transition?: TransitionStatus;
     reset?: () => void;
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {

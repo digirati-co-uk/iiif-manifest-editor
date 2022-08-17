@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   clearScreen: false,
@@ -26,6 +27,11 @@ export default defineConfig({
   test: {
     environment: "happy-dom", // or 'jsdom', 'node'
     globals: true,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   build: {
     // Tauri supports es2021

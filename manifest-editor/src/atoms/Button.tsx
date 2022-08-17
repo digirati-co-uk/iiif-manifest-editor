@@ -14,21 +14,19 @@ export const ButtonReset = styled.button`
   }
 `;
 
-export const Button = styled.button`
-   {
-    padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
-    color: ${(props: any) => props.theme.color.main || "none"};
-    background-color: ${(props: any) => props.theme.color.white || "white"};
-    border-radius: inherit;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    height: 2rem;
-    :disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
+export const Button = styled.button<{ $active?: boolean }>`
+  padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
+  color: ${(props: any) => props.theme.color.main || "none"};
+  background-color: ${(props: any) => props.theme.color.white || "white"};
+  border-radius: inherit;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  :disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
   }
 `;
 

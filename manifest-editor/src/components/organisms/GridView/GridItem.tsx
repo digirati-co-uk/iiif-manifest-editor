@@ -18,11 +18,12 @@ import { CanvasThumbnail } from "../CanvasThumbnail/CanvasThumbnail";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
+  handleChangeDouble: (id: string, e: any) => void;
   canvasId: string;
   reorder?: (fromPosition: number, toPosition: number) => void;
   remove: (fromPosition: number, ref: Reference) => void;
   index: number;
-}> = ({ handleChange, canvasId, reorder, remove, index }) => {
+}> = ({ handleChange, handleChangeDouble, canvasId, reorder, remove, index }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const canvas = useCanvas();
@@ -111,6 +112,9 @@ export const GridItem: React.FC<{
         <ThumbnailContainer
           onClick={(e: any) => {
             handleChange(canvasId, e);
+          }}
+          onDoubleClick={(e: any) => {
+            handleChangeDouble(canvasId, e);
           }}
           // size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}

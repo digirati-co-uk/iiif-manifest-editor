@@ -1,6 +1,10 @@
 import { defineConfig } from "vitest/config";
 import { readFileSync } from "node:fs";
 import react from "@vitejs/plugin-react";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const pkg = JSON.parse(readFileSync("./package.json").toString());
 
@@ -10,6 +14,9 @@ const DEDUPE_DEPENDENCIES = ["react", "react-dom", "styled-components"];
 export default defineConfig({
   resolve: {
     dedupe: DEDUPE_DEPENDENCIES,
+    alias: {
+      "@": resolve(__dirname, "../src"),
+    },
   },
   optimizeDeps: {
     exclude: Object.keys(pkg.dependencies),

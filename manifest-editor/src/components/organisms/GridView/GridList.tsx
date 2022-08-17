@@ -14,9 +14,10 @@ import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 
 export const GridList: React.FC<{
   handleChange: (itemId: string, canvas?: boolean) => void;
+  handleChangeDouble: (itemId: string, thumbnail?: boolean) => void;
   strip?: boolean;
   canvasIds?: Array<Reference | string>;
-}> = ({ handleChange: _handleChange, canvasIds }) => {
+}> = ({ handleChange: _handleChange, handleChangeDouble, canvasIds }) => {
   const ctx = useResourceContext();
   const manifestId = ctx.manifest;
   const canvases = useCanvasSubset(canvasIds);
@@ -102,6 +103,7 @@ export const GridList: React.FC<{
                     <GridItem
                       canvasId={item.id}
                       handleChange={handleChange}
+                      handleChangeDouble={handleChangeDouble}
                       reorder={canvasIds ? undefined : reorder}
                       remove={remove}
                       index={index}
