@@ -9,12 +9,9 @@ import { CanvasContainer, GhostCanvas } from "../../layout/CanvasContainer";
 import { BlockIcon } from "../../../icons/BlockIcon";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";
 import { EmptyCanvasState } from "../../organisms/EmptyCanvasState/EmptyCanvasState";
-<<<<<<< HEAD
 import { useLayoutState } from "../../../shell/Layout/Layout.context";
 import { Annotations } from "./components/Annotations";
-=======
 import { MediaControls } from "./components/MediaControls";
->>>>>>> feature/storybook-ish
 
 const Container = styled.div`
   position: relative;
@@ -48,11 +45,7 @@ export function CanvasPanelViewer() {
     return <EmptyCanvasState />;
   }
 
-<<<<<<< HEAD
   if (!state.canvasId) {
-=======
-  if (!canvas || !manifest) {
->>>>>>> feature/storybook-ish
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -84,19 +77,13 @@ export function CanvasPanelViewer() {
         }
       `}</style>
         <ViewerContainer>
-<<<<<<< HEAD
           <CanvasPanel.Viewer key={state.canvasId} onCreated={(preset) => void (runtime.current = preset.runtime)}>
             <CanvasContext canvas={state.canvasId}>
-              <CanvasPanel.RenderCanvas />
-=======
-          <CanvasPanel.Viewer key={canvas} onCreated={(preset) => void (runtime.current = preset.runtime)}>
-            <CanvasContext canvas={canvas}>
               <CanvasPanel.RenderCanvas
                 strategies={["images", "media"]}
                 renderViewerControls={() => <ViewControls refresh={refresh} />}
                 renderMediaControls={() => <MediaControls />}
               />
->>>>>>> feature/storybook-ish
             </CanvasContext>
             {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
               <Annotations canvasId={state.canvasId} />
