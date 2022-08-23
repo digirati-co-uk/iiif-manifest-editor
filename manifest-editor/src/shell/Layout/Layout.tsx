@@ -4,7 +4,7 @@ import { memo, useContext, useEffect, useLayoutEffect } from "react";
 import * as L from "./Layout.styles";
 import { ModularPanel } from "./components/ModularPanel";
 import { HandleControls } from "./components/HandleControls";
-import { useResizeLayout } from "../../madoc/use-resize-layouts";
+import { useResizeLayout } from "@/madoc/use-resize-layouts";
 import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
 import { panelSizing, renderHelper } from "./Layout.helpers";
