@@ -11,6 +11,7 @@ export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
     if (canvas && annotation?.target.selector === null) {
       return (
         <box
+          html
           relativeStyle
           interactive={false}
           target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }}
@@ -23,6 +24,7 @@ export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
 
   return (
     <box
+      html
       relativeStyle
       interactive={false}
       target={annotation.target.selector.spatial}

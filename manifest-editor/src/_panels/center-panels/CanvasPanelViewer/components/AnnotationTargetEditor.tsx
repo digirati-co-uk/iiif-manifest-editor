@@ -2,14 +2,17 @@ import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationNormalized } from "@iiif/presentation-3";
 import { SupportedTarget } from "@iiif/vault-helpers";
 import { HTMLPortal, ResizeWorldItem } from "@atlas-viewer/atlas";
+import { constrainPosition } from "@/helpers/constrain-position";
 
 export function AnnotationTargetEditor() {
   const vault = useVault();
   const canvas = useCanvas();
   const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
 
-  const updateAnnotationTarget = (position: any) => {
+  const updateAnnotationTarget = (input: any) => {
     if (annotation && canvas) {
+      const position = constrainPosition(canvas, input);
+
       const newTarget = `xywh=${~~position.x},${~~position.y},${~~position.width},${~~position.height}`;
       vault.modifyEntityField(annotation as any, "target", `${canvas.id}#${newTarget}`);
     }

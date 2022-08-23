@@ -116,7 +116,9 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
                 alwaysShowBackground
                 onClickPaintingAnnotation={onClickPaintingAnnotation}
               >
-                {resources.length ? resources.map((resource) => <Highlight key={resource} id={resource} />) : null}
+                {!currentlyEditingAnnotation && resources.length
+                  ? resources.map((resource) => <Highlight key={resource} id={resource} />)
+                  : null}
                 {currentlyEditingAnnotation && editMode ? (
                   <AnnotationContext annotation={currentlyEditingAnnotation}>
                     <AnnotationTargetEditor />

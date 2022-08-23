@@ -1,8 +1,10 @@
-import { useCanvas, useVault } from "react-iiif-vault";
-import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
+import { useVault } from "react-iiif-vault";
+import { ThumbnailImg } from "@/atoms/Thumbnail";
+import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
+import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
+import { createThumbnailHelper } from "@iiif/vault-helpers";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
@@ -12,6 +14,22 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumb
   const vault = useVault();
   const image = vault.get(thumbnailSrc) as any;
   const props = useHoverHighlightImageResource(thumbnailSrc);
+  const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
+  const [thumbnail, setThumbnail] = useState<any>();
+  const lastImage = useRef<string>();
+
+  lastImage.current = thumbnailSrc;
+
+  useEffect(() => {
+    const last = lastImage.current;
+    helper
+      .getBestThumbnailAtSize(vault.get(image), { maxWidth: 200, maxHeight: 200, allowUnsafe: true })
+      .then((result) => {
+        if (last === lastImage.current && result.best) {
+          setThumbnail(result.best);
+        }
+      });
+  }, [helper, image]);
 
   return (
     <>
@@ -30,9 +48,9 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumb
               {...props}
             >
               <FlexContainerColumn>
-                {thumbnailSrc && thumbnailSrc !== "" && (
+                {thumbnail && (
                   <ThumbnailContainer size={32}>
-                    <ThumbnailImg src={annotationBody.id} alt="thumbnail" />
+                    <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
                   </ThumbnailContainer>
                 )}
               </FlexContainerColumn>

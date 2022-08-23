@@ -1,15 +1,22 @@
 import { useContentResource } from "../../hooks/useContentResource";
-import { useVault } from "react-iiif-vault";
+import { SupportedTarget, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { Input, InputContainer, InputLabel } from "../../editors/Input";
 import { HorizontalDivider } from "../../atoms/HorizontalDivider";
 import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
 import { RichMediaLink } from "../../components/organisms/RichMediaLink/RichMediaLink";
 import { ServiceList } from "../../navigation/ServiceList/ServiceList";
+import { BoxSelectorField } from "@/_components/form-elements/BoxSelectorField/BoxSelectorField";
+import { AnnotationNormalized } from "@iiif/presentation-3";
+import { Button, ButtonGroup } from "@/atoms/Button";
+import { updateAnnotationSelector } from "@/helpers/update-annotation-selector";
+import { centerRectangles } from "@/helpers/center-rectangles";
 
 export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
+  const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
   const resource = useContentResource<any>({ id: props.id });
   const vault = useVault();
+  const canvas = useCanvas();
 
   function setValue(prop: string, value: any) {
     if (resource) {
@@ -64,6 +71,60 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
       </InputContainer>
 
       {resource.service ? <ServiceList resourceId={props.id} services={resource.service} /> : null}
+
+      {annotation && canvas && annotation.target.selector === null ? (
+        <InputContainer wide>
+          <InputLabel $margin>Target</InputLabel>
+          <div style={{ border: "1px solid #ddd", borderRadius: 3, padding: "1em", color: "#999" }}>
+            This image fills the whole Canvas.
+          </div>
+          <ButtonGroup $right>
+            <Button
+              onClick={() => {
+                const imagePosition = centerRectangles(
+                  canvas,
+                  {
+                    width: resource.width,
+                    height: resource.height,
+                  },
+                  0.6
+                );
+
+                updateAnnotationSelector(vault, annotation, canvas, { type: "BoxSelector", spatial: imagePosition });
+              }}
+            >
+              Change
+            </Button>
+          </ButtonGroup>
+        </InputContainer>
+      ) : null}
+
+      {annotation ? (
+        annotation.target.selector && annotation.target.selector.type === "BoxSelector" ? (
+          <InputContainer wide>
+            <InputLabel $margin htmlFor="box-selector-fieldset">
+              Target
+            </InputLabel>
+            <BoxSelectorField
+              selector={annotation.target.selector}
+              form
+              onSubmit={(data) => {
+                updateAnnotationSelector(vault, annotation, annotation.target.source, data);
+              }}
+            >
+              <ButtonGroup $right>
+                <Button
+                  type="button"
+                  onClick={() => updateAnnotationSelector(vault, annotation, annotation.target.source)}
+                >
+                  Target whole canvas
+                </Button>
+                <Button type="submit">Update target</Button>
+              </ButtonGroup>
+            </BoxSelectorField>
+          </InputContainer>
+        ) : null
+      ) : null}
     </FlexContainerColumn>
   );
 }

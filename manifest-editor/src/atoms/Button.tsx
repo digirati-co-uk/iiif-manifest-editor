@@ -28,6 +28,10 @@ export const Button = styled.button<{ $active?: boolean }>`
     opacity: 0.65;
     cursor: not-allowed;
   }
+
+  &:hover {
+    background: #eee;
+  }
 `;
 
 export const SmallButton = styled(Button)`
@@ -71,10 +75,10 @@ export const CalltoButton = styled(Button)`
   }
 `;
 
-export const ButtonGroup = styled.div`
+export const ButtonGroup = styled.div<{ $right?: boolean }>`
   display: flex;
   flex-direction: row;
-  width: fit-content;
   flex-wrap: wrap;
-  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: ${(props) => (props.$right ? "flex-end" : "flex-start")};
 `;

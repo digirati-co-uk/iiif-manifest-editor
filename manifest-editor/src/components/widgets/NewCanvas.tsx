@@ -153,6 +153,9 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
           canvas.entity.id = newCanvasID;
           canvas.height = height;
           canvas.width = width;
+          canvas.createAnnotationPage(`${newCanvasID}/annos`, () => {
+            //
+          });
         });
       });
       insertAfterSelected();

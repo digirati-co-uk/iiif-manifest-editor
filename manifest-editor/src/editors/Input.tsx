@@ -139,8 +139,9 @@ export const Submit = styled.input.attrs({
   align-items: center;
 `;
 
-export const Input: typeof _Input = ((props: any) =>
-  props.type === "checkbox" ? <CheckboxInput {...props} /> : <InputUnderlined {...props} />) as any;
+export const Input: typeof _Input = React.forwardRef((props: any, ref) =>
+  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />
+) as any;
 
 export const HighlightInput: typeof _Input = ((props: any) => {
   const ref = useRef<HTMLInputElement>(null);
@@ -173,6 +174,13 @@ export const InputBorderless = styled.input`
   }
 `;
 
+export const Fieldset = styled.fieldset`
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+`;
+
 export const InputContainer = styled.div<{
   wide?: boolean;
   fluid?: boolean;
@@ -181,7 +189,8 @@ export const InputContainer = styled.div<{
   display: flex;
   flex-direction: column;
   max-width: ${(props: any) => (props.fluid ? "100%" : props.wide ? "550px" : "360px")};
-  margin-bottom: 1em;
+  margin: 1em 0;
+  width: 100%;
 
   ${(props: any) =>
     props.$error &&
@@ -193,6 +202,18 @@ export const InputContainer = styled.div<{
         border-color: ${props.theme.color.danger || "#9c2824"};
       }
     `}
+`;
+
+export const FieldsetContainer = styled.fieldset`
+  padding: 0 1em 1em;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+
+  ${InputContainer}:first-child {
+    margin-top: 0.5em;
+  }
+
+  margin-bottom: 0.5em;
 `;
 
 export const InputCheckboxContainer = styled.div`

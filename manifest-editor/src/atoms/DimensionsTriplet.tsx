@@ -6,9 +6,9 @@ import { Input } from "../editors/Input";
 
 type Dimensions = {
   width: number;
-  changeWidth: (newNumber: number) => void;
+  changeWidth?: (newNumber: number) => void;
   height: number;
-  changeHeight: (newHeight: number) => void;
+  changeHeight?: (newHeight: number) => void;
   duration?: number;
   changeDuration?: (newDuration: number) => void;
 };
@@ -22,21 +22,26 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
   changeDuration,
 }) => {
   return (
-    <FlexContainer style={{ marginBottom: "1em" }}>
+    <FlexContainer>
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputLabel $inline={true} htmlFor="dims-height">
-            {"height"}
+            {"Height"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#height"} />
           </InputLabel>
           <Input
             id="dims-height"
+            name="dims-height"
             min={0}
             type="number"
-            onChange={(e: any) => {
-              changeHeight(e.target.valueAsNumber);
-            }}
-            value={height}
+            onChange={
+              changeHeight
+                ? (e: any) => {
+                    changeHeight(e.target.valueAsNumber);
+                  }
+                : undefined
+            }
+            {...{ [changeHeight ? "value" : "defaultValue"]: height }}
           />
         </FlexContainerColumn>
       </ErrorBoundary>
@@ -48,16 +53,21 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
           </InputLabel>
           <Input
             id="dims-width"
+            name="dims-width"
             min={0}
             type="number"
-            onChange={(e: any) => {
-              changeWidth(e.target.valueAsNumber);
-            }}
-            value={width}
+            onChange={
+              changeWidth
+                ? (e: any) => {
+                    changeWidth(e.target.valueAsNumber);
+                  }
+                : undefined
+            }
+            {...{ [changeWidth ? "value" : "defaultValue"]: width }}
           />
         </FlexContainerColumn>
       </ErrorBoundary>
-      {changeDuration ? (
+      {typeof duration !== "undefined" ? (
         <ErrorBoundary>
           <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel $inline={true} htmlFor="dims-duration">
@@ -66,12 +76,17 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
             </InputLabel>
             <Input
               id="dims-duration"
+              name="dims-duration"
               min={0}
               type="number"
-              onChange={(e: any) => {
-                changeDuration(e.target.valueAsNumber);
-              }}
-              value={duration}
+              onChange={
+                changeDuration
+                  ? (e: any) => {
+                      changeDuration(e.target.valueAsNumber);
+                    }
+                  : undefined
+              }
+              {...{ [changeDuration ? "value" : "defaultValue"]: duration }}
             />
           </FlexContainerColumn>
         </ErrorBoundary>

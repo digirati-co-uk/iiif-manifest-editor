@@ -16,6 +16,7 @@ import { OutlineView } from "@/_panels/left-panels/OutlineView/OutlineView";
 import { ThumbnailGridView } from "@/_panels/center-panels/ThumbnailGridView/ThumbnailGridView";
 import { ManifestPropertiesList } from "@/_panels/center-panels/ManifestPropertiesList/ManifestPropertiesList";
 import { CanvasProperties } from "@/_panels/right-panels/CanvasProperties/CanvasProperties";
+import { CreatePaintingAnnotation } from "@/_panels/right-panels/CreatePaintingAnnotation/CreatePaintingAnnotation";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -182,6 +183,15 @@ export const rightPanels: LayoutPanel[] = [
     render: (state) => {
       return <CanvasThumbnailForm />;
     },
+  },
+  {
+    id: "create-painting-annotation",
+    label: "Add media item",
+    render: (state, ctx, app) => (
+      <CanvasContext canvas={app.state.canvasId}>
+        <CreatePaintingAnnotation />,
+      </CanvasContext>
+    ),
   },
   // {
   //   id: "media-properties",
