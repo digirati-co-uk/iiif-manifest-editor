@@ -67,7 +67,13 @@ export const centerPanels: LayoutPanel[] = [
     id: "current-canvas",
     label: "Current canvas",
     icon: "",
-    render: () => <CanvasPanelViewer />,
+    render: (state, { actions }) => (
+      <CanvasPanelViewer
+        onEditAnnotation={(id) => {
+          actions.stack("canvas-media", { annotation: id });
+        }}
+      />
+    ),
   },
   {
     id: "thumbnail-grid",
@@ -139,7 +145,7 @@ export const rightPanels: LayoutPanel[] = [
     render: (state: { annotation: string }, _, app) => (
       <AnnotationContext annotation={state.annotation}>
         <CanvasContext canvas={app.state.canvasId}>
-          <CanvasMedia />
+          <CanvasMedia key={state.annotation} />
         </CanvasContext>
       </AnnotationContext>
     ),

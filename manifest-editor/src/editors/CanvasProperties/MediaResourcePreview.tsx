@@ -2,6 +2,7 @@ import { useCanvas, useVault } from "react-iiif-vault";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
+import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
@@ -10,6 +11,8 @@ interface MediaResourceEditorProps {
 export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumbnailSrc }) => {
   const vault = useVault();
   const image = vault.get(thumbnailSrc) as any;
+  const props = useHoverHighlightImageResource(thumbnailSrc);
+
   return (
     <>
       {image &&
@@ -24,6 +27,7 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumb
                 width: "100%",
               }}
               key={thumbnailSrc}
+              {...props}
             >
               <FlexContainerColumn>
                 {thumbnailSrc && thumbnailSrc !== "" && (

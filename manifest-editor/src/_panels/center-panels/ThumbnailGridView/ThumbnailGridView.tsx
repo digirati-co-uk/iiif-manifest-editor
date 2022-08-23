@@ -14,6 +14,7 @@ export function ThumbnailGridView({
       canvasIds={canvasIds}
       clearCanvases={canvasIds ? clearCanvases : undefined}
       handleChange={onChangeCanvas}
+      handleChangeDouble={onChangeCanvas}
     />
   );
 }

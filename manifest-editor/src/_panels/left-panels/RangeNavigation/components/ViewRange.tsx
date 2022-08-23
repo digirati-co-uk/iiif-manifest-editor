@@ -1,13 +1,13 @@
 import { RangeContext, useRange, useVault } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
 import invariant from "tiny-invariant";
-import { useAppState } from "../../../../shell/AppContext/AppContext";
+import { useAppState } from "@/shell/AppContext/AppContext";
 import { useMemo } from "react";
 import { findAllCanvasesInRange, findFirstCanvasFromRange } from "./ViewRange.helpers";
 import { RangeNavigationStyles as S } from "../RangeNavigation.styles";
-import { useLayoutActions, useLayoutState } from "../../../../shell/Layout/Layout.context";
-import { PreviewIcon } from "../../../../icons/PreviewIcon";
-import { UniversalCopyTarget } from "../../../../shell/Universal/UniversalCopyPaste";
+import { useLayoutActions, useLayoutState } from "@/shell/Layout/Layout.context";
+import { PreviewIcon } from "@/icons/PreviewIcon";
+import { UniversalCopyTarget } from "@/shell/Universal/UniversalCopyPaste";
 
 export function ViewRange() {
   const range = useRange();
@@ -45,7 +45,7 @@ export function ViewRange() {
       }
     }
 
-    if (state.centerPanel.state.canvasIds) {
+    if (state.centerPanel.state?.canvasIds) {
       onClickPreview();
     }
   }
@@ -55,7 +55,7 @@ export function ViewRange() {
       <S.ItemContainer
         $leaf={!hasSubsequentRanges}
         $selected={selected}
-        $withSelector={first?.id.indexOf("#") !== -1}
+        $withSelector={first?.id?.indexOf("#") !== -1}
         data-range-id={range.id}
       >
         <S.SplitLabel>
@@ -67,7 +67,7 @@ export function ViewRange() {
         {hasSubsequentRanges ? (
           <S.NestedContainer>
             {range.items.map((range) => {
-              if (range.type === "Canvas") {
+              if (range.type === "Canvas" || range.type === "SpecificResource" || !range.id) {
                 return null;
               }
 
