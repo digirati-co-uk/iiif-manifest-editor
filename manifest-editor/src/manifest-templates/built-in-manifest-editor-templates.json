@@ -1,0 +1,17 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "built-in-manifest-editor-templates.json",
+  "type": "Collection",
+  "label": {
+    "en": ["Start a new IIIF Manifest"]
+  },
+  "items": [
+    {
+      "id": "config/manifest-templates/blank.json",
+      "type": "Manifest",
+      "label": {
+        "en": ["Blank Manifest"]
+      }
+    }
+  ]
+}
