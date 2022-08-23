@@ -11,6 +11,7 @@ export default defineConfig({
   envPrefix: ["VITE_", "TAURI_"],
   plugins: [
     react({
+      jsxRuntime: "automatic",
       babel: {
         plugins: [
           [
@@ -33,6 +34,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // optimizeDeps: {
+  //   include: ["react/jsx-runtime", "@atlas-viewer/atlas"],
+  // },
   build: {
     // Tauri supports es2021
     target: ["es2021", "chrome97", "safari13"],
@@ -40,5 +44,8 @@ export default defineConfig({
     minify: !process.env.TAURI_DEBUG && "esbuild",
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
+  },
+  esbuild: {
+    logOverride: { "this-is-undefined-in-esm": "silent" },
   },
 });
