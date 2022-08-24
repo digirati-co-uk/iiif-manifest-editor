@@ -48,7 +48,7 @@ export function BoxSelectorField({ selector, form, onSubmit, children }: BoxSele
             <InputLabel $margin htmlFor="type">
               width
             </InputLabel>
-            <Input id="selector-width" name="selector.width" type="number" defaultValue={selector.spatial.height} />
+            <Input id="selector-width" name="selector.width" type="number" defaultValue={selector.spatial.width} />
           </InputContainer>
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
