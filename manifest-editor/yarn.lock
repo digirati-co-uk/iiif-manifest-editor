@@ -10424,10 +10424,10 @@ react-iiif-vault@^0.9.15:
     typescript "^4.7.4"
     use-sync-external-store "^1.2.0"
 
-react-iiif-vault@^0.9.16:
-  version "0.9.16"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.16.tgz#d044647cde28811a354f881d1e06d011fc95070f"
-  integrity sha512-he1HzsllWoyJXRoodVU+dR8FO2bErgClpOR6swhi3m4f8kFgjKuISbNOgAJSCbNS3prWnpdbdg53D7lSjZdYZQ==
+react-iiif-vault@^0.9.19:
+  version "0.9.19"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.19.tgz#de5f7e718e018285a466b5b27766b8bb30149421"
+  integrity sha512-jSe5+hxlyCU+HOaRy/N7IA9I2kjTC+EUSky2oA97A4LcNXsUt7KNOq85PQupHxP5sHd/SSaYibBM1+gc/Vw8QQ==
   dependencies:
     "@atlas-viewer/atlas" "^2.0.0-alpha.19"
     "@atlas-viewer/iiif-image-api" "2.*"
