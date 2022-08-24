@@ -1,20 +1,23 @@
-import { useContentResource } from "../../hooks/useContentResource";
+import { useContentResource } from "@/hooks/useContentResource";
 import { SupportedTarget, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
-import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
-import { Input, InputContainer, InputLabel } from "../../editors/Input";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
-import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
-import { RichMediaLink } from "../../components/organisms/RichMediaLink/RichMediaLink";
-import { ServiceList } from "../../navigation/ServiceList/ServiceList";
+import { FlexContainerColumn, FlexImage } from "@/components/layout/FlexContainer";
+import { Input, InputContainer, InputLabel } from "@/editors/Input";
+import { DimensionsTriplet } from "@/atoms/DimensionsTriplet";
+import { ServiceList } from "@/navigation/ServiceList/ServiceList";
 import { BoxSelectorField } from "@/_components/form-elements/BoxSelectorField/BoxSelectorField";
 import { AnnotationNormalized } from "@iiif/presentation-3";
 import { Button, ButtonGroup } from "@/atoms/Button";
 import { updateAnnotationSelector } from "@/helpers/update-annotation-selector";
 import { centerRectangles } from "@/helpers/center-rectangles";
+import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
+import { DeleteButton } from "@/_components/ui/DeleteButton/DeleteButton";
+import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
+import { removeAnnotationFromCanvas } from "@/helpers/remove-annotation-from-canvas";
 
-export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
+export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDelete?: () => void }) {
   const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
   const resource = useContentResource<any>({ id: props.id });
+  const thumbnail = useAnnotationThumbnail();
   const vault = useVault();
   const canvas = useCanvas();
 
@@ -30,6 +33,8 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
 
   return (
     <FlexContainerColumn>
+      <FlexImage>{thumbnail ? <img src={thumbnail.id} /> : null}</FlexImage>
+
       <InputContainer wide>
         <Input disabled value={resource.id} placeholder={"Paste URL of Media"} />
       </InputContainer>
@@ -124,6 +129,22 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string }) {
             </BoxSelectorField>
           </InputContainer>
         ) : null
+      ) : null}
+
+      {canvas && annotation ? (
+        <DeleteButton
+          label="Remove from canvas"
+          message="Are you sure you want to remove from canvas"
+          onDelete={() => {
+            removeAnnotationFromCanvas(vault, canvas, annotation);
+            if (props.onAfterDelete) {
+              props.onAfterDelete();
+            }
+          }}
+        >
+          <FlexImage>{thumbnail ? <img src={thumbnail.id} /> : null}</FlexImage>
+          <AnnotationPreview />
+        </DeleteButton>
       ) : null}
     </FlexContainerColumn>
   );

@@ -5,6 +5,7 @@ import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexCont
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 import { createThumbnailHelper } from "@iiif/vault-helpers";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
@@ -14,22 +15,7 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumb
   const vault = useVault();
   const image = vault.get(thumbnailSrc) as any;
   const props = useHoverHighlightImageResource(thumbnailSrc);
-  const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
-  const [thumbnail, setThumbnail] = useState<any>();
-  const lastImage = useRef<string>();
-
-  lastImage.current = thumbnailSrc;
-
-  useEffect(() => {
-    const last = lastImage.current;
-    helper
-      .getBestThumbnailAtSize(vault.get(image), { maxWidth: 200, maxHeight: 200, allowUnsafe: true })
-      .then((result) => {
-        if (last === lastImage.current && result.best) {
-          setThumbnail(result.best);
-        }
-      });
-  }, [helper, image]);
+  const thumbnail = useAnnotationThumbnail({ annotationId: thumbnailSrc });
 
   return (
     <>

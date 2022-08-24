@@ -13,15 +13,16 @@ const Container = styled.div<{ $interactive?: boolean }>`
     props.$interactive &&
     css`
       cursor: pointer;
+
       &:hover {
-        border-color: cornflowerblue;
-        outline: 1px solid cornflowerblue;
+        border-color: #488afc;
+        outline: 1px solid #488afc;
       }
     `}
 `;
 
 const Icon = styled.div`
-  background: red;
+  padding-right: 0.5em;
 `;
 
 const Content = styled.div`
@@ -29,6 +30,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 `;
 
 const TitleContainer = styled.div`
@@ -48,12 +50,13 @@ const Title = styled.div`
 `;
 
 const Link = styled.a`
-  color: #7472e9;
+  color: #bdbdbd;
   font-size: 0.8em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+  min-width: 0;
 `;
 
 const Label = styled.div`

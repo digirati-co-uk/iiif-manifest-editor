@@ -1,5 +1,5 @@
 import create from "zustand";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 interface HighlightedImageResources {
   resources: string[];
@@ -21,17 +21,29 @@ export const useHighlightedImageResource = create<HighlightedImageResources>((se
   clearHighlight: (id) => set((s) => ({ resources: s.resources.filter((item) => item !== id) })),
 }));
 
-export function useHoverHighlightImageResource(id: string) {
+export function useHoverHighlightImageResource(id?: string) {
   const highlight = useHighlightedImageResource((s) => s.highlight);
   const clear = useHighlightedImageResource((s) => s.clearHighlight);
+
+  useEffect(() => {
+    return () => {
+      if (id) {
+        clear(id);
+      }
+    };
+  }, [clear, id]);
 
   return useMemo(() => {
     return {
       onMouseEnter() {
-        highlight(id);
+        if (id) {
+          highlight(id);
+        }
       },
       onMouseLeave() {
-        clear(id);
+        if (id) {
+          clear(id);
+        }
       },
     };
   }, [id, highlight, clear]);

@@ -1,12 +1,43 @@
 import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 import { ErrorMessage } from "../../../madoc/components/callouts/ErrorMessage";
-import { CalltoButton } from "../../../atoms/Button";
+import { Button, CalltoButton } from "../../../atoms/Button";
 import { ExperimentalMessage } from "../../../madoc/components/callouts/ExperimentalMessage";
 import { ExperimentalIcon } from "../../../madoc/components/icons/ExperimentalIcon";
 import { LimitationError } from "../../../helpers/limitation";
+import { FixMeError } from "@/helpers/fix-me";
+import { useState } from "react";
+import { WarningMessage } from "@/madoc/components/callouts/WarningMessage";
 
 export function PanelError(props: { error: Error; resetErrorBoundary: () => void }) {
   let error = props.error.toString();
+  const [isFixing, setIsFixing] = useState(false);
+
+  if (props.error instanceof FixMeError) {
+    const errorObject = props.error;
+
+    return (
+      <PaddedSidebarContainer>
+        <WarningMessage $banner>
+          <ExperimentalIcon style={{ fontSize: "2.2em", margin: "0 0.3em 0 0" }} />
+          <div>
+            <h4 style={{ margin: 0 }}>There is a fixable error</h4>
+            <p>{errorObject.message}</p>
+            <Button
+              disabled={isFixing}
+              onClick={async () => {
+                setIsFixing(true);
+                await errorObject.fix();
+                props.resetErrorBoundary();
+                setIsFixing(false);
+              }}
+            >
+              Fix error
+            </Button>
+          </div>
+        </WarningMessage>
+      </PaddedSidebarContainer>
+    );
+  }
 
   if (props.error instanceof LimitationError) {
     error = props.error.message;

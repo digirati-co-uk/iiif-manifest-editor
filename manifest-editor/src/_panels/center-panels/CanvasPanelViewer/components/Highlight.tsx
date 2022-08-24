@@ -15,7 +15,7 @@ export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
           relativeStyle
           interactive={false}
           target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }}
-          style={style || { border: "2px solid #EB8875" }}
+          style={style || { border: "2px solid #488afc" }}
         />
       );
     }
@@ -28,7 +28,7 @@ export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
       relativeStyle
       interactive={false}
       target={annotation.target.selector.spatial}
-      style={style || { border: "2px solid #EB8875" }}
+      style={style || { border: "2px solid #488afc" }}
     />
   );
 }

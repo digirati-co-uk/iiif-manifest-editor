@@ -158,7 +158,6 @@ export function ModularPanel({
 
       if ((!originalCallback || e.metaKey) && switchablePanels.length) {
         e.preventDefault();
-        console.log("set is open?");
         setIsOpen(true);
       } else {
         originalCallback && originalCallback();
@@ -231,6 +230,7 @@ export function ModularPanel({
           onError={() => setDidError(true)}
           FallbackComponent={PanelError}
           resetKeys={resetKeys}
+          onReset={() => setDidError(false)}
         >
           {renderHelper(
             panel.render(

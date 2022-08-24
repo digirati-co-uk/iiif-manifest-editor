@@ -77,13 +77,15 @@ export function useTaskEvent<Req = any, Res = any>(
   }, [name, cb, task.emitter]);
 }
 
+const noop = () => void 0;
+
 export function useTaskDispatch<Req = any, Res = any>(
   name: string,
-  onComplete: (task: Task<Req, Res>) => void | Promise<void>
+  onComplete?: (task: Task<Req, Res>) => void | Promise<void>
 ) {
   const taskDetails = useTask(name);
 
-  useTaskEvent(taskDetails, "complete", onComplete);
+  useTaskEvent(taskDetails, "complete", onComplete ? onComplete : noop);
 
   const runTask = (request?: any) => {
     // Abort running tasks.

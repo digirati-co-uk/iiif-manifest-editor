@@ -17,6 +17,7 @@ import { ThumbnailGridView } from "@/_panels/center-panels/ThumbnailGridView/Thu
 import { ManifestPropertiesList } from "@/_panels/center-panels/ManifestPropertiesList/ManifestPropertiesList";
 import { CanvasProperties } from "@/_panels/right-panels/CanvasProperties/CanvasProperties";
 import { CreatePaintingAnnotation } from "@/_panels/right-panels/CreatePaintingAnnotation/CreatePaintingAnnotation";
+import { CanvasMedia as CanvasMediaPanel } from "@/_panels/right-panels/CanvasMedia/CanvasMedia";
 
 export default { id: "manifest-editor", title: "Manifest editor", project: true };
 
@@ -143,10 +144,10 @@ export const rightPanels: LayoutPanel[] = [
     id: "canvas-media",
     label: "Edit media item",
     requiresState: true,
-    render: (state: { annotation: string }, _, app) => (
+    render: (state: { annotation: string }, ctx, app) => (
       <AnnotationContext annotation={state.annotation}>
         <CanvasContext canvas={app.state.canvasId}>
-          <CanvasMedia key={state.annotation} />
+          <CanvasMedia key={state.annotation} onAfterDelete={ctx.current.popStack} />
         </CanvasContext>
       </AnnotationContext>
     ),
@@ -189,7 +190,18 @@ export const rightPanels: LayoutPanel[] = [
     label: "Add media item",
     render: (state, ctx, app) => (
       <CanvasContext canvas={app.state.canvasId}>
-        <CreatePaintingAnnotation />,
+        <CreatePaintingAnnotation />
+      </CanvasContext>
+    ),
+  },
+  {
+    id: "canvas-media-right",
+    label: "Canvas media",
+    render: (state, ctx, app) => (
+      <CanvasContext canvas={app.state.canvasId}>
+        <CanvasMediaPanel
+          onClickAnnotation={(annotation) => ctx.actions.stack("canvas-media", { annotation: annotation.id })}
+        />
       </CanvasContext>
     ),
   },

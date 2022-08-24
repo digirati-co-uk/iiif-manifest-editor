@@ -17,6 +17,7 @@ import { useHighlightedImageResource } from "@/state/highlighted-image-resources
 import { Highlight } from "@/_panels/center-panels/CanvasPanelViewer/components/Highlight";
 import { useAnnotationEditing } from "@/state/annotationg-editing";
 import { AnnotationTargetEditor } from "@/_panels/center-panels/CanvasPanelViewer/components/AnnotationTargetEditor";
+import { useTaskRunner } from "@/shell/TaskBridge/TaskBridge";
 
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
@@ -35,15 +36,18 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
   );
   const { resources } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
+  const [complete] = useTaskRunner("refresh-canvas", () => {
+    refresh();
+    complete();
+  });
 
   const onClickPaintingAnnotation = useCallback(
     (id: string) => {
-      if (editMode) {
-        setAnnotation(id);
-
-        if (onEditAnnotation) {
-          onEditAnnotation(id);
-        }
+      //if (editMode) {
+      setAnnotation(id);
+      //}
+      if (onEditAnnotation) {
+        onEditAnnotation(id);
       }
     },
     [editMode]
