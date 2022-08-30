@@ -1,6 +1,16 @@
-# iiif-manifest-editor
+# Digirati Manifest Editor
 
-> Create new IIIF Manifests. Modify existing manifests. Tell stories with IIIF.
+* An extensible visual tool for creating IIIF Manifests and more
+* Compatible with IIIF Presentation API 2 and 3
+* Preview your work as you go in your viewer of choice
+* Create IIIF Manifests to drive custom narratives and other viewing experiences
+* Integrate the Manifest Editor into your own tools and workflows
+
+![screenshot of Manifest Editor](docs/img/manifest-editor.png)
+
+* [See our Manifest Editor presentation at the 2022 IIIF Conference](https://www.youtube.com/watch?v=q9shfA3BqsM&list=PLYPP1-8uH9c6iAN6nZ-XWBhtwZW_lSesZ&index=1&t=7275s)
+* [Try it!](https://manifest-editor.digirati.services/)
+
 
 ## Background
 
@@ -10,50 +20,39 @@ In 2018 we developed an experimental [IIIF Workbench](https://www.youtube.com/wa
 
 These combined to make a [IIIF Manifest Editor](https://www.youtube.com/watch?v=D8oA3rHbvPM) that in normal, default mode produces IIIF Presentation 3 Manifests, but can be extended with plugins to produce IIIF Manifests with particular structures and custom `behavior` properties, to drive custom viewing experiences - slideshows, guided viewing and the complex digital exhibition layouts seen in the Delft examples. Development of branches of the Manifest Editor for different clients went hand in hand with new viewers and static site generators.
 
-We have ended up with multiple versions of the Manifest Editor, with different IIIF capabilities, user interfaces, and persistence mechanisms. Some versions integrate with our DLCS platform, allowing drag-and-drop creation of IIIF Image Services in real time.
+## The new version
 
-We don't want to needlessly throw away the capabilities we have, but we want to maintain one editor going forward, that is simple and reliable to use, with excellent user experience. This might mean dropping features in the interests of a sustainable code base - budgets for development aren't getting any bigger.
+The new Manifest Editor builds on our experiences building content creation tools and custom viewing experiences.  Our aim is for the new editor to be more sustainable, which in this context also means cheaper for ourselves and others to customise and adapt. This means a separation of viewing/previewing from content creation for most scenarios. We have ended up with multiple versions of the Manifest Editor, with different IIIF capabilities, user interfaces, and persistence mechanisms. Some versions integrate with our DLCS platform, allowing drag-and-drop creation of IIIF Image Services in real time.
+
+We don't want to needlessly throw away the capabilities we have, but we want to maintain one editor going forward, that is simple and reliable to use, with excellent user experience. The needs of different adopters and users should be met by configuration, and choice of plugins, rather than different versions of the core editor.
 
 
 ## Audience
 
- - IIIF novices using a visual, PowerPoint-like tool for creating Manifests intended for viewing in Univeral Viewer, Mirador and other standard IIIF environments
+ - People who want to learn IIIF
+ - IIIF novices using a visual, PowerPoint-like tool for creating Manifests intended for viewing in Universal Viewer, Mirador and other standard IIIF environments
  - Museum staff assembling manifests intended for custom storytelling or digital exhibition environments
+ - People who need tools to enhance existing (perhaps machine-generated) IIIF with additional information and structure
+ - Researchers and students assembling their own IIIF by remixing existing sources
+ - (and many more in the issues and discussions)
 
 
 ## Features
 
  - Create new Manifest
- - Add Canvas
- - Add resources to Canvas
+ - Add Canvases
+ - Add single resources (media) to a Canvas
+ - Add multiple resources - create image choices, collages and more
  - Browse IIIF (via IIIF Collections) to import Canvases
  - Load any compliant version 2 or version 3 Manifest
- - Use the [new version of Canvas Panel](https://deploy-preview-50--iiif-canvas-panel.netlify.app/) as the editing surface
- - Log in to GitHub from the hosted editor and [persist to gh-pages](https://github.com/digirati-co-uk/iiif-manifest-editor/issues/1), to serve your manifests
- - Allow the Manifest Editor to be embedded as a VS Code plugin for direct saving to file system  
+ - Edit all properties of Manifests and other IIIF resources
+ - Allow developers to make use of the Manifest Editor's application services to quickly develop extensions
 
-## Dropped features
 
- - Direct DLCS integration - instead, use DLCS portal to [create source manifests and image services](https://drive.google.com/file/d/14d-HcbftIt1qMhx-qV1jf29Hkn9e03E2/view?usp=sharing).
- - Any other custom persistence methods apart from the two listed above
- - Don't make _Preview_ part of the tool itself. A Manifest Editor plugin simply defines editing environment behaviour and fields, it doesn't have to incorporate a preview too. Instead, configure a link for the plugin that the Manifest Editor can pass a custom Manifest to for preview. Which will be a standard viewer for normal mode.
-
-## Defining and capturing custom extensions
-
- - Plugins define the additional behaviours and their permitted values their associated viewing environments require
- - Manifest Editor renders user interface defined by the plugin (like a [capture model](https://cultural-heritage.digirati.com/building-blocks/annotation-studio/))
-
- ## Process
-
- - Strip back everything and start with GitHub login and persistence - even if it's just a text editor
- - Work back up to the UI that's proven to work and liked by its current users, using Canvas Panel for rendering
- - Fix or drop things that don't work
-
- How much of the UI we already have will be able to return?
- 
- ## Implementation ideas
+ ## Join the discussion
  
  We're using [GitHub discussions](https://github.com/digirati-co-uk/iiif-manifest-editor/discussions) to explore ideas, and the [Wiki](https://github.com/digirati-co-uk/iiif-manifest-editor/wiki) to think about implementation.
+
  
  ## Acknowledgements
 
