@@ -8,7 +8,6 @@ import {
 } from "@atlas-viewer/atlas";
 import * as React from "react";
 import { useRef, useState } from "react";
-import "../src/modules/react-reconciler/types";
 
 export default { title: "Manifest Editor/Annotations", component: DrawBox };
 

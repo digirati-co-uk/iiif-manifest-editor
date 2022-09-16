@@ -114,6 +114,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                   <L.PanelContainer
                     $menu={props.leftPanelMenuPosition || "bottom"}
                     ref={leftPanelResizer.refs.resizableDiv}
+                    className={transition && enableMotion ? `transition transition-${transition}` : ""}
                     style={{
                       width: state.leftPanel.open || transition !== "exited" ? leftPanelResizer.widthB : undefined,
                       minWidth: leftPanel?.options?.minWidth,
@@ -132,6 +133,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                         <>
                           {leftPanel ? (
                             <ModularPanel
+                              isLeft
+                              transition={transition}
                               panel={leftPanel}
                               state={state.leftPanel}
                               actions={actions.leftPanel}
@@ -192,6 +195,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                   <L.PanelContainer
                     $menu={props.rightPanelMenuPosition || "bottom"}
                     ref={rightPanelResizer.refs.resizableDiv}
+                    className={transition && enableMotion ? `transition transition-${transition}` : ""}
                     style={{
                       width: state.rightPanel.open || transition !== "exited" ? rightPanelResizer.widthB : undefined,
                       minWidth: rightPanel?.options?.minWidth,

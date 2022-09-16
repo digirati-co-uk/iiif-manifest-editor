@@ -17,6 +17,7 @@ import { ChangeIcon } from "@/icons/ChangeIcon";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
+  isLeft?: boolean;
   state: PinnablePanelState | PanelState;
   actions: PanelActions;
   pinActions?: PinnablePanelActions;
@@ -25,7 +26,7 @@ interface ModularPanelProps {
   available?: LayoutPanel[];
 }
 
-const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus }>`
+const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -42,6 +43,11 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   ${(props) => {
     switch (props.$state) {
       case "entering":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
@@ -50,11 +56,21 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
           transform: translateX(0);
         `;
       case "exiting":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
       case "unmounted":
       case "exited":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
@@ -128,6 +144,7 @@ export function ModularPanel({
   panel,
   state,
   actions,
+  isLeft,
   pinActions = actions as any,
   transition,
   close,
@@ -179,7 +196,7 @@ export function ModularPanel({
   }
 
   return (
-    <ModularPanelWrapper $state={transition}>
+    <ModularPanelWrapper $state={transition} $flipped={isLeft}>
       <ModularPanelHeader $tabs={tabs} $error={didError}>
         <Dropdown style={{ display: "flex", height: "100%" }}>
           {panel.backAction || state.stack.length ? (
@@ -235,7 +252,7 @@ export function ModularPanel({
           {renderHelper(
             panel.render(
               state.state || panel.defaultState || {},
-              { ...layout, current: actions, vault: vault as any },
+              { ...layout, current: actions, vault: vault as any, transition },
               appState
             )
           )}

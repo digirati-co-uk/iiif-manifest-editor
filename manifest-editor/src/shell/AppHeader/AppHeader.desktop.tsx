@@ -1,6 +1,6 @@
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
-import { useApps } from "../AppContext/AppContext";
+import { useApps, useAppState } from "../AppContext/AppContext";
 import { PreviewButton } from "../../components/organisms/PreviewButton/PreviewButton";
 import { ShellOptions } from "../../apps/Shell/ShellOptions";
 import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
@@ -19,6 +19,7 @@ import { getCurrent } from "@tauri-apps/api/window";
 import { AppMenu } from "./components/AppMenu";
 import { useProjectCreators } from "../ProjectContext/ProjectContext.hooks";
 import { readTextFile } from "@tauri-apps/api/fs";
+import { useResourceContext } from "react-iiif-vault";
 
 export function AppHeaderDesktop() {
   const { current: currentProject, actions } = useProjectContext();
