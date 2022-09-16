@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
       exclude: Object.keys(pkg.dependencies),
     },
     define: {
-      PULL_REQUEST: process.env.PULL_REQUEST,
+      PULL_REQUEST: false,
     },
     build: {
       outDir: `dist/npm`,

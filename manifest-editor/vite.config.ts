@@ -9,6 +9,9 @@ export default defineConfig({
     strictPort: true,
   },
   envPrefix: ["VITE_", "TAURI_"],
+  define: {
+    PULL_REQUEST: process.env.PULL_REQUEST,
+  },
   plugins: [
     react({
       jsxRuntime: "automatic",
