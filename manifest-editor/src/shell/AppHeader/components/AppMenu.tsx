@@ -23,7 +23,6 @@ export function AppMenu(props: { hideMenu?: boolean }) {
 
     if (app.metadata.dev && import.meta.env.PROD) {
       try {
-        console.log("import.meta.env.PULL_REQUEST", import.meta.env);
         if (import.meta.env.PULL_REQUEST === "true") {
           return true;
         }
