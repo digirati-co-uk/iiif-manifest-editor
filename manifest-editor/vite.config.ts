@@ -2,8 +2,6 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-console.log("IS PULL REQUEST?", process.env.PULL_REQUEST);
-
 export default defineConfig({
   clearScreen: false,
   server: {
