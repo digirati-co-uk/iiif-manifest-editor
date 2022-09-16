@@ -2,16 +2,15 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
+console.log("IS PULL REQUEST?", process.env.PULL_REQUEST);
+
 export default defineConfig({
   clearScreen: false,
   server: {
     port: 3000,
     strictPort: true,
   },
-  envPrefix: ["VITE_", "TAURI_"],
-  define: {
-    PULL_REQUEST: process.env.PULL_REQUEST,
-  },
+  envPrefix: ["VITE_", "TAURI_", "PULL_REQUEST"],
   plugins: [
     react({
       jsxRuntime: "automatic",
