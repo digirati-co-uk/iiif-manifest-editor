@@ -22,6 +22,11 @@ export function AppMenu(props: { hideMenu?: boolean }) {
     }
 
     if (app.metadata.dev && import.meta.env.PROD) {
+      // @ts-ignore
+      if (PULL_REQUEST === "true") {
+        return true;
+      }
+
       return false;
     }
 
