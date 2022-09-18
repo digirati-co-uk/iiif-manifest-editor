@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 import {
   createRef,
   forwardRef,
+  KeyboardEventHandler,
+  MouseEventHandler,
   ReactNode,
   RefObject,
   UIEventHandler,
@@ -23,6 +25,7 @@ export const AccordionContainer = styled.div`
 
 const ItemRow = styled.div`
   background: #fff;
+  position: relative;
   border-bottom: 1px solid #d0d0d0;
   border-top: 1px solid #d0d0d0;
 
@@ -98,8 +101,10 @@ const ItemBody = styled.div<{
 `;
 
 const ItemHeading = styled.div<{ $open?: boolean }>`
+  position: sticky;
   display: flex;
-  position: relative;
+  top: 0;
+  background: #fff;
   min-width: 0;
   width: 100%;
   color: #757575;
@@ -149,12 +154,16 @@ interface AccordionItemRef {
   open(): void;
   close(): void;
   toggle(): void;
+  focus(): void;
+  button?: RefObject<HTMLButtonElement>;
 }
 
 const noop = (() => void 0) as any;
 
 export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(function AccordionItem(props, ref) {
   const content = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+
   const [open, setIsOpen] = useState<boolean>(props.initialOpen || false);
   const onChange = props.onChange || noop;
   const toggle = () => {
@@ -179,6 +188,12 @@ export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(fu
     toggle() {
       toggle();
     },
+    focus() {
+      if (btn.current) {
+        btn.current.focus();
+      }
+    },
+    button: btn,
   }));
 
   useLayoutEffect(() => {
@@ -205,7 +220,9 @@ export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(fu
   return (
     <ItemRow>
       <ItemHeading $open={open}>
-        <ItemLabel onClick={toggle}>{props.label}</ItemLabel>
+        <ItemLabel ref={btn} onClick={toggle}>
+          {props.label}
+        </ItemLabel>
         <ItemCollapse onClick={toggle}>
           <DownIcon rotate={open ? 0 : 90} />
         </ItemCollapse>
@@ -237,6 +254,54 @@ export function Accordion(props: AccordionProps) {
   const [elRefs, setElRefs] = useState<RefObject<AccordionItemRef>[]>([]);
   const current = useRef(-1);
 
+  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {
+    const currentEl = document.activeElement;
+    const currentIndex = elRefs.findIndex((r) => r.current?.button?.current === currentEl);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    switch (e.code) {
+      case "ArrowDown": {
+        if (currentIndex !== itemsLength - 1) {
+          const next = currentIndex + 1;
+          if (elRefs[next]) {
+            elRefs[next].current?.focus();
+          }
+        }
+        break;
+      }
+      // Focus previous
+      case "ArrowUp": {
+        if (currentIndex !== 0) {
+          const next = currentIndex - 1;
+          if (elRefs[next]) {
+            elRefs[next].current?.focus();
+          }
+        }
+        break;
+      }
+      // Focus next
+      case "ArrowLeft": {
+        // Close current
+        const el = elRefs[currentIndex];
+        if (el && el.current) {
+          el.current.close();
+        }
+        break;
+      }
+      // Open current
+      case "ArrowRight": {
+        // Close current
+        const el = elRefs[currentIndex];
+        if (el && el.current) {
+          el.current.open();
+        }
+        break;
+      }
+    }
+  };
+
   const onChange = (key: number, isOpen: boolean) => {
     if (props.singleMode && isOpen && key !== current.current) {
       current.current = key;
@@ -260,7 +325,7 @@ export function Accordion(props: AccordionProps) {
   }, [itemsLength]);
 
   return (
-    <AccordionContainer>
+    <AccordionContainer onKeyDown={onKeyDown}>
       {props.items.map((item, key) => (
         <AccordionItem key={key} ref={elRefs[key]} {...item} onChange={(isOpen) => onChange(key, isOpen)}>
           {item.children}

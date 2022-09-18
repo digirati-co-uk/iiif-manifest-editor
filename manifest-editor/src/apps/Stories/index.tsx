@@ -75,7 +75,7 @@ export const leftPanels: LayoutPanel[] = [
         <div style={{ flex: 1 }}>
           {item.components.map((Component: any, n) => (
             <ErrorBoundary key={n}>
-              <Component />
+              <Component {...(Component.args || {})} />
             </ErrorBoundary>
           ))}
         </div>
@@ -100,11 +100,11 @@ export const centerPanels: LayoutPanel[] = [
 
       return (
         <div style={{ padding: 40 }}>
-          <div style={{ background: "#fff", padding: 20 }}>
+          <div style={{ background: "#fff", padding: 20, overflowY: "auto" }}>
             <div>
               {item.components.map((Component: any) => (
                 <ErrorBoundary>
-                  <Component />
+                  <Component {...(Component.args || {})} />
                 </ErrorBoundary>
               ))}
             </div>
@@ -132,10 +132,10 @@ export const rightPanels: LayoutPanel[] = [
       }
 
       return (
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, overflowY: "auto" }}>
           {item.components.map((Component: any, n) => (
             <ErrorBoundary key={n}>
-              <Component />
+              <Component {...(Component.args || {})} />
             </ErrorBoundary>
           ))}
         </div>
