@@ -2,7 +2,7 @@ import { createContext, ReactNode, SetStateAction, useCallback, useContext, useE
 import { MappedApp } from "../../apps/app-loader";
 import { useLocalStorage } from "../../madoc/use-local-storage";
 import invariant from "tiny-invariant";
-import { useCurrentProject, useProjectContext } from "../ProjectContext/ProjectContext";
+import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
 import qs from "query-string";
 
@@ -69,13 +69,12 @@ function useCurrentApp(initialApp?: { id: string; args?: any }) {
   const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
 
   useEffect(() => {
-    if (import.meta.env.DEV && window) {
+    if ((import.meta.env.DEV || import.meta.env.PULL_REQUEST === "true") && window) {
       const { app, ...args } = qs.parse(window.location.toString().split("?")[1] || "") || {};
 
       if (app) {
         changeApp({ id: app as string, args });
         if (args) {
-          console.log("set state", args);
           s.setState(args);
         }
       }

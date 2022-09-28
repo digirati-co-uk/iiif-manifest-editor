@@ -13,7 +13,7 @@ import qs from "query-string";
 const $root = document.getElementById("root")!;
 
 function useInitialApp() {
-  if (import.meta.env.DEV && window) {
+  if ((import.meta.env.DEV || import.meta.env.PULL_REQUEST === "true") && window) {
     const queryString = qs.parse(window.location.toString().split("?")[1] || "");
 
     if (queryString.app) {
