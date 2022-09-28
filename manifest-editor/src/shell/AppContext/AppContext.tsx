@@ -1,9 +1,10 @@
-import { createContext, ReactNode, SetStateAction, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { MappedApp } from "../../apps/app-loader";
 import { useLocalStorage } from "../../madoc/use-local-storage";
 import invariant from "tiny-invariant";
 import { useCurrentProject, useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
+import qs from "query-string";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
@@ -34,7 +35,7 @@ export function useAppState<S = any>() {
   return useContext(AppStateReactContext);
 }
 
-export function AppStateProvider(props: { appId: string; initialValue?: any; children: ReactNode }) {
+export function AppStateProvider(props: { appId: string; initialValue?: any; args?: any; children: ReactNode }) {
   const { current } = useProjectContext();
   const [state, _setState, stateRef] = useLocalStorage(`app-state/${current?.id}`, props.initialValue || {});
 
@@ -48,6 +49,12 @@ export function AppStateProvider(props: { appId: string; initialValue?: any; chi
     });
   }, []);
 
+  useEffect(() => {
+    if (props.args) {
+      setState(props.args);
+    }
+  }, [props.appId]);
+
   const ctx = useMemo(() => ({ state: state || {}, setState }), [setState, state]);
 
   return (
@@ -55,6 +62,29 @@ export function AppStateProvider(props: { appId: string; initialValue?: any; chi
       {window.__TAURI__ ? <DesktopContext>{props.children}</DesktopContext> : props.children}
     </AppStateReactContext.Provider>
   );
+}
+
+function useCurrentApp(initialApp?: { id: string; args?: any }) {
+  const s = useAppState();
+  const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
+
+  useEffect(() => {
+    if (import.meta.env.DEV && window) {
+      const { app, ...args } = qs.parse(window.location.toString().split("?")[1] || "") || {};
+
+      if (app) {
+        changeApp({ id: app as string, args });
+        if (args) {
+          console.log("set state", args);
+          s.setState(args);
+        }
+      }
+    }
+  }, []);
+
+  console.log(s);
+
+  return [currentApp, changeApp] as const;
 }
 
 export function AppProvider({
@@ -66,7 +96,7 @@ export function AppProvider({
   initialApp?: AppContext["currentApp"];
   children: ReactNode;
 }) {
-  const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
+  const [currentApp, changeApp] = useCurrentApp(initialApp);
   const ctx = useMemo<AppContext>(
     () => ({
       currentApp: currentApp || { id: "splash" },

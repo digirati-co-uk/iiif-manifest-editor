@@ -7,15 +7,29 @@ import { ShellProvider } from "./shell/ShellContext/ShellContext";
 import { RenderApp } from "./_next/pages/render-app";
 import { Main } from "./atoms/Main";
 import { getApps } from "./apps/app-loader";
+import qs from "query-string";
 
 // Vite index, eventually.
 const $root = document.getElementById("root")!;
 
+function useInitialApp() {
+  if (import.meta.env.DEV && window) {
+    const queryString = qs.parse(window.location.toString().split("?")[1] || "");
+
+    if (queryString.app) {
+      return { id: queryString.app as string };
+    }
+  }
+
+  return undefined;
+}
+
 function App() {
   const apps = useMemo(getApps, []);
+  const initialApp = useInitialApp();
 
   return (
-    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }}>
+    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }} initialApp={initialApp}>
       <GlobalStyle />
       <Main>
         <RenderApp />

@@ -35,7 +35,7 @@ export const Button = styled.button<{ $active?: boolean }>`
 `;
 
 export const SmallButton = styled(Button)`
-  padding: 0 ${(props: any) => props.theme.padding.xs || "0.25rem"};
+  padding: 0.25em ${(props: any) => props.theme.padding.xs || "0.4em"};
   height: unset;
   background: none;
 `;

@@ -19,4 +19,9 @@ export const GlobalStyle = createGlobalStyle`
     touch-action: manipulation;
   }
 
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
 `;

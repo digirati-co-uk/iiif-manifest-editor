@@ -2,6 +2,7 @@ import { LayoutPanel } from "@/shell/Layout/Layout.types";
 import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { CanvasListStyles as S } from "@/_panels/left-panels/CanvasList/CanvasList.styles";
 import { AppState } from "@/shell/AppContext/AppContext";
+import { useEffect } from "react";
 
 export default { id: "storybook", title: "Storybook" };
 
@@ -44,12 +45,20 @@ function parseStories(modules: any) {
 const state = parseStories(import.meta.globEager("../../**/*.stories.ts*"));
 
 function AllStories(app: AppState) {
+  useEffect(() => {
+    window.location.hash = `?app=storybook&story=${app.state.story}`;
+  }, [app.state.story]);
+
   return (
     <div style={{ flex: 1 }}>
       <S.Container>
         {state.map((item, n) => {
           return (
-            <S.ItemContainer key={n} onClick={() => app.setState({ story: n })} $selected={n === app.state.story}>
+            <S.ItemContainer
+              key={n}
+              onClick={() => app.setState({ story: item.metadata.title })}
+              $selected={item.metadata.title === app.state.story}
+            >
               <S.ItemLabel>{item.metadata.title}</S.ItemLabel>
               <S.ItemIdentifier>{item.metadata.title}</S.ItemIdentifier>
             </S.ItemContainer>
@@ -66,7 +75,8 @@ export const leftPanels: LayoutPanel[] = [
     label: "Stories",
     icon: "",
     render: (_, ctx, app) => {
-      const item = state[app.state.story];
+      const item = getStory(app.state.story);
+
       if (!item || (item.metadata as any).panel !== "left") {
         return <AllStories {...app} />;
       }
@@ -90,7 +100,7 @@ export const centerPanels: LayoutPanel[] = [
     label: "Storybook",
     icon: "",
     render: (_, ctx, app) => {
-      const item = state[app.state.story];
+      const item = getStory(app.state.story);
       if (!item) {
         return <div>Choose story</div>;
       }
@@ -115,13 +125,17 @@ export const centerPanels: LayoutPanel[] = [
   },
 ];
 
+function getStory(current: string) {
+  return state.find((s) => s.metadata.title === current);
+}
+
 export const rightPanels: LayoutPanel[] = [
   {
     id: "storybook",
     label: "Storybook",
     icon: "",
     render: (_, ctx, app) => {
-      const item = state[app.state.story];
+      const item = getStory(app.state.story);
 
       if (!item || ((item.metadata as any).panel !== "left" && (item.metadata as any).panel !== "right")) {
         return null;

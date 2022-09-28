@@ -10,7 +10,7 @@ export function RenderApp() {
   const selectedApp = currentApp ? apps[currentApp.id] : null;
 
   return selectedApp ? (
-    <AppStateProvider appId={currentApp.id} key={currentApp.id}>
+    <AppStateProvider appId={currentApp.id} key={currentApp.id} args={currentApp.args}>
       <Layout header={isDesktop ? <AppHeaderDesktop /> : <AppHeader />} {...(selectedApp.layout || {})} />
     </AppStateProvider>
   ) : (
