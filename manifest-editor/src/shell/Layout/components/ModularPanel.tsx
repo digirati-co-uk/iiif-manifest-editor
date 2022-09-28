@@ -78,7 +78,7 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   }}
 `;
 
-const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
+export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
   background: #fff;
   display: flex;
   height: 2.8em;

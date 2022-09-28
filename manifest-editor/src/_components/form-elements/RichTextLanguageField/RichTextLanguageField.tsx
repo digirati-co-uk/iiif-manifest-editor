@@ -1,5 +1,5 @@
 import * as S from "./RichTextLanguageField.styles";
-import { SVGProps, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import { CloseIcon } from "@/icons/CloseIcon";
 import Textarea from "react-textarea-autosize";
 import {
@@ -10,9 +10,17 @@ import {
   RichUtils,
   EditorCommand,
   DraftHandleValue,
+  ContentBlock,
+  CompositeDecorator,
 } from "draft-js";
 import { convertToHTML } from "draft-convert";
+import linkIcon from "@/icons/LinkIcon.svg";
+import copyIcon from "@/icons/CopyIcon.svg";
+import codeIcon from "@/icons/CodeIcon.svg";
+import editIcon from "@/icons/EditIcon.svg";
+import tickIcon from "@/icons/TickIcon.svg";
 import DOMPurify from "dompurify";
+import { useCreateLink } from "@/_components/form-elements/RichTextLanguageField/hooks/use-create-link";
 
 interface RichTextLanguageField {
   language: string;
@@ -20,6 +28,25 @@ interface RichTextLanguageField {
   onUpdate: (value: string, lang: string) => void;
   onRemove?: () => void;
 }
+
+const Link = (props: any) => {
+  const { url } = props.contentState.getEntity(props.entityKey).getData();
+  return <S.InlineLink href={url}>{props.children}</S.InlineLink>;
+};
+
+function findLinkEntities(contentBlock: ContentBlock, callback: any, contentState: ContentState) {
+  contentBlock.findEntityRanges((character) => {
+    const entityKey = character.getEntity();
+    return entityKey !== null && contentState.getEntity(entityKey).getType() === "LINK";
+  }, callback);
+}
+
+const decorator = new CompositeDecorator([
+  {
+    strategy: findLinkEntities,
+    component: Link,
+  },
+]);
 
 export function RichTextLanguageField(props: RichTextLanguageField) {
   const isHtml = props.value[0] === "<";
@@ -30,9 +57,32 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const [editorState, setEditorState] = useState(() => {
     const blocksFromHTML = convertFromHTML(textState);
     return EditorState.createWithContent(
-      ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap)
+      ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
+      decorator
     );
   });
+  const [showLinkForm, setShowLinkForm] = useState(false);
+  const linkForm = useCreateLink(editorState, setEditorState, () => setShowLinkForm(false));
+
+  const [showControls, setShowControls] = useState(false);
+
+  // State.
+  const isStateHtml = textState[0] === "<";
+
+  const isBold = htmlMode ? !!editorState.getCurrentInlineStyle().get("BOLD") : false;
+  const isItalic = htmlMode ? !!editorState.getCurrentInlineStyle().get("ITALIC") : false;
+  const isUnderline = htmlMode ? !!editorState.getCurrentInlineStyle().get("UNDERLINE") : false;
+
+  // Getting current link.
+  const contentState = editorState.getCurrentContent();
+  const startKey = editorState.getSelection().getStartKey();
+  const startOffset = editorState.getSelection().getStartOffset();
+  const blockWithLinkAtBeginning = contentState.getBlockForKey(startKey);
+  const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset);
+  const linkInstance = linkKey ? contentState.getEntity(linkKey) : null;
+  const currentUrl = linkInstance ? linkInstance.getData().url : null;
+
+  const isLink = htmlMode ? !!currentUrl : false;
 
   const controls = {
     bold() {
@@ -43,6 +93,9 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
     },
     underline() {
       setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "UNDERLINE"));
+    },
+    link() {
+      setShowLinkForm((l) => !l);
     },
   };
 
@@ -65,8 +118,6 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
     return "not-handled";
   };
 
-  const isStateHtml = textState[0] === "<";
-
   const toggleHtmlMode = () => {
     //
 
@@ -81,6 +132,12 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
               return <span />;
             }
           },
+          entityToHTML: (entity) => {
+            if (entity.type === "LINK") {
+              return <a href={entity.data.url} />;
+            }
+            return <span />;
+          },
         })(content)
           .replace(/<br\/>/g, "<br/>\n")
           .replace(/<\/p><p>/g, "</p>\n<p>")
@@ -94,7 +151,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
       );
       setEditorState(
         EditorState.createWithContent(
-          ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap)
+          ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
+          decorator
         )
       );
     }
@@ -118,7 +176,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   //
   return (
     <S.Container>
-      <S.ToolbarContainer>
+      <S.ToolbarContainer $visible={showControls}>
         {!htmlMode ? (
           <>
             <S.ToolbarItem onClick={toggleHtmlMode}>
@@ -133,6 +191,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         ) : (
           <>
             <S.ToolbarItem
+              $active={isBold}
               style={{ fontWeight: "bold" }}
               onMouseDown={(e) => e.preventDefault()}
               onClick={controls.bold}
@@ -140,6 +199,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
               B
             </S.ToolbarItem>
             <S.ToolbarItem
+              $active={isItalic}
               style={{ fontStyle: "italic" }}
               onMouseDown={(e) => e.preventDefault()}
               onClick={controls.italic}
@@ -147,35 +207,68 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
               i
             </S.ToolbarItem>
             <S.ToolbarItem
+              $active={isUnderline}
               style={{ textDecoration: "underline" }}
               onMouseDown={(e) => e.preventDefault()}
               onClick={controls.underline}
             >
               u
             </S.ToolbarItem>
-            <S.ToolbarItem onClick={toggleHtmlMode}>source</S.ToolbarItem>
+            <S.ToolbarItem
+              $active={isLink || showLinkForm}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={controls.link}
+            >
+              <img src={linkIcon} alt="Add link" />
+            </S.ToolbarItem>
+            <S.ToolbarItem onClick={toggleHtmlMode}>
+              <img src={codeIcon} alt="View source" />
+            </S.ToolbarItem>
           </>
         )}
         <S.ToolbarSpacer />
-        <S.ToolbarItem>en V</S.ToolbarItem>
+        <S.ToolbarItem>
+          <select name="langs">
+            <option>en</option>
+            <option>fr</option>
+          </select>
+        </S.ToolbarItem>
+
         {props.onRemove ? (
           <S.CloseIconContainer onClick={props.onRemove}>
             <CloseIcon />
           </S.CloseIconContainer>
         ) : null}
       </S.ToolbarContainer>
-      <S.InputContainer $focus={focus}>
+      {showLinkForm ? (
+        <S.FloatingActionOuterContainer>
+          <form {...linkForm}>
+            <S.FloatingActionContainer>
+              <S.FloatingActionInput type="text" name="link" defaultValue={currentUrl} />
+              <S.FloatingActionButton type="submit" name="_action" value="add">
+                Add link
+              </S.FloatingActionButton>
+              <S.FloatingActionButton type="submit" name="_action" value="remove">
+                Remove
+              </S.FloatingActionButton>
+            </S.FloatingActionContainer>
+          </form>
+        </S.FloatingActionOuterContainer>
+      ) : null}
+      <S.InputContainer $focus={focus} $disabled={showLinkForm}>
         {htmlMode ? (
-          <S.StyledEditor>
-            <Editor
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              editorState={editorState}
-              handleKeyCommand={handleKeyCommand}
-              onChange={setEditorState}
-              handleReturn={handleReturn}
-            />
-          </S.StyledEditor>
+          <>
+            <S.StyledEditor>
+              <Editor
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                editorState={editorState}
+                handleKeyCommand={handleKeyCommand}
+                onChange={setEditorState}
+                handleReturn={handleReturn}
+              />
+            </S.StyledEditor>
+          </>
         ) : (
           <S.InputInvisible
             as={Textarea}
@@ -185,7 +278,19 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
             onChange={(e: any) => setTextState(e.currentTarget.value)}
           />
         )}
-        <S.CopyText>[C]</S.CopyText>
+        {showControls || focus ? (
+          <S.CopyText onMouseDown={() => setShowControls((c) => !c)}>
+            {showControls ? (
+              <img src={tickIcon} alt="Copy value to clipboard" width="15px" />
+            ) : (
+              <img src={editIcon} alt="Copy value to clipboard" width="15px" />
+            )}
+          </S.CopyText>
+        ) : (
+          <S.LanguageDisplay onClick={() => setShowControls(true)}>
+            <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>
+          </S.LanguageDisplay>
+        )}
       </S.InputContainer>
     </S.Container>
   );

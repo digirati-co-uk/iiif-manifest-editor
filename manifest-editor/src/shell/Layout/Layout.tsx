@@ -83,6 +83,13 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   }, []);
 
   useLayoutEffect(() => {
+    if (mobile && state.leftPanel.open && state.rightPanel.open) {
+      actions.leftPanel.close();
+      actions.rightPanel.close();
+    }
+  }, [mobile]);
+
+  useLayoutEffect(() => {
     if (centerPanel && centerPanel.onMount) {
       return centerPanel.onMount(
         state.centerPanel.state || centerPanel.defaultState || {},

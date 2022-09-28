@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { ModularPanelHeader } from "@/shell/Layout/components/ModularPanel";
 
 export const Container = styled.div`
   position: relative;
@@ -72,6 +73,8 @@ export const DrawerButton = styled.button`
 
 export const DrawerBody = styled.div<{ $open?: boolean }>`
   background: #fff;
+  border-radius: 30px 30px 0 0;
+  padding-top: 0.5em;
   display: flex;
   position: absolute;
   transform: translateY(100%);
@@ -89,6 +92,14 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
       box-shadow: 0 -5px 15px 0 rgba(0, 0, 0, 0.1), 0 -3px 5px 0 rgba(0, 0, 0, 0.1);
       transform: translateY(0);
     `}
+
+  ${ModularPanelHeader} {
+    box-shadow: none;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+  }
 `;
 
 export const LeftPanel = styled.div<{ $open?: boolean }>`
