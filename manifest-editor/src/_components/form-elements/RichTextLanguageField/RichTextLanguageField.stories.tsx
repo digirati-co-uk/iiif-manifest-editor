@@ -12,7 +12,7 @@ export const defaultExample = () => {
 
         <RichTextLanguageField
           value="This is an example value"
-          language="none"
+          language="en"
           onUpdate={(newValue, newLanguage) => {
             console.log(newValue, newLanguage);
           }}

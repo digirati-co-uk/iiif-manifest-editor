@@ -176,6 +176,7 @@ export const LanguageDisplayInner = styled.div`
   font-size: 0.6em;
   background: rgba(0, 0, 0, 0.06);
   color: #606060;
+  font-weight: 600;
   border-radius: 3px;
   text-transform: uppercase;
   margin: 0.4em;
