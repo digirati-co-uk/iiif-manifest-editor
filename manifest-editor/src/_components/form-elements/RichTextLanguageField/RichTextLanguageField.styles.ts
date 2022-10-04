@@ -4,7 +4,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  font-size: 0.875em;
+  font-size: 1em;
 `;
 
 export const ToolbarContainer = styled.div<{ $visible?: boolean }>`
@@ -106,38 +106,6 @@ export const FloatingActionButton = styled.button`
   }
 `;
 
-export const InputContainer = styled.div<{ $focus?: boolean; $disabled?: boolean }>`
-  display: flex;
-  width: 100%;
-  background: #f8f9fa;
-  border-bottom: 1px solid #cad0d5;
-
-  ${(props) =>
-    props.$focus &&
-    css`
-      border-color: ${props.theme.color.main || "#3498db"};
-    `}
-  ${(props) =>
-    props.$disabled &&
-    css`
-      pointer-events: none;
-    `}
-`;
-
-export const InputInvisible = styled.input`
-  background: transparent;
-  flex: 1;
-  border: none;
-  font-size: 1em;
-  padding: 0.8em;
-  font-family: inherit;
-  margin: 0;
-  &:focus {
-    outline: none;
-  }
-  resize: none;
-`;
-
 export const StyledEditor = styled.div`
   padding: 0.8em;
   flex: 1;
@@ -149,6 +117,7 @@ export const CopyText = styled.div`
   width: calc(1.8em + 1px); /* Takes into account the 1px border of the toolbar */
   border-left: 1px solid #e8e8e8;
   cursor: pointer;
+  align-self: normal;
 
   img {
     opacity: 0.5;

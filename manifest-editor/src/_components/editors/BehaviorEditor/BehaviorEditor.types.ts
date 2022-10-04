@@ -1,0 +1,31 @@
+import { InternationalString } from "@iiif/presentation-3";
+import { ReactNode } from "react";
+
+export type BehaviorEditorConfiguration = BehaviorChoice | BehaviorTemplate | BehaviorCustom;
+
+export interface BehaviorChoice {
+  id: string;
+  label: InternationalString;
+  type: "choice";
+  items: Array<{
+    value: string;
+    label: InternationalString;
+  }>;
+}
+
+export interface BehaviorTemplate {
+  id: string;
+  label: InternationalString;
+  type: "template";
+  template: string;
+  regex: RegExp;
+  options: Array<BehaviorChoice & { key: string }>;
+}
+
+export interface BehaviorCustom {
+  id: string;
+  label: InternationalString;
+  type: "custom";
+  component: (behavior: string[], setBehaviors: (b: string[]) => void) => ReactNode;
+  supports: (behavior: string) => boolean;
+}

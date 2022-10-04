@@ -146,14 +146,15 @@ function runWhenEntered(element: HTMLElement, callback: () => void) {
 }
 
 interface AccordionItemProps {
-  label: string;
+  label: string | ReactNode;
   children: ReactNode;
   initialOpen?: boolean;
   maxHeight?: number;
   fullWidth?: boolean;
   onChange?: (value: boolean) => void;
 }
-interface AccordionItemRef {
+
+export interface AccordionItemRef {
   open(): void;
   close(): void;
   toggle(): void;

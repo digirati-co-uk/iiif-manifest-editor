@@ -1,5 +1,5 @@
 import * as S from "./RichTextLanguageField.styles";
-import React, { useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CloseIcon } from "@/icons/CloseIcon";
 import Textarea from "react-textarea-autosize";
 import {
@@ -16,11 +16,11 @@ import {
 import { convertToHTML } from "draft-convert";
 import linkIcon from "@/icons/LinkIcon.svg";
 import codeIcon from "@/icons/CodeIcon.svg";
-import tickIcon from "@/icons/TickIcon.svg";
 import textFormatIcon from "@/icons/TextFormatIcon.svg";
 import DOMPurify from "dompurify";
 import { useCreateLink } from "@/_components/form-elements/RichTextLanguageField/hooks/use-create-link";
 import { useDebounce } from "tiny-use-debounce";
+import { ComposableInput } from "@/_components/form-elements/ComposableInput/ComposableInput";
 
 interface RichTextLanguageField {
   id?: string;
@@ -327,7 +327,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </form>
         </S.FloatingActionOuterContainer>
       ) : null}
-      <S.InputContainer $focus={focus} $disabled={showLinkForm}>
+      <ComposableInput.Container $focus={focus} disabled={showLinkForm}>
         {htmlMode ? (
           <>
             <S.StyledEditor>
@@ -346,7 +346,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
             </S.StyledEditor>
           </>
         ) : (
-          <S.InputInvisible
+          <ComposableInput.Text
             id={props.id}
             as={Textarea}
             onFocus={() => setIsFocused(true)}
@@ -367,7 +367,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
             {props.language === "none" ? null : <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>}
           </S.LanguageDisplay>
         )}
-      </S.InputContainer>
+      </ComposableInput.Container>
     </S.Container>
   );
 }

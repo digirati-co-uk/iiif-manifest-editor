@@ -64,8 +64,8 @@ export const CheckboxInput = styled.input.attrs({ type: "checkbox" })``;
 export const _Input = styled.input`
   background: ${(props: any) => props.theme.color.white || "white"};
   border: 1px solid rgba(5, 42, 68, 0.2);
-  padding: 0.75em 1em;
-  font-size: 0.85em;
+  padding: 0.8em;
+  font-size: 0.875em;
   line-height: 1.2em;
   border-radius: 3px;
 
@@ -95,15 +95,14 @@ export const _Input = styled.input`
 
 export const InputUnderlined = styled(_Input)`
   border-radius: unset;
-  background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  background-color: #f8f9fa;
   border-top: none;
   border-left: none;
   border-right: none;
-  min-height: 2rem;
-  min-width: 70%;
   white-space: pre-line;
+
   &:focus {
-    background: #eee;
+    background: #eceef5;
   }
 `;
 
@@ -190,7 +189,7 @@ export const InputContainer = styled.div<{
   display: flex;
   flex-direction: column;
   max-width: ${(props: any) => (props.fluid ? "100%" : props.wide ? "550px" : "360px")};
-  margin: 1em 0;
+  margin-bottom: 1em;
   width: 100%;
 
   ${(props: any) =>

@@ -124,7 +124,7 @@ export const rightPanels: LayoutPanel[] = [
     id: "canvas-properties",
     label: "Canvas properties",
     defaultState: { current: 0 },
-    options: { tabs: true, minWidth: 475 },
+    options: { tabs: true, minWidth: 400 },
     // backAction: (state, { actions }) => actions.open("manifest-properties"),
     render: (state: { current: number }, { actions }, app) => (
       <CanvasProperties
