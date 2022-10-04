@@ -60,7 +60,7 @@ export const LeftPanel = styled.div<{ $state?: TransitionStatus; $width: string;
 
 export const CenterPanel = styled.div`
   flex: 1 1 0;
-  background: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  background: #e3e7f0;
   // background: #efefef;
   box-shadow: inset 0 3px 2px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(0, 0, 0, 0.14);
   padding-top: 1px;

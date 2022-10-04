@@ -1,5 +1,5 @@
 import * as S from "./RichTextLanguageField.styles";
-import { useReducer, useState } from "react";
+import React, { useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { CloseIcon } from "@/icons/CloseIcon";
 import Textarea from "react-textarea-autosize";
 import {
@@ -15,18 +15,23 @@ import {
 } from "draft-js";
 import { convertToHTML } from "draft-convert";
 import linkIcon from "@/icons/LinkIcon.svg";
-import copyIcon from "@/icons/CopyIcon.svg";
 import codeIcon from "@/icons/CodeIcon.svg";
-import editIcon from "@/icons/EditIcon.svg";
 import tickIcon from "@/icons/TickIcon.svg";
+import textFormatIcon from "@/icons/TextFormatIcon.svg";
 import DOMPurify from "dompurify";
 import { useCreateLink } from "@/_components/form-elements/RichTextLanguageField/hooks/use-create-link";
+import { useDebounce } from "tiny-use-debounce";
 
 interface RichTextLanguageField {
+  id?: string;
   language: string;
   value: string;
-  onUpdate: (value: string, lang: string) => void;
+  onUpdate: (value: string) => void;
   onRemove?: () => void;
+  languages?: string[];
+  onUpdateLanguage?: (lang: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const Link = (props: any) => {
@@ -50,11 +55,12 @@ const decorator = new CompositeDecorator([
 
 export function RichTextLanguageField(props: RichTextLanguageField) {
   const isHtml = props.value[0] === "<";
-  const [htmlMode, _toggleHtmlMode] = useReducer((s) => !s, !isHtml);
-  const [focus, setIsFocused] = useState(false);
+  const editorRef = useRef<Editor>(null);
+  const [htmlMode, setHtmlMode] = useState(isHtml);
+  const [focus, _setIsFocused] = useState(false);
   // Need to hold 2 states, the editorState and the textState
-  const [textState, setTextState] = useState("Testing a value");
-  const [editorState, setEditorState] = useState(() => {
+  const [textState, _setTextState] = useState(props.value);
+  const [editorState, _setEditorState] = useState(() => {
     const blocksFromHTML = convertFromHTML(textState);
     return EditorState.createWithContent(
       ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
@@ -62,12 +68,38 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
     );
   });
   const [showLinkForm, setShowLinkForm] = useState(false);
-  const linkForm = useCreateLink(editorState, setEditorState, () => setShowLinkForm(false));
 
+  const saveChanges = () => {
+    props.onUpdate(getTextValue());
+  };
+  const debounceSave = useDebounce(saveChanges, 400);
   const [showControls, setShowControls] = useState(false);
+
+  const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (s) => {
+    debounceSave();
+    _setEditorState(s);
+  };
+
+  const setTextState: React.Dispatch<React.SetStateAction<string>> = (s) => {
+    debounceSave();
+    _setTextState(s);
+  };
+
+  const setIsFocused = (value: boolean) => {
+    if (value && props.onFocus) {
+      props.onFocus();
+    }
+
+    if (!value && props.onBlur) {
+      props.onBlur();
+    }
+
+    _setIsFocused(value);
+  };
 
   // State.
   const isStateHtml = textState[0] === "<";
+  const linkForm = useCreateLink(editorState, setEditorState, () => setShowLinkForm(false));
 
   const isBold = htmlMode ? !!editorState.getCurrentInlineStyle().get("BOLD") : false;
   const isItalic = htmlMode ? !!editorState.getCurrentInlineStyle().get("ITALIC") : false;
@@ -83,6 +115,31 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const currentUrl = linkInstance ? linkInstance.getData().url : null;
 
   const isLink = htmlMode ? !!currentUrl : false;
+
+  const getTextValue = () => {
+    if (htmlMode) {
+      const content = editorState.getCurrentContent();
+      const blocks = content.getBlocksAsArray().filter((b) => b.getDepth() === 0);
+      return convertToHTML({
+        blockToHTML: (block) => {
+          //
+          if (blocks.length === 1 && block.depth === 0 && block.type === "unstyled") {
+            return <span />;
+          }
+        },
+        entityToHTML: (entity) => {
+          if (entity.type === "LINK") {
+            return <a href={entity.data.url} />;
+          }
+          return <span />;
+        },
+      })(content)
+        .replace(/<br\/>/g, "<br/>\n")
+        .replace(/<\/p><p>/g, "</p>\n<p>");
+    } else {
+      return textState;
+    }
+  };
 
   const controls = {
     bold() {
@@ -119,29 +176,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   };
 
   const toggleHtmlMode = () => {
-    //
-
     if (htmlMode) {
-      const content = editorState.getCurrentContent();
-      const blocks = content.getBlocksAsArray().filter((b) => b.getDepth() === 0);
-      setTextState(
-        convertToHTML({
-          blockToHTML: (block) => {
-            //
-            if (blocks.length === 1 && block.depth === 0 && block.type === "unstyled") {
-              return <span />;
-            }
-          },
-          entityToHTML: (entity) => {
-            if (entity.type === "LINK") {
-              return <a href={entity.data.url} />;
-            }
-            return <span />;
-          },
-        })(content)
-          .replace(/<br\/>/g, "<br/>\n")
-          .replace(/<\/p><p>/g, "</p>\n<p>")
-      );
+      setTextState(getTextValue());
     } else {
       const blocksFromHTML = convertFromHTML(
         textState
@@ -157,8 +193,34 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
       );
     }
 
-    _toggleHtmlMode();
+    setHtmlMode((m) => !m);
   };
+
+  useLayoutEffect(() => {
+    if (props.id) {
+      const $el = document.querySelector(`label[for="${props.id}"]`);
+      if ($el && htmlMode) {
+        const currentEditor = editorRef.current;
+        const listener = () => {
+          if (htmlMode) {
+            currentEditor?.focus();
+          }
+        };
+
+        $el.addEventListener("click", listener);
+        return () => {
+          $el.removeEventListener("click", listener);
+        };
+      }
+    }
+    return () => void 0;
+  }, [htmlMode, props.id]);
+
+  useEffect(() => {
+    return () => {
+      debounceSave.cancel();
+    };
+  }, []);
 
   const stripTags = () => {
     //
@@ -227,12 +289,22 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </>
         )}
         <S.ToolbarSpacer />
-        <S.ToolbarItem>
-          <select name="langs">
-            <option>en</option>
-            <option>fr</option>
-          </select>
-        </S.ToolbarItem>
+        {props.onUpdateLanguage && props.languages ? (
+          <S.ToolbarItem>
+            <select
+              onFocus={props.onFocus}
+              onBlur={props.onBlur}
+              value={props.language}
+              onChange={(e) => props.onUpdateLanguage && props.onUpdateLanguage(e.currentTarget.value)}
+            >
+              {props.languages.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
+          </S.ToolbarItem>
+        ) : null}
 
         {props.onRemove ? (
           <S.CloseIconContainer onClick={props.onRemove}>
@@ -260,8 +332,12 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           <>
             <S.StyledEditor>
               <Editor
+                ref={editorRef}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                onBlur={() => {
+                  setIsFocused(false);
+                  saveChanges();
+                }}
                 editorState={editorState}
                 handleKeyCommand={handleKeyCommand}
                 onChange={setEditorState}
@@ -271,24 +347,24 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </>
         ) : (
           <S.InputInvisible
+            id={props.id}
             as={Textarea}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onBlur={() => {
+              setIsFocused(false);
+              saveChanges();
+            }}
             value={textState}
             onChange={(e: any) => setTextState(e.currentTarget.value)}
           />
         )}
         {showControls || focus ? (
           <S.CopyText onMouseDown={() => setShowControls((c) => !c)}>
-            {showControls ? (
-              <img src={tickIcon} alt="Copy value to clipboard" width="15px" />
-            ) : (
-              <img src={editIcon} alt="Copy value to clipboard" width="15px" />
-            )}
+            <img src={textFormatIcon} alt="Text format" width="24px" />
           </S.CopyText>
         ) : (
           <S.LanguageDisplay onClick={() => setShowControls(true)}>
-            <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>
+            {props.language === "none" ? null : <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>}
           </S.LanguageDisplay>
         )}
       </S.InputContainer>

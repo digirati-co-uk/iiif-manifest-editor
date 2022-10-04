@@ -13,8 +13,8 @@ export const defaultExample = () => {
         <RichTextLanguageField
           value="This is an example value"
           language="en"
-          onUpdate={(newValue, newLanguage) => {
-            console.log(newValue, newLanguage);
+          onUpdate={(newValue) => {
+            console.log(newValue);
           }}
           onRemove={() => {
             console.log("removed");

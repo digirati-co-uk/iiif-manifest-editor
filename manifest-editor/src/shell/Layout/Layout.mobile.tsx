@@ -63,6 +63,9 @@ export const DrawerButton = styled.button`
   border-radius: 5px;
   border: 1px solid #979797;
   letter-spacing: -0.46px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   svg {
     display: block;
@@ -73,8 +76,6 @@ export const DrawerButton = styled.button`
 
 export const DrawerBody = styled.div<{ $open?: boolean }>`
   background: #fff;
-  border-radius: 30px 30px 0 0;
-  padding-top: 0.5em;
   display: flex;
   position: absolute;
   transform: translateY(100%);
@@ -95,9 +96,8 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
 
   ${ModularPanelHeader} {
     box-shadow: none;
-    padding-left: 1em;
-    padding-right: 1em;
-    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     font-size: 1.1em;
   }
 `;

@@ -42,7 +42,7 @@ const ItemLabel = styled.button`
   background: transparent;
   font: inherit;
   text-transform: uppercase;
-  padding: 0.6em;
+  padding: 0.6em 1.2em;
   flex: 1;
   font-size: 0.8em;
   font-weight: 600;
@@ -54,6 +54,7 @@ const ItemLabel = styled.button`
 
 const ItemCollapse = styled.div`
   font-size: 1.4em;
+  padding-right: 0.3em;
   display: flex;
   align-items: center;
 `;
@@ -62,10 +63,10 @@ const ItemBodyInner = styled.div<{ $full?: boolean }>`
   ${(props) =>
     props.$full
       ? css`
-          margin: 0px;
+          margin: 0;
         `
       : css`
-          margin: 0.5em;
+          margin: 1em 1em 1.5em;
         `}
 `;
 
@@ -148,6 +149,8 @@ interface AccordionItemProps {
   label: string;
   children: ReactNode;
   initialOpen?: boolean;
+  maxHeight?: number;
+  fullWidth?: boolean;
   onChange?: (value: boolean) => void;
 }
 interface AccordionItemRef {
@@ -171,7 +174,7 @@ export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(fu
     setIsOpen((o) => !o);
   };
   const [_height, setHeight] = useState<number | undefined>(undefined);
-  const maxHeight = 300;
+  const maxHeight = props.maxHeight || 800;
   const initial = typeof _height === "undefined";
   const height = Math.min(_height || 0, maxHeight);
   const [scrolled, setScrolled] = useState(false);
@@ -238,7 +241,7 @@ export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(fu
           transitionDuration: `${Math.max(200, height * 1.4)}ms`,
         }}
       >
-        <ItemBodyInner>{props.children}</ItemBodyInner>
+        <ItemBodyInner $full={props.fullWidth}>{props.children}</ItemBodyInner>
       </ItemBody>
     </ItemRow>
   );

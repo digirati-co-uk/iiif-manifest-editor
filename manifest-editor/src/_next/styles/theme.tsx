@@ -1,6 +1,6 @@
 export const Theme = {
   color: {
-    main: "#3498db",
+    main: "#347cff",
     logoPink: "#fe4081",
     white: "white",
     grey: "grey",

@@ -1,19 +1,29 @@
 import { useVault } from "react-iiif-vault";
-import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
-import { LanguageFieldEditor } from "../LanguageFieldEditor/LanguageFieldEditor";
-import { useResource } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { useResource } from "@/shell/ResourceEditingContext/ResourceEditingContext";
 import { DescriptiveProperties } from "@iiif/presentation-3";
+import { MetadataSave } from "@/hooks/useMetadataEditor";
+import invariant from "tiny-invariant";
+import { useConfig } from "@/shell/ConfigContext/ConfigContext";
 import { LanguageMapEditorProps } from "./LanguageMapEditor.types";
 import { Container } from "./LanguageMapEditor.styles";
-import { MetadataSave } from "../../../hooks/useMetadataEditor";
-import invariant from "tiny-invariant";
-import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
+import { LanguageFieldEditor } from "../LanguageFieldEditor/LanguageFieldEditor";
+import { useRef } from "react";
 
 export const supported: LanguageMapEditorProps["dispatchType"][] = ["label", "summary"];
 
-export function LanguageMapEditor({ dispatchType, languages, guidanceReference, disableMultiline }: LanguageMapEditorProps) {
+export function LanguageMapEditor({
+  dispatchType,
+  languages,
+  guidanceReference,
+  disableMultiline,
+  formElement,
+  name,
+  id,
+}: LanguageMapEditorProps) {
   const resource = useResource<Partial<DescriptiveProperties>>();
   const vault = useVault();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { defaultLanguages } = useConfig();
 
   invariant(
@@ -22,7 +32,11 @@ export function LanguageMapEditor({ dispatchType, languages, guidanceReference, 
   );
 
   const changeHandler: MetadataSave = (data) => {
-    if (resource) {
+    if (formElement) {
+      if (inputRef.current) {
+        inputRef.current.value = JSON.stringify(data.toInternationalString());
+      }
+    } else if (resource) {
       vault.modifyEntityField(resource, dispatchType, data.toInternationalString());
     }
   };
@@ -41,6 +55,9 @@ export function LanguageMapEditor({ dispatchType, languages, guidanceReference, 
           />
         </ErrorBoundary>
       )}
+      {formElement ? (
+        <input ref={inputRef} type="hidden" name={name} id={id} value={JSON.stringify(resource[dispatchType])} />
+      ) : null}
     </Container>
   );
 }

@@ -62,16 +62,17 @@ export const SecondaryButton = styled(Button)`
 `;
 
 export const CalltoButton = styled(Button)`
-   {
-    padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
-    color: ${(props: any) => props.theme.color.white || "white"};
-    background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    height: 2rem;
-    display: flex;
-    align-items: center;
+  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  color: ${(props: any) => props.theme.color.white || "white"};
+  background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background-color: ${(props: any) => props.theme.color.mainHover || "#347cff;"};
   }
 `;
 

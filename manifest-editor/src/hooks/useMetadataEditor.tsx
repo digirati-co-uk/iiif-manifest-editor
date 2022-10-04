@@ -1,4 +1,4 @@
-import { InternationalString } from "@hyperion-framework/types";
+import { InternationalString } from "@iiif/presentation-3";
 import produce from "immer";
 import { useMemo, useReducer } from "react";
 import { useClosestLanguage } from "../atoms/LocaleString";

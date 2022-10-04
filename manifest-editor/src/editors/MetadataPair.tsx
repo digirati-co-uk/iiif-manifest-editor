@@ -84,7 +84,7 @@ export const MetadataPair: React.FC<MetadataPairProps> = ({
       <FlexContainer>
         <FlexContainerColumn style={{ width: "100%" }}>
           <LanguageFieldEditor
-            label={"label"}
+            label={"Label"}
             disableMultiline
             fields={field.label || { none: [""] }}
             availableLanguages={availableLanguages}
@@ -93,7 +93,7 @@ export const MetadataPair: React.FC<MetadataPairProps> = ({
             property={"label"}
           />
           <LanguageFieldEditor
-            label={"value"}
+            label={"Value"}
             fields={field.value || { none: [""] }}
             availableLanguages={availableLanguages}
             onSave={onSave}

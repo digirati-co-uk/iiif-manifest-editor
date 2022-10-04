@@ -6,11 +6,12 @@ import { Fragment, ReactNode, useEffect, useRef } from "react";
 interface BoxSelectorFieldProps {
   selector: BoxSelector;
   form?: boolean;
+  inlineFieldset?: boolean;
   onSubmit?: (selector: BoxSelector) => void;
   children?: ReactNode;
 }
 
-export function BoxSelectorField({ selector, form, onSubmit, children }: BoxSelectorFieldProps) {
+export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, children }: BoxSelectorFieldProps) {
   const formEl = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function BoxSelectorField({ selector, form, onSubmit, children }: BoxSele
   }
 
   const fields = (
-    <FieldsetContainer id="box-selector-fieldset">
+    <FieldsetContainer id="box-selector-fieldset" $inline={inlineFieldset}>
       <FlexContainer>
         <input type="hidden" name="selector.type" value="BoxSelector" />
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>

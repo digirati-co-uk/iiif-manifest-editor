@@ -26,10 +26,9 @@ function useInitialApp() {
 
 function App() {
   const apps = useMemo(getApps, []);
-  const initialApp = useInitialApp();
 
   return (
-    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }} initialApp={initialApp}>
+    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }}>
       <GlobalStyle />
       <Main>
         <RenderApp />

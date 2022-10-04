@@ -9,7 +9,8 @@ import { AppMenu } from "./components/AppMenu";
 
 export function AppHeader() {
   const [isMenuHidden] = useLocalStorage("menu-hidden");
-  const { changeApp, initialApp } = useApps();
+  const { changeApp, initialApp, currentApp, apps } = useApps();
+  const app = apps[currentApp?.id];
 
   return (
     <Header>
@@ -20,10 +21,12 @@ export function AppHeader() {
           <ManifestEditorLogo height={27} width={200} />
         </Logo>
 
-        <ProjectPreview>
-          <DraftTitleEditor />
-          {/*<ContextButton>{state.canvasId ? "Canvas" : "Manifest"}</ContextButton>*/}
-        </ProjectPreview>
+        {app && app.metadata.drafts === false ? null : (
+          <ProjectPreview>
+            <DraftTitleEditor />
+            {/*<ContextButton>{state.canvasId ? "Canvas" : "Manifest"}</ContextButton>*/}
+          </ProjectPreview>
+        )}
 
         <PreviewButton />
 

@@ -1,9 +1,11 @@
 import { useProjectContext } from "../../../../shell/ProjectContext/ProjectContext";
 import { projectFromManifest } from "../../../../shell/ProjectContext/helpers/project-from-manifest";
 import { getManifestNomalized } from "../../../../helpers/getManifestNormalized";
+import { useApps } from "@/shell/AppContext/AppContext";
 
 export function ProjectListing() {
   const { allProjects, current, loadingStatus, actions, canDelete } = useProjectContext();
+  const { changeApp } = useApps();
 
   if (loadingStatus && loadingStatus.loading) {
     return <div>Loading...</div>;
@@ -16,7 +18,12 @@ export function ProjectListing() {
         return (
           <li key={project.id}>
             {project.name} ({project.id})
-            <button disabled={current?.id === project.id} onClick={() => actions.switchProject(project.id)}>
+            <button
+              disabled={current?.id === project.id}
+              onClick={() => {
+                actions.switchProject(project.id);
+              }}
+            >
               select
             </button>
             <button disabled={!canDelete} onClick={() => actions.deleteProject(project.id)}>

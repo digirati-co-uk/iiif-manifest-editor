@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LanguageFieldEditor } from "../editors/generic/LanguageFieldEditor/LanguageFieldEditor";
+import { LanguageFieldEditor } from "../LanguageFieldEditor/LanguageFieldEditor";
 
 export default {
   title: "Manifest Editor/Language Field Editor",
@@ -9,7 +9,11 @@ export default {
   },
 };
 
-const Template: any = (props: any) => <LanguageFieldEditor {...props} />;
+const Template: any = (props: any) => (
+  <div>
+    <LanguageFieldEditor {...props} />
+  </div>
+);
 
 export const EmptyLanguageEditor = Template.bind({});
 EmptyLanguageEditor.args = {

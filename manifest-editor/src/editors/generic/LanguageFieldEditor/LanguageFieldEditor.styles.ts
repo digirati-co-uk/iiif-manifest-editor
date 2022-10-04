@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { ButtonReset } from "../../../atoms/Button";
+import { ButtonReset } from "@/atoms/Button";
 
 export const AddAnother = styled.div<{ $active?: boolean }>`
   display: flex;
@@ -30,10 +30,10 @@ export const EmptyLanguageField = styled(ButtonReset)`
   padding: 0.8em 1em;
   background: #f8f9fa;
   color: #999;
-  font-size: 0.8em;
+  font-size: 0.9em;
   border-bottom: 1px solid rgba(5, 42, 68, 0.2);
-  margin: 0.35em 0.5em 1rem;
-  width: calc(100% - 1em);
+  margin: 0.5em 0 2.18em;
   display: block;
   text-align: left;
+  width: 100%;
 `;

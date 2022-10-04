@@ -9,6 +9,7 @@ type LoadedApp = Partial<LayoutProps> & {
     dev?: boolean;
     desktop?: boolean;
     web?: boolean;
+    drafts?: boolean;
   };
 };
 

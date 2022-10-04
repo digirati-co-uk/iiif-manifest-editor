@@ -3,8 +3,15 @@ import { useMemo, useRef, useState } from "react";
 export function useDecayState(time: number) {
   const [active, _setActive] = useState(false);
   const lastTimeout = useRef<any>();
+  const focusCount = useRef<any>(0);
 
-  function clear() {
+  function clear(existing?: boolean) {
+    focusCount.current--;
+
+    if (existing && focusCount.current !== 0) {
+      return;
+    }
+
     if (lastTimeout.current) {
       clearTimeout(lastTimeout.current);
       lastTimeout.current = 0;
@@ -15,6 +22,7 @@ export function useDecayState(time: number) {
   }
 
   function set() {
+    focusCount.current++;
     if (lastTimeout.current) {
       clearTimeout(lastTimeout.current);
     }

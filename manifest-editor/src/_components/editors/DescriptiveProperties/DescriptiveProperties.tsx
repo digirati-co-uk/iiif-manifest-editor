@@ -1,8 +1,8 @@
 import { DescriptivePropertiesProps } from "./DescriptiveProperties.types";
-import { LanguageMapEditor } from "../LanguageMapEditor/LanguageMapEditor";
+import { LanguageMapEditor } from "@/editors/generic/LanguageMapEditor/LanguageMapEditor";
 
 export function DescriptiveProperties({ supported }: DescriptivePropertiesProps) {
-  return (
+  const fields = (
     <>
       {supported.includes("label") && (
         <LanguageMapEditor dispatchType={"label"} guidanceReference={"https://iiif.io/api/presentation/3.0/#label"} />
@@ -15,4 +15,8 @@ export function DescriptiveProperties({ supported }: DescriptivePropertiesProps)
       )}
     </>
   );
+
+  // @todo form
+
+  return <>{fields}</>;
 }

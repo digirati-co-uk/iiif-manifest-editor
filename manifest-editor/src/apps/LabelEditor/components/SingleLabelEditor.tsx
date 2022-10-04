@@ -1,5 +1,5 @@
 import { ResourceEditingProvider } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
-import { DescriptiveProperties } from "../../../editors/generic/DescriptiveProperties/DescriptiveProperties";
+import { DescriptiveProperties } from "../../../_components/editors/DescriptiveProperties/DescriptiveProperties";
 import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
 
 export function SingleLabelEditor({ resource }: { resource?: { id: string; type: "Canvas" } }) {

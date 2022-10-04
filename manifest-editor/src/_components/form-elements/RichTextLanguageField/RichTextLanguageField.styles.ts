@@ -3,6 +3,8 @@ import styled, { css } from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  font-size: 0.875em;
 `;
 
 export const ToolbarContainer = styled.div<{ $visible?: boolean }>`
@@ -133,6 +135,7 @@ export const InputInvisible = styled.input`
   &:focus {
     outline: none;
   }
+  resize: none;
 `;
 
 export const StyledEditor = styled.div`
@@ -171,6 +174,7 @@ export const CloseIconContainer = styled(ToolbarItem)`
 export const LanguageDisplay = styled.div`
   display: flex;
   flex-direction: column;
+  width: calc(1.8em + 1px); /* Takes into account the 1px border of the toolbar */
 `;
 export const LanguageDisplayInner = styled.div`
   font-size: 0.6em;
@@ -181,4 +185,5 @@ export const LanguageDisplayInner = styled.div`
   text-transform: uppercase;
   margin: 0.4em;
   padding: 0.5em;
+  text-align: center;
 `;

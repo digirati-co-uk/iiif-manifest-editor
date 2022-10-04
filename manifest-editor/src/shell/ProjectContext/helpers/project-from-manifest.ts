@@ -7,6 +7,7 @@ import { ManifestStorage } from "../types/Storage";
 
 export function projectFromManifest(manifest: Manifest, details: Partial<EditorProject> = {}): EditorProject {
   const name = getValue(manifest.label) || "Untitled manifest";
+
   return {
     id: `manifest-editor://project/${v4()}`,
     filename: slugify(name, { lower: true }),

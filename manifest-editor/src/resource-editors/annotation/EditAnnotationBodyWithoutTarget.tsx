@@ -13,6 +13,8 @@ import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 import { DeleteButton } from "@/_components/ui/DeleteButton/DeleteButton";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { removeAnnotationFromCanvas } from "@/helpers/remove-annotation-from-canvas";
+import { DescriptivePropertiesAnnotation } from "@/_components/editors/DescriptiveProperties/DescriptiveProperties.annotation";
+import { Accordion } from "@/components/layout/Accordion/Accordion";
 
 export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDelete?: () => void }) {
   const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
@@ -31,16 +33,11 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDele
     return <div>Resource not found</div>;
   }
 
-  return (
-    <FlexContainerColumn>
-      <FlexImage>{thumbnail ? <img src={thumbnail.id} /> : null}</FlexImage>
+  const descriptive = <DescriptivePropertiesAnnotation supported={["label", "summary"]} />;
 
+  const media = (
+    <>
       <InputContainer wide>
-        <Input disabled value={resource.id} placeholder={"Paste URL of Media"} />
-      </InputContainer>
-
-      <InputContainer wide>
-        <InputLabel $margin>Media Dimensions</InputLabel>
         <DimensionsTriplet
           width={resource.width || 0}
           changeWidth={(w) => setValue("width", w)}
@@ -74,9 +71,13 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDele
           onChange={(e: any) => setValue("format", e.target.value)}
         />
       </InputContainer>
+    </>
+  );
 
-      {resource.service ? <ServiceList resourceId={props.id} services={resource.service} /> : null}
+  const services = resource.service ? <ServiceList resourceId={props.id} services={resource.service} /> : null;
 
+  const target = (
+    <>
       {annotation && canvas && annotation.target.selector === null ? (
         <InputContainer wide>
           <InputLabel $margin>Target</InputLabel>
@@ -107,12 +108,10 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDele
       {annotation ? (
         annotation.target.selector && annotation.target.selector.type === "BoxSelector" ? (
           <InputContainer wide>
-            <InputLabel $margin htmlFor="box-selector-fieldset">
-              Target
-            </InputLabel>
             <BoxSelectorField
               selector={annotation.target.selector}
               form
+              inlineFieldset
               onSubmit={(data) => {
                 updateAnnotationSelector(vault, annotation, annotation.target.source, data);
               }}
@@ -130,6 +129,41 @@ export function EditAnnotationBodyWithoutTarget(props: { id: string; onAfterDele
           </InputContainer>
         ) : null
       ) : null}
+    </>
+  );
+
+  return (
+    <FlexContainerColumn>
+      <FlexImage>{thumbnail ? <img src={thumbnail.id} /> : null}</FlexImage>
+
+      <InputContainer wide>
+        <Input disabled value={resource.id} placeholder={"Paste URL of Media"} />
+      </InputContainer>
+
+      <Accordion
+        items={[
+          {
+            label: "Descriptive",
+            initialOpen:
+              Object.keys(annotation?.label || {}).length !== 0 || Object.keys(annotation?.summary || {}).length !== 0,
+            children: descriptive,
+          },
+          {
+            label: "Media information",
+            initialOpen: true,
+            children: media,
+          },
+          {
+            label: "Services",
+            children: services,
+          },
+          {
+            label: "Target",
+            initialOpen: annotation && annotation.target.selector !== null,
+            children: target,
+          },
+        ]}
+      />
 
       {canvas && annotation ? (
         <DeleteButton

@@ -109,8 +109,10 @@ export const InputUnderlined = styled(_Input)`
 
 export const InputGroup = styled(FlexContainer)<{ $active?: boolean }>`
   display: flex;
-  width: 100%;
+  width: calc(100% + 1em);
   padding: 0.5em;
+  margin-left: -0.5em;
+  margin-right: -0.5em;
 
   ${(props) =>
     props.$active &&
@@ -203,7 +205,7 @@ export const InputContainer = styled.div<{
     `}
 `;
 
-export const FieldsetContainer = styled.fieldset`
+export const FieldsetContainer = styled.fieldset<{ $inline?: boolean }>`
   padding: 0 1em 1em;
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -213,6 +215,14 @@ export const FieldsetContainer = styled.fieldset`
   }
 
   margin-bottom: 0.5em;
+
+  ${(props) =>
+    props.$inline &&
+    css`
+      padding: 0;
+      margin: 0;
+      border: none;
+    `}
 `;
 
 export const InputCheckboxContainer = styled.div`
