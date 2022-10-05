@@ -22,11 +22,6 @@ export const SimpleExample = () => {
               { label: { none: ["Cat"] }, value: "cat" },
               { label: { none: ["Dog"] }, value: "dog" },
               { label: { none: ["Fish"] }, value: "fish" },
-              { label: { none: ["Fish2"] }, value: "fish2" },
-              { label: { none: ["Fish3"] }, value: "fish3" },
-              { label: { none: ["Fish4"] }, value: "fish4" },
-              { label: { none: ["Fish5"] }, value: "fish5" },
-              { label: { none: ["Fish6"] }, value: "fish6" },
             ],
           },
         ]}
