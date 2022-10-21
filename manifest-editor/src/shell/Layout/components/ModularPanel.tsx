@@ -1,28 +1,32 @@
 import { TransitionStatus } from "react-transition-group";
 import { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePanelState } from "../Layout.types";
 import styled, { css } from "styled-components";
-import { StarIcon } from "../../../icons/StarIcon";
-import { CloseIcon } from "../../../icons/CloseIcon";
-import { BackIcon } from "../../../icons/BackIcon";
+import { StarIcon } from "@/icons/StarIcon";
+import { CloseIcon } from "@/icons/CloseIcon";
+import { BackIcon } from "@/icons/BackIcon";
 import { useLayoutProvider } from "../Layout.context";
-import { useAppState } from "../../AppContext/AppContext";
-import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
-import { useEffect, useState } from "react";
-import { ErrorMessage } from "../../../madoc/components/callouts/ErrorMessage";
-import { Button, CalltoButton } from "../../../atoms/Button";
-import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
+import { useAppState } from "@/shell/AppContext/AppContext";
+import { ErrorBoundary } from "react-error-boundary";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { PanelError } from "./PanelError";
+import { renderHelper } from "../Layout.helpers";
+import { ReactVaultContext } from "react-iiif-vault";
+import { DropdownDivider, DropdownLabel, DropdownMenu, Dropdown, DropdownItem } from "@/atoms/Dropdown";
+import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import { ChangeIcon } from "@/icons/ChangeIcon";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
+  isLeft?: boolean;
   state: PinnablePanelState | PanelState;
   actions: PanelActions;
   pinActions?: PinnablePanelActions;
   transition?: TransitionStatus;
   close?: () => void;
+  available?: LayoutPanel[];
 }
 
-const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus }>`
+const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -39,6 +43,11 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   ${(props) => {
     switch (props.$state) {
       case "entering":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
@@ -47,11 +56,21 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
           transform: translateX(0);
         `;
       case "exiting":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
       case "unmounted":
       case "exited":
+        if (props.$flipped) {
+          return css`
+            transform: translateX(0);
+          `;
+        }
         return css`
           transform: translateX(100%);
         `;
@@ -59,7 +78,7 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   }}
 `;
 
-const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
+export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
   background: #fff;
   display: flex;
   height: 2.8em;
@@ -113,7 +132,7 @@ const ModularPanelContent = styled.div`
   display: flex;
 
   min-height: 0;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
 
   > * {
@@ -125,38 +144,87 @@ export function ModularPanel({
   panel,
   state,
   actions,
+  isLeft,
   pinActions = actions as any,
   transition,
   close,
+  available = [],
 }: ModularPanelProps) {
+  const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
   const appState = useAppState();
   const layout = useLayoutProvider();
   const { tabs, pinnable, hideHeader } = panel?.options || {};
   const resetKeys = [appState.state.canvasId, panel?.id];
+  const switchablePanels = useMemo(() => {
+    return (available || []).filter((p) => !p.requiresState);
+  }, [available]);
+  const { itemProps, isOpen, setIsOpen } = useDropdownMenu(switchablePanels.length);
 
   useEffect(() => setDidError(false), resetKeys);
+
+  const backAction = useCallback(
+    (e: React.MouseEvent) => {
+      const originalCallback = panel
+        ? state.stack.length
+          ? actions.popStack
+          : panel.backAction
+          ? () => panel && panel.backAction && panel.backAction(state, { ...layout, current: actions }, appState)
+          : null
+        : null;
+
+      if ((!originalCallback || e.metaKey) && switchablePanels.length) {
+        e.preventDefault();
+        setIsOpen(true);
+      } else {
+        originalCallback && originalCallback();
+      }
+    },
+    [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length]
+  );
+
+  const menuHandler = (newPanel: LayoutPanel) => {
+    actions.change({
+      id: newPanel.id,
+      state: newPanel.defaultState,
+      stacked: !!(state.stack.length || panel?.backAction),
+    });
+  };
 
   if (!panel || !state.current) {
     return null;
   }
 
   return (
-    <ModularPanelWrapper $state={transition}>
+    <ModularPanelWrapper $state={transition} $flipped={isLeft}>
       <ModularPanelHeader $tabs={tabs} $error={didError}>
-        {panel.backAction ? (
-          <ModulePanelButton
-            onClick={() =>
-              panel && panel.backAction ? panel.backAction(state, { ...layout, current: actions }, appState) : null
-            }
-          >
-            <BackIcon />
-          </ModulePanelButton>
-        ) : state.stack.length ? (
-          <ModulePanelButton onClick={actions.popStack}>
-            <BackIcon />
-          </ModulePanelButton>
-        ) : null}
+        <Dropdown style={{ display: "flex", height: "100%" }}>
+          {panel.backAction || state.stack.length ? (
+            <ModulePanelButton onClick={backAction}>
+              <BackIcon />
+            </ModulePanelButton>
+          ) : switchablePanels.length ? (
+            <ModulePanelButton onClick={backAction}>
+              <ChangeIcon style={{ color: "#999" }} />
+            </ModulePanelButton>
+          ) : null}
+          {switchablePanels.length ? (
+            <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
+              <DropdownLabel>All panels</DropdownLabel>
+              <DropdownDivider />
+              {switchablePanels.map((newPanel, i) => (
+                <DropdownItem
+                  key={i}
+                  {...(itemProps as any)[i]}
+                  onClick={() => menuHandler(newPanel)}
+                  $active={panel.id === newPanel.id}
+                >
+                  {newPanel.label}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          ) : null}
+        </Dropdown>
         {hideHeader ? <ModulePanelSpacer /> : <ModularPanelLabel>{panel.label}</ModularPanelLabel>}
         {pinnable ? (
           (state as PinnablePanelState).pinned ? (
@@ -179,8 +247,15 @@ export function ModularPanel({
           onError={() => setDidError(true)}
           FallbackComponent={PanelError}
           resetKeys={resetKeys}
+          onReset={() => setDidError(false)}
         >
-          {panel.render(state.state || panel.defaultState || {}, { ...layout, current: actions }, appState)}
+          {renderHelper(
+            panel.render(
+              state.state || panel.defaultState || {},
+              { ...layout, current: actions, vault: vault as any, transition },
+              appState
+            )
+          )}
         </ErrorBoundary>
       </ModularPanelContent>
     </ModularPanelWrapper>

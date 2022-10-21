@@ -1,10 +1,9 @@
-import { EditorProject, ProjectStorage } from "../ProjectContext.types";
+import { EditorProject } from "../ProjectContext.types";
 import { Vault } from "@iiif/vault";
-import { Manifest, Reference } from "@iiif/presentation-3";
+import { Manifest } from "@iiif/presentation-3";
 import { ManifestKeyedStorage, ManifestStorage } from "../types/Storage";
 import { v4 } from "uuid";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
-import { writeTextFile } from "@tauri-apps/api/fs";
 import invariant from "tiny-invariant";
 
 export class LocalStorageLoader extends AbstractVaultLoader<ManifestKeyedStorage> {

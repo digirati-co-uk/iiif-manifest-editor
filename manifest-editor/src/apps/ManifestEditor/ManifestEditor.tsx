@@ -6,11 +6,10 @@ import { ExpandTab } from "../../atoms/ExpandTab";
 import { ThumbnailStripView } from "../../components/layout/ThumbnailStripView";
 import { EditorPanel } from "../../components/layout/EditorPanel";
 import { Toolbar } from "../../components/layout/Toolbar";
-import { NewCanvasModal } from "../../components/modals/NewCanvasModal";
 import { GridView } from "../../components/organisms/GridView/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
 import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
-import { CanvasPanelViewer } from "../../components/viewers/CanvasPanelViewer/CanvasPanelViewer";
+import { CanvasPanelViewer } from "../../_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
 import { useAppState } from "../../shell/AppContext/AppContext";
 import { CanvasContext } from "react-iiif-vault";
 
@@ -18,7 +17,7 @@ export function ManifestEditor() {
   const editorContext = useManifestEditor();
   const [editorPanelOpen, setEditorPanelOpen] = useState(true);
   const manifest = useManifest();
-  const { addCanvasModalOpen, setAddCanvasModalOpen, view } = useManifestEditor();
+  const { view } = useManifestEditor();
   const appState = useAppState();
 
   if (!manifest) {
@@ -27,7 +26,6 @@ export function ManifestEditor() {
 
   return (
     <CanvasContext canvas={appState.state?.canvasId}>
-      {addCanvasModalOpen && <NewCanvasModal close={() => setAddCanvasModalOpen(false)} />}
       <ErrorBoundary>
         <Toolbar>
           <ManifestEditorToolbar setEditorPanelOpen={(bool: boolean) => setEditorPanelOpen(bool)} />

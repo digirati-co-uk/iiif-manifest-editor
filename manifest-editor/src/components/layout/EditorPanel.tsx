@@ -8,7 +8,7 @@ import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.cont
 import styled, { css } from "styled-components";
 import { OpenFullscreen } from "../../icons/OpenFullscreen";
 import { CollapseFullscreen } from "../../icons/CollapseFullscreen";
-import { ManifestForm } from "../../editors/ManifestProperties/ManifestForm";
+import { ManifestProperties } from "../../_panels/center-panels/ManifestProperties/ManifestProperties";
 import { CanvasForm } from "../../editors/CanvasProperties/CanvasForm";
 import { ModalHeader } from "../../atoms/ModalHeader";
 import { BackIcon } from "../../icons/BackIcon";
@@ -100,7 +100,7 @@ export const EditorPanel: React.FC<{
               </Button>
             </FlexContainerRow>
             {editorContext?.selectedProperty === "manifest" && (
-              <ManifestForm
+              <ManifestProperties
                 current={editorContext.selectedPanel || 0}
                 setCurrent={(idx) => editorContext?.changeSelectedProperty("manifest", idx)}
               />

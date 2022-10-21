@@ -1,7 +1,11 @@
-import { useCanvas, useVault } from "react-iiif-vault";
-import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
+import { useVault } from "react-iiif-vault";
+import { ThumbnailImg } from "@/atoms/Thumbnail";
+import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
+import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
+import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
+import { createThumbnailHelper } from "@iiif/vault-helpers";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 
 interface MediaResourceEditorProps {
   thumbnailSrc: string;
@@ -10,6 +14,9 @@ interface MediaResourceEditorProps {
 export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumbnailSrc }) => {
   const vault = useVault();
   const image = vault.get(thumbnailSrc) as any;
+  const props = useHoverHighlightImageResource(thumbnailSrc);
+  const thumbnail = useAnnotationThumbnail({ annotationId: thumbnailSrc });
+
   return (
     <>
       {image &&
@@ -24,11 +31,12 @@ export const MediaResourcePreview: React.FC<MediaResourceEditorProps> = ({ thumb
                 width: "100%",
               }}
               key={thumbnailSrc}
+              {...props}
             >
               <FlexContainerColumn>
-                {thumbnailSrc && thumbnailSrc !== "" && (
+                {thumbnail && (
                   <ThumbnailContainer size={32}>
-                    <ThumbnailImg src={annotationBody.id} alt="thumbnail" />
+                    <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
                   </ThumbnailContainer>
                 )}
               </FlexContainerColumn>

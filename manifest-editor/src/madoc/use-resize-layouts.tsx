@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEventHandler } from "./use-event-handler";
 import { useLocalStorage } from "./use-local-storage";
 import { panelSizing } from "../shell/Layout/Layout.helpers";

@@ -10,7 +10,7 @@ export function UniversalCopyTarget<T>({
   onPasteLink,
   onPasteAnalysis,
   ...props
-}: HTMLAttributes<HTMLElement> & UniversalCopyPasteProps<T> & T) {
+}: Partial<HTMLAttributes<HTMLElement>> & UniversalCopyPasteProps<T> & T) {
   const Component = (as || "div") as any;
   const reference = useMemo(() => {
     return _ref;

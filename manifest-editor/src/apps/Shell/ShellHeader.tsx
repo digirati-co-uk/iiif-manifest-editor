@@ -33,7 +33,7 @@ export const ShellHeader: React.FC<{
   setShowPreviewModal,
 }) => {
   const { current: currentProject } = useProjectContext();
-  const { apps, changeApp } = useApps();
+  const { apps, changeApp, initialApp } = useApps();
   const [appMenuOpen, setAppMenuOpen] = useState(false);
 
   const getTitle = () => {
@@ -56,7 +56,7 @@ export const ShellHeader: React.FC<{
       )}
       <ShellHeaderStrip>
         <FlexContainer>
-          <Button onClick={() => changeApp({ id: "splash" })} aria-label="Go to the homepage">
+          <Button onClick={() => changeApp(initialApp)} aria-label="Go to the homepage">
             <ManifestEditorIcon />
           </Button>
           <Dropdown>

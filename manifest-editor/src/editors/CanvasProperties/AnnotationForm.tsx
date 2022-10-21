@@ -1,72 +1,61 @@
-import { IIIFBuilder } from "iiif-builder";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { useManifest } from "../../hooks/useManifest";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { InformationLink } from "../../atoms/InformationLink";
-import { FlexContainer } from "../../components/layout/FlexContainer";
-import { AnnotationPreview } from "./AnnotationPreview";
-import { v4 } from "uuid";
+import { Button, SecondaryButton } from "../../atoms/Button";
+import { FlexContainerRow } from "../../components/layout/FlexContainer";
+import { PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
+import { useEffect, useState } from "react";
+import { NewAnnotationPageForm } from "../../components/organisms/Annotation/NewAnnotationPageForm";
+
+import { AnnotationPages } from "../../components/organisms/Annotation/AnnotationPages";
 
 export const AnnotationForm = () => {
   const canvas = useCanvas();
-  const manifest = useManifest();
   const vault = useVault();
+
+  const [showNewAnnotationPage, setShowNewAnnotationPage] = useState(false);
 
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#annotations";
 
-  const addNew = () => {
-    const newID = `https://example.org/annotation/${v4()}`;
-
-    if (!canvas || !manifest) {
-      return;
+  function annoPages() {
+    // @ts-ignore
+    if (vault.get(canvas?.annotations).length === 0) {
+      return (
+        <small>
+          <i>
+            This canvas has no annotations yet. You can either link to an existing external Annotation Page, or create a
+            new Annotation Page to hold your annotations within this Manifest.
+          </i>
+          <PaddingComponentMedium />
+          <FlexContainerRow justify="flex-end">
+            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>Create an annotation page</SecondaryButton>
+          </FlexContainerRow>
+        </small>
+      );
     }
-    const builder = new IIIFBuilder(vault);
-    builder.editManifest(manifest.id, (mani: any) => {
-      mani.editCanvas(canvas.id, (can: any) => {
-        can.createAnnotation(canvas.id, {
-          id: `${newID}/annotation-page`,
-          type: "AnnotationPage",
-          motivation: "describing",
-          body: {
-            id: v4(),
-            type: "TextualBody",
-            format: "text/html",
-            height: 500,
-            width: 500,
-          },
-        });
-      });
-    });
-  };
+    return <AnnotationPages canvasID={canvas.id} />;
+  }
   return (
     <>
-      <EmptyProperty label={"annotations"} createNew={addNew} />
-      <div>
-        <FlexContainer>
-          <h4>annotations</h4>
-          {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
-        </FlexContainer>
-        <pre
-          // @ts-ignore
-          dangerouslySetInnerHTML={{
-            // @ts-ignore
-            __html: JSON.stringify(vault.get(canvas?.annotations), null, 3),
+      <EmptyProperty label={"annotations"} guidanceReference={guidanceReference} />
+      {!showNewAnnotationPage && annoPages()}
+      {showNewAnnotationPage && (
+        <NewAnnotationPageForm
+          goBack={() => {
+            setShowNewAnnotationPage(false);
           }}
-        ></pre>
-      </div>
-      {/* <h4>{vault.get(canvas.annotations)[0].items.length}</h4> */}
-      {vault &&
-        canvas &&
+        />
+      )}
+      <PaddingComponentSmall />
+      {
         // @ts-ignore
-        vault.get(canvas.annotations).map((item: any) => {
-          // @ts-ignore
-          console.log(item);
-          // @ts-ignore
-          return vault.get(item.id)?.items.map((NESTEDITEM: any) => {
-            // console.log(NESTEDITEM);
-            return <AnnotationPreview thumbnailSrc={NESTEDITEM.id} />;
-          });
-        })}
+        !showNewAnnotationPage && vault.get(canvas?.annotations).length !== 0 && (
+          <FlexContainerRow justify="flex-end">
+            <SecondaryButton onClick={() => setShowNewAnnotationPage(true)}>
+              Add another annotation page
+            </SecondaryButton>
+          </FlexContainerRow>
+        )
+      }
     </>
   );
 };

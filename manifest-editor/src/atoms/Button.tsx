@@ -14,26 +14,28 @@ export const ButtonReset = styled.button`
   }
 `;
 
-export const Button = styled.button`
-   {
-    padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
-    color: ${(props: any) => props.theme.color.main || "none"};
-    background-color: ${(props: any) => props.theme.color.white || "white"};
-    border-radius: inherit;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    height: 2rem;
-    :disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
+export const Button = styled.button<{ $active?: boolean }>`
+  padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
+  color: ${(props: any) => props.theme.color.main || "none"};
+  background-color: ${(props: any) => props.theme.color.white || "white"};
+  border-radius: inherit;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  :disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    background: #eee;
   }
 `;
 
 export const SmallButton = styled(Button)`
-  padding: 0 ${(props: any) => props.theme.padding.xs || "0.25rem"};
+  padding: 0.25em ${(props: any) => props.theme.padding.xs || "0.4em"};
   height: unset;
   background: none;
 `;
@@ -60,23 +62,24 @@ export const SecondaryButton = styled(Button)`
 `;
 
 export const CalltoButton = styled(Button)`
-   {
-    padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
-    color: ${(props: any) => props.theme.color.white || "white"};
-    background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    height: 2rem;
-    display: flex;
-    align-items: center;
+  padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
+  color: ${(props: any) => props.theme.color.white || "white"};
+  background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background-color: ${(props: any) => props.theme.color.mainHover || "#347cff;"};
   }
 `;
 
-export const ButtonGroup = styled.div`
+export const ButtonGroup = styled.div<{ $right?: boolean }>`
   display: flex;
   flex-direction: row;
-  width: fit-content;
   flex-wrap: wrap;
-  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: ${(props) => (props.$right ? "flex-end" : "flex-start")};
 `;

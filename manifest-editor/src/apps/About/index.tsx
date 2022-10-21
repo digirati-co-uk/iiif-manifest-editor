@@ -1,12 +1,12 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
+import { LayoutPanel } from "@/shell/Layout/Layout.types";
 import { AboutText } from "./components/AboutText";
 
 export default { id: "about", title: "About" };
 
 export const centerPanels: LayoutPanel[] = [
   {
-    id: "current-canvas",
-    label: "Current canvas",
+    id: "about-text",
+    label: "About Manifest editor",
     icon: "",
     render: () => <AboutText />,
   },

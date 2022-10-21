@@ -9,7 +9,6 @@ export const InputLabel = styled.label<{
 }>`
   letter-spacing: -0.3px;
   font-weight: 500;
-  font-size: 0.875em;
   line-height: 2.4em;
   display: flex;
   align-items: baseline;
@@ -65,8 +64,8 @@ export const CheckboxInput = styled.input.attrs({ type: "checkbox" })``;
 export const _Input = styled.input`
   background: ${(props: any) => props.theme.color.white || "white"};
   border: 1px solid rgba(5, 42, 68, 0.2);
-  padding: 0.75em 1em;
-  font-size: 0.85em;
+  padding: 0.8em;
+  font-size: 0.875em;
   line-height: 1.2em;
   border-radius: 3px;
 
@@ -96,22 +95,23 @@ export const _Input = styled.input`
 
 export const InputUnderlined = styled(_Input)`
   border-radius: unset;
-  background-color: ${(props: any) => props.theme.color.lightgrey || "grey"};
+  background-color: #f8f9fa;
   border-top: none;
   border-left: none;
   border-right: none;
-  min-height: 2rem;
-  min-width: 70%;
   white-space: pre-line;
+
   &:focus {
-    background: #eee;
+    background: #eceef5;
   }
 `;
 
 export const InputGroup = styled(FlexContainer)<{ $active?: boolean }>`
   display: flex;
-  width: 100%;
+  width: calc(100% + 1em);
   padding: 0.5em;
+  margin-left: -0.5em;
+  margin-right: -0.5em;
 
   ${(props) =>
     props.$active &&
@@ -139,8 +139,9 @@ export const Submit = styled.input.attrs({
   align-items: center;
 `;
 
-export const Input: typeof _Input = ((props: any) =>
-  props.type === "checkbox" ? <CheckboxInput {...props} /> : <InputUnderlined {...props} />) as any;
+export const Input: typeof _Input = React.forwardRef((props: any, ref) =>
+  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />
+) as any;
 
 export const HighlightInput: typeof _Input = ((props: any) => {
   const ref = useRef<HTMLInputElement>(null);
@@ -173,6 +174,13 @@ export const InputBorderless = styled.input`
   }
 `;
 
+export const Fieldset = styled.fieldset`
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+`;
+
 export const InputContainer = styled.div<{
   wide?: boolean;
   fluid?: boolean;
@@ -182,6 +190,7 @@ export const InputContainer = styled.div<{
   flex-direction: column;
   max-width: ${(props: any) => (props.fluid ? "100%" : props.wide ? "550px" : "360px")};
   margin-bottom: 1em;
+  width: 100%;
 
   ${(props: any) =>
     props.$error &&
@@ -192,6 +201,26 @@ export const InputContainer = styled.div<{
       textarea {
         border-color: ${props.theme.color.danger || "#9c2824"};
       }
+    `}
+`;
+
+export const FieldsetContainer = styled.fieldset<{ $inline?: boolean }>`
+  padding: 0 1em 1em;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+
+  ${InputContainer}:first-child {
+    margin-top: 0.5em;
+  }
+
+  margin-bottom: 0.5em;
+
+  ${(props) =>
+    props.$inline &&
+    css`
+      padding: 0;
+      margin: 0;
+      border: none;
     `}
 `;
 

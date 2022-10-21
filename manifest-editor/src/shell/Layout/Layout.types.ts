@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { AppState } from "../AppContext/AppContext";
+import { Vault } from "@iiif/vault";
+import { TransitionStatus } from "react-transition-group";
 
 export interface LayoutProviderProps {
   loading?: true;
@@ -98,8 +100,18 @@ export interface LayoutPanel {
   label: string;
   icon?: null | string | ReactNode; // SVG?
 
-  render: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => ReactNode;
+  render: (
+    state: any,
+    ctx: { current: PanelActions; vault?: Vault; transition?: TransitionStatus } & LayoutContext,
+    app: AppState
+  ) => ReactNode;
+  onMount?: (
+    state: any,
+    ctx: { current: PanelActions; vault?: Vault } & LayoutContext,
+    app: AppState
+  ) => (() => void) | void;
   defaultState?: any;
+  requiresState?: boolean;
   backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
   options?: {
     minWidth?: number;

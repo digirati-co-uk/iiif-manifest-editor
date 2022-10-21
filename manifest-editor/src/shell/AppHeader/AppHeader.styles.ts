@@ -49,6 +49,7 @@ export const Logo = styled.div`
   letter-spacing: -0.5px;
   user-select: none;
   cursor: pointer;
+  margin-right: 0.5em;
 `;
 
 export const ProjectPreview = styled.div`
@@ -60,6 +61,10 @@ export const ProjectPreview = styled.div`
   width: 26em;
   display: flex;
   flex-direction: row;
+
+  @media (max-width: 450px) {
+    display: none;
+  }
 `;
 
 export const Draft = styled.div`

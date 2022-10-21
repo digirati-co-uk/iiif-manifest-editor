@@ -1,23 +1,44 @@
-import { render } from "react-dom";
-import React, { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import React, { StrictMode, useMemo } from "react";
 import config from "../config.json";
-import templates from "../public/config/built-in-manifest-editor-templates.json?import";
+import templates from "./manifest-templates/built-in-manifest-editor-templates.json?import";
 import { GlobalStyle } from "./atoms/GlobalStyle";
 import { ShellProvider } from "./shell/ShellContext/ShellContext";
 import { RenderApp } from "./_next/pages/render-app";
 import { Main } from "./atoms/Main";
+import { getApps } from "./apps/app-loader";
+import qs from "query-string";
 
 // Vite index, eventually.
-const $root = document.getElementById("root");
+const $root = document.getElementById("root")!;
 
-render(
-  <StrictMode>
-    <ShellProvider config={{ ...config, newTemplates: templates }}>
+function useInitialApp() {
+  if ((import.meta.env.DEV || import.meta.env.PULL_REQUEST === "true") && window) {
+    const queryString = qs.parse(window.location.toString().split("?")[1] || "");
+
+    if (queryString.app) {
+      return { id: queryString.app as string };
+    }
+  }
+
+  return undefined;
+}
+
+function App() {
+  const apps = useMemo(getApps, []);
+
+  return (
+    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }}>
       <GlobalStyle />
       <Main>
         <RenderApp />
       </Main>
     </ShellProvider>
-  </StrictMode>,
-  $root
+  );
+}
+
+createRoot($root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
 );

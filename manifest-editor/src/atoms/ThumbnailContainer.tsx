@@ -19,7 +19,7 @@ export const ThumbnailContainer = styled.div<{ size?: number }>`
     ${(props: any) =>
       props.size &&
       css`
-        padding: none;
+        padding: 0;
         img {
           width: ${props.size}px;
           height: ${props.size}px;

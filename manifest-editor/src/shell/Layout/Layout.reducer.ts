@@ -15,7 +15,7 @@ function pushStack<T>(
 
       state.stack.push({
         id: state.current,
-        state: { ...original(state.state) },
+        state: state.state ? { ...original(state.state) } : {},
       });
     }
   } else {

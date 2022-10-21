@@ -11,4 +11,17 @@ export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+
+  /* Disable double-click to zoom on links, input fields
+   and buttons to improve responsiveness */
+  a, input, button
+  {
+    touch-action: manipulation;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
 `;

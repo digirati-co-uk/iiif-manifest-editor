@@ -68,7 +68,7 @@ export const ViewSelector: React.FC = () => {
       >
         <GridIcon />
       </Button>
-      {/*
+
       <Button
         onClick={() => {
           actions.leftPanel.open({ id: "canvas-list-view" });
@@ -93,7 +93,6 @@ export const ViewSelector: React.FC = () => {
       >
         <CopyIcon />
       </Button>
-      */}
     </FlexContainerRow>
   );
 };

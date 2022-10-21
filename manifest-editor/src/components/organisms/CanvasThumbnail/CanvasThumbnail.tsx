@@ -38,6 +38,7 @@ function useThumbnail2(request: ImageCandidateRequest, dereference?: boolean) {
   try {
     return useThumbnail(request, dereference);
   } catch (e) {
+    console.log(e);
     return null;
   }
 }

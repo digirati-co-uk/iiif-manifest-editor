@@ -4,6 +4,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
 import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 
 export const MetadataForm: React.FC<{}> = () => {
   const { defaultLanguages } = useConfig();
@@ -49,7 +50,7 @@ export const MetadataForm: React.FC<{}> = () => {
   const guidanceReference = "https://iiif.io/api/presentation/3.0/#metadata";
 
   return (
-    <>
+    <PaddedSidebarContainer>
       <EmptyProperty label={"metadata"} createNew={addNew} guidanceReference={guidanceReference} />
       <div key={manifest?.id}>
         {manifest && (
@@ -64,6 +65,6 @@ export const MetadataForm: React.FC<{}> = () => {
           </ErrorBoundary>
         )}
       </div>
-    </>
+    </PaddedSidebarContainer>
   );
 };

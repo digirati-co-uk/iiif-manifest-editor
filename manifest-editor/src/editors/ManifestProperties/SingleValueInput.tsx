@@ -7,6 +7,8 @@ import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
 import { PaddingComponentMedium } from "../../atoms/PaddingComponent";
+import { ViewingDirectionEditorManifest } from "@/_components/editors/ViewingDirectionEditor/ViewingDirectionEditor.manifest";
+import { BehaviorEditorManifest } from "@/_components/editors/BehaviorEditor/BehaviorEditor.manifest";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go
@@ -58,32 +60,8 @@ export const SingleValueInput: React.FC<{
           />
         </ErrorBoundary>
       )}
-      {manifest && dispatchType === "viewingDirection" && (
-        <ErrorBoundary>
-          <StringSelector
-            key={manifest.id}
-            label="viewingDirection"
-            options={["left to right", "right to left", "top to bottom", "bottom to top"]}
-            selected={manifest && manifest[dispatchType] ? manifest[dispatchType] : []}
-            multi={false}
-            guidanceReference="https://iiif.io/api/presentation/3.0/#viewingdirection"
-            changeHandler={(e: any) => changeHandler(e)}
-          />
-        </ErrorBoundary>
-      )}
-      {manifest && dispatchType === "behavior" && (
-        <ErrorBoundary>
-          <StringSelector
-            key={manifest.id}
-            label="behavior"
-            options={behaviorPresets}
-            selected={selected}
-            multi={true}
-            guidanceReference="https://iiif.io/api/presentation/3.0/#behavior"
-            changeHandler={(e: any) => changeMulti(e)}
-          />
-        </ErrorBoundary>
-      )}
+      {manifest && dispatchType === "viewingDirection" && <ViewingDirectionEditorManifest />}
+      {manifest && dispatchType === "behavior" && <BehaviorEditorManifest />}
     </>
   );
 };

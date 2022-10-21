@@ -7,6 +7,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
 import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { SelectSearchField } from "@/_components/form-elements/SelectSearchField/SelectSearchField";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go
