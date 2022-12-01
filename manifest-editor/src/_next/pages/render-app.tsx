@@ -3,8 +3,9 @@ import { AppStateProvider, useApps } from "../../shell/AppContext/AppContext";
 import { AppHeader } from "../../shell/AppHeader/AppHeader";
 import { useIsDesktop } from "../../shell/DesktopContext/hooks/useIsDesktop";
 import { AppHeaderDesktop } from "../../shell/AppHeader/AppHeader.desktop";
+import { memo } from "react";
 
-export function RenderApp() {
+export const RenderApp = memo(function RenderApp() {
   const isDesktop = useIsDesktop();
   const { apps, changeApp, currentApp, initialApp } = useApps();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
@@ -18,4 +19,4 @@ export function RenderApp() {
       App ("{currentApp.id}") not found <button onClick={() => changeApp(initialApp)}>Reset</button>
     </div>
   );
-}
+});

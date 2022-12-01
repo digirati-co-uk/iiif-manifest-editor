@@ -6,8 +6,9 @@ import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
 import { useLocalStorage } from "../../madoc/use-local-storage";
 import { DraftTitleEditor } from "./components/DraftTitleEditor";
 import { AppMenu } from "./components/AppMenu";
+import { memo } from "react";
 
-export function AppHeader() {
+export const AppHeader = memo(function AppHeader() {
   const [isMenuHidden] = useLocalStorage("menu-hidden");
   const { changeApp, initialApp, currentApp, apps } = useApps();
   const app = apps[currentApp?.id];
@@ -35,4 +36,4 @@ export function AppHeader() {
       {!isMenuHidden ? <ShellOptions /> : null}
     </Header>
   );
-}
+});
