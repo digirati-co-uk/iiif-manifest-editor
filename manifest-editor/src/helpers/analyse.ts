@@ -15,6 +15,17 @@ const getImage = async (src: string) => {
   });
 };
 
+const getAudioVideo = async (src: string) => {
+  return new Promise<HTMLVideoElement>((resolve, reject) => {
+    // Video tag accepts both.
+    const $media = document.createElement("video");
+    $media.onloadedmetadata = () => resolve($media);
+    $media.onerror = () => reject();
+    $media.preload = "metadata";
+    $media.src = src;
+  });
+};
+
 // use the hints from the user (if any), plus defaults, to get the order
 // in which to try various analysis
 function makeTryList(suppliedExpectedTypes: string[]) {
@@ -51,6 +62,10 @@ function mergeList(inputList: string[], outputList: string[]) {
   });
 }
 
+export async function detectMedia() {
+  //
+}
+
 export async function analyse(url: string, ...expectedTypes: string[]) {
   // const tryList = makeTryList(expectedTypes);
 
@@ -58,11 +73,38 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
     return;
   }
 
+  // 2 new options:
+  //  - Audio
+  //  - Video
+  // Only support them if they end in mp3 or mp4
+  if (url.endsWith(".mp3") || url.endsWith(".mp4") || url.endsWith(".m4a") || url.endsWith(".m4v")) {
+    try {
+      const av = await getAudioVideo(url);
+      if (av) {
+        const isAudio = av.videoWidth === 0;
+        return {
+          id: url,
+          type: av.videoWidth === 0 ? "Sound" : "Video",
+          width: av.videoWidth || undefined, // naturalWidth
+          height: av.videoHeight || undefined, // naturalHeight
+          duration: av.duration,
+          format: isAudio ? "audio/mp4" : "video/mp4",
+        };
+      }
+    } catch (e) {
+      // fall through..
+    }
+  }
+
   // This doesn't use the tryList order yet.
   // One advantage of doing a fetch first _even if we expect an image_ is that
   // we might capture the content type, if the image is CORS-enabled.
   let response = null;
   try {
+    // Try head request, if that works...
+    await fetch(url, { method: "HEAD" });
+
+    // then fetch the full resource.
     response = await fetch(url);
   } catch {
     // can handle the error better, but maybe CORS error happened so:
@@ -175,7 +217,7 @@ async function handleNonFetchableUrl(url: string, capturedContentType?: string) 
       format: await getFormat(url, capturedContentType),
     };
     return data;
-  } catch { }
+  } catch {}
 
   return null;
 }
