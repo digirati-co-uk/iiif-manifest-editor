@@ -6,8 +6,16 @@ import { ListAnnotationPage } from "@/_panels/right-panels/CanvasMedia/component
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { AnnotationNormalized } from "@iiif/presentation-3";
+import { Button } from "@/atoms/Button";
+import { ButtonRow } from "@/atoms/ButtonRow";
 
-export function CanvasMedia({ onClickAnnotation }: { onClickAnnotation?: (annotation: AnnotationNormalized) => void }) {
+export function CanvasMedia({
+  onClickAnnotation,
+  onAddMedia,
+}: {
+  onClickAnnotation?: (annotation: AnnotationNormalized) => void;
+  onAddMedia?: () => void;
+}) {
   const canvas = useCanvas();
   const annotationPage = canvas?.items[0];
 
@@ -23,6 +31,11 @@ export function CanvasMedia({ onClickAnnotation }: { onClickAnnotation?: (annota
       <AnnotationPageContext annotationPage={canvas.items[0].id}>
         <ListAnnotationPage renderAnnotation={() => <AnnotationPreview onClick={onClickAnnotation} />} />
       </AnnotationPageContext>
+      {onAddMedia ? (
+        <ButtonRow>
+          <Button onClick={onAddMedia}>Add media</Button>
+        </ButtonRow>
+      ) : null}
     </PaddedSidebarContainer>
   );
 }

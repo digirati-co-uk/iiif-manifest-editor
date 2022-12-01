@@ -134,12 +134,12 @@ export const rightPanels: LayoutPanel[] = [
       />
     ),
   },
-  {
-    id: "new-annotation-page",
-    label: "Add new media",
-    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
-    render: () => <NewAnnotationPage />,
-  },
+  // {
+  //   id: "new-annotation-page",
+  //   label: "Add new media",
+  //   backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
+  //   render: () => <NewAnnotationPage />,
+  // },
   {
     id: "canvas-media",
     label: "Edit media item",
