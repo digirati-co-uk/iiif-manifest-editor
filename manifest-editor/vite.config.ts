@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import { ecsstatic } from "@acab/ecsstatic/vite";
 import path from "path";
 
 export default defineConfig({
@@ -10,6 +11,7 @@ export default defineConfig({
   },
   envPrefix: ["VITE_", "TAURI_", "PULL_REQUEST"],
   plugins: [
+    ecsstatic(),
     react({
       jsxRuntime: "automatic",
       babel: {

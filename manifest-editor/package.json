@@ -74,6 +74,7 @@
     "zustand": "^4.1.1"
   },
   "devDependencies": {
+    "@acab/ecsstatic": "^0.3.0",
     "@mdx-js/preact": "^2.1.1",
     "@storybook/builder-vite": "^0.1.34",
     "@storybook/react": "^6.5.0",
@@ -94,7 +95,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
-    "@vitejs/plugin-react": "^2.0.1",
+    "@vitejs/plugin-react": "^3.0.1",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-babel": "^5.3.1",
@@ -107,7 +108,7 @@
     "sass": "^1.54.5",
     "storybook-addon-styled-component-theme": "^2.0.0",
     "typescript": "^4.6.4",
-    "vite": "^3.0.8",
-    "vitest": "^0.22.1"
+    "vite": "^4.0.4",
+    "vitest": "^0.28.3"
   }
 }

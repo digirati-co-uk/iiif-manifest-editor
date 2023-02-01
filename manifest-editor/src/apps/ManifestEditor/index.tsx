@@ -3,7 +3,6 @@ import { ManifestProperties } from "@/_panels/center-panels/ManifestProperties/M
 import { AnnotationContext, CanvasContext } from "react-iiif-vault";
 import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
 import { LeftPanelMenu } from "./components/LeftPanelMenu";
-import { NewAnnotationPage } from "./components/NewAnnotationPage";
 import { CanvasMedia } from "@/resource-editors/canvas/CanvasMedia";
 import { ServiceEditor } from "@/resource-editors/service/ServiceEditor";
 import { CanvasThumbnailForm } from "@/editors/ThumbnailProperties/CanvasThumbnailForm";

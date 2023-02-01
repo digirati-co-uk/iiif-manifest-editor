@@ -87,12 +87,7 @@ export const ExportModal: React.FC<{
                   label: "IIIF Presentation 3",
                   component: (
                     <JSONPreview>
-                      <pre
-                        ref={textAreaRef}
-                        dangerouslySetInnerHTML={{
-                          __html: JSON.stringify(vault.toPresentation3(manifest), null, 2),
-                        }}
-                      />
+                      <pre ref={textAreaRef}>JSON.stringify(vault.toPresentation3(manifest), null, 2)</pre>
                     </JSONPreview>
                   ),
                 },
@@ -100,12 +95,7 @@ export const ExportModal: React.FC<{
                   label: "IIIF Presentation 2",
                   component: (
                     <JSONPreview>
-                      <pre
-                        ref={textAreaRef}
-                        dangerouslySetInnerHTML={{
-                          __html: JSON.stringify(vault.toPresentation2(manifest), null, 2),
-                        }}
-                      />
+                      <pre ref={textAreaRef}>{JSON.stringify(vault.toPresentation2(manifest), null, 2)}</pre>
                     </JSONPreview>
                   ),
                 },
