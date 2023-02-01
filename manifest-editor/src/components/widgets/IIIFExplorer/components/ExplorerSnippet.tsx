@@ -1,12 +1,13 @@
 import { CollectionNormalized, ManifestNormalized, Reference } from "@iiif/presentation-3";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import folder from "@/components/widgets/IIIFExplorer/icons/folder.svg";
-import { ManifestContext, useThumbnail, useVault, useVaultSelector } from "react-iiif-vault";
+import { ManifestContext, useExternalResource, useThumbnail, useVault, useVaultSelector } from "react-iiif-vault";
 import { LocaleString } from "@/atoms/LocaleString";
 import { useAccessibleClick } from "@/hooks/useAccessibleClick";
 import { isVisible } from "@/helpers/is-visible";
 import { useEffect, useRef, useState } from "react";
 import { ManifestIcon } from "@/components/widgets/IIIFExplorer/components/ManifestIcon";
+import { LazyLoadComponent } from "react-lazy-load-image-component";
 
 export interface ExplorerSnippetProps {
   resource: string | Reference;
@@ -18,32 +19,11 @@ export interface ExplorerSnippetProps {
 
 export function ExplorerSnippet(props: ExplorerSnippetProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const vault = useVault();
   const resource = useVaultSelector<CollectionNormalized | ManifestNormalized>((s, vault) => vault.get(props.resource));
   const resourceStatus = useVaultSelector((s, vault) =>
     vault.requestStatus(typeof props.resource === "string" ? props.resource : props.resource.id)
   );
   const accessible = useAccessibleClick(props.onClick);
-  const [tryLoaded, setTryLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!tryLoaded) {
-      const interval = setInterval(() => {
-        if (ref.current) {
-          if (isVisible(ref.current)) {
-            if (resource?.type === "Manifest") {
-              setTryLoaded(true);
-              vault.load(resource?.id);
-            }
-          }
-        }
-      }, 1000);
-
-      return () => {
-        clearInterval(interval);
-      };
-    }
-  }, [tryLoaded]);
 
   return (
     <div
@@ -57,7 +37,10 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
       <div className={$.collectionIcon}>
         {resource.type === "Manifest" ? (
           <ManifestContext manifest={resource.id}>
-            <ManifestIcon />
+            <LazyLoadComponent>
+              <LoadManifestComponent resource={resource} />
+              <ManifestIcon />
+            </LazyLoadComponent>
           </ManifestContext>
         ) : (
           <img src={folder} alt="" />
@@ -73,4 +56,15 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
       </div>
     </div>
   );
+}
+
+function LoadManifestComponent({ resource }: { resource: Reference }) {
+  const vault = useVault();
+  useEffect(() => {
+    if (resource?.type === "Manifest") {
+      vault.load(resource?.id);
+    }
+  }, []);
+
+  return null;
 }

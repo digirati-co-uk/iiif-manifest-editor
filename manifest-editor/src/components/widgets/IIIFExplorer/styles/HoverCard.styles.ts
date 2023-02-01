@@ -1,15 +1,6 @@
 import { scss as css } from "@acab/ecsstatic";
 
-export const mainContainer = css`
-  padding: 2em;
-  background: #fff;
-  resize: both;
-  overflow: hidden;
-  width: 400px;
-  height: 400px;
-  container: main-c/size;
-  display: flex;
-`;
+export const mainContainer = css``;
 
 export const testCard = css`
   color: red;
@@ -29,6 +20,12 @@ export const hoverCardContainer = css`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  //
+  container: main-c/size;
+  resize: both;
+  width: 640px;
+  height: 480px;
 `;
 export const hoverCardHeader = css`
   border-bottom: 1px solid #ddd;

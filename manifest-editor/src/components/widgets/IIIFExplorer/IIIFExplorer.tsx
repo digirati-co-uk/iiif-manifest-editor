@@ -6,6 +6,7 @@ import { VaultProvider } from "react-iiif-vault";
 import { ExplorerStoreProvider } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { ExplorerEntry } from "@/components/widgets/IIIFExplorer/components/ExplorerEntry";
 import { ManifestListing } from "./components/ManifestListing";
+import { CanvasView } from "@/components/widgets/IIIFExplorer/components/CanvasView";
 
 export interface IIIFExplorerProps {
   /**
@@ -61,6 +62,8 @@ export function IIIFExplorer({
 
             {/* Only shown if we are looking at a manifest */}
             <ManifestListing />
+
+            <CanvasView />
 
             <ResourceActionBar />
           </div>
