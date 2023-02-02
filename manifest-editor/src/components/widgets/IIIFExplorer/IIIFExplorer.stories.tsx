@@ -3,10 +3,19 @@ import { IIIFExplorer } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 
 export default { title: "IIIF Explorer" };
 
-export const Default = () => <IIIFExplorer />;
+// export const Default = () => <IIIFExplorer />;
+
+// export const TopLevelCollection = () => (
+//   <IIIFExplorer entry={{ id: "https://view.nls.uk/collections/top.json", type: "Collection" }} />
+// );
 
 export const TopLevelCollection = () => (
-  <IIIFExplorer entry={{ id: "https://view.nls.uk/collections/top.json", type: "Collection" }} />
+  <IIIFExplorer
+    entry={{
+      id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections",
+      type: "Collection",
+    }}
+  />
 );
 
 // export const TopLevelCollection = () => (

@@ -28,7 +28,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@^2.0.0-alpha.16", "@atlas-viewer/atlas@^2.0.0-alpha.19":
+"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@^2.0.0-alpha.16", "@atlas-viewer/atlas@^2.0.0-alpha.19", "@atlas-viewer/atlas@^2.0.0-alpha.21":
   version "2.0.0-alpha.19"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.19.tgz#7ff519119c95095ecd43ea6ecbf8c05f86d98760"
   integrity sha512-xzFhy5l1GVVN35qNqrLMxkSLugXRx1K47Xg07WE9SpubMjpFdmE+t7iiv02T8kHKKgICm5UHUdPleCtIQt4LcA==
@@ -49,10 +49,10 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@>=2.0.5", "@atlas-viewer/iiif-image-api@^2.0.5", "@atlas-viewer/iiif-image-api@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.1.0.tgz#cb19e5ba71b6b32385dcd78f030fd51e15dcea57"
-  integrity sha512-w2pYhGtvxCZqWbxUEGuAzYVkqvJMt9y6YIMhgIPpJ2RcBlE5CqwCri0kFmP43P/a4mUS5chyq1sWEz2wWvOlsA==
+"@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@>=2.0.5", "@atlas-viewer/iiif-image-api@^2.0.5", "@atlas-viewer/iiif-image-api@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.1.1.tgz#da01b09e7d29c21f6524b6f632368f48e8eb9d5a"
+  integrity sha512-g7gleRz0Guxwj/JqtppiqloabUTCew61GBzon+ZZ7mXpnMQ+zMupLaI1jHfGxM1Xy9a1+zMwPuUTXqTFkEyueA==
   dependencies:
     "@iiif/presentation-3" "*"
     node-fetch "^3.2.0"
@@ -2003,10 +2003,10 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@1.*", "@iiif/parser@1.x", "@iiif/parser@>=v1.0.10", "@iiif/parser@>=v1.0.13", "@iiif/parser@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.1.0.tgz#e8d5c1665e8d75a3198abe01fa66e31965b4e48f"
-  integrity sha512-p2pqngR/L+ML+LS8Ah70CTITgW192fmWXxOovSapQnI5rKN6daYrbjl5UuIK9R+n0lFFlJwjW5+tA96E+V39hw==
+"@iiif/parser@1.x", "@iiif/parser@>=v1.0.10", "@iiif/parser@>=v1.0.13", "@iiif/parser@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.1.2.tgz#20bb2b0b74756ee6f35db4e9b0b0b54173ae6b0e"
+  integrity sha512-yjbhSWBB+cWHjAgeWlMYgNydMxDGU1BO3JnmgxCclMcfi59JDsKHMXpgZpCNw+svcirBtIMD2u70KPFinr2pUA==
   dependencies:
     "@iiif/presentation-2" "^1.0.4"
     "@iiif/presentation-3" "^1.1.3"
@@ -2034,10 +2034,9 @@
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.11", "@iiif/vault-helpers@^0.9.7":
+"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.7", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/91d2a017/@iiif/vault-helpers":
   version "0.9.11"
-  resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.11.tgz#43a28e4600d41990997a2225e9272491bddc7d57"
-  integrity sha512-4XuFPvu233mMzfU/mMpAqFY5aCTzwhJ0u7MzPcpN8nSfMwbV5Dyvv0PppjcocvbWMUUXScqerRoB1MAfSFas6w==
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/91d2a017/@iiif/vault-helpers#8dde985b8cfbf6068af68dce4bb0feafa5adaf05"
   dependencies:
     "@iiif/presentation-2" "1.x"
     "@iiif/presentation-3" "1.x"
@@ -2047,12 +2046,12 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@>=0.9.18", "@iiif/vault@>=0.9.19", "@iiif/vault@^0.9.18", "@iiif/vault@^0.9.20":
-  version "0.9.20"
-  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.20.tgz#b77837b36f9e5a459e22f7cb88312ffd3b5054aa"
-  integrity sha512-aGlp47X8gOrud1DopoLilLxC4KmKH3V+h1zHXP0pV2hnn84hFBfQ9MV0llFDXo38xRaSduvMNNmT5GzQZKGe8A==
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@>=0.9.18", "@iiif/vault@>=0.9.19", "@iiif/vault@^0.9.18", "@iiif/vault@^0.9.22":
+  version "0.9.22"
+  resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.22.tgz#299bd3e6df1e4c3ae941d272b298ae65280b69d0"
+  integrity sha512-HaFX1u9TSZha0i/esZR5sZzydZgjZgITeO0JrT1qXm+qSaB1Oc0PRNzatXW48Xa0q3PPYbBB71zCL1/D1i1i1A==
   dependencies:
-    "@iiif/parser" "1.*"
+    "@iiif/parser" "^1.1.2"
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^1.1.3"
     mitt "^3.0.0"
@@ -10925,13 +10924,12 @@ react-iiif-vault@^0.9.15:
     typescript "^4.7.4"
     use-sync-external-store "^1.2.0"
 
-react-iiif-vault@^0.9.19:
-  version "0.9.19"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.19.tgz#de5f7e718e018285a466b5b27766b8bb30149421"
-  integrity sha512-jSe5+hxlyCU+HOaRy/N7IA9I2kjTC+EUSky2oA97A4LcNXsUt7KNOq85PQupHxP5sHd/SSaYibBM1+gc/Vw8QQ==
+"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/b2e55c68/react-iiif-vault":
+  version "0.9.20"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/b2e55c68/react-iiif-vault#f9da2d3b4147195f160ba4286d363ddc7343da48"
   dependencies:
-    "@atlas-viewer/atlas" "^2.0.0-alpha.19"
-    "@atlas-viewer/iiif-image-api" "2.*"
+    "@atlas-viewer/atlas" "^2.0.0-alpha.21"
+    "@atlas-viewer/iiif-image-api" "^2.1.1"
     "@iiif/parser" ">=v1.0.13"
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^1.1.2"

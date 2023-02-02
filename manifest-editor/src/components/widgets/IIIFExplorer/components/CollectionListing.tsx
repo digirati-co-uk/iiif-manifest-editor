@@ -19,6 +19,8 @@ export function CollectionListing() {
   );
   const container = useKeyboardListNavigation<HTMLDivElement>("data-collection-list-index");
 
+  console.log({ collection });
+
   useLayoutEffect(() => {
     const cached = collection ? scrollCache[collection.id] : 0;
     if (cached && container.ref.current) {

@@ -51,6 +51,7 @@ export const ThumbnailImage = css`
   min-height: 0;
   display: flex;
   aspect-ratio: var(--thumb-ratio);
+  max-height: var(--thumb-size);
 
   img {
     width: 100%;

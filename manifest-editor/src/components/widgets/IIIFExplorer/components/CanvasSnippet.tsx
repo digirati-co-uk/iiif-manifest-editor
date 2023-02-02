@@ -29,6 +29,7 @@ export function CanvasSnippet(props: { onClick: () => void }) {
       cloned.style.width = `${rect.width}px`;
       cloned.style.height = `${rect.height}px`;
       cloned.style.transition = "all 300ms";
+      cloned.style.maxHeight = "100%";
 
       // container.append(cloned);
       outerContainer.style.pointerEvents = "none";

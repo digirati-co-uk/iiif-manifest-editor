@@ -65,7 +65,10 @@ function LoadManifestComponent({ resource }: { resource: Reference }) {
   useEffect(() => {
     try {
       if (resource?.type === "Manifest") {
-        vault.loadManifest(resource?.id);
+        const full = vault.get<ManifestNormalized>(resource, { skipSelfReturn: false });
+        if (full && (!full.thumbnail || full.thumbnail.length === 0)) {
+          vault.loadManifest(resource?.id);
+        }
       }
     } catch (e) {
       // ignore?
