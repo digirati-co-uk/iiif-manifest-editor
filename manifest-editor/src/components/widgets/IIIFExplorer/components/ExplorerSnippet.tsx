@@ -8,7 +8,7 @@ import { isVisible } from "@/helpers/is-visible";
 import { useEffect, useRef, useState } from "react";
 import { ManifestIcon } from "@/components/widgets/IIIFExplorer/components/ManifestIcon";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
-
+import { ErrorBoundary } from "react-error-boundary";
 export interface ExplorerSnippetProps {
   resource: string | Reference;
   onClick: () => void;
@@ -37,10 +37,12 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
       <div className={$.collectionIcon}>
         {resource.type === "Manifest" ? (
           <ManifestContext manifest={resource.id}>
-            <LazyLoadComponent>
-              <LoadManifestComponent resource={resource} />
-              <ManifestIcon />
-            </LazyLoadComponent>
+            <ErrorBoundary fallback={null}>
+              <LazyLoadComponent>
+                <LoadManifestComponent resource={resource} />
+                <ManifestIcon />
+              </LazyLoadComponent>
+            </ErrorBoundary>
           </ManifestContext>
         ) : (
           <img src={folder} alt="" />
@@ -61,8 +63,12 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
 function LoadManifestComponent({ resource }: { resource: Reference }) {
   const vault = useVault();
   useEffect(() => {
-    if (resource?.type === "Manifest") {
-      vault.load(resource?.id);
+    try {
+      if (resource?.type === "Manifest") {
+        vault.loadManifest(resource?.id);
+      }
+    } catch (e) {
+      // ignore?
     }
   }, []);
 

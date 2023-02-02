@@ -26,7 +26,7 @@ export function CollectionListing() {
     }
   }, [scrollCache, collection, container.ref]);
 
-  if (!selected || !collection || (collection && collection.type !== "Collection")) {
+  if (!selected || !collection || (collection && collection.type !== "Collection") || !collection.items) {
     return null;
   }
 

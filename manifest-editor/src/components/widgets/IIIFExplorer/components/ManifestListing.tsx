@@ -11,7 +11,7 @@ import {
 import { CanvasNormalized, ManifestNormalized } from "@iiif/presentation-3";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
 import { LazyCanvasThumbnail } from "@/components/widgets/IIIFExplorer/components/LazyCanvasThumbnail";
-import React, { useMemo } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ManifestListing.styles";
 import { CanvasSnippet } from "@/components/widgets/IIIFExplorer/components/CanvasSnippet";
@@ -55,7 +55,17 @@ function ManifestListingInner() {
   const sequence = useCanvasSequence({ disablePaging: false });
   const container = useKeyboardListNavigation<HTMLDivElement>("data-manifest-list-index");
   const store = useExplorerStore();
+  const select = useStore(store, (s) => s.select);
   const { ratio } = useBestCanvasRatio();
+
+  const setScrollCache = useStore(store, (s) => s.setScrollCache);
+  const scrollCache = useStore(store, (s) => s.scrollRestoreCache);
+  useLayoutEffect(() => {
+    const cached = manifest ? scrollCache[manifest.id] : 0;
+    if (cached && container.ref.current) {
+      container.ref.current.scrollTop = cached;
+    }
+  }, [scrollCache, manifest, container.ref]);
 
   invariant(manifest);
 
@@ -68,19 +78,19 @@ function ManifestListingInner() {
               .map((id) => sequence.items[id])
               .map((item, k) => (
                 <CanvasContext canvas={item.id} key={item.id + k}>
-                  <CanvasSnippet onClick={() => store.getState().select(item.id)} />
+                  <CanvasSnippet
+                    onClick={() => {
+                      if (container.ref.current) {
+                        setScrollCache(manifest.id, container.ref.current.scrollTop);
+                      }
+                      select(item.id);
+                    }}
+                  />
                 </CanvasContext>
               ))}
           </div>
         ))}
       </div>
-
-      {manifest.items.map((m) => (
-        <li>
-          {m.id}
-          <LazyCanvasThumbnail />
-        </li>
-      ))}
     </div>
   );
 }
