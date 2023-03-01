@@ -1,11 +1,12 @@
 import { useThumbnail } from "react-iiif-vault";
+import manifest from "../icons/manifest.svg";
 
 export function ManifestIcon() {
-  const thumbnail = useThumbnail({ width: 120, height: 120 });
+  const thumbnail = useThumbnail({ width: 256, height: 256 }, false);
 
   if (thumbnail) {
-    return <img src={thumbnail.id} />;
+    return <img src={thumbnail.id} alt="" />;
   }
 
-  return <div>NO icon</div>;
+  return <img src={manifest} alt="" />;
 }

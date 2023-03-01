@@ -19,8 +19,19 @@ export const resourceNavIcon = css`
   display: flex;
   border-radius: 3px;
 
+  transition: opacity 0.3s;
+
   &:hover {
     background: #eee;
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.3;
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+    }
   }
 
   img,

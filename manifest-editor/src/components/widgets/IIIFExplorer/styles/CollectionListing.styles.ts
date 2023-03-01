@@ -54,6 +54,7 @@ export const collectionItem = css`
   }
 `;
 export const collectionIcon = css`
+  position: relative;
   grid-area: icon;
   align-self: center;
   display: flex;

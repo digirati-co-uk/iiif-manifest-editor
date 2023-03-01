@@ -41,5 +41,10 @@ export const hoverCardLabel = css`
   margin: 0.4em 0;
 `;
 export const hoverCardAction = css`
-  color: red;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+
+  &:hover {
+    background: #eee;
+  }
 `;

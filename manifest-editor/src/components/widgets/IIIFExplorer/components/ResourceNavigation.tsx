@@ -32,7 +32,7 @@ export function ResourceNavigation() {
 
   return (
     <div className={$.resourceNavContainer}>
-      <div className={$.resourceNavIcon}>
+      <div className={$.resourceNavIcon} data-disabled={history.length < 2}>
         <img src={back} onClick={backAction} />
       </div>
       <div className={$.resourceNavList} data-collapsed={!open}>

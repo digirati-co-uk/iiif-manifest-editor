@@ -69,9 +69,11 @@ function ManifestListingInner() {
 
   invariant(manifest);
 
+  const single = sequence.sequence.length === 1;
+
   return (
     <div className={$.ManifestListing} {...container}>
-      <div className={$.ThumbnailList} style={{ "--thumb-ratio": ratio } as any}>
+      <div className={$.ThumbnailList} data-single={single} style={{ "--thumb-ratio": ratio } as any}>
         {sequence.sequence.map((ids, n) => (
           <div key={n} className={$.ThumbnailGroup} style={{ "--item-count": ids.length } as any}>
             {ids

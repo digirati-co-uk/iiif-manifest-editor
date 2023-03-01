@@ -7,6 +7,9 @@ import { ExplorerStoreProvider } from "@/components/widgets/IIIFExplorer/IIIFExp
 import { ExplorerEntry } from "@/components/widgets/IIIFExplorer/components/ExplorerEntry";
 import { ManifestListing } from "./components/ManifestListing";
 import { CanvasView } from "@/components/widgets/IIIFExplorer/components/CanvasView";
+import filter from "./icons/filter.svg";
+import { useState } from "react";
+import { FilterProvider, ItemFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
 
 export interface IIIFExplorerProps {
   /**
@@ -46,29 +49,38 @@ export function IIIFExplorer({
   entry = { type: "Text" },
   vault,
 }: IIIFExplorerProps) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   return (
     <VaultProvider vault={vault}>
-      <ExplorerStoreProvider entry={entry.type !== "Text" ? entry : undefined}>
-        <div className={$.mainContainer}>
-          <div className={$.hoverCardContainer}>
-            <div className={$.hoverCardHeader}>
-              <div className={$.hoverCardLabel}>Select resource</div>
-              <div className={$.hoverCardAction}>[F]</div>
+      <FilterProvider>
+        <ExplorerStoreProvider entry={entry.type !== "Text" ? entry : undefined}>
+          <div className={$.mainContainer}>
+            <div className={$.hoverCardContainer}>
+              <div className={$.hoverCardHeader}>
+                <div className={$.hoverCardLabel}>Select resource</div>
+                <div className={$.hoverCardAction} onClick={() => setIsFilterOpen((o) => !o)}>
+                  <img src={filter} alt="" />
+                </div>
+              </div>
+
+              <ItemFilter open={isFilterOpen} />
+
+              <ExplorerEntry entry={entry} />
+
+              {/* Only shown if we are looking at a collection */}
+              <CollectionListing />
+
+              {/* Only shown if we are looking at a manifest */}
+              <ManifestListing />
+
+              <CanvasView />
+
+              <ResourceActionBar />
             </div>
-            <ExplorerEntry entry={entry} />
-
-            {/* Only shown if we are looking at a collection */}
-            <CollectionListing />
-
-            {/* Only shown if we are looking at a manifest */}
-            <ManifestListing />
-
-            <CanvasView />
-
-            <ResourceActionBar />
           </div>
-        </div>
-      </ExplorerStoreProvider>
+        </ExplorerStoreProvider>
+      </FilterProvider>
     </VaultProvider>
   );
 }

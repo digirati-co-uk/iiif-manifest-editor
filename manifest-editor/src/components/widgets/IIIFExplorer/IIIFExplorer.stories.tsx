@@ -9,14 +9,30 @@ export default { title: "IIIF Explorer" };
 //   <IIIFExplorer entry={{ id: "https://view.nls.uk/collections/top.json", type: "Collection" }} />
 // );
 
+// export const TopLevelCollection = () => (
+//   <IIIFExplorer
+//     entry={{
+//       id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections",
+//       type: "Collection",
+//     }}
+//   />
+// );
 export const TopLevelCollection = () => (
   <IIIFExplorer
     entry={{
-      id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections",
+      id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections/digpaintings",
       type: "Collection",
     }}
   />
 );
+// export const TopLevelCollection2 = () => (
+//   <IIIFExplorer
+//     entry={{
+//       id: "https://iiif.wellcomecollection.org/presentation/b12012439",
+//       type: "Manifest",
+//     }}
+//   />
+// );
 
 // export const TopLevelCollection = () => (
 //   <IIIFExplorer entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }} />

@@ -9,6 +9,9 @@ import { useEffect, useRef, useState } from "react";
 import { ManifestIcon } from "@/components/widgets/IIIFExplorer/components/ManifestIcon";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { ErrorBoundary } from "react-error-boundary";
+import { Spinner } from "@/madoc/components/icons/Spinner";
+import { useFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
+import { getValue } from "@iiif/vault-helpers";
 export interface ExplorerSnippetProps {
   resource: string | Reference;
   onClick: () => void;
@@ -24,6 +27,11 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
     vault.requestStatus(typeof props.resource === "string" ? props.resource : props.resource.id)
   );
   const accessible = useAccessibleClick(props.onClick);
+  const { value: filterValue } = useFilter();
+
+  if (filterValue && !getValue(resource.label).toLowerCase().includes(filterValue.toLowerCase())) {
+    return null;
+  }
 
   return (
     <div
@@ -32,9 +40,15 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
       data-active={props.active}
       tabIndex={0}
       data-collection-list-index={props.index}
+      data-loading={resourceStatus?.loadingState}
       {...accessible}
     >
       <div className={$.collectionIcon}>
+        {resourceStatus?.loadingState === "RESOURCE_LOADING" ? (
+          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
+            <Spinner stroke="#000" />
+          </div>
+        ) : null}
         {resource.type === "Manifest" ? (
           <ManifestContext manifest={resource.id}>
             <ErrorBoundary fallback={null}>

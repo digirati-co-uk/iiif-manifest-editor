@@ -5,7 +5,7 @@ import { memo, useMemo } from "react";
 import { ImageCandidateRequest } from "@atlas-viewer/iiif-image-api";
 
 export const CanvasThumbnail = memo(function CanvasThumbnail({
-  size = 128,
+  size = 256,
   fluid,
   onClick,
 }: {
@@ -57,7 +57,7 @@ function Inner({ size, fluid, onClick }: { size: number; fluid?: boolean; onClic
       // atAnyCost: true,
       // returnAllOptions: true,
     },
-    true
+    false
   );
 
   const aspectRatio = canvas ? `${canvas.width}/${canvas.height}` : undefined;

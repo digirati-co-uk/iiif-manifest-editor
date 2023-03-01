@@ -19,6 +19,10 @@ export const ThumbnailList = css`
   justify-content: space-between;
   gap: 0.2em;
 
+  &[data-single="true"] {
+    max-width: 250px;
+  }
+
   @container (min-width: 400px) {
     gap: 0.875em;
   }
