@@ -98,6 +98,7 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
         <style>{`
         .atlas-container {
           min-width: 0;
+          min-height: 0;
           --atlas-container-flex: 1 1 0px;
           --atlas-background:  #f9f9f9;
         }

@@ -5,27 +5,27 @@ import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useExistingVault } from "react-iiif-vault";
 
 interface Store {
-  history: string[];
-  selected: string | null;
+  history: Reference[];
+  selected: Reference | null;
 
   // @todo type..
   refinements: any[];
 
-  recent: string[];
+  recent: Reference[];
 
   error: string | null;
 
   scrollRestoreCache: Record<string, number>;
 
-  setRecent(recent: string[]): void;
+  setRecent(recent: Reference[]): void;
 
-  select(resource: string, reset?: boolean): void;
-  updateKey(before: string, after: string): void;
+  select(resource: Reference, reset?: boolean): void;
+  updateKey(before: Reference, after: Reference): void;
 
   setScrollCache(id: string, scroll: number): void;
   back(): void;
 }
-export const createStore = (vault: Vault, initial?: string) =>
+export const createStore = (vault: Vault, options: { initial?: string; canReset?: boolean }) =>
   create<Store>()((set, get) => ({
     history: [],
     selected: null,
@@ -45,43 +45,51 @@ export const createStore = (vault: Vault, initial?: string) =>
       }
     },
 
-    setRecent(recent: string[]) {
+    setRecent(recent: Reference[]) {
       // load if not loaded.
       set({ recent });
     },
 
-    select(resource: string, reset = false) {
-      vault
-        .load<CollectionNormalized | ManifestNormalized>(resource)
-        .then((loaded) => {
-          if (loaded && resource !== loaded.id) {
-            get().updateKey(resource, loaded.id);
-          }
-          // ?
-        })
-        .catch((error) => {
-          set({ error: error.toString() });
-        });
+    select(_resource: string | Reference, reset = false) {
+      let resource = typeof _resource === "string" ? { id: _resource, type: "unknown" } : _resource;
+
+      const status = vault.requestStatus(resource.id);
+      if (!status || status.loadingState === "RESOURCE_ERROR") {
+        vault
+          .load<CollectionNormalized | ManifestNormalized>(_resource)
+          .then((loaded) => {
+            if (loaded && resource.id !== loaded.id) {
+              get().updateKey(resource, loaded);
+            }
+          })
+          .catch((error) => {
+            set({ error: error.toString() });
+          });
+      } else if (status) {
+        resource = vault.get<any>(resource, { skipSelfReturn: false });
+      }
+
+      const ref = { id: resource.id, type: resource.type };
 
       if (reset) {
-        set({ selected: resource, history: [] });
+        set({ selected: ref, history: [] });
         return;
       }
       // 1. Check if it's in the recent list
       const state = get();
-      if (state.history.find((r) => r === resource)) {
+      if (state.history.find((r) => r.id === ref.id)) {
         // We found it!
-        set({ selected: resource });
+        set({ selected: ref });
       } else {
         // 2. If not - add to the end
         set((s) => ({
-          selected: resource,
-          history: [...s.history, resource],
+          selected: ref,
+          history: [...s.history, ref],
         }));
       }
     },
 
-    updateKey(before: string, after: string) {
+    updateKey(before: Reference, updated: Reference) {
       const state = get();
       const newHistory = state.history.slice(0);
       let changed = false;
@@ -89,30 +97,32 @@ export const createStore = (vault: Vault, initial?: string) =>
         const key = state.history[i];
         if (key === before) {
           changed = true;
-          newHistory[i] = after;
+          newHistory[i] = updated;
         }
       }
       if (changed) {
         set({ history: newHistory });
       }
-      if (state.selected === before) {
-        set({ selected: after });
+      if (state.selected && state.selected.id === before.id) {
+        set({ selected: updated });
       }
     },
 
     back() {
       const state = get();
       const len = state.history.length;
-      if (len < 2 || !state.selected) {
+      if (!options.canReset && (len < 2 || !state.selected)) {
         return;
       }
-      const index = state.history.findIndex((s) => s && s === state.selected);
-      if (index !== -1) {
+      const index = state.history.findIndex((s) => s && s.id === state.selected?.id);
+      if (index >= 1) {
         const selected = state.history[index - 1];
         state.select(selected);
         set({
           history: state.history.slice(0, index),
         });
+      } else {
+        set({ history: [], selected: null });
       }
     },
   }));
@@ -127,15 +137,23 @@ export function useExplorerStore() {
   return store;
 }
 
-export function ExplorerStoreProvider({ children, entry }: { children?: ReactNode; entry?: Reference }) {
+export function ExplorerStoreProvider({
+  children,
+  entry,
+  options,
+}: {
+  children?: ReactNode;
+  entry?: Reference;
+  options?: { canReset?: boolean };
+}) {
   const vault = useExistingVault();
 
   const store = useMemo(() => {
-    const store = createStore(vault);
+    const store = createStore(vault, options || {});
 
     // Initialisation.
     if (entry) {
-      store.getState().select(entry.id);
+      store.getState().select(entry);
     }
 
     return store;

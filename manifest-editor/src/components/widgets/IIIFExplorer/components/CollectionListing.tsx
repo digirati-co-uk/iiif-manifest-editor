@@ -4,13 +4,12 @@ import { useStore } from "zustand";
 import { useResources, useVaultSelector } from "react-iiif-vault";
 import { CollectionNormalized } from "@iiif/presentation-3";
 import { ExplorerSnippet } from "@/components/widgets/IIIFExplorer/components/ExplorerSnippet";
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect } from "react";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
-import { GridChildComponentProps } from "react-window";
-import { ThumbnailPlaceholder } from "@/components/organisms/ThumbnailPagedList/ThumbnailPageList.styles";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
-import { collectionIcon, collectionItem } from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
+import { collectionItem } from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import { useFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
+import { Spinner } from "../../../../madoc/components/icons/Spinner";
 
 export function CollectionListing() {
   const store = useExplorerStore();
@@ -20,7 +19,17 @@ export function CollectionListing() {
   const scrollCache = useStore(store, (s) => s.scrollRestoreCache);
   const { value: filterValue } = useFilter();
   const collection = useVaultSelector<CollectionNormalized | null>(
-    (state, vault) => (selected ? vault.get(selected, { skipSelfReturn: false }) : null),
+    (state, vault) =>
+      selected && (selected.type === "Collection" || selected.type === "unknown")
+        ? vault.get(selected, { skipSelfReturn: false })
+        : null,
+    [selected]
+  );
+  const collectionStatus = useVaultSelector(
+    (state, vault) =>
+      selected && (selected.type === "Collection" || selected.type === "unknown")
+        ? vault.requestStatus(selected.id)
+        : undefined,
     [selected]
   );
   const container = useKeyboardListNavigation<HTMLDivElement>("data-collection-list-index");
@@ -31,6 +40,18 @@ export function CollectionListing() {
       container.ref.current.scrollTop = cached;
     }
   }, [scrollCache, collection, container.ref]);
+
+  if (collectionStatus && collectionStatus.loadingState === "RESOURCE_LOADING") {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (collectionStatus && collectionStatus.loadingState === "RESOURCE_ERROR") {
+    return <div>Error loading manifest: {collectionStatus.error}</div>;
+  }
 
   if (!selected || !collection || (collection && collection.type !== "Collection") || !collection.items) {
     return null;
@@ -52,7 +73,7 @@ export function CollectionListing() {
               if (container.ref.current) {
                 setScrollCache(collection.id, container.ref.current.scrollTop);
               }
-              select(item.id);
+              select(item);
             }}
           />
         </LazyLoadComponent>

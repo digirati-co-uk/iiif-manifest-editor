@@ -11,6 +11,7 @@ import invariant from "tiny-invariant";
 import { ComboButton } from "./ComboButton";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ResourceActionBar.styles";
 import { LocaleString } from "../../../../atoms/LocaleString";
+import { Reference } from "@iiif/presentation-3";
 
 interface ExplorerOutputProps {
   /**
@@ -24,6 +25,7 @@ interface ExplorerOutputProps {
   targets: IIIFExplorerProps["outputTargets"];
   format: OutputFormat;
   output?: { id: string; type: string };
+  onSelect?: () => void;
 }
 
 export function useValidTargets(types: OutputType[]) {
@@ -32,15 +34,18 @@ export function useValidTargets(types: OutputType[]) {
   const history = useStore(store, (s) => s.history);
 
   return useVaultSelector(() => {
-    const validMap: Partial<{ [K in OutputType]: string }> = {};
+    const validMap: Partial<{ [K in OutputType]: { id: string; type: string; parent?: Reference | null } }> = {};
     let hasValidItem = false;
     let mostSpecificTarget = null;
     // List of ids.
-    for (const id of history) {
-      const fullItem = vault.get<any>(id);
+    for (let i = 0; i < history.length; i++) {
+      const resource = history[i];
+      const parent = i === 0 ? null : history[i - 1];
+      const id = resource.id;
+      const fullItem = vault.get<any>(resource);
       if (fullItem && fullItem.type && types.includes(fullItem.type)) {
         hasValidItem = true;
-        validMap[fullItem.type as OutputType] = id;
+        validMap[fullItem.type as OutputType] = { ...resource, parent };
         mostSpecificTarget = fullItem.type as OutputType;
       }
     }
@@ -79,11 +84,20 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
           label: type.label || template.label,
           action: async () => {
             if (mostSpecific) {
-              const ref = vault.get<any>(valid[mostSpecific]);
-              const resource = vault.toPresentation3(ref);
-              const parent = undefined;
-              const formatted = await selectedFormat.format(resource, props.format as never, parent);
+              const ref = valid[mostSpecific];
+              if (!ref) {
+                // This should not happen.
+                return;
+              }
+              const resource = vault.toPresentation3({ id: ref.id, type: ref.type as any });
+              const format = type.format || props.format;
+              const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
+              const parent = ref.parent;
+              const formatted = await chosenFormat.format(resource, format as never, parent);
               await template.action(formatted, type as any);
+              if (props.onSelect) {
+                props.onSelect();
+              }
             }
           },
         };

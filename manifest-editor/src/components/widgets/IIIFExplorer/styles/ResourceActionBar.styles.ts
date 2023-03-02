@@ -28,15 +28,24 @@ export const ResourceAction = css`
 
 export const ResourceActionMeta = css`
   flex: 1;
+  min-width: 0;
+  margin-right: 1lh;
 `;
 
 export const ResourceActionLabel = css`
   color: #444;
   font-size: 0.7em;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
 `;
 export const ResourceActionDescription = css`
   color: #999;
   font-size: 0.875em;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 export const ResourceActionComposite = css`

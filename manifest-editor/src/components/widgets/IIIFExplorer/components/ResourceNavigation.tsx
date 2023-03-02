@@ -6,10 +6,10 @@ import { DownIcon } from "@/icons/DownIcon";
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
 import { useVaultSelector } from "react-iiif-vault";
-import { CollectionNormalized, Manifest, ManifestNormalized } from "@iiif/presentation-3";
+import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3";
 import { LocaleString } from "@/atoms/LocaleString";
 
-export function ResourceNavigation() {
+export function ResourceNavigation(props: { canReset?: boolean }) {
   const store = useExplorerStore();
   const [open, setIsOpen] = useState(false);
   const selected = useStore(store, (s) => s.selected);
@@ -19,11 +19,12 @@ export function ResourceNavigation() {
 
   const historyItems = useVaultSelector(
     (state, vault) => {
-      return history.map((id) => {
+      return history.map((resource) => {
         return {
-          id,
-          resource: vault.get(id, { skipSelfReturn: false }),
-          status: vault.requestStatus(id),
+          id: resource.id,
+          type: resource.type,
+          resource: vault.get(resource, { skipSelfReturn: false }),
+          status: vault.requestStatus(resource.id),
         };
       });
     },
@@ -32,12 +33,12 @@ export function ResourceNavigation() {
 
   return (
     <div className={$.resourceNavContainer}>
-      <div className={$.resourceNavIcon} data-disabled={history.length < 2}>
+      <div className={$.resourceNavIcon} data-disabled={!props.canReset && history.length < 2}>
         <img src={back} onClick={backAction} />
       </div>
       <div className={$.resourceNavList} data-collapsed={!open}>
         {historyItems.map((item, idx) => {
-          const isSelected = item.id === selected;
+          const isSelected = item.id === selected?.id;
           const resource = item.resource as ManifestNormalized | CollectionNormalized;
           return (
             <a
@@ -51,7 +52,7 @@ export function ResourceNavigation() {
                   return;
                 }
                 e.preventDefault();
-                select(item.id);
+                select(item);
                 setIsOpen(false);
               }}
             >

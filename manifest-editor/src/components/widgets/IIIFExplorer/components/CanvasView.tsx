@@ -17,6 +17,7 @@ export function CanvasViewInner() {
       <style>{`
         .atlas-container {
           min-width: 0;
+          min-height: 0;
           --atlas-container-flex: 1 1 0px;
           --atlas-background:  #f9f9f9;
         }
@@ -61,17 +62,13 @@ export function CanvasViewInner() {
 export function CanvasView() {
   const store = useExplorerStore();
   const selected = useStore(store, (s) => s.selected);
-  const canvas = useVaultSelector<CanvasNormalized | null>(
-    (state, vault) => (selected ? vault.get(selected, { skipSelfReturn: false }) : null),
-    [selected]
-  );
 
-  if (!selected || !canvas || (canvas && canvas.type !== "Canvas")) {
+  if (!selected || selected.type !== "Canvas" || !selected.id) {
     return null;
   }
 
   return (
-    <CanvasContext canvas={selected}>
+    <CanvasContext canvas={selected.id}>
       <CanvasViewInner />
     </CanvasContext>
   );

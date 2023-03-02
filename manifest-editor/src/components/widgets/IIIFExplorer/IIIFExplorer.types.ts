@@ -1,5 +1,6 @@
 export interface ExplorerAction<Type extends OutputTarget["type"]> {
   label: string;
+  format?: OutputFormat;
   action: (resource: any, options: GetOutputTarget<Type>) => Promise<any | void> | any | void;
 }
 
@@ -18,12 +19,13 @@ export type OutputFormat =
   | { type: "url" };
 
 export type OutputTarget =
-  | { type: "callback"; label?: string; cb: (resource: any) => void }
-  | { type: "clipboard"; label?: string }
-  | { type: "input"; label?: string; el: HTMLInputElement }
+  | { type: "callback"; label?: string; format?: OutputFormat; cb: (resource: any) => void }
+  | { type: "clipboard"; label?: string; format?: OutputFormat }
+  | { type: "input"; label?: string; format?: OutputFormat; el: { current: null | HTMLInputElement } }
   | {
       type: "open-new-window";
       label?: string;
+      format?: OutputFormat;
       urlPattern: string;
       target?: string;
       features?: string;

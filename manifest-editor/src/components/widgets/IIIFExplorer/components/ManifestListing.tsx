@@ -15,6 +15,7 @@ import React, { useLayoutEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ManifestListing.styles";
 import { CanvasSnippet } from "@/components/widgets/IIIFExplorer/components/CanvasSnippet";
+import { Spinner } from "../../../../madoc/components/icons/Spinner";
 
 function useBestCanvasRatio() {
   const manifest = useManifest();
@@ -85,7 +86,7 @@ function ManifestListingInner() {
                       if (container.ref.current) {
                         setScrollCache(manifest.id, container.ref.current.scrollTop);
                       }
-                      select(item.id);
+                      select(item);
                     }}
                   />
                 </CanvasContext>
@@ -100,17 +101,34 @@ function ManifestListingInner() {
 export function ManifestListing() {
   const store = useExplorerStore();
   const selected = useStore(store, (s) => s.selected);
-  const manifest = useVaultSelector<ManifestNormalized | null>(
-    (state, vault) => (selected ? vault.get(selected, { skipSelfReturn: false }) : null),
+  const manifestStatus = useVaultSelector(
+    (state, vault) =>
+      selected && (selected.type === "Manifest" || selected.type === "unknown")
+        ? vault.requestStatus(selected.id)
+        : null,
     [selected]
   );
 
-  if (!selected || !manifest || (manifest && manifest.type !== "Manifest")) {
+  if (!selected || selected.type !== "Manifest" || !manifestStatus) {
     return null;
   }
 
+  if (manifestStatus.loadingState === "RESOURCE_LOADING") {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (manifestStatus.loadingState === "RESOURCE_ERROR") {
+    return <div>Error loading manifest: {manifestStatus.error}</div>;
+  }
+
+  console.log('selected manifest -> ', selected);
+
   return (
-    <ManifestContext manifest={selected}>
+    <ManifestContext manifest={selected.id}>
       <ManifestListingInner />
     </ManifestContext>
   );

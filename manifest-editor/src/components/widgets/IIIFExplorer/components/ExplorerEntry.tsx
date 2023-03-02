@@ -5,7 +5,7 @@ import { ResourceNavigation } from "@/components/widgets/IIIFExplorer/components
 import { IIIFExplorerProps } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 import { ExplorerInput } from "@/components/widgets/IIIFExplorer/components/ExplorerInput";
 
-export function ExplorerEntry({ entry }: { entry?: IIIFExplorerProps["entry"] }) {
+export function ExplorerEntry({ entry, canReset }: { entry?: IIIFExplorerProps["entry"]; canReset: boolean }) {
   const store = useExplorerStore();
   const history = useStore(store, (s) => s.history);
   const selected = useStore(store, (s) => s.selected);
@@ -19,11 +19,13 @@ export function ExplorerEntry({ entry }: { entry?: IIIFExplorerProps["entry"] })
       return <ExplorerInput />;
     }
 
-    // Otherwise we select the entry and reset.
-    store.getState().select(entry.id, true);
+    if (!canReset) {
+      // Otherwise we select the entry and reset.
+      store.getState().select(entry, true);
+    }
 
-    return null;
+    return <ExplorerInput />;
   }
 
-  return <ResourceNavigation />;
+  return <ResourceNavigation canReset={canReset} />;
 }

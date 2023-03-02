@@ -8,6 +8,9 @@ export const ComboButtonContainer = css`
   position: relative;
   border-radius: 3px;
 
+  @container main (min-width: 400px) {
+    font-size: 0.75em;
+  }
 `;
 
 export const ComboButtonMain = css`
@@ -109,7 +112,7 @@ export const ComboButtonOverlay = css`
   font-size: 0.9em;
   border-radius: 3px;
 
-  box-shadow: 0px 1px 3px 0 rgba(0,0,0,.3);
+  box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.3);
 
   //display: none;
   &[data-open="true"] {
