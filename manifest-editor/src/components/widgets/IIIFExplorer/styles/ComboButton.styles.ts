@@ -92,6 +92,7 @@ export const ComboButtonChoice = css`
 export const ComboButtonOverlay = css`
   opacity: 0;
   pointer-events: none;
+  z-index: 99;
 
   position: absolute;
   bottom: 90%;
