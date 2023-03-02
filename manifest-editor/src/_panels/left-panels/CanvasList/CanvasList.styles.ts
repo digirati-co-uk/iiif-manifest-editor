@@ -6,6 +6,8 @@ const Container = styled.div`
   flex: 1;
   overflow-y: auto;
   width: 100%;
+  position: relative;
+  height: 100%;
 `;
 
 const ItemContainer = styled.div<{ $selected?: boolean }>`
@@ -45,6 +47,7 @@ const ItemIdentifier = styled.div`
 const ItemLabel = styled.div<{ $unwrap?: boolean }>`
   white-space: nowrap;
   font-size: 0.9em;
+  text-transform: capitalize;
 
   > ${ItemIdentifier} {
     margin-block-start: 1em;
@@ -57,10 +60,25 @@ const ItemLabel = styled.div<{ $unwrap?: boolean }>`
     `}
 `;
 
+const SectionLabel = styled.div`
+  font-size: 0.8em;
+  font-weight: bold;
+  padding: 0.5em;
+  color: #555;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0px;
+`;
+
+const Section = styled.div``;
+
 export const CanvasListStyles = {
   Container,
   ItemContainer,
 
   ItemIdentifier,
   ItemLabel,
+  SectionLabel,
+  Section,
 };

@@ -1,15 +1,16 @@
-import * as $ from "@/components/widgets/IIIFExplorer/styles/HoverCard.styles";
-import { CollectionListing } from "@/components/widgets/IIIFExplorer/components/CollectionListing";
-import { ResourceActionBar } from "@/components/widgets/IIIFExplorer/components/ResourceActionBar";
+import * as $ from "./styles/HoverCard.styles";
+import { CollectionListing } from "./components/CollectionListing";
 import { Vault } from "@iiif/vault";
 import { VaultProvider } from "react-iiif-vault";
-import { ExplorerStoreProvider } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
-import { ExplorerEntry } from "@/components/widgets/IIIFExplorer/components/ExplorerEntry";
+import { ExplorerStoreProvider } from "./IIIFExplorer.store";
+import { ExplorerEntry } from "./components/ExplorerEntry";
 import { ManifestListing } from "./components/ManifestListing";
-import { CanvasView } from "@/components/widgets/IIIFExplorer/components/CanvasView";
+import { CanvasView } from "./components/CanvasView";
 import filter from "./icons/filter.svg";
 import { useState } from "react";
-import { FilterProvider, ItemFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
+import { FilterProvider, ItemFilter } from "./components/ItemFilter";
+import { ExplorerOutput } from "./components/ExplorerOutput";
+import { OutputFormat, OutputTarget, OutputType } from "./IIIFExplorer.types";
 
 export interface IIIFExplorerProps {
   /**
@@ -23,21 +24,17 @@ export interface IIIFExplorerProps {
   /**
    * @default {{ type: "content-state" }}
    */
-  output?: { type: "content-state" } | { type: "json" } | { type: "url" };
+  output?: OutputFormat;
 
   /**
    * @default {['manifest', 'canvas', 'canvas-region']}
    */
-  outputTypes?: Array<"Collection" | "Manifest" | "Canvas" | "ImageService" | "CanvasRegion">;
+  outputTypes?: Array<OutputType>;
 
   /**
    * @default {[ type: "clipboard" ]}
    */
-  outputTargets?: Array<
-    | { type: "callback"; label?: string; cb: (resource: any) => void }
-    | { type: "clipboard"; label?: string }
-    | { type: "input"; label?: string; el: HTMLInputElement }
-  >;
+  outputTargets?: OutputTarget[];
 
   vault?: Vault;
 }
@@ -76,7 +73,7 @@ export function IIIFExplorer({
 
               <CanvasView />
 
-              <ResourceActionBar />
+              <ExplorerOutput targets={outputTargets} types={outputTypes} format={output} />
             </div>
           </div>
         </ExplorerStoreProvider>

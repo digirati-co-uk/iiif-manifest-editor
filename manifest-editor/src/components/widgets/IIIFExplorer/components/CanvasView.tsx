@@ -3,11 +3,7 @@ import { useStore } from "zustand";
 import { AnnotationContext, CanvasContext, CanvasPanel, useCanvas, useVaultSelector } from "react-iiif-vault";
 import { CanvasNormalized } from "@iiif/presentation-3";
 import React from "react";
-import { ViewControls } from "@/_panels/center-panels/CanvasPanelViewer/components/ViewControls";
 import { MediaControls } from "@/_panels/center-panels/CanvasPanelViewer/components/MediaControls";
-import { Highlight } from "@/_panels/center-panels/CanvasPanelViewer/components/Highlight";
-import { AnnotationTargetEditor } from "@/_panels/center-panels/CanvasPanelViewer/components/AnnotationTargetEditor";
-import { Annotations } from "@/_panels/center-panels/CanvasPanelViewer/components/Annotations";
 import invariant from "tiny-invariant";
 import { ViewerContainer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer.styles";
 

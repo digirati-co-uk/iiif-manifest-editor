@@ -28,16 +28,16 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@^2.0.0-alpha.16", "@atlas-viewer/atlas@^2.0.0-alpha.19", "@atlas-viewer/atlas@^2.0.0-alpha.21":
-  version "2.0.0-alpha.19"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.19.tgz#7ff519119c95095ecd43ea6ecbf8c05f86d98760"
-  integrity sha512-xzFhy5l1GVVN35qNqrLMxkSLugXRx1K47Xg07WE9SpubMjpFdmE+t7iiv02T8kHKKgICm5UHUdPleCtIQt4LcA==
+"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@^2.0.0-alpha.16", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/933b94f6/@atlas-viewer/atlas":
+  version "2.0.0-alpha.21"
+  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/933b94f6/@atlas-viewer/atlas#932950fea18a1eb5fa96b8730938870b47919e08"
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^2.0.5"
     "@iiif/presentation-3" ">=1"
     "@iiif/vault" "^0.9.18"
     "@iiif/vault-helpers" "^0.9.7"
+    lru-cache "^7.17.0"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
     react-reconciler "^0.26.2"
@@ -2034,9 +2034,9 @@
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.7", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/91d2a017/@iiif/vault-helpers":
+"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.7", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers":
   version "0.9.11"
-  resolved "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/91d2a017/@iiif/vault-helpers#8dde985b8cfbf6068af68dce4bb0feafa5adaf05"
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers#cfeb9ce240554590d9f82f1885dcd2594b2175b6"
   dependencies:
     "@iiif/presentation-2" "1.x"
     "@iiif/presentation-3" "1.x"
@@ -2046,7 +2046,7 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@>=0.9.18", "@iiif/vault@>=0.9.19", "@iiif/vault@^0.9.18", "@iiif/vault@^0.9.22":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@>=0.9.18", "@iiif/vault@>=0.9.21", "@iiif/vault@^0.9.18", "@iiif/vault@^0.9.22":
   version "0.9.22"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.22.tgz#299bd3e6df1e4c3ae941d272b298ae65280b69d0"
   integrity sha512-HaFX1u9TSZha0i/esZR5sZzydZgjZgITeO0JrT1qXm+qSaB1Oc0PRNzatXW48Xa0q3PPYbBB71zCL1/D1i1i1A==
@@ -9131,6 +9131,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+lru-cache@^7.17.0:
+  version "7.18.1"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.1.tgz#4716408dec51d5d0104732647f584d1f6738b109"
+  integrity sha512-8/HcIENyQnfUTCDizRu9rrDyG6XG/21M4X7/YEGZeD76ZJilFPAUVb/2zysFf7VVO1LEjCDFyHp8pMMvozIrvg==
+
 lz-string@^1.4.4:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/lz-string/-/lz-string-1.4.4.tgz#c0d8eaf36059f705796e1e344811cf4c498d3a26"
@@ -10977,17 +10982,17 @@ react-iiif-vault@^0.9.15:
     typescript "^4.7.4"
     use-sync-external-store "^1.2.0"
 
-"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/b2e55c68/react-iiif-vault":
+"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/2c59d6dd/react-iiif-vault":
   version "0.9.20"
-  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/b2e55c68/react-iiif-vault#f9da2d3b4147195f160ba4286d363ddc7343da48"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/2c59d6dd/react-iiif-vault#649f2fa4c46c076431706afa094eca0eb3407534"
   dependencies:
-    "@atlas-viewer/atlas" "^2.0.0-alpha.21"
+    "@atlas-viewer/atlas" "https://pkg.csb.dev/atlas-viewer/atlas/commit/933b94f6/@atlas-viewer/atlas"
     "@atlas-viewer/iiif-image-api" "^2.1.1"
     "@iiif/parser" ">=v1.0.13"
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^1.1.2"
-    "@iiif/vault" ">=0.9.19"
-    "@iiif/vault-helpers" ">=0.9.7"
+    "@iiif/vault" ">=0.9.21"
+    "@iiif/vault-helpers" "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
     react "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-dom "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-error-boundary "^3.1.4"

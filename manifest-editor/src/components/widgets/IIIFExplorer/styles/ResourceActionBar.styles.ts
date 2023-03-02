@@ -10,7 +10,7 @@ export const ResourceActions = css`
   display: flex;
   align-items: center;
 
-  * ~ * {
+  > * ~ * {
     margin-left: 0.2em;
   }
 `;
@@ -32,6 +32,7 @@ export const ResourceActionMeta = css`
 
 export const ResourceActionLabel = css`
   color: #444;
+  font-size: 0.7em;
 `;
 export const ResourceActionDescription = css`
   color: #999;

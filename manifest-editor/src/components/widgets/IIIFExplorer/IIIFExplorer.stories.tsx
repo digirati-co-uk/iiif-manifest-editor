@@ -17,12 +17,36 @@ export default { title: "IIIF Explorer" };
 //     }}
 //   />
 // );
-export const TopLevelCollection = () => (
+export const PaintingsToViewers = () => (
   <IIIFExplorer
     entry={{
       id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections/digpaintings",
       type: "Collection",
     }}
+    outputTypes={["Manifest"]}
+    output={{ type: "url" }}
+    outputTargets={[
+      {
+        type: "open-new-window",
+        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={RESULT}",
+        label: "Open in UV",
+      },
+      {
+        type: "open-new-window",
+        label: "Open in Clover",
+        urlPattern: "https://samvera-labs.github.io/clover-iiif/?iiif-content={RESULT}",
+      },
+      {
+        type: "open-new-window",
+        label: "Open in Mirador",
+        urlPattern: "https://tomcrane.github.io/scratch/mirador3/index.html?iiif-content={RESULT}",
+      },
+      {
+        type: "open-new-window",
+        label: "Open JSON-LD",
+        urlPattern: "{RESULT}",
+      },
+    ]}
   />
 );
 // export const TopLevelCollection2 = () => (

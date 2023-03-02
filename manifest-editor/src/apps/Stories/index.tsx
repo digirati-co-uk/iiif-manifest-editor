@@ -2,11 +2,19 @@ import { LayoutPanel } from "@/shell/Layout/Layout.types";
 import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { CanvasListStyles as S } from "@/_panels/left-panels/CanvasList/CanvasList.styles";
 import { AppState } from "@/shell/AppContext/AppContext";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 export default { id: "storybook", title: "Storybook" };
 
 const invalid = ["Manifest Editor/AddManifestModal", "Manifest Editor/Modals"];
+
+function formatKey(s: string) {
+  return s
+    .replace(/(?:^|\.?)([A-Z])/g, function (x, y) {
+      return " " + y.toLowerCase();
+    })
+    .replace(/^ /, "");
+}
 
 function parseStories(modules: any) {
   const files = Object.keys(modules);
@@ -29,7 +37,7 @@ function parseStories(modules: any) {
           continue;
         }
 
-        components.push(item);
+        components.push({ component: item, key });
       }
 
       validStories.push({
@@ -46,22 +54,30 @@ const state = parseStories(import.meta.globEager("../../**/*.stories.ts*"));
 
 function AllStories(app: AppState) {
   useEffect(() => {
-    window.location.hash = `?app=storybook&story=${app.state.story}`;
-  }, [app.state.story]);
+    window.location.hash = `?app=storybook&story=${app.state.story}&component=${app.state.component}`;
+  }, [app.state.story, app.state.component]);
 
   return (
     <div style={{ flex: 1 }}>
       <S.Container>
         {state.map((item, n) => {
           return (
-            <S.ItemContainer
-              key={n}
-              onClick={() => app.setState({ story: item.metadata.title })}
-              $selected={item.metadata.title === app.state.story}
-            >
-              <S.ItemLabel>{item.metadata.title}</S.ItemLabel>
-              <S.ItemIdentifier>{item.metadata.title}</S.ItemIdentifier>
-            </S.ItemContainer>
+            <Fragment key={n}>
+              <S.SectionLabel>{item.metadata.title}</S.SectionLabel>
+              <S.Section>
+                {item.components.map((component, n2) => {
+                  return (
+                    <S.ItemContainer
+                      key={n2}
+                      onClick={() => app.setState({ story: item.metadata.title, component: component.key })}
+                      $selected={item.metadata.title === app.state.story && component.key === app.state.component}
+                    >
+                      <S.ItemLabel>{formatKey(component.key)}</S.ItemLabel>
+                    </S.ItemContainer>
+                  );
+                })}
+              </S.Section>
+            </Fragment>
           );
         })}
       </S.Container>
@@ -83,11 +99,13 @@ export const leftPanels: LayoutPanel[] = [
 
       return (
         <div style={{ flex: 1 }}>
-          {item.components.map((Component: any, n) => (
-            <ErrorBoundary key={n}>
-              <Component {...(Component.args || {})} />
-            </ErrorBoundary>
-          ))}
+          {item.components.map(({ component: Component, key }: any, n) =>
+            app.state.component && key === app.state.component ? (
+              <ErrorBoundary key={n}>
+                <Component {...(Component.args || {})} />
+              </ErrorBoundary>
+            ) : null
+          )}
         </div>
       );
     },
@@ -112,11 +130,13 @@ export const centerPanels: LayoutPanel[] = [
         <div style={{ padding: 40 }}>
           <div style={{ background: "#fff", padding: 20, overflowY: "auto" }}>
             <div>
-              {item.components.map((Component: any) => (
-                <ErrorBoundary>
-                  <Component {...(Component.args || {})} />
-                </ErrorBoundary>
-              ))}
+              {item.components.map(({ component: Component, key }: any, n) =>
+                app.state.component && key === app.state.component ? (
+                  <ErrorBoundary key={n}>
+                    <Component {...(Component.args || {})} />
+                  </ErrorBoundary>
+                ) : null
+              )}
             </div>
           </div>
         </div>
@@ -147,11 +167,13 @@ export const rightPanels: LayoutPanel[] = [
 
       return (
         <div style={{ flex: 1, overflowY: "auto" }}>
-          {item.components.map((Component: any, n) => (
-            <ErrorBoundary key={n}>
-              <Component {...(Component.args || {})} />
-            </ErrorBoundary>
-          ))}
+          {item.components.map(({ component: Component, key }: any, n) =>
+            app.state.component && key === app.state.component ? (
+              <ErrorBoundary key={n}>
+                <Component {...(Component.args || {})} />
+              </ErrorBoundary>
+            ) : null
+          )}
         </div>
       );
     },
