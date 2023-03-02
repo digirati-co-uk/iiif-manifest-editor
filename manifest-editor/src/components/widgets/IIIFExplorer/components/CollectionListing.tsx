@@ -63,7 +63,6 @@ export function CollectionListing() {
         <LazyLoadComponent
           key={item.id}
           visibleByDefault={n < 40}
-          threshold={200}
           placeholder={<div data-collection-list-index={n} className={collectionItem} style={{ aspectRatio: "1/1" }} />}
         >
           <ExplorerSnippet

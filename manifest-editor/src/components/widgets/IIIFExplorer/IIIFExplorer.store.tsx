@@ -54,10 +54,17 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
       let resource = typeof _resource === "string" ? { id: _resource, type: "unknown" } : _resource;
 
       const status = vault.requestStatus(resource.id);
+      const found = vault.get<any>(resource.id);
+      if (found) {
+        resource.type = found.type;
+      }
+
       if (!status || status.loadingState === "RESOURCE_ERROR") {
         vault
           .load<CollectionNormalized | ManifestNormalized>(_resource)
           .then((loaded) => {
+            console.log("loaded, update key", loaded);
+
             if (loaded && resource.id !== loaded.id) {
               get().updateKey(resource, loaded);
             }

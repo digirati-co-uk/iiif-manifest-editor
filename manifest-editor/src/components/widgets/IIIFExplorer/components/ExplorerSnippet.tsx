@@ -52,7 +52,7 @@ export function ExplorerSnippet(props: ExplorerSnippetProps) {
         {resource.type === "Manifest" ? (
           <ManifestContext manifest={resource.id}>
             <ErrorBoundary fallback={null}>
-              <LazyLoadComponent>
+              <LazyLoadComponent threshold={300}>
                 <LoadManifestComponent resource={resource} />
                 <ManifestIcon />
               </LazyLoadComponent>

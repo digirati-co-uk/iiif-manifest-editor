@@ -1,3 +1,7 @@
+import { ImageCandidateRequest } from "@atlas-viewer/iiif-image-api";
+import { Vault } from "@iiif/vault";
+import { Reference } from "@iiif/presentation-3";
+
 export interface ExplorerAction<Type extends OutputTarget["type"]> {
   label: string;
   format?: OutputFormat;
@@ -7,7 +11,12 @@ export interface ExplorerAction<Type extends OutputTarget["type"]> {
 export interface ExplorerFormat<Type extends OutputFormat["type"]> {
   label: string;
   supportedTypes: OutputType[];
-  format: (resource: any, options: GetOutputFormat<Type>, parentResource?: any) => Promise<any> | any;
+  format: (
+    resource: any,
+    options: GetOutputFormat<Type>,
+    parentResource: any | null,
+    vault: Vault
+  ) => Promise<any> | any;
 }
 
 export type OutputType = "Collection" | "Manifest" | "Canvas" | "ImageService" | "CanvasRegion" | "ImageServiceRegion";
@@ -16,6 +25,7 @@ export type OutputFormat =
   | { type: "content-state"; encoded?: boolean }
   | { type: "json"; pretty?: boolean }
   | { type: "custom"; format: (resource: string, parent?: string) => any }
+  | { type: "thumbnail"; options?: ImageCandidateRequest }
   | { type: "url" };
 
 export type OutputTarget =

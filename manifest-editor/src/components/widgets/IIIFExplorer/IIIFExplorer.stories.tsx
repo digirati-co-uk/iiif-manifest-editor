@@ -107,6 +107,42 @@ export const ContentState = () => {
   );
 };
 
+export const Thumbnail = () => {
+  const input = useRef<HTMLTextAreaElement>(null);
+  const [size, setSize] = useState(256);
+
+  return (
+    <>
+      <div style={{ marginBottom: 30 }}>
+        <label>
+          size
+          <input type="number" value={size} onChange={(e) => setSize(e.target.valueAsNumber)} />
+        </label>
+      </div>
+      <IIIFExplorer
+        allowRemoveEntry
+        output={{ type: "thumbnail", options: { width: size } }}
+        outputTargets={[
+          {
+            label: "Open thumbnail",
+            type: "open-new-window",
+            urlPattern: "{RESULT}",
+          },
+          {
+            label: "Copy to clipboard",
+            type: "clipboard",
+          },
+        ]}
+        entry={{
+          id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections/digpaintings",
+          type: "Collection",
+        }}
+        height={500}
+      />
+    </>
+  );
+};
+
 export const EmptyExplorerWithInput = () => {
   const input = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);

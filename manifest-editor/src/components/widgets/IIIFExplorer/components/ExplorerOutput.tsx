@@ -93,7 +93,7 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
               const format = type.format || props.format;
               const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
               const parent = ref.parent;
-              const formatted = await chosenFormat.format(resource, format as never, parent);
+              const formatted = await chosenFormat.format(resource, format as never, parent, vault);
               await template.action(formatted, type as any);
               if (props.onSelect) {
                 props.onSelect();
@@ -115,7 +115,7 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
             <div className={$.ResourceActionDescription}>
               {output.label ? <LocaleString>{output.label}</LocaleString> : output.type}
             </div>
-            <a href="#" className={$.ResourceActionLabel}>
+            <a href={output.id} target="_blank" className={$.ResourceActionLabel}>
               {output.id}
             </a>
           </>

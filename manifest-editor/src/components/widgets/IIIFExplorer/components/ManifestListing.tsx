@@ -125,8 +125,6 @@ export function ManifestListing() {
     return <div>Error loading manifest: {manifestStatus.error}</div>;
   }
 
-  console.log('selected manifest -> ', selected);
-
   return (
     <ManifestContext manifest={selected.id}>
       <ManifestListingInner />
