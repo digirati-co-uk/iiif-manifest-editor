@@ -92,9 +92,9 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
               const resource = vault.toPresentation3({ id: ref.id, type: ref.type as any });
               const format = type.format || props.format;
               const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
-              const parent = ref.parent;
+              const parent = ref.parent || null;
               const formatted = await chosenFormat.format(resource, format as never, parent, vault);
-              await template.action(formatted, type as any);
+              await template.action(formatted, type as any, parent, vault);
               if (props.onSelect) {
                 props.onSelect();
               }

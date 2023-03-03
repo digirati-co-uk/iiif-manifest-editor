@@ -5,7 +5,12 @@ import { Reference } from "@iiif/presentation-3";
 export interface ExplorerAction<Type extends OutputTarget["type"]> {
   label: string;
   format?: OutputFormat;
-  action: (resource: any, options: GetOutputTarget<Type>) => Promise<any | void> | any | void;
+  action: (
+    resource: any,
+    options: GetOutputTarget<Type>,
+    parent: Reference | null,
+    vault: Vault
+  ) => Promise<any | void> | any | void;
 }
 
 export interface ExplorerFormat<Type extends OutputFormat["type"]> {
@@ -26,7 +31,7 @@ export type OutputFormat =
   | { type: "json"; pretty?: boolean }
   | { type: "custom"; format: (resource: string, parent?: string) => any }
   | { type: "thumbnail"; options?: ImageCandidateRequest }
-  | { type: "url" };
+  | { type: "url"; resolvable?: boolean };
 
 export type OutputTarget =
   | { type: "callback"; label?: string; format?: OutputFormat; cb: (resource: any) => void }

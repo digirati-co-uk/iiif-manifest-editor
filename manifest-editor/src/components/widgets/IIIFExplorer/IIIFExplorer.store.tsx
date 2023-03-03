@@ -63,8 +63,6 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
         vault
           .load<CollectionNormalized | ManifestNormalized>(_resource)
           .then((loaded) => {
-            console.log("loaded, update key", loaded);
-
             if (loaded && resource.id !== loaded.id) {
               get().updateKey(resource, loaded);
             }

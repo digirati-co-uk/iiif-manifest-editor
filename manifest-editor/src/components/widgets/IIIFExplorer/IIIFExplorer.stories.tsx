@@ -25,23 +25,23 @@ export const PaintingsToViewers = () => (
       id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections/digpaintings",
       type: "Collection",
     }}
-    outputTypes={["Manifest"]}
-    output={{ type: "url" }}
+    outputTypes={["Manifest", "Canvas"]}
+    output={{ type: "url", resolvable: false }}
     outputTargets={[
       {
         type: "open-new-window",
-        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={RESULT}",
+        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={MANIFEST}&cv={CANVAS_INDEX}",
         label: "Open in UV",
       },
       {
         type: "open-new-window",
         label: "Open in Clover",
-        urlPattern: "https://samvera-labs.github.io/clover-iiif/?iiif-content={RESULT}",
+        urlPattern: "https://samvera-labs.github.io/clover-iiif/?iiif-content={MANIFEST}",
       },
       {
         type: "open-new-window",
         label: "Open in Mirador",
-        urlPattern: "https://tomcrane.github.io/scratch/mirador3/index.html?iiif-content={RESULT}",
+        urlPattern: "https://tomcrane.github.io/scratch/mirador3/index.html?iiif-content={MANIFEST}",
       },
       {
         type: "open-new-window",
