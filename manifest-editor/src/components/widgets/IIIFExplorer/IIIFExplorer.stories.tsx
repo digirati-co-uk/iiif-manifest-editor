@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IIIFExplorer } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 
 export default { title: "IIIF Explorer" };
@@ -145,14 +145,34 @@ export const Thumbnail = () => {
 
 export const EmptyExplorerWithInput = () => {
   const input = useRef<HTMLInputElement>(null);
+  const container = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      const listener = (e: MouseEvent) => {
+        if (e.target !== input.current) {
+          setIsOpen(false);
+        }
+      };
+      window.addEventListener("click", listener);
+
+      return () => {
+        window.removeEventListener("click", listener);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div style={{ height: 800 }}>
       <div style={{ width: 400, position: "relative" }}>
         <input ref={input} type="text" style={{ height: "30px", width: "100%" }} onFocus={() => setIsOpen(true)} />
         {isOpen ? (
-          <div style={{ height: 400, width: 400, position: "absolute" }}>
+          <div
+            style={{ height: 400, width: 400, position: "absolute" }}
+            ref={container}
+            onClick={(e) => e.stopPropagation()}
+          >
             <IIIFExplorer
               outputTypes={["Manifest"]}
               output={{ type: "url" }}
