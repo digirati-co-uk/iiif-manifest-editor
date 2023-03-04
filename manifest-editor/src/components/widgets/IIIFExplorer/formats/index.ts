@@ -4,6 +4,7 @@ import { contentStateFormat } from "./content-state";
 import { jsonFormat } from "./json";
 import { customFormat } from "./custom";
 import { thumbnailFormat } from "./thumbnail";
+import { imageServiceFormat } from "@/components/widgets/IIIFExplorer/formats/image-service";
 
 export const formats: { [K in OutputFormat["type"]]: ExplorerFormat<K> } = {
   "content-state": contentStateFormat,
@@ -11,4 +12,5 @@ export const formats: { [K in OutputFormat["type"]]: ExplorerFormat<K> } = {
   json: jsonFormat,
   url: urlFormat,
   thumbnail: thumbnailFormat,
+  "image-service": imageServiceFormat,
 };

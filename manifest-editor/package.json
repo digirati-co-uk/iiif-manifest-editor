@@ -59,7 +59,7 @@
     "react-easy-sort": "^1.4.1",
     "react-functional-select": "^3.3.3",
     "react-i18next": "^11.16.9",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/2c59d6dd/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/46f7264d/react-iiif-vault",
     "react-lazy-load-image-component": "^1.5.6",
     "react-select-search": "^4.1.2",
     "react-textarea-autosize": "^8.3.4",

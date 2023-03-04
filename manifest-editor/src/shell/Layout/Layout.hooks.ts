@@ -10,14 +10,14 @@ export function usePanelActions(
     dispatch({ type: "popStack", panel, payload: undefined });
   }
   function change(payload: { id: string; state?: any; stacked?: boolean }) {
-    flushSync(() => {
-      dispatch({ type: "change", panel, payload });
-    });
+    // flushSync(() => {
+    dispatch({ type: "change", panel, payload });
+    // });
   }
   function open(payload?: { id: string; state?: any; stacked?: boolean }) {
-    flushSync(() => {
-      dispatch({ type: "open", panel, payload });
-    });
+    // flushSync(() => {
+    dispatch({ type: "open", panel, payload });
+    // });
   }
   function close() {
     dispatch({ type: "close", panel, payload: undefined });

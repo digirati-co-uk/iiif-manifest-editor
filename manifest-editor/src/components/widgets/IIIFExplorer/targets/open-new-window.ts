@@ -3,13 +3,28 @@ import { ManifestNormalized } from "@iiif/presentation-3";
 
 export const openNewWindowTarget: ExplorerAction<"open-new-window"> = {
   label: "Open",
-  action: (resource, options, parent, vault) => {
+  action: (data, ref, options, vault) => {
+    const urlPattern = options.urlPattern || "{RESULT}";
+    const resource = vault.get(ref, { skipSelfReturn: false });
+    const parent = ref.parent;
+
     let canvas = "";
     let canvasIndex = "";
     let manifest = "";
+    let xywh = "";
+
+    if (ref.type === "Canvas" && ref.selector && ref.selector.spatial) {
+      xywh = [
+        ~~ref.selector.spatial.x,
+        ~~ref.selector.spatial.y,
+        ~~(ref.selector.spatial.width || 1),
+        ~~(ref.selector.spatial.height || 1),
+      ].join(",");
+    }
+
     if (parent?.type === "Manifest") {
       manifest = parent?.id;
-      canvas = typeof resource === "string" ? resource : JSON.stringify(resource);
+      canvas = data;
 
       const manifestVault = vault.get<ManifestNormalized>(manifest);
       if (manifestVault) {
@@ -19,14 +34,15 @@ export const openNewWindowTarget: ExplorerAction<"open-new-window"> = {
         }
       }
     } else {
-      manifest = typeof resource === "string" ? resource : JSON.stringify(resource);
+      manifest = data;
     }
 
-    let targetUrl = options.urlPattern.replace(/{RESULT}/, typeof resource === "string" ? resource : JSON.stringify(resource));
+    let targetUrl = urlPattern.replace(/{RESULT}/, data);
 
     targetUrl = targetUrl.replace(/{MANIFEST}/, manifest || "");
     targetUrl = targetUrl.replace(/{CANVAS}/, canvas || "");
     targetUrl = targetUrl.replace(/{CANVAS_INDEX}/, canvasIndex || "");
+    targetUrl = targetUrl.replace(/{XYWH}/, xywh || "");
 
     const opened = window.open(targetUrl, options.target || "_blank", options.features || "noreferrer");
 

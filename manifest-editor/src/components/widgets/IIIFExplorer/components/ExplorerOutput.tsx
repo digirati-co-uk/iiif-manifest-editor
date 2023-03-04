@@ -1,17 +1,15 @@
 import { IIIFExplorerProps } from "../IIIFExplorer";
-import { ResourceActionBar } from "./ResourceActionBar";
 import { targets } from "../targets";
 import { useMemo } from "react";
 import { useStore } from "zustand";
 import { useExplorerStore } from "../IIIFExplorer.store";
 import { useVault, useVaultSelector } from "react-iiif-vault";
-import { OutputFormat, OutputType } from "../IIIFExplorer.types";
+import { HistoryItem, OutputFormat, OutputType } from "../IIIFExplorer.types";
 import { formats } from "../formats";
 import invariant from "tiny-invariant";
 import { ComboButton } from "./ComboButton";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ResourceActionBar.styles";
 import { LocaleString } from "../../../../atoms/LocaleString";
-import { Reference } from "@iiif/presentation-3";
 
 interface ExplorerOutputProps {
   /**
@@ -32,14 +30,15 @@ export function useValidTargets(types: OutputType[]) {
   const store = useExplorerStore();
   const vault = useVault();
   const history = useStore(store, (s) => s.history);
+  const selected = useStore(store, (s) => s.selected);
 
   return useVaultSelector(() => {
-    const validMap: Partial<{ [K in OutputType]: { id: string; type: string; parent?: Reference | null } }> = {};
+    const validMap: Partial<{ [K in OutputType]: { id: string; type: string; parent?: HistoryItem | null } }> = {};
     let hasValidItem = false;
     let mostSpecificTarget = null;
     // List of ids.
     for (let i = 0; i < history.length; i++) {
-      const resource = history[i];
+      const resource = history[i]?.id === selected?.id ? selected : history[i];
       const parent = i === 0 ? null : history[i - 1];
       const id = resource.id;
       const fullItem = vault.get<any>(resource);
@@ -49,9 +48,8 @@ export function useValidTargets(types: OutputType[]) {
         mostSpecificTarget = fullItem.type as OutputType;
       }
     }
-
     return [validMap, hasValidItem, mostSpecificTarget] as const;
-  }, [history]);
+  }, [history, selected]);
 }
 
 export function ExplorerOutput(props: ExplorerOutputProps) {
@@ -89,12 +87,10 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
                 // This should not happen.
                 return;
               }
-              const resource = vault.toPresentation3({ id: ref.id, type: ref.type as any });
               const format = type.format || props.format;
               const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
-              const parent = ref.parent || null;
-              const formatted = await chosenFormat.format(resource, format as never, parent, vault);
-              await template.action(formatted, type as any, parent, vault);
+              const formatted = await chosenFormat.format(ref, format as never, vault);
+              await template.action(formatted, ref as any, type as any, vault);
               if (props.onSelect) {
                 props.onSelect();
               }
@@ -102,7 +98,7 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
           },
         };
       }),
-    [mostSpecific, props.format, props.targets, selectedFormat, valid, vault]
+    [mostSpecific, props, selectedFormat, valid, vault]
   );
 
   invariant(selectedFormat, "Invalid format selected");

@@ -9,13 +9,23 @@ import { useVaultSelector } from "react-iiif-vault";
 import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3";
 import { LocaleString } from "@/atoms/LocaleString";
 
-export function ResourceNavigation(props: { canReset?: boolean }) {
+export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => void }) {
   const store = useExplorerStore();
   const [open, setIsOpen] = useState(false);
   const selected = useStore(store, (s) => s.selected);
   const select = useStore(store, (s) => s.select);
   const history = useStore(store, (s) => s.history);
   const backAction = useStore(store, (s) => s.back);
+
+  const goBack = () => {
+    if (!props.canReset && history.length < 2) {
+      if (props.onBack) {
+        props.onBack();
+      }
+    } else {
+      backAction();
+    }
+  };
 
   const historyItems = useVaultSelector(
     (state, vault) => {
@@ -33,8 +43,8 @@ export function ResourceNavigation(props: { canReset?: boolean }) {
 
   return (
     <div className={$.resourceNavContainer}>
-      <div className={$.resourceNavIcon} data-disabled={!props.canReset && history.length < 2}>
-        <img src={back} onClick={backAction} />
+      <div className={$.resourceNavIcon} data-disabled={!props.onBack && !props.canReset && history.length < 2}>
+        <img src={back} onClick={goBack} />
       </div>
       <div className={$.resourceNavList} data-collapsed={!open}>
         {historyItems.map((item, idx) => {

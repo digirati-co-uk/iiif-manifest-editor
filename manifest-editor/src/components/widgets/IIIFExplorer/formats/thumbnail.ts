@@ -3,7 +3,7 @@ import { createThumbnailHelper } from "@iiif/vault-helpers";
 
 export const thumbnailFormat: ExplorerFormat<"thumbnail"> = {
   label: "Thumbnail",
-  format: async (resource, options, parentResource, vault) => {
+  format: async (resource, options, vault) => {
     const thumb = await createThumbnailHelper(vault).getBestThumbnailAtSize(
       resource,
       options.options || { width: 256 }

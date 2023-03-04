@@ -3,24 +3,29 @@ import { CollectionNormalized, ManifestNormalized, Reference } from "@iiif/prese
 import { Vault } from "@iiif/vault";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useExistingVault } from "react-iiif-vault";
+import { SupportedSelector } from "@iiif/vault-helpers";
+import { HistoryItem } from "@/components/widgets/IIIFExplorer/IIIFExplorer.types";
 
 interface Store {
-  history: Reference[];
-  selected: Reference | null;
+  history: HistoryItem[];
+  selected: HistoryItem | null;
 
   // @todo type..
   refinements: any[];
 
-  recent: Reference[];
+  recent: HistoryItem[];
 
   error: string | null;
 
   scrollRestoreCache: Record<string, number>;
 
-  setRecent(recent: Reference[]): void;
+  setRecent(recent: HistoryItem[]): void;
 
-  select(resource: Reference, reset?: boolean): void;
-  updateKey(before: Reference, after: Reference): void;
+  select(resource: HistoryItem, reset?: boolean): void;
+
+  replace(resource: HistoryItem): void;
+  setCurrentSelector(selector: SupportedSelector | undefined): void;
+  updateKey(before: HistoryItem, after: HistoryItem): void;
 
   setScrollCache(id: string, scroll: number): void;
   back(): void;
@@ -45,37 +50,54 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
       }
     },
 
-    setRecent(recent: Reference[]) {
+    setRecent(recent: HistoryItem[]) {
       // load if not loaded.
       set({ recent });
     },
 
-    select(_resource: string | Reference, reset = false) {
+    replace(resource) {
+      get().back();
+      get().select(resource);
+    },
+
+    setCurrentSelector(selector: SupportedSelector | undefined) {
+      const selected = get().selected;
+      if (!selected) {
+        return;
+      }
+
+      set({ selected: { ...selected, selector } });
+    },
+
+    select(_resource: string | HistoryItem, reset = false) {
       let resource = typeof _resource === "string" ? { id: _resource, type: "unknown" } : _resource;
 
       const status = vault.requestStatus(resource.id);
       const found = vault.get<any>(resource.id);
       if (found) {
-        resource.type = found.type;
+        if (resource.type === "unknown") {
+          resource.type = found.type;
+        }
       }
 
-      if (!status || status.loadingState === "RESOURCE_ERROR") {
-        vault
-          .load<CollectionNormalized | ManifestNormalized>(_resource)
-          .then((loaded) => {
-            if (loaded && resource.id !== loaded.id) {
-              get().updateKey(resource, loaded);
-            }
-          })
-          .catch((error) => {
-            set({ error: error.toString() });
-          });
-      } else if (status) {
-        resource = vault.get<any>(resource, { skipSelfReturn: false });
+      if (["Collection", "Manifest", "unknown"].includes(resource.type)) {
+        if (!status || status.loadingState === "RESOURCE_ERROR") {
+          vault
+            .load<CollectionNormalized | ManifestNormalized>(_resource)
+            .then((loaded) => {
+              if (loaded && (resource.id !== loaded.id || resource.type !== loaded.type)) {
+                get().updateKey(resource, loaded);
+              }
+            })
+            .catch((error) => {
+              set({ error: error.toString() });
+            });
+        } else if (status) {
+          resource = vault.get<any>(resource, { skipSelfReturn: false });
+        }
       }
 
       const ref = { id: resource.id, type: resource.type };
-
       if (reset) {
         set({ selected: ref, history: [] });
         return;
@@ -94,22 +116,22 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
       }
     },
 
-    updateKey(before: Reference, updated: Reference) {
+    updateKey(before: HistoryItem, updated: HistoryItem) {
       const state = get();
-      const newHistory = state.history.slice(0);
+      const newHistory = state.history.slice();
       let changed = false;
       for (let i = 0; i < state.history.length; i++) {
         const key = state.history[i];
-        if (key === before) {
+        if (key.id === before.id) {
           changed = true;
-          newHistory[i] = updated;
+          newHistory[i] = { id: updated.id, type: updated.type };
         }
       }
       if (changed) {
         set({ history: newHistory });
       }
       if (state.selected && state.selected.id === before.id) {
-        set({ selected: updated });
+        set({ selected: { id: updated.id, type: updated.type } });
       }
     },
 
@@ -148,7 +170,7 @@ export function ExplorerStoreProvider({
   options,
 }: {
   children?: ReactNode;
-  entry?: Reference;
+  entry?: HistoryItem;
   options?: { canReset?: boolean };
 }) {
   const vault = useExistingVault();

@@ -4,7 +4,10 @@ import { ContentState, serialiseContentState } from "@iiif/vault-helpers";
 export const contentStateFormat: ExplorerFormat<"content-state"> = {
   label: "Content state",
   supportedTypes: ["Collection", "Manifest", "Canvas", "CanvasRegion"],
-  format: async (resource, options, parent) => {
+  format: async (ref, options, vault) => {
+    const resource = vault.get<any>(ref, { skipSelfReturn: false });
+    const parent = ref.parent;
+
     const base = {
       "@context": "http://iiif.io/api/presentation/3/context.json" as any,
       id: "",
@@ -28,11 +31,21 @@ export const contentStateFormat: ExplorerFormat<"content-state"> = {
       };
     }
 
-    if (resource.type === "Canvas" || resource.type === "CanvasRegion") {
+    if (resource.type === "Canvas") {
+      let selector = "";
+      if (ref.selector && ref.selector.type === "BoxSelector") {
+        selector = `#xywh=${[
+          ref.selector.spatial.x,
+          ref.selector.spatial.y,
+          ref.selector.spatial.width,
+          ref.selector.spatial.height,
+        ].join(",")}`;
+      }
+
       // which manifest is it in?
       if (parent && parent.type === "Manifest") {
         base.target = {
-          id: resource.id,
+          id: resource.id + selector,
           type: "Canvas",
           partOf: [
             {
@@ -43,7 +56,7 @@ export const contentStateFormat: ExplorerFormat<"content-state"> = {
         };
       } else {
         base.target = {
-          id: resource.id,
+          id: resource.id + selector,
           type: "Canvas",
         };
       }

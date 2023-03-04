@@ -5,7 +5,15 @@ import { ResourceNavigation } from "@/components/widgets/IIIFExplorer/components
 import { IIIFExplorerProps } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 import { ExplorerInput } from "@/components/widgets/IIIFExplorer/components/ExplorerInput";
 
-export function ExplorerEntry({ entry, canReset }: { entry?: IIIFExplorerProps["entry"]; canReset: boolean }) {
+export function ExplorerEntry({
+  entry,
+  canReset,
+  onBack,
+}: {
+  entry?: IIIFExplorerProps["entry"];
+  canReset: boolean;
+  onBack?: () => void;
+}) {
   const store = useExplorerStore();
   const history = useStore(store, (s) => s.history);
   const selected = useStore(store, (s) => s.selected);
@@ -27,5 +35,5 @@ export function ExplorerEntry({ entry, canReset }: { entry?: IIIFExplorerProps["
     return <ExplorerInput />;
   }
 
-  return <ResourceNavigation canReset={canReset} />;
+  return <ResourceNavigation canReset={canReset} onBack={onBack} />;
 }

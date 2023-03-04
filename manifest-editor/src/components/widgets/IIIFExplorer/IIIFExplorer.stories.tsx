@@ -25,12 +25,12 @@ export const PaintingsToViewers = () => (
       id: "https://iiif.wellcomecollection.org/presentation/collections/digitalcollections/digpaintings",
       type: "Collection",
     }}
-    outputTypes={["Manifest", "Canvas"]}
+    outputTypes={["Manifest", "Canvas", "CanvasRegion"]}
     output={{ type: "url", resolvable: false }}
     outputTargets={[
       {
         type: "open-new-window",
-        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={MANIFEST}&cv={CANVAS_INDEX}",
+        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={MANIFEST}&cv={CANVAS_INDEX}&xywh={XYWH}",
         label: "Open in UV",
       },
       {
@@ -49,6 +49,15 @@ export const PaintingsToViewers = () => (
         urlPattern: "{RESULT}",
       },
     ]}
+    height={500}
+  />
+);
+
+export const ImageService = () => (
+  <IIIFExplorer
+    entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }}
+    output={{ type: "image-service" }}
+    outputTargets={[{ type: "open-new-window" }]}
     height={500}
   />
 );
@@ -169,7 +178,7 @@ export const EmptyExplorerWithInput = () => {
         <input ref={input} type="text" style={{ height: "30px", width: "100%" }} onFocus={() => setIsOpen(true)} />
         {isOpen ? (
           <div
-            style={{ height: 400, width: 400, position: "absolute" }}
+            style={{ height: 400, width: 400, paddingTop: "2px", position: "absolute" }}
             ref={container}
             onClick={(e) => e.stopPropagation()}
           >

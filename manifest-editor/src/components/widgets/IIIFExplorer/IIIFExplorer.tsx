@@ -11,7 +11,9 @@ import expand from "./icons/expand.svg";
 import { useState } from "react";
 import { FilterProvider, ItemFilter } from "./components/ItemFilter";
 import { ExplorerOutput } from "./components/ExplorerOutput";
-import { OutputFormat, OutputTarget, OutputType } from "./IIIFExplorer.types";
+import { OutputFormat, OutputTarget, OutputType, HistoryItem } from "./IIIFExplorer.types";
+import { CanvasRegionView } from "@/components/widgets/IIIFExplorer/components/CanvasRegionView";
+import { BoxStyle } from "@atlas-viewer/atlas";
 
 export interface IIIFExplorerProps {
   /**
@@ -21,6 +23,8 @@ export interface IIIFExplorerProps {
     | { type: "Collection"; id: string }
     | { type: "Manifest"; id: string }
     | { type: "Text"; onlyManifests?: boolean; onlyCollections?: boolean };
+
+  entryHistory?: Array<HistoryItem>;
 
   /**
    * @default {{ type: "content-state" }}
@@ -44,6 +48,10 @@ export interface IIIFExplorerProps {
   height?: number;
 
   onSelect?: () => void;
+  highlightStyle?: BoxStyle;
+  window?: boolean;
+
+  onBack?: () => void;
 }
 
 export function IIIFExplorer({
@@ -53,8 +61,11 @@ export function IIIFExplorer({
   entry = { type: "Text" },
   vault,
   allowRemoveEntry,
+  highlightStyle,
   height,
   onSelect,
+  window,
+  onBack,
 }: IIIFExplorerProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -73,7 +84,7 @@ export function IIIFExplorer({
               }
             }}
           >
-            <div className={$.hoverCardContainer} data-float={expanded} style={{ height }}>
+            <div className={$.hoverCardContainer} data-window={window} data-float={expanded} style={{ height }}>
               <div className={$.hoverCardHeader}>
                 <div className={$.hoverCardLabel}>Select resource</div>
                 <div className={$.hoverCardAction} onClick={() => setIsFilterOpen((o) => !o)}>
@@ -86,7 +97,7 @@ export function IIIFExplorer({
 
               <ItemFilter open={isFilterOpen} />
 
-              <ExplorerEntry entry={entry} canReset={canResetLast} />
+              <ExplorerEntry entry={entry} canReset={canResetLast} onBack={onBack} />
 
               {/* Only shown if we are looking at a collection */}
               <CollectionListing />
@@ -94,7 +105,9 @@ export function IIIFExplorer({
               {/* Only shown if we are looking at a manifest */}
               <ManifestListing />
 
-              <CanvasView />
+              <CanvasView highlightStyle={highlightStyle} regionEnabled={outputTypes?.includes("CanvasRegion")} />
+
+              <CanvasRegionView />
 
               <ExplorerOutput onSelect={onSelect} targets={outputTargets} types={outputTypes} format={output} />
             </div>

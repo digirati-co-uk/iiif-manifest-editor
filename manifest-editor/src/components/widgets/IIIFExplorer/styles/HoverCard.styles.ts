@@ -33,6 +33,12 @@ export const hoverCardContainer = css`
   min-width: 20em;
   height: 100%;
 
+  &[data-window="false"] {
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+  }
+
   &[data-float="true"][style] {
     width: auto !important;
     height: auto !important;

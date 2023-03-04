@@ -43,6 +43,8 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
 
   const onClickPaintingAnnotation = useCallback(
     (id: string) => {
+      console.log("on click painting", id);
+
       //if (editMode) {
       setAnnotation(id);
       //}
@@ -114,8 +116,9 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
               <CanvasPanel.RenderCanvas
                 strategies={["empty", "images", "media", "textual-content"]}
                 renderViewerControls={() => (
-                  <ViewControls refresh={refresh} editMode={editMode} toggleEditMode={toggleEditMode} />
+                  <ViewControls refresh={refresh} editIcon editMode={editMode} toggleEditMode={toggleEditMode} />
                 )}
+                viewControlsDeps={[editMode]}
                 renderMediaControls={() => <MediaControls />}
                 backgroundStyle={{ background: "#fff" }}
                 alwaysShowBackground

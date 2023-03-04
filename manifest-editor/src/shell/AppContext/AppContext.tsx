@@ -81,8 +81,6 @@ function useCurrentApp(initialApp?: { id: string; args?: any }) {
     }
   }, []);
 
-  console.log(s);
-
   return [currentApp, changeApp] as const;
 }
 
