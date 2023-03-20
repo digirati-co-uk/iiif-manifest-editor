@@ -62,6 +62,29 @@ export const ImageService = () => (
   />
 );
 
+export const MultiCanvas = () => (
+  <IIIFExplorer
+    entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }}
+    output={{ type: "json" }}
+    outputTypes={["Canvas", "CanvasList"]}
+    outputTargets={[
+      {
+        label: "Select canvas",
+        supportedTypes: ["Canvas"],
+        type: "callback",
+        cb: (resource) => console.log("Sinlge Canvas -> ", resource),
+      },
+      {
+        label: "Select all canvases",
+        supportedTypes: ["CanvasList"],
+        type: "callback",
+        cb: (resource) => console.log("Canvas list -> ", resource),
+      },
+    ]}
+    height={500}
+  />
+);
+
 export const WellcomeTopLevel = () => (
   <IIIFExplorer
     entry={{ id: "https://iiif.wellcomecollection.org/presentation/collections", type: "Collection" }}
@@ -98,6 +121,7 @@ export const ContentState = () => {
       <textarea ref={input} style={{ height: "120px", width: "100%" }} />
       <IIIFExplorer
         allowRemoveEntry
+        outputTypes={["Manifest", "Canvas", "CanvasRegion", "CanvasList"]}
         output={{ type: "content-state", encoded: checked }}
         outputTargets={[
           {

@@ -25,6 +25,11 @@ interface Store {
 
   replace(resource: HistoryItem): void;
   setCurrentSelector(selector: SupportedSelector | undefined): void;
+
+  clearListing(): void;
+  addToListing(item: HistoryItem): void;
+  removeFromListing(item: HistoryItem): void;
+
   updateKey(before: HistoryItem, after: HistoryItem): void;
 
   setScrollCache(id: string, scroll: number): void;
@@ -67,6 +72,36 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
       }
 
       set({ selected: { ...selected, selector } });
+    },
+
+    addToListing(item: HistoryItem) {
+      const selected = get().selected;
+      if (!selected) {
+        return;
+      }
+      const listing = selected.listing || [];
+
+      set({ selected: { ...selected, listing: [...listing.filter((t) => t.id !== item.id), item] } });
+    },
+
+    clearListing() {
+      const selected = get().selected;
+      if (!selected) {
+        return;
+      }
+      set({ selected: { ...selected, listing: [] } });
+    },
+
+    removeFromListing(item: HistoryItem) {
+      const selected = get().selected;
+      if (!selected) {
+        return;
+      }
+      if (!selected.listing) {
+        return;
+      }
+
+      set({ selected: { ...selected, listing: selected.listing.filter((listItem) => listItem.id !== item.id) } });
     },
 
     select(_resource: string | HistoryItem, reset = false) {

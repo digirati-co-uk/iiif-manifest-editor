@@ -1,16 +1,43 @@
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ManifestListing.styles";
 import { LocaleString } from "@/atoms/LocaleString";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { LazyCanvasThumbnail } from "@/components/widgets/IIIFExplorer/components/LazyCanvasThumbnail";
 import React from "react";
+import { contentStateFormat } from "@/components/widgets/IIIFExplorer/formats/content-state";
 
-export function CanvasSnippet(props: { onClick: () => void }) {
+export interface CanvasSnippetProps {
+  onClick: () => void;
+  onSelect: (shift: boolean) => void;
+  onDeselect: () => void;
+  selected?: boolean;
+  selectEnabled?: boolean;
+}
+
+export function CanvasSnippet({
+  onClick: _onClick,
+  selected,
+  onSelect,
+  onDeselect,
+  selectEnabled,
+}: CanvasSnippetProps) {
+  const vault = useVault();
+  const manifest = useManifest();
   const canvas = useCanvas();
 
   invariant(canvas);
 
   const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (selectEnabled && (e.metaKey || e.shiftKey)) {
+      if (selected) {
+        onDeselect();
+      } else {
+        onSelect(e.shiftKey);
+      }
+      return;
+    }
+
     try {
       const outerContainer = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.parentElement!
         .parentElement as HTMLDivElement;
@@ -45,16 +72,33 @@ export function CanvasSnippet(props: { onClick: () => void }) {
       });
 
       setTimeout(() => {
-        props.onClick();
+        _onClick();
         // container.removeChild(cloned);
       }, 300);
     } catch (e) {
-      props.onClick();
+      _onClick();
     }
   };
 
   return (
-    <div className={$.ThumbnailItem}>
+    <div
+      className={$.ThumbnailItem}
+      data-selected={selected}
+      // onDragStart={(e) => {
+      //   const cs = contentStateFormat.format(
+      //     {
+      //       id: canvas.id,
+      //       type: "Canvas",
+      //       parent: manifest,
+      //     },
+      //     { encoded: false, type: "content-state" },
+      //     vault
+      //   );
+      //   cs.then((data: any) => {
+      //     e.dataTransfer.setData("application/json", data);
+      //   });
+      // }}
+    >
       <div className={$.ThumbnailImage} onClick={onClick}>
         <LazyCanvasThumbnail />
       </div>

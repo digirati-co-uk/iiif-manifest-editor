@@ -10,6 +10,7 @@ import invariant from "tiny-invariant";
 import { ComboButton } from "./ComboButton";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ResourceActionBar.styles";
 import { LocaleString } from "../../../../atoms/LocaleString";
+import { getOutputType } from "@/components/widgets/IIIFExplorer/IIIFExplorer.utils";
 
 interface ExplorerOutputProps {
   /**
@@ -40,12 +41,12 @@ export function useValidTargets(types: OutputType[]) {
     for (let i = 0; i < history.length; i++) {
       const resource = history[i]?.id === selected?.id ? selected : history[i];
       const parent = i === 0 ? null : history[i - 1];
-      const id = resource.id;
       const fullItem = vault.get<any>(resource);
-      if (fullItem && fullItem.type && types.includes(fullItem.type)) {
+      const historyType = getOutputType(resource);
+      if (fullItem && fullItem.type && types.includes(historyType)) {
         hasValidItem = true;
-        validMap[fullItem.type as OutputType] = { ...resource, parent };
-        mostSpecificTarget = fullItem.type as OutputType;
+        validMap[historyType] = { ...resource, parent };
+        mostSpecificTarget = historyType;
       }
     }
     return [validMap, hasValidItem, mostSpecificTarget] as const;
@@ -76,28 +77,35 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
   // Configured actions.
   const actions = useMemo(
     () =>
-      (props.targets || []).map((type) => {
-        const template = targets[type.type];
-        return {
-          label: type.label || template.label,
-          action: async () => {
-            if (mostSpecific) {
-              const ref = valid[mostSpecific];
-              if (!ref) {
-                // This should not happen.
-                return;
-              }
-              const format = type.format || props.format;
-              const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
-              const formatted = await chosenFormat.format(ref, format as never, vault);
-              await template.action(formatted, ref as any, type as any, vault);
-              if (props.onSelect) {
-                props.onSelect();
-              }
+      (props.targets || [])
+        .map((type) => {
+          const template = targets[type.type];
+          if (type.supportedTypes) {
+            if (mostSpecific && !type.supportedTypes.includes(mostSpecific)) {
+              return null;
             }
-          },
-        };
-      }),
+          }
+          return {
+            label: type.label || template.label,
+            action: async () => {
+              if (mostSpecific) {
+                const ref = valid[mostSpecific];
+                if (!ref) {
+                  // This should not happen.
+                  return;
+                }
+                const format = type.format || props.format;
+                const chosenFormat = type.format && formats[format.type] ? formats[format.type] : selectedFormat;
+                const formatted = await chosenFormat.format(ref, format as never, vault);
+                await template.action(formatted, ref as any, type as any, vault);
+                if (props.onSelect) {
+                  props.onSelect();
+                }
+              }
+            },
+          };
+        })
+        .filter((t) => t !== null) as Array<{ label: string; action: () => Promise<void> }>,
     [mostSpecific, props, selectedFormat, valid, vault]
   );
 

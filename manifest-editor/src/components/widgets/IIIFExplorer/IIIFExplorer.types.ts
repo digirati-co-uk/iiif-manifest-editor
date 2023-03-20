@@ -3,7 +3,7 @@ import { Vault } from "@iiif/vault";
 import { Reference } from "@iiif/presentation-3";
 import { SupportedSelector } from "@iiif/vault-helpers";
 
-export type HistoryItem = Reference & { selector?: SupportedSelector; parent?: HistoryItem };
+export type HistoryItem = Reference & { selector?: SupportedSelector; parent?: HistoryItem; listing?: HistoryItem[] };
 
 export interface ExplorerAction<Type extends OutputTarget["type"]> {
   label: string;
@@ -22,7 +22,14 @@ export interface ExplorerFormat<Type extends OutputFormat["type"]> {
   format: (resource: any, options: GetOutputFormat<Type>, vault: Vault) => Promise<any> | any;
 }
 
-export type OutputType = "Collection" | "Manifest" | "Canvas" | "ImageService" | "CanvasRegion" | "ImageServiceRegion";
+export type OutputType =
+  | "Collection"
+  | "Manifest"
+  | "Canvas"
+  | "ImageService"
+  | "CanvasRegion"
+  | "ImageServiceRegion"
+  | "CanvasList";
 
 export type OutputFormat =
   | { type: "content-state"; encoded?: boolean }
@@ -32,14 +39,18 @@ export type OutputFormat =
   | { type: "url"; resolvable?: boolean }
   | { type: "image-service"; allowImageFallback?: boolean; skipCanonical?: boolean };
 
-export type OutputTarget =
-  | { type: "callback"; label?: string; format?: OutputFormat; cb: (resource: any) => void }
-  | { type: "clipboard"; label?: string; format?: OutputFormat }
-  | { type: "input"; label?: string; format?: OutputFormat; el: { current: null | HTMLInputElement } }
+export type OutputTarget = { label?: string; format?: OutputFormat; supportedTypes?: OutputType[] } & OutputTargetTypes;
+
+export type OutputTargetTypes =
+  | { type: "callback"; cb: (resource: any) => void }
+  | { type: "clipboard" }
+  | {
+      type: "input";
+      separator?: string;
+      el: { current: null | HTMLInputElement };
+    }
   | {
       type: "open-new-window";
-      label?: string;
-      format?: OutputFormat;
       urlPattern?: string;
       target?: string;
       features?: string;

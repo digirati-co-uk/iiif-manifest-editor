@@ -44,8 +44,13 @@ export const ThumbnailItem = css`
   flex-direction: column;
   padding: 2px;
   border-radius: 3px;
+
   &:hover {
     background: #ddd;
+  }
+
+  &[data-selected="true"] {
+    background: var(--selected-canvas-background, #dfe8fa);
   }
 `;
 

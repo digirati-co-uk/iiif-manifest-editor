@@ -8,9 +8,8 @@ import {
   CanvasContext,
   useVault,
 } from "react-iiif-vault";
-import { CanvasNormalized, ManifestNormalized } from "@iiif/presentation-3";
+import { CanvasNormalized } from "@iiif/presentation-3";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
-import { LazyCanvasThumbnail } from "@/components/widgets/IIIFExplorer/components/LazyCanvasThumbnail";
 import React, { useLayoutEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ManifestListing.styles";
@@ -51,12 +50,16 @@ function useBestCanvasRatio() {
   }, [manifest, vault]);
 }
 
-function ManifestListingInner() {
+function ManifestListingInner({ canvasMultiSelect }: { canvasMultiSelect?: boolean }) {
   const manifest = useManifest();
   const sequence = useCanvasSequence({ disablePaging: false });
   const container = useKeyboardListNavigation<HTMLDivElement>("data-manifest-list-index");
   const store = useExplorerStore();
   const select = useStore(store, (s) => s.select);
+  const clearListing = useStore(store, (s) => s.clearListing);
+  const addToListing = useStore(store, (s) => s.addToListing);
+  const removeFromListing = useStore(store, (s) => s.removeFromListing);
+  const selected = useStore(store, (s) => s.selected);
   const { ratio } = useBestCanvasRatio();
 
   const setScrollCache = useStore(store, (s) => s.setScrollCache);
@@ -71,10 +74,23 @@ function ManifestListingInner() {
   invariant(manifest);
 
   const single = sequence.sequence.length === 1;
+  const items = selected?.listing || [];
 
   return (
     <div className={$.ManifestListing} {...container}>
-      <div className={$.ThumbnailList} data-single={single} style={{ "--thumb-ratio": ratio } as any}>
+      <div
+        className={$.ThumbnailList}
+        onClick={(e) => {
+          if (e.isPropagationStopped() || e.shiftKey || e.metaKey) {
+            return;
+          }
+          if (canvasMultiSelect) {
+            clearListing();
+          }
+        }}
+        data-single={single}
+        style={{ "--thumb-ratio": ratio } as any}
+      >
         {sequence.sequence.map((ids, n) => (
           <div key={n} className={$.ThumbnailGroup} style={{ "--item-count": ids.length } as any}>
             {ids
@@ -82,6 +98,25 @@ function ManifestListingInner() {
               .map((item, k) => (
                 <CanvasContext canvas={item.id} key={item.id + k}>
                   <CanvasSnippet
+                    selectEnabled={canvasMultiSelect}
+                    selected={!!items.find((t) => t.id === item.id)}
+                    onSelect={(shift) => {
+                      if (shift) {
+                        if (items.length) {
+                          const index = sequence.items.findIndex((t) => t.id === item.id);
+                          const lastItem = items[items.length - 1];
+                          const lastIndex = sequence.items.findIndex((t) => t.id === lastItem.id);
+                          const from = Math.min(index, lastIndex);
+                          const to = Math.max(index, lastIndex);
+                          const itemsToSet = sequence.items.slice(from, to);
+                          for (const toAdd of itemsToSet) {
+                            addToListing(toAdd);
+                          }
+                        }
+                      }
+                      addToListing(item);
+                    }}
+                    onDeselect={() => removeFromListing(item)}
                     onClick={() => {
                       if (container.ref.current) {
                         setScrollCache(manifest.id, container.ref.current.scrollTop);
@@ -98,7 +133,7 @@ function ManifestListingInner() {
   );
 }
 
-export function ManifestListing() {
+export function ManifestListing({ canvasMultiSelect }: { canvasMultiSelect?: boolean }) {
   const store = useExplorerStore();
   const selected = useStore(store, (s) => s.selected);
   const manifestStatus = useVaultSelector(
@@ -127,7 +162,7 @@ export function ManifestListing() {
 
   return (
     <ManifestContext manifest={selected.id}>
-      <ManifestListingInner />
+      <ManifestListingInner canvasMultiSelect={canvasMultiSelect} />
     </ManifestContext>
   );
 }

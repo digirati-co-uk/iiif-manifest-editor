@@ -103,7 +103,7 @@ export function IIIFExplorer({
               <CollectionListing />
 
               {/* Only shown if we are looking at a manifest */}
-              <ManifestListing />
+              <ManifestListing canvasMultiSelect={outputTypes?.includes("CanvasList")} />
 
               <CanvasView highlightStyle={highlightStyle} regionEnabled={outputTypes?.includes("CanvasRegion")} />
 
