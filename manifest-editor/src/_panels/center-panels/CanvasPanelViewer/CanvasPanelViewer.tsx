@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useManifest, AnnotationContext } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, AnnotationContext, useVault } from "react-iiif-vault";
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { DefaultPresetOptions, Runtime } from "@atlas-viewer/atlas";
 import { ErrorBoundary } from "react-error-boundary";

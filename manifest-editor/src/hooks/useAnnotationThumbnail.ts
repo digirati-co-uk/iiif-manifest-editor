@@ -20,6 +20,7 @@ export function useAnnotationThumbnail({
   const annotationId = _annotationId || annotation?.id;
 
   const vault = useVault();
+
   const image = vault.get(annotationId) as any;
   const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
   const [thumbnail, setThumbnail] = useState<
@@ -31,13 +32,18 @@ export function useAnnotationThumbnail({
 
   useEffect(() => {
     const last = lastAnnotation.current;
-    helper
-      .getBestThumbnailAtSize(vault.get(image), { maxWidth: 200, maxHeight: 200, allowUnsafe: true, ...options })
-      .then((result) => {
-        if (last === lastAnnotation.current && result.best) {
-          setThumbnail(result.best);
-        }
-      });
+
+    try {
+      helper
+        .getBestThumbnailAtSize(vault.get(image), { maxWidth: 200, maxHeight: 200, allowUnsafe: true, ...options })
+        .then((result) => {
+          if (last === lastAnnotation.current && result.best) {
+            setThumbnail(result.best);
+          }
+        });
+    } catch (e) {
+      // ignore.
+    }
   }, [helper, image, vault]);
 
   return thumbnail;

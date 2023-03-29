@@ -147,7 +147,7 @@ function asImageService(data: any) {
   return null;
 }
 
-async function analyseJson(data: any, url: string) {
+export async function analyseJson(data: any, url: string) {
   // Is it an image service?
   const testImageService = asImageService(data);
   if (testImageService) {
