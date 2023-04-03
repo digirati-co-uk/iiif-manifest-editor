@@ -95,16 +95,17 @@ export type LayoutPanelContext = {
   state: LayoutState;
 };
 
+export type LayoutFunction = (
+  state: any,
+  ctx: { current: PanelActions; vault?: Vault; transition?: TransitionStatus } & LayoutContext,
+  app: AppState
+) => ReactNode;
+
 export interface LayoutPanel {
   id: string;
   label: string;
   icon?: null | string | ReactNode; // SVG?
-
-  render: (
-    state: any,
-    ctx: { current: PanelActions; vault?: Vault; transition?: TransitionStatus } & LayoutContext,
-    app: AppState
-  ) => ReactNode;
+  render: LayoutFunction;
   onMount?: (
     state: any,
     ctx: { current: PanelActions; vault?: Vault } & LayoutContext,

@@ -8,6 +8,8 @@ import invariant from "tiny-invariant";
 export const MediaForm = ({ onAfterDelete }: { onAfterDelete?: () => void }) => {
   const annotation = useAnnotation<{ id: string; body: ContentResource[]; target: SupportedTarget }>();
 
+  console.log("annotaiton", annotation);
+
   // Does this annotation support this form?
 
   invariant(annotation);
@@ -16,6 +18,10 @@ export const MediaForm = ({ onAfterDelete }: { onAfterDelete?: () => void }) => 
   limitation(annotation.target.selectors.length <= 1, "Unsupported multi-target");
 
   const prevBody = annotation.body[0] as any;
+
+  if (prevBody.type === "SpecificResource") {
+    return <EditAnnotationBodyWithoutTarget id={prevBody.source.id} onAfterDelete={onAfterDelete} />;
+  }
 
   return <EditAnnotationBodyWithoutTarget id={prevBody.id} onAfterDelete={onAfterDelete} />;
 };

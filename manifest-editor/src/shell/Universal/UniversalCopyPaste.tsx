@@ -1,17 +1,32 @@
 import { HTMLAttributes, useCallback, useMemo } from "react";
 import { UniversalCopyPasteProps } from "./UniversalCopyPaste.types";
-import { analyse } from "../../helpers/analyse";
+import { analyse, analyseJson } from "../../helpers/analyse";
+import { useVault } from "../../../../../react-iiif-vault";
 
 export function UniversalCopyTarget<T>({
   as,
-  onDropReference,
   reference: _ref,
-  onPasteReference,
-  onPasteLink,
-  onPasteAnalysis,
+  onReference,
+  onLink,
+  onAnalysis,
+  onDropReference: _onDropReference,
+  onDropLink: _onDropLink,
+  onDropAnalysis: _onDropAnalysis,
+  onPasteReference: _onPasteReference,
+  onPasteLink: _onPasteLink,
+  onPasteAnalysis: _onPasteAnalysis,
   ...props
 }: Partial<HTMLAttributes<HTMLElement>> & UniversalCopyPasteProps<T> & T) {
+  // const vault = useVault();
   const Component = (as || "div") as any;
+
+  const onDropReference = _onDropReference || onReference;
+  const onDropLink = _onDropLink || onLink;
+  const onDropAnalysis = _onDropAnalysis || onAnalysis;
+  const onPasteReference = _onPasteReference || onReference;
+  const onPasteLink = _onPasteLink || onLink;
+  const onPasteAnalysis = _onPasteAnalysis || onAnalysis;
+
   const reference = useMemo(() => {
     return _ref;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,6 +40,11 @@ export function UniversalCopyTarget<T>({
       e.preventDefault();
       if (e.clipboardData) {
         if (reference && reference.id && reference.type) {
+          // const full = vault.get(reference);
+          // if (full) {
+          //   e.clipboardData.setData("application/json", JSON.stringify(vault.toPresentation3(vault.get(reference))));
+          // }
+
           e.clipboardData.setData(
             "application/json+vault",
             JSON.stringify({
@@ -111,7 +131,7 @@ export function UniversalCopyTarget<T>({
     }
   }, []);
 
-  const onDrop = useCallback(function onPaste(e: DragEvent) {
+  const onDrop = useCallback(async function onDrop(e: DragEvent) {
     e.preventDefault();
     if (e.dataTransfer) {
       if (onDropReference) {
@@ -128,10 +148,36 @@ export function UniversalCopyTarget<T>({
           }
         }
       }
+      const json = e.dataTransfer.getData("application/json");
+      if (json) {
+        const parsed = JSON.parse(json);
+        // @todo this could be raw JSON or a Content State.
+        return;
+      }
+      const link = e.dataTransfer.getData("text/plain");
+      if (link) {
+        console.log("link", link);
+        return;
+      }
+    }
+  }, []);
+
+  const onDragOver = useCallback((e: DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = "copy";
     }
   }, []);
 
   return (
-    <Component onCopy={onCopy} onPaste={onPaste} onDrop={onDrop} onDragStart={onDragStart} tabIndex={-1} {...props} />
+    <Component
+      onCopy={onCopy}
+      onPaste={onPaste}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      onDragStart={onDragStart}
+      tabIndex={-1}
+      {...props}
+    />
   );
 }
