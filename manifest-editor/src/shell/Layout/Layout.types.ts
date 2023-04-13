@@ -2,6 +2,8 @@ import { ReactNode } from "react";
 import { AppState } from "../AppContext/AppContext";
 import { Vault } from "@iiif/vault";
 import { TransitionStatus } from "react-transition-group";
+import { CreatableResource, EditableResource } from "@/shell/EditingStack/EditingStack.types";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
 
 export interface LayoutProviderProps {
   loading?: true;
@@ -29,16 +31,24 @@ export interface LayoutActions {
   stack(args: { id: string; state?: any }): void;
 
   open(id: string, state?: any): void;
-  open(args: { id: string; state?: any; stacked?: boolean }): void;
+  open(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   change(id: string, state?: any): void;
-  change(args: { id: string; state?: any; stacked?: boolean }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   close(id: string, state?: any): void;
   close(args: { id: string; state?: any }): void;
 
   toggle(id: string, state?: any): void;
   toggle(args: { id: string; state?: any }): void;
+
+  // Resource
+  edit(
+    resource: Reference | SpecificResource,
+    context?: Omit<EditableResource, "resource">,
+    options?: { reset?: boolean; property?: string; stacked?: boolean | undefined }
+  ): void;
+  create(resource: CreatableResource): void;
 
   leftPanel: PanelActions;
   centerPanel: PanelActions;
@@ -56,8 +66,8 @@ export interface PanelState {
 }
 
 export interface PanelActions {
-  change(args: { id: string; state?: any; stacked?: boolean }): void;
-  open(args?: { id: string; state?: any; stacked?: boolean }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  open(args?: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
   close(): void;
   toggle(): void;
   minimise(): void;
@@ -114,6 +124,8 @@ export interface LayoutPanel {
   defaultState?: any;
   requiresState?: boolean;
   backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
+  renderBackAction?: (options: { backAction: (e?: React.MouseEvent) => void; fallback: any }) => ReactNode | null;
+  renderCloseAction?: (options: { closeAction: () => void; fallback: any }) => ReactNode | null;
   options?: {
     minWidth?: number;
     maxWidth?: number;
@@ -128,6 +140,37 @@ export type MenuPositions = "left" | "right" | "bottom" | "top";
 export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
   pinned: true;
   state: T;
+}
+
+export interface EditorDefinition {
+  id: string;
+  label: string;
+  tabs?: {
+    showTitle?: boolean;
+    hide?: boolean;
+  };
+  supports: {
+    properties: string[];
+    readOnlyProperties?: string[];
+    resourceTypes: string[];
+    read?: boolean;
+    edit?: boolean;
+    customLocking?: boolean;
+    target?: boolean;
+    multi?: boolean;
+    custom?: (resource: EditableResource, vault: Vault) => boolean;
+  };
+  component: () => ReactNode; // @todo type component.
+}
+export interface ResourceDefinition {
+  id: string;
+  label: string;
+  resourceType: string;
+  auto: boolean;
+  editors: EditorDefinition[];
+}
+export interface CreatorDefinition {
+  tbc: any;
 }
 
 export interface LayoutProps {
@@ -146,4 +189,8 @@ export interface LayoutProps {
   leftPanelMenuPosition?: MenuPositions;
   centerPanelMenuPosition?: MenuPositions;
   rightPanelMenuPosition?: MenuPositions;
+  // Editors / creators
+  editors?: EditorDefinition[];
+  resources?: (string | ResourceDefinition)[];
+  creators?: CreatorDefinition[];
 }

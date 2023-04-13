@@ -61,7 +61,13 @@ export const TabPanel: React.FC<{
           );
         })}
       </TabPanelOptions>
-      <Content>{menu && menu[selected] ? menu[selected].component : menu[0].component}</Content>
+      <Content>
+        {menu && menu[selected]
+          ? menu[selected].renderComponent
+            ? menu[selected].renderComponent()
+            : menu[selected].component
+          : menu[0].component || menu[0].renderComponent()}
+      </Content>
     </TabPanelContainer>
   );
 };

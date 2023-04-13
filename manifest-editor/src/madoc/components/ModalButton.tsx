@@ -33,7 +33,7 @@ export const ModalButton: React.FC<{
   tabIndex?: number;
   role?: string;
   $disabled?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }> = React.forwardRef(function ModalButton(
   {
     as,

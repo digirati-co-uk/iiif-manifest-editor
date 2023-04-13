@@ -14,5 +14,5 @@ export function BehaviorEditorManifest() {
     vault.modifyEntityField(manifest, "behavior", newValue);
   };
 
-  return <BehaviorEditor behavior={manifest.behavior} onChange={onChange} configs={[]} />;
+  return <BehaviorEditor behavior={manifest.behavior as string[]} onChange={onChange} configs={[]} />;
 }

@@ -41,7 +41,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
       {totalConfigs > 0 ? (
         <>
           <PaddedSidebarContainer>
-            <InputLabel>Custom behaviors</InputLabel>
+            <InputLabel>Built-in behaviors</InputLabel>
           </PaddedSidebarContainer>
           <AccordionContainer>
             {Object.values(parsedConfig).map(({ ref, config }) => (
@@ -110,25 +110,6 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
             <AddIcon /> Add new value
           </div>
         )}
-
-        <datalist id="behaviors">
-          <option value="auto-advance" />
-          <option value="no-auto-advance" />
-          <option value="repeat" />
-          <option value="no-repeat" />
-          <option value="unordered" />
-          <option value="individuals" />
-          <option value="continuous" />
-          <option value="paged" />
-          <option value="facing-pages" />
-          <option value="non-paged" />
-          <option value="multi-part" />
-          <option value="together" />
-          <option value="sequence" />
-          <option value="thumbnail-nav" />
-          <option value="no-nav" />
-          <option value="hidden" />
-        </datalist>
       </PaddedSidebarContainer>
     </>
   );

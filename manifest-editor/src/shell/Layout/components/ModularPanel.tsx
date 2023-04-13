@@ -7,7 +7,7 @@ import { BackIcon } from "@/icons/BackIcon";
 import { useLayoutProvider } from "../Layout.context";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { ErrorBoundary } from "react-error-boundary";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { PanelError } from "./PanelError";
 import { renderHelper } from "../Layout.helpers";
 import { ReactVaultContext } from "react-iiif-vault";
@@ -26,9 +26,16 @@ interface ModularPanelProps {
   available?: LayoutPanel[];
 }
 
+const LayoutTitleReactContext = createContext<(title: string) => void>(null as any);
+
+export function useSetCustomTitle() {
+  return useContext(LayoutTitleReactContext);
+}
+
 const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
   display: flex;
   flex-direction: column;
+  position: relative;
   height: 100%;
   ${(props) =>
     props.$floating &&
@@ -101,7 +108,7 @@ export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean
     `}
 `;
 
-const ModulePanelButton = styled.button`
+export const ModulePanelButton = styled.button`
   border: none;
   background: transparent;
   padding: 0 0.4em;
@@ -160,11 +167,14 @@ export function ModularPanel({
     return (available || []).filter((p) => !p.requiresState);
   }, [available]);
   const { itemProps, isOpen, setIsOpen } = useDropdownMenu(switchablePanels.length);
+  const [customTitle, setCustomTitle] = useState("");
 
   useEffect(() => setDidError(false), resetKeys);
 
+  useEffect(() => setCustomTitle(""), [panel]);
+
   const backAction = useCallback(
-    (e: React.MouseEvent) => {
+    (e?: React.MouseEvent) => {
       const originalCallback = panel
         ? state.stack.length
           ? actions.popStack
@@ -173,7 +183,7 @@ export function ModularPanel({
           : null
         : null;
 
-      if ((!originalCallback || e.metaKey) && switchablePanels.length) {
+      if (e && (!originalCallback || e.metaKey) && switchablePanels.length) {
         e.preventDefault();
         setIsOpen(true);
       } else {
@@ -195,69 +205,87 @@ export function ModularPanel({
     return null;
   }
 
+  const backButton =
+    panel.backAction || state.stack.length ? (
+      <ModulePanelButton onClick={backAction}>
+        <BackIcon />
+      </ModulePanelButton>
+    ) : switchablePanels.length ? (
+      <ModulePanelButton onClick={backAction}>
+        <ChangeIcon style={{ color: "#999" }} />
+      </ModulePanelButton>
+    ) : null;
+
+  const closeButton = (
+    <ModulePanelButton onClick={close || actions.close}>
+      <CloseIcon />
+    </ModulePanelButton>
+  );
+
   return (
-    <ModularPanelWrapper $state={transition} $flipped={isLeft}>
-      <ModularPanelHeader $tabs={tabs} $error={didError}>
-        <Dropdown style={{ display: "flex", height: "100%" }}>
-          {panel.backAction || state.stack.length ? (
-            <ModulePanelButton onClick={backAction}>
-              <BackIcon />
-            </ModulePanelButton>
-          ) : switchablePanels.length ? (
-            <ModulePanelButton onClick={backAction}>
-              <ChangeIcon style={{ color: "#999" }} />
-            </ModulePanelButton>
-          ) : null}
-          {switchablePanels.length ? (
-            <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
-              <DropdownLabel>All panels</DropdownLabel>
-              <DropdownDivider />
-              {switchablePanels.map((newPanel, i) => (
-                <DropdownItem
-                  key={i}
-                  {...(itemProps as any)[i]}
-                  onClick={() => menuHandler(newPanel)}
-                  $active={panel.id === newPanel.id}
-                >
-                  {newPanel.label}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          ) : null}
-        </Dropdown>
-        {hideHeader ? <ModulePanelSpacer /> : <ModularPanelLabel>{panel.label}</ModularPanelLabel>}
-        {pinnable ? (
-          (state as PinnablePanelState).pinned ? (
-            <ModulePanelButton onClick={pinActions.unpin}>
-              <StarIcon fill="orange" />
-            </ModulePanelButton>
+    <LayoutTitleReactContext.Provider value={setCustomTitle}>
+      <ModularPanelWrapper $state={transition} $flipped={isLeft}>
+        <ModularPanelHeader $tabs={tabs} $error={didError}>
+          <Dropdown style={{ display: "flex", height: "100%" }}>
+            {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
+            {switchablePanels.length ? (
+              <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
+                <DropdownLabel>All panels</DropdownLabel>
+                <DropdownDivider />
+                {switchablePanels.map((newPanel, i) => (
+                  <DropdownItem
+                    key={i}
+                    {...(itemProps as any)[i]}
+                    onClick={() => menuHandler(newPanel)}
+                    $active={panel.id === newPanel.id}
+                  >
+                    {newPanel.label}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            ) : null}
+          </Dropdown>
+
+          {customTitle ? (
+            <ModularPanelLabel>{customTitle}</ModularPanelLabel>
+          ) : hideHeader ? (
+            <ModulePanelSpacer />
           ) : (
-            <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
-              <StarIcon fill="#ddd" />
-            </ModulePanelButton>
-          )
-        ) : null}
-        <ModulePanelButton onClick={close || actions.close}>
-          <CloseIcon />
-        </ModulePanelButton>
-      </ModularPanelHeader>
-      <ModularPanelContent>
-        <ErrorBoundary
-          onResetKeysChange={() => setDidError(false)}
-          onError={() => setDidError(true)}
-          FallbackComponent={PanelError}
-          resetKeys={resetKeys}
-          onReset={() => setDidError(false)}
-        >
-          {renderHelper(
-            panel.render(
-              state.state || panel.defaultState || {},
-              { ...layout, current: actions, vault: vault as any, transition },
-              appState
-            )
+            <ModularPanelLabel>{panel.label}</ModularPanelLabel>
           )}
-        </ErrorBoundary>
-      </ModularPanelContent>
-    </ModularPanelWrapper>
+          {pinnable ? (
+            (state as PinnablePanelState).pinned ? (
+              <ModulePanelButton onClick={pinActions.unpin}>
+                <StarIcon fill="orange" />
+              </ModulePanelButton>
+            ) : (
+              <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
+                <StarIcon fill="#ddd" />
+              </ModulePanelButton>
+            )
+          ) : null}
+          {panel.renderCloseAction
+            ? panel.renderCloseAction({ closeAction: close || actions.close, fallback: closeButton })
+            : closeButton}
+        </ModularPanelHeader>
+        <ModularPanelContent>
+          <ErrorBoundary
+            onResetKeysChange={() => setDidError(false)}
+            onError={() => setDidError(true)}
+            FallbackComponent={PanelError}
+            resetKeys={resetKeys}
+            onReset={() => setDidError(false)}
+          >
+            {renderHelper(
+              panel.render(
+                state.state || panel.defaultState || {},
+                { ...layout, current: actions, vault: vault as any, transition },
+                appState
+              )
+            )}
+          </ErrorBoundary>
+        </ModularPanelContent>
+      </ModularPanelWrapper>
+    </LayoutTitleReactContext.Provider>
   );
 }

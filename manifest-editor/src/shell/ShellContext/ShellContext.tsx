@@ -10,6 +10,7 @@ import { Config, ConfigProvider } from "../ConfigContext/ConfigContext";
 import { defaultTheme } from "../../themes/default-theme";
 import { ThemeProvider } from "styled-components";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { EditingStack } from "@/shell/EditingStack/EditingStack";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
@@ -52,14 +53,16 @@ export const ShellProvider = ({
       <ThemeProvider theme={theme || defaultTheme}>
         <ConfigProvider config={config}>
           <AppProvider apps={apps.allApps} initialApp={initialApp}>
-            <LayoutProvider>
-              <ProjectProvider>
-                {/* @todo swap these out for (config?.previews || []) */}
-                <PreviewProvider configs={config?.previews || previewConfigs}>
-                  <ManifestEditorProvider>{children}</ManifestEditorProvider>
-                </PreviewProvider>
-              </ProjectProvider>
-            </LayoutProvider>
+            <EditingStack>
+              <LayoutProvider>
+                <ProjectProvider>
+                  {/* @todo swap these out for (config?.previews || []) */}
+                  <PreviewProvider configs={config?.previews || previewConfigs}>
+                    <ManifestEditorProvider>{children}</ManifestEditorProvider>
+                  </PreviewProvider>
+                </ProjectProvider>
+              </LayoutProvider>
+            </EditingStack>
           </AppProvider>
         </ConfigProvider>
       </ThemeProvider>

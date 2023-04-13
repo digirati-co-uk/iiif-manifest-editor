@@ -4,13 +4,17 @@ import { isPinnableState } from "./Layout.helpers";
 
 function pushStack<T>(
   state: Draft<PinnablePanelState | PanelState>,
-  action: T extends { payload: { stacked?: boolean } } ? T : never
+  action: T extends { payload: { stacked?: boolean; unique?: boolean } } ? T : never
 ) {
   if (action.payload && action.payload.stacked) {
     if (state.current) {
       const latest = state.stack[state.stack.length - 1];
       if (latest && latest.id === state.current) {
         return;
+      }
+
+      if (action.payload.unique) {
+        state.stack = state.stack.filter((i) => i.id !== state.current);
       }
 
       state.stack.push({
@@ -38,7 +42,9 @@ function panelReducer(state: Draft<PinnablePanelState | PanelState>, action: Pan
     }
 
     case "change": {
-      pushStack(state, action);
+      if (action.payload.id !== state.current) {
+        pushStack(state, action);
+      }
       state.state = action.payload.state;
       state.current = action.payload.id;
       break;
@@ -50,7 +56,9 @@ function panelReducer(state: Draft<PinnablePanelState | PanelState>, action: Pan
     case "open": {
       state.open = true;
       if (action.payload) {
-        pushStack<any>(state, action);
+        if (action.payload.id !== state.current) {
+          pushStack<any>(state, action);
+        }
         state.state = action.payload.state;
         state.current = action.payload.id;
       }

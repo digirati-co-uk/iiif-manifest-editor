@@ -7,6 +7,7 @@ export interface BehaviorChoice {
   id: string;
   label: InternationalString;
   type: "choice";
+  addNone?: boolean;
   items: Array<{
     value: string;
     label: InternationalString;

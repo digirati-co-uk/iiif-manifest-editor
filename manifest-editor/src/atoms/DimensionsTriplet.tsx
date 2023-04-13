@@ -22,7 +22,7 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
   changeDuration,
 }) => {
   return (
-    <FlexContainer>
+    <FlexContainer style={{ marginBottom: "1em" }}>
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputLabel $inline={true} htmlFor="dims-height">
@@ -48,7 +48,7 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
       <ErrorBoundary>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputLabel $inline={true} htmlFor="dims-width">
-            {"width"}
+            {"Width"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#width"} />
           </InputLabel>
           <Input
@@ -71,7 +71,7 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
         <ErrorBoundary>
           <FlexContainerColumn style={{ width: "100%" }}>
             <InputLabel $inline={true} htmlFor="dims-duration">
-              {"duration"}
+              {"Duration"}
               <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"} />
             </InputLabel>
             <Input

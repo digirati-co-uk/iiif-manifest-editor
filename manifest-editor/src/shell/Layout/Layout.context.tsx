@@ -3,7 +3,10 @@ import { LayoutContext, LayoutProps, LayoutProviderProps, PinnablePanelActions }
 import { getDefaultLayoutState, layoutReducer } from "./Layout.reducer";
 import { usePanelActions } from "./Layout.hooks";
 import invariant from "tiny-invariant";
-import { useConfig } from "../ConfigContext/ConfigContext";
+import { useEditingStack } from "@/shell/EditingStack/EditingStack";
+import { CreatableResource, EditableResource } from "@/shell/EditingStack/EditingStack.types";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { isSpecificResource } from "@iiif/parser";
 
 const LayoutPropsReactContext = createContext<LayoutProviderProps & { loading?: true }>(null as any);
 const LayoutActionsReactContext = createContext<LayoutContext["actions"]>(null as any);
@@ -56,6 +59,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     leftPanel: usePanelActions("leftPanel", dispatch),
     rightPanel: usePanelActions("rightPanel", dispatch),
     pinnedRightPanel: usePanelActions("pinnedRightPanel", dispatch) as PinnablePanelActions,
+    editingStack: useEditingStack(),
   };
 
   function find(id: any) {
@@ -119,12 +123,52 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     actions.toggle();
   }
 
+  function edit(
+    resource: Reference | SpecificResource,
+    context: Omit<EditableResource, "resource"> = {},
+    { reset, property, stacked }: { reset?: boolean; property?: string; stacked?: boolean | undefined } = {}
+  ) {
+    const toEdit: EditableResource = {
+      resource: isSpecificResource(resource)
+        ? resource
+        : {
+            type: "SpecificResource",
+            source: resource,
+          },
+      ...context,
+    };
+
+    actions.editingStack.edit(toEdit, reset);
+
+    if (available.rightPanels.find((e) => e.id === "@manifest-editor/editor")) {
+      actions.rightPanel.open({
+        id: "@manifest-editor/editor",
+        stacked: stacked !== false,
+        state: { property },
+        unique: true,
+      });
+    }
+  }
+
+  function create(resource: CreatableResource) {
+    actions.editingStack.create(resource, {});
+    if (available.rightPanels.find((e) => e.id === "@manifest-editor/creator")) {
+      actions.rightPanel.open({
+        id: "@manifest-editor/creator",
+        stacked: true,
+        unique: true,
+      });
+    }
+  }
+
   const otherActions = {
     open,
     change,
     close,
     toggle,
     stack,
+    edit,
+    create,
   };
 
   return (

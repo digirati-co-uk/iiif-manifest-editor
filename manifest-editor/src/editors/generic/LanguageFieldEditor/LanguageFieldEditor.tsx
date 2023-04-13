@@ -8,6 +8,7 @@ import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
 import { useDecayState } from "@/hooks/useDecayState";
 import { flushSync } from "react-dom";
 import { RichTextLanguageField } from "@/_components/form-elements/RichTextLanguageField/RichTextLanguageField";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;

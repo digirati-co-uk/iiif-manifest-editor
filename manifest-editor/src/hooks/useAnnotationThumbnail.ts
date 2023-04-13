@@ -8,6 +8,7 @@ import {
   UnknownSizeImage,
   VariableSizeImage,
 } from "@atlas-viewer/iiif-image-api";
+import invariant from "tiny-invariant";
 
 export function useAnnotationThumbnail({
   annotationId: _annotationId,
@@ -20,6 +21,8 @@ export function useAnnotationThumbnail({
   const annotationId = _annotationId || annotation?.id;
 
   const vault = useVault();
+
+  invariant(annotationId, "Missing annotation ID");
 
   const image = vault.get(annotationId) as any;
   const helper = useMemo(() => createThumbnailHelper(vault), [vault]);

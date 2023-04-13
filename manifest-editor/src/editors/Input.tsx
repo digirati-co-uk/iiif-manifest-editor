@@ -29,6 +29,16 @@ export const InputLabel = styled.label<{
     `};
 `;
 
+export const InputFieldset = styled.fieldset`
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 0.5em;
+
+  ${InputLabel} {
+    font-size: 0.875em;
+  }
+`;
+
 export const MutliselectLabel = styled(InputLabel)<{
   $selected?: boolean;
 }>`

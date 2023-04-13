@@ -6,7 +6,7 @@ import { LocaleString } from "@/atoms/LocaleString";
 export interface InlineSelectProps {
   name?: string;
   id?: string;
-  value?: string;
+  value?: string | null;
   onChange?: (value: string) => void;
   onDeselect?: () => void;
   options: Array<{ label: string | InternationalString; value: string }>;
@@ -99,7 +99,7 @@ export function InlineSelect(props: InlineSelectProps) {
         );
       })}
 
-      {props.name ? <input type="hidden" name={props.name} value={currentValue} /> : null}
+      {props.name ? <input type="hidden" name={props.name} value={currentValue || undefined} /> : null}
     </InlineSelectStyles.Container>
   );
 }
