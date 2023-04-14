@@ -126,17 +126,17 @@ export function SingleSetTable({
               if (supports.notAllowed.includes(prop)) {
                 return <td>-</td>;
               }
-              if (combined.properties.includes(prop)) {
-                return (
-                  <td>
-                    <img src="https://iiif.io/api/assets/images/icons/required.png" />
-                  </td>
-                );
-              }
               if (combined.readonly.includes(prop)) {
                 return (
                   <td>
                     <img src="https://iiif.io/api/assets/images/icons/optional.png" />
+                  </td>
+                );
+              }
+              if (combined.properties.includes(prop)) {
+                return (
+                  <td>
+                    <img src="https://iiif.io/api/assets/images/icons/required.png" />
                   </td>
                 );
               }
@@ -167,17 +167,17 @@ export function SingleSetTable({
                 if (supports.notAllowed.includes(prop)) {
                   return <td>-</td>;
                 }
-                if (editor.supports.properties.includes(prop)) {
-                  return (
-                    <td>
-                      <img src="https://iiif.io/api/assets/images/icons/required.png" />
-                    </td>
-                  );
-                }
                 if (editor.supports.readOnlyProperties?.includes(prop)) {
                   return (
                     <td>
                       <img src="https://iiif.io/api/assets/images/icons/optional.png" />
+                    </td>
+                  );
+                }
+                if (editor.supports.properties.includes(prop)) {
+                  return (
+                    <td>
+                      <img src="https://iiif.io/api/assets/images/icons/required.png" />
                     </td>
                   );
                 }

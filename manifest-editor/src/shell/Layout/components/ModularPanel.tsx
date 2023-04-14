@@ -37,6 +37,7 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   flex-direction: column;
   position: relative;
   height: 100%;
+  overflow: hidden;
   ${(props) =>
     props.$floating &&
     css`

@@ -98,6 +98,25 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
     );
   }
 
+  reorder(startIndex: number, endIndex: number) {
+    console.log("reoder", {
+      id: this.getId(),
+      type: this.getType() as any,
+      startIndex,
+      endIndex,
+      key: this.property,
+    });
+    this.config.vault.dispatch(
+      entityActions.reorderEntityField({
+        id: this.getId(),
+        type: this.getType() as any,
+        startIndex,
+        endIndex,
+        key: this.property,
+      })
+    );
+  }
+
   moveUpBy(index: number, steps: number) {
     this.config.vault.dispatch(
       entityActions.reorderEntityField({

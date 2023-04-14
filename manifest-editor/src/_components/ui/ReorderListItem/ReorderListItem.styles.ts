@@ -5,7 +5,8 @@ export const HandleContainer = styled.div`
   display: flex;
   padding: 0.1em;
   border-radius: 3px;
-  margin: 0 0.5em;
+  margin: auto 0.2em;
+  aspect-ratio: 1;
 
   &:hover {
     background: #eee;

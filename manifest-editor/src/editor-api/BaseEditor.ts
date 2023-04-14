@@ -14,7 +14,7 @@ export class BaseEditor<T> {
 
   protected entity(): T {
     const ref = this.ref();
-    return this.config.vault.get(ref);
+    return this.config.vault.get(ref, { skipSelfReturn: false });
   }
 
   protected ref(): Reference {
@@ -23,7 +23,7 @@ export class BaseEditor<T> {
 
   protected getId(): string {
     const ref = this.ref();
-    return ref.type;
+    return ref.id;
   }
 
   protected getType(): string {

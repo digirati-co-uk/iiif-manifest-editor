@@ -6,6 +6,7 @@ export const technicalProperties: EditorDefinition = {
   label: "Technical",
   supports: {
     edit: true,
+    readOnlyProperties: ["id"],
     properties: [
       "id",
       "viewingDirection",

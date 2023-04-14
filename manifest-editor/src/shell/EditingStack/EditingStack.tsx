@@ -3,7 +3,7 @@ import { EditableResource, EditingStackActions, EditingStackState } from "@/shel
 import { editingStackReducer } from "@/shell/EditingStack/EditingStack.reducer";
 import { EditorInstance } from "@/editor-api/EditorInstance";
 import invariant from "tiny-invariant";
-import { useVault } from "react-iiif-vault";
+import { useManifest, useResourceContext, useVault } from "react-iiif-vault";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
 const EditingStackContext = createContext<EditingStackState>(defaultState);
@@ -33,6 +33,33 @@ export function useEditingResourceStack() {
 
 export function useCreatingResource() {
   return useContext(EditingStackContext).create;
+}
+export function useManifestEditor() {
+  const { manifest } = useResourceContext();
+  const vault = useVault();
+  const [key, invalidate] = useReducer((i: number) => i + 1, 0);
+
+  invariant(manifest, "Manifest not found");
+
+  const editor = useMemo(() => {
+    return new EditorInstance({
+      reference: { id: manifest, type: "Manifest" },
+      vault,
+    });
+  }, [manifest, vault]);
+
+  useEffect(() => {
+    return editor.observe.start(invalidate);
+  }, [editor]);
+
+  editor.observe.key = `${key}`;
+  editor.observe.reset();
+
+  return editor;
+}
+
+export function useCollectionEditor() {
+  //
 }
 
 export function useEditor() {
