@@ -3,7 +3,7 @@
   "buildCommand": "custom-build",
   "packages": ["manifest-editor/npm/editor-api"],
   "publishDirectory": {
-    "@manifest-editor/editor": "manifest-editor/npm/editor-api"
+    "@manifest-editor/editor-api": "manifest-editor/npm/editor-api"
   },
   "node": "18"
 }
