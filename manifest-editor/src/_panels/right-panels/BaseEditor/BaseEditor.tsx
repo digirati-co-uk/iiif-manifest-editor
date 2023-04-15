@@ -4,8 +4,6 @@ import { BackIcon } from "@/icons/BackIcon";
 import { ModulePanelButton, useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
 import { CloseIcon } from "@/icons/CloseIcon";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
-import { LabelEditor } from "@/apps/ManifestEditor2/editors/label-editor";
-import { EditorInstance } from "@/editor-api/EditorInstance";
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApps } from "@/shell/AppContext/AppContext";

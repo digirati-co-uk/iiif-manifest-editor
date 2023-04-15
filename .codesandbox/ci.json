@@ -1,0 +1,8 @@
+{
+  "installCommand": "custom-install",
+  "buildCommand": "custom-build",
+  "publishDirectory": {
+    "@manifest-editor/editor": "manifest-editor/npm/editor"
+  },
+  "node": "18"
+}

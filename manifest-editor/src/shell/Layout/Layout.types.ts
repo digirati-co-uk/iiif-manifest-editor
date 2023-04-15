@@ -4,6 +4,7 @@ import { Vault } from "@iiif/vault";
 import { TransitionStatus } from "react-transition-group";
 import { CreatableResource, EditableResource } from "@/shell/EditingStack/EditingStack.types";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { CreatorDefinition } from "@/creator-api/types";
 
 export interface LayoutProviderProps {
   loading?: true;
@@ -168,9 +169,6 @@ export interface ResourceDefinition {
   resourceType: string;
   auto: boolean;
   editors: EditorDefinition[];
-}
-export interface CreatorDefinition {
-  tbc: any;
 }
 
 export interface LayoutProps {

@@ -1,0 +1,11 @@
+{
+  "name": "@manifest-editor/editor-api",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {}
+}

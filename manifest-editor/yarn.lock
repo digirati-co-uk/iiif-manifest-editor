@@ -2093,9 +2093,9 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault":
   version "0.9.22"
-  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault#d9df98d5ad541a9f7149e8ca4f6bd64849ff981d"
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault#c39d4ae7b929a63cabdcb548abfcae9ac30e5f98"
   dependencies:
     "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser"
     "@iiif/presentation-2" "1.*"
@@ -5331,6 +5331,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classnames@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
+  integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
 
 clean-css@^3.0.1:
   version "3.4.28"

@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "build-all": "node ./vite/build-packages.mjs",
     "start": "vite --host",
     "app": "tauri dev",
     "storybook": "start-storybook -p 6006",
@@ -21,7 +22,7 @@
     "test": "vitest"
   },
   "resolutions": {
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault",
+    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
     "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
@@ -43,12 +44,13 @@
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser",
     "@iiif/presentation-3": "^2.0.5",
     "@iiif/presentation-3-normalized": "^0.9.7",
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault",
+    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault",
     "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers",
     "@octokit/rest": "^18.12.0",
     "@react-spring/web": "^9.6.1",
     "@tauri-apps/api": "^1.0.1",
     "@types/styled-components": "^5.1.26",
+    "classnames": "^2.3.2",
     "dompurify": "^2.4.0",
     "draft-convert": "^2.1.12",
     "draft-js": "^0.11.7",

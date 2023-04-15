@@ -150,13 +150,7 @@ export function SingleSetTable({
         ) : null}
         <tr>
           <td colSpan={properties.length + 1}>
-            {supportedEditors.length ? (
-              <td>Built editors</td>
-            ) : (
-              <td>
-                <strong>No current editors</strong>
-              </td>
-            )}
+            {supportedEditors.length ? "Built editors" : <strong>No current editors</strong>}
           </td>
         </tr>
         {supportedEditors.map((editor) => {

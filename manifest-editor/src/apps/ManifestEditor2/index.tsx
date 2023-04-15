@@ -5,6 +5,7 @@ import { technicalProperties } from "@/_editors/TechnicalProperties";
 import { descriptiveProperties } from "@/_editors/DescriptiveProperties";
 import { imageEditor } from "@/_editors/ImageEditor";
 import { CompatibilityTable } from "@/_panels/center-panels/CompatibilityTable/CompatibilityTable";
+import { metadata } from "@/_editors/Metadata";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
@@ -27,6 +28,6 @@ export const rightPanels: LayoutPanel[] = [
   baseEditor,
 ];
 
-export const editors = [imageEditor, technicalProperties, descriptiveProperties];
+export const editors = [imageEditor, descriptiveProperties, metadata, technicalProperties];
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent"];
