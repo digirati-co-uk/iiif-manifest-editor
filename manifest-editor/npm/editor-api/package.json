@@ -1,10 +1,13 @@
 {
   "name": "@manifest-editor/editor-api",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
     }
   },
   "dependencies": {}
