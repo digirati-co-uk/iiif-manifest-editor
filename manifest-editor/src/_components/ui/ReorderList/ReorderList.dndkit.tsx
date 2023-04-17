@@ -14,6 +14,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 
 export interface ReorderListProps {
   id: string;
@@ -21,9 +22,19 @@ export interface ReorderListProps {
   renderItem: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
   inlineHandle?: boolean;
   reorder: (result: { startIndex: number; endIndex: number }) => void;
+  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  marginBottom?: string | number;
 }
 
-export function ReorderList({ items, renderItem, id, reorder, inlineHandle = true }: ReorderListProps) {
+export function ReorderList({
+  items,
+  renderItem,
+  id,
+  reorder,
+  inlineHandle = true,
+  createActions,
+  marginBottom,
+}: ReorderListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -34,7 +45,6 @@ export function ReorderList({ items, renderItem, id, reorder, inlineHandle = tru
   const onDragEnd = useCallback(
     (result: DragEndEvent) => {
       const { active, over } = result;
-      console.log(result);
       if (over && active.id !== over.id) {
         reorder({
           startIndex: items.findIndex((t) => toRef(t)?.id === active.id),
@@ -66,6 +76,8 @@ export function ReorderList({ items, renderItem, id, reorder, inlineHandle = tru
               id={ref.id as string}
               inlineHandle={inlineHandle}
               reorderEnabled={enabled}
+              actions={createActions ? createActions(ref, idx, item) : undefined}
+              marginBottom={marginBottom}
             >
               <ResourceProvider value={{ [ref.type]: ref.id }}>{renderItem(ref, idx, item)}</ResourceProvider>
             </ReorderListItem>

@@ -7,7 +7,6 @@ const Container = styled.div<{ $interactive?: boolean }>`
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
   border-radius: 3px;
   display: flex;
-  margin-bottom: 0.5em;
 
   ${(props) =>
     props.$interactive &&
@@ -19,6 +18,10 @@ const Container = styled.div<{ $interactive?: boolean }>`
         outline: 1px solid #488afc;
       }
     `}
+
+  &[data-margin="true"] {
+    margin-bottom: 0.5em;
+  }
 `;
 
 const Icon = styled.div`

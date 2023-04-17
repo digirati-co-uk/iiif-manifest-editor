@@ -5,6 +5,7 @@ import { ResizeHandleIcon } from "@/icons/ResizeHandleIcon";
 import { MoreMenu } from "@/icons/MoreMenu";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import { AppDropdown, AppDropdownItem } from "../AppDropdown/AppDropdown";
 
 interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   as?: any;
@@ -15,11 +16,8 @@ interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttribu
   inlineHandle?: boolean;
 
   // New?
-  actions?: Array<{
-    icon?: any;
-    label: string;
-    onClick: () => void;
-  }>;
+  actions?: AppDropdownItem[];
+  marginBottom?: string | number;
 }
 export function ReorderListItem({
   children,
@@ -28,6 +26,7 @@ export function ReorderListItem({
   reorderEnabled,
   inlineHandle,
   actions,
+  marginBottom,
   ...props
 }: ReorderListItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({ id });
@@ -45,12 +44,12 @@ export function ReorderListItem({
 
   return (
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
-      <FlexContainer>
+      <FlexContainer style={{ alignItems: "center", marginBottom }}>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
         {actions?.length ? (
-          <HandleContainer>
+          <AppDropdown as={HandleContainer} items={actions}>
             <MoreMenu />
-          </HandleContainer>
+          </AppDropdown>
         ) : null}
         {inlineHandle ? null : (
           <HandleContainer ref={setActivatorNodeRef} {...listeners}>

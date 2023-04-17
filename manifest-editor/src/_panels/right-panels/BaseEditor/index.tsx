@@ -10,7 +10,7 @@ export const baseEditor: LayoutPanel = {
   renderCloseAction: ({ closeAction, fallback }) => (
     <BaseEditorCloseButton closeAction={closeAction} fallback={fallback} />
   ),
-  render() {
-    return <BaseEditor />;
+  render({ currentTab }) {
+    return <BaseEditor currentTab={currentTab} />;
   },
 };

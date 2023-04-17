@@ -37,14 +37,14 @@ const optional: LinkingMap = {
 } as const;
 
 const notAllowed: LinkingMap = {
-  Collection: ["supplementary"],
-  Manifest: ["start", "supplementary"],
-  Canvas: ["start", "supplementary", "services"],
-  Annotation: ["start", "supplementary", "services"],
-  AnnotationPage: ["start", "supplementary", "services"],
-  Range: ["services"],
-  AnnotationCollection: ["start", "supplementary", "services"],
-  ContentResource: ["start", "supplementary", "services"],
+  Collection: ["supplementary", "logo"],
+  Manifest: ["start", "supplementary", "logo"],
+  Canvas: ["start", "supplementary", "services", "logo"],
+  Annotation: ["start", "supplementary", "services", "logo"],
+  AnnotationPage: ["start", "supplementary", "services", "logo"],
+  Range: ["services", "logo"],
+  AnnotationCollection: ["start", "supplementary", "services", "logo"],
+  ContentResource: ["start", "supplementary", "services", "logo"],
   Agent: ["service", "homepage", "rendering", "partOf", "services"],
 } as const;
 

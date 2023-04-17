@@ -41,6 +41,7 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
+    "@floating-ui/react": "^0.23.0",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser",
     "@iiif/presentation-3": "^2.0.5",
     "@iiif/presentation-3-normalized": "^0.9.7",

@@ -11,7 +11,6 @@ import { defaultTheme } from "../../themes/default-theme";
 import { ThemeProvider } from "styled-components";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { EditingStack } from "@/shell/EditingStack/EditingStack";
-import { AppDropdownPortalElement } from "@/_components/ui/AppDropdown/AppDropdown";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
@@ -60,7 +59,6 @@ export const ShellProvider = ({
                   {/* @todo swap these out for (config?.previews || []) */}
                   <PreviewProvider configs={config?.previews || previewConfigs}>
                     <ManifestEditorProvider>{children}</ManifestEditorProvider>
-                    <AppDropdownPortalElement />
                   </PreviewProvider>
                 </ProjectProvider>
               </LayoutProvider>

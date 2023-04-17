@@ -3,7 +3,7 @@ import invariant from "tiny-invariant";
 import { BackIcon } from "@/icons/BackIcon";
 import { ModulePanelButton, useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
 import { CloseIcon } from "@/icons/CloseIcon";
-import { useLayoutActions } from "@/shell/Layout/Layout.context";
+import { useLayoutActions, useLayoutState } from "@/shell/Layout/Layout.context";
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApps } from "@/shell/AppContext/AppContext";
@@ -100,12 +100,12 @@ export function matchBasedOnResource(
   return null;
 }
 
-export function BaseEditor() {
+export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
   const { apps, currentApp } = useApps();
   const resource = useEditingResource();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
   const vault = useVault();
-  const [current, setCurrent] = useState(0);
+  const { change } = useLayoutActions();
   const set = useSetCustomTitle();
 
   invariant(resource, "Nothing selected");
@@ -130,7 +130,6 @@ export function BaseEditor() {
   }, [resource, selectedApp]);
 
   useEffect(() => {
-    setCurrent(0);
     set(match?.label || "");
   }, [match]);
 
@@ -151,8 +150,8 @@ export function BaseEditor() {
             renderComponent: () => editor.component(),
           };
         })}
-        selected={current}
-        switchPanel={setCurrent}
+        selected={currentTab}
+        switchPanel={(p) => change("@manifest-editor/editor", { currentTab: p })}
       />
     </>
   );

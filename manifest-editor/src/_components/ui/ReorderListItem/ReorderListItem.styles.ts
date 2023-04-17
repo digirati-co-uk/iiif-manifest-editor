@@ -8,7 +8,8 @@ export const HandleContainer = styled.div`
   margin: auto 0.2em;
   aspect-ratio: 1;
 
-  &:hover {
-    background: #eee;
+  &:hover,
+  &[aria-expanded="true"] {
+    background: #e8f0fe;
   }
 `;

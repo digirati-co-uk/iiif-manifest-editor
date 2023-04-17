@@ -7,7 +7,15 @@ export const metadata: EditorDefinition = {
   supports: {
     edit: true,
     properties: ["metadata"],
-    resourceTypes: ["Collection", "Manifest", "Canvas", "Range"],
+    resourceTypes: [
+      "Collection",
+      "Manifest",
+      "Canvas",
+      "Range",
+      "ContentResource",
+      "Annotation",
+      "AnnotationCollection",
+    ],
   },
   component: () => <Metadata />,
 };

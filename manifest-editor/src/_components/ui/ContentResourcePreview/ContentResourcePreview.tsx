@@ -6,11 +6,19 @@ import { useContentResource } from "@/hooks/useContentResource";
 import { getValue } from "@iiif/vault-helpers/i18n";
 import invariant from "tiny-invariant";
 
-export function ContentResourcePreview({ id, onClick }: { id: string; onClick?: () => void }) {
+export function ContentResourcePreview({
+  id,
+  onClick,
+  margin,
+}: {
+  id: string;
+  onClick?: () => void;
+  margin?: boolean;
+}) {
   const resource = useContentResource({ id: id });
   const thumbnail = useContentResourceThumbnail({ resourceId: id });
 
-  invariant(resource, "Resource not found");
+  invariant(resource, `ContentResource "${id}" not found`);
 
   const label = getValue((resource as any).label, { defaultText: "Thumbnail" });
 
@@ -25,6 +33,7 @@ export function ContentResourcePreview({ id, onClick }: { id: string; onClick?: 
   return (
     <div>
       <RichMediaLink
+        margin={margin}
         title={label}
         icon={
           thumbnail ? (

@@ -1,77 +1,55 @@
 import { Vault } from "@iiif/vault";
-import { CreatorDefinition } from "./types";
+import { CreatorDefinition, CreatorOptions } from "./types";
 import { Reference } from "@iiif/presentation-3";
-
-class Creator {
-  create() {
-    // ?
-  }
-}
+import { CreatorResource } from "./CreatorResource";
+import { CreatorRuntime } from "./CreatorRuntime";
+import { ReferencedResource } from "./ReferencedResource";
 
 export class CreatorInstance {
   vault: Vault;
   configs: CreatorDefinition[];
-  resources: CreatorResource[] = [];
+  options: CreatorOptions;
 
-  constructor(vault: Vault, createConfigs: CreatorDefinition[]) {
+  constructor(vault: Vault, options: CreatorOptions, createConfigs: CreatorDefinition[]) {
     this.vault = vault;
+    this.options = options;
     this.configs = createConfigs;
   }
 
-  ref() {
-    //
+  ref(idOrRef: string | Reference) {
+    let id = "";
+    let type = "";
+
+    if (typeof idOrRef === "string") {
+      id = idOrRef;
+    } else {
+      id = idOrRef.id;
+    }
+
+    const state = this.vault.getState();
+    const realType = state.iiif.mapping[id];
+
+    if (!realType) {
+      type = "unknown";
+    } else {
+      type = realType;
+    }
+
+    return new ReferencedResource({ id, type }, this.vault);
   }
 
-  embed() {
-    // Created embed resource
+  embed(data: any) {
+    return new CreatorResource(data, this.vault);
   }
 
-  create() {
-    // Creates a resource from the create config.
-    // Creates a Creator Runtime
-    // Pulls out the final CreatorResource
-  }
-}
+  async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource> {
+    const foundDefinition = this.configs.find((t) => t.id === definition);
+    if (!foundDefinition) {
+      throw new Error(`Creator config ${definition} not found`);
+    }
 
-class CreatorResource {
-  warnings: string[] = [];
-  errors: string[] = [];
-  // This is what is returned from the creator instance
-  get() {
-    //
-  }
+    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, options);
 
-  ref() {
-    //
-  }
-
-  getAllEmbeddedResources() {
-    //
-  }
-
-  getResource() {
-    //
-  }
-}
-
-class CreatorRuntime {
-  // This will hold state for the creation process
-
-  run(): Promise<CreatorResource> {
-    // Runs the definition (with creator instance)
-    throw new Error("Not implemented");
-  }
-
-  commit(): Reference {
-    // this will actually save the changes to the vault.
-    throw new Error("Not implemented");
+    return await runtime.run();
   }
 }
-
-// CreatorRuntime
-//  - Make a CreatorInstance
-//  - calls `create()`
-// CreatorInstance
-//  - Creates CreatorRuntime (for nested items)
-//  - Holds creator resources
-//  -

@@ -16,17 +16,29 @@ export const canvasListing: LayoutPanel = {
 };
 
 export function CanvasListing() {
-  const { edit } = useLayoutActions();
+  const { edit, create } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
 
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
 
-  console.log(structural.items.get());
-
   return (
     <div>
       <div>{manifest ? <Button onClick={() => edit(manifest)}>Edit manifest</Button> : null}</div>
+
+      <div>
+        {manifest ? (
+          <Button onClick={() => create({ type: "ContentResource", parent: manifest, property: "seeAlso" })}>
+            Create thing.
+          </Button>
+        ) : null}
+
+        {manifest ? (
+          <Button onClick={() => create({ type: "Canvas", parent: manifest, property: "items" })}>
+            Create canvas.
+          </Button>
+        ) : null}
+      </div>
 
       <ReorderList
         id="canvas-list"

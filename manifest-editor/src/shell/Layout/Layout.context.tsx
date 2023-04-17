@@ -157,6 +157,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
         id: "@manifest-editor/creator",
         stacked: true,
         unique: true,
+        state: resource,
       });
     }
   }

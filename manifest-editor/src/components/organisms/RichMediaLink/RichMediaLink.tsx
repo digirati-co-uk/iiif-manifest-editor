@@ -3,6 +3,7 @@ import { RichMediaLinkStyles } from "./RichMediaLink.styles";
 
 export interface RichMediaLinkProps {
   icon?: string | ReactNode;
+  margin?: boolean;
   iconLabel?: string;
   title: string | ReactNode;
   link: string;
@@ -14,6 +15,7 @@ export interface RichMediaLinkProps {
 export function RichMediaLink(props: RichMediaLinkProps) {
   return (
     <RichMediaLinkStyles.Container
+      data-margin={props.margin}
       onClick={props.onClick}
       $interactive={!!props.onClick}
       {...((props.containerProps as any) || {})}

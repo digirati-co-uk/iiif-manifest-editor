@@ -34,5 +34,7 @@ export const Default = () => (
         },
       },
     ]}
-  />
+  >
+    Menu
+  </AppDropdown>
 );
