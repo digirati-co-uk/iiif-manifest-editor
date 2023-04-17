@@ -1,5 +1,5 @@
 import { ResourceProvider } from "react-iiif-vault";
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { ReorderListItem } from "@/_components/ui/ReorderListItem/ReorderListItem.dndkit";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
@@ -27,7 +27,7 @@ export interface ReorderListProps {
 }
 
 export function ReorderList({
-  items,
+  items: _items,
   renderItem,
   id,
   reorder,
@@ -42,13 +42,17 @@ export function ReorderList({
     })
   );
 
+  const items = useMemo(() => {
+    return _items.map((t) => toRef(t) as any);
+  }, [_items]);
+
   const onDragEnd = useCallback(
     (result: DragEndEvent) => {
       const { active, over } = result;
-      if (over && active.id !== over.id) {
+      if (over && active.data.current?.ref !== over.data.current?.ref) {
         reorder({
-          startIndex: items.findIndex((t) => toRef(t)?.id === active.id),
-          endIndex: items.findIndex((t) => toRef(t)?.id === over.id),
+          startIndex: items.indexOf(active.data.current?.ref),
+          endIndex: items.indexOf(over.data.current?.ref),
         });
       }
     },
@@ -64,22 +68,21 @@ export function ReorderList({
       onDragEnd={onDragEnd}
       modifiers={[restrictToVerticalAxis]}
     >
-      <SortableContext items={items.map((t) => toRef(t) as any)} strategy={verticalListSortingStrategy}>
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
         {items.map((item, idx) => {
-          const ref = toRef(item);
-          if (!ref) {
+          if (!item) {
             return null;
           }
           return (
             <ReorderListItem
-              key={ref.id as string}
-              id={ref.id as string}
+              key={item.id as string}
+              item={item}
               inlineHandle={inlineHandle}
               reorderEnabled={enabled}
-              actions={createActions ? createActions(ref, idx, item) : undefined}
+              actions={createActions ? createActions(item, idx, item) : undefined}
               marginBottom={marginBottom}
             >
-              <ResourceProvider value={{ [ref.type]: ref.id }}>{renderItem(ref, idx, item)}</ResourceProvider>
+              <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
             </ReorderListItem>
           );
         })}

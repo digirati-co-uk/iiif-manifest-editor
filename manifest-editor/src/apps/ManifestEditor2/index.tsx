@@ -10,6 +10,7 @@ import { baseCreator } from "@/_panels/right-panels/BaseCreator";
 import { webPageCreator } from "@/_creators/WebPageCreator";
 import { linkingProperties } from "@/_editors/LinkingProperties";
 import { plaintextCreator } from "@/_creators/PlaintextCreator";
+import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
@@ -21,7 +22,14 @@ export const centerPanels: LayoutPanel[] = [
     render: () => <CompatibilityTable />,
   },
 ];
-export const leftPanels: LayoutPanel[] = [canvasListing];
+export const leftPanels: LayoutPanel[] = [
+  canvasListing,
+  {
+    id: "image-grid",
+    label: "Image grid",
+    render: () => <ManifestItemsGrid />,
+  },
+];
 export const rightPanels: LayoutPanel[] = [
   {
     id: "right-panel-empty",

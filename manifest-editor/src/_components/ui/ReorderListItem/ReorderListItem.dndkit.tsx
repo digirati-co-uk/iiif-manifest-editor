@@ -6,10 +6,11 @@ import { MoreMenu } from "@/icons/MoreMenu";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { AppDropdown, AppDropdownItem } from "../AppDropdown/AppDropdown";
+import { Reference } from "@iiif/presentation-3";
 
 interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   as?: any;
-  id: string;
+  item: Reference;
   children: ReactNode;
   reorderEnabled?: boolean;
 
@@ -21,15 +22,22 @@ interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttribu
 }
 export function ReorderListItem({
   children,
-  id,
   as,
+  item,
   reorderEnabled,
   inlineHandle,
   actions,
   marginBottom,
   ...props
 }: ReorderListItemProps) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
+    id: item.id,
+    data: { ref: item },
+    transition: {
+      duration: 150,
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+    },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
