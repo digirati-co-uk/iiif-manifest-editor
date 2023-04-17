@@ -8,6 +8,7 @@ const Container = css`
   background-color: inherit;
   gap: 0.875em;
   width: 100%;
+  max-width: 100%;
   cursor: pointer;
   flex: 1;
   overflow-y: auto;

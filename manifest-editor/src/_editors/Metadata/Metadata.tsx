@@ -1,4 +1,5 @@
 import { ReorderList } from "@/_components/ui/ReorderList/ReorderList.dndkit";
+import { Button } from "@/atoms/Button";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 import { hash } from "@/helpers/hash";
@@ -25,17 +26,17 @@ export function Metadata() {
         id={descriptive.metadata.focusId()}
         inlineHandle={false}
         items={items}
-        renderItem={(_, idx, e: any) => (
+        renderItem={(e: any, idx, e2: any) => (
           <>
             <h4>{getValue(e.label)}</h4>
             <LanguageFieldEditor
-              focusId={_.id}
+              focusId={e.id}
               label={"Label"}
               fields={e.label || { none: [] }}
               onSave={(label: any) => descriptive.metadata.update(idx, label.toInternationalString(), e.value)}
             />
             <LanguageFieldEditor
-              focusId={_.id + "_value"}
+              focusId={e.id + "_value"}
               label={"Value"}
               fields={e.value || { none: [] }}
               onSave={(value: any) => descriptive.metadata.update(idx, e.label, value.toInternationalString())}
@@ -43,6 +44,8 @@ export function Metadata() {
           </>
         )}
       />
+
+      <Button onClick={() => descriptive.metadata.add({ en: [""] }, { en: [""] })}>Add metadata item</Button>
     </PaddedSidebarContainer>
   );
 }

@@ -18,7 +18,7 @@ import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 
 export interface ReorderListProps {
   id: string;
-  items: (Reference | SpecificResource)[];
+  items: Reference[];
   renderItem: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
   inlineHandle?: boolean;
   reorder: (result: { startIndex: number; endIndex: number }) => void;
@@ -27,7 +27,7 @@ export interface ReorderListProps {
 }
 
 export function ReorderList({
-  items: _items,
+  items,
   renderItem,
   id,
   reorder,
@@ -41,10 +41,6 @@ export function ReorderList({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
-  const items = useMemo(() => {
-    return _items.map((t) => toRef(t) as any);
-  }, [_items]);
 
   const onDragEnd = useCallback(
     (result: DragEndEvent) => {
