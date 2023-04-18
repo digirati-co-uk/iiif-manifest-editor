@@ -7,7 +7,7 @@ import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 interface ContentResourceListProps {
   id?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
-  list: Array<Reference | SpecificResource>;
+  list: Array<Reference>;
   reorder?: (ctx: { startIndex: number; endIndex: number }) => void;
   createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
   inlineHandle?: boolean;

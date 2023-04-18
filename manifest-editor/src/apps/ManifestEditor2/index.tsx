@@ -7,10 +7,13 @@ import { imageEditor } from "@/_editors/ImageEditor";
 import { CompatibilityTable } from "@/_panels/center-panels/CompatibilityTable/CompatibilityTable";
 import { metadata } from "@/_editors/Metadata";
 import { baseCreator } from "@/_panels/right-panels/BaseCreator";
-import { webPageCreator } from "@/_creators/WebPageCreator";
+import { webPageCreator } from "@/_creators/ContentResource/WebPageCreator";
 import { linkingProperties } from "@/_editors/LinkingProperties";
-import { plaintextCreator } from "@/_creators/PlaintextCreator";
+import { plaintextCreator } from "@/_creators/ContentResource/PlaintextCreator";
 import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
+import { canvasStructuralProperties, manifestStructuralProperties } from "../../_editors/StructuralProperties";
+import { emptyCanvas } from "../../_creators/Canvas/EmptyCanvas";
+import { mediaEditor } from "../../_editors/MediaEditor";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
@@ -41,8 +44,17 @@ export const rightPanels: LayoutPanel[] = [
   baseCreator,
 ];
 
-export const editors = [imageEditor, descriptiveProperties, metadata, technicalProperties, linkingProperties];
+export const editors = [
+  imageEditor,
+  mediaEditor,
+  descriptiveProperties,
+  metadata,
+  technicalProperties,
+  linkingProperties,
+  manifestStructuralProperties,
+  canvasStructuralProperties,
+];
 
-export const creators = [webPageCreator, plaintextCreator];
+export const creators = [webPageCreator, plaintextCreator, emptyCanvas];
 
-export const resources = ["Manifest", "Canvas", "ContentResource", "Agent"];
+export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation"];

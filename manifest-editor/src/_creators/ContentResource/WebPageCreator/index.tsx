@@ -1,6 +1,6 @@
 import { CreatorDefinition } from "@/creator-api";
 import { CreateWebPageForm, createWebPage } from "./create-web-page";
-import linkIcon from "../../icons/LinkIcon.svg";
+import linkIcon from "../../../icons/LinkIcon.svg";
 
 export const webPageCreator: CreatorDefinition = {
   id: "@manifest-editor/web-page-creator",

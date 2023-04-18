@@ -38,7 +38,7 @@ export interface CreatorDefinition {
   create: (payload: any, ctx: CreatorInstance) => any | Promise<any>;
   validate?: (payload: any, vault: Vault) => void | Promise<void>;
 
-  render: (ctx: CreatorContext) => ReactNode;
+  render?: (ctx: CreatorContext) => ReactNode;
   renderCanvas?: (ctx: CreatorContext) => ReactNode | null;
   renderModal?: (ctx: CreatorContext) => ReactNode;
 

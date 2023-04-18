@@ -3,7 +3,7 @@ import { useApps } from "@/shell/AppContext/AppContext";
 import { CreatableResource } from "@/shell/EditingStack/EditingStack.types";
 import { useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
 import { Vault } from "@iiif/vault/*";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { baseCreatorStyles as $ } from "./BaseCreator.styles";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
@@ -96,7 +96,10 @@ export function useCreator(parent: any, property: string, type: string) {
   return [canCreate, { create: wrappedCreate, edit: wrappedEdit }] as const;
 }
 
-export function RenderCreator(props: { resource: CreatableResource; creator: CreatorDefinition }) {
+export const RenderCreator = memo(function RenderCreator(props: {
+  resource: CreatableResource;
+  creator: CreatorDefinition;
+}) {
   const vault = useVault();
   const { apps, currentApp } = useApps();
   const { edit, rightPanel } = useLayoutActions();
@@ -126,11 +129,17 @@ export function RenderCreator(props: { resource: CreatableResource; creator: Cre
   };
 
   const validate = async () => {
-    console.log("Run validate");
     return true;
   };
 
   if (isCreating) {
+    return <div>Creating...</div>;
+  }
+
+  if (!props.creator.render) {
+    console.log("RUN CREATE");
+    runCreate({});
+    setIsCreating(true);
     return <div>Creating...</div>;
   }
 
@@ -144,7 +153,7 @@ export function RenderCreator(props: { resource: CreatableResource; creator: Cre
       })}
     </>
   );
-}
+});
 
 export function BaseCreator(props: BaseCreatorProps) {
   const { apps, currentApp } = useApps();

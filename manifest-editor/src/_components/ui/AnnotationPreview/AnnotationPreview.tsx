@@ -3,11 +3,18 @@ import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
-import { AnnotationNormalized } from "@iiif/presentation-3";
+import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 import { getAnnotationType } from "@/helpers/get-annotation-type";
+import { isSpecificResource, toRef } from "@iiif/parser";
 
-export function AnnotationPreview({ onClick }: { onClick?: (annotation: AnnotationNormalized) => void }) {
+export function AnnotationPreview({
+  onClick,
+  margin,
+}: {
+  onClick?: (annotation: AnnotationNormalized) => void;
+  margin?: boolean;
+}) {
   const annotation = useAnnotation();
   const thumbnail = useAnnotationThumbnail();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
@@ -20,10 +27,12 @@ export function AnnotationPreview({ onClick }: { onClick?: (annotation: Annotati
 
   const body = annotation?.body;
   const firstBody = body[0] as any;
+  const item = isSpecificResource(firstBody) ? firstBody.source : firstBody;
 
   return (
     <>
       <RichMediaLink
+        margin={margin}
         title={label}
         icon={
           thumbnail ? (
@@ -32,8 +41,8 @@ export function AnnotationPreview({ onClick }: { onClick?: (annotation: Annotati
             </ThumbnailContainer>
           ) : null
         }
-        link={annotation.body[0].id}
-        label={firstBody?.format || firstBody?.type}
+        link={item.id}
+        label={item?.format || item?.type}
         iconLabel="Icon label"
         onClick={
           onClick

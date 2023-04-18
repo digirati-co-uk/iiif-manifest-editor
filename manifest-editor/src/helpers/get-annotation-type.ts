@@ -1,4 +1,4 @@
-import { RenderingStrategy } from "../../../../react-iiif-vault";
+import { RenderingStrategy } from "react-iiif-vault";
 import { parseImageServiceRequest } from "@atlas-viewer/iiif-image-api";
 
 export type SupportedAnnotationTypes =
