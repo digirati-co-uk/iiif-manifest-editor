@@ -236,16 +236,20 @@ async function getImageService(url: string) {
   }
 }
 
-async function getFormat(url: string, capturedContentType?: string) {
+export async function getFormat(url: string, capturedContentType?: string) {
   if (capturedContentType) {
     // we managed to learn this earlier, the image had CORS
     return capturedContentType;
   }
-  // a HEAD request doesn't have CORS issues... well it didn't used to...
-  const response = await fetch(url, { method: "HEAD", mode: "no-cors" });
-  const ct = response.headers.get("Content-type");
-  if (ct) {
-    return ct;
+  try {
+    // a HEAD request doesn't have CORS issues... well it didn't used to...
+    const response = await fetch(url, { method: "HEAD", mode: "no-cors" });
+    const ct = response.headers.get("Content-type");
+    if (ct) {
+      return ct;
+    }
+  } catch (e) {
+    // ignore.
   }
 
   // if the above still fails, we could fall back to guessing
@@ -257,6 +261,6 @@ async function getFormat(url: string, capturedContentType?: string) {
   if (test.endsWith("png")) {
     return "image/png";
   }
-  // etc - probably a library to do this
-  return "image/unknown";
+  // Just a default.
+  return "image/jpeg";
 }

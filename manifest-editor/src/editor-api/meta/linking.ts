@@ -45,7 +45,7 @@ const notAllowed: LinkingMap = {
   Range: ["services", "logo"],
   AnnotationCollection: ["start", "supplementary", "services", "logo"],
   ContentResource: ["start", "supplementary", "services", "logo"],
-  Agent: ["service", "homepage", "rendering", "partOf", "services"],
+  Agent: ["service", "homepage", "rendering", "partOf", "services", "start", "supplementary"],
 } as const;
 
 type LinkingMap = Record<

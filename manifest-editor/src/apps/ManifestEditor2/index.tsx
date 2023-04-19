@@ -14,6 +14,7 @@ import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
 import { canvasStructuralProperties, manifestStructuralProperties } from "../../_editors/StructuralProperties";
 import { emptyCanvas } from "../../_creators/Canvas/EmptyCanvas";
 import { mediaEditor } from "../../_editors/MediaEditor";
+import { allCreators } from "@/_creators";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
@@ -55,6 +56,6 @@ export const editors = [
   canvasStructuralProperties,
 ];
 
-export const creators = [webPageCreator, plaintextCreator, emptyCanvas];
+export const creators = allCreators;
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation"];

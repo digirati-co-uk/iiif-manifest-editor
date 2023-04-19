@@ -8,10 +8,6 @@ import {
 import { BaseEditor } from "./BaseEditor";
 import { DescriptiveEditor } from "./DescriptiveEditor";
 import { EditorConfig, EntityValidationResponse, TrackerState } from "./types";
-import { descriptiveProperties } from "./meta/descriptive";
-import { technicalProperties } from "./meta/technical";
-import { linkingProperties } from "./meta/linking";
-import { structuralProperties } from "./meta/structural";
 import { PropertyObserver } from "./PropertyObserver";
 import { SelfReferenceEditor } from "./SelfReferenceEditor";
 import { TechnicalEditor } from "./TechnicalPropertiesEditor";
@@ -20,6 +16,7 @@ import { LinkingEditor } from "./LinkingEditor";
 import { StructuralEditor } from "./StructuralEditor";
 import { Vault } from "@iiif/vault";
 import { resources } from "./meta/resources";
+import { AnnotationEditor } from "@/editor-api/AnnotationEditor";
 
 export class EditorInstance<
   T extends Partial<DescriptiveProperties> &
@@ -32,6 +29,7 @@ export class EditorInstance<
   metadata: MetadataEditor<T>;
   linking: LinkingEditor<T>;
   structural: StructuralEditor<T>;
+  annotation!: AnnotationEditor;
   required: (keyof T)[];
   recommended: (keyof T)[];
   notAllowed: string[];
@@ -67,6 +65,10 @@ export class EditorInstance<
 
     const type = this.getType() as any;
 
+    if (type === "Annotation") {
+      this.annotation = new AnnotationEditor(config);
+    }
+
     const meta = resources.supported[type as "Manifest"] || resources.getSupported(type);
 
     this.required = meta.required;
@@ -74,6 +76,10 @@ export class EditorInstance<
     this.notAllowed = meta.notAllowed;
     this.allowed = meta.allowed;
     this.optional = meta.optional;
+  }
+
+  ref() {
+    return this.config.reference;
   }
 
   validate() {

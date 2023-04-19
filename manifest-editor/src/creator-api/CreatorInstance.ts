@@ -1,11 +1,12 @@
 import { Vault } from "@iiif/vault";
-import { CreatorDefinition, CreatorOptions } from "./types";
-import { Reference } from "@iiif/presentation-3";
+import { CreatorDefinition, CreatorFunctionContext, CreatorOptions } from "./types";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
+import { v4 } from "uuid";
 
-export class CreatorInstance {
+export class CreatorInstance implements CreatorFunctionContext {
   vault: Vault;
   configs: CreatorDefinition[];
   options: CreatorOptions;
@@ -14,6 +15,31 @@ export class CreatorInstance {
     this.vault = vault;
     this.options = options;
     this.configs = createConfigs;
+  }
+
+  getTarget(): Reference | undefined {
+    return this.options.target || this.options.parent?.resource;
+  }
+
+  getParent(): Reference | undefined {
+    return this.options.parent?.resource;
+  }
+  getParentResource(): SpecificResource | undefined {
+    const parent = this.getParent();
+    if (parent) {
+      return {
+        type: "SpecificResource",
+        source: parent,
+      };
+    }
+  }
+
+  generateId(type: string, parent?: Reference | ReferencedResource) {
+    if (parent && parent instanceof ReferencedResource) {
+      parent = parent.ref();
+    }
+
+    return `${(parent || this.options.parent?.resource)?.id}/${type}/${v4()}`;
   }
 
   ref(idOrRef: string | Reference) {

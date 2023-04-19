@@ -1,4 +1,24 @@
 import { Entities } from "@iiif/vault/actions";
+import {
+  _ServiceNormalized,
+  emptyAgent,
+  emptyAnnotation,
+  emptyAnnotationPage,
+  emptyCanvas,
+  emptyCollection,
+  emptyManifest,
+  emptyRange,
+  emptyService,
+} from "@iiif/parser";
+import {
+  AnnotationNormalized,
+  AnnotationPageNormalized,
+  CanvasNormalized,
+  CollectionNormalized,
+  ManifestNormalized,
+  RangeNormalized,
+  ResourceProviderNormalized,
+} from "@iiif/presentation-3-normalized";
 
 export function resolveType(type: string): keyof Entities {
   switch (type) {
@@ -7,6 +27,7 @@ export function resolveType(type: string): keyof Entities {
     case "Sound":
     case "Dataset":
     case "Text":
+    case "TextualBody":
     case "Composite":
     case "List":
     case "Independents":
@@ -19,4 +40,20 @@ export function resolveType(type: string): keyof Entities {
   }
 
   return type as any;
+}
+
+const emptyTypes = {
+  Annotation: emptyAnnotation,
+  AnnotationPage: emptyAnnotationPage,
+  Canvas: emptyCanvas,
+  Collection: emptyCollection,
+  Manifest: emptyManifest,
+  Range: emptyRange,
+  ResourceProvider: emptyAgent,
+  Service: emptyService,
+};
+
+export function getEmptyType(type: string) {
+  const key = resolveType(type);
+  return emptyTypes[key as "Manifest"] || {};
 }

@@ -60,10 +60,9 @@ export class CreatorRuntime {
 
     for (const item of allItems) {
       const resource = item.getVaultResource();
-
-      console.log("Vault resource", resource);
-
-      if (!resource.type || !resource.id) continue;
+      if (!resource.type || !resource.id) {
+        continue;
+      }
       const type = resolveType(resource.type);
       resources[type] = resources[type] ? resources[type] : {};
       resources[type][resource.id] = resource;
@@ -84,7 +83,6 @@ export class CreatorRuntime {
     const actions = this.getActions();
     this.vault.dispatch(batchActions({ actions: [...actions, ...afterActions] }));
 
-    console.log({ actions, afterActions });
     return this.resource.ref();
   }
 }

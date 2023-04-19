@@ -1,6 +1,7 @@
 import { CreatorDefinition } from "@/creator-api";
 import { ThumbnailStripIcon } from "../../../icons/ThumbnailStripIcon";
 import { CreatorFunctionContext } from "../../../creator-api";
+import { InternationalString } from "@iiif/presentation-3";
 
 export const emptyCanvas: CreatorDefinition = {
   id: "@manifest-editor/empty-canvas",
@@ -13,23 +14,26 @@ export const emptyCanvas: CreatorDefinition = {
   supports: {},
 };
 
-async function createEmptyCanvas(data: unknown, ctx: CreatorFunctionContext) {
-  console.log("ctx", ctx);
+interface EmptyCanvasPayload {
+  label?: InternationalString;
+  width?: number;
+  height?: number;
+}
 
-  const ref = ctx.create("@manifest-editor/plaintext-creator", { url: '...' });
+async function createEmptyCanvas(data: EmptyCanvasPayload, ctx: CreatorFunctionContext) {
+  const canvasId = ctx.generateId("canvas");
   const page = ctx.embed({
-    id: `https://example.org/canvas/${Date.now()}/page`,
+    id: ctx.generateId("annotation-page", { id: canvasId, type: "Canvas" }),
     type: "AnnotationPage",
     items: [],
   });
 
   return {
-    id: `https://example.org/canvas/${Date.now()}`,
+    id: canvasId,
     type: "Canvas",
-    label: { en: [""] },
-    height: 1000,
-    width: 1000,
+    label: data.label || { en: [""] },
+    height: data.height || 1000,
+    width: data.width || 1000,
     items: [page],
-    seeAlso: [ref],
   };
 }

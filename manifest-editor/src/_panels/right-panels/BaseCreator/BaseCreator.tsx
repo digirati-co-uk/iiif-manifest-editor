@@ -10,6 +10,7 @@ import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { Creator } from "@/creator-api";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { toRef } from "@iiif/parser";
+import { Button } from "@/atoms/Button";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -62,7 +63,6 @@ export function matchBasedOnResource(
     }
   }
 
-  console.log(property, supported);
   return supported;
 }
 
@@ -137,10 +137,11 @@ export const RenderCreator = memo(function RenderCreator(props: {
   }
 
   if (!props.creator.render) {
-    console.log("RUN CREATE");
-    runCreate({});
-    setIsCreating(true);
-    return <div>Creating...</div>;
+    return (
+      <div>
+        <Button onClick={() => runCreate({})}>Create</Button>
+      </div>
+    );
   }
 
   return (

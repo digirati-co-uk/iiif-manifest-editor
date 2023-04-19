@@ -15,6 +15,11 @@ export const mediaEditor: EditorDefinition = {
         return false;
       }
       const body = vault.get(item.body);
+
+      if (body.length > 1) {
+        return false;
+      }
+
       const firstBody = body[0] || body;
 
       return ["Image", "Video", "Sound"].includes(firstBody.type || "");

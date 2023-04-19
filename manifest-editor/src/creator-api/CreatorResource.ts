@@ -1,10 +1,9 @@
 import { references } from "@/editor-api/meta/references";
 import { Vault } from "@iiif/vault";
 import { ReferencedResource } from "./ReferencedResource";
-import { CreatorFunctionContext } from "./types";
-import { resolveType } from "./utils";
+import { getEmptyType, resolveType } from "./utils";
 
-export class CreatorResource implements CreatorFunctionContext {
+export class CreatorResource {
   resource: any;
   warnings: string[] = [];
   errors: string[] = [];
@@ -15,6 +14,7 @@ export class CreatorResource implements CreatorFunctionContext {
   constructor(data: any, vault: Vault) {
     this.vault = vault;
     const properties = Object.keys(data);
+    const defaultType = getEmptyType(data.type);
     for (const key of properties) {
       // These properties are NOT references and can be just included normally.
       if (references.inlineProperties.includes(key) || !references.all.includes(key)) {
@@ -100,7 +100,7 @@ export class CreatorResource implements CreatorFunctionContext {
         data[key] = newItems;
       }
     }
-    this.resource = data;
+    this.resource = { ...defaultType, ...data };
   }
 
   // This is what is returned from the creator instance
@@ -109,7 +109,7 @@ export class CreatorResource implements CreatorFunctionContext {
   }
 
   ref() {
-    return { id: this.resource.id, type: resolveType(this.resource.type as string) };
+    return { id: this.resource.id, type: resolveType(this.resource.type as string) as any };
   }
 
   getAllReferencedResources() {

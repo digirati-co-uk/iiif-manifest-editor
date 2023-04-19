@@ -1,21 +1,25 @@
 import { Vault } from "@iiif/vault";
 import { ReactNode } from "react";
 import { CreatorInstance } from "./CreatorInstance";
-import { Reference } from "@iiif/presentation-3";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { ReferencedResource } from "./ReferencedResource";
 import { CreatorResource } from "./CreatorResource";
 
-export interface CreatorContext {
+export interface CreatorContext<T = any> {
   vault: Vault;
   options: CreatorOptions;
-  validate: (payload: any) => Promise<boolean> | boolean;
-  runCreate: (payload: any) => void;
+  validate: (payload: T) => Promise<boolean> | boolean;
+  runCreate: (payload: T) => void;
 }
 
 export interface CreatorFunctionContext {
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
   create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource>;
+  generateId(type: string, parent?: Reference | ReferencedResource): string;
+  getParent(): Reference | undefined;
+  getTarget(): Reference | undefined;
+  getParentResource(): SpecificResource | undefined;
 }
 
 interface CreatorParent {
@@ -25,6 +29,7 @@ interface CreatorParent {
 }
 export interface CreatorOptions {
   targetType: string;
+  target?: Reference;
   parent?: CreatorParent;
 }
 
@@ -34,6 +39,7 @@ export interface CreatorDefinition {
   label: string;
   summary?: string;
   icon?: any;
+  dependencies?: string[];
 
   create: (payload: any, ctx: CreatorInstance) => any | Promise<any>;
   validate?: (payload: any, vault: Vault) => void | Promise<void>;

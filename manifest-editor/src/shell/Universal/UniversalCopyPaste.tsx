@@ -1,7 +1,6 @@
 import { HTMLAttributes, useCallback, useMemo } from "react";
 import { UniversalCopyPasteProps } from "./UniversalCopyPaste.types";
-import { analyse, analyseJson } from "../../helpers/analyse";
-import { useVault } from "../../../../../react-iiif-vault";
+import { analyse } from "../../helpers/analyse";
 
 export function UniversalCopyTarget<T>({
   as,

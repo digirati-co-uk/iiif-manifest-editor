@@ -8,6 +8,7 @@ import { BehaviorEditor } from "./BehaviorEditor";
 export class TechnicalEditor<T extends Partial<TechnicalProperties>> extends BaseEditor<T> {
   id: ReadonlyProperty<T, string>;
   type: string;
+  mediaType: BasePropertyEditor<T, string>;
   format: BasePropertyEditor<T, string>;
   profile: BasePropertyEditor<T, string>;
   height: BasePropertyEditor<T, number>;
@@ -23,6 +24,7 @@ export class TechnicalEditor<T extends Partial<TechnicalProperties>> extends Bas
 
     this.id = new ReadonlyProperty(config, "id");
     this.type = this.entity().type || config.reference.type;
+    this.mediaType = new BasePropertyEditor(config, "type");
 
     this.format = new BasePropertyEditor(config, "format");
     this.profile = new BasePropertyEditor(config, "profile");

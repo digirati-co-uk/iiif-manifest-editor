@@ -6,6 +6,7 @@ const externalProperties = [
   "supplementary",
   "homepage",
   "logo",
+  "body",
   "annotations",
 ];
 
@@ -35,6 +36,7 @@ const all = [
   "rendering",
   "partOf",
   "start",
+  "body",
   "supplementary",
   "homepage",
   "logo",

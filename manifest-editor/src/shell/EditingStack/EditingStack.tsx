@@ -4,7 +4,8 @@ import { editingStackReducer } from "@/shell/EditingStack/EditingStack.reducer";
 import { EditorInstance } from "@/editor-api/EditorInstance";
 import invariant from "tiny-invariant";
 import { useManifest, useResourceContext, useVault } from "react-iiif-vault";
-import { Reference } from "@iiif/presentation-3";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
 const EditingStackContext = createContext<EditingStackState>(defaultState);
@@ -60,7 +61,7 @@ export function useManifestEditor() {
   return editor;
 }
 
-export function useGenericEditor(ref: Reference) {
+export function useGenericEditor(ref: Reference<any> | SpecificResource) {
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
@@ -68,7 +69,7 @@ export function useGenericEditor(ref: Reference) {
 
   const editor = useMemo(() => {
     return new EditorInstance({
-      reference: ref,
+      reference: toRef(ref) as any,
       vault,
     });
   }, [ref, vault]);
