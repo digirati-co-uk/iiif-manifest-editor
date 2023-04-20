@@ -1,5 +1,5 @@
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource, toRef } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
@@ -7,7 +7,7 @@ import { CanvasContext } from "react-iiif-vault";
 
 interface CanvasListProps {
   id?: string;
-  list: Array<Reference>;
+  list: Array<Reference | ({ id: string } & SpecificResource)>;
   reorder?: (result: { startIndex: number; endIndex: number }) => void;
   inlineHandle?: boolean;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
@@ -24,7 +24,7 @@ export function CanvasList(props: CanvasListProps) {
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
         renderItem={(ref, index) => (
-          <CanvasContext canvas={ref.id}>
+          <CanvasContext canvas={toRef(ref)?.id as string}>
             <CanvasListPreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
           </CanvasContext>
         )}
@@ -39,7 +39,7 @@ export function CanvasList(props: CanvasListProps) {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
           <CanvasContext canvas={ref.id}>
-            <CanvasListPreview margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
+            <CanvasListPreview margin key={item.id} onClick={() => props.onSelect(ref, idx)} />
           </CanvasContext>
         );
       })}

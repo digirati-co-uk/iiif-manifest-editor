@@ -16,17 +16,17 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 
-export interface ReorderListProps {
+export interface ReorderListProps<T extends { id: string; type?: string }> {
   id: string;
-  items: Reference[];
-  renderItem: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
+  items: T[];
+  renderItem: (ref: T, index: number, item: T) => ReactNode;
   inlineHandle?: boolean;
   reorder: (result: { startIndex: number; endIndex: number }) => void;
-  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  createActions?: (ref: T, index: number, item: T) => AppDropdownItem[];
   marginBottom?: string | number;
 }
 
-export function ReorderList({
+export function ReorderList<T extends { id: string; type?: string }>({
   items,
   renderItem,
   id,
@@ -34,7 +34,7 @@ export function ReorderList({
   inlineHandle = true,
   createActions,
   marginBottom,
-}: ReorderListProps) {
+}: ReorderListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -78,7 +78,11 @@ export function ReorderList({
               actions={createActions ? createActions(item, idx, item) : undefined}
               marginBottom={marginBottom}
             >
-              <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
+              {item.type ? (
+                <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
+              ) : (
+                renderItem(item, idx, item)
+              )}
             </ReorderListItem>
           );
         })}

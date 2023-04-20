@@ -6,11 +6,10 @@ import { MoreMenu } from "@/icons/MoreMenu";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { AppDropdown, AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { Reference } from "@iiif/presentation-3";
 
 interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   as?: any;
-  item: Reference;
+  item: { id: string; type?: string };
   children: ReactNode;
   reorderEnabled?: boolean;
 

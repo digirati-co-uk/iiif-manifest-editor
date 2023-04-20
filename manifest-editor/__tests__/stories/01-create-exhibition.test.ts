@@ -159,7 +159,7 @@ describe("Creation of Delft exhibition", () => {
 
     // 1. Create a canvas from YouTube video.
     const canvas = await creator.create(
-      "@manifest-editor/youtube-canvas",
+      "@manifest-editor/youtube",
       {
         label: { en: ["Youtube video"] },
         youtubeUrl: "https://www.youtube.com/watch?v=kv6YvKPXQzk",
@@ -167,7 +167,7 @@ describe("Creation of Delft exhibition", () => {
         width: 1080,
         duration: 10,
       },
-      { parent: { resource: manifest, property: "items" } }
+      { parent: { resource: manifest, property: "items" }, targetType: "Canvas" }
     );
 
     const annotationPage = vault.get(canvas).items[0];

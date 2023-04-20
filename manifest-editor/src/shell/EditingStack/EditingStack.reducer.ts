@@ -3,6 +3,13 @@ import { EditingStackActionCreators, EditingStackState } from "@/shell/EditingSt
 export function editingStackReducer(state: EditingStackState, action: EditingStackActionCreators): EditingStackState {
   switch (action.type) {
     case "edit": {
+      if (state.current?.resource.source.id === action.payload.resource?.resource.source.id) {
+        return {
+          ...state,
+          current: action.payload.resource,
+        };
+      }
+
       return {
         ...state,
         current: action.payload.resource,

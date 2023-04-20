@@ -8,6 +8,9 @@ export const InputLabel = styled.label<{
   $inline?: boolean;
   $margin?: boolean;
 }>`
+  position: sticky;
+  top: 0;
+  background: #fff;
   letter-spacing: -0.3px;
   font-weight: 500;
   line-height: 2.4em;

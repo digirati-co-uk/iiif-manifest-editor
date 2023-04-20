@@ -1,6 +1,7 @@
 import { CreatorDefinition } from "@/creator-api";
 import { TextFormatIcon } from "@/icons/TextFormatIcon";
 import { CreateImageServiceAnnotationForm, createImageSericeAnnotation } from "./create-service-annotation";
+import { resizeResourceToEmptyCanvas } from "@/_creators/side-effects/resize-resource-to-empty-canvas";
 
 // @todo combine this with the content resource one.
 export const imageServiceAnnotation: CreatorDefinition = {
@@ -19,6 +20,7 @@ export const imageServiceAnnotation: CreatorDefinition = {
     parentTypes: ["AnnotationPage"],
     parentFields: ["items"],
   },
+  sideEffects: [resizeResourceToEmptyCanvas],
   staticFields: {
     type: "Annotation",
   },

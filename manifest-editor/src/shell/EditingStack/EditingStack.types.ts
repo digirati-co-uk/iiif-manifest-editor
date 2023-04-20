@@ -15,6 +15,7 @@ export interface CreatableResource {
   index?: number;
   onlyReference?: boolean;
   target?: Reference;
+  initialData?: any;
 }
 
 export interface EditingStackState {

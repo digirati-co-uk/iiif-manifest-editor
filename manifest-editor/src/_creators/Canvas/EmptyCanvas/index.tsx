@@ -11,7 +11,9 @@ export const emptyCanvas: CreatorDefinition = {
   icon: <ThumbnailStripIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
-  supports: {},
+  supports: {
+    parentTypes: ["Manifest"],
+  },
 };
 
 interface EmptyCanvasPayload {

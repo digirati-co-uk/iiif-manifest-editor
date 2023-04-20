@@ -61,7 +61,10 @@ export function useManifestEditor() {
   return editor;
 }
 
-export function useGenericEditor(ref: Reference<any> | SpecificResource) {
+export function useGenericEditor(
+  ref: Reference<any> | SpecificResource | undefined,
+  ctx: { parent?: Reference; parentProperty?: string; index?: number } = {}
+) {
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
@@ -71,6 +74,7 @@ export function useGenericEditor(ref: Reference<any> | SpecificResource) {
     return new EditorInstance({
       reference: toRef(ref) as any,
       vault,
+      context: { resource: ref, parent: ctx.parent, index: ctx.index, parentProperty: ctx.parentProperty },
     });
   }, [ref, vault]);
 

@@ -52,7 +52,11 @@ export function MediaEditor() {
   // This is for an annotation
   const annotationEditor = useEditor();
   const resourceRef = annotationEditor.annotation.body.getFirst();
-  const resourceEditor = useGenericEditor(resourceRef);
+  const resourceEditor = useGenericEditor(resourceRef, {
+    parentProperty: "body",
+    parent: annotationEditor.ref(),
+    index: 0,
+  });
 
   const { id, width, height, mediaType: type, format, duration } = resourceEditor.technical;
   const { service } = resourceEditor.linking;
@@ -183,7 +187,6 @@ export function MediaEditor() {
           </ButtonGroup>
         </InputContainer>
       ) : null}
-
       {currentSelector && currentSelector.type === "BoxSelector" ? (
         <InputContainer wide>
           <BoxSelectorField

@@ -1,4 +1,12 @@
-import { CanvasPanel, CanvasContext, useManifest, AnnotationContext, useVault, useCanvas } from "react-iiif-vault";
+import {
+  CanvasPanel,
+  CanvasContext,
+  useManifest,
+  AnnotationContext,
+  useVault,
+  useCanvas,
+  useAnnotation,
+} from "react-iiif-vault";
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { DefaultPresetOptions, Runtime } from "@atlas-viewer/atlas";
 import { ErrorBoundary } from "react-error-boundary";
@@ -21,13 +29,15 @@ import { useTaskRunner } from "@/shell/TaskBridge/TaskBridge";
 
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
+  highlightAnnotation?: string;
 }
 
-export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) {
+export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation }: CanvasPanelViewerProps) {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
   const canvas = useCanvas();
+  const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
   const { rightPanel } = useLayoutState();
   const [editMode, toggleEditMode] = useReducer((a) => !a, false);
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
@@ -41,24 +51,49 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
     refresh();
     complete();
   });
+  const timeout = useRef<any>();
+  const editModeRef = useRef(editMode);
+
+  editModeRef.current = editMode;
+
+  useEffect(() => {
+    if (runtime.current) {
+      if (!annotation) {
+        runtime?.current.world.goHome();
+      } else {
+        console.log((annotation.target as any).selector);
+        if (
+          annotation.target &&
+          (annotation.target as any).selector &&
+          (annotation.target as any).selector.type === "BoxSelector"
+        ) {
+          runtime.current.world.gotoRegion({
+            ...((annotation.target as any).selector.spatial as any),
+            padding: 100,
+          });
+        }
+        // runtime.current?.
+      }
+    }
+  }, [annotation?.id]);
 
   const canvasId = canvas?.id;
 
-  console.log("canvas id", canvasId);
-
-  const onClickPaintingAnnotation = useCallback(
-    (id: string) => {
-      console.log("on click painting", id);
-
-      //if (editMode) {
+  const onClickPaintingAnnotation = useCallback((id: string) => {
+    if (!editModeRef.current) {
+      return;
+    }
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    timeout.current = setTimeout(() => {
       setAnnotation(id);
-      //}
       if (onEditAnnotation) {
         onEditAnnotation(id);
       }
-    },
-    [editMode]
-  );
+      timeout.current = 0;
+    }, 100);
+  }, []);
 
   useEffect(() => {
     if (!editMode) {
@@ -107,12 +142,12 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
           min-width: 0;
           min-height: 0;
           --atlas-container-flex: 1 1 0px;
-          --atlas-background:  #f9f9f9;
+          --atlas-background:  #E5E7F0;
         }
       `}</style>
         <S.ViewerContainer>
           <CanvasPanel.Viewer
-            key={canvasId}
+            key={`${canvasId}/${canvas?.width}/${canvas?.height}`}
             onCreated={(preset) => void (runtime.current = preset.runtime)}
             renderPreset={config}
             mode={editMode ? "sketch" : "explore"}

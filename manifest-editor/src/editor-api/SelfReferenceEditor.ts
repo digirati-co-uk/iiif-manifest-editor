@@ -19,6 +19,7 @@ const emptyTracker: TrackerState = {
 export class SelfReferenceEditor<T> {
   index: number;
   private editor: BaseReferenceListEditor<T, any>;
+  config: EditorConfig;
 
   constructor(config: EditorConfig) {
     invariant(config.context.parent, "Parent is required");
@@ -33,8 +34,16 @@ export class SelfReferenceEditor<T> {
       },
       config.context.parentProperty
     );
-
+    this.config = config;
     this.index = config.context.index;
+  }
+
+  getSelector() {
+    const resource = this.config.context.resource;
+    if (resource.selector) {
+      return resource.selector;
+    }
+    return null;
   }
 
   updateReference(reference: Reference | SpecificResource) {

@@ -6,16 +6,17 @@ import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { EmptyState } from "@/madoc/components/EmptyState";
 import { useToggleList } from "../LinkingProperties/LinkingProperties";
 import { createAppActions } from "../LinkingProperties/LinkingProperties.helpers";
-import { CanvasList } from "../../_components/ui/CanvasList/CanvasList";
-import { LinkingPropertyList } from "@/_components/ui/LinkingPropertyList/LinkingPropertyList";
+import { toRef } from "@iiif/parser";
+import { RangeList } from "@/_components/ui/RangeList/RangeList";
 
-export function ManifestStructuralProperties() {
+export function RangeStructuralProperties() {
   const resource = useEditingResource();
   const { structural, notAllowed } = useEditor();
   const [toggled, toggle] = useToggleList();
 
   const { items, structures } = structural;
 
+  const [canCreateRange, rangeActions] = useCreator(resource?.resource, "items", "Range");
   const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas");
 
   return (
@@ -25,41 +26,31 @@ export function ManifestStructuralProperties() {
           <InputContainer wide>
             {!items.get()?.length ? (
               <>
-                <InputLabel>Canvases</InputLabel>
+                <InputLabel>Ranges</InputLabel>
                 <EmptyState $noMargin $box>
-                  No canvases
+                  No ranges
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                Canvases
+                Ranges
                 <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
               </InputLabel>
             )}
-            <CanvasList
+            <RangeList
               id={items.focusId()}
-              list={items.getSortable() || []}
+              list={items.get()}
               inlineHandle={false}
               reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
-              onSelect={(item, idx) => canvasActions.edit(item, idx)}
+              onSelect={(item, idx) =>
+                toRef(item)?.type === "Canvas" ? canvasActions.edit(item) : rangeActions.edit(item)
+              }
               createActions={createAppActions(items)}
             />
           </InputContainer>
           {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
+          {canCreateRange ? <Button onClick={() => rangeActions.create()}>Add range</Button> : null}
         </>
-      ) : null}
-
-      {!notAllowed.includes("structures") ? (
-        <LinkingPropertyList
-          label="Ranges"
-          property="structures"
-          items={structures.getSortable()}
-          reorder={(ctx) => structures.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(structures)}
-          creationType="Range"
-          emptyLabel="No ranges"
-          parent={resource?.resource}
-        />
       ) : null}
     </PaddedSidebarContainer>
   );

@@ -3,10 +3,11 @@ import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
-import { AnnotationNormalized, AnnotationPageNormalized } from "@iiif/presentation-3-normalized";
+import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 import { getAnnotationType } from "@/helpers/get-annotation-type";
 import { isSpecificResource, toRef } from "@iiif/parser";
+import { getValue } from "@iiif/vault-helpers";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -34,8 +35,6 @@ export function AnnotationPreview({
   const annotation = useAnnotation();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
 
-  console.log(annotation);
-
   if (!annotation) {
     return null;
   }
@@ -50,7 +49,7 @@ export function AnnotationPreview({
     <>
       <RichMediaLink
         margin={margin}
-        title={isValid ? <AnnotationImageType /> : item.type}
+        title={annotation.label ? getValue(annotation.label) : isValid ? <AnnotationImageType /> : item.type}
         icon={isValid ? <AnnotationImageThumbnail /> : null}
         link={item.id}
         label={item?.format || item?.type}

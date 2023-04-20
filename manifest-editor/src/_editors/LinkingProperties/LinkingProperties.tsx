@@ -10,6 +10,9 @@ import { useReducer, useState } from "react";
 import { createAppActions } from "./LinkingProperties.helpers";
 import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { EmptyState } from "@/madoc/components/EmptyState";
+import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { AppDropdownItem } from "@/_components/ui/AppDropdown/AppDropdown";
+import { LinkingPropertyList } from "@/_components/ui/LinkingPropertyList/LinkingPropertyList";
 
 export function useToggleList() {
   const [state, dispatch] = useReducer((prev: any, action: string) => {
@@ -50,95 +53,42 @@ export function LinkingProperties() {
   return (
     <PaddedSidebarContainer>
       {!notAllowed.includes("seeAlso") ? (
-        <>
-          <InputContainer wide>
-            {!seeAlso.get()?.length ? (
-              <>
-                <InputLabel>See also</InputLabel>
-                <EmptyState $noMargin $box>
-                  No see also
-                </EmptyState>
-              </>
-            ) : (
-              <InputLabel>
-                See also
-                <InputLabelEdit data-active={toggled.seeAlso} onClick={() => toggle("seeAlso")} />
-              </InputLabel>
-            )}
-            <ContentResourceList
-              list={seeAlso.get() || []}
-              inlineHandle={false}
-              reorder={toggled.seeAlso ? (ctx) => seeAlso.reorder(ctx.startIndex, ctx.endIndex) : undefined}
-              onSelect={(e, index) => {
-                seeAlsoActions.edit(e, index);
-              }}
-              createActions={createAppActions(seeAlso)}
-            />
-          </InputContainer>
-          {canCreateSeeAlso ? <Button onClick={() => seeAlsoActions.create()}>Add see also</Button> : null}
-        </>
+        <LinkingPropertyList
+          label="See also"
+          property="seeAlso"
+          items={seeAlso.get()}
+          reorder={(ctx) => seeAlso.reorder(ctx.startIndex, ctx.endIndex)}
+          createActions={createAppActions(seeAlso)}
+          creationType="ContentResource"
+          emptyLabel="No see also"
+          parent={resource?.resource}
+        />
       ) : null}
 
       {!notAllowed.includes("rendering") ? (
-        <>
-          <InputContainer wide>
-            {!rendering.get()?.length ? (
-              <>
-                <InputLabel>Rendering</InputLabel>
-                <EmptyState $noMargin $box>
-                  No rendering
-                </EmptyState>
-              </>
-            ) : (
-              <InputLabel>
-                Rendering
-                <InputLabelEdit data-active={toggled.rendering} onClick={() => toggle("rendering")} />
-              </InputLabel>
-            )}
-            <ContentResourceList
-              list={rendering.get() || []}
-              inlineHandle={false}
-              reorder={toggled.rendering ? (ctx) => rendering.reorder(ctx.startIndex, ctx.endIndex) : undefined}
-              onSelect={(e, index) => {
-                renderingActions.edit(e, index);
-              }}
-              createActions={createAppActions(rendering)}
-            />
-          </InputContainer>
-          {canCreateRendering ? <Button onClick={() => renderingActions.create()}>Add rendering</Button> : null}
-        </>
+        <LinkingPropertyList
+          label="Rendering"
+          property="rendering"
+          items={rendering.get()}
+          reorder={(ctx) => rendering.reorder(ctx.startIndex, ctx.endIndex)}
+          createActions={createAppActions(rendering)}
+          creationType="ContentResource"
+          emptyLabel="No rendering"
+          parent={resource?.resource}
+        />
       ) : null}
 
       {!notAllowed.includes("supplementary") ? (
-        <>
-          <InputContainer wide>
-            {!supplementary.get()?.length ? (
-              <>
-                <InputLabel>Supplementary</InputLabel>
-                <EmptyState $noMargin $box>
-                  No supplementary
-                </EmptyState>
-              </>
-            ) : (
-              <InputLabel>
-                Supplementary
-                <InputLabelEdit data-active={toggled.supplementary} onClick={() => toggle("supplementary")} />
-              </InputLabel>
-            )}
-            <ContentResourceList
-              list={supplementary.get() || []}
-              inlineHandle={false}
-              reorder={toggled.supplementary ? (ctx) => supplementary.reorder(ctx.startIndex, ctx.endIndex) : undefined}
-              onSelect={(e, index) => {
-                supplementaryActions.edit(e, index);
-              }}
-              createActions={createAppActions(supplementary)}
-            />
-          </InputContainer>
-          {canCreateSupplementary ? (
-            <Button onClick={() => supplementaryActions.create()}>Add supplementary</Button>
-          ) : null}
-        </>
+        <LinkingPropertyList
+          label="Supplementary"
+          property="supplementary"
+          items={supplementary.get()}
+          reorder={(ctx) => supplementary.reorder(ctx.startIndex, ctx.endIndex)}
+          createActions={createAppActions(supplementary)}
+          creationType="AnnotationCollection"
+          emptyLabel="No supplementary"
+          parent={resource?.resource}
+        />
       ) : null}
 
       {!notAllowed.includes("logo") ? (

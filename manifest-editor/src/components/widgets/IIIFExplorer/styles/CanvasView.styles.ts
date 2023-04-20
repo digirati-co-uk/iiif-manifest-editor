@@ -11,7 +11,7 @@ export const CanvasContainer = css`
     min-width: 0;
     min-height: 0;
     --atlas-container-flex: 1 1 0px;
-    --atlas-background: #f9f9f9;
+    --atlas-background: #e5e7f0;
   }
 
   @container (max-width: 400px) {

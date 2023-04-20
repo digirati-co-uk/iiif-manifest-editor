@@ -13,6 +13,7 @@ export interface CreatorContext<T = any> {
 }
 
 export interface CreatorFunctionContext {
+  options: CreatorOptions;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
   create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource>;
@@ -65,12 +66,14 @@ export interface CreatorDefinition {
     custom?: (parent: CreatorParent, vault: Vault) => boolean;
   };
 
-  sideEffects?: {
-    run?: (result: any, ctx: any) => void | Promise<void>;
-    temporal?: boolean;
-    spatial?: boolean;
-    replaceSiblings?: boolean;
-    canvasInteraction?: boolean;
-    // @todo maybe other side-effects?
-  };
+  sideEffects?: Array<CreatorSideEffect>;
+}
+
+export interface CreatorSideEffect {
+  run?: (result: any, ctx: { options: CreatorOptions; vault: Vault }) => void | Promise<void>;
+  temporal?: boolean;
+  spatial?: boolean;
+  replaceSiblings?: boolean;
+  canvasInteraction?: boolean;
+  // @todo maybe other side-effects?
 }

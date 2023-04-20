@@ -7,6 +7,7 @@ import { RightsStatementEditor } from "./RightsStatementEditor";
 import { NavDateEditor } from "./NavDateEditor";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { InternationalStringEditor } from "./InternationalStringEditor";
+import { BaseReferenceListEditor } from "@/editor-api/BaseReferenceListEditor";
 
 export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends BaseEditor<T> {
   label: InternationalStringEditor<T>;
@@ -16,7 +17,7 @@ export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends
   rights: RightsStatementEditor<T>;
   navDate: NavDateEditor<T>;
   language: BasePropertyEditor<T, string[]>;
-  thumbnail: BasePropertyEditor<T, Reference<"ContentResource">[]>;
+  thumbnail: BaseReferenceListEditor<T, Reference<"ContentResource">>;
   provider: BasePropertyEditor<T, Reference<"Agent">[]>;
   placeholderCanvas: BasePropertyEditor<T, Reference<"Canvas">>;
   accompanyingCanvas: BasePropertyEditor<T, Reference<"Canvas">>;
@@ -33,7 +34,7 @@ export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends
     this.navDate = new NavDateEditor(config);
     this.language = new BasePropertyEditor(config, "language");
 
-    this.thumbnail = new BasePropertyEditor(config, "thumbnail");
+    this.thumbnail = new BaseReferenceListEditor<T, Reference<"ContentResource">>(config, "thumbnail");
     this.provider = new BasePropertyEditor(config, "provider");
     this.placeholderCanvas = new BasePropertyEditor(config, "placeholderCanvas");
     this.accompanyingCanvas = new BasePropertyEditor(config, "accompanyingCanvas");

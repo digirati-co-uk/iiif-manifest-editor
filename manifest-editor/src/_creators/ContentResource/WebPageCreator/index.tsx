@@ -9,7 +9,6 @@ export const webPageCreator: CreatorDefinition = {
   summary: "Add link to an external web page",
   icon: <img src={linkIcon} />,
   render(ctx) {
-    console.log("render", ctx);
     return <CreateWebPageForm {...ctx} />;
   },
   resourceType: "ContentResource",

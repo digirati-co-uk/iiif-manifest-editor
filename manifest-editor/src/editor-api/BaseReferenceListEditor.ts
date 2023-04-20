@@ -2,14 +2,41 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 import { entityActions } from "@iiif/vault/actions";
+import { v4 } from "uuid";
 
 export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entity, T[]> {
+  protected cachedList: T[] | undefined;
+  protected cachedSortableList: Array<Reference | ({ id: string } & SpecificResource)> | undefined;
+  protected idCache = new Map();
   constructor(config: EditorConfig, property: string) {
     super(config, property);
   }
 
   focusId() {
     return `${super.focusId()}_${this.property}_list`;
+  }
+
+  protected _getId(resource: any) {
+    if (this.idCache.has(resource)) {
+      return this.idCache.get(resource);
+    }
+    const newId = v4();
+    this.idCache.set(resource, newId);
+    return newId;
+  }
+
+  getSortable() {
+    const fresh = this.get();
+    if (this.cachedList !== fresh) {
+      this.cachedSortableList = (fresh || []).map((item: any) => {
+        if (item.id) {
+          return item;
+        }
+        return { id: this._getId(item), ...item };
+      });
+    }
+
+    return this.cachedSortableList;
   }
 
   get(): T[] {

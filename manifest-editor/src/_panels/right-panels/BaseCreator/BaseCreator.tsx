@@ -79,9 +79,9 @@ export function useCreator(parent: any, property: string, type: string, target?:
   const canCreate = parent && supported.length !== 0;
 
   const wrappedCreate = useCallback(
-    (index?: number) => {
+    (index?: number, initialData?: any) => {
       if (parent) {
-        create({ type, parent: toRef(parent), property, index, target });
+        create({ type, parent: toRef(parent), property, index, target, initialData });
       }
     },
     [create, parent, property, type]
@@ -120,9 +120,8 @@ export const RenderCreator = memo(function RenderCreator(props: {
         }
       : undefined,
     target: props.resource.target,
+    initialData: props.resource.initialData,
   };
-
-  console.log("options", options);
 
   const runCreate = async (payload: any) => {
     setIsCreating(true);

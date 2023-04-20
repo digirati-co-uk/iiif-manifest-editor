@@ -57,7 +57,7 @@ export class EditorInstance<
     // Not yet supported.
     this.isMultiple = false;
 
-    if (config.context.parent && config.context.parentProperty && config.context.index) {
+    if (config.context.parent && config.context.parentProperty && typeof config.context.index !== "undefined") {
       // @todo still some questions about this one, and keeping the context updated.
       // Very likely to cause unexpected behavior, we NEED to track it and update it.
       this.context = new SelfReferenceEditor(config);

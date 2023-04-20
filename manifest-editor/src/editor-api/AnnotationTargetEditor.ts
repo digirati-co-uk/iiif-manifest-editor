@@ -37,7 +37,7 @@ export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormali
         ...existing,
         selector: {
           type: "FragmentSelector",
-          value: `xywh=${[position.x, position.y, position.width, position.height].join(",")}`,
+          value: `xywh=${[~~position.x, ~~position.y, ~~position.width, ~~position.height].join(",")}`,
         },
       });
     }

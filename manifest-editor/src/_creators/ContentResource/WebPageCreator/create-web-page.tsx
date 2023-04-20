@@ -33,8 +33,6 @@ export function CreateWebPageForm(props: CreatorContext) {
     }
   };
 
-  console.log(props);
-
   return (
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>

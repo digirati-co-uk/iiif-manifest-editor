@@ -69,9 +69,11 @@ export class Creator {
     // Only run side effects if there is a parent
     if (options?.parent) {
       if (foundDefinition.sideEffects) {
-        if (foundDefinition.sideEffects.run) {
-          // @todo we need more in the ctx (like parent/target where this is to be added.)
-          await foundDefinition.sideEffects.run(result, { vault: this.vault, options });
+        for (const sideEffect of foundDefinition.sideEffects) {
+          if (sideEffect.run) {
+            // @todo we need more in the ctx (like parent/target where this is to be added.)
+            await sideEffect.run(result, { vault: this.vault, options });
+          }
         }
       }
     }

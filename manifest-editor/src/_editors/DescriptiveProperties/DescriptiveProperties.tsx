@@ -1,19 +1,18 @@
-import { ContentResourceList } from "@/_components/ui/ContentResourceList/ContentResourceList";
 import { EmptyPrompt } from "@/_components/ui/EmptyPrompt/EmptyPrompt";
-import { Button } from "@/atoms/Button";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { allRights } from "@/editor-api/meta/rights";
 import { Input, InputContainer, InputFieldset, InputLabel } from "@/editors/Input";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 import { useEditingResource, useEditor } from "@/shell/EditingStack/EditingStack";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
-import { toRef } from "@iiif/parser";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import { useState } from "react";
 import { datePickerStyles } from "./DescriptiveProperties.styles";
+import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
+import { LinkingPropertyList } from "@/_components/ui/LinkingPropertyList/LinkingPropertyList";
 
 export function DescriptiveProperties() {
   const resource = useEditingResource();
@@ -55,15 +54,17 @@ export function DescriptiveProperties() {
         ) : null}
 
         {!notAllowed.includes("thumbnail") ? (
-          <InputContainer wide>
-            <InputLabel>Thumbnail</InputLabel>
-            <ContentResourceList
-              list={thumbnail.get() || []}
-              onSelect={(e, index) => {
-                edit(e, { parent: toRef(resource?.resource), property: "thumbnail", index });
-              }}
-            />
-          </InputContainer>
+          <LinkingPropertyList
+            label="Thumbnail"
+            property="thumbnail"
+            items={thumbnail.get()}
+            singleMode
+            reorder={(ctx) => thumbnail.reorder(ctx.startIndex, ctx.endIndex)}
+            createActions={createAppActions(thumbnail)}
+            creationType="ContentResource"
+            emptyLabel="No thumbnail"
+            parent={resource?.resource}
+          />
         ) : null}
 
         {!notAllowed.includes("rights") ? (

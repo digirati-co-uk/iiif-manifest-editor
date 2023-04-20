@@ -19,7 +19,7 @@ export function AnnotationPreview({ region }: { region: string }) {
           min-width: 0;
           min-height: 0;
           --atlas-container-flex: 1 1 0px;
-          --atlas-background:  #f9f9f9;
+          --atlas-background:  #E5E7F0;
         }
           canvas-panel {
             display: flex;
@@ -27,7 +27,7 @@ export function AnnotationPreview({ region }: { region: string }) {
             min-width: 0;
 
             --atlas-container-flex: 1 1 0px;
-            --atlas-background: #efefef;
+            --atlas-background:  #E5E7F0;
           }
       `}</style>
 

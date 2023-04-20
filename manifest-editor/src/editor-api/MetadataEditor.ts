@@ -1,11 +1,44 @@
-import { DescriptiveProperties, InternationalString } from "@iiif/presentation-3";
+import {
+  DescriptiveProperties,
+  InternationalString,
+  MetadataItem,
+  Reference,
+  SpecificResource,
+} from "@iiif/presentation-3";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 import { entityActions } from "@iiif/vault/actions";
+import { v4 } from "uuid";
 
-export class MetadataEditor<T> extends BasePropertyEditor<T, DescriptiveProperties["metadata"]> {
+export class MetadataEditor<T> extends BasePropertyEditor<T, MetadataItem[]> {
+  protected cachedList: MetadataItem[] | undefined;
+  protected cachedSortableList: Array<{ id: string } & MetadataItem> = [];
+  protected idCache = new Map();
   constructor(config: EditorConfig) {
     super(config, "metadata");
+  }
+
+  protected _getId(resource: any) {
+    if (this.idCache.has(resource)) {
+      return this.idCache.get(resource);
+    }
+    const newId = v4();
+    this.idCache.set(resource, newId);
+    return newId;
+  }
+
+  getSortable() {
+    const fresh = this.get();
+    if (this.cachedList !== fresh) {
+      this.cachedSortableList = (fresh || []).map((item: any) => {
+        if (item.id) {
+          return item;
+        }
+        return { id: this._getId(item), ...item };
+      });
+    }
+
+    return this.cachedSortableList;
   }
 
   add(label: InternationalString, value: InternationalString, beforeIndex?: number) {
@@ -34,7 +67,7 @@ export class MetadataEditor<T> extends BasePropertyEditor<T, DescriptiveProperti
     );
   }
 
-  remove(atIndex: number) {
+  deleteAtIndex(atIndex: number) {
     const ref = this.ref();
     this.config.vault.dispatch(
       entityActions.removeMetadata({
@@ -43,6 +76,14 @@ export class MetadataEditor<T> extends BasePropertyEditor<T, DescriptiveProperti
         atIndex,
       })
     );
+  }
+
+  moveToStart(index: number) {
+    this.reorder(index, 0);
+  }
+  moveToEnd(index: number) {
+    const len = this.getWithoutTracking().length;
+    this.reorder(index, len);
   }
 
   reorder(startIndex: number, endIndex: number) {

@@ -9,27 +9,42 @@ import { metadata } from "@/_editors/Metadata";
 import { baseCreator } from "@/_panels/right-panels/BaseCreator";
 import { linkingProperties } from "@/_editors/LinkingProperties";
 import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
-import { canvasStructuralProperties, manifestStructuralProperties } from "../../_editors/StructuralProperties";
+import {
+  canvasStructuralProperties,
+  manifestStructuralProperties,
+  rangeStructuralProperties,
+} from "../../_editors/StructuralProperties";
 import { mediaEditor } from "../../_editors/MediaEditor";
 import { allCreators } from "@/_creators";
 import { htmlBodyEditor } from "@/_editors/HTMLBodyEditor";
 import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "@/shell/EditingStack/EditingStack";
-import { CanvasContext } from "react-iiif-vault";
+import { AnnotationContext, CanvasContext } from "react-iiif-vault";
+import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
 function CanvasPanelEditingCtx() {
   const stack = useEditingResourceStack();
   const current = useEditingResource();
+  const { edit } = useLayoutActions();
   const canvas =
     current?.resource.source.type === "Canvas" ? current : stack.find((t) => t.resource.source.type === "Canvas");
   const canvasId = canvas?.resource.source.id;
 
+  const annotation =
+    current?.resource.source.type === "Annotation"
+      ? current
+      : stack.find((t) => t.resource.source.type === "Annotation");
+  const annotationId = annotation?.resource?.source.id;
+
   if (canvas) {
     return (
       <CanvasContext canvas={canvasId} key={canvasId}>
-        <CanvasPanelViewer />
+        <CanvasPanelViewer
+          highlightAnnotation={annotation?.resource?.source.id}
+          onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
+        />
       </CanvasContext>
     );
   }
@@ -70,9 +85,13 @@ export const rightPanels: LayoutPanel[] = [
 ];
 
 export const editors = [
+  // First tab ones.
   imageEditor,
   mediaEditor,
   htmlBodyEditor,
+  rangeStructuralProperties,
+
+  // Generic
   descriptiveProperties,
   metadata,
   technicalProperties,
@@ -83,4 +102,4 @@ export const editors = [
 
 export const creators = allCreators;
 
-export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation"];
+export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];

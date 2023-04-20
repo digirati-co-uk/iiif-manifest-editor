@@ -3,23 +3,16 @@ import { Button } from "@/atoms/Button";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@/components/layout/FlexContainer";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
-import { hash } from "@/helpers/hash";
+
 import { useEditor } from "@/shell/EditingStack/EditingStack";
-import { MetadataItem } from "@iiif/presentation-3";
 import { getValue } from "@iiif/vault-helpers/i18n";
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
+import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
 
 export function Metadata() {
   const { descriptive } = useEditor();
   const [ordering, setOrdering] = useState(false);
-  const metadata = descriptive.metadata.get();
-  const items: Array<MetadataItem & { id: string; type: string }> = useMemo(() => {
-    return (metadata || []).map((i, key) => ({
-      id: ordering ? hash(i) : `${key}`,
-      type: "MetadataItem",
-      ...i,
-    }));
-  }, [metadata]);
+  const items = descriptive.metadata.getSortable();
 
   const renderItem = (e: any, idx: number) => (
     <>
@@ -41,9 +34,9 @@ export function Metadata() {
 
   return (
     <PaddedSidebarContainer>
-      <FlexContainer>
+      <FlexContainer style={{ position: "sticky", top: 0, display: "block" }}>
         <Button style={{ marginLeft: "auto" }} onClick={() => setOrdering((e) => !e)}>
-          Enable reordering
+          {ordering ? "Disable ordering" : "Enable ordering"}
         </Button>
       </FlexContainer>
       {ordering ? (
@@ -53,12 +46,18 @@ export function Metadata() {
           inlineHandle={false}
           items={items}
           renderItem={renderItem}
+          createActions={createAppActions(descriptive.metadata)}
         />
       ) : (
-        items.map(renderItem)
+        (items || []).map(renderItem)
       )}
 
-      <Button onClick={() => descriptive.metadata.add({ en: [""] }, { en: [""] })}>Add metadata item</Button>
+      <Button
+        style={{ position: "sticky", bottom: 0 }}
+        onClick={() => descriptive.metadata.add({ en: [""] }, { en: [""] })}
+      >
+        Add metadata item
+      </Button>
     </PaddedSidebarContainer>
   );
 }
