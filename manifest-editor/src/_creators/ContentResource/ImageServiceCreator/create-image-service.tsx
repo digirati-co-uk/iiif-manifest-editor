@@ -71,9 +71,16 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
 
     if (url) {
       const canon = canonicalServiceUrl(url);
+      console.log(canon);
       fetch(canon)
         .then((r) => r.json())
         .then((service) => {
+          if (service["@id"]) {
+            service.id = service["@id"];
+          }
+          if (service["@type"]) {
+            service.type = service["@type"];
+          }
           props.runCreate({ url: formData.url, service });
         });
     }

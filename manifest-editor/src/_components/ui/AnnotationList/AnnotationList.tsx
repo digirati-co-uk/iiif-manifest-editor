@@ -3,9 +3,8 @@ import { isSpecificResource } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { AnnotationContext } from "react-iiif-vault";
-// import { AnnotationPreview } from "../AnnotationPreview/AnnotationPreview";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
-
+import { CanvasTargetContext } from "@/helpers/CanvasTargetContext";
 
 interface AnnotationListProps {
   id?: string;
@@ -27,7 +26,9 @@ export function AnnotationList(props: AnnotationListProps) {
         reorder={props.reorder}
         renderItem={(ref, index) => (
           <AnnotationContext annotation={ref.id}>
-            <AnnotationPreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
+            <CanvasTargetContext>
+              <AnnotationPreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
+            </CanvasTargetContext>
           </AnnotationContext>
         )}
         createActions={props.createActions}
@@ -41,7 +42,9 @@ export function AnnotationList(props: AnnotationListProps) {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
           <AnnotationContext annotation={ref.id}>
-            <AnnotationPreview margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
+            <CanvasTargetContext>
+              <AnnotationPreview margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
+            </CanvasTargetContext>
           </AnnotationContext>
         );
       })}

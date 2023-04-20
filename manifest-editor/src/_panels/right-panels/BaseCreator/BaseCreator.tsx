@@ -11,6 +11,7 @@ import { Creator } from "@/creator-api";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { toRef } from "@iiif/parser";
 import { Button } from "@/atoms/Button";
+import { Reference } from "@iiif/presentation-3";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -66,7 +67,7 @@ export function matchBasedOnResource(
   return supported;
 }
 
-export function useCreator(parent: any, property: string, type: string) {
+export function useCreator(parent: any, property: string, type: string, target?: Reference) {
   const vault = useVault();
   const { apps, currentApp } = useApps();
   const { create, edit } = useLayoutActions();
@@ -80,7 +81,7 @@ export function useCreator(parent: any, property: string, type: string) {
   const wrappedCreate = useCallback(
     (index?: number) => {
       if (parent) {
-        create({ type, parent: toRef(parent), property, index });
+        create({ type, parent: toRef(parent), property, index, target });
       }
     },
     [create, parent, property, type]
@@ -118,7 +119,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
           resource: props.resource.parent,
         }
       : undefined,
+    target: props.resource.target,
   };
+
+  console.log("options", options);
 
   const runCreate = async (payload: any) => {
     setIsCreating(true);

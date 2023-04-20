@@ -55,7 +55,7 @@ export function ReorderList({
     [items, reorder]
   );
 
-  const enabled = items.length > 1;
+  const enabled = items.length > 0;
 
   return (
     <DndContext

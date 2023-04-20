@@ -1,5 +1,5 @@
 import { CreatorDefinition } from "@/creator-api";
-import { createYoutubeBody } from "./create-youtube-body";
+import { createYoutubeBody, YouTubeForm } from "./create-youtube-body";
 import { TextFormatIcon } from "@/icons/TextFormatIcon";
 
 export const youTubeBodyCreator: CreatorDefinition = {
@@ -10,6 +10,7 @@ export const youTubeBodyCreator: CreatorDefinition = {
   icon: <TextFormatIcon />,
   resourceType: "ContentResource",
   resourceFields: ["id", "type", "service"],
+  render: (ctx) => <YouTubeForm {...ctx} />,
   supports: {
     parentTypes: ["Annotation"],
     parentFieldMap: {

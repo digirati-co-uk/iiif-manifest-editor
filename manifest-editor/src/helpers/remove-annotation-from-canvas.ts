@@ -1,5 +1,6 @@
 import { Vault } from "@iiif/vault";
-import { AnnotationNormalized, AnnotationPageNormalized, CanvasNormalized, Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/presentation-3";
+import { AnnotationNormalized, AnnotationPageNormalized, CanvasNormalized } from "@iiif/presentation-3-normalized";
 import invariant from "tiny-invariant";
 import { removeReference } from "@iiif/vault/actions";
 

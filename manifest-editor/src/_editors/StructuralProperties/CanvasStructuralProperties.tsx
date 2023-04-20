@@ -14,8 +14,7 @@ import { Button } from "@/atoms/Button";
 import { AnnotationList } from "../../_components/ui/AnnotationList/AnnotationList";
 
 export function CanvasStructuralProperties() {
-  const resource = useEditingResource();
-  const { structural } = useEditor();
+  const { technical, structural } = useEditor();
   const { items } = structural;
   const pages = items.get();
 
@@ -27,7 +26,7 @@ export function CanvasStructuralProperties() {
 
   // For now - we unwrap the annotation page.
   return (
-    <CanvasContext canvas={resource?.resource.id as string}>
+    <CanvasContext canvas={technical.id.get()}>
       <AnnotationPageContext annotationPage={page.id}>
         <PaintingAnnotationList />
       </AnnotationPageContext>
@@ -36,7 +35,7 @@ export function CanvasStructuralProperties() {
 }
 
 function PaintingAnnotationList() {
-  const { annotationPage } = useResourceContext();
+  const { annotationPage, canvas } = useResourceContext();
   const { structural, notAllowed } = useAnnotationPageEditor();
   const { items } = structural;
   const [toggled, toggle] = useToggleList();
@@ -46,7 +45,8 @@ function PaintingAnnotationList() {
   const [canCreateAnnotation, annotationActions] = useCreator(
     { id: annotationPage, type: "AnnotationPage" },
     "items",
-    "Annotation"
+    "Annotation",
+    canvas ? { id: canvas, type: "Canvas" } : undefined
   );
 
   return (
@@ -71,7 +71,7 @@ function PaintingAnnotationList() {
               id={items.focusId()}
               list={items.get()}
               inlineHandle={false}
-              reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
+              reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
               onSelect={(item, idx) => annotationActions.edit(item, idx)}
               createActions={createAppActions(items)}
             />

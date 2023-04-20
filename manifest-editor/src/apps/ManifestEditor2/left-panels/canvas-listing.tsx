@@ -5,6 +5,13 @@ import { Button } from "@/atoms/Button";
 import { ReorderList } from "@/_components/ui/ReorderList/ReorderList.dndkit";
 import invariant from "tiny-invariant";
 import { useManifestEditor } from "@/shell/EditingStack/EditingStack";
+import { InputContainer, InputLabel, InputLabelEdit } from "@/editors/Input";
+import { EmptyState } from "@/madoc/components/EmptyState";
+import { CanvasList } from "@/_components/ui/CanvasList/CanvasList";
+import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
+import { useToggleList } from "@/_editors/LinkingProperties/LinkingProperties";
+import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
+import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 
 export const canvasListing: LayoutPanel = {
   id: "left-panel-empty",
@@ -18,42 +25,40 @@ export const canvasListing: LayoutPanel = {
 export function CanvasListing() {
   const { edit, create } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
-
+  const [toggled, toggle] = useToggleList();
+  const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
 
   return (
-    <div>
+    <PaddedSidebarContainer>
       <div>{manifest ? <Button onClick={() => edit(manifest)}>Edit manifest</Button> : null}</div>
 
-      <div>
-        {manifest ? (
-          <Button onClick={() => create({ type: "ContentResource", parent: manifest, property: "seeAlso" })}>
-            Create thing.
-          </Button>
-        ) : null}
-
-        {manifest ? (
-          <Button onClick={() => create({ type: "Canvas", parent: manifest, property: "items" })}>
-            Create canvas.
-          </Button>
-        ) : null}
-      </div>
-
-      <ReorderList
-        id="canvas-list"
-        items={structural.items.get() || []}
-        inlineHandle={false}
-        reorder={(ctx) => structural.items.reorder(ctx.startIndex, ctx.endIndex)}
-        renderItem={(item, index) => (
-          <li key={item.id}>
-            {item.id}{" "}
-            <button onClick={() => edit(item, { parent: manifest, index, property: "items" }, { reset: true })}>
-              edit
-            </button>
-          </li>
+      <InputContainer wide>
+        {!items.get()?.length ? (
+          <>
+            <InputLabel>Canvases</InputLabel>
+            <EmptyState $noMargin $box>
+              No canvases
+            </EmptyState>
+          </>
+        ) : (
+          <InputLabel>
+            Canvases
+            <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
+          </InputLabel>
         )}
-      />
-    </div>
+        <CanvasList
+          id={items.focusId()}
+          list={items.get() || []}
+          inlineHandle={false}
+          reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
+          onSelect={(item, idx) => canvasActions.edit(item, idx)}
+          createActions={createAppActions(items)}
+        />
+      </InputContainer>
+      {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
+    </PaddedSidebarContainer>
   );
 }

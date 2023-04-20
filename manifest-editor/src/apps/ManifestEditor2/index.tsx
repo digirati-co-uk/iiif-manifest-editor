@@ -7,18 +7,42 @@ import { imageEditor } from "@/_editors/ImageEditor";
 import { CompatibilityTable } from "@/_panels/center-panels/CompatibilityTable/CompatibilityTable";
 import { metadata } from "@/_editors/Metadata";
 import { baseCreator } from "@/_panels/right-panels/BaseCreator";
-import { webPageCreator } from "@/_creators/ContentResource/WebPageCreator";
 import { linkingProperties } from "@/_editors/LinkingProperties";
-import { plaintextCreator } from "@/_creators/ContentResource/PlaintextCreator";
 import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
 import { canvasStructuralProperties, manifestStructuralProperties } from "../../_editors/StructuralProperties";
-import { emptyCanvas } from "../../_creators/Canvas/EmptyCanvas";
 import { mediaEditor } from "../../_editors/MediaEditor";
 import { allCreators } from "@/_creators";
+import { htmlBodyEditor } from "@/_editors/HTMLBodyEditor";
+import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
+import { useEditingResource, useEditingResourceStack, useEditingStack } from "@/shell/EditingStack/EditingStack";
+import { CanvasContext } from "react-iiif-vault";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
+function CanvasPanelEditingCtx() {
+  const stack = useEditingResourceStack();
+  const current = useEditingResource();
+  const canvas =
+    current?.resource.source.type === "Canvas" ? current : stack.find((t) => t.resource.source.type === "Canvas");
+  const canvasId = canvas?.resource.source.id;
+
+  if (canvas) {
+    return (
+      <CanvasContext canvas={canvasId} key={canvasId}>
+        <CanvasPanelViewer />
+      </CanvasContext>
+    );
+  }
+  return <div>No canvas selected</div>;
+}
+
 export const centerPanels: LayoutPanel[] = [
+  {
+    id: "current-canvas",
+    label: "Current canvas",
+    icon: "",
+    render: (state, { actions }) => <CanvasPanelEditingCtx />,
+  },
   {
     id: "center-panel-empty",
     label: "Center panel",
@@ -48,6 +72,7 @@ export const rightPanels: LayoutPanel[] = [
 export const editors = [
   imageEditor,
   mediaEditor,
+  htmlBodyEditor,
   descriptiveProperties,
   metadata,
   technicalProperties,

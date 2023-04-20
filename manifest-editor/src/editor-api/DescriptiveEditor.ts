@@ -20,6 +20,7 @@ export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends
   provider: BasePropertyEditor<T, Reference<"Agent">[]>;
   placeholderCanvas: BasePropertyEditor<T, Reference<"Canvas">>;
   accompanyingCanvas: BasePropertyEditor<T, Reference<"Canvas">>;
+  value: BasePropertyEditor<T, any>;
 
   constructor(config: EditorConfig) {
     super(config);
@@ -36,5 +37,7 @@ export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends
     this.provider = new BasePropertyEditor(config, "provider");
     this.placeholderCanvas = new BasePropertyEditor(config, "placeholderCanvas");
     this.accompanyingCanvas = new BasePropertyEditor(config, "accompanyingCanvas");
+    // @todo maybe move this..
+    this.value = new BasePropertyEditor<T, any>(config, "value");
   }
 }

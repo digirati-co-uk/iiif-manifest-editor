@@ -9,6 +9,7 @@ import { youTubeCanvas } from "@/_creators/Canvas/YouTubeCanvas";
 import { imageUrlCreator } from "@/_creators/ContentResource/ImageUrlCreator";
 import { imageServiceCreator } from "@/_creators/ContentResource/ImageServiceCreator";
 import { imageServiceAnnotation } from "@/_creators/Annotation/ImageServiceAnnotation";
+import { youTubeAnnotation } from "@/_creators/Annotation/YouTubeAnnotation";
 
 export const allCreators = [
   emptyCanvas,
@@ -23,4 +24,5 @@ export const allCreators = [
   imageUrlCreator,
   imageServiceCreator,
   imageServiceAnnotation,
+  youTubeAnnotation,
 ];

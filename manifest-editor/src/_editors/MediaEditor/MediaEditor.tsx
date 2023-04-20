@@ -16,6 +16,37 @@ import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/Langu
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { parseServiceProfile } from "@/navigation/ServiceList/ServiceList.utility";
 import { ServiceContainer } from "@/navigation/ServiceList/ServiceList.styles";
+import { getYouTubeId } from "@/_creators/ContentResource/YouTubeCreator/create-youtube-body";
+
+function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
+  return (
+    <div className="video-container3">
+      <style>
+        {`
+            .video-container3 {
+              background: #000;
+              z-index: 13;
+              display: flex;
+              justify-content: center;
+              pointer-events: visible;
+              height: 250px;
+            }
+            .video-yt3 {
+              border: none;
+              width: 100%;
+              object-fit: contain;
+            }
+          `}
+      </style>
+      <iframe
+        className="video-yt3"
+        src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}`}
+        referrerPolicy="no-referrer"
+        sandbox="allow-scripts allow-same-origin allow-presentation"
+      ></iframe>
+    </div>
+  );
+}
 
 export function MediaEditor() {
   // This is for an annotation
@@ -33,6 +64,12 @@ export function MediaEditor() {
 
   const thumbnail = useAnnotationThumbnail({ annotationId: annotationEditor.technical.id.get() });
   const canvas = useCanvas({ id: canvasId });
+
+  //type.get()
+  const isYouTube = !!(service.get() || []).find((r) => r.profile === "https://www.youtube.com");
+  const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
+
+  // VideoYouTubeHTML
 
   const descriptive = (
     <>
@@ -103,7 +140,7 @@ export function MediaEditor() {
                 key={key}
                 onClick={(e) => {
                   e.preventDefault();
-                  edit(service, { parent: resourceEditor.ref(), property: "service", index: key });
+                  // edit(service, { parent: resourceEditor.ref(), property: "service", index: key });
                 }}
                 link={service.id || service["@id"]}
                 title={service.type || service["@type"] || "Unknown service"}
@@ -171,7 +208,9 @@ export function MediaEditor() {
 
   return (
     <FlexContainerColumn>
-      <FlexImage>{thumbnail ? <img src={thumbnail.id} /> : null}</FlexImage>
+      <FlexImage>
+        {thumbnail ? <img src={thumbnail.id} /> : youtubeId ? <EmbedYoutube youTubeId={youtubeId} /> : null}
+      </FlexImage>
 
       <InputContainer wide>
         <Input disabled value={id.get()} />

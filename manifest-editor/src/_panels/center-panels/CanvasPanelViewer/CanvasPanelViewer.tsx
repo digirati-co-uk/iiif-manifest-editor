@@ -1,4 +1,4 @@
-import { CanvasPanel, CanvasContext, useManifest, AnnotationContext, useVault } from "react-iiif-vault";
+import { CanvasPanel, CanvasContext, useManifest, AnnotationContext, useVault, useCanvas } from "react-iiif-vault";
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { DefaultPresetOptions, Runtime } from "@atlas-viewer/atlas";
 import { ErrorBoundary } from "react-error-boundary";
@@ -27,6 +27,7 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
+  const canvas = useCanvas();
   const { rightPanel } = useLayoutState();
   const [editMode, toggleEditMode] = useReducer((a) => !a, false);
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
@@ -40,6 +41,10 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
     refresh();
     complete();
   });
+
+  const canvasId = canvas?.id;
+
+  console.log("canvas id", canvasId);
 
   const onClickPaintingAnnotation = useCallback(
     (id: string) => {
@@ -73,7 +78,7 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
     return <EmptyCanvasState />;
   }
 
-  if (!state.canvasId) {
+  if (!canvasId) {
     return (
       <CanvasContainer>
         <GhostCanvas>
@@ -107,12 +112,12 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
       `}</style>
         <S.ViewerContainer>
           <CanvasPanel.Viewer
-            key={state.canvasId}
+            key={canvasId}
             onCreated={(preset) => void (runtime.current = preset.runtime)}
             renderPreset={config}
             mode={editMode ? "sketch" : "explore"}
           >
-            <CanvasContext canvas={state.canvasId}>
+            <CanvasContext canvas={canvasId}>
               <CanvasPanel.RenderCanvas
                 strategies={["empty", "images", "media", "textual-content"]}
                 renderViewerControls={() => (
@@ -135,7 +140,7 @@ export function CanvasPanelViewer({ onEditAnnotation }: CanvasPanelViewerProps) 
               </CanvasPanel.RenderCanvas>
             </CanvasContext>
             {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
-              <Annotations canvasId={state.canvasId} />
+              <Annotations canvasId={canvasId} />
             )}
           </CanvasPanel.Viewer>
         </S.ViewerContainer>

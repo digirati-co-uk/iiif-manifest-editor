@@ -217,30 +217,37 @@ describe("Creation of Delft exhibition", () => {
                 "id": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>",
                 "items": [
                   {
-                    "id": "https://www.youtube.com/watch?v=kv6YvKPXQzk",
+                    "body": {
+                      "id": "https://www.youtube.com/watch?v=kv6YvKPXQzk",
+                      "service": [
+                        {
+                          "params": {
+                            "data": "https://www.youtube.com/embed/kv6YvKPXQzk",
+                          },
+                          "profile": "http://digirati.com/objectifier",
+                        },
+                        {
+                          "id": "https://www.youtube.com/watch?v=kv6YvKPXQzk",
+                          "profile": "https://www.youtube.com",
+                        },
+                      ],
+                      "type": "Video",
+                    },
+                    "id": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>/annotation/<string>",
                     "label": {
                       "en": [
                         "Solar Do-Nothing Machine, a film by Charles and Ray Eames (1957)",
                       ],
                     },
-                    "service": [
-                      {
-                        "params": {
-                          "data": "https://www.youtube.com/embed/kv6YvKPXQzk",
-                        },
-                        "profile": "http://digirati.com/objectifier",
-                      },
-                      {
-                        "id": "https://www.youtube.com/watch?v=kv6YvKPXQzk",
-                        "profile": "https://www.youtube.com",
-                      },
-                    ],
+                    "motivation": "painting",
+                    "rights": [],
                     "summary": {
                       "en": [
                         "In 1957 the Aluminum Company of America, or Alcoa, whose business consisted of a mix of military contracts and consumer products, hired the famed design firm of Charles and Ray Eames to create a fanciful, brightly colored “Do-Nothing Machine.” Resembling a piece of modern art, the project promoted Alcoa’s new photovoltaic cells not by showing their application to any­thing useful, but by challenging would-be clients to come up with their own uses while lending the corporation a whimsical, artsy vibe. Eames Office, LLC. All rights reserved",
                       ],
                     },
-                    "type": "Video",
+                    "target": "https://example.org/exhibition-manifest/canvas/<string>",
+                    "type": "Annotation",
                   },
                 ],
                 "type": "AnnotationPage",

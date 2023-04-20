@@ -7,7 +7,7 @@ export const descriptiveProperties: EditorDefinition = {
   supports: {
     edit: true,
     properties: ["label", "summary", "language", "navDate", "provider", "requiredStatement", "rights", "thumbnail"],
-    resourceTypes: ["Manifest", "Canvas", "ContentResource", "Agent"],
+    resourceTypes: ["Manifest", "Canvas", "ContentResource", "Agent", "Annotation"],
     readOnlyProperties: ["provider"],
   },
   component: () => <DescriptiveProperties />,
