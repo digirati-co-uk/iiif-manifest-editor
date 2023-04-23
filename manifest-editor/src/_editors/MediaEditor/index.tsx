@@ -14,6 +14,11 @@ export const mediaEditor: EditorDefinition = {
       if (!item) {
         return false;
       }
+
+      if (!item.body) {
+        return false;
+      }
+
       const body = vault.get(item.body);
 
       if (body.length > 1) {

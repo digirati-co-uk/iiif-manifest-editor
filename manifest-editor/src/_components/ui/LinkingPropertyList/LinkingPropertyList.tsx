@@ -7,6 +7,7 @@ import { EmptyState } from "@/madoc/components/EmptyState";
 import { ContentResourceList } from "@/_components/ui/ContentResourceList/ContentResourceList";
 import { Button } from "@/atoms/Button";
 import { RangeList } from "@/_components/ui/RangeList/RangeList";
+import { AnnotationPageList } from "@/_components/ui/AnnotationPageLIst/AnnotationPageList";
 
 interface LinkingPropertyListProps {
   parent?: SpecificResource;
@@ -30,6 +31,8 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
     case "Range":
       ListComponent = RangeList as any;
       break;
+    case "AnnotationPage":
+      ListComponent = AnnotationPageList as any;
   }
 
   const items = props.items || [];

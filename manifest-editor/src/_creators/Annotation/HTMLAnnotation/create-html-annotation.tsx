@@ -37,9 +37,9 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
 
   return ctx.embed({
     ...annotation,
-    motivation: data.motivation || "painting",
+    motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
     body: bodies,
-    target: ctx.getParent(),
+    target: ctx.getTarget(),
   });
 }
 

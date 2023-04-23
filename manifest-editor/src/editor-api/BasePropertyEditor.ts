@@ -17,6 +17,10 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
     return `${super.focusId()}_${this.property}`;
   }
 
+  getContainerProps() {
+    return { "data-property": this.property, "data-resource-id": this.getId(), "data-resource-type": this.getType() };
+  }
+
   isRequired() {
     const type = this.getType();
     const required = descriptiveProperties.required[type as unknown as "Manifest"] || [];

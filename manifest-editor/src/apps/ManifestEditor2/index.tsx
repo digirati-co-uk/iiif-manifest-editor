@@ -13,50 +13,23 @@ import {
   canvasStructuralProperties,
   manifestStructuralProperties,
   rangeStructuralProperties,
-} from "../../_editors/StructuralProperties";
-import { mediaEditor } from "../../_editors/MediaEditor";
+} from "@/_editors/StructuralProperties";
+import { mediaEditor } from "@/_editors/MediaEditor";
 import { allCreators } from "@/_creators";
 import { htmlBodyEditor } from "@/_editors/HTMLBodyEditor";
-import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
-import { useEditingResource, useEditingResourceStack, useEditingStack } from "@/shell/EditingStack/EditingStack";
-import { AnnotationContext, CanvasContext } from "react-iiif-vault";
-import { useLayoutActions } from "@/shell/Layout/Layout.context";
+import { inlineAnnotationPageEditor } from "@/_editors/InlineAnnotationPageEditor";
+import React from "react";
+import { CanvasPanelEditor } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
+import { tutorial } from "@/_panels/right-panels/Tutotiral";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
-
-function CanvasPanelEditingCtx() {
-  const stack = useEditingResourceStack();
-  const current = useEditingResource();
-  const { edit } = useLayoutActions();
-  const canvas =
-    current?.resource.source.type === "Canvas" ? current : stack.find((t) => t.resource.source.type === "Canvas");
-  const canvasId = canvas?.resource.source.id;
-
-  const annotation =
-    current?.resource.source.type === "Annotation"
-      ? current
-      : stack.find((t) => t.resource.source.type === "Annotation");
-  const annotationId = annotation?.resource?.source.id;
-
-  if (canvas) {
-    return (
-      <CanvasContext canvas={canvasId} key={canvasId}>
-        <CanvasPanelViewer
-          highlightAnnotation={annotation?.resource?.source.id}
-          onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
-        />
-      </CanvasContext>
-    );
-  }
-  return <div>No canvas selected</div>;
-}
 
 export const centerPanels: LayoutPanel[] = [
   {
     id: "current-canvas",
     label: "Current canvas",
     icon: "",
-    render: (state, { actions }) => <CanvasPanelEditingCtx />,
+    render: (state, { actions }) => <CanvasPanelEditor />,
   },
   {
     id: "center-panel-empty",
@@ -80,6 +53,7 @@ export const rightPanels: LayoutPanel[] = [
     icon: "",
     render: () => <div />,
   },
+  tutorial,
   baseEditor,
   baseCreator,
 ];
@@ -90,6 +64,7 @@ export const editors = [
   mediaEditor,
   htmlBodyEditor,
   rangeStructuralProperties,
+  inlineAnnotationPageEditor,
 
   // Generic
   descriptiveProperties,

@@ -6,7 +6,7 @@ import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { EmptyState } from "@/madoc/components/EmptyState";
 import { useToggleList } from "../LinkingProperties/LinkingProperties";
 import { createAppActions } from "../LinkingProperties/LinkingProperties.helpers";
-import { CanvasList } from "../../_components/ui/CanvasList/CanvasList";
+import { CanvasList } from "@/_components/ui/CanvasList/CanvasList";
 import { LinkingPropertyList } from "@/_components/ui/LinkingPropertyList/LinkingPropertyList";
 
 export function ManifestStructuralProperties() {

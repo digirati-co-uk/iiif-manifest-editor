@@ -72,7 +72,7 @@ export class Creator {
         for (const sideEffect of foundDefinition.sideEffects) {
           if (sideEffect.run) {
             // @todo we need more in the ctx (like parent/target where this is to be added.)
-            await sideEffect.run(result, { vault: this.vault, options });
+            await sideEffect.run(result, { vault: this.vault, options: options as any });
           }
         }
       }

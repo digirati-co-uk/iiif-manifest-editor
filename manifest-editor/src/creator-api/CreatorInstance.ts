@@ -17,8 +17,22 @@ export class CreatorInstance implements CreatorFunctionContext {
     this.configs = createConfigs;
   }
 
-  getTarget(): Reference | undefined {
-    return this.options.target || this.options.parent?.resource;
+  getTarget(): SpecificResource | Reference | undefined {
+    const target = this.options.target || this.options.parent?.resource;
+    console.log("initialData", this.options.initialData);
+    const position: any = this.options.initialData?.selector;
+    if (target && position) {
+      return {
+        type: "SpecificResource",
+        source: target,
+        selector: {
+          type: "FragmentSelector",
+          value: `xywh=${[~~position.x, ~~position.y, ~~position.width, ~~position.height].join(",")}`,
+        },
+      };
+    }
+
+    return target;
   }
 
   getParent(): Reference | undefined {

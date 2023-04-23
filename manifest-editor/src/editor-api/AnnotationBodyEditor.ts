@@ -3,6 +3,7 @@ import { BaseReferenceListEditor } from "@/editor-api/BaseReferenceListEditor";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { EditorConfig } from "@/editor-api/types";
 import invariant from "tiny-invariant";
+import { toRef } from "@iiif/parser";
 
 export class AnnotationBodyEditor extends BaseReferenceListEditor<
   AnnotationNormalized,
@@ -10,6 +11,12 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
 > {
   constructor(config: EditorConfig) {
     super(config, "body");
+  }
+
+  isSpatial() {
+    const body = this.getFirst();
+    const ref = toRef(body);
+    return ref?.type === "Video" || ref?.type === "Image";
   }
 
   getFirst() {

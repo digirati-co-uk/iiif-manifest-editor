@@ -55,6 +55,10 @@ export function matchBasedOnResource(
         }
       }
 
+      if (!def.supports.initialData && Object.keys(resource.initialData || {}).length !== 0) {
+        continue;
+      }
+
       if (def.resourceType !== resource.type) {
         if (!(def.additionalTypes || []).includes(resource.type)) {
           continue;
@@ -110,7 +114,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
     return new Creator(vault, selectedApp?.layout.creators || []);
   }, [selectedApp?.layout.creators, vault]);
 
-  const options = {
+  const options: CreatorOptions = {
     targetType: props.resource.type,
     parent: props.resource.parent
       ? {
@@ -122,6 +126,8 @@ export const RenderCreator = memo(function RenderCreator(props: {
     target: props.resource.target,
     initialData: props.resource.initialData,
   };
+
+  console.log("options", options);
 
   const runCreate = async (payload: any) => {
     setIsCreating(true);
@@ -187,6 +193,7 @@ export function BaseCreator(props: BaseCreatorProps) {
 
   return (
     <PaddedSidebarContainer>
+      {props.resource?.initialData?.selector ? <div>Annotation selection saved.</div> : null}
       <div className={$.ListingGrid}>
         {supported.map((item) => (
           <div className={$.Item} onClick={() => setCurrentId(item.id)}>

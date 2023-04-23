@@ -19,7 +19,7 @@ export interface CreatorFunctionContext {
   create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource>;
   generateId(type: string, parent?: Reference | ReferencedResource): string;
   getParent(): Reference | undefined;
-  getTarget(): Reference | undefined;
+  getTarget(): SpecificResource | Reference | undefined;
   getParentResource(): SpecificResource | undefined;
 }
 
@@ -32,6 +32,7 @@ export interface CreatorOptions {
   targetType: string;
   target?: Reference;
   parent?: CreatorParent;
+  initialData?: any;
 }
 
 export interface CreatorDefinition {
@@ -60,6 +61,7 @@ export interface CreatorDefinition {
 
   // Where is it valid?
   supports: {
+    initialData?: boolean;
     parentTypes?: string[];
     parentFields?: string[];
     parentFieldMap?: Record<string, string[]>;

@@ -17,6 +17,8 @@ import { StructuralEditor } from "./StructuralEditor";
 import { Vault } from "@iiif/vault";
 import { resources } from "./meta/resources";
 import { AnnotationEditor } from "@/editor-api/AnnotationEditor";
+import { HAS_PART, PART_OF } from "@iiif/parser";
+import { r } from "@vitest/runner/dist/tasks-e1fc71d1";
 
 export class EditorInstance<
   T extends Partial<DescriptiveProperties> &
@@ -76,6 +78,17 @@ export class EditorInstance<
     this.notAllowed = meta.notAllowed;
     this.allowed = meta.allowed;
     this.optional = meta.optional;
+  }
+
+  getPartOf(): string | null {
+    const item = this.config.vault.get(this.ref());
+    if (item && item[HAS_PART]) {
+      const found = item[HAS_PART][0];
+      if (found) {
+        return found[PART_OF] || null;
+      }
+    }
+    return null;
   }
 
   ref() {

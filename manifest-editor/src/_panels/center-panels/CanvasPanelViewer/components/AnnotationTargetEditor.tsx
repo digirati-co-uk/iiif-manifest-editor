@@ -17,6 +17,8 @@ export function AnnotationTargetEditor() {
     }
   };
 
+  const isSpatial = editor.annotation.body.isSpatial();
+
   if (!annotation) {
     return null;
   }
@@ -40,8 +42,8 @@ export function AnnotationTargetEditor() {
     <ResizeWorldItem
       {...annotation.target.selector.spatial}
       resizable
-      maintainAspectRatio
-      disableCardinalControls
+      maintainAspectRatio={isSpatial}
+      disableCardinalControls={isSpatial}
       onSave={(newPosition) => {
         updateAnnotationTarget(newPosition);
       }}

@@ -7,6 +7,7 @@ export interface RichMediaLinkProps {
   iconLabel?: string;
   title: string | ReactNode;
   link: string;
+  noLink?: boolean;
   label?: string;
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
   containerProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -28,7 +29,11 @@ export function RichMediaLink(props: RichMediaLinkProps) {
           <RichMediaLinkStyles.Title>{props.title}</RichMediaLinkStyles.Title>
           <RichMediaLinkStyles.Label>{props.label}</RichMediaLinkStyles.Label>
         </RichMediaLinkStyles.TitleContainer>
-        <RichMediaLinkStyles.Link href={props.link}>{props.link}</RichMediaLinkStyles.Link>
+        {props.noLink ? (
+          <RichMediaLinkStyles.NoLink>{props.link}</RichMediaLinkStyles.NoLink>
+        ) : (
+          <RichMediaLinkStyles.Link href={props.link}>{props.link}</RichMediaLinkStyles.Link>
+        )}
       </RichMediaLinkStyles.Content>
     </RichMediaLinkStyles.Container>
   );

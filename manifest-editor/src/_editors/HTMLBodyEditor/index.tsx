@@ -11,7 +11,7 @@ export const htmlBodyEditor: EditorDefinition = {
     readOnlyProperties: [],
     custom: (res, vault) => {
       const item = vault.get(res.resource);
-      if (!item) {
+      if (!item || !item.body) {
         return false;
       }
       const body = vault.get(item.body);

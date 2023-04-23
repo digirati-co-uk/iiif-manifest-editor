@@ -15,6 +15,7 @@ export const htmlAnnotation: CreatorDefinition = {
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
   supports: {
+    initialData: true,
     parentTypes: ["AnnotationPage"],
     parentFields: ["items"],
   },

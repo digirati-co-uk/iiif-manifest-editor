@@ -62,6 +62,16 @@ const Link = styled.a`
   min-width: 0;
 `;
 
+const NoLink = styled.div`
+  color: #bdbdbd;
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  min-width: 0;
+`;
+
 const Label = styled.div`
   color: #9a9a9a;
   font-size: 0.8em;
@@ -73,6 +83,7 @@ export const RichMediaLinkStyles = {
   Icon,
   Title,
   Link,
+  NoLink,
   Label,
   Content,
   TitleContainer,

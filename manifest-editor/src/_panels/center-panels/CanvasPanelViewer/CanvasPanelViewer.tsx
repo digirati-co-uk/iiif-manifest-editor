@@ -8,7 +8,7 @@ import {
   useAnnotation,
 } from "react-iiif-vault";
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
-import { DefaultPresetOptions, Runtime } from "@atlas-viewer/atlas";
+import { DefaultPresetOptions, DrawBox, Runtime } from "@atlas-viewer/atlas";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { useLayoutState } from "@/shell/Layout/Layout.context";
@@ -30,9 +30,16 @@ import { useTaskRunner } from "@/shell/TaskBridge/TaskBridge";
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
   highlightAnnotation?: string;
+  createAnnotation?: (data: any) => void;
+  highlightRegion?: { x: number; y: number; width: number; height: number } | null;
 }
 
-export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation }: CanvasPanelViewerProps) {
+export function CanvasPanelViewer({
+  highlightRegion,
+  onEditAnnotation,
+  highlightAnnotation,
+  createAnnotation,
+}: CanvasPanelViewerProps) {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
@@ -40,6 +47,7 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation }: Can
   const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
   const { rightPanel } = useLayoutState();
   const [editMode, toggleEditMode] = useReducer((a) => !a, false);
+  const [createMode, toggleCreateAnnotation] = useReducer((a) => !a, false);
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
     () => ["default-preset", { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions] as any,
@@ -55,6 +63,8 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation }: Can
   const editModeRef = useRef(editMode);
 
   editModeRef.current = editMode;
+
+  console.log("createMode", createMode);
 
   useEffect(() => {
     if (runtime.current) {
@@ -150,33 +160,68 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation }: Can
             key={`${canvasId}/${canvas?.width}/${canvas?.height}`}
             onCreated={(preset) => void (runtime.current = preset.runtime)}
             renderPreset={config}
-            mode={editMode ? "sketch" : "explore"}
+            mode={editMode || createMode ? "sketch" : "explore"}
           >
             <CanvasContext canvas={canvasId}>
               <CanvasPanel.RenderCanvas
                 strategies={["empty", "images", "media", "textual-content"]}
                 renderViewerControls={() => (
-                  <ViewControls refresh={refresh} editIcon editMode={editMode} toggleEditMode={toggleEditMode} />
+                  <ViewControls
+                    refresh={refresh}
+                    editIcon
+                    editMode={editMode}
+                    toggleEditMode={toggleEditMode}
+                    createMode={createMode}
+                    toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
+                  />
                 )}
-                viewControlsDeps={[editMode]}
+                viewControlsDeps={[editMode, createMode, createAnnotation]}
                 renderMediaControls={() => <MediaControls />}
                 backgroundStyle={{ background: "#fff" }}
                 alwaysShowBackground
-                onClickPaintingAnnotation={onClickPaintingAnnotation}
+                onClickPaintingAnnotation={annotation ? () => void 0 : onClickPaintingAnnotation}
               >
                 {!currentlyEditingAnnotation && resources.length
                   ? resources.map((resource) => <Highlight key={resource} id={resource} />)
                   : null}
-                {currentlyEditingAnnotation && editMode ? (
-                  <AnnotationContext annotation={currentlyEditingAnnotation}>
+                {(currentlyEditingAnnotation || annotation) && editMode ? (
+                  <AnnotationContext annotation={annotation?.id || (currentlyEditingAnnotation as string)}>
                     <AnnotationTargetEditor />
                   </AnnotationContext>
+                ) : null}
+
+                {annotation && !editMode ? (
+                  <Highlight
+                    key={annotation.id}
+                    style={{ border: "4px solid #D45380", boxShadow: "0px 3px 10px 2px #000" }}
+                    id={annotation.id}
+                  />
+                ) : null}
+
+                {highlightRegion && !annotation ? (
+                  <box
+                    key={new Date().toDateString()}
+                    html
+                    relativeStyle
+                    interactive={false}
+                    target={highlightRegion}
+                    style={{ border: "2px solid #488afc" }}
+                  />
                 ) : null}
               </CanvasPanel.RenderCanvas>
             </CanvasContext>
             {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
               <Annotations canvasId={canvasId} />
             )}
+
+            {createMode && createAnnotation && !editMode ? (
+              <DrawBox
+                onCreate={(data) => {
+                  createAnnotation(data);
+                  toggleCreateAnnotation();
+                }}
+              />
+            ) : null}
           </CanvasPanel.Viewer>
         </S.ViewerContainer>
       </S.Container>

@@ -24,13 +24,16 @@ export function AnnotationList(props: AnnotationListProps) {
         items={props.list || []}
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
-        renderItem={(ref, index) => (
-          <AnnotationContext annotation={ref.id}>
-            <CanvasTargetContext>
-              <AnnotationPreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
-            </CanvasTargetContext>
-          </AnnotationContext>
-        )}
+        renderItem={(item, index) => {
+          const ref = isSpecificResource(item) ? item.source : item;
+          return (
+            <AnnotationContext annotation={ref.id}>
+              <CanvasTargetContext>
+                <AnnotationPreview key={ref.id} onClick={() => props.onSelect(item, index)} />
+              </CanvasTargetContext>
+            </AnnotationContext>
+          );
+        }}
         createActions={props.createActions}
       />
     );
