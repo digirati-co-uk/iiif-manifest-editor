@@ -31,15 +31,9 @@ export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
   highlightAnnotation?: string;
   createAnnotation?: (data: any) => void;
-  highlightRegion?: { x: number; y: number; width: number; height: number } | null;
 }
 
-export function CanvasPanelViewer({
-  highlightRegion,
-  onEditAnnotation,
-  highlightAnnotation,
-  createAnnotation,
-}: CanvasPanelViewerProps) {
+export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, createAnnotation }: CanvasPanelViewerProps) {
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
@@ -53,7 +47,7 @@ export function CanvasPanelViewer({
     () => ["default-preset", { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions] as any,
     []
   );
-  const { resources } = useHighlightedImageResource();
+  const { resources, regions } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
   const [complete] = useTaskRunner("refresh-canvas", () => {
     refresh();
@@ -64,7 +58,7 @@ export function CanvasPanelViewer({
 
   editModeRef.current = editMode;
 
-  console.log("createMode", createMode);
+  console.log("regions", regions);
 
   useEffect(() => {
     if (runtime.current) {
@@ -198,16 +192,19 @@ export function CanvasPanelViewer({
                   />
                 ) : null}
 
-                {highlightRegion && !annotation ? (
-                  <box
-                    key={new Date().toDateString()}
-                    html
-                    relativeStyle
-                    interactive={false}
-                    target={highlightRegion}
-                    style={{ border: "2px solid #488afc" }}
-                  />
-                ) : null}
+                {Object.keys(regions).map((key) => {
+                  return regions[key] ? (
+                    <box
+                      id={key}
+                      key={key}
+                      html
+                      relativeStyle
+                      interactive={false}
+                      target={regions[key] as any}
+                      style={{ border: "2px solid #488afc" }}
+                    />
+                  ) : null;
+                })}
               </CanvasPanel.RenderCanvas>
             </CanvasContext>
             {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (

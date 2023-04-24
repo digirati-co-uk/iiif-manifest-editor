@@ -18,17 +18,9 @@ export function CanvasPanelEditor() {
   const annotation = useInStack("Annotation");
   const canvasId = canvas?.resource.source.id;
   let createAnnotation = undefined;
-  const [tempHighlight, setTempHighlight] = useState<{ x: number; y: number; width: number; height: number } | null>(
-    null
-  );
-
-  useEffect(() => {
-    setTempHighlight(null);
-  }, [annotation]);
 
   if (annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations") {
     createAnnotation = (data: any) => {
-      setTempHighlight(data);
       create({
         type: "Annotation",
         parent: { id: annotationPage.resource.source.id as string, type: "AnnotationPage" },
@@ -45,7 +37,6 @@ export function CanvasPanelEditor() {
     return (
       <CanvasContext canvas={canvasId} key={canvasId}>
         <CanvasPanelViewer
-          highlightRegion={tempHighlight}
           highlightAnnotation={annotationId}
           onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
           createAnnotation={createAnnotation}

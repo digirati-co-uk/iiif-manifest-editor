@@ -12,6 +12,7 @@ import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { toRef } from "@iiif/parser";
 import { Button } from "@/atoms/Button";
 import { Reference } from "@iiif/presentation-3";
+import { useTemporaryHighlight } from "@/state/highlighted-image-resources";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -113,6 +114,9 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const creator = useMemo(() => {
     return new Creator(vault, selectedApp?.layout.creators || []);
   }, [selectedApp?.layout.creators, vault]);
+
+  const canvasSelector = props.resource.initialData?.selector;
+  useTemporaryHighlight(canvasSelector);
 
   const options: CreatorOptions = {
     targetType: props.resource.type,
