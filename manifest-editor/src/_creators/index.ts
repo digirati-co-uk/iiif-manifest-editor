@@ -8,6 +8,8 @@ import { youTubeBodyCreator } from "@/_creators/ContentResource/YouTubeCreator";
 import { imageUrlCreator } from "@/_creators/ContentResource/ImageUrlCreator";
 import { imageServiceCreator } from "@/_creators/ContentResource/ImageServiceCreator";
 import { imageServiceAnnotation } from "@/_creators/Annotation/ImageServiceAnnotation";
+import { noBodyAnnotation } from "@/_creators/Annotation/NoBodyAnnotation";
+import { iiifBrowserCreator } from "@/_creators/ContentResource/IIIFBrowserCreator";
 
 export const allCreators = [
   emptyCanvas,
@@ -21,4 +23,6 @@ export const allCreators = [
   imageUrlCreator,
   imageServiceCreator,
   imageServiceAnnotation,
+  noBodyAnnotation,
+  iiifBrowserCreator,
 ];

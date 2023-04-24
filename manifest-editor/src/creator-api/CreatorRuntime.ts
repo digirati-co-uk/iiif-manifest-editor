@@ -11,6 +11,7 @@ export class CreatorRuntime {
   resource: CreatorResource | null = null;
   payload: any;
   vault: Vault;
+  previewVault: Vault;
   definition: CreatorDefinition;
   options: CreatorOptions;
   configs: CreatorDefinition[];
@@ -20,9 +21,11 @@ export class CreatorRuntime {
     definition: CreatorDefinition,
     payload: any,
     createConfigs: CreatorDefinition[],
+    previewVault: Vault,
     options?: Partial<CreatorOptions>
   ) {
     this.vault = vault;
+    this.previewVault = previewVault;
     this.definition = definition;
     this.payload = payload;
     this.configs = createConfigs;
@@ -33,7 +36,7 @@ export class CreatorRuntime {
   }
 
   async run(): Promise<CreatorResource> {
-    const instance = new CreatorInstance(this.vault, this.options, this.configs);
+    const instance = new CreatorInstance(this.vault, this.options, this.configs, this.previewVault);
     const result = await this.definition.create(this.payload, instance);
 
     if (result instanceof CreatorResource) {
@@ -54,6 +57,11 @@ export class CreatorRuntime {
 
     const resources: any = {};
     const mapping: any = {};
+
+    if (this.options.parent) {
+      this.resource.setPartOf(this.options.parent.resource.id);
+    }
+
     const embedded = this.resource.getAllEmbeddedResources();
 
     const allItems = [...embedded, this.resource];

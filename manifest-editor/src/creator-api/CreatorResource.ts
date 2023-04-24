@@ -2,11 +2,13 @@ import { references } from "@/editor-api/meta/references";
 import { Vault } from "@iiif/vault";
 import { ReferencedResource } from "./ReferencedResource";
 import { getEmptyType, resolveType } from "./utils";
+import { HAS_PART, PART_OF } from "@iiif/parser";
 
 export class CreatorResource {
   resource: any;
   warnings: string[] = [];
   errors: string[] = [];
+  partOf: any;
   references: ReferencedResource[] = [];
   embedded: CreatorResource[] = [];
   vault: Vault;
@@ -53,11 +55,15 @@ export class CreatorResource {
       }
 
       if (data.type === "Annotation" && key === "target") {
-        const target = data[key];
+        let target = data[key];
 
         if (target instanceof ReferencedResource) {
           this.references.push(target);
           continue;
+        }
+
+        if (typeof target === "string") {
+          target = { id: target, type: "Canvas" };
         }
 
         const targetRef = new ReferencedResource(target, vault);
@@ -72,7 +78,8 @@ export class CreatorResource {
 
       // This property SHOULD already be in the Vault OR an instance of creator resource.
       if (references.externalProperties.includes(key) || references.internalProperties.includes(key)) {
-        const items = (data[key] || []) as any[];
+        const _items = (data[key] || []) as any[];
+        const items = Array.isArray(_items) ? _items : [_items];
         const newItems: any[] = [];
         for (const item of items) {
           if (item instanceof ReferencedResource) {
@@ -88,7 +95,8 @@ export class CreatorResource {
 
           const exists = this.vault.get(item, { skipSelfReturn: true });
           if (exists) {
-            const newItem = new ReferencedResource(item, vault);
+            const type = resolveType(item.type);
+            const newItem = new ReferencedResource({ id: item.id, type }, vault);
             this.references.push(newItem);
             newItems.push(newItem);
           } else {
@@ -167,6 +175,21 @@ export class CreatorResource {
         }
       }
     }
+
+    if (this.partOf) {
+      newResource[HAS_PART] = newResource[HAS_PART] || [];
+      newResource[HAS_PART].push(this.partOf);
+    }
+
     return newResource;
+  }
+
+  setPartOf(id: string) {
+    const ref = this.ref();
+    this.partOf = {
+      id: ref.id,
+      type: resolveType(ref.type),
+      [PART_OF]: id,
+    };
   }
 }

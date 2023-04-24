@@ -2070,9 +2070,9 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/919323bc/@iiif/parser":
+"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser":
   version "1.1.2"
-  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/919323bc/@iiif/parser#ab7567d72e4c3de8d6419e6ebf0f126745f4b49b"
+  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser#ca6389a09f737d37da100b2dc1ccf158777a2df6"
   dependencies:
     "@iiif/presentation-2" "^1.0.4"
     "@iiif/presentation-3" "^2.0.5"
@@ -2121,11 +2121,11 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault":
   version "0.9.22"
-  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault#c39d4ae7b929a63cabdcb548abfcae9ac30e5f98"
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault#a98542950c921b9d014e59c0b1af193c55c3bc6a"
   dependencies:
-    "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser"
+    "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser"
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^1.1.3"
     typesafe-actions "^5.1.0"

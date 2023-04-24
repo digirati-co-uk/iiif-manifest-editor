@@ -21,6 +21,7 @@ export interface CreatorFunctionContext {
   getParent(): Reference | undefined;
   getTarget(): SpecificResource | Reference | undefined;
   getParentResource(): SpecificResource | undefined;
+  getPreviewVault(): Vault;
 }
 
 interface CreatorParent {
@@ -66,6 +67,8 @@ export interface CreatorDefinition {
     parentFields?: string[];
     parentFieldMap?: Record<string, string[]>;
     custom?: (parent: CreatorParent, vault: Vault) => boolean;
+    // Edge-case for painting annotations.
+    disallowPainting?: boolean;
   };
 
   sideEffects?: Array<CreatorSideEffect>;

@@ -43,15 +43,21 @@ export interface IIIFExplorerProps {
 
   allowRemoveEntry?: boolean;
 
+  homepageCollection?: string;
+
   vault?: Vault;
 
   height?: number;
+
+  hideHeader?: boolean;
 
   onSelect?: () => void;
   highlightStyle?: BoxStyle;
   window?: boolean;
 
   onBack?: () => void;
+  clearHomepageCollection?: () => void;
+  onHistory?: (id: string, type: string) => void;
 }
 
 export function IIIFExplorer({
@@ -60,7 +66,11 @@ export function IIIFExplorer({
   outputTypes = ["Manifest", "Canvas", "CanvasRegion"],
   entry = { type: "Text" },
   vault,
+  onHistory,
+  hideHeader,
   allowRemoveEntry,
+  homepageCollection,
+  clearHomepageCollection,
   highlightStyle,
   height,
   onSelect,
@@ -75,7 +85,10 @@ export function IIIFExplorer({
   return (
     <VaultProvider vault={vault}>
       <FilterProvider>
-        <ExplorerStoreProvider entry={entry.type !== "Text" ? entry : undefined} options={{ canReset: canResetLast }}>
+        <ExplorerStoreProvider
+          entry={entry.type !== "Text" ? entry : undefined}
+          options={{ canReset: canResetLast, onHistory }}
+        >
           <div
             className={$.mainContainer}
             onClick={(e) => {
@@ -85,19 +98,27 @@ export function IIIFExplorer({
             }}
           >
             <div className={$.hoverCardContainer} data-window={window} data-float={expanded} style={{ height }}>
-              <div className={$.hoverCardHeader}>
-                <div className={$.hoverCardLabel}>Select resource</div>
-                <div className={$.hoverCardAction} onClick={() => setIsFilterOpen((o) => !o)}>
-                  <img src={filter} alt="Filter options" />
+              {hideHeader ? null : (
+                <div className={$.hoverCardHeader}>
+                  <div className={$.hoverCardLabel}>Select resource</div>
+                  <div className={$.hoverCardAction} onClick={() => setIsFilterOpen((o) => !o)}>
+                    <img src={filter} alt="Filter options" />
+                  </div>
+                  <div className={$.hoverCardAction} onClick={() => setExpanded((o) => !o)}>
+                    <img src={expand} alt="Expand size" />
+                  </div>
                 </div>
-                <div className={$.hoverCardAction} onClick={() => setExpanded((o) => !o)}>
-                  <img src={expand} alt="Expand size" />
-                </div>
-              </div>
+              )}
 
               <ItemFilter open={isFilterOpen} />
 
-              <ExplorerEntry entry={entry} canReset={canResetLast} onBack={onBack} />
+              <ExplorerEntry
+                entry={entry}
+                homepageCollection={homepageCollection}
+                clearHomepageCollection={clearHomepageCollection}
+                canReset={canResetLast}
+                onBack={onBack}
+              />
 
               {/* Only shown if we are looking at a collection */}
               <CollectionListing />

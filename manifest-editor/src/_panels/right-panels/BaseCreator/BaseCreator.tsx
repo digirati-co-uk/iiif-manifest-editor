@@ -3,7 +3,7 @@ import { useApps } from "@/shell/AppContext/AppContext";
 import { CreatableResource } from "@/shell/EditingStack/EditingStack.types";
 import { useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
 import { Vault } from "@iiif/vault/*";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { baseCreatorStyles as $ } from "./BaseCreator.styles";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
@@ -13,6 +13,8 @@ import { toRef } from "@iiif/parser";
 import { Button } from "@/atoms/Button";
 import { Reference } from "@iiif/presentation-3";
 import { useTemporaryHighlight } from "@/state/highlighted-image-resources";
+import { Spinner } from "@/madoc/components/icons/Spinner";
+import { usePreviewVault } from "@/shell/PreviewVault/PreviewVault";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -49,6 +51,11 @@ export function matchBasedOnResource(
           continue;
         }
       }
+
+      if (def.supports.disallowPainting && resource.isPainting) {
+        continue;
+      }
+
       if (def.supports.custom) {
         const isValid = def.supports.custom({ property, resource: parent, atIndex: resource.index }, options.vault);
         if (!isValid) {
@@ -72,7 +79,13 @@ export function matchBasedOnResource(
   return supported;
 }
 
-export function useCreator(parent: any, property: string, type: string, target?: Reference) {
+export function useCreator(
+  parent: any,
+  property: string,
+  type: string,
+  target?: Reference,
+  options?: { isPainting?: boolean }
+) {
   const vault = useVault();
   const { apps, currentApp } = useApps();
   const { create, edit } = useLayoutActions();
@@ -86,7 +99,7 @@ export function useCreator(parent: any, property: string, type: string, target?:
   const wrappedCreate = useCallback(
     (index?: number, initialData?: any) => {
       if (parent) {
-        create({ type, parent: toRef(parent), property, index, target, initialData });
+        create({ type, parent: toRef(parent), property, index, target, initialData, ...(options || {}) });
       }
     },
     [create, parent, property, type]
@@ -102,18 +115,24 @@ export function useCreator(parent: any, property: string, type: string, target?:
   return [canCreate, { create: wrappedCreate, edit: wrappedEdit }] as const;
 }
 
+export function useInlineCreator() {
+  const vault = useVault();
+  const previewVault = usePreviewVault();
+  const { apps, currentApp } = useApps();
+  const selectedApp = currentApp ? apps[currentApp.id] : null;
+  return useMemo(() => {
+    return new Creator(vault, selectedApp?.layout.creators || [], previewVault);
+  }, [selectedApp?.layout.creators, vault]);
+}
+
 export const RenderCreator = memo(function RenderCreator(props: {
   resource: CreatableResource;
   creator: CreatorDefinition;
 }) {
   const vault = useVault();
-  const { apps, currentApp } = useApps();
   const { edit, rightPanel } = useLayoutActions();
-  const selectedApp = currentApp ? apps[currentApp.id] : null;
   const [isCreating, setIsCreating] = useState(false);
-  const creator = useMemo(() => {
-    return new Creator(vault, selectedApp?.layout.creators || []);
-  }, [selectedApp?.layout.creators, vault]);
+  const creator = useInlineCreator();
 
   const canvasSelector = props.resource.initialData?.selector;
   useTemporaryHighlight(canvasSelector);
@@ -130,8 +149,6 @@ export const RenderCreator = memo(function RenderCreator(props: {
     target: props.resource.target,
     initialData: props.resource.initialData,
   };
-
-  console.log("options", options);
 
   const runCreate = async (payload: any) => {
     setIsCreating(true);
@@ -159,12 +176,14 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
   return (
     <>
-      {props.creator.render({
-        vault,
-        runCreate,
-        validate,
-        options,
-      })}
+      <Suspense fallback={<Spinner />}>
+        {props.creator.render({
+          vault,
+          runCreate,
+          validate,
+          options,
+        })}
+      </Suspense>
     </>
   );
 });

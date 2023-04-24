@@ -7,10 +7,12 @@ import { entityActions } from "@iiif/vault/actions";
 export class Creator {
   configs: CreatorDefinition[];
   vault: Vault;
+  previewVault: Vault;
 
-  constructor(vault: Vault, configs: CreatorDefinition[]) {
+  constructor(vault: Vault, configs: CreatorDefinition[], previewVault?: Vault) {
     this.configs = configs || [];
     this.vault = vault;
+    this.previewVault = previewVault || new Vault();
   }
 
   async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<Reference> {
@@ -47,7 +49,7 @@ export class Creator {
       }
     }
 
-    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, options);
+    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, this.previewVault, options);
 
     const resource = await runtime.run();
 

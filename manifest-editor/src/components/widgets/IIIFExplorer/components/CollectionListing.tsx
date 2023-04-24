@@ -1,15 +1,15 @@
 import * as $ from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
-import { useResources, useVaultSelector } from "react-iiif-vault";
-import { CollectionNormalized } from "@iiif/presentation-3";
+import { useVaultSelector } from "react-iiif-vault";
+import { CollectionNormalized } from "@iiif/presentation-3-normalized";
 import { ExplorerSnippet } from "@/components/widgets/IIIFExplorer/components/ExplorerSnippet";
 import React, { useLayoutEffect } from "react";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { collectionItem } from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import { useFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
-import { Spinner } from "../../../../madoc/components/icons/Spinner";
+import { Spinner } from "@/madoc/components/icons/Spinner";
 
 export function CollectionListing() {
   const store = useExplorerStore();

@@ -1,13 +1,12 @@
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ResourceNavigation.styles";
-import folder from "@/components/widgets/IIIFExplorer/icons/folder.svg";
 import back from "../icons/back.svg";
 import { useState } from "react";
 import { DownIcon } from "@/icons/DownIcon";
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
 import { useVaultSelector } from "react-iiif-vault";
-import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3";
-import { LocaleString } from "@/atoms/LocaleString";
+import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
+import { ResourceNavigationItem } from "@/components/widgets/IIIFExplorer/components/ResourceNavigationItem";
 
 export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => void }) {
   const store = useExplorerStore();
@@ -51,28 +50,17 @@ export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => v
           const isSelected = item.id === selected?.id;
           const resource = item.resource as ManifestNormalized | CollectionNormalized;
           return (
-            <a
-              href={item.id}
-              className={$.resourceNavListItem}
+            <ResourceNavigationItem
               key={item.id}
-              data-active={isSelected}
-              data-index={idx}
-              onClick={(e) => {
-                if (e.ctrlKey) {
-                  return;
-                }
-                e.preventDefault();
+              id={item.id}
+              isSelected={isSelected}
+              index={idx}
+              select={() => {
                 select(item);
                 setIsOpen(false);
               }}
-            >
-              <div className={$.resourceNavListItemIcon}>
-                <img src={folder} alt="" />
-              </div>
-              <div className={$.resourceNavListItemLabel}>
-                <LocaleString>{resource.label}</LocaleString>
-              </div>
-            </a>
+              item={resource}
+            />
           );
         })}
       </div>

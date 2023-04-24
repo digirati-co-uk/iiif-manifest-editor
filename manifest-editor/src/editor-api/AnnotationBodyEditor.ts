@@ -14,7 +14,8 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
   }
 
   isSpatial() {
-    const body = this.getFirst();
+    const bodyRef = this.getFirst();
+    const body = this.config.vault.get(bodyRef);
     const ref = toRef(body);
     return ref?.type === "Video" || ref?.type === "Image";
   }

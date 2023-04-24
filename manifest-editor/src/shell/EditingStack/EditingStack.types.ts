@@ -16,6 +16,7 @@ export interface CreatableResource {
   onlyReference?: boolean;
   target?: Reference;
   initialData?: any;
+  isPainting?: boolean;
 }
 
 export interface EditingStackState {

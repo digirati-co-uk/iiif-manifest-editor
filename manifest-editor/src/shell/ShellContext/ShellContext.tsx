@@ -11,6 +11,7 @@ import { defaultTheme } from "../../themes/default-theme";
 import { ThemeProvider } from "styled-components";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { EditingStack } from "@/shell/EditingStack/EditingStack";
+import { PreviewVaultContext } from "@/shell/PreviewVault/PreviewVault";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
@@ -50,22 +51,24 @@ export const ShellProvider = ({
 }) => {
   return (
     <ErrorBoundary>
-      <ThemeProvider theme={theme || defaultTheme}>
-        <ConfigProvider config={config}>
-          <AppProvider apps={apps.allApps} initialApp={initialApp}>
-            <EditingStack>
-              <LayoutProvider>
-                <ProjectProvider>
-                  {/* @todo swap these out for (config?.previews || []) */}
-                  <PreviewProvider configs={config?.previews || previewConfigs}>
-                    <ManifestEditorProvider>{children}</ManifestEditorProvider>
-                  </PreviewProvider>
-                </ProjectProvider>
-              </LayoutProvider>
-            </EditingStack>
-          </AppProvider>
-        </ConfigProvider>
-      </ThemeProvider>
+      <PreviewVaultContext>
+        <ThemeProvider theme={theme || defaultTheme}>
+          <ConfigProvider config={config}>
+            <AppProvider apps={apps.allApps} initialApp={initialApp}>
+              <EditingStack>
+                <LayoutProvider>
+                  <ProjectProvider>
+                    {/* @todo swap these out for (config?.previews || []) */}
+                    <PreviewProvider configs={config?.previews || previewConfigs}>
+                      <ManifestEditorProvider>{children}</ManifestEditorProvider>
+                    </PreviewProvider>
+                  </ProjectProvider>
+                </LayoutProvider>
+              </EditingStack>
+            </AppProvider>
+          </ConfigProvider>
+        </ThemeProvider>
+      </PreviewVaultContext>
     </ErrorBoundary>
   );
 };

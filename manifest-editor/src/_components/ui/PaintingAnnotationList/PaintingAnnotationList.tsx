@@ -21,7 +21,8 @@ export function PaintingAnnotationList() {
     { id: annotationPage, type: "AnnotationPage" },
     "items",
     "Annotation",
-    canvas ? { id: canvas, type: "Canvas" } : undefined
+    canvas ? { id: canvas, type: "Canvas" } : undefined,
+    { isPainting: true }
   );
 
   return (

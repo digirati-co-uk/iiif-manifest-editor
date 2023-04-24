@@ -8,18 +8,23 @@ import { v4 } from "uuid";
 
 export class CreatorInstance implements CreatorFunctionContext {
   vault: Vault;
+  previewVault: Vault;
   configs: CreatorDefinition[];
   options: CreatorOptions;
 
-  constructor(vault: Vault, options: CreatorOptions, createConfigs: CreatorDefinition[]) {
+  constructor(vault: Vault, options: CreatorOptions, createConfigs: CreatorDefinition[], previewVault: Vault) {
     this.vault = vault;
+    this.previewVault = previewVault;
     this.options = options;
     this.configs = createConfigs;
   }
 
+  getPreviewVault() {
+    return this.previewVault;
+  }
+
   getTarget(): SpecificResource | Reference | undefined {
     const target = this.options.target || this.options.parent?.resource;
-    console.log("initialData", this.options.initialData);
     const position: any = this.options.initialData?.selector;
     if (target && position) {
       return {
@@ -88,7 +93,7 @@ export class CreatorInstance implements CreatorFunctionContext {
       throw new Error(`Creator config ${definition} not found`);
     }
 
-    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, options);
+    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, this.previewVault, options);
 
     return await runtime.run();
   }

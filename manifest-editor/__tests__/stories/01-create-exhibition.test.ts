@@ -6,6 +6,8 @@ import { EditorConfig } from "@/editor-api/types";
 import { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { expect, vi } from "vitest";
 import { CreateImageServiceAnnotationPayload } from "@/_creators/Annotation/ImageServiceAnnotation/create-service-annotation";
+import nlsManifest from "../fixtures/nls-manifest.json";
+import deepmerge from "deepmerge";
 
 vi.mock("uuid", () => {
   return { v4: () => "<string>" };
@@ -92,8 +94,10 @@ describe("Creation of Delft exhibition", () => {
                     },
                     "id": "https://example.org/exhibition-manifest/canvas/<string>/annotations/<string>/annotation/<string>",
                     "motivation": "describing",
-                    "rights": [],
-                    "target": "https://example.org/exhibition-manifest/canvas/<string>/annotations/<string>",
+                    "target": {
+                      "id": "https://example.org/exhibition-manifest/canvas/<string>/annotations/<string>",
+                      "type": "AnnotationPage",
+                    },
                     "type": "Annotation",
                   },
                 ],
@@ -130,8 +134,7 @@ describe("Creation of Delft exhibition", () => {
                     ],
                     "id": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>/annotation/<string>",
                     "motivation": "painting",
-                    "rights": [],
-                    "target": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>",
+                    "target": "https://example.org/exhibition-manifest/canvas/<string>",
                     "type": "Annotation",
                   },
                 ],
@@ -240,7 +243,6 @@ describe("Creation of Delft exhibition", () => {
                       ],
                     },
                     "motivation": "painting",
-                    "rights": [],
                     "summary": {
                       "en": [
                         "In 1957 the Aluminum Company of America, or Alcoa, whose business consisted of a mix of military contracts and consumer products, hired the famed design firm of Charles and Ray Eames to create a fanciful, brightly colored “Do-Nothing Machine.” Resembling a piece of modern art, the project promoted Alcoa’s new photovoltaic cells not by showing their application to any­thing useful, but by challenging would-be clients to come up with their own uses while lending the corporation a whimsical, artsy vibe. Eames Office, LLC. All rights reserved",
@@ -409,7 +411,6 @@ describe("Creation of Delft exhibition", () => {
                       ],
                     },
                     "motivation": "painting",
-                    "rights": [],
                     "summary": {
                       "en": [
                         "As the United States competed with the Soviet Union in a race of military technology, its economy depended on a constant stream of consumer goods. Many saw totalitarianism abroad and consumerism at home as twin threats to individualism. (Photo by Dan Weiner. Copyright John Broderick)",
@@ -473,6 +474,186 @@ describe("Creation of Delft exhibition", () => {
     `);
   });
 
+  test("Creating annotation from content state", async () => {
+    const { manifest, vault, editor, edit, creator, previewVault } = await createEditor();
+
+    await previewVault.loadManifest(nlsManifest["@id"], deepmerge({}, nlsManifest));
+
+    // create empty canvas.
+    const canvas = await creator.create(
+      "@manifest-editor/empty-canvas",
+      {
+        label: { en: ["Creativity, Consumerism, and the Cold War"] },
+        height: 774,
+        width: 774,
+      },
+      { parent: { resource: manifest, property: "items" } }
+    );
+
+    const page = vault.get(canvas).items[0];
+
+    await creator.create(
+      "@manifest-editor/iiif-browser-creator",
+      {
+        output: {
+          "@context": "http://iiif.io/api/presentation/3/context.json",
+          id: "",
+          type: "Annotation",
+          motivation: ["contentState"],
+          target: {
+            id: "https://view.nls.uk/iiif/7446/74464117/canvas/1",
+            type: "Canvas",
+            partOf: [{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }],
+          },
+        },
+      },
+      {
+        parent: {
+          resource: page,
+          property: "items",
+        },
+        target: canvas,
+        targetType: "Annotation",
+      }
+    );
+
+    expect(vault.toPresentation3(manifest)).toMatchInlineSnapshot(`
+      {
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        "id": "https://example.org/exhibition-manifest",
+        "items": [
+          {
+            "height": 1868,
+            "id": "https://example.org/exhibition-manifest/canvas/<string>",
+            "items": [
+              {
+                "id": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>",
+                "items": [
+                  {
+                    "body": {
+                      "format": "image/jpeg",
+                      "height": 1868,
+                      "id": "https://view.nls.uk/iiif/7443/74438561.5/full/full/0/native.jpg",
+                      "service": [
+                        {
+                          "@id": "https://view.nls.uk/iiif/7443/74438561.5",
+                          "@type": "ImageService2",
+                          "profile": "level2",
+                        },
+                      ],
+                      "type": "Image",
+                      "width": 2500,
+                    },
+                    "id": "https://view.nls.uk/iiif/7443/74438561.5/annotation",
+                    "motivation": "painting",
+                    "target": "https://example.org/exhibition-manifest/canvas/<string>",
+                    "type": "Annotation",
+                  },
+                ],
+                "type": "AnnotationPage",
+              },
+            ],
+            "label": {
+              "en": [
+                "Creativity, Consumerism, and the Cold War",
+              ],
+            },
+            "type": "Canvas",
+            "width": 2500,
+          },
+        ],
+        "type": "Manifest",
+      }
+    `);
+  });
+
+  test("Creating canvas from content state", async () => {
+    const { manifest, vault, editor, edit, creator, previewVault } = await createEditor();
+
+    await previewVault.loadManifest(nlsManifest["@id"], deepmerge({}, nlsManifest));
+
+    await creator.create(
+      "@manifest-editor/iiif-browser-creator",
+      {
+        output: {
+          "@context": "http://iiif.io/api/presentation/3/context.json",
+          id: "",
+          type: "Annotation",
+          motivation: ["contentState"],
+          target: {
+            id: "https://view.nls.uk/iiif/7446/74464117/canvas/1",
+            type: "Canvas",
+            partOf: [{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }],
+          },
+        },
+      },
+      {
+        parent: {
+          resource: manifest,
+          property: "items",
+        },
+        targetType: "Canvas",
+      }
+    );
+
+    expect(vault.toPresentation3(manifest)).toMatchInlineSnapshot(`
+      {
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        "id": "https://example.org/exhibition-manifest",
+        "items": [
+          {
+            "height": 1868,
+            "id": "https://view.nls.uk/iiif/7446/74464117/canvas/1",
+            "items": [
+              {
+                "id": "https://view.nls.uk/iiif/7446/74464117/canvas/1/annotation-page",
+                "items": [
+                  {
+                    "body": {
+                      "format": "image/jpeg",
+                      "height": 1868,
+                      "id": "https://view.nls.uk/iiif/7443/74438561.5/full/full/0/native.jpg",
+                      "service": [
+                        {
+                          "@id": "https://view.nls.uk/iiif/7443/74438561.5",
+                          "@type": "ImageService2",
+                          "profile": "level2",
+                        },
+                      ],
+                      "type": "Image",
+                      "width": 2500,
+                    },
+                    "id": "https://view.nls.uk/iiif/7443/74438561.5/annotation",
+                    "motivation": "painting",
+                    "target": "https://view.nls.uk/iiif/7446/74464117/canvas/1",
+                    "type": "Annotation",
+                  },
+                ],
+                "type": "AnnotationPage",
+              },
+            ],
+            "label": {
+              "none": [
+                "1",
+              ],
+            },
+            "thumbnail": [
+              {
+                "height": 113,
+                "id": "https://deriv.nls.uk/dcn4/7443/74438561.4.jpg",
+                "type": "Image",
+                "width": 150,
+              },
+            ],
+            "type": "Canvas",
+            "width": 2500,
+          },
+        ],
+        "type": "Manifest",
+      }
+    `);
+  });
+
   const startingManifest = () => ({
     id: "https://example.org/exhibition-manifest",
     "@context": "http://iiif.io/api/presentation/3/context.json",
@@ -480,7 +661,16 @@ describe("Creation of Delft exhibition", () => {
     items: [],
   });
   const createEditor = async () => {
-    const vault = new Vault();
+    const vault = new Vault({
+      customFetcher: (url) => {
+        throw new Error("No requesting during tests " + url);
+      },
+    });
+    const previewVault = new Vault({
+      customFetcher: (url) => {
+        throw new Error("No requesting during tests " + url);
+      },
+    });
     const empty = startingManifest();
     const manifest: ManifestNormalized = (await vault.loadManifest(empty.id, empty)) as any;
     const editor = new EditorInstance({
@@ -488,12 +678,12 @@ describe("Creation of Delft exhibition", () => {
       vault,
     });
 
-    const creator = new Creator(vault, allCreators);
+    const creator = new Creator(vault, allCreators, previewVault);
 
     const edit = (reference: any, context?: EditorConfig["context"]) =>
       new EditorInstance({ vault, reference, context });
 
-    return { vault, manifest, editor, creator, edit } as const;
+    return { vault, previewVault, manifest, editor, creator, edit } as const;
   };
 
   const fixtures = {

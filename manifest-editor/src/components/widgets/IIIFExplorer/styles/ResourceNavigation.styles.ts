@@ -62,7 +62,6 @@ export const resourceNavListItem = css`
 `;
 
 export const resourceNavListItemIcon = css`
-  color: red;
   overflow: hidden;
   display: flex;
   user-select: none;

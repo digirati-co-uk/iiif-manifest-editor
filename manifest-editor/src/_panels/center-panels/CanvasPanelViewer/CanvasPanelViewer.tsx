@@ -58,14 +58,11 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
 
   editModeRef.current = editMode;
 
-  console.log("regions", regions);
-
   useEffect(() => {
     if (runtime.current) {
       if (!annotation) {
         runtime?.current.world.goHome();
       } else {
-        console.log((annotation.target as any).selector);
         if (
           annotation.target &&
           (annotation.target as any).selector &&
