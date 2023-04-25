@@ -132,6 +132,7 @@ export interface LayoutPanel {
     maxWidth?: number;
     hideHeader?: boolean;
     pinnable?: boolean;
+    openPinned?: boolean;
     tabs?: boolean;
   };
 }

@@ -87,7 +87,7 @@ export function ViewControls({
 
   return (
     <CanvasViewerControls style={style}>
-      {toggleCreateAnnotation ? (
+      {toggleCreateAnnotation && !editMode ? (
         <CanvasViewerButton data-control="create" onClick={toggleCreateAnnotation} $active={creatingAnnotation}>
           {!createMode ? "Create annotation" : "Clear"}
         </CanvasViewerButton>

@@ -2,6 +2,8 @@ import { CreatorDefinition } from "@/creator-api";
 import { TextFormatIcon } from "@/icons/TextFormatIcon";
 import { CreateImageServiceAnnotationForm, createImageSericeAnnotation } from "./create-service-annotation";
 import { resizeResourceToEmptyCanvas } from "@/_creators/side-effects/resize-resource-to-empty-canvas";
+import { repositionMultipleImages } from "@/_creators/side-effects/reposition-multiple-images";
+import { resizeToFitService } from "@/_creators/side-effects/resize-to-fit-service";
 
 // @todo combine this with the content resource one.
 export const imageServiceAnnotation: CreatorDefinition = {
@@ -16,11 +18,12 @@ export const imageServiceAnnotation: CreatorDefinition = {
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
+  additionalTypes: ["Canvas"],
   supports: {
-    parentTypes: ["AnnotationPage"],
+    parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
-  sideEffects: [resizeResourceToEmptyCanvas],
+  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
   staticFields: {
     type: "Annotation",
   },

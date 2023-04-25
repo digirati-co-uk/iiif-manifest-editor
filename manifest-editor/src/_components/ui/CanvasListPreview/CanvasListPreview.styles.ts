@@ -7,6 +7,11 @@ const Item = css`
   &:hover {
     background: #e8f0fe;
   }
+
+  &[aria-selected="true"] {
+    background: #477dfa;
+    color: #fff;
+  }
 `;
 
 const Label = css`

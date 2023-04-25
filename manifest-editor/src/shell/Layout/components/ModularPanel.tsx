@@ -24,6 +24,7 @@ interface ModularPanelProps {
   transition?: TransitionStatus;
   close?: () => void;
   available?: LayoutPanel[];
+  style?: any;
 }
 
 const LayoutTitleReactContext = createContext<(title: string) => void>(null as any);
@@ -136,7 +137,6 @@ const ModularPanelLabel = styled.h2`
 
 const ModularPanelContent = styled.div`
   flex: 1 1 0px;
-  padding-bottom: 1em;
   display: flex;
 
   min-height: 0;
@@ -157,6 +157,7 @@ export function ModularPanel({
   transition,
   close,
   available = [],
+  style,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -225,7 +226,7 @@ export function ModularPanel({
 
   return (
     <LayoutTitleReactContext.Provider value={setCustomTitle}>
-      <ModularPanelWrapper $state={transition} $flipped={isLeft}>
+      <ModularPanelWrapper $state={transition} $flipped={isLeft} style={style}>
         <ModularPanelHeader $tabs={tabs} $error={didError}>
           <Dropdown style={{ display: "flex", height: "100%" }}>
             {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}

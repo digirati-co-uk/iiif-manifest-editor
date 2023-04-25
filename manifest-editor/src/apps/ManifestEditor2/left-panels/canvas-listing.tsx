@@ -1,9 +1,6 @@
 import { LayoutPanel } from "@/shell/Layout/Layout.types";
-import { useManifest } from "react-iiif-vault";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { Button } from "@/atoms/Button";
-import { ReorderList } from "@/_components/ui/ReorderList/ReorderList.dndkit";
-import invariant from "tiny-invariant";
 import { useManifestEditor } from "@/shell/EditingStack/EditingStack";
 import { InputContainer, InputLabel, InputLabelEdit } from "@/editors/Input";
 import { EmptyState } from "@/madoc/components/EmptyState";
@@ -12,6 +9,7 @@ import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties
 import { useToggleList } from "@/_editors/LinkingProperties/LinkingProperties";
 import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
+import { useInStack } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
 
 export const canvasListing: LayoutPanel = {
   id: "left-panel-empty",
@@ -23,9 +21,10 @@ export const canvasListing: LayoutPanel = {
 };
 
 export function CanvasListing() {
-  const { edit, create } = useLayoutActions();
+  const { edit, open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const [toggled, toggle] = useToggleList();
+  const canvas = useInStack("Canvas");
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
@@ -34,6 +33,10 @@ export function CanvasListing() {
   return (
     <PaddedSidebarContainer>
       <div>{manifest ? <Button onClick={() => edit(manifest)}>Edit manifest</Button> : null}</div>
+
+      <div>
+        <Button onClick={() => open("@manifest-editor/tutorial")}>Open tutorial</Button>
+      </div>
 
       <InputContainer wide>
         {!items.get()?.length ? (
@@ -53,12 +56,17 @@ export function CanvasListing() {
           id={items.focusId()}
           list={items.get() || []}
           inlineHandle={false}
+          activeId={canvas?.resource.source.id}
           reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
           onSelect={(item, idx) => canvasActions.edit(item, idx)}
           createActions={createAppActions(items)}
         />
       </InputContainer>
-      {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
+      {canCreateCanvas ? (
+        <Button {...canvasActions.buttonProps} onClick={() => canvasActions.create()}>
+          Add canvas
+        </Button>
+      ) : null}
     </PaddedSidebarContainer>
   );
 }

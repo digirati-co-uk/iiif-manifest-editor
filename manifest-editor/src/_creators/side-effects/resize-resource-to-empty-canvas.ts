@@ -38,8 +38,8 @@ export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
 
       const service = (body.service || [])[0];
 
-      const width = body.width || service?.width;
-      const height = body.height || service?.height;
+      const width = service?.width || body.width;
+      const height = service?.height || body.height;
       const duration = body.duration || service?.duration;
 
       const editor = new EditorInstance({ vault, reference: canvasRef });

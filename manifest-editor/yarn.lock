@@ -2070,9 +2070,9 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser":
+"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser":
   version "1.1.2"
-  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser#ca6389a09f737d37da100b2dc1ccf158777a2df6"
+  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser#1560697c630a1df49414b5661843dcdb546c9a75"
   dependencies:
     "@iiif/presentation-2" "^1.0.4"
     "@iiif/presentation-3" "^2.0.5"

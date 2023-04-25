@@ -15,6 +15,7 @@ import { Reference } from "@iiif/presentation-3";
 import { useTemporaryHighlight } from "@/state/highlighted-image-resources";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 import { usePreviewVault } from "@/shell/PreviewVault/PreviewVault";
+import { createActionIdentity } from "@/helpers/action-identities";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -112,7 +113,13 @@ export function useCreator(
     [edit, parent, property]
   );
 
-  return [canCreate, { create: wrappedCreate, edit: wrappedEdit }] as const;
+  const buttonProps = useMemo(() => {
+    return {
+      "data-action-id": createActionIdentity(type, property, parent),
+    };
+  }, []);
+
+  return [canCreate, { create: wrappedCreate, edit: wrappedEdit, buttonProps }] as const;
 }
 
 export function useInlineCreator() {
@@ -219,7 +226,12 @@ export function BaseCreator(props: BaseCreatorProps) {
       {props.resource?.initialData?.selector ? <div>Annotation selection saved.</div> : null}
       <div className={$.ListingGrid}>
         {supported.map((item) => (
-          <div className={$.Item} onClick={() => setCurrentId(item.id)}>
+          <div
+            className={$.Item}
+            onClick={() => setCurrentId(item.id)}
+            data-creator-id={item.id}
+            data-creator-type={props.resource.type}
+          >
             <div className={$.ItemIcon}>{item.icon || "no icon"}</div>
             <div className={$.ItemLabel}>{item.label}</div>
             {item.summary ? <div className={$.ItemSummary}>{item.summary}</div> : null}

@@ -14,9 +14,10 @@ export const htmlAnnotation: CreatorDefinition = {
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
+  additionalTypes: ["Canvas"],
   supports: {
     initialData: true,
-    parentTypes: ["AnnotationPage"],
+    parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
   staticFields: {

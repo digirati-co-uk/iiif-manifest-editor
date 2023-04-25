@@ -45,11 +45,11 @@ export function AppDropdown({ as, items, children }: AppDropdownProps) {
     middleware: [
       offset({ mainAxis: 5, alignmentAxis: 4 }),
       flip({
-        fallbackPlacements: ["bottom-end", "bottom-start"],
+        fallbackPlacements: ["bottom-end", "top-end"],
       }),
       shift({ padding: 10 }),
     ],
-    placement: "right-start",
+    placement: "bottom-start",
     strategy: "fixed",
     whileElementsMounted: autoUpdate,
   });
@@ -87,9 +87,9 @@ export function AppDropdown({ as, items, children }: AppDropdownProps) {
       <Comp {...buttonProps} onClick={onClick} onKeyDown={onKeyDown}>
         {children}
       </Comp>
-      <FloatingPortal>
-        {isOpen && (
-          <FloatingOverlay lockScroll>
+      {isOpen && (
+        <FloatingPortal>
+          <FloatingOverlay lockScroll style={{ zIndex: 60 }}>
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
                 className={$.container}
@@ -143,8 +143,8 @@ export function AppDropdown({ as, items, children }: AppDropdownProps) {
               </ul>
             </FloatingFocusManager>
           </FloatingOverlay>
-        )}
-      </FloatingPortal>
+        </FloatingPortal>
+      )}
     </div>
   );
 }

@@ -65,7 +65,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
   function find(id: any) {
     const right = available.rightPanels.find((r) => r.id === id);
     if (right) {
-      return [right, actions.rightPanel] as const;
+      return [right, actions.rightPanel, actions.pinnedRightPanel] as const;
     }
 
     const center = available.centerPanels.find((r) => r.id === id);
@@ -83,12 +83,17 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
 
   function open(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): void {
     const { id, state, stacked } = parse(args, _state);
-    const [found, actions] = find(id);
-    actions.open({
-      id,
-      state: { ...(found.defaultState || {}), ...(state || {}) },
-      stacked,
-    });
+    const [found, actions, pinnable] = find(id);
+
+    if (pinnable && found.options?.openPinned) {
+      pinnable.pin({ id, state: { ...(found.defaultState || {}), ...(state || {}) } });
+    } else {
+      actions.open({
+        id,
+        state: { ...(found.defaultState || {}), ...(state || {}) },
+        stacked,
+      });
+    }
   }
 
   function stack(args: string | { id: string; state?: any }, _state?: any): void {

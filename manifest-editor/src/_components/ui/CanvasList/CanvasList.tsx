@@ -10,6 +10,7 @@ interface CanvasListProps {
   list: Array<Reference | ({ id: string } & SpecificResource)>;
   reorder?: (result: { startIndex: number; endIndex: number }) => void;
   inlineHandle?: boolean;
+  activeId?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
   createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 }
@@ -25,7 +26,11 @@ export function CanvasList(props: CanvasListProps) {
         reorder={props.reorder}
         renderItem={(ref, index) => (
           <CanvasContext canvas={toRef(ref)?.id as string}>
-            <CanvasListPreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
+            <CanvasListPreview
+              key={ref.id}
+              active={props?.activeId === toRef(ref)?.id}
+              onClick={() => props.onSelect(ref, index)}
+            />
           </CanvasContext>
         )}
         createActions={props.createActions}
@@ -39,7 +44,12 @@ export function CanvasList(props: CanvasListProps) {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
           <CanvasContext canvas={ref.id}>
-            <CanvasListPreview margin key={item.id} onClick={() => props.onSelect(ref, idx)} />
+            <CanvasListPreview
+              margin
+              key={item.id}
+              active={props?.activeId === ref.id}
+              onClick={() => props.onSelect(ref, idx)}
+            />
           </CanvasContext>
         );
       })}

@@ -185,15 +185,6 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       <L.PanelContent>
         {state.rightPanel.open || transition !== "exited" ? (
           <>
-            {pinnedRightPanel ? (
-              <ModularPanel
-                panel={pinnedRightPanel}
-                state={state.pinnedRightPanel}
-                actions={actions.pinnedRightPanel}
-                close={actions.rightPanel.close}
-              />
-            ) : null}
-
             {showRightPanel ? (
               <ModularPanel
                 panel={rightPanel}
@@ -201,6 +192,15 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                 actions={actions.rightPanel}
                 pinActions={actions.pinnedRightPanel}
                 available={rightPanels}
+              />
+            ) : null}
+
+            {pinnedRightPanel ? (
+              <ModularPanel
+                panel={pinnedRightPanel}
+                state={state.pinnedRightPanel}
+                actions={actions.pinnedRightPanel}
+                close={actions.rightPanel.close}
               />
             ) : null}
           </>

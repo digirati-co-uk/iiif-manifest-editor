@@ -17,6 +17,8 @@ import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLin
 import { parseServiceProfile } from "@/navigation/ServiceList/ServiceList.utility";
 import { ServiceContainer } from "@/navigation/ServiceList/ServiceList.styles";
 import { getYouTubeId } from "@/_creators/ContentResource/YouTubeCreator/create-youtube-body";
+import { isImageService } from "@atlas-viewer/iiif-image-api";
+import { ImageService } from "@iiif/presentation-3";
 
 function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
   return (
@@ -50,6 +52,7 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
 
 export function MediaEditor() {
   // This is for an annotation
+  const vault = useVault();
   const annotationEditor = useEditor();
   const resourceRef = annotationEditor.annotation.body.getFirst();
   const resourceEditor = useGenericEditor(resourceRef, {
@@ -170,16 +173,33 @@ export function MediaEditor() {
           <ButtonGroup $right>
             <Button
               onClick={() => {
-                const imagePosition = centerRectangles(
-                  canvas,
-                  {
-                    width: width.get(),
-                    height: height.get(),
-                  },
-                  0.6
-                );
+                vault.batch(() => {
+                  // Check image resource width/height vs. service.
+                  const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
+                  if (imageService) {
+                    if (imageService.width && imageService.height) {
+                      if (imageService.width !== width.get()) {
+                        width.set(imageService.width);
+                      }
+                      if (imageService.height !== height.get()) {
+                        height.set(imageService.height);
+                      }
+                    }
+                  }
 
-                target.setPosition(imagePosition);
+                  console.log("canvas =>", canvas, { width: width.get(), height: height.get() });
+
+                  const imagePosition = centerRectangles(
+                    canvas,
+                    {
+                      width: width.get(),
+                      height: height.get(),
+                    },
+                    0.6
+                  );
+
+                  target.setPosition(imagePosition);
+                });
               }}
             >
               Change

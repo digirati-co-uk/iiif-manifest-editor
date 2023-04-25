@@ -2,7 +2,6 @@ import { useEditingResource, useEditingResourceStack } from "@/shell/EditingStac
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { CanvasContext } from "react-iiif-vault";
 import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
-import { useEffect, useState } from "react";
 
 export function useInStack(type: string) {
   const stack = useEditingResourceStack();
@@ -37,6 +36,7 @@ export function CanvasPanelEditor() {
     return (
       <CanvasContext canvas={canvasId} key={canvasId}>
         <CanvasPanelViewer
+          key={canvasId}
           highlightAnnotation={annotationId}
           onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
           createAnnotation={createAnnotation}

@@ -6,6 +6,8 @@ import {
   IIIFBrowserCreatorForm,
 } from "@/_creators/ContentResource/IIIFBrowserCreator/iiif-browser-creator";
 import { resizeResourceToEmptyCanvas } from "@/_creators/side-effects/resize-resource-to-empty-canvas";
+import { repositionMultipleImages } from "@/_creators/side-effects/reposition-multiple-images";
+import { resizeToFitService } from "@/_creators/side-effects/resize-to-fit-service";
 
 export const iiifBrowserCreator: CreatorDefinition = {
   id: "@manifest-editor/iiif-browser-creator",
@@ -13,7 +15,7 @@ export const iiifBrowserCreator: CreatorDefinition = {
   label: "IIIF Browser",
   summary: "Find a resource within a IIIF Collection or Manifest",
   icon: <img src={textFormatIcon} alt="" />,
-  render(ctx) {
+  render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },
   resourceType: "ContentResource",
@@ -27,6 +29,6 @@ export const iiifBrowserCreator: CreatorDefinition = {
       AnnotationPage: ["items"],
     },
   },
-  sideEffects: [resizeResourceToEmptyCanvas],
+  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
   staticFields: {},
 };

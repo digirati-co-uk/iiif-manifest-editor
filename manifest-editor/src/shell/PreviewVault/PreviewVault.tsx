@@ -61,6 +61,10 @@ export function createPreviewVault() {
 
   const clearHistory = () => {
     vault.dispatch(modifyEntityField({ id: HOMEPAGE_COLLECTION, type: "Collection", key: "items", value: [] }));
+    window.localStorage.setItem(
+      "preview-vault-collection",
+      JSON.stringify(vault.toPresentation3({ id: HOMEPAGE_COLLECTION, type: "Collection" }))
+    );
   };
 
   const addHistory = (id: string, type: string) => {

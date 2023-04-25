@@ -21,6 +21,7 @@ import { inlineAnnotationPageEditor } from "@/_editors/InlineAnnotationPageEdito
 import React from "react";
 import { CanvasPanelEditor } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
 import { tutorial } from "@/_panels/right-panels/Tutotiral";
+import { overviewCanvasEditor } from "@/_editors/OverviewCanvasEditor";
 
 export default { id: "manifest-editor-2", title: "Manifest Editor 2", dev: true };
 
@@ -63,6 +64,7 @@ export const editors = [
   imageEditor,
   mediaEditor,
   htmlBodyEditor,
+  overviewCanvasEditor,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
 
