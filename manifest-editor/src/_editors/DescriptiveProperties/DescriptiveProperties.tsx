@@ -72,7 +72,7 @@ export function DescriptiveProperties() {
             <InputLabel htmlFor={rights.focusId()}>Rights</InputLabel>
             <Input
               id={rights.focusId()}
-              value={rights.get()}
+              value={rights.get() || ""}
               onChange={(e) => rights.set(e.target.value)}
               list="valid-rights"
             />

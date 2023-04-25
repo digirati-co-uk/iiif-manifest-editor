@@ -25,6 +25,13 @@ export class ReferencedResource {
   }
 
   optionalSpecificResource() {
+    if (isSpecificResource(this.original)) {
+      return {
+        ...this.original,
+        source: { id: this.original.source?.id, type: this.original.source?.type },
+      };
+    }
+
     // @todo check if there are targets here that would make this a specific resource.
     return this.original;
   }

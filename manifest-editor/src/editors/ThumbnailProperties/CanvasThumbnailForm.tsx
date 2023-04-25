@@ -1,6 +1,6 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { addMapping, importEntities } from "@iiif/vault/actions";

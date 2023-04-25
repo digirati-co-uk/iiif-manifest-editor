@@ -25,6 +25,11 @@ export const resizeToFitService: CreatorSideEffect = {
         return;
       }
 
+      const resourceBody = Array.isArray(fullAnno.body) ? fullAnno.body[0] : fullAnno.body;
+      if (resourceBody.type === "SpecificResource" && resourceBody.selector) {
+        return;
+      }
+
       const bodies = vault.get(fullAnno.body);
       const body = bodies[0];
 

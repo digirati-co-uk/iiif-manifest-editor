@@ -2,7 +2,7 @@ import * as $ from "@/components/widgets/IIIFExplorer/styles/CollectionListing.s
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
 import { useVaultSelector } from "react-iiif-vault";
-import { CollectionNormalized } from "@iiif/presentation-3-normalized";
+import { CollectionNormalized, NormalizedCollectionItemSchemas } from "@iiif/presentation-3-normalized";
 import { ExplorerSnippet } from "@/components/widgets/IIIFExplorer/components/ExplorerSnippet";
 import React, { useLayoutEffect } from "react";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
@@ -10,6 +10,41 @@ import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { collectionItem } from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import { useFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
 import { Spinner } from "@/madoc/components/icons/Spinner";
+
+export function CollectionListingStandalone({
+  collection,
+  select,
+}: {
+  collection?: CollectionNormalized;
+  select: (item: NormalizedCollectionItemSchemas) => void;
+}) {
+  const store = useExplorerStore();
+  const container = useKeyboardListNavigation<HTMLDivElement>("data-collection-list-index");
+  const setScrollCache = useStore(store, (s) => s.setScrollCache);
+
+  return (
+    <div className={$.collectionListingContainer} {...container}>
+      {collection?.items.map((item, n) => (
+        <LazyLoadComponent
+          key={item.id}
+          visibleByDefault={n < 40}
+          placeholder={<div data-collection-list-index={n} className={collectionItem} style={{ aspectRatio: "1/1" }} />}
+        >
+          <ExplorerSnippet
+            index={n}
+            resource={item}
+            onClick={() => {
+              if (container.ref.current) {
+                setScrollCache(collection.id, container.ref.current.scrollTop);
+              }
+              select(item);
+            }}
+          />
+        </LazyLoadComponent>
+      ))}
+    </div>
+  );
+}
 
 export function CollectionListing() {
   const store = useExplorerStore();
@@ -57,26 +92,5 @@ export function CollectionListing() {
     return null;
   }
 
-  return (
-    <div className={$.collectionListingContainer} {...container}>
-      {collection?.items.map((item, n) => (
-        <LazyLoadComponent
-          key={item.id}
-          visibleByDefault={n < 40}
-          placeholder={<div data-collection-list-index={n} className={collectionItem} style={{ aspectRatio: "1/1" }} />}
-        >
-          <ExplorerSnippet
-            index={n}
-            resource={item}
-            onClick={() => {
-              if (container.ref.current) {
-                setScrollCache(collection.id, container.ref.current.scrollTop);
-              }
-              select(item);
-            }}
-          />
-        </LazyLoadComponent>
-      ))}
-    </div>
-  );
+  return <CollectionListingStandalone collection={collection} select={(item) => select(item)} />;
 }

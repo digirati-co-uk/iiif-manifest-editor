@@ -33,6 +33,7 @@ export const repositionMultipleImages: CreatorSideEffect = {
 
       const bodies = vault.get(fullAnno.body);
       const body = bodies[0];
+      const selector = fullAnno.body[0]?.selector;
 
       const serviceList = body.service || [];
       const imageService = serviceList.find((s: any) => isImageService(s)) as ImageService | undefined;
@@ -47,8 +48,17 @@ export const repositionMultipleImages: CreatorSideEffect = {
         }
       }
 
-      const width = imageService?.width || body.width;
-      const height = imageService?.height || body.height;
+      let width = imageService?.width || body.width;
+      let height = imageService?.height || body.height;
+
+      if (selector) {
+        if ((selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") && selector.region) {
+          const [x, y, width_, height_] = selector.region.split(",");
+
+          width = Number(width_) || width;
+          height = Number(height_) || height;
+        }
+      }
 
       const editor = new EditorInstance({ vault, reference: result });
 

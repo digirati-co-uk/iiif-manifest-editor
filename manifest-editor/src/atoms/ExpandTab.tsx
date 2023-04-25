@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useManifestEditor } from "../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { DownIcon } from "../icons/DownIcon";
 import { SmallButton } from "./Button";
 

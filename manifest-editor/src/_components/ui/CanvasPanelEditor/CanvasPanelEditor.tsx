@@ -1,6 +1,6 @@
-import { useEditingResource, useEditingResourceStack } from "@/shell/EditingStack/EditingStack";
+import { useEditingResource, useEditingResourceStack, useGenericEditor } from "@/shell/EditingStack/EditingStack";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext, useVaultSelector } from "react-iiif-vault";
 import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
 
 export function useInStack(type: string) {
@@ -18,6 +18,24 @@ export function CanvasPanelEditor() {
   const canvasId = canvas?.resource.source.id;
   let createAnnotation = undefined;
 
+  const totalAnnotations = useVaultSelector(
+    (state, vault) => {
+      if (canvasId) {
+        const c = vault.get(canvasId);
+        console.log({ c });
+        const page = c.items[0];
+        if (page) {
+          const fullPage = vault.get(page);
+          if (fullPage) {
+            return fullPage.items.length;
+          }
+        }
+      }
+      return 0;
+    },
+    [canvasId]
+  );
+
   if (annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations") {
     createAnnotation = (data: any) => {
       create({
@@ -34,9 +52,9 @@ export function CanvasPanelEditor() {
 
   if (canvas) {
     return (
-      <CanvasContext canvas={canvasId} key={canvasId}>
+      <CanvasContext canvas={canvasId}>
         <CanvasPanelViewer
-          key={canvasId}
+          key={`${canvasId}/${totalAnnotations}`}
           highlightAnnotation={annotationId}
           onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
           createAnnotation={createAnnotation}

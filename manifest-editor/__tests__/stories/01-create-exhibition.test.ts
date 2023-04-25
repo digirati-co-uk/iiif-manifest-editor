@@ -538,7 +538,9 @@ describe("Creation of Delft exhibition", () => {
                         {
                           "@id": "https://view.nls.uk/iiif/7443/74438561.5",
                           "@type": "ImageService2",
+                          "height": 1868,
                           "profile": "level2",
+                          "width": 2500,
                         },
                       ],
                       "type": "Image",
@@ -647,6 +649,112 @@ describe("Creation of Delft exhibition", () => {
             ],
             "type": "Canvas",
             "width": 2500,
+          },
+        ],
+        "type": "Manifest",
+      }
+    `);
+  });
+
+  test("Creating cropped-image from content state", async () => {
+    const contentState = {
+      "@context": "http://iiif.io/api/presentation/3/context.json",
+      id: "",
+      type: "Annotation",
+      motivation: ["contentState"],
+      target: {
+        id: "https://view.nls.uk/iiif/7446/74464117/canvas/1#xywh=1192,705,1105,582",
+        type: "Canvas",
+        partOf: [{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }],
+      },
+    };
+
+    const { manifest, vault, editor, edit, creator, previewVault } = await createEditor();
+
+    await previewVault.loadManifest(nlsManifest["@id"], deepmerge({}, nlsManifest));
+
+    // 1st we want an empty canvas.
+    const canvas = await creator.create(
+      "@manifest-editor/empty-canvas",
+      {
+        label: { en: ["Creativity, Consumerism, and the Cold War"] },
+        height: 1200,
+        width: 1200,
+      },
+      { parent: { resource: manifest, property: "items" } }
+    );
+    const page = vault.get(canvas).items[0];
+
+    await creator.create(
+      "@manifest-editor/iiif-browser-creator",
+      {
+        output: contentState,
+      },
+      {
+        parent: {
+          resource: page,
+          property: "items",
+        },
+        target: canvas,
+        targetType: "Annotation",
+      }
+    );
+
+    // 2nd we want to add our content state.
+    expect(vault.toPresentation3(manifest)).toMatchInlineSnapshot(`
+      {
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        "id": "https://example.org/exhibition-manifest",
+        "items": [
+          {
+            "height": "582",
+            "id": "https://example.org/exhibition-manifest/canvas/<string>",
+            "items": [
+              {
+                "id": "https://example.org/exhibition-manifest/canvas/<string>/annotation-page/<string>",
+                "items": [
+                  {
+                    "body": {
+                      "id": "https://view.nls.uk/iiif/7443/74438561.5/annotation/SpecificResource/<string>",
+                      "selector": {
+                        "@context": "http://iiif.io/api/annex/openannotation/context.json",
+                        "region": "1192,705,1105,582",
+                        "type": "iiif:ImageApiSelector",
+                      },
+                      "source": {
+                        "format": "image/jpeg",
+                        "height": 1868,
+                        "id": "https://view.nls.uk/iiif/7443/74438561.5/full/full/0/native.jpg",
+                        "service": [
+                          {
+                            "@id": "https://view.nls.uk/iiif/7443/74438561.5",
+                            "@type": "ImageService2",
+                            "height": 1868,
+                            "profile": "level2",
+                            "width": 2500,
+                          },
+                        ],
+                        "type": "Image",
+                        "width": 2500,
+                      },
+                      "type": "SpecificResource",
+                    },
+                    "id": "https://view.nls.uk/iiif/7443/74438561.5/annotation",
+                    "motivation": "painting",
+                    "target": "https://example.org/exhibition-manifest/canvas/<string>",
+                    "type": "Annotation",
+                  },
+                ],
+                "type": "AnnotationPage",
+              },
+            ],
+            "label": {
+              "en": [
+                "Creativity, Consumerism, and the Cold War",
+              ],
+            },
+            "type": "Canvas",
+            "width": "1105",
           },
         ],
         "type": "Manifest",

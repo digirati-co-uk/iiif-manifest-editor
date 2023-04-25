@@ -8,7 +8,7 @@ import { KeyObjectPairing } from "./IIIFElementsObject";
 import { Annotations } from "./IIIFAnnotationPages";
 import { DownIcon } from "../../icons/DownIcon";
 
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 
 import styled from "styled-components";
 import { FlexContainer } from "../../components/layout/FlexContainer";

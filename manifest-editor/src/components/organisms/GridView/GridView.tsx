@@ -1,4 +1,4 @@
-import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { FlexContainer, FlexContainerRow } from "../../layout/FlexContainer";
 import { AddIcon } from "../../../icons/AddIcon";
 import { GridViewContainer } from "./GridView.styles";
@@ -16,7 +16,7 @@ import { usePasteCanvas } from "../../../hooks/usePasteCanvas";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
-  handleChangeDouble: (canvasId: string, thumbnail?: boolean) => void;
+  handleChangeDouble?: (canvasId: string, thumbnail?: boolean) => void;
   width?: number;
   strip?: boolean;
   column?: boolean;

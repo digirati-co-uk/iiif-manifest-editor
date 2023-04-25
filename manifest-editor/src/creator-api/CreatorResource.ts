@@ -3,6 +3,7 @@ import { Vault } from "@iiif/vault";
 import { ReferencedResource } from "./ReferencedResource";
 import { getEmptyType, resolveType } from "./utils";
 import { HAS_PART, PART_OF } from "@iiif/parser";
+import { SpecificResource } from "@iiif/presentation-3";
 
 export class CreatorResource {
   resource: any;
@@ -12,11 +13,20 @@ export class CreatorResource {
   references: ReferencedResource[] = [];
   embedded: CreatorResource[] = [];
   vault: Vault;
+  specificResource?: SpecificResource;
 
   constructor(data: any, vault: Vault) {
     this.vault = vault;
+
+    if (data.type === "SpecificResource") {
+      const source = data.source;
+      this.specificResource = { ...data, source: { id: source.id, type: resolveType(source.type) } };
+      data = source;
+    }
+
     const properties = Object.keys(data);
     const defaultType = getEmptyType(data.type);
+
     for (const key of properties) {
       // These properties are NOT references and can be just included normally.
       if (references.inlineProperties.includes(key) || !references.all.includes(key)) {
@@ -117,6 +127,10 @@ export class CreatorResource {
   }
 
   ref() {
+    if (this.specificResource) {
+      return this.specificResource;
+    }
+
     return { id: this.resource.id, type: resolveType(this.resource.type as string) as any };
   }
 

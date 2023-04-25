@@ -1,7 +1,7 @@
 import { getValue } from "@iiif/vault-helpers";
 import { useCallback, useState } from "react";
 import { useCanvas, useManifest } from "react-iiif-vault";
-import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { DropdownContent } from "../../../atoms/Dropdown";
 import { DropdownItem } from "../../../atoms/DropdownPreviewMenu";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
@@ -18,7 +18,7 @@ import { CanvasThumbnail } from "../CanvasThumbnail/CanvasThumbnail";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;
-  handleChangeDouble: (id: string, e: any) => void;
+  handleChangeDouble?: (id: string, e: any) => void;
   canvasId: string;
   reorder?: (fromPosition: number, toPosition: number) => void;
   remove: (fromPosition: number, ref: Reference) => void;
@@ -114,7 +114,9 @@ export const GridItem: React.FC<{
             handleChange(canvasId, e);
           }}
           onDoubleClick={(e: any) => {
-            handleChangeDouble(canvasId, e);
+            if (handleChangeDouble) {
+              handleChangeDouble(canvasId, e);
+            }
           }}
           // size={editorContext?.thumbnailSize?.w}
           selected={canvasId === currentCanvasId}

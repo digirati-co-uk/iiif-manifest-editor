@@ -2,7 +2,7 @@ import { CanvasContext, useManifest } from "react-iiif-vault";
 
 import { SmallThumbnailStripContainer, ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { Thumbnail } from "../../atoms/Thumbnail";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 
 import { RecentLabel } from "../../atoms/RecentFilesWidget";

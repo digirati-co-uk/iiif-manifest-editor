@@ -91,6 +91,6 @@ export class CreatorRuntime {
     const actions = this.getActions();
     this.vault.dispatch(batchActions({ actions: [...actions, ...afterActions] }));
 
-    return this.resource.ref();
+    return this.resource.ref() as Reference;
   }
 }

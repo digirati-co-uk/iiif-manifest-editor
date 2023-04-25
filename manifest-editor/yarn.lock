@@ -2121,7 +2121,7 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault":
   version "0.9.22"
   resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault#a98542950c921b9d014e59c0b1af193c55c3bc6a"
   dependencies:
@@ -11160,9 +11160,9 @@ react-i18next@^11.18.0:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
-react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/6326aaca/react-iiif-vault":
+react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault":
   version "0.9.20"
-  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/6326aaca/react-iiif-vault#5cb1a0047b8c2bad9d50d07a656f154e1063de83"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault#055a3b033b1503366cd35b7b243a86bcad6269fd"
   dependencies:
     "@atlas-viewer/atlas" "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas"
     "@atlas-viewer/iiif-image-api" "^2.1.1"
@@ -11170,7 +11170,7 @@ react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/r
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^2.0.5"
     "@iiif/presentation-3-normalized" "^0.9.7"
-    "@iiif/vault" "https://pkg.csb.dev/IIIF-Commons/vault/commit/84c630f7/@iiif/vault"
+    "@iiif/vault" "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault"
     "@iiif/vault-helpers" "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/518bf0e0/@iiif/vault-helpers"
     react "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-dom "^16.10.2 || ^17.0.2 || ^18.2.0"

@@ -43,7 +43,7 @@ export function CanvasList(props: CanvasListProps) {
       {props.list.map((item, idx) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
-          <CanvasContext canvas={ref.id}>
+          <CanvasContext canvas={ref.id} key={ref.id}>
             <CanvasListPreview
               margin
               key={item.id}

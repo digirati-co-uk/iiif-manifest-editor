@@ -10,7 +10,7 @@ import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { SubdirectoryIcon } from "../../icons/SubdirectoryIcon";
 import { FlexContainer } from "../../components/layout/FlexContainer";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { useAppState } from "../../shell/AppContext/AppContext";
 
 export const IIIFCanvas: React.FC<{

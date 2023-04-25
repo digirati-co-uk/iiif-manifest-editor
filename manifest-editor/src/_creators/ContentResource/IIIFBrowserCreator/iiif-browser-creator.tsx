@@ -53,6 +53,47 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
       const annotationPage = previewVault.get(canvas.items[0]);
       const annotation = previewVault.get(annotationPage.items[0]);
       if (targetType === "Annotation") {
+        const fullAnnotation = previewVault.toPresentation3<any>(annotation);
+
+        if (fullAnnotation && fullAnnotation?.body?.service) {
+          const width = fullAnnotation?.body.width;
+          const height = fullAnnotation?.body.height;
+          const service = Array.isArray(fullAnnotation?.body?.service)
+            ? fullAnnotation?.body?.service[0]
+            : fullAnnotation?.body?.service;
+
+          if (!service.width || !service.height) {
+            service.width = width;
+            service.height = height;
+          }
+        }
+
+        // Check for selector on state.
+        if (target.selector && target.selector.type === "BoxSelector") {
+          const selector = {
+            "@context": "http://iiif.io/api/annex/openannotation/context.json",
+            type: "iiif:ImageApiSelector",
+            region: [
+              ~~target.selector.spatial.x,
+              ~~target.selector.spatial.y,
+              ~~target.selector.spatial.width,
+              ~~target.selector.spatial.height,
+            ].join(","),
+          };
+
+          fullAnnotation.body = {
+            id: ctx.generateId("SpecificResource", annotation),
+            type: "SpecificResource",
+            source: fullAnnotation.body,
+            selector,
+          };
+
+          return ctx.embed({
+            ...fullAnnotation,
+            target: ctx.getTarget(),
+          });
+        }
+
         return ctx.embed({
           ...previewVault.toPresentation3(annotation),
           target: ctx.getTarget(),

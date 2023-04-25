@@ -35,12 +35,22 @@ export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
       }
 
       const body = bodies[0];
+      const selector = fullAnno.body[0]?.selector;
 
       const service = (body.service || [])[0];
 
-      const width = service?.width || body.width;
-      const height = service?.height || body.height;
+      let width = service?.width || body.width;
+      let height = service?.height || body.height;
       const duration = body.duration || service?.duration;
+
+      if (selector) {
+        if ((selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") && selector.region) {
+          const [x, y, width_, height_] = selector.region.split(",");
+
+          width = Number(width_) || width;
+          height = Number(height_) || height;
+        }
+      }
 
       const editor = new EditorInstance({ vault, reference: canvasRef });
       vault.batch(() => {

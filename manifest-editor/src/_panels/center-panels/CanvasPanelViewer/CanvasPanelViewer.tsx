@@ -6,6 +6,7 @@ import {
   useVault,
   useCanvas,
   useAnnotation,
+  useAnnotationPage,
 } from "react-iiif-vault";
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { DefaultPresetOptions, DrawBox, Runtime } from "@atlas-viewer/atlas";

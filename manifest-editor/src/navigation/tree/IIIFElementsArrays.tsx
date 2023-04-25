@@ -19,7 +19,7 @@ import { Canvases } from "./IIIFCanvas";
 import { Ranges } from "./IIIFRange";
 import { Services } from "./IIIFServices";
 import { IIIFService } from "./IIIFService";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 
 export type KeyArrayPairing = {
   propertyName: string;
