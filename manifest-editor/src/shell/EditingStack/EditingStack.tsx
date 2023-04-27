@@ -6,8 +6,8 @@ import invariant from "tiny-invariant";
 import { useManifest, useResourceContext, useVault } from "react-iiif-vault";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
-import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 import { current } from "immer";
+import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
 const EditingStackContext = createContext<EditingStackState>(defaultState);
@@ -175,6 +175,8 @@ export function EditingStack(props: { children?: any }) {
   const actions: EditingStackActions = useMemo(() => {
     return { edit, updateCurrent, close, back, create };
   }, []);
+
+  const { current } = useProjectContext();
 
   return (
     <EditingStackActionsContext.Provider value={actions} key={current?.id}>
