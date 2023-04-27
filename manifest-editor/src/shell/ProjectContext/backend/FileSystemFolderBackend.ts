@@ -106,7 +106,6 @@ export class FileSystemFolderBackend implements ProjectBackend {
     });
 
     for (const entry of entries) {
-      console.log(entry);
       // For a project to be valid, we need to find: manifest-editor.json
       try {
         const projectJson = entry.children?.find((s) => s.name === "project.json");

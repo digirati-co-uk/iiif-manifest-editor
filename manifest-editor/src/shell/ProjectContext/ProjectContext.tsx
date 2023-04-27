@@ -3,18 +3,18 @@ import { ProjectContext } from "./ProjectContext.types";
 import { useProjectActionsWithBackend, useProjectBackend, useProjectLoader } from "./ProjectContext.hooks";
 import { getDefaultProjectContextState, projectContextReducer } from "./ProjectContext.reducer";
 import invariant from "tiny-invariant";
-import { ManifestContext, VaultProvider } from "react-iiif-vault";
+import { CollectionContext, ManifestContext, VaultProvider } from "react-iiif-vault";
 import { LocalStorageLoader } from "./storage/LocalStorageLoader";
 import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { useApps } from "../AppContext/AppContext";
 import { FileSystemFolderBackend } from "./backend/FileSystemFolderBackend";
 import { FileSystemLoader } from "./storage/FileSystemLoader";
-import { useLayoutState } from "../Layout/Layout.context";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
 export function ProjectProvider(props: { children: ReactNode; defaultApp?: string }) {
-  const { currentApp, changeApp } = useApps();
+  const { currentApp, changeApp, apps } = useApps();
+  const selectedApp = currentApp ? apps[currentApp.id] : null;
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
   const backend = useMemo(() => (window.__TAURI__ ? new FileSystemFolderBackend() : new LocalStorageBackend()), []);
@@ -26,7 +26,7 @@ export function ProjectProvider(props: { children: ReactNode; defaultApp?: strin
     [actions, backend, state]
   );
   const { vault, ready } = useProjectLoader(context, storage);
-  const manifest = context.current?.resource;
+  const manifestOrCollection = context.current?.resource;
 
   useProjectBackend(context, backend);
 
@@ -35,21 +35,43 @@ export function ProjectProvider(props: { children: ReactNode; defaultApp?: strin
       state.loadingStatus &&
       state.loadingStatus.loaded &&
       ready &&
-      (!vault || !manifest) &&
+      (!vault || !manifestOrCollection) &&
       currentApp?.id !== (props.defaultApp || "splash")
     ) {
       changeApp({ id: props.defaultApp || "splash" });
     }
   }, []);
 
-  if (state.loadingStatus && state.loadingStatus.loading) {
+  if ((state.loadingStatus && state.loadingStatus.loading) || (context.current && !manifestOrCollection)) {
     return <div>Loading...</div>;
+  }
+
+  console.log("resource", manifestOrCollection);
+
+  if (manifestOrCollection?.type === "Manifest") {
+    return (
+      <ProjectReactContext.Provider value={context}>
+        <VaultProvider vault={vault || undefined} key={state.current?.id}>
+          <ManifestContext manifest={manifestOrCollection?.id || ""}>{props.children}</ManifestContext>
+        </VaultProvider>
+      </ProjectReactContext.Provider>
+    );
+  }
+
+  if (manifestOrCollection?.type === "Collection") {
+    return (
+      <ProjectReactContext.Provider value={context}>
+        <VaultProvider vault={vault || undefined} key={state.current?.id}>
+          <CollectionContext collection={manifestOrCollection?.id || ""}>{props.children}</CollectionContext>
+        </VaultProvider>
+      </ProjectReactContext.Provider>
+    );
   }
 
   return (
     <ProjectReactContext.Provider value={context}>
       <VaultProvider vault={vault || undefined} key={state.current?.id}>
-        <ManifestContext manifest={manifest?.id || ""}>{props.children}</ManifestContext>
+        {props.children}
       </VaultProvider>
     </ProjectReactContext.Provider>
   );

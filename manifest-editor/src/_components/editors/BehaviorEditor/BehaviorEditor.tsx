@@ -12,6 +12,7 @@ import { Button } from "@/atoms/Button";
 import { CloseIcon } from "@/icons/CloseIcon";
 
 export interface BehaviorEditorProps {
+  id?: string;
   behavior: string[];
   onChange: (newValue: string[]) => void;
   configs: BehaviorEditorConfiguration[];
@@ -37,7 +38,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
   };
 
   return (
-    <>
+    <div id={props.id}>
       {totalConfigs > 0 ? (
         <>
           <PaddedSidebarContainer>
@@ -111,6 +112,6 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
           </div>
         )}
       </PaddedSidebarContainer>
-    </>
+    </div>
   );
 }

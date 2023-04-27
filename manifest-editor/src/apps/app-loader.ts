@@ -6,6 +6,7 @@ type LoadedApp = Partial<LayoutProps> & {
     title: string;
     type?: "manifest" | "launcher";
     project?: boolean;
+    projectType?: "Manifest" | "Collection";
     dev?: boolean;
     desktop?: boolean;
     web?: boolean;

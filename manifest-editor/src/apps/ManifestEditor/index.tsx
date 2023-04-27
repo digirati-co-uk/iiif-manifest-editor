@@ -22,8 +22,9 @@ import React from "react";
 import { CanvasPanelEditor } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
 import { tutorial } from "@/_panels/right-panels/Tutotiral";
 import { overviewCanvasEditor } from "@/_editors/OverviewCanvasEditor";
+import { combinedProperties } from "@/_editors/CombinedEditor";
 
-export default { id: "manifest-editor", title: "Manifest Editor", project: true };
+export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
 export const centerPanels: LayoutPanel[] = [
   {
@@ -67,6 +68,7 @@ export const editors = [
   overviewCanvasEditor,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
+  combinedProperties,
 
   // Generic
   descriptiveProperties,

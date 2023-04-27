@@ -5,14 +5,15 @@ import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
 import { useApps } from "../../shell/AppContext/AppContext";
 import { TemplateCardPlaceholder } from "../../atoms/TemplateCard";
 import { SecondaryButton } from "../../atoms/Button";
+import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
 
 export const RecentFiles: React.FC = () => {
-  const { changeApp } = useApps();
+  const { editProject } = useApps();
   const { allProjects, actions } = useProjectContext();
 
-  function switchProject(id: string) {
-    actions.switchProject(id);
-    changeApp({ id: "manifest-editor" });
+  function switchProject(project: EditorProject) {
+    actions.switchProject(project.id);
+    editProject(project);
   }
 
   return (
@@ -24,11 +25,11 @@ export const RecentFiles: React.FC = () => {
             <RecentManifestCard style={{ cursor: "pointer" }}>
               <ErrorBoundary>
                 {project.thumbnail ? (
-                  <ThumbnailImg src={project.thumbnail} loading="lazy" onClick={() => switchProject(project.id)} />
+                  <ThumbnailImg src={project.thumbnail} loading="lazy" onClick={() => switchProject(project)} />
                 ) : (
                   <SecondaryButton
                     style={{ backgroundColor: "white", borderRadius: "5px", padding: "0.5rem" }}
-                    onClick={() => switchProject(project.id)}
+                    onClick={() => switchProject(project)}
                   >
                     {project.name}
                   </SecondaryButton>

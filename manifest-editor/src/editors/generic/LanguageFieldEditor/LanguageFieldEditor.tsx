@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
   index?: number;
+  containerId?: string;
   property?: "label" | "value";
   focusId?: string;
   guidanceReference?: string;
@@ -140,7 +141,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   ) : null;
 
   return (
-    <>
+    <div id={props.containerId}>
       <>
         <InputLabel htmlFor={focusId}>{props.label}</InputLabel>
       </>
@@ -161,6 +162,6 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           </EmptyLanguageField>
         </>
       )}
-    </>
+    </div>
   );
 }

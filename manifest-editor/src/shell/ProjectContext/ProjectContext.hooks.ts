@@ -21,6 +21,7 @@ import { useApps } from "../AppContext/AppContext";
 import { v4 } from "uuid";
 import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 import { once } from "@tauri-apps/api/event";
+import { projectFromCollection } from "@/shell/ProjectContext/helpers/project-from-collection";
 
 export function useProjectActionsWithBackend(
   dispatch: Dispatch<ProjectActionsType>,
@@ -301,6 +302,24 @@ export function useProjectCreators() {
     []
   );
 
+  const createProjectFromCollectionId = useCallback(
+    async function createProjectFromCollectionId(id: string) {
+      let full = await getManifestNomalized(id);
+      if (full) {
+        if ((full as any)["@id"]) {
+          full = convertPresentation2(full) as any;
+        }
+        if (full) {
+          actions.createProject(projectFromCollection(full as any));
+          changeApp({ id: "collection-editor" });
+        }
+      }
+    },
+    // Actions are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const createProjectFromManifestJson = useCallback(
     async function createProjectFromManifestId(json: string) {
       let full = JSON.parse(json);
@@ -322,6 +341,7 @@ export function useProjectCreators() {
   return {
     createProjectFromManifestJson,
     createProjectFromManifestId,
+    createProjectFromCollectionId,
     createBlankManifest,
   };
 }

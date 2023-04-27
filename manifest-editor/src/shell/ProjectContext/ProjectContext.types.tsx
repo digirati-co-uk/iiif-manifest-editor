@@ -61,7 +61,7 @@ export interface EditorProject {
   name: string;
   filename?: string;
   thumbnail?: string;
-  resource: { id: string; type: "Manifest" }; // @todo at the moment, only Manifest
+  resource: { id: string; type: "Manifest" } | { id: string; type: "Collection" }; // @todo at the moment, only Manifest
   storage: Storage;
   settings: Record<string, never>;
   publications: Publication[];

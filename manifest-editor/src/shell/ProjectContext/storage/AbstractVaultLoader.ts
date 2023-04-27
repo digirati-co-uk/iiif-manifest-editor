@@ -1,9 +1,11 @@
 import { Vault } from "@iiif/vault";
 import { EditorProject, ProjectStorage } from "../ProjectContext.types";
-import { Manifest, Reference } from "@iiif/presentation-3";
-import { ManifestStorage, Storage } from "../types/Storage";
+import { Collection, Manifest, Reference } from "@iiif/presentation-3";
+import { CollectionStorage, ManifestStorage, Storage } from "../types/Storage";
 
-export abstract class AbstractVaultLoader<T extends Storage> implements ProjectStorage<ManifestStorage, Manifest, T> {
+export abstract class AbstractVaultLoader<T extends Storage>
+  implements ProjectStorage<ManifestStorage | CollectionStorage, Manifest | Collection, T>
+{
   abstract type: string;
   vaults: Record<string, Vault | null> = {};
   saveInterval: number;
@@ -16,7 +18,7 @@ export abstract class AbstractVaultLoader<T extends Storage> implements ProjectS
     return true;
   }
 
-  abstract create(project: EditorProject, data: Manifest): Promise<T>;
+  abstract create(project: EditorProject, data: Manifest | Collection): Promise<T>;
 
   createVaultInstance(project: EditorProject): [Vault, Promise<void>] {
     const foundVault = this.vaults[project.storage.data.key];
@@ -37,26 +39,33 @@ export abstract class AbstractVaultLoader<T extends Storage> implements ProjectS
 
   async saveStorage(storage: T): Promise<void> {
     const vault = this.vaults[storage.data.key];
-    const manifestRef: Reference<"Manifest"> = {
+    const manifestRef: Reference<"Manifest" | "Collection"> = {
       id: storage.data.id,
-      type: "Manifest",
+      type: storage.data.type,
     };
 
     // There will only be something to save if there is active vault.
     if (vault) {
-      const data = vault.toPresentation3<Manifest>(manifestRef);
-      const stored: ManifestStorage = {
-        type: "manifest-storage",
-        data,
-      };
+      const data = vault.toPresentation3<Manifest | Collection>(manifestRef);
+
+      const stored: ManifestStorage | CollectionStorage =
+        data.type === "Collection"
+          ? ({
+              type: "collection-storage",
+              data,
+            } as CollectionStorage)
+          : ({
+              type: "manifest-storage",
+              data,
+            } as ManifestStorage);
 
       await this.saveStorageData(stored, storage);
     }
   }
 
-  abstract getStorage(storage: T): Promise<ManifestStorage | null>;
+  abstract getStorage(storage: T): Promise<CollectionStorage | ManifestStorage | null>;
 
-  abstract saveStorageData(manifest: ManifestStorage, storage: T): void | Promise<void>;
+  abstract saveStorageData(manifest: CollectionStorage | ManifestStorage, storage: T): void | Promise<void>;
 
   abstract deleteStorage(storage: T): Promise<void>;
 

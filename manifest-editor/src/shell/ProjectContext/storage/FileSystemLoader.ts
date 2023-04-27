@@ -1,5 +1,5 @@
 import { EditorProject } from "../ProjectContext.types";
-import { ManifestKeyedStorage, ManifestStorage } from "../types/Storage";
+import { ResourceKeyedStorage, ManifestStorage, CollectionStorage } from "../types/Storage";
 import { Manifest } from "@iiif/presentation-3";
 import { homeDir, join } from "@tauri-apps/api/path";
 import { BaseDirectory, createDir, readTextFile, removeFile, writeTextFile } from "@tauri-apps/api/fs";
@@ -7,11 +7,12 @@ import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import invariant from "tiny-invariant";
 
 export interface FileSystemLoaderConfig {
+  resourceType: "Manifest" | "Collection";
   folderName: string;
   baseDirectory: BaseDirectory;
 }
 
-export class FileSystemLoader extends AbstractVaultLoader<ManifestKeyedStorage> {
+export class FileSystemLoader extends AbstractVaultLoader<ResourceKeyedStorage> {
   type = "file-system";
   config: FileSystemLoaderConfig;
 
@@ -21,6 +22,7 @@ export class FileSystemLoader extends AbstractVaultLoader<ManifestKeyedStorage> 
     const folderName = config.folderName || "ManifestEditor";
 
     this.config = {
+      resourceType: "Manifest",
       baseDirectory,
       folderName,
       ...config,
@@ -31,32 +33,29 @@ export class FileSystemLoader extends AbstractVaultLoader<ManifestKeyedStorage> 
     return true;
   }
 
-  async create(project: EditorProject, data: Manifest): Promise<ManifestKeyedStorage> {
+  async create(project: EditorProject, data: Manifest): Promise<ResourceKeyedStorage> {
     const file = project.filename;
     if (file) {
       await createDir(await this.getDir(file), {
         dir: this.config.baseDirectory,
         recursive: true,
       });
-
-      console.log("create manifest", data);
-
       await writeTextFile(await this.getFile(file), JSON.stringify(data, null, 2), {
         dir: this.config.baseDirectory,
       });
     }
 
     return {
-      type: "manifest-keyed-storage",
+      type: "resource-keyed-storage",
       data: {
-        // We should definitely convert before.
-        id: data.id || (data as any)["@id"],
+        id: data.id,
+        type: data.type,
         key: file as string,
       },
     };
   }
 
-  async getStorage(storage: ManifestKeyedStorage): Promise<ManifestStorage | null> {
+  async getStorage(storage: ResourceKeyedStorage): Promise<CollectionStorage | ManifestStorage | null> {
     try {
       const item = await readTextFile(await this.getFile(storage.data.key), {
         dir: this.config.baseDirectory,
@@ -75,22 +74,25 @@ export class FileSystemLoader extends AbstractVaultLoader<ManifestKeyedStorage> 
     }
   }
 
-  async saveStorageData(manifestStorage: ManifestStorage, storage: ManifestKeyedStorage): Promise<void> {
+  async saveStorageData(
+    manifestStorage: CollectionStorage | ManifestStorage,
+    storage: ResourceKeyedStorage
+  ): Promise<void> {
     await writeTextFile(await this.getFile(storage.data.key), JSON.stringify(manifestStorage.data, null, 2), {
       dir: this.config.baseDirectory,
     });
   }
 
-  async deleteStorage(storage: ManifestKeyedStorage): Promise<void> {
+  async deleteStorage(storage: ResourceKeyedStorage): Promise<void> {
     this.vaults[storage.data.key] = null;
     await removeFile(await this.getFile(storage.data.key), {
       dir: this.config.baseDirectory,
     });
   }
 
-  getBackendStorage(project: EditorProject): ManifestKeyedStorage {
+  getBackendStorage(project: EditorProject): ResourceKeyedStorage {
     // This will never change after creation, but other adapters might?
-    return project.storage as ManifestKeyedStorage;
+    return project.storage as ResourceKeyedStorage;
   }
 
   async getRootDir() {

@@ -8,7 +8,7 @@ import { useVaultSelector } from "react-iiif-vault";
 import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { ResourceNavigationItem } from "@/components/widgets/IIIFExplorer/components/ResourceNavigationItem";
 
-export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => void }) {
+export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => void; hideBack?: boolean }) {
   const store = useExplorerStore();
   const [open, setIsOpen] = useState(false);
   const selected = useStore(store, (s) => s.selected);
@@ -42,9 +42,13 @@ export function ResourceNavigation(props: { canReset?: boolean; onBack?: () => v
 
   return (
     <div className={$.resourceNavContainer}>
-      <div className={$.resourceNavIcon} data-disabled={!props.onBack && !props.canReset && history.length < 2}>
-        <img src={back} onClick={goBack} />
-      </div>
+      {props.hideBack && !props.onBack && !props.canReset && history.length < 2 ? (
+        <div />
+      ) : (
+        <div className={$.resourceNavIcon} data-disabled={!props.onBack && !props.canReset && history.length < 2}>
+          <img src={back} onClick={goBack} />
+        </div>
+      )}
       <div className={$.resourceNavList} data-collapsed={!open}>
         {historyItems.map((item, idx) => {
           const isSelected = item.id === selected?.id;

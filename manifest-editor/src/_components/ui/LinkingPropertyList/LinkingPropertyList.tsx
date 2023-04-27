@@ -12,6 +12,7 @@ import { AnnotationPageList } from "@/_components/ui/AnnotationPageLIst/Annotati
 interface LinkingPropertyListProps {
   parent?: SpecificResource;
   property: string;
+  containerId?: string;
   label: string;
   emptyLabel: string;
   creationType: string;
@@ -37,7 +38,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
 
   const items = props.items || [];
   return (
-    <>
+    <div id={props.containerId}>
       <InputContainer wide>
         {!items.length ? (
           <>
@@ -63,6 +64,6 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
         />
       </InputContainer>
       {canCreate ? <Button onClick={() => actions.create()}>Add {props.label}</Button> : null}
-    </>
+    </div>
   );
 }

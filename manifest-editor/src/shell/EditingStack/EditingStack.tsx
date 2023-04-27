@@ -6,6 +6,8 @@ import invariant from "tiny-invariant";
 import { useManifest, useResourceContext, useVault } from "react-iiif-vault";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
+import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
+import { current } from "immer";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
 const EditingStackContext = createContext<EditingStackState>(defaultState);
@@ -61,6 +63,30 @@ export function useManifestEditor() {
   return editor;
 }
 
+export function useCollectionEditor() {
+  const { collection } = useResourceContext();
+  const vault = useVault();
+  const [key, invalidate] = useReducer((i: number) => i + 1, 0);
+
+  invariant(collection, "Collection not found");
+
+  const editor = useMemo(() => {
+    return new EditorInstance({
+      reference: { id: collection, type: "Collection" },
+      vault,
+    });
+  }, [collection, vault]);
+
+  useEffect(() => {
+    return editor.observe.start(invalidate);
+  }, [editor]);
+
+  editor.observe.key = `${key}`;
+  editor.observe.reset();
+
+  return editor;
+}
+
 export function useGenericEditor(
   ref: Reference<any> | SpecificResource | undefined,
   ctx: { parent?: Reference; parentProperty?: string; index?: number } = {}
@@ -94,10 +120,6 @@ export function useAnnotationPageEditor() {
   invariant(annotationPage, "Annotation page not found");
 
   return useGenericEditor({ id: annotationPage, type: "AnnotationPage" });
-}
-
-export function useCollectionEditor() {
-  //
 }
 
 export function useEditor() {
@@ -155,7 +177,7 @@ export function EditingStack(props: { children?: any }) {
   }, []);
 
   return (
-    <EditingStackActionsContext.Provider value={actions}>
+    <EditingStackActionsContext.Provider value={actions} key={current?.id}>
       <EditingStackContext.Provider value={state}>{props.children}</EditingStackContext.Provider>
     </EditingStackActionsContext.Provider>
   );

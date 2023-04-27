@@ -56,7 +56,7 @@ export const ThumbnailItem = css`
 
 export const ThumbnailImage = css`
   flex: 1;
-  background: #f9f9f9;
+  background: var(--atlas-background, #f9f9f9);
   min-height: 0;
   display: flex;
   aspect-ratio: var(--thumb-ratio);

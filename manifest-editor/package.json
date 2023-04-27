@@ -59,6 +59,7 @@
     "express": "^4.18.1",
     "iiif-builder": "^1.0.5",
     "immer": "^9.0.14",
+    "localforage": "^1.10.0",
     "mitt": "^3.0.0",
     "query-string": "^7.1.1",
     "react": "^18.2.0",

@@ -56,6 +56,7 @@ export interface IIIFExplorerProps {
   window?: boolean;
 
   onBack?: () => void;
+  hideBack?: boolean;
   clearHomepageCollection?: () => void;
   onHistory?: (id: string, type: string) => void;
 }
@@ -76,6 +77,7 @@ export function IIIFExplorer({
   onSelect,
   window,
   onBack,
+  hideBack,
 }: IIIFExplorerProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -117,6 +119,7 @@ export function IIIFExplorer({
                 homepageCollection={homepageCollection}
                 clearHomepageCollection={clearHomepageCollection}
                 canReset={canResetLast}
+                hideBack={hideBack}
                 onBack={onBack}
               />
 

@@ -5,7 +5,7 @@ import { useApps } from "@/shell/AppContext/AppContext";
 
 export function MyProjects() {
   const { allProjects, loadingStatus, actions } = useProjectContext();
-  const { changeApp } = useApps();
+  const { editProject } = useApps();
 
   if (loadingStatus && loadingStatus.loading) {
     return <div>Loading...</div>;
@@ -20,8 +20,7 @@ export function MyProjects() {
             label={project.name}
             onClick={() => {
               actions.switchProject(project.id);
-
-              changeApp({ id: "manifest-editor" });
+              editProject(project);
             }}
             thumbnail={<img src={project.thumbnail} alt="" />}
             actionLabel="Open project"

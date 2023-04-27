@@ -80,9 +80,13 @@ export function matchBasedOnResource(
     // 1. Filter out the
     const editors = (item.editors || []).filter((editor) => {
       // Does this editor support the input resource.
-      if (options.edit && !editor.supports.edit) return false;
+      if (options.edit && !editor.supports.edit) {
+        return false;
+      }
 
-      if (editor.supports.custom ? editor.supports.custom(resource, options.vault) === false : false) return false;
+      if (editor.supports.custom ? editor.supports.custom(resource, options.vault) === false : false) {
+        return false;
+      }
 
       // @todo more logic here, including "custom" supports check.
 
@@ -138,7 +142,7 @@ export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
   //    - Keeping track of changes to the item, by checking it's index
   //    - If the items change - ensure we have the same index by doing an equality check on the reference?
 
-  invariant(match, "Unsupported resource");
+  invariant(match, `Unsupported resource (${resource.resource.source?.type})`);
 
   return (
     <>

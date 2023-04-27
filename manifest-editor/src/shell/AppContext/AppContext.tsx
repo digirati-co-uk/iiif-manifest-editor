@@ -5,12 +5,14 @@ import invariant from "tiny-invariant";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
 import qs from "query-string";
+import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
   currentApp: { id: string; args?: any };
   initialApp: { id: string; args?: any };
   changeApp: (app: { id: string; args?: any }) => void;
+  editProject: (project: EditorProject) => void;
 };
 
 export type AppState = { state: null | any; setState: SetStateAction<any> };
@@ -94,12 +96,23 @@ export function AppProvider({
   children: ReactNode;
 }) {
   const [currentApp, changeApp] = useCurrentApp(initialApp);
+
+  const editProject = (project: EditorProject) => {
+    if (project.resource.type === "Manifest") {
+      changeApp({ id: "manifest-editor" });
+    }
+    if (project.resource.type === "Collection") {
+      changeApp({ id: "collection-editor" });
+    }
+  };
+
   const ctx = useMemo<AppContext>(
     () => ({
       currentApp: currentApp || { id: "splash" },
       initialApp: initialApp || { id: "splash" },
       apps,
       changeApp,
+      editProject,
     }),
     [initialApp, apps, currentApp]
   );

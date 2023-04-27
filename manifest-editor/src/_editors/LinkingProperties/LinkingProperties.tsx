@@ -29,20 +29,6 @@ export function LinkingProperties() {
   const { linking, notAllowed } = useEditor();
   const { seeAlso, service, services, rendering, partOf, start, supplementary, homepage, logo } = linking;
   const [toggled, toggle] = useToggleList();
-
-  // @todo Can this be inside the useEditor? Or Can the supported "type" be in there?
-  const [canCreateSeeAlso, seeAlsoActions] = useCreator(resource?.resource, "seeAlso", "ContentResource");
-  const [canCreateService, serviceActions] = useCreator(resource?.resource, "service", "Service");
-  const [canCreateServices, servicesActions] = useCreator(resource?.resource, "services", "Service");
-  const [canCreateRendering, renderingActions] = useCreator(resource?.resource, "rendering", "ContentResource");
-  const [canCreatePartOf, partOfActions] = useCreator(resource?.resource, "partOf", "Collection"); // @todo this is wrong...
-  const [canCreateStart, startActions] = useCreator(resource?.resource, "start", "Canvas");
-  const [canCreateSupplementary, supplementaryActions] = useCreator(
-    resource?.resource,
-    "supplementary",
-    "AnnotationCollection"
-  );
-  const [canCreateHomepage, homepageActions] = useCreator(resource?.resource, "homepage", "ContentResource");
   const [canCreateLogo, logoActions] = useCreator(resource?.resource, "logo", "ContentResource");
 
   // @todo "service" + "services"
@@ -54,6 +40,7 @@ export function LinkingProperties() {
     <PaddedSidebarContainer>
       {!notAllowed.includes("seeAlso") ? (
         <LinkingPropertyList
+          containerId={seeAlso.containerId()}
           label="See also"
           property="seeAlso"
           items={seeAlso.get()}
@@ -67,6 +54,7 @@ export function LinkingProperties() {
 
       {!notAllowed.includes("rendering") ? (
         <LinkingPropertyList
+          containerId={rendering.containerId()}
           label="Rendering"
           property="rendering"
           items={rendering.get()}
@@ -80,6 +68,7 @@ export function LinkingProperties() {
 
       {!notAllowed.includes("supplementary") ? (
         <LinkingPropertyList
+          containerId={supplementary.containerId()}
           label="Supplementary"
           property="supplementary"
           items={supplementary.get()}
@@ -92,7 +81,7 @@ export function LinkingProperties() {
       ) : null}
 
       {!notAllowed.includes("logo") ? (
-        <>
+        <div id={logo.containerId()}>
           <InputContainer wide>
             {!logo.get()?.length ? (
               <>
@@ -118,7 +107,7 @@ export function LinkingProperties() {
             />
           </InputContainer>
           {canCreateLogo ? <Button onClick={() => logoActions.create()}>Add logo</Button> : null}
-        </>
+        </div>
       ) : null}
     </PaddedSidebarContainer>
   );

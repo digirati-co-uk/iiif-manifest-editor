@@ -38,6 +38,7 @@ export function DescriptiveProperties() {
       <PaddedSidebarContainer>
         {!notAllowed.includes("label") ? (
           <LanguageFieldEditor
+            containerId={label.containerId()}
             focusId={label.focusId()}
             label={"Label"}
             fields={label.get()}
@@ -46,6 +47,7 @@ export function DescriptiveProperties() {
         ) : null}
         {!notAllowed.includes("summary") ? (
           <LanguageFieldEditor
+            containerId={summary.containerId()}
             focusId={summary.focusId()}
             label={"Summary"}
             fields={summary.get()}
@@ -55,6 +57,7 @@ export function DescriptiveProperties() {
 
         {!notAllowed.includes("thumbnail") ? (
           <LinkingPropertyList
+            containerId={thumbnail.containerId()}
             label="Thumbnail"
             property="thumbnail"
             items={thumbnail.get()}
@@ -68,7 +71,7 @@ export function DescriptiveProperties() {
         ) : null}
 
         {!notAllowed.includes("rights") ? (
-          <InputContainer wide>
+          <InputContainer wide id={rights.containerId()}>
             <InputLabel htmlFor={rights.focusId()}>Rights</InputLabel>
             <Input
               id={rights.focusId()}
@@ -85,7 +88,7 @@ export function DescriptiveProperties() {
         ) : null}
 
         {!notAllowed.includes("navDate") ? (
-          <InputContainer wide>
+          <InputContainer wide id={navDate.containerId()}>
             <InputLabel htmlFor={navDate.focusId()}>Nav Date</InputLabel>
             <DateTimePicker
               className={datePickerStyles}
@@ -97,7 +100,7 @@ export function DescriptiveProperties() {
         ) : null}
 
         {!notAllowed.includes("requiredStatement") ? (
-          <InputContainer wide>
+          <InputContainer wide id={requiredStatement.containerId()}>
             <InputLabel htmlFor={requiredStatement.focusId()}>Required statement</InputLabel>
             {!requiredStatement.get() && !requiredStatementVisible ? (
               <EmptyPrompt
@@ -129,7 +132,7 @@ export function DescriptiveProperties() {
         ) : null}
 
         {!notAllowed.includes("provider") && provider.get() ? (
-          <InputContainer wide>
+          <InputContainer wide id={provider.containerId()}>
             <InputLabel>Provider</InputLabel>
             {(provider.get() || []).map((item) => {
               return <div onClick={() => edit(item)}>{item.id}</div>;
@@ -139,7 +142,7 @@ export function DescriptiveProperties() {
 
         {/* NOTE: If this is an annotation, then it will be a string, otherwise a list of strings */}
         {!notAllowed.includes("language") ? (
-          <InputContainer wide>
+          <InputContainer wide id={language.containerId()}>
             <InputLabel htmlFor={language.focusId()}>Language</InputLabel>
             <Input
               id={language.focusId()}

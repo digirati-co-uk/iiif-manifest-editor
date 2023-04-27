@@ -22,12 +22,13 @@ export function CanvasPanelEditor() {
     (state, vault) => {
       if (canvasId) {
         const c = vault.get(canvasId);
-        console.log({ c });
-        const page = c.items[0];
-        if (page) {
-          const fullPage = vault.get(page);
-          if (fullPage) {
-            return fullPage.items.length;
+        if (c && c.items) {
+          const page = c.items[0];
+          if (page) {
+            const fullPage = vault.get(page);
+            if (fullPage) {
+              return fullPage.items.length;
+            }
           }
         }
       }

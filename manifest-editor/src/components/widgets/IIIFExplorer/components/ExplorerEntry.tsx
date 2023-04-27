@@ -12,12 +12,14 @@ export function ExplorerEntry({
   homepageCollection,
   clearHomepageCollection,
   onBack,
+  hideBack,
 }: {
   entry?: IIIFExplorerProps["entry"];
   canReset: boolean;
   homepageCollection?: string;
   clearHomepageCollection?: () => void;
   onBack?: () => void;
+  hideBack?: boolean;
 }) {
   const store = useExplorerStore();
   const history = useStore(store, (s) => s.history);
@@ -54,5 +56,5 @@ export function ExplorerEntry({
     return <ExplorerInput />;
   }
 
-  return <ResourceNavigation canReset={canReset} onBack={onBack} />;
+  return <ResourceNavigation hideBack={hideBack} canReset={canReset} onBack={onBack} />;
 }

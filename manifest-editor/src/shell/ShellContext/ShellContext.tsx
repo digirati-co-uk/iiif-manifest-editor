@@ -55,16 +55,16 @@ export const ShellProvider = ({
         <ThemeProvider theme={theme || defaultTheme}>
           <ConfigProvider config={config}>
             <AppProvider apps={apps.allApps} initialApp={initialApp}>
-              <EditingStack>
-                <LayoutProvider>
-                  <ProjectProvider>
+              <ProjectProvider>
+                <EditingStack>
+                  <LayoutProvider>
                     {/* @todo swap these out for (config?.previews || []) */}
                     <PreviewProvider configs={config?.previews || previewConfigs}>
                       <ManifestEditorProvider>{children}</ManifestEditorProvider>
                     </PreviewProvider>
-                  </ProjectProvider>
-                </LayoutProvider>
-              </EditingStack>
+                  </LayoutProvider>
+                </EditingStack>
+              </ProjectProvider>
             </AppProvider>
           </ConfigProvider>
         </ThemeProvider>

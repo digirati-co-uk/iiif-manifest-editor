@@ -25,6 +25,14 @@
       }
     },
     {
+      "id": "delft-viewer",
+      "type": "external-manifest-preview",
+      "label": "Delft viewer",
+      "config": {
+        "url": "https://delft-viewer.netlify.app/#manifest={manifestId}"
+      }
+    },
+    {
       "id": "iiif-preview",
       "type": "iiif-preview-service",
       "label": "IIIF Preview",

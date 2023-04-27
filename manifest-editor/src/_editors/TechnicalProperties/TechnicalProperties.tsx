@@ -15,7 +15,7 @@ export function TechnicalProperties() {
   return (
     <>
       <PaddedSidebarContainer>
-        <InputContainer wide>
+        <InputContainer wide id={id.containerId()}>
           <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
           <Input disabled id={id.focusId()} value={id.get()} />
         </InputContainer>
@@ -23,10 +23,13 @@ export function TechnicalProperties() {
         {!notAllowed.includes("width") && !notAllowed.includes("height") ? (
           <InputContainer wide>
             <DimensionsTriplet
+              widthId={width.containerId()}
               width={width.get() || 0}
               changeWidth={(v) => width.set(v)}
+              heightId={height.containerId()}
               height={height.get() || 0}
               changeHeight={(v) => height.set(v)}
+              durationId={duration.containerId()}
               duration={duration.get() || 0}
               changeDuration={(v) => duration.set(v)}
             />
@@ -34,7 +37,7 @@ export function TechnicalProperties() {
         ) : null}
 
         {!notAllowed.includes("viewingDirection") ? (
-          <InputContainer fluid>
+          <InputContainer fluid id={viewingDirection.containerId()}>
             <InputLabel htmlFor={viewingDirection.focusId()}>Viewing direction</InputLabel>
             <InlineSelect
               id={viewingDirection.focusId()}
@@ -64,14 +67,14 @@ export function TechnicalProperties() {
         ) : null}
 
         {!notAllowed.includes("profile") ? (
-          <InputContainer wide>
+          <InputContainer wide id={profile.containerId()}>
             <InputLabel htmlFor={profile.focusId()}>Profile</InputLabel>
             <Input id={profile.focusId()} value={profile.get()} onChange={(e) => profile.set(e.target.value)} />
           </InputContainer>
         ) : null}
 
         {!notAllowed.includes("timeMode") ? (
-          <InputContainer wide>
+          <InputContainer wide id={timeMode.containerId()}>
             <InputLabel htmlFor={timeMode.focusId()}>Time mode</InputLabel>
             <InlineSelect
               value={timeMode.get() || ""}
@@ -89,7 +92,7 @@ export function TechnicalProperties() {
         ) : null}
 
         {!notAllowed.includes("format") ? (
-          <InputContainer wide>
+          <InputContainer wide id={format.containerId()}>
             <InputLabel htmlFor={format.focusId()}>Format</InputLabel>
             <Input
               id={format.focusId()}
@@ -102,7 +105,7 @@ export function TechnicalProperties() {
 
         {/* @todo this should be smarted based on the context. */}
         {!notAllowed.includes("motivation") ? (
-          <InputContainer wide>
+          <InputContainer wide id={motivation.containerId()}>
             <InputLabel htmlFor={motivation.focusId()}>Motivation</InputLabel>
             <Input
               id={motivation.focusId()}
@@ -116,6 +119,7 @@ export function TechnicalProperties() {
 
       {!notAllowed.includes("behavior") ? (
         <BehaviorEditor
+          id={behavior.containerId()}
           behavior={behavior.get() || []}
           onChange={(e) => behavior.set(e)}
           configs={behavior.getSupported()}
