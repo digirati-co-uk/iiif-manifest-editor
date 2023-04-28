@@ -1,10 +1,11 @@
 {
   "installCommand": "custom-install",
   "buildCommand": "custom-build",
-  "packages": ["manifest-editor/npm/editor-api", "manifest-editor/npm/iiif-browser"],
+  "packages": ["manifest-editor/npm/editor-api", "manifest-editor/npm/iiif-browser", "manifest-editor/npm/preview-vault"],
   "publishDirectory": {
     "@manifest-editor/editor-api": "manifest-editor/npm/editor-api",
-    "@manifest-editor/iiif-browser": "manifest-editor/npm/iiif-browser"
+    "@manifest-editor/iiif-browser": "manifest-editor/npm/iiif-browser",
+    "@manifest-editor/preview-vault": "manifest-editor/npm/preview-vault"
   },
   "node": "18"
 }
