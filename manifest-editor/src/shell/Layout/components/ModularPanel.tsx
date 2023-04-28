@@ -7,7 +7,7 @@ import { BackIcon } from "@/icons/BackIcon";
 import { useLayoutProvider } from "../Layout.context";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { ErrorBoundary } from "react-error-boundary";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PanelError } from "./PanelError";
 import { renderHelper } from "../Layout.helpers";
 import { ReactVaultContext } from "react-iiif-vault";
@@ -170,10 +170,24 @@ export function ModularPanel({
   }, [available]);
   const { itemProps, isOpen, setIsOpen } = useDropdownMenu(switchablePanels.length);
   const [customTitle, setCustomTitle] = useState("");
+  const setCustomTitleRef = useRef<(title: string) => void | undefined>();
 
   useEffect(() => setDidError(false), resetKeys);
 
   useEffect(() => setCustomTitle(""), [panel]);
+
+  useEffect(() => {
+    setCustomTitleRef.current = setCustomTitle;
+    return () => {
+      setCustomTitleRef.current = undefined;
+    };
+  }, []);
+
+  const _setCustomTitle = useCallback((title: string) => {
+    if (setCustomTitleRef.current) {
+      setCustomTitleRef.current(title);
+    }
+  }, []);
 
   const backAction = useCallback(
     (e?: React.MouseEvent) => {
@@ -225,7 +239,7 @@ export function ModularPanel({
   );
 
   return (
-    <LayoutTitleReactContext.Provider value={setCustomTitle}>
+    <LayoutTitleReactContext.Provider value={_setCustomTitle}>
       <ModularPanelWrapper $state={transition} $flipped={isLeft} style={style}>
         <ModularPanelHeader $tabs={tabs} $error={didError}>
           <Dropdown style={{ display: "flex", height: "100%" }}>

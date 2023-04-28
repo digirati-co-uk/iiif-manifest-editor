@@ -69,13 +69,14 @@ export class CreatorInstance implements CreatorFunctionContext {
       id = idOrRef;
     } else {
       id = idOrRef.id;
+      type = idOrRef.type;
     }
 
     const state = this.vault.getState();
     const realType = state.iiif.mapping[id];
 
     if (!realType) {
-      type = "unknown";
+      type = type || "unknown";
     } else {
       type = realType;
     }

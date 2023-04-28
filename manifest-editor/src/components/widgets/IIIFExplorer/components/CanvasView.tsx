@@ -1,19 +1,9 @@
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
-import {
-  AnnotationContext,
-  CanvasContext,
-  CanvasPanel,
-  ManifestContext,
-  useCanvas,
-  useManifest,
-  useVaultSelector,
-} from "react-iiif-vault";
-import { CanvasNormalized } from "@iiif/presentation-3";
-import React, { useMemo, useReducer, useState } from "react";
+import { CanvasContext, CanvasPanel, ManifestContext, useCanvas, useManifest } from "react-iiif-vault";
+import React, { useMemo, useState } from "react";
 import { MediaControls } from "@/_panels/center-panels/CanvasPanelViewer/components/MediaControls";
 import invariant from "tiny-invariant";
-import { ViewerContainer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer.styles";
 import { ViewControls } from "@/_panels/center-panels/CanvasPanelViewer/components/ViewControls";
 import { BoxStyle, DrawBox } from "@atlas-viewer/atlas";
 import { RegionHighlight } from "@/madoc/components/BoxSelector.Atlas";

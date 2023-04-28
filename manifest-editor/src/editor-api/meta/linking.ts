@@ -38,7 +38,7 @@ const optional: LinkingMap = {
 
 const notAllowed: LinkingMap = {
   Collection: ["supplementary", "logo"],
-  Manifest: ["start", "supplementary", "logo"],
+  Manifest: ["supplementary", "logo"],
   Canvas: ["start", "supplementary", "services", "logo"],
   Annotation: ["start", "supplementary", "services", "logo"],
   AnnotationPage: ["start", "supplementary", "services", "logo"],

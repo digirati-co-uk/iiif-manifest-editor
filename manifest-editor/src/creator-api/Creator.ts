@@ -55,15 +55,26 @@ export class Creator {
 
     const afterActions: any[] = [];
     if (options?.parent) {
-      afterActions.push(
-        entityActions.addReference({
-          id: options.parent.resource.id,
-          type: options.parent.resource.type as any,
-          reference: resource.ref(),
-          key: options.parent.property,
-          index: options.parent.atIndex,
-        })
-      );
+      if (options.parent.property === "start" || options.parent.property === "target") {
+        afterActions.push(
+          entityActions.modifyEntityField({
+            id: options.parent.resource.id,
+            type: options.parent.resource.type as any,
+            value: resource.ref(),
+            key: options.parent.property,
+          })
+        );
+      } else {
+        afterActions.push(
+          entityActions.addReference({
+            id: options.parent.resource.id,
+            type: options.parent.resource.type as any,
+            reference: resource.ref(),
+            key: options.parent.property,
+            index: options.parent.atIndex,
+          })
+        );
+      }
     }
 
     const result = runtime.commit(afterActions);

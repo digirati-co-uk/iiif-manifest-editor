@@ -13,6 +13,11 @@ import { EmptyState } from "@/madoc/components/EmptyState";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "@/_components/ui/AppDropdown/AppDropdown";
 import { LinkingPropertyList } from "@/_components/ui/LinkingPropertyList/LinkingPropertyList";
+import { CanvasContext } from "react-iiif-vault";
+import { CanvasSnippet } from "@/components/widgets/IIIFExplorer/components/CanvasSnippet";
+import { CanvasListPreview } from "@/_components/ui/CanvasListPreview/CanvasListPreview";
+import { ButtonRow } from "@/atoms/ButtonRow";
+import { FlexContainer } from "@/components/layout/FlexContainer";
 
 export function useToggleList() {
   const [state, dispatch] = useReducer((prev: any, action: string) => {
@@ -30,11 +35,13 @@ export function LinkingProperties() {
   const { seeAlso, service, services, rendering, partOf, start, supplementary, homepage, logo } = linking;
   const [toggled, toggle] = useToggleList();
   const [canCreateLogo, logoActions] = useCreator(resource?.resource, "logo", "ContentResource");
+  const [canCreateStart, startActions] = useCreator(resource?.resource, "start", "Canvas", undefined, {
+    onlyReference: true,
+  });
 
   // @todo "service" + "services"
   // @todo "partOf" using explorer + way to render the properties out.
   // @todo "seeAlso" may include manifest types (external)
-  // @todo "start" property
 
   return (
     <PaddedSidebarContainer>
@@ -78,6 +85,32 @@ export function LinkingProperties() {
           emptyLabel="No supplementary"
           parent={resource?.resource}
         />
+      ) : null}
+
+      {!notAllowed.includes("start") ? (
+        <div id={start.containerId()}>
+          <InputContainer wide>
+            {start.get() ? (
+              <>
+                <InputLabel>Start</InputLabel>
+                <CanvasContext canvas={toRef(start.get())?.id as string}>
+                  <CanvasListPreview onClick={() => startActions.edit(start.get())} />
+                </CanvasContext>
+              </>
+            ) : (
+              <>
+                <InputLabel>Start</InputLabel>
+                <EmptyState $noMargin $box>
+                  No start resource
+                </EmptyState>
+              </>
+            )}
+          </InputContainer>
+          <FlexContainer>
+            {canCreateStart ? <Button onClick={() => startActions.create()}>Set start</Button> : null}
+            {start.get() ? <Button onClick={() => start.set(null)}>Unset start</Button> : null}
+          </FlexContainer>
+        </div>
       ) : null}
 
       {!notAllowed.includes("logo") ? (

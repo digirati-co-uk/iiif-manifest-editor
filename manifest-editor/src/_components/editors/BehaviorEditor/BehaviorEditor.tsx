@@ -75,7 +75,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
                 </div>
               </ComposableInput.Container>
             ) : (
-              <ComposableInput.Container>
+              <ComposableInput.Container key={t.value}>
                 <ComposableInput.Text
                   value={t.value}
                   onChange={(e) => changeBehaviorValue(t.value, e.currentTarget.value)}

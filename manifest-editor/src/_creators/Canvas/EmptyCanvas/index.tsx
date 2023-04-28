@@ -13,6 +13,7 @@ export const emptyCanvas: CreatorDefinition = {
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
     parentTypes: ["Manifest"],
+    parentFields: ["items"],
   },
 };
 

@@ -27,7 +27,7 @@ export function AnnotationList(props: AnnotationListProps) {
         renderItem={(item, index) => {
           const ref = isSpecificResource(item) ? item.source : item;
           return (
-            <AnnotationContext annotation={ref.id}>
+            <AnnotationContext annotation={ref.id} key={ref.id}>
               <CanvasTargetContext>
                 <AnnotationPreview key={ref.id} onClick={() => props.onSelect(item, index)} />
               </CanvasTargetContext>
@@ -44,7 +44,7 @@ export function AnnotationList(props: AnnotationListProps) {
       {props.list.map((item, idx) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
-          <AnnotationContext annotation={ref.id}>
+          <AnnotationContext annotation={ref.id} key={ref.id}>
             <CanvasTargetContext>
               <AnnotationPreview margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
             </CanvasTargetContext>

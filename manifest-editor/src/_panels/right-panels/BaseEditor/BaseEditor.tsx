@@ -10,7 +10,7 @@ import { useApps } from "@/shell/AppContext/AppContext";
 import { ResourceDefinition } from "@/shell/Layout/Layout.types";
 import { EditableResource } from "@/shell/EditingStack/EditingStack.types";
 import { TabPanel } from "@/components/layout/TabPanel";
-import { Vault } from "@iiif/vault/*";
+import { Vault } from "@iiif/vault";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();

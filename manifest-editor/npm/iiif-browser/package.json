@@ -1,5 +1,5 @@
 {
-  "name": "@manifest-editor/editor-api",
+  "name": "@manifest-editor/browser",
   "version": "1.0.0",
   "type": "commonjs",
   "main": "./dist/cjs/index.js",
@@ -14,6 +14,10 @@
     }
   },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
     "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
@@ -21,5 +25,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "globalName": "IIIFEditor"
+  "globalName": "IIIFBrowser"
 }

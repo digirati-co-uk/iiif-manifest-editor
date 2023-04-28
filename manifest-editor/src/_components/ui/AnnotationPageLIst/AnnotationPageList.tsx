@@ -24,7 +24,7 @@ export function AnnotationPageList(props: AnnotationPageListProps) {
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
         renderItem={(ref, index) => (
-          <AnnotationPageContext annotationPage={toRef(ref)?.id as string}>
+          <AnnotationPageContext annotationPage={toRef(ref)?.id as string} key={toRef(ref)?.id}>
             <AnnotationPagePreview key={ref.id} onClick={() => props.onSelect(ref, index)} />
           </AnnotationPageContext>
         )}
@@ -38,7 +38,7 @@ export function AnnotationPageList(props: AnnotationPageListProps) {
       {props.list.map((item, idx) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return (
-          <AnnotationPageContext annotationPage={ref.id}>
+          <AnnotationPageContext annotationPage={ref.id} key={ref.id}>
             <AnnotationPagePreview margin key={item.id} onClick={() => props.onSelect(ref, idx)} />
           </AnnotationPageContext>
         );

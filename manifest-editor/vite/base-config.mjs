@@ -7,6 +7,7 @@ export function defineConfig(options) {
       "process.env.NODE_ENV": '"production"',
     },
     build: {
+      copyPublicDir: false,
       sourcemap: true,
       outDir: options.outDir || `dist/${options.name}`,
       lib: {

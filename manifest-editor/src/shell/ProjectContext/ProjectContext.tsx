@@ -46,8 +46,6 @@ export function ProjectProvider(props: { children: ReactNode; defaultApp?: strin
     return <div>Loading...</div>;
   }
 
-  console.log("resource", manifestOrCollection);
-
   if (manifestOrCollection?.type === "Manifest") {
     return (
       <ProjectReactContext.Provider value={context}>
