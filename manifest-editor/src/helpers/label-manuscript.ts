@@ -1,3 +1,9 @@
+/**
+ * Returns an array of labels for the pages of a manuscript.
+ *
+ * @param numPages
+ * @param numRomanPages
+ */
 export function labelManuscript(numPages: number, numRomanPages = 0) {
   const labels = [];
 
@@ -16,6 +22,22 @@ export function labelManuscript(numPages: number, numRomanPages = 0) {
       folioLabel += "r";
     }
     labels.push(folioLabel);
+  }
+
+  return labels;
+}
+
+export function labelManuscriptWithoutFoliation(numPages: number, numRomanPages = 0) {
+  const labels = [];
+
+  // Roman numerals for initial pages
+  for (let i = 1; i <= numRomanPages && i <= numPages; i++) {
+    labels.push(`${toRomanNumeral(i)}`);
+  }
+
+  // Arabic numerals for remaining pages
+  for (let i = numRomanPages + 1; i <= numPages; i++) {
+    labels.push(`${i - numRomanPages}`);
   }
 
   return labels;

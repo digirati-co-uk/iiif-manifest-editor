@@ -27,6 +27,7 @@ export function CanvasStructuralProperties() {
         </AnnotationPageContext>
 
         <LinkingPropertyList
+          containerId={annotations.containerId()}
           label="Annotations"
           property="annotations"
           items={annotations.get()}

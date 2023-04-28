@@ -13,7 +13,8 @@ export const combinedProperties: EditorDefinition = {
       "Canvas",
       "ContentResource",
       "Agent",
-      "Annotation",
+      // Ignore for annotations as they already have a combined editor.
+      // "Annotation",
       "AnnotationPage",
       "Range",
     ],

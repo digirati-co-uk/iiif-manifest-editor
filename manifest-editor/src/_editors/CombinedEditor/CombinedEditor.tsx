@@ -4,9 +4,10 @@ import { BasePropertyEditor } from "@/editor-api/BasePropertyEditor";
 import { TechnicalProperties } from "@/_editors/TechnicalProperties/TechnicalProperties";
 import { useMemo } from "react";
 import { LinkingProperties } from "@/_editors/LinkingProperties/LinkingProperties";
+import { CanvasStructuralProperties } from "@/_editors/StructuralProperties/CanvasStructuralProperties";
 
 export function CombinedEditor() {
-  const { technical, descriptive, linking } = useEditor();
+  const { technical, descriptive, linking, structural } = useEditor();
   function hideIfEmpty(editor: BasePropertyEditor<any, any>) {
     const value = editor.getWithoutTracking();
 
@@ -14,6 +15,8 @@ export function CombinedEditor() {
 
     return `${!isEmpty ? `` : `*[id="${editor.containerId()}"]{display: none}`}`;
   }
+
+  const type = technical.type;
 
   const style = useMemo(
     () => `
@@ -46,6 +49,10 @@ export function CombinedEditor() {
     ${hideIfEmpty(linking.rendering)}
     ${hideIfEmpty(linking.services)}
     ${hideIfEmpty(linking.start)}
+
+    ${hideIfEmpty(structural.items)}
+    ${hideIfEmpty(structural.annotations)}
+    ${hideIfEmpty(structural.structures)}
   `,
     [technical.id.get()]
   );
@@ -54,6 +61,7 @@ export function CombinedEditor() {
     <div>
       <style>{style}</style>
       <DescriptiveProperties />
+      {type === "Canvas" ? <CanvasStructuralProperties /> : null}
       <TechnicalProperties />
       <LinkingProperties />
     </div>

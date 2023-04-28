@@ -1,4 +1,4 @@
-import { labelManuscript } from "@/helpers/label-manuscript";
+import { labelManuscript, labelManuscriptWithoutFoliation } from "@/helpers/label-manuscript";
 
 describe("labelManuscript", () => {
   test("returns an empty array when passed 0", () => {
@@ -101,5 +101,78 @@ describe("labelManuscript", () => {
 
   test("handles large number of pages", () => {
     expect(labelManuscript(100, 10)).toHaveLength(100);
+  });
+
+  test("handles large number of Roman numeral pages", () => {
+    expect(labelManuscript(100, 50)).toHaveLength(100);
+  });
+
+  test("handles large number of pages with no Roman numeral pages", () => {
+    expect(labelManuscript(100, 0)).toHaveLength(100);
+  });
+
+  describe("labelManuscriptWithoutFoliation", function () {
+    test("returns an empty array when passed 0", () => {
+      expect(labelManuscriptWithoutFoliation(0, 0)).toMatchInlineSnapshot("[]");
+    });
+
+    test("returns an array with a single label when passed 1", () => {
+      expect(labelManuscriptWithoutFoliation(1, 0)).toMatchInlineSnapshot(`
+        [
+          "1",
+        ]
+      `);
+    });
+
+    test("returns an array of Roman numerals when all pages are Roman numeral pages", () => {
+      expect(labelManuscriptWithoutFoliation(6, 3)).toMatchInlineSnapshot(`
+        [
+          "I",
+          "II",
+          "III",
+          "1",
+          "2",
+          "3",
+        ]
+      `);
+    });
+
+    test("returns an array of folio labels when all pages are Arabic numeral pages", () => {
+      expect(labelManuscriptWithoutFoliation(6, 0)).toMatchInlineSnapshot(`
+        [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+        ]
+      `);
+    });
+
+    test("returns an array of mixed Roman and folio labels when passed 9 pages and 3 Roman numeral pages", () => {
+      expect(labelManuscriptWithoutFoliation(9, 3)).toMatchInlineSnapshot(`
+        [
+          "I",
+          "II",
+          "III",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+        ]
+      `);
+    });
+
+    test("handles edge case where total pages is less than the number of Roman numeral pages", () => {
+      expect(labelManuscriptWithoutFoliation(2, 4)).toMatchInlineSnapshot(`
+        [
+          "I",
+          "II",
+        ]
+      `);
+    });
   });
 });

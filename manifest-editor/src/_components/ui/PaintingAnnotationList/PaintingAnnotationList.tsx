@@ -28,7 +28,7 @@ export function PaintingAnnotationList() {
   return (
     <>
       {!notAllowed.includes("items") ? (
-        <>
+        <div id={items.containerId()}>
           <InputContainer wide>
             {!items.get()?.length ? (
               <>
@@ -53,7 +53,7 @@ export function PaintingAnnotationList() {
             />
           </InputContainer>
           {canCreateAnnotation ? <Button onClick={() => annotationActions.create()}>Add media</Button> : null}
-        </>
+        </div>
       ) : null}
     </>
   );
