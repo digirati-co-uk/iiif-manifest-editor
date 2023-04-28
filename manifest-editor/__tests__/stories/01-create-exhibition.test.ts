@@ -707,7 +707,7 @@ describe("Creation of Delft exhibition", () => {
         "id": "https://example.org/exhibition-manifest",
         "items": [
           {
-            "height": "582",
+            "height": 582,
             "id": "https://example.org/exhibition-manifest/canvas/<string>",
             "items": [
               {
@@ -754,7 +754,7 @@ describe("Creation of Delft exhibition", () => {
               ],
             },
             "type": "Canvas",
-            "width": "1105",
+            "width": 1105,
           },
         ],
         "type": "Manifest",
