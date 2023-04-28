@@ -25,7 +25,7 @@ import execa from "execa";
     }
 
     const npmPath = path.join(cwd(), distDir, pkg);
-    const umdPath = path.join(cwd(), distDir, `${source}.umd.ts`);
+    const umdPath = path.join(cwd(), sourceDir, `${pkg}.umd.ts`);
     const dist = path.join(npmPath, "dist");
     const distUmd = path.join(npmPath, "dist-umd");
     const packageJson = path.join(npmPath, "package.json");
@@ -53,6 +53,7 @@ import execa from "execa";
       const umdEntry = existsSync(umdPath) ? umdPath : entry;
 
       listItem(`Building UMD - ${packageJsonContents.globalName}`);
+      listItem(`Entry: ${umdEntry}`);
       await build(
         defineConfig({
           entry: umdEntry,
