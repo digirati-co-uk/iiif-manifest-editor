@@ -1,5 +1,5 @@
 /**
- * @param options {{ external: string[]; entry: string; name: string; globalName: string; outDir?: string; react?: boolean; globals: Record<string, string> }}
+ * @param options {{ external: string[]; isNode?: boolean; entry: string; name: string; globalName: string; outDir?: string; react?: boolean; globals: Record<string, string> }}
  */
 export function defineConfig(options) {
   return {
@@ -7,6 +7,7 @@ export function defineConfig(options) {
       "process.env.NODE_ENV": '"production"',
     },
     build: {
+      target: options.isNode ? 'node16': undefined,
       copyPublicDir: false,
       sourcemap: true,
       outDir: options.outDir || `dist/${options.name}`,

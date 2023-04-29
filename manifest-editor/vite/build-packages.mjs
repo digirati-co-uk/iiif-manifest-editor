@@ -4,9 +4,10 @@ import chalk from "chalk";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { cwd } from "node:process";
-import { existsSync } from "fs";
+import { existsSync } from "node:fs";
 import execa from "execa";
 
+const onlyPackage = process.argv[2];
 
 (async () => {
   const NPM = "npm";
@@ -19,6 +20,10 @@ import execa from "execa";
   const sources = await readdir(path.join(cwd(), sourceDir));
   for (const source of sources) {
     const pkg = path.basename(source, ".ts");
+
+    if (onlyPackage && pkg !== onlyPackage) {
+      continue;
+    }
 
     if (pkg.endsWith('.umd')) {
       continue;
@@ -39,13 +44,21 @@ import execa from "execa";
 
     const packageJsonContents = JSON.parse(await readFile(packageJson, "utf-8"));
 
+    const isNode = !!packageJsonContents.nodeDependencies;
+
+    const external = Object.keys(packageJsonContents.dependencies || {});
+    if (packageJsonContents.nodeDependencies) {
+      external.push(...packageJsonContents.nodeDependencies);
+    }
+
     buildMsg(`@manifest-editor/${pkg}`);
     await build(
       defineConfig({
         entry: entry,
         name: "index",
+        isNode: isNode,
         outDir: dist,
-        external: Object.keys(packageJsonContents.dependencies || {}),
+        external: external,
       }),
     );
 

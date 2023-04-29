@@ -15,7 +15,8 @@ async function createServer() {
   const previewPath = join(process.cwd(), ".manifest-editor", "preview.js");
 
   let viteBaseConfig = {
-    server: { middlewareMode: "ssr" },
+    appType: "custom",
+    server: { middlewareMode: true },
     plugins: [react()],
     optimizeDeps: {
       // exclude: ["@atlas-viewer/atlas", "react-iiif-vault", "debounce"],
@@ -31,8 +32,6 @@ async function createServer() {
     console.log(e);
     //
   }
-
-  console.log("viteBaseConfig", viteBaseConfig);
 
   // Create Vite server in middleware mode.
   const vite = await createViteServer(viteBaseConfig);
@@ -61,7 +60,7 @@ async function createServer() {
           <div id="root"></div>
           <script type="application/json" id="config">${JSON.stringify(mainConfig)}</script>
           <script type="module">
-            import { init } from 'manifest-editor';
+            import { init } from '@manifest-editor/custom';
 
             const element = document.getElementById('root');
             const config = JSON.parse(document.getElementById('config').innerText);
@@ -91,5 +90,7 @@ const [server] = await createServer({
   root: process.cwd(),
   server: {},
 });
+
+console.log("Server running at http://localhost:3007");
 
 await server.listen(3007);

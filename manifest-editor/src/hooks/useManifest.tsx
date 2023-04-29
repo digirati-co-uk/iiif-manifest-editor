@@ -1,5 +1,5 @@
 import { useResourceContext } from "react-iiif-vault";
-import { ManifestNormalized } from "@iiif/presentation-3";
+import { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { useVaultSelector } from "react-iiif-vault";
 import { useMemo } from "react";
 import { IIIFStore } from "@iiif/vault";

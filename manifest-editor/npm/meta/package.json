@@ -1,0 +1,21 @@
+{
+  "name": "@manifest-editor/meta",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "files": ["dist", "index.d.ts", "dist-umd"],
+  "types": "./index.d.ts",
+  "keywords": ["iiif", "editor", "typescript"],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    }
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "globalName": "IIIFMeta"
+}
