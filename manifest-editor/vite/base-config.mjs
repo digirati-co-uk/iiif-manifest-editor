@@ -22,7 +22,7 @@ export function defineConfig(options) {
           if (format === "es") {
             return `esm/${options.name}.mjs`;
           }
-          return `${format}/${options.name}.js`;
+          return `${format}/${options.name}.cjs`;
         },
       },
       minify: "terser",

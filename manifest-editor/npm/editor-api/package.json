@@ -1,8 +1,8 @@
 {
   "name": "@manifest-editor/editor-api",
   "version": "1.0.0",
-  "type": "commonjs",
-  "main": "./dist/cjs/index.js",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
   "files": [
     "dist",

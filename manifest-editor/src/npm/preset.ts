@@ -7,6 +7,13 @@ import { allEditors } from "@/_editors";
 
 export const apps = [manifestEditor, collectionEditor, about, splash];
 
+export const availableApps = {
+  manifestEditor,
+  collectionEditor,
+  about,
+  splash,
+};
+
 export const defaultApp = splash;
 
 export const defaultAppId = "splash";
