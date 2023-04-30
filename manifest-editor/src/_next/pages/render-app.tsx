@@ -1,7 +1,6 @@
 import { Layout } from "@/shell";
 import { AppStateProvider, useApps } from "@/shell";
 import { AppHeader } from "@/shell";
-import { useIsDesktop } from "@/shell/DesktopContext/hooks/useIsDesktop";
 import { AppHeaderDesktop } from "@/shell/AppHeader/AppHeader.desktop";
 import { memo } from "react";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
@@ -11,7 +10,7 @@ interface RenderAppProps {
 }
 
 export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
-  const isDesktop = useIsDesktop();
+  const isDesktop = !!window.__TAURI__;
   const { apps, changeApp, currentApp, initialApp } = useApps();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
   const project = useProjectContext();

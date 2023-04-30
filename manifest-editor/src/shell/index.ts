@@ -1,6 +1,8 @@
 // Export all modules in this folder
 export * from "./AppContext/AppContext";
 export * from "./AppHeader/AppHeader";
+export * from "./DesktopContext/hooks/useIsDesktop";
+export * from "./DesktopContext/DesktopContext";
 export * from "./ConfigContext/ConfigContext";
 export * from "./EditingStack/EditingStack";
 export * from "./EditingStack/EditingStack.types";
