@@ -3,13 +3,13 @@ import { LayoutProvider } from "../Layout/Layout.context";
 import { ProjectProvider } from "../ProjectContext/ProjectContext";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
-import { ManifestEditorProvider } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
+import { ManifestEditorProvider } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
 import { AppProvider } from "../AppContext/AppContext";
-import { AppDefinition, getApps } from "../../apps/app-loader";
+import { AppDefinition } from "@/apps/app-loader";
 import { Config, ConfigProvider } from "../ConfigContext/ConfigContext";
-import { defaultTheme } from "../../themes/default-theme";
+import { defaultTheme } from "@/themes/default-theme";
 import { ThemeProvider } from "styled-components";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { EditingStack } from "@/shell/EditingStack/EditingStack";
 import { PreviewVaultContext } from "@/shell/PreviewVault/PreviewVault";
 

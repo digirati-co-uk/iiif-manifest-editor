@@ -19,12 +19,6 @@ export type MappedApp = {
   layout: LayoutProps;
 };
 
-const state = internalGetApps(import.meta.globEager("./**/index.ts*"));
-
-export function getApps() {
-  return state;
-}
-
 export type AppDefinition = {
   allApps: Record<string, MappedApp>;
   allAppIds: string[];

@@ -6,7 +6,7 @@ import { GlobalStyle } from "./atoms/GlobalStyle";
 import { ShellProvider } from "./shell/ShellContext/ShellContext";
 import { RenderApp } from "./_next/pages/render-app";
 import { Main } from "./atoms/Main";
-import { getApps } from "./apps/app-loader";
+import { getApps } from "./apps/apps";
 import qs from "query-string";
 import i18n from "i18next";
 import { initReactI18next, I18nextProvider } from "react-i18next";
