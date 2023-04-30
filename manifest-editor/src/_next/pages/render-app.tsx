@@ -29,9 +29,8 @@ export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
   return selectedApp ? (
     <AppStateProvider appId={currentApp.id} key={currentApp.id} args={currentApp.args}>
       <Layout
-        header={
-          props.hideHeader ? null : isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />
-        }
+        hideHeader={props.hideHeader}
+        header={isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />}
         {...(selectedApp.layout || {})}
       />
     </AppStateProvider>

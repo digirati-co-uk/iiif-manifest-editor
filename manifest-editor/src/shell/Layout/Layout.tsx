@@ -211,12 +211,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   if (mobile) {
     return (
       <L.OuterWrapper>
-        {props.header ? (
+        {props.hideHeader ? null : (
           <L.Header>
             {props.header || null}
             {props.menu ? <menu>{props.menu}</menu> : null}
           </L.Header>
-        ) : null}
+        )}
         <L.Main>
           <M.Container>
             <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>

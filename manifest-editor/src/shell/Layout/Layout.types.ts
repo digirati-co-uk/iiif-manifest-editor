@@ -174,6 +174,7 @@ export interface ResourceDefinition {
 
 export interface LayoutProps {
   className?: string;
+  hideHeader?: boolean;
   provider?: React.FC;
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
