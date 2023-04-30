@@ -3,16 +3,16 @@ import { Publication } from "./types/Publication";
 import { Vault } from "@iiif/vault";
 import { Preview } from "./types/Preview";
 
-export type ProjectContext = ProjectState & {
-  actions: ProjectActions;
-  canDelete: boolean;
-};
-
 export interface ProjectState {
   current: EditorProject | null;
   allProjects: EditorProject[];
   loadingStatus: null | ProjectsLoadingStatus;
 }
+
+export type ProjectContext = ProjectState & {
+  actions: ProjectActions;
+  canDelete: boolean;
+};
 
 export interface ProjectsLoadingStatus {
   loading: boolean;

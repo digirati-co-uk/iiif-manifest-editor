@@ -1,6 +1,6 @@
 import React, { ReactNode, useMemo } from "react";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
-import { ProjectProvider } from "../ProjectContext/ProjectContext";
+import { ProjectProvider } from "../ProjectContext/ProjectContext.internal";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { ManifestEditorProvider } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
