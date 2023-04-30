@@ -30,6 +30,7 @@
     "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault",
     "@iiif/presentation-3": "^2.0.5",
     "@iiif/presentation-3-normalized": "^0.9.7",
+    "styled-components": "^5.3.5",
     "mitt": "^3.0.0"
   },
   "nodeDependencies": [
