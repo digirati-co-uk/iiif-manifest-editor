@@ -4,9 +4,17 @@
   "type": "commonjs",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "files": ["dist", "index.d.ts", "dist-umd"],
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
   "types": "./index.d.ts",
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
@@ -15,10 +23,14 @@
   },
   "dependencies": {
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
-    "uuid": "^9.0.0",
+    "uuid": "^8.3.2",
     "ws": "^8.13.0"
   },
-  "nodeDependencies": ["http", "net", "url"],
+  "nodeDependencies": [
+    "http",
+    "net",
+    "url"
+  ],
   "publishConfig": {
     "access": "public"
   }

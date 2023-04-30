@@ -7,9 +7,17 @@
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "files": ["dist", "index.d.ts", "dist-umd"],
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
   "types": "./index.d.ts",
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
@@ -23,7 +31,7 @@
     "react-dom": "^18.2.0",
     "i18next": "^22.4.15",
     "react-i18next": "^12.2.2",
-    "styled-components": "^5.3.10",
+    "styled-components": "^5.3.5",
     "@iiif/presentation-3": "^2.0.5",
     "react-is": "^18.2.0",
     "@iiif/presentation-3-normalized": "^0.9.7",
@@ -31,7 +39,7 @@
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
     "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers",
     "@vitejs/plugin-react": "^4.0.0",
-    "express": "^4.18.2",
+    "express": "^4.18.1",
     "vite": "^4.3.3"
   },
   "publishConfig": {

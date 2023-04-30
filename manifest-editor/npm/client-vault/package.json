@@ -4,9 +4,17 @@
   "type": "commonjs",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "files": ["dist", "index.d.ts", "dist-umd"],
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
   "types": "./index.d.ts",
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
