@@ -258,10 +258,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   // This is a big ol' work in progress.
   return (
     <L.OuterWrapper className={props.className}>
-      <L.Header>
-        {props.header || null}
-        {props.menu ? <menu>{props.menu}</menu> : null}
-      </L.Header>
+      {props.hideHeader ? null : (
+        <L.Header>
+          {props.header || null}
+          {props.menu ? <menu>{props.menu}</menu> : null}
+        </L.Header>
+      )}
       <L.Main
         ref={(div) => {
           leftPanelResizer.refs.container.current = div;
