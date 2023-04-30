@@ -35,6 +35,10 @@ export function useProjectActionsWithBackend(
 
     ensureUniqueFilename(project, allProjects);
 
+    if (!storage.canCreate()) {
+      throw new Error("Cannot create project with this storage backend");
+    }
+
     const backendStorage = await storage.create(project, project.storage.data);
     const createdProject = { ...project, storage: backendStorage };
     await backend.createProject(createdProject);

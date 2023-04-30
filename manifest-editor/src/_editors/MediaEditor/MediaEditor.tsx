@@ -73,7 +73,7 @@ export function MediaEditor() {
   const canvas = useCanvas({ id: canvasId });
 
   //type.get()
-  const isYouTube = !!(service.get() || []).find((r) => r.profile === "https://www.youtube.com");
+  const isYouTube = !!(service.get() || []).find((r) => (r as any).profile === "https://www.youtube.com");
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
 
   // VideoYouTubeHTML

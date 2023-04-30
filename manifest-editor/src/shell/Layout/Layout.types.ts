@@ -181,6 +181,7 @@ export interface LayoutProps {
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;
+  onClickLogo?: (e: React.MouseEvent) => void;
   // Menus
   leftPanelMenu?: ReactNode;
   centerPanelMenu?: ReactNode;

@@ -89,9 +89,10 @@ export interface ProjectStorage<S extends Storage, DataType = any, Ref extends S
 
   // Fetching
   create(project: EditorProject, data: DataType): Promise<Ref | void>;
-  getStorage(ref: Ref): Promise<S | null>;
   saveStorage(ref: Ref): Promise<void>;
   deleteStorage(ref: Ref): Promise<void>;
+  canCreate(): boolean;
+  canDelete(): boolean;
 
   // Runtime
   getBackendStorage(project: EditorProject): Ref;

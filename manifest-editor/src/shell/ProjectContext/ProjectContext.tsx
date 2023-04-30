@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useReducer } from "react";
-import { ProjectContext } from "./ProjectContext.types";
+import { ProjectBackend, ProjectContext } from "./ProjectContext.types";
 import { useProjectActionsWithBackend, useProjectBackend, useProjectLoader } from "./ProjectContext.hooks";
 import { getDefaultProjectContextState, projectContextReducer } from "./ProjectContext.reducer";
 import invariant from "tiny-invariant";
@@ -9,16 +9,31 @@ import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { useApps } from "../AppContext/AppContext";
 import { FileSystemFolderBackend } from "./backend/FileSystemFolderBackend";
 import { FileSystemLoader } from "./storage/FileSystemLoader";
+import { AbstractVaultLoader } from "@/shell/ProjectContext/storage/AbstractVaultLoader";
 
 const ProjectReactContext = createContext<ProjectContext | null>(null);
 
-export function ProjectProvider(props: { children: ReactNode; defaultApp?: string }) {
+interface ProjectProviderProps {
+  children: ReactNode;
+  defaultApp?: string;
+  // Storage
+  storage?: AbstractVaultLoader<any>;
+  backend?: ProjectBackend;
+}
+
+export function ProjectProvider(props: ProjectProviderProps) {
   const { currentApp, changeApp, apps } = useApps();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
-  const backend = useMemo(() => (window.__TAURI__ ? new FileSystemFolderBackend() : new LocalStorageBackend()), []);
-  const storage = useMemo(() => (window.__TAURI__ ? new FileSystemLoader() : new LocalStorageLoader()), []);
+  const backend = useMemo(
+    () => props.backend || (window.__TAURI__ ? new FileSystemFolderBackend() : new LocalStorageBackend()),
+    []
+  );
+  const storage = useMemo(
+    () => props.storage || (window.__TAURI__ ? new FileSystemLoader() : new LocalStorageLoader()),
+    []
+  );
   const [state, dispatch] = useReducer(projectContextReducer, undefined, getDefaultProjectContextState);
   const actions = useProjectActionsWithBackend(dispatch, backend, storage);
   const context: ProjectContext = useMemo(

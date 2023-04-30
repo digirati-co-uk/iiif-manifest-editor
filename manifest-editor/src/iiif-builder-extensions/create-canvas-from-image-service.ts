@@ -1,5 +1,6 @@
 import { IIIFBuilder } from "iiif-builder";
-import { CanvasNormalized, ImageService } from "@iiif/presentation-3";
+import { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import { ImageService } from "@iiif/presentation-3";
 import { v4 } from "uuid";
 
 export function createCanvasFromImageService(

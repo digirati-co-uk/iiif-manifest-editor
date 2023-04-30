@@ -18,6 +18,14 @@ export abstract class AbstractVaultLoader<T extends Storage>
     return true;
   }
 
+  canCreate() {
+    return true;
+  }
+
+  canDelete() {
+    return true;
+  }
+
   abstract create(project: EditorProject, data: Manifest | Collection): Promise<T>;
 
   createVaultInstance(project: EditorProject): [Vault, Promise<void>] {

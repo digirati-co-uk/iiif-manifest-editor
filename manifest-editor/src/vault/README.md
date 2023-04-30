@@ -41,6 +41,26 @@ This allows the client to be a static webpage that can be hosted on any server. 
 on the same server as the vault. However, the server will need to allow cross-origin requests from the client, and will
 ensure that only select hosts are allowed to connect to the vault.
 
+For post-message you have the server iframe, communicating to the server via web-sockets and the client application
+that has the server in an iframe. When an event originates from the client, the following happens:
+
+- The client sends a message to the server iframe via post-message
+- The server iframe sends a message to the server via web-sockets
+- The server broadcasts the message to all connected clients via web-sockets
+- The server iframe receives the message from the server via web-sockets
+- The server iframe sends the message to the other clients via post-message
+
+When an event originates from the server, the following happens:
+- The server sends a message to the server iframe via web-sockets
+- The server iframe sends the message to the other clients via post-message
+
+
+- ClientPostMessageVault.dispatch() -> sends message to server iframe
+- ServerPostMessageVault.dispatch() -> sends message to server
+- ServerWebSocketVault.dispatch() -> sends message to all clients
+
+
+
 ## GitHub integration
 
 On the server there will be a GitHub integration. This integration will allow the vault to be connected to a GitHub

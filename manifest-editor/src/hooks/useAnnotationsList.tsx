@@ -1,4 +1,4 @@
-import { AnnotationNormalized } from "@iiif/presentation-3";
+import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { IIIFBuilder } from "iiif-builder";
 import { useCallback, useState, useEffect } from "react";
 import { importEntities, removeReference } from "@iiif/vault/actions";
@@ -10,7 +10,9 @@ import { addReference } from "@iiif/vault/actions";
 
 export function getInitialAnnotationList(canvasId: string) {
   const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);
-  if (!canvas) return [];
+  if (!canvas) {
+    return [];
+  }
   const vault = useVault();
   const annoPages = canvas.annotations.map((annoPage) => {
     return vault.get(annoPage);
@@ -62,7 +64,9 @@ export function useAnnotationList<T = AnnotationNormalized>(
       height: 200,
     }
   ) => {
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
     const id = `https://example.org/annotation/${v4()}/annotation`;
     const target = `${canvasId}#xywh=${bounds.x},${bounds.y},${bounds.width},${bounds.height}`;
     setAnnotations((a) => [...a, { id, target }]);
@@ -97,7 +101,9 @@ export function useAnnotationList<T = AnnotationNormalized>(
   };
 
   const addNewAnnotationPage = (id?: string, label?: any, importPage?: boolean, callback?: () => void) => {
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
     const newID = id ? id : `https://example.org/annotations/${v4()}/annotation-page`;
     const lab = label ? label : {};
     vault.dispatch(
@@ -125,11 +131,15 @@ export function useAnnotationList<T = AnnotationNormalized>(
     if (importPage) {
       vault.load(newID);
     }
-    if (callback) callback();
+    if (callback) {
+      callback();
+    }
   };
 
   const removeAnnotationPage = (id: string) => {
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     vault.dispatch(
       removeReference({
@@ -145,7 +155,9 @@ export function useAnnotationList<T = AnnotationNormalized>(
   };
 
   const removeAnnotation = (id: string, pageId: string) => {
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
     vault.dispatch(
       removeReference({
         id: pageId,

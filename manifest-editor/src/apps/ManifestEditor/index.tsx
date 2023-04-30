@@ -23,6 +23,7 @@ import { CanvasPanelEditor } from "@/_components/ui/CanvasPanelEditor/CanvasPane
 import { tutorial } from "@/_panels/right-panels/Tutotiral";
 import { overviewCanvasEditor } from "@/_editors/OverviewCanvasEditor";
 import { combinedProperties } from "@/_editors/CombinedEditor";
+import { allEditors } from "@/_editors";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
@@ -60,24 +61,7 @@ export const rightPanels: LayoutPanel[] = [
   baseCreator,
 ];
 
-export const editors = [
-  // First tab ones.
-  imageEditor,
-  mediaEditor,
-  htmlBodyEditor,
-  overviewCanvasEditor,
-  rangeStructuralProperties,
-  inlineAnnotationPageEditor,
-  combinedProperties,
-
-  // Generic
-  descriptiveProperties,
-  metadata,
-  technicalProperties,
-  linkingProperties,
-  manifestStructuralProperties,
-  canvasStructuralProperties,
-];
+export const editors = allEditors;
 
 export const creators = allCreators;
 

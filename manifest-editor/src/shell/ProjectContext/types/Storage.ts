@@ -22,6 +22,14 @@ export interface CollectionStorage {
   data: Collection;
 }
 
+export interface RemoteWebsocketStorage {
+  type: "remote-websocket-storage";
+  data: {
+    id: string;
+    type: string;
+  };
+}
+
 export interface ResourceKeyedStorage {
   type: "resource-keyed-storage";
   // Possibly annotation pages, or other things editable in the editor.

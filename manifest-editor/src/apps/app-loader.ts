@@ -1,6 +1,6 @@
 import { LayoutProps } from "../shell/Layout/Layout.types";
 
-type LoadedApp = Partial<LayoutProps> & {
+export type LoadedApp = Partial<LayoutProps> & {
   default: {
     id: string;
     title: string;

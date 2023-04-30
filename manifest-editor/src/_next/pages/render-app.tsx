@@ -6,7 +6,11 @@ import { AppHeaderDesktop } from "../../shell/AppHeader/AppHeader.desktop";
 import { memo } from "react";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 
-export const RenderApp = memo(function RenderApp() {
+interface RenderAppProps {
+  onClickLogo?: () => void;
+}
+
+export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
   const isDesktop = useIsDesktop();
   const { apps, changeApp, currentApp, initialApp } = useApps();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
@@ -24,7 +28,10 @@ export const RenderApp = memo(function RenderApp() {
 
   return selectedApp ? (
     <AppStateProvider appId={currentApp.id} key={currentApp.id} args={currentApp.args}>
-      <Layout header={isDesktop ? <AppHeaderDesktop /> : <AppHeader />} {...(selectedApp.layout || {})} />
+      <Layout
+        header={isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />}
+        {...(selectedApp.layout || {})}
+      />
     </AppStateProvider>
   ) : (
     <div>

@@ -78,13 +78,15 @@ const onlyPackage = process.argv[2];
       );
     }
 
-    listItem("Building typescript definitions");
-    try {
-      await execa("./node_modules/.bin/dts-bundle-generator", [`--out-file=${npmPath}/index.d.ts`, `./${entry}`, "--no-check"]);
-    } catch (e) {
-      console.log(e.stdout);
-      console.error(e.stderr);
-      process.exit(1);
+    if (packageJsonContents.types) {
+      listItem("Building typescript definitions");
+      try {
+        await execa("./node_modules/.bin/dts-bundle-generator", [`--out-file=${npmPath}/index.d.ts`, `./${entry}`, "--no-check"]);
+      } catch (e) {
+        console.log(e.stdout);
+        console.error(e.stderr);
+        process.exit(1);
+      }
     }
   }
 

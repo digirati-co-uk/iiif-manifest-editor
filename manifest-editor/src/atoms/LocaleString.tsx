@@ -158,7 +158,7 @@ export const LocaleString: React.FC<{
   defaultText?: string;
   to?: string;
   enableDangerouslySetInnerHTML?: boolean;
-  children: InternationalString | null | undefined;
+  children: string | InternationalString | null | undefined;
   style?: React.CSSProperties;
 }> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
   const [text, language] = useLocaleString(children, defaultText);
