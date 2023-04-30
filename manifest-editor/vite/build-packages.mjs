@@ -82,6 +82,7 @@ const onlyPackage = process.argv[2];
 
       if (external.includes('@manifest-editor/shell')) {
         umdExternal.push('@manifest-editor/shell');
+        external.push('styled-components')
       }
 
       await build(
