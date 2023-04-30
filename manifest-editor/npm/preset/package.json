@@ -19,7 +19,8 @@
     ".": {
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.mjs"
-    }
+    },
+    "./dist/index.css": "./dist/index.css"
   },
   "peerDependencies": {
     "@manifest-editor/shell": "*"

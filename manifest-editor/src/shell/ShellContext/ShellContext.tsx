@@ -1,6 +1,6 @@
 import React, { ReactNode, useMemo } from "react";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
-import { ProjectProvider } from "../ProjectContext/ProjectContext.internal";
+import { ProjectProvider, ProjectProviderProps } from "../ProjectContext/ProjectContext.internal";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { ManifestEditorProvider } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
@@ -42,12 +42,14 @@ export const ShellProvider = ({
   theme,
   apps,
   initialApp,
+  project,
 }: {
   config?: Partial<Config>;
   children: ReactNode;
   theme?: any;
   apps: AppDefinition;
   initialApp?: { id: string; args?: any };
+  project?: Partial<ProjectProviderProps>;
 }) => {
   return (
     <ErrorBoundary>
@@ -55,7 +57,7 @@ export const ShellProvider = ({
         <ThemeProvider theme={theme || defaultTheme}>
           <ConfigProvider config={config}>
             <AppProvider apps={apps.allApps} initialApp={initialApp}>
-              <ProjectProvider>
+              <ProjectProvider {...(project || {})}>
                 <EditingStack>
                   <LayoutProvider>
                     {/* @todo swap these out for (config?.previews || []) */}

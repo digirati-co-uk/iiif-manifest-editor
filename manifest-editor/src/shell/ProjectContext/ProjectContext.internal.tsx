@@ -1,6 +1,7 @@
 import {
   ProjectBackend,
   ProjectContext,
+  ProjectState,
   useApps,
   useProjectActionsWithBackend,
   useProjectBackend,
@@ -22,6 +23,7 @@ export interface ProjectProviderProps {
   // Storage
   storage?: AbstractVaultLoader<any>;
   backend?: ProjectBackend;
+  initialState?: () => ProjectState;
 }
 export function ProjectProvider(props: ProjectProviderProps) {
   const { currentApp, changeApp, apps } = useApps();
@@ -36,7 +38,11 @@ export function ProjectProvider(props: ProjectProviderProps) {
     () => props.storage || (window.__TAURI__ ? new FileSystemLoader() : new LocalStorageLoader()),
     []
   );
-  const [state, dispatch] = useReducer(projectContextReducer, undefined, getDefaultProjectContextState);
+  const [state, dispatch] = useReducer(
+    projectContextReducer,
+    undefined,
+    props.initialState || getDefaultProjectContextState
+  );
   const actions = useProjectActionsWithBackend(dispatch, backend, storage);
   const context: ProjectContext = useMemo(
     () => ({ actions, canDelete: backend.canDelete(), ...state }),

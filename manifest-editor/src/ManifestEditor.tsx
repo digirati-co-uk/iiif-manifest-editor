@@ -6,20 +6,27 @@ import React, { useMemo } from "react";
 import { Config } from "@/shell/ConfigContext/ConfigContext";
 import { Collection } from "@iiif/presentation-3";
 import { internalGetApps, LoadedApp } from "@/apps/app-loader";
+import { ProjectProviderProps } from "@/shell/ProjectContext/ProjectContext.internal";
 
 interface ManifestEditorProps {
   apps: Record<string, LoadedApp>;
   initialApp?: { id: string; args?: any };
-  config: Partial<Config>;
+  config?: Partial<Config>;
   templates?: Collection;
   onClickLogo?: () => void;
+  project?: Partial<ProjectProviderProps>;
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
   const { apps, initialApp, config, templates } = props;
   const mapped = useMemo(() => internalGetApps(apps), [apps]);
   return (
-    <ShellProvider apps={mapped} config={{ ...(config || {}), newTemplates: templates }} initialApp={initialApp}>
+    <ShellProvider
+      apps={mapped}
+      config={{ ...(config || {}), newTemplates: templates }}
+      initialApp={initialApp}
+      project={props.project}
+    >
       <GlobalStyle />
       <Main>
         <RenderApp onClickLogo={props.onClickLogo} />
