@@ -10,7 +10,7 @@ export function defineConfig(options) {
     resolve: {
       alias: options.isShell ? [] : [
         {
-          find: /@\/shell\/(.*)/,
+          find: /@\/shell\/?(.*)/,
           replacement: '@manifest-editor/shell',
         }
       ],
