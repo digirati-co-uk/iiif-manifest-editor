@@ -1,6 +1,6 @@
-import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
+import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { MappedApp } from "@/apps/app-loader";
-import { useLocalStorage } from "@/madoc/use-local-storage";
+import { useLocalStorage, useOptionalLocalStorage } from "@/madoc/use-local-storage";
 import invariant from "tiny-invariant";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
@@ -66,9 +66,13 @@ export function AppStateProvider(props: { appId: string; initialValue?: any; arg
   );
 }
 
-function useCurrentApp(initialApp?: { id: string; args?: any }) {
+function useCurrentApp(initialApp?: { id: string; args?: any }, enableLocalStorage = false) {
   const s = useAppState();
-  const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
+  const [currentApp, changeApp] = useOptionalLocalStorage(
+    "SelectedApplication",
+    initialApp || { id: "splash" },
+    !enableLocalStorage
+  );
 
   useEffect(() => {
     if ((import.meta.env.DEV || import.meta.env.PULL_REQUEST === "true") && window) {
@@ -89,13 +93,15 @@ function useCurrentApp(initialApp?: { id: string; args?: any }) {
 export function AppProvider({
   apps,
   initialApp,
+  saveCurrentApp = true,
   children,
 }: {
   apps: Record<string, MappedApp>;
   initialApp?: AppContext["currentApp"];
+  saveCurrentApp?: boolean;
   children: ReactNode;
 }) {
-  const [currentApp, changeApp] = useCurrentApp(initialApp);
+  const [currentApp, changeApp] = useCurrentApp(initialApp, saveCurrentApp);
 
   const editProject = (project: EditorProject) => {
     if (project.resource.type === "Manifest") {

@@ -11,6 +11,7 @@ import { ProjectProviderProps } from "@/shell/ProjectContext/ProjectContext.inte
 interface ManifestEditorProps {
   apps: Record<string, LoadedApp>;
   initialApp?: { id: string; args?: any };
+  saveCurrentApp?: boolean;
   config?: Partial<Config>;
   templates?: Collection;
   onClickLogo?: () => void;
@@ -26,6 +27,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
       apps={mapped}
       config={{ ...(config || {}), newTemplates: templates }}
       initialApp={initialApp}
+      saveCurrentApp={props.saveCurrentApp}
       project={props.project}
     >
       <GlobalStyle />

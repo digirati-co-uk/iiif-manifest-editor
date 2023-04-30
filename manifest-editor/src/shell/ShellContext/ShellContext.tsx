@@ -40,6 +40,7 @@ export const ShellProvider = ({
   config,
   children,
   theme,
+  saveCurrentApp,
   apps,
   initialApp,
   project,
@@ -47,6 +48,7 @@ export const ShellProvider = ({
   config?: Partial<Config>;
   children: ReactNode;
   theme?: any;
+  saveCurrentApp?: boolean;
   apps: AppDefinition;
   initialApp?: { id: string; args?: any };
   project?: Partial<ProjectProviderProps>;
@@ -56,7 +58,7 @@ export const ShellProvider = ({
       <PreviewVaultContext>
         <ThemeProvider theme={theme || defaultTheme}>
           <ConfigProvider config={config}>
-            <AppProvider apps={apps.allApps} initialApp={initialApp}>
+            <AppProvider apps={apps.allApps} initialApp={initialApp} saveCurrentApp={saveCurrentApp}>
               <ProjectProvider {...(project || {})}>
                 <EditingStack>
                   <LayoutProvider>
