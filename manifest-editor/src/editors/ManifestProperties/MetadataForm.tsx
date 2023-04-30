@@ -1,9 +1,9 @@
 import { useVault } from "react-iiif-vault";
-import { useManifest } from "../../hooks/useManifest";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { useManifest } from "@/hooks/useManifest";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
-import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { EmptyProperty } from "@/atoms/EmptyProperty";
+import { useConfig } from "@/shell";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 
 export const MetadataForm: React.FC<{}> = () => {

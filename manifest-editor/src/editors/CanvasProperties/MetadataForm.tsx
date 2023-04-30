@@ -1,9 +1,8 @@
-import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { MetadataEditor } from "../MetadataEditor";
-import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { EmptyProperty } from "@/atoms/EmptyProperty";
+import { useConfig } from "@/shell";
 
 export const MetadataForm: React.FC = () => {
   const { defaultLanguages } = useConfig();

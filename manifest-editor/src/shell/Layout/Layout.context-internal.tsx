@@ -25,19 +25,6 @@ function parse(args: string | { id: string; state?: any; stacked?: boolean }, _s
   return args;
 }
 
-export function useLayoutProvider() {
-  const available = useContext(LayoutPropsReactContext);
-  const actions = useContext(LayoutActionsReactContext);
-  const state = useContext(LayoutStateReactContext);
-
-  return useMemo(() => {
-    return { actions, state, ...available };
-
-    // The actions have a fully stable identity.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [available, state]);
-}
-
 export const LayoutProvider = memo(function LayoutProvider(props: { children: ReactNode }) {
   const [available, setAvailable] = useState<LayoutProviderProps & { loading?: true }>({
     loading: true,

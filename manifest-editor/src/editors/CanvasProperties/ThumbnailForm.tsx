@@ -1,14 +1,13 @@
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { Button } from "../../atoms/Button";
-import { EditableContainer } from "../../atoms/EditableContainer";
-import { EmptyProperty } from "../../atoms/EmptyProperty";
-import { LightBoxWithoutSides } from "../../atoms/LightBox";
-import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { DeleteIcon } from "../../icons/DeleteIcon";
-import { FlexContainer, FlexContainerRow } from "../../components/layout/FlexContainer";
-import { usePanelActions } from "../../shell/Layout/Layout.hooks";
+import { Button } from "@/atoms/Button";
+import { EditableContainer } from "@/atoms/EditableContainer";
+import { EmptyProperty } from "@/atoms/EmptyProperty";
+import { LightBoxWithoutSides } from "@/atoms/LightBox";
+import { ThumbnailImg } from "@/atoms/Thumbnail";
+import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
+import { DeleteIcon } from "@/icons/DeleteIcon";
+import { FlexContainer, FlexContainerRow } from "@/components/layout/FlexContainer";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.

@@ -2,12 +2,10 @@ import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
 // NB remember to switch this out when "react-iiif-vault bug fixed"
 import { useCanvas } from "react-iiif-vault";
-import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
-import { StringSelector } from "../StringSelector";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
-import { SelectSearchField } from "@/_components/form-elements/SelectSearchField/SelectSearchField";
+import { StringSelector } from "@/editors/StringSelector";
+import { useConfig } from "@/shell";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go

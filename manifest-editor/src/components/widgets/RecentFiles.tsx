@@ -1,10 +1,9 @@
-import { ThumbnailImg } from "../../atoms/Thumbnail";
-import { RecentLabel, RecentManifestCard, RecentThumbnails } from "../../atoms/RecentFilesWidget";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { TemplateCardPlaceholder } from "../../atoms/TemplateCard";
-import { SecondaryButton } from "../../atoms/Button";
+import { ThumbnailImg } from "@/atoms/Thumbnail";
+import { RecentLabel, RecentManifestCard, RecentThumbnails } from "@/atoms/RecentFilesWidget";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { useProjectContext } from "@/shell";
+import { useApps } from "@/shell";
+import { SecondaryButton } from "@/atoms/Button";
 import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
 
 export const RecentFiles: React.FC = () => {

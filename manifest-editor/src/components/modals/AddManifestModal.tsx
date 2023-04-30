@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Input, InputLabel } from "../../editors/Input";
-import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
-import { CloseIcon } from "../../icons/CloseIcon";
-import { ModalBackground } from "../layout/ModalBackground";
-import { ModalContainer } from "../layout/ModalContainer";
-import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
-import { ModalHeader } from "../../atoms/ModalHeader";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
-import { analyse } from "../../helpers/analyse";
-import { RecentFiles } from "../widgets/RecentFiles";
-import { RecentFilesWidget } from "../../atoms/RecentFilesWidget";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
+import { Input, InputLabel } from "@/editors/Input";
+import { Button, CalltoButton, SecondaryButton } from "@/atoms/Button";
+import { CloseIcon } from "@/icons/CloseIcon";
+import { ModalBackground } from "@/components/layout/ModalBackground";
+import { ModalContainer } from "@/components/layout/ModalContainer";
+import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
+import { ModalHeader } from "@/atoms/ModalHeader";
+import { HorizontalDivider } from "@/atoms/HorizontalDivider";
+import { analyse } from "@/helpers/analyse";
+import { RecentFiles } from "@/components/widgets/RecentFiles";
+import { RecentFilesWidget } from "@/atoms/RecentFilesWidget";
+import { useApps } from "@/shell";
+import { useProjectCreators } from "@/shell";
 
 export const AddManifestModal: React.FC<{
   manifest: string;

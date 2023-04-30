@@ -1,8 +1,8 @@
 import { useManifest } from "react-iiif-vault";
-import { ResourceEditingProvider } from "../../shell/ResourceEditingContext/ResourceEditingContext";
-import { ResourceEditorConfig } from "../../types/resource-editor-config";
+import { ResourceEditingProvider } from "@/shell";
+import { ResourceEditorConfig } from "@/types/resource-editor-config";
 import { supportsProperty } from "../helpers/supports-property";
-import { LanguageMapEditor } from "../../editors/generic/LanguageMapEditor/LanguageMapEditor";
+import { LanguageMapEditor } from "@/editors/generic/LanguageMapEditor/LanguageMapEditor";
 
 export interface ManifestDescriptiveProps {
   supports: ResourceEditorConfig[];

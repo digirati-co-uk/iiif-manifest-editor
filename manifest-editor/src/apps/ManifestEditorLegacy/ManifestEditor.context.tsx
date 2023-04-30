@@ -1,8 +1,8 @@
 import React, { ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { ThumbnailSize } from "../../atoms/HeightWidthSwitcher";
+import { ThumbnailSize } from "@/atoms/HeightWidthSwitcher";
 import invariant from "tiny-invariant";
 import { parse } from "query-string";
-import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
+import { useProjectCreators } from "@/shell";
 
 interface EditorContextInterface {
   // Layouts
@@ -31,7 +31,13 @@ export function useManifestEditor() {
   return ctx;
 }
 
-export function ManifestEditorProvider({ children, ignoreQueryString }: { children: ReactNode; ignoreQueryString?: boolean  }) {
+export function ManifestEditorProvider({
+  children,
+  ignoreQueryString,
+}: {
+  children: ReactNode;
+  ignoreQueryString?: boolean;
+}) {
   const [selectedProperty, setSelectedProperty] = useState("manifest");
   const [selectedPanel, setSelectedPanel] = useState(0);
   const [addCanvasModalOpen, setAddCanvasModalOpen] = useState(false);

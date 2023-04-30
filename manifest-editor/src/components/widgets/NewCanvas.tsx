@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Input, InputLabel } from "../../editors/Input";
-import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
+import { Input, InputLabel } from "@/editors/Input";
+import { Button, CalltoButton, SecondaryButton } from "@/atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
-import { HorizontalDivider } from "../../atoms/HorizontalDivider";
-import { analyse } from "../../helpers/analyse";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { InformationLink } from "../../atoms/InformationLink";
+import { HorizontalDivider } from "@/atoms/HorizontalDivider";
+import { analyse } from "@/helpers/analyse";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { InformationLink } from "@/atoms/InformationLink";
 import { useExistingVault } from "react-iiif-vault";
-import { useManifest } from "../../hooks/useManifest";
+import { useManifest } from "@/hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
-import { PaddingComponentLarge, PaddingComponentMedium, PaddingComponentSmall } from "../../atoms/PaddingComponent";
-import { TickIcon } from "../../icons/TickIcon";
-import { Loading } from "../../atoms/Loading";
+import { PaddingComponentLarge, PaddingComponentMedium, PaddingComponentSmall } from "@/atoms/PaddingComponent";
+import { TickIcon } from "@/icons/TickIcon";
+import { Loading } from "@/atoms/Loading";
 import { v4 } from "uuid";
-import { useApps, useAppState } from "../../shell/AppContext/AppContext";
-import { useProjectCreators } from "../../shell/ProjectContext/ProjectContext.hooks";
+import { useApps, useAppState } from "@/shell";
+import { useProjectCreators } from "@/shell";
 
 export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
   const { createProjectFromManifestId } = useProjectCreators();

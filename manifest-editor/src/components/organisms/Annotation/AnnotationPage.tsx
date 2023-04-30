@@ -1,16 +1,18 @@
 import { useVault } from "react-iiif-vault";
-import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
-import { LanguageFieldEditor } from "../../../editors/generic/LanguageFieldEditor/LanguageFieldEditor";
-import { InputLabel, Input } from "../../../editors/Input";
-import { useAnnotationPage } from "../../../hooks/useAnnotationPage";
-import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
+import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
+import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
+import { InputLabel, Input } from "@/editors/Input";
+import { useAnnotationPage } from "@/hooks/useAnnotationPage";
+import { useConfig } from "@/shell";
 
 export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element => {
   const annotationPage = useAnnotationPage({ id: id });
   const vault = useVault();
   const { defaultLanguages } = useConfig();
 
-  if (!annotationPage) return <></>;
+  if (!annotationPage) {
+    return <></>;
+  }
 
   return (
     <>

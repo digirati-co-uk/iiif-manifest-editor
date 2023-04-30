@@ -1,6 +1,6 @@
 import { CanvasContext } from "react-iiif-vault";
-import { CanvasView } from "../../../components/organisms/CanvasView";
-import { useAppState } from "../../../shell/AppContext/AppContext";
+import { CanvasView } from "@/components/organisms/CanvasView";
+import { useAppState } from "@/shell";
 
 export function CurrentCanvas() {
   const { state } = useAppState();

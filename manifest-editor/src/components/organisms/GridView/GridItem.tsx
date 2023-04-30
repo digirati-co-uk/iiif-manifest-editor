@@ -1,20 +1,19 @@
 import { getValue } from "@iiif/vault-helpers";
 import { useCallback, useState } from "react";
 import { useCanvas, useManifest } from "react-iiif-vault";
-import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
-import { DropdownContent } from "../../../atoms/Dropdown";
-import { DropdownItem } from "../../../atoms/DropdownPreviewMenu";
-import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
-import { HorizontalDivider } from "../../../atoms/HorizontalDivider";
-import { Thumbnail } from "../../../atoms/Thumbnail";
-import { MoreVertical } from "../../../icons/MoreVertical";
-import { FlexContainerColumn } from "../../layout/FlexContainer";
+import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
+import { DropdownContent } from "@/atoms/Dropdown";
+import { DropdownItem } from "@/atoms/DropdownPreviewMenu";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { HorizontalDivider } from "@/atoms/HorizontalDivider";
+import { MoreVertical } from "@/icons/MoreVertical";
+import { FlexContainerColumn } from "@/components/layout/FlexContainer";
 import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
-import { useAppState } from "../../../shell/AppContext/AppContext";
-import { ModalButton } from "../../../madoc/components/ModalButton";
-import { NewCanvas } from "../../widgets/NewCanvas";
+import { useAppState } from "@/shell";
+import { ModalButton } from "@/madoc/components/ModalButton";
+import { NewCanvas } from "@/components/widgets/NewCanvas";
 import { Reference } from "@iiif/presentation-3";
-import { CanvasThumbnail } from "../CanvasThumbnail/CanvasThumbnail";
+import { CanvasThumbnail } from "@/components/organisms/CanvasThumbnail/CanvasThumbnail";
 
 export const GridItem: React.FC<{
   handleChange: (id: string, e: any) => void;

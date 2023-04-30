@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Button } from "../../atoms/Button";
-import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
-import { FlexContainer } from "../../components/layout/FlexContainer";
-import { NewManifestModal } from "../../components/modals/NewManifestModal";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { ModalButton } from "../../madoc/components/ModalButton";
-import { ExportToJson } from "../../components/widgets/ExportToJSON";
-import { useLocalStorage } from "../../madoc/use-local-storage";
+import { Button } from "@/atoms/Button";
+import { Dropdown, DropdownContent } from "@/atoms/Dropdown";
+import { FlexContainer } from "@/components/layout/FlexContainer";
+import { NewManifestModal } from "@/components/modals/NewManifestModal";
+import { useApps } from "@/shell";
+import { ModalButton } from "@/madoc/components/ModalButton";
+import { ExportToJson } from "@/components/widgets/ExportToJSON";
 
 export const ShellOptions: React.FC<{}> = () => {
   const { changeApp } = useApps();

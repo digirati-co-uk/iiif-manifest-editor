@@ -1,12 +1,9 @@
 import { useContext, useState } from "react";
 import { useVault } from "react-iiif-vault";
-import { useManifest } from "../../hooks/useManifest";
-import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { useManifest } from "@/hooks/useManifest";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { RightsForm } from "../RightsForm";
-import { StringSelector } from "../StringSelector";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
-import { PaddingComponentMedium } from "../../atoms/PaddingComponent";
+import { useConfig } from "@/shell";
 import { ViewingDirectionEditorManifest } from "@/_components/editors/ViewingDirectionEditor/ViewingDirectionEditor.manifest";
 import { BehaviorEditorManifest } from "@/_components/editors/BehaviorEditor/BehaviorEditor.manifest";
 

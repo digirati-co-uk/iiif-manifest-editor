@@ -1,8 +1,8 @@
-import { Layout } from "../../shell/Layout/Layout";
-import { AppStateProvider, useApps } from "../../shell/AppContext/AppContext";
-import { AppHeader } from "../../shell/AppHeader/AppHeader";
-import { useIsDesktop } from "../../shell/DesktopContext/hooks/useIsDesktop";
-import { AppHeaderDesktop } from "../../shell/AppHeader/AppHeader.desktop";
+import { Layout } from "@/shell";
+import { AppStateProvider, useApps } from "@/shell";
+import { AppHeader } from "@/shell";
+import { useIsDesktop } from "@/shell/DesktopContext/hooks/useIsDesktop";
+import { AppHeaderDesktop } from "@/shell/AppHeader/AppHeader.desktop";
 import { memo } from "react";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 

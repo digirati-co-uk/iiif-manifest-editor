@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useCanvas } from "react-iiif-vault";
-import { Button, SecondaryButton } from "../../../atoms/Button";
-import { LightBox } from "../../../atoms/LightBox";
-import { PaddingComponentMedium } from "../../../atoms/PaddingComponent";
-import { RadioButtons } from "../../../atoms/RadioButtons";
-import { FlexContainerRow } from "../../layout/FlexContainer";
-import { useAnnotationList } from "../../../hooks/useAnnotationsList";
-import { BackIcon } from "../../../icons/BackIcon";
-import { useConfig } from "../../../shell/ConfigContext/ConfigContext";
-import { LanguageFieldEditor } from "../../../editors/generic/LanguageFieldEditor/LanguageFieldEditor";
-import { Input } from "../../../editors/Input";
+import { Button, SecondaryButton } from "@/atoms/Button";
+import { LightBox } from "@/atoms/LightBox";
+import { PaddingComponentMedium } from "@/atoms/PaddingComponent";
+import { RadioButtons } from "@/atoms/RadioButtons";
+import { FlexContainerRow } from "@/components/layout/FlexContainer";
+import { useAnnotationList } from "@/hooks/useAnnotationsList";
+import { BackIcon } from "@/icons/BackIcon";
+import { useConfig } from "@/shell";
+import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
+import { Input } from "@/editors/Input";
 
 export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack }) => {
   const canvas = useCanvas();

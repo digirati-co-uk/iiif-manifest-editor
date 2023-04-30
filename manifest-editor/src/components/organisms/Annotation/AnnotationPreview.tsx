@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useManifest } from "react-iiif-vault";
 import styled from "styled-components";
-import { useAppState } from "../../../shell/AppContext/AppContext";
+import { useAppState } from "@/shell";
 
 const Container = styled.div`
   width: 100%;

@@ -1,10 +1,10 @@
-import { useLayoutActions } from "../../../shell/Layout/Layout.context";
+import { useLayoutActions } from "@/shell";
 import { useVault } from "react-iiif-vault";
-import { useManifest } from "../../../hooks/useManifest";
-import { MediaBody } from "../../../types/media-body";
-import { NewMediaForm } from "../../../editors/MediaProperties/NewMediaForm";
-import { useAppState } from "../../../shell/AppContext/AppContext";
-import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
+import { useManifest } from "@/hooks/useManifest";
+import { MediaBody } from "@/types/media-body";
+import { NewMediaForm } from "@/editors/MediaProperties/NewMediaForm";
+import { useAppState } from "@/shell";
+import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { addMapping, importEntities } from "@iiif/vault/actions";
 
 export function ThumbnailPage({ level }: { level: "manifest" | "canvas" }) {

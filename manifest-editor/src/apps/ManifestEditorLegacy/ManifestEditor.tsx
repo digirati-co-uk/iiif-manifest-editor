@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { useManifest } from "../../hooks/useManifest";
-import { Editor } from "../../atoms/Editor";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { ExpandTab } from "../../atoms/ExpandTab";
-import { ThumbnailStripView } from "../../components/layout/ThumbnailStripView";
-import { EditorPanel } from "../../components/layout/EditorPanel";
-import { Toolbar } from "../../components/layout/Toolbar";
-import { GridView } from "../../components/organisms/GridView/GridView";
+import { useManifest } from "@/hooks/useManifest";
+import { Editor } from "@/atoms/Editor";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { ExpandTab } from "@/atoms/ExpandTab";
+import { ThumbnailStripView } from "@/components/layout/ThumbnailStripView";
+import { EditorPanel } from "@/components/layout/EditorPanel";
+import { Toolbar } from "@/components/layout/Toolbar";
+import { GridView } from "@/components/organisms/GridView/GridView";
 import { useManifestEditor } from "./ManifestEditor.context";
-import { ManifestEditorToolbar } from "./components/ManifestEditorToolbar";
-import { CanvasPanelViewer } from "../../_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
-import { useAppState } from "../../shell/AppContext/AppContext";
+import { ManifestEditorToolbar } from "@/apps/ManifestEditorLegacy/components/ManifestEditorToolbar";
+import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
+import { useAppState } from "@/shell";
 import { CanvasContext } from "react-iiif-vault";
 
 export function ManifestEditor() {

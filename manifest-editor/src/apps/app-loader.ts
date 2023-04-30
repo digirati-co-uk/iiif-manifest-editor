@@ -1,4 +1,4 @@
-import { LayoutProps } from "../shell/Layout/Layout.types";
+import { LayoutProps } from "@/shell";
 
 export type LoadedApp = Partial<LayoutProps> & {
   default: {

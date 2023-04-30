@@ -1,5 +1,5 @@
 import { LayoutProps } from "./Layout.types";
-import { useLayoutProvider } from "./Layout.context-internal";
+import { useLayoutProvider } from "./Layout.context";
 import { memo, useContext, useEffect, useLayoutEffect } from "react";
 import * as L from "./Layout.styles";
 import * as M from "./Layout.mobile";
