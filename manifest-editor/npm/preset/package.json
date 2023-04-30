@@ -55,7 +55,6 @@
     "localforage": "^1.10.0",
     "mitt": "^3.0.0",
     "query-string": "^7.1.1",
-    "react-accessible-dropdown-menu-hook": "^3.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-datetime-picker": "^5.0.3",
     "react-easy-sort": "^1.4.1",
