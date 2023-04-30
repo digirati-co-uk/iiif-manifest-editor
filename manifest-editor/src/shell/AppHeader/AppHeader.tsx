@@ -1,9 +1,9 @@
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
-import { useApps } from "../AppContext/AppContext";
-import { PreviewButton } from "../../components/organisms/PreviewButton/PreviewButton";
-import { ShellOptions } from "../../apps/Shell/ShellOptions";
-import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
-import { useLocalStorage } from "../../madoc/use-local-storage";
+import { useApps } from "@/shell";
+import { PreviewButton } from "@/components/organisms/PreviewButton/PreviewButton";
+import { ShellOptions } from "@/apps/Shell/ShellOptions";
+import { ManifestEditorLogo } from "@/atoms/ManifestEditorLogo";
+import { useLocalStorage } from "@/madoc/use-local-storage";
 import { DraftTitleEditor } from "./components/DraftTitleEditor";
 import { AppMenu } from "./components/AppMenu";
 import { memo } from "react";

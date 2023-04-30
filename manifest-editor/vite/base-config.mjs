@@ -1,10 +1,19 @@
 /**
- * @param options {{ external: string[]; isNode?: boolean; entry: string; name: string; globalName: string; outDir?: string; react?: boolean; globals: Record<string, string> }}
+ * @param options {{ external: string[]; isShell?: boolean; isNode?: boolean; entry: string; name: string; globalName: string; outDir?: string; react?: boolean; globals: Record<string, string> }}
  */
 export function defineConfig(options) {
   return {
     define: {
       "process.env.NODE_ENV": '"production"',
+      "window.__TAURI__": "false",
+    },
+    resolve: {
+      alias: options.isShell ? [] : [
+        {
+          find: /@\/shell\/(.*)/,
+          replacement: '@manifest-editor/shell',
+        }
+      ],
     },
     build: {
       target: options.isNode ? 'node16': undefined,

@@ -1,6 +1,6 @@
-import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { MappedApp } from "../../apps/app-loader";
-import { useLocalStorage } from "../../madoc/use-local-storage";
+import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
+import type { MappedApp } from "@/apps/app-loader";
+import { useLocalStorage } from "@/madoc/use-local-storage";
 import invariant from "tiny-invariant";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";

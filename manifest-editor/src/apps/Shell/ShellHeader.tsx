@@ -9,7 +9,7 @@ import { Button } from "../../atoms/Button";
 import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
 import { DownIcon } from "../../icons/DownIcon";
 import { useApps } from "../../shell/AppContext/AppContext";
-import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
+import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 
 export const ShellHeader: React.FC<{
   savePreviewLink: () => Promise<void>;

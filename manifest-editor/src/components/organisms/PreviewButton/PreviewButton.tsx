@@ -1,5 +1,5 @@
-import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
-import { usePreviewContext } from "../../../shell/PreviewContext/PreviewContext";
+import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
+import { usePreviewContext } from "@/shell/PreviewContext/PreviewContext";
 import {
   MenuContainer,
   ButtonContainer,
@@ -12,9 +12,9 @@ import {
   ButtonEmpty,
 } from "./PreviewButton.styles";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
-import { DownIcon } from "../../../icons/DownIcon";
-import { useApps } from "../../../shell/AppContext/AppContext";
-import { CloseIcon } from "../../../madoc/components/icons/CloseIcon";
+import { DownIcon } from "@/icons/DownIcon";
+import { useApps } from "@/shell";
+import { CloseIcon } from "@/madoc/components/icons/CloseIcon";
 
 export function PreviewButton() {
   const { current } = useProjectContext();

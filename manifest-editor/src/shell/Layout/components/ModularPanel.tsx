@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { StarIcon } from "@/icons/StarIcon";
 import { CloseIcon } from "@/icons/CloseIcon";
 import { BackIcon } from "@/icons/BackIcon";
-import { useLayoutProvider } from "../Layout.context";
+import { useLayoutProvider } from "@/shell/Layout/Layout.context-internal";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";

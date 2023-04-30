@@ -1,7 +1,5 @@
-import { LayoutPanel } from "@/shell/Layout/Layout.types";
-import { useLayoutActions } from "@/shell/Layout/Layout.context";
+import { LayoutPanel, useManifestEditor } from "@/shell";
 import { Button } from "@/atoms/Button";
-import { useManifestEditor } from "@/shell/EditingStack/EditingStack";
 import { InputContainer, InputLabel, InputLabelEdit } from "@/editors/Input";
 import { EmptyState } from "@/madoc/components/EmptyState";
 import { CanvasList } from "@/_components/ui/CanvasList/CanvasList";
@@ -10,6 +8,7 @@ import { useToggleList } from "@/_editors/LinkingProperties/LinkingProperties";
 import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { useInStack } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
+import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 export const canvasListing: LayoutPanel = {
   id: "left-panel-empty",

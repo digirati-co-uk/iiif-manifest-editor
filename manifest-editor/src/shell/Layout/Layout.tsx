@@ -1,5 +1,5 @@
 import { LayoutProps } from "./Layout.types";
-import { useLayoutProvider } from "./Layout.context";
+import { useLayoutProvider } from "./Layout.context-internal";
 import { memo, useContext, useEffect, useLayoutEffect } from "react";
 import * as L from "./Layout.styles";
 import * as M from "./Layout.mobile";
@@ -7,13 +7,12 @@ import { ModularPanel } from "./components/ModularPanel";
 import { HandleControls } from "./components/HandleControls";
 import { useResizeLayout } from "@/madoc/use-resize-layouts";
 import equal from "shallowequal";
-import { useAppState } from "../AppContext/AppContext";
+import { useAppState } from "@/shell";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import { ReactVaultContext } from "react-iiif-vault";
 import { Transition, TransitionStatus } from "react-transition-group";
 import useMatchMedia from "use-match-media-hook";
 import { DownIcon } from "@/icons/DownIcon";
-import { CloseIcon } from "@/madoc/components/icons/CloseIcon";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();

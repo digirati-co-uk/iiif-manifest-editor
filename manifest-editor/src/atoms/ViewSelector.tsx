@@ -3,7 +3,7 @@ import { ThumbnailStripIcon } from "../icons/ThumbnailStripIcon";
 import { TreeIcon } from "../icons/TreeIcon";
 import { FlexContainerRow } from "../components/layout/FlexContainer";
 import { Button } from "./Button";
-import { useLayoutActions, useLayoutState } from "../shell/Layout/Layout.context";
+import { useLayoutActions, useLayoutState } from "@/shell/Layout/Layout.context";
 import { useEffect, useState } from "react";
 import { VerticalDivider } from "./VerticalDivider";
 import { PaddingComponentSmall } from "./PaddingComponent";

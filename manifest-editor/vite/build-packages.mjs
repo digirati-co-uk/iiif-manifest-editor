@@ -50,6 +50,9 @@ const onlyPackage = process.argv[2];
     if (packageJsonContents.nodeDependencies) {
       external.push(...packageJsonContents.nodeDependencies);
     }
+    if (packageJsonContents.peerDependencies) {
+      external.push(...Object.keys(packageJsonContents.peerDependencies));
+    }
 
     buildMsg(`@manifest-editor/${pkg}`);
     await build(
@@ -59,6 +62,7 @@ const onlyPackage = process.argv[2];
         isNode: isNode,
         outDir: dist,
         external: external,
+        isShell: pkg === 'shell'
       }),
     );
 
@@ -68,17 +72,25 @@ const onlyPackage = process.argv[2];
       const globals = external.includes("react") ? {
         react: "React",
         "react-dom": "ReactDOM",
+        "@manifest-editor/shell": "ManifestEditorShell",
       } : {};
 
       listItem(`Building UMD - ${packageJsonContents.globalName}`);
       listItem(`Entry: ${umdEntry}`);
+
+      const umdExternal =external.includes("react") ? ["react", "react-dom", "react-dom/server"] : [];
+
+      if (external.includes('@manifest-editor/shell')) {
+        umdExternal.push('@manifest-editor/shell');
+      }
+
       await build(
         defineConfig({
           entry: umdEntry,
           name: "index",
           outDir: distUmd,
           globalName: packageJsonContents.globalName,
-          external: external.includes("react") ? ["react", "react-dom", "react-dom/server"] : [],
+          external: umdExternal,
           globals,
         }),
       );

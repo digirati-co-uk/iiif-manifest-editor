@@ -24,6 +24,9 @@
       "import": "./dist/esm/index.mjs"
     }
   },
+  "peerDependencies": {
+    "@manifest-editor/shell": "*"
+  },
   "dependencies": {
     "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
