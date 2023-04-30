@@ -7,6 +7,7 @@ import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 
 interface RenderAppProps {
   onClickLogo?: () => void;
+  hideHeader?: boolean;
 }
 
 export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
@@ -28,7 +29,9 @@ export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
   return selectedApp ? (
     <AppStateProvider appId={currentApp.id} key={currentApp.id} args={currentApp.args}>
       <Layout
-        header={isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />}
+        header={
+          props.hideHeader ? null : isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />
+        }
         {...(selectedApp.layout || {})}
       />
     </AppStateProvider>

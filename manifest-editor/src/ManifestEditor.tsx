@@ -15,6 +15,7 @@ interface ManifestEditorProps {
   templates?: Collection;
   onClickLogo?: () => void;
   project?: Partial<ProjectProviderProps>;
+  hideHeader?: boolean;
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
@@ -29,7 +30,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
     >
       <GlobalStyle />
       <Main>
-        <RenderApp onClickLogo={props.onClickLogo} />
+        <RenderApp onClickLogo={props.onClickLogo} hideHeader={props.hideHeader} />
       </Main>
     </ShellProvider>
   );
