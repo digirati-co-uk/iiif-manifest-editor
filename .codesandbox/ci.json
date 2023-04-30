@@ -8,7 +8,8 @@
     "manifest-editor/npm/meta",
     "manifest-editor/npm/client-vault",
     "manifest-editor/npm/server-vault",
-    "manifest-editor/npm/preset"
+    "manifest-editor/npm/preset",
+    "manifest-editor/npm/custom"
   ],
   "publishDirectory": {
     "@manifest-editor/editor-api": "manifest-editor/npm/editor-api",
@@ -17,7 +18,8 @@
     "@manifest-editor/meta": "manifest-editor/npm/meta",
     "@manifest-editor/client-vault": "manifest-editor/npm/client-vault",
     "@manifest-editor/server-vault": "manifest-editor/npm/server-vault",
-    "@manifest-editor/preset": "manifest-editor/npm/preset"
+    "@manifest-editor/preset": "manifest-editor/npm/preset",
+    "@manifest-editor/custom": "manifest-editor/npm/custom"
   },
   "node": "18"
 }
