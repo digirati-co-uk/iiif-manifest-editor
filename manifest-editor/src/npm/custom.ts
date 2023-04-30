@@ -33,3 +33,5 @@ export function init(
 
   render(createElement(StrictMode, {}, [createElement(App, {})]), element);
 }
+
+export * from "../ManifestEditor";

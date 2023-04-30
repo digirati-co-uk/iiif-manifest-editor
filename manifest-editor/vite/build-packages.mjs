@@ -25,7 +25,7 @@ const onlyPackage = process.argv[2];
       continue;
     }
 
-    if (pkg.endsWith('.umd')) {
+    if (pkg.endsWith(".umd")) {
       continue;
     }
 
@@ -65,16 +65,22 @@ const onlyPackage = process.argv[2];
     if (packageJsonContents.globalName) {
       const umdEntry = existsSync(umdPath) ? umdPath : entry;
 
+      const globals = external.includes("react") ? {
+        react: "React",
+        "react-dom": "ReactDOM",
+      } : {};
+
       listItem(`Building UMD - ${packageJsonContents.globalName}`);
       listItem(`Entry: ${umdEntry}`);
       await build(
         defineConfig({
           entry: umdEntry,
-          name: 'index',
+          name: "index",
           outDir: distUmd,
           globalName: packageJsonContents.globalName,
-          external
-        })
+          external: external.includes("react") ? ["react", "react-dom", "react-dom/server"] : [],
+          globals,
+        }),
       );
     }
 
@@ -89,19 +95,6 @@ const onlyPackage = process.argv[2];
       }
     }
   }
-
-  return;
-
-
-  buildMsg("@manifest-editor/editor-api");
-  await build(
-    defineConfig({
-      entry: `src/npm/editor-api.ts`,
-      name: "index",
-      outDir: `${NPM}/editor-api/dist`,
-      external,
-    }),
-  );
 
   function buildMsg(name) {
     console.log(chalk.grey(`\n\nBuilding ${chalk.blue(name)}\n`));
