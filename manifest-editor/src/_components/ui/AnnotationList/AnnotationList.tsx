@@ -5,6 +5,8 @@ import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { AnnotationContext } from "react-iiif-vault";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { CanvasTargetContext } from "@/helpers/CanvasTargetContext";
+import { InputLabel } from "@/editors/Input";
+import { EmptyState } from "@/madoc/components/EmptyState";
 
 interface AnnotationListProps {
   id?: string;
@@ -16,6 +18,16 @@ interface AnnotationListProps {
 }
 
 export function AnnotationList(props: AnnotationListProps) {
+  if (props.list.length === 0) {
+    return (
+      <>
+        <EmptyState $noMargin $box>
+          No annotations
+        </EmptyState>
+      </>
+    );
+  }
+
   if (props.reorder) {
     return (
       <ReorderList

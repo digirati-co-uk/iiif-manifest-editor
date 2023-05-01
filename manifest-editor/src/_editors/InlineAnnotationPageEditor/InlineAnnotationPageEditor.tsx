@@ -11,6 +11,9 @@ import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLin
 import { AnnotationPreview, AnnotationTargetLabel } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { FlexContainer } from "@/components/layout/FlexContainer";
 import invariant from "tiny-invariant";
+import { InputLabel } from "@/editors/Input";
+import { EmptyState } from "@/madoc/components/EmptyState";
+import { Button } from "@/atoms/Button";
 
 export function InlineAnnotationPageEditor() {
   const editor = useEditor();
@@ -36,6 +39,7 @@ export function InlineAnnotationPageEditor() {
 
   return (
     <PaddedSidebarContainer>
+      <InputLabel>Annotations</InputLabel>
       <AnnotationList
         id={items.focusId()}
         list={items.get() || []}
@@ -44,6 +48,17 @@ export function InlineAnnotationPageEditor() {
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
         createActions={createAppActions(items)}
       />
+      <br />
+      {canCreateAnnotation ? (
+        <Button
+          onClick={() => {
+            // @ts-ignore
+            document.querySelector('button[data-control="create"]')?.click();
+          }}
+        >
+          Create annotation
+        </Button>
+      ) : null}
       {annoPage /*&& hasMultiplePainting*/ ? (
         <PromptToAddPaintingAnnotations painting={annoPage} page={editor.ref()} canvasId={canvasId} />
       ) : null}
@@ -102,7 +117,8 @@ function PromptToAddPaintingAnnotations({
 
   return (
     <div key={paintingAnnotations?.items.length}>
-      <h3>Add describing annotations</h3>
+      <h5>Add describing annotations</h5>
+      <p>This is an advanced feature for exhibitions</p>
       <FlexContainer style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           {validToAdd.map((item) => {
