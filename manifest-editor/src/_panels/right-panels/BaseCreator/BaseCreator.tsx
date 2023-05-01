@@ -161,7 +161,11 @@ export const RenderCreator = memo(function RenderCreator(props: {
     setIsCreating(true);
     creator.create(props.creator.id, payload, options).then((ref) => {
       rightPanel.popStack();
-      edit(ref);
+      edit(ref, {
+        parent: toRef(props.resource.parent),
+        property: props.resource.property,
+        index: props.resource.index,
+      });
     });
   };
 

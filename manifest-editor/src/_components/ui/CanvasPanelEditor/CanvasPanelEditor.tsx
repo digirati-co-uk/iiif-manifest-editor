@@ -17,6 +17,10 @@ export function CanvasPanelEditor() {
   const annotation = useInStack("Annotation");
   const canvasId = canvas?.resource.source.id;
   let createAnnotation = undefined;
+  const annotationPageId =
+    annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations"
+      ? annotationPage.resource.source.id
+      : undefined;
 
   const totalAnnotations = useVaultSelector(
     (state, vault) => {
@@ -37,11 +41,11 @@ export function CanvasPanelEditor() {
     [canvasId]
   );
 
-  if (annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations") {
+  if (annotationPageId) {
     createAnnotation = (data: any) => {
       create({
         type: "Annotation",
-        parent: { id: annotationPage.resource.source.id as string, type: "AnnotationPage" },
+        parent: { id: annotationPageId as string, type: "AnnotationPage" },
         property: "items",
         initialData: { selector: data, motivation: "describing" },
         target: { id: canvasId, type: "Canvas" },
@@ -55,7 +59,7 @@ export function CanvasPanelEditor() {
     return (
       <CanvasContext canvas={canvasId}>
         <CanvasPanelViewer
-          key={`${canvasId}/${totalAnnotations}`}
+          key={`${canvasId}/${totalAnnotations}/${annotationPageId}`}
           highlightAnnotation={annotationId}
           onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
           createAnnotation={createAnnotation}
