@@ -14,10 +14,18 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
   }
 
   isSpatial() {
+    if (!this.hasBody()) {
+      return false;
+    }
     const bodyRef = this.getFirst();
     const body = this.config.vault.get(bodyRef);
     const ref = toRef(body);
     return ref?.type === "Video" || ref?.type === "Image";
+  }
+
+  hasBody() {
+    const all = this.get();
+    return !!all[0];
   }
 
   getFirst() {
