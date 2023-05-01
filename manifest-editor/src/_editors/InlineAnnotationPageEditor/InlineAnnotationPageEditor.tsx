@@ -3,7 +3,7 @@ import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties
 import { AnnotationList } from "@/_components/ui/AnnotationList/AnnotationList";
 import { useCreator, useInlineCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
-import { AnnotationContext, useAnnotationPage, useVaultSelector } from "react-iiif-vault";
+import { AnnotationContext, CanvasContext, useAnnotationPage, useVaultSelector } from "react-iiif-vault";
 import { Reference } from "@iiif/presentation-3";
 import { isSpecificResource, toRef } from "@iiif/parser";
 import { getValue } from "@iiif/vault-helpers";
@@ -45,7 +45,7 @@ export function InlineAnnotationPageEditor() {
         createActions={createAppActions(items)}
       />
       {annoPage /*&& hasMultiplePainting*/ ? (
-        <PromptToAddPaintingAnnotations painting={annoPage} page={editor.ref()} />
+        <PromptToAddPaintingAnnotations painting={annoPage} page={editor.ref()} canvasId={canvasId} />
       ) : null}
     </PaddedSidebarContainer>
   );
@@ -69,7 +69,15 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
   );
 }
 
-function PromptToAddPaintingAnnotations({ painting, page }: { painting: Reference; page: Reference }) {
+function PromptToAddPaintingAnnotations({
+  painting,
+  page,
+  canvasId,
+}: {
+  painting: Reference;
+  page: Reference;
+  canvasId?: string;
+}) {
   const paintingAnnotations = useAnnotationPage({ id: painting.id });
   const pageEditor = useGenericEditor({ id: page.id, type: "AnnotationPage" });
   const totalItems = (pageEditor.structural.items.get() || []).length;
@@ -99,27 +107,29 @@ function PromptToAddPaintingAnnotations({ painting, page }: { painting: Referenc
         <div style={{ flex: 1, minWidth: 0 }}>
           {validToAdd.map((item) => {
             return (
-              <AnnotationContext annotation={item.id}>
-                <AnnotationPreview
-                  margin
-                  onClick={async () => {
-                    await creator.create(
-                      "@manifest-editor/no-body-annotation",
-                      { motivation: "describing" },
-                      {
-                        parent: {
-                          resource: page,
-                          property: "items",
-                        },
-                        target: {
-                          id: item.id,
-                          type: "Annotation",
-                        },
-                      }
-                    );
-                  }}
-                />
-              </AnnotationContext>
+              <CanvasContext canvas={canvasId as string}>
+                <AnnotationContext annotation={item.id}>
+                  <AnnotationPreview
+                    margin
+                    onClick={async () => {
+                      await creator.create(
+                        "@manifest-editor/no-body-annotation",
+                        { motivation: "describing" },
+                        {
+                          parent: {
+                            resource: page,
+                            property: "items",
+                          },
+                          target: {
+                            id: item.id,
+                            type: "Annotation",
+                          },
+                        }
+                      );
+                    }}
+                  />
+                </AnnotationContext>
+              </CanvasContext>
             );
           })}
         </div>
