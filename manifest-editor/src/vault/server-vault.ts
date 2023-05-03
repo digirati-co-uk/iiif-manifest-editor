@@ -71,7 +71,6 @@ export class ServerVault {
     this.ws.on("connection", (socket) => {
       console.log("Connection...");
       socket.on("message", this.handleMessage(socket));
-      socket.on("close", this.handleClose(socket));
       // socket.on("open", this.handleOpen(socket));
       // socket.on("upgrade", this.handleOpen(socket));
 
@@ -79,30 +78,42 @@ export class ServerVault {
     });
   }
 
-  handleMessage = (socket: WebSocket) => (data: RawData) => {
-    console.log("Message received from client: ", data);
-    const parsed: ClientAction = JSON.parse(data.toString());
+  _handleMessage = new Map();
+  _handleClose = new Map();
 
-    if (parsed._type === "init-request") {
-      socket.send(this.createMessage("init-response", { data: this.vault.getState() }));
+  handleMessage = (socket: WebSocket) => {
+    if (this._handleMessage.has(socket)) {
+      return this._handleMessage.get(socket);
     }
+    const handler = (data: RawData) => {
+      console.log("Message received from client: ", data);
+      const parsed: ClientAction = JSON.parse(data.toString());
 
-    if (parsed._type === "vault-action") {
-      try {
-        this.vault.dispatch(parsed.action);
-      } catch (e) {
-        // @todo error handling.
-        socket.send(
-          this.createMessage("vault-action-rejection", {
-            action: parsed._id,
-          })
-        );
-        return;
+      if (parsed._type === "init-request") {
+        socket.send(this.createMessage("init-response", { data: this.vault.getState() }));
       }
 
-      this.lastActionId = parsed._id;
-      this.rebroadcast(socket, data, parsed);
-    }
+      if (parsed._type === "vault-action") {
+        try {
+          this.vault.dispatch(parsed.action);
+        } catch (e) {
+          // @todo error handling.
+          socket.send(
+            this.createMessage("vault-action-rejection", {
+              action: parsed._id,
+            })
+          );
+          return;
+        }
+
+        this.lastActionId = parsed._id;
+        this.rebroadcast(socket, data, parsed);
+      }
+    };
+
+    this._handleMessage.set(socket, handler);
+
+    return handler;
   };
 
   send = (data: RawData) => {
@@ -127,10 +138,6 @@ export class ServerVault {
         );
       }
     });
-  };
-
-  handleClose = (socket: WebSocket) => (id: number) => {
-    console.log("closed", id);
   };
 
   handleOpen = (socket: WebSocket) => {
