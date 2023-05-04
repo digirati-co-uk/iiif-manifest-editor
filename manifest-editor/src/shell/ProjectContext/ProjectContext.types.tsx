@@ -97,5 +97,6 @@ export interface ProjectStorage<S extends Storage, DataType = any, Ref extends S
   // Runtime
   getBackendStorage(project: EditorProject): Ref;
   createVaultInstance(project: EditorProject): [Vault, Promise<void>];
+  closeVaultInstance(project: EditorProject, vault: Vault): void;
   shouldUpdateWithVault(): boolean;
 }

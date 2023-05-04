@@ -22,6 +22,7 @@ import { v4 } from "uuid";
 import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 import { once } from "@tauri-apps/api/event";
 import { projectFromCollection } from "@/shell/ProjectContext/helpers/project-from-collection";
+import { ClientVault } from "@/vault/client-vault";
 
 export function useProjectActionsWithBackend(
   dispatch: Dispatch<ProjectActionsType>,
@@ -209,6 +210,19 @@ export function useProjectLoader<T extends Storage = any>(
     return { vault: null, promise: null };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storage, currentId]);
+
+  useEffect(() => {
+    const currentStorage = storage;
+    const currentProject = current;
+    const currentVault = vault;
+    return () => {
+      if (currentVault && currentProject) {
+        currentStorage.closeVaultInstance(currentProject, currentVault);
+      } else if (currentVault instanceof ClientVault) {
+        currentVault.ws.close();
+      }
+    };
+  }, [storage, current, vault]);
 
   // If the vault takes some time to load from an external source we might have
   // some time to wait. This will listen to the "Vault is ready" promise.

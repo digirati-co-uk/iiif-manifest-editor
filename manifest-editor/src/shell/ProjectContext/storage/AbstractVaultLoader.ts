@@ -45,6 +45,10 @@ export abstract class AbstractVaultLoader<T extends Storage>
     return [vault, promise() as Promise<void>];
   }
 
+  closeVaultInstance(project: EditorProject, vault: Vault): void {
+    // No-op
+  }
+
   async saveStorage(storage: T): Promise<void> {
     const vault = this.vaults[storage.data.key];
     const manifestRef: Reference<"Manifest" | "Collection"> = {

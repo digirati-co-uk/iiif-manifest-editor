@@ -42,6 +42,12 @@ export class WebsocketLoader extends AbstractVaultLoader<RemoteWebsocketStorage>
     return [vault, vault.waitUntilReady()];
   }
 
+  closeVaultInstance(project: EditorProject, vault: Vault): void {
+    if (vault instanceof ClientVault) {
+      vault.ws.close();
+    }
+  }
+
   async saveStorageData(
     manifestStorage: ManifestStorage | CollectionStorage,
     storage: RemoteWebsocketStorage
