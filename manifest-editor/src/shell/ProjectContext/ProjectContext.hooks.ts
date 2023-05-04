@@ -22,7 +22,7 @@ import { v4 } from "uuid";
 import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 import { once } from "@tauri-apps/api/event";
 import { projectFromCollection } from "@/shell/ProjectContext/helpers/project-from-collection";
-import { ClientVault } from "@/vault/client-vault";
+import { ClientVault } from "@/npm/client-vault";
 
 export function useProjectActionsWithBackend(
   dispatch: Dispatch<ProjectActionsType>,

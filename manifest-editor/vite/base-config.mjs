@@ -2,13 +2,22 @@
  * @param options {{ external: string[]; isShell?: boolean; isNode?: boolean; entry: string; name: string; globalName: string; outDir?: string; react?: boolean; globals: Record<string, string> }}
  */
 export function defineConfig(options) {
+
+  const replacements = [
+    {
+      find: /@\/npm\/(.*)/,
+      replacement: '@manifest-editor/$1',
+    }
+  ];
+
   return {
     define: {
       "process.env.NODE_ENV": '"production"',
       "window.__TAURI__": "false",
     },
     resolve: {
-      alias: options.isShell ? [] : [
+      alias: options.isShell ? replacements : [
+        ...replacements,
         {
           find: /@\/shell\/?(.*)/,
           replacement: '@manifest-editor/shell',

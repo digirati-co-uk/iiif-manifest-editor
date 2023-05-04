@@ -28,6 +28,7 @@
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
     "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault",
+    "@manifest-editor/client-vault": "*",
     "@iiif/presentation-3": "^2.0.5",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "styled-components": "^5.3.5",

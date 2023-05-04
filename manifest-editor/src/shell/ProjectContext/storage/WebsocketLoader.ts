@@ -3,7 +3,7 @@ import { Vault } from "@iiif/vault";
 import { Collection, Manifest } from "@iiif/presentation-3";
 import { ManifestStorage, CollectionStorage, RemoteWebsocketStorage } from "../types/Storage";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
-import { ClientVault } from "@/vault/client-vault";
+import { ClientVault } from "@/npm/client-vault";
 
 export class WebsocketLoader extends AbstractVaultLoader<RemoteWebsocketStorage> {
   type = "websocket-storage";
