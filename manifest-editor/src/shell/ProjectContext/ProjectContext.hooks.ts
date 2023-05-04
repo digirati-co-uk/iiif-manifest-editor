@@ -172,6 +172,7 @@ export function useProjectLoader<T extends Storage = any>(
 ) {
   const currentRef = useRef<EditorProject | null>(null);
   const [ready, setIsReady] = useState(false);
+  const [error, setError] = useState("");
   const saveChanges = useCallback(() => {
     const project = currentRef.current;
     if (project) {
@@ -215,11 +216,15 @@ export function useProjectLoader<T extends Storage = any>(
     setIsReady(false);
     let cancelled = false;
     if (promise) {
-      promise.then(() => {
-        if (!cancelled) {
-          setIsReady(true);
-        }
-      });
+      promise
+        .then(() => {
+          if (!cancelled) {
+            setIsReady(true);
+          }
+        })
+        .catch((e) => {
+          setError(e.message);
+        });
     }
     return () => {
       cancelled = true;
@@ -262,6 +267,7 @@ export function useProjectLoader<T extends Storage = any>(
   return {
     vault,
     ready,
+    error,
   };
 }
 

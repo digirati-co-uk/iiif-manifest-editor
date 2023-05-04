@@ -44,15 +44,11 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
 export function BaseEditorCloseButton({ closeAction, fallback }: any) {
   const stack = useEditingResourceStack();
   const current = useEditingResource();
-  const actions = useLayoutActions();
-  const { close } = useEditingStack();
 
   if (current || stack.length) {
     return (
       <ModulePanelButton
         onClick={() => {
-          close();
-          actions.rightPanel.popStack();
           closeAction();
         }}
       >

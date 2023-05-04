@@ -15,7 +15,7 @@ import { LocalStorageLoader } from "@/shell/ProjectContext/storage/LocalStorageL
 import { getDefaultProjectContextState, projectContextReducer } from "@/shell/ProjectContext/ProjectContext.reducer";
 import { CollectionContext, ManifestContext, VaultProvider } from "react-iiif-vault";
 import { AbstractVaultLoader } from "@/shell/ProjectContext/storage/AbstractVaultLoader";
-import { ProjectReactContext } from "./ProjectContext";
+import { ProjectReactContext, ProjectLoadingReactContext } from "./ProjectContext";
 
 export interface ProjectProviderProps {
   children: ReactNode;
@@ -48,8 +48,12 @@ export function ProjectProvider(props: ProjectProviderProps) {
     () => ({ actions, canDelete: backend.canDelete(), ...state }),
     [actions, backend, state]
   );
-  const { vault, ready } = useProjectLoader(context, storage);
+  const { vault, ready, error } = useProjectLoader(context, storage);
   const manifestOrCollection = context.current?.resource;
+
+  const loadingStatus = useMemo(() => {
+    return { isLoading: !ready, isError: !!error, error };
+  }, [ready, error]);
 
   useProjectBackend(context, backend);
 
@@ -71,29 +75,35 @@ export function ProjectProvider(props: ProjectProviderProps) {
 
   if (manifestOrCollection?.type === "Manifest") {
     return (
-      <ProjectReactContext.Provider value={context}>
-        <VaultProvider vault={vault || undefined} key={state.current?.id}>
-          <ManifestContext manifest={manifestOrCollection?.id || ""}>{props.children}</ManifestContext>
-        </VaultProvider>
-      </ProjectReactContext.Provider>
+      <ProjectLoadingReactContext.Provider value={loadingStatus}>
+        <ProjectReactContext.Provider value={context}>
+          <VaultProvider vault={vault || undefined} key={state.current?.id}>
+            <ManifestContext manifest={manifestOrCollection?.id || ""}>{props.children}</ManifestContext>
+          </VaultProvider>
+        </ProjectReactContext.Provider>
+      </ProjectLoadingReactContext.Provider>
     );
   }
 
   if (manifestOrCollection?.type === "Collection") {
     return (
-      <ProjectReactContext.Provider value={context}>
-        <VaultProvider vault={vault || undefined} key={state.current?.id}>
-          <CollectionContext collection={manifestOrCollection?.id || ""}>{props.children}</CollectionContext>
-        </VaultProvider>
-      </ProjectReactContext.Provider>
+      <ProjectLoadingReactContext.Provider value={loadingStatus}>
+        <ProjectReactContext.Provider value={context}>
+          <VaultProvider vault={vault || undefined} key={state.current?.id}>
+            <CollectionContext collection={manifestOrCollection?.id || ""}>{props.children}</CollectionContext>
+          </VaultProvider>
+        </ProjectReactContext.Provider>
+      </ProjectLoadingReactContext.Provider>
     );
   }
 
   return (
-    <ProjectReactContext.Provider value={context}>
-      <VaultProvider vault={vault || undefined} key={state.current?.id}>
-        {props.children}
-      </VaultProvider>
-    </ProjectReactContext.Provider>
+    <ProjectLoadingReactContext.Provider value={loadingStatus}>
+      <ProjectReactContext.Provider value={context}>
+        <VaultProvider vault={vault || undefined} key={state.current?.id}>
+          {props.children}
+        </VaultProvider>
+      </ProjectReactContext.Provider>
+    </ProjectLoadingReactContext.Provider>
   );
 }

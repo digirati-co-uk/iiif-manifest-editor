@@ -7,14 +7,17 @@ import { ModularPanel } from "./components/ModularPanel";
 import { HandleControls } from "./components/HandleControls";
 import { useResizeLayout } from "@/madoc/use-resize-layouts";
 import equal from "shallowequal";
-import { useAppState } from "@/shell";
+import { useAppState, useProjectLoading } from "@/shell";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import { ReactVaultContext } from "react-iiif-vault";
 import { Transition, TransitionStatus } from "react-transition-group";
 import useMatchMedia from "use-match-media-hook";
 import { DownIcon } from "@/icons/DownIcon";
+import { Spinner } from "@/madoc/components/icons/Spinner";
+import { GhostBlocks } from "@/_components/ui/GhostBlocks/GhostBlocks";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
+  const status = useProjectLoading();
   const layout = useLayoutProvider();
   const appState = useAppState();
   const { vault: _vault } = useContext(ReactVaultContext);
@@ -116,30 +119,38 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         minWidth: leftPanel?.options?.minWidth,
       }}
     >
-      {props.leftPanelMenu ? (
-        <L.PanelMenu
-          $open={state.leftPanel.open && transition !== "exited"}
-          $position={props.leftPanelMenuPosition || "bottom"}
-        >
-          {props.leftPanelMenu}
-        </L.PanelMenu>
-      ) : null}
-      <L.PanelContent>
-        {state.leftPanel.open || transition !== "exited" ? (
-          <>
-            {leftPanel ? (
-              <ModularPanel
-                isLeft
-                transition={transition}
-                panel={leftPanel}
-                state={state.leftPanel}
-                actions={actions.leftPanel}
-                available={leftPanels}
-              />
+      {status.isLoading ? (
+        <L.PanelContent>
+          <GhostBlocks />
+        </L.PanelContent>
+      ) : (
+        <>
+          {props.leftPanelMenu ? (
+            <L.PanelMenu
+              $open={state.leftPanel.open && transition !== "exited"}
+              $position={props.leftPanelMenuPosition || "bottom"}
+            >
+              {props.leftPanelMenu}
+            </L.PanelMenu>
+          ) : null}
+          <L.PanelContent>
+            {state.leftPanel.open || transition !== "exited" ? (
+              <>
+                {leftPanel ? (
+                  <ModularPanel
+                    isLeft
+                    transition={transition}
+                    panel={leftPanel}
+                    state={state.leftPanel}
+                    actions={actions.leftPanel}
+                    available={leftPanels}
+                  />
+                ) : null}
+              </>
             ) : null}
-          </>
-        ) : null}
-      </L.PanelContent>
+          </L.PanelContent>
+        </>
+      )}
     </L.PanelContainer>
   );
 
@@ -151,17 +162,21 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         </L.PanelMenu>
       ) : null}
       <L.PanelContent>
-        {state.centerPanel.open
-          ? centerPanel
-            ? renderHelper(
-                centerPanel.render(
-                  state.centerPanel.state || centerPanel.defaultState || {},
-                  { ...layout, current: actions.centerPanel, vault: vault },
-                  appState
-                )
+        {status.isLoading ? (
+          <div style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Spinner stroke="rgba(0,0,0,.3)" fontSize={"2em"} />
+          </div>
+        ) : state.centerPanel.open ? (
+          centerPanel ? (
+            renderHelper(
+              centerPanel.render(
+                state.centerPanel.state || centerPanel.defaultState || {},
+                { ...layout, current: actions.centerPanel, vault: vault },
+                appState
               )
-            : null
-          : null}
+            )
+          ) : null
+        ) : null}
       </L.PanelContent>
     </L.PanelContainer>
   );
@@ -176,35 +191,43 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         minWidth: rightPanel?.options?.minWidth,
       }}
     >
-      {props.rightPanelMenu ? (
-        <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
-          {props.rightPanelMenu}
-        </L.PanelMenu>
-      ) : null}
-      <L.PanelContent>
-        {state.rightPanel.open || transition !== "exited" ? (
-          <>
-            {showRightPanel ? (
-              <ModularPanel
-                panel={rightPanel}
-                state={state.rightPanel}
-                actions={actions.rightPanel}
-                pinActions={actions.pinnedRightPanel}
-                available={rightPanels}
-              />
-            ) : null}
+      {status.isLoading ? (
+        <L.PanelContent>
+          <GhostBlocks />
+        </L.PanelContent>
+      ) : (
+        <>
+          {props.rightPanelMenu ? (
+            <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
+              {props.rightPanelMenu}
+            </L.PanelMenu>
+          ) : null}
+          <L.PanelContent>
+            {state.rightPanel.open || transition !== "exited" ? (
+              <>
+                {showRightPanel ? (
+                  <ModularPanel
+                    panel={rightPanel}
+                    state={state.rightPanel}
+                    actions={actions.rightPanel}
+                    pinActions={actions.pinnedRightPanel}
+                    available={rightPanels}
+                  />
+                ) : null}
 
-            {pinnedRightPanel ? (
-              <ModularPanel
-                panel={pinnedRightPanel}
-                state={state.pinnedRightPanel}
-                actions={actions.pinnedRightPanel}
-                close={actions.rightPanel.close}
-              />
+                {pinnedRightPanel ? (
+                  <ModularPanel
+                    panel={pinnedRightPanel}
+                    state={state.pinnedRightPanel}
+                    actions={actions.pinnedRightPanel}
+                    close={actions.rightPanel.close}
+                  />
+                ) : null}
+              </>
             ) : null}
-          </>
-        ) : null}
-      </L.PanelContent>
+          </L.PanelContent>
+        </>
+      )}
     </L.PanelContainer>
   );
 
