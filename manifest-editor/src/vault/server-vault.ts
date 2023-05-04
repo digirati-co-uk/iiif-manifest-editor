@@ -83,7 +83,7 @@ export class ServerVault {
   private _handleOpen = new Map();
   private _handleClose = new Map();
 
-  constructor(options: ServerVaultOptions) {
+  constructor(options: ServerVaultOptions = {}) {
     this.vault = new Vault();
     this.ws = new WebSocketServer({ noServer: true });
 

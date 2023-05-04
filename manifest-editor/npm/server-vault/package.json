@@ -29,7 +29,8 @@
   "nodeDependencies": [
     "http",
     "net",
-    "url"
+    "url",
+    "timers"
   ],
   "publishConfig": {
     "access": "public"
