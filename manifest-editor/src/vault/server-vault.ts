@@ -3,6 +3,7 @@ import { AllActions, BatchAction, IIIFStore, Vault } from "@iiif/vault";
 import { Collection, Manifest } from "@iiif/presentation-3";
 import WebSocket, { RawData, WebSocketServer } from "ws";
 import { v4 } from "uuid";
+import { clearInterval, setInterval } from "timers";
 
 type RemoteAction = {
   _id: string;
@@ -60,33 +61,88 @@ export type ServerAction =
   | ClientInitAction
   | EmptyVaultResponse;
 
+// Extend ws module interface WebSocket.WebSocket with custom typescript property
+declare module "ws" {
+  interface WebSocket {
+    isAlive: boolean;
+  }
+}
+
+export interface ServerVaultOptions {
+  pingTimeout?: number;
+  onClose?: () => void;
+}
+
 export class ServerVault {
   vault: Vault;
   ws: WebSocketServer;
   lastActionId: string = GenesisId;
-  // initialised = false;
-  constructor() {
+  pingInterval: NodeJS.Timeout;
+
+  private _handleMessage = new Map();
+  private _handleOpen = new Map();
+  private _handleClose = new Map();
+
+  constructor(options: ServerVaultOptions) {
     this.vault = new Vault();
     this.ws = new WebSocketServer({ noServer: true });
-    this.ws.on("connection", (socket) => {
-      console.log("Connection...");
-      socket.on("message", this.handleMessage(socket));
-      // socket.on("open", this.handleOpen(socket));
-      // socket.on("upgrade", this.handleOpen(socket));
 
-      this.handleOpen(socket);
+    this.ws.on("connection", this.setupWebSocket);
+
+    this.pingInterval = setInterval(() => {
+      this.ws.clients.forEach((socket) => {
+        if (socket.isAlive === false) {
+          return socket.terminate();
+        }
+
+        socket.isAlive = false;
+        socket.ping();
+      });
+    }, options.pingTimeout || 30000);
+
+    this.ws.on("close", () => {
+      clearInterval(this.pingInterval);
+
+      if (options.onClose) {
+        options.onClose();
+      }
+    });
+
+    this.ws.on("error", (err) => {
+      // @todo error handling.
     });
   }
 
-  _handleMessage = new Map();
-  _handleClose = new Map();
+  async close() {
+    clearTimeout(this.pingInterval);
+
+    return new Promise<void>((resolve, error) => {
+      this.ws.close((err) => {
+        if (err) {
+          error(err);
+        }
+        resolve();
+      });
+    });
+  }
+
+  setupWebSocket = (socket: WebSocket.WebSocket) => {
+    socket.isAlive = true;
+    socket.on("pong", () => {
+      socket.isAlive = true;
+    });
+    socket.on("open", this.handleOpen(socket));
+    socket.on("message", this.handleMessage(socket));
+    socket.on("close", this.handleClose(socket));
+    // Send the initial state to the client.
+    socket.send(this.createMessage("init-response", { data: this.vault.getState() }));
+  };
 
   handleMessage = (socket: WebSocket) => {
     if (this._handleMessage.has(socket)) {
       return this._handleMessage.get(socket);
     }
-    const handler = (data: RawData) => {
-      console.log("Message received from client: ", data);
+    const handler = (data: RawData, isBinary: boolean) => {
       const parsed: ClientAction = JSON.parse(data.toString());
 
       if (parsed._type === "init-request") {
@@ -107,7 +163,7 @@ export class ServerVault {
         }
 
         this.lastActionId = parsed._id;
-        this.rebroadcast(socket, data, parsed);
+        this.rebroadcast(socket, data, parsed, isBinary);
       }
     };
 
@@ -117,7 +173,6 @@ export class ServerVault {
   };
 
   send = (data: RawData) => {
-    console.log("Sending to clients: ", data);
     this.ws.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(data, { binary: true });
@@ -125,11 +180,10 @@ export class ServerVault {
     });
   };
 
-  rebroadcast = (source: WebSocket, data: RawData, action: RemoteAction) => {
-    console.log("Rebroadcasting to clients: ", data);
+  rebroadcast = (source: WebSocket, data: RawData, action: RemoteAction, isBinary = true) => {
     this.ws.clients.forEach((client) => {
       if (client !== source && client.readyState === WebSocket.OPEN) {
-        client.send(data, { binary: true });
+        client.send(data, { binary: isBinary });
       } else {
         client.send(
           this.createMessage("vault-action-confirmation", {
@@ -141,8 +195,29 @@ export class ServerVault {
   };
 
   handleOpen = (socket: WebSocket) => {
-    console.log("opened");
-    socket.send(this.createMessage("init-response", { data: this.vault.getState() }));
+    if (this._handleOpen.has(socket)) {
+      return this._handleOpen.get(socket);
+    }
+    const handler = () => {
+      // Handle open.
+    };
+
+    this._handleOpen.set(socket, handler);
+
+    return handler;
+  };
+
+  handleClose = (socket: WebSocket) => {
+    if (this._handleClose.has(socket)) {
+      return this._handleClose.get(socket);
+    }
+    const handler = () => {
+      // Close handler.
+    };
+
+    this._handleClose.set(socket, handler);
+
+    return handler;
   };
 
   createMessage = (type: string, message: any) => {
@@ -153,12 +228,4 @@ export class ServerVault {
       ...message,
     });
   };
-
-  // @todo support loading an initial
-  async loadInitial(manifestOrCollection: Manifest | Collection) {
-    await this.vault.load(manifestOrCollection.id, manifestOrCollection);
-    // this.initialised = true;
-  }
-
-  //
 }
