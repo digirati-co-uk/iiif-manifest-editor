@@ -2,7 +2,7 @@ import { GlobalStyle } from "@/atoms/GlobalStyle";
 import { Main } from "@/atoms/Main";
 import { RenderApp } from "@/_next/pages/render-app";
 import { ShellProvider } from "@/shell/ShellContext/ShellContext";
-import React, { useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { Config } from "@/shell/ConfigContext/ConfigContext";
 import { Collection } from "@iiif/presentation-3";
 import { internalGetApps, LoadedApp } from "@/apps/app-loader";
@@ -17,6 +17,7 @@ interface ManifestEditorProps {
   onClickLogo?: () => void;
   project?: Partial<ProjectProviderProps>;
   hideHeader?: boolean;
+  children?: ReactNode;
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
@@ -33,6 +34,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
       <GlobalStyle />
       <Main>
         <RenderApp onClickLogo={props.onClickLogo} hideHeader={props.hideHeader} />
+        {props.children}
       </Main>
     </ShellProvider>
   );
