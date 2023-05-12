@@ -46,6 +46,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     loading,
   });
 
+  const isProjectLoading = status.isLoading && props.isProject;
+
   // Pinned state
   const showRightPanel =
     rightPanel &&
@@ -119,7 +121,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         minWidth: leftPanel?.options?.minWidth,
       }}
     >
-      {status.isLoading ? (
+      {isProjectLoading ? (
         <L.PanelContent>
           <GhostBlocks />
         </L.PanelContent>
@@ -162,7 +164,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         </L.PanelMenu>
       ) : null}
       <L.PanelContent>
-        {status.isLoading ? (
+        {isProjectLoading ? (
           <div style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
             <Spinner stroke="rgba(0,0,0,.3)" fontSize={"2em"} />
           </div>
@@ -191,7 +193,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         minWidth: rightPanel?.options?.minWidth,
       }}
     >
-      {status.isLoading ? (
+      {isProjectLoading ? (
         <L.PanelContent>
           <GhostBlocks />
         </L.PanelContent>
