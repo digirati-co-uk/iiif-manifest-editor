@@ -6,6 +6,8 @@ export const CanvasContainer = css`
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+  view-transition-name: canvas-image;
+  contain: layout;
 
   & .atlas-container {
     min-width: 0;

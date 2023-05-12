@@ -4,7 +4,7 @@ import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEdito
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import { MediaBody } from "../../types/media-body";
+import { MediaBody } from "@/___delete/types/media-body";
 
 export const ManifestThumbnailForm = () => {
   const editorContext = useManifestEditor();

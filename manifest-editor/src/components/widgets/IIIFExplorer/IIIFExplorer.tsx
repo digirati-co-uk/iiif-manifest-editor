@@ -14,6 +14,7 @@ import { ExplorerOutput } from "./components/ExplorerOutput";
 import { OutputFormat, OutputTarget, OutputType, HistoryItem } from "./IIIFExplorer.types";
 import { CanvasRegionView } from "@/components/widgets/IIIFExplorer/components/CanvasRegionView";
 import { BoxStyle } from "@atlas-viewer/atlas";
+import "./IIIFExplorer.css";
 
 export interface IIIFExplorerProps {
   /**

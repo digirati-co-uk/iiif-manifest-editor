@@ -11,6 +11,7 @@ import qs from "query-string";
 import i18n from "i18next";
 import { initReactI18next, I18nextProvider } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import { useProjectContext } from "@/shell";
 
 const instance = i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -55,8 +56,4 @@ function App() {
   );
 }
 
-createRoot($root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+createRoot($root).render(<App />);
