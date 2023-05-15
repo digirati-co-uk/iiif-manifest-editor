@@ -5,6 +5,7 @@ import invariant from "tiny-invariant";
 import { LazyCanvasThumbnail } from "@/components/widgets/IIIFExplorer/components/LazyCanvasThumbnail";
 import React, { useLayoutEffect, useRef } from "react";
 import { contentStateFormat } from "@/components/widgets/IIIFExplorer/formats/content-state";
+import { startViewTransition } from "@/helpers/start-view-transition";
 
 export interface CanvasSnippetProps {
   onClick: () => void;
@@ -45,13 +46,7 @@ export function CanvasSnippet({
       return;
     }
 
-    // This is the part that we want to change to use the new View Transitions API.
-    if (!(document as any).startViewTransition) {
-      _onClick();
-      return;
-    }
-
-    (document as any).startViewTransition(() => _onClick());
+    startViewTransition(() => _onClick());
   };
 
   return (

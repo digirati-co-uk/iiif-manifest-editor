@@ -31,6 +31,13 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
     }
   }
 
+  &[data-control="previous"] {
+    view-transition-name: "previous-canvas";
+  }
+  &[data-control="next"] {
+    view-transition-name: "next-canvas";
+  }
+
   ${(props) =>
     props.$active &&
     css`

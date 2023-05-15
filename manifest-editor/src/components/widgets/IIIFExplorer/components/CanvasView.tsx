@@ -8,6 +8,7 @@ import { ViewControls } from "@/_panels/center-panels/CanvasPanelViewer/componen
 import { BoxStyle, DrawBox } from "@atlas-viewer/atlas";
 import { RegionHighlight } from "@/madoc/components/BoxSelector.Atlas";
 import { CanvasContainer } from "@/components/widgets/IIIFExplorer/styles/CanvasView.styles";
+import { startViewTransition } from "@/helpers/start-view-transition";
 
 interface CanvasInnerViewProps {
   highlightStyle?: BoxStyle;
@@ -62,8 +63,8 @@ export function CanvasViewInner({ highlightStyle, regionEnabled }: CanvasInnerVi
                 editMode={editMode}
                 enableNavigation={index !== -1}
                 toggleEditMode={regionEnabled ? () => setEditMode((e) => !e) : undefined}
-                onNext={next ? () => replace(next) : undefined}
-                onPrevious={prev ? () => replace(prev) : undefined}
+                onNext={next ? () => startViewTransition(() => replace(next)) : undefined}
+                onPrevious={prev ? () => startViewTransition(() => replace(prev)) : undefined}
                 clearSelection={() => setCurrentSelector(undefined)}
                 style={{ fontSize: "0.85em" }}
               />
