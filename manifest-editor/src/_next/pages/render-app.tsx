@@ -4,7 +4,7 @@ import { AppHeader } from "@/shell";
 import { AppHeaderDesktop } from "@/shell/AppHeader/AppHeader.desktop";
 import { memo } from "react";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
-import { useProjectLoading } from "../../shell";
+import { useProjectLoading } from "@/shell";
 
 interface RenderAppProps {
   onClickLogo?: () => void;
