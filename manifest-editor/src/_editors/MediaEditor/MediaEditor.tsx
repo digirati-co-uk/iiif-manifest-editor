@@ -135,26 +135,24 @@ export function MediaEditor() {
     </>
   );
 
-  const serviceList = service.get();
+  const serviceList = service.get() || [];
 
-  const services = serviceList ? (
+  const services = serviceList.length ? (
     <>
       <ServiceContainer>
         <InputLabel>Services</InputLabel>
-        {serviceList
-          ? serviceList.map((service: any, key) => (
-              <RichMediaLink
-                key={key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  // edit(service, { parent: resourceEditor.ref(), property: "service", index: key });
-                }}
-                link={service.id || service["@id"]}
-                title={service.type || service["@type"] || "Unknown service"}
-                label={parseServiceProfile(service.profile)}
-              />
-            ))
-          : null}
+        {serviceList.map((service: any, key) => (
+          <RichMediaLink
+            key={key}
+            onClick={(e) => {
+              e.preventDefault();
+              // edit(service, { parent: resourceEditor.ref(), property: "service", index: key });
+            }}
+            link={service.id || service["@id"]}
+            title={service.type || service["@type"] || "Unknown service"}
+            label={parseServiceProfile(service.profile)}
+          />
+        ))}
       </ServiceContainer>
     </>
   ) : null;
@@ -186,8 +184,6 @@ export function MediaEditor() {
                       }
                     }
                   }
-
-                  console.log("canvas =>", canvas, { width: width.get(), height: height.get() });
 
                   const imagePosition = centerRectangles(
                     canvas,

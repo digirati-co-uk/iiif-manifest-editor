@@ -6,6 +6,7 @@ export const mediaEditor: EditorDefinition = {
   label: "Media",
   supports: {
     edit: true,
+    sortKey: "annotation-target",
     properties: ["items"],
     resourceTypes: ["Annotation"],
     readOnlyProperties: [],

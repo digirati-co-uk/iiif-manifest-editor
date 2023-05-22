@@ -13,6 +13,7 @@ import { technicalProperties } from "@/_editors/TechnicalProperties";
 import { linkingProperties } from "@/_editors/LinkingProperties";
 import { inlineAnnotationPageEditor } from "@/_editors/InlineAnnotationPageEditor";
 import { descriptiveProperties } from "@/_editors/DescriptiveProperties";
+import { fallbackAnnotationEditor } from "./FallbackAnnotationEditor";
 
 export const allEditors = [
   // First tab ones.
@@ -23,6 +24,7 @@ export const allEditors = [
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   combinedProperties,
+  fallbackAnnotationEditor,
 
   // Generic
   descriptiveProperties,

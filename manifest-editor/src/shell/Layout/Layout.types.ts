@@ -155,6 +155,8 @@ export interface EditorDefinition {
     properties: string[];
     readOnlyProperties?: string[];
     resourceTypes: string[];
+    sortKey?: string;
+    sortFallback?: boolean;
     read?: boolean;
     edit?: boolean;
     customLocking?: boolean;

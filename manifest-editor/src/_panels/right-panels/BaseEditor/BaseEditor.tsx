@@ -11,6 +11,7 @@ import { ResourceDefinition } from "@/shell/Layout/Layout.types";
 import { EditableResource } from "@/shell/EditingStack/EditingStack.types";
 import { TabPanel } from "@/components/layout/TabPanel";
 import { Vault } from "@iiif/vault";
+import { EditorDefinition } from "@/shell";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -73,8 +74,19 @@ export function matchBasedOnResource(
 
   for (const item of filteredList) {
     // Check for a match in order.
+    const sortKeys: string[] = [];
+    const sortKeyFallbacks: Record<string, EditorDefinition> = {};
     // 1. Filter out the
     const editors = (item.editors || []).filter((editor) => {
+      if (editor.supports.sortKey) {
+        if (sortKeys.includes(editor.supports.sortKey)) {
+          return false;
+        }
+        if (editor.supports.sortFallback) {
+          sortKeyFallbacks[editor.supports.sortKey] = editor;
+        }
+      }
+
       // Does this editor support the input resource.
       if (options.edit && !editor.supports.edit) {
         return false;
@@ -86,8 +98,23 @@ export function matchBasedOnResource(
 
       // @todo more logic here, including "custom" supports check.
 
+      if (editor.supports.sortKey) {
+        sortKeys.push(editor.supports.sortKey);
+      }
+
       return true;
     });
+
+    const missingKeys = Object.keys(sortKeyFallbacks);
+    for (const missingKey of missingKeys) {
+      if (
+        !sortKeys.includes(missingKey) &&
+        sortKeyFallbacks[missingKey] &&
+        !editors.includes(sortKeyFallbacks[missingKey])
+      ) {
+        editors.push(sortKeyFallbacks[missingKey]);
+      }
+    }
 
     if (editors.length) {
       return {
