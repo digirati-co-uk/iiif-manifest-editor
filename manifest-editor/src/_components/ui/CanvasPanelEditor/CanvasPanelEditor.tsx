@@ -2,6 +2,7 @@ import { useEditingResource, useEditingResourceStack, useGenericEditor } from "@
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { CanvasContext, useVaultSelector } from "react-iiif-vault";
 import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
+import { EmptyState } from "@/madoc/components/EmptyState";
 
 export function useInStack(type: string) {
   const stack = useEditingResourceStack();
@@ -67,5 +68,5 @@ export function CanvasPanelEditor() {
       </CanvasContext>
     );
   }
-  return <div>No canvas selected</div>;
+  return <EmptyState>No canvas selected</EmptyState>;
 }

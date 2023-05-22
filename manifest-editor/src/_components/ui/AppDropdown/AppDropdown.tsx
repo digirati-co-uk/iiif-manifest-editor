@@ -4,7 +4,7 @@ import cx from "classnames";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { Button } from "@/atoms/Button";
 import { createPortal } from "react-dom";
-import { Fragment, useEffect, useLayoutEffect } from "react";
+import { CSSProperties, Fragment, useEffect, useLayoutEffect } from "react";
 import {
   useFloating,
   autoUpdate,
@@ -24,6 +24,7 @@ export interface AppDropdownItem {
   actionLink?: () => void;
   actionLinkLabel?: string;
   action?: () => void;
+  active?: boolean;
   onClick?: () => void;
   sectionAbove?: { label: string; divider?: boolean };
 }
@@ -32,9 +33,10 @@ interface AppDropdownProps {
   as?: any;
   items: AppDropdownItem[];
   children: any;
+  style?: CSSProperties;
 }
 
-export function AppDropdown({ as, items, children }: AppDropdownProps) {
+export function AppDropdown({ as, items, children, style, ...props }: AppDropdownProps) {
   const Comp: any = as || Button;
 
   const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
@@ -83,8 +85,8 @@ export function AppDropdown({ as, items, children }: AppDropdownProps) {
   }, []);
 
   return (
-    <div className={$.menuOuter}>
-      <Comp {...buttonProps} onClick={onClick} onKeyDown={onKeyDown}>
+    <div className={$.menuOuter} style={style}>
+      <Comp {...buttonProps} {...props} onClick={onClick} onKeyDown={onKeyDown}>
         {children}
       </Comp>
       {isOpen && (
@@ -102,7 +104,12 @@ export function AppDropdown({ as, items, children }: AppDropdownProps) {
               >
                 {items.map((item, key) => {
                   const listItem = (
-                    <li key={key} className={$.itemContainer} {...(itemProps as any)[key]} onClick={item.onClick}>
+                    <li
+                      key={key}
+                      className={cx($.itemContainer, item.active && $.itemContainerActive)}
+                      {...(itemProps as any)[key]}
+                      onClick={item.onClick}
+                    >
                       {item.onClick ? (
                         <button className={cx($.actionButton, $.buttonReset)}>
                           {item.icon ? <span className={$.itemIcon}>{item.icon}</span> : null}

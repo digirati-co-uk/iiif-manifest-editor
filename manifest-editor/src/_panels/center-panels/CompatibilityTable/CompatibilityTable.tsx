@@ -7,6 +7,7 @@ import { technicalProperties } from "@/editor-api/meta/technical";
 import { useApps } from "@/shell/AppContext/AppContext";
 import { useEditingResource } from "@/shell/EditingStack/EditingStack";
 import { useState } from "react";
+import { compatibilityTable } from "@/_panels/center-panels/CompatibilityTable/CompatibilityTable.styles";
 
 export function CompatibilityTable() {
   const [selected, setSelected] = useState(0);
@@ -91,7 +92,7 @@ export function SingleSetTable({
     : null;
 
   return (
-    <table border={1}>
+    <table className={compatibilityTable}>
       <thead>
         <tr>
           <td></td>
@@ -149,8 +150,8 @@ export function SingleSetTable({
           </tr>
         ) : null}
         <tr>
-          <td colSpan={properties.length + 1}>
-            {supportedEditors.length ? "Built editors" : <strong>No current editors</strong>}
+          <td style={{ textAlign: "left" }} colSpan={properties.length + 1}>
+            {supportedEditors.length ? <strong>Built editors</strong> : <em>No current editors</em>}
           </td>
         </tr>
         {supportedEditors.map((editor) => {

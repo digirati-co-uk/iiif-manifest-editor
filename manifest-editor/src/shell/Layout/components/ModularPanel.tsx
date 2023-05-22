@@ -39,75 +39,69 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   position: relative;
   height: 100%;
   overflow: hidden;
-  ${(props) =>
-    props.$floating &&
-    css`
-      margin: 10px;
-      border-radius: 5px;
-      overflow: hidden;
-      background: #fff;
-    `}
-
   transition: transform 300ms;
-  ${(props) => {
-    switch (props.$state) {
-      case "entering":
-        if (props.$flipped) {
-          return css`
-            transform: translateX(0);
-          `;
-        }
-        return css`
-          transform: translateX(100%);
-        `;
-      case "entered":
-        return css`
-          transform: translateX(0);
-        `;
-      case "exiting":
-        if (props.$flipped) {
-          return css`
-            transform: translateX(0);
-          `;
-        }
-        return css`
-          transform: translateX(100%);
-        `;
-      case "unmounted":
-      case "exited":
-        if (props.$flipped) {
-          return css`
-            transform: translateX(0);
-          `;
-        }
-        return css`
-          transform: translateX(100%);
-        `;
-    }
-  }}
+
+  &[data-floating="true"] {
+    margin: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  &[data-state="entering"],
+  &[data-state="entered"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="exiting"],
+  &[data-state="exited"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="exiting"][data-flipped="true"],
+  &[data-state="exited"][data-flipped="true"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="exiting"][data-flipped="false"],
+  &[data-state="exited"][data-flipped="false"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="entering"][data-flipped="true"],
+  &[data-state="entered"][data-flipped="true"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="entering"][data-flipped="false"],
+  &[data-state="entered"][data-flipped="false"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="unmounted"] {
+    transform: translateX(100%);
+  }
 `;
 
 export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
   background: #fff;
   display: flex;
   height: 2.8em;
-  ${(props) =>
-    props.$tabs
-      ? css`
-          box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-        `
-      : css`
-          box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-        `}
-  z-index: 12;
+  z-index: 2;
 
-  ${(props) =>
-    props.$error &&
-    css`
-      color: #b61717;
-      background: #ffc2d2;
-      box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
-    `}
+  &[data-tabs="true"] {
+    box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+  }
+
+  &[data-tabs="false"] {
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+  }
+
+  &[data-error="true"] {
+    color: #b61717;
+    background: #ffc2d2;
+    box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
+  }
 `;
 
 export const ModulePanelButton = styled.button`
@@ -240,8 +234,8 @@ export function ModularPanel({
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper $state={transition} $flipped={isLeft} style={style}>
-        <ModularPanelHeader $tabs={tabs} $error={didError}>
+      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style}>
+        <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
           <Dropdown style={{ display: "flex", height: "100%" }}>
             {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
             {switchablePanels.length ? (

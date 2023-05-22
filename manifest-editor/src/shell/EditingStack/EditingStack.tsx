@@ -8,6 +8,8 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
 import { current } from "immer";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
+import { startViewTransition } from "@/helpers/start-view-transition";
+import { flushSync } from "react-dom";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
 const EditingStackContext = createContext<EditingStackState>(defaultState);
@@ -147,7 +149,11 @@ export function useEditor() {
 }
 
 export function EditingStack(props: { children?: any }) {
-  const [state, dispatch] = useReducer(editingStackReducer, defaultState);
+  const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
+
+  const dispatch = useCallback((action: any) => {
+    (() => flushSync(() => _dispatch(action)))();
+  }, []);
 
   const edit = useCallback(
     (resource: EditableResource, reset = false) => dispatch({ type: "edit", payload: { resource, reset } }),

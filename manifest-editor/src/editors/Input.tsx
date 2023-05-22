@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import styled, { css } from "styled-components";
-import { FlexContainer } from "../components/layout/FlexContainer";
+import { FlexContainer } from "@/components/layout/FlexContainer";
 import { EditIcon } from "@/icons/EditIcon";
 
 export const InputLabel = styled.label<{
@@ -11,9 +11,9 @@ export const InputLabel = styled.label<{
   position: sticky;
   top: 0;
   background: #fff;
-  letter-spacing: -0.3px;
   font-weight: 500;
   line-height: 2.4em;
+  font-size: 0.875em;
   display: flex;
   flex-direction: row;
   align-items: baseline;

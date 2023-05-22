@@ -33,9 +33,9 @@ export function CanvasListing() {
     <PaddedSidebarContainer>
       <div>{manifest ? <Button onClick={() => edit(manifest)}>Edit manifest</Button> : null}</div>
 
-      <div>
-        <Button onClick={() => open("@manifest-editor/tutorial")}>Open tutorial</Button>
-      </div>
+      {/*<div>*/}
+      {/*  <Button onClick={() => open("@manifest-editor/tutorial")}>Open tutorial</Button>*/}
+      {/*</div>*/}
 
       <InputContainer wide>
         {!items.get()?.length ? (

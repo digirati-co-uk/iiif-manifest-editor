@@ -19,13 +19,17 @@ const Container = styled.div<{ $interactive?: boolean }>`
       }
     `}
 
+  margin-top: 1px;
+
   &[data-margin="true"] {
     margin-bottom: 0.5em;
   }
 `;
 
 const Icon = styled.div`
-  padding-right: 0.5em;
+  margin-right: 0.5em;
+  min-width: 40px;
+  background: #f5f5f5;
 `;
 
 const Content = styled.div`

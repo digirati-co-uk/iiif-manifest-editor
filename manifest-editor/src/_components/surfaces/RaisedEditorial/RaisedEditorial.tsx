@@ -10,5 +10,11 @@ export const RaisedEditorial = styled.div`
   background: #fff;
   max-width: 60em;
   margin: auto;
-  border-radius: 0px 0px 5px 5px;
+  margin-top: 2em;
+  border-radius: 5px;
+
+  p {
+    line-height: 1.4em;
+    font-size: 1.1em;
+  }
 `;

@@ -8,6 +8,7 @@ import { useEditor } from "@/shell/EditingStack/EditingStack";
 import { getValue } from "@iiif/vault-helpers/i18n";
 import { useState } from "react";
 import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
+import { EmptyState } from "@/madoc/components/EmptyState";
 
 export function Metadata() {
   const { descriptive } = useEditor();
@@ -34,11 +35,13 @@ export function Metadata() {
 
   return (
     <PaddedSidebarContainer>
-      <FlexContainer style={{ position: "sticky", top: 0, display: "block" }}>
-        <Button style={{ marginLeft: "auto" }} onClick={() => setOrdering((e) => !e)}>
-          {ordering ? "Disable ordering" : "Enable ordering"}
-        </Button>
-      </FlexContainer>
+      {(items || []).length !== 0 ? (
+        <FlexContainer style={{ position: "sticky", top: 0, display: "block" }}>
+          <Button style={{ marginLeft: "auto" }} onClick={() => setOrdering((e) => !e)}>
+            {ordering ? "Disable ordering" : "Enable ordering"}
+          </Button>
+        </FlexContainer>
+      ) : null}
       {ordering ? (
         <ReorderList
           reorder={(e) => descriptive.metadata.reorder(e.startIndex, e.endIndex)}
@@ -50,6 +53,12 @@ export function Metadata() {
         />
       ) : (
         (items || []).map(renderItem)
+      )}
+
+      {(items || []).length === 0 && (
+        <EmptyState $noMargin $box>
+          No metadata items
+        </EmptyState>
       )}
 
       <Button

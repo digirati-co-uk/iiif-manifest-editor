@@ -135,9 +135,11 @@ export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
   const { change } = useLayoutActions();
   const set = useSetCustomTitle();
 
-  invariant(resource, "Nothing selected");
-
   const match = useMemo(() => {
+    if (!resource) {
+      return null;
+    }
+
     const editors = selectedApp?.layout.editors || [];
     const resources = selectedApp?.layout.resources || [];
     const mappedResources: ResourceDefinition[] = resources.map((resource) => {
@@ -165,7 +167,9 @@ export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
   //    - Keeping track of changes to the item, by checking it's index
   //    - If the items change - ensure we have the same index by doing an equality check on the reference?
 
-  invariant(match, `Unsupported resource (${resource.resource.source?.type})`);
+  if (!resource || !match) {
+    return null;
+  }
 
   return (
     <>

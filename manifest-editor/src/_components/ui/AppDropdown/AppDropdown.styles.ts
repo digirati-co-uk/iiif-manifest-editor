@@ -51,6 +51,13 @@ const itemContainer = css`
   }
 `;
 
+const itemContainerActive = css`
+  button {
+    font-weight: 600;
+    box-shadow: 0 0 0 2px #bfd1ed;
+  }
+`;
+
 const itemIcon = css`
   display: flex;
   align-items: center;
@@ -140,6 +147,7 @@ export const appDropdownStyles = {
   container,
   sectionLabel,
   itemContainer,
+  itemContainerActive,
   itemIcon,
   splitItem,
   iconAction,
