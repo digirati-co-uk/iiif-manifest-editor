@@ -12,7 +12,7 @@ export const centerPanels: LayoutPanel[] = [
     label: "Splash Screen",
     icon: "",
     render: () => (
-      <div style={{ flex: 1, background: "#fff" }}>
+      <div style={{ flex: 1, background: "#fff", overflowY: 'auto' }}>
         <ManifestOpener />
         <SplashTabs>
           {{

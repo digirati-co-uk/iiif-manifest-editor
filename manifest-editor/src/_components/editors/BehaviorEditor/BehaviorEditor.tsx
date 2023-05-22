@@ -55,8 +55,8 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
       ) : null}
       <PaddedSidebarContainer>
         <InputLabel>Behaviors</InputLabel>
-        <InputContainer fluid>
-          {filtered.map((t) =>
+        <InputContainer fluid key={filtered.length}>
+          {filtered.map((t, k) =>
             t.hasConfig ? (
               <ComposableInput.Container
                 key={t.value}
@@ -70,12 +70,12 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
                 }}
               >
                 <ComposableInput.ReadOnly>{t.value}</ComposableInput.ReadOnly>
-                <div>
-                  Edit <RightArrow />
+                <div style={{ display: 'flex', alignItems: 'center', color: '#666' }}>
+                  edit <RightArrow style={{ margin: '0 0.4em', width: '1.2em' }}/>
                 </div>
               </ComposableInput.Container>
             ) : (
-              <ComposableInput.Container key={t.value}>
+              <ComposableInput.Container key={k}>
                 <ComposableInput.Text
                   value={t.value}
                   onChange={(e) => changeBehaviorValue(t.value, e.currentTarget.value)}

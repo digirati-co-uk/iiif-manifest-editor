@@ -4,6 +4,7 @@ import { AppHeader } from "@/shell";
 import { AppHeaderDesktop } from "@/shell/AppHeader/AppHeader.desktop";
 import { memo } from "react";
 import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
+import { useProjectLoading } from "../../shell";
 
 interface RenderAppProps {
   onClickLogo?: () => void;
@@ -13,11 +14,12 @@ interface RenderAppProps {
 export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
   const isDesktop = !!window.__TAURI__;
   const { apps, changeApp, currentApp, initialApp } = useApps();
+  const status = useProjectLoading();
   const selectedApp = currentApp ? apps[currentApp.id] : null;
   const project = useProjectContext();
   const type = project.current?.resource.type;
 
-  if (selectedApp && selectedApp.metadata.project && selectedApp.metadata.projectType !== type) {
+  if (!status.isLoading && selectedApp && selectedApp.metadata.project && selectedApp.metadata.projectType !== type) {
     return (
       <div>
         App {selectedApp.metadata.id} not supported for resource (found {type}, expected{" "}
