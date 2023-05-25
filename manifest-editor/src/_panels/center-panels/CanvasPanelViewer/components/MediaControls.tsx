@@ -1,5 +1,5 @@
 import { formatTime, useMediaActions, useMediaElements, useMediaState } from "react-iiif-vault";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { PauseIcon, PlayIcon, VolumeDownIcon, VolumeOffIcon, VolumeUpIcon } from "./MediaControls.icons";
 import {
   AudioPlayerContainer,
@@ -16,14 +16,40 @@ import {
 import { VisuallyHiddenLabel } from "@/atoms/VisuallHidden/VisuallHidden";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 
-export function MediaControls() {
+export function MediaControls(props: { onError?: (error: string) => void; onDuration?: (duration: number) => void }) {
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
-  const { progress, currentTime } = useMediaElements();
+  const { progress, currentTime, element } = useMediaElements();
   const { duration, isMuted, volume, isPlaying, playRequested } = useMediaState();
   const { setVolume, toggleMute, play, pause, setDurationPercent } = useMediaActions();
 
   // Volume Icon to use.
   const Volume = isMuted || volume === 0 ? VolumeOffIcon : volume > 50 ? VolumeUpIcon : VolumeDownIcon;
+
+  useLayoutEffect(() => {
+    if (element.current) {
+      const $el = element.current;
+      if ($el.error && props.onError) {
+        props.onError($el.error?.message || "Unknown error");
+        return;
+      }
+      const onError = () => {
+        if (props.onError) {
+          props.onError($el.error?.message || "Unknown error");
+        }
+      };
+      const loadedMetadata = () => {
+        if ($el.duration && props.onDuration) {
+          props.onDuration($el.duration);
+        }
+      };
+      $el.addEventListener("loadedmetadata", loadedMetadata);
+      $el.addEventListener("error", onError);
+      return () => {
+        $el.removeEventListener("loadedmetadata", loadedMetadata);
+        $el.removeEventListener("error", onError);
+      };
+    }
+  }, []);
 
   return (
     <AudioPlayerContainer>

@@ -136,7 +136,7 @@ export const TabPanel: React.FC<{
           <AppDropdown
             as={TabMore}
             style={{ marginLeft: "auto", height: "1.5em", width: "1.5em", alignSelf: "center", marginRight: "0.2em" }}
-            data-active={menu.length - hidden - 1 <= selected}
+            data-active={menu.length - hidden <= selected}
             items={[
               ...menu.slice(menu.length - hidden).map((item: any, idx: number) => ({
                 label: item.label,

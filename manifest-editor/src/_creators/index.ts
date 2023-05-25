@@ -12,6 +12,7 @@ import { noBodyAnnotation } from "@/_creators/Annotation/NoBodyAnnotation";
 import { iiifBrowserCreator } from "@/_creators/ContentResource/IIIFBrowserCreator";
 import { internalCanvas } from "@/_creators/Canvas/InternalCanvas";
 import { imageUrlAnnotation } from "@/_creators/Annotation/ImageUrlAnnotation";
+import { audioAnnotation } from "@/_creators/Annotation/AudioAnnotation";
 
 export const allCreators = [
   emptyCanvas,
@@ -29,4 +30,5 @@ export const allCreators = [
   iiifBrowserCreator,
   internalCanvas,
   imageUrlAnnotation,
+  audioAnnotation,
 ];
