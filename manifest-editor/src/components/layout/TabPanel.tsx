@@ -53,9 +53,15 @@ const TabMore = styled.div`
   display: flex;
   align-items: center;
   padding: 0 0.2em;
+  border-radius: 3px;
+
+  &:hover {
+    background: #eee;
+  }
 
   &[data-active="true"] {
-    box-shadow: inset 0 -2px 0 0 ${(props: any) => props.theme.color.main || "blue"};
+    border: 2px solid ${(props: any) => props.theme.color.main || "blue"};
+    // box-shadow: inset 0 -2px 0 0 ${(props: any) => props.theme.color.main || "blue"};
   }
 `;
 
@@ -120,7 +126,7 @@ export const TabPanel: React.FC<{
               key={idx}
               $active={idx === selected}
               onClick={() => switchPanel(idx)}
-              data-hidden={hidden >= menu.length - idx - 1}
+              data-hidden={hidden >= menu.length - idx}
             >
               {item.label}
             </PanelHeader>
@@ -129,7 +135,7 @@ export const TabPanel: React.FC<{
         {hidden ? (
           <AppDropdown
             as={TabMore}
-            style={{ marginLeft: "auto" }}
+            style={{ marginLeft: "auto", height: "1.5em", width: "1.5em", alignSelf: "center", marginRight: "0.2em" }}
             data-active={menu.length - hidden - 1 <= selected}
             items={[
               ...menu.slice(menu.length - hidden).map((item: any, idx: number) => ({
