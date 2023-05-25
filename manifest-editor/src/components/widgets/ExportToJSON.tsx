@@ -56,7 +56,7 @@ export const ExportToJson: React.FC<{
     }
     e.preventDefault();
     downloadFile(
-      JSON.stringify(selected === 1 && resource ? vault.toPresentation2(resource) : resource),
+      JSON.stringify(selected === 1 && resource ? vault.toPresentation2(resource) : vault.toPresentation3(resource)),
       //  defaulting to manifest id for the filename but we can change this.
       resource.id + ".json",
       "text/json"
