@@ -16,7 +16,11 @@ import {
 import { VisuallyHiddenLabel } from "@/atoms/VisuallHidden/VisuallHidden";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 
-export function MediaControls(props: { onError?: (error: string) => void; onDuration?: (duration: number) => void }) {
+export function MediaControls(props: {
+  onDimensions?: (width: number, height: number) => void;
+  onError?: (error: string) => void;
+  onDuration?: (duration: number) => void;
+}) {
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
   const { progress, currentTime, element } = useMediaElements();
   const { duration, isMuted, volume, isPlaying, playRequested } = useMediaState();
@@ -40,6 +44,9 @@ export function MediaControls(props: { onError?: (error: string) => void; onDura
       const loadedMetadata = () => {
         if ($el.duration && props.onDuration) {
           props.onDuration($el.duration);
+        }
+        if (props.onDimensions && $el instanceof HTMLVideoElement) {
+          props.onDimensions($el.videoWidth, $el.videoHeight);
         }
       };
       $el.addEventListener("loadedmetadata", loadedMetadata);
