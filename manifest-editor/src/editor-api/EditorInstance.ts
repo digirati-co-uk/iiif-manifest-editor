@@ -1,9 +1,11 @@
 import {
   DescriptiveProperties,
   LinkingProperties,
+  NavPlaceExtension,
   Reference,
   StructuralProperties,
   TechnicalProperties,
+  TextGranularityExtension,
 } from "@iiif/presentation-3";
 import { BaseEditor } from "./BaseEditor";
 import { DescriptiveEditor } from "./DescriptiveEditor";
@@ -18,13 +20,14 @@ import { Vault } from "@iiif/vault";
 import { resources } from "./meta/resources";
 import { AnnotationEditor } from "@/editor-api/AnnotationEditor";
 import { HAS_PART, PART_OF } from "@iiif/parser";
-import { r } from "@vitest/runner/dist/tasks-e1fc71d1";
+import { ExtensionsEditor } from "@/editor-api/ExtensionsEditor";
 
 export class EditorInstance<
   T extends Partial<DescriptiveProperties> &
     Partial<TechnicalProperties> &
     Partial<LinkingProperties> &
-    Partial<StructuralProperties<unknown>>
+    Partial<StructuralProperties<unknown>> &
+    Partial<NavPlaceExtension & TextGranularityExtension>
 > extends BaseEditor<T> {
   technical: TechnicalEditor<T>;
   descriptive: DescriptiveEditor<T>;
@@ -32,6 +35,7 @@ export class EditorInstance<
   linking: LinkingEditor<T>;
   structural: StructuralEditor<T>;
   annotation!: AnnotationEditor;
+  extensions!: ExtensionsEditor<T>;
   required: (keyof T)[];
   recommended: (keyof T)[];
   notAllowed: string[];
@@ -55,6 +59,7 @@ export class EditorInstance<
     this.metadata = this.descriptive.metadata;
     this.linking = new LinkingEditor(config);
     this.structural = new StructuralEditor(config);
+    this.extensions = new ExtensionsEditor(config);
 
     // Not yet supported.
     this.isMultiple = false;

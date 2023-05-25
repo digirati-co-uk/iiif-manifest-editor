@@ -5,9 +5,10 @@ import { TechnicalProperties } from "@/_editors/TechnicalProperties/TechnicalPro
 import { useMemo } from "react";
 import { LinkingProperties } from "@/_editors/LinkingProperties/LinkingProperties";
 import { CanvasStructuralProperties } from "@/_editors/StructuralProperties/CanvasStructuralProperties";
+import { NavPlaceEditor } from "@/_editors/NavPlaceEditor/NavPlaceEditor";
 
 export function CombinedEditor() {
-  const { technical, descriptive, linking, structural } = useEditor();
+  const { technical, descriptive, linking, structural, extensions, notAllowed } = useEditor();
   function hideIfEmpty(editor: BasePropertyEditor<any, any>) {
     const value = editor.getWithoutTracking();
 
@@ -64,6 +65,8 @@ export function CombinedEditor() {
       {type === "Canvas" ? <CanvasStructuralProperties /> : null}
       <TechnicalProperties />
       <LinkingProperties />
+
+      {!notAllowed.includes("navPlace") && extensions.navPlace.get() ? <NavPlaceEditor /> : null}
     </div>
   );
 }
