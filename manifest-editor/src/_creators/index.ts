@@ -11,6 +11,7 @@ import { imageServiceAnnotation } from "@/_creators/Annotation/ImageServiceAnnot
 import { noBodyAnnotation } from "@/_creators/Annotation/NoBodyAnnotation";
 import { iiifBrowserCreator } from "@/_creators/ContentResource/IIIFBrowserCreator";
 import { internalCanvas } from "@/_creators/Canvas/InternalCanvas";
+import { imageUrlAnnotation } from "@/_creators/Annotation/ImageUrlAnnotation";
 
 export const allCreators = [
   emptyCanvas,
@@ -27,4 +28,5 @@ export const allCreators = [
   noBodyAnnotation,
   iiifBrowserCreator,
   internalCanvas,
+  imageUrlAnnotation,
 ];

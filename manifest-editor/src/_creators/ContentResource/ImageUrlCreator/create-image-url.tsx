@@ -3,7 +3,7 @@ import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { CreatorContext, CreatorFunctionContext } from "@/creator-api/types";
 import { InputContainer, InputLabel, Input } from "@/editors/Input";
 import { FormEvent } from "react";
-import { getFormat } from "@/helpers/analyse";
+import { getFormat, getImageDimensions } from "@/helpers/analyse";
 import { ImageService } from "@iiif/presentation-3";
 
 export interface CreateImageUrlPayload {
@@ -15,6 +15,14 @@ export interface CreateImageUrlPayload {
 }
 
 export async function createImageUrl(data: CreateImageUrlPayload, ctx: CreatorFunctionContext) {
+  if (!data.height || !data.width) {
+    const dimensions = await getImageDimensions(data.url);
+    if (dimensions) {
+      data.height = dimensions.height;
+      data.width = dimensions.width;
+    }
+  }
+
   return ctx.embed({
     id: data.url,
     type: "Image",

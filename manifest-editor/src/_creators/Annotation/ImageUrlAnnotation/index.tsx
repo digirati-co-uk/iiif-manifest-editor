@@ -1,20 +1,19 @@
 import { CreatorDefinition } from "@/creator-api";
 import { TextFormatIcon } from "@/icons/TextFormatIcon";
-import { CreateImageServiceAnnotationForm, createImageServiceAnnotation } from "./create-service-annotation";
+import { CreateImageUrlAnnotationForm, createImageUrlAnnotation } from "./create-image-url-annotation";
 import { resizeResourceToEmptyCanvas } from "@/_creators/side-effects/resize-resource-to-empty-canvas";
 import { repositionMultipleImages } from "@/_creators/side-effects/reposition-multiple-images";
 import { resizeToFitService } from "@/_creators/side-effects/resize-to-fit-service";
 
-// @todo combine this with the content resource one.
-export const imageServiceAnnotation: CreatorDefinition = {
-  id: "@manifest-editor/image-service-annotation",
-  create: createImageServiceAnnotation,
-  label: "Image Service",
-  dependencies: ["@manifest-editor/image-service-creator"],
-  summary: "Add an annotation from Image Service",
+export const imageUrlAnnotation: CreatorDefinition = {
+  id: "@manifest-editor/image-url-annotation",
+  create: createImageUrlAnnotation,
+  label: "Image URL",
+  dependencies: ["@manifest-editor/image-url-creator"],
+  summary: "Add an annotation from Image URL",
   icon: <TextFormatIcon />,
   render(ctx) {
-    return <CreateImageServiceAnnotationForm {...ctx} />;
+    return <CreateImageUrlAnnotationForm {...ctx} />;
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],

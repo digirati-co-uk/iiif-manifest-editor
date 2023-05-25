@@ -3,7 +3,7 @@ import * as IIIFVault from "@iiif/vault";
 
 // This is from the ts version
 // Create an image in the DOM to measure height and width
-const getImage = async (src: string) => {
+const getImage = async (src: string): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const $img = document.createElement("img");
     $img.onload = () => resolve($img);
@@ -263,4 +263,19 @@ export async function getFormat(url: string, capturedContentType?: string) {
   }
   // Just a default.
   return "image/jpeg";
+}
+
+export async function getImageDimensions(url: string) {
+  try {
+    const image = await getImage(url);
+    if (image) {
+      return {
+        width: image.naturalWidth || image.width,
+        height: image.naturalHeight || image.height,
+      };
+    }
+  } catch (e) {
+    return null;
+  }
+  return null;
 }

@@ -71,7 +71,6 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
 
     if (url) {
       const canon = canonicalServiceUrl(url);
-      console.log(canon);
       fetch(canon)
         .then((r) => r.json())
         .then((service) => {
