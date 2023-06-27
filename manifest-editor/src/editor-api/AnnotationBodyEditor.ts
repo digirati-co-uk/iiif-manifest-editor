@@ -17,10 +17,14 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
     if (!this.hasBody()) {
       return false;
     }
-    const bodyRef = this.getFirst();
-    const body = this.config.vault.get(bodyRef);
-    const ref = toRef(body);
-    return ref?.type === "Video" || ref?.type === "Image";
+    try {
+      const bodyRef = this.getFirst();
+      const body = this.config.vault.get(bodyRef);
+      const ref = toRef(body);
+      return ref?.type === "Video" || ref?.type === "Image";
+    } catch (err) {
+      return false;
+    }
   }
 
   hasBody() {
@@ -32,5 +36,15 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
     const all = this.get();
     invariant(all[0], "Body not found");
     return all[0];
+  }
+
+  getFirstOrNone() {
+    const all = this.get();
+
+    if (!all) {
+      return undefined;
+    }
+
+    return all[0] || undefined;
   }
 }

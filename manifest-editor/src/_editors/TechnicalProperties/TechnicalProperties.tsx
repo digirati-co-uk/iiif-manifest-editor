@@ -2,14 +2,13 @@ import { BehaviorEditor } from "@/_components/editors/BehaviorEditor/BehaviorEdi
 import { InlineSelect } from "@/_components/form-elements/InlineSelect/InlineSelect";
 import { DimensionsTriplet } from "@/atoms/DimensionsTriplet";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
-import { PaddingComponentMedium } from "@/atoms/PaddingComponent";
-import { FlexContainer } from "@/components/layout/FlexContainer";
 import { InputContainer, InputLabel, Input } from "@/editors/Input";
 import { useEditor } from "@/shell/EditingStack/EditingStack";
 import { ViewingDirection } from "@iiif/presentation-3";
+import { TextGranularityEditor } from "@/_components/editors/TextGranularityEditor/TextGranularityEditor";
 
 export function TechnicalProperties() {
-  const { technical, notAllowed } = useEditor();
+  const { technical, extensions, notAllowed } = useEditor();
   const { id, viewingDirection, height, width, duration, behavior, format, motivation, profile, timeMode } = technical;
 
   return (

@@ -42,7 +42,7 @@ const notAllowed: ExtensionsMap = {
   Collection: ["textGranularity"],
   Manifest: ["textGranularity"],
   Canvas: ["textGranularity"],
-  Annotation: ["textGranularity", "navPlace"],
+  Annotation: ["navPlace"],
   AnnotationPage: ["textGranularity", "navPlace"],
   Range: ["textGranularity"],
   AnnotationCollection: ["textGranularity", "navPlace"],

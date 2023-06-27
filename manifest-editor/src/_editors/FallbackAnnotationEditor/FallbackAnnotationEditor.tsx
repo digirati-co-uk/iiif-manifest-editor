@@ -9,23 +9,12 @@ import { DeleteButton } from "@/_components/ui/DeleteButton/DeleteButton";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { useEditor, useGenericEditor } from "@/shell/EditingStack/EditingStack";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
-import { isImageService } from "@atlas-viewer/iiif-image-api";
-import { ImageService } from "@iiif/presentation-3";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 
 export function FallbackAnnotationEditor() {
   // This is for an annotation
   const vault = useVault();
   const annotationEditor = useEditor();
-  const resourceRef = annotationEditor.annotation.body.getFirst();
-  const resourceEditor = useGenericEditor(resourceRef, {
-    parentProperty: "body",
-    parent: annotationEditor.ref(),
-    index: 0,
-  });
-
-  const { width, height } = resourceEditor.technical;
-  const { service } = resourceEditor.linking;
   const { target } = annotationEditor.annotation;
   const canvasId = target.getSourceId();
 
@@ -34,7 +23,6 @@ export function FallbackAnnotationEditor() {
   const thumbnail = useAnnotationThumbnail({ annotationId: annotationEditor.technical.id.get() });
   const canvas = useCanvas({ id: canvasId });
 
-  const serviceList = service.get() || [];
   const currentTarget = target.get();
   const currentSelector = target.getParsedSelector();
 
@@ -50,24 +38,11 @@ export function FallbackAnnotationEditor() {
             <Button
               onClick={() => {
                 vault.batch(() => {
-                  // Check image resource width/height vs. service.
-                  const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
-                  if (imageService) {
-                    if (imageService.width && imageService.height) {
-                      if (imageService.width !== width.get()) {
-                        width.set(imageService.width);
-                      }
-                      if (imageService.height !== height.get()) {
-                        height.set(imageService.height);
-                      }
-                    }
-                  }
-
                   const imagePosition = centerRectangles(
                     canvas,
                     {
-                      width: width.get(),
-                      height: height.get(),
+                      width: 100,
+                      height: 100,
                     },
                     0.6
                   );

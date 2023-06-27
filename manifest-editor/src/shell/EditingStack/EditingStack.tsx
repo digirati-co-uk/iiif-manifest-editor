@@ -149,11 +149,21 @@ export function useEditor() {
 }
 
 export function EditingStack(props: { children?: any }) {
+  const vault = useVault();
   const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
 
   const dispatch = useCallback((action: any) => {
     (() => flushSync(() => _dispatch(action)))();
   }, []);
+
+  useEffect(() => {
+    return vault.on("@iiif/REMOVE_REFERENCE", (payload: any) => {
+      const action = payload.action;
+      const parent = { id: action.payload.id, type: action.payload.type };
+      const resource = action.payload.reference;
+      _dispatch({ type: "syncRemoval", payload: { resource: { parent, resource } } });
+    });
+  }, [vault]);
 
   const edit = useCallback(
     (resource: EditableResource, reset = false) => dispatch({ type: "edit", payload: { resource, reset } }),

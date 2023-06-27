@@ -36,6 +36,7 @@ export interface EditingStackActions {
 export type EditingStackActionCreators =
   | { type: "edit"; payload: { resource: EditableResource | null; reset?: boolean } }
   | { type: "updateCurrent"; payload: { resource: EditableResource } }
+  | { type: "syncRemoval"; payload: { resource: EditableResource } }
   | { type: "back" }
   | { type: "create"; payload: { resource: CreatableResource | null; options?: any } }
   | { type: "close" };

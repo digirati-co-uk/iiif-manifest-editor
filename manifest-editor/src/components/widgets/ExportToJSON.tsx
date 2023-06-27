@@ -65,7 +65,7 @@ export const ExportToJson: React.FC<{
 
   return (
     <>
-      <FlexContainerColumn justify={"flex-start"}>
+      <FlexContainerColumn justify={"flex-start"} style={{ flex: 1 }}>
         {selected === 1 && <WarningMessage>Not all features of IIIF are available in Version 2</WarningMessage>}
         {resource && (
           <TabPanel
@@ -75,12 +75,9 @@ export const ExportToJson: React.FC<{
                 label: "IIIF Presentation 3",
                 component: (
                   <JSONPreview>
-                    <pre
-                      ref={textAreaRef}
-                      dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(vault.toPresentation3(resource), null, 2),
-                      }}
-                    />
+                    <pre>
+                      <code ref={textAreaRef}>{JSON.stringify(vault.toPresentation3(resource), null, 2)}</code>
+                    </pre>
                   </JSONPreview>
                 ),
               },
@@ -88,12 +85,9 @@ export const ExportToJson: React.FC<{
                 label: "IIIF Presentation 2",
                 component: (
                   <JSONPreview>
-                    <pre
-                      ref={textAreaRef}
-                      dangerouslySetInnerHTML={{
-                        __html: `<code>${JSON.stringify(vault.toPresentation2(resource), null, 2)}</code>`,
-                      }}
-                    />
+                    <pre>
+                      <code ref={textAreaRef}>{JSON.stringify(vault.toPresentation2(resource), null, 2)}</code>
+                    </pre>
                   </JSONPreview>
                 ),
               },

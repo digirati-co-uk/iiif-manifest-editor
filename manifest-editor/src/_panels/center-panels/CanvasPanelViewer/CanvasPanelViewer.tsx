@@ -8,7 +8,7 @@ import {
   useAnnotation,
   useAnnotationPage,
 } from "react-iiif-vault";
-import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { DefaultPresetOptions, DrawBox, Runtime } from "@atlas-viewer/atlas";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAppState } from "@/shell/AppContext/AppContext";
@@ -27,6 +27,7 @@ import { Highlight } from "@/_panels/center-panels/CanvasPanelViewer/components/
 import { useAnnotationEditing } from "@/state/annotationg-editing";
 import { AnnotationTargetEditor } from "@/_panels/center-panels/CanvasPanelViewer/components/AnnotationTargetEditor";
 import { useTaskRunner } from "@/shell/TaskBridge/TaskBridge";
+import { a } from "@react-spring/web";
 
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
@@ -42,7 +43,10 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
   const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
   const { rightPanel } = useLayoutState();
   const [editMode, toggleEditMode] = useReducer((a) => !a, false);
-  const [createMode, toggleCreateAnnotation] = useReducer((a) => !a, false);
+  const [createMode, toggleCreateAnnotation] = useReducer(
+    (a: boolean, action?: boolean) => (typeof action === "undefined" ? !a : action),
+    false
+  );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
     () => ["default-preset", { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions] as any,
@@ -213,7 +217,7 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
               <DrawBox
                 onCreate={(data) => {
                   createAnnotation(data);
-                  toggleCreateAnnotation();
+                  (toggleCreateAnnotation as any)(false);
                 }}
               />
             ) : null}

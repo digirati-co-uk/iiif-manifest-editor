@@ -3,21 +3,21 @@ import { createRef, KeyboardEventHandler, useLayoutEffect, useMemo, useState } f
 import { InlineSelectStyles } from "@/_components/form-elements/InlineSelect/InlineSelect.styles";
 import { LocaleString } from "@/atoms/LocaleString";
 
-export interface InlineSelectProps {
+export interface InlineSelectProps<T> {
   name?: string;
   id?: string;
-  value?: string | null;
-  onChange?: (value: string) => void;
+  value?: T | null;
+  onChange?: (value: T) => void;
   onDeselect?: () => void;
   options: Array<{ label: string | InternationalString; value: string }>;
 }
 
-export function InlineSelect(props: InlineSelectProps) {
+export function InlineSelect<T extends string = string>(props: InlineSelectProps<T>) {
   const [currentValue, _setCurrentValue] = useState(props.value);
   const itemsLength = props.options.length;
   const elRefs = useMemo(() => props.options.map(() => createRef()), [props.options]) as any[];
 
-  const setCurrentValue = (newValue: string) => {
+  const setCurrentValue = (newValue: T) => {
     if (props.onChange) {
       props.onChange(newValue);
     }
@@ -88,9 +88,9 @@ export function InlineSelect(props: InlineSelectProps) {
             onClick={() => {
               if (option.value === currentValue && props.onDeselect) {
                 props.onDeselect();
-                setCurrentValue("");
+                setCurrentValue("" as any);
               } else {
-                setCurrentValue(option.value);
+                setCurrentValue(option.value as any);
               }
             }}
           >

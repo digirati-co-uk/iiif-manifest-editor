@@ -25,7 +25,8 @@ export const allEditors = [
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   combinedProperties,
-  fallbackAnnotationEditor,
+  // This isn't working for annotations without bodies.
+  // fallbackAnnotationEditor,
 
   // Generic
   descriptiveProperties,

@@ -1,8 +1,13 @@
 import styled from "styled-components";
 
 export const ButtonRow = styled.div`
-  background: #f9f9f9;
   padding: 0.3em;
+
+  display: flex;
+  background: #e4e7ef;
+  border-radius: 3px;
+  margin: 0.3em 0;
+  gap: 0.3em;
 
   button,
   a {
@@ -11,5 +16,10 @@ export const ButtonRow = styled.div`
     & ~ & {
       margin-left: 0.3em;
     }
+  }
+
+  &[data-sticky="true"] {
+    position: sticky;
+    bottom: 0;
   }
 `;

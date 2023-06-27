@@ -25,7 +25,7 @@
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
-    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
+    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas",
     "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/94749453/@iiif/vault-helpers",
     "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault",
     "@iiif/presentation-3": "^2.0.5",
@@ -34,7 +34,7 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
+    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
     "@digirati/canvas-panel-web-components": "^1.0.53",
     "@dnd-kit/core": "^6.0.8",

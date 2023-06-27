@@ -28,9 +28,9 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas":
+"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas":
   version "2.0.0-alpha.21"
-  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas#9a7b026102bf7baedbe5f651f83500d3917bee81"
+  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas#595fe582f3e7243b48fd34e0c87a8a5d8d1716b2"
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^2.0.5"

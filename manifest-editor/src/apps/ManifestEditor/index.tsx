@@ -24,6 +24,7 @@ import { tutorial } from "@/_panels/right-panels/Tutotiral";
 import { overviewCanvasEditor } from "@/_editors/OverviewCanvasEditor";
 import { combinedProperties } from "@/_editors/CombinedEditor";
 import { allEditors } from "@/_editors";
+import { ExportPanel } from "@/_panels/center-panels/ExportPanel/ExportPanel";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
@@ -39,6 +40,12 @@ export const centerPanels: LayoutPanel[] = [
     label: "Center panel",
     icon: "",
     render: () => <CompatibilityTable />,
+  },
+  {
+    id: "export",
+    label: "Export",
+    icon: "",
+    render: () => <ExportPanel />,
   },
 ];
 export const leftPanels: LayoutPanel[] = [
