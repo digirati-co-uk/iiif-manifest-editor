@@ -175,9 +175,11 @@ Now click _Create_ under the HTML box to create this annotation. On the new anno
 
 You can set the `label` property of the annotation, and the `label` of the annotation page you created to hold it, which makes things easier to identify in the Manifest Editor even though they are not used in the exhibition. 
 
+<!-- This has been fixed. There is a new "Target" tab on non-media annotations where you can change the target
 > **⚠ NOT POSSIBLE**
 > 
 > Here we would reset the annotation target to the whole canvas - but the `target` UI is missing.
+-->
 
 This info Canvas now has the following content:
 
@@ -198,9 +200,11 @@ The Information Panel Canvas is now complete.
 
 You should save your work. If the Manifest Editor is configured with a storage provider, you can save to that - otherwise (the default), simply export the Manifest (from the File menu), downloading it to your computer.
 
+<!-- Export has been fixed, with a new screen. No stubs, and fixed HTML encoding. 
 > **⚠ EXPORT NOT WORKING** 
 > 
 > Export is stubs, not a fully expanded manifest
+-->
 
 You can now also preview the exhibition, if the Manifest Editor is configured with Delft preview as a target:
 
@@ -285,6 +289,7 @@ This image is a false-coloured SEM of a bee pupa just before the sixth and final
 
 If you now preview the exhibition you'll see the new type of panel - with the Canvas label and summary used to populate the text on the right, and the painting annotation label and summary providing the information about the image when clicked on.
 
+<!-- Delft Viewer Preview is just a visual guide at the moment, not fully functional -->
 > **⚠ PROBLEMS WITH PREVIEW** 
 > - Same as above - hard-coded painting annotation label and summary
 
@@ -323,6 +328,7 @@ w-12
 h-10
 ```
 
+<!-- Unable to find the cause of this - I _think_ it happens when you have 2 that have the same value -->
 > **⚠ Problem** 
 > - For some reason on this Canvas had real problems with the behavior input field losing focus after every keystroke.
 
@@ -385,9 +391,10 @@ It's not necessary for the exhibition, but may be convenient now to rename the _
 
 ![Use labels for clarity](tour-steps.png)
 
+<!-- This should now be fixed too, in addition to them disappearing
 > **⚠ The describing annotation target "sticks"** 
 > - After creating the describing anno, the target stays drawn on other canvases.
-
+-->
 
 
 
