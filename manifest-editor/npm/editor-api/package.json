@@ -1,0 +1,33 @@
+{
+  "name": "@manifest-editor/editor-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
+  "types": "./index.d.ts",
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    }
+  },
+  "dependencies": {
+    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
+    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
+    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "globalName": "IIIFEditor"
+}

@@ -1,4 +1,4 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
+import { LayoutPanel } from "@/shell";
 import { ProjectListing } from "./components/ProjectListing/ProjectListing";
 
 export default { id: "project-manager", title: "Project manager", dev: true };

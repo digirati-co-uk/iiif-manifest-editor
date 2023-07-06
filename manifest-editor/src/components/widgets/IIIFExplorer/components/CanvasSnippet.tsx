@@ -3,8 +3,9 @@ import { LocaleString } from "@/atoms/LocaleString";
 import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { LazyCanvasThumbnail } from "@/components/widgets/IIIFExplorer/components/LazyCanvasThumbnail";
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { contentStateFormat } from "@/components/widgets/IIIFExplorer/formats/content-state";
+import { startViewTransition } from "@/helpers/start-view-transition";
 
 export interface CanvasSnippetProps {
   onClick: () => void;
@@ -24,11 +25,18 @@ export function CanvasSnippet({
   const vault = useVault();
   const manifest = useManifest();
   const canvas = useCanvas();
+  const thumb = useRef<HTMLDivElement>(null);
 
   invariant(canvas);
 
   const onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    const img = e.currentTarget.querySelector("img") as HTMLImageElement;
+    if (img) {
+      (img as any).style.viewTransitionName = "canvas-image";
+    }
+
     if (selectEnabled && (e.metaKey || e.shiftKey)) {
       if (selected) {
         onDeselect();
@@ -38,46 +46,7 @@ export function CanvasSnippet({
       return;
     }
 
-    try {
-      const outerContainer = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.parentElement!
-        .parentElement as HTMLDivElement;
-      const container = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!
-        .parentElement as HTMLDivElement;
-      const thumb = e.currentTarget as HTMLDivElement;
-      const rect = thumb.getBoundingClientRect();
-      const cRect = container.getBoundingClientRect();
-      const oRect = outerContainer.getBoundingClientRect();
-      // Try to position absolute.
-      const cloned = thumb as HTMLDivElement;
-      cloned.style.position = "absolute";
-      cloned.style.top = `${rect.top - cRect.top}px`;
-      cloned.style.left = `${rect.left - cRect.left}px`;
-      cloned.style.transform = `translate(0, 0)`;
-      cloned.style.width = `${rect.width}px`;
-      cloned.style.height = `${rect.height}px`;
-      cloned.style.transition = "all 300ms";
-      cloned.style.maxHeight = "100%";
-
-      // container.append(cloned);
-      outerContainer.style.pointerEvents = "none";
-
-      requestAnimationFrame(() => {
-        cloned.style.transform = `translate(${-(rect.left - cRect.left)}px, ${-(
-          rect.top -
-          cRect.top -
-          outerContainer.scrollTop
-        )}px)`;
-        cloned.style.width = `${oRect.width}px`;
-        cloned.style.height = `${oRect.height}px`;
-      });
-
-      setTimeout(() => {
-        _onClick();
-        // container.removeChild(cloned);
-      }, 300);
-    } catch (e) {
-      _onClick();
-    }
+    startViewTransition(() => _onClick());
   };
 
   return (
@@ -99,7 +68,7 @@ export function CanvasSnippet({
       //   });
       // }}
     >
-      <div className={$.ThumbnailImage} onClick={onClick}>
+      <div ref={thumb} className={$.ThumbnailImage} onClick={onClick} style={{ viewTransitionName: canvas.id } as any}>
         <LazyCanvasThumbnail />
       </div>
       <div className={$.ThumbnailLabel}>

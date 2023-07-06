@@ -1,46 +1,59 @@
 import { EditorProject } from "../ProjectContext.types";
 import { Vault } from "@iiif/vault";
-import { Manifest } from "@iiif/presentation-3";
-import { ManifestKeyedStorage, ManifestStorage } from "../types/Storage";
+import { Collection, Manifest } from "@iiif/presentation-3";
+import { ResourceKeyedStorage, ManifestStorage, CollectionStorage } from "../types/Storage";
 import { v4 } from "uuid";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import invariant from "tiny-invariant";
+import localforage from "localforage";
 
-export class LocalStorageLoader extends AbstractVaultLoader<ManifestKeyedStorage> {
+export class LocalStorageLoader extends AbstractVaultLoader<ResourceKeyedStorage> {
   type = "local-storage";
   namespace: string;
+  storage: LocalForage;
 
   vaults: Record<string, Vault | null> = {};
 
   constructor(settings?: { namespace?: string }) {
     super({ saveInterval: 5000 });
     this.namespace = settings?.namespace || "default";
+    this.storage = localforage.createInstance({
+      name: "local-storage-resource-loader",
+    });
   }
 
   shouldUpdateWithVault() {
     return true;
   }
 
-  async create(project: EditorProject, data: Manifest): Promise<ManifestKeyedStorage> {
+  async create(project: EditorProject, data: Manifest | Collection): Promise<ResourceKeyedStorage> {
     const key = v4();
 
     await localStorage.setItem(`${this.namespace}/store/${key}`, JSON.stringify(data));
 
     return {
-      type: "manifest-keyed-storage",
+      type: "resource-keyed-storage",
       data: {
         id: data.id,
+        type: data.type,
         key,
       },
     };
   }
 
-  async getStorage(storage: ManifestKeyedStorage): Promise<ManifestStorage | null> {
+  async getStorage(storage: ResourceKeyedStorage): Promise<CollectionStorage | ManifestStorage | null> {
     try {
       const item = await localStorage.getItem(`${this.namespace}/store/${storage.data.key}`);
-      const manifest = item ? (JSON.parse(item) as Manifest) : null;
+      const manifest = item ? (JSON.parse(item) as any) : null;
 
-      invariant(manifest, "Manifest not found");
+      invariant(manifest, "Resource not found");
+
+      if (manifest.type === "Collection") {
+        return {
+          type: "collection-storage",
+          data: manifest,
+        };
+      }
 
       return {
         type: "manifest-storage",
@@ -51,17 +64,20 @@ export class LocalStorageLoader extends AbstractVaultLoader<ManifestKeyedStorage
     }
   }
 
-  async saveStorageData(manifestStorage: ManifestStorage, storage: ManifestKeyedStorage): Promise<void> {
+  async saveStorageData(
+    manifestStorage: ManifestStorage | CollectionStorage,
+    storage: ResourceKeyedStorage
+  ): Promise<void> {
     await localStorage.setItem(`${this.namespace}/store/${storage.data.key}`, JSON.stringify(manifestStorage.data));
   }
 
-  async deleteStorage(storage: ManifestKeyedStorage): Promise<void> {
+  async deleteStorage(storage: ResourceKeyedStorage): Promise<void> {
     this.vaults[storage.data.key] = null;
     await localStorage.removeItem(`${this.namespace}/store/${storage.data.key}`);
   }
 
-  getBackendStorage(project: EditorProject): ManifestKeyedStorage {
+  getBackendStorage(project: EditorProject): ResourceKeyedStorage {
     // This will never change after creation, but other adapters might?
-    return project.storage as ManifestKeyedStorage;
+    return project.storage as ResourceKeyedStorage;
   }
 }

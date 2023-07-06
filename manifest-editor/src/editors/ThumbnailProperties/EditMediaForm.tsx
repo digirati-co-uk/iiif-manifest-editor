@@ -9,7 +9,7 @@ import { Loading } from "../../atoms/Loading";
 import { TickIcon } from "../../icons/TickIcon";
 import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { InputLabel, Input } from "../Input";
-import { MediaBody } from "../../types/media-body";
+import { MediaBody } from "@/___delete/types/media-body";
 
 interface EditMediaForm {
   edit: (body: MediaBody) => void;

@@ -31,6 +31,13 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
     }
   }
 
+  &[data-control="previous"] {
+    view-transition-name: "previous-canvas";
+  }
+  &[data-control="next"] {
+    view-transition-name: "next-canvas";
+  }
+
   ${(props) =>
     props.$active &&
     css`
@@ -60,12 +67,15 @@ export function ViewControls({
   refresh,
   toggleEditMode,
   editMode,
+  createMode,
   onNext,
   onPrevious,
   editIcon,
   clearSelection,
   enableNavigation,
   style,
+  creatingAnnotation,
+  toggleCreateAnnotation,
 }: {
   refresh?: () => void;
   toggleEditMode?: () => void;
@@ -73,14 +83,22 @@ export function ViewControls({
   onPrevious?: () => void;
   clearSelection?: () => void;
   editMode?: boolean;
+  createMode?: boolean;
   editIcon?: boolean;
+  creatingAnnotation?: boolean;
   enableNavigation?: boolean;
   style?: CSSProperties;
+  toggleCreateAnnotation?: () => void;
 }) {
   const preset = useViewerPreset();
 
   return (
     <CanvasViewerControls style={style}>
+      {toggleCreateAnnotation && !editMode ? (
+        <CanvasViewerButton data-control="create" onClick={toggleCreateAnnotation} $active={creatingAnnotation}>
+          {!createMode ? "Create annotation" : "Clear"}
+        </CanvasViewerButton>
+      ) : null}
       {toggleEditMode ? (
         <>
           <CanvasViewerButton data-control="edit" onClick={toggleEditMode} $active={editMode}>

@@ -1,4 +1,4 @@
-import { ResourceEditorConfig } from "../../types/resource-editor-config";
+export type ResourceEditorConfig<T = any> = [string, T] | string;
 
 export function supportsProperty<T>(list: ResourceEditorConfig[], property: string): T | null {
   for (const config of list) {

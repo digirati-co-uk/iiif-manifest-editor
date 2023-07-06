@@ -2,7 +2,7 @@ import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { useThumbnail } from "react-iiif-vault";
 
 export function LazyCanvasThumbnail() {
-  const thumbnail = useThumbnail({ height: 120, width: 120 });
+  const thumbnail = useThumbnail({ height: 120, width: 120 }, false);
   // const ref = useRef<HTMLDivElement>(null);
   // Save this for later.
   // useLayoutEffect(() => {

@@ -5,7 +5,7 @@ import { TabPanel } from "../layout/TabPanel";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { useManifest } from "../../hooks/useManifest";
 import { JSONPreview } from "../../atoms/JSONPreview";
-import { useVault } from "react-iiif-vault";
+import { useCollection, useVault } from "react-iiif-vault";
 import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
 
 export const ExportToJson: React.FC<{
@@ -16,6 +16,8 @@ export const ExportToJson: React.FC<{
   const [copySuccess, setCopySuccess] = useState("");
   const textAreaRef = useRef(null);
   const manifest = useManifest();
+  const collection = useCollection({} as any);
+  const resource = manifest || collection;
   const vault = useVault();
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export const ExportToJson: React.FC<{
   }, [selected]);
 
   function copyToClipboard() {
-    const man = selected === 1 && manifest ? vault.toPresentation2(manifest) : manifest;
+    const man = selected === 1 && resource ? vault.toPresentation2(resource) : resource;
 
     if (textAreaRef && textAreaRef.current) {
       navigator.clipboard.writeText(JSON.stringify(man));
@@ -49,23 +51,23 @@ export const ExportToJson: React.FC<{
   };
 
   const exportToJson = (e: any) => {
-    if (!manifest) {
+    if (!resource) {
       return;
     }
     e.preventDefault();
     downloadFile(
-      JSON.stringify(selected === 1 && manifest ? vault.toPresentation2(manifest) : manifest),
+      JSON.stringify(selected === 1 && resource ? vault.toPresentation2(resource) : vault.toPresentation3(resource)),
       //  defaulting to manifest id for the filename but we can change this.
-      manifest.id + ".json",
+      resource.id + ".json",
       "text/json"
     );
   };
 
   return (
     <>
-      <FlexContainerColumn justify={"flex-start"}>
+      <FlexContainerColumn justify={"flex-start"} style={{ flex: 1 }}>
         {selected === 1 && <WarningMessage>Not all features of IIIF are available in Version 2</WarningMessage>}
-        {manifest && (
+        {resource && (
           <TabPanel
             style={{ width: "unset" }}
             menu={[
@@ -73,12 +75,9 @@ export const ExportToJson: React.FC<{
                 label: "IIIF Presentation 3",
                 component: (
                   <JSONPreview>
-                    <pre
-                      ref={textAreaRef}
-                      dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(vault.toPresentation3(manifest), null, 2),
-                      }}
-                    />
+                    <pre>
+                      <code ref={textAreaRef}>{JSON.stringify(vault.toPresentation3(resource), null, 2)}</code>
+                    </pre>
                   </JSONPreview>
                 ),
               },
@@ -86,12 +85,9 @@ export const ExportToJson: React.FC<{
                 label: "IIIF Presentation 2",
                 component: (
                   <JSONPreview>
-                    <pre
-                      ref={textAreaRef}
-                      dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(vault.toPresentation2(manifest), null, 2),
-                      }}
-                    />
+                    <pre>
+                      <code ref={textAreaRef}>{JSON.stringify(vault.toPresentation2(resource), null, 2)}</code>
+                    </pre>
                   </JSONPreview>
                 ),
               },

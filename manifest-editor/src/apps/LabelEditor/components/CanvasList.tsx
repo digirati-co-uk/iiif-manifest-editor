@@ -1,7 +1,7 @@
 import { CanvasContext, useManifest } from "react-iiif-vault";
-import { useLayoutState } from "../../../shell/Layout/Layout.context";
+import { useLayoutState } from "@/shell";
 import { SingleCanvas } from "./SingleCanvas";
-import { PaddedSidebarContainer } from "../../../atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 
 export function CanvasList() {
   const manifest = useManifest();

@@ -3,7 +3,7 @@ import { createCanvasFromImageService } from "../iiif-builder-extensions/create-
 import { useResourceContext, useVault } from "react-iiif-vault";
 import { useMemo } from "react";
 import { IIIFBuilder } from "iiif-builder";
-import { CanvasNormalized, ManifestNormalized } from "@iiif/presentation-3";
+import { CanvasNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { unstable_batchedUpdates } from "react-dom";
 import { reorderEntityField } from "@iiif/vault/actions";
 

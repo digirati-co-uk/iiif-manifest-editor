@@ -1,5 +1,5 @@
 import create, { StoreApi } from "zustand/vanilla";
-import { CollectionNormalized, ManifestNormalized, Reference } from "@iiif/presentation-3";
+import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { Vault } from "@iiif/vault";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useExistingVault } from "react-iiif-vault";
@@ -35,7 +35,10 @@ interface Store {
   setScrollCache(id: string, scroll: number): void;
   back(): void;
 }
-export const createStore = (vault: Vault, options: { initial?: string; canReset?: boolean }) =>
+export const createStore = (
+  vault: Vault,
+  options: { initial?: string; canReset?: boolean; onHistory?: (id: string, type: string) => void }
+) =>
   create<Store>()((set, get) => ({
     history: [],
     selected: null,
@@ -137,6 +140,7 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
         set({ selected: ref, history: [] });
         return;
       }
+
       // 1. Check if it's in the recent list
       const state = get();
       if (state.history.find((r) => r.id === ref.id)) {
@@ -148,6 +152,11 @@ export const createStore = (vault: Vault, options: { initial?: string; canReset?
           selected: ref,
           history: [...s.history, ref],
         }));
+      }
+
+      // Add to history.
+      if (options.onHistory) {
+        options.onHistory(ref.id, ref.type);
       }
     },
 
@@ -206,7 +215,7 @@ export function ExplorerStoreProvider({
 }: {
   children?: ReactNode;
   entry?: HistoryItem;
-  options?: { canReset?: boolean };
+  options?: { canReset?: boolean; onHistory?: (id: string, type: string) => void };
 }) {
   const vault = useExistingVault();
 

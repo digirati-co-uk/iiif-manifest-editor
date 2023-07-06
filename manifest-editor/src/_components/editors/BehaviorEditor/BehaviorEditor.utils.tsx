@@ -2,6 +2,7 @@ import { BehaviorEditorConfiguration } from "@/_components/editors/BehaviorEdito
 import { LocaleString } from "@/atoms/LocaleString";
 import { InlineSelect } from "@/_components/form-elements/InlineSelect/InlineSelect";
 import SelectSearch from "react-select-search";
+import { supportedBehaviorConfig, supportedBehaviorGroups } from "@/editor-api/meta/behavior";
 
 export function filteredBehaviors(
   behaviors: string[],
@@ -55,9 +56,18 @@ export function RenderCustomBehaviorEditor(props: {
     }
 
     case "choice": {
-      const values = props.config.items.map((i) => i.value);
+      const items = props.config.addNone
+        ? [{ label: { en: ["None"] }, value: "" }, ...props.config.items]
+        : props.config.items;
+
+      const values = items.map((i) => i.value);
       const filtered = props.behaviors.filter((b) => !values.includes(b));
-      const selected = props.behaviors.filter((b) => values.includes(b));
+      let selected = props.behaviors.filter((b) => values.includes(b));
+
+      if (selected.length === 0 && props.config.addNone) {
+        selected = [""];
+      }
+
       const firstIndex = selected.length ? props.behaviors.findIndex((f) => f === selected[0]) : -1;
 
       const setNewChoice = (choice: string) => {
@@ -69,7 +79,7 @@ export function RenderCustomBehaviorEditor(props: {
         }
       };
 
-      return <InlineSelect options={props.config.items} value={selected[0]} onChange={setNewChoice} />;
+      return <InlineSelect options={items} value={selected[0]} onChange={setNewChoice} />;
     }
 
     case "template": {

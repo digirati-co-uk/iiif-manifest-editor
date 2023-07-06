@@ -1,0 +1,27 @@
+{
+  "installCommand": "custom-install",
+  "buildCommand": "custom-build",
+  "packages": [
+    "manifest-editor/npm/editor-api",
+    "manifest-editor/npm/iiif-browser",
+    "manifest-editor/npm/preview-vault",
+    "manifest-editor/npm/meta",
+    "manifest-editor/npm/client-vault",
+    "manifest-editor/npm/server-vault",
+    "manifest-editor/npm/preset",
+    "manifest-editor/npm/custom",
+    "manifest-editor/npm/shell"
+  ],
+  "publishDirectory": {
+    "@manifest-editor/editor-api": "manifest-editor/npm/editor-api",
+    "@manifest-editor/iiif-browser": "manifest-editor/npm/iiif-browser",
+    "@manifest-editor/preview-vault": "manifest-editor/npm/preview-vault",
+    "@manifest-editor/meta": "manifest-editor/npm/meta",
+    "@manifest-editor/client-vault": "manifest-editor/npm/client-vault",
+    "@manifest-editor/server-vault": "manifest-editor/npm/server-vault",
+    "@manifest-editor/preset": "manifest-editor/npm/preset",
+    "@manifest-editor/custom": "manifest-editor/npm/custom",
+    "@manifest-editor/shell": "manifest-editor/npm/shell"
+  },
+  "node": "18"
+}

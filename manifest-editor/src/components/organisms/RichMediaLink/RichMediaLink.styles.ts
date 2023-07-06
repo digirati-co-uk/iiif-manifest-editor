@@ -7,7 +7,6 @@ const Container = styled.div<{ $interactive?: boolean }>`
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
   border-radius: 3px;
   display: flex;
-  margin-bottom: 0.5em;
 
   ${(props) =>
     props.$interactive &&
@@ -19,10 +18,18 @@ const Container = styled.div<{ $interactive?: boolean }>`
         outline: 1px solid #488afc;
       }
     `}
+
+  margin-top: 1px;
+
+  &[data-margin="true"] {
+    margin-bottom: 0.5em;
+  }
 `;
 
 const Icon = styled.div`
-  padding-right: 0.5em;
+  margin-right: 0.5em;
+  min-width: 40px;
+  background: #f5f5f5;
 `;
 
 const Content = styled.div`
@@ -59,6 +66,16 @@ const Link = styled.a`
   min-width: 0;
 `;
 
+const NoLink = styled.div`
+  color: #bdbdbd;
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  min-width: 0;
+`;
+
 const Label = styled.div`
   color: #9a9a9a;
   font-size: 0.8em;
@@ -70,6 +87,7 @@ export const RichMediaLinkStyles = {
   Icon,
   Title,
   Link,
+  NoLink,
   Label,
   Content,
   TitleContainer,

@@ -72,7 +72,7 @@ export function ExplorerOutput(props: ExplorerOutputProps) {
   }, [props.types, selectedFormat.supportedTypes]);
 
   const [valid, hasValid, mostSpecific] = useValidTargets(validFormats);
-  const output = mostSpecific ? vault.get<any>(valid[mostSpecific]) : undefined;
+  const output = mostSpecific ? vault.get<any>(valid[mostSpecific] as any) : undefined;
 
   // Configured actions.
   const actions = useMemo(

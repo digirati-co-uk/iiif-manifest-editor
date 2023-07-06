@@ -15,16 +15,19 @@ import { InternationalString } from "@iiif/presentation-3";
 import { LocaleString } from "@/atoms/LocaleString";
 
 export function ManifestOpener() {
-  const { changeApp } = useApps();
+  const { changeApp, editProject } = useApps();
   const form = useRef<HTMLFormElement>(null);
-  const { createProjectFromManifestId } = useProjectCreators();
+  const { createProjectFromManifestId, createProjectFromCollectionId } = useProjectCreators();
   const { current: currentProject } = useProjectContext();
+
   const currentProjectWarning = () => (
     <InfoMessage>
       {currentProject?.name}
-      <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
-        Continue editing
-      </Button>
+      {currentProject ? (
+        <Button style={{ marginLeft: 20 }} onClick={() => editProject(currentProject)}>
+          Continue editing
+        </Button>
+      ) : null}
     </InfoMessage>
   );
   const [loading, setLoading] = useState(false);
@@ -35,7 +38,11 @@ export function ManifestOpener() {
   async function loadChosen() {
     if (chosen) {
       try {
-        await createProjectFromManifestId(chosen.id);
+        if (chosen.type === "Manifest") {
+          await createProjectFromManifestId(chosen.id);
+        } else {
+          await createProjectFromCollectionId(chosen.id);
+        }
       } catch (e) {
         setLoading(false);
         setSuccess(false);
@@ -61,7 +68,7 @@ export function ManifestOpener() {
         setError("Unknown manifest");
         return;
       }
-      if (result.type !== "Manifest" || !result.id) {
+      if ((result.type !== "Manifest" && result.type !== "Collection") || !result.id) {
         setLoading(false);
         setError(`Expected manifest, got ${result.type}`);
         return;
@@ -97,16 +104,16 @@ export function ManifestOpener() {
             <S.ErrorBox>{error}</S.ErrorBox>
           ) : loading ? (
             <S.LoadingBox $loading={true}>
-              <Spinner /> Loading manifest
+              <Spinner /> Loading
             </S.LoadingBox>
           ) : success && chosen ? (
             <>
               <S.LoadingBox>
-                <TickIcon /> Valid manifest (<LocaleString as="strong">{chosen.label}</LocaleString>)
+                <TickIcon /> Valid {chosen.type} (<LocaleString as="strong">{chosen.label}</LocaleString>)
               </S.LoadingBox>
               <S.OpenManifest>
                 <Button onClick={loadChosen}>
-                  Open manifest <RightArrow />
+                  Open {chosen.type} <RightArrow />
                 </Button>
               </S.OpenManifest>
             </>

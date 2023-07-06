@@ -1,9 +1,9 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
-import { FlexContainerColumn } from "../../components/layout/FlexContainer";
-import { PaddingComponentLarge } from "../../atoms/PaddingComponent";
-import { LoadManifest } from "../../components/widgets/LoadManifest/LoadManifest";
-import { RecentFiles } from "../../components/widgets/RecentFiles";
-import { GithubContext } from "../../shell/DesktopContext/components/GithubContext";
+import { LayoutPanel } from "@/shell";
+import { FlexContainerColumn } from "@/components/layout/FlexContainer";
+import { PaddingComponentLarge } from "@/atoms/PaddingComponent";
+import { LoadManifest } from "@/components/widgets/LoadManifest/LoadManifest";
+import { RecentFiles } from "@/components/widgets/RecentFiles";
+import { GithubContext } from "@/shell/DesktopContext/components/GithubContext";
 
 export default { id: "splash", title: "Splash", type: "launcher", desktop: true };
 

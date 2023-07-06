@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { ShellHeaderStrip } from "./ShellHeaderStrip";
-import { FlexContainer } from "../../components/layout/FlexContainer";
-import { ManifestEditorIcon } from "../../icons/ManifestEditorIcon";
-import { DropdownPreviewMenu } from "../../atoms/DropdownPreviewMenu";
-import { PreviewModal } from "../../components/modals/PreviewModal";
+import { FlexContainer } from "@/components/layout/FlexContainer";
+import { ManifestEditorIcon } from "@/icons/ManifestEditorIcon";
+import { DropdownPreviewMenu } from "@/atoms/DropdownPreviewMenu";
+import { PreviewModal } from "@/components/modals/PreviewModal";
 import { Persistance } from "./Shell";
-import { Button } from "../../atoms/Button";
-import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
-import { DownIcon } from "../../icons/DownIcon";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
+import { Button } from "@/atoms/Button";
+import { Dropdown, DropdownContent } from "@/atoms/Dropdown";
+import { DownIcon } from "@/icons/DownIcon";
+import { useApps } from "@/shell";
+import { useProjectContext } from "@/shell/ProjectContext/ProjectContext";
 
 export const ShellHeader: React.FC<{
   savePreviewLink: () => Promise<void>;

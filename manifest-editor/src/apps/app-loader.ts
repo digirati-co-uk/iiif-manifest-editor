@@ -1,11 +1,12 @@
-import { LayoutProps } from "../shell/Layout/Layout.types";
+import { LayoutProps } from "@/shell";
 
-type LoadedApp = Partial<LayoutProps> & {
+export type LoadedApp = Partial<LayoutProps> & {
   default: {
     id: string;
     title: string;
     type?: "manifest" | "launcher";
     project?: boolean;
+    projectType?: "Manifest" | "Collection";
     dev?: boolean;
     desktop?: boolean;
     web?: boolean;
@@ -17,12 +18,6 @@ export type MappedApp = {
   metadata: LoadedApp["default"];
   layout: LayoutProps;
 };
-
-const state = internalGetApps(import.meta.globEager("./**/index.ts*"));
-
-export function getApps() {
-  return state;
-}
 
 export type AppDefinition = {
   allApps: Record<string, MappedApp>;

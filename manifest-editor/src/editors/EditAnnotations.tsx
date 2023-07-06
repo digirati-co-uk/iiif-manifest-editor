@@ -1,6 +1,5 @@
 import React from "react";
-import { ErrorBoundary } from "../atoms/ErrorBoundary";
-import { useLayoutState } from "../shell/Layout/Layout.context";
+import { useLayoutState } from "@/shell";
 
 export function EditAnnotations() {
   const { rightPanel } = useLayoutState();

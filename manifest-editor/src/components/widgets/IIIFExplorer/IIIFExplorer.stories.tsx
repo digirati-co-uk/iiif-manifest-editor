@@ -65,7 +65,7 @@ export const ImageService = () => (
 export const MultiCanvas = () => (
   <IIIFExplorer
     entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }}
-    output={{ type: "json" }}
+    output={{ type: "content-state" }}
     outputTypes={["Canvas", "CanvasList"]}
     outputTargets={[
       {

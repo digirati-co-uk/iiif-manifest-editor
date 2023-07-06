@@ -1,23 +1,14 @@
 import { useExplorerStore } from "@/components/widgets/IIIFExplorer/IIIFExplorer.store";
 import { useStore } from "zustand";
-import {
-  AnnotationContext,
-  CanvasContext,
-  CanvasPanel,
-  ManifestContext,
-  useCanvas,
-  useManifest,
-  useVaultSelector,
-} from "react-iiif-vault";
-import { CanvasNormalized } from "@iiif/presentation-3";
-import React, { useMemo, useReducer, useState } from "react";
+import { CanvasContext, CanvasPanel, ManifestContext, useCanvas, useManifest } from "react-iiif-vault";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MediaControls } from "@/_panels/center-panels/CanvasPanelViewer/components/MediaControls";
 import invariant from "tiny-invariant";
-import { ViewerContainer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer.styles";
 import { ViewControls } from "@/_panels/center-panels/CanvasPanelViewer/components/ViewControls";
 import { BoxStyle, DrawBox } from "@atlas-viewer/atlas";
 import { RegionHighlight } from "@/madoc/components/BoxSelector.Atlas";
 import { CanvasContainer } from "@/components/widgets/IIIFExplorer/styles/CanvasView.styles";
+import { startViewTransition } from "@/helpers/start-view-transition";
 
 interface CanvasInnerViewProps {
   highlightStyle?: BoxStyle;
@@ -32,11 +23,18 @@ export function CanvasViewInner({ highlightStyle, regionEnabled }: CanvasInnerVi
   const setCurrentSelector = useStore(store, (s) => s.setCurrentSelector);
   const selected = useStore(store, (s) => s.selected);
   const replace = useStore(store, (s) => s.replace);
+  const container = useRef<HTMLDivElement>(null);
 
   // "Edit mode" if CanvasRegion or ImageServiceRegion is supported
   // Need new state for the box?
 
   invariant(canvas);
+
+  // useLayoutEffect(() => {
+  //   if (container.current) {
+  //     (container.current as any).style.viewTransitionName = canvas.id;
+  //   }
+  // }, [canvas.id]);
 
   const index = useMemo(() => {
     return manifest ? manifest.items.findIndex((c) => c.id === canvas.id) : -1;
@@ -50,7 +48,7 @@ export function CanvasViewInner({ highlightStyle, regionEnabled }: CanvasInnerVi
   }, [index, manifest]);
 
   return (
-    <div className={CanvasContainer}>
+    <div className={CanvasContainer} ref={container}>
       <CanvasPanel.Viewer
         key={canvas.id}
         // onCreated={(preset) => void (runtime.current = preset.runtime)}
@@ -65,8 +63,8 @@ export function CanvasViewInner({ highlightStyle, regionEnabled }: CanvasInnerVi
                 editMode={editMode}
                 enableNavigation={index !== -1}
                 toggleEditMode={regionEnabled ? () => setEditMode((e) => !e) : undefined}
-                onNext={next ? () => replace(next) : undefined}
-                onPrevious={prev ? () => replace(prev) : undefined}
+                onNext={next ? () => startViewTransition(() => replace(next)) : undefined}
+                onPrevious={prev ? () => startViewTransition(() => replace(prev)) : undefined}
                 clearSelection={() => setCurrentSelector(undefined)}
                 style={{ fontSize: "0.85em" }}
               />

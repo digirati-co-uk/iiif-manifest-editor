@@ -14,5 +14,5 @@ export function BehaviorEditorCanvas() {
     vault.modifyEntityField(canvas, "behavior", newValue);
   };
 
-  return <BehaviorEditor behavior={canvas.behavior} onChange={onChange} configs={[]} />;
+  return <BehaviorEditor behavior={canvas.behavior as string[]} onChange={onChange} configs={[]} />;
 }

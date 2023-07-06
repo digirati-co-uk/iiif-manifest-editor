@@ -1,6 +1,6 @@
-import { useProjectContext } from "../../../../shell/ProjectContext/ProjectContext";
-import { projectFromManifest } from "../../../../shell/ProjectContext/helpers/project-from-manifest";
-import { getManifestNomalized } from "../../../../helpers/getManifestNormalized";
+import { useProjectContext } from "@/shell";
+import { projectFromManifest } from "@/shell";
+import { getManifestNomalized } from "@/helpers/getManifestNormalized";
 import { useApps } from "@/shell/AppContext/AppContext";
 
 export function ProjectListing() {

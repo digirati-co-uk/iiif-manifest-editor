@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useCanvas } from "react-iiif-vault";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { FlexContainerColumn } from "../../components/layout/FlexContainer";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
+import { FlexContainerColumn } from "@/components/layout/FlexContainer";
 import { RightsForm } from "../RightsForm";
 import { StringSelector } from "../StringSelector";
-import { useConfig } from "../../shell/ConfigContext/ConfigContext";
+import { useConfig } from "@/shell";
 
 export const SingleValueInput: React.FC<{
   // Add to this list as we go

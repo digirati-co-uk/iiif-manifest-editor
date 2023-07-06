@@ -1,11 +1,10 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
+import { LayoutPanel } from "@/shell";
 import { Reference } from "@iiif/presentation-3";
 import { useEffect, useState } from "react";
-import { UniversalCopyTarget } from "../../shell/Universal/UniversalCopyPaste";
+import { UniversalCopyTarget } from "@/shell";
 import styled from "styled-components";
 import { useVault } from "react-iiif-vault";
-import { analyse } from "../../helpers/analyse";
-import { Spinner } from "../../madoc/components/icons/Spinner";
+import { Spinner } from "@/madoc/components/icons/Spinner";
 
 export default { id: "copy-paste", title: "Copy and paste", dev: true };
 

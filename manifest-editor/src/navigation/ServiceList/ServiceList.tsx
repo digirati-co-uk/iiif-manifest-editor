@@ -3,7 +3,7 @@ import { RichMediaLink } from "../../components/organisms/RichMediaLink/RichMedi
 import { parseServiceProfile } from "./ServiceList.utility";
 import { ServiceContainer } from "./ServiceList.styles";
 import { InputLabel } from "../../editors/Input";
-import { useLayoutActions } from "../../shell/Layout/Layout.context";
+import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 export function ServiceList(props: { resourceId: string; services: Service[] }) {
   const { stack } = useLayoutActions();

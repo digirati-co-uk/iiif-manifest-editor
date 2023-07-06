@@ -1,4 +1,4 @@
-import { ManifestNormalized } from "@iiif/presentation-3";
+import { ManifestNormalized } from "@iiif/presentation-3-normalized";
 
 export async function getManifestNomalized(id: string): Promise<ManifestNormalized | undefined> {
   let responseData: ManifestNormalized | undefined = undefined;

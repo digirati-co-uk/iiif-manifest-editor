@@ -28,7 +28,7 @@ export const LeftPanel = styled.div<{ $state?: TransitionStatus; $width: string;
   background: #fff;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   max-width: 720px;
   align-items: flex-end;
 
@@ -70,8 +70,7 @@ export const CenterPanel = styled.div`
   display: flex;
 
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 
   > * {
     min-width: 0;
@@ -82,7 +81,7 @@ export const RightPanel = styled.div<{ $state?: TransitionStatus; $width: string
   background: #fff;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   max-width: 720px;
 
   ${(props) => (props.$motion ? "transition: max-width 400ms;" : "")}
@@ -112,6 +111,7 @@ export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`
   height: 100%;
   min-width: 50px;
   transition: min-width 400ms;
+  overflow: hidden;
 
   ${(props) => {
     switch (props.$menu) {
@@ -165,4 +165,5 @@ export const PanelContent = styled.div`
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 `;

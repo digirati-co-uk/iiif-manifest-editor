@@ -1,7 +1,7 @@
 import { ExplorerFormat } from "@/components/widgets/IIIFExplorer/IIIFExplorer.types";
 import { getImageServices, canonicalServiceUrl } from "@atlas-viewer/iiif-image-api";
-import { CanvasNormalized } from "@iiif/presentation-3";
 import { createPaintingAnnotationsHelper } from "@iiif/vault-helpers";
+import { CanvasNormalized } from "@iiif/presentation-3-normalized";
 
 export const imageServiceFormat: ExplorerFormat<"image-service"> = {
   label: "Image service",

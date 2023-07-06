@@ -3,16 +3,16 @@ import { Publication } from "./types/Publication";
 import { Vault } from "@iiif/vault";
 import { Preview } from "./types/Preview";
 
-export type ProjectContext = ProjectState & {
-  actions: ProjectActions;
-  canDelete: boolean;
-};
-
 export interface ProjectState {
   current: EditorProject | null;
   allProjects: EditorProject[];
   loadingStatus: null | ProjectsLoadingStatus;
 }
+
+export type ProjectContext = ProjectState & {
+  actions: ProjectActions;
+  canDelete: boolean;
+};
 
 export interface ProjectsLoadingStatus {
   loading: boolean;
@@ -61,7 +61,7 @@ export interface EditorProject {
   name: string;
   filename?: string;
   thumbnail?: string;
-  resource: { id: string; type: "Manifest" }; // @todo at the moment, only Manifest
+  resource: { id: string; type: "Manifest" } | { id: string; type: "Collection" }; // @todo at the moment, only Manifest
   storage: Storage;
   settings: Record<string, never>;
   publications: Publication[];
@@ -89,12 +89,14 @@ export interface ProjectStorage<S extends Storage, DataType = any, Ref extends S
 
   // Fetching
   create(project: EditorProject, data: DataType): Promise<Ref | void>;
-  getStorage(ref: Ref): Promise<S | null>;
   saveStorage(ref: Ref): Promise<void>;
   deleteStorage(ref: Ref): Promise<void>;
+  canCreate(): boolean;
+  canDelete(): boolean;
 
   // Runtime
   getBackendStorage(project: EditorProject): Ref;
   createVaultInstance(project: EditorProject): [Vault, Promise<void>];
+  closeVaultInstance(project: EditorProject, vault: Vault): void;
   shouldUpdateWithVault(): boolean;
 }

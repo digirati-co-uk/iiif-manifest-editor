@@ -1,8 +1,8 @@
 import React from "react";
 import { useExternalCollection } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { Loading } from "../../atoms/Loading";
+import { useApps } from "@/shell";
+import { Loading } from "@/atoms/Loading";
 
 export const IIIFBrowser: React.FC = () => {
   const { currentApp } = useApps();

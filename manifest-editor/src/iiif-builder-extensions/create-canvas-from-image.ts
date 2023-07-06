@@ -1,5 +1,6 @@
 import { IIIFBuilder } from "iiif-builder";
-import { CanvasNormalized, ExternalWebResource } from "@iiif/presentation-3";
+import { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import { ExternalWebResource } from "@iiif/presentation-3";
 import { v4 } from "uuid";
 
 export function createCanvasFromImage(

@@ -1,10 +1,10 @@
 import { useCanvas, useVault } from "react-iiif-vault";
 import { useManifest } from "../../hooks/useManifest";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
 import { addMapping, importEntities } from "@iiif/vault/actions";
-import { MediaBody } from "../../types/media-body";
+import { MediaBody } from "@/___delete/types/media-body";
 
 export const CanvasThumbnailForm = () => {
   const editorContext = useManifestEditor();

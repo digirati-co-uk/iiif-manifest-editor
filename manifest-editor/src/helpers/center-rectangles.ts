@@ -8,8 +8,8 @@ export function centerRectangles(
 
   if (aAr === bAr) {
     return {
-      x: 0,
-      y: 0,
+      x: (a.width * (1 - downscale)) / 2,
+      y: (a.height * (1 - downscale)) / 2,
       width: a.width * downscale,
       height: a.height * downscale,
     };

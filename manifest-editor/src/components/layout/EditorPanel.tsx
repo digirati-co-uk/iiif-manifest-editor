@@ -3,7 +3,7 @@ import { FlexContainerColumn, FlexContainerRow } from "./FlexContainer";
 import { Button } from "../../atoms/Button";
 import { CloseIcon } from "../../icons/CloseIcon";
 
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 
 import styled, { css } from "styled-components";
 import { OpenFullscreen } from "../../icons/OpenFullscreen";

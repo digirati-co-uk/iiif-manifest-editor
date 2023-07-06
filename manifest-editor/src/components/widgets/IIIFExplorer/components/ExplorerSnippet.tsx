@@ -1,11 +1,11 @@
-import { CollectionNormalized, ManifestNormalized, Reference } from "@iiif/presentation-3";
+import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
+import { Reference } from "@iiif/presentation-3";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/CollectionListing.styles";
 import folder from "@/components/widgets/IIIFExplorer/icons/folder.svg";
-import { ManifestContext, useExternalResource, useThumbnail, useVault, useVaultSelector } from "react-iiif-vault";
+import { ManifestContext, useVault, useVaultSelector } from "react-iiif-vault";
 import { LocaleString } from "@/atoms/LocaleString";
 import { useAccessibleClick } from "@/hooks/useAccessibleClick";
-import { isVisible } from "@/helpers/is-visible";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ManifestIcon } from "@/components/widgets/IIIFExplorer/components/ManifestIcon";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { ErrorBoundary } from "react-error-boundary";
@@ -79,7 +79,7 @@ function LoadManifestComponent({ resource }: { resource: Reference }) {
   useEffect(() => {
     try {
       if (resource?.type === "Manifest") {
-        const full = vault.get<ManifestNormalized>(resource, { skipSelfReturn: false });
+        const full = vault.get<ManifestNormalized>(resource as any, { skipSelfReturn: false });
         if (full && (!full.thumbnail || full.thumbnail.length === 0)) {
           vault.loadManifest(resource?.id);
         }

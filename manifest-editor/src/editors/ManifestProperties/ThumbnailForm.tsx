@@ -9,7 +9,7 @@ import { EmptyProperty } from "../../atoms/EmptyProperty";
 import { LightBoxWithoutSides } from "../../atoms/LightBox";
 import { ThumbnailImg } from "../../atoms/Thumbnail";
 import { ThumbnailContainer } from "../../atoms/ThumbnailContainer";
-import { useLayoutActions } from "../../shell/Layout/Layout.context";
+import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 // Handles the whole list and speaks to the vault.
 export const ThumbnailForm = () => {

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useManifest } from "react-iiif-vault";
 import styled from "styled-components";
-import { useAppState } from "../../../shell/AppContext/AppContext";
+import { useAppState } from "@/shell";
 
 const Container = styled.div`
   width: 100%;
@@ -19,7 +19,7 @@ export function AnnotationPreview({ region }: { region: string }) {
           min-width: 0;
           min-height: 0;
           --atlas-container-flex: 1 1 0px;
-          --atlas-background:  #f9f9f9;
+          --atlas-background:  #E5E7F0;
         }
           canvas-panel {
             display: flex;
@@ -27,7 +27,7 @@ export function AnnotationPreview({ region }: { region: string }) {
             min-width: 0;
 
             --atlas-container-flex: 1 1 0px;
-            --atlas-background: #efefef;
+            --atlas-background:  #E5E7F0;
           }
       `}</style>
 

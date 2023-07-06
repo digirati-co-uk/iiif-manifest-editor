@@ -1,5 +1,5 @@
 import { ExplorerAction } from "../IIIFExplorer.types";
-import { ManifestNormalized } from "@iiif/presentation-3";
+import { ManifestNormalized } from "@iiif/presentation-3-normalized";
 
 export const openNewWindowTarget: ExplorerAction<"open-new-window"> = {
   label: "Open",

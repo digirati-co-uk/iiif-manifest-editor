@@ -1,9 +1,9 @@
 import { Shell } from "../../apps/Shell/Shell";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import { ManifestEditor } from "../../apps/ManifestEditor/ManifestEditor";
+import { ManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor";
 import styled, { ThemeProvider } from "styled-components";
 import { useManifest } from "react-iiif-vault";
-import { ManifestEditorProvider } from "../../apps/ManifestEditor/ManifestEditor.context";
+import { ManifestEditorProvider } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { Fragment } from "react";
 import { RenderApp } from "./render-app";
 import { AppStateProvider, useApps } from "../../shell/AppContext/AppContext";

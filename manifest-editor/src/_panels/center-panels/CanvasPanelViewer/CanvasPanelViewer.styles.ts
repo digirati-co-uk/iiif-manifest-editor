@@ -14,4 +14,8 @@ export const ViewerContainer = styled.div`
   flex: 1 1 0px;
   flex-direction: column;
   min-width: 0;
+
+  .atlas-canvas {
+    view-transition-name: viewer-container;
+  }
 `;

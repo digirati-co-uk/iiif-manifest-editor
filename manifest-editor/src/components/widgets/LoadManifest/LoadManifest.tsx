@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Input, Submit } from "../../../editors/Input";
-import { Button, SecondaryButton } from "../../../atoms/Button";
-import { FlexContainer, FlexContainerColumn } from "../../layout/FlexContainer";
-import { analyse } from "../../../helpers/analyse";
-import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
+import { Input, Submit } from "@/editors/Input";
+import { Button, SecondaryButton } from "@/atoms/Button";
+import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
+import { analyse } from "@/helpers/analyse";
+import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
 import { LoadManifestWidget } from "./LoadManifest.style";
-import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
-import { useProjectCreators } from "../../../shell/ProjectContext/ProjectContext.hooks";
-import { useApps } from "../../../shell/AppContext/AppContext";
-import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
-import { TickIcon } from "../../../icons/TickIcon";
-import { BlockIcon } from "../../../icons/BlockIcon";
-import { CloseIcon } from "../../../icons/CloseIcon";
+import { useProjectContext } from "@/shell";
+import { useProjectCreators } from "@/shell";
+import { useApps } from "@/shell";
+import { InfoMessage } from "@/madoc/components/callouts/InfoMessage";
+import { TickIcon } from "@/icons/TickIcon";
+import { BlockIcon } from "@/icons/BlockIcon";
+import { CloseIcon } from "@/icons/CloseIcon";
 
 export const LoadManifest: React.FC = () => {
   const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();

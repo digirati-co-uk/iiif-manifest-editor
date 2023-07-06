@@ -8,13 +8,13 @@ import {
   CanvasContext,
   useVault,
 } from "react-iiif-vault";
-import { CanvasNormalized } from "@iiif/presentation-3";
+import { CanvasNormalized } from "@iiif/presentation-3-normalized";
 import { useKeyboardListNavigation } from "@/hooks/use-keyboard-list-navigation";
 import React, { useLayoutEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import * as $ from "@/components/widgets/IIIFExplorer/styles/ManifestListing.styles";
 import { CanvasSnippet } from "@/components/widgets/IIIFExplorer/components/CanvasSnippet";
-import { Spinner } from "../../../../madoc/components/icons/Spinner";
+import { Spinner } from "@/madoc/components/icons/Spinner";
 
 function useBestCanvasRatio() {
   const manifest = useManifest();

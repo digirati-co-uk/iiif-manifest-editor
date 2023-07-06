@@ -1,6 +1,5 @@
 import { scss as css } from "@acab/ecsstatic";
 export const collectionListingContainer = css`
-  color: red;
   padding: 0 0.2em;
   overflow-y: auto;
   --grid-icon-size: 130px;

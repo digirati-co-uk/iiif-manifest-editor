@@ -1,16 +1,18 @@
 import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { MappedApp } from "../../apps/app-loader";
-import { useLocalStorage } from "../../madoc/use-local-storage";
+import type { MappedApp } from "@/apps/app-loader";
+import { useLocalStorage, useOptionalLocalStorage } from "@/madoc/use-local-storage";
 import invariant from "tiny-invariant";
 import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
 import qs from "query-string";
+import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
   currentApp: { id: string; args?: any };
   initialApp: { id: string; args?: any };
   changeApp: (app: { id: string; args?: any }) => void;
+  editProject: (project: EditorProject) => void;
 };
 
 export type AppState = { state: null | any; setState: SetStateAction<any> };
@@ -64,9 +66,13 @@ export function AppStateProvider(props: { appId: string; initialValue?: any; arg
   );
 }
 
-function useCurrentApp(initialApp?: { id: string; args?: any }) {
+function useCurrentApp(initialApp?: { id: string; args?: any }, enableLocalStorage = false) {
   const s = useAppState();
-  const [currentApp, changeApp] = useLocalStorage("SelectedApplication", initialApp || { id: "splash" });
+  const [currentApp, changeApp] = useOptionalLocalStorage(
+    "SelectedApplication",
+    initialApp || { id: "splash" },
+    !enableLocalStorage
+  );
 
   useEffect(() => {
     if ((import.meta.env.DEV || import.meta.env.PULL_REQUEST === "true") && window) {
@@ -87,19 +93,32 @@ function useCurrentApp(initialApp?: { id: string; args?: any }) {
 export function AppProvider({
   apps,
   initialApp,
+  saveCurrentApp = true,
   children,
 }: {
   apps: Record<string, MappedApp>;
   initialApp?: AppContext["currentApp"];
+  saveCurrentApp?: boolean;
   children: ReactNode;
 }) {
-  const [currentApp, changeApp] = useCurrentApp(initialApp);
+  const [currentApp, changeApp] = useCurrentApp(initialApp, saveCurrentApp);
+
+  const editProject = (project: EditorProject) => {
+    if (project.resource.type === "Manifest") {
+      changeApp({ id: "manifest-editor" });
+    }
+    if (project.resource.type === "Collection") {
+      changeApp({ id: "collection-editor" });
+    }
+  };
+
   const ctx = useMemo<AppContext>(
     () => ({
       currentApp: currentApp || { id: "splash" },
       initialApp: initialApp || { id: "splash" },
       apps,
       changeApp,
+      editProject,
     }),
     [initialApp, apps, currentApp]
   );

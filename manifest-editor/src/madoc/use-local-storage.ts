@@ -3,6 +3,16 @@ import mitt from "mitt";
 
 const lsEmitter = mitt();
 
+export function useOptionalLocalStorage<T>(key: string, initialValue?: T, disabled?: boolean) {
+  const [storedValue, setStoredValue] = useState<T | undefined>(initialValue);
+  const [localStorageValue, setLocalStorageValue] = useLocalStorage(key, initialValue);
+
+  if (disabled) {
+    return [storedValue, setStoredValue] as const;
+  }
+  return [localStorageValue, setLocalStorageValue] as const;
+}
+
 export function useLocalStorage<T>(key: string, initialValue?: T) {
   const lastStoredValue = useRef<string>();
 

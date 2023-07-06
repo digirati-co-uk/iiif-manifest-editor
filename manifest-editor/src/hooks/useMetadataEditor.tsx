@@ -2,7 +2,6 @@ import { InternationalString } from "@iiif/presentation-3";
 import produce from "immer";
 import { useMemo, useReducer } from "react";
 import { useClosestLanguage } from "../atoms/LocaleString";
-import { MetadataDefinition } from "../types/metadata-definition";
 
 export type MetadataEditorState = {
   fieldIds: number[]; // for ordering.
@@ -25,6 +24,18 @@ export type MetadataDiff = {
     language: string;
     value: string;
   }>;
+};
+
+export type MetadataDefinition = {
+  id?: number;
+  language: string;
+  value: string;
+  key: string;
+  source?: string;
+  edited?: boolean;
+  auto_update?: boolean;
+  readonly?: boolean;
+  data?: any;
 };
 
 export type MetadataEditorActions =

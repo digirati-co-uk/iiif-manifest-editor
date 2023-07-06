@@ -1,6 +1,6 @@
-import { InternationalString } from "@hyperion-framework/types";
 import { useTranslation } from "react-i18next";
 import React, { CSSProperties, useMemo } from "react";
+import { InternationalString } from "@iiif/presentation-3";
 
 export const LanguageString: React.FC<{ [key: string]: any } & { as?: string | React.FC<any>; language: string }> = ({
   as: Component,
@@ -95,7 +95,7 @@ export const useClosestLanguage = (getLanguages: () => string[], deps: any[] = [
   return useMemo(() => {
     const languages = getLanguages();
 
-    return getClosestLanguage(i18nLanguage, languages, i18nLanguages);
+    return getClosestLanguage(i18nLanguage, languages, i18nLanguages as string[]);
   }, [i18nLanguages, i18nLanguage, ...deps]);
 };
 
@@ -132,7 +132,7 @@ export function useCreateLocaleString() {
 
   return function createLocaleString(inputText: InternationalString | string | null | undefined, defaultText?: string) {
     const languages = Object.keys(inputText || {});
-    const language = getClosestLanguage(i18nLanguage, languages, i18nLanguages);
+    const language = getClosestLanguage(i18nLanguage, languages, i18nLanguages as string[]);
 
     if (!inputText) {
       return defaultText || "";
@@ -158,7 +158,7 @@ export const LocaleString: React.FC<{
   defaultText?: string;
   to?: string;
   enableDangerouslySetInnerHTML?: boolean;
-  children: InternationalString | null | undefined;
+  children: string | InternationalString | null | undefined;
   style?: React.CSSProperties;
 }> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
   const [text, language] = useLocaleString(children, defaultText);

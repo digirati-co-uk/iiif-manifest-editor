@@ -1,7 +1,5 @@
 import { LayoutState, PanelActions, PanelActionType, PinnablePanelActions } from "./Layout.types";
 import { Dispatch, useMemo } from "react";
-import { flushSync } from "react-dom";
-
 export function usePanelActions(
   panel: keyof LayoutState,
   dispatch: Dispatch<PanelActionType>

@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
+import { LayoutPanel } from "@/shell";
 
 export default { id: "collection-explorer", title: "Collection explorer", type: "launcher" };
 

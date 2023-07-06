@@ -68,7 +68,7 @@ export type SelectorHelperEventTypes =
   | "remove-event-listener"
   | "image-preview-request";
 
-export const SelectorControllerProvider: React.FC = ({ children }) => {
+export const SelectorControllerProvider: React.FC = ({ children }: any) => {
   return (
     <SelectorHelperReactContext.Provider value={useMemo(() => mitt(), [])}>
       {children}

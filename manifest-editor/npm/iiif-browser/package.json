@@ -1,0 +1,38 @@
+{
+  "name": "@manifest-editor/iiif-browser",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
+  "types": "./index.d.ts",
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault",
+    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
+    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
+    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "globalName": "IIIFBrowser"
+}

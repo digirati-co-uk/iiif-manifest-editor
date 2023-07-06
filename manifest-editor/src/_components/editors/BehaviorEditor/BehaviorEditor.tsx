@@ -12,6 +12,7 @@ import { Button } from "@/atoms/Button";
 import { CloseIcon } from "@/icons/CloseIcon";
 
 export interface BehaviorEditorProps {
+  id?: string;
   behavior: string[];
   onChange: (newValue: string[]) => void;
   configs: BehaviorEditorConfiguration[];
@@ -37,11 +38,11 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
   };
 
   return (
-    <>
+    <div id={props.id}>
       {totalConfigs > 0 ? (
         <>
           <PaddedSidebarContainer>
-            <InputLabel>Custom behaviors</InputLabel>
+            <InputLabel>Built-in behaviors</InputLabel>
           </PaddedSidebarContainer>
           <AccordionContainer>
             {Object.values(parsedConfig).map(({ ref, config }) => (
@@ -54,8 +55,8 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
       ) : null}
       <PaddedSidebarContainer>
         <InputLabel>Behaviors</InputLabel>
-        <InputContainer fluid>
-          {filtered.map((t) =>
+        <InputContainer fluid key={filtered.length}>
+          {filtered.map((t, k) =>
             t.hasConfig ? (
               <ComposableInput.Container
                 key={t.value}
@@ -69,12 +70,12 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
                 }}
               >
                 <ComposableInput.ReadOnly>{t.value}</ComposableInput.ReadOnly>
-                <div>
-                  Edit <RightArrow />
+                <div style={{ display: 'flex', alignItems: 'center', color: '#666' }}>
+                  edit <RightArrow style={{ margin: '0 0.4em', width: '1.2em' }}/>
                 </div>
               </ComposableInput.Container>
             ) : (
-              <ComposableInput.Container>
+              <ComposableInput.Container key={k}>
                 <ComposableInput.Text
                   value={t.value}
                   onChange={(e) => changeBehaviorValue(t.value, e.currentTarget.value)}
@@ -110,26 +111,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
             <AddIcon /> Add new value
           </div>
         )}
-
-        <datalist id="behaviors">
-          <option value="auto-advance" />
-          <option value="no-auto-advance" />
-          <option value="repeat" />
-          <option value="no-repeat" />
-          <option value="unordered" />
-          <option value="individuals" />
-          <option value="continuous" />
-          <option value="paged" />
-          <option value="facing-pages" />
-          <option value="non-paged" />
-          <option value="multi-part" />
-          <option value="together" />
-          <option value="sequence" />
-          <option value="thumbnail-nav" />
-          <option value="no-nav" />
-          <option value="hidden" />
-        </datalist>
       </PaddedSidebarContainer>
-    </>
+    </div>
   );
 }

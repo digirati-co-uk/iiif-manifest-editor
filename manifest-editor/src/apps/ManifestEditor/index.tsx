@@ -1,217 +1,75 @@
 import { LayoutPanel } from "@/shell/Layout/Layout.types";
-import { ManifestProperties } from "@/_panels/center-panels/ManifestProperties/ManifestProperties";
-import { AnnotationContext, CanvasContext } from "react-iiif-vault";
-import { CanvasPanelViewer } from "@/_panels/center-panels/CanvasPanelViewer/CanvasPanelViewer";
-import { LeftPanelMenu } from "./components/LeftPanelMenu";
-import { CanvasMedia } from "@/resource-editors/canvas/CanvasMedia";
-import { ServiceEditor } from "@/resource-editors/service/ServiceEditor";
-import { CanvasThumbnailForm } from "@/editors/ThumbnailProperties/CanvasThumbnailForm";
-import { ThumbnailPage } from "./components/ThumbnailPage";
-import { CanvasList } from "@/_panels/left-panels/CanvasList/CanvasList";
-import { RangeNavigation } from "@/_panels/left-panels/RangeNavigation/RangeNavigation";
-import { CanvasVerticalThumbnails } from "@/_panels/left-panels/CanvasVerticalThumbnails/CanvasVerticalThumbnails";
-import { CanvasThumbnailView } from "@/_panels/left-panels/CanvasThumbnailView/CanvasThumbnailView";
-import { OutlineView } from "@/_panels/left-panels/OutlineView/OutlineView";
-import { ThumbnailGridView } from "@/_panels/center-panels/ThumbnailGridView/ThumbnailGridView";
-import { ManifestPropertiesList } from "@/_panels/center-panels/ManifestPropertiesList/ManifestPropertiesList";
-import { CanvasProperties } from "@/_panels/right-panels/CanvasProperties/CanvasProperties";
-import { CreatePaintingAnnotation } from "@/_panels/right-panels/CreatePaintingAnnotation/CreatePaintingAnnotation";
-import { CanvasMedia as CanvasMediaPanel } from "@/_panels/right-panels/CanvasMedia/CanvasMedia";
+import { canvasListing } from "@/apps/ManifestEditor/left-panels/canvas-listing";
+import { baseEditor } from "@/_panels/right-panels/BaseEditor";
+import { technicalProperties } from "@/_editors/TechnicalProperties";
+import { descriptiveProperties } from "@/_editors/DescriptiveProperties";
+import { imageEditor } from "@/_editors/ImageEditor";
+import { CompatibilityTable } from "@/_panels/center-panels/CompatibilityTable/CompatibilityTable";
+import { metadata } from "@/_editors/Metadata";
+import { baseCreator } from "@/_panels/right-panels/BaseCreator";
+import { linkingProperties } from "@/_editors/LinkingProperties";
+import { ManifestItemsGrid } from "@/_panels/left-panels/CanvasGrid/CanvasGrid";
+import {
+  canvasStructuralProperties,
+  manifestStructuralProperties,
+  rangeStructuralProperties,
+} from "@/_editors/StructuralProperties";
+import { mediaEditor } from "@/_editors/MediaEditor";
+import { allCreators } from "@/_creators";
+import { htmlBodyEditor } from "@/_editors/HTMLBodyEditor";
+import { inlineAnnotationPageEditor } from "@/_editors/InlineAnnotationPageEditor";
+import React from "react";
+import { CanvasPanelEditor } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor";
+import { tutorial } from "@/_panels/right-panels/Tutotiral";
+import { overviewCanvasEditor } from "@/_editors/OverviewCanvasEditor";
+import { combinedProperties } from "@/_editors/CombinedEditor";
+import { allEditors } from "@/_editors";
+import { ExportPanel } from "@/_panels/center-panels/ExportPanel/ExportPanel";
 
-export default { id: "manifest-editor", title: "Manifest editor", project: true };
-
-export const leftPanelMenu = <LeftPanelMenu />;
-
-export const leftPanels: LayoutPanel[] = [
-  {
-    id: "thumbnail-view",
-    label: "Canvases",
-    defaultState: { width: 128 },
-    render: (state, { actions }, ctx) => (
-      <CanvasThumbnailView
-        width={state.width}
-        onCanvasClick={(canvasId) => {
-          ctx.setState({ canvasId });
-          actions.change("canvas-properties");
-        }}
-        onCanvasDoubleClick={(canvasId) => {
-          ctx.setState({ canvasId });
-          actions.open("canvas-properties");
-        }}
-      />
-    ),
-  },
-  {
-    id: "canvas-vertical-list",
-    label: "Canvases",
-    render: () => <CanvasVerticalThumbnails />,
-  },
-  {
-    id: "outline-view",
-    label: "Outline view",
-    render: () => <OutlineView />,
-  },
-  {
-    id: "canvas-list-view",
-    label: "Canvas list view",
-    render: () => <CanvasList />,
-  },
-  {
-    id: "canvas-range-view",
-    label: "Structure",
-    render: () => <RangeNavigation />,
-  },
-];
+export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
 export const centerPanels: LayoutPanel[] = [
   {
     id: "current-canvas",
     label: "Current canvas",
     icon: "",
-    render: (state, { actions }) => (
-      <CanvasPanelViewer
-        onEditAnnotation={(id) => {
-          actions.stack("canvas-media", { annotation: id });
-        }}
-      />
-    ),
+    render: (state, { actions }) => <CanvasPanelEditor />,
   },
   {
-    id: "thumbnail-grid",
-    label: "Thumbnail grid",
+    id: "center-panel-empty",
+    label: "Center panel",
     icon: "",
-    render: (state, { actions }, ctx) => (
-      <ThumbnailGridView
-        canvasIds={state.canvasIds}
-        clearCanvases={() => {
-          actions.centerPanel.change({ id: "thumbnail-grid", state: { canvasIds: undefined } });
-        }}
-        onChangeCanvas={(canvasId, thumbnails) => {
-          ctx.setState({ canvasId });
-          actions.open("canvas-properties");
-          if (thumbnails) {
-            actions.open("current-canvas");
-          }
-        }}
-      />
-    ),
+    render: () => <CompatibilityTable />,
+  },
+  {
+    id: "export",
+    label: "Export",
+    icon: "",
+    render: () => <ExportPanel />,
   },
 ];
-
+export const leftPanels: LayoutPanel[] = [
+  canvasListing,
+  {
+    id: "image-grid",
+    label: "Image grid",
+    render: () => <ManifestItemsGrid />,
+  },
+];
 export const rightPanels: LayoutPanel[] = [
   {
-    id: "manifest-properties",
-    label: "Manifest properties",
-    defaultState: { current: 0 },
-    options: { tabs: true, minWidth: 400 },
-    // backAction: (state, { actions }) => actions.open("canvas-properties"),
-    render: (state: { current: number }, { actions }, app) => (
-      <ManifestProperties
-        current={state.current}
-        setCurrent={(idx) => actions.change("manifest-properties", { current: idx })}
-      />
-    ),
+    id: "right-panel-empty",
+    label: "Right panel",
+    icon: "",
+    render: () => <div />,
   },
-  {
-    id: "manifest-properties-list",
-    label: "Manifest properties (list)",
-    render: () => {
-      return <ManifestPropertiesList />;
-    },
-  },
-  {
-    id: "canvas-properties",
-    label: "Canvas properties",
-    defaultState: { current: 0 },
-    options: { tabs: true, minWidth: 400 },
-    // backAction: (state, { actions }) => actions.open("manifest-properties"),
-    render: (state: { current: number }, { actions }, app) => (
-      <CanvasProperties
-        canvasId={app.state.canvasId}
-        currentPanel={state.current}
-        setCurrentPanel={(idx) => actions.change("canvas-properties", { current: idx })}
-      />
-    ),
-  },
-  // {
-  //   id: "new-annotation-page",
-  //   label: "Add new media",
-  //   backAction: (state, { actions }) => actions.open("canvas-properties", { current: 2 }),
-  //   render: () => <NewAnnotationPage />,
-  // },
-  {
-    id: "canvas-media",
-    label: "Edit media item",
-    requiresState: true,
-    render: (state: { annotation: string }, ctx, app) => (
-      <AnnotationContext annotation={state.annotation}>
-        <CanvasContext canvas={app.state.canvasId}>
-          <CanvasMedia key={state.annotation} onAfterDelete={ctx.current.popStack} />
-        </CanvasContext>
-      </AnnotationContext>
-    ),
-  },
-  {
-    id: "new-manifest-thumbnail",
-    label: "New manifest thumbnail",
-    backAction: (state, { actions }) => actions.open("manifest-properties", { current: 0 }),
-    render: () => {
-      return <ThumbnailPage level={"manifest"} />;
-    },
-  },
-  {
-    id: "new-canvas-thumbnail",
-    label: "New canvas thumbnail",
-    backAction: (state, { actions }) => actions.open("canvas-properties", { current: 0 }),
-    render: () => {
-      return <ThumbnailPage level={"canvas"} />;
-    },
-  },
-  {
-    id: "service-editor",
-    label: "Edit service",
-    requiresState: true,
-    render: (state) => {
-      return <ServiceEditor id={state.service} resourceId={state.resourceId} />;
-    },
-  },
-  {
-    id: "canvas-thumbnail",
-    label: "Edit canvas thumbnail",
-    // @todo add prompt to add new if one does not exist and then remove this.
-    requiresState: true,
-    render: (state) => {
-      return <CanvasThumbnailForm />;
-    },
-  },
-  {
-    id: "create-painting-annotation",
-    label: "Add media item",
-    render: (state, ctx, app) => (
-      <CanvasContext canvas={app.state.canvasId}>
-        <CreatePaintingAnnotation />
-      </CanvasContext>
-    ),
-  },
-  {
-    id: "canvas-media-right",
-    label: "Canvas media",
-    render: (state, ctx, app) => (
-      <CanvasContext canvas={app.state.canvasId}>
-        <CanvasMediaPanel
-          onClickAnnotation={(annotation) => ctx.actions.stack("canvas-media", { annotation: annotation.id })}
-        />
-      </CanvasContext>
-    ),
-  },
-  // {
-  //   id: "media-properties",
-  //   label: "Canvas media properties",
-  //   render: () => {
-  //     return <MediaForm />;
-  //   },
-  // },
-  // <MediaForm />
-  // <CanvasThumbnailForm />
-  // <ManifestThumbnailForm />
+  tutorial,
+  baseEditor,
+  baseCreator,
 ];
+
+export const editors = allEditors;
+
+export const creators = allCreators;
+
+export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];

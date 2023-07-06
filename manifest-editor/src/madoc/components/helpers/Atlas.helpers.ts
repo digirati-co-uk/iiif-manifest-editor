@@ -1,7 +1,6 @@
-
-import { ImageService } from '@hyperion-framework/types';
-import { useCallback } from 'react';
-import { createContext } from '../helpers/create-context';
+import { useCallback } from "react";
+import { createContext } from "../helpers/create-context";
+import { ImageService } from "@iiif/presentation-3";
 
 export const [useImageServiceContext, ImageServiceContext] = createContext<ImageService>();
 
