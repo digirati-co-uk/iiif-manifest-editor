@@ -1,6 +1,6 @@
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import { useManifest, useVault, CanvasContext, useResourceContext } from "react-iiif-vault";
-import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
+import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { RecentLabel } from "../../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
 import { AddIcon } from "../../../icons/AddIcon";
@@ -14,7 +14,7 @@ import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 
 export const GridList: React.FC<{
   handleChange: (itemId: string, canvas?: boolean) => void;
-  handleChangeDouble: (itemId: string, thumbnail?: boolean) => void;
+  handleChangeDouble?: (itemId: string, thumbnail?: boolean) => void;
   strip?: boolean;
   canvasIds?: Array<Reference | string>;
 }> = ({ handleChange: _handleChange, handleChangeDouble, canvasIds }) => {

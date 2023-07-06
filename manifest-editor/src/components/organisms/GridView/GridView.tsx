@@ -1,22 +1,22 @@
-import { useManifestEditor } from "../../../apps/ManifestEditor/ManifestEditor.context";
-import { FlexContainer, FlexContainerRow } from "../../layout/FlexContainer";
-import { AddIcon } from "../../../icons/AddIcon";
+import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
+import { FlexContainer, FlexContainerRow } from "@/components/layout/FlexContainer";
+import { AddIcon } from "@/icons/AddIcon";
 import { GridViewContainer } from "./GridView.styles";
 import { GridList } from "./GridList";
-import { HeightWidthSwitcher, ThumbnailSize } from "../../../atoms/HeightWidthSwitcher";
-import { ModalButton } from "../../../madoc/components/ModalButton";
-import { NewCanvas } from "../../widgets/NewCanvas";
-import { Button, CalltoButton } from "../../../atoms/Button";
-import { PaddingComponentSmall } from "../../../atoms/PaddingComponent";
-import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
+import { HeightWidthSwitcher, ThumbnailSize } from "@/atoms/HeightWidthSwitcher";
+import { ModalButton } from "@/madoc/components/ModalButton";
+import { NewCanvas } from "@/components/widgets/NewCanvas";
+import { Button, CalltoButton } from "@/atoms/Button";
+import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
+import { useCanvasSubset } from "@/hooks/useCanvasSubset";
 import { Reference } from "@iiif/presentation-3";
-import { InfoMessage } from "../../../madoc/components/callouts/InfoMessage";
-import { UniversalCopyTarget } from "../../../shell/Universal/UniversalCopyPaste";
-import { usePasteCanvas } from "../../../hooks/usePasteCanvas";
+import { InfoMessage } from "@/madoc/components/callouts/InfoMessage";
+import { UniversalCopyTarget } from "@/shell";
+import { usePasteCanvas } from "@/hooks/usePasteCanvas";
 
 export const GridView: React.FC<{
   handleChange: (canvasId: string, thumbnail?: boolean) => void;
-  handleChangeDouble: (canvasId: string, thumbnail?: boolean) => void;
+  handleChangeDouble?: (canvasId: string, thumbnail?: boolean) => void;
   width?: number;
   strip?: boolean;
   column?: boolean;

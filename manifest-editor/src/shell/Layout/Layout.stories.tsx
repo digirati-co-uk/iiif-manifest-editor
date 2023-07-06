@@ -1,6 +1,7 @@
 import { Layout } from "./Layout";
 import { LayoutProps } from "./Layout.types";
-import { LayoutProvider, useAvailableLayouts, useLayoutActions, useLayoutState } from "./Layout.context";
+import { useAvailableLayouts, useLayoutActions, useLayoutState } from "./Layout.context";
+import { LayoutProvider } from "./Layout.context-internal";
 
 export default {
   title: "Shell / Layout",

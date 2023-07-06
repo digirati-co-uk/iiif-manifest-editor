@@ -1,4 +1,4 @@
-import { AnnotationPageNormalized } from "@iiif/presentation-3";
+import { AnnotationPageNormalized } from "@iiif/presentation-3-normalized";
 import { useVaultSelector } from "react-iiif-vault";
 
 export function useAnnotationPage<T = AnnotationPageNormalized>(

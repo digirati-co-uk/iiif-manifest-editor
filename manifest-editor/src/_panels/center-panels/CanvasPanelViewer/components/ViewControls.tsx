@@ -5,6 +5,9 @@ import { PlusIcon } from "@/icons/PlusIcon";
 import { RefreshIcon } from "@/icons/RefreshIcon";
 import { useViewerPreset } from "react-iiif-vault";
 import { EditIcon } from "@/icons/EditIcon";
+import back from "../../../../components/widgets/IIIFExplorer/icons/back.svg";
+import { CSSProperties } from "react";
+import { CropIcon } from "@/icons/CropIcon";
 
 export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
   padding: 0.8em;
@@ -21,6 +24,20 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
     outline: 2px solid #ff9999;
   }
 
+  &:disabled {
+    opacity: 0.5;
+    img {
+      opacity: 0.5;
+    }
+  }
+
+  &[data-control="previous"] {
+    view-transition-name: "previous-canvas";
+  }
+  &[data-control="next"] {
+    view-transition-name: "next-canvas";
+  }
+
   ${(props) =>
     props.$active &&
     css`
@@ -28,7 +45,7 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
       background: #5197d8;
       color: #fff;
       &:hover {
-        background: #5197d8 !important;
+        background: #5197d8;
         color: #fff;
       }
     `}
@@ -37,16 +54,12 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
 export const CanvasViewerControls = styled.div`
   display: flex;
   position: absolute;
-  top: 1.4em;
-  right: 1.4em;
+  top: 1em;
+  right: 1em;
   z-index: 20;
 
   & > * ~ * {
     margin-left: 0.5em;
-  }
-
-  &:hover ${CanvasViewerButton} {
-    background: #fff;
   }
 `;
 
@@ -54,29 +67,81 @@ export function ViewControls({
   refresh,
   toggleEditMode,
   editMode,
+  createMode,
+  onNext,
+  onPrevious,
+  editIcon,
+  clearSelection,
+  enableNavigation,
+  style,
+  creatingAnnotation,
+  toggleCreateAnnotation,
 }: {
-  refresh: () => void;
-  toggleEditMode: () => void;
+  refresh?: () => void;
+  toggleEditMode?: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  clearSelection?: () => void;
   editMode?: boolean;
+  createMode?: boolean;
+  editIcon?: boolean;
+  creatingAnnotation?: boolean;
+  enableNavigation?: boolean;
+  style?: CSSProperties;
+  toggleCreateAnnotation?: () => void;
 }) {
   const preset = useViewerPreset();
+
   return (
-    <CanvasViewerControls>
-      <CanvasViewerButton onClick={toggleEditMode} $active={editMode}>
-        {editMode ? "Finish editing" : <EditIcon title={"Edit mode"} />}
-      </CanvasViewerButton>
-      <CanvasViewerButton onClick={refresh}>
-        <RefreshIcon title={"Refresh viewer"} />
-      </CanvasViewerButton>
-      <CanvasViewerButton onClick={() => preset?.runtime.world.goHome()}>
+    <CanvasViewerControls style={style}>
+      {toggleCreateAnnotation && !editMode ? (
+        <CanvasViewerButton data-control="create" onClick={toggleCreateAnnotation} $active={creatingAnnotation}>
+          {!createMode ? "Create annotation" : "Clear"}
+        </CanvasViewerButton>
+      ) : null}
+      {toggleEditMode ? (
+        <>
+          <CanvasViewerButton data-control="edit" onClick={toggleEditMode} $active={editMode}>
+            {editMode ? (
+              "Finish editing"
+            ) : editIcon ? (
+              <EditIcon title={"Edit mode"} />
+            ) : (
+              <CropIcon title={"Edit mode"} />
+            )}
+          </CanvasViewerButton>
+          {clearSelection && editMode ? (
+            <CanvasViewerButton data-control="edit-clear" onClick={clearSelection}>
+              Clear
+            </CanvasViewerButton>
+          ) : null}
+        </>
+      ) : null}
+      {refresh ? (
+        <CanvasViewerButton onClick={refresh}>
+          <RefreshIcon title={"Refresh viewer"} />
+        </CanvasViewerButton>
+      ) : null}
+      <CanvasViewerButton data-control="home" onClick={() => preset?.runtime.world.goHome()}>
         <HomeIcon title={"Home"} />
       </CanvasViewerButton>
-      <CanvasViewerButton onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}>
+      <CanvasViewerButton data-control="zoom-out" onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}>
         <MinusIcon title={"Zoom out"} />
       </CanvasViewerButton>
-      <CanvasViewerButton onClick={() => preset?.runtime.world.zoomTo(0.75)}>
+      <CanvasViewerButton data-control="zoom-in" onClick={() => preset?.runtime.world.zoomTo(0.75)}>
         <PlusIcon title={"Zoom in"} />
       </CanvasViewerButton>
+
+      {enableNavigation ? (
+        <>
+          <CanvasViewerButton data-control="previous" disabled={!onPrevious} onClick={onPrevious}>
+            <img src={back} width={16} />
+          </CanvasViewerButton>
+          <CanvasViewerButton data-control="next" disabled={!onNext} onClick={onNext}>
+            <img src={back} width={16} style={{ transform: "rotate(180deg)" }} />
+          </CanvasViewerButton>
+        </>
+      ) : null}
     </CanvasViewerControls>
   );
 }

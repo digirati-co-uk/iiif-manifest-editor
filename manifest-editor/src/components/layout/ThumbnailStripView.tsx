@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { Tree } from "../../navigation/tree/Tree";
-import { ViewSelector } from "../../atoms/ViewSelector";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useAppState } from "../../shell/AppContext/AppContext";
+import { Tree } from "@/navigation/tree/Tree";
+import { ViewSelector } from "@/atoms/ViewSelector";
+import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
+import { useAppState } from "@/shell";
 import { GridList } from "../organisms/GridView/GridList";
 import { FlexContainerColumn } from "./FlexContainer";
 

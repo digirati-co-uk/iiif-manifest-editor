@@ -58,7 +58,7 @@ export const ExportModal: React.FC<{
     }
     e.preventDefault();
     downloadFile(
-      JSON.stringify(selected === 1 && manifest ? vault.toPresentation2(manifest) : manifest),
+      JSON.stringify(selected === 1 && manifest ? vault.toPresentation2(manifest) : vault.toPresentation3(manifest)),
       //  defaulting to manifest id for the filename but we can change this.
       manifest.id + ".json",
       "text/json"
@@ -87,12 +87,7 @@ export const ExportModal: React.FC<{
                   label: "IIIF Presentation 3",
                   component: (
                     <JSONPreview>
-                      <pre
-                        ref={textAreaRef}
-                        dangerouslySetInnerHTML={{
-                          __html: JSON.stringify(vault.toPresentation3(manifest), null, 2),
-                        }}
-                      />
+                      <pre ref={textAreaRef}>JSON.stringify(vault.toPresentation3(manifest), null, 2)</pre>
                     </JSONPreview>
                   ),
                 },
@@ -100,12 +95,7 @@ export const ExportModal: React.FC<{
                   label: "IIIF Presentation 2",
                   component: (
                     <JSONPreview>
-                      <pre
-                        ref={textAreaRef}
-                        dangerouslySetInnerHTML={{
-                          __html: JSON.stringify(vault.toPresentation2(manifest), null, 2),
-                        }}
-                      />
+                      <pre ref={textAreaRef}>{JSON.stringify(vault.toPresentation2(manifest), null, 2)}</pre>
                     </JSONPreview>
                   ),
                 },

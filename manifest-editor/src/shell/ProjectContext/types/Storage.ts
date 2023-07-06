@@ -1,6 +1,6 @@
 // Storage
-import { Manifest } from "@iiif/presentation-3";
-import { EntityStore } from "@iiif/vault/dist";
+import { Collection, Manifest } from "@iiif/presentation-3";
+import { EntityStore } from "@iiif/vault";
 
 export interface Storage {
   type: string;
@@ -17,21 +17,35 @@ export interface ManifestStorage {
   data: Manifest;
 }
 
-export interface ManifestKeyedStorage {
-  type: "manifest-keyed-storage";
+export interface CollectionStorage {
+  type: "collection-storage";
+  data: Collection;
+}
+
+export interface RemoteWebsocketStorage {
+  type: "remote-websocket-storage";
+  data: {
+    id: string;
+    type: string;
+  };
+}
+
+export interface ResourceKeyedStorage {
+  type: "resource-keyed-storage";
   // Possibly annotation pages, or other things editable in the editor.
   // Should only be for content, not configuration.
   data: {
     id: string;
+    type: string;
     key: string;
   };
 }
 
-export interface VaultManifestStorage {
+export interface VaultStorage {
   type: "vault-storage";
   data: {
     id: string;
-    type: "Manifest";
+    type: "Manifest" | "Collection";
     store: EntityStore;
   };
 }
@@ -41,5 +55,13 @@ export interface ExternalManifestStorage {
   data: {
     id: string;
     type: "Manifest";
+  };
+}
+
+export interface ExternalCollectionStorage {
+  type: "external";
+  data: {
+    id: string;
+    type: "Collection";
   };
 }

@@ -1,5 +1,5 @@
 import { useCanvas } from "react-iiif-vault";
-import { ResourceEditingProvider } from "../../../shell/ResourceEditingContext/ResourceEditingContext";
+import { ResourceEditingProvider } from "@/shell";
 import { DescriptiveProperties } from "./DescriptiveProperties";
 import { DescriptivePropertiesProps } from "./DescriptiveProperties.types";
 

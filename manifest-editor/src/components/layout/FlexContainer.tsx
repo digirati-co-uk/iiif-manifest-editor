@@ -22,7 +22,7 @@ export const FlexContainerColumn = styled.div<{ justify?: string }>`
 `;
 
 export const FlexImage = styled.div`
-  max-height: 256px;
+  max-height: 300px;
   flex: 1;
   display: flex;
   justify-content: center;

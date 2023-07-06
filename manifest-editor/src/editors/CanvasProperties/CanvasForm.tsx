@@ -33,6 +33,7 @@ export const CanvasForm: React.FC<{ current: number; setCurrent: (idx: number) =
             component: (
               <CanvasMediaPanel
                 onClickAnnotation={(annotation) => stack("canvas-media", { annotation: annotation.id })}
+                onAddMedia={() => stack("create-painting-annotation")}
               />
             ),
           },

@@ -1,6 +1,5 @@
 import { LayoutState, PanelActions, PanelActionType, PinnablePanelActions } from "./Layout.types";
 import { Dispatch, useMemo } from "react";
-
 export function usePanelActions(
   panel: keyof LayoutState,
   dispatch: Dispatch<PanelActionType>
@@ -9,10 +8,14 @@ export function usePanelActions(
     dispatch({ type: "popStack", panel, payload: undefined });
   }
   function change(payload: { id: string; state?: any; stacked?: boolean }) {
+    // flushSync(() => {
     dispatch({ type: "change", panel, payload });
+    // });
   }
   function open(payload?: { id: string; state?: any; stacked?: boolean }) {
+    // flushSync(() => {
     dispatch({ type: "open", panel, payload });
+    // });
   }
   function close() {
     dispatch({ type: "close", panel, payload: undefined });

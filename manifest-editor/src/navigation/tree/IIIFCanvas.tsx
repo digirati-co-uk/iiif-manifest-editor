@@ -3,15 +3,15 @@ import { useState } from "react";
 
 import { Container, ContainerColumn, KeyValuePairString, Expanded, KeyCanvas, Indentation } from "./IIIFElementsShared";
 
-import { DownIcon } from "../../icons/DownIcon";
+import { DownIcon } from "@/icons/DownIcon";
 import { KeyValuePairArray } from "./IIIFElementsArrays";
 import { KeyObjectPairing } from "./IIIFElementsObject";
-import { ErrorBoundary } from "../../atoms/ErrorBoundary";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { useCanvas, useVault } from "react-iiif-vault";
-import { SubdirectoryIcon } from "../../icons/SubdirectoryIcon";
-import { FlexContainer } from "../../components/layout/FlexContainer";
-import { useManifestEditor } from "../../apps/ManifestEditor/ManifestEditor.context";
-import { useAppState } from "../../shell/AppContext/AppContext";
+import { SubdirectoryIcon } from "@/icons/SubdirectoryIcon";
+import { FlexContainer } from "@/components/layout/FlexContainer";
+import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
+import { useAppState } from "@/shell";
 
 export const IIIFCanvas: React.FC<{
   type: string;

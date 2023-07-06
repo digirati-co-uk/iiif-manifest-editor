@@ -52,6 +52,7 @@ const MenuItem = styled.button<{ $active?: boolean }>`
 const Content = styled.div`
   background: #e2e7f0;
   flex: 1;
+  overflow-y: auto;
 `;
 
 const InnerContent = styled.div`

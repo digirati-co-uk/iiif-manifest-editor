@@ -8,10 +8,12 @@ import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
 import { useDecayState } from "@/hooks/useDecayState";
 import { flushSync } from "react-dom";
 import { RichTextLanguageField } from "@/_components/form-elements/RichTextLanguageField/RichTextLanguageField";
+import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
   index?: number;
+  containerId?: string;
   property?: "label" | "value";
   focusId?: string;
   guidanceReference?: string;
@@ -139,7 +141,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   ) : null;
 
   return (
-    <>
+    <div id={props.containerId}>
       <>
         <InputLabel htmlFor={focusId}>{props.label}</InputLabel>
       </>
@@ -160,6 +162,6 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
           </EmptyLanguageField>
         </>
       )}
-    </>
+    </div>
   );
 }

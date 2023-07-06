@@ -33,7 +33,7 @@ export const CanvasView: React.FC = () => {
             min-width: 0;
 
             --atlas-container-flex: 1 1 0px;
-            --atlas-background: #efefef;
+            --atlas-background:  #E5E7F0;
           }
       `}</style>
       <ErrorBoundary>

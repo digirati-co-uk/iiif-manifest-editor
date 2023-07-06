@@ -20,10 +20,14 @@ export const RegionHighlight: React.FC<{
   onSave: (annotation: RegionHighlightType) => void;
   onClick: (annotation: RegionHighlightType) => void;
   interactive?: boolean;
+  disableCardinalControls?: boolean;
   style?: BoxStyle;
-}> = ({ id, interactive, region, onClick, onSave, isEditing, style = { backgroundColor: "rgba(0,0,0,.5)" } }) => {
+}> = (
+  { id, interactive, region, onClick, onSave, isEditing, style = { backgroundColor: "rgba(0,0,0,.5)" } },
+  disableCardinalControls
+) => {
   const saveCallback = useCallback(
-    (bounds) => {
+    (bounds: any) => {
       onSave({ id: region.id, x: region.x, y: region.y, height: region.height, width: region.width, ...bounds });
     },
     [onSave, region.id, region.x, region.y, region.height, region.width]
@@ -38,6 +42,7 @@ export const RegionHighlight: React.FC<{
       height={region.height}
       resizable={isEditing}
       onSave={saveCallback}
+      disableCardinalControls={disableCardinalControls}
     >
       <box
         html

@@ -21,6 +21,8 @@ import { useApps } from "../AppContext/AppContext";
 import { v4 } from "uuid";
 import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 import { once } from "@tauri-apps/api/event";
+import { projectFromCollection } from "@/shell/ProjectContext/helpers/project-from-collection";
+import { ClientVault } from "@/npm/client-vault";
 
 export function useProjectActionsWithBackend(
   dispatch: Dispatch<ProjectActionsType>,
@@ -33,6 +35,10 @@ export function useProjectActionsWithBackend(
     const project = { ...payload }; // avoid readonly payload.
 
     ensureUniqueFilename(project, allProjects);
+
+    if (!storage.canCreate()) {
+      throw new Error("Cannot create project with this storage backend");
+    }
 
     const backendStorage = await storage.create(project, project.storage.data);
     const createdProject = { ...project, storage: backendStorage };
@@ -167,6 +173,7 @@ export function useProjectLoader<T extends Storage = any>(
 ) {
   const currentRef = useRef<EditorProject | null>(null);
   const [ready, setIsReady] = useState(false);
+  const [error, setError] = useState("");
   const saveChanges = useCallback(() => {
     const project = currentRef.current;
     if (project) {
@@ -204,17 +211,34 @@ export function useProjectLoader<T extends Storage = any>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storage, currentId]);
 
+  useEffect(() => {
+    const currentStorage = storage;
+    const currentProject = current;
+    const currentVault = vault;
+    return () => {
+      if (currentVault && currentProject) {
+        currentStorage.closeVaultInstance(currentProject, currentVault);
+      } else if (currentVault instanceof ClientVault) {
+        currentVault.ws.close();
+      }
+    };
+  }, [storage, current, vault]);
+
   // If the vault takes some time to load from an external source we might have
   // some time to wait. This will listen to the "Vault is ready" promise.
   useEffect(() => {
     setIsReady(false);
     let cancelled = false;
     if (promise) {
-      promise.then(() => {
-        if (!cancelled) {
-          setIsReady(true);
-        }
-      });
+      promise
+        .then(() => {
+          if (!cancelled) {
+            setIsReady(true);
+          }
+        })
+        .catch((e) => {
+          setError(e.message);
+        });
     }
     return () => {
       cancelled = true;
@@ -257,6 +281,7 @@ export function useProjectLoader<T extends Storage = any>(
   return {
     vault,
     ready,
+    error,
   };
 }
 
@@ -301,6 +326,24 @@ export function useProjectCreators() {
     []
   );
 
+  const createProjectFromCollectionId = useCallback(
+    async function createProjectFromCollectionId(id: string) {
+      let full = await getManifestNomalized(id);
+      if (full) {
+        if ((full as any)["@id"]) {
+          full = convertPresentation2(full) as any;
+        }
+        if (full) {
+          actions.createProject(projectFromCollection(full as any));
+          changeApp({ id: "collection-editor" });
+        }
+      }
+    },
+    // Actions are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const createProjectFromManifestJson = useCallback(
     async function createProjectFromManifestId(json: string) {
       let full = JSON.parse(json);
@@ -322,6 +365,7 @@ export function useProjectCreators() {
   return {
     createProjectFromManifestJson,
     createProjectFromManifestId,
+    createProjectFromCollectionId,
     createBlankManifest,
   };
 }

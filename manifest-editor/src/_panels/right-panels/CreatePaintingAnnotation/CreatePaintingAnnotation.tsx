@@ -16,6 +16,7 @@ import {
   imageServiceRequestToString,
 } from "@atlas-viewer/iiif-image-api";
 import { ImageServiceSizeField } from "@/_components/form-elements/ImageServiceSizeField/ImageServiceSizeField";
+import { IIIFExplorer } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 
 export function CreatePaintingAnnotation() {
   const [isRunning, setIsRunning] = useState(false);
@@ -44,6 +45,25 @@ export function CreatePaintingAnnotation() {
 
       // Otherwise we are confirming.
       const formData = Object.fromEntries(data.entries());
+
+      if (result.type === "Sound") {
+        addPaintingAnnotationToCanvas(vault, canvas, {
+          ...result,
+          type: formData["type"],
+          duration: Number(formData["dims-duration"]),
+          format: formData["format"],
+        });
+      }
+      if (result.type === "Video") {
+        addPaintingAnnotationToCanvas(vault, canvas, {
+          ...result,
+          type: formData["type"],
+          width: Number(formData["dims-width"]),
+          height: Number(formData["dims-height"]),
+          duration: Number(formData["dims-duration"]),
+          format: formData["format"],
+        });
+      }
 
       if (result.type === "Image") {
         addPaintingAnnotationToCanvas(vault, canvas, {
@@ -112,6 +132,29 @@ export function CreatePaintingAnnotation() {
     return <div>No canvas selected</div>;
   }
 
+  if (result && (result.type === "Manifest" || result.type === "Collection")) {
+    return (
+      <IIIFExplorer
+        entry={result}
+        window={false}
+        onBack={() => setResult(null)}
+        outputTypes={["Canvas"]}
+        output={{ type: "image-service", allowImageFallback: true }}
+        outputTargets={[
+          {
+            type: "callback",
+            cb: (service) => {
+              if (media.current) {
+                media.current.value = service;
+              }
+              return runAnalyser(service);
+            },
+          },
+        ]}
+      />
+    );
+  }
+
   return (
     <PaddedSidebarContainer>
       <form ref={form} onSubmit={onSubmit}>
@@ -122,6 +165,7 @@ export function CreatePaintingAnnotation() {
               ref={media}
               id="media-url"
               name="media-url"
+              defaultValue={result ? result?.id || result["@id"] : ""}
               placeholder={"Paste URL of Media"}
               disabled={!!result}
               onBlur={(e) => runAnalyser(e.target.value)}
@@ -164,7 +208,11 @@ export function CreatePaintingAnnotation() {
                 </datalist>
               </InputContainer>
 
-              <DimensionsTriplet width={result.width || 0} height={result.height || 0} />
+              <DimensionsTriplet
+                width={result.width || 0}
+                height={result.height || 0}
+                duration={result.duration || 0}
+              />
 
               <InputContainer wide>
                 <InputLabel $margin htmlFor="format">

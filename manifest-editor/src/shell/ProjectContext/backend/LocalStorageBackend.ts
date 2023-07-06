@@ -1,22 +1,26 @@
 import { EditorProject, ProjectBackend } from "../ProjectContext.types";
+import * as localforage from "localforage";
 
 export class LocalStorageBackend implements ProjectBackend {
   namespace: string;
   saveInterval: number;
-
+  storage: LocalForage;
   constructor(settings?: { namespace?: string }) {
     this.namespace = settings?.namespace || "default-v1.1";
     this.saveInterval = 5000;
+    this.storage = localforage.createInstance({
+      name: "manifest-editor-projects",
+    });
   }
 
   async deleteProject(id: string): Promise<void> {
-    await localStorage.removeItem(`${this.namespace}/projects/${id}`);
+    await this.storage.removeItem(`${this.namespace}/projects/${id}`);
   }
 
   async createProject(project: EditorProject): Promise<void> {
     const index = await this.getProjectIndex();
 
-    await localStorage.setItem(`${this.namespace}/projects/${project.id}`, JSON.stringify(project));
+    await this.storage.setItem(`${this.namespace}/projects/${project.id}`, JSON.stringify(project));
 
     if (index.indexOf(project.id) === -1) {
       index.push(project.id);
@@ -36,7 +40,7 @@ export class LocalStorageBackend implements ProjectBackend {
         if (item === "_index") {
           continue;
         }
-        const loaded = await localStorage.getItem(`${this.namespace}/projects/${item}`);
+        const loaded = await this.storage.getItem<any>(`${this.namespace}/projects/${item}`);
         if (loaded) {
           try {
             projects.push(JSON.parse(loaded));
@@ -54,23 +58,23 @@ export class LocalStorageBackend implements ProjectBackend {
   }
 
   async getLastProject(): Promise<string | null> {
-    return localStorage.getItem(`${this.namespace}/last`);
+    return this.storage.getItem(`${this.namespace}/last`);
   }
 
   async setLastProject(id: string): Promise<void> {
-    localStorage.setItem(`${this.namespace}/last`, id);
+    await this.storage.setItem(`${this.namespace}/last`, id);
   }
 
   async updateProject(project: EditorProject): Promise<void> {
-    await localStorage.setItem(`${this.namespace}/projects/${project.id}`, JSON.stringify(project));
+    await this.storage.setItem(`${this.namespace}/projects/${project.id}`, JSON.stringify(project));
   }
 
   private async saveProjectIndex(index: string[]): Promise<void> {
-    await localStorage.setItem(`${this.namespace}/_index`, JSON.stringify(index));
+    await this.storage.setItem(`${this.namespace}/_index`, JSON.stringify(index));
   }
 
   private async getProjectIndex(): Promise<string[]> {
-    const json = await localStorage.getItem(`${this.namespace}/_index`);
+    const json = await this.storage.getItem<string>(`${this.namespace}/_index`);
     if (!json) {
       return [];
     }

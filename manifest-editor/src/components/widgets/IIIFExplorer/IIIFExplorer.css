@@ -1,0 +1,52 @@
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes shrink-x {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+::view-transition-old(root) {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  pointer-events: none;
+}
+
+::view-transition-new(canvas-image) {
+  pointer-events: visible;
+}
+
+::view-transition-old(canvas-image),
+::view-transition-new(canvas-image) {
+  animation-duration: 300ms;
+  height: auto;
+  right: 0;
+  left: auto;
+  transform-origin: right center;
+}
+
+::view-transition-old(canvas-image) {
+  pointer-events: none;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  background: #E6E7F0;
+}
+
+::view-transition-new(canvas-image) {
+  /*animation: 0.25s 0.25s linear both grow-x;*/
+  /*background: green;*/
+}

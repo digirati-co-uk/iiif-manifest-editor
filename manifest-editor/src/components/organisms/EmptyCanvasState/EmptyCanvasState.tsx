@@ -1,6 +1,6 @@
 import { FloatingPanel, FloatingPanelContainer, FloatingPanelInner, TextOverlay } from "./EmptyCanvasState.styles";
-import { UniversalCopyTarget } from "../../../shell/Universal/UniversalCopyPaste";
-import { usePasteCanvas } from "../../../hooks/usePasteCanvas";
+import { UniversalCopyTarget } from "@/shell";
+import { usePasteCanvas } from "@/hooks/usePasteCanvas";
 
 export function EmptyCanvasState() {
   const onPasteCanvas = usePasteCanvas();

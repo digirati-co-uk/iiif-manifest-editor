@@ -12,7 +12,12 @@ export function AppMenu(props: { hideMenu?: boolean }) {
   const { current: currentProject } = useProjectContext();
   const [isMenuHidden, setIsMenuHidden] = useLocalStorage("menu-hidden");
   const { apps, changeApp } = useApps();
+  const type = currentProject?.resource.type;
   const filteredApps = Object.values(apps).filter((app: MappedApp) => {
+    if (app.metadata.project && app.metadata.projectType !== type) {
+      return false;
+    }
+
     if (!currentProject && app.metadata.project) {
       return false;
     }

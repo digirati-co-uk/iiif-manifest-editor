@@ -1,6 +1,7 @@
 import { GridView } from "@/components/organisms/GridView/GridView";
+import { memo } from "react";
 
-export function CanvasThumbnailView(props: {
+export const CanvasThumbnailView = memo(function CanvasThumbnailView(props: {
   width?: number;
   onCanvasClick: (canvasId: string) => void;
   onCanvasDoubleClick: (canvasId: string) => void;
@@ -13,4 +14,4 @@ export function CanvasThumbnailView(props: {
       handleChangeDouble={props.onCanvasDoubleClick}
     />
   );
-}
+});

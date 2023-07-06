@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useEventHandler } from "./use-event-handler";
 import { useLocalStorage } from "./use-local-storage";
-import { panelSizing } from "../shell/Layout/Layout.helpers";
+import { panelSizing } from "@/shell/Layout/Layout.helpers";
 
 function distance(x1: number, y1: number, x2: number, y2: number) {
   return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));

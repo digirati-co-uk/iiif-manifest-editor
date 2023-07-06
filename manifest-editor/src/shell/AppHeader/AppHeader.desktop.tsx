@@ -6,7 +6,7 @@ import { ShellOptions } from "../../apps/Shell/ShellOptions";
 import { ManifestEditorLogo } from "../../atoms/ManifestEditorLogo";
 import { MappedApp } from "../../apps/app-loader";
 import { useLocalStorage } from "../../madoc/use-local-storage";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { DraftTitleEditor } from "./components/DraftTitleEditor";
 import { useAppWindowEvent } from "../DesktopContext/hooks/useAppWindowEvent";
 import { open } from "@tauri-apps/api/dialog";
@@ -21,7 +21,7 @@ import { useProjectCreators } from "../ProjectContext/ProjectContext.hooks";
 import { readTextFile } from "@tauri-apps/api/fs";
 import { useResourceContext } from "react-iiif-vault";
 
-export function AppHeaderDesktop() {
+export const AppHeaderDesktop = memo(function AppHeaderDesktop() {
   const { current: currentProject, actions } = useProjectContext();
   const [isMenuHidden, setIsMenuHidden] = useLocalStorage("menu-hidden");
   const [editingTitle, setIsEditingTitle] = useState(false);
@@ -134,4 +134,4 @@ export function AppHeaderDesktop() {
       ) : null}
     </Header>
   );
-}
+});

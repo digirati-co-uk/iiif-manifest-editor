@@ -14,7 +14,7 @@ import {
   CompositeDecorator,
 } from "draft-js";
 import { convertToHTML } from "draft-convert";
-import linkIcon from "@/icons/LinkIcon.svg";
+import linkIcon from "../../../icons/LinkIcon.svg";
 import codeIcon from "@/icons/CodeIcon.svg";
 import textFormatIcon from "@/icons/TextFormatIcon.svg";
 import DOMPurify from "dompurify";

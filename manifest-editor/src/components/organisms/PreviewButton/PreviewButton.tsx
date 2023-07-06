@@ -1,5 +1,5 @@
-import { useProjectContext } from "../../../shell/ProjectContext/ProjectContext";
-import { usePreviewContext } from "../../../shell/PreviewContext/PreviewContext";
+import { useProjectContext, useProjectLoading } from "@/shell/ProjectContext/ProjectContext";
+import { usePreviewContext } from "@/shell/PreviewContext/PreviewContext";
 import {
   MenuContainer,
   ButtonContainer,
@@ -12,18 +12,19 @@ import {
   ButtonEmpty,
 } from "./PreviewButton.styles";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
-import { DownIcon } from "../../../icons/DownIcon";
-import { useApps } from "../../../shell/AppContext/AppContext";
-import { CloseIcon } from "../../../madoc/components/icons/CloseIcon";
+import { DownIcon } from "@/icons/DownIcon";
+import { useApps } from "@/shell";
+import { CloseIcon } from "@/madoc/components/icons/CloseIcon";
 
 export function PreviewButton() {
+  const { isLoading } = useProjectLoading();
   const { current } = useProjectContext();
   const { currentApp, apps } = useApps();
   const { active, configs, actions, selected } = usePreviewContext();
   const configsToShow = configs.filter((c) => c.type === "external-manifest-preview");
   const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length);
 
-  if (!current || currentApp.id === "splash") {
+  if (!current || currentApp.id === "splash" || isLoading) {
     return null;
   }
   if (configsToShow.length === 0) {

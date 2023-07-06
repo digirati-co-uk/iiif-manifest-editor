@@ -1,6 +1,6 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
-import { usePreviewContext } from "../../shell/PreviewContext/PreviewContext";
-import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
+import { LayoutPanel } from "@/shell";
+import { usePreviewContext } from "@/shell";
+import { useProjectContext } from "@/shell";
 
 export default { id: "preview-testing", title: "Preview testing", project: true, dev: true };
 

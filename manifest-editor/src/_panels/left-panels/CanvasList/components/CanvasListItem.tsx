@@ -2,8 +2,8 @@ import { useCanvas } from "react-iiif-vault";
 import { getValue } from "@iiif/vault-helpers";
 import invariant from "tiny-invariant";
 import { CanvasListStyles as S } from "../CanvasList.styles";
-import { useAppState } from "../../../../shell/AppContext/AppContext";
-import { UniversalCopyTarget } from "../../../../shell/Universal/UniversalCopyPaste";
+import { useAppState } from "@/shell";
+import { UniversalCopyTarget } from "@/shell";
 
 export function CanvasListItem() {
   const canvas = useCanvas();

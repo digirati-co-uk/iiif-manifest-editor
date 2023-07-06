@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "@types/uuid": "^8.3.4"
+  },
+  "scripts": {
+    "custom-install": "cd manifest-editor && yarn install",
+    "custom-build": "cd manifest-editor && yarn build-all"
   }
 }

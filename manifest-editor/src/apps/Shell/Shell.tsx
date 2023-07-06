@@ -2,7 +2,7 @@ import { ShellHeader } from "./ShellHeader";
 import { ShellOptions } from "./ShellOptions";
 import { ShellToolbar } from "./ShellToolbar";
 import { useState } from "react";
-import { useProjectContext } from "../../shell/ProjectContext/ProjectContext";
+import { useProjectContext } from "@/shell";
 
 export type Persistance = {
   deleteLocation?: string;

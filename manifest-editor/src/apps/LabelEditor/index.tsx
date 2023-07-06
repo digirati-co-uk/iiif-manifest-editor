@@ -1,6 +1,6 @@
-import { LayoutPanel } from "../../shell/Layout/Layout.types";
-import { GridIcon } from "../../icons/GridIcon";
-import { PreviewIcon } from "../../icons/PreviewIcon";
+import { LayoutPanel } from "@/shell";
+import { GridIcon } from "@/icons/GridIcon";
+import { PreviewIcon } from "@/icons/PreviewIcon";
 import { SingleLabelEditor } from "./components/SingleLabelEditor";
 import { CanvasList } from "./components/CanvasList";
 import { CurrentCanvas } from "./components/CurrentCanvas";

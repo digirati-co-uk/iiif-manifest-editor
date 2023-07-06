@@ -1,19 +1,24 @@
 import React, { useRef } from "react";
 import styled, { css } from "styled-components";
-import { FlexContainer } from "../components/layout/FlexContainer";
+import { FlexContainer } from "@/components/layout/FlexContainer";
+import { EditIcon } from "@/icons/EditIcon";
 
 export const InputLabel = styled.label<{
   $caps?: boolean;
   $inline?: boolean;
   $margin?: boolean;
 }>`
-  letter-spacing: -0.3px;
+  position: sticky;
+  top: 0;
+  background: #fff;
   font-weight: 500;
   line-height: 2.4em;
+  font-size: 0.875em;
   display: flex;
+  flex-direction: row;
   align-items: baseline;
   width: 100%;
-  flex-direction: column;
+  /* flex-direction: column; */
   // padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   ${(props: any) =>
     props.$caps &&
@@ -28,6 +33,50 @@ export const InputLabel = styled.label<{
       width: unset;
     `};
 `;
+
+export const InputFieldset = styled.fieldset`
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 0.5em;
+
+  ${InputLabel} {
+    font-size: 0.875em;
+  }
+`;
+
+export const InputLabelEditContainer = styled.div`
+  display: inline-block;
+
+  font-size: 1.2em;
+  display: flex;
+  padding: 0.1em;
+  border-radius: 3px;
+  margin: auto 0.2em;
+  margin-left: auto;
+  aspect-ratio: 1;
+
+  &:hover,
+  &[aria-expanded="true"] {
+    background: #e8f0fe;
+  }
+
+  &[data-active="true"] {
+    background: #e8f0fe;
+  }
+
+  svg,
+  img {
+    height: 0.8em;
+  }
+`;
+
+export function InputLabelEdit(props: any) {
+  return (
+    <InputLabelEditContainer {...props}>
+      <EditIcon />
+    </InputLabelEditContainer>
+  );
+}
 
 export const MutliselectLabel = styled(InputLabel)<{
   $selected?: boolean;

@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import { ecsstatic } from "@acab/ecsstatic/vite";
 import path from "path";
 
 export default defineConfig({
@@ -8,8 +9,12 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
   },
+  optimizeDeps: {
+    exclude: ["react-iiif-vault"],
+  },
   envPrefix: ["VITE_", "TAURI_", "PULL_REQUEST"],
   plugins: [
+    ecsstatic(),
     react({
       jsxRuntime: "automatic",
       babel: {
@@ -30,6 +35,8 @@ export default defineConfig({
     globals: true,
   },
   resolve: {
+    dedupe: ["@iiif/vault", "@iiif/vault-helpers"],
+
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

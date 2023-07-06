@@ -11,6 +11,9 @@ type Dimensions = {
   changeHeight?: (newHeight: number) => void;
   duration?: number;
   changeDuration?: (newDuration: number) => void;
+  widthId?: string;
+  heightId?: string;
+  durationId?: string;
 };
 
 export const DimensionsTriplet: React.FC<Dimensions> = ({
@@ -20,11 +23,14 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
   changeWidth,
   changeHeight,
   changeDuration,
+  widthId,
+  heightId,
+  durationId,
 }) => {
   return (
-    <FlexContainer>
+    <FlexContainer style={{ marginBottom: "1em" }}>
       <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
+        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }} id={heightId}>
           <InputLabel $inline={true} htmlFor="dims-height">
             {"Height"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#height"} />
@@ -46,9 +52,9 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
         </FlexContainerColumn>
       </ErrorBoundary>
       <ErrorBoundary>
-        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
+        <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }} id={widthId}>
           <InputLabel $inline={true} htmlFor="dims-width">
-            {"width"}
+            {"Width"}
             <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#width"} />
           </InputLabel>
           <Input
@@ -69,9 +75,9 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
       </ErrorBoundary>
       {typeof duration !== "undefined" ? (
         <ErrorBoundary>
-          <FlexContainerColumn style={{ width: "100%" }}>
+          <FlexContainerColumn style={{ width: "100%" }} id={durationId}>
             <InputLabel $inline={true} htmlFor="dims-duration">
-              {"duration"}
+              {"Duration"}
               <InformationLink guidanceReference={"https://iiif.io/api/presentation/3.0/#duration"} />
             </InputLabel>
             <Input

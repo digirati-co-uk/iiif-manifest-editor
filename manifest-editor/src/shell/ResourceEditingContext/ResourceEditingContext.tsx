@@ -2,6 +2,7 @@ import { Reference } from "@iiif/presentation-3";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import invariant from "tiny-invariant";
 import { useVault, useVaultSelector } from "react-iiif-vault";
+import { EditorInstance } from "../../editor-api/EditorInstance";
 
 interface ResourceEditingContext {
   resource: Reference<any> | null;

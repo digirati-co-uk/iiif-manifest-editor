@@ -3,7 +3,7 @@ import * as IIIFVault from "@iiif/vault";
 
 // This is from the ts version
 // Create an image in the DOM to measure height and width
-const getImage = async (src: string) => {
+const getImage = async (src: string): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const $img = document.createElement("img");
     $img.onload = () => resolve($img);
@@ -12,6 +12,17 @@ const getImage = async (src: string) => {
     if ($img.complete) {
       resolve($img); // cached.
     }
+  });
+};
+
+const getAudioVideo = async (src: string) => {
+  return new Promise<HTMLVideoElement>((resolve, reject) => {
+    // Video tag accepts both.
+    const $media = document.createElement("video");
+    $media.onloadedmetadata = () => resolve($media);
+    $media.onerror = () => reject();
+    $media.preload = "metadata";
+    $media.src = src;
   });
 };
 
@@ -51,6 +62,10 @@ function mergeList(inputList: string[], outputList: string[]) {
   });
 }
 
+export async function detectMedia() {
+  //
+}
+
 export async function analyse(url: string, ...expectedTypes: string[]) {
   // const tryList = makeTryList(expectedTypes);
 
@@ -58,11 +73,38 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
     return;
   }
 
+  // 2 new options:
+  //  - Audio
+  //  - Video
+  // Only support them if they end in mp3 or mp4
+  if (url.endsWith(".mp3") || url.endsWith(".mp4") || url.endsWith(".m4a") || url.endsWith(".m4v")) {
+    try {
+      const av = await getAudioVideo(url);
+      if (av) {
+        const isAudio = av.videoWidth === 0;
+        return {
+          id: url,
+          type: av.videoWidth === 0 ? "Sound" : "Video",
+          width: av.videoWidth || undefined, // naturalWidth
+          height: av.videoHeight || undefined, // naturalHeight
+          duration: av.duration,
+          format: isAudio ? "audio/mp4" : "video/mp4",
+        };
+      }
+    } catch (e) {
+      // fall through..
+    }
+  }
+
   // This doesn't use the tryList order yet.
   // One advantage of doing a fetch first _even if we expect an image_ is that
   // we might capture the content type, if the image is CORS-enabled.
   let response = null;
   try {
+    // Try head request, if that works...
+    await fetch(url, { method: "HEAD" });
+
+    // then fetch the full resource.
     response = await fetch(url);
   } catch {
     // can handle the error better, but maybe CORS error happened so:
@@ -105,7 +147,7 @@ function asImageService(data: any) {
   return null;
 }
 
-async function analyseJson(data: any, url: string) {
+export async function analyseJson(data: any, url: string) {
   // Is it an image service?
   const testImageService = asImageService(data);
   if (testImageService) {
@@ -175,7 +217,7 @@ async function handleNonFetchableUrl(url: string, capturedContentType?: string) 
       format: await getFormat(url, capturedContentType),
     };
     return data;
-  } catch { }
+  } catch {}
 
   return null;
 }
@@ -194,16 +236,20 @@ async function getImageService(url: string) {
   }
 }
 
-async function getFormat(url: string, capturedContentType?: string) {
+export async function getFormat(url: string, capturedContentType?: string) {
   if (capturedContentType) {
     // we managed to learn this earlier, the image had CORS
     return capturedContentType;
   }
-  // a HEAD request doesn't have CORS issues... well it didn't used to...
-  const response = await fetch(url, { method: "HEAD", mode: "no-cors" });
-  const ct = response.headers.get("Content-type");
-  if (ct) {
-    return ct;
+  try {
+    // a HEAD request doesn't have CORS issues... well it didn't used to...
+    const response = await fetch(url, { method: "HEAD", mode: "no-cors" });
+    const ct = response.headers.get("Content-type");
+    if (ct) {
+      return ct;
+    }
+  } catch (e) {
+    // ignore.
   }
 
   // if the above still fails, we could fall back to guessing
@@ -215,6 +261,21 @@ async function getFormat(url: string, capturedContentType?: string) {
   if (test.endsWith("png")) {
     return "image/png";
   }
-  // etc - probably a library to do this
-  return "image/unknown";
+  // Just a default.
+  return "image/jpeg";
+}
+
+export async function getImageDimensions(url: string) {
+  try {
+    const image = await getImage(url);
+    if (image) {
+      return {
+        width: image.naturalWidth || image.width,
+        height: image.naturalHeight || image.height,
+      };
+    }
+  } catch (e) {
+    return null;
+  }
+  return null;
 }

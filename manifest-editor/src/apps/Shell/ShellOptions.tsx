@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Button } from "../../atoms/Button";
-import { Dropdown, DropdownContent } from "../../atoms/Dropdown";
-import { FlexContainer } from "../../components/layout/FlexContainer";
-import { NewManifestModal } from "../../components/modals/NewManifestModal";
-import { useApps } from "../../shell/AppContext/AppContext";
-import { ModalButton } from "../../madoc/components/ModalButton";
-import { ExportToJson } from "../../components/widgets/ExportToJSON";
-import { useLocalStorage } from "../../madoc/use-local-storage";
+import { Button } from "@/atoms/Button";
+import { Dropdown, DropdownContent } from "@/atoms/Dropdown";
+import { FlexContainer } from "@/components/layout/FlexContainer";
+import { NewManifestModal } from "@/components/modals/NewManifestModal";
+import { useApps, useLayoutActions } from "@/shell";
+import { ModalButton } from "@/madoc/components/ModalButton";
+import { ExportToJson } from "@/components/widgets/ExportToJSON";
 
 export const ShellOptions: React.FC<{}> = () => {
   const { changeApp } = useApps();
+  const actions = useLayoutActions();
+
   const [fileOpen, setFileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -43,16 +44,17 @@ export const ShellOptions: React.FC<{}> = () => {
               >
                 Open
               </Button>
-              <ModalButton
-                as={Button}
+
+              <Button
+                onClick={() => {
+                  actions.open({ id: "export", stacked: true });
+                }}
                 aria-label="Export to JSON"
                 title="Export to JSON"
-                modalSize="lg"
-                onOpen={() => setFileOpen(false)}
-                render={(props) => <ExportToJson {...props} />}
+                color={"#6b6b6b"}
               >
                 Export
-              </ModalButton>
+              </Button>
             </DropdownContent>
           </div>
         </Dropdown>
