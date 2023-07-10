@@ -1,0 +1,3 @@
+Manifest Editor is the informal name given to this project, but it is also the name given to the component that is by far the most commonly used - the general-purpose, visual **IIIF Manifest Editor**. Many users (perhaps most) will only ever see this component, because they have no need for further specialist tasks. 
+
+It would be annoying to name the outer application (the [[Shell]]) something much more general than "Manifest Editor", because most of its users are editing manifests, in the Manifest Editor [[App|Apps]] - so it makes sense to refer to the running, hosted web application as a Manifest Editor.
