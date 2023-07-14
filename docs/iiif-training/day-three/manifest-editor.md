@@ -16,6 +16,8 @@ Navigate to the editor at https://manifest-editor.digirati.services/
 
 ## Steps to create your Manifest
 
+Once in the editor...
+
 ### Step 1
   
 Click on the Create Empty Manifest option:
