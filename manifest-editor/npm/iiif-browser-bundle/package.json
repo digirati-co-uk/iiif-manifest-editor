@@ -1,0 +1,32 @@
+{
+  "name": "@manifest-editor/iiif-browser-bundle",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist-umd/index.umd.js",
+  "module": "./dist-umd/index.umd.js",
+  "files": [
+    "index.d.ts",
+    "dist-umd"
+  ],
+  "types": "./index.d.ts",
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist-umd/index.umd.js",
+      "import": "./dist-umd/index.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "globalName": "IIIFBrowser"
+}

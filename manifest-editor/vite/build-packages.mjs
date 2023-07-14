@@ -19,22 +19,28 @@ const onlyPackage = process.argv[2];
 
   const sources = await readdir(path.join(cwd(), sourceDir));
   for (const source of sources) {
-    const pkg = path.basename(source, ".ts");
+    let pkg = path.basename(source, ".ts");
 
     if (onlyPackage && pkg !== onlyPackage) {
       continue;
     }
 
-    if (pkg.endsWith(".umd")) {
+    if (pkg.endsWith(".umd") && pkg !== 'iiif-browser-bundle.umd') {
       continue;
+    }
+
+    if (pkg === 'iiif-browser-bundle.umd') {
+      pkg = 'iiif-browser-bundle';
     }
 
     const npmPath = path.join(cwd(), distDir, pkg);
     const umdPath = path.join(cwd(), sourceDir, `${pkg}.umd.ts`);
+    const npmSourcePath = path.join(cwd(), sourceDir, `${pkg}.ts`);
     const dist = path.join(npmPath, "dist");
     const distUmd = path.join(npmPath, "dist-umd");
     const packageJson = path.join(npmPath, "package.json");
     const entry = `src/npm/${pkg}.ts`;
+    const umdEntry = `src/npm/${pkg}.umd.ts`;
 
     if (
       !existsSync(npmPath) || !existsSync(packageJson)
@@ -54,17 +60,19 @@ const onlyPackage = process.argv[2];
       external.push(...Object.keys(packageJsonContents.peerDependencies));
     }
 
-    buildMsg(`@manifest-editor/${pkg}`);
-    await build(
-      defineConfig({
-        entry: entry,
-        name: "index",
-        isNode: isNode,
-        outDir: dist,
-        external: external,
-        isShell: pkg === 'shell'
-      }),
-    );
+    if (existsSync(npmSourcePath)) {
+      buildMsg(`@manifest-editor/${pkg}`);
+      await build(
+        defineConfig({
+          entry: entry,
+          name: "index",
+          isNode: isNode,
+          outDir: dist,
+          external: external,
+          isShell: pkg === 'shell'
+        }),
+      );
+    }
 
     if (packageJsonContents.globalName) {
       const umdEntry = existsSync(umdPath) ? umdPath : entry;
@@ -99,8 +107,11 @@ const onlyPackage = process.argv[2];
 
     if (packageJsonContents.types) {
       listItem("Building typescript definitions");
+
+      const validPath = existsSync(npmSourcePath) ? entry : umdEntry;
+
       try {
-        await execa("./node_modules/.bin/dts-bundle-generator", [`--out-file=${npmPath}/index.d.ts`, `./${entry}`, "--no-check"]);
+        await execa("./node_modules/.bin/dts-bundle-generator", [`--out-file=${npmPath}/index.d.ts`, `./${validPath}`, "--no-check"]);
       } catch (e) {
         console.log(e.stdout);
         console.error(e.stderr);
