@@ -86,7 +86,7 @@ export function IIIFExplorer({
   const canResetLast = allowRemoveEntry || entry?.type === "Text";
 
   return (
-    <VaultProvider vault={vault}>
+    <VaultProvider vault={vault || new Vault()}>
       <FilterProvider>
         <ExplorerStoreProvider
           entry={entry.type !== "Text" ? entry : undefined}
