@@ -19,7 +19,7 @@
       "require": "./dist-umd/index.umd.js",
       "import": "./dist-umd/index.umd.js"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist-umd/style.css": "./dist-umd/style.css"
   },
   "dependencies": {
     "react": "^18.2.0",
