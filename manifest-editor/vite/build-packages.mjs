@@ -93,6 +93,8 @@ const onlyPackage = process.argv[2];
         external.push('styled-components')
       }
 
+      console.log('umdExternal', umdExternal);
+
       await build(
         defineConfig({
           entry: umdEntry,

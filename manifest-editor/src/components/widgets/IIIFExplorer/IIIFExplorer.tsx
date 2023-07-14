@@ -60,6 +60,7 @@ export interface IIIFExplorerProps {
   hideBack?: boolean;
   clearHomepageCollection?: () => void;
   onHistory?: (id: string, type: string) => void;
+  hideOutput?: boolean;
 }
 
 export function IIIFExplorer({
@@ -79,6 +80,7 @@ export function IIIFExplorer({
   window,
   onBack,
   hideBack,
+  hideOutput,
 }: IIIFExplorerProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -130,11 +132,16 @@ export function IIIFExplorer({
               {/* Only shown if we are looking at a manifest */}
               <ManifestListing canvasMultiSelect={outputTypes?.includes("CanvasList")} />
 
-              <CanvasView highlightStyle={highlightStyle} regionEnabled={outputTypes?.includes("CanvasRegion")} />
+              <CanvasView
+                highlightStyle={highlightStyle}
+                regionEnabled={!hideOutput && outputTypes?.includes("CanvasRegion")}
+              />
 
               <CanvasRegionView />
 
-              <ExplorerOutput onSelect={onSelect} targets={outputTargets} types={outputTypes} format={output} />
+              {hideOutput ? null : (
+                <ExplorerOutput onSelect={onSelect} targets={outputTargets} types={outputTypes} format={output} />
+              )}
             </div>
           </div>
         </ExplorerStoreProvider>
