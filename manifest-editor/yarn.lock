@@ -28,7 +28,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas/_pkg.tgz":
+"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/6a41e259/@atlas-viewer/atlas/_pkg.tgz", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas/_pkg.tgz":
   version "2.0.0-alpha.21"
   resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas/_pkg.tgz#595fe582f3e7243b48fd34e0c87a8a5d8d1716b2"
   dependencies:
@@ -11243,6 +11243,25 @@ react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/r
     "@iiif/presentation-3-normalized" "^0.9.7"
     "@iiif/vault" "https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault"
     "@iiif/vault-helpers" "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/518bf0e0/@iiif/vault-helpers"
+    react "^16.10.2 || ^17.0.2 || ^18.2.0"
+    react-dom "^16.10.2 || ^17.0.2 || ^18.2.0"
+    react-error-boundary "^3.1.4"
+    typescript "^4.7.4"
+    use-sync-external-store "^1.2.0"
+    zustand "^4.3.6"
+
+"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/83f0d062/react-iiif-vault/_pkg.tgz":
+  version "0.9.20"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/83f0d062/react-iiif-vault/_pkg.tgz#c561d3b2df736be72c8d65792522eba85ccf2364"
+  dependencies:
+    "@atlas-viewer/atlas" "https://pkg.csb.dev/atlas-viewer/atlas/commit/6a41e259/@atlas-viewer/atlas/_pkg.tgz"
+    "@atlas-viewer/iiif-image-api" "^2.1.1"
+    "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/704e72d1/@iiif/parser/_pkg.tgz"
+    "@iiif/presentation-2" "1.*"
+    "@iiif/presentation-3" "^2.0.5"
+    "@iiif/presentation-3-normalized" "^0.9.7"
+    "@iiif/vault" "https://pkg.csb.dev/IIIF-Commons/vault/commit/60ff763a/@iiif/vault/_pkg.tgz"
+    "@iiif/vault-helpers" "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/fc0bf4dc/@iiif/vault-helpers/_pkg.tgz"
     react "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-dom "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-error-boundary "^3.1.4"

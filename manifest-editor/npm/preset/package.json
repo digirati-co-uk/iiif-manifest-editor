@@ -57,7 +57,7 @@
     "react-datetime-picker": "^5.0.3",
     "react-easy-sort": "^1.4.1",
     "react-functional-select": "^3.3.3",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault/_pkg.tgz",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/83f0d062/react-iiif-vault/_pkg.tgz",
     "react-select-search": "^4.1.2",
     "react-textarea-autosize": "^8.3.4",
     "react-window": "^1.8.8",

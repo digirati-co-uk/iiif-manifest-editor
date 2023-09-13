@@ -27,7 +27,7 @@
     "react-transition-group": "^4.4.5",
     "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/60ff763a/@iiif/vault/_pkg.tgz",
     "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser/_pkg.tgz",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault/_pkg.tgz",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/83f0d062/react-iiif-vault/_pkg.tgz",
     "@manifest-editor/client-vault": "*",
     "@iiif/presentation-3": "^2.0.5",
     "@iiif/presentation-3-normalized": "^0.9.7",
