@@ -8,6 +8,30 @@ import { SingleVaultLoader } from "@/shell/ProjectContext/storage/SingleVaultLoa
 import { StaticStorageBackend } from "@/shell/ProjectContext/backend/StaticBackend";
 import { ManifestEditor } from "@/ManifestEditor";
 
+const getManifestData = () =>
+  new Promise((resolve) => {
+    if (!window.opener && !window.parent) {
+      return resolve(null);
+    }
+
+    (window.opener || window.parent).postMessage(
+      {
+        type: "manifest-editor:manifest-request",
+      },
+      "*"
+    );
+
+    const listener = (e: MessageEvent) => {
+      const { type, data } = e.data || {};
+      if (type === "manifest-editor:manifest-response") {
+        resolve(data);
+        window.removeEventListener("message", listener);
+      }
+    };
+
+    window.addEventListener("message", listener);
+  });
+
 export function ManifestUrlEmbed({ query, apps }: { apps: AppDefinition; query: any }) {
   const [vault, invalidate] = useMemoOnce(() => new Vault());
   const [isLoading, setIsLoading] = useState(true);
@@ -27,19 +51,30 @@ export function ManifestUrlEmbed({ query, apps }: { apps: AppDefinition; query: 
   });
 
   useEffect(() => {
-    vault.current.loadManifest(query.manifest).then((ref) => {
-      setReference(ref);
-      setIsLoading(false);
-      resetProject();
-    });
+    if (query.local === "true") {
+      getManifestData().then((data: any) => {
+        if (data) {
+          vault.current.loadManifest(query.manifest, data).then((ref) => {
+            setReference(ref);
+            setIsLoading(false);
+            resetProject();
+          });
+        }
+      });
+    } else {
+      vault.current.loadManifest(query.manifest).then((ref) => {
+        setReference(ref);
+        setIsLoading(false);
+        resetProject();
+      });
+    }
   }, [query.manifest]);
 
   useEffect(() => {
     const unloadCallback = () => {
       if (window.opener) {
-        window.opener.postMessage({ type: "close" }, "*");
+        window.opener.postMessage({ type: "manifest-editor:close" }, "*");
       }
-      console.log("working?");
     };
 
     window.addEventListener("beforeunload", unloadCallback);

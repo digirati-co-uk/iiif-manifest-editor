@@ -1,0 +1,172 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+
+<div>
+  <div id="editor">
+
+  </div>
+
+  <textarea id="manifest"></textarea>
+
+  <div id="controls">
+    <button id="open">Open</button>
+    <button id="save" disabled="disabled">Save</button>
+  </div>
+
+</div>
+
+<script>
+  const $open = document.getElementById("open");
+  const $save = document.getElementById("save");
+  const $manifest = document.getElementById("manifest");
+  const $editor = document.getElementById("editor");
+
+  const staticManifest = {
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://example.org/manifest-123",
+    "type": "Manifest",
+    "label": {
+      "en": [
+        "Single Image Example",
+      ],
+    },
+    "items": [
+      {
+        "id": "https://iiif.io/api/cookbook/recipe/0001-mvm-image/canvas/p1",
+        "type": "Canvas",
+        "height": 1800,
+        "width": 1200,
+        "items": [
+          {
+            "id": "https://iiif.io/api/cookbook/recipe/0001-mvm-image/page/p1/1",
+            "type": "AnnotationPage",
+            "items": [
+              {
+                "id": "https://iiif.io/api/cookbook/recipe/0001-mvm-image/annotation/p0001-image",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": {
+                  "id": "http://iiif.io/api/presentation/2.1/example/fixtures/resources/page1-full.png",
+                  "type": "Image",
+                  "format": "image/png",
+                  "height": 1800,
+                  "width": 1200,
+                },
+                "target": "https://iiif.io/api/cookbook/recipe/0001-mvm-image/canvas/p1",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  $manifest.value = JSON.stringify(staticManifest, null, 2);
+
+  const state = { isOpen: false, $frame: null };
+
+  $open.addEventListener("click", () => {
+    const currentValue = JSON.parse($manifest.value);
+    const id = currentValue.id || currentValue["@id"];
+    if (!id) {
+      alert("Please enter a manifest ID");
+      return;
+    }
+
+    state.isOpen = true;
+    $open.setAttribute("disabled", "disabled");
+    $save.removeAttribute("disabled");
+    const $frame = document.createElement("iframe");
+    $frame.setAttribute("src", `https://deploy-preview-267--manifest-editor-testing.netlify.app/?embed=true&local=true&manifest=${id}`);
+    $frame.setAttribute("width", "100%");
+    $frame.setAttribute("height", "900");
+
+    sendManifestData($frame, currentValue);
+
+    $manifest.setAttribute("disabled", "disabled");
+    state.$frame = $frame;
+    $editor.appendChild($frame);
+  });
+
+  $save.addEventListener("click", () => {
+    if (!state.$frame) {
+      return;
+    }
+
+    getManifestData(state.$frame).then(data => {
+      $manifest.value = JSON.stringify(data, null, 2);
+      $manifest.removeAttribute("disabled");
+      $open.removeAttribute("disabled");
+
+      $save.setAttribute("disabled", "disabled");
+      state.$frame.remove();
+      state.$frame = null;
+      state.isOpen = false;
+
+      $editor.innerHTML = "";
+      state.$frame = null;
+    });
+
+  });
+
+
+  const getManifestData = (iframe) => new Promise(resolve => {
+    iframe.contentWindow.postMessage({
+      type: "manifest-editor:save",
+    }, "*");
+
+    const listener = e => {
+      const { type, data } = e.data || {};
+      if (type === "manifest-editor:save-response") {
+        resolve(data);
+        window.removeEventListener("message", listener);
+      }
+    };
+
+    window.addEventListener("message", listener);
+  });
+
+  const sendManifestData = (iframe, data) => {
+
+    const listener = e => new Promise(resolve => {
+      const { type } = e.data || {};
+      if (type === "manifest-editor:manifest-request") {
+        resolve();
+        iframe.contentWindow.postMessage({
+          type: "manifest-editor:manifest-response",
+          data,
+        }, "*");
+        window.removeEventListener("message", listener);
+      }
+    });
+    window.addEventListener("message", listener);
+
+  };
+
+
+  // sendManifestData($me, staticManifest);
+  //
+  //
+  // window.addEventListener('message', e => {
+  //   const { type } = e.data || {};
+  //   if (type === 'manifest-editor:close') {
+  //     console.log(
+  //       getManifestData($me).then(data => {
+  //         console.log('data', data);
+  //       })
+  //     )
+  //   }
+  // });
+
+</script>
+
+</body>
+</html>
