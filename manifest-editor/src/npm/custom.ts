@@ -6,6 +6,7 @@ import { GlobalStyle } from "@/atoms/GlobalStyle";
 import { Main } from "@/atoms/Main";
 import { RenderApp } from "@/_next/pages/render-app";
 import { Config } from "@/shell/ConfigContext/ConfigContext";
+import { LayoutProps } from "@/shell";
 
 export function init(
   element: HTMLElement,
@@ -13,6 +14,7 @@ export function init(
   preset: {
     initialApp?: { id: string; args?: any };
     config?: Partial<Config>;
+    layout?: Partial<LayoutProps>;
   }
 ) {
   const modules = imports.reduce((state: any, mapping: any) => ({ ...state, ...mapping }), {});
@@ -27,7 +29,7 @@ export function init(
         config: { ...(preset.config || {}) },
         initialApp: preset.initialApp,
       } as any,
-      [createElement(GlobalStyle, {}), createElement(Main, {}, [createElement(RenderApp, {})])]
+      [createElement(GlobalStyle, {}), createElement(Main, {}, [createElement(RenderApp, { layout: preset.layout })])]
     );
   }
 

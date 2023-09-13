@@ -1,4 +1,4 @@
-import { Layout } from "@/shell";
+import { Layout, LayoutProps } from "@/shell";
 import { AppStateProvider, useApps } from "@/shell";
 import { AppHeader } from "@/shell";
 import { AppHeaderDesktop } from "@/shell/AppHeader/AppHeader.desktop";
@@ -9,6 +9,7 @@ import { useProjectLoading } from "@/shell";
 interface RenderAppProps {
   onClickLogo?: () => void;
   hideHeader?: boolean;
+  layout?: Partial<LayoutProps>;
 }
 
 export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
@@ -35,6 +36,7 @@ export const RenderApp = memo(function RenderApp(props: RenderAppProps) {
         hideHeader={props.hideHeader}
         header={isDesktop ? <AppHeaderDesktop /> : <AppHeader onClickLogo={props.onClickLogo} />}
         {...(selectedApp.layout || {})}
+        {...(props.layout || {})}
       />
     </AppStateProvider>
   ) : (
