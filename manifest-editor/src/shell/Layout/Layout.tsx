@@ -15,6 +15,7 @@ import useMatchMedia from "use-match-media-hook";
 import { DownIcon } from "@/icons/DownIcon";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@/_components/ui/GhostBlocks/GhostBlocks";
+import { MiniEditor } from "@/shell/Layout/components/MiniEditor";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const status = useProjectLoading();
@@ -232,6 +233,10 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       )}
     </L.PanelContainer>
   );
+
+  if (props.miniEditor) {
+    return <MiniEditor {...props.miniEditor}>{renderRightPanel()}</MiniEditor>;
+  }
 
   if (mobile) {
     return (

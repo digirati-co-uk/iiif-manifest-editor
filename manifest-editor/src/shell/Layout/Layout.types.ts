@@ -197,4 +197,8 @@ export interface LayoutProps {
   editors?: EditorDefinition[];
   resources?: (string | ResourceDefinition)[];
   creators?: CreatorDefinition[];
+
+  miniEditor?: {
+    resource?: EditableResource;
+  };
 }
