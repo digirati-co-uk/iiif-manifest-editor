@@ -15,6 +15,7 @@ export function init(
     initialApp?: { id: string; args?: any };
     config?: Partial<Config>;
     layout?: Partial<LayoutProps>;
+    shell?: any;
   }
 ) {
   const modules = imports.reduce((state: any, mapping: any) => ({ ...state, ...mapping }), {});
@@ -28,6 +29,7 @@ export function init(
         apps,
         config: { ...(preset.config || {}) },
         initialApp: preset.initialApp,
+        ...(preset.shell || {}),
       } as any,
       [createElement(GlobalStyle, {}), createElement(Main, {}, [createElement(RenderApp, { layout: preset.layout })])]
     );
