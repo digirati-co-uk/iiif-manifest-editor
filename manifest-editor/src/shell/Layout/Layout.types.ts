@@ -125,8 +125,12 @@ export interface LayoutPanel {
   defaultState?: any;
   requiresState?: boolean;
   backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
-  renderBackAction?: (options: { backAction: (e?: React.MouseEvent) => void; fallback: any }) => ReactNode | null;
-  renderCloseAction?: (options: { closeAction: () => void; fallback: any }) => ReactNode | null;
+  renderBackAction?: (options: {
+    backAction: (e?: React.MouseEvent) => void;
+    fallback: any;
+    mini?: boolean;
+  }) => ReactNode | null;
+  renderCloseAction?: (options: { closeAction: () => void; fallback: any; mini?: boolean }) => ReactNode | null;
   options?: {
     minWidth?: number;
     maxWidth?: number;
@@ -199,6 +203,7 @@ export interface LayoutProps {
   creators?: CreatorDefinition[];
 
   miniEditor?: {
-    resource?: EditableResource;
+    resource: Reference | SpecificResource;
+    context?: Omit<EditableResource, "resource">;
   };
 }

@@ -5,8 +5,9 @@ import { ShellProvider } from "@/shell/ShellContext/ShellContext";
 import React, { ReactNode, useMemo } from "react";
 import { Config } from "@/shell/ConfigContext/ConfigContext";
 import { Collection } from "@iiif/presentation-3";
-import { internalGetApps, LoadedApp } from "@/apps/app-loader";
+import { AppDefinition, internalGetApps, LoadedApp } from "@/apps/app-loader";
 import { ProjectProviderProps } from "@/shell/ProjectContext/ProjectContext.internal";
+import { LayoutProps } from "@/shell";
 
 interface ManifestEditorProps {
   apps: Record<string, LoadedApp>;
@@ -17,12 +18,13 @@ interface ManifestEditorProps {
   onClickLogo?: () => void;
   project?: Partial<ProjectProviderProps>;
   hideHeader?: boolean;
+  layout?: Partial<LayoutProps>;
   children?: ReactNode;
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
   const { apps, initialApp, config, templates } = props;
-  const mapped = useMemo(() => internalGetApps(apps), [apps]);
+  const mapped = useMemo(() => (apps.allApps ? (apps as any) : internalGetApps(apps as any)), [apps]);
   return (
     <ShellProvider
       apps={mapped}
@@ -33,7 +35,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
     >
       <GlobalStyle />
       <Main>
-        <RenderApp onClickLogo={props.onClickLogo} hideHeader={props.hideHeader} />
+        <RenderApp onClickLogo={props.onClickLogo} hideHeader={props.hideHeader} layout={props.layout} />
         {props.children}
       </Main>
     </ShellProvider>

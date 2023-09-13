@@ -184,7 +184,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     </L.PanelContainer>
   );
 
-  const renderRightPanel = (transition?: TransitionStatus) => (
+  const renderRightPanel = (transition?: TransitionStatus, mini?: boolean) => (
     <L.PanelContainer
       $menu={props.rightPanelMenuPosition || "bottom"}
       ref={rightPanelResizer.refs.resizableDiv}
@@ -215,6 +215,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                     actions={actions.rightPanel}
                     pinActions={actions.pinnedRightPanel}
                     available={rightPanels}
+                    mini={mini}
                   />
                 ) : null}
 
@@ -224,6 +225,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                     state={state.pinnedRightPanel}
                     actions={actions.pinnedRightPanel}
                     close={actions.rightPanel.close}
+                    mini={mini}
                   />
                 ) : null}
               </>
@@ -235,7 +237,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   );
 
   if (props.miniEditor) {
-    return <MiniEditor {...props.miniEditor}>{renderRightPanel()}</MiniEditor>;
+    return <MiniEditor {...props.miniEditor}>{renderRightPanel(undefined, true)}</MiniEditor>;
   }
 
   if (mobile) {

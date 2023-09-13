@@ -25,6 +25,7 @@ interface ModularPanelProps {
   close?: () => void;
   available?: LayoutPanel[];
   style?: any;
+  mini?: boolean;
 }
 
 const LayoutTitleReactContext = createContext<(title: string) => void>(null as any);
@@ -152,6 +153,7 @@ export function ModularPanel({
   close,
   available = [],
   style,
+  mini,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -185,8 +187,10 @@ export function ModularPanel({
 
   const backAction = useCallback(
     (e?: React.MouseEvent) => {
+      const canPop = mini ? false : state.stack.length;
+
       const originalCallback = panel
-        ? state.stack.length
+        ? canPop
           ? actions.popStack
           : panel.backAction
           ? () => panel && panel.backAction && panel.backAction(state, { ...layout, current: actions }, appState)
@@ -216,7 +220,7 @@ export function ModularPanel({
   }
 
   const backButton =
-    panel.backAction || state.stack.length ? (
+    panel.backAction || (state.stack.length && !mini) ? (
       <ModulePanelButton onClick={backAction}>
         <BackIcon />
       </ModulePanelButton>
@@ -226,7 +230,7 @@ export function ModularPanel({
       </ModulePanelButton>
     ) : null;
 
-  const closeButton = (
+  const closeButton = mini ? null : (
     <ModulePanelButton onClick={close || actions.close}>
       <CloseIcon />
     </ModulePanelButton>
@@ -237,7 +241,7 @@ export function ModularPanel({
       <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style}>
         <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
           <Dropdown style={{ display: "flex", height: "100%" }}>
-            {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
+            {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton, mini }) : backButton}
             {switchablePanels.length ? (
               <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
                 <DropdownLabel>All panels</DropdownLabel>
@@ -275,7 +279,7 @@ export function ModularPanel({
             )
           ) : null}
           {panel.renderCloseAction
-            ? panel.renderCloseAction({ closeAction: close || actions.close, fallback: closeButton })
+            ? panel.renderCloseAction({ closeAction: close || actions.close, fallback: closeButton, mini })
             : closeButton}
         </ModularPanelHeader>
         <ModularPanelContent>

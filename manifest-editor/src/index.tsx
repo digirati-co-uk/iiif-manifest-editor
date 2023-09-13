@@ -1,17 +1,17 @@
 import { createRoot } from "react-dom/client";
-import React, { StrictMode, useMemo } from "react";
+import React, { useMemo } from "react";
 import config from "../config.json";
 import templates from "./manifest-templates/built-in-manifest-editor-templates.json?import";
 import { GlobalStyle } from "./atoms/GlobalStyle";
-import { ShellProvider } from "./shell/ShellContext/ShellContext";
+import { ShellProvider } from "@/shell";
 import { RenderApp } from "./_next/pages/render-app";
 import { Main } from "./atoms/Main";
 import { getApps } from "./apps/apps";
 import qs from "query-string";
 import i18n from "i18next";
-import { initReactI18next, I18nextProvider } from "react-i18next";
+import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { useProjectContext } from "@/shell";
+import { OptionalEmbed } from "@/shell/Embed/OptionalEmbed";
 
 const instance = i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -47,12 +47,14 @@ function App() {
   const apps = useMemo(getApps, []);
 
   return (
-    <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }}>
-      <GlobalStyle />
-      <Main>
-        <RenderApp />
-      </Main>
-    </ShellProvider>
+    <OptionalEmbed apps={apps}>
+      <ShellProvider apps={apps} config={{ ...config, newTemplates: templates }}>
+        <GlobalStyle />
+        <Main>
+          <RenderApp />
+        </Main>
+      </ShellProvider>
+    </OptionalEmbed>
   );
 }
 
