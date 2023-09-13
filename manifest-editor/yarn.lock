@@ -28,9 +28,9 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas":
+"@atlas-viewer/atlas@>=2.0.0-alpha.17", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas/_pkg.tgz":
   version "2.0.0-alpha.21"
-  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas#595fe582f3e7243b48fd34e0c87a8a5d8d1716b2"
+  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/b3ff7bfc/@atlas-viewer/atlas/_pkg.tgz#595fe582f3e7243b48fd34e0c87a8a5d8d1716b2"
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^2.0.5"
@@ -2077,9 +2077,9 @@
     "@iiif/vocabulary" "^1.0.20"
     manifesto.js "^4.2.6"
 
-"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser":
+"@iiif/parser@1.x", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/704e72d1/@iiif/parser/_pkg.tgz", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/79a20658/@iiif/parser", "@iiif/parser@https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser/_pkg.tgz":
   version "1.1.2"
-  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser#1560697c630a1df49414b5661843dcdb546c9a75"
+  resolved "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser/_pkg.tgz#1560697c630a1df49414b5661843dcdb546c9a75"
   dependencies:
     "@iiif/presentation-2" "^1.0.4"
     "@iiif/presentation-3" "^2.0.5"
@@ -2115,9 +2115,9 @@
   dependencies:
     "@types/geojson" "^7946.0.10"
 
-"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.7", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/518bf0e0/@iiif/vault-helpers", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/94749453/@iiif/vault-helpers", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers":
+"@iiif/vault-helpers@>=0.9.7", "@iiif/vault-helpers@^0.9.7", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/518bf0e0/@iiif/vault-helpers", "@iiif/vault-helpers@https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/fc0bf4dc/@iiif/vault-helpers/_pkg.tgz":
   version "0.10.0"
-  resolved "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/94749453/@iiif/vault-helpers#d05b72e0fca7f807d68dfd8c338d876fba21c23d"
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/fc0bf4dc/@iiif/vault-helpers/_pkg.tgz#baca9c64dff8f1920fa54af98d26be427c4a8523"
   dependencies:
     "@iiif/presentation-2" "1.0.4"
     "@iiif/presentation-3" "2.0.5"
@@ -2128,11 +2128,11 @@
     react-i18next "^11.18.0"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault":
+"@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.18", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/4a79bea0/@iiif/vault", "@iiif/vault@https://pkg.csb.dev/IIIF-Commons/vault/commit/60ff763a/@iiif/vault/_pkg.tgz":
   version "0.9.22"
-  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault#a98542950c921b9d014e59c0b1af193c55c3bc6a"
+  resolved "https://pkg.csb.dev/IIIF-Commons/vault/commit/60ff763a/@iiif/vault/_pkg.tgz#c4ee52bad1b2b1dc82ea207250fb5e9f1b98f948"
   dependencies:
-    "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/30a567d8/@iiif/parser"
+    "@iiif/parser" "https://pkg.csb.dev/IIIF-Commons/parser/commit/704e72d1/@iiif/parser/_pkg.tgz"
     "@iiif/presentation-2" "1.*"
     "@iiif/presentation-3" "^1.1.3"
     typesafe-actions "^5.1.0"
@@ -11231,9 +11231,9 @@ react-i18next@^12.2.2:
     "@babel/runtime" "^7.20.6"
     html-parse-stringify "^3.0.1"
 
-react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault":
+react-iiif-vault@^0.9.15, "react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault/_pkg.tgz":
   version "0.9.20"
-  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault#055a3b033b1503366cd35b7b243a86bcad6269fd"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7c770a3e/react-iiif-vault/_pkg.tgz#055a3b033b1503366cd35b7b243a86bcad6269fd"
   dependencies:
     "@atlas-viewer/atlas" "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas"
     "@atlas-viewer/iiif-image-api" "^2.1.1"
