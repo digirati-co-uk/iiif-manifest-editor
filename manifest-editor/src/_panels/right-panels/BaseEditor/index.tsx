@@ -6,9 +6,11 @@ export const baseEditor: LayoutPanel = {
   id: "@manifest-editor/editor",
   label: "Editor",
   options: { hideHeader: true, tabs: true },
-  renderBackAction: ({ backAction, fallback }) => <BaseEditorBackButton backAction={backAction} fallback={fallback} />,
-  renderCloseAction: ({ closeAction, fallback }) => (
-    <BaseEditorCloseButton closeAction={closeAction} fallback={fallback} />
+  renderBackAction: ({ backAction, fallback, mini }) => (
+    <BaseEditorBackButton mini={mini} backAction={backAction} fallback={fallback} />
+  ),
+  renderCloseAction: ({ closeAction, fallback, mini }) => (
+    <BaseEditorCloseButton mini={mini} closeAction={closeAction} fallback={fallback} />
   ),
   render({ currentTab }) {
     return <BaseEditor currentTab={currentTab} />;

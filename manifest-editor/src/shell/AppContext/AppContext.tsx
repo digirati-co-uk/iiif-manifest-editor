@@ -6,6 +6,7 @@ import { useProjectContext } from "../ProjectContext/ProjectContext";
 import { DesktopContext } from "../DesktopContext/DesktopContext";
 import qs from "query-string";
 import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
+import { useVault } from "react-iiif-vault";
 
 export type AppContext = {
   apps: Record<string, MappedApp>;
@@ -39,7 +40,34 @@ export function useAppState<S = any>() {
 
 export function AppStateProvider(props: { appId: string; initialValue?: any; args?: any; children: ReactNode }) {
   const { current } = useProjectContext();
+  const vault = useVault();
   const [state, _setState, stateRef] = useLocalStorage(`app-state/${current?.id}`, props.initialValue || {});
+
+  useEffect(() => {
+    const w = window.parent || window.opener;
+    if (w) {
+      const listener = (e: MessageEvent) => {
+        const { type } = e.data || {};
+        if (type.startsWith("manifest-editor")) {
+          switch (type) {
+            case "manifest-editor:save":
+              if (vault && current?.resource) {
+                w.postMessage(
+                  { type: "manifest-editor:save-response", data: vault.toPresentation3(current?.resource) },
+                  "*"
+                );
+              }
+          }
+        }
+      };
+
+      window.addEventListener("message", listener);
+
+      return () => {
+        window.removeEventListener("message", listener);
+      };
+    }
+  }, []);
 
   const setState = useCallback((partial: any) => {
     const existing = stateRef.current ? JSON.parse(stateRef.current || "{}") : {};

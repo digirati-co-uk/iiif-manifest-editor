@@ -20,7 +20,13 @@ export function ExplorerInput() {
 
   return (
     <form onSubmit={onSubmit} className={$.InputContainer}>
-      <input type="text" placeholder="Enter Manifest or Collection URL..." className={$.Input} name="url" id="url" />
+      <input
+        type="text"
+        placeholder="Enter IIIF Manifest or Collection URL..."
+        className={$.Input}
+        name="url"
+        id="url"
+      />
     </form>
   );
 }

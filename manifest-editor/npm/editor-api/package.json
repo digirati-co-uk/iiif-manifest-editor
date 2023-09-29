@@ -22,9 +22,9 @@
     }
   },
   "dependencies": {
-    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
-    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
+    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser/_pkg.tgz",
+    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/60ff763a/@iiif/vault/_pkg.tgz",
+    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/fc0bf4dc/@iiif/vault-helpers/_pkg.tgz"
   },
   "publishConfig": {
     "access": "public"

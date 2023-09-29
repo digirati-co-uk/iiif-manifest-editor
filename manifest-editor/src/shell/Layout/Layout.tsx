@@ -15,6 +15,7 @@ import useMatchMedia from "use-match-media-hook";
 import { DownIcon } from "@/icons/DownIcon";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@/_components/ui/GhostBlocks/GhostBlocks";
+import { MiniEditor } from "@/shell/Layout/components/MiniEditor";
 
 export const Layout = memo(function Layout(props: LayoutProps) {
   const status = useProjectLoading();
@@ -183,7 +184,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     </L.PanelContainer>
   );
 
-  const renderRightPanel = (transition?: TransitionStatus) => (
+  const renderRightPanel = (transition?: TransitionStatus, mini?: boolean) => (
     <L.PanelContainer
       $menu={props.rightPanelMenuPosition || "bottom"}
       ref={rightPanelResizer.refs.resizableDiv}
@@ -214,6 +215,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                     actions={actions.rightPanel}
                     pinActions={actions.pinnedRightPanel}
                     available={rightPanels}
+                    mini={mini}
                   />
                 ) : null}
 
@@ -223,6 +225,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                     state={state.pinnedRightPanel}
                     actions={actions.pinnedRightPanel}
                     close={actions.rightPanel.close}
+                    mini={mini}
                   />
                 ) : null}
               </>
@@ -232,6 +235,10 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       )}
     </L.PanelContainer>
   );
+
+  if (props.miniEditor) {
+    return <MiniEditor {...props.miniEditor}>{renderRightPanel(undefined, true)}</MiniEditor>;
+  }
 
   if (mobile) {
     return (

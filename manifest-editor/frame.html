@@ -1,0 +1,51 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+<iframe
+  id="me"
+  src="/?embed=true&manifest=https://digirati-co-uk.github.io/wunder.json&mini=false&canvas=https://digirati-co-uk.github.io/wunder/canvases/2" width="400" height="600"
+
+></iframe>
+
+<script>
+  const $me = document.getElementById('me');
+
+  const getManifestData = (iframe) => new Promise(resolve => {
+    iframe.contentWindow.postMessage({
+      type: 'manifest-editor:save',
+    }, '*');
+
+    const listener = e => {
+      const { type, data } = e.data || {};
+      if (type === 'manifest-editor:save-response') {
+        resolve(data);
+        window.removeEventListener('message', listener);
+      }
+    };
+
+    window.addEventListener('message', listener);
+  });
+
+  window.addEventListener('message', e => {
+    const { type } = e.data || {};
+    if (type === 'manifest-editor:close') {
+      console.log(
+        getManifestData($me).then(data => {
+          console.log('data', data);
+        })
+      )
+    }
+  });
+
+
+</script>
+
+</body>
+</html>

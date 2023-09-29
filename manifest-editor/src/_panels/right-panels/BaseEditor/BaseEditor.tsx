@@ -13,12 +13,12 @@ import { TabPanel } from "@/components/layout/TabPanel";
 import { Vault } from "@iiif/vault";
 import { EditorDefinition } from "@/shell";
 
-export function BaseEditorBackButton({ fallback, backAction }: any) {
+export function BaseEditorBackButton({ fallback, backAction, mini }: any) {
   const stack = useEditingResourceStack();
   const current = useEditingResource();
   const { back, close } = useEditingStack();
 
-  if (stack.length) {
+  if (stack.length > 0) {
     return (
       <ModulePanelButton onClick={back}>
         <BackIcon />
@@ -27,6 +27,9 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
   }
 
   if (current) {
+    if (mini) {
+      return null;
+    }
     return (
       <ModulePanelButton
         onClick={() => {
@@ -34,7 +37,7 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
           close();
         }}
       >
-        <BackIcon />
+        <BackIcon /> {stack.length}
       </ModulePanelButton>
     );
   }
@@ -42,15 +45,25 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
   return fallback;
 }
 
-export function BaseEditorCloseButton({ closeAction, fallback }: any) {
+export function BaseEditorCloseButton({ closeAction, fallback, mini }: any) {
   const stack = useEditingResourceStack();
   const current = useEditingResource();
+
+  if (mini && !window.opener && !window.parent) {
+    return null;
+  }
 
   if (current || stack.length) {
     return (
       <ModulePanelButton
         onClick={() => {
-          closeAction();
+          if (mini) {
+            if (window.opener || window.parent) {
+              (window.opener || window.parent).postMessage({ type: "manifest-editor:close" }, "*");
+            }
+          } else {
+            closeAction();
+          }
         }}
       >
         <CloseIcon />
