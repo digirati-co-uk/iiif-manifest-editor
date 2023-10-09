@@ -62,6 +62,14 @@ export const ImageService = () => (
   />
 );
 
+export const NoOutput = () => (
+  <IIIFExplorer
+    entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }}
+    hideOutput
+    height={500}
+  />
+);
+
 export const MultiCanvas = () => (
   <IIIFExplorer
     entry={{ id: "https://view.nls.uk/manifest/7446/74464117/manifest.json", type: "Manifest" }}
