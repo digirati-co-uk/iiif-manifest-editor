@@ -1,5 +1,5 @@
 import { useCanvas } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import invariant from "tiny-invariant";
 import { CanvasListStyles as S } from "../CanvasList.styles";
 import { useAppState } from "@/shell";

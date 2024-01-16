@@ -1,4 +1,4 @@
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useVault, useCanvas } from "react-iiif-vault";
 import { Button, CalltoButton } from "../../../atoms/Button";
 import { LightBox } from "../../../atoms/LightBox";

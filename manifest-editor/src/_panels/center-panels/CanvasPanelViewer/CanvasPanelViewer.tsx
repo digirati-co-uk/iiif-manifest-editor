@@ -27,7 +27,6 @@ import { Highlight } from "@/_panels/center-panels/CanvasPanelViewer/components/
 import { useAnnotationEditing } from "@/state/annotationg-editing";
 import { AnnotationTargetEditor } from "@/_panels/center-panels/CanvasPanelViewer/components/AnnotationTargetEditor";
 import { useTaskRunner } from "@/shell/TaskBridge/TaskBridge";
-import { a } from "@react-spring/web";
 
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
@@ -132,6 +131,8 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
       </CanvasContainer>
     );
   }
+
+  console.log("canvas panel mode", editMode || createMode ? "sketch" : "explore");
 
   return (
     <ErrorBoundary

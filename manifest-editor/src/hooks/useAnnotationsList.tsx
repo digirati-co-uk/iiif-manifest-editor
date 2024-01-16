@@ -1,12 +1,12 @@
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { IIIFBuilder } from "iiif-builder";
 import { useCallback, useState, useEffect } from "react";
-import { importEntities, removeReference } from "@iiif/vault/actions";
+import { importEntities, removeReference } from "@iiif/helpers/vault/actions";
 import { v4 } from "uuid";
 import { useAnnotationPage } from "./useAnnotationPage";
 import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { emptyAnnotationPage, emptyAnnotation } from "@iiif/parser";
-import { addReference } from "@iiif/vault/actions";
+import { addReference } from "@iiif/helpers/vault/actions";
 
 export function getInitialAnnotationList(canvasId: string) {
   const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);

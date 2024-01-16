@@ -11,7 +11,7 @@ import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { ErrorBoundary } from "react-error-boundary";
 import { Spinner } from "@/madoc/components/icons/Spinner";
 import { useFilter } from "@/components/widgets/IIIFExplorer/components/ItemFilter";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 export interface ExplorerSnippetProps {
   resource: string | Reference;
   onClick: () => void;

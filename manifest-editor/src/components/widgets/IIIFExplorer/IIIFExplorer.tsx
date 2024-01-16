@@ -1,6 +1,6 @@
 import * as $ from "./styles/HoverCard.styles";
 import { CollectionListing } from "./components/CollectionListing";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { VaultProvider } from "react-iiif-vault";
 import { ExplorerStoreProvider } from "./IIIFExplorer.store";
 import { ExplorerEntry } from "./components/ExplorerEntry";

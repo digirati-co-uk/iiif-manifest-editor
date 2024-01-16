@@ -1,6 +1,6 @@
 import { LayoutPanel } from "@/shell/Layout/Layout.types";
 import { useCollection } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { Button } from "@/atoms/Button";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 import { descriptiveProperties } from "@/_editors/DescriptiveProperties";

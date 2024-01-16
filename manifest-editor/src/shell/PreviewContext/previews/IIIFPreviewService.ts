@@ -1,6 +1,6 @@
 import { EditorProject } from "../../ProjectContext/ProjectContext.types";
 import { Preview } from "../../ProjectContext/types/Preview";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { PreviewConfiguration, PreviewHandler } from "../PreviewContext.types";
 import invariant from "tiny-invariant";
 

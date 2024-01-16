@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useManifest } from "../../hooks/useManifest";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 
 import { KeyValuePairString, KeyManifest } from "./IIIFElementsShared";
 import { KeyValuePairArray } from "./IIIFElementsArrays";

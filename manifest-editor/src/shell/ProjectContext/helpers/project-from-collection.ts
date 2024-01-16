@@ -1,6 +1,6 @@
 import { Collection } from "@iiif/presentation-3";
 import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { v4 } from "uuid";
 import slugify from "slugify";
 import { CollectionStorage } from "@/shell/ProjectContext/types/Storage";

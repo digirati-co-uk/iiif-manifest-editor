@@ -1,5 +1,5 @@
 import { ExplorerFormat } from "../IIIFExplorer.types";
-import { ContentState, serialiseContentState } from "@iiif/vault-helpers";
+import { ContentState, serialiseContentState } from "@iiif/helpers";
 import { Reference } from "@iiif/presentation-3";
 import { CanvasNormalized } from "@iiif/presentation-3-normalized";
 

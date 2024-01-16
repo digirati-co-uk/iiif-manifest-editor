@@ -1,5 +1,5 @@
 import { useCanvas } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
 export function SingleCanvas({ selected }: { selected: boolean }) {

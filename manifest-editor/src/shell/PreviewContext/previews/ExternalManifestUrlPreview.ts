@@ -1,5 +1,5 @@
 import { EditorProject } from "../../ProjectContext/ProjectContext.types";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { Preview } from "../../ProjectContext/types/Preview";
 import { PreviewConfiguration, PreviewHandler } from "../PreviewContext.types";
 

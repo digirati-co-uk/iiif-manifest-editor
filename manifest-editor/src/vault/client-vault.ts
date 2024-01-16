@@ -1,4 +1,4 @@
-import { AllActions, BatchAction, Vault, VaultOptions } from "@iiif/vault";
+import { AllActions, BatchAction, Vault, VaultOptions } from "@iiif/helpers/vault";
 import { type ServerAction } from "@/vault/server-vault";
 import { v4 } from "uuid";
 

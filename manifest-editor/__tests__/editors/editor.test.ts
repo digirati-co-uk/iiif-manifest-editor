@@ -1,5 +1,5 @@
 import { EditorInstance } from "@/editor-api/EditorInstance";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 
 describe("Editor test", () => {
   test("basic test", async () => {

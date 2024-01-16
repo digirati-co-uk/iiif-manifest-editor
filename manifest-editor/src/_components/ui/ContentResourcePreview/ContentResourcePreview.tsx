@@ -3,7 +3,7 @@ import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { useContentResourceThumbnail } from "@/hooks/use-content-resource-thumbnail";
 import { useContentResource } from "@/hooks/useContentResource";
-import { getValue } from "@iiif/vault-helpers/i18n";
+import { getValue } from "@iiif/helpers/i18n";
 import invariant from "tiny-invariant";
 
 export function ContentResourcePreview({

@@ -1,8 +1,8 @@
 import { Reference } from "@iiif/presentation-3";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { CreatorDefinition, CreatorOptions } from "./types";
-import { entityActions } from "@iiif/vault/actions";
+import { entityActions } from "@iiif/helpers/vault/actions";
 
 export class Creator {
   configs: CreatorDefinition[];

@@ -1,5 +1,5 @@
 import { useAnnotationPage } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { isExternal } from "@/helpers/is-external";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 

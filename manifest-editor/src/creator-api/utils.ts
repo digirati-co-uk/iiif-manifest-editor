@@ -1,4 +1,4 @@
-import { Entities } from "@iiif/vault/actions";
+import { Entities } from "@iiif/helpers/vault/actions";
 import {
   _ServiceNormalized,
   emptyAgent,

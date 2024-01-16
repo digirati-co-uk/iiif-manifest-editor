@@ -1,6 +1,6 @@
 import { canvasListPreviewStyles as $ } from "./CanvasListPreview.styles";
 import { useCanvas } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import cx from "classnames";
 
 interface CanvasListPreviewProps {

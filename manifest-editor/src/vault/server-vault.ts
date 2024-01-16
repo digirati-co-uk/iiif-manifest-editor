@@ -1,5 +1,5 @@
 // Server vault.
-import { AllActions, BatchAction, IIIFStore, Vault } from "@iiif/vault";
+import { AllActions, BatchAction, IIIFStore, Vault } from "@iiif/helpers/vault";
 import { Collection, Manifest } from "@iiif/presentation-3";
 import WebSocket, { RawData, WebSocketServer } from "ws";
 import { v4 } from "uuid";

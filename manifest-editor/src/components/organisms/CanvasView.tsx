@@ -3,7 +3,6 @@ import { useCanvas } from "react-iiif-vault";
 import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
 import { useManifest } from "../../hooks/useManifest";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
-import "@digirati/canvas-panel-web-components";
 
 export const CanvasView: React.FC = () => {
   const viewer = useRef();
@@ -36,9 +35,7 @@ export const CanvasView: React.FC = () => {
             --atlas-background:  #E5E7F0;
           }
       `}</style>
-      <ErrorBoundary>
-        <canvas-panel ref={viewer} canvas-id={canvas?.id} manifest-id={manifest?.id} key={canvas?.id} />
-      </ErrorBoundary>
+      <ErrorBoundary>NO LONGER IN USE.</ErrorBoundary>
     </CanvasContainer>
   );
 };

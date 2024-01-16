@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAnnotation, useVault } from "react-iiif-vault";
-import { createThumbnailHelper } from "@iiif/vault-helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
 import {
   FixedSizeImage,
   FixedSizeImageService,

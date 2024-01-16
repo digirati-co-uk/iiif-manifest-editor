@@ -2,7 +2,6 @@ import { ImageService3 } from "@iiif/presentation-3";
 import { FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { Input, InputContainer, InputLabel } from "../../editors/Input";
 import { DimensionsTriplet } from "../../atoms/DimensionsTriplet";
-import "@digirati/canvas-panel-web-components";
 import { Dropdown, DropdownOption } from "../../madoc/components/Dropdown";
 
 const profiles: DropdownOption[] = [

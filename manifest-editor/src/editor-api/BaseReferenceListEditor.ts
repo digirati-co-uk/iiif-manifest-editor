@@ -1,7 +1,7 @@
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
-import { entityActions } from "@iiif/vault/actions";
+import { entityActions } from "@iiif/helpers/vault/actions";
 import { v4 } from "uuid";
 
 export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entity, T[]> {

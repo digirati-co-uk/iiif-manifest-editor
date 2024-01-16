@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { AppState } from "../AppContext/AppContext";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { TransitionStatus } from "react-transition-group";
 import { CreatableResource, EditableResource } from "@/shell/EditingStack/EditingStack.types";
 import { Reference, SpecificResource } from "@iiif/presentation-3";

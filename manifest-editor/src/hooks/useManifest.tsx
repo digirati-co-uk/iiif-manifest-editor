@@ -2,7 +2,7 @@ import { useResourceContext } from "react-iiif-vault";
 import { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { useVaultSelector } from "react-iiif-vault";
 import { useMemo } from "react";
-import { IIIFStore } from "@iiif/vault";
+import { IIIFStore } from "@iiif/helpers/vault";
 
 // NB... This hook will be switched out when https://github.com/digirati-co-uk/react-iiif-vault/pull/1 is merged
 

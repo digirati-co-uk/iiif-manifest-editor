@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { VaultProvider } from "react-iiif-vault";
 import { createPreviewVault } from "@/shell/PreviewVault/create-preview-vault";
 

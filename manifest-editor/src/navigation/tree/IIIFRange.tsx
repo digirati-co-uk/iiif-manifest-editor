@@ -1,4 +1,4 @@
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useState } from "react";
 
 import { Container, ContainerColumn, KeyValuePairString, Expanded, KeyRanges, Indentation } from "./IIIFElementsShared";

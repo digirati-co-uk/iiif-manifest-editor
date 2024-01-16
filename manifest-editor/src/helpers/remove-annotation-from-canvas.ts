@@ -1,8 +1,8 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { Reference } from "@iiif/presentation-3";
 import { AnnotationNormalized, AnnotationPageNormalized, CanvasNormalized } from "@iiif/presentation-3-normalized";
 import invariant from "tiny-invariant";
-import { removeReference } from "@iiif/vault/actions";
+import { removeReference } from "@iiif/helpers/vault/actions";
 
 export function removeAnnotationFromCanvas(
   vault: Vault,

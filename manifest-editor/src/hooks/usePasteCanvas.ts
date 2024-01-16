@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { IIIFBuilder } from "iiif-builder";
 import { CanvasNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { unstable_batchedUpdates } from "react-dom";
-import { reorderEntityField } from "@iiif/vault/actions";
+import { reorderEntityField } from "@iiif/helpers/vault/actions";
 
 export function usePasteCanvas(onComplete?: (canvas: CanvasNormalized) => void) {
   const ctx = useResourceContext();

@@ -1,4 +1,4 @@
-import { addMapping, importEntities } from "@iiif/vault/actions";
+import { addMapping, importEntities } from "@iiif/helpers/vault/actions";
 import { useEffect, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { analyse } from "../../helpers/analyse";

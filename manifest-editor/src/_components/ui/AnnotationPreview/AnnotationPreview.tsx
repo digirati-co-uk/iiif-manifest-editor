@@ -7,7 +7,7 @@ import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 import { getAnnotationType } from "@/helpers/get-annotation-type";
 import { isSpecificResource, toRef } from "@iiif/parser";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { LocaleString } from "@/atoms/LocaleString";
 
 function AnnotationImageThumbnail() {

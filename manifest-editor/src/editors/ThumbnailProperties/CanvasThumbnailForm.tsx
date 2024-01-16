@@ -3,7 +3,7 @@ import { useManifest } from "../../hooks/useManifest";
 import { useManifestEditor } from "../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { NewMediaForm } from "./NewMediaForm";
 import { EditMediaForm } from "./EditMediaForm";
-import { addMapping, importEntities } from "@iiif/vault/actions";
+import { addMapping, importEntities } from "@iiif/helpers/vault/actions";
 import { MediaBody } from "@/___delete/types/media-body";
 
 export const CanvasThumbnailForm = () => {

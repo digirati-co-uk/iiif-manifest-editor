@@ -1,6 +1,6 @@
 import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { SupportedTarget } from "@iiif/vault-helpers";
+import { SupportedTarget } from "@iiif/helpers";
 import { BoxStyle } from "@atlas-viewer/atlas";
 
 export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {

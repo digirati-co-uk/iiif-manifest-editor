@@ -1,4 +1,4 @@
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useCallback, useState } from "react";
 import { useCanvas, useManifest } from "react-iiif-vault";
 import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";

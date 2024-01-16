@@ -5,7 +5,7 @@ import { EmptyState } from "@/madoc/components/EmptyState";
 import { RangeNavigationStyles as S } from "./RangeNavigation.styles";
 import { findManifestSelectedRange } from "./components/ViewRange.helpers";
 import { useAppState } from "@/shell/AppContext/AppContext";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useLayoutEffect } from "react";
 
 export function RangeNavigation() {

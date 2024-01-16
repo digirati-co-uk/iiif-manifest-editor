@@ -1,11 +1,11 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import {
   addReference,
   batchActions,
   modifyEntityField,
   reorderEntityField,
   requestResource,
-} from "@iiif/vault/actions";
+} from "@iiif/helpers/vault/actions";
 import { actionListFromResource } from "@iiif/vault/utility";
 
 export function createPreviewVault(homepageCollectionId = "vault://homepage-collection.json") {

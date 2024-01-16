@@ -9,7 +9,7 @@ import { ErrorMessage } from "@/atoms/callouts/ErrorMessage";
 import { CanvasPanel } from "react-iiif-vault";
 import { MediaControls } from "@/_panels/center-panels/CanvasPanelViewer/components/MediaControls";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 
 interface CreateAudioAnnotationPayload {
   label?: InternationalString;

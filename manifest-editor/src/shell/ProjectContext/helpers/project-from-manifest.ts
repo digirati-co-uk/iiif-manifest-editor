@@ -1,5 +1,5 @@
 import { Manifest } from "@iiif/presentation-3";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import slugify from "slugify";
 import { v4 } from "uuid";
 import { EditorProject } from "../ProjectContext.types";

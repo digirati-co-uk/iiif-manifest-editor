@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { CreatorDefinition, CreatorFunctionContext, CreatorOptions } from "./types";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { CreatorResource } from "./CreatorResource";

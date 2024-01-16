@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { EditorInstance } from "@/editor-api/EditorInstance";
 import { Creator } from "@/creator-api";
 import { allCreators } from "@/_creators";

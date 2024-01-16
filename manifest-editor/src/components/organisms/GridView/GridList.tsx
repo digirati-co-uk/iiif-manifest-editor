@@ -8,7 +8,7 @@ import { FlexContainer } from "../../layout/FlexContainer";
 import { GridItem } from "./GridItem";
 import { Fragment, useCallback } from "react";
 import { unstable_batchedUpdates } from "react-dom";
-import { reorderEntityField, removeReference } from "@iiif/vault/actions";
+import { reorderEntityField, removeReference } from "@iiif/helpers/vault/actions";
 import { Reference } from "@iiif/presentation-3";
 import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 

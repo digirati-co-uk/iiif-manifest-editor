@@ -1,5 +1,5 @@
 import { CreatorFunctionContext } from "@/creator-api";
-import { ContentState, normaliseContentState, parseContentState } from "@iiif/vault-helpers";
+import { ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 

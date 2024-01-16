@@ -50,7 +50,7 @@ function parseStories(modules: any) {
   return validStories;
 }
 
-const state = parseStories(import.meta.globEager("../../**/*.stories.ts*"));
+const state = parseStories(import.meta.glob("../../**/*.stories.ts*", { eager: true }));
 
 function AllStories(app: AppState) {
   useEffect(() => {
