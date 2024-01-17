@@ -1,5 +1,5 @@
 import { useContentResource } from "../../hooks/useContentResource";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useState } from "react";
 
 import {

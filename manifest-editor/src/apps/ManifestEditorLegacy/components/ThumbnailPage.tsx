@@ -5,7 +5,7 @@ import { MediaBody } from "@/___delete/types/media-body";
 import { NewMediaForm } from "@/editors/MediaProperties/NewMediaForm";
 import { useAppState } from "@/shell";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
-import { addMapping, importEntities } from "@iiif/vault/actions";
+import { addMapping, importEntities } from "@iiif/helpers/vault/actions";
 
 export function ThumbnailPage({ level }: { level: "manifest" | "canvas" }) {
   const { open } = useLayoutActions();

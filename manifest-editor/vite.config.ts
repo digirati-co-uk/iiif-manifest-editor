@@ -9,9 +9,9 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
   },
-  optimizeDeps: {
-    exclude: ["react-iiif-vault"],
-  },
+  // optimizeDeps: {
+  //   exclude: ["react-iiif-vault", "@atlas-viewer/atlas"],
+  // },
   envPrefix: ["VITE_", "TAURI_", "PULL_REQUEST"],
   plugins: [
     ecsstatic(),
@@ -35,7 +35,7 @@ export default defineConfig({
     globals: true,
   },
   resolve: {
-    dedupe: ["@iiif/vault", "@iiif/vault-helpers"],
+    dedupe: ["@iiif/helpers"],
 
     alias: {
       "@": path.resolve(__dirname, "./src"),

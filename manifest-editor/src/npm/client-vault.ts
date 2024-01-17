@@ -1,5 +1,5 @@
 import { ClientVault } from "@/vault/client-vault";
-import { VaultOptions } from "@iiif/vault";
+import { VaultOptions } from "@iiif/helpers/vault";
 
 export { ClientVault };
 

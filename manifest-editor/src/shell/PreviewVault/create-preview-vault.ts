@@ -1,11 +1,11 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import {
   addReference,
   batchActions,
   modifyEntityField,
   reorderEntityField,
   requestResource,
-} from "@iiif/vault/actions";
+} from "@iiif/helpers/vault/actions";
 import { actionListFromResource } from "@iiif/vault/utility";
 
 export function createPreviewVault(homepageCollectionId = "vault://homepage-collection.json") {
@@ -19,7 +19,7 @@ export function createPreviewVault(homepageCollectionId = "vault://homepage-coll
       const previewState = JSON.parse(previewCollection);
       if (previewState.id && previewState.id === homepageCollectionId) {
         vault.dispatch(requestResource({ id: previewState.id }));
-        const toDispatch = actionListFromResource(previewState.id, previewState);
+        const toDispatch: any = actionListFromResource(previewState.id, previewState);
         vault.dispatch(batchActions({ actions: toDispatch }));
         didImport = true;
       }
@@ -29,7 +29,7 @@ export function createPreviewVault(homepageCollectionId = "vault://homepage-coll
   }
 
   if (!didImport) {
-    const toDispatch = actionListFromResource(homepageCollectionId, {
+    const toDispatch: any = actionListFromResource(homepageCollectionId, {
       "@context": "http://iiif.io/api/presentation/3/context.json",
       id: homepageCollectionId,
       type: "Collection",

@@ -1,5 +1,5 @@
 import { ExplorerFormat } from "../IIIFExplorer.types";
-import { createThumbnailHelper } from "@iiif/vault-helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
 
 export const thumbnailFormat: ExplorerFormat<"thumbnail"> = {
   label: "Thumbnail",

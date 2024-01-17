@@ -3,7 +3,7 @@ import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
 import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
-import { createThumbnailHelper } from "@iiif/vault-helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 

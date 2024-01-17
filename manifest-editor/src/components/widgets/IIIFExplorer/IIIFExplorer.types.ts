@@ -1,7 +1,7 @@
 import { ImageCandidateRequest } from "@atlas-viewer/iiif-image-api";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { Reference } from "@iiif/presentation-3";
-import { SupportedSelector } from "@iiif/vault-helpers";
+import { SupportedSelector } from "@iiif/helpers";
 
 export type HistoryItem = Reference & { selector?: SupportedSelector; parent?: HistoryItem; listing?: HistoryItem[] };
 

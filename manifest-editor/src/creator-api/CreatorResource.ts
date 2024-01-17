@@ -1,5 +1,5 @@
 import { references } from "@/editor-api/meta/references";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { ReferencedResource } from "./ReferencedResource";
 import { getEmptyType, resolveType } from "./utils";
 import { HAS_PART, PART_OF } from "@iiif/parser";

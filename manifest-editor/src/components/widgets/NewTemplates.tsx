@@ -1,6 +1,6 @@
 import { RecentFilesWidget, RecentLabel, RecentThumbnails } from "../../atoms/RecentFilesWidget";
-import { getValue } from "@iiif/vault-helpers";
-import * as IIIFVault from "@iiif/vault";
+import { getValue } from "@iiif/helpers";
+import * as IIIFVault from "@iiif/helpers/vault";
 import { useEffect, useState } from "react";
 import { TemplateCardContainer, TemplateCardNew, TemplateCardPlaceholder } from "../../atoms/TemplateCard";
 import { AddIcon } from "../../icons/AddIcon";

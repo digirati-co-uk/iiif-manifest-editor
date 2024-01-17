@@ -1,5 +1,5 @@
 import { RangeContext, useRange, useVault } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import invariant from "tiny-invariant";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { useMemo } from "react";

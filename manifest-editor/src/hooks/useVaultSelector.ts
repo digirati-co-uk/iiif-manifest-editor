@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { useVault } from "react-iiif-vault";
-import { IIIFStore, Vault } from "@iiif/vault";
+import { IIIFStore, Vault } from "@iiif/helpers/vault";
 
 export function useVaultSelector<T>(selector: (state: IIIFStore, vault: Vault) => T): T {
   const vault = useVault();

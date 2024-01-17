@@ -1,6 +1,6 @@
 import { Storage } from "./types/Storage";
 import { Publication } from "./types/Publication";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { Preview } from "./types/Preview";
 
 export interface ProjectState {

@@ -1,5 +1,5 @@
 import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { isSpecificResource } from "@iiif/parser";
 
 export class ReferencedResource {

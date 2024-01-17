@@ -1,8 +1,8 @@
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { useLayoutEffect, useRef } from "react";
 import { useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
-import { Vault } from "@iiif/vault";
-import { getValue } from "@iiif/vault-helpers";
+import { Vault } from "@iiif/helpers/vault";
+import { getValue } from "@iiif/helpers";
 
 const exampleTutorial = {
   startingManifest: {

@@ -2,7 +2,7 @@ import { BasePropertyEditor } from "@/editor-api/BasePropertyEditor";
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { SpecificResource } from "@iiif/presentation-3";
 import { EditorConfig } from "@/editor-api/types";
-import { parseSelector } from "@iiif/vault-helpers";
+import { parseSelector } from "@iiif/helpers";
 
 export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormalized, SpecificResource> {
   constructor(config: EditorConfig) {

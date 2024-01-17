@@ -1,5 +1,5 @@
-import { getValue } from "@iiif/vault-helpers";
-import * as IIIFVault from "@iiif/vault";
+import { getValue } from "@iiif/helpers";
+import * as IIIFVault from "@iiif/helpers/vault";
 
 // This is from the ts version
 // Create an image in the DOM to measure height and width

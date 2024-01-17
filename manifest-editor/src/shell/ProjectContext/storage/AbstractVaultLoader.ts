@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { EditorProject, ProjectStorage } from "../ProjectContext.types";
 import { Collection, Manifest, Reference } from "@iiif/presentation-3";
 import { CollectionStorage, ManifestStorage, Storage } from "../types/Storage";

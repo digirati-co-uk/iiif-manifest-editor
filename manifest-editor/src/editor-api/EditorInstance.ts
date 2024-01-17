@@ -16,7 +16,7 @@ import { TechnicalEditor } from "./TechnicalPropertiesEditor";
 import { MetadataEditor } from "./MetadataEditor";
 import { LinkingEditor } from "./LinkingEditor";
 import { StructuralEditor } from "./StructuralEditor";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { resources } from "./meta/resources";
 import { AnnotationEditor } from "@/editor-api/AnnotationEditor";
 import { HAS_PART, PART_OF } from "@iiif/parser";

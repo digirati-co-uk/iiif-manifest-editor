@@ -1,9 +1,9 @@
 import create, { StoreApi } from "zustand/vanilla";
 import { CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useExistingVault } from "react-iiif-vault";
-import { SupportedSelector } from "@iiif/vault-helpers";
+import { SupportedSelector } from "@iiif/helpers";
 import { HistoryItem } from "@/components/widgets/IIIFExplorer/IIIFExplorer.types";
 
 interface Store {

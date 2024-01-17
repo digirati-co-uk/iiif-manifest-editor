@@ -1,7 +1,7 @@
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { AnnotationNormalized, CanvasNormalized, Reference } from "@iiif/presentation-3";
-import { SupportedSelectors } from "@iiif/vault-helpers";
-import { modifyEntityField } from "@iiif/vault/actions";
+import { SupportedSelectors } from "@iiif/helpers";
+import { modifyEntityField } from "@iiif/helpers/vault/actions";
 
 export function updateAnnotationSelector(
   vault: Vault,

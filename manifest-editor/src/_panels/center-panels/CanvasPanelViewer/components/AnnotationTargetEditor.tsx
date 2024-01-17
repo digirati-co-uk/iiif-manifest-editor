@@ -1,11 +1,12 @@
 import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { SupportedTarget } from "@iiif/vault-helpers";
-import { HTMLPortal, ResizeWorldItem } from "@atlas-viewer/atlas";
+import { SupportedTarget } from "@iiif/helpers";
+import { HTMLPortal, ResizeWorldItem, useMode } from "@atlas-viewer/atlas";
 import { constrainPosition } from "@/helpers/constrain-position";
 import { useGenericEditor } from "@/shell/EditingStack/EditingStack";
 
 export function AnnotationTargetEditor() {
+  const mode = useMode();
   const canvas = useCanvas();
   const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
   const editor = useGenericEditor(annotation ? { id: annotation.id, type: "Annotation" } : undefined);
@@ -44,7 +45,7 @@ export function AnnotationTargetEditor() {
       resizable
       maintainAspectRatio={isSpatial}
       disableCardinalControls={isSpatial}
-      onSave={(newPosition) => {
+      onSave={(newPosition: any) => {
         updateAnnotationTarget(newPosition);
       }}
     >

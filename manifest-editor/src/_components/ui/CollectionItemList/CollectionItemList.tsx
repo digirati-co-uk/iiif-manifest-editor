@@ -3,7 +3,7 @@ import { isSpecificResource } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import cx from "classnames";
 import { canvasListPreviewStyles as $ } from "@/_components/ui/CanvasListPreview/CanvasListPreview.styles";
 

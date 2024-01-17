@@ -1,6 +1,6 @@
 import React from "react";
 import { useExternalCollection } from "react-iiif-vault";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useApps } from "@/shell";
 import { Loading } from "@/atoms/Loading";
 

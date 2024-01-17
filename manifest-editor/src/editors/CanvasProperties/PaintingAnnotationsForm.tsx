@@ -10,7 +10,7 @@ import { EditIcon } from "@/icons/EditIcon";
 import { EditableContainer } from "@/atoms/EditableContainer";
 import { useLayoutActions } from "@/shell/Layout/Layout.context";
 
-import { removeReference, reorderEntityField } from "@iiif/vault/actions";
+import { removeReference, reorderEntityField } from "@iiif/helpers/vault/actions";
 import invariant from "tiny-invariant";
 import { AnnotationNormalized, AnnotationPageNormalized } from "@iiif/presentation-3";
 

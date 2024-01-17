@@ -5,7 +5,7 @@ import { FlexContainer } from "@/components/layout/FlexContainer";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 
 import { useEditor } from "@/shell/EditingStack/EditingStack";
-import { getValue } from "@iiif/vault-helpers/i18n";
+import { getValue } from "@iiif/helpers/i18n";
 import { useState } from "react";
 import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
 import { EmptyState } from "@/madoc/components/EmptyState";

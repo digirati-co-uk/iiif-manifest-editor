@@ -1,6 +1,6 @@
 // Storage
 import { Collection, Manifest } from "@iiif/presentation-3";
-import { EntityStore } from "@iiif/vault";
+import { EntityStore } from "@iiif/helpers/vault";
 
 export interface Storage {
   type: string;

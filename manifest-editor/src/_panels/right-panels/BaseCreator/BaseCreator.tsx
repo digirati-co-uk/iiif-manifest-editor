@@ -2,7 +2,7 @@ import { CreatorDefinition, CreatorOptions } from "@/creator-api/types";
 import { useApps } from "@/shell/AppContext/AppContext";
 import { CreatableResource } from "@/shell/EditingStack/EditingStack.types";
 import { useSetCustomTitle } from "@/shell/Layout/components/ModularPanel";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { memo, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { baseCreatorStyles as $ } from "./BaseCreator.styles";

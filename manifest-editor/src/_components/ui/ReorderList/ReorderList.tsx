@@ -1,7 +1,7 @@
 import { AnnotationContext, ResourceProvider, useAnnotationPage, useVault } from "react-iiif-vault";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import { ReactNode, useCallback } from "react";
-import { reorderEntityField } from "@iiif/vault/actions";
+import { reorderEntityField } from "@iiif/helpers/vault/actions";
 import invariant from "tiny-invariant";
 import { StrictModeDroppable } from "@/helpers/strict-mode-droppable";
 import { useTaskDispatch } from "@/shell/TaskBridge/TaskBridge";

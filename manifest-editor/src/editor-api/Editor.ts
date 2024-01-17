@@ -1,5 +1,5 @@
 import { Reference } from "@iiif/presentation-3";
-import { Vault } from "@iiif/vault";
+import { Vault } from "@iiif/helpers/vault";
 import { EditorConfig } from "./types";
 import { EditorInstance } from "./EditorInstance";
 

@@ -6,7 +6,7 @@ import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
 import { AnnotationContext, CanvasContext, useAnnotationPage, useVaultSelector } from "react-iiif-vault";
 import { Reference } from "@iiif/presentation-3";
 import { isSpecificResource, toRef } from "@iiif/parser";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { AnnotationPreview, AnnotationTargetLabel } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { FlexContainer } from "@/components/layout/FlexContainer";

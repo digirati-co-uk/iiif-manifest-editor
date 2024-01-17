@@ -1,4 +1,4 @@
-import { BoxSelector } from "@iiif/vault-helpers";
+import { BoxSelector } from "@iiif/helpers";
 import { FieldsetContainer, Input, InputContainer, InputLabel } from "@/editors/Input";
 import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
 import { Fragment, ReactNode, useEffect, useRef } from "react";

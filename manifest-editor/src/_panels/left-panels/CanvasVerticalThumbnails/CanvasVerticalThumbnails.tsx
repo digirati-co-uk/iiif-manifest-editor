@@ -3,7 +3,7 @@ import { useCanvasSubset } from "@/hooks/useCanvasSubset";
 import { CanvasNormalized, Reference } from "@iiif/presentation-3";
 import { CanvasContext, useVault } from "react-iiif-vault";
 import { CanvasThumbnail } from "@/components/organisms/CanvasThumbnail/CanvasThumbnail";
-import { getValue } from "@iiif/vault-helpers";
+import { getValue } from "@iiif/helpers";
 import { useAppState } from "@/shell/AppContext/AppContext";
 import { UniversalCopyTarget } from "@/shell/Universal/UniversalCopyPaste";
 import { useLayoutEffect } from "react";
