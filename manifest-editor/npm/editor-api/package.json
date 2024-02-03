@@ -22,9 +22,8 @@
     }
   },
   "dependencies": {
-    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
-    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers"
+    "@iiif/parser": "^2.0.1",
+    "@iiif/helpers": "^1.0.4"
   },
   "publishConfig": {
     "access": "public"

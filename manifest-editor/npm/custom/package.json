@@ -28,19 +28,18 @@
     "@manifest-editor/shell": "*"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/9fc143d3/@atlas-viewer/atlas",
+    "@atlas-viewer/atlas": "^2.0.5",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "i18next": "^22.4.15",
     "react-i18next": "^12.2.2",
     "styled-components": "^5.3.5",
-    "@iiif/presentation-3": "^2.0.5",
+    "@iiif/presentation-3": "^2.1.3",
     "react-is": "^18.2.0",
     "@iiif/presentation-3-normalized": "^0.9.7",
-    "@iiif/parser": "https://pkg.csb.dev/IIIF-Commons/parser/commit/9c888e0c/@iiif/parser",
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
-    "@iiif/vault-helpers": "https://pkg.csb.dev/IIIF-Commons/vault-helpers/commit/e9d41f61/@iiif/vault-helpers",
+    "@iiif/parser": "^2.0.1",
+    "@iiif/helpers": "^1.0.4",
     "@vitejs/plugin-react": "^4.0.0",
     "express": "^4.18.1",
     "vite": "^4.3.3"
