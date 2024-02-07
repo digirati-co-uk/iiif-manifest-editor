@@ -132,8 +132,6 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
     );
   }
 
-  console.log("canvas panel mode", editMode || createMode ? "sketch" : "explore");
-
   return (
     <ErrorBoundary
       resetKeys={[state.canvasId, refreshKey]}

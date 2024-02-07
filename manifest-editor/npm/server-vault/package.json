@@ -22,7 +22,7 @@
     }
   },
   "dependencies": {
-    "@iiif/vault": "https://pkg.csb.dev/IIIF-Commons/vault/commit/4fdd7a3b/@iiif/vault",
+    "@iiif/helpers": "^1.0.4",
     "uuid": "^8.3.2",
     "ws": "^8.13.0"
   },
