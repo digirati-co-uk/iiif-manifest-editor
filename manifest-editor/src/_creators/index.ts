@@ -14,6 +14,7 @@ import { internalCanvas } from "@/_creators/Canvas/InternalCanvas";
 import { imageUrlAnnotation } from "@/_creators/Annotation/ImageUrlAnnotation";
 import { audioAnnotation } from "@/_creators/Annotation/AudioAnnotation";
 import { videoAnnotation } from "@/_creators/Annotation/VideoAnnotation";
+import { manifestBrowserCreator } from "@/_creators/Manifest/ManifestBrowserCreator";
 
 export const allCreators = [
   emptyCanvas,
@@ -33,4 +34,5 @@ export const allCreators = [
   imageUrlAnnotation,
   audioAnnotation,
   videoAnnotation,
+  manifestBrowserCreator,
 ];

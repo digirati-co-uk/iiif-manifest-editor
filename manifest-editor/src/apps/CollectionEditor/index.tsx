@@ -20,6 +20,9 @@ import { useInStack } from "@/_components/ui/CanvasPanelEditor/CanvasPanelEditor
 import { PreviewVaultBoundary } from "@/shell/PreviewVault/PreviewVault";
 import { IIIFExplorer } from "@/components/widgets/IIIFExplorer/IIIFExplorer";
 import { PaddedSidebarContainer } from "@/atoms/PaddedSidebarContainer";
+import { manifestBrowserCreator } from "@/_creators/Manifest/ManifestBrowserCreator";
+import { ExportPanel } from "@/_panels/center-panels/ExportPanel/ExportPanel";
+import React from "react";
 
 export default { id: "collection-editor", title: "Collection Editor", project: true, projectType: "Collection" };
 
@@ -29,6 +32,12 @@ export const centerPanels: LayoutPanel[] = [
     label: "Center panel",
     icon: "",
     render: () => <ViewManifest />,
+  },
+  {
+    id: "export",
+    label: "Export",
+    icon: "",
+    render: () => <ExportPanel />,
   },
 ];
 export const leftPanels: LayoutPanel[] = [
@@ -58,6 +67,9 @@ export const editors = [
   technicalProperties,
   linkingProperties,
 ];
+
+export const creators = [manifestBrowserCreator];
+
 export const resources = ["Collection", "Manifest"];
 
 function ViewManifest() {
@@ -106,6 +118,12 @@ function CollectionLeftPanel() {
         }
         createActions={createAppActions(items)}
       />
+
+      {canCreateManifest ? (
+        <Button {...manifestActions.buttonProps} onClick={() => manifestActions.create()}>
+          Add Manifest
+        </Button>
+      ) : null}
     </PaddedSidebarContainer>
   );
 }
