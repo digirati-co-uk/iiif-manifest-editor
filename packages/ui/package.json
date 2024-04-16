@@ -1,0 +1,76 @@
+{
+  "name": "@manifest-editor/ui",
+  "version": "1.0.0",
+  "type": "module",
+  "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "directory": "packages/ui"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "exports": {
+    "./atoms/Button": "./atoms/Button.tsx",
+    "./GlobalStyle": "./atoms/GlobalStyle.ts",
+    "./madoc/use-local-storage": "./madoc//use-local-storage.ts",
+    "./atoms/ManifestEditorLogo": "./atoms/ManifestEditorLogo.tsx",
+    "./components/organisms/PreviewButton/PreviewButton": "./components/organisms/PreviewButton/PreviewButton.tsx",
+    "./components/layout/FlexContainer": "./components/layout/FlexContainer.tsx",
+    "./components/modals/NewManifestModal": "./components/modals/NewManifestModal.tsx",
+    "./components/layout/*": "./components/layout/*.tsx",
+    "./madoc/components/ModalButton": "./madoc/components/ModalButton.tsx",
+    "./icons/svg/*.svg": "./icons/*.svg",
+    "./icons/*": "./icons/*.tsx",
+    "./atoms/*": "./atoms/*.tsx",
+    "./atoms/callouts/*": "./atoms/callouts/*.tsx",
+    "./madoc/components/callouts/*": "./madoc/components/callouts/*.tsx",
+    "./madoc/components/icons/*": "./madoc/components/icons/*.tsx",
+    "./madoc/use-resize-layouts": "./madoc/use-resize-layouts.tsx",
+    "./madoc/use-event-handler": "./madoc/use-event-handler.ts",
+    "./ui/GhostBlocks/GhostBlocks": "./ui/GhostBlocks/GhostBlocks.tsx",
+    "./components/modals/PreviewModal": "./components/modals/PreviewModal.tsx",
+    "./madoc/components/EmptyState": "./madoc/components/EmptyState.tsx",
+    "./components/layout/Accordion/Accordion": "./components/layout/Accordion/Accordion.tsx",
+    "./editors/Input": "./editors/Input.tsx",
+    "./helpers/strict-mode-droppable": "./helpers/strict-mode-droppable.tsx",
+    "./components/organisms/RichMediaLink/RichMediaLink": "./components/organisms/RichMediaLink/RichMediaLink.tsx",
+    "./DeleteButton": "./ui/DeleteButton/DeleteButton.tsx",
+    "./MediaControls": "./ui/MediaControls/MediaControls.tsx",
+    "./VideoPlayer": "./ui/VideoPlayer/VideoPlayer.tsx",
+    "./ViewControls": "./ui/ViewControls/ViewControls.tsx",
+    "./EmptyCanvasState": "./components/organisms/EmptyCanvasState/EmptyCanvasState.tsx",
+    "./CenterPanelContainer": "./ui/CenterPanelContainer/CenterPanelContainer.tsx",
+    "./RichTextLanguageField": "./ui/RichTextLanguageField/RichTextLanguageField.tsx",
+    "./use-local-storage": "./madoc/use-local-storage.ts"
+  },
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@atlas-viewer/atlas": "^2.2.0",
+    "@floating-ui/react": "0.26.12",
+    "react": "^18.2.0",
+    "@iiif/helpers": "^1.1.0",
+    "react-dom": "^18.2.0",
+    "react-iiif-vault": "^1.1.1",
+    "styled-components": "6.1.8",
+    "classnames": "^2.3.2",
+    "react-accessible-dropdown-menu-hook": "4.0.0",
+    "mitt": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
+    "@repo/eslint-config": "0.0.0"
+  },
+  "private": true
+}

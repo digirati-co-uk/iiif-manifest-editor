@@ -1,0 +1,22 @@
+.Item {
+  padding: 0.2em 0.5em;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.Item:hover {
+  background: #e8f0fe;
+}
+
+.Item[aria-selected="true"] {
+  background: #477dfa;
+  color: #fff;
+}
+
+.Label {
+  font-size: 1em;
+}
+
+.ItemMargin {
+  margin-bottom: 0.5em;
+}

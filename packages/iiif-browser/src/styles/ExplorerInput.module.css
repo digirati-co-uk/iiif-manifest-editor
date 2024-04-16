@@ -1,0 +1,19 @@
+.InputContainer {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.875em;
+}
+
+@container (min-width: 400px) {
+  .InputContainer {
+    font-size: 1em;
+  }
+}
+
+.Input {
+  border: none;
+  background: #fff;
+  padding: 0.5em;
+  font-size: 1em;
+  width: 100%;
+}
