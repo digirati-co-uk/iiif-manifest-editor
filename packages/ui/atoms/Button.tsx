@@ -34,13 +34,13 @@ export const Button = styled.button<{ $active?: boolean }>`
   }
 `;
 
-export const SmallButton = styled(Button)`
+export const SmallButton = styled(Button as any)`
   padding: 0.25em ${(props: any) => props.theme.padding.xs || "0.4em"};
   height: unset;
   background: none;
 `;
 
-export const SecondaryButton = styled(Button)`
+export const SecondaryButton = styled(Button as any)`
    {
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
     color: ${(props: any) => props.theme.color.main || "#347cff;"};
@@ -61,7 +61,7 @@ export const SecondaryButton = styled(Button)`
   }
 `;
 
-export const CalltoButton = styled(Button)`
+export const CalltoButton = styled(Button as any)`
   padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   color: ${(props: any) => props.theme.color.white || "white"};
   background-color: ${(props: any) => props.theme.color.main || "#347cff;"};

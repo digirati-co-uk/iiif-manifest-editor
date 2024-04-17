@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { FlexContainerColumn } from "../components/layout/FlexContainer";
 
-export const TemplateCardContainer = styled(FlexContainerColumn)`
+export const TemplateCardContainer = styled(FlexContainerColumn as any)`
   align-items: center;
   max-width: 10rem;
   height: fit-content;

@@ -46,7 +46,9 @@ export const InnerModalContainer = styled.div<{ size?: keyof typeof sizes; $expa
   max-height: 80vh;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 4px 0 40px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    4px 0 40px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
 
   ${(props) =>
     props.$expanded &&
@@ -83,7 +85,7 @@ export const ModalHeaderTitle = styled.div`
   flex: 1 1 0px;
 `;
 
-export const ModalCloseIcon = styled(CloseIcon)`
+export const ModalCloseIcon = styled(CloseIcon as any)`
   fill: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   &:hover {
@@ -91,7 +93,7 @@ export const ModalCloseIcon = styled(CloseIcon)`
   }
 `;
 
-export const ModalResizeIcon = styled(FullScreenEnterIcon)`
+export const ModalResizeIcon = styled(FullScreenEnterIcon as any)`
   fill: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font-size: 1.2em;
