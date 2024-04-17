@@ -28,3 +28,9 @@ export function useCurrentProject(): EditorProject {
 
   return current;
 }
+
+export function useOptionalCurrentProject(): EditorProject | null {
+  const current = useProjectContext().current;
+
+  return current || null;
+}

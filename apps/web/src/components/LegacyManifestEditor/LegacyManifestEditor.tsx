@@ -1,6 +1,12 @@
 "use client";
 
-import { ProjectProvider, useCurrentProject } from "@manifest-editor/projects";
+import {
+  ProjectProvider,
+  useOptionalCurrentProject,
+  useProjectActionsWithBackend,
+  useProjectContext,
+  useProjectCreators,
+} from "@manifest-editor/projects";
 import { Layout, MultiAppProvider, PreviewConfiguration, ShellProvider, mapApp } from "@manifest-editor/shell";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
 import * as aboutApp from "./apps/About";
@@ -9,6 +15,7 @@ import * as manifestEditorApp from "@manifest-editor/manifest-preset";
 import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import { AppHeader } from "./components/AppHeader";
 import "manifest-editor/dist/index.css";
+import { useEffect, useRef, useState } from "react";
 
 // Aim: For this to be exactly like the current manifest editor.
 
@@ -85,14 +92,33 @@ export default function LegacyManifestEditor() {
 }
 
 function InternalEditor() {
-  const { resource } = useCurrentProject();
+  const { createBlankManifest } = useProjectCreators();
+  const project = useOptionalCurrentProject();
+  const [loading, setIsLoading] = useState(false);
 
-  if (!resource) {
-    return null;
+  if (!project) {
+    return (
+      <div className="m-auto text-center">
+        <h4 className={`text-3xl text-center text-slate-700 mb-8`}>Welcome to Manifest editor</h4>
+        {loading ? (
+          <div className={`text-2xl text-center text-slate-500 mb-8`}>Loading...</div>
+        ) : (
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            onClick={() => {
+              setIsLoading(true);
+              createBlankManifest();
+            }}
+          >
+            Get started
+          </button>
+        )}
+      </div>
+    );
   }
 
   return (
-    <ShellProvider resource={resource} config={config}>
+    <ShellProvider resource={project.resource} config={config}>
       <GlobalStyle />
       <Layout header={<AppHeader />} />
     </ShellProvider>

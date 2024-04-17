@@ -59,10 +59,6 @@ export function ProjectProvider(props: ProjectProviderProps) {
     return <div>Loading...</div>;
   }
 
-  if (!manifestOrCollection) {
-    return <div>Resource is required</div>;
-  }
-
   return (
     <ProjectLoadingReactContext.Provider value={loadingStatus}>
       <ProjectReactContext.Provider value={context}>

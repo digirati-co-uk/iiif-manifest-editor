@@ -36,12 +36,12 @@ export function AppResourceInstanceProvider({ id, children }: { id?: string; chi
   return <AppResourceInstanceReactProvider.Provider value={id}>{children}</AppResourceInstanceReactProvider.Provider>;
 }
 
-export function AppResourceProvider({ resource, children }: { resource: Resource; children: React.ReactNode }) {
+export function AppResourceProvider({ resource, children }: { resource?: Resource; children: React.ReactNode }) {
   const vault = useExistingVault();
 
   let inner = children;
 
-  if (resource.type === "Manifest") {
+  if (resource && resource.type === "Manifest") {
     inner = (
       <VaultProvider vault={vault || undefined}>
         <ManifestContext manifest={resource.id || ""}>{children}</ManifestContext>
@@ -49,7 +49,7 @@ export function AppResourceProvider({ resource, children }: { resource: Resource
     );
   }
 
-  if (resource.type === "Collection") {
+  if (resource && resource.type === "Collection") {
     inner = (
       <VaultProvider vault={vault || undefined}>
         <CollectionContext collection={resource.id || ""}>{children}</CollectionContext>
@@ -57,5 +57,5 @@ export function AppResourceProvider({ resource, children }: { resource: Resource
     );
   }
 
-  return <AppResourceReactProvider.Provider value={resource}>{inner}</AppResourceReactProvider.Provider>;
+  return <AppResourceReactProvider.Provider value={resource as any}>{inner}</AppResourceReactProvider.Provider>;
 }
