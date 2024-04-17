@@ -4,7 +4,7 @@ const routes = createIIIFPreviewNextApiHandler({
   apiPath: "/api/iiif",
 });
 
-export const dynamic = routes.dynamic;
+export const dynamic = "force-dynamic";
 export const GET = routes.GET;
 export const POST = routes.POST;
 export const PUT = routes.PUT;
