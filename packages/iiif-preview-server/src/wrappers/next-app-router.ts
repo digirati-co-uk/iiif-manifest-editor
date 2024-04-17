@@ -29,8 +29,10 @@ export function createIIIFPreviewNextApiHandler({
   config?: Partial<Config>;
 }) {
   const storage = createMemoryStore();
-  const baseConfig: Config = {
+  const baseUrl = getBaseUrl() + apiPath + "/";
+  const baseConfig: Config & { baseUrl: string } = {
     ...config,
+    baseUrl,
     keyLength: 32,
     partLength: 16, // keyLength / 2
     updateKeyLength: 64,
@@ -64,11 +66,7 @@ export function createIIIFPreviewNextApiHandler({
       invariant(p3 === "p3", "Invalid path");
       invariant(id, "Invalid resource");
 
-      const config = {
-        ...baseConfig,
-        baseUrl: getBaseUrl(request) + apiPath + "/",
-        storage: getStore ? getStore(request) : storage,
-      };
+      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
 
       return retrieveRoute(request, { keys: id }, config);
     },
@@ -82,11 +80,7 @@ export function createIIIFPreviewNextApiHandler({
       invariant(store === "store", "Invalid path");
       invariant(params.slug.length === 1, "Invalid path");
 
-      const config = {
-        ...baseConfig,
-        baseUrl: getBaseUrl(request) + apiPath + "/",
-        storage: getStore ? getStore(request) : storage,
-      };
+      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
 
       return storeRoute(request, {}, config);
     },
@@ -102,11 +96,7 @@ export function createIIIFPreviewNextApiHandler({
       invariant(key3, "Invalid path");
       invariant(params.slug.length === 3, "Invalid path");
 
-      const config = {
-        ...baseConfig,
-        baseUrl: getBaseUrl(request) + apiPath + "/",
-        storage: getStore ? getStore(request) : storage,
-      };
+      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
 
       return updateRoute(request, { keys: id, key3 }, config);
     },
@@ -123,18 +113,28 @@ export function createIIIFPreviewNextApiHandler({
       invariant(key3, "Invalid path");
       invariant(params.slug.length === 3, "Invalid path");
 
-      const config = {
-        ...baseConfig,
-        baseUrl: getBaseUrl(request) + apiPath + "/",
-        storage: getStore ? getStore(request) : storage,
-      };
+      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
 
       return deleteRoute(request, { keys: id, key3 }, config);
     },
   };
 }
 
-function getBaseUrl(request: Request) {
-  const base = new URL(request.url);
-  return base.origin;
+function getBaseUrl() {
+  if (typeof window !== "undefined")
+    // browser should use relative path
+    return "";
+  if (process.env.VERCEL_URL)
+    // reference for vercel.com
+    return `https://${process.env.VERCEL_URL}`;
+  if (process.env.RENDER_INTERNAL_HOSTNAME)
+    // reference for render.com
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+
+  if (process.env.URL) {
+    // assume Netlify
+    return process.env.URL;
+  }
+  // assume localhost
+  return `http://localhost:${process.env.PORT ?? 3000}`;
 }
