@@ -136,11 +136,5 @@ export function createIIIFPreviewNextApiHandler({
 
 function getBaseUrl(request: Request) {
   const base = new URL(request.url);
-  base.pathname = "";
-  base.searchParams.forEach((_, key) => base.searchParams.delete(key));
-  const path = base.toString();
-  if (path.endsWith("/")) {
-    return path.slice(0, -1);
-  }
-  return path;
+  return base.origin;
 }

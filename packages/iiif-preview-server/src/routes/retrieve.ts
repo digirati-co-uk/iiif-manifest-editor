@@ -24,8 +24,6 @@ export async function retrieveRoute(
 
   const resp = await storage.getWithMetadata<{ ttl: number }>(storeKey);
 
-  console.log("resp", resp);
-
   invariant(resp && resp.value, "Item not found");
 
   const data = resp.value;
