@@ -1,14 +1,12 @@
-import { defineDocumentType, makeSource } from "contentlayer2/source-files";
+import { makeSource } from "@contentlayer2/source-files";
+import highlight from "rehype-highlight";
+import { contentDirPath } from "./src/contentlayer/utils";
+import { Doc } from "./src/contentlayer/Doc";
 
-export const Documentation = defineDocumentType(() => ({
-  name: "Documentation",
-  filePathPattern: "**/*.md",
-  fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
+export default makeSource({
+  contentDirPath,
+  documentTypes: {
+    Doc,
   },
-}));
-
-export default makeSource({ contentDirPath: "docs", documentTypes: [Documentation] });
+  mdx: { rehypePlugins: [highlight] },
+});
