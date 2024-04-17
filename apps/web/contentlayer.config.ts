@@ -1,6 +1,7 @@
 import { makeSource } from "@contentlayer2/source-files";
 import highlight from "rehype-highlight";
 import { contentDirPath } from "./src/contentlayer/utils";
+import rehypeSlug from "rehype-slug";
 import { Doc } from "./src/contentlayer/Doc";
 
 export default makeSource({
@@ -8,5 +9,5 @@ export default makeSource({
   documentTypes: {
     Doc,
   },
-  mdx: { rehypePlugins: [highlight] },
+  mdx: { rehypePlugins: [highlight, rehypeSlug] },
 });

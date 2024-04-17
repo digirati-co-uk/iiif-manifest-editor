@@ -5,6 +5,8 @@ import { DocsNavigation } from "../../../../components/docs/DocsNavigation";
 import { Card } from "../../../../components/docs/Card";
 import { Label } from "../../../../components/docs/Label";
 import Link from "next/link";
+import { DocsHeader } from "../../../../components/docs/DocsHeader";
+import { PageNavigation } from "../../../../components/docs/PageNavigation";
 
 interface DocsPageProps {
   params: { slug: string[] };
@@ -40,7 +42,7 @@ export default async function DocsPage(props: DocsPageProps) {
       </div>
 
       <div className="relative w-full grow">
-        {/* <DocsHeader tree={tree} breadcrumbs={breadcrumbs} title={doc.title} /> */}
+        <DocsHeader tree={thing.tree} breadcrumbs={thing.breadcrumbs} title={doc.title} />
         <div className="w-full max-w-3xl p-4 pb-8 mx-auto mb-4 prose docs prose-slate prose-violet shrink prose-headings:font-semibold prose-a:font-normal prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-hr:border-gray-200 dark:prose-invert dark:prose-a:text-violet-400 dark:prose-hr:border-gray-800 md:mb-8 md:px-8 lg:mx-0 lg:max-w-full lg:px-16">
           {MDXContent && <MDXContent components={mdxComponents as any} />}
 
@@ -67,9 +69,9 @@ export default async function DocsPage(props: DocsPageProps) {
       </div>
       <div
         style={{ maxHeight: "calc(100vh - 128px)" }}
-        className="sticky top-32 hidden w-80 shrink-0 overflow-y-scroll p-8 pr-16 1.5xl:block"
+        className="sticky top-32 w-80 shrink-0 overflow-y-auto p-8 pr-16 1.5xl:block"
       >
-        {/* <PageNavigation headings={doc.headings} /> */}
+        <PageNavigation headings={doc.headings} />
         <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-t from-white/0 to-white/100 dark:from-gray-950/0 dark:to-gray-950/100" />
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-b from-white/0 to-white/100 dark:from-gray-950/0 dark:to-gray-950/100" />
       </div>

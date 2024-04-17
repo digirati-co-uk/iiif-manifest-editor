@@ -29,7 +29,10 @@ export default function Page(): JSX.Element {
           digitised books, manuscripts, artworks, movies and audio. It's typically used by galleries, libraries,
           archives and museums to present their collections and make them <i>interoperable</i> - they become available
           to software such as viewers, annotation tools, digital exhibits and more.{" "}
-          <a href="https://iiif.io/">Learn more at iiif.io</a>.
+          <a href="https://iiif.io/" target="_blank">
+            Learn more at iiif.io
+          </a>
+          .
         </p>
 
         <h2>What's a Manifest?</h2>
