@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ProjectProvider,
-  useOptionalCurrentProject,
-  useProjectActionsWithBackend,
-  useProjectContext,
-  useProjectCreators,
-} from "@manifest-editor/projects";
+import { ProjectProvider, useOptionalCurrentProject, useProjectCreators } from "@manifest-editor/projects";
 import { Layout, MultiAppProvider, PreviewConfiguration, ShellProvider, mapApp } from "@manifest-editor/shell";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
 import * as aboutApp from "./apps/About";
@@ -15,10 +9,20 @@ import * as manifestEditorApp from "@manifest-editor/manifest-preset";
 import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import { AppHeader } from "./components/AppHeader";
 import "manifest-editor/dist/index.css";
-import { useEffect, useRef, useState } from "react";
+import "@manifest-editor/shell/dist/index.css";
+import { useState } from "react";
 
 // Aim: For this to be exactly like the current manifest editor.
 
+const classes = {
+  container: "m-4",
+  row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
+  label: "font-bold text-slate-600 w-full text-sm font-semibold mb-0",
+  value: "text-sm text-slate-800 block [&>a]:underline",
+  empty: "text-gray-400",
+};
+
+// class="[&>a]:underline"
 const apps = {
   about: mapApp(aboutApp),
   splash: mapApp(splashApp),

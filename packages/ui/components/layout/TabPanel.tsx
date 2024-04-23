@@ -91,7 +91,7 @@ export const TabPanel: React.FC<{
 
       if (fullWidth && ref.current) {
         const el = ref.current;
-        const width = el.getBoundingClientRect().width - 20; // 60 is the width of the "more" button
+        const width = el.getBoundingClientRect().width - 60; // 60 is the width of the "more" button
 
         let hidden = 0;
         let total = 0;

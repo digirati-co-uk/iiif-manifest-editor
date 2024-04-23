@@ -7,6 +7,10 @@ export const OuterWrapper = styled.div`
   flex-direction: column;
   flex: 1;
   min-height: 0;
+
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 export const Header = styled.header`
@@ -148,6 +152,47 @@ export const PanelContainer = styled.div<{ $menu?: MenuPositions }>`
         `;
     }
   }}
+`;
+
+export const PanelSideMenu = styled.div`
+  background: #fff;
+  border-top: 1px solid #e3e7f0;
+  border-right: 1px solid #e3e7f0;
+  display: flex;
+  flex-direction: column;
+  width: 3.35em;
+  padding: 0.3em;
+  gap: 0.3em;
+`;
+
+export const PanelSideMenuItem = styled.button`
+  cursor: pointer;
+  aspect-ratio: 1;
+  width: 2.75em;
+  height: 2.75em;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background: #fff6f9;
+  }
+
+  &:hover svg {
+    color: #000;
+  }
+
+  &[data-selected="true"] {
+    background: #fff6f9;
+    svg {
+      color: #d85681;
+    }
+  }
+
+  & svg {
+    font-size: 1.4em;
+    color: #999;
+  }
 `;
 
 export const PanelMenu = styled.div<{ $position: "bottom" | "top" | "left" | "right"; $open: boolean }>`

@@ -15,6 +15,8 @@ import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
 import { useMatchMedia } from "../hooks/use-match-media";
+import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
+import { ExperimentalIcon } from "@manifest-editor/ui/madoc/components/icons/ExperimentalIcon";
 
 interface LayoutProps {
   header?: React.ReactNode;
@@ -167,11 +169,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                 {leftPanel ? (
                   <ModularPanel
                     isLeft
+                    noHeader
                     transition={transition}
                     panel={leftPanel}
                     state={state.leftPanel}
                     actions={actions.leftPanel}
-                    available={leftPanels}
                   />
                 ) : null}
               </>
@@ -319,6 +321,25 @@ export const Layout = memo(function Layout(props: LayoutProps) {
           rightPanelResizer.refs.container.current = div;
         }}
       >
+        {leftPanels.length > 0 ? (
+          <L.PanelSideMenu data-open={state.leftPanel.open}>
+            {leftPanels.map((panel) => (
+              <L.PanelSideMenuItem
+                key={panel.id}
+                data-selected={state.leftPanel.current === panel.id && state.leftPanel.open}
+                onClick={() => {
+                  if (state.leftPanel.current === panel.id) {
+                    actions.leftPanel.toggle();
+                  } else {
+                    actions.leftPanel.change({ id: panel.id });
+                  }
+                }}
+              >
+                {panel.icon ? panel.icon : <StarIcon />}
+              </L.PanelSideMenuItem>
+            ))}
+          </L.PanelSideMenu>
+        ) : null}
         {leftPanels.length > 0 ? (
           <Transition in={state.leftPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
             {(transition) => (

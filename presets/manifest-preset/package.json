@@ -42,6 +42,7 @@
     "@manifest-editor/shell": "1.0.0",
     "@manifest-editor/editors": "1.0.0",
     "@manifest-editor/creators": "1.0.0",
+    "react-iiif-vault": "^1.1.1",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@iiif/presentation-3": "^2.2.2",
     "@iiif/parser": "^2.1.0",

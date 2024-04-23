@@ -13,8 +13,40 @@ import {
   FloatingFocusManager,
   FloatingOverlay,
 } from "@floating-ui/react";
+import { Button } from "../../atoms/Button";
+import {
+  actionButton,
+  buttonReset,
+  container,
+  divider,
+  iconAction,
+  itemContainer,
+  itemContainerActive,
+  itemHotkey,
+  itemIcon,
+  itemLabel,
+  itemLink,
+  menuOuter,
+  sectionLabel,
+  splitItem,
+} from "./AppDropdown.module.css";
 
-const $ = {} as any;
+const $ = {
+  actionButton,
+  buttonReset,
+  container,
+  divider,
+  iconAction,
+  itemContainer,
+  itemContainerActive,
+  itemHotkey,
+  itemIcon,
+  itemLabel,
+  itemLink,
+  menuOuter,
+  sectionLabel,
+  splitItem,
+};
 
 export interface AppDropdownItem {
   label: string;

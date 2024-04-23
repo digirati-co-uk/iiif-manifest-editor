@@ -20,6 +20,7 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
+import { overrideScrollbar } from "../../index.module.css";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -28,6 +29,7 @@ interface ModularPanelProps {
   actions: PanelActions;
   pinActions?: PinnablePanelActions;
   transition?: TransitionStatus;
+  noHeader?: boolean;
   close?: () => void;
   available?: LayoutPanel[];
   style?: any;
@@ -46,6 +48,10 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
   height: 100%;
   overflow: hidden;
   transition: transform 300ms;
+
+  &[data-header="false"] {
+    border-top: 1px solid #e4e7f0;
+  }
 
   &[data-floating="true"] {
     margin: 10px;
@@ -162,6 +168,7 @@ export function ModularPanel({
   close,
   available = [],
   style,
+  noHeader,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -244,51 +251,53 @@ export function ModularPanel({
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style}>
-        <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
-          <Dropdown style={{ display: "flex", height: "100%" }}>
-            {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
-            {switchablePanels.length ? (
-              <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
-                <DropdownLabel>All panels</DropdownLabel>
-                <DropdownDivider />
-                {switchablePanels.map((newPanel, i) => (
-                  <DropdownItem
-                    key={i}
-                    {...(itemProps as any)[i]}
-                    onClick={() => menuHandler(newPanel)}
-                    $active={panel.id === newPanel.id}
-                  >
-                    {newPanel.label}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            ) : null}
-          </Dropdown>
+      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} data-header={!noHeader}>
+        {noHeader ? null : (
+          <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
+            <Dropdown style={{ display: "flex", height: "100%" }}>
+              {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
+              {switchablePanels.length ? (
+                <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
+                  <DropdownLabel>All panels</DropdownLabel>
+                  <DropdownDivider />
+                  {switchablePanels.map((newPanel, i) => (
+                    <DropdownItem
+                      key={i}
+                      {...(itemProps as any)[i]}
+                      onClick={() => menuHandler(newPanel)}
+                      $active={panel.id === newPanel.id}
+                    >
+                      {newPanel.label}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              ) : null}
+            </Dropdown>
 
-          {customTitle ? (
-            <ModularPanelLabel>{customTitle}</ModularPanelLabel>
-          ) : hideHeader ? (
-            <ModulePanelSpacer />
-          ) : (
-            <ModularPanelLabel>{panel.label}</ModularPanelLabel>
-          )}
-          {pinnable ? (
-            (state as PinnablePanelState).pinned ? (
-              <ModulePanelButton onClick={pinActions.unpin}>
-                <StarIcon fill="orange" />
-              </ModulePanelButton>
+            {customTitle ? (
+              <ModularPanelLabel>{customTitle}</ModularPanelLabel>
+            ) : hideHeader ? (
+              <ModulePanelSpacer />
             ) : (
-              <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
-                <StarIcon fill="#ddd" />
-              </ModulePanelButton>
-            )
-          ) : null}
-          {panel.renderCloseAction
-            ? panel.renderCloseAction({ closeAction: close || actions.close, fallback: closeButton })
-            : closeButton}
-        </ModularPanelHeader>
-        <ModularPanelContent>
+              <ModularPanelLabel>{panel.label}</ModularPanelLabel>
+            )}
+            {pinnable ? (
+              (state as PinnablePanelState).pinned ? (
+                <ModulePanelButton onClick={pinActions.unpin}>
+                  <StarIcon fill="orange" />
+                </ModulePanelButton>
+              ) : (
+                <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
+                  <StarIcon fill="#ddd" />
+                </ModulePanelButton>
+              )
+            ) : null}
+            {panel.renderCloseAction
+              ? panel.renderCloseAction({ closeAction: close || actions.close, fallback: closeButton })
+              : closeButton}
+          </ModularPanelHeader>
+        )}
+        <ModularPanelContent className={overrideScrollbar}>
           <ErrorBoundary
             // onResetKeysChange={() => setDidError(false)}
             onError={() => setDidError(true)}

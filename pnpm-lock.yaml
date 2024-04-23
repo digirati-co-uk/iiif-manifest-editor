@@ -1064,6 +1064,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-iiif-vault:
+        specifier: ^1.1.1
+        version: 1.1.1(@types/react@18.2.74)(immer@10.0.4)(react-dom@18.2.0)(react@18.2.0)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.2.0)(react@18.2.0)

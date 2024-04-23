@@ -76,8 +76,8 @@
   flex: 1;
   text-align: left;
   padding: 0.65em;
-  height: 2.4em;
   border-radius: 3px;
+  font-size: 0.875em;
   display: flex;
   &:focus {
     outline: 2px solid #bfd1ed;

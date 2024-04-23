@@ -11,11 +11,26 @@ import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@m
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { SVGProps, useEffect } from "react";
+
+const ListingIcon = ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 -960 960 960"
+    aria-labelledby={titleId}
+    {...props}
+  >
+    {title ? <title id={titleId}>{title}</title> : null}
+    <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z" />
+  </svg>
+);
 
 export const canvasListing: LayoutPanel = {
   id: "left-panel-empty",
   label: "Left panel",
-  icon: "",
+  icon: <ListingIcon />,
   render: (state, ctx, app) => {
     return <CanvasListing />;
   },
@@ -31,9 +46,23 @@ export function CanvasListing() {
   const manifest = { id: manifestId, type: "Manifest" };
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
 
+  useEffect(() => {
+    if (canvas?.resource.source.id) {
+      const key = items.get().findIndex((c) => c.id === canvas.resource.source.id);
+      if (key !== -1) {
+        open({ id: "current-canvas" });
+        canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
+      }
+    }
+  }, []);
+
   return (
     <PaddedSidebarContainer>
-      <div>{manifest ? <Button onClick={() => edit(manifest)}>Edit manifest</Button> : null}</div>
+      {canCreateCanvas ? (
+        <Button {...canvasActions.buttonProps} onClick={() => canvasActions.create()}>
+          Add new canvas
+        </Button>
+      ) : null}
 
       {/*<div>*/}
       {/*  <Button onClick={() => open("@manifest-editor/tutorial")}>Open tutorial</Button>*/}
@@ -59,15 +88,13 @@ export function CanvasListing() {
           inlineHandle={false}
           activeId={canvas?.resource.source.id}
           reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
-          onSelect={(item, idx) => canvasActions.edit(item, idx)}
+          onSelect={(item, idx) => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
           createActions={createAppActions(items)}
         />
       </InputContainer>
-      {canCreateCanvas ? (
-        <Button {...canvasActions.buttonProps} onClick={() => canvasActions.create()}>
-          Add canvas
-        </Button>
-      ) : null}
     </PaddedSidebarContainer>
   );
 }
