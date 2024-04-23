@@ -20,7 +20,7 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
-import { overrideScrollbar } from "../../index.module.css";
+import { OverrideScrollbar } from "./ModularPanel.module.css";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -297,7 +297,7 @@ export function ModularPanel({
               : closeButton}
           </ModularPanelHeader>
         )}
-        <ModularPanelContent className={overrideScrollbar}>
+        <ModularPanelContent className={OverrideScrollbar}>
           <ErrorBoundary
             // onResetKeysChange={() => setDidError(false)}
             onError={() => setDidError(true)}
