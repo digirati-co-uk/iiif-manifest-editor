@@ -11,6 +11,7 @@ import { AppHeader } from "./components/AppHeader";
 // import "manifest-editor/dist/index.css";
 import "@manifest-editor/editors/dist/index.css";
 import "@manifest-editor/shell/dist/index.css";
+import "@manifest-editor/components/dist/index.css";
 import { useState } from "react";
 
 // Aim: For this to be exactly like the current manifest editor.

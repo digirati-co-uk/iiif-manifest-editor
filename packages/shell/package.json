@@ -44,6 +44,8 @@
     "@manifest-editor/client-vault": "1.0.0",
     "@manifest-editor/creator-api": "1.0.0",
     "@manifest-editor/editor-api": "1.0.0",
+    "@manifest-editor/components": "1.0.0",
+    "@floating-ui/react": "^0.26.13",
     "immer": "^10.0.4",
     "localforage": "^1.10.0",
     "mitt": "^3.0.1",

@@ -1,7 +1,8 @@
 import { LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { SVGProps, useEffect } from "react";
-import { ManifestMetadata } from "react-iiif-vault";
+import { LocaleString, ManifestMetadata } from "react-iiif-vault";
+import { SidebarHeader } from "@manifest-editor/components";
 
 function ManifestIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
@@ -19,7 +20,7 @@ function ManifestIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { 
 
 export const manifestPanel: LayoutPanel = {
   id: "left-panel-manifest",
-  label: "Manifest",
+  label: "Manifest summary",
   icon: <ManifestIcon />,
   render: (state, ctx, app) => {
     return <ManifestPanel />;
@@ -28,9 +29,14 @@ export const manifestPanel: LayoutPanel = {
 
 function ManifestPanel() {
   const { edit, open } = useLayoutActions();
-  const { structural, technical } = useManifestEditor();
+  const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
+
+  const label = descriptive.label.get();
+  const summary = descriptive.summary.get();
+  const requiredStatement = descriptive.requiredStatement.get();
+  const metadata = descriptive.metadata.get();
 
   useEffect(() => {
     edit(manifest);
@@ -38,22 +44,52 @@ function ManifestPanel() {
   }, []);
 
   return (
-    <div className="p-4">
-      <div>TODO: HEADER</div>
-      <div>TODO: LABEL</div>
-      <div>TODO: SUMMARY</div>
-      <div>TODO: REQUIRED STATEMENT</div>
+    <div className="w-full">
+      <SidebarHeader title="Manifest summary" />
+      <div className="p-4">
+        {label ? (
+          <LocaleString as="h2" className="text-lg font-semibold mb-2">
+            {label}
+          </LocaleString>
+        ) : null}
 
-      <ManifestMetadata
-        allowHtml
-        classes={{
-          container: "w-full",
-          row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
-          label: "font-bold text-slate-600 w-full text-sm font-semibold mb-0",
-          value: "text-sm text-slate-800 block [&>a]:underline",
-          empty: "text-gray-400",
-        }}
-      />
+        {summary ? (
+          <LocaleString as="p" className="text-sm text-slate-800 block [&>a]:underline mb-2">
+            {summary}
+          </LocaleString>
+        ) : null}
+
+        <hr />
+        {requiredStatement ? (
+          <>
+            <div className="py-2 text-black">
+              <LocaleString as="h4" className="font-bold text-black w-full text-sm font-semibold mb-0">
+                {requiredStatement.label}
+              </LocaleString>
+              <LocaleString className="text-sm">{requiredStatement.value}</LocaleString>
+            </div>
+
+            <hr />
+          </>
+        ) : null}
+
+        {metadata && metadata.length === 0 ? (
+          <div className="py-2 text-gray-400">
+            You can add some descriptive metadata for this manifest using the editing panel on the right
+          </div>
+        ) : null}
+
+        <ManifestMetadata
+          allowHtml
+          classes={{
+            container: "w-full",
+            row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
+            label: "font-bold text-black w-full text-sm font-semibold mb-1",
+            value: "text-sm text-black block [&>a]:underline",
+            empty: "text-gray-400",
+          }}
+        />
+      </div>
     </div>
   );
 }

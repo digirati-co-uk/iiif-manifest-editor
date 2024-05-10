@@ -36,8 +36,8 @@ const ListingIcon = ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { t
 );
 
 export const canvasListing: LayoutPanel = {
-  id: "left-panel-empty",
-  label: "Left panel",
+  id: "canvas-listing",
+  label: "Canvases",
   icon: <ListingIcon />,
   render: (state, ctx, app) => {
     return <CanvasListing />;

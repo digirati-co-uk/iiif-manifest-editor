@@ -16,7 +16,7 @@ import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { ExperimentalIcon } from "@manifest-editor/ui/madoc/components/icons/ExperimentalIcon";
+import { PanelSideMenu } from "@manifest-editor/components";
 
 interface LayoutProps {
   header?: React.ReactNode;
@@ -322,24 +322,24 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         }}
       >
         {leftPanels.length > 0 ? (
-          <L.PanelSideMenu data-open={state.leftPanel.open}>
-            {leftPanels.map((panel) => (
-              <L.PanelSideMenuItem
-                key={panel.id}
-                data-selected={state.leftPanel.current === panel.id && state.leftPanel.open}
-                onClick={() => {
-                  if (state.leftPanel.current === panel.id) {
-                    actions.leftPanel.toggle();
-                  } else {
-                    actions.leftPanel.change({ id: panel.id });
-                  }
-                }}
-              >
-                {panel.icon ? panel.icon : <StarIcon />}
-              </L.PanelSideMenuItem>
-            ))}
-          </L.PanelSideMenu>
+          <PanelSideMenu
+            current={state.leftPanel.current}
+            items={leftPanels.map((panel) => ({
+              id: panel.id,
+              label: panel.label,
+              icon: panel.icon,
+              onClick: () => {
+                if (state.leftPanel.current === panel.id) {
+                  actions.leftPanel.toggle();
+                } else {
+                  actions.leftPanel.change({ id: panel.id });
+                }
+              },
+            }))}
+            open={state.leftPanel.open}
+          />
         ) : null}
+
         {leftPanels.length > 0 ? (
           <Transition in={state.leftPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
             {(transition) => (

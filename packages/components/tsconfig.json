@@ -1,0 +1,5 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx", "@storylite/vite-plugin/virtual", "stories/**/*", ".storylite/**/*"],
+  "exclude": ["node_modules"]
+}
