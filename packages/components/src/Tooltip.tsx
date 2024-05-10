@@ -13,7 +13,8 @@ import {
   useMergeRefs,
   FloatingPortal,
 } from "@floating-ui/react";
-import type { Placement } from "@floating-ui/react";
+import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
+import { UseFloatingReturn } from "@floating-ui/react-dom";
 
 interface TooltipOptions {
   initialOpen?: boolean;
@@ -27,7 +28,11 @@ export function useTooltip({
   placement = "top",
   open: controlledOpen,
   onOpenChange: setControlledOpen,
-}: TooltipOptions = {}) {
+}: TooltipOptions = {}): {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+} & UseFloatingReturn &
+  UseInteractionsReturn {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(initialOpen);
 
   const open = controlledOpen ?? uncontrolledOpen;
