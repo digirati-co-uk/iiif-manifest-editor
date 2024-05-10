@@ -1,16 +1,29 @@
 .Item {
-  padding: 0.2em 0.5em;
+  padding: 0.3em;
   cursor: pointer;
-  border-radius: 3px;
+  display: flex;
+  gap: 0.4em;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+}
+
+.Item svg {
+  color: #e6e6e6;
 }
 
 .Item:hover {
-  background: #e8f0fe;
+  background: #f5f5f5;
 }
 
 .Item[aria-selected="true"] {
-  background: #477dfa;
-  color: #fff;
+  background: #f5f5f5;
+  color: #000;
+  border-color: #892c4e;
+}
+
+.Item[aria-selected="true"] svg {
+  color: #b84c74;
 }
 
 .Label {
@@ -18,5 +31,4 @@
 }
 
 .ItemMargin {
-  margin-bottom: 0.5em;
 }

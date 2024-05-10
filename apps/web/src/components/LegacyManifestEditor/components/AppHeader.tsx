@@ -24,12 +24,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
           <ManifestEditorLogo height={27} width={200} />
         </Logo>
 
-        {app && app.metadata.drafts === false ? null : (
-          <ProjectPreview>
-            <DraftTitleEditor />
-            {/*<ContextButton>{state.canvasId ? "Canvas" : "Manifest"}</ContextButton>*/}
-          </ProjectPreview>
-        )}
+        <div className="flex-1" />
 
         {app && app.metadata.drafts === false ? null : <PreviewButton />}
 

@@ -160,17 +160,17 @@ export const PanelSideMenu = styled.div`
   border-right: 1px solid #e3e7f0;
   display: flex;
   flex-direction: column;
-  width: 3.35em;
-  padding: 0.3em;
-  gap: 0.3em;
+  width: 3em;
+  /* width: 3.35em;
+  padding: 0.3em; 
+  gap: 0.3em; */
 `;
 
 export const PanelSideMenuItem = styled.button`
   cursor: pointer;
   aspect-ratio: 1;
-  width: 2.75em;
-  height: 2.75em;
-  border-radius: 3px;
+  width: 3em;
+  height: 3em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -183,14 +183,14 @@ export const PanelSideMenuItem = styled.button`
   }
 
   &[data-selected="true"] {
-    background: #fff6f9;
+    background: #b84c74;
     svg {
-      color: #d85681;
+      color: #ffffff;
     }
   }
 
   & svg {
-    font-size: 1.4em;
+    font-size: 1.5em;
     color: #999;
   }
 `;

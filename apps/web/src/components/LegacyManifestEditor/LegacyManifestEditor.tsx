@@ -8,7 +8,8 @@ import * as splashApp from "./apps/Splash";
 import * as manifestEditorApp from "@manifest-editor/manifest-preset";
 import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import { AppHeader } from "./components/AppHeader";
-import "manifest-editor/dist/index.css";
+// import "manifest-editor/dist/index.css";
+import "@manifest-editor/editors/dist/index.css";
 import "@manifest-editor/shell/dist/index.css";
 import { useState } from "react";
 
@@ -45,14 +46,6 @@ const previews: PreviewConfiguration[] = [
     label: "Mirador 3",
     config: {
       url: "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}",
-    },
-  },
-  {
-    id: "universal-viewer-3",
-    type: "external-manifest-preview",
-    label: "Universal viewer (v3)",
-    config: {
-      url: "https://uv-v3.netlify.app/#?manifest={manifestId}",
     },
   },
   {

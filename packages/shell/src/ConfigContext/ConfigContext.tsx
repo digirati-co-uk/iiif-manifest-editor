@@ -3,10 +3,24 @@ import { createContext, ReactNode, useContext, useMemo } from "react";
 import { Collection } from "@iiif/presentation-3";
 
 export interface Config {
+  // Previous configuration.
   previews: PreviewConfiguration[];
   defaultLanguages: string[];
   behaviorPresets: string[];
   newTemplates: Collection | null;
+
+  // New optional configuration.
+  properties?: {
+    All?: string[];
+    Manifest?: string[];
+    Canvas?: string[];
+    Annotation?: string[];
+    AnnotationPage?: string[];
+    AnnotationCollection?: string[];
+    Range?: string[];
+    Collection?: string[];
+    ContentResource?: string[];
+  };
 }
 
 const ConfigReactContext = createContext<Config>(null as any);

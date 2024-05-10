@@ -2,7 +2,6 @@ import { CanvasPanelEditor, allEditors } from "@manifest-editor/editors";
 import { allCreators } from "@manifest-editor/creators";
 import { LayoutPanel, ExportPanel, baseCreator, baseEditor } from "@manifest-editor/shell";
 import { canvasListing } from "./left-panels/canvas-listing";
-import { overviewPanel } from "./left-panels/overview";
 import { manifestPanel } from "./left-panels/manifest";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
@@ -29,7 +28,6 @@ export const centerPanels: LayoutPanel[] = [
 ];
 
 export const leftPanels: LayoutPanel[] = [
-  overviewPanel,
   manifestPanel,
   canvasListing,
   // @todo we will come back to the image grid
