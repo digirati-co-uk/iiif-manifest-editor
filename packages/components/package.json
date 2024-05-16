@@ -45,6 +45,8 @@
   },
   "dependencies": {
     "@iiif/helpers": "^1.1.0",
+    "react-iiif-vault": "^1.1.1",
+    "react-lazy-load-image-component": "^1.6.0",
     "@floating-ui/react": "^0.26.13",
     "@floating-ui/react-dom": "^2.0.9",
     "tailwind-merge": "^2.3.0",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@repo/eslint-config": "0.0.0",
     "@storylite/storylite": "^0.15.1",
+    "@types/react-lazy-load-image-component": "^1.6.4",
     "@storylite/vite-plugin": "^0.15.0",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "@types/react": "^18.2.74",

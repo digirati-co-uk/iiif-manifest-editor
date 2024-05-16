@@ -1,3 +1,5 @@
+import { DefaultTooltipContent, Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+
 interface SidebarHeaderProps {
   actions?: Array<{
     icon: any;
@@ -17,15 +19,20 @@ export function SidebarHeader(props: SidebarHeaderProps) {
       <div className="flex-1">{title}</div>
       <div className="ml-auto flex gap-2 items-center">
         {actions?.map((action, index) => (
-          <button
-            key={index}
-            className={`p-1 rounded hover:bg-me-gray-300 ${action.toggled ? "bg-me-gray-300" : ""}`}
-            onClick={action.onClick}
-            title={action.title}
-            disabled={action.disabled}
-          >
-            {action.icon}
-          </button>
+          <Tooltip placement="bottom">
+            <TooltipTrigger asChild>
+              <button
+                key={index}
+                className={`p-1 rounded hover:bg-me-gray-300 ${action.toggled ? "bg-me-gray-300" : ""}`}
+                onClick={action.onClick}
+                title={action.title}
+                disabled={action.disabled}
+              >
+                {action.icon}
+              </button>
+            </TooltipTrigger>
+            <DefaultTooltipContent>{action.title}</DefaultTooltipContent>
+          </Tooltip>
         ))}
       </div>
     </div>

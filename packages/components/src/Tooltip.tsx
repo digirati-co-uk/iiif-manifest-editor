@@ -154,3 +154,11 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, React.HTMLProps<H
     </FloatingPortal>
   );
 });
+
+export function DefaultTooltipContent(props: { children: React.ReactNode }) {
+  return (
+    <TooltipContent className="bg-me-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-90 z-50">
+      {props.children}
+    </TooltipContent>
+  );
+}

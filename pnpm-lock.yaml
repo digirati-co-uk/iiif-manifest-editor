@@ -289,6 +289,12 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-iiif-vault:
+        specifier: ^1.1.1
+        version: 1.1.1(@types/react@18.2.74)(immer@10.0.4)(react-dom@18.2.0)(react@18.2.0)
+      react-lazy-load-image-component:
+        specifier: ^1.6.0
+        version: 1.6.0(react-dom@18.2.0)(react@18.2.0)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -308,6 +314,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.24
         version: 18.2.24
+      '@types/react-lazy-load-image-component':
+        specifier: ^1.6.4
+        version: 1.6.4
       '@vitejs/plugin-react-swc':
         specifier: ^3.6.0
         version: 3.6.0(vite@5.2.8)
@@ -3605,6 +3614,13 @@ packages:
 
   /@types/react-lazy-load-image-component@1.6.3:
     resolution: {integrity: sha512-HsIsYz7yWWTh/bftdzGnijKD26JyofLRqM/RM80sxs7Gk13G83ew8R/ra2XzXuiZfjNEjAq/Va+NBHFF9ciwxA==}
+    dependencies:
+      '@types/react': 18.2.74
+      csstype: 3.1.2
+    dev: true
+
+  /@types/react-lazy-load-image-component@1.6.4:
+    resolution: {integrity: sha512-8pFPeDPF4yVG4lU1/ixZidJEEDZmEOYOTYDvmIu2IAabyuv97Q7n/93nMCocHvQ7vD1czKGiW+op55D9m3MkdA==}
     dependencies:
       '@types/react': 18.2.74
       csstype: 3.1.2

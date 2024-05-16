@@ -28,6 +28,12 @@
 
 .Label {
   font-size: 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  text-align: start;
 }
 
 .ItemMargin {

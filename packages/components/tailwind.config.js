@@ -16,6 +16,7 @@ module.exports = {
       "me-gray-500": "#A1A1A1",
       "me-gray-700": "#666666",
       "me-gray-900": "#333333",
+      transparent: "transparent",
     },
     extend: {},
   },
