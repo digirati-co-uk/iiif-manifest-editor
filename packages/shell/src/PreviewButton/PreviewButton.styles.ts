@@ -14,40 +14,41 @@ const variation = {
     color: "",
   },
   salmon: {
-    bg: { normal: "salmon", hover: "#ff988e", active: "#ff988e" },
-    border: { main: "salmon", divider: "#e37266" },
+    bg: { normal: "#B84C74", hover: "#892C4E", active: "#892C4E" },
+    border: { main: "#B84C74", divider: "#e37266" },
     color: "",
   },
 };
 
 export const ButtonMain = styled(ButtonReset as any)`
   flex: 1;
-  padding: 0.6em 0.8em;
-  background: salmon;
+  padding: 0.5em 0.8em;
+  background: #b84c74;
   color: #fff;
   border-top-left-radius: 5px;
   font-size: 0.875em;
   border-bottom-left-radius: 5px;
-  border: 1px solid salmon;
+  border: 1px solid #b84c74;
   border-right-width: 0;
 
   &:hover {
     color: #fff;
-    background: #ff988e;
+    background: #892c4e;
+    border-color: #892c4e;
   }
 
   &:active {
-    background: #ff988e;
+    background: #892c4e;
     box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
 `;
 
 export const ButtonChange = styled(ButtonReset as any)<{ $open: boolean }>`
-  background: salmon;
+  background: #b84c74;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  border: 1px solid salmon;
-  border-left: 1px solid #e37266;
+  border: 1px solid #b84c74;
+  border-left: 1px solid #fff;
   padding: 0.4em;
   color: #fff;
   svg {
@@ -55,18 +56,18 @@ export const ButtonChange = styled(ButtonReset as any)<{ $open: boolean }>`
   }
   &:hover {
     color: #fff;
-    background: #ff988e;
+    background: #892c4e;
   }
 
   &:active {
-    background: #ff988e;
+    background: #892c4e;
     box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
 
   ${(props) =>
     props.$open &&
     css`
-      background: #ff988e;
+      background: #892c4e;
       box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
     `}
 `;
