@@ -149,7 +149,8 @@ export function EditingStack(props: { children?: any }) {
   const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
 
   const dispatch = useCallback((action: any) => {
-    (() => flushSync(() => _dispatch(action)))();
+    _dispatch(action);
+    // (() => flushSync(() => _dispatch(action)))();
   }, []);
 
   useEffect(() => {

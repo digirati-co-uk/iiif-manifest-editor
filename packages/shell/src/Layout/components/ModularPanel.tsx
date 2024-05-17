@@ -237,10 +237,6 @@ export function ModularPanel({
       <ModulePanelButton onClick={backAction}>
         <BackIcon />
       </ModulePanelButton>
-    ) : switchablePanels.length ? (
-      <ModulePanelButton onClick={backAction}>
-        <ChangeIcon style={{ color: "#999" }} />
-      </ModulePanelButton>
     ) : null;
 
   const closeButton = (

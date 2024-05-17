@@ -19,7 +19,7 @@ export function SidebarHeader(props: SidebarHeaderProps) {
       <div className="flex-1">{title}</div>
       <div className="ml-auto flex gap-2 items-center">
         {actions?.map((action, index) => (
-          <Tooltip placement="bottom">
+          <Tooltip placement="bottom" key={index}>
             <TooltipTrigger asChild>
               <button
                 key={index}

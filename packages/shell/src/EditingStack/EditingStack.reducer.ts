@@ -4,6 +4,14 @@ import { toRef } from "@iiif/parser";
 export function editingStackReducer(state: EditingStackState, action: EditingStackActionCreators): EditingStackState {
   switch (action.type) {
     case "edit": {
+      let reset = action.payload.reset;
+      if (
+        action.payload.resource?.resource.source?.type === "Manifest" ||
+        action.payload.resource?.resource.source?.type === "Canvas"
+      ) {
+        reset = true;
+      }
+
       if (state.current?.resource.source.id === action.payload.resource?.resource.source.id) {
         return {
           ...state,
@@ -14,7 +22,7 @@ export function editingStackReducer(state: EditingStackState, action: EditingSta
       return {
         ...state,
         current: action.payload.resource,
-        stack: action.payload.reset ? [] : state.current ? [state.current, ...state.stack] : state.stack,
+        stack: reset ? [] : state.current ? [state.current, ...state.stack] : state.stack,
       };
     }
     case "syncRemoval": {

@@ -39,16 +39,7 @@ export const leftPanels: LayoutPanel[] = [
   //   render: () => <ManifestItemsGrid />,
   // },
 ];
-export const rightPanels: LayoutPanel[] = [
-  {
-    id: "right-panel-empty",
-    label: "Right panel",
-    icon: "",
-    render: () => <div />,
-  },
-  baseEditor,
-  baseCreator,
-];
+export const rightPanels: LayoutPanel[] = [baseEditor, baseCreator];
 
 export const editors = allEditors;
 

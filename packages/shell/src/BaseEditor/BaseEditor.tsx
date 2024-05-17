@@ -13,25 +13,11 @@ import { useApp } from "../AppContext/AppContext";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
-  const current = useEditingResource();
-  const { back, close } = useEditingStack();
+  const { back } = useEditingStack();
 
   if (stack.length) {
     return (
       <ModulePanelButton onClick={back}>
-        <BackIcon />
-      </ModulePanelButton>
-    );
-  }
-
-  if (current) {
-    return (
-      <ModulePanelButton
-        onClick={() => {
-          backAction();
-          close();
-        }}
-      >
         <BackIcon />
       </ModulePanelButton>
     );
@@ -157,7 +143,7 @@ export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
 
   useEffect(() => {
     set(match?.label || "");
-  }, [match]);
+  });
 
   // Problems to solve:
   //  - Subscribing to updates to the reference
