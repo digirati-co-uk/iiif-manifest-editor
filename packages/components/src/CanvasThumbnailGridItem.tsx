@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 export function CanvasThumbnailGridItem(props: { id: string; selected?: boolean; onClick?: () => void }) {
   return (
     <CanvasContext canvas={props.id}>
-      <div onClick={props.onClick} className="flex flex-col" data-canvas-selected={props.selected}>
+      <div onMouseDown={props.onClick} className="flex flex-col" data-canvas-selected={props.selected}>
         <div className="bg-me-gray-100 w-full aspect-square flex-1 overflow-hidden rounded">
           <div
             className={twMerge(

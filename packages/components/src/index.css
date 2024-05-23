@@ -1,2 +1,14 @@
 @tailwind components;
 @tailwind utilities;
+
+.grid-lg {
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+}
+
+.grid-md {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid-sm {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}

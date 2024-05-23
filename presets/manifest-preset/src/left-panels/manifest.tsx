@@ -48,13 +48,13 @@ function ManifestPanel() {
       <SidebarHeader title="Manifest summary" />
       <div className="p-4">
         {label ? (
-          <LocaleString as="h2" className="text-lg font-semibold mb-2">
+          <LocaleString as="h2" className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400">
             {label}
           </LocaleString>
         ) : null}
 
         {summary ? (
-          <LocaleString as="p" className="text-sm text-slate-800 block [&>a]:underline mb-2">
+          <LocaleString as="p" className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2">
             {summary}
           </LocaleString>
         ) : null}
@@ -63,10 +63,18 @@ function ManifestPanel() {
         {requiredStatement ? (
           <>
             <div className="py-2 text-black">
-              <LocaleString as="h4" className="font-bold text-black w-full text-sm font-semibold mb-0">
+              <LocaleString
+                as="h4"
+                className="font-bold text-black w-full text-sm font-semibold mb-0 [&>a]:underline [&>a]:hover:text-slate-400"
+              >
                 {requiredStatement.label}
               </LocaleString>
-              <LocaleString className="text-sm">{requiredStatement.value}</LocaleString>
+              <LocaleString
+                enableDangerouslySetInnerHTML
+                className="text-sm [&>a]:underline [&>a]:hover:text-slate-400"
+              >
+                {requiredStatement.value}
+              </LocaleString>
             </div>
 
             <hr />
@@ -85,7 +93,7 @@ function ManifestPanel() {
             container: "w-full",
             row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
             label: "font-bold text-black w-full text-sm font-semibold mb-1",
-            value: "text-sm text-black block [&>a]:underline",
+            value: "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
             empty: "text-gray-400",
           }}
         />

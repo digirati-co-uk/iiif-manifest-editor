@@ -32,7 +32,13 @@ function CanvasThumbnails() {
       if (key !== -1) {
         open({ id: "current-canvas" });
         canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
+        return;
       }
+    }
+
+    if (items.get().length) {
+      open({ id: "current-canvas" });
+      canvasActions.edit(items.get()[0]);
     }
   }, []);
 
@@ -62,7 +68,10 @@ function CanvasThumbnails() {
             id={item.id}
             key={item.id}
             selected={canvas?.resource.source.id === item.id}
-            onClick={() => canvasActions.edit(item)}
+            onClick={() => {
+              open({ id: "current-canvas" });
+              canvasActions.edit(item);
+            }}
           />
         ))}
       </ThumbnailGridContainer>

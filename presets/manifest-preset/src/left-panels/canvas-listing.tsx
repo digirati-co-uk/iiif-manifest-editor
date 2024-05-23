@@ -61,7 +61,13 @@ export function CanvasListing() {
       if (key !== -1) {
         open({ id: "current-canvas" });
         canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
+        return;
       }
+    }
+
+    if (items.get().length) {
+      open({ id: "current-canvas" });
+      canvasActions.edit(items.get()[0]);
     }
   }, []);
 

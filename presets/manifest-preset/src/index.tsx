@@ -4,16 +4,12 @@ import { LayoutPanel, ExportPanel, baseCreator, baseEditor } from "@manifest-edi
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { canvasThumbnails } from "./left-panels/canvas-thumbnails";
+import { manifestOverview } from "./center-panels/manifest-overview";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
 export const centerPanels: LayoutPanel[] = [
-  {
-    id: "overview",
-    label: "Overview",
-    icon: "",
-    render: () => <div>Overview of manifest?</div>,
-  },
+  manifestOverview,
   {
     id: "current-canvas",
     label: "Current canvas",
