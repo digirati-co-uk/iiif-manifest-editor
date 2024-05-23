@@ -12,7 +12,7 @@ import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarC
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { SVGProps, useEffect } from "react";
-import { CreateCanvasIcon, SidebarHeader } from "@manifest-editor/components";
+import { CreateCanvasIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 
 const ListingIcon = ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) => (
   <svg
@@ -72,7 +72,7 @@ export function CanvasListing() {
   }, []);
 
   return (
-    <div className="w-full h-full">
+    <Sidebar>
       <SidebarHeader
         title="Canvases"
         actions={[
@@ -89,7 +89,7 @@ export function CanvasListing() {
           },
         ]}
       />
-      <PaddedSidebarContainer>
+      <SidebarContent className="p-3">
         <InputContainer $wide>
           <CanvasList
             id={items.focusId()}
@@ -104,8 +104,8 @@ export function CanvasListing() {
             createActions={createAppActions(items)}
           />
         </InputContainer>
-      </PaddedSidebarContainer>
-    </div>
+      </SidebarContent>
+    </Sidebar>
   );
 }
 

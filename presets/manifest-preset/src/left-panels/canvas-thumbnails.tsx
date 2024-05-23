@@ -3,6 +3,8 @@ import {
   CanvasThumbnailGridItem,
   ThumbnailGridContainer,
   CreateCanvasIcon,
+  SidebarContent,
+  Sidebar,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
@@ -50,7 +52,7 @@ function CanvasThumbnails() {
   }, []);
 
   return (
-    <div className="w-full h-full">
+    <Sidebar>
       <SidebarHeader
         title="Grid view"
         actions={[
@@ -62,20 +64,22 @@ function CanvasThumbnails() {
           },
         ]}
       />
-      <ThumbnailGridContainer>
-        {items.get().map((item) => (
-          <CanvasThumbnailGridItem
-            id={item.id}
-            key={item.id}
-            selected={canvas?.resource.source.id === item.id}
-            onClick={() => {
-              open({ id: "current-canvas" });
-              canvasActions.edit(item);
-            }}
-          />
-        ))}
-      </ThumbnailGridContainer>
-    </div>
+      <SidebarContent>
+        <ThumbnailGridContainer>
+          {items.get().map((item) => (
+            <CanvasThumbnailGridItem
+              id={item.id}
+              key={item.id}
+              selected={canvas?.resource.source.id === item.id}
+              onClick={() => {
+                open({ id: "current-canvas" });
+                canvasActions.edit(item);
+              }}
+            />
+          ))}
+        </ThumbnailGridContainer>
+      </SidebarContent>
+    </Sidebar>
   );
 }
 

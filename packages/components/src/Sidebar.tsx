@@ -1,4 +1,13 @@
+import { twMerge } from "tailwind-merge";
 import { DefaultTooltipContent, Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+
+export function Sidebar({ children }: { children: React.ReactNode }) {
+  return <div className="w-full h-full flex flex-col overflow-hidden">{children}</div>;
+}
+
+export function SidebarContent({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={twMerge("flex-1 min-h-0 overflow-y-auto", className)}>{children}</div>;
+}
 
 interface SidebarHeaderProps {
   actions?: Array<{
@@ -15,7 +24,7 @@ export function SidebarHeader(props: SidebarHeaderProps) {
   const { actions, title } = props;
 
   return (
-    <div className="bg-me-gray-100 h-12 flex items-center px-3 sticky top-0 z-10 text-black border-b-me-gray-300 border-b">
+    <div className="bg-me-gray-100 h-12 flex items-center px-3 z-10 text-black border-b-me-gray-300 border-b">
       <div className="flex-1">{title}</div>
       <div className="ml-auto flex gap-2 items-center">
         {actions?.map((action, index) => (

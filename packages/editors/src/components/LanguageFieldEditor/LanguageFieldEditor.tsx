@@ -8,6 +8,7 @@ import { flushSync } from "react-dom";
 import { useDecayState } from "../../hooks/useDecayState";
 import { UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
 import { RichTextLanguageField } from "../../form-elements/RichTextLanguageField/RichTextLanguageField";
+import { ControlButton, OpaqueControls } from "@manifest-editor/components";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -125,16 +126,16 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
       )}
 
       {!props.singleValue || fieldKeys.length > 1 ? (
-        <AddAnother $active={active}>
+        <OpaqueControls active={active}>
           {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-          <SmallButton aria-label="create-new" onClick={() => createNewItem(true)}>
+          <ControlButton aria-label="create new" onClick={() => createNewItem(true)}>
             Add another
-          </SmallButton>
+          </ControlButton>
 
-          <SmallButton aria-label="create-new" onClick={() => setIsReorderMode((o) => !o)}>
+          <ControlButton aria-label="remove" onClick={() => setIsReorderMode((o) => !o)}>
             Remove
-          </SmallButton>
-        </AddAnother>
+          </ControlButton>
+        </OpaqueControls>
       ) : null}
     </>
   ) : null;

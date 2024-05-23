@@ -30,7 +30,7 @@ function ManifestOverview() {
           key={item.id}
           onClick={() => {
             open({ id: "current-canvas" });
-            open({ id: "canvas-listing" });
+            open({ id: "canvas-thumbnails" });
             canvasActions.edit(item);
           }}
         />

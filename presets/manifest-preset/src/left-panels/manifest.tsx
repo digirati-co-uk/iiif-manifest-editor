@@ -2,7 +2,7 @@ import { LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-edit
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { SVGProps, useEffect } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
-import { SidebarHeader } from "@manifest-editor/components";
+import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 
 function ManifestIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
@@ -44,9 +44,9 @@ function ManifestPanel() {
   }, []);
 
   return (
-    <div className="w-full">
+    <Sidebar>
       <SidebarHeader title="Manifest summary" />
-      <div className="p-4">
+      <SidebarContent className="p-4">
         {label ? (
           <LocaleString as="h2" className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400">
             {label}
@@ -97,7 +97,7 @@ function ManifestPanel() {
             empty: "text-gray-400",
           }}
         />
-      </div>
-    </div>
+      </SidebarContent>
+    </Sidebar>
   );
 }

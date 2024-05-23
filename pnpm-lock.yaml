@@ -494,6 +494,9 @@ importers:
       '@iiif/presentation-3-normalized':
         specifier: ^0.9.7
         version: 0.9.7
+      '@manifest-editor/components':
+        specifier: 1.0.0
+        version: link:../components
       '@manifest-editor/creator-api':
         specifier: 1.0.0
         version: link:../creator-api
