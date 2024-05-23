@@ -13,6 +13,7 @@ export interface LayoutProviderProps {
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
+  modals?: Array<LayoutPanel>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -25,6 +26,7 @@ export interface LayoutState {
   centerPanel: PanelState;
   rightPanel: PanelState;
   pinnedRightPanel: PinnablePanelState;
+  modal: PanelState;
 }
 
 export interface LayoutActions {
@@ -55,6 +57,7 @@ export interface LayoutActions {
   centerPanel: PanelActions;
   rightPanel: PanelActions;
   pinnedRightPanel: PinnablePanelActions;
+  modal: PanelActions;
 }
 
 export interface PanelState {
@@ -183,6 +186,7 @@ export interface LayoutProps {
   leftPanels: Array<LayoutPanel>;
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
+  modals?: Array<LayoutPanel>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;

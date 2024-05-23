@@ -7,6 +7,7 @@ export * from "./Tooltip";
 export * from "./ThumbnailGridContainer";
 export * from "./LazyThumbnail";
 export * from "./CanvasThumbnailGridItem";
+export * from "./Modal";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

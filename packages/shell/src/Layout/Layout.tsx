@@ -16,7 +16,7 @@ import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { PanelSideMenu } from "@manifest-editor/components";
+import { Modal, PanelSideMenu } from "@manifest-editor/components";
 
 interface LayoutProps {
   header?: React.ReactNode;
@@ -38,10 +38,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
   const vault = _vault || undefined;
-  const { loading, state, leftPanels, centerPanels, rightPanels, actions } = layout;
+  const { loading, state, leftPanels, centerPanels, rightPanels, modals = [], actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
   const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
+  const modalToRender = modals.find((panel) => panel.id === state.modal.current);
   const enableMotion = true;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
@@ -49,6 +50,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const [mobile] = useMatchMedia(["(max-width: 1020px)"]);
 
   const isLoading = props.isLoading || false;
+
+  console.log("modalToRender", modalToRender);
 
   // Resizers
   const leftPanelResizer = useResizeLayout(`left-panel/${leftPanel?.id}`, {
@@ -183,6 +186,24 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       )}
     </L.PanelContainer>
   );
+
+  const renderModal = () => {
+    if (!modalToRender || state.modal.open === false) {
+      return null;
+    }
+
+    return (
+      <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
+        {renderHelper(
+          modalToRender.render(
+            state.modal.state || modalToRender.defaultState || {},
+            { ...layout, current: actions.modal, vault: vault },
+            appState
+          )
+        )}
+      </Modal>
+    );
+  };
 
   const renderCenterPanel = () => (
     <L.PanelContainer $menu={props.centerPanelMenuPosition || "top"}>
@@ -380,6 +401,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         ) : null}
       </L.Main>
       <L.Footer>{props.footer || null}</L.Footer>
+      <>{renderModal()}</>
     </L.OuterWrapper>
   );
 });

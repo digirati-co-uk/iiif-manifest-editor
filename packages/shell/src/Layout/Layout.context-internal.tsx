@@ -27,6 +27,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     leftPanel: usePanelActions("leftPanel", dispatch),
     rightPanel: usePanelActions("rightPanel", dispatch),
     pinnedRightPanel: usePanelActions("pinnedRightPanel", dispatch) as PinnablePanelActions,
+    modal: usePanelActions("modal", dispatch),
     editingStack: useEditingStack(),
   };
 
@@ -125,7 +126,14 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
 
   function create(resource: CreatableResource) {
     actions.editingStack.create(resource, {});
-    if (available.rightPanels.find((e) => e.id === "@manifest-editor/creator")) {
+    if (available.modals && available.modals.find((e) => e.id === "@manifest-editor/creator")) {
+      actions.modal.open({
+        id: "@manifest-editor/creator",
+        stacked: true,
+        unique: true,
+        state: resource,
+      });
+    } else if (available.rightPanels.find((e) => e.id === "@manifest-editor/creator")) {
       actions.rightPanel.open({
         id: "@manifest-editor/creator",
         stacked: true,

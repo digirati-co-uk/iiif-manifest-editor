@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./stories/**/*.{js,jsx,ts,tsx}"],
@@ -6,6 +8,7 @@ module.exports = {
       //
       black: "#000",
       white: "#fff",
+      gray: colors.gray,
       "me-primary-100": "#F1D6E5",
       "me-primary-500": "#B84C74",
       "me-primary-600": "#892C4E",

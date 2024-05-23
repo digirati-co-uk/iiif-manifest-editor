@@ -22,7 +22,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   creator: CreatorDefinition;
 }) {
   const vault = useVault();
-  const { edit, rightPanel } = useLayoutActions();
+  const { edit, modal } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
   const creator = useInlineCreator();
 
@@ -45,7 +45,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const runCreate = async (payload: any) => {
     setIsCreating(true);
     creator.create(props.creator.id, payload, options).then((ref) => {
-      rightPanel.popStack();
+      modal.popStack();
       edit(ref, {
         parent: toRef(props.resource.parent),
         property: props.resource.property,
@@ -104,7 +104,7 @@ export function BaseCreator(props: BaseCreatorProps) {
   }
 
   if (current) {
-    set(current.label);
+    set && set(current.label);
 
     return <RenderCreator creator={current} resource={props.resource} />;
   }

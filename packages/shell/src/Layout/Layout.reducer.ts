@@ -120,6 +120,10 @@ export const layoutReducer = produce<LayoutState, [PanelActionType]>((state, act
       panelReducer(state.rightPanel, action);
       break;
     }
+    case "modal": {
+      panelReducer(state.modal, action);
+      break;
+    }
     case "pinnedRightPanel": {
       panelReducer(state.pinnedRightPanel, action);
       break;
@@ -143,6 +147,7 @@ export function getDefaultLayoutState(): LayoutState {
     leftPanel: getDefaultPanelState(),
     centerPanel: getDefaultPanelState(),
     rightPanel: getDefaultPanelState(),
+    modal: getDefaultPanelState(),
     pinnedRightPanel: {
       ...getDefaultPanelState(),
       pinnable: true,
