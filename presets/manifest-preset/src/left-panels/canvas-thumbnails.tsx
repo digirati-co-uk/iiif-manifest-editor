@@ -5,6 +5,7 @@ import {
   CreateCanvasIcon,
   SidebarContent,
   Sidebar,
+  useFastList,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
@@ -27,6 +28,7 @@ function CanvasThumbnails() {
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const canvases = useFastList(items.get(), 24);
 
   useEffect(() => {
     if (canvas?.resource.source.id) {
@@ -49,7 +51,7 @@ function CanvasThumbnails() {
     if (selected) {
       selected.scrollIntoView({ block: "center" });
     }
-  }, []);
+  }, [canvases]);
 
   return (
     <Sidebar>
@@ -66,7 +68,7 @@ function CanvasThumbnails() {
       />
       <SidebarContent>
         <ThumbnailGridContainer>
-          {items.get().map((item) => (
+          {canvases.map((item) => (
             <CanvasThumbnailGridItem
               id={item.id}
               key={item.id}
