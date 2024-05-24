@@ -49,6 +49,7 @@
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/collection-preset": "1.0.0",
     "@manifest-editor/iiif-browser": "1.0.0",
+    "@manifest-editor/components": "1.0.0",
     "@manifest-editor/editors": "1.0.0",
     "@manifest-editor/manifest-preset": "1.0.0",
     "@manifest-editor/shell": "1.0.0",

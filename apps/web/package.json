@@ -20,13 +20,15 @@
     "@manifest-editor/manifest-preset": "1.0.0",
     "@manifest-editor/projects": "1.0.0",
     "@manifest-editor/shell": "1.0.0",
+    "@tanstack/react-query": "^5.37.1",
     "classnames": "^2.5.1",
     "manifest-editor": "1.0.0",
     "next": "^14.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-iiif-vault": "^1.1.1",
-    "styled-components": "6.1.8"
+    "styled-components": "6.1.8",
+    "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
     "@contentlayer2/source-contentful": "^0.4.1",

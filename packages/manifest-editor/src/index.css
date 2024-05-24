@@ -1,3 +1,4 @@
 @import "@manifest-editor/shell/dist/index.css";
 @import "@manifest-editor/iiif-browser/dist/index.css";
 @import "@manifest-editor/editors/dist/index.css";
+@import "@manifest-editor/components/dist/index.css";

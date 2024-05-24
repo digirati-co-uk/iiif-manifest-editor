@@ -123,6 +123,9 @@ importers:
       '@manifest-editor/shell':
         specifier: 1.0.0
         version: link:../../packages/shell
+      '@tanstack/react-query':
+        specifier: ^5.37.1
+        version: 5.37.1(react@18.2.0)
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -144,6 +147,9 @@ importers:
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.2.0)(react@18.2.0)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.3.0
     devDependencies:
       '@contentlayer2/source-contentful':
         specifier: ^0.4.1
@@ -750,6 +756,9 @@ importers:
       '@manifest-editor/collection-preset':
         specifier: 1.0.0
         version: link:../../presets/collection-preset
+      '@manifest-editor/components':
+        specifier: 1.0.0
+        version: link:../components
       '@manifest-editor/editors':
         specifier: 1.0.0
         version: link:../editors
@@ -3433,6 +3442,19 @@ packages:
   /@tanstack/history@1.26.3:
     resolution: {integrity: sha512-NhRgiyTdNy7lw2iL1gggj6Znz5wWi8c2yFE1zCfn0G6CPRDZZ//Stgd7bPOs6XIp24YeCFrIq4J3HAhbo8jyZg==}
     engines: {node: '>=12'}
+
+  /@tanstack/query-core@5.36.1:
+    resolution: {integrity: sha512-BteWYEPUcucEu3NBcDAgKuI4U25R9aPrHSP6YSf2NvaD2pSlIQTdqOfLRsxH9WdRYg7k0Uom35Uacb6nvbIMJg==}
+    dev: false
+
+  /@tanstack/react-query@5.37.1(react@18.2.0):
+    resolution: {integrity: sha512-EhtBNA8GL3XFeSx6VYUjXQ96n44xe3JGKZCzBINrCYlxbZP6UwBafv7ti4eSRWc2Fy+fybQre0w17gR6lMzULA==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.36.1
+      react: 18.2.0
+    dev: false
 
   /@tanstack/react-router@1.26.9(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-7UlNKRpk71Uh6ZsN4OQkZSXJw8u7n7gKKipmxWB9iPsvczymOoJ78JYgR26y3awpqXvbEjdCb7hbxSxZt2xfbA==}
