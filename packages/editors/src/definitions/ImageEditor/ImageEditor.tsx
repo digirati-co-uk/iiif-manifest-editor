@@ -22,7 +22,7 @@ export function ImageEditor() {
   return (
     <>
       {thumbnail ? (
-        <ThumbnailContainer size={200}>
+        <ThumbnailContainer $size={200}>
           <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
         </ThumbnailContainer>
       ) : null}

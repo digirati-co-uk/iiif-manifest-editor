@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "./utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 interface PanelSideMenuItemProps {
@@ -13,7 +13,7 @@ export function PanelSideMenuItem(props: PanelSideMenuItemProps) {
     <Tooltip placement="right">
       <TooltipTrigger asChild>
         <button
-          className={twMerge(
+          className={cn(
             "aspect-square w-full flex justify-center items-center hover:bg-me-primary-100 hover:text-black [&>svg]:text-2xl cursor-default",
             props.selected
               ? "bg-me-primary-500 hover:bg-me-primary-600 hover:text-white text-white"

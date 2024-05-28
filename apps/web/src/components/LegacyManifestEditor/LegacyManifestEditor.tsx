@@ -50,6 +50,14 @@ const previews: PreviewConfiguration[] = [
     },
   },
   {
+    id: "annona",
+    type: "external-manifest-preview",
+    label: "Annona",
+    config: {
+      url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
+    },
+  },
+  {
     id: "delft-viewer",
     type: "external-manifest-preview",
     label: "Delft viewer",

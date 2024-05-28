@@ -36,7 +36,7 @@ export function TechnicalProperties() {
         ) : null}
 
         {!notAllowed.includes("viewingDirection") ? (
-          <InputContainer $fluidid={viewingDirection.containerId()}>
+          <InputContainer $fluid id={viewingDirection.containerId()}>
             <InputLabel htmlFor={viewingDirection.focusId()}>Viewing direction</InputLabel>
             <InlineSelect
               id={viewingDirection.focusId()}

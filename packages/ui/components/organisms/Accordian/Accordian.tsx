@@ -12,7 +12,7 @@ export const Accordian: React.FC<{ renderOpen: boolean; title: string; children:
   return (
     <div>
       <LightBoxWithoutSides onClick={() => setIsOpen(!isOpen)}>
-        <FlexContainerRow style={{ alignItem: "center", justifyContent: "space-between" }}>
+        <FlexContainerRow style={{ alignItems: "center", justifyContent: "space-between" }}>
           {title}
           <DownIcon rotate={isOpen ? 180 : 0} />
         </FlexContainerRow>

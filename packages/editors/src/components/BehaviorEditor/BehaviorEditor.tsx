@@ -56,7 +56,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
       ) : null}
       <PaddedSidebarContainer>
         <InputLabel>Behaviors</InputLabel>
-        <InputContainer $fluidkey={filtered.length}>
+        <InputContainer $fluid key={filtered.length}>
           {filtered.map((t, k) =>
             t.hasConfig ? (
               <ComposableInput.Container

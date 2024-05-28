@@ -8,14 +8,14 @@ import {
   TabProps,
   TabPanelProps,
 } from "react-aria-components";
-import { twMerge } from "tailwind-merge";
+import { cn } from "./utils";
 
 export function Tabs({ className, children, ...props }: TabsProps & React.RefAttributes<HTMLDivElement>) {
   return (
     <BaseTabs
       className={(state) => {
         const cs = typeof className === "function" ? className(state) : className;
-        return twMerge("", cs);
+        return cn("", cs);
       }}
       {...props}
     >
@@ -33,7 +33,7 @@ export function TabList<T extends object>({
     <BaseTabList
       className={(state) => {
         const cs = typeof className === "function" ? className(state) : className;
-        return twMerge("flex gap-4", cs);
+        return cn("flex gap-4", cs);
       }}
       {...props}
     >
@@ -47,7 +47,7 @@ export function Tab({ className, children, ...props }: TabProps & React.RefAttri
     <BaseTab
       className={(state) => {
         const cs = typeof className === "function" ? className(state) : className;
-        return twMerge(
+        return cn(
           "cursor-default outline-none group py-1 font-semibold px-2 border-b-2 text-me-gray-700",
           state.isSelected && "border-b-me-primary-600 text-black",
           state.isFocusVisible && "focus-visible:bg-me-primary-100",
@@ -66,7 +66,7 @@ export function TabPanel({ className, children, ...props }: TabPanelProps & Reac
     <BaseTabPanel
       className={(state) => {
         const cs = typeof className === "function" ? className(state) : className;
-        return twMerge("", cs);
+        return cn("", cs);
       }}
       {...props}
     >

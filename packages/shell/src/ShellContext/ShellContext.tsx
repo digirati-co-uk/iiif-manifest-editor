@@ -26,6 +26,14 @@ const previewConfigs: PreviewConfiguration[] = [
     },
   },
   {
+    id: "annona",
+    type: "external-manifest-preview",
+    label: "Annona",
+    config: {
+      url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
+    },
+  },
+  {
     id: "iiif-preview",
     config: { url: "https://iiif-preview.digirati.services/store" },
     type: "iiif-preview-service",

@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "./utils";
 import { DefaultTooltipContent, Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
@@ -6,7 +6,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 }
 
 export function SidebarContent({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={twMerge("flex-1 min-h-0 overflow-y-auto", className)}>{children}</div>;
+  return <div className={cn("flex-1 min-h-0 overflow-y-auto", className)}>{children}</div>;
 }
 
 interface SidebarHeaderProps {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SidebarHeader } from "../src/SidebarHeader";
+import { SidebarHeader } from "../src/Sidebar";
 
 export default { title: "Sidebar Header" };
 

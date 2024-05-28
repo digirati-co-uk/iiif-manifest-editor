@@ -44,6 +44,7 @@
     "prepack": "tsup src/index.tsx"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "@headlessui/react": "^2.0.3",
     "@iiif/helpers": "^1.1.0",
     "react-aria-components": "^1.2.1",

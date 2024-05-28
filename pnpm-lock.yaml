@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@netlify/plugin-nextjs':
-        specifier: ^5.3.1
-        version: 5.3.1
+        specifier: ^5.3.2
+        version: 5.3.2
       '@repo/eslint-config':
         specifier: 0.0.0
         version: link:internal-packages/eslint-config
@@ -181,9 +181,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.12
         version: 0.5.13(tailwindcss@3.4.3)
-      '@types/classnames':
-        specifier: ^2.3.1
-        version: 2.3.1
       '@types/eslint':
         specifier: ^8.56.5
         version: 8.56.10
@@ -298,6 +295,9 @@ importers:
       '@iiif/helpers':
         specifier: ^1.1.0
         version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -2871,6 +2871,11 @@ packages:
     engines: {node: '>=18.0.0'}
     dev: true
 
+  /@netlify/plugin-nextjs@5.3.2:
+    resolution: {integrity: sha512-DC3sNpWnnhIfJxAfqdktbkU2LxYUDKCVQnxqEhJSyheQ5G9ILu1spUKa5pEe8X2EvtH8FwtMAc7Gi5h6pft22A==}
+    engines: {node: '>=18.0.0'}
+    dev: true
+
   /@next/env@14.2.3:
     resolution: {integrity: sha512-W7fd7IbkfmeeY2gXrzJYDx8D2lWKbVoTIj1o1ScPHNzvp30s1AuoEFSdr39bC5sjxJaxTtq3OTCZboNp0lNWHA==}
 
@@ -4996,13 +5001,6 @@ packages:
       '@babel/types': 7.24.6
     dev: true
 
-  /@types/classnames@2.3.1:
-    resolution: {integrity: sha512-zeOWb0JGBoVmlQoznvqXbE0tEC/HONsnoUNH19Hc96NFsTAwTXbTqb8FMYkru1F/iqp7a18Ws3nWJvtA1sHD1A==}
-    deprecated: This is a stub types definition. classnames provides its own type definitions, so you do not need this installed.
-    dependencies:
-      classnames: 2.5.1
-    dev: true
-
   /@types/debug@4.1.12:
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
     dependencies:
@@ -5916,6 +5914,7 @@ packages:
 
   /classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+    dev: false
 
   /clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}

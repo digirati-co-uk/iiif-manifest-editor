@@ -30,6 +30,8 @@ import {
   sectionLabel,
   splitItem,
 } from "./AppDropdown.module.css";
+import { PauseIcon } from "../../icons/PauseIcon";
+import { PlayIcon } from "../../icons/PlayIcon";
 
 const $ = {
   actionButton,
