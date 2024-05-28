@@ -10,6 +10,7 @@ export * from "./CanvasThumbnailGridItem";
 export * from "./Modal";
 export * from "./ControlButton";
 export * from "./OpaqueControls";
+export * from "./Tabs";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

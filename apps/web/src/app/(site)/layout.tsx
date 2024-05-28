@@ -18,7 +18,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           <div>
             <Link
               // Button
-              className="bg-pink-500 hover:bg-pink-700 text-sm text-white py-2 px-4 rounded"
+              className="bg-me-primary-500 hover:bg-me-primary-600 text-sm text-white py-2 px-4 rounded"
               href="/legacy"
             >
               Launch editor
