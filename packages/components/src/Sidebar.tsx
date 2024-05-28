@@ -32,7 +32,12 @@ export function SidebarHeader(props: SidebarHeaderProps) {
             <TooltipTrigger asChild>
               <button
                 key={index}
-                className={`p-1 rounded hover:bg-me-gray-300 ${action.toggled ? "bg-me-gray-300" : ""}`}
+                className={cn(
+                  //
+                  `p-1 rounded hover:bg-me-gray-300`,
+                  action.toggled && "bg-me-gray-300",
+                  action.disabled && "opacity-50 cursor-not-allowed"
+                )}
                 onClick={action.onClick}
                 title={action.title}
                 disabled={action.disabled}
@@ -40,7 +45,7 @@ export function SidebarHeader(props: SidebarHeaderProps) {
                 {action.icon}
               </button>
             </TooltipTrigger>
-            <DefaultTooltipContent>{action.title}</DefaultTooltipContent>
+            {!action.disabled ? <DefaultTooltipContent>{action.title}</DefaultTooltipContent> : null}
           </Tooltip>
         ))}
       </div>
