@@ -33,6 +33,7 @@
   "devDependencies": {
     "@contentlayer2/source-contentful": "^0.4.1",
     "@contentlayer2/source-files": "~0.4.1",
+    "@netlify/plugin-nextjs": "^5.3.1",
     "@manifest-editor/iiif-preview-server": "1.0.0",
     "@manifest-editor/ui": "workspace:*",
     "@next/eslint-plugin-next": "^14.1.1",

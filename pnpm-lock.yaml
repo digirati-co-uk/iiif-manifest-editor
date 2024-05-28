@@ -163,6 +163,9 @@ importers:
       '@manifest-editor/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@netlify/plugin-nextjs':
+        specifier: ^5.3.1
+        version: 5.3.1
       '@next/eslint-plugin-next':
         specifier: ^14.1.1
         version: 14.2.3
@@ -2858,6 +2861,11 @@ packages:
 
   /@microsoft/tsdoc@0.14.2:
     resolution: {integrity: sha512-9b8mPpKrfeGRuhFH5iO1iwCLeIIsV6+H1sRfxbkoGXIyQE2BTsPd9zqSqQJ+pv5sJ/hT5M1zvOFL02MnEezFug==}
+    dev: true
+
+  /@netlify/plugin-nextjs@5.3.1:
+    resolution: {integrity: sha512-pYY8FJ5rXAGFB2QZG5bl3HGBeqSDyqgfUkLsdO8kOEQqZTmobs9BP0faI3RUT63LR2DMHat/IEDIIU9WzsCQvw==}
+    engines: {node: '>=18.0.0'}
     dev: true
 
   /@next/env@14.2.3:
