@@ -48,18 +48,30 @@ const IndexLazyRoute = IndexLazyImport.update({
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/explorer': {
+      id: '/explorer'
+      path: '/explorer'
+      fullPath: '/explorer'
       preLoaderRoute: typeof ExplorerLazyImport
       parentRoute: typeof rootRoute
     }
     '/shell': {
+      id: '/shell'
+      path: '/shell'
+      fullPath: '/shell'
       preLoaderRoute: typeof ShellLazyImport
       parentRoute: typeof rootRoute
     }
@@ -68,11 +80,39 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   AboutLazyRoute,
   ExplorerLazyRoute,
   ShellLazyRoute,
-])
+})
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/about",
+        "/explorer",
+        "/shell"
+      ]
+    },
+    "/": {
+      "filePath": "index.lazy.tsx"
+    },
+    "/about": {
+      "filePath": "about.lazy.tsx"
+    },
+    "/explorer": {
+      "filePath": "explorer.lazy.tsx"
+    },
+    "/shell": {
+      "filePath": "shell.lazy.tsx"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

@@ -35,3 +35,4 @@ export * from "./Universal/UniversalCopyPaste.types";
 export * from "./analysis";
 export * from "./helpers";
 export * from "./highlighted-image-resources";
+export * from "./hooks/use-save-vault";
