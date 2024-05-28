@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@netlify/plugin-nextjs':
+        specifier: ^5.3.1
+        version: 5.3.1
       '@repo/eslint-config':
         specifier: 0.0.0
         version: link:internal-packages/eslint-config

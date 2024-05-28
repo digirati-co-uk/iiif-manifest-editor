@@ -11,6 +11,7 @@
     "fix-deps": "syncpack fix-mismatches"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.3.1",
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",
     "typescript-plugin-css-modules": "^5.1.0",
