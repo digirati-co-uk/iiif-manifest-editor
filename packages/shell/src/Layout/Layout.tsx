@@ -51,8 +51,6 @@ export const Layout = memo(function Layout(props: LayoutProps) {
 
   const isLoading = props.isLoading || false;
 
-  console.log("modalToRender", modalToRender);
-
   // Resizers
   const leftPanelResizer = useResizeLayout(`left-panel/${leftPanel?.id}`, {
     left: true,

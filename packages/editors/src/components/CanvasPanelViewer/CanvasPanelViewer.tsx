@@ -137,7 +137,7 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
         </CanvasContainer>
       )}
     >
-      <S.Container key={refreshKey}>
+      <S.Container key={refreshKey} className="animate-fadeIn">
         <style>{`
         .atlas-container {
           min-width: 0;

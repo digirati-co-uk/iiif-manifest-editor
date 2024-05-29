@@ -38,7 +38,7 @@ module.exports = {
     extend: {
       // that is animation class
       animation: {
-        fadeIn: "fadeIn 500ms ease-in-out",
+        fadeIn: "fadeIn 300ms ease-in-out",
       },
 
       // that is actual animation

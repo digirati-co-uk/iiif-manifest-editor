@@ -13,8 +13,8 @@ export interface ModalProps {
 export function Modal({ id, title, onClose, actions, children }: ModalProps) {
   return (
     <>
-      <Dialog open={true} onClose={onClose} id={id} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <Dialog open={true} onClose={onClose} id={id} className="relative z-[500]">
+        <div className="fixed inset-0 bg-black/30 animate-fadeIn" aria-hidden="true" />
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <div className="relative p-4 w-full max-w-4xl max-h-full">
             <DialogPanel className="relative bg-white rounded-lg shadow dark:bg-gray-700 max-h-[80vh] flex flex-col">
