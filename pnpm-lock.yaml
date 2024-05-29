@@ -129,6 +129,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.37.1
         version: 5.40.0(react@18.3.1)
+      browser-fs-access:
+        specifier: ^0.35.0
+        version: 0.35.0
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -921,6 +924,9 @@ importers:
 
   packages/shell:
     dependencies:
+      '@atlas-viewer/iiif-image-api':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1)(react@18.3.1)
@@ -5766,6 +5772,10 @@ packages:
     dependencies:
       fill-range: 7.1.1
     dev: true
+
+  /browser-fs-access@0.35.0:
+    resolution: {integrity: sha512-sLoadumpRfsjprP8XzVjpQc0jK8yqHBx0PtUTGYj2fftT+P/t+uyDAQdMgGAPKD011in/O+YYGh7fIs0oG/viw==}
+    dev: false
 
   /browserslist@4.23.0:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}

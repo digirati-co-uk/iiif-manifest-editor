@@ -9,6 +9,8 @@ import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { defaultTheme } from "./default-theme";
+import { ImageServiceLoaderContext } from "react-iiif-vault";
+import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
@@ -41,6 +43,12 @@ const previewConfigs: PreviewConfiguration[] = [
   },
 ];
 
+const imageServiceLoader = new ImageServiceLoader({
+  approximateServices: true,
+  verificationsRequired: 8,
+  enableFetching: true,
+});
+
 export const ShellProvider = ({
   config,
   children,
@@ -56,22 +64,24 @@ export const ShellProvider = ({
 }) => {
   return (
     <ErrorBoundary>
-      <AppResourceProvider resource={resource}>
-        <PreviewVaultContext>
-          <ThemeProvider theme={theme || defaultTheme}>
-            <ConfigProvider config={config}>
-              <EditingStack>
-                <LayoutProvider>
-                  {/* @todo swap these out for (config?.previews || []) */}
-                  <PreviewProvider previews={previews || []} configs={config?.previews || previewConfigs}>
-                    {children}
-                  </PreviewProvider>
-                </LayoutProvider>
-              </EditingStack>
-            </ConfigProvider>
-          </ThemeProvider>
-        </PreviewVaultContext>
-      </AppResourceProvider>
+      <ImageServiceLoaderContext.Provider value={imageServiceLoader}>
+        <AppResourceProvider resource={resource}>
+          <PreviewVaultContext>
+            <ThemeProvider theme={theme || defaultTheme}>
+              <ConfigProvider config={config}>
+                <EditingStack>
+                  <LayoutProvider>
+                    {/* @todo swap these out for (config?.previews || []) */}
+                    <PreviewProvider previews={previews || []} configs={config?.previews || previewConfigs}>
+                      {children}
+                    </PreviewProvider>
+                  </LayoutProvider>
+                </EditingStack>
+              </ConfigProvider>
+            </ThemeProvider>
+          </PreviewVaultContext>
+        </AppResourceProvider>
+      </ImageServiceLoaderContext.Provider>
     </ErrorBoundary>
   );
 };

@@ -35,7 +35,20 @@ module.exports = {
       "me-gray-900": "#333333",
       transparent: "transparent",
     },
-    extend: {},
+    extend: {
+      // that is animation class
+      animation: {
+        fadeIn: "fadeIn 500ms ease-in-out",
+      },
+
+      // that is actual animation
+      keyframes: () => ({
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+      }),
+    },
   },
   plugins: [],
 };
