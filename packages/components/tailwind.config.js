@@ -39,12 +39,18 @@ module.exports = {
       // that is animation class
       animation: {
         fadeIn: "fadeIn 300ms ease-in-out",
+        fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
       },
 
       // that is actual animation
       keyframes: () => ({
         fadeIn: {
           "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        fadeInDelayed: {
+          "0%": { opacity: 0 },
+          "85%": { opacity: 0 },
           "100%": { opacity: 1 },
         },
       }),

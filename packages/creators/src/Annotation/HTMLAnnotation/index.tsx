@@ -1,13 +1,13 @@
 import { CreateHTMLAnnotation, createHtmlAnnotation } from "./create-html-annotation";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
 import { CreatorDefinition } from "@manifest-editor/creator-api";
+import { HTMLIcon } from "@manifest-editor/components";
 
 export const htmlAnnotation: CreatorDefinition = {
   id: "@manifest-editor/html-annotation",
   create: createHtmlAnnotation,
-  label: "HTML Annotation",
-  summary: "Add HTML annotation",
-  icon: <TextFormatIcon />,
+  label: "HTML",
+  summary: "HTML annotation",
+  icon: <HTMLIcon />,
   render(ctx) {
     return <CreateHTMLAnnotation {...ctx} />;
   },

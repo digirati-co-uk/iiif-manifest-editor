@@ -30,9 +30,9 @@ export function Modal({ id, title, onClose, actions, children }: ModalProps) {
                   >
                     <path
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                     />
                   </svg>
@@ -40,7 +40,7 @@ export function Modal({ id, title, onClose, actions, children }: ModalProps) {
                 </CloseButton>
               </div>
 
-              <Description className="flex-1 min-h-0 p-4 md:p-5 space-y-4 overflow-y-auto">{children}</Description>
+              <Description className="flex-1 min-h-0 space-y-4 overflow-y-auto">{children}</Description>
 
               {actions ? (
                 <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600 justify-end">

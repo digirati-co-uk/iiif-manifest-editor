@@ -1,14 +1,14 @@
 import { CreatorDefinition } from "@manifest-editor/creator-api";
 import { createFromManifestBrowserOutput } from "./manifest-browser-creator";
 import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import { IIIFBrowserIcon } from "@manifest-editor/components";
 
 export const manifestBrowserCreator: CreatorDefinition = {
   id: "@manifest-editor/manifest-browser-creator",
   create: createFromManifestBrowserOutput,
   label: "IIIF Browser",
-  summary: "Find a resource within a IIIF Collection",
-  icon: <TextFormatIcon />,
+  summary: "Browse IIIF Resources",
+  icon: <IIIFBrowserIcon />,
   render(ctx: any) {
     return <ManifestBrowserCreatorForm {...ctx} />;
   },

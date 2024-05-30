@@ -4,13 +4,14 @@ import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
+import { IIIFBrowserIcon } from "@manifest-editor/components";
 
 export const iiifBrowserCreator: CreatorDefinition = {
   id: "@manifest-editor/iiif-browser-creator",
   create: createFromIIIFBrowserOutput,
   label: "IIIF Browser",
-  summary: "Find a resource within a IIIF Collection or Manifest",
-  icon: <TextFormatIcon />,
+  summary: "Browse IIIF Resources",
+  icon: <IIIFBrowserIcon />,
   render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },

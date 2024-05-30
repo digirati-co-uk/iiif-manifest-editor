@@ -4,14 +4,15 @@ import { repositionMultipleImages } from "../../side-effects/reposition-multiple
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
 import { createImageUrlAnnotation, CreateImageUrlAnnotationForm } from "./create-image-url-annotation";
+import { AddImageIcon } from "@manifest-editor/components";
 
 export const imageUrlAnnotation: CreatorDefinition = {
   id: "@manifest-editor/image-url-annotation",
   create: createImageUrlAnnotation,
-  label: "Image URL",
+  label: "Image",
   dependencies: ["@manifest-editor/image-url-creator"],
-  summary: "Add an annotation from Image URL",
-  icon: <TextFormatIcon />,
+  summary: "Image from URL",
+  icon: <AddImageIcon />,
   render(ctx) {
     return <CreateImageUrlAnnotationForm {...ctx} />;
   },

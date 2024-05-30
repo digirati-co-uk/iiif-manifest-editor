@@ -1,13 +1,14 @@
 import { CreatorDefinition } from "@manifest-editor/creator-api";
 import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
 import { createAudioAnnotation, CreateAudioAnnotationForm } from "./create-audio-annotation";
+import { AudioIcon } from "@manifest-editor/components";
 
 export const audioAnnotation: CreatorDefinition = {
   id: "@manifest-editor/audio-annotation",
   create: createAudioAnnotation,
-  label: "Audio Annotation",
-  summary: "Add Audio annotation (mp3/wav/ogg/mp4)",
-  icon: <TextFormatIcon />,
+  label: "Audio",
+  summary: "Audio annotation",
+  icon: <AudioIcon />,
   render(ctx) {
     return <CreateAudioAnnotationForm {...ctx} />;
   },

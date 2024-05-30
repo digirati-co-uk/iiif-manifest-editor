@@ -93,9 +93,8 @@ export function CanvasListing({
         title="Canvases"
         actions={[
           {
-            icon: <CanvasThumbnailsIcon />,
-            title: "Grid view",
-            toggled: gridView,
+            icon: <>{gridView ? <ListingIcon width={24} height={24} /> : <CanvasThumbnailsIcon />}</>,
+            title: gridView ? "List view" : "Grid view",
             onClick: () => {
               onChangeGridView(!gridView);
             },

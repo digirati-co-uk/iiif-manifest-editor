@@ -4,7 +4,7 @@ import { LayoutPanel } from "../Layout/Layout.types";
 
 export const baseCreator: LayoutPanel = {
   id: "@manifest-editor/creator",
-  label: "Creator",
+  label: "Add content",
   options: { hideHeader: true, tabs: false },
   render(state: CreatableResource) {
     return <BaseCreator resource={state} />;

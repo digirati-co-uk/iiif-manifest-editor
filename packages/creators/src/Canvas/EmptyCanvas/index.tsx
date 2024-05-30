@@ -1,13 +1,13 @@
 import { InternationalString } from "@iiif/presentation-3";
+import { EmptyCanvasIcon } from "@manifest-editor/components";
 import { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 
 export const emptyCanvas: CreatorDefinition = {
   id: "@manifest-editor/empty-canvas",
   create: createEmptyCanvas,
   label: "Empty canvas",
-  summary: "Canvas with nothing",
-  icon: <ThumbnailStripIcon />,
+  summary: "No content",
+  icon: <EmptyCanvasIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {

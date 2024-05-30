@@ -26,7 +26,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
 
         <div className="flex-1" />
 
-        {app && app.metadata.drafts === false ? null : <PreviewButton />}
+        {app && app.metadata.drafts === false ? null : <PreviewButton downloadEnabled />}
 
         {/*<IconButton>•</IconButton>*/}
       </Container>

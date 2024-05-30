@@ -1,6 +1,6 @@
 import { InternationalString } from "@iiif/presentation-3";
 import { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import { EmptyCanvasIcon } from "@manifest-editor/components";
 
 // @todo combine this with the content resource one.
 
@@ -14,7 +14,7 @@ export const noBodyAnnotation: CreatorDefinition = {
   create: createNoBodyAnnotation,
   label: "Annotation without body",
   summary: "Add an annotation that only has motivation and target",
-  icon: <TextFormatIcon />,
+  icon: <EmptyCanvasIcon />,
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "target"],
   supports: {

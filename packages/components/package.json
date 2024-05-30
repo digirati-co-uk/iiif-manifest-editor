@@ -49,6 +49,7 @@
     "@iiif/helpers": "^1.1.0",
     "react-aria-components": "^1.2.1",
     "react-iiif-vault": "^1.1.1",
+    "react-aria": "^3.33.1",
     "react-lazy-load-image-component": "^1.6.0",
     "@floating-ui/react": "^0.26.13",
     "@floating-ui/react-dom": "^2.0.9",

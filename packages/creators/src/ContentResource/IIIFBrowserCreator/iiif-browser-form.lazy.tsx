@@ -7,27 +7,26 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   const { addHistory, clearHistory } = usePreviewHistory();
 
   return (
-    <>
-      <PreviewVaultBoundary>
-        <IIIFExplorer
-          window={false}
-          hideHeader={true}
-          outputTypes={["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"]}
-          vault={vault}
-          output={{ type: "content-state" }}
-          homepageCollection={HOMEPAGE_COLLECTION}
-          clearHomepageCollection={clearHistory}
-          onHistory={addHistory}
-          outputTargets={[
-            {
-              type: "callback",
-              label: "Select",
-              cb: (resource) => props.runCreate({ output: resource }),
-            },
-          ]}
-          allowRemoveEntry
-        />
-      </PreviewVaultBoundary>
-    </>
+    <PreviewVaultBoundary>
+      <IIIFExplorer
+        window={false}
+        hideHeader={true}
+        outputTypes={["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"]}
+        vault={vault}
+        output={{ type: "content-state" }}
+        homepageCollection={HOMEPAGE_COLLECTION}
+        clearHomepageCollection={clearHistory}
+        onHistory={addHistory}
+        height={500}
+        outputTargets={[
+          {
+            type: "callback",
+            label: "Select",
+            cb: (resource) => props.runCreate({ output: resource }),
+          },
+        ]}
+        allowRemoveEntry
+      />
+    </PreviewVaultBoundary>
   );
 }

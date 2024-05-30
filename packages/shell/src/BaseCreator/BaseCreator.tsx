@@ -1,8 +1,6 @@
 import { CreatorDefinition, CreatorOptions } from "@manifest-editor/creator-api";
-import { memo, Suspense, useMemo, useState } from "react";
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
-import { ListingGrid, Item, ItemIcon, ItemLabel, ItemSummary } from "./BaseCreator.module.css";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { toRef } from "@iiif/parser";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
@@ -12,6 +10,7 @@ import { useLayoutActions } from "../Layout/Layout.context";
 import { useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { matchBasedOnResource, useInlineCreator } from "./BaseCreator.hooks";
 import { useApp } from "../AppContext/AppContext";
+import { CreatorGrid } from "@manifest-editor/components";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -25,6 +24,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const { edit, modal } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
   const creator = useInlineCreator();
+  const isCreatingRef = useRef(false);
 
   const canvasSelector = props.resource.initialData?.selector;
   useTemporaryHighlight(canvasSelector);
@@ -42,8 +42,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
     initialData: props.resource.initialData,
   };
 
-  const runCreate = async (payload: any) => {
+  const runCreate = (payload: any) => {
+    if (isCreating || isCreatingRef.current) return;
     setIsCreating(true);
+    isCreatingRef.current = true;
     creator.create(props.creator.id, payload, options).then((ref) => {
       modal.popStack();
       edit(ref, {
@@ -58,8 +60,21 @@ export const RenderCreator = memo(function RenderCreator(props: {
     return true;
   };
 
+  useEffect(() => {
+    if (!props.creator.render && !isCreating) {
+      runCreate({});
+    }
+  }, [props.creator]);
+
+  useEffect(() => {
+    if (isCreating) {
+      modal.popStack();
+      modal.close();
+    }
+  });
+
   if (isCreating) {
-    return <div>Creating...</div>;
+    return null;
   }
 
   if (!props.creator.render) {
@@ -99,33 +114,39 @@ export function BaseCreator(props: BaseCreatorProps) {
 
   const current = supported.find((t) => t.id === currentId);
 
+  useEffect(() => {
+    if (current) {
+      set && set(current.label);
+    }
+  });
+
   if (supported.length === 0) {
     return <div>Not currently supported</div>;
   }
 
   if (current) {
-    set && set(current.label);
-
-    return <RenderCreator creator={current} resource={props.resource} />;
+    return (
+      <div>
+        <div className="bg-me-gray-100 p-2">
+          <Button onClick={() => setCurrentId("")}>Back</Button>
+        </div>
+        <div className="p-2 py-6">
+          <RenderCreator creator={current} resource={props.resource} />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <PaddedSidebarContainer>
-      {props.resource?.initialData?.selector ? <div>Annotation selection saved.</div> : null}
-      <div className={ListingGrid}>
-        {supported.map((item) => (
-          <div
-            className={Item}
-            onClick={() => setCurrentId(item.id)}
-            data-creator-id={item.id}
-            data-creator-type={props.resource.type}
-          >
-            <div className={ItemIcon}>{item.icon || "no icon"}</div>
-            <div className={ItemLabel}>{item.label}</div>
-            {item.summary ? <div className={ItemSummary}>{item.summary}</div> : null}
-          </div>
-        ))}
-      </div>
-    </PaddedSidebarContainer>
+    <CreatorGrid
+      label="Select a type"
+      items={supported.map((item) => ({
+        id: item.id,
+        title: item.label,
+        description: item.summary || "",
+        icon: item.icon,
+        onClick: () => setCurrentId(item.id),
+      }))}
+    />
   );
 }
