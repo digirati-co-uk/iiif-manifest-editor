@@ -2,7 +2,7 @@ import { Vault } from "@iiif/helpers";
 import { useEffect } from "react";
 import { useDebounce } from "tiny-use-debounce";
 
-export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval: number) {
+export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval: number, enabled = true) {
   const debounceSaveChanges = useDebounce(saveChanges, saveInterval);
 
   useEffect(() => {
@@ -17,8 +17,8 @@ export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval
   }, [saveChanges]);
 
   useEffect(() => {
-    if (vault) {
+    if (vault && enabled) {
       return vault.subscribe(debounceSaveChanges, true);
     }
-  }, [debounceSaveChanges, vault]);
+  }, [debounceSaveChanges, vault, enabled]);
 }

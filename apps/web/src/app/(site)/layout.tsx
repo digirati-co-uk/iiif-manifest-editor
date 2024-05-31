@@ -15,15 +15,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           <div>
             <GlobalNav />
           </div>
-          <div>
-            <Link
-              // Button
-              className="bg-me-primary-500 hover:bg-me-primary-600 text-sm text-white py-2 px-4 rounded"
-              href="/legacy"
-            >
-              Launch editor
-            </Link>
-          </div>
         </header>
       </div>
       <div className="mx-auto w-full max-w-screen-2xl min-h-[calc(100vh-64px)]">{children}</div>

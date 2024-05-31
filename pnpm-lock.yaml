@@ -135,6 +135,9 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
+      idb-keyval:
+        specifier: ^6.2.1
+        version: 6.2.1
       manifest-editor:
         specifier: 1.0.0
         version: link:../../packages/manifest-editor
@@ -7871,6 +7874,10 @@ packages:
     dependencies:
       postcss: 8.4.38
     dev: true
+
+  /idb-keyval@6.2.1:
+    resolution: {integrity: sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==}
+    dev: false
 
   /ignore-walk@5.0.1:
     resolution: {integrity: sha512-yemi4pMf51WKT7khInJqAvsIGzoqYXblnsz0ql8tM+yi1EKYTY1evX4NAbJrLL/Aanr2HyZeluqU+Oi7MGHokw==}

@@ -15,7 +15,7 @@ export function DownloadButton({ label, id: _id, getData, fileName, fileType }: 
   const id = useId(_id);
   return (
     <Tooltip placement="bottom">
-      <TooltipTrigger asChild>
+      <TooltipTrigger>
         <Button
           className="bg-me-gray-100 hover:bg-me-primary-500 hover:text-white p-1 rounded-md text-me-primary-500 text-2xl"
           aria-label={label}
