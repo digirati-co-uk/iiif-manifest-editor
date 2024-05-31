@@ -1,7 +1,15 @@
 "use client";
 
 import { useBrowserProject } from "./browser-state";
-import { AppProvider, Layout, PreviewButton, ShellProvider, mapApp, useSaveVault } from "@manifest-editor/shell";
+import {
+  AppProvider,
+  Layout,
+  PreviewButton,
+  PreviewConfiguration,
+  ShellProvider,
+  mapApp,
+  useSaveVault,
+} from "@manifest-editor/shell";
 import { Vault } from "@iiif/helpers";
 import { VaultProvider } from "react-iiif-vault";
 import { ManifestEditor } from "manifest-editor";
@@ -19,6 +27,67 @@ import "@manifest-editor/components/dist/index.css";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const manifestEditor = mapApp(manifestEditorPreset);
+
+const previews: PreviewConfiguration[] = [
+  {
+    id: "universal-viewer",
+    type: "external-manifest-preview",
+    label: "Universal viewer",
+    config: {
+      url: "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}",
+    },
+  },
+  {
+    id: "mirador-3",
+    type: "external-manifest-preview",
+    label: "Mirador 3",
+    config: {
+      url: "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "annona",
+    type: "external-manifest-preview",
+    label: "Annona",
+    config: {
+      url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
+    },
+  },
+  {
+    id: "delft-viewer",
+    type: "external-manifest-preview",
+    label: "Delft viewer",
+    config: {
+      url: "https://delft-viewer.netlify.app/#manifest={manifestId}",
+    },
+  },
+  {
+    id: "theseus",
+    type: "external-manifest-preview",
+    label: "Theseus",
+    config: {
+      url: "https://theseus-viewer.netlify.app/?manifest={manifestId}",
+    },
+  },
+  {
+    id: "iiif-preview",
+    type: "iiif-preview-service",
+    label: "IIIF Preview",
+    config: {
+      url: "/api/iiif/store",
+    },
+  },
+  {
+    id: "raw-manifest",
+    type: "external-manifest-preview",
+    label: "Raw Manifest",
+    config: {
+      url: "{manifestId}",
+    },
+  },
+];
+
+const config = { previews };
 
 export default function BrowserEditor({ id }: { id: string }) {
   const {
@@ -105,7 +174,7 @@ export default function BrowserEditor({ id }: { id: string }) {
       <VaultProvider vault={vault}>
         <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
           <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource}>
+            <ShellProvider resource={project.resource} config={config}>
               <GlobalStyle />
               <Layout header={header} />
             </ShellProvider>

@@ -1,6 +1,6 @@
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { useVaultSelector, CanvasContext } from "react-iiif-vault";
+import { useVaultSelector, CanvasContext, useVault } from "react-iiif-vault";
 import { useInStack } from "../../helpers";
 import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 
@@ -9,6 +9,8 @@ export function CanvasPanelEditor() {
   const canvas = useInStack("Canvas");
   const annotationPage = useInStack("AnnotationPage");
   const annotation = useInStack("Annotation");
+  const vault = useVault();
+
   const canvasId = canvas?.resource.source.id;
   let createAnnotation = undefined;
   const annotationPageId =
@@ -36,15 +38,22 @@ export function CanvasPanelEditor() {
   );
 
   if (annotationPageId) {
-    createAnnotation = (data: any) => {
-      create({
-        type: "Annotation",
-        parent: { id: annotationPageId as string, type: "AnnotationPage" },
-        property: "items",
-        initialData: { selector: data, motivation: "describing" },
-        target: { id: canvasId, type: "Canvas" },
-      });
-    };
+    const fullCanvas = vault.get({ id: canvasId, type: "Canvas" });
+    if (fullCanvas) {
+      createAnnotation = (data: any) => {
+        create({
+          type: "Annotation",
+          parent: { id: annotationPageId as string, type: "AnnotationPage" },
+          property: "items",
+          initialData: {
+            selector: data,
+            motivation: "describing",
+            on: { width: fullCanvas.width, height: fullCanvas.height },
+          },
+          target: { id: canvasId, type: "Canvas" },
+        });
+      };
+    }
   }
 
   const annotationId = annotation?.resource?.source.id;

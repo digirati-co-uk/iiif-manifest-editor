@@ -20,8 +20,8 @@ export default function BrowserRecents() {
           <div className="relative" key={project.id}>
             <ProjectContextualMenu id={project.id} />
             <Link href={`/editor/${project.id}`}>
-              <div className=" border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
-                <div className="bg-gray-200 w-full h-48 pointer-events-none">
+              <div className="border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
+                <div className="bg-gray-200 w-full h-48 transition-transform">
                   {project.resource.thumbnail ? (
                     <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
                   ) : (

@@ -1,6 +1,6 @@
 import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { SupportedTarget } from "@iiif/helpers";
+import { SupportedTarget, SvgSelector } from "@iiif/helpers";
 import { BoxStyle } from "@atlas-viewer/atlas";
 
 export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
@@ -23,6 +23,22 @@ export function Highlight({ id, style }: { id: string; style?: BoxStyle }) {
         />
       );
     }
+
+    if (canvas && annotation?.target.selector?.type === "SvgSelector") {
+      const selector: SvgSelector = annotation?.target.selector!;
+      if (!selector.points) return null;
+      const Shape = "shape" as any;
+      return (
+        <Shape
+          points={selector.points.map((p) => [p[0], p[1]])}
+          open={selector.svgShape === "polyline"}
+          relativeStyle={true}
+          style={{ border: "2px solid #488afc" }}
+          target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }}
+        />
+      );
+    }
+
     return null;
   }
 

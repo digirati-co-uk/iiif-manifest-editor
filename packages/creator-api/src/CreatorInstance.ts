@@ -4,6 +4,7 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
+import { InputShape } from "polygon-editor";
 import { randomId } from "./utils";
 
 export class CreatorInstance implements CreatorFunctionContext {
@@ -26,6 +27,75 @@ export class CreatorInstance implements CreatorFunctionContext {
   getTarget(): SpecificResource | Reference | undefined {
     const target = this.options.target || this.options.parent?.resource;
     const position: any = this.options.initialData?.selector;
+    if (position.type === "polygon") {
+      // Do something
+      // Check if its a box selector.
+      const position: { type: "polygon"; shape: InputShape } = this.options.initialData?.selector;
+      const { width, height } = this.options.initialData?.on || {};
+
+      if (position.shape.points.length === 0) {
+        return target;
+      }
+
+      if (position.shape.points.length === 1) {
+        const points = position.shape.points[0] as [number, number];
+        return {
+          type: "SpecificResource",
+          source: target,
+          selector: {
+            type: "PointSelector",
+            x: points[0],
+            y: points[1],
+          },
+        };
+      }
+
+      // Maybe box?
+      if (position.shape.points.length === 4) {
+        const [topLeft, topRight, bottomRight, bottomLeft] = position.shape.points as [
+          [number, number],
+          [number, number],
+          [number, number],
+          [number, number],
+        ];
+
+        if (
+          topLeft[0] === topRight[0] &&
+          topLeft[1] === bottomLeft[1] &&
+          topRight[1] === bottomRight[1] &&
+          bottomLeft[0] === bottomRight[0]
+        ) {
+          const x = Math.min(topLeft[0], topRight[0], bottomRight[0], bottomLeft[0]);
+          const y = Math.min(topLeft[1], topRight[1], bottomRight[1], bottomLeft[1]);
+
+          const x2 = Math.max(topLeft[0], topRight[0], bottomRight[0], bottomLeft[0]);
+          const y2 = Math.max(topLeft[1], topRight[1], bottomRight[1], bottomLeft[1]);
+          const width = x2 - x;
+          const height = y2 - y;
+
+          // It's a box.
+          return {
+            type: "SpecificResource",
+            source: target,
+            selector: {
+              type: "FragmentSelector",
+              value: `xywh=${[~~x, ~~y, ~~width, ~~height].join(",")}`,
+            },
+          };
+        }
+        // No it's a polygon.
+      }
+      const el = position.shape.open ? "polyline" : "polygon";
+      return {
+        type: "SpecificResource",
+        source: target,
+        selector: {
+          type: "SvgSelector",
+          value: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><${el} points="${position.shape.points.map((p: any) => p.join(",")).join(" ")}" /></svg>`,
+        },
+      };
+    }
+
     if (target && position) {
       return {
         type: "SpecificResource",

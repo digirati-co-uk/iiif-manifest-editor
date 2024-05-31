@@ -3,6 +3,7 @@ import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { SpecificResource } from "@iiif/presentation-3";
 import { EditorConfig } from "./types";
 import { SupportedSelectors, parseSelector } from "@iiif/helpers";
+import { InputShape } from "polygon-editor";
 
 export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormalized, SpecificResource> {
   constructor(config: EditorConfig) {
@@ -28,6 +29,20 @@ export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormali
       return parseSelector(resource.selector)?.selector;
     }
     return null;
+  }
+
+  setSvgSelector(shape: InputShape, canvas: { width: number; height: number }) {
+    const existing = this.getWithoutTracking();
+    if (existing && existing.source) {
+      const el = shape.open ? "polyline" : "polygon";
+      this.set({
+        ...existing,
+        selector: {
+          type: "SvgSelector",
+          value: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${canvas.width} ${canvas.height}" width="${canvas.width}" height="${canvas.height}"><${el} points="${shape.points.map((p: any) => p.join(",")).join(" ")}" /></svg>`,
+        },
+      });
+    }
   }
 
   setPosition(position: { x: number; y: number; width: number; height: number }) {

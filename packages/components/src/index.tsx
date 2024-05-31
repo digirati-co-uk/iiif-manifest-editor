@@ -13,6 +13,9 @@ export * from "./OpaqueControls";
 export * from "./Tabs";
 export * from "./CreatorGrid";
 export * from "./DownloadButton";
+export * from "./AtlasBanner";
+export * from "./SvgControlBar";
+export * from "./ConfirmSelectionButton";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

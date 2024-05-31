@@ -55,7 +55,7 @@
     "@manifest-editor/shell": "1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-iiif-vault": "^1.1.1"
+    "react-iiif-vault": "^1.2.1"
   },
   "devDependencies": {
     "@manifest-editor/ui": "1.0.0",

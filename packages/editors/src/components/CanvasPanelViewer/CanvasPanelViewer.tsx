@@ -23,6 +23,8 @@ import { CanvasContainer, GhostCanvas } from "@manifest-editor/ui/components/lay
 import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
 import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
+import { DrawPolygon } from "../DrawPolygon/DrawPolygon";
+import { AtlasBanner } from "@manifest-editor/components";
 
 export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
@@ -147,6 +149,9 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
         }
       `}</style>
         <S.ViewerContainer>
+          {(createMode && createAnnotation && !editMode) || ((currentlyEditingAnnotation || annotation) && editMode) ? (
+            <AtlasBanner controlsId="atlas-controls">Draw a box or select a shape</AtlasBanner>
+          ) : null}
           <AuthProvider>
             <CanvasPanel.Viewer
               key={`${canvasId}/${canvas?.width}/${canvas?.height}`}
@@ -210,9 +215,9 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
               )}
 
               {createMode && createAnnotation && !editMode ? (
-                <DrawBox
+                <DrawPolygon
                   onCreate={(data) => {
-                    createAnnotation(data);
+                    createAnnotation({ type: "polygon", shape: data });
                     (toggleCreateAnnotation as any)(false);
                   }}
                 />
