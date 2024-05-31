@@ -110,7 +110,7 @@ function InternalEditor() {
           <div className={`text-2xl text-center text-slate-500 mb-8`}>Loading...</div>
         ) : (
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            className="bg-me-primary-500 text-white py-2 px-4 rounded"
             onClick={() => {
               setIsLoading(true);
               createBlankManifest();
