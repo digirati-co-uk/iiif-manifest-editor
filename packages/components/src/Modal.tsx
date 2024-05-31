@@ -4,19 +4,20 @@ export interface ModalProps {
   id?: string;
   title: string | React.ReactNode;
   onClose: () => void;
+  open?: boolean;
   width?: number | string;
   height?: number | string;
   children: React.ReactNode;
   actions?: React.ReactNode;
 }
 
-export function Modal({ id, title, onClose, actions, children }: ModalProps) {
+export function Modal({ id, title, open = true, onClose, actions, children }: ModalProps) {
   return (
     <>
-      <Dialog open={true} onClose={onClose} id={id} className="relative z-[500]">
-        <div className="fixed inset-0 bg-black/30 animate-fadeIn" aria-hidden="true" />
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <div className="relative p-4 w-full max-w-4xl max-h-full">
+      <Dialog open={open} onClose={onClose} id={id} className="relative z-[500]">
+        <div className={`fixed inset-0 bg-black/30 animate-fadeIn z-[501]`} aria-hidden="true" />
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[502]">
+          <div className="relative p-4 w-full max-w-4xl max-h-full mb-[25%]">
             <DialogPanel className="relative bg-white rounded-lg shadow dark:bg-gray-700 max-h-[80vh] flex flex-col">
               <div className="flex  items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 sticky top-0 bg-white">
                 <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">{title}</DialogTitle>
@@ -51,7 +52,6 @@ export function Modal({ id, title, onClose, actions, children }: ModalProps) {
           </div>
         </div>
       </Dialog>
-      <div className="bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40"></div>
     </>
   );
 }

@@ -1,9 +1,11 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import "manifest-editor/dist/index.css";
-import { listBrowserProjects } from "./browser-state";
+import { deleteBrowserProject, listBrowserProjects } from "./browser-state";
 import { LocaleString } from "react-iiif-vault";
 import Link from "next/link";
+import { Button, Dialog, DialogTrigger, OverlayArrow, Popover, Switch, Toolbar } from "react-aria-components";
+import { queryClient } from "../site/Provider";
 
 export default function BrowserRecents() {
   const projects = useQuery({
@@ -12,16 +14,73 @@ export default function BrowserRecents() {
   });
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-md gap-4">
       {projects.data &&
         projects.data.map((project) => (
-          <Link className="underline" key={project.id} href={`/editor/${project.id}`}>
-            <div className="w-64 border flex flex-col">
-              <div className="bg-gray-300 w-full h-48"></div>
-              <LocaleString className="p-3 text-center w-full">{project.resource.label}</LocaleString>
-            </div>
-          </Link>
+          <div className="relative" key={project.id}>
+            <ProjectContextualMenu id={project.id} />
+            <Link href={`/editor/${project.id}`}>
+              <div className=" border flex flex-col rounded hover:border-me-primary-500">
+                <div className="bg-gray-200 w-full h-48">
+                  {project.resource.thumbnail ? (
+                    <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
+                  )}
+                </div>
+                <LocaleString className="underline p-3  text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
+                  {project.resource.label}
+                </LocaleString>
+              </div>
+            </Link>
+          </div>
         ))}
     </div>
+  );
+}
+
+function MoreIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="#5f6368" viewBox="0 -960 960 960" {...props}>
+      <path
+        d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function ProjectContextualMenu({ id }: { id: string }) {
+  function doDelete() {
+    const confirmed = confirm("Are you sure you want to delete this project?");
+    if (confirmed) {
+      deleteBrowserProject(id).then(() => {
+        queryClient.invalidateQueries({ queryKey: ["browser-projects"] });
+      });
+    }
+  }
+
+  return (
+    <DialogTrigger>
+      <Button className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-1 text-2xl rounded-full">
+        <MoreIcon />
+      </Button>
+      <Popover placement="bottom left">
+        <Dialog className="bg-white/95 p-1 shadow-md rounded-md animate-fadeIn w-36 flex flex-col items-start gap-1 focus:outline-none text-sm">
+          <Link
+            className="w-full hover:bg-me-primary-100 rounded py-1 px-2 focus-visible:bg-me-primary-100"
+            href={`/editor/${id}`}
+          >
+            Open
+          </Link>
+          <Button
+            className="w-full hover:bg-me-primary-100 rounded py-1 px-2 focus-visible:bg-me-primary-100 text-left"
+            onPress={doDelete}
+          >
+            Delete
+          </Button>
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
   );
 }

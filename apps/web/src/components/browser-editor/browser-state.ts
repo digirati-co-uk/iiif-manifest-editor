@@ -7,7 +7,7 @@ import { createStore, set, get, keys, del, delMany } from "idb-keyval";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { queryClient } from "../site/Provider";
 import { randomId } from "@manifest-editor/shell";
-import { Vault } from "@iiif/helpers";
+import { Vault, createThumbnailHelper } from "@iiif/helpers";
 
 const localStore = createStore("manifest-editor-projects-v2", "manifest-editor-project-store");
 
@@ -331,6 +331,42 @@ export async function createBlankManifest() {
       thumbnail: "",
     },
     { id: "blank-manifest", type: "Template" },
+    vaultData,
+    {}
+  );
+
+  return project;
+}
+
+export async function createManifestFromId(url: string) {
+  const id = randomId();
+  const vault = new Vault();
+  const manifest = await vault.loadManifest(url);
+
+  if (!manifest) throw new Error("Manifest not found");
+
+  const vaultData = vault.getState().iiif;
+
+  const thumbnailHelper = createThumbnailHelper(vault);
+  const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
+    manifest,
+    {
+      width: 256,
+      height: 256,
+    },
+    true
+  );
+  const thumb = thumbnail?.best?.id;
+
+  const project = await createBrowserProject(
+    id,
+    {
+      id: manifest.id,
+      type: "Manifest",
+      label: manifest.label || { en: ["Untitled manifest"] },
+      thumbnail: thumb || "",
+    },
+    { id: url, type: "Template" },
     vaultData,
     {}
   );
