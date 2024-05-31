@@ -20,8 +20,8 @@ export default function BrowserRecents() {
           <div className="relative" key={project.id}>
             <ProjectContextualMenu id={project.id} />
             <Link href={`/editor/${project.id}`}>
-              <div className=" border flex flex-col rounded hover:border-me-primary-500">
-                <div className="bg-gray-200 w-full h-48">
+              <div className=" border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
+                <div className="bg-gray-200 w-full h-48 pointer-events-none">
                   {project.resource.thumbnail ? (
                     <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -62,19 +62,19 @@ function ProjectContextualMenu({ id }: { id: string }) {
 
   return (
     <DialogTrigger>
-      <Button className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-1 text-2xl rounded-full">
+      <Button className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-0.5 text-2xl rounded-full">
         <MoreIcon />
       </Button>
       <Popover placement="bottom left">
-        <Dialog className="bg-white/95 p-1 shadow-md rounded-md animate-fadeIn w-36 flex flex-col items-start gap-1 focus:outline-none text-sm">
+        <Dialog className="bg-white/95 p-0.5 shadow-md rounded-md animate-fadeIn w-36 flex flex-col items-start gap-1 focus:outline-none text-sm border border-[#000] border-opacity-10 backdrop-blur">
           <Link
-            className="w-full hover:bg-me-primary-100 rounded py-1 px-2 focus-visible:bg-me-primary-100"
+            className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50"
             href={`/editor/${id}`}
           >
             Open
           </Link>
           <Button
-            className="w-full hover:bg-me-primary-100 rounded py-1 px-2 focus-visible:bg-me-primary-100 text-left"
+            className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
             onPress={doDelete}
           >
             Delete
