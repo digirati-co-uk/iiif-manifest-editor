@@ -121,7 +121,7 @@ export function CanvasPanelViewer({ onEditAnnotation, highlightAnnotation, creat
       <CanvasContainer>
         <GhostCanvas>
           <BlockIcon color="grey" />
-          <PaddingComponentSmall> No canvas selected </PaddingComponentSmall>
+          <PaddingComponentSmall> No canvas selected</PaddingComponentSmall>
           <PaddingComponentMedium />
           <PaddingComponentSmall>Manage your canvases on the left </PaddingComponentSmall>
           <PaddingComponentSmall>Edit your manifest properties on the right</PaddingComponentSmall>

@@ -2,6 +2,11 @@ import { Tab, TabList, TabPanel, Tabs } from "@manifest-editor/components";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
+import allExamples from "../../../../../examples.json";
+import { ExampleListing } from "../../components/example-listing/ExampleListing";
+
+const { examples } = allExamples;
+
 const BrowserRecents = dynamic(() => import("../../components/browser-editor/BrowserRecents"), { ssr: false });
 
 const GettingStarted = dynamic(() => import("../../components/browser-editor/GettingStarted"), { ssr: false });
@@ -21,12 +26,7 @@ export default function Page(): JSX.Element {
             <BrowserRecents />
           </TabPanel>
           <TabPanel id="examples">
-            <div>TODO: Examples</div>
-            <div>
-              <a className="underline underline-offset-2" href="/examples/iiif-manifest-example">
-                iiif-manifest-example
-              </a>
-            </div>
+            <ExampleListing examples={examples} />
           </TabPanel>
         </Tabs>
       </div>

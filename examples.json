@@ -1,0 +1,46 @@
+{
+  "examples": [
+    {
+      "id": "ocean-liners",
+      "url": "https://stephenwf.github.io/ocean-liners-v2.json",
+      "label": "Ocean Liners",
+      "description": "Example of Annotations",
+      "thumbnail": "https://framemark.vam.ac.uk/collections/2013GU2911/full/473,/0/default.jpg"
+    },
+    {
+      "id": "wunder",
+      "url": "https://iiif.wellcomecollection.org/presentation/b18035723",
+      "label": "Wunder der Vererbung",
+      "description": "Example from Wellcome Collection",
+      "thumbnail": "https://iiif.wellcomecollection.org/thumbs/b18035723_0004.JP2/full/286,/0/default.jpg"
+    },
+    {
+      "id": "jwst",
+      "url": "https://iiif-test-images.netlify.app/jwst-full.json",
+      "label": "James Webb Space Telescope Image",
+      "description": "Example of a large image with level0 service",
+      "thumbnail": "https://iiif-test-images.netlify.app/jwst-full/0,0,512,512/512,/0/default.jpg"
+    },
+    {
+      "id": "self-portrait",
+      "url": "https://iiif.harvardartmuseums.org/manifests/object/299843",
+      "label": "Self-Portrait Dedicated to Paul Gauguin",
+      "description": "Example from Harvard Art Museums",
+      "thumbnail": "https://ids.lib.harvard.edu/ids/iiif/47174896/full/512,/0/default.jpg"
+    },
+    {
+      "id": "illuminations",
+      "url": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/ae9f6cca-ae5c-4149-8fe4-95e6eca1f73c.json",
+      "label": "Illuminations",
+      "description": "Example from Bodleian Libraries",
+      "thumbnail": "https://iiif.bodleian.ox.ac.uk/iiif/image/b359708b-6375-4a88-8980-7aa3142f74ca/full/256,/0/default.jpg"
+    },
+    {
+      "id": "scroll",
+      "url": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/ed590aeb-442e-4ffe-b8a3-3ffa52c8ca3f.json",
+      "label": "Scroll",
+      "description": "Example from Bodleian Libraries",
+      "thumbnail": "https://iiif.bodleian.ox.ac.uk/iiif/image/f51d523a-0706-4834-a432-83a8d0ead930/full/225,/0/default.jpg"
+    }
+  ]
+}

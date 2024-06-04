@@ -8,12 +8,18 @@ import Link from "next/link";
 import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
 import { GlobalNav } from "../site/GlobalNav";
 import { Vault } from "@iiif/helpers";
+import { upgrade } from "@iiif/parser/upgrader";
 
 export default function LocalEditor() {
   const [file, setFile] = useState<FileWithHandle | null>(null);
   const [manifest, setManifest] = useState<any | null>(null);
   const vault = useMemo(() => new Vault(), []);
   const [lastModified, setLastModified] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   if (!supported) {
     return <div>Browser FS Access not supported</div>;
@@ -30,8 +36,13 @@ export default function LocalEditor() {
               const text = await file.text();
               const manifest = JSON.parse(text);
               setManifest(JSON.parse(text));
-              vault.loadManifestSync(manifest.id, manifest);
-              setLastModified(file.lastModified);
+              const upgraded = upgrade(manifest);
+              if (upgraded) {
+                vault.loadManifestSync(upgraded.id, upgraded);
+                setLastModified(file.lastModified);
+              } else {
+                setError("Could not upgrade manifest");
+              }
             }
           }}
         >
