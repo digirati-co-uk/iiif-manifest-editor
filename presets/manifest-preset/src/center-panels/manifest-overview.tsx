@@ -1,7 +1,10 @@
-import { CanvasThumbnailGridItem, ThumbnailGridContainer, useFastList } from "@manifest-editor/components";
-import { useToggleList, useInStack } from "@manifest-editor/editors";
+import {
+  CanvasThumbnailGridItem,
+  ManifestOverviewEmptyState,
+  ThumbnailGridContainer,
+  useFastList,
+} from "@manifest-editor/components";
 import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { useEffect, useLayoutEffect, useState } from "react";
 
 export const manifestOverview: LayoutPanel = {
   id: "overview",
@@ -19,8 +22,12 @@ function ManifestOverview() {
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
   const canvases = useFastList(items.get(), 24);
 
-  if (!canvases) {
-    return null;
+  if (!canvases || canvases.length === 0) {
+    return (
+      <div>
+        <ManifestOverviewEmptyState onCreate={canvasActions.create} canCreate={canCreateCanvas} />
+      </div>
+    );
   }
   return (
     <ThumbnailGridContainer wide>
