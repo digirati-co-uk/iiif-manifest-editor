@@ -4,14 +4,24 @@ import "manifest-editor/dist/index.css";
 import { deleteBrowserProject, listBrowserProjects } from "./browser-state";
 import { LocaleString } from "react-iiif-vault";
 import Link from "next/link";
-import { Button, Dialog, DialogTrigger, OverlayArrow, Popover, Switch, Toolbar } from "react-aria-components";
+import { Button, Dialog, DialogTrigger, Popover, TabListStateContext } from "react-aria-components";
 import { queryClient } from "../site/Provider";
+import { useContext, useEffect } from "react";
 
 export default function BrowserRecents() {
+  const { selectionManager } = useContext(TabListStateContext);
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,
   });
+
+  useEffect(() => {
+    if (projects.isFetched) {
+      if (!projects.data || !projects.data.length) {
+        selectionManager.select("examples");
+      }
+    }
+  }, [projects.data]);
 
   return (
     <div className="grid grid-md gap-4">
