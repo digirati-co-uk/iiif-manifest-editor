@@ -17,23 +17,23 @@ import { videoAnnotation } from "./Annotation/VideoAnnotation";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 
 export const allCreators = [
+  // Images first.
+  imageServiceCreator,
+  imageServiceAnnotation,
+  imageUrlCreator,
+  imageUrlAnnotation,
+  videoAnnotation,
+  audioAnnotation,
+  htmlBodyCreator,
+  htmlAnnotation,
+  youTubeBodyCreator,
+  iiifBrowserCreator,
   emptyCanvas,
   plaintextCreator,
   webPageCreator,
-  htmlBodyCreator,
-  htmlBodyCreator,
-  htmlAnnotation,
   emptyAnnotationPage,
-  youTubeBodyCreator,
-  imageUrlCreator,
-  imageServiceCreator,
-  imageServiceAnnotation,
   noBodyAnnotation,
-  iiifBrowserCreator,
   internalCanvas,
-  imageUrlAnnotation,
-  audioAnnotation,
-  videoAnnotation,
 ];
 
 export {
