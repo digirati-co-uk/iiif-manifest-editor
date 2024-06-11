@@ -14,7 +14,7 @@ export function Card3D({
     if (!outer.current || !inner.current) return;
 
     let bounds: DOMRect;
-    function rotateToMouse(e) {
+    function rotateToMouse(e: MouseEvent) {
       const mouseX = e.clientX;
       const mouseY = e.clientY;
       const leftX = mouseX - bounds.x;
@@ -65,7 +65,7 @@ export function Card3D({
       reset();
     };
 
-    const mousemove = (e) => {
+    const mousemove = (e: MouseEvent) => {
       if (!isActive) return;
       rotateToMouse(e);
     };

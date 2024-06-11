@@ -1,6 +1,20 @@
 {
   "examples": [
     {
+      "id": "cross-streets",
+      "url": "https://media.getty.edu/iiif/manifest/7e41bf77-f7e1-4fbe-805a-3e4b3b508f6e",
+      "label": "Cross streets",
+      "description": "Example from Getty Research Institute",
+      "thumbnail": "https://media.getty.edu/iiif/image/aa534a2c-94e7-4158-8307-f619335b72ee/full/329,/0/default.jpg"
+    },
+    {
+      "id": "poems",
+      "url": "https://view.nls.uk/manifest/2423/3907/242339078/manifest.json",
+      "label": "Poems in the Scottish dialect",
+      "description": "Example of a book from the National Library of Scotland",
+      "thumbnail": "https://view.nls.uk/iiif/2424/3040/242430408.5/full/256,/0/default.jpg"
+    },
+    {
       "id": "ocean-liners",
       "url": "https://stephenwf.github.io/ocean-liners-v2.json",
       "label": "Ocean Liners",
@@ -22,6 +36,13 @@
       "thumbnail": "https://iiif-test-images.netlify.app/jwst-full/0,0,512,512/512,/0/default.jpg"
     },
     {
+      "id": "bible",
+      "url": "https://dms-data.stanford.edu/Stanford/ege1/manifest.json",
+      "label": "Otto Ege Manuscript",
+      "description": "12th-century French glossed bible",
+      "thumbnail": "https://stacks.stanford.edu/image/iiif/kq131cs7229%252Fkq131cs7229_05_0006/full/233,/0/default.jpg"
+    },
+    {
       "id": "self-portrait",
       "url": "https://iiif.harvardartmuseums.org/manifests/object/299843",
       "label": "Self-Portrait Dedicated to Paul Gauguin",
@@ -36,11 +57,25 @@
       "thumbnail": "https://iiif.bodleian.ox.ac.uk/iiif/image/b359708b-6375-4a88-8980-7aa3142f74ca/full/256,/0/default.jpg"
     },
     {
+      "id": "poems-transcripts",
+      "url": "https://damsssl.llgc.org.uk/iiif/2.0/4574752/manifest.json",
+      "description": "Poems by Guillaume de Machaut, [15 cent.]",
+      "label": "Guillaume de Machaut",
+      "thumbnail": "https://damsssl.llgc.org.uk/iiif/2.0/image/4574761/full/270,/0/native.jpg"
+    },
+    {
       "id": "scroll",
       "url": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/ed590aeb-442e-4ffe-b8a3-3ffa52c8ca3f.json",
       "label": "Scroll",
       "description": "Example from Bodleian Libraries",
       "thumbnail": "https://iiif.bodleian.ox.ac.uk/iiif/image/f51d523a-0706-4834-a432-83a8d0ead930/full/225,/0/default.jpg"
+    },
+    {
+      "id": "atlas",
+      "url": "https://purl.stanford.edu/hs631zg4177/iiif/manifest",
+      "label": "Ōmi Kuni-ezu",
+      "description": "Example from Stanford University",
+      "thumbnail": "https://stacks.stanford.edu/image/iiif/hs631zg4177/hs631zg4177_00_0001/full/537,/0/default.jpg"
     }
   ]
 }
