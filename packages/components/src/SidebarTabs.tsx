@@ -60,7 +60,12 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
   }, []);
 
   return (
-    <Tabs className="w-full" key={menuId} selectedKey={selectedKey} onSelectionChange={onSelectionChange as any}>
+    <Tabs
+      className="w-full flex-1 overflow-hidden flex flex-col"
+      key={menuId}
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange as any}
+    >
       <div className="flex items-center w-full tab-shadow">
         <TabList ref={ref} className="flex-1 overflow-hidden w-full flex text-sm whitespace-nowrap">
           {menu.map((item, idx) => {
@@ -73,8 +78,9 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
                 className={(state) =>
                   cn(
                     //
-                    "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black",
+                    "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
                     state.isSelected && "border-me-primary-500 text-black",
+                    state.isFocusVisible && "ring-0 bg-me-gray-100",
                     isHidden && "hidden"
                   )
                 }
@@ -120,25 +126,10 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
       </div>
 
       {menu.map((item) => (
-        <TabPanel key={item.id} id={item.id}>
+        <TabPanel key={item.id} id={item.id} className="flex-1 overflow-y-auto h-full">
           {item.renderComponent}
         </TabPanel>
       ))}
-      {hidden > 0 && (
-        <TabPanel key="more" id="more">
-          <div className="absolute right-0 top-0 z-10">
-            <div className="bg-white border border-me-primary-200 shadow-lg rounded-lg">
-              <div className="flex flex-col gap-1">
-                {menu.slice(-hidden).map((item) => (
-                  <Button key={item.id} onPress={() => onSelectionChange?.(item.id)}>
-                    {item.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </TabPanel>
-      )}
     </Tabs>
   );
 }
