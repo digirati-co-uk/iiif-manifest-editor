@@ -47,6 +47,7 @@
     "clsx": "^2.1.1",
     "@headlessui/react": "^2.0.3",
     "@iiif/helpers": "^1.1.0",
+    "@iiif/presentation-3": "^2.2.3",
     "react-aria-components": "^1.2.1",
     "polygon-editor": "^0.0.4",
     "react-iiif-vault": "^1.2.1",

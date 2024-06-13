@@ -10,6 +10,7 @@ import { EditableResource } from "../EditingStack/EditingStack.types";
 import { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useApp } from "../AppContext/AppContext";
+import { SidebarTabs } from "@manifest-editor/components";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -111,7 +112,7 @@ export function editBasedOnResource(
   return null;
 }
 
-export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
+export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) {
   const resource = useEditingResource();
   const app = useApp();
   const vault = useVault();
@@ -155,18 +156,18 @@ export function BaseEditor({ currentTab = 0 }: { currentTab?: number }) {
   }
 
   return (
-    <>
-      <TabPanel
-        key={resource.resource.source?.id}
-        menu={match?.editors.map((editor) => {
-          return {
-            label: editor.label,
-            renderComponent: () => editor.component(),
-          };
-        })}
-        selected={currentTab}
-        switchPanel={(p) => change("@manifest-editor/editor", { currentTab: p })}
-      />
-    </>
+    <SidebarTabs
+      key={resource.resource.source?.id}
+      menuId={resource.resource.source.id}
+      menu={(match?.editors || []).map((editor, key) => {
+        return {
+          id: editor.id + key,
+          label: editor.label,
+          renderComponent: () => editor.component(),
+        };
+      })}
+      selectedKey={currentTab}
+      onSelectionChange={(p: any) => change("@manifest-editor/editor", { currentTab: p })}
+    />
   );
 }

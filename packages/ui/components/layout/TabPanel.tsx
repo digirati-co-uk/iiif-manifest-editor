@@ -51,11 +51,12 @@ const TabMore = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 0.2em;
+  background: #eee;
+  padding: 0 0.25em;
   border-radius: 3px;
 
   &:hover {
-    background: #eee;
+    background: #ddd;
   }
 
   &[data-active="true"] {

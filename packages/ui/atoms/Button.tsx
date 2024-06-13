@@ -15,7 +15,7 @@ export const ButtonReset = styled.button`
 `;
 
 export const Button = styled.button<{ $active?: boolean }>`
-  padding: 0 ${(props: any) => props.theme.padding.small || "0.5rem"};
+  padding: 0.5rem 1rem;
   color: ${(props: any) => props.theme.color.main || "none"};
   background-color: ${(props: any) => props.theme.color.white || "white"};
   border-radius: inherit;
@@ -23,7 +23,7 @@ export const Button = styled.button<{ $active?: boolean }>`
   cursor: pointer;
   display: flex;
   align-items: center;
-  height: 2rem;
+  font-size: 0.85em;
   :disabled {
     opacity: 0.65;
     cursor: not-allowed;
@@ -43,9 +43,9 @@ export const SmallButton = styled(Button as any)`
 export const SecondaryButton = styled(Button as any)`
    {
     padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
-    color: ${(props: any) => props.theme.color.main || "#347cff;"};
+    color: ${(props: any) => props.theme.color.main || "#B84C74;"};
     background-color: ${(props: any) => props.theme.color.white || "white"};
-    border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
+    border: 1px solid ${(props: any) => props.theme.color.main || "#B84C74;"};
     border-radius: 0.25rem;
     cursor: pointer;
     height: 2rem;
@@ -64,15 +64,15 @@ export const SecondaryButton = styled(Button as any)`
 export const CalltoButton = styled(Button as any)`
   padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   color: ${(props: any) => props.theme.color.white || "white"};
-  background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
-  border: none;
+  background-color: ${(props: any) => props.theme.color.main || "#B84C74;"};
+  border: 1px solid #eee;
   border-radius: 0.25rem;
   cursor: pointer;
   justify-content: center;
   display: flex;
   align-items: center;
   &:hover {
-    background-color: ${(props: any) => props.theme.color.mainHover || "#347cff;"};
+    background-color: ${(props: any) => props.theme.color.mainHover || "#B84C74;"};
   }
 `;
 

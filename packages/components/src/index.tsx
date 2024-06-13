@@ -1,6 +1,7 @@
 // All components.
 import "./index.css";
 
+export * from "./ActionButton";
 export * from "./Sidebar";
 export * from "./PanelSideMenu";
 export * from "./Tooltip";
@@ -18,6 +19,9 @@ export * from "./SvgControlBar";
 export * from "./ConfirmSelectionButton";
 export * from "./ManifestOverviewEmptyState";
 export * from "./Card3D";
+export * from "./SidebarTabs";
+export * from "./MetadataContainer";
+export * from "./EmptyState";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
@@ -30,6 +34,7 @@ export * from "./icons/VideoIcon";
 export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
+export * from "./icons/AddIcon";
 
 // Helpers
 export * from "./hooks";

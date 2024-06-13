@@ -2,12 +2,12 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { useState } from "react";
 import { InputContainer, InputLabel, InputLabelEdit } from "../Input";
-import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useCreator } from "@manifest-editor/shell";
 import { ContentResourceList } from "../ContentResourceList/ContentResourceList";
 import { RangeList } from "../RangeList";
 import { AnnotationPageList } from "../AnnotationPageLIst/AnnotationPageList";
 import { Button } from "@manifest-editor/ui/atoms/Button";
+import { ActionButton, EmptyState, AddIcon } from "@manifest-editor/components";
 
 interface LinkingPropertyListProps {
   parent?: SpecificResource;
@@ -38,8 +38,8 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
 
   const items = props.items || [];
   return (
-    <div id={props.containerId}>
-      <InputContainer $wide>
+    <div id={props.containerId} className="mb-2">
+      <div className="flex flex-col gap-2">
         {!items.length ? (
           <>
             <InputLabel>{props.label}</InputLabel>
@@ -62,8 +62,12 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
           }}
           createActions={props.createActions}
         />
-      </InputContainer>
-      {canCreate ? <Button onClick={() => actions.create()}>Add {props.label}</Button> : null}
+      </div>
+      {canCreate ? (
+        <ActionButton onPress={() => actions.create()}>
+          <AddIcon /> Add {props.label}
+        </ActionButton>
+      ) : null}
     </div>
   );
 }

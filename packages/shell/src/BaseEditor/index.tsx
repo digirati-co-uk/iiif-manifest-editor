@@ -4,7 +4,7 @@ import { BaseEditor, BaseEditorBackButton, BaseEditorCloseButton } from "./BaseE
 export const baseEditor: LayoutPanel = {
   id: "@manifest-editor/editor",
   label: "Editor",
-  options: { hideHeader: true, tabs: true },
+  options: { hideHeader: true, tabs: true, minWidth: 400 },
   renderBackAction: ({ backAction, fallback }) => <BaseEditorBackButton backAction={backAction} fallback={fallback} />,
   renderCloseAction: ({ closeAction, fallback }) => (
     <BaseEditorCloseButton closeAction={closeAction} fallback={fallback} />

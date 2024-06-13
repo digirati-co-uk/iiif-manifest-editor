@@ -19,6 +19,8 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   guidanceReference?: string;
   disableMultiline?: boolean;
   singleValue?: boolean;
+
+  advancedMode?: boolean;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -37,11 +39,13 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   const [active, activeState] = useDecayState(2000);
   const [isReorderMode, setIsReorderMode] = useState(false);
 
+  const isFullMode = !!props.advancedMode || fieldKeys.length > 1;
+
   // We can set these up from config, or the browser or just allow them to be passed down.
   // This is where we choose a default for which languages will appear in the dropdown.
   // The `firstItem` will be based on the i18n of the user's browser.
   // ...
-  const availableLanguages = props.availableLanguages || ["en", "none"];
+  const availableLanguages = props.availableLanguages || ["en", "nl", "none"];
   const id = useMemo(() => `k-${Date.now()}`, []);
 
   const focusId = props.focusId ? props.focusId : id + props.metadataKey;
@@ -55,6 +59,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
             flexDirection: "column",
             borderRadius: "5px",
             width: "100%",
+            gap: "0.25em",
+            marginBottom: "0.5em",
           }}
         >
           {fieldKeys.map((key, n) => {
@@ -125,7 +131,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
         </div>
       )}
 
-      {!props.singleValue || fieldKeys.length > 1 ? (
+      {isFullMode && (!props.singleValue || fieldKeys.length > 1) ? (
         <OpaqueControls active={active}>
           {/* Here we can call createNewItem() with true, to indicate a new on existing */}
           <ControlButton aria-label="create new" onClick={() => createNewItem(true)}>
@@ -141,7 +147,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   ) : null;
 
   return (
-    <div id={props.containerId}>
+    <div className="mb-4" id={props.containerId}>
       <>
         <InputLabel htmlFor={focusId}>{props.label}</InputLabel>
       </>

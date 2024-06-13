@@ -11,6 +11,7 @@ import { BehaviorEditorConfiguration } from "./BehaviorEditor.types";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { LocaleString } from "react-iiif-vault";
+import { ActionButton } from "@manifest-editor/components";
 
 export interface BehaviorEditorProps {
   id?: string;
@@ -91,6 +92,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
 
         {showNew ? (
           <form
+            className="flex flex-col gap-2 border-2 border-gray-100 p-2 rounded-md"
             onSubmit={(e) => {
               e.preventDefault();
               const data = new FormData(e.target as HTMLFormElement);
@@ -102,15 +104,18 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
               }
             }}
           >
+            <InputLabel htmlFor="custom_behavior">Add custom behavior</InputLabel>
             <ComposableInput.Container>
-              <ComposableInput.Text name="behavior" list="behaviors" />
+              <ComposableInput.Text name="behavior" id="custom_behavior" list="behaviors" autoFocus />
             </ComposableInput.Container>
-            <Button type="submit">Add new</Button>
+            <ActionButton center primary type="submit">
+              <AddIcon /> Add
+            </ActionButton>
           </form>
         ) : (
-          <div onClick={() => setShowNew(true)}>
-            <AddIcon /> Add new value
-          </div>
+          <ActionButton onPress={() => setShowNew(true)}>
+            <AddIcon /> Add custom behavior
+          </ActionButton>
         )}
       </PaddedSidebarContainer>
     </div>

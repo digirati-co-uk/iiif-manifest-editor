@@ -76,7 +76,7 @@ export function InlineSelect<T extends string = string>(props: InlineSelectProps
   };
 
   return (
-    <InlineSelectStyles.Container data-vertical={props.options.length > 4}>
+    <InlineSelectStyles.Container data-vertical={props.options.length > 3}>
       {props.options.map((option, idx) => {
         return (
           <InlineSelectStyles.Item

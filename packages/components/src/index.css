@@ -31,6 +31,10 @@
   grid-template-columns: repeat(auto-fill, minmax(max(var(--grid-item--min-width), var(--grid-item--max-width)), 1fr));
 }
 
+.tab-shadow {
+  box-shadow: inset 0 -2px 0px 0 rgba(0, 0, 0, 0.1);
+}
+
 /* SVG */
 .atlas-cursor-se {
   cursor: se-resize;

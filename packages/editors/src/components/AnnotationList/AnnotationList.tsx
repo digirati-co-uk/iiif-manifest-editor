@@ -5,13 +5,14 @@ import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { AnnotationContext } from "react-iiif-vault";
 import { AnnotationPreview } from "../AnnotationPreview/AnnotationPreview";
 import { CanvasTargetContext } from "../CanvasTargetContext";
-import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { EmptyState } from "@manifest-editor/components";
 
 interface AnnotationListProps {
   id?: string;
   list: Array<Reference>;
   reorder?: (result: { startIndex: number; endIndex: number }) => void;
   inlineHandle?: boolean;
+  isMedia?: boolean;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
   createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 }
@@ -21,7 +22,7 @@ export function AnnotationList(props: AnnotationListProps) {
     return (
       <>
         <EmptyState $noMargin $box>
-          No annotations
+          No {props.isMedia ? "media" : "annotations"}
         </EmptyState>
       </>
     );

@@ -1,11 +1,11 @@
-import { getValue } from "@iiif/helpers/i18n";
 import { useEditor } from "@manifest-editor/shell";
+import { MetadataContainer } from "@manifest-editor/components";
 import { Fragment, useState } from "react";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
-import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { EmptyState } from "@manifest-editor/components";
 import { ReorderList } from "../../components/ReorderList/ReorderList.dndkit";
 import { createAppActions } from "../../helpers/create-app-actions";
 
@@ -15,8 +15,7 @@ export function Metadata() {
   const items = descriptive.metadata.getSortable();
 
   const renderItem = (e: any, idx: number) => (
-    <Fragment key={idx}>
-      <h4>{getValue(e.label)}</h4>
+    <MetadataContainer key={idx} label={e.label}>
       <LanguageFieldEditor
         focusId={e.id}
         label={"Label"}
@@ -29,7 +28,7 @@ export function Metadata() {
         fields={e.value || { none: [] }}
         onSave={(value: any) => descriptive.metadata.update(idx, e.label, value.toInternationalString())}
       />
-    </Fragment>
+    </MetadataContainer>
   );
 
   return (

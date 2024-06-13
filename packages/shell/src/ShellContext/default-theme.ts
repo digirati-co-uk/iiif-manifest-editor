@@ -1,6 +1,6 @@
 export const defaultTheme = {
   color: {
-    main: "#347cff",
+    main: "#B84C74",
     mainHover: "#4a89ff",
     logoPink: "#E94581",
     white: "white",

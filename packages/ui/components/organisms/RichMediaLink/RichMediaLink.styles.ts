@@ -14,8 +14,8 @@ const Container = styled.div<{ $interactive?: boolean }>`
       cursor: pointer;
 
       &:hover {
-        border-color: #488afc;
-        outline: 1px solid #488afc;
+        border-color: #b84c74;
+        outline: 1px solid #b84c74;
       }
     `}
 

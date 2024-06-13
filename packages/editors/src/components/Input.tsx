@@ -13,7 +13,7 @@ export const InputLabel = styled.label<{
   background: #fff;
   font-weight: 500;
   line-height: 2.4em;
-  font-size: 0.875em;
+  font-size: 0.925em;
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -87,8 +87,8 @@ export const MutliselectLabel = styled(InputLabel)<{
   padding: 0 ${(props: any) => props.theme.padding.small || "1rem"};
   margin: ${(props: any) => props.theme.padding.xs || "1rem"} ${(props: any) => props.theme.padding.xs || "1rem"};
   background-color: ${(props: any) => props.theme.color.white || "white"};
-  color: ${(props: any) => props.theme.color.main || "#347cff;"};
-  border: 1px solid ${(props: any) => props.theme.color.main || "#347cff;"};
+  color: ${(props: any) => props.theme.color.main || "#B84C74;"};
+  border: 1px solid ${(props: any) => props.theme.color.main || "#B84C74;"};
   border-radius: 20px;
   cursor: pointer;
   height: 2rem;
@@ -99,12 +99,12 @@ export const MutliselectLabel = styled(InputLabel)<{
     props.$selected &&
     css`
       color: ${props.theme.color.white || "white"};
-      background-color: ${props.theme.color.main || "#347cff;"};
+      background-color: ${props.theme.color.main || "#B84C74;"};
     `}
 
   :hover {
     color: ${(props: any) => props.theme.color.white || "white"};
-    background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+    background-color: ${(props: any) => props.theme.color.main || "#B84C74;"};
   }
 `;
 
@@ -157,20 +157,6 @@ export const InputUnderlined = styled(_Input)`
 
 export const InputGroup = styled(FlexContainer as any)<{ $active?: boolean }>`
   display: flex;
-  width: calc(100% + 1em);
-  padding: 0.5em;
-  margin-left: -0.5em;
-  margin-right: -0.5em;
-
-  ${(props) =>
-    props.$active &&
-    css`
-      border-radius: 5px;
-      transition: background 200ms;
-      &:hover {
-        background-color: ${(props: any) => props.theme.color.highlight || "yellow"};
-      }
-    `}
 `;
 
 export const Submit = styled.input.attrs({
@@ -179,7 +165,7 @@ export const Submit = styled.input.attrs({
 })`
   padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   color: ${(props: any) => props.theme.color.white || "white"};
-  background-color: ${(props: any) => props.theme.color.main || "#347cff;"};
+  background-color: ${(props: any) => props.theme.color.main || "#B84C74;"};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -238,7 +224,7 @@ export const InputContainer = styled.div<{
   display: flex;
   flex-direction: column;
   max-width: ${(props: any) => (props.$$fluid ? "100%" : props.$wide ? "550px" : "360px")};
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
   width: 100%;
 
   ${(props: any) =>

@@ -45,10 +45,10 @@ export const DropdownItem = styled.button<{ $active?: boolean }>`
   ${(props) =>
     props.$active &&
     css`
-      background: #347cff;
+      background: #b84c74;
       color: #fff;
       &:hover {
-        background: #347cff;
+        background: #b84c74;
         color: #fff;
       }
     `}
@@ -63,7 +63,9 @@ export const DropdownMenu = styled.div<{ $open?: boolean; $center?: boolean }>`
   font-size: 0.75rem;
   min-width: 190px;
   top: calc(100% + 0.5em);
-  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15),
+  box-shadow:
+    0 4px 15px 0 rgba(0, 0, 0, 0.18),
+    0 0px 0px 1px rgba(0, 0, 0, 0.15),
     inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   border-radius: 3px;
   z-index: 150;
