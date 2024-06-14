@@ -59,7 +59,7 @@
     "@atlas-viewer/atlas": "^2.2.0",
     "@floating-ui/react": "0.26.12",
     "react": "^18.2.0",
-    "@iiif/helpers": "^1.1.0",
+    "@iiif/helpers": "^1.2.12",
     "react-dom": "^18.2.0",
     "react-iiif-vault": "^1.2.1",
     "styled-components": "6.1.8",

@@ -5,7 +5,7 @@ import { Button } from "@manifest-editor/ui/atoms/Button";
 import { InfoMessage } from "@manifest-editor/ui/madoc/components/callouts/InfoMessage";
 import { InternationalString } from "@iiif/presentation-3";
 import { ManifestOpenerStyles as S } from "./ManifestOpener.styles";
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import { Input } from "@manifest-editor/editors";
 import { LocaleString } from "react-iiif-vault";
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
@@ -90,7 +90,7 @@ export function ManifestOpener() {
       {currentProject ? currentProjectWarning() : null}
       <S.Container>
         <S.LogoContainer>
-          <ManifestEditorLogo width="100%" height="" />
+          <ManifestEditorLogo />
         </S.LogoContainer>
 
         <S.InputContainer>

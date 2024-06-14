@@ -1,5 +1,4 @@
 import { LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { SVGProps, useEffect } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";

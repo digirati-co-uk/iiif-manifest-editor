@@ -22,6 +22,7 @@ export * from "./Card3D";
 export * from "./SidebarTabs";
 export * from "./MetadataContainer";
 export * from "./EmptyState";
+export * from "./ManifestEditorLogo";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

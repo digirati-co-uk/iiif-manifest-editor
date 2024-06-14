@@ -40,6 +40,21 @@ module.exports = {
       "me-gray-700": "#666666",
       "me-gray-900": "#333333",
       transparent: "transparent",
+
+      // Testing new pallette
+      me: {
+        50: "#fbf4f7",
+        100: "#f8ebf1",
+        200: "#f2d8e5",
+        300: "#e9b8cf",
+        400: "#da8caf",
+        500: "#cc6892",
+        600: "#b84c74",
+        700: "#9d395c",
+        800: "#83314c",
+        900: "#6e2d42",
+        950: "#421524",
+      },
     },
     extend: {},
   },

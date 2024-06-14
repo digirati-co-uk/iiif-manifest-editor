@@ -5,7 +5,7 @@ import { ManifestEditor } from "manifest-editor";
 import { useEffect, useMemo, useState } from "react";
 import "manifest-editor/dist/index.css";
 import Link from "next/link";
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import { GlobalNav } from "../site/GlobalNav";
 import { Vault } from "@iiif/helpers";
 import { upgrade } from "@iiif/parser/upgrader";
@@ -56,7 +56,7 @@ export default function LocalEditor() {
     <>
       <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b">
         <Link href="/" className="w-96 flex justify-start" onClick={() => confirm("Are you sure?")}>
-          <ManifestEditorLogo className="me-logo h-[27px] w-[206px]" />
+          <ManifestEditorLogo />
         </Link>
         <div className="flex-1 flex gap-2"></div>
         <div>

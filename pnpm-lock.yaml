@@ -94,8 +94,8 @@ importers:
   apps/web:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
         specifier: ^2.1.0
         version: 2.1.2
@@ -280,8 +280,8 @@ importers:
   packages/client-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
     devDependencies:
       '@repo/eslint-config':
         specifier: 0.0.0
@@ -302,8 +302,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.4(react-dom@18.3.1)(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -372,10 +372,10 @@ importers:
   packages/creator-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -412,10 +412,10 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -476,10 +476,10 @@ importers:
   packages/editor-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -525,10 +525,10 @@ importers:
         specifier: 0.26.12
         version: 0.26.12(react-dom@18.3.1)(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -676,10 +676,10 @@ importers:
         specifier: ^2.2.0
         version: 2.2.4(react-dom@18.3.1)(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -749,8 +749,8 @@ importers:
   packages/iiif-preview-server:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/presentation-3':
         specifier: ^2.2.2
         version: 2.2.3
@@ -781,10 +781,10 @@ importers:
   packages/manifest-editor:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -848,10 +848,10 @@ importers:
   packages/projects:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -921,8 +921,8 @@ importers:
   packages/server-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/presentation-3':
         specifier: ^2.2.2
         version: 2.2.3
@@ -958,10 +958,10 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1)(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -1070,8 +1070,8 @@ importers:
         specifier: 0.26.12
         version: 0.26.12(react-dom@18.3.1)(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       classnames:
         specifier: ^2.3.2
         version: 2.5.1
@@ -1107,10 +1107,10 @@ importers:
   presets/collection-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -1165,10 +1165,10 @@ importers:
   presets/manifest-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.1.0
-        version: 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.2.12
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
@@ -1253,7 +1253,7 @@ packages:
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+      '@iiif/helpers': 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser': 2.1.2
       '@iiif/presentation-3': 2.2.3
       lru-cache: 7.18.3
@@ -2686,8 +2686,8 @@ packages:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     dev: true
 
-  /@iiif/helpers@1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2):
-    resolution: {integrity: sha512-fouD+R2hqADESKZoqEumIx38UFUPMnBqXclWO5cjB4V9XT1luZnjK/An9BP3w4sQMkhMB6s90l8mHDgY/YFzaw==}
+  /@iiif/helpers@1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2):
+    resolution: {integrity: sha512-+gakKEOpea9zfA4qQPRQ/19YZNiOJlmJrDbYE5dbN+oElbot9htFH3mZIW8eYen6Q66qBsRQugPmeAZ6Jq0ZSQ==}
     peerDependencies:
       '@atlas-viewer/iiif-image-api': ^2.2.0
       '@iiif/parser': ^2.1.2
@@ -10269,7 +10269,7 @@ packages:
     dependencies:
       '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1)(react@18.3.1)
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.2.9(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+      '@iiif/helpers': 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser': 2.1.2
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3

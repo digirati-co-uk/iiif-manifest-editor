@@ -10,14 +10,12 @@ import {
   mapApp,
   useSaveVault,
 } from "@manifest-editor/shell";
-import { Vault } from "@iiif/helpers";
 import { VaultProvider } from "react-iiif-vault";
-import { ManifestEditor } from "manifest-editor";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import { GlobalNav } from "../site/GlobalNav";
 
 import "manifest-editor/dist/index.css";
@@ -124,7 +122,7 @@ export default function BrowserEditor({ id }: { id: string }) {
   const header = (
     <header className="h-[64px] flex w-full gap-12 px-4 items-center">
       <Link href="/" className="w-96 flex justify-start">
-        <ManifestEditorLogo className="me-logo h-[27px] w-[206px]" />
+        <ManifestEditorLogo />
       </Link>
       <div className="flex-1" />
       <div className="flex items-center justify-center gap-5">

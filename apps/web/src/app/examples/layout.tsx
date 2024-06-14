@@ -1,4 +1,4 @@
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import Link from "next/link";
 import { GlobalNav } from "../../components/site/GlobalNav";
 

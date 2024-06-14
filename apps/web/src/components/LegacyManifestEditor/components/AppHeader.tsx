@@ -1,6 +1,6 @@
 import { AppMenu, DraftTitleEditor } from "@manifest-editor/projects";
 import { useApps, PreviewButton } from "@manifest-editor/shell";
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
 import { memo } from "react";
@@ -21,7 +21,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
         <AppMenu />
 
         <Logo onClick={props.onClickLogo || (() => changeApp(initialApp))}>
-          <ManifestEditorLogo height={27} width={200} />
+          <ManifestEditorLogo />
         </Logo>
 
         <div className="flex-1" />

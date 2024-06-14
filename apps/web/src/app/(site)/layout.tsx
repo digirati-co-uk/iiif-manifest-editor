@@ -1,4 +1,4 @@
-import { ManifestEditorLogo } from "@manifest-editor/ui/atoms/ManifestEditorLogo";
+import { ManifestEditorLogo } from "@manifest-editor/components";
 import Link from "next/link";
 import { GlobalNav } from "../../components/site/GlobalNav";
 
@@ -9,7 +9,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <div className="fixed left-0 right-0 top-0 h-[64px] bg-white z-50">
         <header className="h-[64px] flex w-full gap-12 px-4 items-center mx-auto max-w-screen-2xl border-b">
           <Link href="/" className="w-96 flex justify-start">
-            <ManifestEditorLogo className="me-logo h-[27px] w-[206px]" />
+            <ManifestEditorLogo />
           </Link>
           <div className="flex-1" />
           <div>

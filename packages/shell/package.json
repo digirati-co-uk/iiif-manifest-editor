@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "@atlas-viewer/iiif-image-api": "^2.2.0",
-    "@iiif/helpers": "^1.1.0",
-    "@iiif/parser": "^2.1.0",
+    "@iiif/helpers": "^1.2.12",
+    "@iiif/parser": "^2.1.2",
     "@iiif/presentation-3": "^2.2.2",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/client-vault": "1.0.0",

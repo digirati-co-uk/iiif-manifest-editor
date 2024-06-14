@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 
 import allExamples from "../../../../../examples.json";
 import { ExampleListing } from "../../components/example-listing/ExampleListing";
+import { HandleQueryString } from "../../components/query-string/HandleQueryString";
 
 const { examples } = allExamples;
 
@@ -14,6 +15,8 @@ const GettingStarted = dynamic(() => import("../../components/browser-editor/Get
 export default function Page(): JSX.Element {
   return (
     <div className="bg-white">
+      <HandleQueryString />
+
       <GettingStarted />
 
       <div className="px-8">

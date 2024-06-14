@@ -55,8 +55,8 @@
     "@manifest-editor/iiif-browser": "1.0.0",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@iiif/presentation-3": "^2.2.2",
-    "@iiif/parser": "^2.1.0",
-    "@iiif/helpers": "^1.1.0"
+    "@iiif/parser": "^2.1.2",
+    "@iiif/helpers": "^1.2.12"
   },
   "devDependencies": {
     "@manifest-editor/ui": "1.0.0",
