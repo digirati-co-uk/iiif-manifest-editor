@@ -97,7 +97,7 @@ importers:
         specifier: ^1.2.12
         version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
       '@iiif/parser':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@iiif/presentation-3':
         specifier: ^2.2.2
