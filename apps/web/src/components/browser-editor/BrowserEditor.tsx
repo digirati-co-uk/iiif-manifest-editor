@@ -28,6 +28,14 @@ const manifestEditor = mapApp(manifestEditorPreset);
 
 const previews: PreviewConfiguration[] = [
   {
+    id: "theseus",
+    type: "external-manifest-preview",
+    label: "Theseus",
+    config: {
+      url: "https://theseus-viewer.netlify.app/?manifest={manifestId}",
+    },
+  },
+  {
     id: "universal-viewer",
     type: "external-manifest-preview",
     label: "Universal viewer",
@@ -40,7 +48,7 @@ const previews: PreviewConfiguration[] = [
     type: "external-manifest-preview",
     label: "Mirador 3",
     config: {
-      url: "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}",
+      url: "https://projectmirador.org/embed/?iiif-content={manifestId}",
     },
   },
   {
@@ -52,19 +60,19 @@ const previews: PreviewConfiguration[] = [
     },
   },
   {
+    id: "clover",
+    type: "external-manifest-preview",
+    label: "Clover",
+    config: {
+      url: "https://samvera-labs.github.io/clover-iiif/docs/viewer/demo?iiif-content={manifestId}",
+    },
+  },
+  {
     id: "delft-viewer",
     type: "external-manifest-preview",
     label: "Delft viewer",
     config: {
       url: "https://delft-viewer.netlify.app/#manifest={manifestId}",
-    },
-  },
-  {
-    id: "theseus",
-    type: "external-manifest-preview",
-    label: "Theseus",
-    config: {
-      url: "https://theseus-viewer.netlify.app/?manifest={manifestId}",
     },
   },
   {
