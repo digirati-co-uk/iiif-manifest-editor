@@ -27,7 +27,7 @@ export class CreatorInstance implements CreatorFunctionContext {
   getTarget(): SpecificResource | Reference | undefined {
     const target = this.options.target || this.options.parent?.resource;
     const position: any = this.options.initialData?.selector;
-    if (position.type === "polygon") {
+    if (position && position.type === "polygon") {
       // Do something
       // Check if its a box selector.
       const position: { type: "polygon"; shape: InputShape } = this.options.initialData?.selector;
