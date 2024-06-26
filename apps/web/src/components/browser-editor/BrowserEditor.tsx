@@ -13,7 +13,7 @@ import {
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { GlobalNav } from "../site/GlobalNav";
@@ -23,6 +23,7 @@ import "@manifest-editor/editors/dist/index.css";
 import "@manifest-editor/shell/dist/index.css";
 import "@manifest-editor/components/dist/index.css";
 import { usePathname, useSearchParams } from "next/navigation";
+import { createThumbnailHelper } from "@iiif/helpers";
 
 const manifestEditor = mapApp(manifestEditorPreset);
 
@@ -113,19 +114,28 @@ export default function BrowserEditor({ id }: { id: string }) {
     wasAlreadyOpen,
   } = useBrowserProject(id);
   const [allowAnyway, setAllowAnyway] = useState(false);
+  const thumbnailHelper = useMemo(() => {
+    return createThumbnailHelper(vault);
+  }, [vault]);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  useSaveVault(
-    vault,
-    () => {
-      console.log("saving...");
-      saveVaultData.mutate(false);
-    },
-    5000,
-    vaultReady && !!project && (!wasAlreadyOpen || allowAnyway)
-  );
+  const saveVault = useCallback(async () => {
+    if (project) {
+      const fullResource = vault.get(project.resource);
+      if (!fullResource) return;
+      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(fullResource, { width: 256, height: 256 }, false);
+      const resource = {
+        ...project.resource,
+        label: fullResource.label,
+        thumbnail: thumbnail?.best?.id || "",
+      };
+      await saveVaultData.mutateAsync({ force: false, resource });
+    }
+  }, [project, vault]);
+
+  useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
 
   const header = (
     <header className="h-[64px] flex w-full gap-12 px-4 items-center">

@@ -12,6 +12,7 @@ export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval
     window.addEventListener("beforeunload", saveChanges, false);
 
     return () => {
+      saveChanges();
       window.removeEventListener("beforeunload", saveChanges);
     };
   }, [saveChanges]);

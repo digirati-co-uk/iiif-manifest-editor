@@ -15,15 +15,13 @@ export function DownloadButton({ label, id: _id, getData, fileName, fileType }: 
   const id = useId(_id);
   return (
     <Tooltip placement="bottom">
-      <TooltipTrigger>
-        <Button
-          className="bg-me-gray-100 hover:bg-me-primary-500 hover:text-white p-1 rounded-md text-me-primary-500 text-2xl"
-          aria-label={label}
-          id={id}
-          onPress={() => createDownload(getData(), fileName, fileType)}
-        >
-          <DownloadIcon aria-labelledby={_id} />
-        </Button>
+      <TooltipTrigger
+        className="bg-me-gray-100 hover:bg-me-primary-500 hover:text-white p-1 rounded-md text-me-primary-500 text-2xl"
+        aria-label={label}
+        id={id}
+        onPress={() => createDownload(getData(), fileName, fileType)}
+      >
+        <DownloadIcon aria-labelledby={_id} />
         <DefaultTooltipContent>{label}</DefaultTooltipContent>
       </TooltipTrigger>
     </Tooltip>
