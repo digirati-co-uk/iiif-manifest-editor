@@ -267,7 +267,7 @@ export function useBrowserProject(id: string) {
   const closeProject = useMutation({
     mutationFn: async () => {
       try {
-        await saveVaultData.mutateAsync(false);
+        await saveVaultData.mutateAsync({ force: false });
       } catch (e) {}
       await closeBrowserProject(id);
     },
