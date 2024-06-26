@@ -13,7 +13,7 @@ import {
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { GlobalNav } from "../site/GlobalNav";
@@ -142,37 +142,52 @@ export default function BrowserEditor({ id }: { id: string }) {
     </header>
   );
 
+  useEffect(() => {
+    if (wasAlreadyOpen && !allowAnyway) {
+      userForceUpdate.mutateAsync().then(() => setAllowAnyway(true));
+    }
+  }, [wasAlreadyOpen, allowAnyway]);
+
+  useEffect(() => {
+    if (staleEtag) {
+      reopenProject();
+    }
+  }, [staleEtag]);
+
   if (isProjectLoading) return <div>Loading...</div>;
   if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
 
+  // @todo test without this option and see if its needed
   if (wasAlreadyOpen && !allowAnyway) {
-    return (
-      <div>
-        Already open in another window.
-        <button
-          onClick={() => {
-            userForceUpdate.mutateAsync().then(() => setAllowAnyway(true));
-          }}
-        >
-          Edit anyway
-        </button>
-      </div>
-    );
+    //   return (
+    //     <div>
+    //       Already open in another window.
+    //       <button
+    //         onClick={() => {
+    //           userForceUpdate.mutateAsync().then(() => setAllowAnyway(true));
+    //         }}
+    //       >
+    //         Edit anyway
+    //       </button>
+    //     </div>
+    //   );
+    return null;
   }
 
   if (staleEtag) {
-    return (
-      <div>
-        Editing in another window
-        <button
-          onClick={() => {
-            reopenProject();
-          }}
-        >
-          Open here
-        </button>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     Editing in another window
+    //     <button
+    //       onClick={() => {
+    //         reopenProject();
+    //       }}
+    //     >
+    //       Open here
+    //     </button>
+    //   </div>
+    // );
+    return null;
   }
 
   return (

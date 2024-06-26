@@ -185,7 +185,6 @@ export function useBrowserProject(id: string) {
   const userForceUpdate = useMutation({
     mutationFn: async () => {
       const newEtag = await getLatestEtag(id);
-      console.log("setting etag (2)", newEtag);
       etag.current = newEtag;
     },
     mutationKey: ["force-reopen-browser-project", id],
