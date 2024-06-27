@@ -1,0 +1,66 @@
+{
+  "name": "@manifest-editor/server-vault",
+  "version": "1.0.0",
+  "type": "module",
+  "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "directory": "packages/server-vault"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "nodeDependencies": [
+    "http",
+    "net",
+    "url",
+    "timers"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "dev": "tsup src/index.ts --watch",
+    "lint": "publint",
+    "typecheck": "tsc --noEmit",
+    "prepack": "tsup src/index.ts"
+  },
+  "dependencies": {
+    "@iiif/presentation-3": "^2.2.2",
+    "@iiif/helpers": "^1.2.12",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "@types/uuid": "^9.0.8",
+    "@types/node": "^20.11.24",
+    "@repo/eslint-config": "0.0.0",
+    "tsup": "^8.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

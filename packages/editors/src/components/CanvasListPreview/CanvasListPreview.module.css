@@ -1,0 +1,40 @@
+.Item {
+  padding: 0.3em;
+  cursor: pointer;
+  display: flex;
+  gap: 0.4em;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+}
+
+.Item svg {
+  color: #e6e6e6;
+}
+
+.Item:hover {
+  background: #f5f5f5;
+}
+
+.Item[aria-selected="true"] {
+  background: #f5f5f5;
+  color: #000;
+  border-color: #892c4e;
+}
+
+.Item[aria-selected="true"] svg {
+  color: #b84c74;
+}
+
+.Label {
+  font-size: 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  text-align: start;
+}
+
+.ItemMargin {
+}

@@ -1,0 +1,40 @@
+.SectionLabel {
+  padding: 0.5em;
+  flex: 1;
+}
+
+.UrlContainer {
+  padding: 2em 0.5em;
+}
+
+.UrlContainer > form {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.Section {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #eee;
+}
+
+.SectionAction {
+  border: none;
+  background: #eee;
+  color: #000;
+  align-self: center;
+  font-size: 0.9em;
+  padding: 0.3em 0.5em;
+  margin: 0.2em;
+  border-radius: 3px;
+}
+
+.SectionAction:hover {
+  background: #ddd;
+}
+
+.UrlLabel {
+  margin-bottom: 0.5em;
+  display: block;
+}

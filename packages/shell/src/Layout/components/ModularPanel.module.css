@@ -1,0 +1,18 @@
+.OverrideScrollbar {
+  /* For Safari, Chrome, and offshoots */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #f4f4f5;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* For Firefox and offshoots */
+  scrollbar-color: #f4f4f5 transparent;
+  scrollbar-width: thin;
+}

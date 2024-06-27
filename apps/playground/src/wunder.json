@@ -1,0 +1,3682 @@
+{
+  "@context": ["http://iiif.io/api/search/1/context.json", "http://iiif.io/api/presentation/3/context.json"],
+  "id": "https://digirati-co-uk.github.io/wunder.json",
+  "type": "Manifest",
+  "label": {
+    "en": ["Wunder der Vererbung / von Fritz Bolle."]
+  },
+  "thumbnail": [
+    {
+      "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0004.JP2/full/72,100/0/default.jpg",
+      "type": "Image",
+      "width": 72,
+      "height": 100,
+      "service": [
+        {
+          "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0004.JP2",
+          "@type": "ImageService2",
+          "profile": "http://iiif.io/api/image/2/level0.json",
+          "width": 732,
+          "height": 1024,
+          "sizes": [
+            {
+              "width": 72,
+              "height": 100
+            },
+            {
+              "width": 143,
+              "height": 200
+            },
+            {
+              "width": 286,
+              "height": 400
+            },
+            {
+              "width": 732,
+              "height": 1024
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "homepage": [
+    {
+      "id": "https://wellcomecollection.org/works/krqp99r9",
+      "type": "Text",
+      "label": {
+        "en": ["Wunder der Vererbung / von Fritz Bolle."]
+      },
+      "format": "text/html",
+      "language": ["en"]
+    }
+  ],
+  "metadata": [
+    {
+      "label": {
+        "en": ["Publication/creation"]
+      },
+      "value": {
+        "none": ["Murnau ; München : Sebastian Lux, [1951]"]
+      }
+    },
+    {
+      "label": {
+        "en": ["Physical description"]
+      },
+      "value": {
+        "en": ["31 pages : illustrations ; 15 cm."]
+      }
+    },
+    {
+      "label": {
+        "en": ["Contributors"]
+      },
+      "value": {
+        "none": ["Bolle, Fritz."]
+      }
+    },
+    {
+      "label": {
+        "en": ["Type/technique"]
+      },
+      "value": {
+        "en": ["Pamphlets"]
+      }
+    },
+    {
+      "label": {
+        "en": ["Subjects"]
+      },
+      "value": {
+        "en": ["Genetics - history"]
+      }
+    },
+    {
+      "label": {
+        "en": ["Attribution and usage"]
+      },
+      "value": {
+        "en": [
+          "Wellcome Collection",
+          "<span>You have permission to make copies of this work under a <a target=\"_top\" href=\"http://creativecommons.org/licenses/by-nc/4.0/\">Creative Commons, Attribution, Non-commercial license</a>.<br/><br/>Non-commercial use includes private study, academic research, teaching, and other activities that are not primarily intended for, or directed towards, commercial advantage or private monetary compensation. See the <a target=\"_top\" href=\"http://creativecommons.org/licenses/by-nc/4.0/legalcode\">Legal Code</a> for further information.<br/><br/>Image source should be attributed as specified in the full catalogue record. If no source is given the image should be attributed to Wellcome Collection.</span>"
+        ]
+      }
+    }
+  ],
+  "rights": "http://creativecommons.org/licenses/by-nc/4.0/",
+  "provider": [
+    {
+      "id": "https://wellcomecollection.org",
+      "type": "Agent",
+      "label": {
+        "en": [
+          "Wellcome Collection",
+          "183 Euston Road",
+          "London NW1 2BE UK",
+          "T +44 (0)20 7611 8722",
+          "E library@wellcomecollection.org",
+          "https://wellcomecollection.org"
+        ]
+      },
+      "homepage": [
+        {
+          "id": "https://wellcomecollection.org/works",
+          "type": "Text",
+          "label": {
+            "en": ["Explore our collections"]
+          },
+          "format": "text/html"
+        }
+      ],
+      "logo": [
+        {
+          "id": "https://iiif.wellcomecollection.org/logos/wellcome-collection-black.png",
+          "type": "Image",
+          "format": "image/png"
+        }
+      ]
+    }
+  ],
+  "rendering": [
+    {
+      "id": "https://iiif.wellcomecollection.org/pdf/b18035723",
+      "type": "Text",
+      "label": {
+        "en": ["View as PDF"]
+      },
+      "format": "application/pdf"
+    },
+    {
+      "id": "https://api.wellcomecollection.org/text/v1/b18035723",
+      "type": "Text",
+      "label": {
+        "en": ["View raw text"]
+      },
+      "format": "text/plain"
+    }
+  ],
+  "seeAlso": [
+    {
+      "id": "https://api.wellcomecollection.org/catalogue/v2/works/krqp99r9",
+      "type": "Dataset",
+      "profile": "https://api.wellcomecollection.org/catalogue/v2/context.json",
+      "label": {
+        "en": ["Wellcome Collection Catalogue API"]
+      },
+      "format": "application/json"
+    }
+  ],
+  "service": [
+    {
+      "@id": "https://iiif.wellcomecollection.org/search/v1/b18035723",
+      "@type": "SearchService1",
+      "profile": "http://iiif.io/api/search/1/search",
+      "label": "Search within this manifest",
+      "service": {
+        "@id": "https://iiif.wellcomecollection.org/search/autocomplete/v1/b18035723",
+        "@type": "AutoCompleteService1",
+        "profile": "http://iiif.io/api/search/1/autocomplete",
+        "label": "Autocomplete words in this manifest"
+      }
+    }
+  ],
+  "behavior": ["paged"],
+  "services": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723#tracking",
+      "type": "Text",
+      "profile": "http://universalviewer.io/tracking-extensions-profile",
+      "label": {
+        "en": [
+          "Format: Monograph, Institution: n/a, Identifier: b18035723, Digicode: diggenetics, Collection code: n/a"
+        ]
+      }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723#timestamp",
+      "type": "Text",
+      "profile": "https://github.com/wellcomecollection/iiif-builder/build-timestamp",
+      "label": {
+        "none": ["2021-04-29T21:58:28.9247406Z"]
+      }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723#accesscontrolhints",
+      "type": "Text",
+      "profile": "http://wellcomelibrary.org/ld/iiif-ext/access-control-hints",
+      "label": {
+        "en": ["open"]
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/0",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2569,
+      "height": 3543,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0001.JP2/full/73,100/0/default.jpg",
+          "type": "Image",
+          "width": 73,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0001.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 742,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 73,
+                  "height": 100
+                },
+                {
+                  "width": 145,
+                  "height": 200
+                },
+                {
+                  "width": 290,
+                  "height": 400
+                },
+                {
+                  "width": 742,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0001.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0001.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0001.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0001.JP2/full/742,1024/0/default.jpg",
+                "type": "Image",
+                "width": 742,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0001.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2569,
+                    "height": 3543
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/0"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/0.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/1",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0003.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0003.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0003.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0003.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0003.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0003.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0003.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/1"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/1.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/2",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0004.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0004.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0004.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0004.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0004.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0004.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0004.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/2"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/2.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/3",
+      "type": "Canvas",
+      "label": {
+        "none": ["2"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0005.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0005.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0005.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0005.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0005.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0005.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0005.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/3"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/3.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 2"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/4",
+      "type": "Canvas",
+      "label": {
+        "none": ["3"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0006.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0006.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0006.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0006.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0006.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0006.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0006.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/4"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/4.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 3"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/5",
+      "type": "Canvas",
+      "label": {
+        "none": ["4"]
+      },
+      "width": 2008,
+      "height": 2736,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0007.JP2/full/73,100/0/default.jpg",
+          "type": "Image",
+          "width": 73,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0007.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 752,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 73,
+                  "height": 100
+                },
+                {
+                  "width": 147,
+                  "height": 200
+                },
+                {
+                  "width": 294,
+                  "height": 400
+                },
+                {
+                  "width": 752,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0007.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0007.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0007.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0007.JP2/full/752,1024/0/default.jpg",
+                "type": "Image",
+                "width": 752,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0007.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2008,
+                    "height": 2736
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/5"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/5.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 4"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/6",
+      "type": "Canvas",
+      "label": {
+        "none": ["5"]
+      },
+      "width": 2008,
+      "height": 2740,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0008.JP2/full/73,100/0/default.jpg",
+          "type": "Image",
+          "width": 73,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0008.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 750,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 73,
+                  "height": 100
+                },
+                {
+                  "width": 147,
+                  "height": 200
+                },
+                {
+                  "width": 293,
+                  "height": 400
+                },
+                {
+                  "width": 750,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0008.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0008.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0008.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0008.JP2/full/750,1024/0/default.jpg",
+                "type": "Image",
+                "width": 750,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0008.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2008,
+                    "height": 2740
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/6"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/6.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 5"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/7",
+      "type": "Canvas",
+      "label": {
+        "none": ["6"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0009.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0009.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0009.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0009.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0009.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0009.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0009.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/7"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/7.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 6"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/8",
+      "type": "Canvas",
+      "label": {
+        "none": ["7"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0010.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0010.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0010.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0010.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0010.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0010.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0010.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/8"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/8.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 7"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/9",
+      "type": "Canvas",
+      "label": {
+        "none": ["8"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0011.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0011.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0011.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0011.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0011.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0011.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0011.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/9"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/9.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 8"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/10",
+      "type": "Canvas",
+      "label": {
+        "none": ["9"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0012.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0012.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0012.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0012.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0012.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0012.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0012.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/10"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/10.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 9"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/11",
+      "type": "Canvas",
+      "label": {
+        "none": ["10"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0013.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0013.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0013.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0013.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0013.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0013.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0013.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/11"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/11.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 10"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/12",
+      "type": "Canvas",
+      "label": {
+        "none": ["11"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0014.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0014.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0014.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0014.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0014.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0014.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0014.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/12"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/12.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 11"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/13",
+      "type": "Canvas",
+      "label": {
+        "none": ["12"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0015.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0015.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0015.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0015.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0015.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0015.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0015.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/13"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/13.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 12"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/14",
+      "type": "Canvas",
+      "label": {
+        "none": ["13"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0016.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0016.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0016.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0016.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0016.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0016.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0016.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/14"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/14.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 13"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/15",
+      "type": "Canvas",
+      "label": {
+        "none": ["14"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0017.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0017.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0017.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0017.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0017.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0017.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0017.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/15"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/15.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 14"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/16",
+      "type": "Canvas",
+      "label": {
+        "none": ["15"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0018.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0018.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0018.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0018.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0018.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0018.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0018.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/16"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/16.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 15"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/17",
+      "type": "Canvas",
+      "label": {
+        "none": ["16"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0019.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0019.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0019.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0019.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0019.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0019.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0019.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/17"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/17.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 16"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/18",
+      "type": "Canvas",
+      "label": {
+        "none": ["17"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0020.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0020.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0020.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0020.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0020.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0020.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0020.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/18"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/18.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 17"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/19",
+      "type": "Canvas",
+      "label": {
+        "none": ["18"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0021.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0021.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0021.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0021.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0021.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0021.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0021.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/19"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/19.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 18"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/20",
+      "type": "Canvas",
+      "label": {
+        "none": ["19"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0022.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0022.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0022.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0022.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0022.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0022.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0022.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/20"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/20.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 19"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/21",
+      "type": "Canvas",
+      "label": {
+        "none": ["20"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0023.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0023.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0023.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0023.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0023.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0023.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0023.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/21"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/21.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 20"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/22",
+      "type": "Canvas",
+      "label": {
+        "none": ["21"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0024.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0024.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0024.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0024.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0024.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0024.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0024.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/22"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/22.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 21"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/23",
+      "type": "Canvas",
+      "label": {
+        "none": ["22"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0025.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0025.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0025.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0025.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0025.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0025.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0025.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/23"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/23.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 22"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/24",
+      "type": "Canvas",
+      "label": {
+        "none": ["23"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0026.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0026.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0026.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0026.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0026.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0026.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0026.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/24"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/24.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 23"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/25",
+      "type": "Canvas",
+      "label": {
+        "none": ["24"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0027.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0027.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0027.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0027.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0027.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0027.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0027.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/25"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/25.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 24"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/26",
+      "type": "Canvas",
+      "label": {
+        "none": ["25"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0028.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0028.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0028.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0028.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0028.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0028.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0028.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/26"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/26.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 25"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/27",
+      "type": "Canvas",
+      "label": {
+        "none": ["26"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0029.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0029.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0029.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0029.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0029.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0029.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0029.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/27"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/27.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 26"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/28",
+      "type": "Canvas",
+      "label": {
+        "none": ["27"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0030.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0030.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0030.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0030.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0030.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0030.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0030.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/28"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/28.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 27"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/29",
+      "type": "Canvas",
+      "label": {
+        "none": ["28"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0031.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0031.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0031.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0031.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0031.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0031.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0031.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/29"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/29.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 28"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/30",
+      "type": "Canvas",
+      "label": {
+        "none": ["29"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0032.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0032.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0032.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0032.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0032.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0032.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0032.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/30"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/30.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 29"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/31",
+      "type": "Canvas",
+      "label": {
+        "none": ["30"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0033.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0033.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0033.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0033.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0033.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0033.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0033.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/31"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/31.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 30"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/32",
+      "type": "Canvas",
+      "label": {
+        "none": ["31"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0034.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0034.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0034.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0034.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0034.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0034.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0034.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/32"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/32.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page 31"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/33",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0035.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0035.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0035.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0035.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0035.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0035.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0035.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/33"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/33.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/34",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2411,
+      "height": 3372,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0036.JP2/full/72,100/0/default.jpg",
+          "type": "Image",
+          "width": 72,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0036.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 732,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 72,
+                  "height": 100
+                },
+                {
+                  "width": 143,
+                  "height": 200
+                },
+                {
+                  "width": 286,
+                  "height": 400
+                },
+                {
+                  "width": 732,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0036.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0036.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0036.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0036.JP2/full/732,1024/0/default.jpg",
+                "type": "Image",
+                "width": 732,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0036.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2411,
+                    "height": 3372
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/34"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/34.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "https://digirati-co-uk.github.io/wunder/canvases/35",
+      "type": "Canvas",
+      "label": {
+        "none": ["-"]
+      },
+      "width": 2231,
+      "height": 3040,
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0002.JP2/full/73,100/0/default.jpg",
+          "type": "Image",
+          "width": 73,
+          "height": 100,
+          "service": [
+            {
+              "@id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0002.JP2",
+              "@type": "ImageService2",
+              "profile": "http://iiif.io/api/image/2/level0.json",
+              "width": 751,
+              "height": 1024,
+              "sizes": [
+                {
+                  "width": 73,
+                  "height": 100
+                },
+                {
+                  "width": 147,
+                  "height": 200
+                },
+                {
+                  "width": 294,
+                  "height": 400
+                },
+                {
+                  "width": 751,
+                  "height": 1024
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "seeAlso": [
+        {
+          "id": "https://api.wellcomecollection.org/text/alto/b18035723/b18035723_0002.JP2",
+          "type": "Dataset",
+          "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+          "label": {
+            "none": ["METS-ALTO XML"]
+          },
+          "format": "text/xml"
+        }
+      ],
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0002.JP2/painting",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0002.JP2/painting/anno",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "https://iiif.wellcomecollection.org/image/b18035723_0002.JP2/full/751,1024/0/default.jpg",
+                "type": "Image",
+                "width": 751,
+                "height": 1024,
+                "format": "image/jpeg",
+                "service": [
+                  {
+                    "@id": "https://iiif.wellcomecollection.org/image/b18035723_0002.JP2",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "width": 2231,
+                    "height": 3040
+                  }
+                ]
+              },
+              "target": "https://digirati-co-uk.github.io/wunder/canvases/35"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://digirati-co-uk.github.io/wunder/annos/35.json",
+          "type": "AnnotationPage",
+          "label": {
+            "en": ["Text of page  -"]
+          }
+        }
+      ],
+      "rendering": [
+        {
+          "id": "https://iiif.wellcomecollection.org/image/b18035723_0002.JP2/full/max/0/bitonal.jpg",
+          "type": "Image",
+          "label": {
+            "en": ["Bitonal version"]
+          },
+          "format": "image/jpeg"
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723/ranges/LOG_0001",
+      "type": "Range",
+      "label": {
+        "none": ["Front Cover"]
+      },
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0001.JP2",
+          "type": "Canvas"
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723/ranges/LOG_0003",
+      "type": "Range",
+      "label": {
+        "none": ["Title Page"]
+      },
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0004.JP2",
+          "type": "Canvas"
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723/ranges/LOG_0002",
+      "type": "Range",
+      "label": {
+        "none": ["Back Cover"]
+      },
+      "items": [
+        {
+          "id": "https://iiif.wellcomecollection.org/presentation/b18035723/canvases/b18035723_0002.JP2",
+          "type": "Canvas"
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "id": "https://iiif.wellcomecollection.org/annotations/v3/b18035723/images",
+      "type": "AnnotationPage",
+      "label": {
+        "en": ["OCR-identified images and figures for b18035723"]
+      }
+    }
+  ],
+  "partOf": [
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/contributors/xtwzf3g5",
+      "type": "Collection",
+      "label": {
+        "en": ["Contributor: Bolle, Fritz."]
+      }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/subjects/hq8gcy73",
+      "type": "Collection",
+      "label": {
+        "en": ["Subject: Genetics - history"]
+      }
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/genres/Pamphlets",
+      "type": "Collection",
+      "label": {
+        "en": ["Genre: Pamphlets"]
+      }
+    }
+  ]
+}

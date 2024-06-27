@@ -1,0 +1,27 @@
+.datePicker {
+  display: flex;
+  font-size: 0.875em;
+  width: 100%;
+  background: #f8f9fa;
+  border: none;
+  padding: 0.4em;
+  margin: 0;
+  border-bottom: 1px solid #cad0d5;
+  text-align: left;
+  align-items: center;
+}
+
+.datePicker:focus {
+  outline: none;
+  background: #eceef5;
+}
+
+.datePicker:has(input:focus),
+.datePicker:has(button:focus) {
+  outline: none;
+  background: #eceef5;
+}
+
+.datePicker .react-datetime-picker__wrapper {
+  border: none;
+}

@@ -1,0 +1,5 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "include": ["**/*.ts", "**/*.tsx", "index.ts", "../editors/src/components/DimensionsTriplet.tsx"],
+  "exclude": ["node_modules"]
+}

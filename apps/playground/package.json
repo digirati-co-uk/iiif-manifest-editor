@@ -1,0 +1,32 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@manifest-editor/creator-api": "1.0.0",
+    "@manifest-editor/iiif-browser": "1.0.0",
+    "@manifest-editor/shell": "1.0.0",
+    "@tanstack/react-router": "^1.26.9",
+    "manifest-editor": "1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@tanstack/router-devtools": "^1.26.9",
+    "@tanstack/router-vite-plugin": "^1.26.8",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "vite": "^5.2.8"
+  }
+}

@@ -1,9 +1,30 @@
 {
-  "dependencies": {
-    "@types/uuid": "^8.3.4"
-  },
+  "name": "iiif-manifest-editor",
+  "private": true,
   "scripts": {
-    "custom-install": "cd manifest-editor && yarn install",
-    "custom-build": "cd manifest-editor && yarn build-all"
+    "build": "turbo build",
+    "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "mismatch": "syncpack list-mismatches",
+    "fix-deps": "syncpack fix-mismatches"
+  },
+  "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.3.2",
+    "@repo/eslint-config": "0.0.0",
+    "@repo/typescript-config": "0.0.0",
+    "prettier": "^3.2.5",
+    "publint": "^0.2.7",
+    "syncpack": "^12.3.0",
+    "tailwindcss": "^3.4.3",
+    "tslib": "^2.6.2",
+    "turbo": "^2.0.3",
+    "typescript": "^5.4.5",
+    "typescript-plugin-css-modules": "^5.1.0"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18"
   }
 }
