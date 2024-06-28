@@ -131,6 +131,10 @@ function getBaseUrl() {
     // reference for render.com
     return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
 
+  if (process.env.PULL_REQUEST === "true" && process.env.DEPLOY_PRIME_URL) {
+    return process.env.DEPLOY_PRIME_URL;
+  }
+
   if (process.env.URL) {
     // assume Netlify
     return process.env.URL;
