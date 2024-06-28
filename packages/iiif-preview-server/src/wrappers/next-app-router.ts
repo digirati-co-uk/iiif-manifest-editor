@@ -57,6 +57,13 @@ export function createIIIFPreviewNextApiHandler({
       });
     },
     async GET(request: NextRequest, { params }: { params: { slug: string[] } }) {
+      const url = new URL(request.url);
+      const baseUrl = new URL(baseConfig.baseUrl);
+
+      if (url.hostname !== baseUrl.hostname) {
+        baseUrl.hostname = url.hostname;
+      }
+
       if (validate) {
         const valid = await validate(request);
         invariant(valid, "Unauthorized");
@@ -66,11 +73,18 @@ export function createIIIFPreviewNextApiHandler({
       invariant(p3 === "p3", "Invalid path");
       invariant(id, "Invalid resource");
 
-      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
+      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
 
       return retrieveRoute(request, { keys: id }, config);
     },
     async POST(request: NextRequest, { params }: { params: { slug: string[] } }) {
+      const url = new URL(request.url);
+      const baseUrl = new URL(baseConfig.baseUrl);
+
+      if (url.hostname !== baseUrl.hostname) {
+        baseUrl.hostname = url.hostname;
+      }
+
       if (validate) {
         const valid = await validate(request);
         invariant(valid, "Unauthorized");
@@ -80,11 +94,18 @@ export function createIIIFPreviewNextApiHandler({
       invariant(store === "store", "Invalid path");
       invariant(params.slug.length === 1, "Invalid path");
 
-      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
+      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
 
       return storeRoute(request, {}, config);
     },
     async PUT(request: NextRequest, { params }: { params: { slug: string[] } }) {
+      const url = new URL(request.url);
+      const baseUrl = new URL(baseConfig.baseUrl);
+
+      if (url.hostname !== baseUrl.hostname) {
+        baseUrl.hostname = url.hostname;
+      }
+
       if (validate) {
         const valid = await validate(request);
         invariant(valid, "Unauthorized");
@@ -96,7 +117,7 @@ export function createIIIFPreviewNextApiHandler({
       invariant(key3, "Invalid path");
       invariant(params.slug.length === 3, "Invalid path");
 
-      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
+      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
 
       return updateRoute(request, { keys: id, key3 }, config);
     },
