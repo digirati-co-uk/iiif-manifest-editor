@@ -49,9 +49,9 @@ export function randomId() {
   return `${Math.random().toString(36).substr(2)}-${Date.now().toString(36)}`;
 }
 
-export function mapApp(input: any): MappedApp {
+export function mapApp(input: any, map?: (app: MappedApp) => MappedApp): MappedApp {
   const { default: metadata, ...props } = input;
-  return {
+  const app = {
     metadata: metadata as any,
     layout: {
       leftPanels: [],
@@ -60,4 +60,6 @@ export function mapApp(input: any): MappedApp {
       ...(props as any),
     },
   };
+
+  return map ? map(app) : app;
 }

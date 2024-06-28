@@ -340,7 +340,7 @@ export async function createBlankManifest() {
   return project;
 }
 
-export async function createManifestFromId(url: string) {
+export async function createManifestFromId(url: string, extra: any = {}) {
   const id = randomId();
   const vault = new Vault();
   const manifest = await vault.loadManifest(url);
@@ -370,7 +370,7 @@ export async function createManifestFromId(url: string) {
     },
     { id: url, type: "Template" },
     vaultData,
-    {}
+    extra
   );
 
   return project;
