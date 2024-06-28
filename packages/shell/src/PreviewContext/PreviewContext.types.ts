@@ -23,6 +23,7 @@ export interface PreviewActions {
   selectPreview(id: string): void;
   deletePreview(id: string): void;
   focusPreview(id: string): void;
+  getPreviewLink(): Promise<string | null>;
 }
 
 export type PreviewActionsType = {

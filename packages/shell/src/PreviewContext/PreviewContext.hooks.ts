@@ -102,6 +102,23 @@ export function usePreviewActions(
     }
   }
 
+  // Be able to generate a preview link on demand from the iiif-preview-service, if available.
+  async function getPreviewLink(): Promise<null | string> {
+    const handlerId = providesMap["readOnlyManifest"];
+    const previewService = handlerId ? handlerMap[handlerId] : null;
+
+    if (previewService && instanceId) {
+      const existing = previews.find((p) => p.type === "iiif-preview-service");
+      if (!existing || !(await previewService.isPreviewValid(instanceId, existing))) {
+        const preview = await previewService.createPreview(instanceId, resource, vault, {});
+        if (preview) {
+          return preview.data.readOnlyManifest;
+        }
+      }
+    }
+    return null;
+  }
+
   function deletePreview(id: string) {
     const selectedHandler = handlerMap[id];
     if (selectedHandler && instanceId) {
@@ -155,7 +172,7 @@ export function usePreviewActions(
   }
 
   return useMemo(
-    () => ({ selectPreview, deletePreview, focusPreview, activatePreview, updatePreviews }),
+    () => ({ selectPreview, deletePreview, focusPreview, activatePreview, updatePreviews, getPreviewLink }),
     // Dispatch has a stable identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [handlerMap, instanceId, vault, state.selected, previews]
