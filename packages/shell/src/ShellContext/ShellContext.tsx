@@ -1,5 +1,5 @@
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { ThemeProvider } from "styled-components";
 import { AppResourceProvider, Resource } from "../AppResourceProvider/AppResourceProvider";
 import { Config, ConfigProvider } from "../ConfigContext/ConfigContext";

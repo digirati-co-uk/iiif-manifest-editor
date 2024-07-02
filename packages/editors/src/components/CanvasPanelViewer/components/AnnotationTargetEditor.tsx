@@ -44,12 +44,10 @@ export function AnnotationTargetEditor() {
     if (canvas && annotation?.target.selector?.type === "SvgSelector") {
       const selector: SvgSelector = annotation?.target.selector!;
       if (!selector.points) return null;
-      console.log("selector =>", selector);
       return (
         <PolygonSelector
           id={annotation.id}
           updatePolygon={(data) => {
-            console.log("UPDATE POLYGON", data);
             updateAnnotationTarget({
               type: "polygon",
               shape: data,

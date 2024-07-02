@@ -62,6 +62,7 @@ export default function SharePage() {
         return await createManifestFromId(queryString.resource, {
           imported: true,
           originalProjectId: queryString.projectId,
+          projectId: copy ? undefined : queryString.projectId,
         });
       }
       return await createManifestFromId(queryString.resource, { imported: true });
