@@ -53,7 +53,7 @@ const previews: PreviewConfiguration[] = [
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://theseus-viewer.netlify.app/?manifest={manifestId}",
+      url: "https://theseus-viewer.netlify.app/?iiif-content={manifestId}&ref=manifest-editor",
     },
   },
   {
