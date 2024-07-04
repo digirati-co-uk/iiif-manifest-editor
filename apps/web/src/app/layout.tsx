@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
       </head>
       <body className={inter.className}>
         <SiteProvider>{children}</SiteProvider>
-        {location.host === "localhost:3000" ? null : <Posthog />}
+        <Posthog />
       </body>
     </html>
   );
