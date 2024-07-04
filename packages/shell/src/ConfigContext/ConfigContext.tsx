@@ -8,6 +8,8 @@ export interface Config {
   behaviorPresets: string[];
   newTemplates: Collection | null;
 
+  defaultPreview: string | null;
+
   editorConfig: {
     All?: EditorConfig;
     Manifest?: EditorConfig;
@@ -76,6 +78,7 @@ const DEFAULT_CONFIG: Config = {
     "no-nav",
     "hidden",
   ],
+  defaultPreview: null,
   editorConfig: {},
   newTemplates: null,
   i18n: {
@@ -123,6 +126,7 @@ export function ConfigProvider({
     }),
     [config, runtimeConfig]
   );
+
   const memoSaveConfig = useCallback(
     (config: Partial<Config>) => {
       setRuntimeConfig(config);

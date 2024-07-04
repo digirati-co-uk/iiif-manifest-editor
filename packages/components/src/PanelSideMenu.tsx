@@ -1,3 +1,4 @@
+import { Fragment } from "react/jsx-runtime";
 import { PanelSideMenuItem } from "./PanelSideMenuItem";
 
 interface PanelSideMenuProps {
@@ -16,7 +17,7 @@ export function PanelSideMenu(props: PanelSideMenuProps) {
   return (
     <div className="bg-white border-t border-r flex flex-col w-12 pb-2" data-open={props.open}>
       {props.items.map((panel) => (
-        <>
+        <Fragment key={panel.id}>
           {panel.divide ? <div className="flex-1 block w-2 min-h-1" /> : null}
           <PanelSideMenuItem
             key={panel.id}
@@ -25,7 +26,7 @@ export function PanelSideMenu(props: PanelSideMenuProps) {
             icon={panel.icon}
             onClick={panel.onClick}
           />
-        </>
+        </Fragment>
       ))}
     </div>
   );

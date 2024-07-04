@@ -179,6 +179,13 @@ export default function BrowserEditor({ id }: { id: string }) {
     }
   }, [staleEtag]);
 
+  const mergedConfig = useMemo(() => {
+    return {
+      ...config,
+      ...projectConfig,
+    };
+  }, [projectConfig]);
+
   const manifestEditor = useMemo(
     () =>
       mapApp(manifestEditorPreset, (app) => {
@@ -268,7 +275,7 @@ export default function BrowserEditor({ id }: { id: string }) {
       <VaultProvider vault={vault}>
         <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
           <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource} config={projectConfig || config} saveConfig={saveProjectConfig}>
+            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
               <GlobalStyle />
               <Layout header={header} />
             </ShellProvider>

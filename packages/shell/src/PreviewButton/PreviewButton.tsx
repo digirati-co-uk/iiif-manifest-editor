@@ -13,8 +13,6 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { useAppInstance } from "../AppContext/AppContext";
-import { createDownload } from "../helpers";
 import { useVault } from "react-iiif-vault";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { DownloadButton } from "@manifest-editor/components";
@@ -52,6 +50,17 @@ export function PreviewButton({ downloadEnabled }: { downloadEnabled?: boolean }
         <ButtonMain
           onClick={() => {
             if (!selected) {
+              const defaultPreviewId = config.defaultPreview;
+              if (defaultPreviewId) {
+                const found = configs.find((c) => c.id === defaultPreviewId);
+                if (found) {
+                  console.log(found, { defaultPreviewId });
+                  actions.selectPreview(found.id);
+                  actions.updatePreviews();
+                  return;
+                }
+              }
+
               actions.selectPreview(configs[0]!.id);
             }
             actions.updatePreviews();

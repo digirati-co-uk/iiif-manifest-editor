@@ -2,8 +2,10 @@ import { Button } from "@manifest-editor/ui/atoms/Button";
 import { Config, useConfig, useSaveConfig } from "./ConfigContext";
 import { Sidebar, SidebarHeader, SidebarContent, Form, ActionButton } from "@manifest-editor/components";
 import { useDecayState } from "../hooks/use-decay-state";
+import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 
 export function ConfigEditor() {
+  const previews = usePreviewContext();
   const config = useConfig();
   const setConfig = useSaveConfig();
   const [isSaved, saveState] = useDecayState(2000);
@@ -13,6 +15,7 @@ export function ConfigEditor() {
     const formValues = new FormData(e.target as HTMLFormElement);
 
     const newConfig: Partial<Config> = {
+      defaultPreview: formValues.get("defaultPreview") as string,
       i18n: {
         ...(config.i18n || ({} as any)),
         advancedLanguageMode: formValues.get("advancedLanguageMode") === "on",
@@ -89,6 +92,29 @@ export function ConfigEditor() {
               defaultValue={config.export?.baseIdentifier || ""}
             />
           </Form.InputContainer> */}
+
+          <Form.InputContainer>
+            <Form.Label htmlFor="defaultPreview">Default preview</Form.Label>
+            <div>
+              {previews.configs.map((preview, key) => {
+                if (preview.type === "iiif-preview-service") {
+                  return null;
+                }
+                return (
+                  <Form.InputContainer key={preview.id} horizontal>
+                    <Form.Input
+                      type="radio"
+                      id={preview.id}
+                      name="defaultPreview"
+                      value={preview.id}
+                      defaultChecked={!config.defaultPreview ? key === 0 : config.defaultPreview === preview.id}
+                    />
+                    <label htmlFor={preview.id}>{preview.label}</label>
+                  </Form.InputContainer>
+                );
+              })}
+            </div>
+          </Form.InputContainer>
 
           <div className="mt-5">
             <ActionButton type="submit">{"Save changes"}</ActionButton>
