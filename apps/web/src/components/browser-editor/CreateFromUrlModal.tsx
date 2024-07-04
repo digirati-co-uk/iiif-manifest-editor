@@ -13,8 +13,8 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
     mutationFn: analyse,
     onSuccess: (data) => {
       if (data && data.type === "Manifest") {
-        posthog.capture("manifest-imported", { url: data.id });
         createProject.mutate(data);
+        posthog.capture("manifest-imported", { url: data.id });
       }
     },
   });

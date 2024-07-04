@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { SiteProvider } from "../components/site/Provider";
 import "@manifest-editor/components/dist/index.css";
 import "@manifest-editor/iiif-browser/dist/index.css";
+import { Posthog } from "../components/PostHog";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
       </head>
       <body className={inter.className}>
         <SiteProvider>{children}</SiteProvider>
+        {location.host === "localhost:3000" ? null : <Posthog />}
       </body>
     </html>
   );
