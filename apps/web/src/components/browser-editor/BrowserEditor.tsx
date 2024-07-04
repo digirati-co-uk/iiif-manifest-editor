@@ -228,7 +228,7 @@ export default function BrowserEditor({ id }: { id: string }) {
         <GlobalNav />
         <div className="flex items-center gap-2">
           <ShareButton />
-          <PreviewButton downloadEnabled />
+          <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
         </div>
       </div>
     </header>

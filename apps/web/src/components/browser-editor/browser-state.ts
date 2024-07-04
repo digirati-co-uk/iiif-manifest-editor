@@ -346,6 +346,43 @@ export async function createBlankManifest() {
   return project;
 }
 
+export async function createManifestFromJson(json: any, extra: any = {}) {
+  const { projectId, ...extraFields } = extra;
+  const id = projectId || randomId();
+  const vault = new Vault();
+  const manifest = vault.loadManifestSync(json.id, json);
+
+  if (!manifest) throw new Error("Manifest not found");
+
+  const vaultData = vault.getState().iiif;
+
+  const thumbnailHelper = createThumbnailHelper(vault);
+  const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
+    manifest,
+    {
+      width: 256,
+      height: 256,
+    },
+    true
+  );
+  const thumb = thumbnail?.best?.id;
+
+  const project = await createBrowserProject(
+    id,
+    {
+      id: manifest.id,
+      type: "Manifest",
+      label: manifest.label || { en: ["Untitled manifest"] },
+      thumbnail: thumb || "",
+    },
+    { id: json.id, type: "Import" },
+    vaultData,
+    extraFields
+  );
+
+  return project;
+}
+
 export async function createManifestFromId(url: string, extra: any = {}) {
   const { projectId, ...extraFields } = extra;
   const id = projectId || randomId();
