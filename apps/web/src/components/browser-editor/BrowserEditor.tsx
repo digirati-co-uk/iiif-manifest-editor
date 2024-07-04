@@ -111,17 +111,17 @@ const previews: PreviewConfiguration[] = [
 
 const config: Partial<Config> = {
   previews,
-  editorConfig: {
-    Manifest: {
-      singleTab: "@manifest-editor/overview",
-      // onlyTabs: [
-      //   //
-      //   "@manifest-editor/overview",
-      //   "@manifest-editor/metadata",
-      // ],
-      fields: ["label", "summary", "metadata"],
-    },
-  },
+  // editorConfig: {
+  //   Manifest: {
+  //     singleTab: "@manifest-editor/overview",
+  //     // onlyTabs: [
+  //     //   //
+  //     //   "@manifest-editor/overview",
+  //     //   "@manifest-editor/metadata",
+  //     // ],
+  //     fields: ["label", "summary", "metadata"],
+  //   },
+  // },
 };
 
 export default function BrowserEditor({ id }: { id: string }) {
