@@ -14,7 +14,7 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
     onSuccess: (data) => {
       if (data && data.type === "Manifest") {
         createProject.mutate(data);
-        posthog.capture("manifest-imported", { url: data.id });
+        posthog.capture("manifest-imported", { manifest_id: data.id });
       }
     },
   });

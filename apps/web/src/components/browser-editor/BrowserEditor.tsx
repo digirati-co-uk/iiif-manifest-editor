@@ -154,7 +154,7 @@ export default function BrowserEditor({ id }: { id: string }) {
 
   useLayoutEffect(() => {
     if (project?.isOpen) {
-      posthog.capture("project-opened", { url: project.resource.id, resourecType: project.resource.type });
+      posthog.capture("manifest-edited", { resource_id: project.resource.id, resource_type: project.resource.type });
     }
   }, [project?.isOpen]);
 
