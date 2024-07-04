@@ -49,8 +49,9 @@ const imageServiceLoader = new ImageServiceLoader({
   enableFetching: true,
 });
 
-export const ShellProvider = ({
+export function ShellProvider({
   config,
+  saveConfig,
   children,
   theme,
   previews,
@@ -58,17 +59,18 @@ export const ShellProvider = ({
 }: {
   resource: Resource;
   config?: Partial<Config>;
+  saveConfig?: (config: Partial<Config>) => void;
   children: ReactNode;
   theme?: any;
   previews?: Preview[];
-}) => {
+}) {
   return (
     <ErrorBoundary>
       <ImageServiceLoaderContext.Provider value={imageServiceLoader}>
         <AppResourceProvider resource={resource}>
           <PreviewVaultContext>
             <ThemeProvider theme={theme || defaultTheme}>
-              <ConfigProvider config={config}>
+              <ConfigProvider config={config} saveConfig={saveConfig}>
                 <EditingStack>
                   <LayoutProvider>
                     {/* @todo swap these out for (config?.previews || []) */}
@@ -84,4 +86,4 @@ export const ShellProvider = ({
       </ImageServiceLoaderContext.Provider>
     </ErrorBoundary>
   );
-};
+}

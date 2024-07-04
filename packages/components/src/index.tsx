@@ -23,6 +23,7 @@ export * from "./SidebarTabs";
 export * from "./MetadataContainer";
 export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
+export * from "./Forms";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

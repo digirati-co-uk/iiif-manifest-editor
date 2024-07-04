@@ -5,10 +5,10 @@ import { InputGroup, InputLabel } from "../Input";
 import { useDebounce } from "tiny-use-debounce";
 import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
 import { flushSync } from "react-dom";
-import { useDecayState } from "../../hooks/useDecayState";
 import { UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
 import { RichTextLanguageField } from "../../form-elements/RichTextLanguageField/RichTextLanguageField";
 import { ControlButton, OpaqueControls } from "@manifest-editor/components";
+import { useConfig, useDecayState } from "@manifest-editor/shell";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -19,8 +19,6 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   guidanceReference?: string;
   disableMultiline?: boolean;
   singleValue?: boolean;
-
-  advancedMode?: boolean;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -38,14 +36,16 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   const debounceSave = useDebounce(saveChanges, 400);
   const [active, activeState] = useDecayState(2000);
   const [isReorderMode, setIsReorderMode] = useState(false);
+  const {
+    i18n: { advancedLanguageMode, availableLanguages },
+  } = useConfig();
 
-  const isFullMode = !!props.advancedMode || fieldKeys.length > 1;
+  const isFullMode = advancedLanguageMode || fieldKeys.length > 1;
 
   // We can set these up from config, or the browser or just allow them to be passed down.
   // This is where we choose a default for which languages will appear in the dropdown.
   // The `firstItem` will be based on the i18n of the user's browser.
   // ...
-  const availableLanguages = props.availableLanguages || ["en", "nl", "none"];
   const id = useMemo(() => `k-${Date.now()}`, []);
 
   const focusId = props.focusId ? props.focusId : id + props.metadataKey;

@@ -7,7 +7,7 @@
 
 * Get current app
 * Change app
-* List all apps 
+* List all apps
 
 ```js
 const { currentApp, apps, changeApp } = useApps();
@@ -48,14 +48,14 @@ const config = useConfig();
 
 
 // Languages for the editor ['en, 'none']
-config.defaultLanguages;
+config.i18n.availableLanguages;
 
 // Behaviours string[]
 config.behaviorPresets;
 
 // IIIF collection for templates
 config.newTemplates;
-  
+
 // List of previews.
 config.previews;
 ```
@@ -85,10 +85,10 @@ layouts.rightPanels;
 
 ### Get layout state
 ```js
-const { 
-  leftPanel, 
-  rightPanel, 
-  pinnedRightPanel, 
+const {
+  leftPanel,
+  rightPanel,
+  pinnedRightPanel,
   centerPanel,
 } = useLayoutState();
 
@@ -220,7 +220,7 @@ ctx.current.metadata.modified; // Last modified
 ctx.current.metadata.created; // Created at
 
 // List of all projects
-ctx.allProjects; 
+ctx.allProjects;
 
 // Actions
 ctx.actions.switchProject('some-project-id');
@@ -266,7 +266,7 @@ function MyGenericEditor() {
   // You can narrow with typescript
   const resource = useResource<DescriptiveProperties>();
 
-  // Although technical properties, the "ref" is always 
+  // Although technical properties, the "ref" is always
   // merged with the type.
   resource.id
   resource.type

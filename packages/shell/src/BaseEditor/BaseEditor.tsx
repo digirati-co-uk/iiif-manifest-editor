@@ -3,7 +3,6 @@ import { Vault } from "@iiif/helpers";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { useVault } from "react-iiif-vault";
-import { TabPanel } from "@manifest-editor/ui/components/layout/TabPanel";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { EditableResource } from "../EditingStack/EditingStack.types";
@@ -11,6 +10,7 @@ import { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useApp } from "../AppContext/AppContext";
 import { SidebarTabs } from "@manifest-editor/components";
+import { EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -49,7 +49,8 @@ export function BaseEditorCloseButton({ closeAction, fallback }: any) {
 export function editBasedOnResource(
   resource: EditableResource,
   list: ResourceDefinition[],
-  options: { edit?: boolean; vault: Vault }
+  options: { edit?: boolean; vault: Vault },
+  config: EditorConfig
 ): ResourceDefinition | null {
   const filteredList = list.filter((l) => l.resourceType === resource.resource.source.type);
 
@@ -63,6 +64,12 @@ export function editBasedOnResource(
     const sortKeyFallbacks: Record<string, EditorDefinition> = {};
     // 1. Filter out the
     const editors = (item.editors || []).filter((editor) => {
+      if (config.hideTabs && config.hideTabs.includes(editor.id)) {
+        return false;
+      }
+      if (config.onlyTabs && !config.onlyTabs.includes(editor.id)) {
+        return false;
+      }
       if (editor.supports.sortKey) {
         if (sortKeys.includes(editor.supports.sortKey)) {
           return false;
@@ -118,6 +125,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   const vault = useVault();
   const { change } = useLayoutActions();
   const set = useSetCustomTitle();
+  const { editorConfig } = useConfig();
+  const resourceConfig: EditorConfig =
+    (resource?.resource.source?.type
+      ? (editorConfig as any)[resource?.resource.source?.type as any]
+      : editorConfig.All) || {};
 
   const match = useMemo(() => {
     if (!resource) {
@@ -139,7 +151,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       return resource;
     });
 
-    return editBasedOnResource(resource, mappedResources, { edit: true, vault });
+    return editBasedOnResource(resource, mappedResources, { edit: true, vault }, resourceConfig);
   }, [resource, app]);
 
   useEffect(() => {
@@ -155,6 +167,13 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
     return null;
   }
 
+  if (resourceConfig.singleTab) {
+    const first = (match?.editors || []).find((editor) => editor.id === resourceConfig.singleTab);
+    if (first) {
+      return <div className="w-full">{first.component(resourceConfig)}</div>;
+    }
+  }
+
   return (
     <SidebarTabs
       key={resource.resource.source?.id}
@@ -163,7 +182,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
         return {
           id: editor.id + key,
           label: editor.label,
-          renderComponent: () => editor.component(),
+          renderComponent: () => editor.component(resourceConfig),
         };
       })}
       selectedKey={currentTab}

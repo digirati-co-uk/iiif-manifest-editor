@@ -4,9 +4,9 @@
 import { InternationalString } from "@iiif/presentation-3";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createStore, set, get, keys, del, delMany } from "idb-keyval";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { queryClient } from "../site/Provider";
-import { randomId } from "@manifest-editor/shell";
+import { Config, randomId, useConfig } from "@manifest-editor/shell";
 import { Vault, createThumbnailHelper } from "@iiif/helpers";
 
 const localStore = createStore("manifest-editor-projects-v2", "manifest-editor-project-store");
@@ -22,8 +22,8 @@ export interface LocalBrowserProject {
   id: string;
   resource: { id: string; type: string; label: InternationalString; thumbnail: string };
   source: { id: string; type: string };
-  vaultData: object;
-  extraData: object;
+  vaultData: any;
+  extraData: { config?: Config } & { [key: string]: any };
   created: number;
   updated: number;
   isOpen: boolean;
@@ -206,7 +206,7 @@ export function useBrowserProject(id: string) {
       const newEtag = await saveBrowserProjectExtraData(id, data, etag.current!);
       etag.current = newEtag;
       queryClient.setQueryData(["browser-project", id], {
-        project: { ...projectData.project, extraData: data },
+        project: { ...projectData.project, extraData: { ...(projectData.project.extraData || {}), ...data } },
         wasAlreadyOpen: projectData.wasAlreadyOpen,
       });
     },
@@ -216,6 +216,10 @@ export function useBrowserProject(id: string) {
     },
     mutationKey: ["save-browser-project-extra-data", id],
   });
+
+  const saveProjectConfig = useCallback((config: Partial<Config>) => {
+    return saveExtraData.mutateAsync({ config });
+  }, []);
 
   const saveResource = useMutation({
     mutationFn: async (data: LocalBrowserProject["resource"], force = false) => {
@@ -298,6 +302,8 @@ export function useBrowserProject(id: string) {
     isProjectLoading: isLoading,
     isProjectError: isError,
     wasAlreadyOpen: projectData?.wasAlreadyOpen,
+    projectConfig: projectData?.project?.extraData?.config as Partial<Config> | undefined,
+    saveProjectConfig,
     project: projectData?.project,
     saveExtraData,
     saveResource,

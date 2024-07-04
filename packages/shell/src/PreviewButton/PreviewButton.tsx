@@ -18,10 +18,12 @@ import { createDownload } from "../helpers";
 import { useVault } from "react-iiif-vault";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { DownloadButton } from "@manifest-editor/components";
+import { useConfig } from "../ConfigContext/ConfigContext";
 
 export function PreviewButton({ downloadEnabled }: { downloadEnabled?: boolean }) {
   const { active, configs, actions, selected } = usePreviewContext();
   const vault = useVault();
+  const config = useConfig();
   const resource = useAppResource();
   const configsToShow = configs.filter((c) => c.type === "external-manifest-preview");
   const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length);
@@ -37,7 +39,12 @@ export function PreviewButton({ downloadEnabled }: { downloadEnabled?: boolean }
           <DownloadButton
             fileName="manifest.json"
             label="Download manifest"
-            getData={() => JSON.stringify(vault.toPresentation3(resource as any), null, 2)}
+            getData={() => {
+              if (config.export && config.export.version === 2) {
+                return JSON.stringify(vault.toPresentation2(resource as any), null, 2);
+              }
+              return JSON.stringify(vault.toPresentation3(resource as any), null, 2);
+            }}
           />
         </div>
       ) : null}

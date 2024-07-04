@@ -1,4 +1,5 @@
 import { InternationalString } from "@iiif/presentation-3";
+import { useConfig } from "@manifest-editor/shell";
 import { produce } from "immer";
 import { useMemo, useReducer } from "react";
 import { useClosestLanguage } from "react-iiif-vault";
@@ -213,21 +214,19 @@ export type MetadataSave = (
 
 export interface UseMetadataEditor {
   fields: InternationalString | MetadataDefinition[];
-  availableLanguages?: string[];
   metadataKey?: string;
-  defaultLocale?: string;
-  allowCustomLanguage?: boolean;
+
   // Actions.
   onSave?: MetadataSave;
+  /** @deprecated use config context */
+  availableLanguages?: string[];
+  /** @deprecated use config context */
+  defaultLocale?: string;
 }
 
-export function useMetadataEditor({
-  fields,
-  metadataKey = "none",
-  availableLanguages = ["en", "none"],
-  defaultLocale,
-  onSave,
-}: UseMetadataEditor) {
+export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseMetadataEditor) {
+  const { i18n } = useConfig();
+  const { availableLanguages, defaultLanguage: defaultLocale } = i18n;
   const [state, dispatch] = useReducer(metadataEditorReducer, { fields, key: metadataKey }, createInitialValues);
 
   // Computed values.
