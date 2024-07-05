@@ -18,7 +18,7 @@ import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { DownloadButton } from "@manifest-editor/components";
 import { useConfig } from "../ConfigContext/ConfigContext";
 
-export function PreviewButton({ downloadEnabled }: { downloadEnabled?: boolean }) {
+export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?: boolean; fileName?: string }) {
   const { active, configs, actions, selected } = usePreviewContext();
   const vault = useVault();
   const config = useConfig();
@@ -35,7 +35,7 @@ export function PreviewButton({ downloadEnabled }: { downloadEnabled?: boolean }
       {downloadEnabled ? (
         <div className="mr-4">
           <DownloadButton
-            fileName="manifest.json"
+            fileName={fileName || "manifest.json"}
             label="Download manifest"
             getData={() => {
               if (config.export && config.export.version === 2) {
