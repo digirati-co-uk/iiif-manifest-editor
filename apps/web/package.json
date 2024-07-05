@@ -23,13 +23,14 @@
     "browser-fs-access": "^0.35.0",
     "classnames": "^2.5.1",
     "manifest-editor": "1.0.2",
+    "idb-keyval": "^6.2.1",
     "next": "^14.2.3",
+    "posthog-js": "^1.144.1",
     "react": "^18.2.0",
     "react-aria-components": "^1.2.1",
     "react-dom": "^18.2.0",
     "react-iiif-vault": "^1.2.1",
     "styled-components": "6.1.8",
-    "idb-keyval": "^6.2.1",
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {

@@ -7,6 +7,7 @@ import { CreateFromUrlModal } from "./CreateFromUrlModal";
 import { Toolbar, Button } from "react-aria-components";
 import { fileOpen } from "browser-fs-access";
 import { upgrade } from "@iiif/parser/upgrader";
+import posthog from "posthog-js";
 
 export default function GettingStarted() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function GettingStarted() {
     mutationFn: createBlankManifest,
     onSuccess: (data) => {
       if (data) {
+        posthog.capture("blank-manifest-created", {});
         router.push(`/editor/${data.id}`);
       }
     },

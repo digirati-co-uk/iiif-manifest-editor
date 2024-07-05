@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useLayoutEffect, useRef } from "react";
 import { createManifestFromId } from "./browser-state";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 
 export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const router = useRouter();
@@ -13,6 +14,7 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
     onSuccess: (data) => {
       if (data && data.type === "Manifest") {
         createProject.mutate(data);
+        posthog.capture("manifest-imported", { manifest_id: data.id });
       }
     },
   });
