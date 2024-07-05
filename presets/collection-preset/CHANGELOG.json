@@ -1,0 +1,20 @@
+{
+  "name": "@manifest-editor/collection-preset",
+  "entries": [
+    {
+      "date": "Fri, 05 Jul 2024 11:36:19 GMT",
+      "version": "1.0.0",
+      "tag": "@manifest-editor/collection-preset_v1.0.0",
+      "comments": {
+        "none": [
+          {
+            "author": "stephen.fraser@digirati.com",
+            "package": "@manifest-editor/collection-preset",
+            "commit": "1efedf754acc3aef25d5c2264fc6678e9b206545",
+            "comment": "Added build and package management"
+          }
+        ]
+      }
+    }
+  ]
+}

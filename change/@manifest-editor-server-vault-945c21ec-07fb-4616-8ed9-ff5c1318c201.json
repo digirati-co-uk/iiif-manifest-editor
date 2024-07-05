@@ -1,7 +1,0 @@
-{
-  "type": "none",
-  "comment": "Added build and package management",
-  "packageName": "@manifest-editor/server-vault",
-  "email": "stephen.fraser@digirati.com",
-  "dependentChangeType": "none"
-}

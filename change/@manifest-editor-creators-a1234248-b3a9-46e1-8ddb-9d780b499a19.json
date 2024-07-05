@@ -1,7 +1,0 @@
-{
-  "type": "none",
-  "comment": "Added build and package management",
-  "packageName": "@manifest-editor/creators",
-  "email": "stephen.fraser@digirati.com",
-  "dependentChangeType": "none"
-}
