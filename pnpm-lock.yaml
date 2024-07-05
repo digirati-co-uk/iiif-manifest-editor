@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@netlify/plugin-nextjs':
-        specifier: ^5.3.2
-        version: 5.3.2
+        specifier: ^5.4.0
+        version: 5.5.0
       '@repo/eslint-config':
         specifier: 0.0.0
         version: link:internal-packages/eslint-config
@@ -3178,6 +3178,11 @@ packages:
 
   /@netlify/plugin-nextjs@5.3.2:
     resolution: {integrity: sha512-DC3sNpWnnhIfJxAfqdktbkU2LxYUDKCVQnxqEhJSyheQ5G9ILu1spUKa5pEe8X2EvtH8FwtMAc7Gi5h6pft22A==}
+    engines: {node: '>=18.0.0'}
+    dev: true
+
+  /@netlify/plugin-nextjs@5.5.0:
+    resolution: {integrity: sha512-Fcsc0fRk2t3VAz8CZ3b2IQzlIwluktjroeaNRRXWionK5z4hXHvTbG+R/+qz5XIACaX+D23+t1k31uuYevD+Ww==}
     engines: {node: '>=18.0.0'}
     dev: true
 
