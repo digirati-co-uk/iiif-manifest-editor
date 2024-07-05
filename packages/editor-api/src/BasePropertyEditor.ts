@@ -9,6 +9,10 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
     this.property = property as any;
   }
 
+  getProperty() {
+    return this.property;
+  }
+
   observe(cb: (selected: T, resource: Entity, context: any) => void, skipInitial = true) {
     this._observe((entity) => entity && (entity as any)[this.property], cb, skipInitial);
   }

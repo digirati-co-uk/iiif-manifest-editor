@@ -1,5 +1,6 @@
 import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
 import { InputContainer, InputLabel, RichTextLanguageField } from "@manifest-editor/editors";
+import { useConfig } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
@@ -20,8 +21,9 @@ export async function createHtmlBody(data: CreateHTMLBodyPayload, ctx: CreatorFu
 }
 
 export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>) {
+  const { i18n } = useConfig();
   const [body, setBodyValue] = useState<string>("<p></p>");
-  const [language, setLang] = useState("en");
+  const [language, setLang] = useState(i18n.defaultLanguage);
 
   const onSubmit = () => {
     props.runCreate({
@@ -39,7 +41,7 @@ export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>)
           value={body}
           language={language}
           onUpdateLanguage={(lng) => setLang(lng)}
-          languages={["en", "nl", "cy"]}
+          languages={i18n.availableLanguages}
           onUpdate={(e) => setBodyValue(e)}
         />
       </InputContainer>

@@ -2,7 +2,7 @@ import { EditorDefinition } from "@manifest-editor/shell";
 import { CombinedEditor } from "../CombinedEditor/CombinedEditor";
 
 export const combinedProperties: EditorDefinition = {
-  id: "@manifest-editor/technical-properties",
+  id: "@manifest-editor/overview",
   label: "Overview",
   supports: {
     edit: true,
@@ -19,5 +19,5 @@ export const combinedProperties: EditorDefinition = {
       "Range",
     ],
   },
-  component: () => <CombinedEditor />,
+  component: (config) => <CombinedEditor config={config} />,
 };

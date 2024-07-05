@@ -3,18 +3,17 @@
 import { useBrowserProject } from "./browser-state";
 import {
   AppProvider,
+  Config,
   Layout,
   PreviewButton,
   PreviewConfiguration,
   ShellProvider,
+  ConfigEditor,
   mapApp,
-  useApp,
   useEditingResource,
-  useEditingStack,
   useLayoutActions,
   useLayoutState,
   usePreviewContext,
-  usePreviews,
   useSaveVault,
 } from "@manifest-editor/shell";
 import { VaultProvider } from "react-iiif-vault";
@@ -24,7 +23,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   DefaultTooltipContent,
-  DownloadIcon,
   ManifestEditorLogo,
   Tab,
   TabList,
@@ -32,7 +30,6 @@ import {
   Tabs,
   TooltipTrigger,
   Tooltip,
-  TooltipContent,
 } from "@manifest-editor/components";
 import { GlobalNav } from "../site/GlobalNav";
 
@@ -42,10 +39,8 @@ import "@manifest-editor/shell/dist/index.css";
 import "@manifest-editor/components/dist/index.css";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createThumbnailHelper } from "@iiif/helpers";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useQuery } from "@tanstack/react-query";
-import { useInStack } from "@manifest-editor/editors";
-import { Checkbox, CheckboxGroup, Label } from "react-aria-components";
+import { Label } from "react-aria-components";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -114,7 +109,20 @@ const previews: PreviewConfiguration[] = [
   },
 ];
 
-const config = { previews };
+const config: Partial<Config> = {
+  previews,
+  // editorConfig: {
+  //   Manifest: {
+  //     singleTab: "@manifest-editor/overview",
+  //     // onlyTabs: [
+  //     //   //
+  //     //   "@manifest-editor/overview",
+  //     //   "@manifest-editor/metadata",
+  //     // ],
+  //     fields: ["label", "summary", "metadata"],
+  //   },
+  // },
+};
 
 export default function BrowserEditor({ id }: { id: string }) {
   const {
@@ -132,6 +140,8 @@ export default function BrowserEditor({ id }: { id: string }) {
     userForceUpdate,
     vault,
     wasAlreadyOpen,
+    projectConfig,
+    saveProjectConfig,
   } = useBrowserProject(id);
   const [allowAnyway, setAllowAnyway] = useState(false);
   const thumbnailHelper = useMemo(() => {
@@ -169,6 +179,13 @@ export default function BrowserEditor({ id }: { id: string }) {
     }
   }, [staleEtag]);
 
+  const mergedConfig = useMemo(() => {
+    return {
+      ...config,
+      ...projectConfig,
+    };
+  }, [projectConfig]);
+
   const manifestEditor = useMemo(
     () =>
       mapApp(manifestEditorPreset, (app) => {
@@ -176,10 +193,21 @@ export default function BrowserEditor({ id }: { id: string }) {
           ...app,
           layout: {
             ...app.layout,
+            leftPanels: [
+              ...(app.layout.leftPanels || []),
+              {
+                divide: true,
+                id: "config",
+                label: "Config",
+                icon: <SettingsIcon />,
+                render: () => <ConfigEditor />,
+              },
+            ],
             modals: [
               ...(app.layout.modals || []),
               {
                 id: "share-modal",
+                icon: <ShareIcon />,
                 label: "Share",
                 render: () => <SharePanel projectId={id} />,
               },
@@ -247,7 +275,7 @@ export default function BrowserEditor({ id }: { id: string }) {
       <VaultProvider vault={vault}>
         <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
           <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource} config={config}>
+            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
               <GlobalStyle />
               <Layout header={header} />
             </ShellProvider>
@@ -273,6 +301,21 @@ function ShareButton() {
         <DefaultTooltipContent>Share workspace</DefaultTooltipContent>
       </TooltipTrigger>
     </Tooltip>
+  );
+}
+
+function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      viewBox="0 -960 960 960"
+      {...props}
+    >
+      <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+    </svg>
   );
 }
 

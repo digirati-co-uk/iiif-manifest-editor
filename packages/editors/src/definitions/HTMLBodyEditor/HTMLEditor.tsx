@@ -1,5 +1,5 @@
 import { Reference } from "@iiif/presentation-3";
-import { useEditor, useGenericEditor } from "@manifest-editor/shell";
+import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { InputContainer, InputLabel } from "../../components/Input";
 import { TextGranularityEditor } from "../../components/TextGranularityEditor/TextGranularityEditor";
@@ -20,6 +20,7 @@ export function HTMLEditor() {
 }
 
 function HTMLEditorItem({ item }: { item: Reference }) {
+  const { i18n } = useConfig();
   const editor = useGenericEditor(item);
 
   const { textGranularity } = editor.extensions;
@@ -35,7 +36,7 @@ function HTMLEditorItem({ item }: { item: Reference }) {
           value={value.get()}
           language={language.get() as any}
           onUpdateLanguage={(lng) => language.set(lng as any)}
-          languages={["en", "nl", "cy"]}
+          languages={i18n.availableLanguages}
           onUpdate={(e) => value.set(e)}
         />
       </InputContainer>

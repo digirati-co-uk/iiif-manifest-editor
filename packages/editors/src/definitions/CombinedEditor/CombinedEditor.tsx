@@ -1,5 +1,5 @@
 import { BasePropertyEditor } from "@manifest-editor/editor-api";
-import { useEditor } from "@manifest-editor/shell";
+import { useEditor, EditorConfig } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import { DescriptiveProperties } from "../DescriptiveProperties/DescriptiveProperties";
 import { LinkingProperties } from "../LinkingProperties/LinkingProperties";
@@ -7,20 +7,27 @@ import { NavPlaceEditor } from "../NavPlaceEditor/NavPlaceEditor";
 import { CanvasStructuralProperties } from "../StructuralProperties/CanvasStructuralProperties";
 import { TechnicalProperties } from "../TechnicalProperties/TechnicalProperties";
 
-export function CombinedEditor() {
+export function CombinedEditor({ config }: { config: EditorConfig }) {
   const { technical, descriptive, linking, structural, extensions, notAllowed } = useEditor();
   function hideIfEmpty(editor: BasePropertyEditor<any, any>) {
     const value = editor.getWithoutTracking();
+    let shouldHide = !value || value.length === 0 || value === "left-to-right";
+    if (config.fields) {
+      const found = config.fields.includes(editor.getProperty());
+      if (found) {
+        return ``;
+      }
+      shouldHide = true;
+    }
 
-    const isEmpty = !value || value.length === 0 || value === "left-to-right";
-
-    return `${!isEmpty ? `` : `*[id="${editor.containerId()}"]{display: none}`}`;
+    return `${!shouldHide ? `` : `*[id="${editor.containerId()}"]{display: none}`}`;
   }
 
   const type = technical.type;
 
   const style = useMemo(
     () => `
+    ${hideIfEmpty(technical.id)}
     ${hideIfEmpty(technical.width)}
     ${hideIfEmpty(technical.height)}
     ${hideIfEmpty(technical.duration)}
@@ -54,6 +61,7 @@ export function CombinedEditor() {
     ${hideIfEmpty(structural.items)}
     ${hideIfEmpty(structural.annotations)}
     ${hideIfEmpty(structural.structures)}
+    ${hideIfEmpty(extensions.navPlace)}
   `,
     [technical.id.get()]
   );

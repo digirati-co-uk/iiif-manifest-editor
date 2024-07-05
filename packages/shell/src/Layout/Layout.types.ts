@@ -4,6 +4,7 @@ import { TransitionStatus } from "react-transition-group";
 import { CreatableResource, EditableResource } from "../EditingStack/EditingStack.types";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppState } from "../AppContext/AppContext";
+import { EditorConfig } from "../ConfigContext/ConfigContext";
 
 // @todo come back to.
 type CreatorDefinition = any;
@@ -118,6 +119,7 @@ export type LayoutFunction = (
 export interface LayoutPanel {
   id: string;
   label: string;
+  divide?: boolean;
   icon?: null | string | ReactNode; // SVG?
   render: LayoutFunction;
   onMount?: (
@@ -167,7 +169,7 @@ export interface EditorDefinition {
     multi?: boolean;
     custom?: (resource: EditableResource, vault: Vault) => boolean;
   };
-  component: () => ReactNode; // @todo type component.
+  component: (config: EditorConfig) => ReactNode; // @todo type component.
 }
 export interface ResourceDefinition {
   id: string;
