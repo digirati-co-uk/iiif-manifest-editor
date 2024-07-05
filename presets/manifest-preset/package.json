@@ -40,7 +40,7 @@
     "react-dom": "^18.2.0",
     "styled-components": "6.1.8",
     "@manifest-editor/components": "1.0.0",
-    "@manifest-editor/shell": "1.0.0",
+    "@manifest-editor/shell": "1.0.1",
     "@manifest-editor/editors": "1.0.0",
     "@manifest-editor/creators": "1.0.0",
     "react-iiif-vault": "^1.2.1",

@@ -52,7 +52,7 @@
     "@manifest-editor/components": "1.0.0",
     "@manifest-editor/editors": "1.0.0",
     "@manifest-editor/manifest-preset": "1.0.0",
-    "@manifest-editor/shell": "1.0.0",
+    "@manifest-editor/shell": "1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-iiif-vault": "^1.2.1"

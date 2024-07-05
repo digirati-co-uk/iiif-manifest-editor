@@ -54,7 +54,7 @@ importers:
         specifier: 1.0.0
         version: link:../../packages/iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../../packages/shell
       '@tanstack/react-router':
         specifier: ^1.26.9
@@ -127,7 +127,7 @@ importers:
         specifier: 1.0.0
         version: link:../../packages/projects
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../../packages/shell
       '@tanstack/react-query':
         specifier: ^5.37.1
@@ -442,7 +442,7 @@ importers:
         specifier: 1.0.0
         version: link:../iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../shell
       react:
         specifier: ^18.2.0
@@ -549,7 +549,7 @@ importers:
         specifier: 1.0.0
         version: link:../editor-api
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../shell
       classnames:
         specifier: ^2.5.1
@@ -811,7 +811,7 @@ importers:
         specifier: 1.0.0
         version: link:../../presets/manifest-preset
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../shell
       react:
         specifier: ^18.2.0
@@ -863,10 +863,10 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/client-vault':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../client-vault
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../shell
       immer:
         specifier: ^10.0.4
@@ -973,7 +973,7 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/client-vault':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../client-vault
       '@manifest-editor/components':
         specifier: 1.0.0
@@ -1131,7 +1131,7 @@ importers:
         specifier: 1.0.0
         version: link:../../packages/iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../../packages/shell
       react:
         specifier: ^18.2.0
@@ -1189,7 +1189,7 @@ importers:
         specifier: 1.0.0
         version: link:../../packages/editors
       '@manifest-editor/shell':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../../packages/shell
       react:
         specifier: ^18.2.0

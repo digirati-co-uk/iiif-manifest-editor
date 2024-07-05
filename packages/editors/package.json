@@ -58,7 +58,7 @@
     "@manifest-editor/components": "1.0.0",
     "@manifest-editor/creator-api": "1.0.0",
     "@manifest-editor/editor-api": "1.0.0",
-    "@manifest-editor/shell": "1.0.0",
+    "@manifest-editor/shell": "1.0.1",
     "classnames": "^2.5.1",
     "dompurify": "3.1.0",
     "draft-convert": "^2.1.12",

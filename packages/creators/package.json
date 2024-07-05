@@ -47,7 +47,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-iiif-vault": "^1.2.1",
-    "@manifest-editor/shell": "1.0.0",
+    "@manifest-editor/shell": "1.0.1",
     "@manifest-editor/components": "1.0.0",
     "@manifest-editor/editor-api": "1.0.0",
     "@manifest-editor/creator-api": "1.0.0",
