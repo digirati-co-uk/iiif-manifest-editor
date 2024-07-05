@@ -42,7 +42,7 @@ const config: DocsThemeConfig = {
   project: {
     link: "https://github.com/digirati-co-uk/iiif-manifest-editor",
   },
-  docsRepositoryBase: "https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/app/docs",
+  docsRepositoryBase: "https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/apps/docs",
   footer: {
     content: "Manifest Editor",
   },
