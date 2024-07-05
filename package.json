@@ -13,16 +13,13 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "mismatch": "syncpack list-mismatches",
     "fix-deps": "syncpack fix-mismatches",
-    "sync-deps": "beachball sync",
-    "change": "beachball change",
-    "checkchange": "beachball check",
-    "release": "beachball publish --access public"
+    "bump": "syncpack fix-mismatches && lerna version --no-private && syncpack fix-mismatches",
+    "release": "lerna publish --no-private"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.3.2",
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",
-    "beachball": "^2.43.1",
     "prettier": "^3.2.5",
     "publint": "^0.2.7",
     "syncpack": "^12.3.0",

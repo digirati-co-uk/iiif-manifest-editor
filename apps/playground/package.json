@@ -11,11 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@manifest-editor/creator-api": "1.0.0",
-    "@manifest-editor/iiif-browser": "1.0.0",
-    "@manifest-editor/shell": "1.0.1",
+    "@manifest-editor/creator-api": "1.0.2",
+    "@manifest-editor/iiif-browser": "1.0.2",
+    "@manifest-editor/shell": "1.0.2",
     "@tanstack/react-router": "^1.26.9",
-    "manifest-editor": "1.0.0",
+    "manifest-editor": "1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
