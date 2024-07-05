@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useLayoutEffect, useRef } from "react";
 import { createManifestFromId } from "./browser-state";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 
 export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
     mutationFn: analyse,
     onSuccess: (data) => {
       if (data && data.type === "Manifest") {
+        posthog.capture("manifest-imported", { url: data.id });
         createProject.mutate(data);
       }
     },

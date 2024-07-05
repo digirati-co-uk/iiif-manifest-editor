@@ -19,7 +19,7 @@ import {
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   DefaultTooltipContent,
@@ -41,6 +41,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { createThumbnailHelper } from "@iiif/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { Label } from "react-aria-components";
+import posthog from "posthog-js";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -150,6 +151,12 @@ export default function BrowserEditor({ id }: { id: string }) {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useLayoutEffect(() => {
+    if (project?.isOpen) {
+      posthog.capture("project-opened", { url: project.resource.id, resourecType: project.resource.type });
+    }
+  }, [project?.isOpen]);
 
   const saveVault = useCallback(async () => {
     if (project) {
