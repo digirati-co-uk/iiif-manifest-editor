@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "Added build and package management",
+  "packageName": "@manifest-editor/collection-preset",
+  "email": "stephen.fraser@digirati.com",
+  "dependentChangeType": "none"
+}
