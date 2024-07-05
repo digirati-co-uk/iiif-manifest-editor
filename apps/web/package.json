@@ -5,13 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint . --max-warnings 0"
+    "start": "next start"
   },
   "dependencies": {
     "@iiif/helpers": "^1.2.12",
     "@iiif/parser": "^2.1.2",
-    "@iiif/presentation-3": "^2.2.2",
+    "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/collection-preset": "1.0.0",
     "@manifest-editor/components": "1.0.0",
@@ -36,9 +35,9 @@
   "devDependencies": {
     "@contentlayer2/source-contentful": "^0.4.1",
     "@contentlayer2/source-files": "~0.4.1",
-    "@netlify/plugin-nextjs": "^5.3.1",
+    "@netlify/plugin-nextjs": "^5.3.2",
     "@manifest-editor/iiif-preview-server": "1.0.0",
-    "@manifest-editor/ui": "workspace:*",
+    "@manifest-editor/ui": "1.0.0",
     "@next/eslint-plugin-next": "^14.1.1",
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",

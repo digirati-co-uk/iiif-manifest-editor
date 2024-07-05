@@ -1,6 +1,10 @@
 {
   "name": "iiif-manifest-editor",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git"
+  },
   "scripts": {
     "build": "turbo build",
     "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
@@ -8,12 +12,17 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "mismatch": "syncpack list-mismatches",
-    "fix-deps": "syncpack fix-mismatches"
+    "fix-deps": "syncpack fix-mismatches",
+    "sync-deps": "beachball sync",
+    "change": "beachball change",
+    "checkchange": "beachball check",
+    "release": "beachball publish --access public"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.3.2",
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",
+    "beachball": "^2.43.1",
     "prettier": "^3.2.5",
     "publint": "^0.2.7",
     "syncpack": "^12.3.0",
