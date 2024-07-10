@@ -1,7 +1,8 @@
-import { LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import { LayoutPanel, useEditingResource, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { SVGProps, useEffect } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { useLayoutState } from "../../../../packages/shell/dist/index.cjs";
 
 function ManifestIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
@@ -28,6 +29,7 @@ export const manifestPanel: LayoutPanel = {
 
 function ManifestPanel() {
   const { edit, open } = useLayoutActions();
+  const current = useEditingResource();
   const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
@@ -38,7 +40,9 @@ function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    edit(manifest);
+    if (!current) {
+      edit(manifest);
+    }
     open({ id: "overview" });
   }, []);
 

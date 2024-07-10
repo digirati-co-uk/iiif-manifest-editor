@@ -54,7 +54,7 @@ export default function LocalEditor() {
 
   return (
     <>
-      <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b">
+      <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b shadow">
         <Link href="/" className="w-96 flex justify-start" onClick={() => confirm("Are you sure?")}>
           <ManifestEditorLogo />
         </Link>

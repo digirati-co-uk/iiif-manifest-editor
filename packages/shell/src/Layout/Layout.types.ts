@@ -50,7 +50,7 @@ export interface LayoutActions {
   edit(
     resource: Reference | SpecificResource,
     context?: Omit<EditableResource, "resource">,
-    options?: { reset?: boolean; property?: string; stacked?: boolean | undefined }
+    options?: { reset?: boolean; property?: string; stacked?: boolean | undefined; selectedTab?: string }
   ): void;
   create(resource: CreatableResource): void;
 
