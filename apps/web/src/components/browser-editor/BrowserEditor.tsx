@@ -42,6 +42,7 @@ import { createThumbnailHelper } from "@iiif/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { Label } from "react-aria-components";
 import posthog from "posthog-js";
+import { useInStack } from "@manifest-editor/editors";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -149,8 +150,13 @@ export default function BrowserEditor({ id }: { id: string }) {
     return createThumbnailHelper(vault);
   }, [vault]);
 
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const selectedCanvasId = searchParams.get("selected-canvas-id") || undefined;
+  const selectedId = searchParams.get("selected-id");
+  const selectedType = searchParams.get("selected-type");
+  const editing = selectedId && selectedType ? { id: selectedId, type: selectedType } : undefined;
+  const selectedTab = searchParams.get("selected-tab") || undefined;
 
   useLayoutEffect(() => {
     if (project?.isOpen) {
@@ -226,13 +232,14 @@ export default function BrowserEditor({ id }: { id: string }) {
   );
 
   const header = (
-    <header className="h-[64px] flex w-full gap-12 px-4 items-center">
+    <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
       <Link href="/" className="w-96 flex justify-start">
         <ManifestEditorLogo />
       </Link>
       <div className="flex-1" />
       <div className="flex items-center justify-center gap-5">
-        <GlobalNav />
+        {/* Github links etc. */}
+        {/* <GlobalNav noMenu /> */}
         <div className="flex items-center gap-2">
           <ShareButton />
           <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
@@ -285,12 +292,51 @@ export default function BrowserEditor({ id }: { id: string }) {
             <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
               <GlobalStyle />
               <Layout header={header} />
+              <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
             </ShellProvider>
           </VaultProvider>
         </AppProvider>
       </VaultProvider>
     </div>
   );
+}
+
+function FromQueryString({
+  editing,
+  selectedTab,
+  canvasId,
+}: {
+  editing?: { id: string; type: string };
+  selectedTab?: string;
+  canvasId?: string;
+}) {
+  const { edit, open } = useLayoutActions();
+
+  console.log({
+    editing,
+    selectedTab,
+    canvasId,
+  });
+
+  useEffect(() => {
+    if (canvasId) {
+      edit({ id: canvasId, type: "Canvas" });
+      open({ id: "current-canvas" });
+      open({ id: "canvas-listing", state: { gridView: true } });
+    }
+    if (editing) {
+      edit(editing);
+      if (editing.type === "Canvas") {
+        open({ id: "current-canvas" });
+        open({ id: "canvas-listing", state: { gridView: true } });
+      }
+    }
+    if (selectedTab) {
+      open("@manifest-editor/editor", { currentTab: selectedTab });
+    }
+  }, []);
+
+  return null;
 }
 
 function ShareButton() {
@@ -342,12 +388,14 @@ function createShareLink({
   manifest,
   projectId,
   selected,
+  canvasId,
   tab,
 }: {
   manifest: string;
   action: "preview" | "import";
   projectId?: string;
   tab?: string;
+  canvasId?: string;
   selected?: { id: string; type: string };
 }) {
   const currentUrl = new URL(window.location.href);
@@ -362,6 +410,10 @@ function createShareLink({
   }
 
   baseUrl.searchParams.set("iiif-content", manifest);
+
+  if (canvasId) {
+    baseUrl.searchParams.set("selected-canvas-id", canvasId);
+  }
 
   if (tab) {
     baseUrl.searchParams.set("selected-tab", tab);
@@ -379,6 +431,7 @@ function SharePanel({ projectId }: { projectId: string }) {
   const { actions } = usePreviewContext();
   const resource = useEditingResource();
   const { rightPanel } = useLayoutState();
+  const canvas = useInStack("Canvas");
 
   const [options, setOptions] = useState({
     includeCurrentSelectedItem: true,
@@ -441,11 +494,14 @@ function SharePanel({ projectId }: { projectId: string }) {
       <div>Loading...</div>
     );
 
+  console.log("->canvas", canvas);
+
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
         Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
         continue collaborating on this manifest
+        <pre>{JSON.stringify(canvas, null, 2)}</pre>
       </p>
       {renderLink(
         data
@@ -454,6 +510,7 @@ function SharePanel({ projectId }: { projectId: string }) {
               action: "preview",
               selected: includeCurrentSelectedItem ? selected : undefined,
               tab: includeCurrentTab ? currentTab : undefined,
+              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
             })
           : ""
       )}

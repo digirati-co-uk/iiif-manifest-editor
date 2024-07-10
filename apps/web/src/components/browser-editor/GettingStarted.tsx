@@ -41,8 +41,8 @@ export default function GettingStarted() {
   });
 
   return (
-    <div className="bg-me-gray-100 py-8 px-6 border-b">
-      <h2 className="text-2xl mb-6">Get started</h2>
+    <div className="bg-me-gray-100 pb-8 pt-4 px-6 border-b">
+      <h2 className="text-lg mb-3">Get started</h2>
       <Toolbar className="flex gap-3">
         <Button className="w-32 flex items-center flex-col group cursor-default" onPress={() => blankManifest.mutate()}>
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-32 flex items-center justify-center">

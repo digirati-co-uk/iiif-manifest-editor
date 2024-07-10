@@ -56,6 +56,7 @@ export function ShellProvider({
   theme,
   previews,
   resource,
+  editing,
 }: {
   resource: Resource;
   config?: Partial<Config>;
@@ -63,6 +64,7 @@ export function ShellProvider({
   children: ReactNode;
   theme?: any;
   previews?: Preview[];
+  editing?: { id: string; type: string };
 }) {
   return (
     <ErrorBoundary>

@@ -69,7 +69,20 @@ export default function SharePage() {
     },
     onSuccess: (data) => {
       if (data) {
-        router.push(`/editor/${data.id}`);
+        const search = new URLSearchParams();
+        if (queryString.state) {
+          if (queryString.state.selected) {
+            search.set("selected-id", queryString.state.selected.id);
+            search.set("selected-type", queryString.state.selected.type!);
+          }
+          if (queryString.state.tab) {
+            search.set("selected-tab", queryString.state.tab);
+          }
+          if (queryString.state.canvasId) {
+            search.set("selected-canvas-id", queryString.state.canvasId);
+          }
+        }
+        router.push(`/editor/${data.id}?${search.toString()}`);
       }
     },
   });
@@ -86,6 +99,7 @@ export default function SharePage() {
     const projectId = params.get("projectId");
     const selected = params.get("selected-id");
     const selectedType = params.get("selected-type");
+    const canvasId = params.get("selected-canvas-id");
     const action = params.get("action") as null | "import" | "preview";
     const tab = params.get("selected-tab") as null;
 
@@ -94,6 +108,7 @@ export default function SharePage() {
       projectId,
       action: action,
       state: {
+        canvasId,
         selected: selected
           ? {
               id: selected,

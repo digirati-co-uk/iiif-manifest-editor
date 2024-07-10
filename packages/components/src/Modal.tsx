@@ -18,10 +18,10 @@ export function Modal({ id, title, open = true, onClose, actions, children }: Mo
         <div className={`fixed inset-0 bg-black/30 animate-fadeIn z-[501]`} aria-hidden="true" />
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[502]">
           <div className="relative p-4 w-full max-w-3xl max-h-full">
-            <DialogPanel className="relative bg-white rounded-lg overflow-hidden shadow-2xl dark:bg-gray-700 max-h-[80vh] flex flex-col">
-              <div className="flex  items-center justify-between p-4 md:p-5 rounded-t-lg dark:border-gray-600 sticky top-0 bg-white">
-                <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">{title}</DialogTitle>
-                <CloseButton className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+            <DialogPanel className="relative bg-white rounded-lg overflow-hidden shadow-2xl max-h-[80vh] flex flex-col">
+              <div className="flex  items-center justify-between p-4 md:p-5 rounded-t-lg sticky top-0 bg-white">
+                <DialogTitle className="text-xl font-semibold text-gray-900 ">{title}</DialogTitle>
+                <CloseButton className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
                   <svg
                     className="w-3 h-3"
                     aria-hidden="true"
@@ -44,7 +44,7 @@ export function Modal({ id, title, open = true, onClose, actions, children }: Mo
               <Description className="flex-1 min-h-0 overflow-y-auto">{children}</Description>
 
               {actions ? (
-                <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600 justify-end">
+                <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b justify-end">
                   {actions}
                 </div>
               ) : null}

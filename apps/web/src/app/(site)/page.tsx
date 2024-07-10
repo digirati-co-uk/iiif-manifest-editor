@@ -33,7 +33,7 @@ export default function Page(): JSX.Element {
           </TabPanel>
         </Tabs>
       </div>
-      <div className="bg-slate-200 p-5 rounded flex gap-5 mt-10">
+      <div className="bg-slate-200 p-5 rounded flex gap-5 mt-10 m-8">
         <div className="">Looking for the legacy editor?</div>
         <div>
           <Link

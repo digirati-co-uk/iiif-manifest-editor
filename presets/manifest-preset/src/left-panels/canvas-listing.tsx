@@ -66,12 +66,14 @@ export function CanvasListing({
 
   useEffect(() => {
     if (canvas?.resource.source.id) {
-      const key = items.get().findIndex((c) => c.id === canvas.resource.source.id);
-      if (key !== -1) {
-        open({ id: "current-canvas" });
-        canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
-        return;
-      }
+      // @todo check if this is still needed..
+      // const key = items.get().findIndex((c) => c.id === canvas.resource.source.id);
+      // if (key !== -1) {
+      //   open({ id: "current-canvas" });
+      //   canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
+      //   return;
+      // }
+      return;
     }
 
     if (items.get().length) {

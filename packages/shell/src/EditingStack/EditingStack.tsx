@@ -144,7 +144,7 @@ export function useEditor() {
   return editor;
 }
 
-export function EditingStack(props: { children?: any }) {
+export function EditingStack(props: { children?: any; editing?: { id: string; type: string } }) {
   const vault = useVault();
   const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
 

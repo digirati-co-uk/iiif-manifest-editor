@@ -10,7 +10,7 @@ const SharePage = dynamic(() => import("../../components/share/SharePage"), {
 export default function Share() {
   return (
     <div className="flex flex-col h-[100vh]">
-      <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b">
+      <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b sh">
         <Link href="/" className="w-96 flex justify-start">
           <ManifestEditorLogo className="me-logo h-[27px] w-[206px]" />
         </Link>
