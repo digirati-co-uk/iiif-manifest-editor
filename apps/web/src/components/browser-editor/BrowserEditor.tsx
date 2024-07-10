@@ -215,7 +215,7 @@ export default function BrowserEditor({ id }: { id: string }) {
               {
                 id: "share-modal",
                 icon: <ShareIcon />,
-                label: "Share",
+                label: "Share workspace",
                 render: () => <SharePanel projectId={id} />,
               },
             ],
@@ -397,30 +397,30 @@ function SharePanel({ projectId }: { projectId: string }) {
     },
   });
 
-  const form = (
-    <div className="flex-1 flex gap-1 flex-col">
-      <div className="flex gap-2 p-2 has-[:checked]:text-me-primary-500 rounded">
-        <input
-          type="checkbox"
-          id="includeCurrentSelectedItem"
-          value="includeCurrentSelectedItem"
-          checked={includeCurrentSelectedItem}
-          onChange={(e) => setOptions({ ...options, includeCurrentSelectedItem: e.target.checked })}
-        />
-        <Label htmlFor="includeCurrentSelectedItem">Share current selected item</Label>
-      </div>
-      <div className="flex gap-2 p-2 has-[:checked]:text-me-primary-500 rounded">
-        <input
-          type="checkbox"
-          id="includeCurrentTab"
-          value="includeCurrentTab"
-          checked={includeCurrentTab}
-          onChange={(e) => setOptions({ ...options, includeCurrentTab: e.target.checked })}
-        />
-        <Label htmlFor="includeCurrentTab">Include selected right panel tab</Label>
-      </div>
-    </div>
-  );
+  // const form = (
+  //   <div className="flex-1 flex gap-1 flex-col">
+  //     <div className="flex gap-2 p-2 has-[:checked]:text-me-primary-500 rounded">
+  //       <input
+  //         type="checkbox"
+  //         id="includeCurrentSelectedItem"
+  //         value="includeCurrentSelectedItem"
+  //         checked={includeCurrentSelectedItem}
+  //         onChange={(e) => setOptions({ ...options, includeCurrentSelectedItem: e.target.checked })}
+  //       />
+  //       <Label htmlFor="includeCurrentSelectedItem">Share current selected item</Label>
+  //     </div>
+  //     <div className="flex gap-2 p-2 has-[:checked]:text-me-primary-500 rounded">
+  //       <input
+  //         type="checkbox"
+  //         id="includeCurrentTab"
+  //         value="includeCurrentTab"
+  //         checked={includeCurrentTab}
+  //         onChange={(e) => setOptions({ ...options, includeCurrentTab: e.target.checked })}
+  //       />
+  //       <Label htmlFor="includeCurrentTab">Include selected right panel tab</Label>
+  //     </div>
+  //   </div>
+  // );
 
   const renderLink = (link: string) =>
     link ? (
@@ -436,9 +436,6 @@ function SharePanel({ projectId }: { projectId: string }) {
             Copy
           </button>
         </div>
-        <a href={link} target="_blank" className="text-me-primary-500 underline">
-          Share link
-        </a>
       </div>
     ) : (
       <div>Loading...</div>
@@ -446,41 +443,20 @@ function SharePanel({ projectId }: { projectId: string }) {
 
   return (
     <div className="min-h-64 px-4">
-      <Tabs>
-        <TabList aria-label="Choose a share option" className="mb-4">
-          <Tab id="transfer-workspace">Transfer workspace</Tab>
-          <Tab id="share-preview">Share preview</Tab>
-        </TabList>
-        <TabPanel id="transfer-workspace">
-          {form}
-
-          {renderLink(
-            data
-              ? createShareLink({
-                  manifest: data,
-                  action: "import",
-                  projectId,
-                  selected: includeCurrentSelectedItem ? selected : undefined,
-                  tab: includeCurrentTab ? currentTab : undefined,
-                })
-              : ""
-          )}
-        </TabPanel>
-        <TabPanel id="share-preview">
-          {form}
-
-          {renderLink(
-            data
-              ? createShareLink({
-                  manifest: data,
-                  action: "preview",
-                  selected: includeCurrentSelectedItem ? selected : undefined,
-                  tab: includeCurrentTab ? currentTab : undefined,
-                })
-              : ""
-          )}
-        </TabPanel>
-      </Tabs>
+      <p className="mb-8">
+        Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
+        continue collaborating on this manifest
+      </p>
+      {renderLink(
+        data
+          ? createShareLink({
+              manifest: data,
+              action: "preview",
+              selected: includeCurrentSelectedItem ? selected : undefined,
+              tab: includeCurrentTab ? currentTab : undefined,
+            })
+          : ""
+      )}
     </div>
   );
 }
