@@ -36,13 +36,6 @@
       "thumbnail": "https://iiif-test-images.netlify.app/jwst-full/0,0,512,512/512,/0/default.jpg"
     },
     {
-      "id": "bible",
-      "url": "https://dms-data.stanford.edu/Stanford/ege1/manifest.json",
-      "label": "Otto Ege Manuscript",
-      "description": "12th-century French glossed bible",
-      "thumbnail": "https://stacks.stanford.edu/image/iiif/kq131cs7229%252Fkq131cs7229_05_0006/full/233,/0/default.jpg"
-    },
-    {
       "id": "self-portrait",
       "url": "https://iiif.harvardartmuseums.org/manifests/object/299843",
       "label": "Self-Portrait Dedicated to Paul Gauguin",

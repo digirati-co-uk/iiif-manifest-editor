@@ -38,3 +38,6 @@ yarn-error.log*
 *.pem
 prev/
 .contentlayer
+.obsidian/
+.space/
+.makemd/

@@ -1,5 +1,5 @@
 import { LayoutPanel, useEditingResource, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { SVGProps, useEffect } from "react";
+import { SVGProps, useEffect, useRef } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useLayoutState } from "../../../../packages/shell/dist/index.cjs";
@@ -33,6 +33,7 @@ function ManifestPanel() {
   const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
+  const isInitial = useRef(true);
 
   const label = descriptive.label.get();
   const summary = descriptive.summary.get();
@@ -40,10 +41,12 @@ function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    if (!current) {
+    if (!current || !isInitial.current) {
       edit(manifest);
     }
     open({ id: "overview" });
+
+    isInitial.current = false;
   }, []);
 
   return (
