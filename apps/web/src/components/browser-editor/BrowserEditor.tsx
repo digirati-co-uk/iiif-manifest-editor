@@ -50,7 +50,7 @@ const previews: PreviewConfiguration[] = [
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://theseus-viewer.netlify.app/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
     },
   },
   {
@@ -501,7 +501,6 @@ function SharePanel({ projectId }: { projectId: string }) {
       <p className="mb-8">
         Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
         continue collaborating on this manifest
-        <pre>{JSON.stringify(canvas, null, 2)}</pre>
       </p>
       {renderLink(
         data
