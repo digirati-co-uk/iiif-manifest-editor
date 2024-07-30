@@ -170,7 +170,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   if (resourceConfig.singleTab) {
     const first = (match?.editors || []).find((editor) => editor.id === resourceConfig.singleTab);
     if (first) {
-      return <div className="w-full">{first.component(resourceConfig)}</div>;
+      return (
+        <div key={resource.resource.source?.id} className="w-full">
+          {first.component(resourceConfig)}
+        </div>
+      );
     }
   }
 

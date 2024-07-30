@@ -111,22 +111,22 @@ const previews: PreviewConfiguration[] = [
   },
 ];
 
-const config: Partial<Config> = {
-  previews,
-  // editorConfig: {
-  //   Manifest: {
-  //     singleTab: "@manifest-editor/overview",
-  //     // onlyTabs: [
-  //     //   //
-  //     //   "@manifest-editor/overview",
-  //     //   "@manifest-editor/metadata",
-  //     // ],
-  //     fields: ["label", "summary", "metadata"],
-  //   },
-  // },
-};
+// const config: Partial<Config> = {
+//   previews,
+//   // editorConfig: {
+//   //   Manifest: {
+//   //     singleTab: "@manifest-editor/overview",
+//   //     // onlyTabs: [
+//   //     //   //
+//   //     //   "@manifest-editor/overview",
+//   //     //   "@manifest-editor/metadata",
+//   //     // ],
+//   //     fields: ["label", "summary", "metadata"],
+//   //   },
+//   // },
+// };
 
-export default function BrowserEditor({ id }: { id: string }) {
+export default function BrowserEditor({ id, config: extraConfig = {} }: { id: string; config?: Partial<Config> }) {
   const {
     staleEtag,
     vaultReady,
@@ -149,6 +149,14 @@ export default function BrowserEditor({ id }: { id: string }) {
   const thumbnailHelper = useMemo(() => {
     return createThumbnailHelper(vault);
   }, [vault]);
+
+  const config = useMemo(
+    () => ({
+      previews,
+      ...extraConfig,
+    }),
+    [extraConfig]
+  );
 
   const searchParams = useSearchParams();
 
