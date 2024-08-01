@@ -41,9 +41,9 @@ function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    if (!current || !isInitial.current) {
-      edit(manifest);
-    }
+    // if (!current || !isInitial.current) {
+    edit(manifest);
+    // }
     open({ id: "overview" });
 
     isInitial.current = false;
