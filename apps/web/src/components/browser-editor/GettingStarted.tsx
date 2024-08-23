@@ -1,6 +1,6 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
-import { createBlankManifest, createBrowserProject, createManifestFromJson } from "./browser-state";
+import { createBlankManifest, createManifestFromJson } from "./browser-state";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreateFromUrlModal } from "./CreateFromUrlModal";
@@ -50,7 +50,7 @@ export default function GettingStarted() {
               <AddIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">New manifest</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create new manifest</div>
         </Button>
         <Button className="w-32 flex items-center flex-col group cursor-default" onPress={() => setIsModalOpen(true)}>
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-32 flex items-center justify-center">
@@ -58,7 +58,7 @@ export default function GettingStarted() {
               <LinkIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Paste link</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest URL</div>
         </Button>
         <Button
           className="w-32 flex items-center flex-col group cursor-default"
@@ -69,7 +69,7 @@ export default function GettingStarted() {
               <FileIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open File</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest file</div>
         </Button>
       </Toolbar>
       <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
