@@ -44,16 +44,16 @@ export default function GettingStarted() {
     <div className="bg-me-gray-100 pb-8 pt-4 px-6 border-b">
       <h2 className="text-lg mb-3">Get started</h2>
       <Toolbar className="flex gap-3">
-        <Button className="w-32 flex items-center flex-col group cursor-default" onPress={() => blankManifest.mutate()}>
-          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-32 flex items-center justify-center">
+        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => blankManifest.mutate()}>
+          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
               <AddIcon />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create new manifest</div>
         </Button>
-        <Button className="w-32 flex items-center flex-col group cursor-default" onPress={() => setIsModalOpen(true)}>
-          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-32 flex items-center justify-center">
+        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => setIsModalOpen(true)}>
+          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
               <LinkIcon />
             </div>
@@ -61,10 +61,10 @@ export default function GettingStarted() {
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest URL</div>
         </Button>
         <Button
-          className="w-32 flex items-center flex-col group cursor-default"
+          className="w-36 flex items-center flex-col group cursor-default"
           onPress={() => filesystemManifest.mutate()}
         >
-          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-32 flex items-center justify-center">
+          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
               <FileIcon />
             </div>
