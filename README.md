@@ -1,15 +1,40 @@
 # Digirati IIIF Manifest Editor
 
-- An extensible visual tool for creating IIIF Manifests and more
-- Compatible with IIIF Presentation API 2 and 3
-- Preview your work as you go in your viewer of choice
-- Create IIIF Manifests to drive custom narratives and other viewing experiences
-- Integrate the Manifest Editor into your own tools and workflows
+An open-source, IIIF editing tool, the Manifest Editor is designed to provide a visually intuitive tool for creating, editing and updating IIIF Manifests and more. The Manifest Editor can be used as-is or can be further customised to support institute or organisation specific requirements.
 
 ![screenshot of Manifest Editor](manifest-editor.png)
 
-- [See our Manifest Editor presentation at the 2022 IIIF Conference](https://www.youtube.com/watch?v=q9shfA3BqsM&list=PLYPP1-8uH9c6iAN6nZ-XWBhtwZW_lSesZ&index=1&t=7275s)
 - [Try it!](https://manifest-editor-site.netlify.app/)
+
+## What is the Digirati IIIF Manifest Editor?
+
+The Manifest Editor is an open-source web based editor, built from the ground up using IIIF, JS and HTML. You can use it to create new manifests, adding metadata, creating and managing canvases for simple and complex IIIF manifest requirements. You can preview your work in progress in a range of configured IIIF viewers, whilst you can share your work in progress or completed manifest with other users. 
+
+You can edit existing manifests to update and test changes ranging from simple metadata additions, to adding annotations, changing manifest behaviours and adding navPlace data to support enriching your presentation with map-based interfaces.
+
+It is also possible to simply provide the option to allow users to view manifests, supporting learning and exploration of IIIF Manifests and how these are assembled by institutes and organisations to deliver rich, engaging only viewing experiences.
+
+## Features
+
+- Create and edit new Manifest(s)
+- Open and edit an existing Manifest(s) from disk or URL
+- Add Canvas(es) to Manifest, order and manage canvases within Manifest
+- Add single resources (media for example) to a Canvas
+- Add multiple resources (image choices, collages for example) to a Canvas
+- Edit all properties of Manifests, Canvases and other IIIF resources (add and edit annotations for example)
+- Ability to browse IIIF (via IIIF Collections) to import Canvases
+- Extensible application enabling further customisation and configuration specific to institute or organisational use cases and workflows
+
+## The latest version
+
+The current Manifest Editor reflects our experience gained in building content creation tools and custom viewing experiences, while user research has helped inform some of the core functional and usability improvements. 
+
+We have taken an approach to ensure the tool is more sustainable, both by continuing to build the tool using existing components (which are used by others in a range of scenarios) and by ensuring it is easier (and cheaper) for us and others to customise and adapt. 
+
+This means a separation of viewing/previewing from content creation for most scenarios. We have ended up with multiple versions of the Manifest Editor in the past, with different IIIF capabilities, user interfaces, and persistence mechanisms. Some versions integrate with our IIIF Cloud Services platform, allowing drag-and-drop creation of IIIF Image Services in real time.
+
+We don't want to needlessly throw away the capabilities we have, but we want to maintain one editor going forward, that is simple and reliable to use, with excellent user experience. The needs of different adopters and users should be met by configuration, and choice of plugins, rather than different versions of the core editor.
+
 
 ## Background
 
@@ -19,31 +44,11 @@ In 2018 we developed an experimental [IIIF Workbench](https://www.youtube.com/wa
 
 These combined to make a [IIIF Manifest Editor](https://www.youtube.com/watch?v=D8oA3rHbvPM) that in normal, default mode produces IIIF Presentation 3 Manifests, but can be extended with plugins to produce IIIF Manifests with particular structures and custom `behavior` properties, to drive custom viewing experiences - slideshows, guided viewing and the complex digital exhibition layouts seen in the Delft examples. Development of branches of the Manifest Editor for different clients went hand in hand with new viewers and static site generators.
 
-## The new version
-
-The new Manifest Editor builds on our experiences building content creation tools and custom viewing experiences. Our aim is for the new editor to be more sustainable, which in this context also means cheaper for ourselves and others to customise and adapt. This means a separation of viewing/previewing from content creation for most scenarios. We have ended up with multiple versions of the Manifest Editor, with different IIIF capabilities, user interfaces, and persistence mechanisms. Some versions integrate with our DLCS platform, allowing drag-and-drop creation of IIIF Image Services in real time.
-
-We don't want to needlessly throw away the capabilities we have, but we want to maintain one editor going forward, that is simple and reliable to use, with excellent user experience. The needs of different adopters and users should be met by configuration, and choice of plugins, rather than different versions of the core editor.
-
 ## Audience
 
-- People who want to learn IIIF
-- IIIF novices using a visual, PowerPoint-like tool for creating Manifests intended for viewing in Universal Viewer, Mirador and other standard IIIF environments
-- Museum staff assembling manifests intended for custom storytelling or digital exhibition environments
-- People who need tools to enhance existing (perhaps machine-generated) IIIF with additional information and structure
-- Researchers and students assembling their own IIIF by remixing existing sources
-- (and many more in the issues and discussions)
+The Manifest Editor has been developed to support users creating and editing IIIF content; with a focus on usability to enable those wishing to learn or already familiar with the IIIF standard.
 
-## Features
-
-- Create new Manifest
-- Add Canvases
-- Add single resources (media) to a Canvas
-- Add multiple resources - create image choices, collages and more
-- Browse IIIF (via IIIF Collections) to import Canvases
-- Load any compliant version 2 or version 3 Manifest
-- Edit all properties of Manifests and other IIIF resources
-- Allow developers to make use of the Manifest Editor's application services to quickly develop extensions
+There are a whole range of use cases for visually editing IIIF Manifests; from within the context of museums, libraries, archives and their workflows to research and education. The Manifest Editor can be used as is, or it can be further configured and customised to support specific requirements.
 
 ## Join the discussion
 
