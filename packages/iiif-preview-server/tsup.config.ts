@@ -9,6 +9,7 @@ export default defineConfig((options: Options) => ({
   entry: {
     index: "src/index.ts",
     "next-app-router": "src/wrappers/next-app-router.ts",
+    netlify: "src/stores/netlify-blob.ts",
   },
   external: ["next/server"],
   ...options,
