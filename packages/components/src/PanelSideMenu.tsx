@@ -15,7 +15,7 @@ interface PanelSideMenuProps {
 
 export function PanelSideMenu(props: PanelSideMenuProps) {
   return (
-    <div className="bg-white border-t border-r flex flex-col w-12 pb-2" data-open={props.open}>
+    <div className="bg-white border-me-gray-300 border-t border-r flex flex-col w-12 pb-2" data-open={props.open}>
       {props.items.map((panel) => (
         <Fragment key={panel.id}>
           {panel.divide ? <div className="flex-1 block w-2 min-h-1" /> : null}

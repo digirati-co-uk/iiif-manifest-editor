@@ -2,7 +2,6 @@
 
 import { ProjectProvider, useOptionalCurrentProject, useProjectCreators } from "@manifest-editor/projects";
 import { Layout, MultiAppProvider, PreviewConfiguration, ShellProvider, mapApp } from "@manifest-editor/shell";
-import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
 import * as aboutApp from "./apps/About";
 import * as splashApp from "./apps/Splash";
 import * as manifestEditorApp from "@manifest-editor/manifest-preset";
@@ -125,7 +124,6 @@ function InternalEditor() {
 
   return (
     <ShellProvider resource={project.resource} config={config}>
-      <GlobalStyle />
       <Layout header={<AppHeader />} />
     </ShellProvider>
   );

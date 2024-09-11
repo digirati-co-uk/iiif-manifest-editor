@@ -94,7 +94,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
           <MenuTrigger>
             <Button
               className={cn(
-                "rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-500 semibold uppercase text-[10px]",
+                "border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-500 semibold uppercase text-[10px]",
                 selectedIndex > hidden && "bg-me-primary-500 text-white rounded"
               )}
             >

@@ -13,7 +13,6 @@
   },
   "exports": {
     "./atoms/Button": "./atoms/Button.tsx",
-    "./GlobalStyle": "./atoms/GlobalStyle.ts",
     "./madoc/use-local-storage": "./madoc//use-local-storage.ts",
     "./atoms/ManifestEditorLogo": "./atoms/ManifestEditorLogo.tsx",
     "./components/organisms/PreviewButton/PreviewButton": "./components/organisms/PreviewButton/PreviewButton.tsx",
@@ -58,9 +57,9 @@
   "dependencies": {
     "@atlas-viewer/atlas": "^2.2.0",
     "@floating-ui/react": "^0.26.13",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "@iiif/helpers": "^1.2.12",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.3.1",
     "react-iiif-vault": "^1.2.1",
     "styled-components": "6.1.8",
     "classnames": "^2.5.1",
@@ -68,8 +67,8 @@
     "mitt": "^3.0.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.74",
-    "@types/react-dom": "^18.2.24",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@repo/eslint-config": "0.0.0"
   },
   "private": true

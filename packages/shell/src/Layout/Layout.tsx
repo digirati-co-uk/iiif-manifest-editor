@@ -327,7 +327,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
 
   // This is a big ol' work in progress.
   return (
-    <L.OuterWrapper className={props.className}>
+    <L.OuterWrapper className={`manifest-editor ${props.className}`}>
       {props.hideHeader ? null : (
         <L.Header>
           {props.header || null}

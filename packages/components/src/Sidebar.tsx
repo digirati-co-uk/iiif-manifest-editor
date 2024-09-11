@@ -5,8 +5,16 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   return <div className="w-full h-full flex flex-col overflow-hidden">{children}</div>;
 }
 
-export function SidebarContent({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("flex-1 min-h-0 overflow-y-auto", className)}>{children}</div>;
+export function SidebarContent({
+  children,
+  className,
+  padding,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  padding?: boolean;
+}) {
+  return <div className={cn("flex-1 min-h-0 overflow-y-auto", className, padding && "p-3")}>{children}</div>;
 }
 
 interface SidebarHeaderProps {

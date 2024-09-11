@@ -31,7 +31,7 @@ function CreatorGridItem(props: CreatorGridItemProps) {
       onAction={props.onClick}
       className={($s) =>
         twMerge(
-          "bg-white p-2 rounded-md border hover:border-me-primary-500",
+          "bg-white p-2 border-me-gray-300 rounded-md border hover:border-me-primary-500",
           $s.isFocused && "border-me-primary-500 outline-me-primary-500 outline-2"
         )
       }

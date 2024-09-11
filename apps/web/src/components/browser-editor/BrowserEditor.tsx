@@ -18,7 +18,6 @@ import {
 } from "@manifest-editor/shell";
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
-import { GlobalStyle } from "@manifest-editor/ui/GlobalStyle";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -290,7 +289,6 @@ export default function BrowserEditor({ id }: { id: string }) {
         <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
           <VaultProvider vault={vault}>
             <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
-              <GlobalStyle />
               <Layout header={header} />
               <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
             </ShellProvider>
