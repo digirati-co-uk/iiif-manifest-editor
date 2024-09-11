@@ -14,6 +14,7 @@ export interface StorageInterface {
     options: { expirationTtl: number; metadata: { ttl: number } }
   ) => Promise<void>;
   getWithMetadata: <T>(key: string) => Promise<{ value: StoredResource | null; metadata: T | null }>;
+  purgeCache?: () => Promise<void>;
 }
 
 export interface Config {

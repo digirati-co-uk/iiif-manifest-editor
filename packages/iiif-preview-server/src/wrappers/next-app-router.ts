@@ -22,13 +22,15 @@ export function createIIIFPreviewNextApiHandler({
   validate,
   getStore,
   config,
+  storage: customStorage,
 }: {
   apiPath: string;
   validate?: (request: NextRequest) => Promise<boolean>;
   getStore?: (request: NextRequest) => StorageInterface;
   config?: Partial<Config>;
+  storage?: StorageInterface;
 }) {
-  const storage = createMemoryStore();
+  const storage = customStorage || createMemoryStore();
   const baseUrl = getBaseUrl() + apiPath + "/";
   const baseConfig: Config & { baseUrl: string } = {
     ...config,

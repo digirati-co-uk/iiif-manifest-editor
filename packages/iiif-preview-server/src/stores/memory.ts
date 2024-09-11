@@ -30,7 +30,7 @@ export function createMemoryStore(): StorageInterface {
         options.metadata.ttl = Date.now() + options.expirationTtl;
       }
       if (!options.metadata.ttl) {
-        options.metadata.ttl = Date.now() + 1000 * 60 * 60 * 24 * 365; // 1 year
+        options.metadata.ttl = Date.now() + 1000 * 60 * 60 * 24 * 2; // 48 hours
       }
       data.set(key, { value, metadata: options.metadata as any });
     },
