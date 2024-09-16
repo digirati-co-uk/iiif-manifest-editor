@@ -25,6 +25,10 @@ export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
 export * from "./Forms";
 
+// From Styled Components
+export * from "./Layout";
+export * from "./ModularPanel";
+
 // Icons
 export * from "./icons/CreateCanvasIcon";
 export * from "./icons/AddImageIcon";

@@ -21,6 +21,7 @@ import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
 import { OverrideScrollbar } from "./ModularPanel.module.css";
+import { ModularPanelWrapper } from "@manifest-editor/components";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -41,59 +42,59 @@ export function useSetCustomTitle() {
   return useContext(LayoutTitleReactContext);
 }
 
-const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  transition: transform 300ms;
+// const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
+//   display: flex;
+//   flex-direction: column;
+//   position: relative;
+//   height: 100%;
+//   overflow: hidden;
+//   transition: transform 300ms;
 
-  &[data-header="false"] {
-    border-top: 1px solid #e4e7f0;
-  }
+//   &[data-header="false"] {
+//     border-top: 1px solid #e4e7f0;
+//   }
 
-  &[data-floating="true"] {
-    margin: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background: #fff;
-  }
+//   &[data-floating="true"] {
+//     margin: 10px;
+//     border-radius: 5px;
+//     overflow: hidden;
+//     background: #fff;
+//   }
 
-  &[data-state="entering"],
-  &[data-state="entered"] {
-    transform: translateX(0);
-  }
+//   &[data-state="entering"],
+//   &[data-state="entered"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="exiting"],
-  &[data-state="exited"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="exiting"],
+//   &[data-state="exited"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="exiting"][data-flipped="true"],
-  &[data-state="exited"][data-flipped="true"] {
-    transform: translateX(0);
-  }
+//   &[data-state="exiting"][data-flipped="true"],
+//   &[data-state="exited"][data-flipped="true"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="exiting"][data-flipped="false"],
-  &[data-state="exited"][data-flipped="false"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="exiting"][data-flipped="false"],
+//   &[data-state="exited"][data-flipped="false"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="entering"][data-flipped="true"],
-  &[data-state="entered"][data-flipped="true"] {
-    transform: translateX(0);
-  }
+//   &[data-state="entering"][data-flipped="true"],
+//   &[data-state="entered"][data-flipped="true"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="entering"][data-flipped="false"],
-  &[data-state="entered"][data-flipped="false"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="entering"][data-flipped="false"],
+//   &[data-state="entered"][data-flipped="false"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="unmounted"] {
-    transform: translateX(100%);
-  }
-`;
+//   &[data-state="unmounted"] {
+//     transform: translateX(100%);
+//   }
+// `;
 
 export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
   background: #fff;
@@ -168,7 +169,7 @@ export function ModularPanel({
   close,
   available = [],
   style,
-  noHeader,
+  noHeader = false,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -247,7 +248,7 @@ export function ModularPanel({
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} data-header={!noHeader}>
+      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} header={!noHeader}>
         {noHeader ? null : (
           <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
             <Dropdown style={{ display: "flex", height: "100%" }}>

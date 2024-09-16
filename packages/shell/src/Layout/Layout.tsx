@@ -10,13 +10,11 @@ import { useAppState } from "../AppContext/AppContext";
 import { useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import * as M from "./Layout.mobile";
-import * as L from "./Layout.styles";
 import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
 import { useMatchMedia } from "../hooks/use-match-media";
-import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { Modal, PanelSideMenu } from "@manifest-editor/components";
+import { Modal, PanelSideMenu, Layout as L } from "@manifest-editor/components";
 
 interface LayoutProps {
   header?: React.ReactNode;

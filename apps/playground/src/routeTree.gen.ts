@@ -80,12 +80,54 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  AboutLazyRoute,
-  ExplorerLazyRoute,
-  ShellLazyRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
+  '/explorer': typeof ExplorerLazyRoute
+  '/shell': typeof ShellLazyRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
+  '/explorer': typeof ExplorerLazyRoute
+  '/shell': typeof ShellLazyRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/about': typeof AboutLazyRoute
+  '/explorer': typeof ExplorerLazyRoute
+  '/shell': typeof ShellLazyRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/about' | '/explorer' | '/shell'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/about' | '/explorer' | '/shell'
+  id: '__root__' | '/' | '/about' | '/explorer' | '/shell'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexLazyRoute: typeof IndexLazyRoute
+  AboutLazyRoute: typeof AboutLazyRoute
+  ExplorerLazyRoute: typeof ExplorerLazyRoute
+  ShellLazyRoute: typeof ShellLazyRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexLazyRoute: IndexLazyRoute,
+  AboutLazyRoute: AboutLazyRoute,
+  ExplorerLazyRoute: ExplorerLazyRoute,
+  ShellLazyRoute: ShellLazyRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 

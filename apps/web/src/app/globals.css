@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Highlight all styled components to remove */
+/* *[class^="sc-"] {
+  background-color: rgba(255, 0, 0, 0.1);
+  outline: 1px solid red;
+} */

@@ -42,6 +42,14 @@ module.exports = {
         fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
       },
 
+      transitionProperty: {
+        "max-width": "max-width",
+        "min-width": "min-width",
+      },
+
+      transitionDuration: {
+        400: "400ms",
+      },
       // that is actual animation
       keyframes: () => ({
         fadeIn: {
