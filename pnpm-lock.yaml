@@ -61,10 +61,10 @@ importers:
         version: 14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1)(react@18.3.1)
       nextra:
         specifier: alpha
-        version: 3.0.0-alpha.37(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5)
+        version: 3.0.0-alpha.38(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5)
       nextra-theme-docs:
         specifier: alpha
-        version: 3.0.0-alpha.37(next@14.2.3)(nextra@3.0.0-alpha.37)(react-dom@18.3.1)(react@18.3.1)
+        version: 3.0.0-alpha.38(next@14.2.3)(nextra@3.0.0-alpha.38)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -412,6 +412,9 @@ importers:
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1)(react@18.3.1)
+      react-transition-group:
+        specifier: ^4.4.5
+        version: 4.4.5(react-dom@18.3.1)(react@18.3.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -434,6 +437,9 @@ importers:
       '@types/react-lazy-load-image-component':
         specifier: ^1.6.4
         version: 1.6.4
+      '@types/react-transition-group':
+        specifier: ^4.4.4
+        version: 4.4.10
       '@vitejs/plugin-react-swc':
         specifier: ^3.6.0
         version: 3.7.0(vite@5.4.4)
@@ -12680,11 +12686,11 @@ packages:
       - '@babel/core'
       - babel-plugin-macros
 
-  /nextra-theme-docs@3.0.0-alpha.37(next@14.2.3)(nextra@3.0.0-alpha.37)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-RZ4//hdzUJ40ejCW9C2qxZ+DxA2x3MeBT1Xdy3I41eS9h51Su2q4UPJA1GFlFbbNEj4TxKfglLfx7UfS4PFl0Q==}
+  /nextra-theme-docs@3.0.0-alpha.38(next@14.2.3)(nextra@3.0.0-alpha.38)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-I+x5fQpg9O4aNd8DBRSxPlIcf8U/VyK4RQCi7j4z3GEmfmttdGT0EksPRG2G3zbVtfJn8C31tdk0vI2/4gEu0A==}
     peerDependencies:
       next: '>=13'
-      nextra: 3.0.0-alpha.37
+      nextra: 3.0.0-alpha.38
       react: '>=16.13.1'
       react-dom: '>=16.13.1'
     dependencies:
@@ -12695,15 +12701,15 @@ packages:
       flexsearch: 0.7.43
       next: 14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1)(react@18.3.1)
       next-themes: 0.3.0(react-dom@18.3.1)(react@18.3.1)
-      nextra: 3.0.0-alpha.37(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5)
+      nextra: 3.0.0-alpha.38(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.23.8
     dev: false
 
-  /nextra@3.0.0-alpha.37(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5):
-    resolution: {integrity: sha512-3Ybxc7wjkYXPgvOtMAB38EDWH/sQxLrhl/6+kGszocR+zJLTCrVMFwoyN53+5yCUIUVGrUJALw0J9oCLWLNVVg==}
+  /nextra@3.0.0-alpha.38(@types/react@18.3.3)(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5):
+    resolution: {integrity: sha512-O0HnxHboLt7y4Opr33mAcLNZ+DQWD59K/P5D2ZukGi0nRcpRPuYApQdE4a8mKKJBONFKo6Xf/5+dlsls0ZZD9w==}
     engines: {node: '>=18'}
     peerDependencies:
       next: '>=13'

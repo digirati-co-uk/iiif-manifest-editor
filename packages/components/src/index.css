@@ -103,3 +103,53 @@
 .shape-line:hover {
   stroke: rgba(119, 24, 196, 0.5);
 }
+
+/** Modular Panel transition logic **/
+.ModularPanel {
+  transition: transform 400ms;
+
+  &[data-header="false"] {
+    border-top: 1px solid #e4e7f0;
+  }
+
+  &[data-floating="true"] {
+    margin: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  &[data-state="entering"],
+  &[data-state="entered"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="exiting"],
+  &[data-state="exited"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="exiting"][data-flipped="true"],
+  &[data-state="exited"][data-flipped="true"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="exiting"][data-flipped="false"],
+  &[data-state="exited"][data-flipped="false"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="entering"][data-flipped="true"],
+  &[data-state="entered"][data-flipped="true"] {
+    transform: translateX(0);
+  }
+
+  &[data-state="entering"][data-flipped="false"],
+  &[data-state="entered"][data-flipped="false"] {
+    transform: translateX(100%);
+  }
+
+  &[data-state="unmounted"] {
+    transform: translateX(100%);
+  }
+}

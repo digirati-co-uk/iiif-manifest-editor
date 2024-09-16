@@ -24,6 +24,8 @@ export * from "./MetadataContainer";
 export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
 export * from "./Forms";
+export * from "./Layout";
+export * from "./ModularPanel";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
