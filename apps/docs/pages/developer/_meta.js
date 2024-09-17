@@ -4,4 +4,5 @@ export default {
   "saving-manifests": { title: "Saving manifests" },
   configuration: { title: "Configuration" },
   previews: { title: "Previews" },
+  creators: { title: "Resource creators" },
 };
