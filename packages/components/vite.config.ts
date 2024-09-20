@@ -25,4 +25,7 @@ export default defineConfig({
     }),
     react(),
   ],
+  define: {
+    "global.setImmediate": "window.setImmediate",
+  },
 });

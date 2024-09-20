@@ -11,6 +11,7 @@ export default defineConfig((options: Options) => ({
   external: [
     // -
     "@iiif/helpers",
+    "react-aria-components",
   ],
   ...options,
 }));

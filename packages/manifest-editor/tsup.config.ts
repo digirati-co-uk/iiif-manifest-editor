@@ -11,4 +11,7 @@ export default defineConfig((options: Options) => ({
     "@iiif/helpers",
   ],
   ...options,
+  define: {
+    "global.setImmediate": "window.setImmediate",
+  },
 }));

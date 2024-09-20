@@ -15,7 +15,7 @@ export default defineConfig((options: Options) => ({
     ".css": "local-css",
   },
   define: {
-    global: "window",
+    "global.setImmediate": "window.setImmediate",
   },
   ...options,
 }));

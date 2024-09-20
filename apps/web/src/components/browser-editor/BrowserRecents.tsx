@@ -9,7 +9,8 @@ import { queryClient } from "../site/Provider";
 import { useContext, useEffect } from "react";
 
 export default function BrowserRecents() {
-  const { selectionManager } = useContext(TabListStateContext);
+  const { selectionManager } = useContext(TabListStateContext) || {};
+
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,

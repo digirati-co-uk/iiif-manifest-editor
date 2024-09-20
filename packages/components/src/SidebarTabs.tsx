@@ -1,5 +1,6 @@
 import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
+import { createHideableComponent } from "@react-aria/collections";
 import { cn } from "./utils";
 
 interface SidebarTabsProps {
@@ -59,6 +60,8 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
     };
   }, []);
 
+  const menuHidden = menu.filter((item, idx) => hidden >= menu.length - idx);
+
   return (
     <Tabs
       className="w-full flex-1 overflow-hidden flex flex-col"
@@ -72,7 +75,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
             const isHidden = hidden >= menu.length - idx;
             return (
               <Tab
-                ref={(el) => (itemsRef.current[idx] = el)}
+                ref={(el) => (itemsRef.current[idx] = el as any)}
                 id={item.id}
                 key={item.id}
                 className={(state) =>
@@ -91,37 +94,13 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
           })}
         </TabList>
         {hidden > 0 && (
-          <MenuTrigger>
-            <Button
-              className={cn(
-                "border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-500 semibold uppercase text-[10px]",
-                selectedIndex > hidden && "bg-me-primary-500 text-white rounded"
-              )}
-            >
-              MORE
-            </Button>
-            <Popover>
-              <Menu className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28">
-                {menu.map((item, idx) => {
-                  if (idx < menu.length - hidden) return null;
-                  return (
-                    <MenuItem
-                      className={(state) =>
-                        cn(
-                          "hover:bg-me-gray-100 p-1 rounded-sm text-sm",
-                          selectedKey === item.id && "ring ring-me-primary-500"
-                        )
-                      }
-                      key={item.id}
-                      onAction={() => onSelectionChange?.(item.id)}
-                    >
-                      {item.label}
-                    </MenuItem>
-                  );
-                })}
-              </Menu>
-            </Popover>
-          </MenuTrigger>
+          <MoreMenu
+            hidden={hidden}
+            menuHidden={menuHidden}
+            selectedIndex={selectedIndex}
+            selectedKey={selectedKey}
+            onSelectionChange={onSelectionChange}
+          />
         )}
       </div>
 
@@ -133,3 +112,49 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
     </Tabs>
   );
 }
+
+const MoreMenu = createHideableComponent<
+  {},
+  {
+    selectedIndex: number;
+    hidden: number;
+    menuHidden: Array<{ id: string; label: string }>;
+    selectedKey: string | undefined;
+    onSelectionChange?: (key: string) => void;
+  }
+>(({ selectedIndex, hidden, menuHidden, selectedKey, onSelectionChange }) => {
+  return (
+    <MenuTrigger>
+      <Button
+        className={cn(
+          "border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-500 semibold uppercase text-[10px]",
+          selectedIndex > hidden && "bg-me-primary-500 text-white rounded"
+        )}
+      >
+        MORE
+      </Button>
+      <Popover>
+        {menuHidden.length ? (
+          <Menu key={menuHidden.length} className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28">
+            {menuHidden.map((item, idx) => {
+              return (
+                <MenuItem
+                  className={(state) =>
+                    cn(
+                      "hover:bg-me-gray-100 p-1 rounded-sm text-sm",
+                      selectedKey === item.id && "ring ring-me-primary-500"
+                    )
+                  }
+                  key={item.id}
+                  onAction={() => onSelectionChange?.(item.id)}
+                >
+                  {item.label}
+                </MenuItem>
+              );
+            })}
+          </Menu>
+        ) : null}
+      </Popover>
+    </MenuTrigger>
+  );
+});
