@@ -12,6 +12,6 @@ export default defineConfig((options: Options) => ({
   ],
   ...options,
   define: {
-    "global.setImmediate": "((fn, ...args) => setTimeout(fn, 0, ...args))",
+    "global.setImmediate": "window.setImmediate",
   },
 }));

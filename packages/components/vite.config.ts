@@ -26,6 +26,6 @@ export default defineConfig({
     react(),
   ],
   define: {
-    "global.setImmediate": "((fn, ...args) => setTimeout(fn, 0, ...args))",
+    "global.setImmediate": "window.setImmediate",
   },
 });
