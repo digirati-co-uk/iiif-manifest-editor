@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/shell",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -44,8 +44,8 @@
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/client-vault": "1.1.0",
-    "@manifest-editor/components": "1.1.0",
-    "@manifest-editor/creator-api": "1.1.0",
+    "@manifest-editor/components": "^1.2.0",
+    "@manifest-editor/creator-api": "^1.2.0",
     "@manifest-editor/editor-api": "1.1.0",
     "immer": "^10.0.4",
     "localforage": "^1.10.0",
