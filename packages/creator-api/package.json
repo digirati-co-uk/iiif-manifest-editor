@@ -46,7 +46,7 @@
     "@iiif/parser": "^2.1.2",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
-    "@manifest-editor/editor-api": "^1.1.0",
+    "@manifest-editor/editor-api": "1.1.0",
     "polygon-editor": "^0.0.4",
     "react-iiif-vault": "^1.2.1"
   },
