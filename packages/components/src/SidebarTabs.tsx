@@ -59,6 +59,8 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
     };
   }, []);
 
+  const menuHidden = menu.filter((item, idx) => hidden < menu.length - idx);
+
   return (
     <Tabs
       className="w-full flex-1 overflow-hidden flex flex-col"
@@ -101,25 +103,30 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
               MORE
             </Button>
             <Popover>
-              <Menu className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28">
-                {menu.map((item, idx) => {
-                  if (idx < menu.length - hidden) return null;
-                  return (
-                    <MenuItem
-                      className={(state) =>
-                        cn(
-                          "hover:bg-me-gray-100 p-1 rounded-sm text-sm",
-                          selectedKey === item.id && "ring ring-me-primary-500"
-                        )
-                      }
-                      key={item.id}
-                      onAction={() => onSelectionChange?.(item.id)}
-                    >
-                      {item.label}
-                    </MenuItem>
-                  );
-                })}
-              </Menu>
+              {menuHidden ? (
+                <Menu
+                  key={menuHidden.length}
+                  className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28"
+                >
+                  {menu.map((item, idx) => {
+                    if (idx < menu.length - hidden) return null;
+                    return (
+                      <MenuItem
+                        className={(state) =>
+                          cn(
+                            "hover:bg-me-gray-100 p-1 rounded-sm text-sm",
+                            selectedKey === item.id && "ring ring-me-primary-500"
+                          )
+                        }
+                        key={item.id}
+                        onAction={() => onSelectionChange?.(item.id)}
+                      >
+                        {item.label}
+                      </MenuItem>
+                    );
+                  })}
+                </Menu>
+              ) : null}
             </Popover>
           </MenuTrigger>
         )}

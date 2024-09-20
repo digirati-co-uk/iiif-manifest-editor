@@ -1,5 +1,6 @@
 // All components.
 import "./index.css";
+import "./compat";
 
 export * from "./ActionButton";
 export * from "./Sidebar";
