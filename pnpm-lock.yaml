@@ -80,19 +80,19 @@ importers:
   apps/playground:
     dependencies:
       '@manifest-editor/creator-api':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/creator-api
       '@manifest-editor/iiif-browser':
         specifier: 1.1.0
         version: link:../../packages/iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/shell
       '@tanstack/react-router':
         specifier: ^1.26.9
         version: 1.34.3(react-dom@18.3.1)(react@18.3.1)
       manifest-editor:
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/manifest-editor
       react:
         specifier: ^18.3.1
@@ -129,7 +129,7 @@ importers:
   apps/vite-example:
     dependencies:
       manifest-editor:
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/manifest-editor
       react:
         specifier: ^18.3.1
@@ -184,25 +184,25 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/collection-preset':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../presets/collection-preset
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/components
       '@manifest-editor/editors':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/editors
       '@manifest-editor/iiif-browser':
         specifier: 1.1.0
         version: link:../../packages/iiif-browser
       '@manifest-editor/manifest-preset':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../presets/manifest-preset
       '@manifest-editor/projects':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/projects
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/shell
       '@tanstack/react-query':
         specifier: ^5.37.1
@@ -217,7 +217,7 @@ importers:
         specifier: ^6.2.1
         version: 6.2.1
       manifest-editor:
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/manifest-editor
       next:
         specifier: ^14.2.3
@@ -511,22 +511,22 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../components
       '@manifest-editor/creator-api':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../creator-api
       '@manifest-editor/editor-api':
         specifier: 1.1.0
         version: link:../editor-api
       '@manifest-editor/editors':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../editors
       '@manifest-editor/iiif-browser':
         specifier: 1.1.0
         version: link:../iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../shell
       react:
         specifier: ^18.3.1
@@ -624,16 +624,16 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../components
       '@manifest-editor/creator-api':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../creator-api
       '@manifest-editor/editor-api':
         specifier: 1.1.0
         version: link:../editor-api
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../shell
       classnames:
         specifier: ^2.5.1
@@ -883,22 +883,22 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/collection-preset':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../presets/collection-preset
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../components
       '@manifest-editor/editors':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../editors
       '@manifest-editor/iiif-browser':
         specifier: 1.1.0
         version: link:../iiif-browser
       '@manifest-editor/manifest-preset':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../presets/manifest-preset
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../shell
       react:
         specifier: ^18.3.1
@@ -953,7 +953,7 @@ importers:
         specifier: 1.1.0
         version: link:../client-vault
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../shell
       immer:
         specifier: ^10.0.4
@@ -1063,10 +1063,10 @@ importers:
         specifier: 1.1.0
         version: link:../client-vault
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../components
       '@manifest-editor/creator-api':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../creator-api
       '@manifest-editor/editor-api':
         specifier: 1.1.0
@@ -1209,16 +1209,16 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/creators':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/creators
       '@manifest-editor/editors':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/editors
       '@manifest-editor/iiif-browser':
         specifier: 1.1.0
         version: link:../../packages/iiif-browser
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/shell
       react:
         specifier: ^18.3.1
@@ -1267,16 +1267,16 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       '@manifest-editor/components':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/components
       '@manifest-editor/creators':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/creators
       '@manifest-editor/editors':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/editors
       '@manifest-editor/shell':
-        specifier: 1.1.0
+        specifier: 1.2.0
         version: link:../../packages/shell
       react:
         specifier: ^18.3.1
