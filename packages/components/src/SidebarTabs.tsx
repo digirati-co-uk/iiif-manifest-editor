@@ -103,13 +103,12 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
               MORE
             </Button>
             <Popover>
-              {menuHidden ? (
+              {menuHidden.length ? (
                 <Menu
                   key={menuHidden.length}
                   className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28"
                 >
-                  {menu.map((item, idx) => {
-                    if (idx < menu.length - hidden) return null;
+                  {menuHidden.map((item, idx) => {
                     return (
                       <MenuItem
                         className={(state) =>
