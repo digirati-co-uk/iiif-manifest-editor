@@ -75,7 +75,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
             const isHidden = hidden >= menu.length - idx;
             return (
               <Tab
-                ref={(el) => (itemsRef.current[idx] = el)}
+                ref={(el) => (itemsRef.current[idx] = el as any)}
                 id={item.id}
                 key={item.id}
                 className={(state) =>
