@@ -3,6 +3,7 @@
   "packages": [
     "packages/manifest-editor",
     "packages/client-vault",
+    "packages/components",
     "packages/creator-api",
     "packages/creators",
     "packages/editor-api",
@@ -17,6 +18,7 @@
   ],
   "publishDirectory": {
     "manifest-editor": "packages/manifest-editor",
+    "@manifest-editor/components": "packages/components",
     "@manifest-editor/client-vault": "packages/client-vault",
     "@manifest-editor/creator-api": "packages/creator-api",
     "@manifest-editor/creators": "packages/creators",
