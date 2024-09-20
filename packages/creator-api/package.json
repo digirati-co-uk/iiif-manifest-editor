@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/creator-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {

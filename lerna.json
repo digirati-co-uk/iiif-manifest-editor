@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "pnpmClient": "pnpm",
   "packages": ["packages/*", "presets/*", "apps/*"]
 }
