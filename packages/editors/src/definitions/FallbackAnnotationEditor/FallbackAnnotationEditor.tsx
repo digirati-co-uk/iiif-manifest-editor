@@ -1,7 +1,7 @@
 import { useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { ButtonGroup, Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";

@@ -10,11 +10,10 @@ import { useAppState } from "../AppContext/AppContext";
 import { useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import * as M from "./Layout.mobile";
-import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
 import { useMatchMedia } from "../hooks/use-match-media";
-import { Modal, PanelSideMenu, Layout as L } from "@manifest-editor/components";
+import { Modal, PanelSideMenu, Layout as L, HandleControls } from "@manifest-editor/components";
 
 interface LayoutProps {
   header?: React.ReactNode;
@@ -55,6 +54,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     minWidthPx: leftPanel?.options?.minWidth || 200,
     maxWidthPx: leftPanel?.options?.maxWidth || 720,
     loading,
+    leftPadding: 47,
   });
   const rightPanelResizer = useResizeLayout(`right-panel/${rightPanel?.id}`, {
     left: false,

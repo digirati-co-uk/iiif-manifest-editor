@@ -30,7 +30,7 @@ importers:
         specifier: ^12.3.0
         version: 12.4.0(typescript@5.6.2)
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: ^3.4.13
         version: 3.4.13
       tslib:
         specifier: ^2.6.2
@@ -120,7 +120,7 @@ importers:
         specifier: ^8.4.38
         version: 8.4.47
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: ^3.4.13
         version: 3.4.13
       vite:
         specifier: ^5.4.1
@@ -241,7 +241,7 @@ importers:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1)(react@18.3.1)
       tailwind-merge:
-        specifier: ^2.3.0
+        specifier: ^2.5.2
         version: 2.5.2
     devDependencies:
       '@contentlayer2/source-contentful':
@@ -323,7 +323,7 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: ^3.4.13
         version: 3.4.13
       typescript:
         specifier: ^5.4.5
@@ -422,7 +422,7 @@ importers:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1)(react@18.3.1)
       tailwind-merge:
-        specifier: ^2.3.0
+        specifier: ^2.5.2
         version: 2.5.2
     devDependencies:
       '@repo/eslint-config':
@@ -453,7 +453,7 @@ importers:
         specifier: ^8.4.38
         version: 8.4.47
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: ^3.4.13
         version: 3.4.13
       tsup:
         specifier: ^8.0.2
@@ -1214,6 +1214,9 @@ importers:
       '@iiif/presentation-3-normalized':
         specifier: ^0.9.7
         version: 0.9.7
+      '@manifest-editor/components':
+        specifier: 1.2.0
+        version: link:../../packages/components
       '@manifest-editor/creators':
         specifier: 1.2.0
         version: link:../../packages/creators

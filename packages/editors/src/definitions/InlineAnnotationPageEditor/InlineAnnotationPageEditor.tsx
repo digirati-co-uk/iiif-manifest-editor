@@ -4,7 +4,7 @@ import { isSpecificResource, toRef } from "@iiif/parser";
 import invariant from "tiny-invariant";
 import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";

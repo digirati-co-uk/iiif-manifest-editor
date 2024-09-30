@@ -3,7 +3,7 @@ import { MetadataContainer } from "@manifest-editor/components";
 import { Fragment, useState } from "react";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EmptyState } from "@manifest-editor/components";
 import { ReorderList } from "../../components/ReorderList/ReorderList.dndkit";

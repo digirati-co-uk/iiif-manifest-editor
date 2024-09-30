@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
+import { Form } from "@manifest-editor/components";
 
 export const AddAnother = styled.div<{ $active?: boolean }>`
   display: flex;
@@ -20,11 +21,7 @@ export const FormFieldWrapper = styled.div`
   margin-bottom: 0.5em;
 `;
 
-export const Label = styled.label`
-  font-size: 1em;
-  padding-left: 0.5em;
-  font-weight: 500;
-`;
+export const Label = Form.Label;
 
 export const EmptyLanguageField = styled(ButtonReset as any)`
   padding: 0.8em 1em;

@@ -1,7 +1,7 @@
 import { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { InternationalString } from "@iiif/presentation-3";
 import { useEffect, useState } from "react";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { ErrorMessage } from "@manifest-editor/ui/atoms/callouts/ErrorMessage";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
 import { CanvasPanel } from "react-iiif-vault";

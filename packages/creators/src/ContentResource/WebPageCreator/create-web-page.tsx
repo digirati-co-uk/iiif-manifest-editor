@@ -2,7 +2,7 @@ import { InternationalString } from "@iiif/presentation-3";
 import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
 import { LanguageFieldEditor, InputContainer, InputLabel, Input } from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { FormEvent, useState } from "react";
 
 export interface CreateWebpagePayload {

@@ -1,7 +1,7 @@
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
 import { createAppActions } from "../../helpers/create-app-actions";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 

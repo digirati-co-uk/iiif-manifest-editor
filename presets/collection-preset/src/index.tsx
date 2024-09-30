@@ -22,7 +22,7 @@ import {
 import { descriptiveProperties, technicalProperties, linkingProperties } from "@manifest-editor/editors";
 import { manifestBrowserCreator } from "@manifest-editor/creators";
 import { useCollection } from "react-iiif-vault";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 
 export default { id: "collection-editor", title: "Collection Editor", project: true, projectType: "Collection" };

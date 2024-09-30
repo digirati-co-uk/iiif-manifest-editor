@@ -1,5 +1,5 @@
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";

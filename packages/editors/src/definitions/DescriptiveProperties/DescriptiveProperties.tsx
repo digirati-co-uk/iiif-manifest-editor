@@ -6,7 +6,7 @@ import { useState } from "react";
 import $ from "./DescriptiveProperties.module.css";
 import { allRights } from "@manifest-editor/editor-api";
 import { useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { InputContainer, InputLabel, Input, InputFieldset } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";

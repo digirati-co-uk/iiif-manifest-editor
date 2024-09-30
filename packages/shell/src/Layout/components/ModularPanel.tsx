@@ -21,7 +21,14 @@ import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
 import { OverrideScrollbar } from "./ModularPanel.module.css";
-import { ModularPanelWrapper } from "@manifest-editor/components";
+import {
+  ModularPanelWrapper,
+  ModularPanelLabel,
+  ModularPanelButton,
+  ModularPanelHeader,
+  ModularPanelContent,
+  ModulePanelSpacer,
+} from "@manifest-editor/components";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -96,68 +103,68 @@ export function useSetCustomTitle() {
 //   }
 // `;
 
-export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
-  background: #fff;
-  display: flex;
-  height: 2.8em;
-  align-items: center;
-  z-index: 2;
+// export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
+//   background: #fff;
+//   display: flex;
+//   height: 2.8em;
+//   align-items: center;
+//   z-index: 2;
 
-  &[data-tabs="true"] {
-    box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  }
+//   &[data-tabs="true"] {
+//     box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+//   }
 
-  &[data-tabs="false"] {
-    box-shadow:
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.17),
-      inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  }
+//   &[data-tabs="false"] {
+//     box-shadow:
+//       inset 0 -1px 0 0 rgba(0, 0, 0, 0.17),
+//       inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+//   }
 
-  &[data-error="true"] {
-    color: #b61717;
-    background: #ffc2d2;
-    box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
-  }
-`;
+//   &[data-error="true"] {
+//     color: #b61717;
+//     background: #ffc2d2;
+//     box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
+//   }
+// `;
 
-export const ModulePanelButton = styled.button`
-  border: none;
-  background: transparent;
-  padding: 0 0.4em;
-  margin: 0.3em;
-  border-radius: 3px;
-  &:hover {
-    background: #eee;
-  }
-  svg {
-    font-size: 1.2em;
-  }
-`;
+// export const ModularPanelButton = styled.button`
+//   border: none;
+//   background: transparent;
+//   padding: 0 0.4em;
+//   margin: 0.3em;
+//   border-radius: 3px;
+//   &:hover {
+//     background: #eee;
+//   }
+//   svg {
+//     font-size: 1.2em;
+//   }
+// `;
 
-const ModulePanelSpacer = styled.div`
-  flex: 1 1 0px;
-`;
+// const ModulePanelSpacer = styled.div`
+//   flex: 1 1 0px;
+// `;
 
-const ModularPanelLabel = styled.h2`
-  font-size: 0.875em;
-  flex: 1 1 0px;
-  padding-left: 1em;
-  text-align: center;
-  align-self: center;
-`;
+// const ModularPanelLabel = styled.h2`
+//   font-size: 0.875em;
+//   flex: 1 1 0px;
+//   padding-left: 1em;
+//   text-align: center;
+//   align-self: center;
+// `;
 
-const ModularPanelContent = styled.div`
-  flex: 1 1 0px;
-  display: flex;
+// const ModularPanelContent = styled.div`
+//   flex: 1 1 0px;
+//   display: flex;
 
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+//   min-height: 0;
+//   overflow-y: auto;
+//   overflow-x: hidden;
 
-  > * {
-    min-width: 0;
-  }
-`;
+//   > * {
+//     min-width: 0;
+//   }
+// `;
 
 export function ModularPanel({
   panel,
@@ -235,15 +242,15 @@ export function ModularPanel({
 
   const backButton =
     panel.backAction || state.stack.length ? (
-      <ModulePanelButton onClick={backAction}>
+      <ModularPanelButton onClick={backAction}>
         <BackIcon />
-      </ModulePanelButton>
+      </ModularPanelButton>
     ) : null;
 
   const closeButton = (
-    <ModulePanelButton onClick={close || actions.close}>
+    <ModularPanelButton onClick={close || actions.close}>
       <CloseIcon />
-    </ModulePanelButton>
+    </ModularPanelButton>
   );
 
   return (
@@ -280,13 +287,13 @@ export function ModularPanel({
             )}
             {pinnable ? (
               (state as PinnablePanelState).pinned ? (
-                <ModulePanelButton onClick={pinActions.unpin}>
+                <ModularPanelButton onClick={pinActions.unpin}>
                   <StarIcon fill="orange" />
-                </ModulePanelButton>
+                </ModularPanelButton>
               ) : (
-                <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
+                <ModularPanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
                   <StarIcon fill="#ddd" />
-                </ModulePanelButton>
+                </ModularPanelButton>
               )
             ) : null}
             {panel.renderCloseAction

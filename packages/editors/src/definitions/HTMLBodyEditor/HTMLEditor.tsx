@@ -1,6 +1,6 @@
 import { Reference } from "@iiif/presentation-3";
 import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { InputContainer, InputLabel } from "../../components/Input";
 import { TextGranularityEditor } from "../../components/TextGranularityEditor/TextGranularityEditor";
 import { RichTextLanguageField } from "../../form-elements/RichTextLanguageField/RichTextLanguageField";

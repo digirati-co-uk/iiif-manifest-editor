@@ -4,7 +4,7 @@ import { CanvasContext } from "react-iiif-vault";
 import { useToggleList } from "../../helpers";
 import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { CanvasListPreview } from "../../components/CanvasListPreview/CanvasListPreview";

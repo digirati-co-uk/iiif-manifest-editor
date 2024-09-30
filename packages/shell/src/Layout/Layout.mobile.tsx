@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { ModularPanelHeader } from "../Layout/components/ModularPanel";
+import { ModularPanelHeader } from "@manifest-editor/components";
 
 export const Container = styled.div`
   position: relative;
