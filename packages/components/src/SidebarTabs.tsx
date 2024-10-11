@@ -1,6 +1,6 @@
+import { createHideableComponent } from "@react-aria/collections";
 import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
-import { createHideableComponent } from "@react-aria/collections";
 import { cn } from "./utils";
 
 interface SidebarTabsProps {
@@ -14,6 +14,7 @@ interface SidebarTabsProps {
   selectedKey?: string;
   onSelectionChange?: (key: string) => void;
 }
+
 export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: SidebarTabsProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState(0);
