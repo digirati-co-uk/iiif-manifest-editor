@@ -10,8 +10,6 @@ export function HTMLEditor() {
 
   const body = annotation.body.get();
 
-  console.log("body", body);
-
   return (
     <PaddedSidebarContainer>
       {body.map((item) => (
