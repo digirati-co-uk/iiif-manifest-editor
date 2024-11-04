@@ -54,7 +54,6 @@ const decorator = new CompositeDecorator([
 ]);
 
 export function RichTextLanguageField(props: RichTextLanguageField) {
-  console.log(props);
   const isHtml = props.value[0] === "<";
   const editorRef = useRef<Editor>(null);
   const [htmlMode, setHtmlMode] = useState(isHtml);
