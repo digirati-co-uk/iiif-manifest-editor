@@ -9,10 +9,10 @@ export function ManifestOverviewEmptyState({ onCreate, canCreate }: { onCreate: 
         onClick={canCreate ? onCreate : undefined}
         className="border-2 border-dotted bg-black/5 aspect-[3/4] rounded w-32 border-black"
       />
-      <div className="font-bold text-lg">Good to go!</div>
-      <div className="max-w-xl px-5">
-        Add a title and top level information for this manifest using the editing panel, and then add some canvases and
-        content.
+      <div className="font-bold text-lg">Let's get started!</div>
+      <div className="max-w-xl px-5 my-4">
+        Add a title and top level information for this manifest using the editing panel on the right, and then add some
+        canvases and content.
       </div>
       {canCreate ? (
         <Button

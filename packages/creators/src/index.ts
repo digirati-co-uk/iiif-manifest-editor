@@ -1,19 +1,20 @@
+import { audioAnnotation } from "./Annotation/AudioAnnotation";
+import { captionedImageAnnotation } from "./Annotation/CaptionedImageAnnotation";
+import { htmlAnnotation } from "./Annotation/HTMLAnnotation";
+import { imageServiceAnnotation } from "./Annotation/ImageServiceAnnotation";
+import { imageUrlAnnotation } from "./Annotation/ImageUrlAnnotation";
+import { noBodyAnnotation } from "./Annotation/NoBodyAnnotation";
+import { videoAnnotation } from "./Annotation/VideoAnnotation";
+import { emptyAnnotationPage } from "./AnnotationPage/EmptyAnnotationPage";
 import { emptyCanvas } from "./Canvas/EmptyCanvas";
+import { internalCanvas } from "./Canvas/InternalCanvas";
+import { htmlBodyCreator } from "./ContentResource/HTMLBodyCreator";
+import { iiifBrowserCreator } from "./ContentResource/IIIFBrowserCreator";
+import { imageServiceCreator } from "./ContentResource/ImageServiceCreator";
+import { imageUrlCreator } from "./ContentResource/ImageUrlCreator";
 import { plaintextCreator } from "./ContentResource/PlaintextCreator";
 import { webPageCreator } from "./ContentResource/WebPageCreator";
-import { htmlBodyCreator } from "./ContentResource/HTMLBodyCreator";
-import { htmlAnnotation } from "./Annotation/HTMLAnnotation";
-import { emptyAnnotationPage } from "./AnnotationPage/EmptyAnnotationPage";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
-import { imageUrlCreator } from "./ContentResource/ImageUrlCreator";
-import { imageServiceCreator } from "./ContentResource/ImageServiceCreator";
-import { imageServiceAnnotation } from "./Annotation/ImageServiceAnnotation";
-import { noBodyAnnotation } from "./Annotation/NoBodyAnnotation";
-import { iiifBrowserCreator } from "./ContentResource/IIIFBrowserCreator";
-import { internalCanvas } from "./Canvas/InternalCanvas";
-import { imageUrlAnnotation } from "./Annotation/ImageUrlAnnotation";
-import { audioAnnotation } from "./Annotation/AudioAnnotation";
-import { videoAnnotation } from "./Annotation/VideoAnnotation";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 
 export const allCreators = [
@@ -34,6 +35,7 @@ export const allCreators = [
   emptyAnnotationPage,
   noBodyAnnotation,
   internalCanvas,
+  captionedImageAnnotation,
 ];
 
 export {
@@ -53,6 +55,7 @@ export {
   imageUrlAnnotation,
   audioAnnotation,
   videoAnnotation,
+  captionedImageAnnotation,
   // Not included
   manifestBrowserCreator,
 };

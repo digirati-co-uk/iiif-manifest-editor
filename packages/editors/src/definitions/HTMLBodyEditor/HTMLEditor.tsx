@@ -1,4 +1,4 @@
-import { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/presentation-3";
 import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { InputContainer, InputLabel } from "../../components/Input";
@@ -13,7 +13,7 @@ export function HTMLEditor() {
   return (
     <PaddedSidebarContainer>
       {body.map((item) => (
-        <HTMLEditorItem item={item as any} />
+        <HTMLEditorItem key={item.id} item={item as any} />
       ))}
     </PaddedSidebarContainer>
   );
@@ -25,7 +25,13 @@ function HTMLEditorItem({ item }: { item: Reference }) {
 
   const { textGranularity } = editor.extensions;
   const { language, value } = editor.descriptive;
-  const { motivation } = editor.technical;
+  const { motivation, mediaType } = editor.technical;
+
+  const mt = mediaType.get();
+
+  if (mt === "Image") {
+    return <img src={item.id} alt="" />;
+  }
 
   return (
     <>
@@ -41,7 +47,7 @@ function HTMLEditorItem({ item }: { item: Reference }) {
         />
       </InputContainer>
 
-      {motivation.get() !== "painting" ? (
+      {i18n.textGranularityEnabled && motivation.get() !== "painting" ? (
         <TextGranularityEditor
           focusId={textGranularity.focusId()}
           value={textGranularity.get()}
