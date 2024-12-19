@@ -1,0 +1,34 @@
+# Editors
+
+```ts
+import { Editor } from "@manifest-editor/editor-api";
+import { Vault } from "@iiif/helpers";
+
+const vault = new Vault();
+const editor = new Editor(vault);
+const empty = {
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  id: "/config/manifest-templates/with-provider.json",
+  type: "Manifest",
+  label: {
+    en: [""],
+  },
+  items: [],
+};
+
+vault.loadSync(empty.id, empty);
+
+const thisManifest = editor.edit({ id: empty.id, type: "Manifest" });
+
+thisManifest.descriptive.label.set({ en: ["A new label"] });
+thisManifest.descriptive.summary.set({ en: ["A summary"] });
+
+console.log(thisManifest.descriptive.label.get());
+
+document.getElementById("app").innerHTML = `
+  ${JSON.stringify(thisManifest.descriptive.label.get())} <br />
+  ${JSON.stringify(thisManifest.descriptive.summary.get())} <br />
+`;
+```
+
+Source: https://codesandbox.io/p/sandbox/manifest-editor-api-iz784i?file=%2Fsrc%2Findex.js%3A22%2C63

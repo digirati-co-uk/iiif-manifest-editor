@@ -25,6 +25,12 @@ export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
 export * from "./Forms";
 
+// From Styled Components
+export * from "./Layout";
+export * from "./ModularPanel";
+export * from "./HandleControls";
+export * from "./PaddedSidebarContainer";
+
 // Icons
 export * from "./icons/CreateCanvasIcon";
 export * from "./icons/AddImageIcon";
@@ -37,6 +43,9 @@ export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
 export * from "./icons/AddIcon";
+export * from "./icons/CloseIcon";
+export * from "./icons/DownIcon";
+export * from "./icons/ResetIcon";
 
 // Helpers
 export * from "./hooks";

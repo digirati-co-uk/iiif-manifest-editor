@@ -1,4 +1,4 @@
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { ErrorMessage } from "@manifest-editor/ui/madoc/components/callouts/ErrorMessage";
 import { Button, CalltoButton } from "@manifest-editor/ui/atoms/Button";
 import { ExperimentalMessage } from "@manifest-editor/ui/madoc/components/callouts/ExperimentalMessage";

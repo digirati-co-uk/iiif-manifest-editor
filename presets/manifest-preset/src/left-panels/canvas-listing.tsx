@@ -134,20 +134,18 @@ export function CanvasListing({
         </SidebarContent>
       ) : (
         <SidebarContent className="p-3">
-          <InputContainer $wide>
-            <CanvasList
-              id={items.focusId()}
-              list={items.get() || []}
-              inlineHandle={false}
-              activeId={canvas?.resource.source.id}
-              reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
-              onSelect={(item, idx) => {
-                open({ id: "current-canvas" });
-                canvasActions.edit(item, idx);
-              }}
-              createActions={createAppActions(items)}
-            />
-          </InputContainer>
+          <CanvasList
+            id={items.focusId()}
+            list={items.get() || []}
+            inlineHandle={false}
+            activeId={canvas?.resource.source.id}
+            reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
+            onSelect={(item, idx) => {
+              open({ id: "current-canvas" });
+              canvasActions.edit(item, idx);
+            }}
+            createActions={createAppActions(items)}
+          />
         </SidebarContent>
       )}
     </Sidebar>

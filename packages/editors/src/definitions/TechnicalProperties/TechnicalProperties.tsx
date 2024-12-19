@@ -1,5 +1,5 @@
 import { useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { ViewingDirection } from "@iiif/presentation-3";

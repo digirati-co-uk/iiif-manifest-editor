@@ -2,7 +2,7 @@ import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator
 import { InputContainer, InputLabel, RichTextLanguageField } from "@manifest-editor/editors";
 import { useConfig } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useState } from "react";
 
 export interface CreateHTMLBodyPayload {

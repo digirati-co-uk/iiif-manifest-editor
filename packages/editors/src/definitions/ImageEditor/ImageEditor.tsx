@@ -2,7 +2,7 @@ import { useManifest, useVault } from "react-iiif-vault";
 import { toRef } from "@iiif/parser";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { InputContainer, InputLabel, Input } from "../../components/Input";

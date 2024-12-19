@@ -8,7 +8,7 @@ import {
   canonicalServiceUrl,
 } from "@iiif/parser/image-3";
 import { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { InputContainer, InputLabel, Input } from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 

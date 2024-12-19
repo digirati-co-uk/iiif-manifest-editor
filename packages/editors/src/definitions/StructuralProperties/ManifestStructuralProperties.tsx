@@ -1,6 +1,6 @@
 import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { InputContainer, InputLabel, InputLabelEdit } from "../../components/Input";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";

@@ -21,6 +21,14 @@ import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
 import { OverrideScrollbar } from "./ModularPanel.module.css";
+import {
+  ModularPanelWrapper,
+  ModularPanelLabel,
+  ModularPanelButton,
+  ModularPanelHeader,
+  ModularPanelContent,
+  ModulePanelSpacer,
+} from "@manifest-editor/components";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -41,122 +49,122 @@ export function useSetCustomTitle() {
   return useContext(LayoutTitleReactContext);
 }
 
-const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  transition: transform 300ms;
+// const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: TransitionStatus; $flipped?: boolean }>`
+//   display: flex;
+//   flex-direction: column;
+//   position: relative;
+//   height: 100%;
+//   overflow: hidden;
+//   transition: transform 300ms;
 
-  &[data-header="false"] {
-    border-top: 1px solid #e4e7f0;
-  }
+//   &[data-header="false"] {
+//     border-top: 1px solid #e4e7f0;
+//   }
 
-  &[data-floating="true"] {
-    margin: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background: #fff;
-  }
+//   &[data-floating="true"] {
+//     margin: 10px;
+//     border-radius: 5px;
+//     overflow: hidden;
+//     background: #fff;
+//   }
 
-  &[data-state="entering"],
-  &[data-state="entered"] {
-    transform: translateX(0);
-  }
+//   &[data-state="entering"],
+//   &[data-state="entered"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="exiting"],
-  &[data-state="exited"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="exiting"],
+//   &[data-state="exited"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="exiting"][data-flipped="true"],
-  &[data-state="exited"][data-flipped="true"] {
-    transform: translateX(0);
-  }
+//   &[data-state="exiting"][data-flipped="true"],
+//   &[data-state="exited"][data-flipped="true"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="exiting"][data-flipped="false"],
-  &[data-state="exited"][data-flipped="false"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="exiting"][data-flipped="false"],
+//   &[data-state="exited"][data-flipped="false"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="entering"][data-flipped="true"],
-  &[data-state="entered"][data-flipped="true"] {
-    transform: translateX(0);
-  }
+//   &[data-state="entering"][data-flipped="true"],
+//   &[data-state="entered"][data-flipped="true"] {
+//     transform: translateX(0);
+//   }
 
-  &[data-state="entering"][data-flipped="false"],
-  &[data-state="entered"][data-flipped="false"] {
-    transform: translateX(100%);
-  }
+//   &[data-state="entering"][data-flipped="false"],
+//   &[data-state="entered"][data-flipped="false"] {
+//     transform: translateX(100%);
+//   }
 
-  &[data-state="unmounted"] {
-    transform: translateX(100%);
-  }
-`;
+//   &[data-state="unmounted"] {
+//     transform: translateX(100%);
+//   }
+// `;
 
-export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
-  background: #fff;
-  display: flex;
-  height: 2.8em;
-  align-items: center;
-  z-index: 2;
+// export const ModularPanelHeader = styled.div<{ $tabs?: boolean; $error?: boolean }>`
+//   background: #fff;
+//   display: flex;
+//   height: 2.8em;
+//   align-items: center;
+//   z-index: 2;
 
-  &[data-tabs="true"] {
-    box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  }
+//   &[data-tabs="true"] {
+//     box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+//   }
 
-  &[data-tabs="false"] {
-    box-shadow:
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.17),
-      inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
-  }
+//   &[data-tabs="false"] {
+//     box-shadow:
+//       inset 0 -1px 0 0 rgba(0, 0, 0, 0.17),
+//       inset 0 1px 0 0 rgba(0, 0, 0, 0.17);
+//   }
 
-  &[data-error="true"] {
-    color: #b61717;
-    background: #ffc2d2;
-    box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
-  }
-`;
+//   &[data-error="true"] {
+//     color: #b61717;
+//     background: #ffc2d2;
+//     box-shadow: inset 0 -5px 10px 0 rgba(255, 255, 255, 0.5);
+//   }
+// `;
 
-export const ModulePanelButton = styled.button`
-  border: none;
-  background: transparent;
-  padding: 0 0.4em;
-  margin: 0.3em;
-  border-radius: 3px;
-  &:hover {
-    background: #eee;
-  }
-  svg {
-    font-size: 1.2em;
-  }
-`;
+// export const ModularPanelButton = styled.button`
+//   border: none;
+//   background: transparent;
+//   padding: 0 0.4em;
+//   margin: 0.3em;
+//   border-radius: 3px;
+//   &:hover {
+//     background: #eee;
+//   }
+//   svg {
+//     font-size: 1.2em;
+//   }
+// `;
 
-const ModulePanelSpacer = styled.div`
-  flex: 1 1 0px;
-`;
+// const ModulePanelSpacer = styled.div`
+//   flex: 1 1 0px;
+// `;
 
-const ModularPanelLabel = styled.h2`
-  font-size: 0.875em;
-  flex: 1 1 0px;
-  padding-left: 1em;
-  text-align: center;
-  align-self: center;
-`;
+// const ModularPanelLabel = styled.h2`
+//   font-size: 0.875em;
+//   flex: 1 1 0px;
+//   padding-left: 1em;
+//   text-align: center;
+//   align-self: center;
+// `;
 
-const ModularPanelContent = styled.div`
-  flex: 1 1 0px;
-  display: flex;
+// const ModularPanelContent = styled.div`
+//   flex: 1 1 0px;
+//   display: flex;
 
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+//   min-height: 0;
+//   overflow-y: auto;
+//   overflow-x: hidden;
 
-  > * {
-    min-width: 0;
-  }
-`;
+//   > * {
+//     min-width: 0;
+//   }
+// `;
 
 export function ModularPanel({
   panel,
@@ -168,7 +176,7 @@ export function ModularPanel({
   close,
   available = [],
   style,
-  noHeader,
+  noHeader = false,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -234,20 +242,20 @@ export function ModularPanel({
 
   const backButton =
     panel.backAction || state.stack.length ? (
-      <ModulePanelButton onClick={backAction}>
+      <ModularPanelButton onClick={backAction}>
         <BackIcon />
-      </ModulePanelButton>
+      </ModularPanelButton>
     ) : null;
 
   const closeButton = (
-    <ModulePanelButton onClick={close || actions.close}>
+    <ModularPanelButton onClick={close || actions.close}>
       <CloseIcon />
-    </ModulePanelButton>
+    </ModularPanelButton>
   );
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} data-header={!noHeader}>
+      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} header={!noHeader}>
         {noHeader ? null : (
           <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
             <Dropdown style={{ display: "flex", height: "100%" }}>
@@ -279,13 +287,13 @@ export function ModularPanel({
             )}
             {pinnable ? (
               (state as PinnablePanelState).pinned ? (
-                <ModulePanelButton onClick={pinActions.unpin}>
+                <ModularPanelButton onClick={pinActions.unpin}>
                   <StarIcon fill="orange" />
-                </ModulePanelButton>
+                </ModularPanelButton>
               ) : (
-                <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
+                <ModularPanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
                   <StarIcon fill="#ddd" />
-                </ModulePanelButton>
+                </ModularPanelButton>
               )
             ) : null}
             {panel.renderCloseAction

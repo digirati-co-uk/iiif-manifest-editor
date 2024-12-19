@@ -1,7 +1,8 @@
-const colors = require("tailwindcss/colors");
+import colors from "tailwindcss/colors";
+import typography from "@tailwindcss/typography";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./content/**/*.{md,mdx}",
@@ -58,5 +59,5 @@ module.exports = {
     },
     extend: {},
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [typography],
 };

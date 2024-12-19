@@ -4,7 +4,7 @@ import { CreatorContext, CreatorFunctionContext, CreatorResource } from "@manife
 import { InputContainer, InputLabel, Input } from "@manifest-editor/editors";
 import { getImageDimensions, getFormat } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 
 export interface CreateImageUrlPayload {
   url: string;

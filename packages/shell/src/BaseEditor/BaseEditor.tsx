@@ -4,12 +4,12 @@ import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { useVault } from "react-iiif-vault";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
-import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
+import { useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { EditableResource } from "../EditingStack/EditingStack.types";
 import { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useApp } from "../AppContext/AppContext";
-import { SidebarTabs } from "@manifest-editor/components";
+import { SidebarTabs, ModularPanelButton } from "@manifest-editor/components";
 import { EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
@@ -18,9 +18,9 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
 
   if (stack.length) {
     return (
-      <ModulePanelButton onClick={back}>
+      <ModularPanelButton onClick={back}>
         <BackIcon />
-      </ModulePanelButton>
+      </ModularPanelButton>
     );
   }
 
@@ -33,13 +33,13 @@ export function BaseEditorCloseButton({ closeAction, fallback }: any) {
 
   if (current || stack.length) {
     return (
-      <ModulePanelButton
+      <ModularPanelButton
         onClick={() => {
           closeAction();
         }}
       >
         <CloseIcon />
-      </ModulePanelButton>
+      </ModularPanelButton>
     );
   }
 
