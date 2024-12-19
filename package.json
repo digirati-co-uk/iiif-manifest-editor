@@ -6,7 +6,7 @@
     "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git"
   },
   "scripts": {
-    "build": "turbo build --filter=!playground --filter=!01-example-editor --concurrency 5",
+    "build": "turbo build --filter=!playground --filter=!01-example-editor",
     "build-all": "turbo build",
     "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
     "dev": "turbo dev",
