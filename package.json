@@ -18,7 +18,7 @@
     "release": "lerna publish --no-private"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.4.0",
+    "@netlify/plugin-nextjs": "^5.9.1",
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",
     "prettier": "^3.2.5",
