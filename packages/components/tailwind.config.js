@@ -1,8 +1,15 @@
-const colors = require("tailwindcss/colors");
+import colors from "tailwindcss/colors";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./stories/**/*.{js,jsx,ts,tsx}"],
+export default {
+  content: {
+    relative: true,
+    files: [
+      //
+      "./src/**/*.{js,jsx,ts,tsx}",
+      "./stories/**/*.{js,jsx,ts,tsx}",
+    ],
+  },
   theme: {
     colors: {
       //
@@ -42,6 +49,14 @@ module.exports = {
         fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
       },
 
+      transitionProperty: {
+        "max-width": "max-width",
+        "min-width": "min-width",
+      },
+
+      transitionDuration: {
+        400: "400ms",
+      },
       // that is actual animation
       keyframes: () => ({
         fadeIn: {

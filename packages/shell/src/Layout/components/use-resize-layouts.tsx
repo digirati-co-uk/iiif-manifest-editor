@@ -31,6 +31,7 @@ export function useResizeLayout(
     minWidthPct?: number;
     onDragEnd?: () => void;
     loading?: boolean;
+    leftPadding?: number;
   } = {}
 ) {
   const container = useRef<HTMLDivElement | null>(null);
@@ -128,12 +129,12 @@ export function useResizeLayout(
         if (current) {
           const { x, width } = current.getBoundingClientRect();
 
+          const xReal = (options.leftPadding || 0) + x;
           const isLeft = options.left || false;
 
           const maxWidthPct = getMaxWidthPct(width, 0.8, options.maxWidthPct, options.maxWidthPx);
           const minWidthPct = getMaxWidthPct(width, 0.2, options.minWidthPct, options.minWidthPx);
-
-          newPct.current = (width + x - e.pageX - 5) / width;
+          newPct.current = (width + xReal - e.pageX - 2) / width;
           if (isLeft) {
             newPct.current = 1 - newPct.current;
           }

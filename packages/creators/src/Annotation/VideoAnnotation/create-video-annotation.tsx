@@ -3,7 +3,7 @@ import { InternationalString } from "@iiif/presentation-3";
 import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
 import { InputContainer, InputLabel, Input, LanguageFieldEditor, DimensionsTriplet } from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { ErrorMessage } from "@manifest-editor/ui/atoms/callouts/ErrorMessage";
 import { useState, useEffect } from "react";
 import { VideoPlayer } from "@manifest-editor/ui/VideoPlayer";

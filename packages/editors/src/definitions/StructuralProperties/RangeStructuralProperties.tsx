@@ -4,7 +4,7 @@ import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { createAppActions } from "../../helpers/create-app-actions";
 import { toRef } from "@iiif/parser";
 import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useToggleList } from "../../helpers";
 import { RangeList } from "../../components/RangeList";
 

@@ -3,7 +3,7 @@ import { ComposableInput } from "../../form-elements/ComposableInput/ComposableI
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
 import { AddIcon } from "@manifest-editor/ui/icons/AddIcon";
 import { AccordionContainer, AccordionItem, AccordionItemRef } from "@manifest-editor/ui/atoms/Accordion";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { createRef, RefObject, useMemo, useState } from "react";
 import { changeBehavior, filteredBehaviors, RenderCustomBehaviorEditor } from "./BehaviorEditor.utils";
 
