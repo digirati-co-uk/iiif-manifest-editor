@@ -1,6 +1,6 @@
-import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
-import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { Collection } from "@iiif/presentation-3";
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
+import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 
 export interface Config {
   // Previous configuration.
@@ -32,6 +32,7 @@ export interface Config {
     defaultLanguage: string;
     availableLanguages: string[];
     advancedLanguageMode: boolean;
+    textGranularityEnabled?: boolean;
   };
 
   // Options when exporting from Vault.

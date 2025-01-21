@@ -40,6 +40,7 @@ export function ReorderList({ items, renderItem, id, reorder, inlineHandle = tru
                 if (!ref) {
                   return null;
                 }
+
                 return (
                   <Draggable key={item.id} draggableId={ref.id} index={idx} isDragDisabled={!enabled}>
                     {(innerProvided, snapshot) => {
