@@ -5,7 +5,6 @@ import { StrictModeDroppable } from "./strict-mode-droppable";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
 import { ReorderListItem } from "../ReorderListItem/ReorderListItem";
-import { SortableContext } from "@dnd-kit/sortable";
 
 export interface ReorderListProps {
   id: string;
@@ -70,7 +69,7 @@ export function ReorderList({ items, renderItem, id, reorder, inlineHandle = tru
             </div>
           )}
         </StrictModeDroppable>
-      </SortableContext>
+      </DragDropContext>
     </>
   );
 }

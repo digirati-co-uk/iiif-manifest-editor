@@ -10,12 +10,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { AppDropdownItem } from "../../../../ui/ui/AppDropdown/AppDropdown";
 
