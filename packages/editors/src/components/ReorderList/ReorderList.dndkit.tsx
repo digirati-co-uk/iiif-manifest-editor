@@ -10,7 +10,12 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { AppDropdownItem } from "../../../../ui/ui/AppDropdown/AppDropdown";
 
@@ -64,7 +69,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
       onDragEnd={onDragEnd}
       modifiers={[restrictToParentElement]}
     >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext items={items} strategy={rectSortingStrategy}>
         {items.map((item, idx) => {
           if (!item) {
             return null;
