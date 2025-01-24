@@ -31,7 +31,7 @@ export function CanvasGrid(props: CanvasGridProps) {
               key={ref.id}
               active={props?.activeId === toRef(ref)?.id}
               onClick={() => props.onSelect(ref, index)}
-              id={item?.activeId}
+              id={ref.id}
             />
           </CanvasContext>
         )}
