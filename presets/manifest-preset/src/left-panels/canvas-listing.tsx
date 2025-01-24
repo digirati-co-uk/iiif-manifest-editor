@@ -104,7 +104,6 @@ export function CanvasListing({
           {
             icon: <ListEditIcon />,
             title: "Edit canvases",
-            disabled: gridView,
             toggled: toggled.items,
             onClick: () => toggle("items"),
           },
