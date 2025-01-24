@@ -52,7 +52,18 @@ export function ReorderListItem({
     return <Component {...props}>{children}</Component>;
   }
 
-  const gridStyle: React.CSSProperties | undefined = grid ? { position: 'absolute', display: 'flex', padding: '5px', background: 'white', zIndex: 1, right: 2, top: 2, borderRadius: 4 } : undefined;
+  const gridStyle: React.CSSProperties | undefined = grid
+    ? {
+        position: "absolute",
+        display: "flex",
+        padding: "5px",
+        background: "white",
+        zIndex: 1,
+        right: 2,
+        top: 2,
+        borderRadius: 4,
+      }
+    : { display: 'flex', alignItems: 'center' };
   return (
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
       <FlexContainer style={{ flexDirection: grid ? "column" : "row", marginBottom }}>

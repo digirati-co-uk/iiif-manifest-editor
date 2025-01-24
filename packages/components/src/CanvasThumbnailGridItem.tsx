@@ -1,4 +1,4 @@
-import { CanvasContext, LocaleString, useCanvas } from "react-iiif-vault";
+import { CanvasContext } from "react-iiif-vault";
 import { LazyThumbnail } from "./LazyThumbnail";
 import { CanvasLabel } from "./CanvasLabel";
 import { cn } from "./utils";
@@ -12,11 +12,8 @@ interface CanvasThumbnailGridItemProps {
 }
 
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
-  const canvas = useCanvas();
-
-  if (canvas) {
     return (
-      <CanvasContext canvas={canvas.id}>
+      <CanvasContext canvas={props.id}>
         <div onMouseDown={props.onClick} className="flex flex-col" data-canvas-selected={props.selected}>
           <div className="bg-me-gray-100 w-full aspect-square flex-1 overflow-hidden rounded">
             <Card3D
@@ -35,4 +32,3 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
       </CanvasContext>
     );
   }
-}
