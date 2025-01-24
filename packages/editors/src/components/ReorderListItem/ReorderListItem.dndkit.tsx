@@ -43,6 +43,7 @@ export function ReorderListItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    position: "relative",
   };
 
   const Component = as || "div";
@@ -51,11 +52,12 @@ export function ReorderListItem({
     return <Component {...props}>{children}</Component>;
   }
 
+  const gridStyle: React.CSSProperties | undefined = grid ? { position: 'absolute', display: 'flex', padding: '5px', background: 'white', zIndex: 1, right: 2, top: 2, borderRadius: 4 } : undefined;
   return (
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
       <FlexContainer style={{ flexDirection: grid ? "column" : "row", marginBottom }}>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
-        <div style={{ display: grid ? "flex" : "", justifyContent: "space-between", width: grid ? "100%" : "" }}>
+        <div style={gridStyle}>
           {actions?.length ? (
             <AppDropdown as={HandleContainer} items={actions}>
               <MoreMenu />
