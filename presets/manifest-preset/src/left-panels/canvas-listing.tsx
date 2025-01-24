@@ -1,4 +1,4 @@
-import { InputContainer, useInStack, useToggleList, CanvasList, createAppActions } from "@manifest-editor/editors";
+import { InputContainer, useInStack, useToggleList, CanvasList, CanvasGrid, createAppActions } from "@manifest-editor/editors";
 import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { SVGProps, useEffect, useLayoutEffect } from "react";
 import {
@@ -119,17 +119,18 @@ export function CanvasListing({
       {gridView ? (
         <SidebarContent>
           <ThumbnailGridContainer>
-            {canvases.map((item) => (
-              <CanvasThumbnailGridItem
-                id={item.id}
-                key={item.id}
-                selected={canvas?.resource.source.id === item.id}
-                onClick={() => {
-                  open({ id: "current-canvas" });
-                  canvasActions.edit(item);
-                }}
-              />
-            ))}
+            <CanvasGrid
+              id={items.focusId()}
+              list={items.get() || []}
+              inlineHandle={false}
+              activeId={canvas?.resource.source.id}
+              reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
+              onSelect={(item, idx) => {
+                open({ id: "current-canvas" });
+                canvasActions.edit(item, idx);
+              }}
+              createActions={createAppActions(items)}
+            />
           </ThumbnailGridContainer>
         </SidebarContent>
       ) : (
