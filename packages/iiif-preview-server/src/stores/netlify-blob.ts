@@ -11,11 +11,12 @@ export function createNetlifyStore(
 
   return {
     get: async (key: string) => {
-      const itemString = await manifests.get(key);
-      const item = itemString ? JSON.parse(itemString) : null;
+      const resource = await manifests.getWithMetadata(key);
+      const metadata = (resource?.metadata || {}) as any;
+      const item = resource?.data ? JSON.parse(resource.data) : null;
 
       if (item) {
-        if (item.metadata.ttl < Date.now()) {
+        if (metadata?.ttl < Date.now()) {
           manifests.delete(key);
           return null;
         }
@@ -34,7 +35,7 @@ export function createNetlifyStore(
       const item = await manifests.getWithMetadata(key);
       if (item) {
         const metadata = item.metadata as { ttl?: number };
-        if (metadata.ttl && metadata.ttl < Date.now()) {
+        if (metadata?.ttl && metadata?.ttl < Date.now()) {
           await manifests.delete(key);
           return { value: null, metadata: null };
         }
