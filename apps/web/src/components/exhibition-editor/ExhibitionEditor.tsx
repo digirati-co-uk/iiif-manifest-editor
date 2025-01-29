@@ -8,6 +8,32 @@ export default function ExhibitionEditor(props: { id: string }) {
   const config = useMemo(() => ({
     // Custom config here.
     // previews: [],
+    previews: [
+      {
+        id: "delft-exhibition-viewer",
+        type: "external-manifest-preview",
+        label: "Exhibition viewer",
+        config: {
+          url: "https://feature-exhibition-viewer.delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
+        },
+      },
+      {
+        id: "iiif-preview",
+        type: "iiif-preview-service",
+        label: "IIIF Preview",
+        config: {
+          url: "/api/iiif/store",
+        },
+      },
+      {
+        id: "raw-manifest",
+        type: "external-manifest-preview",
+        label: "Raw Manifest",
+        config: {
+          url: "{manifestId}",
+        },
+      },
+    ],
   } as Partial<Config>), []);
 
   const extensions = useMemo(() => ({
