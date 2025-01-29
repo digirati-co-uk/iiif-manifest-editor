@@ -5,6 +5,7 @@ import BrowserEditor, { type BrowserEditorProps } from "../browser-editor/Browse
 import * as exampleLeftPanel from './left-panels/Example';
 import * as layoutTest from './left-panels/LayoutTest';
 import { customBehaviourEditor, slideBehaviours } from "./left-panels/SlideBehaviours";
+import { exampleCanvasEditor } from "./canvas-editors/example-canvas-editor";
 
 export default function ExhibitionEditor(props: { id: string }) {
   const config = useMemo(() => ({
@@ -47,6 +48,9 @@ export default function ExhibitionEditor(props: { id: string }) {
       exampleLeftPanel,
       slideBehaviours,
       layoutTest,
+    ],
+    canvasEditors: [
+      exampleCanvasEditor
     ],
     editors: [
       customBehaviourEditor
