@@ -1,6 +1,6 @@
 import { Sidebar, SidebarHeader } from "@manifest-editor/components";
 import { useInStack, BehaviorEditor, BehaviorEditorProps } from "@manifest-editor/editors";
-import { LayoutPanel, useEditor } from "@manifest-editor/shell";
+import { EditorDefinition, LayoutPanel, useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
 
 export const slideBehaviours: LayoutPanel = {
@@ -8,6 +8,20 @@ export const slideBehaviours: LayoutPanel = {
   label: 'Slide behaviors',
   icon: <>🐙</>,
   render: () => <SlideBehavioursPanel />,
+};
+
+export const customBehaviourEditor: EditorDefinition = {
+  component: () => <SlideBehavioursPanel />,
+  supports: {
+    edit: true,
+    resourceTypes: ["Canvas"],
+    properties: ["behavior"]
+  },
+  id: 'slide-behaviors',
+  label: 'Slide behaviors',
+  tabs: {
+    showTitle: true,
+  }
 };
 
 const exhibitionConfigs: BehaviorEditorProps['configs'] = [
