@@ -5,6 +5,7 @@ import { CreatableResource, EditableResource } from "../EditingStack/EditingStac
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppState } from "../AppContext/AppContext";
 import { EditorConfig } from "../ConfigContext/ConfigContext";
+import { RenderingStrategy } from "react-iiif-vault";
 
 // @todo come back to.
 type CreatorDefinition = any;
@@ -149,6 +150,15 @@ export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
   state: T;
 }
 
+export interface CanvasEditorDefinition {
+  id: string;
+  label: string;
+  supports: {
+    strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault) => boolean;
+  },
+  component: (strategy: RenderingStrategy) => ReactNode | null;
+}
+
 export interface EditorDefinition {
   id: string;
   label: string;
@@ -204,4 +214,6 @@ export interface LayoutProps {
   editors?: EditorDefinition[];
   resources?: (string | ResourceDefinition)[];
   creators?: CreatorDefinition[];
+  // Custom canvas renderer for main
+  canvasEditors?: CanvasEditorDefinition[];
 }

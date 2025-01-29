@@ -17,6 +17,7 @@ import {
   useSaveVault,
   LayoutPanel,
   EditorDefinition,
+  CanvasEditorDefinition,
 } from "@manifest-editor/shell";
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
@@ -137,6 +138,7 @@ export interface BrowserEditorProps {
     modalPanels?: LayoutPanel[];
     editors?: EditorDefinition[];
     creators?: CreatorDefinition[];
+    canvasEditors?: CanvasEditorDefinition[];
   }
   config?: Partial<Config>;
 }
@@ -233,6 +235,10 @@ export default function BrowserEditor({ id, config: browserConfig, extensions }:
                 icon: <SettingsIcon />,
                 render: () => <ConfigEditor />,
               },
+            ],
+            canvasEditors: [
+              ...(app.layout.canvasEditors || []),
+              ...(extensions?.canvasEditors || []),
             ],
             creators: [
               ...(app.layout.creators || []),
