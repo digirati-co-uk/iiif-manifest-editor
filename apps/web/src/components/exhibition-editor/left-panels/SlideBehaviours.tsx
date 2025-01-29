@@ -29,6 +29,7 @@ const exhibitionConfigs: BehaviorEditorProps['configs'] = [
     id: 'layout',
     type: 'choice',
     label: { en: ['Layout'] },
+    initialOpen: true,
     items: [
       {
         label: { en: ['Text on left'] },
@@ -55,6 +56,7 @@ const exhibitionConfigs: BehaviorEditorProps['configs'] = [
     component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
     label: { en: ['Size'] },
     type: 'custom',
+    initialOpen: true,
     supports: (b) => b.startsWith('w-') || b.startsWith('h-'),
   }
 ];

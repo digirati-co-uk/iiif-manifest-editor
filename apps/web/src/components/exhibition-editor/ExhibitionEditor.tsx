@@ -3,6 +3,7 @@ import type { Config } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import BrowserEditor, { type BrowserEditorProps } from "../browser-editor/BrowserEditor";
 import * as exampleLeftPanel from './left-panels/Example';
+import * as layoutTest from './left-panels/LayoutTest';
 import { customBehaviourEditor, slideBehaviours } from "./left-panels/SlideBehaviours";
 
 export default function ExhibitionEditor(props: { id: string }) {
@@ -45,6 +46,7 @@ export default function ExhibitionEditor(props: { id: string }) {
     leftPanels: [
       exampleLeftPanel,
       slideBehaviours,
+      layoutTest,
     ],
     editors: [
       customBehaviourEditor
