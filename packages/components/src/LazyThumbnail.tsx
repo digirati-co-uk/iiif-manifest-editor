@@ -3,15 +3,15 @@ import { useCanvas, useThumbnail } from "react-iiif-vault";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Spinner } from "./Spinner";
 
-export function LazyThumbnail() {
+export function LazyThumbnail({ cover }: { cover?: boolean }) {
   return (
     <LazyLoadComponent>
-      <LazyThumbnailInner />
+      <LazyThumbnailInner cover={cover} />
     </LazyLoadComponent>
   );
 }
 
-function LazyThumbnailInner() {
+function LazyThumbnailInner({ cover }: { cover?: boolean }) {
   const img = useRef<HTMLImageElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const thumbnail = useThumbnail({ height: 256, width: 256 }, true);
@@ -38,7 +38,7 @@ function LazyThumbnailInner() {
           ref={img}
           src={thumbnail?.id}
           alt=""
-          className={`w-full h-full object-contain ${!isLoading ? "animate-fadeIn" : "opacity-0"}`}
+          className={`w-full h-full ${cover ? 'object-cover' : 'object-contain'} ${!isLoading ? "animate-fadeIn" : "opacity-0"}`}
         />
       ) : (
         <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0 z-20">
