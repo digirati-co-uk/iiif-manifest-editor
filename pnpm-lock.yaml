@@ -28,22 +28,22 @@ importers:
         version: 0.2.8
       syncpack:
         specifier: ^12.3.0
-        version: 12.3.2(typescript@5.4.5)
+        version: 12.3.2(typescript@5.7.3)
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.3
       tslib:
-        specifier: ^2.6.2
-        version: 2.6.2
+        specifier: ^2.8.1
+        version: 2.8.1
       turbo:
         specifier: ^2.0.3
         version: 2.0.3
       typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
+        specifier: ^5.7.3
+        version: 5.7.3
       typescript-plugin-css-modules:
         specifier: ^5.1.0
-        version: 5.1.0(typescript@5.4.5)
+        version: 5.1.0(typescript@5.7.3)
 
   apps/docs:
     dependencies:
@@ -61,10 +61,10 @@ importers:
         version: 14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2)
       nextra:
         specifier: alpha
-        version: 3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
+        version: 3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)
       nextra-theme-docs:
         specifier: alpha
-        version: 3.0.0-alpha.40(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.0.0-alpha.40(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -80,11 +80,11 @@ importers:
   apps/web:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -146,8 +146,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -237,8 +237,8 @@ importers:
         specifier: ^3.4.3
         version: 3.4.3
       typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
+        specifier: ^5.7.3
+        version: 5.7.3
       unified:
         specifier: ^11.0.4
         version: 11.0.4
@@ -247,13 +247,13 @@ importers:
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.1.0
-        version: 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+        version: 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/parser':
         specifier: ^7.1.0
-        version: 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+        version: 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@vercel/style-guide':
         specifier: 6.0.0
-        version: 6.0.0(@next/eslint-plugin-next@14.2.3)(eslint@9.10.0(jiti@1.21.0))(prettier@3.2.5)(typescript@5.4.5)
+        version: 6.0.0(@next/eslint-plugin-next@14.2.3)(eslint@9.10.0(jiti@1.21.0))(prettier@3.2.5)(typescript@5.7.3)
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.10.0(jiti@1.21.0))
@@ -264,8 +264,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
+        specifier: ^5.7.3
+        version: 5.7.3
 
   internal-packages/typescript-config: {}
 
@@ -273,14 +273,14 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../internal-packages/eslint-config
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/components:
     dependencies:
@@ -295,7 +295,7 @@ importers:
         version: 2.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -324,8 +324,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -338,7 +338,7 @@ importers:
         version: link:../../internal-packages/eslint-config
       '@storylite/storylite':
         specifier: ^0.15.1
-        version: 0.15.1(@types/node@20.12.12)(@types/react-dom@18.3.0)(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
+        version: 0.15.1(@types/node@20.12.12)(@types/react-dom@18.3.0)(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)
       '@storylite/vite-plugin':
         specifier: ^0.15.0
         version: 0.15.0(@types/node@20.12.12)(less@4.2.0)(lightningcss@1.25.1)(sass@1.77.2)(stylus@0.62.0)
@@ -362,7 +362,7 @@ importers:
         version: 3.4.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3)
       vite:
         specifier: ^5.4.1
         version: 5.4.4(@types/node@20.12.12)(less@4.2.0)(lightningcss@1.25.1)(sass@1.77.2)(stylus@0.62.0)
@@ -370,11 +370,11 @@ importers:
   packages/creator-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -402,7 +402,7 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/creators:
     dependencies:
@@ -410,11 +410,11 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -446,8 +446,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -469,16 +469,16 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/editor-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -497,7 +497,7 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/editors:
     dependencies:
@@ -523,11 +523,11 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -546,6 +546,9 @@ importers:
       '@manifest-editor/shell':
         specifier: workspace:*
         version: link:../shell
+      '@vidstack/react':
+        specifier: ^1.11.29
+        version: 1.12.12(@types/react@18.3.3)(react@18.3.1)
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -598,8 +601,8 @@ importers:
         specifier: 14.1.0
         version: 14.1.0(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet:
         specifier: ^4.2.1
         version: 4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -666,7 +669,7 @@ importers:
         version: 1.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3)
 
   packages/iiif-browser:
     dependencies:
@@ -674,11 +677,11 @@ importers:
         specifier: ^2.2.0
         version: 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -695,8 +698,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -739,16 +742,16 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3)
       typescript-plugin-css-modules:
         specifier: ^5.1.0
-        version: 5.1.0(typescript@5.4.5)
+        version: 5.1.0(typescript@5.7.3)
 
   packages/iiif-preview-server:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -777,16 +780,16 @@ importers:
         version: 8.5.10
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/manifest-editor:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -844,16 +847,16 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3)
 
   packages/projects:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -882,8 +885,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -917,13 +920,13 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/server-vault:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -948,7 +951,7 @@ importers:
         version: 8.5.10
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   packages/shell:
     dependencies:
@@ -959,11 +962,11 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1007,8 +1010,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1057,10 +1060,10 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3)
       typescript-plugin-css-modules:
         specifier: ^5.1.0
-        version: 5.1.0(typescript@5.4.5)
+        version: 5.1.0(typescript@5.7.3)
 
   packages/ui:
     dependencies:
@@ -1072,7 +1075,7 @@ importers:
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -1089,8 +1092,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1108,11 +1111,11 @@ importers:
   presets/collection-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1138,8 +1141,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1161,16 +1164,16 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
   presets/manifest-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.2.12
-        version: 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.7
+        version: 2.1.7
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1196,8 +1199,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1219,7 +1222,7 @@ importers:
         version: 1.3.3
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5)
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
 
 packages:
 
@@ -1242,6 +1245,18 @@ packages:
 
   '@atlas-viewer/atlas@2.2.4':
     resolution: {integrity: sha512-iKCvC311i/8kkNyQM6RYOtEwx7N409RxlPOQ39Crpcr66qju32ZdGEEGqd6L81Atn+vA5tWRPaIYuN2hYBDlPA==}
+    peerDependencies:
+      react: '>=17.0'
+      react-dom: '>=17.0'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+
+  '@atlas-viewer/atlas@2.2.9':
+    resolution: {integrity: sha512-UqtyxcfIMx8MbXWTVwBIFOL5Dz9BacBWpUWNkOOefC6/9FWKwitCm7L15ZvosyVwGN+UsexeAuyV5mNh45lTvg==}
     peerDependencies:
       react: '>=17.0'
       react-dom: '>=17.0'
@@ -1944,6 +1959,9 @@ packages:
   '@floating-ui/core@1.6.2':
     resolution: {integrity: sha512-+2XpQV9LLZeanU4ZevzRnGFg2neDeKHgFLjP6YLW+tly0IvrhqT4u8enLGjLH3qeh85g19xY5rsAusfwTdn5lg==}
 
+  '@floating-ui/dom@1.6.13':
+    resolution: {integrity: sha512-umqzocjDgNRGTuO7Q8CU32dkHkECqI8ZdMZ5Swb6QAM0t5rnlrN3lGo1hdpscRd3WS8T6DKYK4ephgIH9iRh3w==}
+
   '@floating-ui/dom@1.6.5':
     resolution: {integrity: sha512-Nsdud2X65Dz+1RHjAIP0t8z5e2ff/IRbei6BqFrl1urT8sDVzM1HMQ+R0XcU5ceRfyO3I6ayeqIfh+6Wb8LGTw==}
 
@@ -1961,6 +1979,9 @@ packages:
 
   '@floating-ui/utils@0.2.2':
     resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
+
+  '@floating-ui/utils@0.2.9':
+    resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
   '@formatjs/ecma402-abstract@2.0.0':
     resolution: {integrity: sha512-rRqXOqdFmk7RYvj4khklyqzcfQl9vEL/usogncBHRZfZBDOwMGuSRNFl02fu5KGHXdbinju+YXyuR+Nk8xlr/g==}
@@ -2029,8 +2050,8 @@ packages:
     peerDependencies:
       '@iiif/parser': ^2.1.7
 
-  '@iiif/parser@2.1.2':
-    resolution: {integrity: sha512-bv+Y6de7vmYpMtLevhxjjdTilrzNzwq8cYjanOOCsbC0r1LeAD+Cu8UET4rWsyKKm3UhsKOIYgUHpk17unD6sA==}
+  '@iiif/parser@2.1.7':
+    resolution: {integrity: sha512-a3NrHOdW6RbmUeBCFJ751FBBuzS251O7owbRjUHUvRRs9GoFwNIDk5slh9qP5FFHycIbuyWjyl1lIxbikxAq/g==}
 
   '@iiif/presentation-2@1.0.4':
     resolution: {integrity: sha512-hJakpq62VBajesLJrYPtFm6hcn6c/HkKP7CmKZ5atuzu40m0nifWYsqigR1l9sZGvhhHb/DRshPmiW/0GNrJoA==}
@@ -3788,6 +3809,13 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  '@vidstack/react@1.12.12':
+    resolution: {integrity: sha512-rEwCkZdp/K0FopUU76lgYJqzOZa3AGM2FumQnTPPSCP9jwShYReY9mXgl4/UP5CH3v7MkaVl5ZT67rhfjPxx9Q==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/react': ^18.0.0
+      react: ^18.0.0
 
   '@vitejs/plugin-react-swc@3.7.0':
     resolution: {integrity: sha512-yrknSb3Dci6svCd/qhHqhFPDSw0QtjumcqdKMoNNzmOl5lMXTTiqzjWtG4Qask2HdvvzaNgSunbQGet8/GrKdA==}
@@ -6468,6 +6496,10 @@ packages:
     peerDependencies:
       esbuild: 0.*
 
+  media-captions@1.0.4:
+    resolution: {integrity: sha512-cyDNmuZvvO4H27rcBq2Eudxo9IZRDCOX/I7VEyqbxsEiD2Ei7UYUhG/Sc5fvMZjmathgz3fEK7iAKqvpY+Ux1w==}
+    engines: {node: '>=16'}
+
   mem@8.1.1:
     resolution: {integrity: sha512-qFCFUDs7U3b8mBDPyz5EToEKoAkgCzqquIgi9nkkR9bixxOVOre+09lbuH7+9Kn2NFpm56M3GUWVbU2hQgdACA==}
     engines: {node: '>=10'}
@@ -7565,15 +7597,8 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  react-iiif-vault@1.4.0:
-    resolution: {integrity: sha512-PYrnXJKSBcWoNoL7N/6Y8s4aTIZpqc8WIF6vDIhqzrGbTMvnGM5THaile3tuiL5EL38qXlQnF+5OZal/1ODFEg==}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
-  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault:
-    resolution: {tarball: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault}
-    version: 1.4.0
+  react-iiif-vault@1.5.1:
+    resolution: {integrity: sha512-/vbrlhYrvTc9trU2r2Zx0Bden0zCn8Mu+VFV4qjLwa1WVXJd/ZZYwaCZIi1Et9hnYjx/vhi3751UA+9AHOFnjw==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -8445,6 +8470,9 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   tsup@8.0.2:
     resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
     engines: {node: '>=18'}
@@ -8575,8 +8603,8 @@ packages:
     peerDependencies:
       typescript: '>=4.0.0'
 
-  typescript@5.4.5:
-    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
+  typescript@5.7.3:
+    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -9014,8 +9042,24 @@ snapshots:
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
+      '@iiif/presentation-3': 2.2.3
+      lru-cache: 7.18.3
+      normalize-wheel: 1.0.1
+      react: 18.3.1
+      react-reconciler: 0.29.2(react@18.3.1)
+      react-use-measure: 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      scheduler: 0.21.0
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@atlas-viewer/atlas@2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@atlas-viewer/dna': 0.5.0
+      '@atlas-viewer/iiif-image-api': 2.2.0
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       lru-cache: 7.18.3
       normalize-wheel: 1.0.1
@@ -9293,7 +9337,7 @@ snapshots:
   '@dnd-kit/accessibility@3.1.0(react@18.3.1)':
     dependencies:
       react: 18.3.1
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -9636,6 +9680,11 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.2
 
+  '@floating-ui/dom@1.6.13':
+    dependencies:
+      '@floating-ui/core': 1.6.2
+      '@floating-ui/utils': 0.2.9
+
   '@floating-ui/dom@1.6.5':
     dependencies:
       '@floating-ui/core': 1.6.2
@@ -9657,29 +9706,31 @@ snapshots:
 
   '@floating-ui/utils@0.2.2': {}
 
+  '@floating-ui/utils@0.2.9': {}
+
   '@formatjs/ecma402-abstract@2.0.0':
     dependencies:
       '@formatjs/intl-localematcher': 0.5.4
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@formatjs/fast-memoize@2.2.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@formatjs/icu-messageformat-parser@2.7.8':
     dependencies:
       '@formatjs/ecma402-abstract': 2.0.0
       '@formatjs/icu-skeleton-parser': 1.8.2
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@formatjs/icu-skeleton-parser@1.8.2':
     dependencies:
       '@formatjs/ecma402-abstract': 2.0.0
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@formatjs/intl-localematcher@0.5.4':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@grpc/grpc-js@1.10.8':
     dependencies:
@@ -9731,10 +9782,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@iiif/helpers@1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)':
+  '@iiif/helpers@1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.7)':
     dependencies:
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/parser': 2.1.2
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -9744,9 +9795,9 @@ snapshots:
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/helpers@1.3.1(@iiif/parser@2.1.2)':
+  '@iiif/helpers@1.3.1(@iiif/parser@2.1.7)':
     dependencies:
-      '@iiif/parser': 2.1.2
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -9756,7 +9807,7 @@ snapshots:
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/parser@2.1.2':
+  '@iiif/parser@2.1.7':
     dependencies:
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
@@ -9829,25 +9880,25 @@ snapshots:
   '@js-temporal/polyfill@0.4.4':
     dependencies:
       jsbi: 4.3.0
-      tslib: 2.6.2
+      tslib: 2.8.1
 
-  '@jsonjoy.com/base64@1.1.2(tslib@2.6.2)':
+  '@jsonjoy.com/base64@1.1.2(tslib@2.8.1)':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
-  '@jsonjoy.com/json-pack@1.0.4(tslib@2.6.2)':
+  '@jsonjoy.com/json-pack@1.0.4(tslib@2.8.1)':
     dependencies:
-      '@jsonjoy.com/base64': 1.1.2(tslib@2.6.2)
-      '@jsonjoy.com/util': 1.1.3(tslib@2.6.2)
+      '@jsonjoy.com/base64': 1.1.2(tslib@2.8.1)
+      '@jsonjoy.com/util': 1.1.3(tslib@2.8.1)
       hyperdyperid: 1.2.0
-      thingies: 1.21.0(tslib@2.6.2)
-      tslib: 2.6.2
+      thingies: 1.21.0(tslib@2.8.1)
+      tslib: 2.8.1
 
-  '@jsonjoy.com/util@1.1.3(tslib@2.6.2)':
+  '@jsonjoy.com/util@1.1.3(tslib@2.8.1)':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
-  '@lerna/create@8.1.5(@swc/core@1.5.7(@swc/helpers@0.5.11))(encoding@0.1.13)(typescript@5.4.5)':
+  '@lerna/create@8.1.5(@swc/core@1.5.7(@swc/helpers@0.5.11))(encoding@0.1.13)(typescript@5.7.3)':
     dependencies:
       '@npmcli/arborist': 7.5.3
       '@npmcli/package-json': 5.2.0
@@ -9865,7 +9916,7 @@ snapshots:
       console-control-strings: 1.1.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.4.5)
+      cosmiconfig: 8.3.6(typescript@5.7.3)
       dedent: 1.5.3
       execa: 5.0.0
       fs-extra: 11.2.0
@@ -9928,16 +9979,16 @@ snapshots:
       - supports-color
       - typescript
 
-  '@manifest-editor/client-vault@1.1.0(@iiif/parser@2.1.2)':
+  '@manifest-editor/client-vault@1.1.0(@iiif/parser@2.1.7)':
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
     transitivePeerDependencies:
       - '@iiif/parser'
 
   '@manifest-editor/collection-preset@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)':
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       '@manifest-editor/creators': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)
@@ -9946,7 +9997,7 @@ snapshots:
       '@manifest-editor/shell': 1.2.0(@types/react@18.3.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
@@ -9957,12 +10008,12 @@ snapshots:
       - prop-types
       - react-native
 
-  '@manifest-editor/components@1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)':
+  '@manifest-editor/components@1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)':
     dependencies:
       '@floating-ui/react': 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react-dom': 2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@headlessui/react': 2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
       '@iiif/presentation-3': 2.2.3
       '@react-aria/collections': 3.0.0-alpha.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
@@ -9972,7 +10023,7 @@ snapshots:
       react-aria-components: 1.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge: 2.3.0
     transitivePeerDependencies:
@@ -9983,13 +10034,13 @@ snapshots:
 
   '@manifest-editor/creator-api@1.2.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       '@manifest-editor/editor-api': 1.1.0
       polygon-editor: 0.0.4
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -10000,11 +10051,11 @@ snapshots:
   '@manifest-editor/creators@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)':
     dependencies:
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)
+      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/creator-api': 1.2.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manifest-editor/editor-api': 1.1.0
       '@manifest-editor/editors': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(prop-types@15.8.1)
@@ -10012,7 +10063,7 @@ snapshots:
       '@manifest-editor/shell': 1.2.0(@types/react@18.3.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
@@ -10025,8 +10076,8 @@ snapshots:
 
   '@manifest-editor/editor-api@1.1.0':
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       polygon-editor: 0.0.4
@@ -10040,11 +10091,11 @@ snapshots:
       '@dnd-kit/sortable': 8.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@dnd-kit/utilities': 3.2.2(react@18.3.1)
       '@floating-ui/react': 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)
+      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/creator-api': 1.2.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manifest-editor/editor-api': 1.1.0
       '@manifest-editor/shell': 1.2.0(@types/react@18.3.3)
@@ -10065,7 +10116,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
       react-i18next: 14.1.0(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet: 4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet-draw: 0.20.4(leaflet-draw@1.0.4)(leaflet@1.9.4)(prop-types@15.8.1)(react-leaflet@4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       react-select-search: 4.1.7(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -10083,14 +10134,14 @@ snapshots:
   '@manifest-editor/iiif-browser@1.1.0(@types/react@18.3.3)(immer@10.1.1)':
     dependencies:
       '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       react: 18.3.1
       react-accessible-dropdown-menu-hook: 4.0.0
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     transitivePeerDependencies:
@@ -10100,17 +10151,17 @@ snapshots:
 
   '@manifest-editor/manifest-preset@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)':
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)
+      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/creators': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)
       '@manifest-editor/editors': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(prop-types@15.8.1)
       '@manifest-editor/shell': 1.2.0(@types/react@18.3.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
@@ -10125,12 +10176,12 @@ snapshots:
     dependencies:
       '@atlas-viewer/iiif-image-api': 2.2.0
       '@floating-ui/react': 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-      '@manifest-editor/client-vault': 1.1.0(@iiif/parser@2.1.2)
-      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)
+      '@manifest-editor/client-vault': 1.1.0(@iiif/parser@2.1.7)
+      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/creator-api': 1.2.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manifest-editor/editor-api': 1.1.0
       immer: 10.1.1
@@ -10141,7 +10192,7 @@ snapshots:
       react-accessible-dropdown-menu-hook: 4.0.0
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
-      react-iiif-vault: 1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       shallowequal: 1.1.0
       slugify: 1.6.6
@@ -10447,7 +10498,7 @@ snapshots:
   '@nrwl/tao@19.4.0(@swc/core@1.5.7(@swc/helpers@0.5.11))':
     dependencies:
       nx: 19.4.0(@swc/core@1.5.7(@swc/helpers@0.5.11))
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc-node/register'
       - '@swc/core'
@@ -10463,7 +10514,7 @@ snapshots:
       nx: 19.4.0(@swc/core@1.5.7(@swc/helpers@0.5.11))
       semver: 7.6.2
       tmp: 0.2.3
-      tslib: 2.6.2
+      tslib: 2.8.1
       yargs-parser: 21.1.1
 
   '@nx/nx-darwin-arm64@19.4.0':
@@ -11792,10 +11843,10 @@ snapshots:
 
   '@shikijs/core@1.10.1': {}
 
-  '@shikijs/twoslash@1.10.1(typescript@5.4.5)':
+  '@shikijs/twoslash@1.10.1(typescript@5.7.3)':
     dependencies:
       '@shikijs/core': 1.10.1
-      twoslash: 0.2.9(typescript@5.4.5)
+      twoslash: 0.2.9(typescript@5.7.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -11836,7 +11887,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@storylite/storylite@0.15.1(@types/node@20.12.12)(@types/react-dom@18.3.0)(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)':
+  '@storylite/storylite@0.15.1(@types/node@20.12.12)(@types/react-dom@18.3.0)(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)':
     dependencies:
       '@types/node': 20.12.12
       '@types/react': 18.3.3
@@ -11844,7 +11895,7 @@ snapshots:
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      typescript: 5.4.5
+      typescript: 5.7.3
       zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     transitivePeerDependencies:
       - immer
@@ -11913,12 +11964,12 @@ snapshots:
 
   '@swc/helpers@0.5.11':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@swc/helpers@0.5.5':
     dependencies:
       '@swc/counter': 0.1.3
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@swc/types@0.1.7':
     dependencies:
@@ -12120,34 +12171,34 @@ snapshots:
     dependencies:
       '@types/node': 20.12.12
 
-  '@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)':
+  '@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)':
     dependencies:
       '@eslint-community/regexpp': 4.10.0
-      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/scope-manager': 7.11.0
-      '@typescript-eslint/type-utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
-      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/type-utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
+      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/visitor-keys': 7.11.0
       eslint: 9.10.0(jiti@1.21.0)
       graphemer: 1.4.0
       ignore: 5.3.1
       natural-compare: 1.4.0
-      ts-api-utils: 1.3.0(typescript@5.4.5)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)':
+  '@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 7.11.0
       '@typescript-eslint/types': 7.11.0
-      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.4.5)
+      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.7.3)
       '@typescript-eslint/visitor-keys': 7.11.0
       debug: 4.3.4
       eslint: 9.10.0(jiti@1.21.0)
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -12161,15 +12212,15 @@ snapshots:
       '@typescript-eslint/types': 7.11.0
       '@typescript-eslint/visitor-keys': 7.11.0
 
-  '@typescript-eslint/type-utils@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)':
+  '@typescript-eslint/type-utils@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.4.5)
-      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.7.3)
+      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       debug: 4.3.4
       eslint: 9.10.0(jiti@1.21.0)
-      ts-api-utils: 1.3.0(typescript@5.4.5)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -12177,7 +12228,7 @@ snapshots:
 
   '@typescript-eslint/types@7.11.0': {}
 
-  '@typescript-eslint/typescript-estree@5.62.0(typescript@5.4.5)':
+  '@typescript-eslint/typescript-estree@5.62.0(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
@@ -12185,13 +12236,13 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.6.2
-      tsutils: 3.21.0(typescript@5.4.5)
+      tsutils: 3.21.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/typescript-estree@7.11.0(typescript@5.4.5)':
+  '@typescript-eslint/typescript-estree@7.11.0(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/types': 7.11.0
       '@typescript-eslint/visitor-keys': 7.11.0
@@ -12200,20 +12251,20 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.4
       semver: 7.6.2
-      ts-api-utils: 1.3.0(typescript@5.4.5)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)':
+  '@typescript-eslint/utils@5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@9.10.0(jiti@1.21.0))
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.8
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.5)
+      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
       eslint-scope: 5.1.1
       semver: 7.6.2
@@ -12221,12 +12272,12 @@ snapshots:
       - supports-color
       - typescript
 
-  '@typescript-eslint/utils@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)':
+  '@typescript-eslint/utils@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@9.10.0(jiti@1.21.0))
       '@typescript-eslint/scope-manager': 7.11.0
       '@typescript-eslint/types': 7.11.0
-      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.4.5)
+      '@typescript-eslint/typescript-estree': 7.11.0(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
     transitivePeerDependencies:
       - supports-color
@@ -12250,39 +12301,46 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vercel/style-guide@6.0.0(@next/eslint-plugin-next@14.2.3)(eslint@9.10.0(jiti@1.21.0))(prettier@3.2.5)(typescript@5.4.5)':
+  '@vercel/style-guide@6.0.0(@next/eslint-plugin-next@14.2.3)(eslint@9.10.0(jiti@1.21.0))(prettier@3.2.5)(typescript@5.7.3)':
     dependencies:
       '@babel/core': 7.24.6
       '@babel/eslint-parser': 7.24.6(@babel/core@7.24.6)(eslint@9.10.0(jiti@1.21.0))
       '@rushstack/eslint-patch': 1.10.3
-      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
-      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
+      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-playwright: 1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))
+      eslint-plugin-playwright: 1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-react: 7.35.2(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-react-hooks: 4.6.2(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-testing-library: 6.2.2(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      eslint-plugin-testing-library: 6.2.2(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-plugin-tsdoc: 0.2.17
       eslint-plugin-unicorn: 51.0.1(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-vitest: 0.3.26(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      eslint-plugin-vitest: 0.3.26(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       prettier-plugin-packagejson: 2.5.0(prettier@3.2.5)
     optionalDependencies:
       '@next/eslint-plugin-next': 14.2.3
       eslint: 9.10.0(jiti@1.21.0)
       prettier: 3.2.5
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - eslint-import-resolver-node
       - eslint-import-resolver-webpack
       - jest
       - supports-color
       - vitest
+
+  '@vidstack/react@1.12.12(@types/react@18.3.3)(react@18.3.1)':
+    dependencies:
+      '@floating-ui/dom': 1.6.13
+      '@types/react': 18.3.3
+      media-captions: 1.0.4
+      react: 18.3.1
 
   '@vitejs/plugin-react-swc@3.7.0(@swc/helpers@0.5.11)(vite@5.4.4(@types/node@20.12.12)(less@4.2.0)(lightningcss@1.25.1)(sass@1.77.2)(stylus@0.62.0))':
     dependencies:
@@ -12298,7 +12356,7 @@ snapshots:
   '@yarnpkg/parsers@3.0.0-rc.46':
     dependencies:
       js-yaml: 3.14.1
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@zkochan/js-yaml@0.0.7':
     dependencies:
@@ -12616,7 +12674,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   camelcase-css@2.0.1: {}
 
@@ -12935,23 +12993,23 @@ snapshots:
     dependencies:
       layout-base: 2.0.1
 
-  cosmiconfig@8.3.6(typescript@5.4.5):
+  cosmiconfig@8.3.6(typescript@5.7.3):
     dependencies:
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
 
-  cosmiconfig@9.0.0(typescript@5.4.5):
+  cosmiconfig@9.0.0(typescript@5.7.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
 
   cross-fetch@3.1.8(encoding@0.1.13):
     dependencies:
@@ -13593,9 +13651,9 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       eslint-plugin-turbo: 2.0.6(eslint@9.10.0(jiti@1.21.0))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
     dependencies:
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
@@ -13605,13 +13663,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)):
+  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 4.3.7
       enhanced-resolve: 5.16.1
       eslint: 9.10.0(jiti@1.21.0)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
       is-core-module: 2.13.1
@@ -13622,14 +13680,14 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -13639,7 +13697,7 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       ignore: 5.3.1
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5
@@ -13649,7 +13707,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -13660,18 +13718,18 @@ snapshots:
       semver: 6.3.1
       tsconfig-paths: 3.15.0
     optionalDependencies:
-      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5):
+  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/utils': 5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -13698,12 +13756,12 @@ snapshots:
 
   eslint-plugin-only-warn@1.1.0: {}
 
-  eslint-plugin-playwright@1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0)):
+  eslint-plugin-playwright@1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       eslint: 9.10.0(jiti@1.21.0)
       globals: 13.24.0
     optionalDependencies:
-      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
 
   eslint-plugin-react-hooks@4.6.2(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
@@ -13731,9 +13789,9 @@ snapshots:
       string.prototype.matchall: 4.0.11
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-testing-library@6.2.2(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5):
+  eslint-plugin-testing-library@6.2.2(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/utils': 5.62.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
     transitivePeerDependencies:
       - supports-color
@@ -13771,12 +13829,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-vitest@0.3.26(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5):
+  eslint-plugin-vitest@0.3.26(@typescript-eslint/eslint-plugin@7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/utils': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint: 9.10.0(jiti@1.21.0)
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.0))(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -14638,7 +14696,7 @@ snapshots:
       '@formatjs/ecma402-abstract': 2.0.0
       '@formatjs/fast-memoize': 2.2.0
       '@formatjs/icu-messageformat-parser': 2.7.8
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   invariant@2.2.4:
     dependencies:
@@ -14978,7 +15036,7 @@ snapshots:
 
   lerna@8.1.5(@swc/core@1.5.7(@swc/helpers@0.5.11))(encoding@0.1.13):
     dependencies:
-      '@lerna/create': 8.1.5(@swc/core@1.5.7(@swc/helpers@0.5.11))(encoding@0.1.13)(typescript@5.4.5)
+      '@lerna/create': 8.1.5(@swc/core@1.5.7(@swc/helpers@0.5.11))(encoding@0.1.13)(typescript@5.7.3)
       '@npmcli/arborist': 7.5.3
       '@npmcli/package-json': 5.2.0
       '@npmcli/run-script': 8.1.0
@@ -14996,7 +15054,7 @@ snapshots:
       conventional-changelog-angular: 7.0.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.4.5)
+      cosmiconfig: 8.3.6(typescript@5.7.3)
       dedent: 1.5.3
       envinfo: 7.13.0
       execa: 5.0.0
@@ -15047,7 +15105,7 @@ snapshots:
       strong-log-transformer: 2.1.0
       tar: 6.2.1
       temp-dir: 1.0.0
-      typescript: 5.4.5
+      typescript: 5.7.3
       upath: 2.0.1
       uuid: 10.0.0
       validate-npm-package-license: 3.0.4
@@ -15070,7 +15128,7 @@ snapshots:
     dependencies:
       copy-anything: 2.0.6
       parse-node-version: 1.0.1
-      tslib: 2.6.2
+      tslib: 2.8.1
     optionalDependencies:
       errno: 0.1.8
       graceful-fs: 4.2.11
@@ -15240,7 +15298,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   lowlight@3.1.0:
     dependencies:
@@ -15295,19 +15353,19 @@ snapshots:
 
   manifest-editor@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1):
     dependencies:
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       '@manifest-editor/collection-preset': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)
-      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.2)(@types/react@18.3.3)(immer@10.1.1)
+      '@manifest-editor/components': 1.2.0(@iiif/parser@2.1.7)(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/editors': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(prop-types@15.8.1)
       '@manifest-editor/iiif-browser': 1.1.0(@types/react@18.3.3)(immer@10.1.1)
       '@manifest-editor/manifest-preset': 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(immer@10.1.1)(prop-types@15.8.1)
       '@manifest-editor/shell': 1.2.0(@types/react@18.3.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
@@ -15539,6 +15597,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  media-captions@1.0.4: {}
+
   mem@8.1.1:
     dependencies:
       map-age-cleaner: 0.1.3
@@ -15546,10 +15606,10 @@ snapshots:
 
   memfs@4.9.2:
     dependencies:
-      '@jsonjoy.com/json-pack': 1.0.4(tslib@2.6.2)
-      '@jsonjoy.com/util': 1.1.3(tslib@2.6.2)
-      sonic-forest: 1.0.3(tslib@2.6.2)
-      tslib: 2.6.2
+      '@jsonjoy.com/json-pack': 1.0.4(tslib@2.8.1)
+      '@jsonjoy.com/util': 1.1.3(tslib@2.8.1)
+      sonic-forest: 1.0.3(tslib@2.8.1)
+      tslib: 2.8.1
 
   memoize-one@5.2.1: {}
 
@@ -16068,7 +16128,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextra-theme-docs@3.0.0-alpha.40(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  nextra-theme-docs@3.0.0-alpha.40(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@headlessui/react': 2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@popperjs/core': 2.11.8
@@ -16077,19 +16137,19 @@ snapshots:
       flexsearch: 0.7.43
       next: 14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2)
       next-themes: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nextra: 3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
+      nextra: 3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.23.8
 
-  nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5):
+  nextra@3.0.0-alpha.40(@types/react@18.3.3)(next@14.2.3(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3):
     dependencies:
       '@headlessui/react': 2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mdx-js/mdx': 3.0.1
       '@mdx-js/react': 3.0.1(@types/react@18.3.3)(react@18.3.1)
       '@napi-rs/simple-git': 0.1.16
-      '@shikijs/twoslash': 1.10.1(typescript@5.4.5)
+      '@shikijs/twoslash': 1.10.1(typescript@5.7.3)
       '@theguild/remark-mermaid': 0.1.2(react@18.3.1)
       '@theguild/remark-npm2yarn': 0.3.2
       better-react-mathjax: 2.0.3(react@18.3.1)
@@ -16133,7 +16193,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   node-fetch@2.6.7(encoding@0.1.13):
     dependencies:
@@ -16293,7 +16353,7 @@ snapshots:
       tar-stream: 2.2.0
       tmp: 0.2.3
       tsconfig-paths: 4.2.0
-      tslib: 2.6.2
+      tslib: 2.8.1
       yargs: 17.7.2
       yargs-parser: 21.1.1
     optionalDependencies:
@@ -16563,7 +16623,7 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   path-data-parser@0.1.0: {}
 
@@ -17045,8 +17105,8 @@ snapshots:
     dependencies:
       '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.2.12(@atlas-viewer/iiif-image-api@2.2.0)(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -17063,35 +17123,11 @@ snapshots:
       - immer
       - react-native
 
-  react-iiif-vault@1.4.0(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-iiif-vault@1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      mitt: 3.0.1
-      polygon-editor: 0.0.4
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-error-boundary: 4.0.13(react@18.3.1)
-      react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-reconciler: 0.29.2(react@18.3.1)
-      tiny-invariant: 1.3.3
-      zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-
-  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.2)
-      '@iiif/parser': 2.1.2
+      '@atlas-viewer/atlas': 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser': 2.1.7
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -17610,7 +17646,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   sade@1.8.1:
     dependencies:
@@ -17762,10 +17798,10 @@ snapshots:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
 
-  sonic-forest@1.0.3(tslib@2.6.2):
+  sonic-forest@1.0.3(tslib@2.8.1):
     dependencies:
-      tree-dump: 1.0.1(tslib@2.6.2)
-      tslib: 2.6.2
+      tree-dump: 1.0.1(tslib@2.8.1)
+      tslib: 2.8.1
 
   sort-keys@2.0.0:
     dependencies:
@@ -18014,15 +18050,15 @@ snapshots:
   synckit@0.9.0:
     dependencies:
       '@pkgr/core': 0.1.1
-      tslib: 2.6.2
+      tslib: 2.8.1
 
-  syncpack@12.3.2(typescript@5.4.5):
+  syncpack@12.3.2(typescript@5.7.3):
     dependencies:
       '@effect/schema': 0.66.5(effect@3.0.3)(fast-check@3.17.2)
       chalk: 5.3.0
       chalk-template: 1.1.0
       commander: 12.0.0
-      cosmiconfig: 9.0.0(typescript@5.4.5)
+      cosmiconfig: 9.0.0(typescript@5.7.3)
       effect: 3.0.3
       enquirer: 2.4.1
       fast-check: 3.17.2
@@ -18104,9 +18140,9 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  thingies@1.21.0(tslib@2.6.2):
+  thingies@1.21.0(tslib@2.8.1):
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   through2@2.0.5:
     dependencies:
@@ -18157,9 +18193,9 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  tree-dump@1.0.1(tslib@2.6.2):
+  tree-dump@1.0.1(tslib@2.8.1):
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   tree-kill@1.2.2: {}
 
@@ -18171,9 +18207,9 @@ snapshots:
 
   trough@2.2.0: {}
 
-  ts-api-utils@1.3.0(typescript@5.4.5):
+  ts-api-utils@1.3.0(typescript@5.7.3):
     dependencies:
-      typescript: 5.4.5
+      typescript: 5.7.3
 
   ts-dedent@2.2.0: {}
 
@@ -18202,7 +18238,9 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsup@8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.4.5):
+  tslib@2.8.1: {}
+
+  tsup@8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.38)(typescript@5.7.3):
     dependencies:
       bundle-require: 4.1.0(esbuild@0.19.12)
       cac: 6.7.14
@@ -18221,12 +18259,12 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.5.7(@swc/helpers@0.5.11)
       postcss: 8.4.38
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
 
-  tsup@8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.4.5):
+  tsup@8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3):
     dependencies:
       bundle-require: 4.1.0(esbuild@0.19.12)
       cac: 6.7.14
@@ -18245,15 +18283,15 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.5.7(@swc/helpers@0.5.11)
       postcss: 8.4.45
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
 
-  tsutils@3.21.0(typescript@5.4.5):
+  tsutils@3.21.0(typescript@5.7.3):
     dependencies:
       tslib: 1.14.1
-      typescript: 5.4.5
+      typescript: 5.7.3
 
   tuf-js@2.2.1:
     dependencies:
@@ -18292,11 +18330,11 @@ snapshots:
 
   twoslash-protocol@0.2.9: {}
 
-  twoslash@0.2.9(typescript@5.4.5):
+  twoslash@0.2.9(typescript@5.7.3):
     dependencies:
       '@typescript/vfs': 1.5.0
       twoslash-protocol: 0.2.9
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -18354,7 +18392,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typescript-plugin-css-modules@5.1.0(typescript@5.4.5):
+  typescript-plugin-css-modules@5.1.0(typescript@5.7.3):
     dependencies:
       '@types/postcss-modules-local-by-default': 4.0.2
       '@types/postcss-modules-scope': 3.0.4
@@ -18372,12 +18410,12 @@ snapshots:
       source-map-js: 1.2.0
       stylus: 0.62.0
       tsconfig-paths: 4.2.0
-      typescript: 5.4.5
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
 
-  typescript@5.4.5: {}
+  typescript@5.7.3: {}
 
   ua-parser-js@0.7.37: {}
 
