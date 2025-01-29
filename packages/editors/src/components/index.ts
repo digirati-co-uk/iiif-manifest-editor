@@ -6,3 +6,4 @@ export * from "./CanvasList/CanvasList";
 export * from "./CanvasPanelEditor/CanvasPanelEditor";
 export * from "./RichTextLanguageField/RichTextLanguageField";
 export * from "./CollectionItemList/CollectionItemList";
+export * from './BehaviorEditor/BehaviorEditor';
