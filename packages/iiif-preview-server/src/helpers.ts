@@ -86,12 +86,17 @@ export function getBaseUrl(request: Request) {
   return base.toString();
 }
 
-export function getHeaders(request: Request) {
-  return {
+export function getHeaders(request: Request, config?: { accessControlAllowPrivateNetwork?: boolean }) {
+  const headers = {
     "Access-Control-Allow-Origin": request.headers.get("Origin") || "*",
     "Access-Control-Allow-Methods": "GET,HEAD,POST,PUT,OPTIONS",
     "Access-Control-Allow-Headers": request.headers.get("Access-Control-Request-Headers") || "Content-Type,Accept",
   } as HeadersInit;
+
+  if (config?.accessControlAllowPrivateNetwork) {
+    (headers as any)["Access-Control-Allow-Private-Network"] = "true";
+  }
+  return headers;
 }
 
 export function getKeys(keys: string, key3: string, partLength: number, encryptedEnabled: boolean) {

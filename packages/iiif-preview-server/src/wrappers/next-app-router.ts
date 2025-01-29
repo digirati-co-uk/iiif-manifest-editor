@@ -33,7 +33,6 @@ export function createIIIFPreviewNextApiHandler({
   const storage = customStorage || createMemoryStore();
   const baseUrl = getBaseUrl() + apiPath + "/";
   const baseConfig: Config & { baseUrl: string } = {
-    ...config,
     baseUrl,
     keyLength: 32,
     partLength: 16, // keyLength / 2
@@ -41,6 +40,8 @@ export function createIIIFPreviewNextApiHandler({
     expirationTtl: 60 * 60 * 24 * 28, // 28 days
     encryptedEnabled: false,
     rotatingUpdateKey: true,
+    accessControlAllowPrivateNetwork: false,
+    ...config,
   };
 
   return {
@@ -52,7 +53,10 @@ export function createIIIFPreviewNextApiHandler({
       });
     },
     async OPTIONS(request: NextRequest) {
-      const headers = getHeaders(request);
+      const didRequestPrivateNetwork = request.headers.get('Access-Control-Request-Private-Network');
+      const headers = getHeaders(request, {
+        accessControlAllowPrivateNetwork: (didRequestPrivateNetwork === 'true') && baseConfig.accessControlAllowPrivateNetwork,
+      });
       return new Response(null, {
         status: 200,
         headers,
