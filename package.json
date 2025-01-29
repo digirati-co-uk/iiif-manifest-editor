@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.4.0",
-    "@repo/eslint-config": "0.0.0",
-    "@repo/typescript-config": "0.0.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "prettier": "^3.2.5",
     "publint": "^0.2.7",
     "syncpack": "^12.3.0",

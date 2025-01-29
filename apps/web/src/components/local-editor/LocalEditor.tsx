@@ -101,7 +101,7 @@ export default function LocalEditor() {
       </div>
       <div className="flex flex-col flex-1">
         <div className="w-full flex flex-1 max-w-full min-w-0">
-          <ManifestEditor vault={vault} resource={{ id: manifest.id, type: "Manifest" }} data={manifest as any} />
+          <ManifestEditor vault={vault as any} resource={{ id: manifest.id, type: "Manifest" }} data={manifest as any} />
         </div>
       </div>
     </>
