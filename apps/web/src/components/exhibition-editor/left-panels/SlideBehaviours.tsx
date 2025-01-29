@@ -1,5 +1,4 @@
 import { Sidebar, SidebarHeader } from "@manifest-editor/components";
-import { behaviors } from "@manifest-editor/editor-api";
 import { useInStack, BehaviorEditor, BehaviorEditorProps } from "@manifest-editor/editors";
 import { LayoutPanel, useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
