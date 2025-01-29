@@ -4,7 +4,7 @@ import { createMemoryStore } from "@manifest-editor/iiif-preview-server";
 
 const routes = createIIIFPreviewNextApiHandler({
   apiPath: "/api/iiif",
-  storage: process.env.NETLIFY_BLOBS_CONTEXT ? createNetlifyStore() : createMemoryStore(),
+  storage: /*process.env.NETLIFY_BLOBS_CONTEXT ? createNetlifyStore() :*/ createMemoryStore(),
   config: {
     accessControlAllowPrivateNetwork: true
   }
