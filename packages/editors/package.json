@@ -58,7 +58,6 @@
     "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "@vidstack/react": "^1.11.29",
     "classnames": "^2.5.1",
     "dompurify": "3.1.0",
     "draft-convert": "^2.1.12",

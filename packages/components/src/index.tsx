@@ -40,3 +40,7 @@ export * from "./icons/AddIcon";
 
 // Helpers
 export * from "./hooks";
+
+// Renderers
+export * from './RenderTextualContent';
+export * from './IIIFMediaPlayer';

@@ -59,7 +59,8 @@
     "react-error-boundary": "^4.0.13",
     "react-iiif-vault": "^1.5.1",
     "react-lazy-load-image-component": "^1.6.0",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "@vidstack/react": "^1.11.29"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
