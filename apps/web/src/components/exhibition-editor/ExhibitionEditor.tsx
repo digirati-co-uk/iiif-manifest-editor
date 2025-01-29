@@ -3,6 +3,7 @@ import type { Config } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import BrowserEditor, { type BrowserEditorProps } from "../browser-editor/BrowserEditor";
 import * as exampleLeftPanel from './left-panels/Example';
+import { slideBehaviours } from "./left-panels/SlideBehaviours";
 
 export default function ExhibitionEditor(props: { id: string }) {
   const config = useMemo(() => ({
@@ -37,7 +38,10 @@ export default function ExhibitionEditor(props: { id: string }) {
   } as Partial<Config>), []);
 
   const extensions = useMemo(() => ({
-    leftPanels: [exampleLeftPanel],
+    leftPanels: [
+      exampleLeftPanel,
+      slideBehaviours,
+    ],
   } as BrowserEditorProps['extensions']), []);
 
 
