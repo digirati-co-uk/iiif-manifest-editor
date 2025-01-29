@@ -55,14 +55,14 @@ export function InternalRenderCanvas({
         <RenderTextualContentStrategy />
         <RenderImageStrategy
           isStatic={isStatic}
-          enableSizes={enableSizes}
+          enableSizes={false} // bug in atlas.
           onClickPaintingAnnotation={onClickPaintingAnnotation}
         />
         <RenderAnnotationStrategy />
         <Render3DModelStrategy />
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
-        {enableYouTube ? <RenderYouTubeStrategy /> : null}
+        <RenderYouTubeStrategy />
         {children}
       </CanvasWorldObject>
       <RenderAccompanyingCanvas />
