@@ -97,6 +97,9 @@ importers:
       '@manifest-editor/components':
         specifier: workspace:*
         version: link:../../packages/components
+      '@manifest-editor/creator-api':
+        specifier: workspace:*
+        version: link:../../packages/creator-api
       '@manifest-editor/editors':
         specifier: workspace:*
         version: link:../../packages/editors

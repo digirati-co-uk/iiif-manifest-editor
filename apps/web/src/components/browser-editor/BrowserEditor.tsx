@@ -15,6 +15,8 @@ import {
   useLayoutState,
   usePreviewContext,
   useSaveVault,
+  LayoutPanel,
+  EditorDefinition,
 } from "@manifest-editor/shell";
 import { VaultProvider } from "react-iiif-vault";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
@@ -42,6 +44,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Label } from "react-aria-components";
 import posthog from "posthog-js";
 import { useInStack } from "@manifest-editor/editors";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -125,7 +128,20 @@ const config: Partial<Config> = {
   // },
 };
 
-export default function BrowserEditor({ id }: { id: string }) {
+export interface BrowserEditorProps {
+  id: string;
+  extensions?: {
+    leftPanels?: LayoutPanel[];
+    centerPanels?: LayoutPanel[];
+    rightPanels?: LayoutPanel[];
+    modalPanels?: LayoutPanel[];
+    editors?: EditorDefinition[];
+    creators?: CreatorDefinition[];
+  }
+  config?: Partial<Config>;
+}
+
+export default function BrowserEditor({ id, config: browserConfig, extensions }: BrowserEditorProps) {
   const {
     staleEtag,
     vaultReady,
@@ -144,6 +160,7 @@ export default function BrowserEditor({ id }: { id: string }) {
     projectConfig,
     saveProjectConfig,
   } = useBrowserProject(id);
+  const customConfig = browserConfig || {};
   const [allowAnyway, setAllowAnyway] = useState(false);
   const thumbnailHelper = useMemo(() => {
     return createThumbnailHelper(vault);
@@ -195,8 +212,9 @@ export default function BrowserEditor({ id }: { id: string }) {
     return {
       ...config,
       ...projectConfig,
+      ...customConfig,
     };
-  }, [projectConfig]);
+  }, [projectConfig, customConfig]);
 
   const manifestEditor = useMemo(
     () =>
@@ -207,6 +225,7 @@ export default function BrowserEditor({ id }: { id: string }) {
             ...app.layout,
             leftPanels: [
               ...(app.layout.leftPanels || []),
+              ...(extensions?.leftPanels || []),
               {
                 divide: true,
                 id: "config",
@@ -215,8 +234,25 @@ export default function BrowserEditor({ id }: { id: string }) {
                 render: () => <ConfigEditor />,
               },
             ],
+            creators: [
+              ...(app.layout.creators || []),
+              ...(extensions?.creators || []),
+            ],
+            editors: [
+              ...(app.layout.editors || []),
+              ...(extensions?.editors || []),
+            ],
+            rightPanels: [
+              ...(app.layout.rightPanels || []),
+              ...(extensions?.rightPanels || []),
+            ],
+            centerPanels: [
+              ...(app.layout.centerPanels || []),
+              ...(extensions?.centerPanels || []),
+            ],
             modals: [
               ...(app.layout.modals || []),
+              ...(extensions?.modalPanels || []),
               {
                 id: "share-modal",
                 icon: <ShareIcon />,
@@ -309,12 +345,6 @@ function FromQueryString({
   canvasId?: string;
 }) {
   const { edit, open } = useLayoutActions();
-
-  console.log({
-    editing,
-    selectedTab,
-    canvasId,
-  });
 
   useEffect(() => {
     if (canvasId) {
@@ -492,8 +522,6 @@ function SharePanel({ projectId }: { projectId: string }) {
       <div>Loading...</div>
     );
 
-  console.log("->canvas", canvas);
-
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
@@ -503,12 +531,12 @@ function SharePanel({ projectId }: { projectId: string }) {
       {renderLink(
         data
           ? createShareLink({
-              manifest: data,
-              action: "preview",
-              selected: includeCurrentSelectedItem ? selected : undefined,
-              tab: includeCurrentTab ? currentTab : undefined,
-              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
-            })
+            manifest: data,
+            action: "preview",
+            selected: includeCurrentSelectedItem ? selected : undefined,
+            tab: includeCurrentTab ? currentTab : undefined,
+            canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
+          })
           : ""
       )}
     </div>
