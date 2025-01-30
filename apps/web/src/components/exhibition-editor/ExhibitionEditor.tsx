@@ -21,7 +21,7 @@ export default function ExhibitionEditor(props: { id: string }) {
         type: "external-manifest-preview",
         label: "Exhibition viewer",
         config: {
-          url: "https://feature-exhibition-viewer.delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
+          url: "https://feature-hss-history.delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
         },
       },
       {
