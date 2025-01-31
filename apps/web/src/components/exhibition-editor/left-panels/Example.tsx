@@ -1,4 +1,5 @@
 import { CreateCanvasIcon, Sidebar, SidebarHeader } from "@manifest-editor/components";
+import { useCreator, useManifestEditor } from "@manifest-editor/shell";
 
 export const id = 'example-left';
 
@@ -10,6 +11,10 @@ export const render = () => <ExampleLeftPanel />;
 
 
 function ExampleLeftPanel() {
+  const { structural, technical } = useManifestEditor();
+  const manifestId = technical.id.get();
+  const manifest = { id: manifestId, type: "Manifest" };
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Manifest");
   return (
     <Sidebar>
       <SidebarHeader title={'Example left panel'} actions={[
@@ -26,7 +31,7 @@ function ExampleLeftPanel() {
         {
           icon: <NewSlideIcon />,
           title: "Add new slide",
-          onClick: () => console.log('add new slide'),
+          onClick: () => canvasActions.create(),
         },
       ]} />
 

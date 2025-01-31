@@ -7,7 +7,7 @@ import * as layoutTest from './left-panels/LayoutTest';
 import * as gridView from './left-panels/GridView';
 import { customBehaviourEditor, slideBehaviours } from "./left-panels/SlideBehaviours";
 import { exampleCanvasEditor } from "./canvas-editors/example-canvas-editor";
-
+import { exampleCreator } from "../../../../../packages/creators/src/ExampleCreator";
 export default function ExhibitionEditor(props: { id: string }) {
   const config = useMemo(() => ({
     // Custom config here.
@@ -57,6 +57,9 @@ export default function ExhibitionEditor(props: { id: string }) {
     editors: [
       customBehaviourEditor
     ],
+    creators: [
+      exampleCreator
+    ]
   } as BrowserEditorProps['extensions']), []);
 
 

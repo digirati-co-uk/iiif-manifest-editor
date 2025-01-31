@@ -41,7 +41,13 @@ function GridView() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Grid View Sortable test" />
+      <SidebarHeader title="Grid View Sortable test" actions={[
+        {
+          icon: <NewSlideIcon />,
+          title: "Add new slide",
+          onClick: () => canvasActions.create(),
+        },
+      ]} />
       <SidebarContent>
         <div className="grid auto-rows-auto grid-cols-12 content-center justify-center gap-1 p-2">
           <div className="col-span-4 row-span-4 text-black bg-yellow-400 min-h-[100px] flex items-center justify-center">
@@ -155,7 +161,7 @@ function SingleCanvas({ isFirst, onClick, mref, item }: { isFirst: boolean; onCl
       >
         <div className="flex-1 overflow-hidden relative justify-self-stretch">
           <div className="absolute inset-0 w-full h-full">
-            <LazyThumbnail />
+            <LazyThumbnail cover />
           </div>
         </div>
         {isImage ? null : (
@@ -171,5 +177,13 @@ function SingleCanvas({ isFirst, onClick, mref, item }: { isFirst: boolean; onCl
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={onClick} className={`${className} bg-me-gray-700 overflow-hidden hover:ring-2 ring-me-primary-500`}>
       {children}
     </div>
+  );
+}
+function NewSlideIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#5f6368" viewBox="0 -960 960 960" >
+      <path
+        d="M160-240v-480 480Zm80-80v-200h360v200H240Zm-80 160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240h-80v-240H160v480h360v80H160Zm500-320v-100H360v-60h360v160h-60Zm60 400v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z" />
+    </svg>
   );
 }
