@@ -18,7 +18,6 @@ interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttribu
   // New?
   actions?: AppDropdownItem[];
   marginBottom?: string | number;
-  grid?: boolean;
 }
 export function ReorderListItem({
   children,
@@ -28,7 +27,6 @@ export function ReorderListItem({
   inlineHandle,
   actions,
   marginBottom,
-  grid,
   ...props
 }: ReorderListItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
@@ -52,23 +50,10 @@ export function ReorderListItem({
     return <Component {...props}>{children}</Component>;
   }
 
-  const gridStyle: React.CSSProperties | undefined = grid
-    ? {
-        position: "absolute",
-        display: "flex",
-        padding: "5px",
-        background: "white",
-        zIndex: 1,
-        right: 2,
-        top: 2,
-        borderRadius: 4,
-      }
-    : { display: 'flex', alignItems: 'center' };
   return (
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
-      <FlexContainer style={{ flexDirection: grid ? "column" : "row", marginBottom }}>
+      <FlexContainer style={{ alignItems: "center", marginBottom }}>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
-        <div style={gridStyle}>
           {actions?.length ? (
             <AppDropdown as={HandleContainer} items={actions}>
               <MoreMenu />
@@ -79,7 +64,6 @@ export function ReorderListItem({
               <ResizeHandleIcon />
             </HandleContainer>
           )}
-        </div>
       </FlexContainer>
     </Component>
   );

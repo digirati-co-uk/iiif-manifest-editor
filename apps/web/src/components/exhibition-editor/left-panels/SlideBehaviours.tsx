@@ -154,7 +154,7 @@ function SlideBehavioursPanel() {
       <BehaviorEditor
         behavior={editor.technical.behavior.get()}
         onChange={(v) => {
-          editor.technical.behavior.set(v); console.log(v);
+          editor.technical.behavior.set(v);
         }}
         configs={exhibitionConfigs}
       />

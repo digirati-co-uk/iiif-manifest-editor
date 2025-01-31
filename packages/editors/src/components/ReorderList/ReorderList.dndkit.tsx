@@ -10,8 +10,8 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { AppDropdownItem } from "../../../../ui/ui/AppDropdown/AppDropdown";
 
 export interface ReorderListProps<T extends { id: string; type?: string }> {
@@ -22,7 +22,6 @@ export interface ReorderListProps<T extends { id: string; type?: string }> {
   reorder: (result: { startIndex: number; endIndex: number }) => void;
   createActions?: (ref: T, index: number, item: T) => AppDropdownItem[];
   marginBottom?: string | number;
-  grid?: boolean;
 }
 
 export function ReorderList<T extends { id: string; type?: string }>({
@@ -33,7 +32,6 @@ export function ReorderList<T extends { id: string; type?: string }>({
   inlineHandle = true,
   createActions,
   marginBottom,
-  grid,
 }: ReorderListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -62,9 +60,9 @@ export function ReorderList<T extends { id: string; type?: string }>({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
-      modifiers={[restrictToParentElement]}
+      modifiers={[restrictToVerticalAxis]}
     >
-      <SortableContext items={items} strategy={rectSortingStrategy}>
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
         {items.map((item, idx) => {
           if (!item) {
             return null;
@@ -77,7 +75,6 @@ export function ReorderList<T extends { id: string; type?: string }>({
               reorderEnabled={enabled}
               actions={createActions ? createActions(item, idx, item) : undefined}
               marginBottom={marginBottom}
-              grid={grid}
             >
               {item.type ? (
                 <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
