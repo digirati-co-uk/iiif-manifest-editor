@@ -153,7 +153,9 @@ function SlideBehavioursPanel() {
       <SidebarHeader title="Slide behaviors" />
       <BehaviorEditor
         behavior={editor.technical.behavior.get()}
-        onChange={(v) => editor.technical.behavior.set(v)}
+        onChange={(v) => {
+          editor.technical.behavior.set(v); console.log(v);
+        }}
         configs={exhibitionConfigs}
       />
     </Sidebar>

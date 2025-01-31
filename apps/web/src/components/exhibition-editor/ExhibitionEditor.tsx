@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import BrowserEditor, { type BrowserEditorProps } from "../browser-editor/BrowserEditor";
 import * as exampleLeftPanel from './left-panels/Example';
 import * as layoutTest from './left-panels/LayoutTest';
+import * as gridView from './left-panels/GridView';
 import { customBehaviourEditor, slideBehaviours } from "./left-panels/SlideBehaviours";
 import { exampleCanvasEditor } from "./canvas-editors/example-canvas-editor";
 
@@ -48,6 +49,7 @@ export default function ExhibitionEditor(props: { id: string }) {
       exampleLeftPanel,
       slideBehaviours,
       layoutTest,
+      gridView
     ],
     canvasEditors: [
       exampleCanvasEditor
