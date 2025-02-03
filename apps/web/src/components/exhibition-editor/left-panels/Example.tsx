@@ -1,5 +1,6 @@
 import { CreateCanvasIcon, Sidebar, SidebarHeader } from "@manifest-editor/components";
 import { useCreator, useManifestEditor } from "@manifest-editor/shell";
+import { useToggleList } from "@manifest-editor/editors";
 
 export const id = 'example-left';
 
@@ -15,6 +16,9 @@ function ExampleLeftPanel() {
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Manifest");
+  const [toggled, toggle] = useToggleList();
+
+  console.log(toggled)
   return (
     <Sidebar>
       <SidebarHeader title={'Example left panel'} actions={[
@@ -26,7 +30,7 @@ function ExampleLeftPanel() {
         {
           icon: <ListEditIcon />,
           title: "Edit slides",
-          onClick: () => console.log('edit slides'),
+          onClick: () => toggle("items"),
         },
         {
           icon: <NewSlideIcon />,

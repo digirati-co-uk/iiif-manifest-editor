@@ -10,6 +10,7 @@ import { getClassName } from "../helpers";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
 import { useCallback } from "react";
+import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import {
   DndContext,
   DragEndEvent,
@@ -20,6 +21,9 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { createAppActions, useToggleList } from "@manifest-editor/editors";
+import { MoreMenu } from "@manifest-editor/ui/icons/MoreMenu";
+import { AppDropdown, AppDropdownItem } from "../../../../../../packages/editors/src/components/AppDropdown/AppDropdown";
 
 export const id = "grid-view";
 
@@ -35,6 +39,9 @@ function GridView() {
   const manifestRef = { id: manifestId, type: "Manifest" };
   const [canCreateCanvas, canvasActions] = useCreator(manifestRef, "items", "Canvas");
   const { structural } = useManifestEditor();
+  const [toggled, toggle] = useToggleList();
+
+  console.log(toggled)
 
   const { items: structure } = structural;
   const items = manifest.structural.items.get()
@@ -42,6 +49,12 @@ function GridView() {
   return (
     <Sidebar>
       <SidebarHeader title="Grid View Sortable test" actions={[
+        {
+          icon: <ListEditIcon />,
+          title: "Edit slides",
+          toggled: toggled.items,
+          onClick: () => toggle("items"),
+        },
         {
           icon: <NewSlideIcon />,
           title: "Add new slide",
@@ -59,6 +72,7 @@ function GridView() {
             items={items}
             inlineHandle={false}
             reorder={items ? (t) => structure.reorder(t.startIndex, t.endIndex) : undefined}
+            createActions={createAppActions(structure)}
           />
           <div
             onClick={() => canvasActions.create()}
@@ -77,9 +91,10 @@ interface ReorderCssGridProps<T extends { id: string; type?: string }> {
   id: string;
   items: T[];
   reorder: (result: { startIndex: number; endIndex: number }) => void;
+  createActions?: (ref: T, index: number, item: T) => AppDropdownItem[];
 }
 
-function ReorderCssGrid<T extends { id: string; type?: string }>({ items, reorder }: ReorderCssGridProps<T>) {
+function ReorderCssGrid<T extends { id: string; type?: string }>({ items, reorder, createActions }: ReorderCssGridProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -111,14 +126,15 @@ function ReorderCssGrid<T extends { id: string; type?: string }>({ items, reorde
         {items.map((item, idx) => {
           if (!item) return null;
           return (
-            <CanvasContext key={item.id} canvas={item.id}>
-              <SingleCanvas
-                key={item.id}
-                mref={item.id}
-                item={item}
-                isFirst={idx === 0}
-                onClick={() => console.log("Clicked:", item.id)}
-              />
+            <CanvasContext key={item.id} canvas={item.id} >
+                <SingleCanvas
+                  key={item.id}
+                  mref={item.id}
+                  item={item}
+                  isFirst={idx === 0}
+                  onClick={() => console.log("Clicked:", item.id)}
+                  actions={ createActions ? createActions(item, idx, item) : undefined}
+                />
             </CanvasContext>
           );
         })}
@@ -127,7 +143,7 @@ function ReorderCssGrid<T extends { id: string; type?: string }>({ items, reorde
   );
 }
 
-function SingleCanvas({ isFirst, onClick, mref, item }: { isFirst: boolean; onClick: () => void; mref: any; item: any }) {
+function SingleCanvas({ isFirst, onClick, mref, item, actions }: { isFirst: boolean; onClick: () => void; mref: any; item: any;   actions?: AppDropdownItem[]; }) {
   const canvas = useCanvas();
   const behavior = canvas?.behavior || [];
   const className = getClassName(canvas?.behavior, isFirst);
@@ -150,6 +166,8 @@ function SingleCanvas({ isFirst, onClick, mref, item }: { isFirst: boolean; onCl
     transform: CSS.Translate.toString(transform),
     transition,
   };
+  const Component =  "div";
+
 
   let children = null;
   if (isInfo) {
@@ -174,9 +192,22 @@ function SingleCanvas({ isFirst, onClick, mref, item }: { isFirst: boolean; onCl
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={onClick} className={`${className} bg-me-gray-700 overflow-hidden hover:ring-2 ring-me-primary-500`}>
+    <Component  ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={onClick} className={`${className} bg-me-gray-700 overflow-hidden hover:ring-2 ring-me-primary-500 relative`}>
+      {actions?.length ? (
+        <AppDropdown items={actions} style={{ position: 'absolute', right: 0, zIndex: 2}}>
+          <MoreMenu />
+        </AppDropdown>
+      ) : null}
       {children}
-    </div>
+    </Component>
+  );
+}
+function ListEditIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
+    </svg>
   );
 }
 function NewSlideIcon() {
