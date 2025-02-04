@@ -24,6 +24,8 @@ export * from "./MetadataContainer";
 export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
 export * from "./Forms";
+export * from "./HTMLEditor";
+export * from "./MDXEditor";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
@@ -42,5 +44,5 @@ export * from "./icons/AddIcon";
 export * from "./hooks";
 
 // Renderers
-export * from './RenderTextualContent';
-export * from './IIIFMediaPlayer';
+export * from "./RenderTextualContent";
+export * from "./IIIFMediaPlayer";
