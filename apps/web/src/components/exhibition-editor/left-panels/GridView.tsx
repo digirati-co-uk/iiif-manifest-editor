@@ -1,17 +1,4 @@
 import {
-  LazyThumbnail,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
-import { useCreator, useManifestEditor } from "@manifest-editor/shell";
-import { CanvasContext, useCanvas } from "react-iiif-vault";
-import { getClassName } from "../helpers";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
-import { useCallback } from "react";
-import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
-import {
   DndContext,
   DragEndEvent,
   KeyboardSensor,
@@ -20,10 +7,23 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  LazyThumbnail,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "@manifest-editor/components";
 import { createAppActions, useToggleList } from "@manifest-editor/editors";
+import { useCreator, useManifestEditor } from "@manifest-editor/shell";
+import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { MoreMenu } from "@manifest-editor/ui/icons/MoreMenu";
+import { useCallback } from "react";
+import { CanvasContext, useCanvas } from "react-iiif-vault";
 import { AppDropdown, AppDropdownItem } from "../../../../../../packages/editors/src/components/AppDropdown/AppDropdown";
+import { getClassName } from "../helpers";
 
 export const id = "grid-view";
 
@@ -70,8 +70,7 @@ function GridView() {
           <ReorderCssGrid
             id={structure.focusId() || "reorder-css-grid"}
             items={items}
-            inlineHandle={false}
-            reorder={items ? (t) => structure.reorder(t.startIndex, t.endIndex) : undefined}
+            reorder={(t) => structure.reorder(t.startIndex, t.endIndex)}
             createActions={createAppActions(structure)}
           />
           <div
