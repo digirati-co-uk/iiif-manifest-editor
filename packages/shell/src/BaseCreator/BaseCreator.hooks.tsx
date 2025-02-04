@@ -1,19 +1,19 @@
-import { Creator, CreatorDefinition } from "@manifest-editor/creator-api";
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault } from "@iiif/helpers/vault";
+import { toRef } from "@iiif/parser";
+import type { Reference } from "@iiif/presentation-3";
+import { Creator, type CreatorDefinition } from "@manifest-editor/creator-api";
 import { useCallback, useMemo } from "react";
 import { useVault } from "react-iiif-vault";
-import { toRef } from "@iiif/parser";
-import { Reference } from "@iiif/presentation-3";
-import { createActionIdentity } from "../helpers";
-import { CreatableResource } from "../EditingStack/EditingStack.types";
+import { useApp } from "../AppContext/AppContext";
+import type { CreatableResource } from "../EditingStack/EditingStack.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { usePreviewVault } from "../PreviewVault/PreviewVault";
-import { useApp } from "../AppContext/AppContext";
+import { createActionIdentity } from "../helpers";
 
 export function matchBasedOnResource(
   resource: CreatableResource,
   list: CreatorDefinition[],
-  options: { vault: Vault }
+  options: { vault: Vault },
 ): CreatorDefinition[] {
   const supported = [];
   if (list.length === 0) {
@@ -21,8 +21,16 @@ export function matchBasedOnResource(
   }
   const parent = toRef(resource.parent);
   const property = resource.property;
+  const filter = resource.filter;
 
   for (const def of list) {
+    if (filter) {
+      if (!def.tags) continue;
+      if (!def.tags.includes(filter)) {
+        continue;
+      }
+    }
+
     if (parent && property) {
       if (def.supports.parentTypes) {
         if (!def.supports.parentTypes.includes(parent.type)) {
@@ -47,13 +55,19 @@ export function matchBasedOnResource(
       }
 
       if (def.supports.custom) {
-        const isValid = def.supports.custom({ property, resource: parent, atIndex: resource.index }, options.vault);
+        const isValid = def.supports.custom(
+          { property, resource: parent, atIndex: resource.index },
+          options.vault,
+        );
         if (!isValid) {
           continue;
         }
       }
 
-      if (!def.supports.initialData && Object.keys(resource.initialData || {}).length !== 0) {
+      if (
+        !def.supports.initialData &&
+        Object.keys(resource.initialData || {}).length !== 0
+      ) {
         continue;
       }
 
@@ -74,31 +88,65 @@ export function useCreator(
   property: string,
   type: string,
   target?: Reference,
-  options?: { isPainting?: boolean; onlyReference?: boolean }
+  options?: { isPainting?: boolean; onlyReference?: boolean },
 ) {
   const vault = useVault();
   const app = useApp();
   const { create, edit } = useLayoutActions();
   const supported = useMemo(
-    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault }),
-    [parent, property, app.layout.creators, type, vault]
+    () =>
+      matchBasedOnResource(
+        { type, parent, index: 0, property },
+        app.layout.creators || [],
+        { vault },
+      ),
+    [parent, property, app.layout.creators, type, vault],
   );
   const canCreate = parent && supported.length !== 0;
 
   const wrappedCreate = useCallback(
     (index?: number, initialData?: any) => {
       if (parent) {
-        create({ type, parent: toRef(parent), property, index, target, initialData, ...(options || {}) });
+        create({
+          type,
+          parent: toRef(parent),
+          property,
+          index,
+          target,
+          initialData,
+          ...(options || {}),
+        });
       }
     },
-    [create, parent, property, type]
+    [create, parent, property, type],
+  );
+
+  const wrappedFilteredCreate = useCallback(
+    (filter: string, index?: number, initialData?: any) => {
+      if (parent) {
+        create({
+          type,
+          filter,
+          parent: toRef(parent),
+          property,
+          index,
+          target,
+          initialData,
+          ...(options || {}),
+        });
+      }
+    },
+    [create, parent, property, type],
   );
 
   const wrappedEdit = useCallback(
     (resource: any, index?: number) => {
-      edit(resource, parent ? { parent: toRef(parent), property, index } : undefined);
+      edit(
+        resource,
+        parent ? { parent: toRef(parent), property, index } : undefined,
+      );
     },
-    [edit, parent, property]
+    [edit, parent, property],
   );
 
   const buttonProps = useMemo(() => {
@@ -107,7 +155,15 @@ export function useCreator(
     };
   }, []);
 
-  return [canCreate, { create: wrappedCreate, edit: wrappedEdit, buttonProps }] as const;
+  return [
+    canCreate,
+    {
+      create: wrappedCreate,
+      edit: wrappedEdit,
+      createFiltered: wrappedFilteredCreate,
+      buttonProps,
+    },
+  ] as const;
 }
 
 export function useInlineCreator() {

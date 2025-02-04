@@ -1,16 +1,19 @@
-import { CreatorDefinition, CreatorOptions } from "@manifest-editor/creator-api";
-import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useVault } from "react-iiif-vault";
 import { toRef } from "@iiif/parser";
+import { CreatorGrid } from "@manifest-editor/components";
+import type {
+  CreatorDefinition,
+  CreatorOptions,
+} from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
-import { useTemporaryHighlight } from "../highlighted-image-resources";
-import { CreatableResource } from "../EditingStack/EditingStack.types";
+import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
+import { useVault } from "react-iiif-vault";
+import { useApp } from "../AppContext/AppContext";
+import type { CreatableResource } from "../EditingStack/EditingStack.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useSetCustomTitle } from "../Layout/components/ModularPanel";
+import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { matchBasedOnResource, useInlineCreator } from "./BaseCreator.hooks";
-import { useApp } from "../AppContext/AppContext";
-import { CreatorGrid } from "@manifest-editor/components";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -105,8 +108,11 @@ export function BaseCreator(props: BaseCreatorProps) {
   const [currentId, setCurrentId] = useState("");
   const set = useSetCustomTitle();
   const supported = useMemo(
-    () => matchBasedOnResource(props.resource, app.layout.creators || [], { vault }),
-    [props.resource, app.layout.creators, vault]
+    () =>
+      matchBasedOnResource(props.resource, app.layout.creators || [], {
+        vault,
+      }),
+    [props.resource, app.layout.creators, vault],
   );
   if (supported.length === 1 && !currentId) {
     setCurrentId(supported[0]!.id);
