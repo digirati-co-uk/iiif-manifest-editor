@@ -8,8 +8,11 @@ import BrowserEditor, {
   type BrowserEditorProps,
 } from "../browser-editor/BrowserEditor";
 import { exampleCanvasEditor } from "./canvas-editors/example-canvas-editor";
+import { imageBlockEditor } from "./canvas-editors/image-block-editor";
+import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { textPanelCreator } from "./creators/text-panel-creator";
 import * as exampleLeftPanel from "./left-panels/Example";
+import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import * as gridView from "./left-panels/GridView";
 import * as layoutTest from "./left-panels/LayoutTest";
 import {
@@ -73,8 +76,15 @@ export default function ExhibitionEditor(props: { id: string }) {
   const extensions = useMemo(
     () =>
       ({
-        leftPanels: [exampleLeftPanel, slideBehaviours, layoutTest, gridView],
-        canvasEditors: [exampleCanvasEditor],
+        leftPanels: [
+          //
+          exhibitionGridLeftPanel,
+          exampleLeftPanel,
+          slideBehaviours,
+          layoutTest,
+          gridView,
+        ],
+        canvasEditors: [imageBlockEditor, infoBlockEditor],
         editors: [customBehaviourEditor],
         creators: [textPanelCreator],
       }) as BrowserEditorProps["extensions"],
