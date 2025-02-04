@@ -1,12 +1,29 @@
-import { LayoutPanel, useEditingResource, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { SVGProps, useEffect, useRef } from "react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "@manifest-editor/components";
+import {
+  type LayoutPanel,
+  useLayoutActions,
+  useManifestEditor,
+} from "@manifest-editor/shell";
+import { type SVGProps, useEffect, useRef } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
-import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
-import { useLayoutState } from "../../../../packages/shell/dist/index.cjs";
 
-function ManifestIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
+export function ManifestIcon({
+  title,
+  titleId,
+  ...props
+}: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-labelledby={titleId} {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      aria-labelledby={titleId}
+      {...props}
+    >
       {title ? <title id={titleId}>{title}</title> : null}
 
       <path d="M0 0h24v24H0V0z" fill="none" />
@@ -23,13 +40,19 @@ export const manifestPanel: LayoutPanel = {
   label: "Manifest summary",
   icon: <ManifestIcon />,
   render: (state, ctx, app) => {
-    return <ManifestPanel />;
+    return (
+      <Sidebar>
+        <SidebarHeader title="Manifest summary" />
+        <SidebarContent className="p-4">
+          <ManifestPanel />
+        </SidebarContent>
+      </Sidebar>
+    );
   },
 };
 
-function ManifestPanel() {
+export function ManifestPanel() {
   const { edit, open } = useLayoutActions();
-  const current = useEditingResource();
   const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
@@ -50,60 +73,65 @@ function ManifestPanel() {
   }, []);
 
   return (
-    <Sidebar>
-      <SidebarHeader title="Manifest summary" />
-      <SidebarContent className="p-4">
-        {label ? (
-          <LocaleString as="h2" className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400">
-            {label}
-          </LocaleString>
-        ) : null}
+    <>
+      {label ? (
+        <LocaleString
+          as="h2"
+          className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
+        >
+          {label}
+        </LocaleString>
+      ) : null}
 
-        {summary ? (
-          <LocaleString as="p" className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2">
-            {summary}
-          </LocaleString>
-        ) : null}
+      {summary ? (
+        <LocaleString
+          as="p"
+          className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
+        >
+          {summary}
+        </LocaleString>
+      ) : null}
 
-        <hr />
-        {requiredStatement ? (
-          <>
-            <div className="py-2 text-black">
-              <LocaleString
-                as="h4"
-                className="font-bold text-black w-full text-sm font-semibold mb-0 [&>a]:underline [&>a]:hover:text-slate-400"
-              >
-                {requiredStatement.label}
-              </LocaleString>
-              <LocaleString
-                enableDangerouslySetInnerHTML
-                className="text-sm [&>a]:underline [&>a]:hover:text-slate-400"
-              >
-                {requiredStatement.value}
-              </LocaleString>
-            </div>
-
-            <hr />
-          </>
-        ) : null}
-
-        {metadata && metadata.length === 0 ? (
-          <div className="py-2 text-gray-400">
-            You can add some descriptive metadata for this manifest using the editing panel on the right
+      <hr />
+      {requiredStatement ? (
+        <>
+          <div className="py-2 text-black">
+            <LocaleString
+              as="h4"
+              className="font-bold text-black w-full text-sm font-semibold mb-0 [&>a]:underline [&>a]:hover:text-slate-400"
+            >
+              {requiredStatement.label}
+            </LocaleString>
+            <LocaleString
+              enableDangerouslySetInnerHTML
+              className="text-sm [&>a]:underline [&>a]:hover:text-slate-400"
+            >
+              {requiredStatement.value}
+            </LocaleString>
           </div>
-        ) : null}
 
-        <ManifestMetadata
-          allowHtml
-          classes={{
-            container: "w-full",
-            row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
-            label: "font-bold text-black w-full text-sm font-semibold mb-1",
-            value: "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
-            empty: "text-gray-400",
-          }}
-        />
-      </SidebarContent>
-    </Sidebar>
+          <hr />
+        </>
+      ) : null}
+
+      {metadata && metadata.length === 0 ? (
+        <div className="py-2 text-gray-400">
+          You can add some descriptive metadata for this manifest using the
+          editing panel on the right
+        </div>
+      ) : null}
+
+      <ManifestMetadata
+        allowHtml
+        classes={{
+          container: "w-full",
+          row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
+          label: "font-bold text-black w-full text-sm font-semibold mb-1",
+          value:
+            "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
+          empty: "text-gray-400",
+        }}
+      />
+    </>
   );
 }
