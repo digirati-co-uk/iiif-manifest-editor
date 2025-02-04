@@ -57,3 +57,22 @@ export function getClassName(b?: string[], firstInfo = false, preview = true) {
   classNames.push(widthMap[w]);
   return classNames.join(" ");
 }
+
+export function getGridStats(behavior?: string[]) {
+  const isRight = behavior?.includes("right");
+  const isLeft = behavior?.includes("left");
+  const isBottom = behavior?.includes("bottom");
+  const isTop = behavior?.includes("top");
+  const isInfo = behavior?.includes("info");
+  const isImage =
+    behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+
+  return {
+    isRight,
+    isLeft,
+    isBottom,
+    isTop,
+    isInfo,
+    isImage,
+  };
+}
