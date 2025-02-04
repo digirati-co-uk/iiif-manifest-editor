@@ -1,4 +1,5 @@
 export * from "./definitions";
+export * from "./definitions/components";
 export * from "./hooks";
 export * from "./components";
 export * from "./helpers";
