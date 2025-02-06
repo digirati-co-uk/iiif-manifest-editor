@@ -7,3 +7,5 @@ export * from "./CanvasPanelEditor/CanvasPanelEditor";
 export * from "./RichTextLanguageField/RichTextLanguageField";
 export * from "./CollectionItemList/CollectionItemList";
 export * from "./BehaviorEditor/BehaviorEditor";
+export * from "./LanguageMapEditor/LanguageMapEditor";
+export * from "./PaintingAnnotationList/PaintingAnnotationList";
