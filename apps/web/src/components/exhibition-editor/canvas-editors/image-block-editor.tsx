@@ -1,21 +1,9 @@
 import { ActionButton } from "@manifest-editor/components";
-import {
-  CanvasPanelEditor,
-  useInStack,
-  useToggleList,
-} from "@manifest-editor/editors";
-import type {
-  CanvasEditorDefinition,
-  LayoutPanel,
-} from "@manifest-editor/shell";
+import { CanvasPanelEditor, useInStack, useToggleList } from "@manifest-editor/editors";
+import type { CanvasEditorDefinition, LayoutPanel } from "@manifest-editor/shell";
 import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
 import { Button } from "react-aria-components";
-import {
-  CanvasContext,
-  LocaleString,
-  type RenderingStrategy,
-  useCanvas,
-} from "react-iiif-vault";
+import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
 
@@ -38,11 +26,7 @@ export const imageBlockEditor: CanvasEditorDefinition = {
 
       let isImage = false;
       for (const behaviour of behaviors) {
-        if (
-          behaviour.startsWith("w-") ||
-          behaviour.startsWith("h-") ||
-          behaviour === "image"
-        ) {
+        if (behaviour.startsWith("w-") || behaviour.startsWith("h-") || behaviour === "image") {
           isImage = true;
         }
       }
@@ -52,9 +36,7 @@ export const imageBlockEditor: CanvasEditorDefinition = {
   },
 };
 
-export function ImageBlockEditor({
-  strategy,
-}: { strategy: RenderingStrategy }) {
+export function ImageBlockEditor({ strategy }: { strategy: RenderingStrategy }) {
   const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
   const canvas = useInStack("Canvas");
   if (!canvas) {
@@ -63,7 +45,7 @@ export function ImageBlockEditor({
 
   return (
     <CanvasContext canvas={canvas.resource.source?.id}>
-      <div className="flex gap-4 bg-me-500 py-2 px-4 text-white mb-4 items-center">
+      <div className="flex gap-4 bg-me-500 py-2 px-4 text-white shadow-md z-40 ring-1 ring-me-500 items-center">
         Switch view
         <ActionButton onPress={() => setIsPreview(!isPreview)}>
           {isPreview ? "Full canvas" : "Layout preview"}
@@ -93,7 +75,7 @@ function ImageBlockRenderer() {
       className={twMerge(
         className,
         "flex h-full max-h-full min-h-0",
-        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
+        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row"
       )}
     >
       <div className="flex-1 h-full flex min-w-0">

@@ -11,13 +11,14 @@ import {
   headingsPlugin,
   imagePlugin,
   linkDialogPlugin,
+  linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
 } from "@mdxeditor/editor";
-import type { ForwardedRef } from "react";
+import { useMemo, type ForwardedRef } from "react";
 
 // Only import this to the next file
 export function MDXEditor({
@@ -26,29 +27,33 @@ export function MDXEditor({
 }: { editorRef?: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
   return (
     <BaseMDXEditor
-      plugins={[
-        // Example Plugin Usage
-        headingsPlugin(),
-        listsPlugin(),
-        quotePlugin(),
-        thematicBreakPlugin(),
-        linkDialogPlugin(),
-        markdownShortcutPlugin(),
-        imagePlugin(),
-        toolbarPlugin({
-          toolbarClassName: "mdx-toolbar",
-          toolbarContents: () => (
-            <>
-              {" "}
-              <UndoRedo />
-              <ListsToggle />
-              <BoldItalicUnderlineToggles />
-              <CreateLink />
-              <InsertImage />
-            </>
-          ),
-        }),
-      ]}
+      plugins={useMemo(
+        () => [
+          // Example Plugin Usage
+          headingsPlugin(),
+          listsPlugin(),
+          linkPlugin(),
+          quotePlugin(),
+          thematicBreakPlugin(),
+          // linkDialogPlugin(),
+          markdownShortcutPlugin(),
+          imagePlugin(),
+          toolbarPlugin({
+            toolbarClassName: "mdx-toolbar",
+            toolbarContents: () => (
+              <>
+                {" "}
+                <UndoRedo />
+                <ListsToggle />
+                <BoldItalicUnderlineToggles />
+                {/* <CreateLink /> */}
+                <InsertImage />
+              </>
+            ),
+          }),
+        ],
+        []
+      )}
       {...props}
       ref={editorRef}
     />

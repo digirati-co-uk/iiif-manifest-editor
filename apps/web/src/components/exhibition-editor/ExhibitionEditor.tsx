@@ -4,9 +4,7 @@ import { useMemo } from "react";
 import type { Step } from "react-joyride";
 import { exampleCreator } from "../../../../../packages/creators/src/ExampleCreator";
 import { OnboardingTour } from "../OnboardingTour";
-import BrowserEditor, {
-  type BrowserEditorProps,
-} from "../browser-editor/BrowserEditor";
+import BrowserEditor, { type BrowserEditorProps } from "../browser-editor/BrowserEditor";
 import { exampleCanvasEditor } from "./canvas-editors/example-canvas-editor";
 import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
@@ -15,10 +13,11 @@ import * as exampleLeftPanel from "./left-panels/Example";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import * as gridView from "./left-panels/GridView";
 import * as layoutTest from "./left-panels/LayoutTest";
-import {
-  customBehaviourEditor,
-  slideBehaviours,
-} from "./left-panels/SlideBehaviours";
+import { customBehaviourEditor, slideBehaviours } from "./left-panels/SlideBehaviours";
+import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
+import { exhibitionInfoEditorPanel } from "./right-panels/ExhibitionInfoEditor";
+import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
+import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 
 const exhibitionOnboarding: Step[] = [
   // {
@@ -39,9 +38,19 @@ export default function ExhibitionEditor(props: { id: string }) {
       ({
         // Custom config here.
         editorConfig: {
-          // Canvas: {
-          //   singleTab: customBehaviourEditor.id,
-          // },
+          Canvas: {
+            hideTabs: [
+              "@manifest-editor/overview",
+              "@manifest-editor/technical-properties",
+              "@manifest-editor/linking-properties",
+              "@manifest-editor/nav-place-editor",
+              "@manifest-editor/canvas-structural",
+              "@manifest-editor/descriptive-properties",
+              "@manifest-editor/overview-canvas-editor",
+              "@manifest-editor/metadata",
+              // "@manifest-editor/overview-canvas-editor",
+            ],
+          },
         },
         previews: [
           {
@@ -70,7 +79,7 @@ export default function ExhibitionEditor(props: { id: string }) {
           },
         ],
       }) as Partial<Config>,
-    [],
+    []
   );
 
   const extensions = useMemo(
@@ -79,16 +88,24 @@ export default function ExhibitionEditor(props: { id: string }) {
         leftPanels: [
           //
           exhibitionGridLeftPanel,
-          exampleLeftPanel,
-          slideBehaviours,
-          layoutTest,
-          gridView,
+          // exampleLeftPanel,
+          // slideBehaviours,
+          // layoutTest,
+          // gridView,
         ],
+        leftPanelIds: ["left-panel-manifest"],
         canvasEditors: [imageBlockEditor, infoBlockEditor],
-        editors: [customBehaviourEditor],
+        editors: [
+          //
+          exhibitionInfoEditorPanel,
+          exhibitionCanvasEditor,
+          customBehaviourEditor,
+          exhibitionSummaryEdtior,
+          exhibitionTourSteps,
+        ],
         creators: [textPanelCreator],
       }) as BrowserEditorProps["extensions"],
-    [],
+    []
   );
 
   return (

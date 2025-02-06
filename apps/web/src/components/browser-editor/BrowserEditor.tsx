@@ -139,7 +139,10 @@ export interface BrowserEditorProps {
     editors?: EditorDefinition[];
     creators?: CreatorDefinition[];
     canvasEditors?: CanvasEditorDefinition[];
-  }
+
+    // Config.
+    leftPanelIds?: string[];
+  };
   config?: Partial<Config>;
 }
 
@@ -226,7 +229,12 @@ export default function BrowserEditor({ id, config: browserConfig, extensions }:
           layout: {
             ...app.layout,
             leftPanels: [
-              ...(app.layout.leftPanels || []),
+              ...(app.layout.leftPanels || []).filter((panel) => {
+                if (extensions?.leftPanelIds) {
+                  return extensions.leftPanelIds.includes(panel.id);
+                }
+                return true;
+              }),
               ...(extensions?.leftPanels || []),
               {
                 divide: true,
@@ -236,26 +244,11 @@ export default function BrowserEditor({ id, config: browserConfig, extensions }:
                 render: () => <ConfigEditor />,
               },
             ],
-            canvasEditors: [
-              ...(app.layout.canvasEditors || []),
-              ...(extensions?.canvasEditors || []),
-            ],
-            creators: [
-              ...(app.layout.creators || []),
-              ...(extensions?.creators || []),
-            ],
-            editors: [
-              ...(app.layout.editors || []),
-              ...(extensions?.editors || []),
-            ],
-            rightPanels: [
-              ...(app.layout.rightPanels || []),
-              ...(extensions?.rightPanels || []),
-            ],
-            centerPanels: [
-              ...(app.layout.centerPanels || []),
-              ...(extensions?.centerPanels || []),
-            ],
+            canvasEditors: [...(extensions?.canvasEditors || []), ...(app.layout.canvasEditors || [])],
+            creators: [...(extensions?.creators || []), ...(app.layout.creators || [])],
+            editors: [...(extensions?.editors || []), ...(app.layout.editors || [])],
+            rightPanels: [...(app.layout.rightPanels || []), ...(extensions?.rightPanels || [])],
+            centerPanels: [...(app.layout.centerPanels || []), ...(extensions?.centerPanels || [])],
             modals: [
               ...(app.layout.modals || []),
               ...(extensions?.modalPanels || []),
@@ -537,12 +530,12 @@ function SharePanel({ projectId }: { projectId: string }) {
       {renderLink(
         data
           ? createShareLink({
-            manifest: data,
-            action: "preview",
-            selected: includeCurrentSelectedItem ? selected : undefined,
-            tab: includeCurrentTab ? currentTab : undefined,
-            canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
-          })
+              manifest: data,
+              action: "preview",
+              selected: includeCurrentSelectedItem ? selected : undefined,
+              tab: includeCurrentTab ? currentTab : undefined,
+              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
+            })
           : ""
       )}
     </div>

@@ -1,14 +1,6 @@
-import { Sidebar, SidebarHeader } from "@manifest-editor/components";
-import {
-  BehaviorEditor,
-  type BehaviorEditorProps,
-  useInStack,
-} from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  type LayoutPanel,
-  useEditor,
-} from "@manifest-editor/shell";
+import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { BehaviorEditor, type BehaviorEditorProps, useInStack } from "@manifest-editor/editors";
+import { type EditorDefinition, type LayoutPanel, useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
 
 export const slideBehaviours: LayoutPanel = {
@@ -26,7 +18,7 @@ export const customBehaviourEditor: EditorDefinition = {
     properties: ["behavior"],
   },
   id: "slide-behaviors",
-  label: "Slide behaviors",
+  label: "Layout",
   tabs: {
     showTitle: true,
   },
@@ -59,9 +51,7 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
   {
     id: "size",
-    component: (existing, setBehaviors) => (
-      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
-    ),
+    component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
     label: { en: ["Size"] },
     type: "custom",
     initialOpen: true,
@@ -87,10 +77,7 @@ function parseBehaviors(items: string[]) {
   };
 }
 
-function EditSize({
-  behaviors,
-  setBehaviors,
-}: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
+function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
   const { width, height } = parseBehaviors(behaviors);
   const [hoverPosition, setHoverPosition] = useState({ x: -1, y: -1 });
 
@@ -135,10 +122,7 @@ function EditSize({
   });
 
   return (
-    <div
-      className="grid grid-cols-12 grid-rows-12 gap-1"
-      onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}
-    >
+    <div className="grid grid-cols-12 grid-rows-12 gap-1" onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}>
       {cells}
     </div>
   );
@@ -159,14 +143,15 @@ function SlideBehavioursPanel() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Slide behaviors" />
-      <BehaviorEditor
-        behavior={editor.technical.behavior.get()}
-        onChange={(v) => {
-          editor.technical.behavior.set(v);
-        }}
-        configs={exhibitionConfigs}
-      />
+      <SidebarContent>
+        <BehaviorEditor
+          behavior={editor.technical.behavior.get()}
+          onChange={(v) => {
+            editor.technical.behavior.set(v);
+          }}
+          configs={exhibitionConfigs}
+        />
+      </SidebarContent>
     </Sidebar>
   );
 }

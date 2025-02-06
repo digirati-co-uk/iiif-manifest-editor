@@ -11,6 +11,8 @@ import { useContext, useEffect } from "react";
 export default function BrowserRecents() {
   const { selectionManager } = useContext(TabListStateContext) || {};
 
+  console.log(selectionManager);
+
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,

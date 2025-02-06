@@ -42,6 +42,31 @@ const widthMap = {
   "w-12": "col-span-12",
 };
 
+export function getHeightWidthRatio(behavior?: string[]) {
+  const { isLeft, isRight, isBottom } = getGridStats(behavior);
+  const h = behavior?.find((a) => a.includes("h-")) as keyof typeof heightMap;
+  const w = behavior?.find((a) => a.includes("w-")) as keyof typeof widthMap;
+
+  const ret = {
+    h: Number.parseInt(h.split("-")[1]!),
+    w: Number.parseInt(w.split("-")[1]!),
+    ratio: 1,
+  };
+
+  // If left or right - the ratio is 2/3s.
+  if (isLeft || isRight) {
+    ret.w *= 2 / 3;
+  }
+  if (isBottom) {
+    ret.h *= 2 / 3;
+  }
+
+  if (ret.h && ret.w) {
+    ret.ratio = ret.w / ret.h;
+  }
+  return ret;
+}
+
 export function getClassName(b?: string[], firstInfo = false, preview = true) {
   if (!b || b.length === 0) {
     b = ["h-8", "w-8", "image"];
@@ -64,8 +89,7 @@ export function getGridStats(behavior?: string[]) {
   const isBottom = behavior?.includes("bottom");
   const isTop = behavior?.includes("top");
   const isInfo = behavior?.includes("info");
-  const isImage =
-    behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+  const isImage = behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
 
   return {
     isRight,
