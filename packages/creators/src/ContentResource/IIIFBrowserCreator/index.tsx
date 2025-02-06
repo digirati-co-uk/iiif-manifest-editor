@@ -15,6 +15,7 @@ export const iiifBrowserCreator: CreatorDefinition = {
   render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },
+  tags: ["image", "image-service"],
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: ["Annotation", "Canvas"],
