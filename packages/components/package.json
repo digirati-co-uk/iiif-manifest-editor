@@ -11,11 +11,17 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": {
@@ -38,12 +44,13 @@
     "prepack": "tsup src/index.tsx"
   },
   "dependencies": {
+    "@types/turndown": "5.0.5",
     "@floating-ui/react": "^0.26.13",
     "@floating-ui/react-dom": "^2.0.9",
     "@headlessui/react": "^2.0.3",
     "@iiif/helpers": "^1.2.12",
     "@iiif/presentation-3": "^2.2.3",
-    "@mdxeditor/editor": "^3.20.0",
+    "@mdxeditor/editor": "^3.21.2",
     "@react-aria/collections": "3.0.0-alpha.4",
     "@vidstack/react": "^1.11.29",
     "tiny-use-debounce": "^1.0.4",
@@ -57,6 +64,7 @@
     "react-iiif-vault": "^1.5.1",
     "react-lazy-load-image-component": "^1.6.0",
     "showdown": "^2.1.0",
+    "turndown": "^7.2.0",
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {

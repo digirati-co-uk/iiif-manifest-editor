@@ -172,6 +172,9 @@ importers:
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
+      tiny-invariant:
+        specifier: ^1.3.3
+        version: 1.3.3
     devDependencies:
       '@contentlayer2/source-contentful':
         specifier: ^0.4.1
@@ -318,11 +321,14 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@mdxeditor/editor':
-        specifier: ^3.20.0
+        specifier: ^3.21.2
         version: 3.21.2(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yjs@13.6.23)
       '@react-aria/collections':
         specifier: 3.0.0-alpha.4
         version: 3.0.0-alpha.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/turndown':
+        specifier: 5.0.5
+        version: 5.0.5
       '@vidstack/react':
         specifier: ^1.11.29
         version: 1.12.12(@types/react@18.3.3)(react@18.3.1)
@@ -362,6 +368,9 @@ importers:
       tiny-use-debounce:
         specifier: ^1.0.4
         version: 1.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      turndown:
+        specifier: ^7.2.0
+        version: 7.2.0
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -2474,6 +2483,9 @@ packages:
   '@microsoft/tsdoc@0.14.2':
     resolution: {integrity: sha512-9b8mPpKrfeGRuhFH5iO1iwCLeIIsV6+H1sRfxbkoGXIyQE2BTsPd9zqSqQJ+pv5sJ/hT5M1zvOFL02MnEezFug==}
 
+  '@mixmark-io/domino@2.2.0':
+    resolution: {integrity: sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==}
+
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     resolution: {integrity: sha512-dbrCL0Pl5KZG7x7tXdtVsA5CO6At5ohDX3myf5xIYn9kN4jDFxsocl8bNt6Vb/hZQoJd8fI+k5VlJt+rFhbdVw==}
     engines: {node: '>= 10'}
@@ -4350,6 +4362,9 @@ packages:
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
+  '@types/turndown@5.0.5':
+    resolution: {integrity: sha512-TL2IgGgc7B5j78rIccBtlYAnkuv8nUQqhQc+DSYV5j9Be9XOcm/SKOVRuA47xAVI3680Tk9B1d8flK2GWT2+4w==}
+
   '@types/unist@2.0.10':
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
 
@@ -4512,11 +4527,6 @@ packages:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
-
-  acorn@8.11.3:
-    resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
 
   acorn@8.12.1:
     resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
@@ -9415,6 +9425,9 @@ packages:
     resolution: {integrity: sha512-jF1K0tTUyryEWmgqk1V0ALbSz3VdeZ8FXUo6B64WsPksCMCE48N5jUezGOH2MN0+epdaRMH8/WcPU0QQaVfeLA==}
     hasBin: true
 
+  turndown@7.2.0:
+    resolution: {integrity: sha512-eCZGBN4nNNqM9Owkv9HAtWRYfLA4h909E/WGAWWBpmB275ehNhZyk87/Tpvjbp0jjNl9XwCsbe6bm6CqFsgD+A==}
+
   twoslash-protocol@0.2.9:
     resolution: {integrity: sha512-uKQl8UboT6JU4VAtYaSI3DbNtgaNhFaTpCSMy/n3tRl5lMlMhrjiuNKdqx15xjcviconuGJ9oObkz1h9zJFrJg==}
 
@@ -11775,6 +11788,8 @@ snapshots:
 
   '@microsoft/tsdoc@0.14.2': {}
 
+  '@mixmark-io/domino@2.2.0': {}
+
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     optional: true
 
@@ -14048,6 +14063,8 @@ snapshots:
 
   '@types/trusted-types@2.0.7': {}
 
+  '@types/turndown@5.0.5': {}
+
   '@types/unist@2.0.10': {}
 
   '@types/unist@3.0.2': {}
@@ -14196,7 +14213,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
@@ -14259,15 +14276,9 @@ snapshots:
   abs-svg-path@0.1.1:
     optional: true
 
-  acorn-jsx@5.3.2(acorn@8.11.3):
-    dependencies:
-      acorn: 8.11.3
-
   acorn-jsx@5.3.2(acorn@8.12.1):
     dependencies:
       acorn: 8.12.1
-
-  acorn@8.11.3: {}
 
   acorn@8.12.1: {}
 
@@ -15614,7 +15625,7 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       eslint-plugin-turbo: 2.0.6(eslint@9.10.0(jiti@1.21.0))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
 
@@ -15631,7 +15642,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.16.1
       eslint: 9.10.0(jiti@1.21.0)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -15643,7 +15654,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -15670,7 +15681,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -15876,8 +15887,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.11.3
-      acorn-jsx: 5.3.2(acorn@8.11.3)
+      acorn: 8.12.1
+      acorn-jsx: 5.3.2(acorn@8.12.1)
       eslint-visitor-keys: 3.4.3
 
   esprima@4.0.1: {}
@@ -17814,8 +17825,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.11.3
-      acorn-jsx: 5.3.2(acorn@8.11.3)
+      acorn: 8.12.1
+      acorn-jsx: 5.3.2(acorn@8.12.1)
       micromark-extension-mdx-expression: 3.0.0
       micromark-extension-mdx-jsx: 3.0.0
       micromark-extension-mdx-md: 2.0.0
@@ -20478,6 +20489,10 @@ snapshots:
       turbo-linux-arm64: 2.0.3
       turbo-windows-64: 2.0.3
       turbo-windows-arm64: 2.0.3
+
+  turndown@7.2.0:
+    dependencies:
+      '@mixmark-io/domino': 2.2.0
 
   twoslash-protocol@0.2.9: {}
 
