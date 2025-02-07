@@ -71,6 +71,17 @@ export function ConfigEditor() {
             />
             <Form.Label htmlFor="advancedLanguageMode">Advanced Language Mode</Form.Label>
           </Form.InputContainer>
+          
+          
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="textGranularityEnabled"
+              id="textGranularityEnabled"
+              defaultChecked={config.i18n?.textGranularityEnabled || false}
+            />
+            <Form.Label htmlFor="textGranularityEnabled">Enable text granularity</Form.Label>
+          </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
             <Form.Input

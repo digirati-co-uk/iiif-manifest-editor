@@ -78,7 +78,14 @@ export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?:
             return (
               <MenuItem key={config.id} {...(itemProps[key] as any)}>
                 <MenuItemStatus $status={inactive ? "available" : config.id === selected ? "active" : "configured"} />
-                <MenuItemLabel onClick={() => actions.selectPreview(config.id)}>{config.label}</MenuItemLabel>
+                <MenuItemLabel
+                  onClick={() => {
+                    actions.selectPreview(config.id);
+                    actions.updatePreviews();
+                  }}
+                >
+                  {config.label}
+                </MenuItemLabel>
                 {!inactive ? (
                   <MenuItemClose onClick={() => actions.deletePreview(config.id)}>
                     <CloseIcon />

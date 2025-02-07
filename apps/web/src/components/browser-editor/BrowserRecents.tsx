@@ -16,7 +16,7 @@ export default function BrowserRecents() {
 
 
   useEffect(() => {
-    if (projects.isFetched) {
+    if (projects.isFetched && selectionManager) {
       if (!projects.data || !projects.data.length) {
         document.cookie = "tab=examples; path=/";
       } else {
