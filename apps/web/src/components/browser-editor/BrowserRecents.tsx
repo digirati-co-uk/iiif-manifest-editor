@@ -16,14 +16,14 @@ export default function BrowserRecents() {
 
 
   useEffect(() => {
-    if (projects.isFetched && selectionManager) {
+    if (projects.isFetched) {
       if (!projects.data || !projects.data.length) {
         document.cookie = "tab=examples; path=/";
       } else {
         document.cookie = "tab=recent; path=/";
       }
     }
-  }, [projects.data, projects]);
+  }, [projects.data]);
 
   return (
     <div className="grid grid-md gap-4">
