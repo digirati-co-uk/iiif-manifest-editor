@@ -1,4 +1,5 @@
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { CreatableResource } from "@manifest-editor/creator-api";
 
 export interface EditableResource {
   parent?: Reference;
@@ -6,18 +7,6 @@ export interface EditableResource {
   index?: number;
   resource: SpecificResource;
   onlyReference?: boolean;
-}
-
-export interface CreatableResource {
-  type: string;
-  parent?: Reference;
-  property?: string;
-  index?: number;
-  onlyReference?: boolean;
-  target?: Reference;
-  initialData?: any;
-  isPainting?: boolean;
-  filter?: string;
 }
 
 export interface EditingStackState {
@@ -36,14 +25,14 @@ export interface EditingStackActions {
 
 export type EditingStackActionCreators =
   | {
-      type: "edit";
-      payload: { resource: EditableResource | null; reset?: boolean };
-    }
+    type: "edit";
+    payload: { resource: EditableResource | null; reset?: boolean };
+  }
   | { type: "updateCurrent"; payload: { resource: EditableResource } }
   | { type: "syncRemoval"; payload: { resource: EditableResource } }
   | { type: "back" }
   | {
-      type: "create";
-      payload: { resource: CreatableResource | null; options?: any };
-    }
+    type: "create";
+    payload: { resource: CreatableResource | null; options?: any };
+  }
   | { type: "close" };

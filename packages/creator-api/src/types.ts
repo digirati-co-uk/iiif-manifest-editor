@@ -90,3 +90,15 @@ export interface CreatorSideEffect {
   canvasInteraction?: boolean;
   // @todo maybe other side-effects?
 }
+
+export interface CreatableResource {
+  type: string;
+  parent?: Reference;
+  property?: string;
+  index?: number;
+  onlyReference?: boolean;
+  target?: Reference;
+  initialData?: any;
+  isPainting?: boolean;
+  filter?: string;
+}

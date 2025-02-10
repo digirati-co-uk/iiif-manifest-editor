@@ -1,11 +1,15 @@
-import { FormEvent } from "react";
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
-import { InputContainer, InputLabel, Input } from "@manifest-editor/editors";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorContext,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
+import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import type { FormEvent } from "react";
 
-const ytRegex = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#&?]*).*/;
+const ytRegex =
+  /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#&?]*).*/;
 
 export interface CreateYouTubeBodyPayload {
   youtubeUrl: string;
@@ -24,7 +28,10 @@ export function validateYouTube(data: CreateYouTubeBodyPayload) {
   return !!getYouTubeId(data.youtubeUrl);
 }
 
-export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
+export async function createYoutubeBody(
+  data: CreateYouTubeBodyPayload,
+  ctx: CreatorFunctionContext,
+) {
   const id = getYouTubeId(data.youtubeUrl);
   const body = ctx.embed({
     id: `https://www.youtube.com/watch?v=${id}`,
@@ -45,14 +52,20 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
 
   if (ctx.options.targetType === "Canvas") {
     const canvasId = ctx.generateId("canvas");
-    const pageId = ctx.generateId("annotation-page", { id: canvasId, type: "Canvas" });
+    const pageId = ctx.generateId("annotation-page", {
+      id: canvasId,
+      type: "Canvas",
+    });
 
-    const annotation = await ctx.embed({
+    const annotation = ctx.embed({
       id: ctx.generateId("annotation", { id: pageId, type: "AnnotationPage" }),
       type: "Annotation",
       motivation: "painting",
       body: [body],
-      target: { type: "SpecificResource", source: { id: canvasId, type: "Canvas" } },
+      target: {
+        type: "SpecificResource",
+        source: { id: canvasId, type: "Canvas" },
+      },
     });
 
     const page = ctx.embed({
@@ -72,7 +85,7 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
     });
   }
 
-  if (ctx.options.targetType === "Annotation" || ctx.options.targetType === "Canvas") {
+  if (ctx.options.targetType === "Annotation") {
     return ctx.embed({
       id: ctx.generateId("annotation"),
       type: "Annotation",

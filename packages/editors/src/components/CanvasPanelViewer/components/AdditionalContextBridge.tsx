@@ -1,13 +1,25 @@
+import { ModeContext } from "@atlas-viewer/atlas";
+import {
+  AtlasStoreReactContext,
+  LayoutStateReactContext,
+} from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { StrategyReactContext, ControlsReactContext, CustomContextBridgeProvider } from "react-iiif-vault";
+import {
+  ControlsReactContext,
+  CustomContextBridgeProvider,
+  StrategyReactContext,
+} from "react-iiif-vault";
 
 export function AdditionalContextBridge(props: { children: React.ReactNode }) {
   const contexts = useMemo(() => {
     return {
       strategy: StrategyReactContext,
-      controls: ControlsReactContext
+      controls: ControlsReactContext,
+      mode: ModeContext,
+      atlas: AtlasStoreReactContext,
+      layout: LayoutStateReactContext,
     };
-  }, [])
+  }, []);
 
   return (
     <CustomContextBridgeProvider providers={contexts}>
@@ -16,11 +28,16 @@ export function AdditionalContextBridge(props: { children: React.ReactNode }) {
   );
 }
 
-export function AdditionalContextBridgeInner(props: { children: React.ReactNode }) {
+export function AdditionalContextBridgeInner(props: {
+  children: React.ReactNode;
+}) {
   const contexts = useMemo(() => {
     return {
       strategy: StrategyReactContext,
-      controls: ControlsReactContext
+      controls: ControlsReactContext,
+      mode: ModeContext,
+      atlas: AtlasStoreReactContext,
+      layout: LayoutStateReactContext,
     };
   }, []);
 

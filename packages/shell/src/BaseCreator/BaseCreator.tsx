@@ -1,19 +1,20 @@
 import { toRef } from "@iiif/parser";
 import { CreatorGrid } from "@manifest-editor/components";
-import type {
-  CreatorDefinition,
-  CreatorOptions,
+import {
+  CreatableResource,
+  type CreatorDefinition,
+  type CreatorOptions,
+  matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
-import type { CreatableResource } from "../EditingStack/EditingStack.types";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
-import { matchBasedOnResource, useInlineCreator } from "./BaseCreator.hooks";
+import { useInlineCreator } from "./BaseCreator.hooks";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -36,10 +37,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
     targetType: props.resource.type,
     parent: props.resource.parent
       ? {
-          property: props.resource.property as string,
-          atIndex: props.resource.index,
-          resource: props.resource.parent,
-        }
+        property: props.resource.property as string,
+        atIndex: props.resource.index,
+        resource: props.resource.parent,
+      }
       : undefined,
     target: props.resource.target,
     initialData: props.resource.initialData,

@@ -4,11 +4,12 @@ import { memo, ReactNode, useMemo, useReducer } from "react";
 import invariant from "tiny-invariant";
 import { useApp } from "../AppContext/AppContext";
 import { useEditingStack } from "../EditingStack/EditingStack";
-import { CreatableResource, EditableResource } from "../EditingStack/EditingStack.types";
+import { EditableResource } from "../EditingStack/EditingStack.types";
 import { LayoutActionsReactContext, LayoutStateReactContext } from "./Layout.context";
 import { usePanelActions } from "./Layout.hooks";
 import { getDefaultLayoutState, layoutReducer } from "./Layout.reducer";
 import { PinnablePanelActions } from "./Layout.types";
+import { CreatableResource } from "@manifest-editor/creator-api";
 
 function parse(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): any {
   if (typeof args === "string") {
@@ -106,9 +107,9 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
       resource: isSpecificResource(resource)
         ? resource
         : {
-            type: "SpecificResource",
-            source: resource,
-          },
+          type: "SpecificResource",
+          source: resource,
+        },
       ...context,
     };
 

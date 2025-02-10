@@ -1,18 +1,22 @@
-import { ResourceProvider } from "react-iiif-vault";
-import { ReactNode, useCallback } from "react";
-import { ReorderListItem } from "../ReorderListItem/ReorderListItem.dndkit";
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { AppDropdownItem } from "../../../../ui/ui/AppDropdown/AppDropdown";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { type ReactNode, useCallback } from "react";
+import { ResourceProvider } from "react-iiif-vault";
+import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
+import { ReorderListItem } from "../ReorderListItem/ReorderListItem.dndkit";
 
 export interface ReorderListProps<T extends { id: string; type?: string }> {
   id: string;
@@ -34,10 +38,14 @@ export function ReorderList<T extends { id: string; type?: string }>({
   marginBottom,
 }: ReorderListProps<T>) {
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const onDragEnd = useCallback(
@@ -50,7 +58,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
         });
       }
     },
-    [items, reorder]
+    [items, reorder],
   );
 
   const enabled = items.length > 0;
@@ -73,11 +81,15 @@ export function ReorderList<T extends { id: string; type?: string }>({
               item={item}
               inlineHandle={inlineHandle}
               reorderEnabled={enabled}
-              actions={createActions ? createActions(item, idx, item) : undefined}
+              actions={
+                createActions ? createActions(item, idx, item) : undefined
+              }
               marginBottom={marginBottom}
             >
               {item.type ? (
-                <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
+                <ResourceProvider value={{ [item.type]: item.id }}>
+                  {renderItem(item, idx, item)}
+                </ResourceProvider>
               ) : (
                 renderItem(item, idx, item)
               )}

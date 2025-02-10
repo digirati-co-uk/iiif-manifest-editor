@@ -9,3 +9,6 @@ export * from "./CollectionItemList/CollectionItemList";
 export * from "./BehaviorEditor/BehaviorEditor";
 export * from "./LanguageMapEditor/LanguageMapEditor";
 export * from "./PaintingAnnotationList/PaintingAnnotationList";
+export * from "./CanvasPanelViewer/components/AnnotationTargetEditor";
+export * from "./ReorderList/ReorderList.dndkit";
+export * from "./LinkingPropertyList/LinkingPropertyList";

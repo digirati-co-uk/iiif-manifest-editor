@@ -23,6 +23,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@tanstack/react-query": "^5.37.1",
@@ -39,7 +40,8 @@
     "react-joyride": "^2.9.3",
     "styled-components": "6.1.8",
     "tailwind-merge": "^2.3.0",
-    "tiny-invariant": "^1.3.3"
+    "tiny-invariant": "^1.3.3",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@contentlayer2/source-contentful": "^0.4.1",

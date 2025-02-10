@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  polygon-editor: 0.0.6
+
 importers:
 
   .:
@@ -118,6 +121,9 @@ importers:
       '@manifest-editor/editors':
         specifier: workspace:*
         version: link:../../packages/editors
+      '@manifest-editor/exhibition-preset':
+        specifier: workspace:*
+        version: link:../../presets/exhibition-preset
       '@manifest-editor/iiif-browser':
         specifier: workspace:*
         version: link:../../packages/iiif-browser
@@ -175,6 +181,9 @@ importers:
       tiny-invariant:
         specifier: ^1.3.3
         version: 1.3.3
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@contentlayer2/source-contentful':
         specifier: ^0.4.1
@@ -336,8 +345,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       polygon-editor:
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: 0.0.6
+        version: 0.0.6
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -371,6 +380,9 @@ importers:
       turndown:
         specifier: ^7.2.0
         version: 7.2.0
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -427,8 +439,8 @@ importers:
         specifier: workspace:*
         version: link:../editor-api
       polygon-editor:
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: 0.0.6
+        version: 0.0.6
       react-iiif-vault:
         specifier: ^1.2.1
         version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -528,8 +540,8 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       polygon-editor:
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: 0.0.6
+        version: 0.0.6
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -544,8 +556,8 @@ importers:
   packages/editors:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: ^2.2.0
-        version: 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^2.0.6
+        version: 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -609,9 +621,12 @@ importers:
       leaflet-draw:
         specifier: ^1.0.4
         version: 1.0.4
+      mitt:
+        specifier: ^3.0.1
+        version: 3.0.1
       polygon-editor:
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: 0.0.6
+        version: 0.0.6
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -657,6 +672,9 @@ importers:
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.3.0
       zustand:
         specifier: ^4.5.2
         version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
@@ -713,8 +731,8 @@ importers:
   packages/iiif-browser:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: ^2.2.0
-        version: 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^2.0.6
+        version: 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
         version: 1.3.1(@iiif/parser@2.1.7)
@@ -994,6 +1012,9 @@ importers:
 
   packages/shell:
     dependencies:
+      '@atlas-viewer/atlas':
+        specifier: ^2.0.6
+        version: 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1024,6 +1045,9 @@ importers:
       '@manifest-editor/editor-api':
         specifier: workspace:*
         version: link:../editor-api
+      '@tanstack/react-query':
+        specifier: ^5.56.2
+        version: 5.66.0(react@18.3.1)
       immer:
         specifier: ^10.0.4
         version: 10.1.1
@@ -1033,6 +1057,9 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
+      polygon-editor:
+        specifier: 0.0.6
+        version: 0.0.6
       query-string:
         specifier: ^9.0.0
         version: 9.0.0
@@ -1107,8 +1134,8 @@ importers:
   packages/ui:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: ^2.2.0
-        version: 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^2.0.6
+        version: 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1201,6 +1228,88 @@ importers:
       tiny-invariant:
         specifier: ^1.3.3
         version: 1.3.3
+      tsup:
+        specifier: ^8.0.2
+        version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
+
+  presets/exhibition-preset:
+    dependencies:
+      '@dnd-kit/core':
+        specifier: ^6.0.8
+        version: 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/modifiers':
+        specifier: 7.0.0
+        version: 7.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/sortable':
+        specifier: 8.0.0
+        version: 8.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.1
+        version: 3.2.2(react@18.3.1)
+      '@iiif/helpers':
+        specifier: ^1.3.1
+        version: 1.3.1(@iiif/parser@2.1.7)
+      '@iiif/parser':
+        specifier: ^2.1.7
+        version: 2.1.7
+      '@iiif/presentation-3':
+        specifier: ^2.2.3
+        version: 2.2.3
+      '@iiif/presentation-3-normalized':
+        specifier: ^0.9.7
+        version: 0.9.7
+      '@manifest-editor/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@manifest-editor/creators':
+        specifier: workspace:*
+        version: link:../../packages/creators
+      '@manifest-editor/editor-api':
+        specifier: workspace:*
+        version: link:../../packages/editor-api
+      '@manifest-editor/editors':
+        specifier: workspace:*
+        version: link:../../packages/editors
+      '@manifest-editor/manifest-preset':
+        specifier: workspace:*
+        version: link:../manifest-preset
+      '@manifest-editor/shell':
+        specifier: workspace:*
+        version: link:../../packages/shell
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-aria-components:
+        specifier: ^1.3.3
+        version: 1.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-iiif-vault:
+        specifier: ^1.5.1
+        version: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.3.0
+      tiny-invariant:
+        specifier: ^1.3.3
+        version: 1.3.3
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
+    devDependencies:
+      '@manifest-editor/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal-packages/eslint-config
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.0
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(postcss@8.4.45)(typescript@5.7.3)
@@ -3895,19 +4004,9 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
-  '@rollup/rollup-android-arm-eabi@4.18.0':
-    resolution: {integrity: sha512-Tya6xypR10giZV1XzxmH5wr25VcZSncG0pZIjfePT0OVBvqNEurzValetGNarVrGiq66EBVAFn15iYX4w6FKgQ==}
-    cpu: [arm]
-    os: [android]
-
   '@rollup/rollup-android-arm-eabi@4.21.2':
     resolution: {integrity: sha512-fSuPrt0ZO8uXeS+xP3b+yYTCBUd05MoSp2N/MFOgjhhUhMmchXlpTQrTpI8T+YAwAQuK7MafsCOxW7VrPMrJcg==}
     cpu: [arm]
-    os: [android]
-
-  '@rollup/rollup-android-arm64@4.18.0':
-    resolution: {integrity: sha512-avCea0RAP03lTsDhEyfy+hpfr85KfyTctMADqHVhLAF3MlIkq83CP8UfAHUssgXTYd+6er6PaAhx/QGv4L1EiA==}
-    cpu: [arm64]
     os: [android]
 
   '@rollup/rollup-android-arm64@4.21.2':
@@ -3915,19 +4014,9 @@ packages:
     cpu: [arm64]
     os: [android]
 
-  '@rollup/rollup-darwin-arm64@4.18.0':
-    resolution: {integrity: sha512-IWfdwU7KDSm07Ty0PuA/W2JYoZ4iTj3TUQjkVsO/6U+4I1jN5lcR71ZEvRh52sDOERdnNhhHU57UITXz5jC1/w==}
-    cpu: [arm64]
-    os: [darwin]
-
   '@rollup/rollup-darwin-arm64@4.21.2':
     resolution: {integrity: sha512-99AhQ3/ZMxU7jw34Sq8brzXqWH/bMnf7ZVhvLk9QU2cOepbQSVTns6qoErJmSiAvU3InRqC2RRZ5ovh1KN0d0Q==}
     cpu: [arm64]
-    os: [darwin]
-
-  '@rollup/rollup-darwin-x64@4.18.0':
-    resolution: {integrity: sha512-n2LMsUz7Ynu7DoQrSQkBf8iNrjOGyPLrdSg802vk6XT3FtsgX6JbE8IHRvposskFm9SNxzkLYGSq9QdpLYpRNA==}
-    cpu: [x64]
     os: [darwin]
 
   '@rollup/rollup-darwin-x64@4.21.2':
@@ -3935,18 +4024,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@rollup/rollup-linux-arm-gnueabihf@4.18.0':
-    resolution: {integrity: sha512-C/zbRYRXFjWvz9Z4haRxcTdnkPt1BtCkz+7RtBSuNmKzMzp3ZxdM28Mpccn6pt28/UWUCTXa+b0Mx1k3g6NOMA==}
-    cpu: [arm]
-    os: [linux]
-
   '@rollup/rollup-linux-arm-gnueabihf@4.21.2':
     resolution: {integrity: sha512-ztRJJMiE8nnU1YFcdbd9BcH6bGWG1z+jP+IPW2oDUAPxPjo9dverIOyXz76m6IPA6udEL12reYeLojzW2cYL7w==}
-    cpu: [arm]
-    os: [linux]
-
-  '@rollup/rollup-linux-arm-musleabihf@4.18.0':
-    resolution: {integrity: sha512-l3m9ewPgjQSXrUMHg93vt0hYCGnrMOcUpTz6FLtbwljo2HluS4zTXFy2571YQbisTnfTKPZ01u/ukJdQTLGh9A==}
     cpu: [arm]
     os: [linux]
 
@@ -3955,18 +4034,8 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@rollup/rollup-linux-arm64-gnu@4.18.0':
-    resolution: {integrity: sha512-rJ5D47d8WD7J+7STKdCUAgmQk49xuFrRi9pZkWoRD1UeSMakbcepWXPF8ycChBoAqs1pb2wzvbY6Q33WmN2ftw==}
-    cpu: [arm64]
-    os: [linux]
-
   '@rollup/rollup-linux-arm64-gnu@4.21.2':
     resolution: {integrity: sha512-69CF19Kp3TdMopyteO/LJbWufOzqqXzkrv4L2sP8kfMaAQ6iwky7NoXTp7bD6/irKgknDKM0P9E/1l5XxVQAhw==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@rollup/rollup-linux-arm64-musl@4.18.0':
-    resolution: {integrity: sha512-be6Yx37b24ZwxQ+wOQXXLZqpq4jTckJhtGlWGZs68TgdKXJgw54lUUoFYrg6Zs/kjzAQwEwYbp8JxZVzZLRepQ==}
     cpu: [arm64]
     os: [linux]
 
@@ -3975,19 +4044,9 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@rollup/rollup-linux-powerpc64le-gnu@4.18.0':
-    resolution: {integrity: sha512-hNVMQK+qrA9Todu9+wqrXOHxFiD5YmdEi3paj6vP02Kx1hjd2LLYR2eaN7DsEshg09+9uzWi2W18MJDlG0cxJA==}
-    cpu: [ppc64]
-    os: [linux]
-
   '@rollup/rollup-linux-powerpc64le-gnu@4.21.2':
     resolution: {integrity: sha512-cZdyuInj0ofc7mAQpKcPR2a2iu4YM4FQfuUzCVA2u4HI95lCwzjoPtdWjdpDKyHxI0UO82bLDoOaLfpZ/wviyQ==}
     cpu: [ppc64]
-    os: [linux]
-
-  '@rollup/rollup-linux-riscv64-gnu@4.18.0':
-    resolution: {integrity: sha512-ROCM7i+m1NfdrsmvwSzoxp9HFtmKGHEqu5NNDiZWQtXLA8S5HBCkVvKAxJ8U+CVctHwV2Gb5VUaK7UAkzhDjlg==}
-    cpu: [riscv64]
     os: [linux]
 
   '@rollup/rollup-linux-riscv64-gnu@4.21.2':
@@ -3995,28 +4054,13 @@ packages:
     cpu: [riscv64]
     os: [linux]
 
-  '@rollup/rollup-linux-s390x-gnu@4.18.0':
-    resolution: {integrity: sha512-0UyyRHyDN42QL+NbqevXIIUnKA47A+45WyasO+y2bGJ1mhQrfrtXUpTxCOrfxCR4esV3/RLYyucGVPiUsO8xjg==}
-    cpu: [s390x]
-    os: [linux]
-
   '@rollup/rollup-linux-s390x-gnu@4.21.2':
     resolution: {integrity: sha512-PMxkrWS9z38bCr3rWvDFVGD6sFeZJw4iQlhrup7ReGmfn7Oukrr/zweLhYX6v2/8J6Cep9IEA/SmjXjCmSbrMQ==}
     cpu: [s390x]
     os: [linux]
 
-  '@rollup/rollup-linux-x64-gnu@4.18.0':
-    resolution: {integrity: sha512-xuglR2rBVHA5UsI8h8UbX4VJ470PtGCf5Vpswh7p2ukaqBGFTnsfzxUBetoWBWymHMxbIG0Cmx7Y9qDZzr648w==}
-    cpu: [x64]
-    os: [linux]
-
   '@rollup/rollup-linux-x64-gnu@4.21.2':
     resolution: {integrity: sha512-B90tYAUoLhU22olrafY3JQCFLnT3NglazdwkHyxNDYF/zAxJt5fJUB/yBoWFoIQ7SQj+KLe3iL4BhOMa9fzgpw==}
-    cpu: [x64]
-    os: [linux]
-
-  '@rollup/rollup-linux-x64-musl@4.18.0':
-    resolution: {integrity: sha512-LKaqQL9osY/ir2geuLVvRRs+utWUNilzdE90TpyoX0eNqPzWjRm14oMEE+YLve4k/NAqCdPkGYDaDF5Sw+xBfg==}
     cpu: [x64]
     os: [linux]
 
@@ -4025,29 +4069,14 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@rollup/rollup-win32-arm64-msvc@4.18.0':
-    resolution: {integrity: sha512-7J6TkZQFGo9qBKH0pk2cEVSRhJbL6MtfWxth7Y5YmZs57Pi+4x6c2dStAUvaQkHQLnEQv1jzBUW43GvZW8OFqA==}
-    cpu: [arm64]
-    os: [win32]
-
   '@rollup/rollup-win32-arm64-msvc@4.21.2':
     resolution: {integrity: sha512-9rRero0E7qTeYf6+rFh3AErTNU1VCQg2mn7CQcI44vNUWM9Ze7MSRS/9RFuSsox+vstRt97+x3sOhEey024FRQ==}
     cpu: [arm64]
     os: [win32]
 
-  '@rollup/rollup-win32-ia32-msvc@4.18.0':
-    resolution: {integrity: sha512-Txjh+IxBPbkUB9+SXZMpv+b/vnTEtFyfWZgJ6iyCmt2tdx0OF5WhFowLmnh8ENGNpfUlUZkdI//4IEmhwPieNg==}
-    cpu: [ia32]
-    os: [win32]
-
   '@rollup/rollup-win32-ia32-msvc@4.21.2':
     resolution: {integrity: sha512-5rA4vjlqgrpbFVVHX3qkrCo/fZTj1q0Xxpg+Z7yIo3J2AilW7t2+n6Q8Jrx+4MrYpAnjttTYF8rr7bP46BPzRw==}
     cpu: [ia32]
-    os: [win32]
-
-  '@rollup/rollup-win32-x64-msvc@4.18.0':
-    resolution: {integrity: sha512-UOo5FdvOL0+eIVTgS4tIdbW+TtnBLWg1YBCcU2KWM7nuNwRz9bksDX1bekJJCpu25N1DVWaCwnT39dVQxzqS8g==}
-    cpu: [x64]
     os: [win32]
 
   '@rollup/rollup-win32-x64-msvc@4.21.2':
@@ -4200,10 +4229,18 @@ packages:
   '@tanstack/query-core@5.40.0':
     resolution: {integrity: sha512-eD8K8jsOIq0Z5u/QbvOmfvKKE/XC39jA7yv4hgpl/1SRiU+J8QCIwgM/mEHuunQsL87dcvnHqSVLmf9pD4CiaA==}
 
+  '@tanstack/query-core@5.66.0':
+    resolution: {integrity: sha512-J+JeBtthiKxrpzUu7rfIPDzhscXF2p5zE/hVdrqkACBP8Yu0M96mwJ5m/8cPPYQE9aRNvXztXHlNwIh4FEeMZw==}
+
   '@tanstack/react-query@5.40.0':
     resolution: {integrity: sha512-iv/W0Axc4aXhFzkrByToE1JQqayxTPNotCoSCnarR/A1vDIHaoKpg7FTIfP3Ev2mbKn1yrxq0ZKYUdLEJxs6Tg==}
     peerDependencies:
       react: ^18.0.0
+
+  '@tanstack/react-query@5.66.0':
+    resolution: {integrity: sha512-z3sYixFQJe8hndFnXgWu7C79ctL+pI0KAelYyW+khaNJ1m22lWrhJU2QrsTcRKMuVPtoZvfBYrTStIdKo+x0Xw==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-virtual@3.10.7':
     resolution: {integrity: sha512-yeP+M0G8D+15ZFPivpuQ5hoM4Fa/PzERBx8P8EGcfEsXX3JOb9G9UUrqc47ZXAxvK+YqzM9T5qlJUYUFOwCZJw==}
@@ -8052,8 +8089,8 @@ packages:
   points-on-path@0.2.1:
     resolution: {integrity: sha512-25ClnWWuw7JbWZcgqY/gJ4FQWadKxGWk+3kR/7kD0tCaDtPPMj7oHu2ToLaVhfpnHrZzYby2w6tUA0eOIuUg8g==}
 
-  polygon-editor@0.0.4:
-    resolution: {integrity: sha512-meDMpdEJdYB8VueoHjSmWKjHbA1kV7U83bxl3GDJNg6ZpBp5oTCsUWe8PCifTe0MxNRF+elZFae/yfMs0PjhLg==}
+  polygon-editor@0.0.6:
+    resolution: {integrity: sha512-mQbsAg02d17NwilQQnXuSjPbki3kavg9xXLz1Z4wvkmnSfyEm3xGhdBu3bRm9Vb/cLREGxMNK3TbVjheqfNswg==}
 
   popper.js@1.16.1:
     resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
@@ -8765,11 +8802,6 @@ packages:
 
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
-
-  rollup@4.18.0:
-    resolution: {integrity: sha512-QmJz14PX3rzbJCN1SG4Xe/bAAX2a6NpCP8ab2vfu2GiUr8AQcr2nCV/oEO3yneFarB67zk8ShlIyWb2LGTb3Sg==}
-    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
-    hasBin: true
 
   rollup@4.21.2:
     resolution: {integrity: sha512-e3TapAgYf9xjdLvKQCkQTnbTKd4a6jwlpQSJJFokHGaX2IVjoEqkIIhiQfqsi0cdwlOD+tQGuOd5AJkc5RngBw==}
@@ -11474,7 +11506,7 @@ snapshots:
       '@iiif/presentation-3': 2.2.3
       '@react-aria/collections': 3.0.0-alpha.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react: 18.3.1
       react-aria: 3.34.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-aria-components: 1.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11496,7 +11528,7 @@ snapshots:
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       '@manifest-editor/editor-api': 1.1.0
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
@@ -11537,11 +11569,11 @@ snapshots:
       '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
 
   '@manifest-editor/editors@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(encoding@0.1.13)(i18next@23.11.5)(prop-types@15.8.1)':
     dependencies:
-      '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@atlas-viewer/atlas': 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api': 2.2.0
       '@dnd-kit/core': 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/modifiers': 7.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -11563,7 +11595,7 @@ snapshots:
       immer: 10.1.1
       leaflet: 1.9.4
       leaflet-draw: 1.0.4
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react: 18.3.1
       react-accessible-dropdown-menu-hook: 4.0.0
       react-beautiful-dnd: 13.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11590,7 +11622,7 @@ snapshots:
 
   '@manifest-editor/iiif-browser@1.1.0(@types/react@18.3.3)(immer@10.1.1)':
     dependencies:
-      '@atlas-viewer/atlas': 2.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@atlas-viewer/atlas': 2.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
       '@iiif/parser': 2.1.7
       '@iiif/presentation-3': 2.2.3
@@ -11598,7 +11630,7 @@ snapshots:
       react: 18.3.1
       react-accessible-dropdown-menu-hook: 4.0.0
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/0ef44e92/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     transitivePeerDependencies:
@@ -13641,97 +13673,49 @@ snapshots:
       '@react-types/shared': 3.24.1(react@18.3.1)
       react: 18.3.1
 
-  '@rollup/rollup-android-arm-eabi@4.18.0':
-    optional: true
-
   '@rollup/rollup-android-arm-eabi@4.21.2':
-    optional: true
-
-  '@rollup/rollup-android-arm64@4.18.0':
     optional: true
 
   '@rollup/rollup-android-arm64@4.21.2':
     optional: true
 
-  '@rollup/rollup-darwin-arm64@4.18.0':
-    optional: true
-
   '@rollup/rollup-darwin-arm64@4.21.2':
-    optional: true
-
-  '@rollup/rollup-darwin-x64@4.18.0':
     optional: true
 
   '@rollup/rollup-darwin-x64@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-arm-gnueabihf@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-arm-gnueabihf@4.21.2':
-    optional: true
-
-  '@rollup/rollup-linux-arm-musleabihf@4.18.0':
     optional: true
 
   '@rollup/rollup-linux-arm-musleabihf@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-arm64-gnu@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-arm64-gnu@4.21.2':
-    optional: true
-
-  '@rollup/rollup-linux-arm64-musl@4.18.0':
     optional: true
 
   '@rollup/rollup-linux-arm64-musl@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-powerpc64le-gnu@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-powerpc64le-gnu@4.21.2':
-    optional: true
-
-  '@rollup/rollup-linux-riscv64-gnu@4.18.0':
     optional: true
 
   '@rollup/rollup-linux-riscv64-gnu@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-s390x-gnu@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-s390x-gnu@4.21.2':
-    optional: true
-
-  '@rollup/rollup-linux-x64-gnu@4.18.0':
     optional: true
 
   '@rollup/rollup-linux-x64-gnu@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-x64-musl@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-x64-musl@4.21.2':
-    optional: true
-
-  '@rollup/rollup-win32-arm64-msvc@4.18.0':
     optional: true
 
   '@rollup/rollup-win32-arm64-msvc@4.21.2':
     optional: true
 
-  '@rollup/rollup-win32-ia32-msvc@4.18.0':
-    optional: true
-
   '@rollup/rollup-win32-ia32-msvc@4.21.2':
-    optional: true
-
-  '@rollup/rollup-win32-x64-msvc@4.18.0':
     optional: true
 
   '@rollup/rollup-win32-x64-msvc@4.21.2':
@@ -13885,9 +13869,16 @@ snapshots:
 
   '@tanstack/query-core@5.40.0': {}
 
+  '@tanstack/query-core@5.66.0': {}
+
   '@tanstack/react-query@5.40.0(react@18.3.1)':
     dependencies:
       '@tanstack/query-core': 5.40.0
+      react: 18.3.1
+
+  '@tanstack/react-query@5.66.0(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.66.0
       react: 18.3.1
 
   '@tanstack/react-virtual@3.10.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -14008,11 +13999,11 @@ snapshots:
 
   '@types/postcss-modules-local-by-default@4.0.2':
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.45
 
   '@types/postcss-modules-scope@3.0.4':
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.45
 
   '@types/prop-types@15.7.12': {}
 
@@ -14213,7 +14204,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
@@ -14286,7 +14277,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -15625,7 +15616,7 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       eslint-plugin-turbo: 2.0.6(eslint@9.10.0(jiti@1.21.0))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
 
@@ -15642,7 +15633,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.16.1
       eslint: 9.10.0(jiti@1.21.0)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -15654,7 +15645,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -15681,7 +15672,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -16556,14 +16547,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.5:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -17951,7 +17942,7 @@ snapshots:
   micromark@4.0.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.3.7
       decode-named-character-reference: 1.0.2
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.1
@@ -18728,7 +18719,7 @@ snapshots:
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
 
-  polygon-editor@0.0.4: {}
+  polygon-editor@0.0.6: {}
 
   popper.js@1.16.1: {}
 
@@ -19173,7 +19164,7 @@ snapshots:
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       mitt: 3.0.1
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
@@ -19194,7 +19185,7 @@ snapshots:
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       mitt: 3.0.1
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
@@ -19217,7 +19208,7 @@ snapshots:
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       mitt: 3.0.1
-      polygon-editor: 0.0.4
+      polygon-editor: 0.0.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
@@ -19720,28 +19711,6 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rollup@4.18.0:
-    dependencies:
-      '@types/estree': 1.0.5
-    optionalDependencies:
-      '@rollup/rollup-android-arm-eabi': 4.18.0
-      '@rollup/rollup-android-arm64': 4.18.0
-      '@rollup/rollup-darwin-arm64': 4.18.0
-      '@rollup/rollup-darwin-x64': 4.18.0
-      '@rollup/rollup-linux-arm-gnueabihf': 4.18.0
-      '@rollup/rollup-linux-arm-musleabihf': 4.18.0
-      '@rollup/rollup-linux-arm64-gnu': 4.18.0
-      '@rollup/rollup-linux-arm64-musl': 4.18.0
-      '@rollup/rollup-linux-powerpc64le-gnu': 4.18.0
-      '@rollup/rollup-linux-riscv64-gnu': 4.18.0
-      '@rollup/rollup-linux-s390x-gnu': 4.18.0
-      '@rollup/rollup-linux-x64-gnu': 4.18.0
-      '@rollup/rollup-linux-x64-musl': 4.18.0
-      '@rollup/rollup-win32-arm64-msvc': 4.18.0
-      '@rollup/rollup-win32-ia32-msvc': 4.18.0
-      '@rollup/rollup-win32-x64-msvc': 4.18.0
-      fsevents: 2.3.3
-
   rollup@4.21.2:
     dependencies:
       '@types/estree': 1.0.5
@@ -19931,7 +19900,7 @@ snapshots:
   socks-proxy-agent@8.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.4
+      debug: 4.3.7
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
@@ -20167,7 +20136,7 @@ snapshots:
   stylus@0.62.0:
     dependencies:
       '@adobe/css-tools': 4.3.3
-      debug: 4.3.4
+      debug: 4.3.7
       glob: 7.2.3
       sax: 1.3.0
       source-map: 0.7.4
@@ -20407,14 +20376,14 @@ snapshots:
       bundle-require: 4.1.0(esbuild@0.19.12)
       cac: 6.7.14
       chokidar: 3.6.0
-      debug: 4.3.4
+      debug: 4.3.7
       esbuild: 0.19.12
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
       postcss-load-config: 4.0.2(postcss@8.4.38)
       resolve-from: 5.0.0
-      rollup: 4.18.0
+      rollup: 4.21.2
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
@@ -20431,14 +20400,14 @@ snapshots:
       bundle-require: 4.1.0(esbuild@0.19.12)
       cac: 6.7.14
       chokidar: 3.6.0
-      debug: 4.3.4
+      debug: 4.3.7
       esbuild: 0.19.12
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
       postcss-load-config: 4.0.2(postcss@8.4.45)
       resolve-from: 5.0.0
-      rollup: 4.18.0
+      rollup: 4.21.2
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
@@ -20458,7 +20427,7 @@ snapshots:
   tuf-js@2.2.1:
     dependencies:
       '@tufjs/models': 2.0.1
-      debug: 4.3.4
+      debug: 4.3.7
       make-fetch-happen: 13.0.1
     transitivePeerDependencies:
       - supports-color

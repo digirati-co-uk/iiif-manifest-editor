@@ -1,7 +1,23 @@
-import { createContext, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
-import invariant from "tiny-invariant";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
-import { LayoutProps } from "../Layout/Layout.types";
+import {
+  type ReactNode,
+  type SetStateAction,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import invariant from "tiny-invariant";
+import { type Config, ConfigProvider } from "../ConfigContext/ConfigContext";
+import type {
+  AnnotationPanel,
+  CanvasEditorDefinition,
+  EditorDefinition,
+  LayoutPanel,
+  LayoutProps,
+} from "../Layout/Layout.types";
 
 export type AppContext = {
   instanceId: string;
@@ -10,6 +26,7 @@ export type AppContext = {
 };
 
 export type LoadedApp = Partial<LayoutProps> & {
+  config?: Partial<Config>;
   default: {
     id: string;
     title: string;
@@ -26,13 +43,34 @@ export type LoadedApp = Partial<LayoutProps> & {
 export type MappedApp = {
   metadata: LoadedApp["default"];
   layout: LayoutProps;
+  config?: Partial<Config>;
 };
+
+export interface AppExtension {
+  config?: Partial<Config>;
+  leftPanels?: LayoutPanel[];
+  centerPanels?: LayoutPanel[];
+  rightPanels?: LayoutPanel[];
+  modalPanels?: LayoutPanel[];
+  editors?: EditorDefinition[];
+  creators?: CreatorDefinition[];
+  canvasEditors?: CanvasEditorDefinition[];
+  annotations?: AnnotationPanel[];
+  // Config.
+  leftPanelIds?: string[];
+
+  // Side-effects.
+  disableSideEffects?: string[];
+}
 
 export type AppState = { state: null | any; setState: SetStateAction<any> };
 
 export const PrimeAppReactContext = createContext<MappedApp | null>(null);
 const AppReactContext = createContext<AppContext | null>(null);
-const AppStateReactContext = createContext<{ state: null | any; setState: SetStateAction<any> }>({
+const AppStateReactContext = createContext<{
+  state: null | any;
+  setState: SetStateAction<any>;
+}>({
   state: null,
   setState: () => {
     // no-op
@@ -67,12 +105,15 @@ function AppStateProvider(props: {
 }) {
   const [state, _setState, stateRef] = useLocalStorage(
     `app-state/${props.appId}/${props.instanceId}`,
-    props.initialState || {}
+    props.initialState || {},
   );
 
   const setState = useCallback((partial: any) => {
-    const existing = stateRef.current ? JSON.parse(stateRef.current || "{}") : {};
-    const partialState = (typeof partial === "function" ? partial(existing) : partial) || {};
+    const existing = stateRef.current
+      ? JSON.parse(stateRef.current || "{}")
+      : {};
+    const partialState =
+      (typeof partial === "function" ? partial(existing) : partial) || {};
 
     _setState({
       ...existing,
@@ -86,9 +127,16 @@ function AppStateProvider(props: {
     }
   }, [props.appId]);
 
-  const ctx = useMemo(() => ({ state: state || {}, setState }), [setState, state]);
+  const ctx = useMemo(
+    () => ({ state: state || {}, setState }),
+    [setState, state],
+  );
 
-  return <AppStateReactContext.Provider value={ctx}>{props.children}</AppStateReactContext.Provider>;
+  return (
+    <AppStateReactContext.Provider value={ctx}>
+      {props.children}
+    </AppStateReactContext.Provider>
+  );
 }
 
 export function AppProvider({
@@ -106,17 +154,27 @@ export function AppProvider({
   definition: MappedApp;
   children: ReactNode;
 }) {
-  const ctx = useMemo(() => ({ instanceId, appId, args }), [instanceId, appId, args]);
+  const ctx = useMemo(
+    () => ({ instanceId, appId, args }),
+    [instanceId, appId, args],
+  );
   const _initialState = useMemo(() => initialState || {}, [instanceId]);
 
   // Current App is now put in the "Prime" context.
   return (
-    <PrimeAppReactContext.Provider value={definition}>
-      <AppReactContext.Provider value={ctx}>
-        <AppStateProvider instanceId={ctx.instanceId} appId={ctx.appId} args={ctx.args} initialState={_initialState}>
-          {children}
-        </AppStateProvider>
-      </AppReactContext.Provider>
-    </PrimeAppReactContext.Provider>
+    <ConfigProvider config={definition.config || {}}>
+      <PrimeAppReactContext.Provider value={definition}>
+        <AppReactContext.Provider value={ctx}>
+          <AppStateProvider
+            instanceId={ctx.instanceId}
+            appId={ctx.appId}
+            args={ctx.args}
+            initialState={_initialState}
+          >
+            {children}
+          </AppStateProvider>
+        </AppReactContext.Provider>
+      </PrimeAppReactContext.Provider>
+    </ConfigProvider>
   );
 }

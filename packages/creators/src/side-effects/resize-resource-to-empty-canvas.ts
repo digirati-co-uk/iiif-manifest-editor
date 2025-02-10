@@ -1,12 +1,17 @@
-import { SpecificResource } from "@iiif/presentation-3";
-import { CreatorSideEffect } from "@manifest-editor/creator-api";
+import type { SpecificResource } from "@iiif/presentation-3";
+import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import type { CreatorSideEffect } from "@manifest-editor/creator-api";
 import { EditorInstance } from "@manifest-editor/editor-api";
 
 export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
   canvasInteraction: true,
   spatial: true,
   async run(result, { vault, options }) {
-    if (result && result.type === "Annotation" && options.targetType === "Annotation") {
+    if (
+      result &&
+      result.type === "Annotation" &&
+      options.targetType === "Annotation"
+    ) {
       const fullAnno = vault.get<any>(result);
 
       const target = fullAnno.target as SpecificResource;
@@ -15,12 +20,17 @@ export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
       }
 
       const canvasRef = target.source;
-      const canvas = vault.get(canvasRef);
+      const canvas = vault.get<CanvasNormalized>(canvasRef);
       if (!canvas.items) {
         return;
       }
 
-      const annoPage = vault.get(canvas.items[0]);
+      if (canvas.behavior.length) {
+        // Ignore custom canvas behaviours.
+        return;
+      }
+
+      const annoPage = vault.get(canvas.items[0]!);
       if (!annoPage) {
         return;
       }
@@ -44,7 +54,11 @@ export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
       const duration = body.duration || service?.duration;
 
       if (selector) {
-        if ((selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") && selector.region) {
+        if (
+          (selector.type === "iiif:ImageApiSelector" ||
+            selector.type === "ImageApiSelector") &&
+          selector.region
+        ) {
           const [x, y, width_, height_] = selector.region.split(",");
 
           width = Number(width_) || width;

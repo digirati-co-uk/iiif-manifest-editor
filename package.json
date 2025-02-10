@@ -16,6 +16,11 @@
     "bump": "syncpack fix-mismatches && lerna version --no-private && syncpack fix-mismatches",
     "release": "lerna publish --no-private"
   },
+  "pnpm": {
+    "overrides": {
+      "polygon-editor": "0.0.6"
+    }
+  },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.4.0",
     "@repo/eslint-config": "workspace:*",

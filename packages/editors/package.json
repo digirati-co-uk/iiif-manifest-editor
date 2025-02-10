@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": {
@@ -43,7 +37,7 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "^2.2.0",
+    "@atlas-viewer/atlas": "^2.0.6",
     "@atlas-viewer/iiif-image-api": "^2.2.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "7.0.0",
@@ -65,7 +59,8 @@
     "immer": "^10.0.4",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
-    "polygon-editor": "^0.0.4",
+    "mitt": "^3.0.1",
+    "polygon-editor": "^0.0.6",
     "react": "^18.3.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-beautiful-dnd": "^13.1.0",
@@ -81,6 +76,7 @@
     "react-select-search": "^4.1.2",
     "react-textarea-autosize": "^8.3.4",
     "styled-components": "6.1.8",
+    "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
