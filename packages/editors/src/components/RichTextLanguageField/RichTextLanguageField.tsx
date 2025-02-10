@@ -1,26 +1,27 @@
-import * as S from "./RichTextLanguageField.styles";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Textarea from "react-textarea-autosize";
-import {
-  Editor,
-  EditorState,
-  convertFromHTML,
-  ContentState,
-  RichUtils,
-  EditorCommand,
-  DraftHandleValue,
-  ContentBlock,
-  CompositeDecorator,
-} from "draft-js";
-import { convertToHTML } from "draft-convert";
-import DOMPurify from "dompurify";
-import { useDebounce } from "tiny-use-debounce";
-import { useCreateLink } from "./hooks/use-create-link";
-import { LinkIcon } from "@manifest-editor/ui/icons/LinkIcon";
-import { CodeIcon } from "@manifest-editor/ui/icons/CodeIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
+import { CodeIcon } from "@manifest-editor/ui/icons/CodeIcon";
+import { LinkIcon } from "@manifest-editor/ui/icons/LinkIcon";
 import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import DOMPurify from "dompurify";
+import { convertToHTML } from "draft-convert";
+import {
+  CompositeDecorator,
+  type ContentBlock,
+  ContentState,
+  type DraftHandleValue,
+  Editor,
+  type EditorCommand,
+  EditorState,
+  RichUtils,
+  convertFromHTML,
+} from "draft-js";
+import type React from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Textarea from "react-textarea-autosize";
+import { useDebounce } from "tiny-use-debounce";
+import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
+import * as S from "./RichTextLanguageField.styles";
+import { useCreateLink } from "./hooks/use-create-link";
 
 interface RichTextLanguageField {
   id?: string;
@@ -39,10 +40,17 @@ const Link = (props: any) => {
   return <S.InlineLink href={url}>{props.children}</S.InlineLink>;
 };
 
-function findLinkEntities(contentBlock: ContentBlock, callback: any, contentState: ContentState) {
+function findLinkEntities(
+  contentBlock: ContentBlock,
+  callback: any,
+  contentState: ContentState,
+) {
   contentBlock.findEntityRanges((character) => {
     const entityKey = character.getEntity();
-    return entityKey !== null && contentState.getEntity(entityKey).getType() === "LINK";
+    return (
+      entityKey !== null &&
+      contentState.getEntity(entityKey).getType() === "LINK"
+    );
   }, callback);
 }
 
@@ -63,8 +71,11 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const [editorState, _setEditorState] = useState(() => {
     const blocksFromHTML = convertFromHTML(textState);
     return EditorState.createWithContent(
-      ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
-      decorator
+      ContentState.createFromBlockArray(
+        blocksFromHTML.contentBlocks,
+        blocksFromHTML.entityMap,
+      ),
+      decorator,
     );
   });
   const [showLinkForm, setShowLinkForm] = useState(false);
@@ -75,7 +86,9 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const debounceSave = useDebounce(saveChanges, 400);
   const [showControls, setShowControls] = useState(false);
 
-  const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (s) => {
+  const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (
+    s,
+  ) => {
     debounceSave();
     _setEditorState(s);
   };
@@ -99,11 +112,19 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
 
   // State.
   const isStateHtml = textState[0] === "<";
-  const linkForm = useCreateLink(editorState, setEditorState, () => setShowLinkForm(false));
+  const linkForm = useCreateLink(editorState, setEditorState, () =>
+    setShowLinkForm(false),
+  );
 
-  const isBold = htmlMode ? !!editorState.getCurrentInlineStyle().get("BOLD") : false;
-  const isItalic = htmlMode ? !!editorState.getCurrentInlineStyle().get("ITALIC") : false;
-  const isUnderline = htmlMode ? !!editorState.getCurrentInlineStyle().get("UNDERLINE") : false;
+  const isBold = htmlMode
+    ? !!editorState.getCurrentInlineStyle().get("BOLD")
+    : false;
+  const isItalic = htmlMode
+    ? !!editorState.getCurrentInlineStyle().get("ITALIC")
+    : false;
+  const isUnderline = htmlMode
+    ? !!editorState.getCurrentInlineStyle().get("UNDERLINE")
+    : false;
 
   // Getting current link.
   const contentState = editorState.getCurrentContent();
@@ -119,11 +140,17 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const getTextValue = () => {
     if (htmlMode) {
       const content = editorState.getCurrentContent();
-      const blocks = content.getBlocksAsArray().filter((b) => b.getDepth() === 0);
+      const blocks = content
+        .getBlocksAsArray()
+        .filter((b) => b.getDepth() === 0);
       return convertToHTML({
         blockToHTML: (block) => {
           //
-          if (blocks.length === 1 && block.depth === 0 && block.type === "unstyled") {
+          if (
+            blocks.length === 1 &&
+            block.depth === 0 &&
+            block.type === "unstyled"
+          ) {
             return <span />;
           }
         },
@@ -143,20 +170,29 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
 
   const controls = {
     bold() {
-      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "BOLD"));
+      setEditorState((prevState) =>
+        RichUtils.toggleInlineStyle(prevState, "BOLD"),
+      );
     },
     italic() {
-      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "ITALIC"));
+      setEditorState((prevState) =>
+        RichUtils.toggleInlineStyle(prevState, "ITALIC"),
+      );
     },
     underline() {
-      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "UNDERLINE"));
+      setEditorState((prevState) =>
+        RichUtils.toggleInlineStyle(prevState, "UNDERLINE"),
+      );
     },
     link() {
       setShowLinkForm((l) => !l);
     },
   };
 
-  const handleKeyCommand = (command: EditorCommand, editorState: EditorState): DraftHandleValue => {
+  const handleKeyCommand = (
+    command: EditorCommand,
+    editorState: EditorState,
+  ): DraftHandleValue => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
 
     if (newState) {
@@ -183,13 +219,16 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         textState
           .replace(/<\/p>\n<p>/g, "</p><p>")
           .replace(/<br\/>\n/g, "<br/>")
-          .replace(/\n/g, "<br/>")
+          .replace(/\n/g, "<br/>"),
       );
       setEditorState(
         EditorState.createWithContent(
-          ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
-          decorator
-        )
+          ContentState.createFromBlockArray(
+            blocksFromHTML.contentBlocks,
+            blocksFromHTML.entityMap,
+          ),
+          decorator,
+        ),
       );
     }
 
@@ -230,8 +269,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           .replace(/<br\/>\n/, "\n")
           .replace(/<br\/>/, "\n")
           .replace(/<\/p><p/, "</p>\n<p"),
-        { ALLOWED_TAGS: [] }
-      )
+        { ALLOWED_TAGS: [] },
+      ),
     );
   };
 
@@ -295,10 +334,10 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
               onFocus={props.onFocus}
               onBlur={props.onBlur}
               value={props.language}
-              onChange={(e) => props.onUpdateLanguage && props.onUpdateLanguage(e.currentTarget.value)}
+              onChange={(e) => props.onUpdateLanguage?.(e.currentTarget.value)}
             >
-              {props.languages.map((lang) => (
-                <option key={lang} value={lang}>
+              {props.languages.map((lang, n) => (
+                <option key={lang + n} value={lang}>
                   {lang}
                 </option>
               ))}
@@ -316,11 +355,19 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         <S.FloatingActionOuterContainer>
           <form {...linkForm}>
             <S.FloatingActionContainer>
-              <S.FloatingActionInput type="text" name="link" defaultValue={currentUrl} />
+              <S.FloatingActionInput
+                type="text"
+                name="link"
+                defaultValue={currentUrl}
+              />
               <S.FloatingActionButton type="submit" name="_action" value="add">
                 Add link
               </S.FloatingActionButton>
-              <S.FloatingActionButton type="submit" name="_action" value="remove">
+              <S.FloatingActionButton
+                type="submit"
+                name="_action"
+                value="remove"
+              >
                 Remove
               </S.FloatingActionButton>
             </S.FloatingActionContainer>
@@ -364,7 +411,9 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </S.CopyText>
         ) : (
           <S.LanguageDisplay onClick={() => setShowControls(true)}>
-            {props.language === "none" ? null : <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>}
+            {props.language === "none" ? null : (
+              <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>
+            )}
           </S.LanguageDisplay>
         )}
       </ComposableInput.Container>
