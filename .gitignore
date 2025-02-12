@@ -42,3 +42,6 @@ prev/
 .space/
 .makemd/
 .idea/
+
+# Local Netlify folder
+.netlify

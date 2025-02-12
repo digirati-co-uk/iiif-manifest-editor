@@ -1,12 +1,12 @@
-import { type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import invariant from "tiny-invariant";
+import { getHeaders } from "../helpers";
+import { deleteRoute } from "../routes/delete";
 import { retrieveRoute } from "../routes/retrieve";
-import { createMemoryStore } from "../stores/memory";
 import { storeRoute } from "../routes/store";
 import { updateRoute } from "../routes/update";
-import { Config, StorageInterface } from "../types";
-import { deleteRoute } from "../routes/delete";
-import { getHeaders } from "../helpers";
+import { createMemoryStore } from "../stores/memory";
+import type { Config, StorageInterface } from "../types";
 
 // Create a Next.js router for the IIIF Preview Server
 // Usage: create `app/iiif/[...slug]/route.js`
@@ -53,16 +53,23 @@ export function createIIIFPreviewNextApiHandler({
       });
     },
     async OPTIONS(request: NextRequest) {
-      const didRequestPrivateNetwork = request.headers.get('Access-Control-Request-Private-Network');
+      const didRequestPrivateNetwork = request.headers.get(
+        "Access-Control-Request-Private-Network",
+      );
       const headers = getHeaders(request, {
-        accessControlAllowPrivateNetwork: (didRequestPrivateNetwork === 'true') && baseConfig.accessControlAllowPrivateNetwork,
+        accessControlAllowPrivateNetwork:
+          didRequestPrivateNetwork === "true" &&
+          baseConfig.accessControlAllowPrivateNetwork,
       });
       return new Response(null, {
         status: 200,
         headers,
       });
     },
-    async GET(request: NextRequest, { params }: { params: { slug: string[] } }) {
+    async GET(
+      request: NextRequest,
+      { params }: { params: { slug: string[] } },
+    ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
 
@@ -79,11 +86,18 @@ export function createIIIFPreviewNextApiHandler({
       invariant(p3 === "p3", "Invalid path");
       invariant(id, "Invalid resource");
 
-      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
+      const config = {
+        ...baseConfig,
+        baseUrl: baseUrl.toString(),
+        storage: getStore ? getStore(request) : storage,
+      };
 
       return retrieveRoute(request, { keys: id }, config);
     },
-    async POST(request: NextRequest, { params }: { params: { slug: string[] } }) {
+    async POST(
+      request: NextRequest,
+      { params }: { params: { slug: string[] } },
+    ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
 
@@ -100,11 +114,18 @@ export function createIIIFPreviewNextApiHandler({
       invariant(store === "store", "Invalid path");
       invariant(params.slug.length === 1, "Invalid path");
 
-      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
+      const config = {
+        ...baseConfig,
+        baseUrl: baseUrl.toString(),
+        storage: getStore ? getStore(request) : storage,
+      };
 
       return storeRoute(request, {}, config);
     },
-    async PUT(request: NextRequest, { params }: { params: { slug: string[] } }) {
+    async PUT(
+      request: NextRequest,
+      { params }: { params: { slug: string[] } },
+    ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
 
@@ -123,11 +144,18 @@ export function createIIIFPreviewNextApiHandler({
       invariant(key3, "Invalid path");
       invariant(params.slug.length === 3, "Invalid path");
 
-      const config = { ...baseConfig, baseUrl: baseUrl.toString(), storage: getStore ? getStore(request) : storage };
+      const config = {
+        ...baseConfig,
+        baseUrl: baseUrl.toString(),
+        storage: getStore ? getStore(request) : storage,
+      };
 
       return updateRoute(request, { keys: id, key3 }, config);
     },
-    async DELETE(request: NextRequest, { params }: { params: { slug: string[] } }) {
+    async DELETE(
+      request: NextRequest,
+      { params }: { params: { slug: string[] } },
+    ) {
       if (validate) {
         const valid = await validate(request);
         invariant(valid, "Unauthorized");
@@ -140,7 +168,10 @@ export function createIIIFPreviewNextApiHandler({
       invariant(key3, "Invalid path");
       invariant(params.slug.length === 3, "Invalid path");
 
-      const config = { ...baseConfig, storage: getStore ? getStore(request) : storage };
+      const config = {
+        ...baseConfig,
+        storage: getStore ? getStore(request) : storage,
+      };
 
       return deleteRoute(request, { keys: id, key3 }, config);
     },
@@ -157,6 +188,12 @@ function getBaseUrl() {
   if (process.env.RENDER_INTERNAL_HOSTNAME)
     // reference for render.com
     return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+
+  const url = process.env.URL;
+
+  if (url?.includes('localhost')) {
+    return url;
+  }
 
   if (process.env.DEPLOY_PRIME_URL) {
     return process.env.DEPLOY_PRIME_URL;
