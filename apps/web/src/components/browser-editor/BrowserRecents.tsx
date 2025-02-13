@@ -7,8 +7,12 @@ import Link from "next/link";
 import { Button, Dialog, DialogTrigger, Popover, TabListStateContext } from "react-aria-components";
 import { queryClient } from "../site/Provider";
 import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 
 export default function BrowserRecents() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,
@@ -17,13 +21,12 @@ export default function BrowserRecents() {
 
   useEffect(() => {
     if (projects.isFetched) {
-      if (!projects.data || !projects.data.length) {
-        document.cookie = "tab=examples; path=/";
-      } else {
-        document.cookie = "tab=recent; path=/";
+      const newTab = !projects.data || !projects.data.length ? "examples" : "recent";
+      if (searchParams.get("tab") !== newTab) {
+        router.replace(`?tab=${newTab}`, { scroll: false });
       }
     }
-  }, [projects.data]);
+  }, [projects.isFetched, projects.data]);
 
   return (
     <div className="grid grid-md gap-4">

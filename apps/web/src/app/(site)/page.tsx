@@ -7,17 +7,15 @@ import { ExampleListing } from "../../components/example-listing/ExampleListing"
 import { HandleQueryString } from "../../components/query-string/HandleQueryString";
 
 const { examples } = allExamples;
-import { cookies } from 'next/headers'
+
 
 const BrowserRecents = dynamic(() => import("../../components/browser-editor/BrowserRecents"), { ssr: false });
 
 const GettingStarted = dynamic(() => import("../../components/browser-editor/GettingStarted"), { ssr: false });
 
-export default async function Page(): Promise<JSX.Element> {
+export default async function Page({ searchParams }: { searchParams: { tab?: string } }) {
 
-  const cookieStore = await cookies();
-
-  const defaultTab = cookieStore.get('tab')?.value;
+  const defaultTab = searchParams.tab || "recent";
 
   return (
     <div className="bg-white">
@@ -26,7 +24,7 @@ export default async function Page(): Promise<JSX.Element> {
       <GettingStarted />
 
       <div className="px-8">
-        <Tabs defaultSelectedKey={defaultTab}>
+        <Tabs key={defaultTab} defaultSelectedKey={defaultTab}>
           <TabList aria-label="Get started with Manifest Editor" className="my-4">
             <Tab id="recent">Recent</Tab>
             <Tab id="examples">Examples</Tab>
