@@ -45,7 +45,7 @@
     "@iiif/helpers": "^1.2.12"
   },
   "devDependencies": {
-    "@repo/eslint-config": "0.0.0",
+    "@repo/eslint-config": "workspace:*",
     "tsup": "^8.0.2"
   },
   "publishConfig": {

@@ -6,20 +6,21 @@ import { LocaleString } from "react-iiif-vault";
 import Link from "next/link";
 import { Button, Dialog, DialogTrigger, Popover, TabListStateContext } from "react-aria-components";
 import { queryClient } from "../site/Provider";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 
 export default function BrowserRecents() {
-  const { selectionManager } = useContext(TabListStateContext) || {};
-
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,
   });
 
+
   useEffect(() => {
-    if (projects.isFetched && selectionManager) {
+    if (projects.isFetched) {
       if (!projects.data || !projects.data.length) {
-        selectionManager.select("examples");
+        document.cookie = "tab=examples; path=/";
+      } else {
+        document.cookie = "tab=recent; path=/";
       }
     }
   }, [projects.data]);
@@ -39,7 +40,7 @@ export default function BrowserRecents() {
                     <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
                   )}
                 </div>
-                <LocaleString className="underline p-3  text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
+                <LocaleString className="underline p-3 text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
                   {project.resource.label}
                 </LocaleString>
               </div>

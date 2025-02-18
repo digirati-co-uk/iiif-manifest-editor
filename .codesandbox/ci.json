@@ -32,5 +32,5 @@
     "@manifest-editor/manifest-preset": "presets/manifest-preset",
     "@manifest-editor/collection-preset": "presets/collection-preset"
   },
-  "node": "18"
+  "node": "20"
 }

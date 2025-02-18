@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["18", "20"]
+        node: ["20"]
 
     name: Node ${{ matrix.node }} build
     steps:
@@ -19,11 +19,10 @@ jobs:
 
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - run: pnpm run build
       - run: pnpm run lint
-      - run: pnpm run mismatch

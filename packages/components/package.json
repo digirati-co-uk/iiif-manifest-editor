@@ -62,7 +62,7 @@
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "0.0.0",
+    "@repo/eslint-config": "workspace:*",
     "@storylite/storylite": "^0.15.1",
     "@storylite/vite-plugin": "^0.15.0",
     "@types/react": "^18.3.3",
