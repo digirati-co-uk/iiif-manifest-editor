@@ -4,28 +4,40 @@ import {
   ThumbnailGridContainer,
   useFastList,
 } from "@manifest-editor/components";
-import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import {
+  type LayoutPanel,
+  useCreator,
+  useLayoutActions,
+  useManifestEditor,
+} from "@manifest-editor/shell";
 
 export const manifestOverview: LayoutPanel = {
   id: "overview",
   label: "Overview",
   icon: "",
-  render: () => <ManifestOverview />,
+  render: () => <ManifestOverviewCenterPanel />,
 };
 
-function ManifestOverview() {
+export function ManifestOverviewCenterPanel() {
   const { edit, open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(
+    manifest,
+    "items",
+    "Canvas",
+  );
   const canvases = useFastList(items.get(), 24);
 
   if (!canvases || canvases.length === 0) {
     return (
       <div>
-        <ManifestOverviewEmptyState onCreate={canvasActions.create} canCreate={canCreateCanvas} />
+        <ManifestOverviewEmptyState
+          onCreate={canvasActions.create}
+          canCreate={canCreateCanvas}
+        />
       </div>
     );
   }

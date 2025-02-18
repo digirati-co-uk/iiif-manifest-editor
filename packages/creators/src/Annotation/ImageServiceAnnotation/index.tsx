@@ -13,6 +13,7 @@ export const imageServiceAnnotation: CreatorDefinition = {
   label: "IIIF Image",
   dependencies: ["@manifest-editor/image-service-creator"],
   summary: "IIIF Image service",
+  tags: ["image", "image-service"],
   icon: <IIIFLogo style={{ padding: 10 }} />,
   render(ctx) {
     return <CreateImageServiceAnnotationForm {...ctx} />;

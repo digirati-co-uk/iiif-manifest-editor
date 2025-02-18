@@ -1,12 +1,12 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import "manifest-editor/dist/index.css";
-import { deleteBrowserProject, listBrowserProjects } from "./browser-state";
-import { LocaleString } from "react-iiif-vault";
 import Link from "next/link";
-import { Button, Dialog, DialogTrigger, Popover, TabListStateContext } from "react-aria-components";
-import { queryClient } from "../site/Provider";
 import { useEffect } from "react";
+import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
+import { LocaleString } from "react-iiif-vault";
+import { queryClient } from "../site/Provider";
+import { deleteBrowserProject, listBrowserProjects } from "./browser-state";
 
 export default function BrowserRecents() {
   const projects = useQuery({

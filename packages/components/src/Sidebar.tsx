@@ -32,7 +32,7 @@ export function SidebarHeader(props: SidebarHeaderProps) {
   const { actions, title } = props;
 
   return (
-    <div className="bg-me-gray-100 h-12 flex items-center px-3 z-10 text-black border-b-me-gray-300 border-b">
+    <div className="bg-me-gray-100 h-12 flex items-center px-3 z-10 text-black border-b-me-gray-300 border-b flex-shrink-0">
       <div className="flex-1">{title}</div>
       <div className="ml-auto flex gap-2 items-center">
         {actions?.map((action, index) => (

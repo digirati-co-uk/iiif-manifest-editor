@@ -41,6 +41,7 @@ export function ReorderListItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    position: "relative",
   };
 
   const Component = as || "div";
@@ -53,16 +54,16 @@ export function ReorderListItem({
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
       <FlexContainer style={{ alignItems: "center", marginBottom }}>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
-        {actions?.length ? (
-          <AppDropdown as={HandleContainer} items={actions}>
-            <MoreMenu />
-          </AppDropdown>
-        ) : null}
-        {inlineHandle ? null : (
-          <HandleContainer ref={setActivatorNodeRef} {...listeners}>
-            <ResizeHandleIcon />
-          </HandleContainer>
-        )}
+          {actions?.length ? (
+            <AppDropdown as={HandleContainer} items={actions}>
+              <MoreMenu />
+            </AppDropdown>
+          ) : null}
+          {inlineHandle ? null : (
+            <HandleContainer ref={setActivatorNodeRef} {...listeners}>
+              <ResizeHandleIcon />
+            </HandleContainer>
+          )}
       </FlexContainer>
     </Component>
   );

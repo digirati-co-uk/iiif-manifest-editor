@@ -8,7 +8,7 @@ import { createAppActions } from "../../helpers/create-app-actions";
 import { AnnotationList } from "../AnnotationList/AnnotationList";
 import { ActionButton, AddIcon, EmptyState } from "@manifest-editor/components";
 
-export function PaintingAnnotationList() {
+export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: () => void; createFilter?: string }) {
   const { annotationPage, canvas } = useResourceContext();
   const { structural, notAllowed } = useAnnotationPageEditor();
   const { items } = structural;
@@ -50,7 +50,19 @@ export function PaintingAnnotationList() {
             />
           </div>
           {canCreateAnnotation ? (
-            <ActionButton onPress={() => annotationActions.create()}>
+            <ActionButton
+              onPress={
+                onCreate
+                  ? onCreate
+                  : () => {
+                      if (createFilter) {
+                        annotationActions.createFiltered(createFilter);
+                      } else {
+                        annotationActions.create();
+                      }
+                    }
+              }
+            >
               <AddIcon /> Add media
             </ActionButton>
           ) : null}

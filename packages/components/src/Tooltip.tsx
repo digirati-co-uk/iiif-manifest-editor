@@ -14,8 +14,9 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
-import { UseFloatingReturn } from "@floating-ui/react-dom";
+import type { UseFloatingReturn } from "@floating-ui/react-dom";
 import { Button } from "react-aria-components";
+import { twMerge } from "tailwind-merge";
 
 interface TooltipOptions {
   initialOpen?: boolean;
@@ -76,7 +77,7 @@ export function useTooltip({
       ...interactions,
       ...data,
     }),
-    [open, setOpen, interactions, data]
+    [open, setOpen, interactions, data],
   );
 }
 
@@ -94,11 +95,18 @@ export const useTooltipContext = () => {
   return context;
 };
 
-export function Tooltip({ children, ...options }: { children: React.ReactNode } & TooltipOptions) {
+export function Tooltip({
+  children,
+  ...options
+}: { children: React.ReactNode } & TooltipOptions) {
   // This can accept any props as options, e.g. `placement`,
   // or other positioning options.
   const tooltip = useTooltip(options);
-  return <TooltipContext.Provider value={tooltip}>{children}</TooltipContext.Provider>;
+  return (
+    <TooltipContext.Provider value={tooltip}>
+      {children}
+    </TooltipContext.Provider>
+  );
 }
 
 export const TooltipTrigger = React.forwardRef<
@@ -118,7 +126,7 @@ export const TooltipTrigger = React.forwardRef<
         ...props,
         ...children.props,
         "data-state": context.open ? "open" : "closed",
-      })
+      }),
     );
   }
 
@@ -134,10 +142,10 @@ export const TooltipTrigger = React.forwardRef<
   );
 });
 
-export const TooltipContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(function TooltipContent(
-  { style, ...props },
-  propRef
-) {
+export const TooltipContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLProps<HTMLDivElement>
+>(function TooltipContent({ style, ...props }, propRef) {
   const context = useTooltipContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
 
@@ -157,9 +165,17 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, React.HTMLProps<H
   );
 });
 
-export function DefaultTooltipContent(props: { children: React.ReactNode }) {
+export function DefaultTooltipContent(props: {
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <TooltipContent className="bg-me-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-90 z-50">
+    <TooltipContent
+      className={twMerge(
+        "bg-me-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-90 z-50",
+        props.className,
+      )}
+    >
       {props.children}
     </TooltipContent>
   );

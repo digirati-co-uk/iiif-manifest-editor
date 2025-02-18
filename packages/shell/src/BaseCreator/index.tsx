@@ -1,6 +1,6 @@
 import { BaseCreator } from "./BaseCreator";
-import { CreatableResource } from "../EditingStack/EditingStack.types";
 import { LayoutPanel } from "../Layout/Layout.types";
+import { CreatableResource } from "@manifest-editor/creator-api";
 
 export const baseCreator: LayoutPanel = {
   id: "@manifest-editor/creator",

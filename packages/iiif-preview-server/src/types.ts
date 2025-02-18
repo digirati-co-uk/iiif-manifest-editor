@@ -24,6 +24,7 @@ export interface Config {
   expirationTtl: number;
   encryptedEnabled: boolean;
   rotatingUpdateKey: boolean;
+  accessControlAllowPrivateNetwork: boolean;
 }
 
 export interface RouteConfig extends Config {

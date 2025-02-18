@@ -12,6 +12,7 @@ export const imageUrlAnnotation: CreatorDefinition = {
   label: "Image",
   dependencies: ["@manifest-editor/image-url-creator"],
   summary: "Image from URL",
+  tags: ["image"],
   icon: <AddImageIcon />,
   render(ctx) {
     return <CreateImageUrlAnnotationForm {...ctx} />;

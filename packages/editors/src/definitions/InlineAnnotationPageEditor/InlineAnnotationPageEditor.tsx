@@ -1,11 +1,21 @@
-import { AnnotationContext, CanvasContext, useAnnotationPage, useVaultSelector } from "react-iiif-vault";
-import { Reference } from "@iiif/presentation-3";
 import { isSpecificResource, toRef } from "@iiif/parser";
-import invariant from "tiny-invariant";
-import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
+import type { Reference } from "@iiif/presentation-3";
+import {
+  useCreator,
+  useEditor,
+  useGenericEditor,
+  useInlineCreator,
+} from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
+import {
+  AnnotationContext,
+  CanvasContext,
+  useAnnotationPage,
+  useVaultSelector,
+} from "react-iiif-vault";
+import invariant from "tiny-invariant";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputLabel } from "../../components/Input";
@@ -28,7 +38,7 @@ export function InlineAnnotationPageEditor() {
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
   );
 
   // Does the canvas have multiple media?
@@ -55,9 +65,6 @@ export function InlineAnnotationPageEditor() {
           Create annotation
         </Button>
       ) : null}
-      {annoPage /*&& hasMultiplePainting*/ ? (
-        <PromptToAddPaintingAnnotations painting={annoPage} page={editor.ref()} canvasId={canvasId} />
-      ) : null}
     </PaddedSidebarContainer>
   );
 }
@@ -70,17 +77,21 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       for (const annoRef of annotationPage?.items || []) {
         const anno = vault.get(annoRef);
         const type = (anno?.target || []) as any;
-        if (type && isSpecificResource(type) && (type as any).source?.type === "Annotation") {
+        if (
+          type &&
+          isSpecificResource(type) &&
+          (type as any).source?.type === "Annotation"
+        ) {
           toList.push(anno);
         }
       }
       return toList;
     },
-    [id, ...deps]
+    [id, ...deps],
   );
 }
 
-function PromptToAddPaintingAnnotations({
+export function PromptToAddPaintingAnnotations({
   painting,
   page,
   canvasId,
@@ -95,7 +106,7 @@ function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems]
+    [targets, totalItems],
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -113,13 +124,11 @@ function PromptToAddPaintingAnnotations({
 
   return (
     <div key={paintingAnnotations?.items.length}>
-      <h5>Add describing annotations</h5>
-      <p>This is an advanced feature for exhibitions</p>
       <FlexContainer style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           {validToAdd.map((item) => {
             return (
-              <CanvasContext canvas={canvasId as string}>
+              <CanvasContext canvas={canvasId as string} key={canvasId}>
                 <AnnotationContext annotation={item.id}>
                   <AnnotationPreview
                     margin
@@ -136,7 +145,7 @@ function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        }
+                        },
                       );
                     }}
                   />

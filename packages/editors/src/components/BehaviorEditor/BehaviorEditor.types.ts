@@ -12,6 +12,7 @@ export interface BehaviorChoice {
     value: string;
     label: InternationalString;
   }>;
+  initialOpen?: boolean;
 }
 
 export interface BehaviorTemplate {
@@ -21,6 +22,7 @@ export interface BehaviorTemplate {
   template: string;
   regex: RegExp;
   options: Array<BehaviorChoice & { key: string }>;
+  initialOpen?: boolean;
 }
 
 export interface BehaviorCustom {
@@ -29,4 +31,5 @@ export interface BehaviorCustom {
   type: "custom";
   component: (behavior: string[], setBehaviors: (b: string[]) => void) => ReactNode;
   supports: (behavior: string) => boolean;
+  initialOpen?: boolean;
 }

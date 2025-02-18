@@ -217,7 +217,7 @@ export function useProjectLoader<T extends Storage = any>(
       if (currentVault && currentProject) {
         currentStorage.closeVaultInstance(currentProject, currentVault);
       } else if (currentVault instanceof ClientVault) {
-        currentVault.ws.close();
+        (currentVault as ClientVault).ws.close();
       }
     };
   }, [storage, current, vault]);

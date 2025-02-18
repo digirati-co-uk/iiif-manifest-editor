@@ -1,9 +1,9 @@
-import { Vault } from "@iiif/helpers/vault";
-import { ReactNode } from "react";
-import { CreatorInstance } from "./CreatorInstance";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { ReferencedResource } from "./ReferencedResource";
-import { CreatorResource } from "./CreatorResource";
+import type { Vault } from "@iiif/helpers/vault";
+import type { ReactNode } from "react";
+import type { CreatorInstance } from "./CreatorInstance";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { ReferencedResource } from "./ReferencedResource";
+import type { CreatorResource } from "./CreatorResource";
 
 export interface CreatorContext<T = any> {
   vault: Vault;
@@ -16,7 +16,11 @@ export interface CreatorFunctionContext {
   options: CreatorOptions;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
-  create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource>;
+  create(
+    definition: string,
+    payload: any,
+    options?: Partial<CreatorOptions>,
+  ): Promise<CreatorResource>;
   generateId(type: string, parent?: Reference | ReferencedResource): string;
   getParent(): Reference | undefined;
   getTarget(): SpecificResource | Reference | undefined;
@@ -43,6 +47,7 @@ export interface CreatorDefinition {
   summary?: string;
   icon?: any;
   dependencies?: string[];
+  tags?: string[];
 
   create: (payload: any, ctx: CreatorInstance) => any | Promise<any>;
   validate?: (payload: any, vault: Vault) => void | Promise<void>;
@@ -75,10 +80,25 @@ export interface CreatorDefinition {
 }
 
 export interface CreatorSideEffect {
-  run?: (result: any, ctx: { options: CreatorOptions; vault: Vault }) => void | Promise<void>;
+  run?: (
+    result: any,
+    ctx: { options: CreatorOptions; vault: Vault },
+  ) => void | Promise<void>;
   temporal?: boolean;
   spatial?: boolean;
   replaceSiblings?: boolean;
   canvasInteraction?: boolean;
   // @todo maybe other side-effects?
+}
+
+export interface CreatableResource {
+  type: string;
+  parent?: Reference;
+  property?: string;
+  index?: number;
+  onlyReference?: boolean;
+  target?: Reference;
+  initialData?: any;
+  isPainting?: boolean;
+  filter?: string;
 }

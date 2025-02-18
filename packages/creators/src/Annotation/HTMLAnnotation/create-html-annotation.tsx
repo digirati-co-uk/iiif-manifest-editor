@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
-import { InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorFunctionContext,
+  CreatorContext,
+} from "@manifest-editor/creator-api";
+import {
+  InputContainer,
+  InputLabel,
+  LanguageFieldEditor,
+} from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 
@@ -13,7 +20,10 @@ export interface CreateHTMLAnnotationPayload {
   width?: number;
 }
 
-export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ctx: CreatorFunctionContext) {
+export async function createHtmlAnnotation(
+  data: CreateHTMLAnnotationPayload,
+  ctx: CreatorFunctionContext,
+) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -33,8 +43,8 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
             language,
             body,
           },
-          { parent: { resource: annotation, property: "items" } }
-        )
+          { parent: { resource: annotation, property: "items" } },
+        ),
       );
     }
   }
@@ -42,7 +52,8 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation:
+        data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -50,13 +61,19 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
 
   if (targetType === "Canvas") {
     const canvasId = ctx.generateId("canvas");
-    const pageId = ctx.generateId("annotation-page", { id: canvasId, type: "Canvas" });
+    const pageId = ctx.generateId("annotation-page", {
+      id: canvasId,
+      type: "Canvas",
+    });
 
     const annotationResource = ctx.embed({
       ...annotation,
       motivation: "painting",
       body: bodies,
-      target: { type: "SpecificResource", source: { id: canvasId, type: "Canvas" } },
+      target: {
+        type: "SpecificResource",
+        source: { id: canvasId, type: "Canvas" },
+      },
     });
 
     const page = ctx.embed({
@@ -76,7 +93,9 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
   }
 }
 
-export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
+export function CreateHTMLAnnotation(
+  props: CreatorContext<CreateHTMLAnnotationPayload>,
+) {
   const [body, setBody] = useState<InternationalString>({ en: [""] });
 
   const onSubmit = () => {

@@ -1,8 +1,8 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, ReactNode, useContext } from "react";
 import { Vault } from "@iiif/helpers";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { useVault } from "react-iiif-vault";
+import { useVault, ResourceReactContext } from "react-iiif-vault";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { EditableResource } from "../EditingStack/EditingStack.types";
@@ -121,6 +121,7 @@ export function editBasedOnResource(
 
 export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) {
   const resource = useEditingResource();
+  const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
   const vault = useVault();
   const { change } = useLayoutActions();
@@ -130,6 +131,33 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
     (resource?.resource.source?.type
       ? (editorConfig as any)[resource?.resource.source?.type as any]
       : editorConfig.All) || {};
+
+  const newResourceContext = useMemo(() => {
+    const newCtx = { ...currentResourceContext };
+    const id = resource?.resource.source.id;
+    const type = resource?.resource.source.type;
+    const mapping = {
+      Collection: "collection",
+      Manifest: "manifest",
+      Range: "range",
+      Canvas: "canvas",
+      Annotation: "annotation",
+      AnnotationPage: "annotationPage",
+    };
+
+    if (type && (mapping as any)[type]) {
+      (newCtx as any)[(mapping as any)[type]] = id;
+    }
+    return newCtx;
+  }, [resource, currentResourceContext]);
+
+  function wrap(children: ReactNode) {
+    if (!resource) {
+      return children;
+    }
+
+    return <ResourceReactContext.Provider value={newResourceContext}>{children}</ResourceReactContext.Provider>;
+  }
 
   const match = useMemo(() => {
     if (!resource) {
@@ -170,11 +198,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   if (resourceConfig.singleTab) {
     const first = (match?.editors || []).find((editor) => editor.id === resourceConfig.singleTab);
     if (first) {
-      return <div className="w-full">{first.component(resourceConfig)}</div>;
+      return wrap(<div className="w-full">{first.component(resourceConfig)}</div>);
     }
   }
 
-  return (
+  return wrap(
     <SidebarTabs
       key={resource.resource.source?.id}
       menuId={resource.resource.source.id}
