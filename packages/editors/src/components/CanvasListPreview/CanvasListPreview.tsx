@@ -13,7 +13,6 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
   const canvas = useCanvas();
 
   return (
-    //
     <button
       data-canvas-selected={props.active}
       className={cx(Item, props.margin && ItemMargin)}

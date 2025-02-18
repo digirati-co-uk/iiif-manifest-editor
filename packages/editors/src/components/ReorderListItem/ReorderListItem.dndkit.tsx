@@ -18,6 +18,7 @@ interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttribu
   // New?
   actions?: AppDropdownItem[];
   marginBottom?: string | number;
+  grid?: boolean;
 }
 export function ReorderListItem({
   children,
@@ -27,6 +28,7 @@ export function ReorderListItem({
   inlineHandle,
   actions,
   marginBottom,
+  grid,
   ...props
 }: ReorderListItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
@@ -41,6 +43,7 @@ export function ReorderListItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    position: "relative",
   };
 
   const Component = as || "div";
@@ -49,20 +52,34 @@ export function ReorderListItem({
     return <Component {...props}>{children}</Component>;
   }
 
+  const gridStyle: React.CSSProperties | undefined = grid
+    ? {
+        position: "absolute",
+        display: "flex",
+        padding: "5px",
+        background: "white",
+        zIndex: 1,
+        right: 2,
+        top: 2,
+        borderRadius: 4,
+      }
+    : { display: 'flex', alignItems: 'center' };
   return (
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
-      <FlexContainer style={{ alignItems: "center", marginBottom }}>
+      <FlexContainer style={{ flexDirection: grid ? "column" : "row", marginBottom }}>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
-        {actions?.length ? (
-          <AppDropdown as={HandleContainer} items={actions}>
-            <MoreMenu />
-          </AppDropdown>
-        ) : null}
-        {inlineHandle ? null : (
-          <HandleContainer ref={setActivatorNodeRef} {...listeners}>
-            <ResizeHandleIcon />
-          </HandleContainer>
-        )}
+        <div style={gridStyle}>
+          {actions?.length ? (
+            <AppDropdown as={HandleContainer} items={actions}>
+              <MoreMenu />
+            </AppDropdown>
+          ) : null}
+          {inlineHandle ? null : (
+            <HandleContainer ref={setActivatorNodeRef} {...listeners}>
+              <ResizeHandleIcon />
+            </HandleContainer>
+          )}
+        </div>
       </FlexContainer>
     </Component>
   );
