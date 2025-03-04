@@ -15,7 +15,7 @@ import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 const previewConfigs: PreviewConfiguration[] = [
   {
     id: "universal-viewer",
-    config: { url: "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}" },
+    config: { url: "https://universalviewer.dev/#?iiifManifestId={manifestId}" },
     type: "external-manifest-preview",
     label: "Universal viewer",
   },
