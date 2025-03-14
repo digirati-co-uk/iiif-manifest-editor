@@ -1,5 +1,5 @@
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { ErrorMessage } from "@manifest-editor/ui/madoc/components/callouts/ErrorMessage";
+import { ErrorMessage } from "@manifest-editor/components";
 import { Button, CalltoButton } from "@manifest-editor/ui/atoms/Button";
 import { ExperimentalMessage } from "@manifest-editor/ui/madoc/components/callouts/ExperimentalMessage";
 import { ExperimentalIcon } from "@manifest-editor/ui/madoc/components/icons/ExperimentalIcon";
@@ -59,7 +59,7 @@ export function PanelError(props: { error: Error; resetErrorBoundary: () => void
 
   return (
     <PaddedSidebarContainer>
-      <ErrorMessage $margin>{error}</ErrorMessage>
+      <ErrorMessage className="mb-2">{error}</ErrorMessage>
       <CalltoButton onClick={props.resetErrorBoundary}>Try again</CalltoButton>
     </PaddedSidebarContainer>
   );

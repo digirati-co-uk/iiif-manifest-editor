@@ -14,6 +14,7 @@ module.exports = {
       black: "#000",
       white: "#fff",
       gray: colors.gray,
+      red: colors.red,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",

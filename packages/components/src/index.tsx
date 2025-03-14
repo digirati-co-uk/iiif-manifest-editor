@@ -43,6 +43,9 @@ export * from "./icons/AddIcon";
 export * from "./icons/DeleteForeverIcon";
 export * from "./icons/TextIcon";
 
+// Messages
+export * from "./ErrorMessage";
+
 // Helpers
 export * from "./hooks";
 
