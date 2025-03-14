@@ -25,10 +25,11 @@ export const resizeResourceToEmptyCanvas: CreatorSideEffect = {
         return;
       }
 
-      if (canvas.behavior.length) {
-        // Ignore custom canvas behaviours.
-        return;
-      }
+      // This is what broke the aspect ratio work.
+      // if (canvas.behavior.length) {
+      //   // Ignore custom canvas behaviours.
+      //   return;
+      // }
 
       const annoPage = vault.get(canvas.items[0]!);
       if (!annoPage) {
