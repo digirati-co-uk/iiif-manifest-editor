@@ -337,7 +337,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
               onChange={(e) => props.onUpdateLanguage?.(e.currentTarget.value)}
             >
               {props.languages.map((lang, n) => (
-                <option key={lang + n} value={lang}>
+                <option key={`lang_${lang}_${n}`} value={lang}>
                   {lang}
                 </option>
               ))}

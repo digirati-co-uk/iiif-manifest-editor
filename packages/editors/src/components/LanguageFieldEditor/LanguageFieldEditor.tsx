@@ -6,9 +6,9 @@ import { useDebounce } from "tiny-use-debounce";
 import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
 import { flushSync } from "react-dom";
 import { UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
-import { RichTextLanguageField } from "../../form-elements/RichTextLanguageField/RichTextLanguageField";
 import { ControlButton, OpaqueControls } from "@manifest-editor/components";
 import { useConfig, useDecayState } from "@manifest-editor/shell";
+import { RichTextLanguageField } from "../RichTextLanguageField/RichTextLanguageField";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;

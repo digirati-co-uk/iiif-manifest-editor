@@ -3,7 +3,7 @@ import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { InputContainer, InputLabel } from "../../components/Input";
 import { TextGranularityEditor } from "../../components/TextGranularityEditor/TextGranularityEditor";
-import { RichTextLanguageField } from "../../form-elements/RichTextLanguageField/RichTextLanguageField";
+import { RichTextLanguageField } from "../../components/RichTextLanguageField/RichTextLanguageField";
 
 export function HTMLEditor() {
   const { annotation } = useEditor();
