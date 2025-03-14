@@ -8,6 +8,7 @@ import {
   useFastList,
 } from "@manifest-editor/components";
 import {
+  CanvasGrid,
   CanvasList,
   InputContainer,
   createAppActions,
@@ -133,7 +134,6 @@ export function CanvasListing({
           {
             icon: <ListEditIcon />,
             title: "Edit canvases",
-            disabled: gridView,
             toggled: toggled.items,
             onClick: () => toggle("items"),
           },
@@ -146,7 +146,7 @@ export function CanvasListing({
         ]}
       />
       {gridView ? (
-        <CanvasGridView />
+        <CanvasGridView isEditing={toggled.items} />
       ) : (
         <CanvasListView isEditing={toggled.items} />
       )}
@@ -179,22 +179,27 @@ export function useEditCanvasItems() {
   };
 }
 
-export function CanvasGridView() {
-  const { canvas, canvases, canvasActions, open } = useEditCanvasItems();
+export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
+  const { canvas, items, canvases, canvasActions, open } = useEditCanvasItems();
   return (
     <SidebarContent>
       <ThumbnailGridContainer>
-        {canvases.map((item) => (
-          <CanvasThumbnailGridItem
-            id={item.id}
-            key={item.id}
-            selected={canvas?.resource.source.id === item.id}
-            onClick={() => {
-              open({ id: "current-canvas" });
-              canvasActions.edit(item);
-            }}
-          />
-        ))}
+        <CanvasGrid
+          id={items.focusId()}
+          list={items.get() || []}
+          inlineHandle={false}
+          activeId={canvas?.resource.source.id}
+          reorder={
+            isEditing
+              ? (t: any) => items.reorder(t.startIndex, t.endIndex)
+              : undefined
+          }
+          onSelect={(item: any, idx: number) => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
+          createActions={createAppActions(items)}
+        />
       </ThumbnailGridContainer>
     </SidebarContent>
   );
