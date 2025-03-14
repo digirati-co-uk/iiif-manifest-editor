@@ -18,6 +18,7 @@ import {
 } from "react-aria-components";
 import { createHideableComponent } from "@react-aria/collections";
 import { cn } from "./utils";
+import { createPortal } from "react-dom";
 
 interface SidebarTabsProps {
   menuId: string;
@@ -38,6 +39,7 @@ export function SidebarTabs({
 }: SidebarTabsProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState(0);
+  const [hiddenMenu, setHiddenMenu] = useState<HTMLDivElement | null>(null);
   const widths = useRef<number[]>([]);
   const itemsRef = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -87,60 +89,67 @@ export function SidebarTabs({
   const menuHidden = menu.filter((item, idx) => hidden >= menu.length - idx);
 
   return (
-    <Tabs
-      className="w-full flex-1 overflow-hidden flex flex-col"
-      key={menuId}
-      selectedKey={selectedKey}
-      onSelectionChange={onSelectionChange as any}
-    >
-      <div className="flex items-center w-full tab-shadow">
-        <TabList
-          ref={ref}
-          className="flex-1 overflow-hidden w-full flex text-sm whitespace-nowrap"
-        >
-          {menu.map((item, idx) => {
-            const isHidden = hidden >= menu.length - idx;
-            return (
-              <Tab
-                ref={(el) => (itemsRef.current[idx] = el as any)}
-                id={item.id}
-                key={item.id}
-                className={(state) =>
-                  cn(
-                    //
-                    "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
-                    state.isSelected && "border-me-primary-500 text-black",
-                    state.isFocusVisible && "ring-0 bg-me-gray-100",
-                    isHidden && "hidden",
-                  )
-                }
-              >
-                {item.label}
-              </Tab>
-            );
-          })}
-        </TabList>
-        {hidden > 0 && (
+    <>
+      <Tabs
+        className="w-full flex-1 overflow-hidden flex flex-col"
+        key={menuId}
+        selectedKey={selectedKey}
+        onSelectionChange={onSelectionChange as any}
+      >
+        <div className="flex items-center w-full tab-shadow">
+          <TabList
+            ref={ref}
+            className="flex-1 overflow-hidden w-full flex text-sm whitespace-nowrap"
+          >
+            {menu.map((item, idx) => {
+              const isHidden = hidden >= menu.length - idx;
+              return (
+                <Tab
+                  ref={(el) => (itemsRef.current[idx] = el as any)}
+                  id={item.id}
+                  key={item.id}
+                  className={(state) =>
+                    cn(
+                      //
+                      "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
+                      state.isSelected && "border-me-primary-500 text-black",
+                      state.isFocusVisible && "ring-0 bg-me-gray-100",
+                      isHidden && "hidden",
+                    )
+                  }
+                >
+                  {item.label}
+                </Tab>
+              );
+            })}
+          </TabList>
+          <div ref={setHiddenMenu} id="hidden-menu" />
+        </div>
+        {menu.map((item) => (
+          <TabPanel
+            key={item.id}
+            id={item.id}
+            className="flex-1 overflow-y-auto h-full"
+          >
+            {item.renderComponent}
+          </TabPanel>
+        ))}
+      </Tabs>
+
+      {/* This is a bug where buttons that are not tabs can't be inside the <Tabs/> context, since the context is overwritten. */}
+      {hiddenMenu && hidden > 0 ?
+        createPortal(
           <MoreMenu
             hidden={hidden}
             menuHidden={menuHidden}
             selectedIndex={selectedIndex}
             selectedKey={selectedKey}
             onSelectionChange={onSelectionChange}
-          />
-        )}
-      </div>
-
-      {menu.map((item) => (
-        <TabPanel
-          key={item.id}
-          id={item.id}
-          className="flex-1 overflow-y-auto h-full"
-        >
-          {item.renderComponent}
-        </TabPanel>
-      ))}
-    </Tabs>
+          />,
+          hiddenMenu
+        )
+        : null}
+    </>
   );
 }
 
@@ -167,12 +176,9 @@ const MoreMenu = createHideableComponent<
       <Popover>
         {menuHidden.length ? (
           <Menu
-            key={menuHidden.length}
-            items={menuHidden}
-            dependencies={[menuHidden.length]}
             className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28"
           >
-            {(item) => {
+            {menuHidden.map((item) => {
               return (
                 <MenuItem
                   className={(state) =>
@@ -187,7 +193,7 @@ const MoreMenu = createHideableComponent<
                   {item.label}
                 </MenuItem>
               );
-            }}
+            })}
           </Menu>
         ) : null}
       </Popover>

@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo build",
     "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
-    "dev": "turbo dev --filter=web... --concurrency 15",
+    "dev": "turbo dev --filter=web... --concurrency 16",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "mismatch": "syncpack list-mismatches",
