@@ -31,7 +31,7 @@ export const PaintingsToViewers = () => (
     outputTargets={[
       {
         type: "open-new-window",
-        urlPattern: "https://uv-v4.netlify.app/#?iiifManifestId={MANIFEST}&cv={CANVAS_INDEX}&xywh={XYWH}",
+        urlPattern: "https://universalviewer.dev/#?iiifManifestId={MANIFEST}&cv={CANVAS_INDEX}&xywh={XYWH}",
         label: "Open in UV",
       },
       {
