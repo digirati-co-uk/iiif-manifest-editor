@@ -1,8 +1,9 @@
 import { Reference } from "@iiif/presentation-3";
 import { Vault } from "@iiif/helpers/vault";
 import { CreatorRuntime } from "./CreatorRuntime";
-import { CreatorDefinition, CreatorOptions } from "./types";
+import { CreatableResource, CreatorDefinition, CreatorOptions } from "./types";
 import { entityActions } from "@iiif/helpers/vault/actions";
+import { matchBasedOnResource } from "./utils";
 
 export class Creator {
   configs: CreatorDefinition[];
@@ -13,6 +14,14 @@ export class Creator {
     this.configs = configs || [];
     this.vault = vault;
     this.previewVault = previewVault || new Vault();
+  }
+
+  matchBasedOnResource(resource: CreatableResource) {
+    return matchBasedOnResource(
+      resource,
+      this.configs || [],
+      { vault: this.vault },
+    );
   }
 
   async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<Reference> {

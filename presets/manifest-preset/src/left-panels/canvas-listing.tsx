@@ -1,6 +1,3 @@
-import { InputContainer, useInStack, useToggleList, CanvasList, createAppActions } from "@manifest-editor/editors";
-import { LayoutPanel, useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { SVGProps, useEffect, useLayoutEffect } from "react";
 import {
   CanvasThumbnailGridItem,
   CreateCanvasIcon,
@@ -10,8 +7,27 @@ import {
   ThumbnailGridContainer,
   useFastList,
 } from "@manifest-editor/components";
+import {
+  CanvasGrid,
+  CanvasList,
+  InputContainer,
+  createAppActions,
+  useInStack,
+  useToggleList,
+} from "@manifest-editor/editors";
+import {
+  type LayoutPanel,
+  useCreator,
+  useLayoutActions,
+  useManifestEditor,
+} from "@manifest-editor/shell";
+import { type SVGProps, useEffect, useLayoutEffect } from "react";
 
-const ListingIcon = ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) => (
+export const CanvasListingIcon = ({
+  title,
+  titleId,
+  ...props
+}: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -36,12 +52,14 @@ const ListingIcon = ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { t
 export const canvasListing: LayoutPanel = {
   id: "canvas-listing",
   label: "Canvases",
-  icon: <ListingIcon />,
+  icon: <CanvasListingIcon />,
   render: (state, ctx, app) => {
     return (
       <CanvasListing
         gridView={state.gridView || false}
-        onChangeGridView={(gridView) => ctx.actions.change("canvas-listing", { gridView })}
+        onChangeGridView={(gridView) =>
+          ctx.actions.change("canvas-listing", { gridView })
+        }
       />
     );
   },
@@ -54,14 +72,18 @@ export function CanvasListing({
   gridView: boolean;
   onChangeGridView: (gridView: boolean) => void;
 }) {
-  const { edit, open } = useLayoutActions();
+  const { open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const [toggled, toggle] = useToggleList();
   const canvas = useInStack("Canvas");
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(
+    manifest,
+    "items",
+    "Canvas",
+  );
   const canvases = useFastList(items.get(), 24);
 
   useEffect(() => {
@@ -95,7 +117,15 @@ export function CanvasListing({
         title="Canvases"
         actions={[
           {
-            icon: <>{gridView ? <ListingIcon width={24} height={24} /> : <CanvasThumbnailsIcon />}</>,
+            icon: (
+              <>
+                {gridView ? (
+                  <CanvasListingIcon width={24} height={24} />
+                ) : (
+                  <CanvasThumbnailsIcon />
+                )}
+              </>
+            ),
             title: gridView ? "List view" : "Grid view",
             onClick: () => {
               onChangeGridView(!gridView);
@@ -104,7 +134,6 @@ export function CanvasListing({
           {
             icon: <ListEditIcon />,
             title: "Edit canvases",
-            disabled: gridView,
             toggled: toggled.items,
             onClick: () => toggle("items"),
           },
@@ -117,55 +146,114 @@ export function CanvasListing({
         ]}
       />
       {gridView ? (
-        <SidebarContent>
-          <ThumbnailGridContainer>
-            {canvases.map((item) => (
-              <CanvasThumbnailGridItem
-                id={item.id}
-                key={item.id}
-                selected={canvas?.resource.source.id === item.id}
-                onClick={() => {
-                  open({ id: "current-canvas" });
-                  canvasActions.edit(item);
-                }}
-              />
-            ))}
-          </ThumbnailGridContainer>
-        </SidebarContent>
+        <CanvasGridView isEditing={toggled.items} />
       ) : (
-        <SidebarContent className="p-3">
-          <InputContainer $wide>
-            <CanvasList
-              id={items.focusId()}
-              list={items.get() || []}
-              inlineHandle={false}
-              activeId={canvas?.resource.source.id}
-              reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
-              onSelect={(item, idx) => {
-                open({ id: "current-canvas" });
-                canvasActions.edit(item, idx);
-              }}
-              createActions={createAppActions(items)}
-            />
-          </InputContainer>
-        </SidebarContent>
+        <CanvasListView isEditing={toggled.items} />
       )}
     </Sidebar>
   );
 }
 
-function ListEditIcon() {
+export function useEditCanvasItems() {
+  const { edit, open } = useLayoutActions();
+  const canvas = useInStack("Canvas");
+  const { technical, structural } = useManifestEditor();
+  const { items } = structural;
+  const manifestId = technical.id.get();
+  const manifest = { id: manifestId, type: "Manifest" };
+  const canvases = useFastList(items.get(), 24);
+  const [canCreateCanvas, canvasActions] = useCreator(
+    manifest,
+    "items",
+    "Canvas",
+  );
+
+  return {
+    canvas,
+    canvases,
+    items,
+    canvasActions,
+    open,
+    edit,
+    canCreateCanvas,
+  };
+}
+
+export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
+  const { canvas, items, canvases, canvasActions, open } = useEditCanvasItems();
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+    <SidebarContent>
+      <ThumbnailGridContainer>
+        <CanvasGrid
+          id={items.focusId()}
+          list={items.get() || []}
+          inlineHandle={false}
+          activeId={canvas?.resource.source.id}
+          reorder={
+            isEditing
+              ? (t: any) => items.reorder(t.startIndex, t.endIndex)
+              : undefined
+          }
+          onSelect={(item: any, idx: number) => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
+          createActions={createAppActions(items)}
+        />
+      </ThumbnailGridContainer>
+    </SidebarContent>
+  );
+}
+
+export function CanvasListView({ isEditing }: { isEditing: boolean }) {
+  const { canvas, items, canvasActions, open } = useEditCanvasItems();
+
+  return (
+    <SidebarContent className="p-3">
+      <InputContainer $wide>
+        <CanvasList
+          id={items.focusId()}
+          list={items.get() || []}
+          inlineHandle={false}
+          activeId={canvas?.resource.source.id}
+          reorder={
+            isEditing
+              ? (t) => items.reorder(t.startIndex, t.endIndex)
+              : undefined
+          }
+          onSelect={(item, idx) => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
+          createActions={createAppActions(items)}
+        />
+      </InputContainer>
+    </SidebarContent>
+  );
+}
+
+export function ListEditIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
     </svg>
   );
 }
 
-function CanvasThumbnailsIcon() {
+export function CanvasThumbnailsIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path
         d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"

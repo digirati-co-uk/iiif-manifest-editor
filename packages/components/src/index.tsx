@@ -24,6 +24,11 @@ export * from "./MetadataContainer";
 export * from "./EmptyState";
 export * from "./ManifestEditorLogo";
 export * from "./Forms";
+export * from "./HTMLEditor";
+export * from "./MDXEditor";
+export * from "./IconButton";
+export * from "./ItemWithHandle";
+export * from "./HandleContainer";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
@@ -37,6 +42,16 @@ export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
 export * from "./icons/AddIcon";
+export * from "./icons/DeleteForeverIcon";
+export * from "./icons/TextIcon";
+export * from "./icons/MoreMenu";
+
+// Messages
+export * from "./ErrorMessage";
 
 // Helpers
 export * from "./hooks";
+
+// Renderers
+export * from "./RenderTextualContent";
+export * from "./IIIFMediaPlayer";

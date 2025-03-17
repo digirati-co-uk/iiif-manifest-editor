@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": {
@@ -43,15 +37,15 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "^2.2.0",
-    "@iiif/helpers": "^1.2.12",
-    "@iiif/parser": "^2.1.2",
+    "@atlas-viewer/atlas": "^2.0.6",
+    "@iiif/helpers": "^1.3.1",
+    "@iiif/parser": "^2.1.7",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "react": "^18.3.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.2.1",
+    "react-iiif-vault": "^1.5.1",
     "react-lazy-load-image-component": "^1.6.0",
     "zustand": "^4.5.2"
   },

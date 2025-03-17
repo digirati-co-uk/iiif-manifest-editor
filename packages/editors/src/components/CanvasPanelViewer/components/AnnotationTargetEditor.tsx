@@ -1,17 +1,47 @@
-import { PolygonSelector, RenderSvgEditorControls, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { SupportedTarget, SvgSelector } from "@iiif/helpers";
-import { HTMLPortal, ResizeWorldItem, useMode } from "@atlas-viewer/atlas";
-import { constrainPosition } from "../../../helpers/constrain-position";
+import { HTMLPortal, useMode } from "@atlas-viewer/atlas";
+import type { SupportedTarget, SvgSelector } from "@iiif/helpers";
+import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useGenericEditor } from "@manifest-editor/shell";
+import {
+  PolygonSelector,
+  RenderSvgEditorControls,
+  useAnnotation,
+  useCanvas,
+  useVault,
+} from "react-iiif-vault";
+import { constrainPosition } from "../../../helpers/constrain-position";
+import { ResizeWorldItem } from "./ResizeWorldItem";
 
 export function AnnotationTargetEditor() {
   const canvas = useCanvas();
-  const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
-  const editor = useGenericEditor(annotation ? { id: annotation.id, type: "Annotation" } : undefined);
+  const annotation = useAnnotation<
+    AnnotationNormalized & { target: SupportedTarget }
+  >();
+  const editor = useGenericEditor(
+    annotation ? { id: annotation.id, type: "Annotation" } : undefined,
+  );
 
   const updateAnnotationTarget = (input: any) => {
     if (input.type === "polygon" && canvas) {
+      // Check if the polygon is a rectangle.
+      const points = input.shape.points;
+      if (
+        points.length === 4 &&
+        points[0][0] === points[3][0] &&
+        points[1][0] === points[2][0] &&
+        points[0][1] === points[1][1] &&
+        points[2][1] === points[3][1]
+      ) {
+        const x = points[0][0];
+        const y = points[0][1];
+        const width = points[1][0] - points[0][0];
+        const height = points[2][1] - points[0][1];
+        const target = { x, y, width, height };
+        const position = constrainPosition(canvas, target);
+        editor.annotation.target.setPosition(position);
+        return;
+      }
+
       editor.annotation.target.setSvgSelector(input.shape, canvas);
       return;
     }
@@ -27,7 +57,11 @@ export function AnnotationTargetEditor() {
     return null;
   }
 
-  if (!annotation || !annotation.target || annotation.target.selector?.type !== "BoxSelector") {
+  if (
+    !annotation ||
+    !annotation.target ||
+    annotation.target.selector?.type !== "BoxSelector"
+  ) {
     // Refused to show the resizing if it's targeting the whole canvas.
     if (canvas && annotation?.target.selector === null) {
       return (
@@ -53,11 +87,19 @@ export function AnnotationTargetEditor() {
               shape: data,
             });
           }}
-          polygon={{ id: annotation.id, open: selector.svgShape === "polyline", points: selector.points }}
+          polygon={{
+            id: annotation.id,
+            open: selector.svgShape === "polyline",
+            points: selector.points,
+          }}
           annotationBucket="default"
           renderControls={(helper, state, showShapes) => (
             <>
-              <RenderSvgEditorControls helper={helper} state={state} showShapes={showShapes} />
+              <RenderSvgEditorControls
+                helper={helper}
+                state={state}
+                showShapes={showShapes}
+              />
             </>
           )}
         />

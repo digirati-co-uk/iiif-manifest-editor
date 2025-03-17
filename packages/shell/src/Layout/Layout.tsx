@@ -1,12 +1,15 @@
+import { Modal, PanelSideMenu } from "@manifest-editor/components";
 // import { LayoutProps } from "./Layout.types";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
+import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
 import { memo, useContext, useLayoutEffect } from "react";
 import { ReactVaultContext } from "react-iiif-vault";
-import { Transition, TransitionStatus } from "react-transition-group";
+import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
+import { useMatchMedia } from "../hooks/use-match-media";
 import { useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import * as M from "./Layout.mobile";
@@ -14,9 +17,6 @@ import * as L from "./Layout.styles";
 import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { useResizeLayout } from "./components/use-resize-layouts";
-import { useMatchMedia } from "../hooks/use-match-media";
-import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { Modal, PanelSideMenu } from "@manifest-editor/components";
 
 interface LayoutProps {
   header?: React.ReactNode;
@@ -31,6 +31,7 @@ interface LayoutProps {
   isLoading?: boolean;
   className?: string;
   centerPanelMenuPosition?: "top" | "bottom";
+  disableSideEffects?: string[];
 }
 
 export const Layout = memo(function Layout(props: LayoutProps) {
@@ -38,11 +39,27 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
   const vault = _vault || undefined;
-  const { loading, state, leftPanels, centerPanels, rightPanels, modals = [], actions } = layout;
-  const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
-  const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
-  const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
-  const modalToRender = modals.find((panel) => panel.id === state.modal.current);
+  const {
+    loading,
+    state,
+    leftPanels,
+    centerPanels,
+    rightPanels,
+    modals = [],
+    actions,
+  } = layout;
+  const leftPanel = leftPanels.find(
+    (panel) => panel.id === state.leftPanel.current,
+  );
+  const rightPanel = rightPanels.find(
+    (panel) => panel.id === state.rightPanel.current,
+  );
+  const centerPanel = centerPanels.find(
+    (panel) => panel.id === state.centerPanel.current,
+  );
+  const modalToRender = modals.find(
+    (panel) => panel.id === state.modal.current,
+  );
   const enableMotion = true;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
@@ -68,7 +85,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   // Pinned state
   const showRightPanel =
     rightPanel &&
-    (pinnedRightPanel?.id !== rightPanel.id || !equal(state.pinnedRightPanel.state, state.rightPanel.state));
+    (pinnedRightPanel?.id !== rightPanel.id ||
+      !equal(state.pinnedRightPanel.state, state.rightPanel.state));
   const resetLeftPanel =
     leftPanelResizer.widthB !== "auto"
       ? () =>
@@ -116,7 +134,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       return centerPanel.onMount(
         state.centerPanel.state || centerPanel.defaultState || {},
         { ...layout, current: actions.centerPanel, vault: vault as any },
-        appState
+        appState,
       );
     }
   }, [state.centerPanel.current]);
@@ -126,7 +144,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     // actions.setAvailable(props);
     rightPanels.length && actions.rightPanel.change({ id: rightPanels[0]!.id });
     leftPanels.length && actions.leftPanel.change({ id: leftPanels[0]!.id });
-    centerPanels.length && actions.centerPanel.change({ id: centerPanels[0]!.id });
+    centerPanels.length &&
+      actions.centerPanel.change({ id: centerPanels[0]!.id });
 
     // actions are stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,9 +163,14 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     <L.PanelContainer
       $menu={props.leftPanelMenuPosition || "bottom"}
       ref={leftPanelResizer.refs.resizableDiv}
-      className={transition && enableMotion ? `transition transition-${transition}` : ""}
+      className={
+        transition && enableMotion ? `transition transition-${transition}` : ""
+      }
       style={{
-        width: state.leftPanel.open || transition !== "exited" ? leftPanelResizer.widthB : undefined,
+        width:
+          state.leftPanel.open || transition !== "exited"
+            ? leftPanelResizer.widthB
+            : undefined,
         minWidth: leftPanel?.options?.minWidth,
       }}
     >
@@ -196,8 +220,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
           modalToRender.render(
             state.modal.state || modalToRender.defaultState || {},
             { ...layout, current: actions.modal, vault: vault },
-            appState
-          )
+            appState,
+          ),
         )}
       </Modal>
     );
@@ -206,13 +230,23 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const renderCenterPanel = () => (
     <L.PanelContainer $menu={props.centerPanelMenuPosition || "top"}>
       {props.centerPanelMenu ? (
-        <L.PanelMenu $open={state.centerPanel.open} $position={props.centerPanelMenuPosition || "top"}>
+        <L.PanelMenu
+          $open={state.centerPanel.open}
+          $position={props.centerPanelMenuPosition || "top"}
+        >
           {props.centerPanelMenu}
         </L.PanelMenu>
       ) : null}
       <L.PanelContent>
         {isLoading ? (
-          <div style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Spinner stroke="rgba(0,0,0,.3)" fontSize={"2em"} />
           </div>
         ) : state.centerPanel.open ? (
@@ -221,8 +255,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
               centerPanel.render(
                 state.centerPanel.state || centerPanel.defaultState || {},
                 { ...layout, current: actions.centerPanel, vault: vault },
-                appState
-              )
+                appState,
+              ),
             )
           ) : null
         ) : null}
@@ -234,9 +268,14 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     <L.PanelContainer
       $menu={props.rightPanelMenuPosition || "bottom"}
       ref={rightPanelResizer.refs.resizableDiv}
-      className={transition && enableMotion ? `transition transition-${transition}` : ""}
+      className={
+        transition && enableMotion ? `transition transition-${transition}` : ""
+      }
       style={{
-        width: state.rightPanel.open || transition !== "exited" ? rightPanelResizer.widthB : undefined,
+        width:
+          state.rightPanel.open || transition !== "exited"
+            ? rightPanelResizer.widthB
+            : undefined,
         minWidth: rightPanel?.options?.minWidth,
       }}
     >
@@ -247,7 +286,10 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       ) : (
         <>
           {props.rightPanelMenu ? (
-            <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
+            <L.PanelMenu
+              $open={state.rightPanel.open}
+              $position={props.rightPanelMenuPosition || "bottom"}
+            >
               {props.rightPanelMenu}
             </L.PanelMenu>
           ) : null}
@@ -294,7 +336,9 @@ export const Layout = memo(function Layout(props: LayoutProps) {
             <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>
             <M.MobileBar>
               {leftPanels.length > 0 ? (
-                <M.LeftBarButton onClick={actions.leftPanel.toggle}>{leftPanel?.label}</M.LeftBarButton>
+                <M.LeftBarButton onClick={actions.leftPanel.toggle}>
+                  {leftPanel?.label}
+                </M.LeftBarButton>
               ) : null}
               {rightPanels.length > 0 ? (
                 <M.DrawerContainer>
@@ -307,9 +351,15 @@ export const Layout = memo(function Layout(props: LayoutProps) {
               <M.PreviewBarButton>Preview</M.PreviewBarButton>
             </M.MobileBar>
             {rightPanels.length > 0 ? (
-              <M.DrawerBody $open={state.rightPanel.open}>{renderRightPanel()}</M.DrawerBody>
+              <M.DrawerBody $open={state.rightPanel.open}>
+                {renderRightPanel()}
+              </M.DrawerBody>
             ) : null}
-            {leftPanels.length > 0 ? <M.LeftPanel $open={state.leftPanel.open}>{renderLeftPanel()}</M.LeftPanel> : null}
+            {leftPanels.length > 0 ? (
+              <M.LeftPanel $open={state.leftPanel.open}>
+                {renderLeftPanel()}
+              </M.LeftPanel>
+            ) : null}
             {leftPanels.length > 0 || rightPanels.length > 0 ? (
               <M.Lightbox
                 $open={state.leftPanel.open || state.rightPanel.open}
@@ -361,10 +411,18 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         ) : null}
 
         {leftPanels.length > 0 ? (
-          <Transition in={state.leftPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
+          <Transition
+            in={state.leftPanel.open}
+            timeout={enableMotion ? 400 : 0}
+            unmountOnExit={false}
+          >
             {(transition) => (
               <>
-                <L.LeftPanel $width={leftPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                <L.LeftPanel
+                  $width={leftPanelResizer.widthB}
+                  $state={transition}
+                  $motion={enableMotion}
+                >
                   {renderLeftPanel(transition)}
                 </L.LeftPanel>
                 <HandleControls
@@ -381,7 +439,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         ) : null}
         <L.CenterPanel>{renderCenterPanel()}</L.CenterPanel>
         {rightPanels.length > 0 ? (
-          <Transition in={state.rightPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
+          <Transition
+            in={state.rightPanel.open}
+            timeout={enableMotion ? 400 : 0}
+            unmountOnExit={false}
+          >
             {(transition) => (
               <>
                 <HandleControls
@@ -391,7 +453,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                   open={state.rightPanel.open}
                   actions={actions.rightPanel}
                 />
-                <L.RightPanel $width={rightPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                <L.RightPanel
+                  $width={rightPanelResizer.widthB}
+                  $state={transition}
+                  $motion={enableMotion}
+                >
                   {renderRightPanel(transition)}
                 </L.RightPanel>
               </>

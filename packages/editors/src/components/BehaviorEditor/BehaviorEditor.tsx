@@ -48,7 +48,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
           </PaddedSidebarContainer>
           <AccordionContainer>
             {Object.values(parsedConfig).map(({ ref, config }) => (
-              <AccordionItem key={config.id} ref={ref} label={<LocaleString>{config.label}</LocaleString>}>
+              <AccordionItem key={config.id} initialOpen={config.initialOpen} ref={ref} label={<LocaleString>{config.label}</LocaleString>}>
                 <RenderCustomBehaviorEditor behaviors={props.behavior} setBehaviors={props.onChange} config={config} />
               </AccordionItem>
             ))}

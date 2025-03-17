@@ -1,6 +1,10 @@
+import { HandleContainer as HandleContainer_ } from "@manifest-editor/components";
+
 import styled from "styled-components";
 
-export const HandleContainer = styled.div`
+export const HandleContainer = HandleContainer_;
+
+export const HandleContainer2 = styled.div`
   font-size: 1.2em;
   display: flex;
   padding: 0.1em;

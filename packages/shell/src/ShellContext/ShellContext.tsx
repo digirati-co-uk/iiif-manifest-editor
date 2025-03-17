@@ -1,21 +1,32 @@
+import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
-import { ReactNode, useMemo } from "react";
+import { type ReactNode, useMemo } from "react";
+import { ImageServiceLoaderContext } from "react-iiif-vault";
 import { ThemeProvider } from "styled-components";
-import { AppResourceProvider, Resource } from "../AppResourceProvider/AppResourceProvider";
-import { Config, ConfigProvider } from "../ConfigContext/ConfigContext";
+import {
+  AppResourceProvider,
+  type Resource,
+} from "../AppResourceProvider/AppResourceProvider";
+import { AtlasStoreProvider } from "../AtlasStore/AtlasStoreProvider";
+import {
+  type Config,
+  ConfigProvider,
+  useConfig,
+} from "../ConfigContext/ConfigContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
-import { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
+import type {
+  Preview,
+  PreviewConfiguration,
+} from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { defaultTheme } from "./default-theme";
-import { ImageServiceLoaderContext } from "react-iiif-vault";
-import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
     id: "universal-viewer",
-    config: { url: "https://uv-v4.netlify.app/#?iiifManifestId={manifestId}" },
+    config: { url: "https://universalviewer.dev/#?iiifManifestId={manifestId}" },
     type: "external-manifest-preview",
     label: "Universal viewer",
   },
@@ -66,18 +77,30 @@ export function ShellProvider({
   previews?: Preview[];
   editing?: { id: string; type: string };
 }) {
+  const existingConfig = useConfig();
+  const mergedConfig = useMemo(() => {
+    return {
+      ...existingConfig,
+      ...config,
+      previews: config?.previews || existingConfig.previews || previewConfigs,
+    };
+  }, [existingConfig, config]);
+
   return (
     <ErrorBoundary>
       <ImageServiceLoaderContext.Provider value={imageServiceLoader}>
         <AppResourceProvider resource={resource}>
           <PreviewVaultContext>
             <ThemeProvider theme={theme || defaultTheme}>
-              <ConfigProvider config={config} saveConfig={saveConfig}>
+              <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
                 <EditingStack>
                   <LayoutProvider>
                     {/* @todo swap these out for (config?.previews || []) */}
-                    <PreviewProvider previews={previews || []} configs={config?.previews || previewConfigs}>
-                      {children}
+                    <PreviewProvider
+                      previews={previews || []}
+                      configs={mergedConfig.previews}
+                    >
+                      <AtlasStoreProvider>{children}</AtlasStoreProvider>
                     </PreviewProvider>
                   </LayoutProvider>
                 </EditingStack>

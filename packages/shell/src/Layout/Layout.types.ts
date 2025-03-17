@@ -1,10 +1,12 @@
-import { ReactNode } from "react";
-import { Vault } from "@iiif/helpers/vault";
-import { TransitionStatus } from "react-transition-group";
-import { CreatableResource, EditableResource } from "../EditingStack/EditingStack.types";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { AppState } from "../AppContext/AppContext";
-import { EditorConfig } from "../ConfigContext/ConfigContext";
+import type { Vault } from "@iiif/helpers/vault";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { CreatableResource } from "@manifest-editor/creator-api";
+import type { ReactNode } from "react";
+import type { RenderingStrategy } from "react-iiif-vault";
+import type { TransitionStatus } from "react-transition-group";
+import type { AppState } from "../AppContext/AppContext";
+import type { EditorConfig } from "../ConfigContext/ConfigContext";
+import type { EditableResource } from "../EditingStack/EditingStack.types";
 
 // @todo come back to.
 type CreatorDefinition = any;
@@ -15,6 +17,7 @@ export interface LayoutProviderProps {
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
   modals?: Array<LayoutPanel>;
+  annotations?: Array<AnnotationPanel>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -35,10 +38,20 @@ export interface LayoutActions {
   stack(args: { id: string; state?: any }): void;
 
   open(id: string, state?: any): void;
-  open(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  open(args: {
+    id: string;
+    state?: any;
+    stacked?: boolean;
+    unique?: boolean;
+  }): void;
 
   change(id: string, state?: any): void;
-  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  change(args: {
+    id: string;
+    state?: any;
+    stacked?: boolean;
+    unique?: boolean;
+  }): void;
 
   close(id: string, state?: any): void;
   close(args: { id: string; state?: any }): void;
@@ -50,7 +63,12 @@ export interface LayoutActions {
   edit(
     resource: Reference | SpecificResource,
     context?: Omit<EditableResource, "resource">,
-    options?: { reset?: boolean; property?: string; stacked?: boolean | undefined; selectedTab?: string }
+    options?: {
+      reset?: boolean;
+      property?: string;
+      stacked?: boolean | undefined;
+      selectedTab?: string;
+    },
   ): void;
   create(resource: CreatableResource): void;
 
@@ -71,8 +89,18 @@ export interface PanelState {
 }
 
 export interface PanelActions {
-  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
-  open(args?: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  change(args: {
+    id: string;
+    state?: any;
+    stacked?: boolean;
+    unique?: boolean;
+  }): void;
+  open(args?: {
+    id: string;
+    state?: any;
+    stacked?: boolean;
+    unique?: boolean;
+  }): void;
   close(): void;
   toggle(): void;
   minimise(): void;
@@ -112,9 +140,19 @@ export type LayoutPanelContext = {
 
 export type LayoutFunction = (
   state: any,
-  ctx: { current: PanelActions; vault?: Vault; transition?: TransitionStatus } & LayoutContext,
-  app: AppState
+  ctx: {
+    current: PanelActions;
+    vault?: Vault;
+    transition?: TransitionStatus;
+  } & LayoutContext,
+  app: AppState,
 ) => ReactNode;
+
+export interface AnnotationPanel {
+  id: string;
+  label: string;
+  render: () => React.ReactNode | null;
+}
 
 export interface LayoutPanel {
   id: string;
@@ -125,13 +163,23 @@ export interface LayoutPanel {
   onMount?: (
     state: any,
     ctx: { current: PanelActions; vault?: Vault } & LayoutContext,
-    app: AppState
+    app: AppState,
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
-  backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
-  renderBackAction?: (options: { backAction: (e?: React.MouseEvent) => void; fallback: any }) => ReactNode | null;
-  renderCloseAction?: (options: { closeAction: () => void; fallback: any }) => ReactNode | null;
+  backAction?: (
+    state: any,
+    ctx: { current: PanelActions } & LayoutContext,
+    app: AppState,
+  ) => void;
+  renderBackAction?: (options: {
+    backAction: (e?: React.MouseEvent) => void;
+    fallback: any;
+  }) => ReactNode | null;
+  renderCloseAction?: (options: {
+    closeAction: () => void;
+    fallback: any;
+  }) => ReactNode | null;
   options?: {
     minWidth?: number;
     maxWidth?: number;
@@ -147,6 +195,19 @@ export type MenuPositions = "left" | "right" | "bottom" | "top";
 export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
   pinned: true;
   state: T;
+}
+
+export interface CanvasEditorDefinition {
+  id: string;
+  label: string;
+  supports: {
+    strategy: (
+      strategy: RenderingStrategy,
+      resource: EditableResource,
+      vault: Vault,
+    ) => boolean;
+  };
+  component: (strategy: RenderingStrategy) => ReactNode | null;
 }
 
 export interface EditorDefinition {
@@ -189,6 +250,7 @@ export interface LayoutProps {
   rightPanels: Array<LayoutPanel>;
   centerPanels: Array<LayoutPanel>;
   modals?: Array<LayoutPanel>;
+  annotations?: Array<AnnotationPanel>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;
@@ -204,4 +266,6 @@ export interface LayoutProps {
   editors?: EditorDefinition[];
   resources?: (string | ResourceDefinition)[];
   creators?: CreatorDefinition[];
+  // Custom canvas renderer for main
+  canvasEditors?: CanvasEditorDefinition[];
 }
