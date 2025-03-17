@@ -1,5 +1,5 @@
-import { Reference } from "@iiif/presentation-3";
-import { createContext, ReactNode, useContext, useMemo } from "react";
+import type { Reference } from "@iiif/presentation-3";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 import invariant from "tiny-invariant";
 import { useVault, useVaultSelector } from "react-iiif-vault";
 
@@ -7,9 +7,10 @@ interface ResourceEditingContext {
   resource: Reference<any> | null;
 }
 
-const ResourceEditingReactContext = createContext<ResourceEditingContext>({
-  resource: null,
-});
+export const ResourceEditingReactContext =
+  createContext<ResourceEditingContext>({
+    resource: null,
+  });
 
 export function useEditingContext() {
   return useContext(ResourceEditingReactContext);
@@ -62,7 +63,7 @@ export function ResourceEditingProvider({
           // Current resource.
           resource: id && type ? { id, type } : null,
         }),
-        [id, type]
+        [id, type],
       )}
     >
       {children}

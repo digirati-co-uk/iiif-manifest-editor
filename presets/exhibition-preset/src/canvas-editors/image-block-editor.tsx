@@ -75,7 +75,7 @@ export function ImageBlockEditor({
         </div>
       ) : (
         <div className="h-full flex flex-1 min-h-0">
-          <CanvasPanelEditor />
+          <CanvasPanelEditor asFallback />
         </div>
       )}
     </CanvasContext>
@@ -97,7 +97,7 @@ function ImageBlockRenderer() {
       )}
     >
       <div className="flex-1 h-full flex min-w-0">
-        <CanvasPanelEditor />
+        <CanvasPanelEditor asFallback />
       </div>
       {!isImage ? (
         <div

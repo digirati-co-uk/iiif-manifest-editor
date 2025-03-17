@@ -1,10 +1,12 @@
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { useVaultSelector, CanvasContext, useVault } from "react-iiif-vault";
+import { CanvasContext, useVault, useVaultSelector } from "react-iiif-vault";
 import { useInStack } from "../../helpers";
 import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 
-export function CanvasPanelEditor() {
+export function CanvasPanelEditor({
+  asFallback = false,
+}: { asFallback?: boolean }) {
   const { edit, create } = useLayoutActions();
   const canvas = useInStack("Canvas");
   const annotationPage = useInStack("AnnotationPage");
@@ -14,7 +16,10 @@ export function CanvasPanelEditor() {
   const canvasId = canvas?.resource.source.id;
   let createAnnotation = undefined;
   const annotationPageId =
-    annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations"
+    annotationPage &&
+    canvas &&
+    annotationPage.parent?.id === canvasId &&
+    annotationPage.property === "annotations"
       ? annotationPage.resource.source.id
       : undefined;
 
@@ -34,7 +39,7 @@ export function CanvasPanelEditor() {
       }
       return 0;
     },
-    [canvasId]
+    [canvasId],
   );
 
   if (annotationPageId) {
@@ -62,9 +67,12 @@ export function CanvasPanelEditor() {
     return (
       <CanvasContext canvas={canvasId}>
         <CanvasPanelViewer
+          asFallback={asFallback}
           key={`${canvasId}/${totalAnnotations}/${annotationPageId}`}
           highlightAnnotation={annotationId}
-          onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
+          onEditAnnotation={(id: string) =>
+            id !== annotationId && edit({ id, type: "Annotation" })
+          }
           createAnnotation={createAnnotation}
         />
       </CanvasContext>

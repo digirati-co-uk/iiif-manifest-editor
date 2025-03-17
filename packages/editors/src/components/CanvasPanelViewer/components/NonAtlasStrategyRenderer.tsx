@@ -1,15 +1,21 @@
 import { IIIFMediaPlayer } from "@manifest-editor/components";
 import { RenderTextualContent } from "@manifest-editor/components";
 import { useApp } from "@manifest-editor/shell";
-import { createContext, useContext, useMemo } from "react";
-import { useCanvas, useStrategy, useVault } from "react-iiif-vault";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
+import { useStrategy, useVault } from "react-iiif-vault";
 import { useInStack } from "../../../helpers";
 
-const SelfContext = createContext<any>(null);
+const SelfContext = createContext<null | React.ReactNode>(null);
 
 export function NonAtlasStrategyRenderer({
   children,
-}: { children: React.ReactNode }) {
+}: { children: React.ReactNode; deps?: any[] }) {
   const vault = useVault();
   const strategy = useStrategy();
   const canvas = useInStack("Canvas");
@@ -27,7 +33,7 @@ export function NonAtlasStrategyRenderer({
         }
       }
     }
-  }, [canvas, strategy]);
+  }, [canvas, strategy, vault, app.layout.canvasEditors]);
 
   if (!canvas) {
     return null;
