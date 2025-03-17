@@ -1,4 +1,3 @@
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { Config, useConfig, useSaveConfig } from "./ConfigContext";
 import { Sidebar, SidebarHeader, SidebarContent, Form, ActionButton } from "@manifest-editor/components";
 import { useDecayState } from "../hooks/use-decay-state";
@@ -71,8 +70,8 @@ export function ConfigEditor() {
             />
             <Form.Label htmlFor="advancedLanguageMode">Advanced Language Mode</Form.Label>
           </Form.InputContainer>
-          
-          
+
+
           <Form.InputContainer horizontal className="my-3">
             <Form.Input
               type="checkbox"
@@ -92,6 +91,7 @@ export function ConfigEditor() {
             />
             <Form.Label htmlFor="isVersion2">Export Presentation 2 Manifests</Form.Label>
           </Form.InputContainer>
+
 
           {/* <Form.InputContainer>
             <Form.Label htmlFor="base">Base Identifier</Form.Label>
@@ -126,11 +126,17 @@ export function ConfigEditor() {
               })}
             </div>
           </Form.InputContainer>
+          <a className='text-sm text-me-primary-500 hover:underline hover:text-me-primary-600'
+             href={window.location.pathname.includes("/exhibition") ? window.location.pathname.replace("/exhibition", "") || "/" : `${window.location.pathname}/exhibition`}
+          >
+            {window.location.pathname.includes("/exhibition") ? "Return to Manifest Editor" : "Go to Exhibition Editor"}
+          </a>
 
           <div className="mt-5">
             <ActionButton type="submit">{"Save changes"}</ActionButton>
           </div>
         </Form.Form>
+
       </SidebarContent>
     </Sidebar>
   );
