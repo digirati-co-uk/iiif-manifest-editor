@@ -33,7 +33,7 @@ interface RichTextLanguageField {
   onUpdateLanguage?: (lang: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  dissalowHTML?: boolean;
+  disallowHTML?: boolean;
 }
 
 const Link = (props: any) => {
@@ -243,7 +243,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
       <S.ToolbarContainer $visible={showControls}>
         {!htmlMode ? (
           <>
-            {!props.dissalowHTML && (
+            {!props.disallowHTML && (
               <S.ToolbarItem onClick={toggleHtmlMode}>
                 <a>{isStateHtml ? "Edit HTML" : "Convert to HTML"}</a>
               </S.ToolbarItem>

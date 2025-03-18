@@ -5,6 +5,6 @@ export interface LanguageMapEditorProps {
   formElement?: boolean;
   name?: string;
   id?: string;
-  dissalowHTML?: boolean;
+  disallowHTML?: boolean;
 
 }

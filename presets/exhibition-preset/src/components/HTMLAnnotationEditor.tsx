@@ -13,10 +13,6 @@ export function HTMLAnnotationEditor() {
     return null;
   }
 
-  //add more html editing wizygiv stuff to this
-  // h1 h2 h3
-  // theres a tailwind plugin for styles - pros (tailwind typography)
-
   return (
     <div className="flex flex-col gap-4">
       {bodies.map((body, n) => {

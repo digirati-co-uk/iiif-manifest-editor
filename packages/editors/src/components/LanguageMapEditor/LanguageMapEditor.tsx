@@ -18,7 +18,7 @@ export function LanguageMapEditor({
   formElement,
   name,
   id,
-  dissalowHTML,
+  disallowHTML,
 }: LanguageMapEditorProps) {
   const resource = useResource<Partial<DescriptiveProperties>>();
   const vault = useVault();
@@ -49,7 +49,7 @@ export function LanguageMapEditor({
             onSave={changeHandler}
             guidanceReference={guidanceReference}
             disableMultiline={disableMultiline}
-            dissalowHTML={dissalowHTML}
+            disallowHTML={disallowHTML}
           />
         </ErrorBoundary>
       )}
