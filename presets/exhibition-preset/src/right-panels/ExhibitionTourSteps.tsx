@@ -41,10 +41,51 @@ function ExhibitionRightPanelOptionalPage() {
 
   // @todo create annotation page?
   if (!firstAnnotationPage || !canvas || !itemsAnnotationPage) {
-    return <div className="p-4 opacity-50 text-center">Tour not available</div>;
+    return <PromptCreationOfTourSteps />;
   }
 
   return <ExhibitionRightPanel />;
+}
+
+function PromptCreationOfTourSteps() {
+  const canvas = useCanvas();
+  const creator = useInlineCreator();
+
+  const createEmptyAnnotationPage = () => {
+    if (!canvas) return;
+    creator.create(
+      "@manifest-editor/empty-annotation-page",
+      {
+        label: { en: ["Tour steps"] },
+      },
+      {
+        target: {
+          id: canvas.id,
+          type: "Canvas",
+        },
+        targetType: "AnnotationPage",
+        parent: {
+          property: "items",
+          resource: {
+            id: canvas.id,
+            type: "Canvas",
+          },
+        },
+      }
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4">
+      <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
+      <Button
+        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+        onPress={createEmptyAnnotationPage}
+      >
+        Create Tour
+      </Button>
+    </div>
+  );
 }
 
 function ExhibitionRightPanel() {
