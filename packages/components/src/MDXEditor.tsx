@@ -16,7 +16,7 @@ import {
   markdownShortcutPlugin,
   quotePlugin,
   thematicBreakPlugin,
-  toolbarPlugin,
+  toolbarPlugin, ALL_HEADING_LEVELS, allowedHeadingLevels$, BlockTypeSelect,
 } from "@mdxeditor/editor";
 import { useMemo, type ForwardedRef } from "react";
 
@@ -35,6 +35,7 @@ export function MDXEditor({
           linkPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
+          headingsPlugin(),
           // linkDialogPlugin(),
           markdownShortcutPlugin(),
           imagePlugin(),
@@ -44,8 +45,8 @@ export function MDXEditor({
               <>
                 {" "}
                 <UndoRedo />
+                <BlockTypeSelect />
                 <ListsToggle />
-                <BoldItalicUnderlineToggles />
                 {/* <CreateLink /> */}
                 <InsertImage />
               </>

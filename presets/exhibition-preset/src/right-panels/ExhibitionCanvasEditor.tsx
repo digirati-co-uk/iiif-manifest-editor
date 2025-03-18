@@ -53,7 +53,7 @@ function ExhibitionRightPanel() {
         <ResourceEditingProvider resource={canvas}>
           {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-          <LanguageMapEditor dispatchType="label" disableMultiline />
+          <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
 
           <LinkingPropertyList
             containerId={thumbnail.containerId()}

@@ -85,6 +85,7 @@ export function ManifestPanel() {
 
       {summary ? (
         <LocaleString
+          enableDangerouslySetInnerHTML
           as="p"
           className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
         >

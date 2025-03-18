@@ -21,12 +21,14 @@ export function Metadata() {
         label={"Label"}
         fields={e.label || { none: [] }}
         onSave={(label: any) => descriptive.metadata.update(idx, label.toInternationalString(), e.value)}
+        disallowHTML
       />
       <LanguageFieldEditor
         focusId={e.id + "_value"}
         label={"Value"}
         fields={e.value || { none: [] }}
         onSave={(value: any) => descriptive.metadata.update(idx, e.label, value.toInternationalString())}
+        disallowHTML
       />
     </MetadataContainer>
   );
