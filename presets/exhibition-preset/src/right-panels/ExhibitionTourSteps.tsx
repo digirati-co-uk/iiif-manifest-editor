@@ -1,9 +1,5 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import {
-  ActionButton,
-  Sidebar,
-  SidebarContent,
-} from "@manifest-editor/components";
+import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
@@ -59,9 +55,9 @@ function ExhibitionRightPanel() {
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
 
-  const { requestAnnotation, isPending, busy } = useRequestAnnotation({
+  const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } = useRequestAnnotation({
     onSuccess: (resp) => {
-      if (resp.target && firstAnnotationPage) {
+      if (!resp.cancelled && resp.target && firstAnnotationPage) {
         creator.create(
           "@manifest-editor/html-annotation",
           {
@@ -97,7 +93,7 @@ function ExhibitionRightPanel() {
                     }
                   : resp.boundingBox,
             },
-          },
+          }
         );
       }
     },
@@ -113,9 +109,7 @@ function ExhibitionRightPanel() {
       <SidebarContent padding>
         <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
           <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
-          <ActionButton onPress={() => setReorderable((r) => !r)}>
-            {reorderable ? "Done" : "Reorder"}
-          </ActionButton>
+          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
         </div>
 
         <ResourceEditingProvider resource={canvas}>
@@ -124,19 +118,28 @@ function ExhibitionRightPanel() {
               <TourAnnotationPageEditor reorderable={reorderable} />
 
               {!busy ? (
-                <Button
-                  onPress={() => requestAnnotation({ type: "polygon" })}
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
-                >
-                  {isPending ? "Complete selector" : "+ Add new step"}
-                </Button>
+                isPending ? (
+                  <div className="border grid grid-cols-2 gap-2 disabled:opacity-50 border-gray-300 shadow-sm rounded p-1 bg-white relative text-black/40">
+                    <Button onPress={cancelRequest} className="text-black/80 rounded-sm p-3">
+                      Cancel
+                    </Button>
+                    <Button onPress={completeRequest} className="bg-me-100 text-me-500 rounded-sm p-3">
+                      Save changes
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onPress={() => requestAnnotation({ type: "polygon" })}
+                    className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+                  >
+                    + Add new step
+                  </Button>
+                )
               ) : null}
             </div>
             {itemsAnnotationPage /*&& hasMultiplePainting*/ ? (
               <>
-                <h3 className="text-md border-b pt-4 pb-2 mb-2">
-                  Available tour steps from images
-                </h3>
+                <h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>
                 <PromptToAddPaintingAnnotations
                   painting={itemsAnnotationPage}
                   page={editor.ref()}
