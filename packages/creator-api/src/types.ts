@@ -1,9 +1,9 @@
 import type { Vault } from "@iiif/helpers/vault";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
-import type { ReferencedResource } from "./ReferencedResource";
 import type { CreatorResource } from "./CreatorResource";
+import type { ReferencedResource } from "./ReferencedResource";
 
 export interface CreatorContext<T = any> {
   vault: Vault;
@@ -64,6 +64,7 @@ export interface CreatorDefinition {
   // This is completely static values. (e.g. {type: 'Image'})
   staticFields?: Record<string, any>;
   allowModal?: boolean;
+  hiddenModal?: boolean;
 
   // Where is it valid?
   supports: {
@@ -101,4 +102,5 @@ export interface CreatableResource {
   initialData?: any;
   isPainting?: boolean;
   filter?: string;
+  initialCreator?: string;
 }

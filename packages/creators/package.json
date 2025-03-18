@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": {
@@ -53,6 +47,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
+    "iiif-browser": "https://pkg.csb.dev/digirati-co-uk/iiif-browser/commit/f0cd69a5/iiif-browser",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-iiif-vault": "^1.5.1",

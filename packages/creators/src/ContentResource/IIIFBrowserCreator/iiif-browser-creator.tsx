@@ -1,5 +1,9 @@
-import { ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
-import { CreatorFunctionContext } from "@manifest-editor/creator-api";
+import {
+  type ContentState,
+  normaliseContentState,
+  parseContentState,
+} from "@iiif/helpers";
+import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 
@@ -10,8 +14,14 @@ interface IIIFBrowserCreatorPayload {
   output: string | ContentState | ContentState[];
 }
 
-export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
-  const targetType = ctx.options.targetType as "Annotation" | "Canvas" | "ContentResource";
+export async function createFromIIIFBrowserOutput(
+  data: IIIFBrowserCreatorPayload,
+  ctx: CreatorFunctionContext,
+) {
+  const targetType = ctx.options.targetType as
+    | "Annotation"
+    | "Canvas"
+    | "ContentResource";
 
   // For now..
   if (Array.isArray(data.output)) {
@@ -19,7 +29,9 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
   }
 
   const contentState = normaliseContentState(
-    typeof data.output === "string" ? parseContentState(data.output) : data.output
+    typeof data.output === "string"
+      ? parseContentState(data.output)
+      : data.output,
   );
 
   if (!contentState.target || contentState.target.length === 0) {
@@ -36,7 +48,9 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
     if (type === "Canvas") {
       const canvasId = target.source.id;
-      const manifestId = target.source.partOf?.find((t) => t.type === "Manifest");
+      const manifestId = target.source.partOf?.find(
+        (t) => t.type === "Manifest",
+      );
       invariant(manifestId, "Could not load external resource without partOf");
 
       // 1st. Check the preview vault.
@@ -50,16 +64,16 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
       const canvas = previewVault.get(canvasRef);
 
-      if (targetType === "Canvas") {
+      if (targetType === "Canvas" && target.selector?.type !== "BoxSelector") {
         return ctx.embed(previewVault.toPresentation3(canvas));
       }
 
       const annotationPage = previewVault.get(canvas.items[0]!);
       const annotation = previewVault.get(annotationPage.items[0]!);
-      if (targetType === "Annotation") {
+      if (targetType === "Annotation" || targetType === "Canvas") {
         const fullAnnotation = previewVault.toPresentation3<any>(annotation);
 
-        if (fullAnnotation && fullAnnotation?.body?.service) {
+        if (fullAnnotation?.body?.service) {
           const width = fullAnnotation?.body.width;
           const height = fullAnnotation?.body.height;
           const service = Array.isArray(fullAnnotation?.body?.service)
@@ -92,6 +106,27 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             selector,
           };
 
+          // Canvas.
+          if (targetType === "Canvas") {
+            const canvasId = ctx.generateId("Canvas", annotation);
+            fullAnnotation.target = canvasId;
+            // Page then canvas.
+            const pageId = ctx.generateId("Page", annotation);
+            const annotationPage = ctx.embed({
+              id: pageId,
+              type: "AnnotationPage",
+              items: [fullAnnotation],
+            });
+
+            return ctx.embed({
+              id: canvasId,
+              type: "Canvas",
+              width: ~~target.selector.spatial.width,
+              height: ~~target.selector.spatial.height,
+              items: [annotationPage],
+            });
+          }
+
           return ctx.embed({
             ...fullAnnotation,
             target: ctx.getTarget(),
@@ -114,4 +149,6 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
   // - Canvas (extracted from browser resource OR new blank one)
   // + There's a cropping aspect that might be applied.
 }
-export const IIIFBrowserCreatorForm = lazy(() => import("./iiif-browser-form.lazy"));
+export const IIIFBrowserCreatorForm = lazy(
+  () => import("./iiif-browser-form.lazy"),
+);

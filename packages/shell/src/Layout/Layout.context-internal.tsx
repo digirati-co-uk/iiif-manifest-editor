@@ -1,33 +1,48 @@
 import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { memo, ReactNode, useMemo, useReducer } from "react";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { CreatableResource } from "@manifest-editor/creator-api";
+import { type ReactNode, memo, useMemo, useReducer } from "react";
 import invariant from "tiny-invariant";
 import { useApp } from "../AppContext/AppContext";
 import { useEditingStack } from "../EditingStack/EditingStack";
-import { EditableResource } from "../EditingStack/EditingStack.types";
-import { LayoutActionsReactContext, LayoutStateReactContext } from "./Layout.context";
+import type { EditableResource } from "../EditingStack/EditingStack.types";
+import {
+  LayoutActionsReactContext,
+  LayoutStateReactContext,
+} from "./Layout.context";
 import { usePanelActions } from "./Layout.hooks";
 import { getDefaultLayoutState, layoutReducer } from "./Layout.reducer";
-import { PinnablePanelActions } from "./Layout.types";
-import { CreatableResource } from "@manifest-editor/creator-api";
+import type { PinnablePanelActions } from "./Layout.types";
 
-function parse(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): any {
+function parse(
+  args: string | { id: string; state?: any; stacked?: boolean },
+  _state?: any,
+): any {
   if (typeof args === "string") {
     return { id: args, state: _state };
   }
   return args;
 }
 
-export const LayoutProvider = memo(function LayoutProvider(props: { children: ReactNode }) {
+export const LayoutProvider = memo(function LayoutProvider(props: {
+  children: ReactNode;
+}) {
   const app = useApp();
   const available = app.layout;
 
-  const [state, dispatch] = useReducer(layoutReducer, undefined, getDefaultLayoutState);
+  const [state, dispatch] = useReducer(
+    layoutReducer,
+    undefined,
+    getDefaultLayoutState,
+  );
   const actions = {
     centerPanel: usePanelActions("centerPanel", dispatch),
     leftPanel: usePanelActions("leftPanel", dispatch),
     rightPanel: usePanelActions("rightPanel", dispatch),
-    pinnedRightPanel: usePanelActions("pinnedRightPanel", dispatch) as PinnablePanelActions,
+    pinnedRightPanel: usePanelActions(
+      "pinnedRightPanel",
+      dispatch,
+    ) as PinnablePanelActions,
     modal: usePanelActions("modal", dispatch),
     editingStack: useEditingStack(),
   };
@@ -51,12 +66,18 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     invariant(false, `Was not able to find panel with id "${id}"`);
   }
 
-  function open(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): void {
+  function open(
+    args: string | { id: string; state?: any; stacked?: boolean },
+    _state?: any,
+  ): void {
     const { id, state, stacked } = parse(args, _state);
     const [found, actions, pinnable] = find(id);
 
     if (pinnable && found.options?.openPinned) {
-      pinnable.pin({ id, state: { ...(found.defaultState || {}), ...(state || {}) } });
+      pinnable.pin({
+        id,
+        state: { ...(found.defaultState || {}), ...(state || {}) },
+      });
     } else {
       actions.open({
         id,
@@ -66,7 +87,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     }
   }
 
-  function stack(args: string | { id: string; state?: any }, _state?: any): void {
+  function stack(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id, state } = parse(args, _state);
     const [found, actions] = find(id);
     actions.open({
@@ -76,7 +100,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     });
   }
 
-  function change(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): void {
+  function change(
+    args: string | { id: string; state?: any; stacked?: boolean },
+    _state?: any,
+  ): void {
     const { id, state, stacked } = parse(args, _state);
     const [found, actions] = find(id);
     actions.change({
@@ -86,13 +113,19 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     });
   }
 
-  function close(args: string | { id: string; state?: any }, _state?: any): void {
+  function close(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id } = parse(args, _state);
     const [, actions] = find(id);
     actions.close();
   }
 
-  function toggle(args: string | { id: string; state?: any }, _state?: any): void {
+  function toggle(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id } = parse(args, _state);
     const [, actions] = find(id);
     actions.toggle();
@@ -101,15 +134,23 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
   function edit(
     resource: Reference | SpecificResource,
     context: Omit<EditableResource, "resource"> = {},
-    { reset, property, stacked }: { reset?: boolean; property?: string; stacked?: boolean | undefined } = {}
+    {
+      reset,
+      property,
+      stacked,
+    }: {
+      reset?: boolean;
+      property?: string;
+      stacked?: boolean | undefined;
+    } = {},
   ) {
     const toEdit: EditableResource = {
       resource: isSpecificResource(resource)
         ? resource
         : {
-          type: "SpecificResource",
-          source: resource,
-        },
+            type: "SpecificResource",
+            source: resource,
+          },
       ...context,
     };
 
@@ -127,14 +168,16 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
 
   function create(resource: CreatableResource) {
     actions.editingStack.create(resource, {});
-    if (available.modals && available.modals.find((e) => e.id === "@manifest-editor/creator")) {
+    if (available.modals?.find((e) => e.id === "@manifest-editor/creator")) {
       actions.modal.open({
         id: "@manifest-editor/creator",
         stacked: true,
         unique: true,
         state: resource,
       });
-    } else if (available.rightPanels.find((e) => e.id === "@manifest-editor/creator")) {
+    } else if (
+      available.rightPanels.find((e) => e.id === "@manifest-editor/creator")
+    ) {
       actions.rightPanel.open({
         id: "@manifest-editor/creator",
         stacked: true,
@@ -155,8 +198,13 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
   };
 
   return (
-    <LayoutActionsReactContext.Provider value={useMemo(() => ({ ...actions, ...otherActions }), [available])}>
-      <LayoutStateReactContext.Provider value={state}>{props.children}</LayoutStateReactContext.Provider>
+    <LayoutActionsReactContext.Provider
+      // biome-ignore lint/correctness/useExhaustiveDependencies: actions do not change
+      value={useMemo(() => ({ ...actions, ...otherActions }), [available])}
+    >
+      <LayoutStateReactContext.Provider value={state}>
+        {props.children}
+      </LayoutStateReactContext.Provider>
     </LayoutActionsReactContext.Provider>
   );
 });
