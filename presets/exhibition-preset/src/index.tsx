@@ -5,12 +5,6 @@ import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
-import {
-  imageSlideBottomCreator,
-  imageSlideCreator,
-  imageSlideLeftCreator,
-  imageSlideRightCreator,
-} from "./creators/image-slide-creator";
 import { infoBoxCreator } from "./creators/info-box-creator";
 import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
@@ -18,6 +12,12 @@ import { customBehaviourEditor } from "./left-panels/SlideBehaviours";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
+import { iiifBrowserCreator, imageUrlAnnotation } from "@manifest-editor/creators";
+import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
+import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
+import { imageUrlSlide } from "./creators/image-url-slide";
+import { emptyCanvasSlide } from "./creators/empty-canvas-slide";
+
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),
@@ -67,11 +67,15 @@ export const exhibitionEditorPreset = extendApp(
     ],
     creators: [
       infoBoxCreator,
-      imageSlideBottomCreator,
-      imageSlideCreator,
-      imageSlideLeftCreator,
-      imageSlideRightCreator,
+      imageServiceSlideCreator, // not showing!!?
+      imageBrowserSlideCreator,
+      // imageSlideBottomCreator,
+      // imageSlideCreator,
+      // imageSlideLeftCreator,
+      // imageSlideRightCreator,
+      emptyCanvasSlide,
       youtubeSlideCreator,
+      imageUrlSlide, // not showing!?
     ],
   },
 );
