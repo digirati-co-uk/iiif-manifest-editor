@@ -77,7 +77,6 @@ export function ManifestPanel() {
       {label ? (
         <LocaleString
           as="h2"
-          enableDangerouslySetInnerHTML
           className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
         >
           {label}
