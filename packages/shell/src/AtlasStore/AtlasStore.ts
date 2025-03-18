@@ -1,19 +1,12 @@
 import type { Runtime, ViewerMode } from "@atlas-viewer/atlas";
 import type { FragmentSelector, SvgSelector } from "@iiif/presentation-3";
 import type { Emitter, Handler } from "mitt";
-import {
-  type InputShape,
-  type RenderState,
-  type SlowState,
-  createHelper,
-} from "polygon-editor";
+import { type InputShape, type RenderState, type SlowState, createHelper } from "polygon-editor";
 import { createStore } from "zustand/vanilla";
 import { polygonToBoundingBox } from "./polygon-to-bounding-box";
 
 type Polygons = ReturnType<typeof createHelper>;
-type Point =
-  | [number, number]
-  | [number, number, number, number, number, number];
+type Point = [number, number] | [number, number, number, number, number, number];
 
 export type AnnotationRequest =
   | {
@@ -98,24 +91,16 @@ export interface AtlasStore {
   polygon: InputShape | null;
   polygons: Polygons;
   polygonState: SlowState;
-  setPolygonState: (
-    state: SlowState | ((prev: SlowState) => SlowState),
-  ) => void;
+  setPolygonState: (state: SlowState | ((prev: SlowState) => SlowState)) => void;
   setToolCanvasId: (canvasId: string) => void;
 
   getRequestId(): { requestId: string; clear: () => void };
-  requestAnnotation(
-    req: AnnotationRequest,
-    options: AnnotationRequestOptions,
-  ): Promise<AnnotationResponse | null>;
+  requestAnnotation(req: AnnotationRequest, options: AnnotationRequestOptions): Promise<AnnotationResponse | null>;
   setAtlasRuntime(runtime: Runtime): void;
-  setCanvasRelativePosition(
-    canvasId: string,
-    position: { x: number; y: number; width: number; height: number },
-  ): void;
+  setCanvasRelativePosition(canvasId: string, position: { x: number; y: number; width: number; height: number }): void;
   clearCanvasRelativePosition(canvasId: string): void;
   clearAtlasRuntime(): void;
-  completeRequest(): void;
+  completeRequest(requestId?: string): void;
   cancelRequest(requestId: string): void;
   reset(): void;
 
@@ -130,9 +115,7 @@ export interface AtlasStore {
   goHome(): void;
 }
 
-function polygonToTarget(
-  polygon: InputShape,
-): FragmentSelector | SvgSelector | null {
+function polygonToTarget(polygon: InputShape): FragmentSelector | SvgSelector | null {
   if (!polygon) return null;
 
   // // Check if its a rectangle.
@@ -167,9 +150,7 @@ function polygonToTarget(
   };
 }
 
-export function requestToAnnotationResponse(
-  request: AnnotationRequest,
-): Omit<AnnotationResponse, "id"> {
+export function requestToAnnotationResponse(request: AnnotationRequest): Omit<AnnotationResponse, "id"> {
   if (request.type === "polygon") {
     return {
       polygon: {
@@ -216,6 +197,7 @@ export type AnnotationResponse = {
   id: string;
   canvasId?: string | null;
   polygon: InputShape | null;
+  cancelled?: boolean;
   requestType: "polygon" | "target" | "box";
   target: FragmentSelector | SvgSelector | null;
   boundingBox: { x: number; y: number; width: number; height: number } | null;
@@ -282,17 +264,13 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
   const store = createStore<AtlasStore>((set, get) => {
     let runtime: Runtime | null = null;
 
-    const onSave = (input: {
-      id?: string;
-      open: boolean;
-      points: Array<Point>;
-    }) => {
+    const onSave = (input: { id?: string; open: boolean; points: Array<Point> }) => {
       set((s) =>
         s.tool.requestId
           ? { polygon: { ...input, id: s.tool.requestId } }
           : {
               polygon: { id: undefined, points: [], open: true },
-            },
+            }
       );
     };
     const polygons = createHelper(null, onSave);
@@ -374,8 +352,7 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
 
       setPolygonState: (state) =>
         set({
-          polygonState:
-            typeof state === "function" ? state(get().polygonState) : state,
+          polygonState: typeof state === "function" ? state(get().polygonState) : state,
         }),
 
       getRequestId: () => {
@@ -391,12 +368,8 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
             }
             set((state) => ({
               tool:
-                state.tool.requestId === requestId
-                  ? { enabled: false, requestId: null, canvasId: null }
-                  : state.tool,
-              validRequestIds: state.validRequestIds.filter(
-                (id) => id !== requestId,
-              ),
+                state.tool.requestId === requestId ? { enabled: false, requestId: null, canvasId: null } : state.tool,
+              validRequestIds: state.validRequestIds.filter((id) => id !== requestId),
             }));
           },
         };
@@ -405,13 +378,8 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
       cancelRequest: (requestId) => {
         set((state) => ({
           mode: "explore",
-          tool:
-            state.tool.requestId === requestId
-              ? { enabled: false, requestId: null, canvasId: null }
-              : state.tool,
-          validRequestIds: state.validRequestIds.filter(
-            (id) => id !== requestId,
-          ),
+          tool: state.tool.requestId === requestId ? { enabled: false, requestId: null, canvasId: null } : state.tool,
+          validRequestIds: state.validRequestIds.filter((id) => id !== requestId),
         }));
 
         events.emit("atlas.request-cancelled", { id: requestId });
@@ -455,9 +423,7 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
           }
 
           return new Promise<AnnotationResponse | null>((resolve) => {
-            const cancelHandler: Handler<
-              AtlasStoreEvents["atlas.request-cancelled"]
-            > = (e) => {
+            const cancelHandler: Handler<AtlasStoreEvents["atlas.request-cancelled"]> = (e) => {
               if (e.id !== requestId) return;
               set({
                 mode: "explore",
@@ -472,9 +438,7 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
               resolve(null);
             };
 
-            const handler: Handler<
-              AtlasStoreEvents["atlas.annotation-completed"]
-            > = (e) => {
+            const handler: Handler<AtlasStoreEvents["atlas.annotation-completed"]> = (e) => {
               if (e.id !== requestId) return;
               set({
                 mode: "explore",
@@ -496,7 +460,12 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
         }
       },
 
-      completeRequest: () => {
+      completeRequest: (requestId?: string) => {
+        if (typeof requestId === "string" && requestId) {
+          if (requestId !== get().tool.requestId) {
+            return;
+          }
+        }
         const polygon = get().polygon;
         if (!polygon) return;
         events.emit("atlas.annotation-completed", {
@@ -514,15 +483,8 @@ export function createAtlasStore({ events }: CreateAtlasStoreProps) {
         events.emit("atlas.ready", { runtime: newRuntime });
 
         runtime.world.addLayoutSubscriber((ev, data) => {
-          if (
-            ev === "event-activation" ||
-            ev === "zoom-to" ||
-            ev === "go-home"
-          ) {
-            if (
-              runtime?._lastGoodScale &&
-              !Number.isNaN(runtime._lastGoodScale)
-            ) {
+          if (ev === "event-activation" || ev === "zoom-to" || ev === "go-home") {
+            if (runtime?._lastGoodScale && !Number.isNaN(runtime._lastGoodScale)) {
               helper.setScale(1 / runtime._lastGoodScale);
             }
           }
