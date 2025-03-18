@@ -14,7 +14,7 @@ export function ExhibitionContainer({
           onPress={() => manifest && edit(manifest)}
           className="col-span-4 row-span-4 text-xs text-black bg-[rgb(250,204,21)] min-h-[100px] w-full flex items-center justify-center"
         >
-          <LocaleString>{manifest?.label}</LocaleString>
+          <LocaleString enableDangerouslySetInnerHTML>{manifest?.label}</LocaleString>
         </Button>
       </div>
       {children}
