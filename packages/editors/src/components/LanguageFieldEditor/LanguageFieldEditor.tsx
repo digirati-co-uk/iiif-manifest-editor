@@ -93,7 +93,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                 onMouseLeave={() => activeState.clear(true)}
               >
                 <RichTextLanguageField
-                  dissalowHTML={props.disallowHTML}
+                  disallowHTML={props.disallowHTML}
                   id={n === 0 ? focusId : undefined}
                   language={field.language}
                   value={field.value}
