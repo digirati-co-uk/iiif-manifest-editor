@@ -7,15 +7,11 @@ import {
   PaintingAnnotationList,
   createAppActions,
 } from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  ResourceEditingProvider,
-  useEditingResource,
-  useEditor,
-} from "@manifest-editor/shell";
+import { type EditorDefinition, ResourceEditingProvider, useEditingResource, useEditor } from "@manifest-editor/shell";
 import { AnnotationPageContext, useCanvas } from "react-iiif-vault";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
-import { getGridStats } from "../helpers";
+import { getGridStats, isExhibitionItem } from "../helpers";
+import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 
 export const exhibitionCanvasEditor: EditorDefinition = {
   id: "@exhibition/right-panel-editor",
@@ -47,29 +43,17 @@ function ExhibitionRightPanel() {
   const pages = items.get();
   const page = pages[0];
 
-  if (!canvas || !page || !resource) return null;
+  const isAnExhibitionCanvas = isExhibitionItem(canvas);
+
+  if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
 
   return (
     <Sidebar>
       <SidebarContent padding>
         <ResourceEditingProvider resource={canvas}>
-          <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+          {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-          <div>
-            <InputContainer $wide>
-              <DimensionsTriplet
-                widthId={width.containerId()}
-                width={width.get() || 0}
-                changeWidth={(v) => width.set(v)}
-                heightId={height.containerId()}
-                height={height.get() || 0}
-                changeHeight={(v) => height.set(v)}
-              />
-              <div>
-                <AspectRatioWarning />
-              </div>
-            </InputContainer>
-          </div>
+          <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
 
           <LinkingPropertyList
             containerId={thumbnail.containerId()}

@@ -1,15 +1,14 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
+import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import {
   BehaviorEditor,
   type BehaviorEditorProps,
+  DimensionsTriplet,
+  InputContainer,
   useInStack,
 } from "@manifest-editor/editors";
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
+import { AspectRatioWarning } from "../components/AspectRatioWarning";
 
 export const customBehaviourEditor: EditorDefinition = {
   component: () => <SlideBehavioursPanel />,
@@ -52,9 +51,7 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
   {
     id: "size",
-    component: (existing, setBehaviors) => (
-      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
-    ),
+    component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
     label: { en: ["Size"] },
     type: "custom",
     initialOpen: true,
@@ -80,10 +77,7 @@ function parseBehaviors(items: string[]) {
   };
 }
 
-function EditSize({
-  behaviors,
-  setBehaviors,
-}: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
+function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
   const { width, height } = parseBehaviors(behaviors);
   const [hoverPosition, setHoverPosition] = useState({ x: -1, y: -1 });
 
@@ -129,10 +123,7 @@ function EditSize({
   });
 
   return (
-    <div
-      className="grid grid-cols-12 grid-rows-12 gap-1"
-      onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}
-    >
+    <div className="grid grid-cols-12 grid-rows-12 gap-1" onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}>
       {cells}
     </div>
   );
@@ -141,6 +132,7 @@ function EditSize({
 function SlideBehavioursPanel() {
   const canvas = useInStack("Canvas");
   const editor = useEditor();
+  const { width, height } = editor.technical;
 
   if (!canvas || editor.technical.type !== "Canvas") {
     return (
@@ -154,6 +146,22 @@ function SlideBehavioursPanel() {
   return (
     <Sidebar>
       <SidebarContent>
+        <div className="px-2">
+          <InputContainer $wide>
+            <DimensionsTriplet
+              widthId={width.containerId()}
+              width={width.get() || 0}
+              changeWidth={(v) => width.set(v)}
+              heightId={height.containerId()}
+              height={height.get() || 0}
+              changeHeight={(v) => height.set(v)}
+            />
+            <div>
+              <AspectRatioWarning />
+            </div>
+          </InputContainer>
+        </div>
+
         <BehaviorEditor
           behavior={editor.technical.behavior.get() || []}
           onChange={(v) => {

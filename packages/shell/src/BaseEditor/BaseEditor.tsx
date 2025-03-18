@@ -1,16 +1,26 @@
-import { useMemo, useEffect, ReactNode, useContext } from "react";
-import { Vault } from "@iiif/helpers";
+import type { Vault } from "@iiif/helpers";
+import { SidebarTabs } from "@manifest-editor/components";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { useVault, ResourceReactContext } from "react-iiif-vault";
-import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
-import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
-import { EditableResource } from "../EditingStack/EditingStack.types";
-import { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
-import { useLayoutActions } from "../Layout/Layout.context";
+import { type ReactNode, useContext, useEffect, useMemo } from "react";
+import { ResourceReactContext, useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
-import { SidebarTabs } from "@manifest-editor/components";
-import { EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
+import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
+import {
+  useEditingResource,
+  useEditingResourceStack,
+  useEditingStack,
+} from "../EditingStack/EditingStack";
+import type { EditableResource } from "../EditingStack/EditingStack.types";
+import { useLayoutActions } from "../Layout/Layout.context";
+import type {
+  EditorDefinition,
+  ResourceDefinition,
+} from "../Layout/Layout.types";
+import {
+  ModulePanelButton,
+  useSetCustomTitle,
+} from "../Layout/components/ModularPanel";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -50,9 +60,11 @@ export function editBasedOnResource(
   resource: EditableResource,
   list: ResourceDefinition[],
   options: { edit?: boolean; vault: Vault },
-  config: EditorConfig
+  config: EditorConfig,
 ): ResourceDefinition | null {
-  const filteredList = list.filter((l) => l.resourceType === resource.resource.source.type);
+  const filteredList = list.filter(
+    (l) => l.resourceType === resource.resource.source.type,
+  );
 
   if (filteredList.length === 0) {
     return null;
@@ -84,7 +96,11 @@ export function editBasedOnResource(
         return false;
       }
 
-      if (editor.supports.custom ? editor.supports.custom(resource, options.vault) === false : false) {
+      if (
+        editor.supports.custom
+          ? editor.supports.custom(resource, options.vault) === false
+          : false
+      ) {
         return false;
       }
 
@@ -119,7 +135,9 @@ export function editBasedOnResource(
   return null;
 }
 
-export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) {
+export function BaseEditor({
+  currentTab = undefined,
+}: { currentTab?: string }) {
   const resource = useEditingResource();
   const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
@@ -156,7 +174,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       return children;
     }
 
-    return <ResourceReactContext.Provider value={newResourceContext}>{children}</ResourceReactContext.Provider>;
+    return (
+      <ResourceReactContext.Provider value={newResourceContext}>
+        {children}
+      </ResourceReactContext.Provider>
+    );
   }
 
   const match = useMemo(() => {
@@ -166,25 +188,43 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
 
     const editors = app.layout.editors || [];
     const resources = app.layout.resources || [];
-    const mappedResources: ResourceDefinition[] = resources.map((resource: string | ResourceDefinition) => {
-      if (typeof resource === "string") {
-        return {
-          id: "@default/" + resource,
-          label: resource,
-          resourceType: resource,
-          auto: true,
-          editors: editors.filter((e: any) => e.supports.resourceTypes.includes(resource)),
-        };
-      }
-      return resource;
-    });
+    const mappedResources: ResourceDefinition[] = resources.map(
+      (resource: string | ResourceDefinition) => {
+        if (typeof resource === "string") {
+          return {
+            id: "@default/" + resource,
+            label: resource,
+            resourceType: resource,
+            auto: true,
+            editors: editors.filter((e: any) =>
+              e.supports.resourceTypes.includes(resource),
+            ),
+          };
+        }
+        return resource;
+      },
+    );
 
-    return editBasedOnResource(resource, mappedResources, { edit: true, vault }, resourceConfig);
+    return editBasedOnResource(
+      resource,
+      mappedResources,
+      { edit: true, vault },
+      resourceConfig,
+    );
   }, [resource, app]);
 
   useEffect(() => {
     set(match?.label || "");
   });
+
+  useEffect(() => {
+    const availableKeys =
+      match?.editors.map((editor, key) => editor.id + key) || [];
+    const currentKey = availableKeys.find((key) => key === currentTab);
+    if (!currentKey) {
+      change("@manifest-editor/editor", { currentTab: availableKeys[0] });
+    }
+  }, [match?.editors, currentTab, change]);
 
   // Problems to solve:
   //  - Subscribing to updates to the reference
@@ -196,9 +236,13 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   }
 
   if (resourceConfig.singleTab) {
-    const first = (match?.editors || []).find((editor) => editor.id === resourceConfig.singleTab);
+    const first = (match?.editors || []).find(
+      (editor) => editor.id === resourceConfig.singleTab,
+    );
     if (first) {
-      return wrap(<div className="w-full">{first.component(resourceConfig)}</div>);
+      return wrap(
+        <div className="w-full">{first.component(resourceConfig)}</div>,
+      );
     }
   }
 
@@ -214,7 +258,9 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
         };
       })}
       selectedKey={currentTab}
-      onSelectionChange={(p: any) => change("@manifest-editor/editor", { currentTab: p })}
-    />
+      onSelectionChange={(p: any) => {
+        change("@manifest-editor/editor", { currentTab: p });
+      }}
+    />,
   );
 }

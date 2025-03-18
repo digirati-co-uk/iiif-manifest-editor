@@ -1,9 +1,6 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  ResourceEditingProvider,
-} from "@manifest-editor/shell";
+import { type EditorDefinition, ResourceEditingProvider } from "@manifest-editor/shell";
 import { useCanvas } from "react-iiif-vault";
 import { getGridStats } from "../helpers";
 
@@ -35,6 +32,7 @@ function ExhibitionRightPanel() {
     <Sidebar>
       <SidebarContent padding>
         <ResourceEditingProvider resource={canvas}>
+          <LanguageMapEditor dispatchType="label" />
           <LanguageMapEditor dispatchType="summary" />
         </ResourceEditingProvider>
       </SidebarContent>
