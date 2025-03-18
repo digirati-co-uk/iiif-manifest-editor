@@ -19,6 +19,7 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   guidanceReference?: string;
   disableMultiline?: boolean;
   singleValue?: boolean;
+  dissalowHTML?: boolean;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
@@ -92,6 +93,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                 onMouseLeave={() => activeState.clear(true)}
               >
                 <RichTextLanguageField
+                  dissalowHTML={props.dissalowHTML}
                   id={n === 0 ? focusId : undefined}
                   language={field.language}
                   value={field.value}

@@ -53,7 +53,7 @@ function ExhibitionRightPanel() {
     <Sidebar>
       <SidebarContent padding>
         <ResourceEditingProvider resource={canvas}>
-          <LanguageMapEditor dispatchType="label" disableMultiline />
+          <LanguageMapEditor dispatchType="label" disableMultiline dissalowHTML />
 
           <div>
             <InputContainer $wide>

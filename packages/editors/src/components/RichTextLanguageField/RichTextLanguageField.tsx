@@ -33,6 +33,7 @@ interface RichTextLanguageField {
   onUpdateLanguage?: (lang: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  dissalowHTML?: boolean;
 }
 
 const Link = (props: any) => {
@@ -40,17 +41,10 @@ const Link = (props: any) => {
   return <S.InlineLink href={url}>{props.children}</S.InlineLink>;
 };
 
-function findLinkEntities(
-  contentBlock: ContentBlock,
-  callback: any,
-  contentState: ContentState,
-) {
+function findLinkEntities(contentBlock: ContentBlock, callback: any, contentState: ContentState) {
   contentBlock.findEntityRanges((character) => {
     const entityKey = character.getEntity();
-    return (
-      entityKey !== null &&
-      contentState.getEntity(entityKey).getType() === "LINK"
-    );
+    return entityKey !== null && contentState.getEntity(entityKey).getType() === "LINK";
   }, callback);
 }
 
@@ -71,11 +65,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const [editorState, _setEditorState] = useState(() => {
     const blocksFromHTML = convertFromHTML(textState);
     return EditorState.createWithContent(
-      ContentState.createFromBlockArray(
-        blocksFromHTML.contentBlocks,
-        blocksFromHTML.entityMap,
-      ),
-      decorator,
+      ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
+      decorator
     );
   });
   const [showLinkForm, setShowLinkForm] = useState(false);
@@ -86,9 +77,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const debounceSave = useDebounce(saveChanges, 400);
   const [showControls, setShowControls] = useState(false);
 
-  const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (
-    s,
-  ) => {
+  const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (s) => {
     debounceSave();
     _setEditorState(s);
   };
@@ -112,19 +101,11 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
 
   // State.
   const isStateHtml = textState[0] === "<";
-  const linkForm = useCreateLink(editorState, setEditorState, () =>
-    setShowLinkForm(false),
-  );
+  const linkForm = useCreateLink(editorState, setEditorState, () => setShowLinkForm(false));
 
-  const isBold = htmlMode
-    ? !!editorState.getCurrentInlineStyle().get("BOLD")
-    : false;
-  const isItalic = htmlMode
-    ? !!editorState.getCurrentInlineStyle().get("ITALIC")
-    : false;
-  const isUnderline = htmlMode
-    ? !!editorState.getCurrentInlineStyle().get("UNDERLINE")
-    : false;
+  const isBold = htmlMode ? !!editorState.getCurrentInlineStyle().get("BOLD") : false;
+  const isItalic = htmlMode ? !!editorState.getCurrentInlineStyle().get("ITALIC") : false;
+  const isUnderline = htmlMode ? !!editorState.getCurrentInlineStyle().get("UNDERLINE") : false;
 
   // Getting current link.
   const contentState = editorState.getCurrentContent();
@@ -140,17 +121,11 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const getTextValue = () => {
     if (htmlMode) {
       const content = editorState.getCurrentContent();
-      const blocks = content
-        .getBlocksAsArray()
-        .filter((b) => b.getDepth() === 0);
+      const blocks = content.getBlocksAsArray().filter((b) => b.getDepth() === 0);
       return convertToHTML({
         blockToHTML: (block) => {
           //
-          if (
-            blocks.length === 1 &&
-            block.depth === 0 &&
-            block.type === "unstyled"
-          ) {
+          if (blocks.length === 1 && block.depth === 0 && block.type === "unstyled") {
             return <span />;
           }
         },
@@ -170,29 +145,20 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
 
   const controls = {
     bold() {
-      setEditorState((prevState) =>
-        RichUtils.toggleInlineStyle(prevState, "BOLD"),
-      );
+      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "BOLD"));
     },
     italic() {
-      setEditorState((prevState) =>
-        RichUtils.toggleInlineStyle(prevState, "ITALIC"),
-      );
+      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "ITALIC"));
     },
     underline() {
-      setEditorState((prevState) =>
-        RichUtils.toggleInlineStyle(prevState, "UNDERLINE"),
-      );
+      setEditorState((prevState) => RichUtils.toggleInlineStyle(prevState, "UNDERLINE"));
     },
     link() {
       setShowLinkForm((l) => !l);
     },
   };
 
-  const handleKeyCommand = (
-    command: EditorCommand,
-    editorState: EditorState,
-  ): DraftHandleValue => {
+  const handleKeyCommand = (command: EditorCommand, editorState: EditorState): DraftHandleValue => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
 
     if (newState) {
@@ -219,16 +185,13 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         textState
           .replace(/<\/p>\n<p>/g, "</p><p>")
           .replace(/<br\/>\n/g, "<br/>")
-          .replace(/\n/g, "<br/>"),
+          .replace(/\n/g, "<br/>")
       );
       setEditorState(
         EditorState.createWithContent(
-          ContentState.createFromBlockArray(
-            blocksFromHTML.contentBlocks,
-            blocksFromHTML.entityMap,
-          ),
-          decorator,
-        ),
+          ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
+          decorator
+        )
       );
     }
 
@@ -269,8 +232,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           .replace(/<br\/>\n/, "\n")
           .replace(/<br\/>/, "\n")
           .replace(/<\/p><p/, "</p>\n<p"),
-        { ALLOWED_TAGS: [] },
-      ),
+        { ALLOWED_TAGS: [] }
+      )
     );
   };
 
@@ -280,9 +243,11 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
       <S.ToolbarContainer $visible={showControls}>
         {!htmlMode ? (
           <>
-            <S.ToolbarItem onClick={toggleHtmlMode}>
-              <a>{isStateHtml ? "Edit HTML" : "Convert to HTML"}</a>
-            </S.ToolbarItem>
+            {!props.dissalowHTML && (
+              <S.ToolbarItem onClick={toggleHtmlMode}>
+                <a>{isStateHtml ? "Edit HTML" : "Convert to HTML"}</a>
+              </S.ToolbarItem>
+            )}
             {isStateHtml ? (
               <S.ToolbarItem onClick={stripTags}>
                 <a>Remove HTML</a>
@@ -355,19 +320,11 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         <S.FloatingActionOuterContainer>
           <form {...linkForm}>
             <S.FloatingActionContainer>
-              <S.FloatingActionInput
-                type="text"
-                name="link"
-                defaultValue={currentUrl}
-              />
+              <S.FloatingActionInput type="text" name="link" defaultValue={currentUrl} />
               <S.FloatingActionButton type="submit" name="_action" value="add">
                 Add link
               </S.FloatingActionButton>
-              <S.FloatingActionButton
-                type="submit"
-                name="_action"
-                value="remove"
-              >
+              <S.FloatingActionButton type="submit" name="_action" value="remove">
                 Remove
               </S.FloatingActionButton>
             </S.FloatingActionContainer>
@@ -411,9 +368,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </S.CopyText>
         ) : (
           <S.LanguageDisplay onClick={() => setShowControls(true)}>
-            {props.language === "none" ? null : (
-              <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>
-            )}
+            {props.language === "none" ? null : <S.LanguageDisplayInner>{props.language}</S.LanguageDisplayInner>}
           </S.LanguageDisplay>
         )}
       </ComposableInput.Container>
