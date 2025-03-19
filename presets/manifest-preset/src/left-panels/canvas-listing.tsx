@@ -1,6 +1,7 @@
 import {
   CanvasThumbnailGridItem,
   CreateCanvasIcon,
+  IIIFBrowserIcon,
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -136,6 +137,13 @@ export function CanvasListing({
             title: "Edit canvases",
             toggled: toggled.items,
             onClick: () => toggle("items"),
+          },
+          {
+            icon: <IIIFBrowserIcon className="text-2xl" />,
+            title: "IIIF Browser",
+            onClick: () =>
+              canvasActions.creator("@manifest-editor/iiif-browser-creator"),
+            disabled: !canCreateCanvas,
           },
           {
             icon: <CreateCanvasIcon />,

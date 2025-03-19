@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": {
@@ -51,6 +45,7 @@
     "@iiif/helpers": "^1.2.12",
     "@iiif/presentation-3": "^2.2.3",
     "@mdxeditor/editor": "^3.21.2",
+    "iiif-browser": "^2.0.0",
     "@react-aria/collections": "3.0.0-alpha.4",
     "@vidstack/react": "^1.11.29",
     "tiny-use-debounce": "^1.0.4",

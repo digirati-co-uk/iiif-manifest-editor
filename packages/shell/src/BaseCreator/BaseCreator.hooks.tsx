@@ -43,7 +43,7 @@ export function useCreator(
         });
       }
     },
-    [create, parent, property, type],
+    [create, parent, property, type, options, target],
   );
 
   const wrappedFilteredCreate = useCallback(
@@ -61,7 +61,7 @@ export function useCreator(
         });
       }
     },
-    [create, parent, property, type],
+    [create, parent, property, type, options, target],
   );
 
   const wrappedEdit = useCallback(
@@ -74,11 +74,28 @@ export function useCreator(
     [edit, parent, property],
   );
 
+  const wrappedCreator = useCallback(
+    (initialCreator: string, initialData?: any) => {
+      if (parent) {
+        create({
+          type,
+          initialCreator,
+          parent: toRef(parent),
+          property,
+          target,
+          initialData,
+          ...(options || {}),
+        });
+      }
+    },
+    [type, property, parent, target, create, options],
+  );
+
   const buttonProps = useMemo(() => {
     return {
       "data-action-id": createActionIdentity(type, property, parent),
     };
-  }, []);
+  }, [type, property, parent]);
 
   return [
     canCreate,
@@ -86,6 +103,7 @@ export function useCreator(
       create: wrappedCreate,
       edit: wrappedEdit,
       createFiltered: wrappedFilteredCreate,
+      creator: wrappedCreator,
       buttonProps,
     },
   ] as const;

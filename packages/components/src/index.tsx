@@ -1,5 +1,6 @@
 // All components.
 import "./index.css";
+import "iiif-browser/dist/index.css";
 
 export * from "./ActionButton";
 export * from "./Sidebar";
@@ -55,3 +56,6 @@ export * from "./hooks";
 // Renderers
 export * from "./RenderTextualContent";
 export * from "./IIIFMediaPlayer";
+
+// Extra class names:
+// border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full
