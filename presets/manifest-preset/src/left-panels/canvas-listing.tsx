@@ -140,7 +140,7 @@ export function CanvasListing({
           },
           {
             icon: <IIIFBrowserIcon className="text-2xl" />,
-            title: "Explorer",
+            title: "IIIF Browser",
             onClick: () =>
               canvasActions.creator("@manifest-editor/iiif-browser-creator"),
             disabled: !canCreateCanvas,
