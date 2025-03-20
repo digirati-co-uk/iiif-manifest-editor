@@ -2,13 +2,19 @@ import { imageServiceCreator } from "@manifest-editor/creators";
 import { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { ImageService, InternationalString } from "@iiif/presentation-3";
 
-export const imageUrlSlide: CreatorDefinition = {
+export const imageUrlSlideCreator: CreatorDefinition = {
   ...imageServiceCreator,
-  id: "@exhibitions/image-service-creator",
+  id: "@exhibitions/image-url-creator",
   create: createUrlSlide,
-  tags: ["image", "exhibition-slide"],
+  tags: ["exhibition-slide"],
+  icon: <div>IMAGE</div>,
   label: "Image",
   summary: "Image from URL",
+  resourceType: "Canvas",
+  supports: {
+    parentTypes: ["Manifest"],
+    parentFields: ["items"],
+  }
 }
 
 interface CreateImageUrlSlidePayload {

@@ -18,9 +18,15 @@ export const imageServiceSlideCreator: CreatorDefinition = {
   ...imageServiceCreator,
   id: "@exhibitions/image-service-creator",
   create: createImageService,
+  icon: <div>IMAGE</div>,
   tags: ["image", "exhibition-slide"],
   label: "IIIF Image",
   summary: "IIIF Image service",
+  resourceType: "Canvas",
+  supports: {
+    parentTypes: ["Manifest"],
+    parentFields: ["items"],
+  }
 }
 
 interface CreateImageServicePayload {
