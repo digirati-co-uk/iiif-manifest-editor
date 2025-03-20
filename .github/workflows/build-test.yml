@@ -18,11 +18,11 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 9.11.0
           run_install: false
 
       - name: Get pnpm store directory
