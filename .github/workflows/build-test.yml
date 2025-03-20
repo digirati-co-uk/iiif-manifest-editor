@@ -1,6 +1,12 @@
 name: Build
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -29,7 +35,8 @@ jobs:
 
       - run: pnpm run lint
 
-      - name: Deploy
+      - name: Deploy production
+        if: ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -37,3 +44,22 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy preview
+        if: github.event_name == 'pull_request'
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: pnpm run pre-build
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy --env preview
+
+      - name: Comment Preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: moojing/cf-preview-bot@v1
+        with:
+          deployment_url: ${{ steps.deploy.outputs.deployment-url }}
+          branch_preview_url: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
