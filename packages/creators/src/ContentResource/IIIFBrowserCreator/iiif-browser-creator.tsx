@@ -1,11 +1,28 @@
 import {
   type ContentState,
+  Vault,
   normaliseContentState,
   parseContentState,
 } from "@iiif/helpers";
+import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
+
+function croppedRegion(
+  imageServiceId: string,
+  region: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  },
+  size: string,
+) {
+  return `${imageServiceId}/${Math.floor(region.x)},${Math.floor(region.y)},${Math.floor(region.width)},${Math.floor(
+    region.height,
+  )}/${size}/0/default.jpg`;
+}
 
 interface IIIFBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
@@ -34,13 +51,15 @@ export async function createFromIIIFBrowserOutput(
       : data.output,
   );
 
+  console.log("Adding from content state", contentState);
+
   if (!contentState.target || contentState.target.length === 0) {
     throw new Error("No target found in content state");
   }
 
   const target = contentState.target[0]!;
   const type = target.source.type;
-  const previewVault = ctx.getPreviewVault();
+  const previewVault = new Vault();
 
   // Case 1 - we want the WHOLE canvas to come across.
   if (targetType === "Canvas" || targetType === "Annotation") {
@@ -72,15 +91,16 @@ export async function createFromIIIFBrowserOutput(
       const annotation = previewVault.get(annotationPage.items[0]!);
       if (targetType === "Annotation" || targetType === "Canvas") {
         const fullAnnotation = previewVault.toPresentation3<any>(annotation);
+        fullAnnotation.id = ctx.generateId("Annotation");
+
+        let service = null;
 
         if (fullAnnotation?.body?.service) {
           const width = fullAnnotation?.body.width;
           const height = fullAnnotation?.body.height;
-          const service = Array.isArray(fullAnnotation?.body?.service)
-            ? fullAnnotation?.body?.service[0]
-            : fullAnnotation?.body?.service;
+          service = getImageServices(fullAnnotation?.body)[0];
 
-          if (!service.width || !service.height) {
+          if (service && (!service.width || !service.height)) {
             service.width = width;
             service.height = height;
           }
@@ -99,10 +119,23 @@ export async function createFromIIIFBrowserOutput(
             ].join(","),
           };
 
+          // Change the body ID to be the cropped image.
+          const newBody = { ...fullAnnotation.body };
+          let thumbnailId = "";
+          // Cropped id.
+          if (service) {
+            const id = service.id || service["@id"] || "";
+            if (id) {
+              newBody.id = croppedRegion(id, target.selector.spatial, "max");
+              thumbnailId = croppedRegion(id, target.selector.spatial, "512,");
+            }
+          }
+          // Generate cropped image URL.
+
           fullAnnotation.body = {
             id: ctx.generateId("SpecificResource", annotation),
             type: "SpecificResource",
-            source: fullAnnotation.body,
+            source: newBody,
             selector,
           };
 
@@ -123,6 +156,21 @@ export async function createFromIIIFBrowserOutput(
               type: "Canvas",
               width: ~~target.selector.spatial.width,
               height: ~~target.selector.spatial.height,
+              thumbnail: thumbnailId
+                ? [
+                    ctx.embed({
+                      id: thumbnailId,
+                      type: "Image",
+                      format: "image/jpeg",
+                      width: 512,
+                      height: Math.round(
+                        (target.selector.spatial.height /
+                          target.selector.spatial.width) *
+                          512,
+                      ),
+                    }),
+                  ]
+                : undefined,
               items: [annotationPage],
             });
           }

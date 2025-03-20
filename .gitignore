@@ -45,3 +45,6 @@ prev/
 
 # Local Netlify folder
 .netlify
+
+# Env
+.dev.env.dev
