@@ -1,0 +1,23 @@
+'$schema' = "node_modules/wrangler/config-schema.json"
+
+name = "manifest-editor"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+main = ".open-next/worker.js"
+assets.directory = ".open-next/assets"
+assets.binding = "ASSETS"
+
+[[kv_namespaces]]
+id = "9708730cddd545a68d255f11fe2d6b89"
+binding = "PREVIEW_KV"
+
+
+[vars]
+URL = "http://localhost:8787"
+
+[env.dev.vars]
+URL = "http://localhost:3000"
+
+[env.production.vars]
+URL = "https://manifest-editor.digirati.workers.dev"

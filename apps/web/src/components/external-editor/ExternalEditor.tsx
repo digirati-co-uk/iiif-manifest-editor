@@ -65,7 +65,7 @@ export default function ExternalEditor({
         return null;
       }
 
-      const manifestJson = await resp.json();
+      const manifestJson: any = await resp.json();
 
       const loaded = vault.loadManifestSync(
         manifestJson.id || manifestJson["@id"],

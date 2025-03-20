@@ -1,7 +1,9 @@
-// next.config.js
-const { withContentlayer } = require("next-contentlayer2");
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { withContentlayer } from "next-contentlayer2";
+
+initOpenNextCloudflareForDev();
 
 /** @type {import('next').NextConfig} */
-const nextConfig = { reactStrictMode: true, swcMinify: true };
+const nextConfig = { reactStrictMode: false, swcMinify: true };
 
-module.exports = withContentlayer(nextConfig);
+export default withContentlayer(nextConfig);
