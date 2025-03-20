@@ -85,4 +85,3 @@ jobs:
         uses: moojing/cf-preview-bot@v1
         with:
           deployment_url: ${{ steps.deploy.outputs.deployment-url }}
-          branch_preview_url: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
