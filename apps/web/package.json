@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "pre-build": "opennextjs-cloudflare",
     "preview": "opennextjs-cloudflare && wrangler dev",
     "deploy": "opennextjs-cloudflare && wrangler deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",

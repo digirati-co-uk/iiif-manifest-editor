@@ -5,17 +5,18 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ["20"]
+    name: Node 20 build and deploy
+    permissions:
+      contents: read
+      deployments: write
 
-    name: Node ${{ matrix.node }} build
     steps:
       - uses: actions/checkout@v1
+
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
 
       - uses: pnpm/action-setup@v3
         with:
@@ -25,4 +26,14 @@ jobs:
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - run: pnpm run build
+
       - run: pnpm run lint
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: pnpm run pre-build
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
