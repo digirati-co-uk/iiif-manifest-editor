@@ -39,7 +39,7 @@ export function IIIFBrowserModal({
       {
         type: "callback",
         cb: (url: string) => createProject.mutate(url),
-        label: "Edit Manifest",
+        label: "Open Manifest",
         supportedTypes: ["Manifest"],
         format: { type: "url" },
       },
