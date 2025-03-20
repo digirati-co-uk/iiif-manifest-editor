@@ -11,50 +11,54 @@ converter.setFlavor("github");
 const turndownService = new TurndownService();
 
 export function HTMLEditor({
-	value,
-	onChange,
-	disabled,
+  value,
+  onChange,
+  disabled,
 }: {
-	value: string;
-	disabled?: boolean;
-	onChange: (text: string) => void;
+  value: string;
+  disabled?: boolean;
+  onChange: (text: string) => void;
 }) {
-	const editorRef = useRef<MDXEditorMethods>(null);
-	const [_value, _setValue] = useState<any>(undefined);
-	const internalOnChange = useCallback(() => {
-		if (editorRef.current) {
-			onChange(converter.makeHtml(editorRef.current.getMarkdown()));
-		}
-	}, []);
-	const debounceSave = useDebounce(internalOnChange, 400);
-	const memoState = useMemo(() => {
-		return turndownService.turndown(value);
-	}, []);
+  const editorRef = useRef<MDXEditorMethods>(null);
+  const [_value, _setValue] = useState<any>(undefined);
+  const internalOnChange = useCallback(() => {
+    if (editorRef.current) {
+      onChange(converter.makeHtml(editorRef.current.getMarkdown()));
+    }
+  }, []);
+  const debounceSave = useDebounce(internalOnChange, 400);
+  const memoState = useMemo(() => {
+    return turndownService.turndown(value);
+  }, []);
 
-	useEffect(() => {
-		const ref = editorRef.current;
-		return () => {
-			if (ref) {
-				onChange(converter.makeHtml(ref.getMarkdown()));
-			}
-		};
-	}, []);
+  const popup = document.querySelector("._linkDialogPopoverContent_uazmk_600") as HTMLElement;
+  popup ? (popup.style.left = "180px", popup.style.position = 'relative') : "";
 
-	return (
-		<MDXEditor
-			editorRef={editorRef}
-			onBlur={internalOnChange}
-			readOnly={disabled}
-			className="bg-white prose-sm text-sm border rounded-lg p-0.5 focus-within:outline-none focus-within:border-me-primary-500"
-			markdown={memoState}
-			suppressHtmlProcessing
-			onError={(err) => {
-				console.log("err", err);
-			}}
-			onChange={(value) => {
-				_setValue(value);
-				debounceSave();
-			}}
-		/>
-	);
+  useEffect(() => {
+    const ref = editorRef.current;
+    return () => {
+      if (ref) {
+        onChange(converter.makeHtml(ref.getMarkdown()));
+      }
+    };
+  }, []);
+  //_linkDialogPopoverContent_uazmk_600
+  //radix-:r2r:
+  return (
+    <MDXEditor
+      editorRef={editorRef}
+      onBlur={internalOnChange}
+      readOnly={disabled}
+      className="bg-white prose-sm text-sm border rounded-lg p-0.5 focus-within:outline-none focus-within:border-me-primary-500"
+      markdown={memoState}
+      suppressHtmlProcessing
+      onError={(err) => {
+        console.log("err", err);
+      }}
+      onChange={(value) => {
+        _setValue(value);
+        debounceSave();
+      }}
+    />
+  );
 }

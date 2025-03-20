@@ -13,7 +13,6 @@ import {
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
-  markdownShortcutPlugin,
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
@@ -38,23 +37,21 @@ export function MDXEditor({
           quotePlugin(),
           thematicBreakPlugin(),
           headingsPlugin(),
-          // linkDialogPlugin(),
-          markdownShortcutPlugin(),
-          markdownShortcutPlugin(),
+          linkDialogPlugin(),
           imagePlugin(),
           diffSourcePlugin(),
           toolbarPlugin({
             toolbarClassName: "mdx-toolbar",
             toolbarContents: () => (
-              <DiffSourceToggleWrapper>
+              <>
                 {" "}
                 <UndoRedo />
                 <BoldItalicUnderlineToggles />
                 <BlockTypeSelect />
                 <ListsToggle />
-                <CreateLink />
+                <CreateLink  />
                 <InsertImage />
-              </DiffSourceToggleWrapper>
+              </>
 
             ),
           }),
