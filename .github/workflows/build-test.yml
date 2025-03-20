@@ -5,7 +5,8 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize]
+    branches:
+      - main
 
 jobs:
   build:
@@ -35,7 +36,7 @@ jobs:
       - run: pnpm run lint
 
       - name: Deploy production
-        if: ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
