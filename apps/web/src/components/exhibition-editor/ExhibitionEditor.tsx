@@ -55,6 +55,7 @@ export default function ExhibitionEditor(props: { id: string }) {
         preset={exhibitionEditorPreset}
         config={config}
         presetPath="exhibition"
+        presetName="Exhibitions"
       />
       <OnboardingTour id="exhibition-editor" steps={exhibitionOnboarding} />
     </>

@@ -1,28 +1,87 @@
 name: Build
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ["20"]
+    name: Node 20 build and deploy
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
 
-    name: Node ${{ matrix.node }} build
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.STORE_PATH }}
+            ${{ github.workspace }}/apps/web/.next/cache
+            ${{ github.workspace }}/apps/docs/.next/cache
+
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
+          cache: "pnpm"
 
-      - uses: pnpm/action-setup@v3
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Deploy production
+        if: github.event_name != 'pull_request'
+        uses: cloudflare/wrangler-action@v3
         with:
-          version: 9
-          run_install: |
-            - recursive: true
-              args: [--frozen-lockfile, --strict-peer-dependencies]
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: pnpm run pre-build
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: pnpm run build
-      - run: pnpm run lint
+      - name: Deploy preview
+        if: github.event_name == 'pull_request'
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: pnpm run pre-build
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy --env preview
+
+      - name: Comment Preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: moojing/cf-preview-bot@v1
+        with:
+          deployment_url: ${{ steps.deploy.outputs.deployment-url }}
