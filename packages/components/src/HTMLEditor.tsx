@@ -45,9 +45,7 @@ export function HTMLEditor({
       editorRef={editorRef}
       onBlur={internalOnChange}
       readOnly={disabled}
-      className={
-        "bg-white prose-sm text-sm border rounded-lg p-0.5 focus-within:outline-none focus-within:border-me-primary-500 "
-      }
+      className="bg-white prose-sm text-sm border rounded-lg p-0.5 focus-within:outline-none focus-within:border-me-primary-500 z-50 relative"
       markdown={memoState}
       suppressHtmlProcessing
       onError={(err) => {
