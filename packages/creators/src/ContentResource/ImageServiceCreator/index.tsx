@@ -16,7 +16,5 @@ export const imageServiceCreator: CreatorDefinition = {
   supports: {
     parentFields: ["logo", "body", "thumbnail"],
   },
-  staticFields: {
-    type: "Image",
-  },
+
 };
