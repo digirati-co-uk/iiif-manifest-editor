@@ -4,10 +4,6 @@ name = "manifest-editor"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-routes = [
-    { pattern = "manifest-editor.digirati.services", custom_domain = true },
-]
-
 main = ".open-next/worker.js"
 assets.directory = ".open-next/assets"
 assets.binding = "ASSETS"
@@ -22,6 +18,12 @@ binding = "PREVIEW_KV"
 
 [vars]
 URL = "https://manifest-editor.digirati.services"
+
+[env.production]
+vars.URL = "https://manifest-editor.digirati.services"
+routes = [
+    { pattern = "manifest-editor.digirati.services", custom_domain = true },
+]
 
 [env.preview.vars]
 URL = "https://manifest-editor-preview.digirati.workers.dev"
