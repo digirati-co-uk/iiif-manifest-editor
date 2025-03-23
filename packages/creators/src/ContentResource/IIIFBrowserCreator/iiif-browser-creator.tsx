@@ -24,11 +24,12 @@ function croppedRegion(
   )}/${size}/0/default.jpg`;
 }
 
-interface IIIFBrowserCreatorPayload {
+export interface IIIFBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
   output: string | ContentState | ContentState[];
+  trackSize?: (dimensions: { width: number; height: number }) => void;
 }
 
 export async function createFromIIIFBrowserOutput(
@@ -51,8 +52,6 @@ export async function createFromIIIFBrowserOutput(
       : data.output,
   );
 
-  console.log("Adding from content state", contentState);
-
   if (!contentState.target || contentState.target.length === 0) {
     throw new Error("No target found in content state");
   }
@@ -62,7 +61,11 @@ export async function createFromIIIFBrowserOutput(
   const previewVault = new Vault();
 
   // Case 1 - we want the WHOLE canvas to come across.
-  if (targetType === "Canvas" || targetType === "Annotation") {
+  if (
+    targetType === "Canvas" ||
+    targetType === "Annotation" ||
+    targetType === "ContentResource"
+  ) {
     // Then we should have gotten eit
 
     if (type === "Canvas") {
@@ -89,11 +92,17 @@ export async function createFromIIIFBrowserOutput(
 
       const annotationPage = previewVault.get(canvas.items[0]!);
       const annotation = previewVault.get(annotationPage.items[0]!);
-      if (targetType === "Annotation" || targetType === "Canvas") {
+      if (
+        targetType === "Annotation" ||
+        targetType === "Canvas" ||
+        targetType === "ContentResource"
+      ) {
         const fullAnnotation = previewVault.toPresentation3<any>(annotation);
         fullAnnotation.id = ctx.generateId("Annotation");
 
         let service = null;
+
+        const dimensions = { width: 0, height: 0 };
 
         if (fullAnnotation?.body?.service) {
           const width = fullAnnotation?.body.width;
@@ -103,6 +112,12 @@ export async function createFromIIIFBrowserOutput(
           if (service && (!service.width || !service.height)) {
             service.width = width;
             service.height = height;
+          }
+
+          dimensions.width = width;
+          dimensions.height = height;
+          if (data.trackSize) {
+            data.trackSize(dimensions);
           }
         }
 
@@ -138,6 +153,17 @@ export async function createFromIIIFBrowserOutput(
             source: newBody,
             selector,
           };
+
+          if (data.trackSize) {
+            data.trackSize({
+              width: ~~target.selector.spatial.width,
+              height: ~~target.selector.spatial.height,
+            });
+          }
+
+          if (targetType === "ContentResource") {
+            return fullAnnotation.body;
+          }
 
           // Canvas.
           if (targetType === "Canvas") {

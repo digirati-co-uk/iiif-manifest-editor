@@ -1,9 +1,13 @@
-import { ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
-import { CreatorFunctionContext } from "@manifest-editor/creator-api";
+import {
+  type ContentState,
+  normaliseContentState,
+  parseContentState,
+} from "@iiif/helpers";
+import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 
-interface ManifestBrowserCreatorPayload {
+export interface ManifestBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
@@ -12,7 +16,7 @@ interface ManifestBrowserCreatorPayload {
 
 export async function createFromManifestBrowserOutput(
   data: ManifestBrowserCreatorPayload,
-  ctx: CreatorFunctionContext
+  ctx: CreatorFunctionContext,
 ) {
   const targetType = ctx.options.targetType as "Manifest" | "Collection";
 
@@ -22,7 +26,9 @@ export async function createFromManifestBrowserOutput(
   }
 
   const contentState = normaliseContentState(
-    typeof data.output === "string" ? parseContentState(data.output) : data.output
+    typeof data.output === "string"
+      ? parseContentState(data.output)
+      : data.output,
   );
 
   const target = contentState.target[0];
@@ -56,4 +62,6 @@ export async function createFromManifestBrowserOutput(
 
   throw new Error("Not yet supported.");
 }
-export const ManifestBrowserCreatorForm = lazy(() => import("./manifest-browser-form.lazy"));
+export const ManifestBrowserCreatorForm = lazy(
+  () => import("./manifest-browser-form.lazy"),
+);

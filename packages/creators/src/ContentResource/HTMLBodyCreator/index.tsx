@@ -1,8 +1,12 @@
-import { CreateHTMLBodyForm, createHtmlBody } from "./create-html-body";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  CreateHTMLBodyForm,
+  type CreateHTMLBodyPayload,
+  createHtmlBody,
+} from "./create-html-body";
 
-export const htmlBodyCreator: CreatorDefinition = {
+export const htmlBodyCreator: CreatorDefinition<CreateHTMLBodyPayload> = {
   id: "@manifest-editor/html-body-creator",
   create: createHtmlBody,
   label: "HTML Body",

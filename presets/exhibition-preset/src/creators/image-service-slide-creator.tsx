@@ -1,24 +1,17 @@
-import { ImageService } from "@iiif/presentation-3";
 import type {
   CreatorDefinition,
   CreatorFunctionContext,
+  GetCreatorPayload,
 } from "@manifest-editor/creator-api";
-import {
-  createImageServiceRequest,
-  imageServiceRequestToString,
-  RegionParameter,
-  SizeParameter,
-} from "@iiif/parser/image-3";
-import {
-  CreateImageServicePayload
-} from "@manifest-editor/creators/src/ContentResource/ImageServiceCreator/create-image-service";
-import { imageServiceCreator } from '@manifest-editor/creators'
+import { imageServiceCreator } from "@manifest-editor/creators";
+import { imageSlideCreator } from "./image-slide-creator";
 
-export const imageServiceSlideCreator: CreatorDefinition = {
+export const imageServiceSlideCreator: CreatorDefinition<
+  GetCreatorPayload<typeof imageServiceCreator>
+> = {
   ...imageServiceCreator,
   id: "@exhibitions/image-service-creator",
   create: createImageService,
-  icon: <div>IMAGE</div>,
   tags: ["image", "exhibition-slide"],
   label: "IIIF Image",
   summary: "IIIF Image service",
@@ -26,52 +19,55 @@ export const imageServiceSlideCreator: CreatorDefinition = {
   supports: {
     parentTypes: ["Manifest"],
     parentFields: ["items"],
-  }
-}
-
-interface CreateImageServicePayload {
-  url: string;
-  height?: number;
-  width?: number;
-  format?: string;
-  service: ImageService;
-  size?: SizeParameter;
-  embedService?: boolean;
-  selector?: RegionParameter;
-}
+  },
+};
 
 async function createImageService(
-  data: CreateImageServicePayload,
+  data: GetCreatorPayload<typeof imageServiceCreator>,
   ctx: CreatorFunctionContext,
 ) {
-  const request = createImageServiceRequest(data.service);
-  const imageId = imageServiceRequestToString({
-    identifier: request.identifier,
-    server: request.server,
-    scheme: request.scheme,
-    type: "image",
-    size: {
-      max: !data.size?.width && !data.size?.height,
-      confined: false,
-      upscaled: false,
-      ...(data.size || {}),
-    },
-    format: "jpg",
-    // This isn't how it should be modelled, always full,
-    // region: data.selector ? data.selector : { full: true },
-    region: { full: true },
-    rotation: { angle: 0 },
-    quality: "default",
-    prefix: request.prefix,
-    originalPath: (request as any).originalPath,
+  const canvasId = ctx.generateId("canvas");
+  const pageId = ctx.generateId("annotation-page", {
+    id: canvasId,
+    type: "Canvas",
   });
 
-  return ctx.embed({
-    id: imageId,
-    type: "Image",
-    format: data.format || "image/jpeg",
-    height: data.height || data.service.height,
-    width: data.width || data.service.width,
-    service: data.embedService === false ? undefined : [data.service],
+  // 1. Call the original creator to get the annotation
+  const resource = await ctx.create<typeof imageServiceCreator>(
+    imageServiceCreator.id,
+    data,
+    {
+      target: {
+        id: canvasId,
+        type: "Canvas",
+      },
+      targetType: "Annotation",
+      parent: {
+        resource: { id: pageId, type: "AnnotationPage" },
+        property: "items",
+      },
+    },
+  );
+
+  const { width, height } = resource.get();
+
+  const annotation = ctx.embed({
+    id: ctx.generateId("annotation"),
+    type: "Annotation",
+    motivation: "painting",
+    body: [resource],
+    target: {
+      type: "SpecificResource",
+      source: { id: canvasId, type: "Canvas" },
+    },
+  });
+
+  // 2. Pass that to an empty slide.
+  return await ctx.create<typeof imageSlideCreator>(imageSlideCreator.id, {
+    canvasId,
+    width,
+    height,
+    type: "default", // default / left / right / bottom
+    items: [annotation],
   });
 }

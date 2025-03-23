@@ -1,8 +1,12 @@
-import { CreatorDefinition } from "@manifest-editor/creator-api";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import { CreatePlaintextForm, createPlaintext } from "./create-plaintext";
+import {
+  CreatePlaintextForm,
+  createPlaintext,
+  type CreatePlaintextPayload,
+} from "./create-plaintext";
 
-export const plaintextCreator: CreatorDefinition = {
+export const plaintextCreator: CreatorDefinition<CreatePlaintextPayload> = {
   id: "@manifest-editor/plaintext-creator",
   create: createPlaintext,
   label: "Plaintext",

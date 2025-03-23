@@ -16,17 +16,27 @@ export interface CreatorFunctionContext {
   options: CreatorOptions;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
+
   create(
     definition: string,
     payload: any,
     options?: Partial<CreatorOptions>,
   ): Promise<CreatorResource>;
+  create<Definition extends CreatorDefinition = any>(
+    definition: Definition["id"],
+    payload: GetCreatorPayload<Definition>,
+    options?: Partial<CreatorOptions>,
+  ): Promise<CreatorResource>;
+
   generateId(type: string, parent?: Reference | ReferencedResource): string;
   getParent(): Reference | undefined;
   getTarget(): SpecificResource | Reference | undefined;
   getParentResource(): SpecificResource | undefined;
   getPreviewVault(): Vault;
 }
+
+export type GetCreatorPayload<T extends CreatorDefinition> =
+  T extends CreatorDefinition<infer Payload> ? Payload : never;
 
 interface CreatorParent {
   resource: Reference;
@@ -40,7 +50,7 @@ export interface CreatorOptions {
   initialData?: any;
 }
 
-export interface CreatorDefinition {
+export interface CreatorDefinition<Payload = any> {
   // The creation itself
   id: string;
   label: string;
@@ -49,12 +59,12 @@ export interface CreatorDefinition {
   dependencies?: string[];
   tags?: string[];
 
-  create: (payload: any, ctx: CreatorInstance) => any | Promise<any>;
-  validate?: (payload: any, vault: Vault) => void | Promise<void>;
+  create: (payload: Payload, ctx: CreatorInstance) => any | Promise<any>;
+  validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
 
-  render?: (ctx: CreatorContext) => ReactNode;
-  renderCanvas?: (ctx: CreatorContext) => ReactNode | null;
-  renderModal?: (ctx: CreatorContext) => ReactNode;
+  render?: (ctx: CreatorContext<Payload>) => ReactNode;
+  renderCanvas?: (ctx: CreatorContext<Payload>) => ReactNode | null;
+  renderModal?: (ctx: CreatorContext<Payload>) => ReactNode;
 
   // What is being created.
   resourceType: string;

@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "require": {
@@ -53,6 +47,7 @@
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
+    "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",

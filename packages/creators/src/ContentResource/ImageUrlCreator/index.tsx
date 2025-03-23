@@ -1,9 +1,12 @@
-import { CreatorDefinition } from "@manifest-editor/creator-api";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import { createImageUrl, CreateImageUrlForm } from "./create-image-url";
 import { AddImageIcon } from "@manifest-editor/components";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  CreateImageUrlForm,
+  type CreateImageUrlPayload,
+  createImageUrl,
+} from "./create-image-url";
 
-export const imageUrlCreator: CreatorDefinition = {
+export const imageUrlCreator: CreatorDefinition<CreateImageUrlPayload> = {
   id: "@manifest-editor/image-url-creator",
   create: createImageUrl,
   label: "Image",

@@ -1,18 +1,22 @@
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorContext,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
 import {
   CreateImageServerForm,
-  CreateImageServicePayload,
+  type CreateImageServicePayload,
 } from "../../ContentResource/ImageServiceCreator/create-image-service";
 
-export interface CreateImageServiceAnnotationPayload extends CreateImageServicePayload {
+export interface CreateImageServiceAnnotationPayload
+  extends CreateImageServicePayload {
   label?: InternationalString;
   motivation?: string;
 }
 
 export async function createImageServiceAnnotation(
   data: CreateImageServiceAnnotationPayload,
-  ctx: CreatorFunctionContext
+  ctx: CreatorFunctionContext,
 ) {
   const annotation = {
     id: ctx.generateId("annotation"),
@@ -20,9 +24,13 @@ export async function createImageServiceAnnotation(
   };
   const targetType = ctx.options.targetType as "Annotation" | "Canvas";
 
-  const resource = await ctx.create("@manifest-editor/image-service-creator", data, {
-    parent: { resource: annotation, property: "body" },
-  });
+  const resource = await ctx.create(
+    "@manifest-editor/image-service-creator",
+    data,
+    {
+      parent: { resource: annotation, property: "body" },
+    },
+  );
 
   if (targetType === "Annotation") {
     return {
@@ -35,13 +43,19 @@ export async function createImageServiceAnnotation(
 
   if (targetType === "Canvas") {
     const canvasId = ctx.generateId("canvas");
-    const pageId = ctx.generateId("annotation-page", { id: canvasId, type: "Canvas" });
+    const pageId = ctx.generateId("annotation-page", {
+      id: canvasId,
+      type: "Canvas",
+    });
 
     const annotationResource = ctx.embed({
       ...annotation,
       motivation: "painting",
       body: [resource],
-      target: { type: "SpecificResource", source: { id: canvasId, type: "Canvas" } },
+      target: {
+        type: "SpecificResource",
+        source: { id: canvasId, type: "Canvas" },
+      },
     });
 
     const page = ctx.embed({
@@ -61,6 +75,8 @@ export async function createImageServiceAnnotation(
   }
 }
 
-export function CreateImageServiceAnnotationForm(props: CreatorContext<CreateImageServicePayload>) {
+export function CreateImageServiceAnnotationForm(
+  props: CreatorContext<CreateImageServicePayload>,
+) {
   return <CreateImageServerForm {...props} />;
 }

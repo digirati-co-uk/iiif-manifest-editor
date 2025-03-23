@@ -1,15 +1,18 @@
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
+import type {
+  CreatorDefinition,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
 
 // @todo combine this with the content resource one.
 
-interface NoBodyAnnotationPayload {
+export interface NoBodyAnnotationPayload {
   label?: InternationalString;
   motivation?: string;
 }
 
-export const noBodyAnnotation: CreatorDefinition = {
+export const noBodyAnnotation: CreatorDefinition<NoBodyAnnotationPayload> = {
   id: "@manifest-editor/no-body-annotation",
   create: createNoBodyAnnotation,
   label: "Annotation without body",
@@ -29,12 +32,16 @@ export const noBodyAnnotation: CreatorDefinition = {
   },
 };
 
-export function createNoBodyAnnotation(data: NoBodyAnnotationPayload, ctx: CreatorFunctionContext) {
+export function createNoBodyAnnotation(
+  data: NoBodyAnnotationPayload,
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({
     id: ctx.generateId("annotation"),
     type: "Annotation",
     label: data?.label,
-    motivation: data.motivation || ctx.options.initialData?.motivation || "highlighting",
+    motivation:
+      data.motivation || ctx.options.initialData?.motivation || "highlighting",
     target: ctx.getTarget(),
   });
 }

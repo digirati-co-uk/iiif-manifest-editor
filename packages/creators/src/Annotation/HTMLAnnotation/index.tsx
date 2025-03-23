@@ -1,8 +1,12 @@
-import { CreateHTMLAnnotation, createHtmlAnnotation } from "./create-html-annotation";
-import { CreatorDefinition } from "@manifest-editor/creator-api";
 import { HTMLIcon } from "@manifest-editor/components";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  CreateHTMLAnnotation,
+  type CreateHTMLAnnotationPayload,
+  createHtmlAnnotation,
+} from "./create-html-annotation";
 
-export const htmlAnnotation: CreatorDefinition = {
+export const htmlAnnotation: CreatorDefinition<CreateHTMLAnnotationPayload> = {
   id: "@manifest-editor/html-annotation",
   create: createHtmlAnnotation,
   label: "HTML",

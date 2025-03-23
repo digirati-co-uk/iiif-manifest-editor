@@ -1,6 +1,11 @@
-import { CreatorContext } from "@manifest-editor/creator-api";
+import type { CreatorContext } from "@manifest-editor/creator-api";
 import { IIIFExplorer } from "@manifest-editor/iiif-browser";
-import { usePreviewVault, usePreviewHistory, PreviewVaultBoundary, HOMEPAGE_COLLECTION } from "@manifest-editor/shell";
+import {
+  usePreviewVault,
+  usePreviewHistory,
+  PreviewVaultBoundary,
+  HOMEPAGE_COLLECTION,
+} from "@manifest-editor/shell";
 
 export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   const vault = usePreviewVault();

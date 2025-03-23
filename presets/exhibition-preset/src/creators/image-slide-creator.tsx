@@ -1,18 +1,20 @@
 import { emptyAnnotationPage, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
+import { EmptyCanvasIcon } from "@manifest-editor/components";
 import type {
   CreatorContext,
   CreatorDefinition,
   CreatorFunctionContext,
+  CreatorResource,
 } from "@manifest-editor/creator-api";
 
-export const imageSlideCreator: CreatorDefinition = {
+export const imageSlideCreator: CreatorDefinition<InfoBoxPayload> = {
   id: "@exhibitions/image-slide-creator",
   create: createImageSlide,
-  label: "Image",
-  summary: "An image with text.",
-  icon: <div>IMAGE</div>,
-  tags: ["exhibition-slide"],
+  label: "Empty slide",
+  summary: "An empty image slide.",
+  icon: <EmptyCanvasIcon />,
+  tags: ["exhibition-slide"], // No tag, so it doesn't appear, it's just called.
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
@@ -51,17 +53,19 @@ export const imageSlideBottomCreator: CreatorDefinition = {
 };
 
 interface InfoBoxPayload {
+  canvasId?: string;
   label?: InternationalString;
   height?: number;
   width?: number;
   type: "default" | "left" | "right" | "bottom";
+  items?: CreatorResource[];
 }
 
 function createImageSlide(
   payload: InfoBoxPayload,
   ctx: CreatorFunctionContext,
 ) {
-  const canvasId = ctx.generateId("Canvas");
+  const canvasId = payload.canvasId || ctx.generateId("Canvas");
   const itemsPageId = ctx.generateId("AnnotationPage", {
     id: canvasId,
     type: "Canvas",
@@ -71,8 +75,28 @@ function createImageSlide(
     type: "Canvas",
   });
 
-  const behavior = ["w-12", "h-4"];
+  const behavior = [];
   let width = 6000;
+
+  if (payload.width && payload.height) {
+    // Let's figure out the right behaviours.
+    if (payload.width > payload.height) {
+      // The orientation is landscape.
+      // Let's shrink the height.
+      const gridSize = payload.width / 12;
+      const heightColumns = Math.floor(payload.height / gridSize);
+      const hClass = `h-${heightColumns}`;
+      behavior.push("w-12", hClass);
+    } else {
+      // The orientation is portrait.
+      const gridSize = payload.height / 12;
+      const widthColumns = Math.floor(payload.width / gridSize);
+      const wClass = `w-${widthColumns}`;
+      behavior.push(wClass, "h-12");
+    }
+  } else {
+    behavior.push("w-12", "h-4");
+  }
 
   switch (payload.type) {
     case "left":
@@ -88,6 +112,10 @@ function createImageSlide(
       break;
   }
 
+  if (!payload.items?.length) {
+    behavior.push("multi-image");
+  }
+
   return ctx.embed({
     ...emptyCanvas,
     id: canvasId,
@@ -100,7 +128,7 @@ function createImageSlide(
         ...emptyAnnotationPage,
         id: itemsPageId,
         type: "AnnotationPage",
-        items: [],
+        items: payload.items ? payload.items : [],
       }),
     ],
     annotations: [

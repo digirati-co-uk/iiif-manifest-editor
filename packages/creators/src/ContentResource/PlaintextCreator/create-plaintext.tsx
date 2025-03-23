@@ -1,16 +1,27 @@
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
-import { LanguageFieldEditor, InputContainer, InputLabel, Input } from "@manifest-editor/editors";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorFunctionContext,
+  CreatorContext,
+} from "@manifest-editor/creator-api";
+import {
+  LanguageFieldEditor,
+  InputContainer,
+  InputLabel,
+  Input,
+} from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 
 export interface CreatePlaintextPayload {
   url: string;
   label?: InternationalString;
 }
 
-export async function createPlaintext(data: CreatePlaintextPayload, ctx: CreatorFunctionContext) {
+export async function createPlaintext(
+  data: CreatePlaintextPayload,
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({
     id: data.url,
     type: "Text",
@@ -20,7 +31,9 @@ export async function createPlaintext(data: CreatePlaintextPayload, ctx: Creator
 }
 
 export function CreatePlaintextForm(props: CreatorContext) {
-  const [label, setLabel] = useState<InternationalString>({ en: ["View as text"] });
+  const [label, setLabel] = useState<InternationalString>({
+    en: ["View as text"],
+  });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();

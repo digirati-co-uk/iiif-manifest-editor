@@ -5,16 +5,18 @@ import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
+import { emptyCanvasSlide } from "./creators/empty-canvas-slide";
+import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
+import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
+import { imageSlideCreator } from "./creators/image-slide-creator";
+import { imageUrlSlideCreator } from "./creators/image-url-slide";
 import { infoBoxCreator } from "./creators/info-box-creator";
+import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
-import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
-import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
-import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
-import { imageUrlSlideCreator } from "./creators/image-url-slide";
-import { emptyCanvasSlide } from "./creators/empty-canvas-slide";
+import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),
@@ -56,18 +58,19 @@ export const exhibitionEditorPreset = extendApp(
       youtubeMainEdtior,
       infoBlockEditor,
     ],
-    editors: [exhibitionCanvasEditor, customBehaviourEditor, exhibitionSummaryEdtior, exhibitionTourSteps],
+    editors: [
+      exhibitionCanvasEditor,
+      customBehaviourEditor,
+      exhibitionSummaryEdtior,
+      exhibitionTourSteps,
+    ],
     creators: [
       infoBoxCreator,
-      imageServiceSlideCreator, // not showing!!?
+      youtubeSlideCreator,
+      imageServiceSlideCreator,
       imageBrowserSlideCreator,
-      // imageSlideBottomCreator,
-      // imageSlideCreator,
-      // imageSlideLeftCreator,
-      // imageSlideRightCreator,
-      emptyCanvasSlide,
-      // youtubeSlideCreator,
-      imageUrlSlideCreator, // not showing!?
+      imageSlideCreator,
+      imageUrlSlideCreator,
     ],
-  }
+  },
 );
