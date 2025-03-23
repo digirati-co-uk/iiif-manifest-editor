@@ -13,6 +13,9 @@ assets.directory = ".open-next/assets"
 assets.binding = "ASSETS"
 account_id = "ae784157f30fd7164f22b075991c1caa"
 
+[observability.logs]
+enabled = true
+
 [[kv_namespaces]]
 id = "9708730cddd545a68d255f11fe2d6b89"
 binding = "PREVIEW_KV"
