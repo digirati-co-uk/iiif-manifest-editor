@@ -29,6 +29,14 @@ const config: Partial<Config> = {
       },
     },
     {
+      id: "delft-exhibition-viewer",
+      type: "external-manifest-preview",
+      label: "Exhibition slideshow viewer",
+      config: {
+        url: "https://feature-hss-history.delft-exhibition-viewer.pages.dev/embed?manifest={manifestId}",
+      },
+    },
+    {
       id: "iiif-preview",
       type: "iiif-preview-service",
       label: "IIIF Preview",
