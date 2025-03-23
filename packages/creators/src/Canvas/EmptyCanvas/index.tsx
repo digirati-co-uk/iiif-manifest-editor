@@ -2,13 +2,11 @@ import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
 import type { CreatorDefinition } from "@manifest-editor/creator-api";
 
-export interface EmptyCanvasPayload {
+export const emptyCanvas: CreatorDefinition<{
   label?: InternationalString;
   width?: number;
   height?: number;
-}
-
-export const emptyCanvas: CreatorDefinition<EmptyCanvasPayload> = {
+}> = {
   id: "@manifest-editor/empty-canvas",
   create: (data, ctx) => {
     const canvasId = ctx.generateId("canvas");

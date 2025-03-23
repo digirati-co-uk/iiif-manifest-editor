@@ -17,6 +17,22 @@ import { webPageCreator } from "./ContentResource/WebPageCreator";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 
+export * from "./Annotation/AudioAnnotation/create-audio-annotation";
+export * from "./Annotation/CaptionedImageAnnotation/create-captioned-image-annotation";
+export * from "./Annotation/HTMLAnnotation/create-html-annotation";
+export * from "./Annotation/ImageUrlAnnotation/create-image-url-annotation";
+export * from "./Annotation/ImageServiceAnnotation/create-service-annotation";
+export * from "./Annotation/VideoAnnotation/create-video-annotation";
+export * from "./Annotation/NoBodyAnnotation/index";
+export * from "./Canvas/InternalCanvas/index";
+export * from "./ContentResource/HTMLBodyCreator/create-html-body";
+export * from "./ContentResource/IIIFBrowserCreator/iiif-browser-creator";
+export * from "./ContentResource/ImageServiceCreator/create-image-service";
+export * from "./ContentResource/ImageUrlCreator/create-image-url";
+export * from "./ContentResource/PlaintextCreator/create-plaintext";
+export * from "./ContentResource/WebPageCreator/create-web-page";
+export * from "./ContentResource/YouTubeCreator/create-youtube-body";
+
 export const allCreators = [
   // Images first.
   imageServiceCreator,
@@ -49,9 +65,8 @@ export {
   imageUrlCreator,
   imageServiceCreator,
   imageServiceAnnotation,
-  noBodyAnnotation,
+  // noBodyAnnotation,
   iiifBrowserCreator,
-  internalCanvas,
   imageUrlAnnotation,
   audioAnnotation,
   videoAnnotation,

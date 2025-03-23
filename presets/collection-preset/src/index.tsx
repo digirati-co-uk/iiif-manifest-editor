@@ -9,7 +9,7 @@ import {
 } from "@manifest-editor/editors";
 import { IIIFExplorer } from "@manifest-editor/iiif-browser";
 import {
-  LayoutPanel,
+  type LayoutPanel,
   ExportPanel,
   baseEditor,
   baseCreator,
@@ -19,13 +19,22 @@ import {
   useCreator,
   useSetCustomTitle,
 } from "@manifest-editor/shell";
-import { descriptiveProperties, technicalProperties, linkingProperties } from "@manifest-editor/editors";
+import {
+  descriptiveProperties,
+  technicalProperties,
+  linkingProperties,
+} from "@manifest-editor/editors";
 import { manifestBrowserCreator } from "@manifest-editor/creators";
 import { useCollection } from "react-iiif-vault";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 
-export default { id: "collection-editor", title: "Collection Editor", project: true, projectType: "Collection" };
+export default {
+  id: "collection-editor",
+  title: "Collection Editor",
+  project: true,
+  projectType: "Collection",
+};
 
 export const centerPanels: LayoutPanel[] = [
   {
@@ -83,7 +92,12 @@ function ViewManifest() {
   // @todo "use as thumbnail" option.
   return (
     <PreviewVaultBoundary key={manifest.resource.source.id}>
-      <IIIFExplorer hideBack entry={manifest.resource.source} hideHeader window={false} />
+      <IIIFExplorer
+        hideBack
+        entry={manifest.resource.source}
+        hideHeader
+        window={false}
+      />
     </PreviewVaultBoundary>
   );
 }
@@ -94,8 +108,16 @@ function CollectionLeftPanel() {
   const collection = useCollection({} as any);
   const { descriptive, structural } = useCollectionEditor();
 
-  const [canCreateManifest, manifestActions] = useCreator(collection, "items", "Manifest");
-  const [canCreateCollection, collectionActions] = useCreator(collection, "items", "Collection");
+  const [canCreateManifest, manifestActions] = useCreator(
+    collection,
+    "items",
+    "Manifest",
+  );
+  const [canCreateCollection, collectionActions] = useCreator(
+    collection,
+    "items",
+    "Collection",
+  );
 
   const { items } = structural;
 
@@ -105,7 +127,11 @@ function CollectionLeftPanel() {
 
   return (
     <PaddedSidebarContainer>
-      <div>{collection ? <Button onClick={() => edit(collection)}>Edit collection</Button> : null}</div>
+      <div>
+        {collection ? (
+          <Button onClick={() => edit(collection)}>Edit collection</Button>
+        ) : null}
+      </div>
 
       <CollectionItemList
         id={items.focusId()}
@@ -114,13 +140,18 @@ function CollectionLeftPanel() {
         activeId={manifest?.resource.source.id}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) =>
-          toRef(item)?.type === "Manifest" ? manifestActions.edit(item, idx) : collectionActions.edit(item, idx)
+          toRef(item)?.type === "Manifest"
+            ? manifestActions.edit(item, idx)
+            : collectionActions.edit(item, idx)
         }
         createActions={createAppActions(items)}
       />
 
       {canCreateManifest ? (
-        <Button {...manifestActions.buttonProps} onClick={() => manifestActions.create()}>
+        <Button
+          {...manifestActions.buttonProps}
+          onClick={() => manifestActions.create()}
+        >
           Add Manifest
         </Button>
       ) : null}

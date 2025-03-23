@@ -5,7 +5,6 @@ import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
-import { emptyCanvasSlide } from "./creators/empty-canvas-slide";
 import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
 import { imageSlideCreator } from "./creators/image-slide-creator";
