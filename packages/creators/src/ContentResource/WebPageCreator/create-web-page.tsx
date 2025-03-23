@@ -1,16 +1,27 @@
-import { InternationalString } from "@iiif/presentation-3";
-import { CreatorFunctionContext, CreatorContext } from "@manifest-editor/creator-api";
-import { LanguageFieldEditor, InputContainer, InputLabel, Input } from "@manifest-editor/editors";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorFunctionContext,
+  CreatorContext,
+} from "@manifest-editor/creator-api";
+import {
+  LanguageFieldEditor,
+  InputContainer,
+  InputLabel,
+  Input,
+} from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 
 export interface CreateWebpagePayload {
   url: string;
   label?: InternationalString;
 }
 
-export async function createWebPage(data: CreateWebpagePayload, ctx: CreatorFunctionContext) {
+export async function createWebPage(
+  data: CreateWebpagePayload,
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({
     id: data.url,
     type: "Text",

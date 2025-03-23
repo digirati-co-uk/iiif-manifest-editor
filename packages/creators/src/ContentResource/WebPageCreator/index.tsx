@@ -1,8 +1,12 @@
-import { CreateWebPageForm, createWebPage } from "./create-web-page";
-import { CreatorDefinition } from "@manifest-editor/creator-api";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { LinkIcon } from "@manifest-editor/ui/icons/LinkIcon";
+import {
+  CreateWebPageForm,
+  type CreateWebpagePayload,
+  createWebPage,
+} from "./create-web-page";
 
-export const webPageCreator: CreatorDefinition = {
+export const webPageCreator: CreatorDefinition<CreateWebpagePayload> = {
   id: "@manifest-editor/web-page-creator",
   create: createWebPage,
   label: "Web page",

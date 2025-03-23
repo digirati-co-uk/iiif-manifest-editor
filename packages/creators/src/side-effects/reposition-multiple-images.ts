@@ -1,6 +1,6 @@
 import { isImageService } from "@iiif/parser/image-3";
-import { ImageService, SpecificResource } from "@iiif/presentation-3";
-import { CreatorSideEffect } from "@manifest-editor/creator-api";
+import type { ImageService, SpecificResource } from "@iiif/presentation-3";
+import type { CreatorSideEffect } from "@manifest-editor/creator-api";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { centerRectangles } from "@manifest-editor/editors";
 
@@ -8,7 +8,11 @@ export const repositionMultipleImages: CreatorSideEffect = {
   canvasInteraction: true,
   spatial: true,
   async run(result, { vault, options }) {
-    if (result && result.type === "Annotation" && options.targetType === "Annotation") {
+    if (
+      result &&
+      result.type === "Annotation" &&
+      options.targetType === "Annotation"
+    ) {
       const fullAnno = vault.get<any>(result);
 
       const target = fullAnno.target as SpecificResource;
@@ -27,7 +31,10 @@ export const repositionMultipleImages: CreatorSideEffect = {
         return;
       }
 
-      if (annoPage.items.length < 2) {
+      if (
+        annoPage.items.length < 2 &&
+        !canvas.behavior.includes("multi-image")
+      ) {
         return;
       }
 
@@ -36,14 +43,24 @@ export const repositionMultipleImages: CreatorSideEffect = {
       const selector = fullAnno.body[0]?.selector;
 
       const serviceList = body.service || [];
-      const imageService = serviceList.find((s: any) => isImageService(s)) as ImageService | undefined;
+      const imageService = serviceList.find((s: any) => isImageService(s)) as
+        | ImageService
+        | undefined;
       if (imageService) {
         if (imageService.width && imageService.height) {
           if (imageService.width !== body.width) {
-            vault.modifyEntityField({ id: body.id, type: "ContentResource" }, "width", imageService.width);
+            vault.modifyEntityField(
+              { id: body.id, type: "ContentResource" },
+              "width",
+              imageService.width,
+            );
           }
           if (imageService.height !== body.height) {
-            vault.modifyEntityField({ id: body.id, type: "ContentResource" }, "height", imageService.height);
+            vault.modifyEntityField(
+              { id: body.id, type: "ContentResource" },
+              "height",
+              imageService.height,
+            );
           }
         }
       }
@@ -52,7 +69,11 @@ export const repositionMultipleImages: CreatorSideEffect = {
       let height = imageService?.height || body.height;
 
       if (selector) {
-        if ((selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") && selector.region) {
+        if (
+          (selector.type === "iiif:ImageApiSelector" ||
+            selector.type === "ImageApiSelector") &&
+          selector.region
+        ) {
           const [x, y, width_, height_] = selector.region.split(",");
 
           width = Number(width_) || width;
@@ -68,7 +89,7 @@ export const repositionMultipleImages: CreatorSideEffect = {
           width: width,
           height: height,
         },
-        0.6
+        0.6,
       );
 
       editor.annotation.target.setPosition(imagePosition);

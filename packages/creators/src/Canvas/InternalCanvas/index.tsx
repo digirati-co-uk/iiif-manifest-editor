@@ -1,10 +1,14 @@
+import type {
+  CreatorContext,
+  CreatorDefinition,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
+import { IIIFExplorer } from "@manifest-editor/iiif-browser";
+import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 import { useManifest, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
-import { IIIFExplorer } from "@manifest-editor/iiif-browser";
-import { CreatorDefinition, CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 
-export const internalCanvas: CreatorDefinition = {
+export const internalCanvas: CreatorDefinition<InternalCanvasPayload> = {
   id: "@manifest-editor/internal-canvas",
   create: createInternalCanvas,
   label: "Internal canvas link",
@@ -47,10 +51,13 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
   );
 }
 
-interface InternalCanvasPayload {
+export interface InternalCanvasPayload {
   id: string;
 }
 
-async function createInternalCanvas(data: InternalCanvasPayload, ctx: CreatorFunctionContext) {
+async function createInternalCanvas(
+  data: InternalCanvasPayload,
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({ id: data.id, type: "Canvas" });
 }

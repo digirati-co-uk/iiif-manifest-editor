@@ -1,6 +1,14 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
+import type {
+  CreatorContext,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
+import {
+  Input,
+  InputContainer,
+  InputLabel,
+  LanguageFieldEditor,
+} from "@manifest-editor/editors";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
@@ -16,7 +24,7 @@ export interface CreateCaptionedImageAnnotationPayload {
 
 export async function createCaptionedImageAnnotation(
   data: CreateCaptionedImageAnnotationPayload,
-  ctx: CreatorFunctionContext
+  ctx: CreatorFunctionContext,
 ) {
   const annotation = {
     id: ctx.generateId("annotation"),
@@ -37,8 +45,8 @@ export async function createCaptionedImageAnnotation(
             language,
             body,
           },
-          { parent: { resource: annotation, property: "items" } }
-        )
+          { parent: { resource: annotation, property: "items" } },
+        ),
       );
     }
   }
@@ -48,7 +56,7 @@ export async function createCaptionedImageAnnotation(
     { url: data.imageUrl },
     {
       parent: { resource: annotation, property: "body" },
-    }
+    },
   );
 
   if (resource) {
@@ -58,7 +66,8 @@ export async function createCaptionedImageAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation:
+        data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -99,7 +108,9 @@ export async function createCaptionedImageAnnotation(
   }
 }
 
-export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
+export function CreateCaptionedImageAnnotation(
+  props: CreatorContext<CreateCaptionedImageAnnotationPayload>,
+) {
   const [body, setBody] = useState<InternationalString>({ en: [""] });
 
   const onSubmit = (e: FormEvent) => {

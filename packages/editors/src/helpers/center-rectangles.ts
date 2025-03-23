@@ -1,7 +1,7 @@
 export function centerRectangles(
   a: { width: number; height: number },
   b: { width: number; height: number },
-  downscale = 1
+  downscale = 1,
 ): { x: number; y: number; width: number; height: number } {
   const aAr = a.width / a.height;
   const bAr = b.width / b.height;
@@ -31,8 +31,8 @@ export function centerRectangles(
   const width = b.width * (a.height / b.height) * downscale;
 
   return {
-    x: (a.height - height) / 2,
-    y: (a.width - width) / 2,
+    x: (a.width - width) / 2,
+    y: (a.height - height) / 2,
     width: width,
     height: height,
   };

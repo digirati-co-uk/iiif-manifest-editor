@@ -5,19 +5,17 @@ import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
-import {
-  imageSlideBottomCreator,
-  imageSlideCreator,
-  imageSlideLeftCreator,
-  imageSlideRightCreator,
-} from "./creators/image-slide-creator";
+import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
+import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
+import { imageSlideCreator } from "./creators/image-slide-creator";
+import { imageUrlSlideCreator } from "./creators/image-url-slide";
 import { infoBoxCreator } from "./creators/info-box-creator";
 import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
-import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
+import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),
@@ -59,14 +57,19 @@ export const exhibitionEditorPreset = extendApp(
       youtubeMainEdtior,
       infoBlockEditor,
     ],
-    editors: [exhibitionCanvasEditor, customBehaviourEditor, exhibitionSummaryEdtior, exhibitionTourSteps],
+    editors: [
+      exhibitionCanvasEditor,
+      customBehaviourEditor,
+      exhibitionSummaryEdtior,
+      exhibitionTourSteps,
+    ],
     creators: [
       infoBoxCreator,
-      imageSlideBottomCreator,
-      imageSlideCreator,
-      imageSlideLeftCreator,
-      imageSlideRightCreator,
       youtubeSlideCreator,
+      imageServiceSlideCreator,
+      imageBrowserSlideCreator,
+      imageSlideCreator,
+      imageUrlSlideCreator,
     ],
-  }
+  },
 );

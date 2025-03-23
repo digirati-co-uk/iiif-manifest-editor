@@ -1,7 +1,11 @@
-import { CreatorDefinition } from "@manifest-editor/creator-api";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import { createAudioAnnotation, CreateAudioAnnotationForm } from "./create-audio-annotation";
 import { AudioIcon } from "@manifest-editor/components";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import {
+  CreateAudioAnnotationForm,
+  type CreateAudioAnnotationPayload,
+  createAudioAnnotation,
+} from "./create-audio-annotation";
 
 export const audioAnnotation: CreatorDefinition = {
   id: "@manifest-editor/audio-annotation",

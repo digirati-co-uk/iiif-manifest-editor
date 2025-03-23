@@ -1,7 +1,10 @@
-import { CreatorDefinition } from "@manifest-editor/creator-api";
-import { createFromManifestBrowserOutput } from "./manifest-browser-creator";
-import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  type ManifestBrowserCreatorPayload,
+  createFromManifestBrowserOutput,
+} from "./manifest-browser-creator";
+import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
 
 export const manifestBrowserCreator: CreatorDefinition = {
   id: "@manifest-editor/manifest-browser-creator",

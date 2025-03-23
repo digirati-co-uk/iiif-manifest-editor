@@ -6,35 +6,37 @@ import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
 import {
   IIIFBrowserCreatorForm,
+  type IIIFBrowserCreatorPayload,
   createFromIIIFBrowserOutput,
 } from "./iiif-browser-creator";
 
-export const iiifBrowserCreator: CreatorDefinition = {
-  id: "@manifest-editor/iiif-browser-creator",
-  create: createFromIIIFBrowserOutput,
-  label: "IIIF Browser",
-  summary: "Browse IIIF Resources",
-  icon: <IIIFBrowserIcon />,
-  render(ctx: any) {
-    return <IIIFBrowserCreatorForm {...ctx} />;
-  },
-  hiddenModal: true,
-  tags: ["image", "image-service"],
-  resourceType: "ContentResource",
-  resourceFields: ["id", "language", "type", "format", "value"],
-  additionalTypes: ["Annotation", "Canvas"],
-  supports: {
-    parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
-    parentFieldMap: {
-      Annotation: ["body"],
-      Manifest: ["items"],
-      AnnotationPage: ["items"],
+export const iiifBrowserCreator: CreatorDefinition<IIIFBrowserCreatorPayload> =
+  {
+    id: "@manifest-editor/iiif-browser-creator",
+    create: createFromIIIFBrowserOutput,
+    label: "IIIF Browser",
+    summary: "Browse IIIF Resources",
+    icon: <IIIFBrowserIcon />,
+    render(ctx: any) {
+      return <IIIFBrowserCreatorForm {...ctx} />;
     },
-  },
-  sideEffects: [
-    resizeToFitService,
-    resizeResourceToEmptyCanvas,
-    repositionMultipleImages,
-  ],
-  staticFields: {},
-};
+    hiddenModal: true,
+    tags: ["image", "image-service"],
+    resourceType: "ContentResource",
+    resourceFields: ["id", "language", "type", "format", "value"],
+    additionalTypes: ["Annotation", "Canvas"],
+    supports: {
+      parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
+      parentFieldMap: {
+        Annotation: ["body"],
+        Manifest: ["items"],
+        AnnotationPage: ["items"],
+      },
+    },
+    sideEffects: [
+      resizeToFitService,
+      resizeResourceToEmptyCanvas,
+      repositionMultipleImages,
+    ],
+    staticFields: {},
+  };

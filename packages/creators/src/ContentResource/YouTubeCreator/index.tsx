@@ -1,8 +1,12 @@
 import { YouTubeIcon } from "@manifest-editor/components";
-import { createYoutubeBody, YouTubeForm } from "./create-youtube-body";
-import { CreatorDefinition } from "@manifest-editor/creator-api";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  type CreateYouTubeBodyPayload,
+  YouTubeForm,
+  createYoutubeBody,
+} from "./create-youtube-body";
 
-export const youTubeBodyCreator: CreatorDefinition = {
+export const youTubeBodyCreator: CreatorDefinition<CreateYouTubeBodyPayload> = {
   id: "@manifest-editor/youtube",
   create: createYoutubeBody,
   label: "YouTube",
