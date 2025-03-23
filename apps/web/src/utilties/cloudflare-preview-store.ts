@@ -6,11 +6,11 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import superjson from "superjson";
 
 export function createCloudflarePreviewStore(): StorageInterface {
-  const previewKv = getCloudflareContext().env.PREVIEW_KV;
+  const getPreviewKv = () => getCloudflareContext().env.PREVIEW_KV;
 
   return {
     get: async (key: string) => {
-      const item = await previewKv.getWithMetadata<{ ttl?: number }>(key);
+      const item = await getPreviewKv().getWithMetadata<{ ttl?: number }>(key);
 
       if (item.value === null) {
         return null;
@@ -19,7 +19,7 @@ export function createCloudflarePreviewStore(): StorageInterface {
       return superjson.parse(item.value);
     },
     delete: async (key: string) => {
-      await previewKv.delete(key);
+      await getPreviewKv().delete(key);
     },
     put: async (
       key: string,
@@ -36,10 +36,10 @@ export function createCloudflarePreviewStore(): StorageInterface {
 
       const serialisedValue = superjson.stringify(value);
 
-      await previewKv.put(key, serialisedValue, options);
+      await getPreviewKv().put(key, serialisedValue, options);
     },
     getWithMetadata: async <T>(key: string) => {
-      const { metadata, value } = await previewKv.getWithMetadata<T>(key);
+      const { metadata, value } = await getPreviewKv().getWithMetadata<T>(key);
       return {
         metadata,
         value: value ? superjson.parse(value) : null,
