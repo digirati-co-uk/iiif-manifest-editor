@@ -41,10 +41,17 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
     };
   }, []);
 
+  const uiOptions = useMemo(() => {
+    return {
+      buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
+    } as IIIFBrowserProps["ui"];
+  }, []);
+
   return (
     <PreviewVaultBoundary>
       <IIIFBrowser
         debug
+        ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}
