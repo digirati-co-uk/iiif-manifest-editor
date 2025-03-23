@@ -91,15 +91,6 @@ export const repositionMultipleImages: CreatorSideEffect = {
         },
         0.6,
       );
-      console.log(
-        "downsize",
-        canvas,
-        {
-          width: width,
-          height: height,
-        },
-        0.6,
-      );
 
       editor.annotation.target.setPosition(imagePosition);
     }
