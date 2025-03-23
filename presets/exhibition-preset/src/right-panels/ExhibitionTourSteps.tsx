@@ -8,6 +8,7 @@ import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
+  useCreator,
   useGenericEditor,
   useInlineCreator,
   useRequestAnnotation,
@@ -45,10 +46,54 @@ function ExhibitionRightPanelOptionalPage() {
 
   // @todo create annotation page?
   if (!firstAnnotationPage || !canvas || !itemsAnnotationPage) {
-    return <div className="p-4 opacity-50 text-center">Tour not available</div>;
+    return <PromptCreationOfTourSteps />;
   }
 
   return <ExhibitionRightPanel />;
+}
+
+function PromptCreationOfTourSteps() {
+  const canvas = useCanvas();
+  const creator = useInlineCreator();
+
+  const createEmptyAnnotationPage = () => {
+    if (!canvas) return;
+    creator.create(
+      "@manifest-editor/empty-annotation-page",
+      {
+        label: { en: ["Tour steps"] },
+      },
+      {
+        target: {
+          id: canvas.id,
+          type: "Canvas",
+        },
+        targetType: "AnnotationPage",
+        parent: {
+          property: "annotations",
+          resource: {
+            id: canvas.id,
+            type: "Canvas",
+          },
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4">
+      <div className="p-4 opacity-50 text-center">
+        This image does not yet have a tour.
+      </div>
+
+      <Button
+        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+        onPress={() => createEmptyAnnotationPage()}
+      >
+        Create Tour
+      </Button>
+    </div>
+  );
 }
 
 function ExhibitionRightPanel() {
@@ -59,49 +104,50 @@ function ExhibitionRightPanel() {
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
 
-  const { requestAnnotation, isPending, busy } = useRequestAnnotation({
-    onSuccess: (resp) => {
-      if (resp.target && firstAnnotationPage) {
-        creator.create(
-          "@manifest-editor/html-annotation",
-          {
-            label: { en: ["Tour step"] },
-            body: { en: ["<h2>New step</h2><p>Description</p>"] },
-            motivation: "describing",
-          } as {
-            label?: InternationalString;
-            body: InternationalString;
-            motivation?: string;
-            height?: number;
-            width?: number;
-          },
-          {
-            target: {
-              id: canvas.id,
-              type: "Canvas",
+  const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } =
+    useRequestAnnotation({
+      onSuccess: (resp) => {
+        if (!resp.cancelled && resp.target && firstAnnotationPage) {
+          creator.create(
+            "@manifest-editor/html-annotation",
+            {
+              label: { en: ["Tour step"] },
+              body: { en: ["<h2>New step</h2><p>Description</p>"] },
+              motivation: "describing",
+            } as {
+              label?: InternationalString;
+              body: InternationalString;
+              motivation?: string;
+              height?: number;
+              width?: number;
             },
-            targetType: "Annotation",
-            parent: {
-              property: "items",
-              resource: {
-                id: firstAnnotationPage.id,
-                type: "AnnotationPage",
+            {
+              target: {
+                id: canvas.id,
+                type: "Canvas",
+              },
+              targetType: "Annotation",
+              parent: {
+                property: "items",
+                resource: {
+                  id: firstAnnotationPage.id,
+                  type: "AnnotationPage",
+                },
+              },
+              initialData: {
+                selector:
+                  resp.target.type === "SvgSelector"
+                    ? {
+                        type: "polygon",
+                        shape: resp.polygon,
+                      }
+                    : resp.boundingBox,
               },
             },
-            initialData: {
-              selector:
-                resp.target.type === "SvgSelector"
-                  ? {
-                      type: "polygon",
-                      shape: resp.polygon,
-                    }
-                  : resp.boundingBox,
-            },
-          },
-        );
-      }
-    },
-  });
+          );
+        }
+      },
+    });
 
   if (!canvas) return null;
   if (!firstAnnotationPage) {
@@ -124,12 +170,29 @@ function ExhibitionRightPanel() {
               <TourAnnotationPageEditor reorderable={reorderable} />
 
               {!busy ? (
-                <Button
-                  onPress={() => requestAnnotation({ type: "polygon" })}
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
-                >
-                  {isPending ? "Complete selector" : "+ Add new step"}
-                </Button>
+                isPending ? (
+                  <div className="border grid grid-cols-2 gap-2 disabled:opacity-50 border-gray-300 shadow-sm rounded p-1 bg-white relative text-black/40">
+                    <Button
+                      onPress={cancelRequest}
+                      className="text-black/80 rounded-sm p-3"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onPress={completeRequest}
+                      className="bg-me-100 text-me-500 rounded-sm p-3"
+                    >
+                      Save changes
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onPress={() => requestAnnotation({ type: "polygon" })}
+                    className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+                  >
+                    + Add new step
+                  </Button>
+                )
               ) : null}
             </div>
             {itemsAnnotationPage /*&& hasMultiplePainting*/ ? (

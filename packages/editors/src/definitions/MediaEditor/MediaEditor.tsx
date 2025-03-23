@@ -1,22 +1,29 @@
-import { useCanvas, useVault } from "react-iiif-vault";
 import { isImageService } from "@atlas-viewer/iiif-image-api";
-import { ImageService } from "@iiif/presentation-3";
-import { useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
-import { ButtonGroup, Button } from "@manifest-editor/ui/atoms/Button";
+import type { ImageService } from "@iiif/presentation-3";
+import {
+  useEditor,
+  useGenericEditor,
+  useLayoutActions,
+} from "@manifest-editor/shell";
+import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
-import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
+import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
+import {
+  FlexContainerColumn,
+  FlexImage,
+} from "@manifest-editor/ui/components/layout/FlexContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
-import { InputContainer, InputLabel, Input } from "../../components/Input";
+import { DimensionsTriplet } from "../../components/DimensionsTriplet";
+import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
-import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
-import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
-import { getYouTubeId } from "../../helpers/get-youtube-id";
 import { ServiceContainer } from "../../components/ServiceList/ServiceList.styles";
 import { parseServiceProfile } from "../../components/ServiceList/ServiceList.utility";
+import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
 import { centerRectangles } from "../../helpers/center-rectangles";
-import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
-import { DimensionsTriplet } from "../../components/DimensionsTriplet";
+import { getYouTubeId } from "../../helpers/get-youtube-id";
+import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
 
 function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
   return (
@@ -59,7 +66,14 @@ export function MediaEditor() {
     index: 0,
   });
 
-  const { id, width, height, mediaType: type, format, duration } = resourceEditor.technical;
+  const {
+    id,
+    width,
+    height,
+    mediaType: type,
+    format,
+    duration,
+  } = resourceEditor.technical;
   const { service } = resourceEditor.linking;
   const { label, summary } = annotationEditor.descriptive;
   const { target, body } = annotationEditor.annotation;
@@ -67,11 +81,15 @@ export function MediaEditor() {
 
   const { edit } = useLayoutActions();
 
-  const thumbnail = useAnnotationThumbnail({ annotationId: annotationEditor.technical.id.get() });
+  const thumbnail = useAnnotationThumbnail({
+    annotationId: annotationEditor.technical.id.get(),
+  });
   const canvas = useCanvas({ id: canvasId });
 
   //type.get()
-  const isYouTube = !!(service.get() || []).find((r) => (r as any).profile === "https://www.youtube.com");
+  const isYouTube = !!(service.get() || []).find(
+    (r) => (r as any).profile === "https://www.youtube.com",
+  );
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
 
   // VideoYouTubeHTML
@@ -103,7 +121,9 @@ export function MediaEditor() {
           height={height.get() || 0}
           changeHeight={(v) => height.set(v)}
           duration={duration.get() || 0}
-          changeDuration={type.get() !== "Image" ? (v) => duration.set(v) : undefined}
+          changeDuration={
+            type.get() !== "Image" ? (v) => duration.set(v) : undefined
+          }
         />
       </InputContainer>
 
@@ -163,22 +183,62 @@ export function MediaEditor() {
       {canvas && !currentTarget.selector ? (
         <InputContainer $wide>
           <InputLabel $margin>Target</InputLabel>
-          <div style={{ border: "1px solid #ddd", borderRadius: 3, padding: "1em", color: "#999" }}>
+          <div
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: 3,
+              padding: "1em",
+              color: "#999",
+            }}
+          >
             This image fills the whole Canvas.
           </div>
           <ButtonGroup $right>
             <Button
               onClick={() => {
                 vault.batch(() => {
-                  // Check image resource width/height vs. service.
-                  const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
-                  if (imageService) {
-                    if (imageService.width && imageService.height) {
-                      if (imageService.width !== width.get()) {
-                        width.set(imageService.width);
+                  let dimensionsSet = false;
+
+                  // However.. if it's cropped this won't work.
+                  if (body.hasIIIFSelector()) {
+                    const dimensions = body.getIIIFSelectorHeightWidth();
+                    if (dimensions) {
+                      dimensionsSet = true;
+                      if (dimensions.width !== width.get()) {
+                        width.set(dimensions.width);
                       }
-                      if (imageService.height !== height.get()) {
-                        height.set(imageService.height);
+                      if (dimensions.height !== height.get()) {
+                        height.set(dimensions.height);
+                      }
+
+                      const imagePosition = centerRectangles(
+                        canvas,
+                        {
+                          width: dimensions.width,
+                          height: dimensions.height,
+                        },
+                        0.6,
+                      );
+
+                      target.setPosition(imagePosition);
+
+                      return;
+                    }
+                  }
+
+                  if (!dimensionsSet) {
+                    // Check image resource width/height vs. service.
+                    const imageService = serviceList.find((s) =>
+                      isImageService(s),
+                    ) as ImageService | undefined;
+                    if (imageService) {
+                      if (imageService.width && imageService.height) {
+                        if (imageService.width !== width.get()) {
+                          width.set(imageService.width);
+                        }
+                        if (imageService.height !== height.get()) {
+                          height.set(imageService.height);
+                        }
                       }
                     }
                   }
@@ -189,7 +249,7 @@ export function MediaEditor() {
                       width: width.get(),
                       height: height.get(),
                     },
-                    0.6
+                    0.6,
                   );
 
                   target.setPosition(imagePosition);
@@ -226,7 +286,11 @@ export function MediaEditor() {
   return (
     <FlexContainerColumn>
       <FlexImage>
-        {thumbnail ? <img src={thumbnail.id} /> : youtubeId ? <EmbedYoutube youTubeId={youtubeId} /> : null}
+        {thumbnail ? (
+          <img src={thumbnail.id} />
+        ) : youtubeId ? (
+          <EmbedYoutube youTubeId={youtubeId} />
+        ) : null}
       </FlexImage>
 
       <InputContainer $wide>
@@ -237,7 +301,9 @@ export function MediaEditor() {
         items={[
           {
             label: "Descriptive",
-            initialOpen: Object.keys(label.get() || {}).length !== 0 || Object.keys(summary.get() || {}).length !== 0,
+            initialOpen:
+              Object.keys(label.get() || {}).length !== 0 ||
+              Object.keys(summary.get() || {}).length !== 0,
             children: descriptive,
           },
           {

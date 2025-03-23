@@ -1,3 +1,5 @@
+import { CanvasNormalized } from "@iiif/presentation-3-normalized";
+
 const heightMap = {
   "h-1": "lg:min-h-[100px] row-span-1",
   "h-2": "lg:min-h-[200px] row-span-2",
@@ -93,8 +95,7 @@ export function getGridStats(behavior?: string[]) {
   const isBottom = behavior?.includes("bottom");
   const isTop = behavior?.includes("top");
   const isInfo = behavior?.includes("info");
-  const isImage =
-    behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+  const isImage = behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
 
   return {
     isRight,
@@ -104,4 +105,21 @@ export function getGridStats(behavior?: string[]) {
     isInfo,
     isImage,
   };
+}
+
+export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
+  if (!canvas) return false;
+
+  const behaviors = canvas.behavior || [];
+  if (behaviors.includes("image") || behaviors.includes("info")) {
+    return true;
+  }
+
+  for (const behavior of behaviors) {
+    if (behavior.startsWith("w-") || behavior.startsWith("h-")) {
+      return true;
+    }
+  }
+
+  return false;
 }

@@ -1,7 +1,7 @@
 import { toRef } from "@iiif/parser";
 import { CreatorGrid } from "@manifest-editor/components";
 import {
-  CreatableResource,
+  type CreatableResource,
   type CreatorDefinition,
   type CreatorOptions,
   matchBasedOnResource,
@@ -37,10 +37,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
     targetType: props.resource.type,
     parent: props.resource.parent
       ? {
-        property: props.resource.property as string,
-        atIndex: props.resource.index,
-        resource: props.resource.parent,
-      }
+          property: props.resource.property as string,
+          atIndex: props.resource.index,
+          resource: props.resource.parent,
+        }
       : undefined,
     target: props.resource.target,
     initialData: props.resource.initialData,
@@ -106,7 +106,9 @@ export const RenderCreator = memo(function RenderCreator(props: {
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
   const vault = useVault();
-  const [currentId, setCurrentId] = useState("");
+  const [currentId, setCurrentId] = useState(
+    props.resource.initialCreator || "",
+  );
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -123,7 +125,7 @@ export function BaseCreator(props: BaseCreatorProps) {
 
   useEffect(() => {
     if (current) {
-      set && set(current.label);
+      set?.(current.label);
     }
   });
 
@@ -132,6 +134,12 @@ export function BaseCreator(props: BaseCreatorProps) {
   }
 
   if (current) {
+    const shouldHideModal = current.hiddenModal;
+
+    if (shouldHideModal) {
+      return <RenderCreator creator={current} resource={props.resource} />;
+    }
+
     return (
       <div>
         <div className="bg-me-gray-100 p-2">

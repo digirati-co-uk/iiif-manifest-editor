@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, Tabs } from "@manifest-editor/components";
-import Link from "next/link";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 import allExamples from "../../../../../examples.json";
 import { ExampleListing } from "../../components/example-listing/ExampleListing";
@@ -8,13 +8,19 @@ import { HandleQueryString } from "../../components/query-string/HandleQueryStri
 
 const { examples } = allExamples;
 
+const BrowserRecents = dynamic(
+  () => import("../../components/browser-editor/BrowserRecents"),
+  { ssr: false },
+);
 
-const BrowserRecents = dynamic(() => import("../../components/browser-editor/BrowserRecents"), { ssr: false });
+const GettingStarted = dynamic(
+  () => import("../../components/browser-editor/GettingStarted"),
+  { ssr: false },
+);
 
-const GettingStarted = dynamic(() => import("../../components/browser-editor/GettingStarted"), { ssr: false });
-
-export default async function Page({ searchParams }: { searchParams: { tab?: string } }) {
-
+export default async function Page({
+  searchParams,
+}: { searchParams: { tab?: string } }) {
   const defaultTab = searchParams.tab || "recent";
 
   return (
@@ -25,7 +31,10 @@ export default async function Page({ searchParams }: { searchParams: { tab?: str
 
       <div className="px-8">
         <Tabs key={defaultTab} defaultSelectedKey={defaultTab}>
-          <TabList aria-label="Get started with Manifest Editor" className="my-4">
+          <TabList
+            aria-label="Get started with Manifest Editor"
+            className="my-4"
+          >
             <Tab id="recent">Recent</Tab>
             <Tab id="examples">Examples</Tab>
           </TabList>
@@ -36,18 +45,6 @@ export default async function Page({ searchParams }: { searchParams: { tab?: str
             <ExampleListing examples={examples} />
           </TabPanel>
         </Tabs>
-      </div>
-      <div className="bg-slate-200 p-5 rounded flex gap-5 mt-10 m-8">
-        <div className="">Looking for the legacy editor?</div>
-        <div>
-          <Link
-            // Button
-            className="bg-me-primary-500 hover:bg-me-primary-600 text-sm text-white py-2 px-4 rounded"
-            href="/legacy"
-          >
-            Launch legacy editor
-          </Link>
-        </div>
       </div>
     </div>
   );

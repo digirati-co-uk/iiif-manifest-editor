@@ -7,7 +7,7 @@ import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
 import { infoBoxCreator } from "./creators/info-box-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
-import { customBehaviourEditor } from "./left-panels/SlideBehaviours";
+import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
@@ -56,12 +56,7 @@ export const exhibitionEditorPreset = extendApp(
       youtubeMainEdtior,
       infoBlockEditor,
     ],
-    editors: [
-      exhibitionCanvasEditor,
-      customBehaviourEditor,
-      exhibitionSummaryEdtior,
-      exhibitionTourSteps,
-    ],
+    editors: [exhibitionCanvasEditor, customBehaviourEditor, exhibitionSummaryEdtior, exhibitionTourSteps],
     creators: [
       infoBoxCreator,
       imageServiceSlideCreator, // not showing!!?
@@ -74,5 +69,5 @@ export const exhibitionEditorPreset = extendApp(
       // youtubeSlideCreator,
       imageUrlSlideCreator, // not showing!?
     ],
-  },
+  }
 );

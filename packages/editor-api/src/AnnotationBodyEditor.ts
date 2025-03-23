@@ -1,9 +1,9 @@
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { EditorConfig } from "./types";
-import invariant from "tiny-invariant";
 import { toRef } from "@iiif/parser";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import invariant from "tiny-invariant";
+import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
+import type { EditorConfig } from "./types";
 
 export class AnnotationBodyEditor extends BaseReferenceListEditor<
   AnnotationNormalized,
@@ -25,6 +25,78 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
     } catch (err) {
       return false;
     }
+  }
+
+  getIIIFSelectorHeightWidth() {
+    try {
+      const bodyRef = this.getFirst();
+      const selector = (bodyRef as any).selector;
+      if (!selector) {
+        return null;
+      }
+
+      if (
+        selector["@context"] !==
+        "http://iiif.io/api/annex/openannotation/context.json"
+      ) {
+        return null;
+      }
+
+      const [x, y, width, height] = selector.region.split(",").map(Number);
+      return { height, width };
+    } catch (err) {
+      return null;
+    }
+  }
+
+  hasIIIFSelector() {
+    const bodyRef = this.getFirst();
+    const selector = (bodyRef as any).selector;
+    if (!selector) {
+      return false;
+    }
+
+    if (
+      selector["@context"] !==
+      "http://iiif.io/api/annex/openannotation/context.json"
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  updateIIIFSelector(box: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    const bodyRef = this.getFirst();
+    const body = toRef(bodyRef);
+
+    if (!body) {
+      return;
+    }
+
+    const selector = (bodyRef as any).selector;
+    if (!selector) {
+      return;
+    }
+
+    if (
+      selector["@context"] !==
+      "http://iiif.io/api/annex/openannotation/context.json"
+    ) {
+      return;
+    }
+
+    const newSelector = {
+      ...selector,
+      region: `${~~box.x},${~~box.y},${~~box.width},${~~box.height}`,
+    };
+
+    this.config.vault.modifyEntityField(body, "selector", newSelector);
   }
 
   hasBody() {

@@ -1,4 +1,8 @@
-import { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import type { InternationalString } from "@iiif/presentation-3";
+import type {
+  CreatorDefinition,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 
 export const emptyAnnotationPage: CreatorDefinition = {
@@ -19,9 +23,13 @@ export const emptyAnnotationPage: CreatorDefinition = {
   },
 };
 
-async function createEmptyAnnotationPage(data: unknown, ctx: CreatorFunctionContext) {
+async function createEmptyAnnotationPage(
+  data: { label?: InternationalString },
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({
     id: ctx.generateId("annotations"),
+    label: data.label,
     type: "AnnotationPage",
     items: [],
   });

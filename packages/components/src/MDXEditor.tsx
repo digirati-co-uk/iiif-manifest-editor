@@ -13,10 +13,11 @@ import {
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
-  markdownShortcutPlugin,
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
+  BlockTypeSelect,
+  diffSourcePlugin, codeBlockPlugin, codeMirrorPlugin, InsertCodeBlock, DiffSourceToggleWrapper,
 } from "@mdxeditor/editor";
 import { useMemo, type ForwardedRef } from "react";
 
@@ -35,20 +36,23 @@ export function MDXEditor({
           linkPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
-          // linkDialogPlugin(),
-          markdownShortcutPlugin(),
+          headingsPlugin(),
+          linkDialogPlugin(),
           imagePlugin(),
+          diffSourcePlugin(),
           toolbarPlugin({
             toolbarClassName: "mdx-toolbar",
             toolbarContents: () => (
               <>
                 {" "}
                 <UndoRedo />
-                <ListsToggle />
                 <BoldItalicUnderlineToggles />
-                {/* <CreateLink /> */}
+                <BlockTypeSelect />
+                <ListsToggle />
+                <CreateLink  />
                 <InsertImage />
               </>
+
             ),
           }),
         ],

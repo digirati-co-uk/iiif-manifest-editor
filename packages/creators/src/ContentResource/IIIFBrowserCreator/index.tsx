@@ -1,10 +1,13 @@
-import { CreatorDefinition } from "@manifest-editor/creator-api";
-import { IIIFBrowserCreatorForm, createFromIIIFBrowserOutput } from "./iiif-browser-creator";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
-import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
-import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
+import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
+import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
+import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
+import {
+  IIIFBrowserCreatorForm,
+  createFromIIIFBrowserOutput,
+} from "./iiif-browser-creator";
 
 export const iiifBrowserCreator: CreatorDefinition = {
   id: "@manifest-editor/iiif-browser-creator",
@@ -15,6 +18,7 @@ export const iiifBrowserCreator: CreatorDefinition = {
   render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },
+  hiddenModal: true,
   tags: ["image", "image-service"],
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
@@ -27,6 +31,10 @@ export const iiifBrowserCreator: CreatorDefinition = {
       AnnotationPage: ["items"],
     },
   },
-  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
+  sideEffects: [
+    resizeToFitService,
+    resizeResourceToEmptyCanvas,
+    repositionMultipleImages,
+  ],
   staticFields: {},
 };

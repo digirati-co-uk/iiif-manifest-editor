@@ -14,7 +14,9 @@ export function SidebarContent({
   className?: string;
   padding?: boolean;
 }) {
-  return <div className={cn("flex-1 min-h-0 overflow-y-auto", className, padding && "p-3")}>{children}</div>;
+  return (
+    <div className={cn("flex-1 min-h-0 overflow-y-auto pb-64", className, padding && "px-3 pt-3")}>{children}</div>
+  );
 }
 
 interface SidebarHeaderProps {

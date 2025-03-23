@@ -1,7 +1,28 @@
-import { ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
-import { CreatorFunctionContext } from "@manifest-editor/creator-api";
+import {
+  type ContentState,
+  Vault,
+  normaliseContentState,
+  parseContentState,
+} from "@iiif/helpers";
+import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
+import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
+
+function croppedRegion(
+  imageServiceId: string,
+  region: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  },
+  size: string,
+) {
+  return `${imageServiceId}/${Math.floor(region.x)},${Math.floor(region.y)},${Math.floor(region.width)},${Math.floor(
+    region.height,
+  )}/${size}/0/default.jpg`;
+}
 
 interface IIIFBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
@@ -10,8 +31,14 @@ interface IIIFBrowserCreatorPayload {
   output: string | ContentState | ContentState[];
 }
 
-export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
-  const targetType = ctx.options.targetType as "Annotation" | "Canvas" | "ContentResource";
+export async function createFromIIIFBrowserOutput(
+  data: IIIFBrowserCreatorPayload,
+  ctx: CreatorFunctionContext,
+) {
+  const targetType = ctx.options.targetType as
+    | "Annotation"
+    | "Canvas"
+    | "ContentResource";
 
   // For now..
   if (Array.isArray(data.output)) {
@@ -19,8 +46,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
   }
 
   const contentState = normaliseContentState(
-    typeof data.output === "string" ? parseContentState(data.output) : data.output
+    typeof data.output === "string"
+      ? parseContentState(data.output)
+      : data.output,
   );
+
+  console.log("Adding from content state", contentState);
 
   if (!contentState.target || contentState.target.length === 0) {
     throw new Error("No target found in content state");
@@ -28,7 +59,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
   const target = contentState.target[0]!;
   const type = target.source.type;
-  const previewVault = ctx.getPreviewVault();
+  const previewVault = new Vault();
 
   // Case 1 - we want the WHOLE canvas to come across.
   if (targetType === "Canvas" || targetType === "Annotation") {
@@ -36,7 +67,9 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
     if (type === "Canvas") {
       const canvasId = target.source.id;
-      const manifestId = target.source.partOf?.find((t) => t.type === "Manifest");
+      const manifestId = target.source.partOf?.find(
+        (t) => t.type === "Manifest",
+      );
       invariant(manifestId, "Could not load external resource without partOf");
 
       // 1st. Check the preview vault.
@@ -50,23 +83,24 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
       const canvas = previewVault.get(canvasRef);
 
-      if (targetType === "Canvas") {
+      if (targetType === "Canvas" && target.selector?.type !== "BoxSelector") {
         return ctx.embed(previewVault.toPresentation3(canvas));
       }
 
       const annotationPage = previewVault.get(canvas.items[0]!);
       const annotation = previewVault.get(annotationPage.items[0]!);
-      if (targetType === "Annotation") {
+      if (targetType === "Annotation" || targetType === "Canvas") {
         const fullAnnotation = previewVault.toPresentation3<any>(annotation);
+        fullAnnotation.id = ctx.generateId("Annotation");
 
-        if (fullAnnotation && fullAnnotation?.body?.service) {
+        let service = null;
+
+        if (fullAnnotation?.body?.service) {
           const width = fullAnnotation?.body.width;
           const height = fullAnnotation?.body.height;
-          const service = Array.isArray(fullAnnotation?.body?.service)
-            ? fullAnnotation?.body?.service[0]
-            : fullAnnotation?.body?.service;
+          service = getImageServices(fullAnnotation?.body)[0];
 
-          if (!service.width || !service.height) {
+          if (service && (!service.width || !service.height)) {
             service.width = width;
             service.height = height;
           }
@@ -85,12 +119,61 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             ].join(","),
           };
 
+          // Change the body ID to be the cropped image.
+          const newBody = { ...fullAnnotation.body };
+          let thumbnailId = "";
+          // Cropped id.
+          if (service) {
+            const id = service.id || service["@id"] || "";
+            if (id) {
+              newBody.id = croppedRegion(id, target.selector.spatial, "max");
+              thumbnailId = croppedRegion(id, target.selector.spatial, "512,");
+            }
+          }
+          // Generate cropped image URL.
+
           fullAnnotation.body = {
             id: ctx.generateId("SpecificResource", annotation),
             type: "SpecificResource",
-            source: fullAnnotation.body,
+            source: newBody,
             selector,
           };
+
+          // Canvas.
+          if (targetType === "Canvas") {
+            const canvasId = ctx.generateId("Canvas", annotation);
+            fullAnnotation.target = canvasId;
+            // Page then canvas.
+            const pageId = ctx.generateId("Page", annotation);
+            const annotationPage = ctx.embed({
+              id: pageId,
+              type: "AnnotationPage",
+              items: [fullAnnotation],
+            });
+
+            return ctx.embed({
+              id: canvasId,
+              type: "Canvas",
+              width: ~~target.selector.spatial.width,
+              height: ~~target.selector.spatial.height,
+              thumbnail: thumbnailId
+                ? [
+                    ctx.embed({
+                      id: thumbnailId,
+                      type: "Image",
+                      format: "image/jpeg",
+                      width: 512,
+                      height: Math.round(
+                        (target.selector.spatial.height /
+                          target.selector.spatial.width) *
+                          512,
+                      ),
+                    }),
+                  ]
+                : undefined,
+              items: [annotationPage],
+            });
+          }
 
           return ctx.embed({
             ...fullAnnotation,
@@ -114,4 +197,6 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
   // - Canvas (extracted from browser resource OR new blank one)
   // + There's a cropping aspect that might be applied.
 }
-export const IIIFBrowserCreatorForm = lazy(() => import("./iiif-browser-form.lazy"));
+export const IIIFBrowserCreatorForm = lazy(
+  () => import("./iiif-browser-form.lazy"),
+);

@@ -1,17 +1,20 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
-import { createBlankManifest, createManifestFromJson } from "./browser-state";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { CreateFromUrlModal } from "./CreateFromUrlModal";
-import { Toolbar, Button } from "react-aria-components";
-import { fileOpen } from "browser-fs-access";
 import { upgrade } from "@iiif/parser/upgrader";
+import { IIIFBrowserIcon, Modal } from "@manifest-editor/components";
+import { useMutation } from "@tanstack/react-query";
+import { fileOpen } from "browser-fs-access";
+import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
+import { useState } from "react";
+import { Button, Dialog, DialogTrigger, Toolbar } from "react-aria-components";
+import { CreateFromUrlModal } from "./CreateFromUrlModal";
+import { IIIFBrowserModal } from "./IIIFBrowserModal";
+import { createBlankManifest, createManifestFromJson } from "./browser-state";
 
 export default function GettingStarted() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isIIIFBrowserOpen, setIsIIIFBrowserOpen] = useState(false);
   const blankManifest = useMutation({
     mutationFn: createBlankManifest,
     onSuccess: (data) => {
@@ -24,7 +27,10 @@ export default function GettingStarted() {
 
   const filesystemManifest = useMutation({
     mutationFn: async () => {
-      const file = await fileOpen({ mimeTypes: ["json/*"], id: "iiif-manifest" });
+      const file = await fileOpen({
+        mimeTypes: ["json/*"],
+        id: "iiif-manifest",
+      });
       const text = await file.text();
       const json = JSON.parse(text);
       const upgraded = upgrade(json);
@@ -44,21 +50,31 @@ export default function GettingStarted() {
     <div className="bg-me-gray-100 pb-8 pt-4 px-6 border-b">
       <h2 className="text-lg mb-3">Get started</h2>
       <Toolbar className="flex gap-3">
-        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => blankManifest.mutate()}>
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default"
+          onPress={() => blankManifest.mutate()}
+        >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
               <AddIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create new manifest</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            Create new manifest
+          </div>
         </Button>
-        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => setIsModalOpen(true)}>
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default"
+          onPress={() => setIsModalOpen(true)}
+        >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
               <LinkIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest URL</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            Open manifest URL
+          </div>
         </Button>
         <Button
           className="w-36 flex items-center flex-col group cursor-default"
@@ -69,17 +85,43 @@ export default function GettingStarted() {
               <FileIcon />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest file</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            Open manifest file
+          </div>
+        </Button>
+
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default"
+          onPress={() => setIsIIIFBrowserOpen(true)}
+        >
+          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
+            <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
+              <IIIFBrowserIcon />
+            </div>
+          </div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            Browse for IIIF
+          </div>
         </Button>
       </Toolbar>
       <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+      <IIIFBrowserModal
+        isOpen={isIIIFBrowserOpen}
+        setIsOpen={setIsIIIFBrowserOpen}
+      />
     </div>
   );
 }
 
 function LinkIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 -960 960 960" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 -960 960 960"
+      {...props}
+    >
       <path
         d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"
         fill="currentColor"

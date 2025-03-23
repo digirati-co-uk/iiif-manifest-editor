@@ -140,6 +140,7 @@ export interface BrowserEditorProps {
   id: string;
   preset?: MappedApp;
   presetPath?: string;
+  presetName?: string;
   config?: Partial<Config>;
 }
 
@@ -148,6 +149,7 @@ export default function BrowserEditor({
   config: browserConfig,
   preset,
   presetPath,
+  presetName,
 }: BrowserEditorProps) {
   const {
     staleEtag,
@@ -264,8 +266,11 @@ export default function BrowserEditor({
 
   const header = (
     <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
-      <Link href="/" className="w-96 flex justify-start">
+      <Link href="/" className="w-96 flex justify-start items-center gap-2">
         <ManifestEditorLogo />
+        {presetName ? (
+          <span className="text-lg text-gray-600">/ {presetName}</span>
+        ) : null}
       </Link>
       <div className="flex-1" />
       <div className="flex items-center justify-center gap-5">
