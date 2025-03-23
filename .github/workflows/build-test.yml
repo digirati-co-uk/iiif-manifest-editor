@@ -67,6 +67,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy --env production
 
       - name: Deploy preview
         if: github.event_name == 'pull_request'
