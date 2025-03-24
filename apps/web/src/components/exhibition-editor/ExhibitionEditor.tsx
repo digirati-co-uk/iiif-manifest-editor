@@ -29,7 +29,7 @@ const config: Partial<Config> = {
       },
     },
     {
-      id: "delft-exhibition-viewer",
+      id: "delft-exhibition-embed-viewer",
       type: "external-manifest-preview",
       label: "Exhibition slideshow viewer",
       config: {
