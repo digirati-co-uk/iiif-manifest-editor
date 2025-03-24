@@ -125,7 +125,7 @@ async function createInfoBox(
     id: canvasId,
     type: "Canvas",
     behavior: ["w-4", "h-4", "info"],
-    label: data.label || { en: ["Untitled info box"] },
+    label: data.label || undefined,
     height: data.height || 1000,
     width: data.width || 1000,
     items: [page],
