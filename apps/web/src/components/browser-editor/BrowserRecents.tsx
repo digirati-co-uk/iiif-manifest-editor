@@ -1,13 +1,14 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import "manifest-editor/dist/index.css";
+import { Vault } from "@iiif/helpers";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 import { LocaleString } from "react-iiif-vault";
 import { queryClient } from "../site/Provider";
-import { deleteBrowserProject, listBrowserProjects } from "./browser-state";
-import { useRouter, useSearchParams } from "next/navigation";
+import { deleteBrowserProject, internal_getBrowserProjectById, listBrowserProjects } from "./browser-state";
 
 export default function BrowserRecents() {
   const router = useRouter();
@@ -16,7 +17,6 @@ export default function BrowserRecents() {
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,
   });
-
 
   useEffect(() => {
     if (projects.isFetched) {
@@ -29,26 +29,25 @@ export default function BrowserRecents() {
 
   return (
     <div className="grid grid-md gap-4">
-      {projects.data &&
-        projects.data.map((project) => (
-          <div className="relative" key={project.id}>
-            <ProjectContextualMenu id={project.id} />
-            <Link href={`/editor/${project.id}`}>
-              <div className="border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
-                <div className="bg-gray-200 w-full h-48 transition-transform">
-                  {project.resource.thumbnail ? (
-                    <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
-                  )}
-                </div>
-                <LocaleString className="underline p-3 text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
-                  {project.resource.label}
-                </LocaleString>
+      {projects.data?.map((project) => (
+        <div className="relative" key={project.id}>
+          <ProjectContextualMenu id={project.id} />
+          <Link href={`/editor/${project.id}`}>
+            <div className="border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
+              <div className="bg-gray-200 w-full h-48 transition-transform">
+                {project.resource.thumbnail ? (
+                  <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
+                )}
               </div>
-            </Link>
-          </div>
-        ))}
+              <LocaleString className="underline p-3 text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
+                {project.resource.label}
+              </LocaleString>
+            </div>
+          </Link>
+        </div>
+      ))}
     </div>
   );
 }
@@ -74,19 +73,65 @@ function ProjectContextualMenu({ id }: { id: string }) {
     }
   }
 
+  async function doDownload() {
+    const project = await internal_getBrowserProjectById(id);
+    if (project) {
+      const fullData = JSON.stringify(project, null, 2);
+      // Do download
+      const blob = new Blob([fullData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `me-${project.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function doDownloadManifest() {
+    const project = await internal_getBrowserProjectById(id);
+    if (project) {
+      const vault = new Vault();
+      vault.getStore().setState({ iiif: project.vaultData as any });
+      const item = vault.get(project.resource);
+      const manifestJson = vault.toPresentation3(item);
+      const fullData = JSON.stringify(manifestJson, null, 2);
+      // Do download
+      const blob = new Blob([fullData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `manifest-${project.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  }
+
   return (
     <DialogTrigger>
       <Button className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-0.5 text-2xl rounded-full">
         <MoreIcon />
       </Button>
       <Popover placement="bottom left">
-        <Dialog className="bg-white/95 p-0.5 shadow-md rounded-md animate-fadeIn w-36 flex flex-col items-start gap-1 focus:outline-none text-sm border border-[#000] border-opacity-10 backdrop-blur">
+        <Dialog className="bg-white/95 p-0.5 shadow-md rounded-md animate-fadeIn w-44 flex flex-col items-start gap-1 focus:outline-none text-sm border border-[#000] border-opacity-10 backdrop-blur">
           <Link
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50"
             href={`/editor/${id}`}
           >
             Open
           </Link>
+          <Button
+            className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
+            onPress={doDownloadManifest}
+          >
+            Download
+          </Button>
+          <Button
+            className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
+            onPress={doDownload}
+          >
+            Debug download
+          </Button>
           <Button
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
             onPress={doDelete}
