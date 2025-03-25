@@ -1,11 +1,11 @@
 import invariant from "tiny-invariant";
 import { decrypt, getHeaders } from "../helpers";
-import { RouteConfig } from "../types";
+import type { RouteConfig } from "../types";
 
 export async function retrieveRoute(
   request: Request,
   params: { keys: string },
-  config: RouteConfig
+  config: RouteConfig,
 ): Promise<Response> {
   const { encryptedEnabled, partLength, storage } = config;
   const corsHeaders = getHeaders(request);
@@ -24,7 +24,7 @@ export async function retrieveRoute(
 
   const resp = await storage.getWithMetadata<{ ttl: number }>(storeKey);
 
-  invariant(resp && resp.value, "Item not found");
+  invariant(resp?.value, "Item not found");
 
   const data = resp.value;
 
@@ -36,6 +36,7 @@ export async function retrieveRoute(
     status: 200,
     headers: {
       ...corsHeaders,
+      "Cache-Control": "no-store",
       "Content-Type": "application/json",
       "X-Sandbox-Expires-In": `${Math.floor(((resp.metadata?.ttl || 0) - Date.now()) / 1000)}`,
     },

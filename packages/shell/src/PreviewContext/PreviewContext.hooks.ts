@@ -1,5 +1,8 @@
-import { Dispatch, useMemo } from "react";
-import {
+import { type Dispatch, useMemo } from "react";
+import { useVault } from "react-iiif-vault";
+import invariant from "tiny-invariant";
+import { useAppResource, useAppResourceInstance } from "../AppResourceProvider/AppResourceProvider";
+import type {
   Preview,
   PreviewActions,
   PreviewActionsType,
@@ -9,16 +12,13 @@ import {
 } from "./PreviewContext.types";
 import { ExternalManifestUrlPreview } from "./previews/ExternalManifestUrlPreview";
 import { IIIFPreviewService } from "./previews/IIIFPreviewService";
-import invariant from "tiny-invariant";
-import { useVault } from "react-iiif-vault";
-import { useAppResource, useAppResourceInstance } from "../AppResourceProvider/AppResourceProvider";
 
 export function usePreviewActions(
   state: PreviewState,
   dispatch: Dispatch<PreviewActionsType>,
   handlers: PreviewHandler[],
   previews: Preview[],
-  setPreviews: (previews: Preview[] | ((prev: Preview[]) => Preview[])) => void
+  setPreviews: (previews: Preview[] | ((prev: Preview[]) => Preview[])) => void,
 ): PreviewActions {
   const resource = useAppResource();
   const instanceId = useAppResourceInstance();
@@ -34,7 +34,7 @@ export function usePreviewActions(
         setPreviews((prev) => prev.filter((p) => p.id !== id));
       },
     }),
-    [setPreviews, instanceId]
+    [setPreviews, instanceId],
   );
   //
   const [handlerMap, providesMap] = useMemo(() => {
@@ -96,9 +96,8 @@ export function usePreviewActions(
   async function selectPreview(id: string) {
     const selectedHandler = handlerMap[id];
     if (selectedHandler && instanceId) {
-      await activatePreview(id);
-
       dispatch({ type: "selectPreview", payload: id });
+      await activatePreview(id);
     }
   }
 
@@ -159,13 +158,13 @@ export function usePreviewActions(
             dispatch({ type: "activatePreview", payload: contextualPreview.id });
           } else {
             Object.assign(context, existing?.data || {});
-            dispatch({ type: "activatePreview", payload: id });
+            dispatch({ type: "activatePreview", payload: existing.id });
           }
         }
         const created = await selectedHandler.createPreview(instanceId, resource, vault, context);
         if (created) {
           previewActions.setPreview(created);
-          dispatch({ type: "activatePreview", payload: id });
+          dispatch({ type: "activatePreview", payload: created.id });
         }
       }
     }
@@ -175,7 +174,7 @@ export function usePreviewActions(
     () => ({ selectPreview, deletePreview, focusPreview, activatePreview, updatePreviews, getPreviewLink }),
     // Dispatch has a stable identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handlerMap, instanceId, vault, state.selected, previews]
+    [handlerMap, instanceId, vault, state.selected, previews],
   );
 }
 

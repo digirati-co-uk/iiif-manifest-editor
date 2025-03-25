@@ -1,7 +1,7 @@
 import { Vault } from "@iiif/helpers/vault";
 import invariant from "tiny-invariant";
-import { generateId, encrypt, getHeaders } from "../helpers";
-import { RouteConfig } from "../types";
+import { encrypt, generateId, getHeaders } from "../helpers";
+import type { RouteConfig } from "../types";
 
 export async function storeRoute(request: Request, params: any, config: RouteConfig): Promise<Response> {
   const { storage, baseUrl, encryptedEnabled, expirationTtl, partLength, updateKeyLength } = config;
@@ -16,7 +16,7 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
 
   invariant(
     type === "Manifest" || type === "Collection" || type === "sc:Manifest" || type === "sc:Collection",
-    "Invalid Type"
+    "Invalid Type",
   );
 
   const vault = new Vault();
@@ -47,7 +47,7 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
     {
       expirationTtl, // 48 hours
       metadata: { ttl: Date.now() + expirationTtl * 1000 },
-    }
+    },
   );
 
   // POST /store  Body<Manifest> -> Response<{ location: string; updateLocation: string }>
@@ -64,6 +64,6 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
         ...headers,
         "Content-Type": "application/json",
       },
-    }
+    },
   );
 }

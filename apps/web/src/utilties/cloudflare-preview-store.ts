@@ -1,7 +1,4 @@
-import type {
-  StorageInterface,
-  StoredResource,
-} from "@manifest-editor/iiif-preview-server";
+import type { StorageInterface, StoredResource } from "@manifest-editor/iiif-preview-server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import superjson from "superjson";
 

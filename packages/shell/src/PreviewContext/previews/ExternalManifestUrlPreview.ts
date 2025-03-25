@@ -1,5 +1,5 @@
-import { Vault } from "@iiif/helpers/vault";
-import { Preview, PreviewHandler } from "../PreviewContext.types";
+import type { Vault } from "@iiif/helpers/vault";
+import type { Preview, PreviewHandler } from "../PreviewContext.types";
 
 export class ExternalManifestUrlPreview implements PreviewHandler {
   id: string;
@@ -37,7 +37,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
     instanceId: string,
     resource: { id: string; type: string },
     vault: Vault,
-    ctx: { readOnlyManifest: string }
+    ctx: { readOnlyManifest: string },
   ): Promise<Preview> {
     // @todo change this to be a template, with more features.
     const location = `${this.serviceUrl}`
@@ -66,7 +66,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
     instanceId: string,
     resource: { id: string; type: string },
     vault: Vault,
-    ctx: { readOnlyManifest: string }
+    ctx: { readOnlyManifest: string },
   ): Promise<Preview | null> {
     const found = this.windows[instanceId];
 

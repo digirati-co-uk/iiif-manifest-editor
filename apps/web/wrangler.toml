@@ -8,6 +8,9 @@ main = ".open-next/worker.js"
 assets.directory = ".open-next/assets"
 assets.binding = "ASSETS"
 account_id = "ae784157f30fd7164f22b075991c1caa"
+kv_namespaces = [
+    { binding = "PREVIEW_KV", id = "9708730cddd545a68d255f11fe2d6b89" },
+]
 
 [observability.logs]
 enabled = true
