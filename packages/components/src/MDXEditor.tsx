@@ -1,13 +1,19 @@
 import "@mdxeditor/editor/style.css";
 import {
   MDXEditor as BaseMDXEditor,
+  BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CreateLink,
+  DiffSourceToggleWrapper,
+  InsertCodeBlock,
   InsertImage,
   ListsToggle,
   type MDXEditorMethods,
   type MDXEditorProps,
   UndoRedo,
+  codeBlockPlugin,
+  codeMirrorPlugin,
+  diffSourcePlugin,
   headingsPlugin,
   imagePlugin,
   linkDialogPlugin,
@@ -16,10 +22,8 @@ import {
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
-  BlockTypeSelect,
-  diffSourcePlugin, codeBlockPlugin, codeMirrorPlugin, InsertCodeBlock, DiffSourceToggleWrapper,
 } from "@mdxeditor/editor";
-import { useMemo, type ForwardedRef } from "react";
+import { type ForwardedRef, useMemo } from "react";
 
 // Only import this to the next file
 export function MDXEditor({
@@ -31,12 +35,11 @@ export function MDXEditor({
       plugins={useMemo(
         () => [
           // Example Plugin Usage
-          headingsPlugin(),
+          headingsPlugin({ allowedHeadingLevels: [2, 3] }),
           listsPlugin(),
           linkPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
-          headingsPlugin(),
           linkDialogPlugin(),
           imagePlugin(),
           diffSourcePlugin(),
@@ -48,15 +51,14 @@ export function MDXEditor({
                 <UndoRedo />
                 <BoldItalicUnderlineToggles />
                 <BlockTypeSelect />
-                <ListsToggle />
-                <CreateLink  />
+                <ListsToggle options={["bullet", "number"]} />
+                <CreateLink />
                 <InsertImage />
               </>
-
             ),
           }),
         ],
-        []
+        [],
       )}
       {...props}
       ref={editorRef}

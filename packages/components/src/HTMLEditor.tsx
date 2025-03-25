@@ -45,7 +45,11 @@ export function HTMLEditor({
       editorRef={editorRef}
       onBlur={internalOnChange}
       readOnly={disabled}
-      className="bg-white prose-sm text-sm border rounded-lg p-0.5 focus-within:outline-none focus-within:border-me-primary-500 z-50 relative"
+      className={[
+        "bg-white prose-sm text-sm border rounded-lg prose-a:text-me-primary-500 prose-a:underline prose-ul:list-disc p-0.5",
+        "prose-ol:list-decimal",
+        "focus-within:outline-none focus-within:border-me-primary-500 z-50 relative",
+      ].join(" ")}
       markdown={memoState}
       suppressHtmlProcessing
       onError={(err) => {
