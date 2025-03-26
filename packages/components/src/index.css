@@ -105,3 +105,8 @@ div.mdxeditor-popup-container {
   position: relative;
   z-index: 1000;
 }
+
+div.mdxeditor-popup-container > *[role="dialog"] {
+  display: flex;
+  flex-direction: column;
+}
