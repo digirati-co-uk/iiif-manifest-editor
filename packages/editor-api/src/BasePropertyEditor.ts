@@ -1,6 +1,6 @@
 import { BaseEditor } from "./BaseEditor";
 import { descriptiveProperties } from "./meta/descriptive";
-import { EditorConfig } from "./types";
+import type { EditorConfig } from "./types";
 
 export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
   protected property: string;
