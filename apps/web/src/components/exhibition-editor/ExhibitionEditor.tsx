@@ -25,7 +25,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Exhibition viewer",
       config: {
-        url: "https://feature-hss-history.delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
+        url: "https://delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
       },
     },
     {
@@ -33,7 +33,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Exhibition slideshow viewer",
       config: {
-        url: "https://feature-hss-history.delft-exhibition-viewer.pages.dev/embed?manifest={manifestId}",
+        url: "https://delft-exhibition-viewer.pages.dev/embed?manifest={manifestId}",
       },
     },
     {
