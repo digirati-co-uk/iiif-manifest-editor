@@ -36,7 +36,7 @@
     "classnames": "^2.5.1",
     "idb-keyval": "^6.2.1",
     "iiif-browser": "^2.0.1",
-    "manifest-editor": "1.2.0",
+    "manifest-editor": "workspace:*",
     "next": "^14.2.25",
     "posthog-js": "^1.144.1",
     "react": "^18.3.1",
