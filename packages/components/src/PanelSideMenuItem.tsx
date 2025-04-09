@@ -19,6 +19,7 @@ export function PanelSideMenuItem(props: PanelSideMenuItemProps) {
               ? "bg-me-primary-500 hover:bg-me-primary-600 hover:text-white text-white"
               : "text-me-gray-700"
           )}
+          aria-label={props.label}
           onMouseDown={props.onClick}
         >
           {props.icon}
