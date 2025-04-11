@@ -1,11 +1,11 @@
-import { useEditor } from "@manifest-editor/shell";
 import { MetadataContainer } from "@manifest-editor/components";
-import { Fragment, useState } from "react";
-import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
+import { EmptyState } from "@manifest-editor/components";
+import { useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
-import { EmptyState } from "@manifest-editor/components";
+import { Fragment, useState } from "react";
+import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { ReorderList } from "../../components/ReorderList/ReorderList.dndkit";
 import { createAppActions } from "../../helpers/create-app-actions";
 
@@ -15,7 +15,7 @@ export function Metadata() {
   const items = descriptive.metadata.getSortable();
 
   const renderItem = (e: any, idx: number) => (
-    <MetadataContainer key={idx} label={e.label}>
+    <MetadataContainer key={idx} label={e.label} aria-label={`Metadata item ${idx}`}>
       <LanguageFieldEditor
         focusId={e.id}
         label={"Label"}
