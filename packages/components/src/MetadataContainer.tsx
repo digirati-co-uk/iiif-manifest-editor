@@ -7,9 +7,9 @@ export function MetadataContainer({
   label,
   children,
   ...props
-}: { label: InternationalString | null } & React.HTMLAttributes<HTMLDivElement>) {
+}: { label: InternationalString | null } & React.HTMLAttributes<HTMLFieldSetElement>) {
   return (
-    <div
+    <fieldset
       className={cn(
         "hover:ring ring-gray-200 focus-within:ring-me-primary-500 focus-within:ring p-2 rounded mb-2",
         className
@@ -20,6 +20,6 @@ export function MetadataContainer({
         {label}
       </LocaleString>
       {children}
-    </div>
+    </fieldset>
   );
 }

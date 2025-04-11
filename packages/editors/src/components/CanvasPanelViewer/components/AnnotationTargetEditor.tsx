@@ -109,13 +109,26 @@ export function AnnotationTargetEditor() {
     return null;
   }
 
+  const bodyWidth = (annotation as any).body?.[0].width;
+  const bodyHeight = (annotation as any).body?.[0].height;
+  const bodyAspectRatio = bodyWidth && bodyHeight ? bodyWidth / bodyHeight : undefined;
+
+
   return (
     <ResizeWorldItem
       {...annotation.target.selector.spatial}
       resizable
+      aspectRatio={isSpatial ? bodyAspectRatio : undefined}
       maintainAspectRatio={isSpatial}
       disableCardinalControls={isSpatial}
       onSave={(newPosition: any) => {
+        if (bodyAspectRatio && isSpatial) {
+          // Increase height to make sure the aspect ratio is preserved.
+          const newHeight = Math.round(newPosition.width / bodyAspectRatio);
+          if (Number.isInteger(newHeight)) {
+            newPosition.height = newHeight;
+          }
+        }
         updateAnnotationTarget(newPosition);
       }}
     >
