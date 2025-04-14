@@ -15,16 +15,13 @@ test.describe("Basic Manifest Editor actions", async () => {
     await manifestPage.waitForPage();
 
     // Having some problems with loading the Manifest Page.
-    const heading = manifestPage.manifestHeading;
-    await heading.waitFor({ state: "visible" });
-
-    expect(heading).toBeVisible();
+    await expect(manifestPage.manifestHeading).toBeVisible();
 
     // Blank Manifest ID is "https://example.org/".
     await manifestPage.waitForIdentifier();
 
     const manifestIdentifier = page.getByRole("textbox", { name: "Identifier" });
-    expect(manifestIdentifier).toHaveValue(/https:\/\/example.org\/.*/);
+    await expect(manifestIdentifier).toHaveValue(/https:\/\/example.org\/.*/);
 
     // Update the label.
     const labelContainer = manifestPage.resolveContainer('Manifest', 'label');
@@ -33,8 +30,7 @@ test.describe("Basic Manifest Editor actions", async () => {
     $label.fill("My Test Manifest");
     $label.blur();
 
-
-    expect(page.getByRole("heading", { level: 2 })).toHaveText("My Test Manifest", { timeout: 1000 });
+    await expect(page.getByRole("heading", { level: 2 })).toHaveText("My Test Manifest", { timeout: 1000 });
 
     // Now add metadata.
     await page.getByRole("tab", { name: "Metadata" }).click();
