@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "_build": "next build",
     "clean": "rimraf .next .turbo",
     "dev": "next --port=3003",
     "start": "next start"
