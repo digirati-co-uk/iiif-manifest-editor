@@ -940,6 +940,9 @@ importers:
 
   packages/playwright:
     devDependencies:
+      '@manifest-editor/editor-api':
+        specifier: workspace:*
+        version: link:../editor-api
       '@playwright/test':
         specifier: ^1.51.1
         version: 1.51.1
