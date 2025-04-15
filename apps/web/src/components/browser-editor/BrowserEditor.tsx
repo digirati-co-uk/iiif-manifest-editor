@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@manifest-editor/components";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
+import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
   type AnnotationPanel,
   AppProvider,
@@ -138,7 +139,7 @@ const config: Partial<Config> = {
 
 export interface BrowserEditorProps {
   id: string;
-  preset?: MappedApp;
+  preset: MappedApp;
   presetPath?: string;
   presetName?: string;
   config?: Partial<Config>;
@@ -242,8 +243,7 @@ export default function BrowserEditor({
   }, [preset, projectConfig, customConfig]);
 
   const manifestEditor = useMemo(() => {
-    const app = preset ? preset : mapApp(manifestEditorPreset);
-    return extendApp(app, app.metadata, {
+    return extendApp(preset, preset.metadata, {
       leftPanels: [
         {
           divide: true,
@@ -573,16 +573,16 @@ function SharePanel({
       {renderLink(
         data
           ? createShareLink({
-              manifest: data,
-              action: "preview",
-              selected: includeCurrentSelectedItem ? selected : undefined,
-              tab: includeCurrentTab ? currentTab : undefined,
-              presetPath,
-              canvasId:
-                canvas && selected && selected.type !== "Canvas"
-                  ? canvas.resource.source.id
-                  : undefined,
-            })
+            manifest: data,
+            action: "preview",
+            selected: includeCurrentSelectedItem ? selected : undefined,
+            tab: includeCurrentTab ? currentTab : undefined,
+            presetPath,
+            canvasId:
+              canvas && selected && selected.type !== "Canvas"
+                ? canvas.resource.source.id
+                : undefined,
+          })
           : "",
       )}
     </div>
