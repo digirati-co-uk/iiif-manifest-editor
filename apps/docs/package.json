@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "_build": "next build",
+    "build": "next build",
     "clean": "rimraf .next .turbo",
     "dev": "next --port=3003",
     "start": "next start"
@@ -14,8 +14,8 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "next": "^14.2.3",
-    "nextra": "alpha",
-    "nextra-theme-docs": "alpha",
+    "nextra": "3.0.0-alpha.42",
+    "nextra-theme-docs": "3.0.0-alpha.42",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
