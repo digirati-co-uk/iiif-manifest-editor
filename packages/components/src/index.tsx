@@ -30,6 +30,8 @@ export * from "./MDXEditor";
 export * from "./IconButton";
 export * from "./ItemWithHandle";
 export * from "./HandleContainer";
+export * from "./CollectionListItem";
+export * from "./ManifestListItem";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
@@ -37,7 +39,10 @@ export * from "./icons/AddImageIcon";
 export * from "./icons/IIIFLogo";
 export * from "./icons/HTMLIcon";
 export * from "./icons/IIIFBrowserIcon";
+export * from "./icons/InfoIcon";
+export * from "./icons/ListingIcon";
 export * from "./icons/YouTubeIcon";
+export * from "./icons/ListEditIcon";
 export * from "./icons/VideoIcon";
 export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
@@ -46,6 +51,8 @@ export * from "./icons/AddIcon";
 export * from "./icons/DeleteForeverIcon";
 export * from "./icons/TextIcon";
 export * from "./icons/MoreMenu";
+export * from "./icons/ManifestIcon";
+export * from "./icons/CollectionIcon";
 
 // Messages
 export * from "./ErrorMessage";
