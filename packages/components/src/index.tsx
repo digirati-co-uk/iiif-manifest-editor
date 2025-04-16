@@ -65,4 +65,4 @@ export * from "./RenderTextualContent";
 export * from "./IIIFMediaPlayer";
 
 // Extra class names:
-// border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full
+// border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full -translate-y-1 data-[selected]:ring-2 data-[selected]:bg-me-primary-100

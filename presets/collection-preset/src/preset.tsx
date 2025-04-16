@@ -35,7 +35,7 @@ export const config: Partial<Config> = {
       singleTab: "@manifest-editor/overview",
     },
     Collection: {
-      fields: ["label", "summary", "requiredStatement"],
+      fields: ["label", "summary", "requiredStatement", "thumbnail"],
     },
   },
 };

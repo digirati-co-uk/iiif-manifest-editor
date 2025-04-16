@@ -1247,6 +1247,9 @@ importers:
       '@manifest-editor/shell':
         specifier: workspace:*
         version: link:../../packages/shell
+      iiif-browser:
+        specifier: ^2.0.1
+        version: 2.0.1(@types/react@18.3.3)(immer@10.1.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1

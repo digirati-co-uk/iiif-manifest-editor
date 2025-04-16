@@ -44,5 +44,5 @@ const collectionWithPreviews = extendApp(collectionPreset, collectionPreset.meta
 });
 
 export default function BrowserCollectionEditor({ id }: { id: string }) {
-  return <BrowserEditor id={id} preset={collectionWithPreviews} />;
+  return <BrowserEditor id={id} preset={collectionWithPreviews} presetName="Collections" />;
 }
