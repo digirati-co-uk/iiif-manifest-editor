@@ -1,11 +1,13 @@
-import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
 import { getValue } from "@iiif/helpers";
+import { isSpecificResource } from "@iiif/parser";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import cx from "classnames";
+import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
+import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import $ from "../CanvasListPreview/CanvasListPreview.module.css";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
+
+import { CollectionListItem, ManifestListItem } from "@manifest-editor/components";
 
 interface CollectionItemListProps {
   id?: string;
@@ -53,11 +55,11 @@ export function CollectionItemList(props: CollectionItemListProps) {
           const ref = isSpecificResource(item) ? item.source : item;
           return ref.type === "Manifest" ? (
             <ManifestContext manifest={ref.id}>
-              <ManifestItem onClick={() => props.onSelect(ref, index)} active={props.activeId === ref.id} />
+              <ManifestListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
             </ManifestContext>
           ) : (
             <CollectionContext collection={ref.id}>
-              <CollectionItem onClick={() => props.onSelect(ref, index)} active={props.activeId === ref.id} />
+              <CollectionListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
             </CollectionContext>
           );
         }}
@@ -68,15 +70,15 @@ export function CollectionItemList(props: CollectionItemListProps) {
 
   return (
     <div id={props.id}>
-      {props.list.map((item, idx) => {
+      {props.list.map((item, index) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return ref.type === "Manifest" ? (
-          <ManifestContext manifest={ref.id}>
-            <ManifestItem />
+          <ManifestContext key={`${index}_${item.id}`} manifest={ref.id}>
+            <ManifestListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
           </ManifestContext>
         ) : (
-          <CollectionContext collection={ref.id}>
-            <CollectionItem />
+          <CollectionContext key={`${index}_${item.id}`} collection={ref.id}>
+            <CollectionListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
           </CollectionContext>
         );
       })}

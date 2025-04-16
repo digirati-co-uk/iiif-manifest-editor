@@ -6,21 +6,11 @@ import { type ReactNode, useContext, useEffect, useMemo } from "react";
 import { ResourceReactContext, useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
-import {
-  useEditingResource,
-  useEditingResourceStack,
-  useEditingStack,
-} from "../EditingStack/EditingStack";
+import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
 import { useLayoutActions } from "../Layout/Layout.context";
-import type {
-  EditorDefinition,
-  ResourceDefinition,
-} from "../Layout/Layout.types";
-import {
-  ModulePanelButton,
-  useSetCustomTitle,
-} from "../Layout/components/ModularPanel";
+import type { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -62,9 +52,7 @@ export function editBasedOnResource(
   options: { edit?: boolean; vault: Vault },
   config: EditorConfig,
 ): ResourceDefinition | null {
-  const filteredList = list.filter(
-    (l) => l.resourceType === resource.resource.source.type,
-  );
+  const filteredList = list.filter((l) => l.resourceType === resource.resource.source.type);
 
   if (filteredList.length === 0) {
     return null;
@@ -96,11 +84,7 @@ export function editBasedOnResource(
         return false;
       }
 
-      if (
-        editor.supports.custom
-          ? editor.supports.custom(resource, options.vault) === false
-          : false
-      ) {
+      if (editor.supports.custom ? editor.supports.custom(resource, options.vault) === false : false) {
         return false;
       }
 
@@ -135,9 +119,7 @@ export function editBasedOnResource(
   return null;
 }
 
-export function BaseEditor({
-  currentTab = undefined,
-}: { currentTab?: string }) {
+export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) {
   const resource = useEditingResource();
   const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
@@ -174,11 +156,7 @@ export function BaseEditor({
       return children;
     }
 
-    return (
-      <ResourceReactContext.Provider value={newResourceContext}>
-        {children}
-      </ResourceReactContext.Provider>
-    );
+    return <ResourceReactContext.Provider value={newResourceContext}>{children}</ResourceReactContext.Provider>;
   }
 
   const match = useMemo(() => {
@@ -188,29 +166,20 @@ export function BaseEditor({
 
     const editors = app.layout.editors || [];
     const resources = app.layout.resources || [];
-    const mappedResources: ResourceDefinition[] = resources.map(
-      (resource: string | ResourceDefinition) => {
-        if (typeof resource === "string") {
-          return {
-            id: "@default/" + resource,
-            label: resource,
-            resourceType: resource,
-            auto: true,
-            editors: editors.filter((e: any) =>
-              e.supports.resourceTypes.includes(resource),
-            ),
-          };
-        }
-        return resource;
-      },
-    );
+    const mappedResources: ResourceDefinition[] = resources.map((resource: string | ResourceDefinition) => {
+      if (typeof resource === "string") {
+        return {
+          id: "@default/" + resource,
+          label: resource,
+          resourceType: resource,
+          auto: true,
+          editors: editors.filter((e: any) => e.supports.resourceTypes.includes(resource)),
+        };
+      }
+      return resource;
+    });
 
-    return editBasedOnResource(
-      resource,
-      mappedResources,
-      { edit: true, vault },
-      resourceConfig,
-    );
+    return editBasedOnResource(resource, mappedResources, { edit: true, vault }, resourceConfig);
   }, [resource, app]);
 
   useEffect(() => {
@@ -218,8 +187,7 @@ export function BaseEditor({
   });
 
   useEffect(() => {
-    const availableKeys =
-      match?.editors.map((editor, key) => editor.id + key) || [];
+    const availableKeys = match?.editors.map((editor, key) => editor.id + key) || [];
     const currentKey = availableKeys.find((key) => key === currentTab);
     if (!currentKey) {
       change("@manifest-editor/editor", { currentTab: availableKeys[0] });
@@ -236,12 +204,12 @@ export function BaseEditor({
   }
 
   if (resourceConfig.singleTab) {
-    const first = (match?.editors || []).find(
-      (editor) => editor.id === resourceConfig.singleTab,
-    );
+    const first = (match?.editors || []).find((editor) => editor.id === resourceConfig.singleTab);
     if (first) {
       return wrap(
-        <div className="w-full">{first.component(resourceConfig)}</div>,
+        <div key={resource.resource.source?.id} className="w-full">
+          {first.component(resourceConfig)}
+        </div>,
       );
     }
   }

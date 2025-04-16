@@ -27,6 +27,7 @@ import {
   ShellProvider,
   extendApp,
   mapApp,
+  useAppResource,
   useEditingResource,
   useLayoutActions,
   useLayoutState,
@@ -34,13 +35,7 @@ import {
   useSaveVault,
 } from "@manifest-editor/shell";
 import Link from "next/link";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { useBrowserProject } from "./browser-state";
 import "manifest-editor/dist/index.css";
@@ -181,10 +176,7 @@ export default function BrowserEditor({
   const selectedCanvasId = searchParams.get("selected-canvas-id") || undefined;
   const selectedId = searchParams.get("selected-id");
   const selectedType = searchParams.get("selected-type");
-  const editing =
-    selectedId && selectedType
-      ? { id: selectedId, type: selectedType }
-      : undefined;
+  const editing = selectedId && selectedType ? { id: selectedId, type: selectedType } : undefined;
   const selectedTab = searchParams.get("selected-tab") || undefined;
 
   useLayoutEffect(() => {
@@ -200,11 +192,7 @@ export default function BrowserEditor({
     if (project) {
       const fullResource = vault.get(project.resource);
       if (!fullResource) return;
-      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
-        fullResource,
-        { width: 256, height: 256 },
-        false,
-      );
+      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(fullResource, { width: 256, height: 256 }, false);
       const resource = {
         ...project.resource,
         label: fullResource.label,
@@ -214,12 +202,7 @@ export default function BrowserEditor({
     }
   }, [project, vault]);
 
-  useSaveVault(
-    vault,
-    saveVault,
-    5000,
-    vaultReady && !!project && (!wasAlreadyOpen || allowAnyway),
-  );
+  useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
 
   useEffect(() => {
     if (wasAlreadyOpen && !allowAnyway) {
@@ -268,9 +251,7 @@ export default function BrowserEditor({
     <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
       <Link href="/" className="w-96 flex justify-start items-center gap-2">
         <ManifestEditorLogo />
-        {presetName ? (
-          <span className="text-lg text-gray-600">/ {presetName}</span>
-        ) : null}
+        {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
       </Link>
       <div className="flex-1" />
       <div className="flex items-center justify-center gap-5">
@@ -278,18 +259,14 @@ export default function BrowserEditor({
         {/* <GlobalNav noMenu /> */}
         <div className="flex items-center gap-2">
           <ShareButton />
-          <PreviewButton
-            downloadEnabled
-            fileName={project?.extraData.fileName}
-          />
+          <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
         </div>
       </div>
     </header>
   );
 
   if (isProjectLoading) return <div>Loading...</div>;
-  if (isProjectError || !project)
-    return <div>Error: {projectError?.message}</div>;
+  if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
 
   // @todo test without this option and see if its needed
   if (wasAlreadyOpen && !allowAnyway) {
@@ -327,23 +304,11 @@ export default function BrowserEditor({
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider
-          appId="manifest-editor"
-          definition={manifestEditor}
-          instanceId={id}
-        >
+        <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
           <VaultProvider vault={vault}>
-            <ShellProvider
-              resource={project.resource}
-              config={mergedConfig}
-              saveConfig={saveProjectConfig}
-            >
+            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
               <Layout header={header} />
-              <FromQueryString
-                editing={editing}
-                selectedTab={selectedTab}
-                canvasId={selectedCanvasId}
-              />
+              <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
             </ShellProvider>
           </VaultProvider>
         </AppProvider>
@@ -419,14 +384,7 @@ function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function ShareIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      fill="#5f6368"
-      viewBox="0 -960 960 960"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="#5f6368" viewBox="0 -960 960 960" {...props}>
       <path
         d="M720-80q-50 0-85-35t-35-85q0-7 1-14.5t3-13.5L322-392q-17 15-38 23.5t-44 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q23 0 44 8.5t38 23.5l282-164q-2-6-3-13.5t-1-14.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-23 0-44-8.5T638-672L356-508q2 6 3 13.5t1 14.5q0 7-1 14.5t-3 13.5l282 164q17-15 38-23.5t44-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-640q17 0 28.5-11.5T760-760q0-17-11.5-28.5T720-800q-17 0-28.5 11.5T680-760q0 17 11.5 28.5T720-720ZM240-440q17 0 28.5-11.5T280-480q0-17-11.5-28.5T240-520q-17 0-28.5 11.5T200-480q0 17 11.5 28.5T240-440Zm480 280q17 0 28.5-11.5T760-200q0-17-11.5-28.5T720-240q-17 0-28.5 11.5T680-200q0 17 11.5 28.5T720-160Zm0-600ZM240-480Zm480 280Z"
         fill="currentColor"
@@ -443,11 +401,13 @@ function createShareLink({
   canvasId,
   tab,
   presetPath,
+  resourceType,
 }: {
   manifest: string;
   action: "preview" | "import";
   projectId?: string;
   tab?: string;
+  resourceType?: string;
   canvasId?: string;
   presetPath?: string;
   selected?: { id: string; type: string };
@@ -458,6 +418,10 @@ function createShareLink({
   baseUrl.pathname = "/share";
 
   baseUrl.searchParams.set("action", action);
+
+  if (resourceType) {
+    baseUrl.searchParams.set("resource-type", resourceType);
+  }
 
   if (projectId) {
     baseUrl.searchParams.set("projectId", projectId);
@@ -485,12 +449,10 @@ function createShareLink({
   return baseUrl.toString();
 }
 
-function SharePanel({
-  projectId,
-  presetPath,
-}: { projectId: string; presetPath?: string }) {
+function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?: string }) {
   const { actions } = usePreviewContext();
   const resource = useEditingResource();
+  const appResource = useAppResource();
   const { rightPanel } = useLayoutState();
   const canvas = useInStack("Canvas");
 
@@ -502,10 +464,7 @@ function SharePanel({
   const { includeCurrentSelectedItem, includeCurrentTab } = options;
 
   const selected = resource ? resource.resource.source : undefined;
-  const currentTab =
-    rightPanel.current === "@manifest-editor/editor"
-      ? rightPanel.state.currentTab
-      : undefined;
+  const currentTab = rightPanel.current === "@manifest-editor/editor" ? rightPanel.state.currentTab : undefined;
 
   const { data } = useQuery({
     queryKey: ["share", { projectId }],
@@ -543,12 +502,7 @@ function SharePanel({
     link ? (
       <div>
         <div className="flex gap-2 my-4">
-          <input
-            className="flex-1 p-2 border-b bg-gray-50"
-            type="text"
-            value={link}
-            readOnly
-          />
+          <input className="flex-1 p-2 border-b bg-gray-50" type="text" value={link} readOnly />
           <button
             className="bg-me-primary-500 text-white px-5 rounded-md"
             onClick={() => {
@@ -566,23 +520,20 @@ function SharePanel({
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
-        Share your workspace link with a colleague, enabling them to preview it,
-        make a copy, or import any changes to continue collaborating on this
-        manifest
+        Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
+        continue collaborating on this manifest
       </p>
       {renderLink(
         data
           ? createShareLink({
-            manifest: data,
-            action: "preview",
-            selected: includeCurrentSelectedItem ? selected : undefined,
-            tab: includeCurrentTab ? currentTab : undefined,
-            presetPath,
-            canvasId:
-              canvas && selected && selected.type !== "Canvas"
-                ? canvas.resource.source.id
-                : undefined,
-          })
+              manifest: data,
+              resourceType: appResource.type, //<-- change.
+              action: "preview",
+              selected: includeCurrentSelectedItem ? selected : undefined,
+              tab: includeCurrentTab ? currentTab : undefined,
+              presetPath,
+              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
+            })
           : "",
       )}
     </div>

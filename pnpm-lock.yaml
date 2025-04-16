@@ -1232,6 +1232,9 @@ importers:
       '@iiif/presentation-3-normalized':
         specifier: ^0.9.7
         version: 0.9.7
+      '@manifest-editor/components':
+        specifier: workspace:*
+        version: link:../../packages/components
       '@manifest-editor/creators':
         specifier: workspace:*
         version: link:../../packages/creators
