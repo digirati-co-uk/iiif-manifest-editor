@@ -272,7 +272,7 @@ export function useBrowserProject(id: string) {
     mutationFn: async () => {
       try {
         await saveVaultData.mutateAsync({ force: false });
-      } catch (e) {}
+      } catch (e) { }
       await closeBrowserProject(id);
     },
     onSuccess: async () => {
@@ -411,6 +411,33 @@ export async function createManifestFromId(url: string, extra: any = {}) {
       type: "Manifest",
       label: manifest.label || { en: ["Untitled manifest"] },
       thumbnail: thumb || "",
+    },
+    { id: url, type: "Template" },
+    vaultData,
+    extraFields
+  );
+
+  return project;
+}
+
+
+export async function createCollectionFromId(url: string, extra: any = {}) {
+  const { projectId, ...extraFields } = extra;
+  const id = projectId || randomId();
+  const vault = new Vault();
+  const collection = await vault.loadCollection(url);
+
+  if (!collection) throw new Error("Collection not found");
+
+  const vaultData = vault.getState().iiif;
+
+  const project = await createBrowserProject(
+    id,
+    {
+      id: collection.id,
+      type: "Collection",
+      label: collection.label || { en: ["Untitled Collection"] },
+      thumbnail: "",
     },
     { id: url, type: "Template" },
     vaultData,

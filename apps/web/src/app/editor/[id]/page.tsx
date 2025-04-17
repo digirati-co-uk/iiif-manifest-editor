@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const BrowserEditor = dynamic(() => import("../../../components/browser-editor/BrowserEditor"), {
+const BrowserEditor = dynamic(() => import("../../../components/browser-editor/AutomaticBrowserEditor"), {
   ssr: false,
 });
 

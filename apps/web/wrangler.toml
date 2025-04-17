@@ -27,8 +27,8 @@ kv_namespaces = [
     { binding = "PREVIEW_KV", id = "9708730cddd545a68d255f11fe2d6b89" },
 ]
 
-[env.preview.vars]
-URL = "https://manifest-editor-preview.digirati.workers.dev"
+[env.preview]
+vars.URL = "https://manifest-editor-preview.digirati.workers.dev"
 kv_namespaces = [
     { binding = "PREVIEW_KV", id = "9708730cddd545a68d255f11fe2d6b89" },
 ]
