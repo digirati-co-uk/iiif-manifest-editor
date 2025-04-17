@@ -53,6 +53,7 @@ export * from "./icons/TextIcon";
 export * from "./icons/MoreMenu";
 export * from "./icons/ManifestIcon";
 export * from "./icons/CollectionIcon";
+export * from "./icons/PreviewIcon";
 
 // Messages
 export * from "./ErrorMessage";
@@ -67,3 +68,4 @@ export * from "./IIIFMediaPlayer";
 // Extra class names:
 // border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full -translate-y-1 data-[selected]:ring-2 data-[selected]:bg-me-primary-100
 // truncate line-clamp-2 text-xs text-gray-600 data-[selected]:ring-me-primary-500 hover:ring-2 ring-me-primary-100 ring-me-gray-500
+// top-3 right-3

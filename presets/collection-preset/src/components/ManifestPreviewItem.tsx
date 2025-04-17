@@ -1,4 +1,11 @@
-import { ManifestIcon, Modal } from "@manifest-editor/components";
+import {
+  DefaultTooltipContent,
+  ManifestIcon,
+  Modal,
+  PreviewIcon,
+  Tooltip,
+  TooltipTrigger,
+} from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { useEditingResource, useGenericEditor, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -59,9 +66,18 @@ export function ManifestPreviewItem() {
         {manifest?.summary}
       </LocaleString>
 
-      <Button className="absolute top-0 right-0 flex items-center gap-1" onClick={() => setOpen(true)}>
-        <ManifestIcon className="text-lg" /> Open preview
-      </Button>
+      <Tooltip placement="bottom">
+        <TooltipTrigger
+          className="absolute top-3 right-3 flex items-center gap-1 bg-white hover:bg-me-primary-100 p-1 rounded-sm text-me-primary-500 text-2xl"
+          aria-label="Preview Manifest"
+          id={`preview_${manifest?.id}`}
+          onClick={() => setOpen(true)}
+        >
+          <PreviewIcon />
+          <DefaultTooltipContent>Preview Manifest</DefaultTooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
       <Modal title="Preview Manifest" open={open} onClose={() => setOpen(false)}>
         {manifest && open ? <PreviewManifestInBrowser id={manifest.id} setThumbnail={setThumbnail} /> : null}
       </Modal>
