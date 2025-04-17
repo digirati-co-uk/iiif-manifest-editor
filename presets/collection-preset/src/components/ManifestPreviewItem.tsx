@@ -41,7 +41,7 @@ export function ManifestPreviewItem() {
   return (
     <div
       data-selected={isSelected || undefined}
-      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-primary-500 rounded"
+      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-gray-500 data-[selected]:ring-me-primary-500 hover:ring-2 rounded"
       onClick={() => edit(manifest!)}
     >
       <div className="aspect-square bg-gray-100 mb-2 relative rounded-sm overflow-hidden">

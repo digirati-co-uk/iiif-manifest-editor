@@ -40,10 +40,10 @@ export function CollectionPreviewItem() {
   return (
     <div
       data-selected={isSelected || undefined}
-      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-primary-500"
+      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-gray-500 data-[selected]:ring-me-primary-500 hover:ring-2 rounded"
       onClick={() => edit(collection!)}
     >
-      <div className="aspect-square bg-gray-100 mb-2 relative">
+      <div className="aspect-square bg-gray-100 mb-2 relative rounded-sm overflow-hidden">
         {rawThumb.length ? (
           <img className="w-full h-full object-contain" src={rawThumb[0]!.id} alt="Collection Thumbnail" />
         ) : (
