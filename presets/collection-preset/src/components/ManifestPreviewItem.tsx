@@ -41,18 +41,24 @@ export function ManifestPreviewItem() {
   return (
     <div
       data-selected={isSelected || undefined}
-      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-primary-500"
+      className="bg-white p-2 relative data-[selected]:ring-2 ring-me-primary-500 rounded"
       onClick={() => edit(manifest!)}
     >
-      <div className="aspect-square bg-gray-100 mb-2 relative">
+      <div className="aspect-square bg-gray-100 mb-2 relative rounded-sm overflow-hidden">
         {thumbnail && rawThumb.length ? (
           <img className="w-full h-full object-contain" src={thumbnail.id} alt="Manifest Thumbnail" />
         ) : (
           <div className="w-full h-full flex items-center text-center justify-center text-gray-600">No thumbnail</div>
         )}
       </div>
-      <LocaleString as="h3">{manifest?.label}</LocaleString>
-      <LocaleString as="p">{manifest?.summary}</LocaleString>
+      <LocaleString className="line-clamp-2 text-sm" as="h4">
+        {manifest?.label}
+      </LocaleString>
+
+      <LocaleString className="line-clamp-2 mt-2 text-xs text-gray-600" as="p">
+        {manifest?.summary}
+      </LocaleString>
+
       <Button className="absolute top-0 right-0 flex items-center gap-1" onClick={() => setOpen(true)}>
         <ManifestIcon className="text-lg" /> Open preview
       </Button>

@@ -1,6 +1,6 @@
 import { CollectionIcon, Modal } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
-import { useGenericEditor, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
+import { useEditingResource, useGenericEditor, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useState } from "react";
 import { LocaleString, useCollection, useManifest, useThumbnail } from "react-iiif-vault";
@@ -12,7 +12,7 @@ export function CollectionPreviewItem() {
   const { edit } = useLayoutActions();
   const creator = useInlineCreator();
   const editor = useGenericEditor(collection);
-  const collectionInstack = useInStack("Collection");
+  const collectionInstack = useEditingResource();
   const isSelected = collectionInstack?.resource.source?.id === collection?.id;
 
   const rawThumb = editor.descriptive.thumbnail.get();
@@ -51,8 +51,14 @@ export function CollectionPreviewItem() {
         )}
       </div>
 
-      <LocaleString as="h3">{collection?.label}</LocaleString>
-      <LocaleString as="p">{collection?.summary}</LocaleString>
+      <LocaleString className="line-clamp-2 text-sm" as="h4">
+        {collection?.label}
+      </LocaleString>
+
+      <LocaleString className="line-clamp-2 mt-2 text-xs text-gray-600" as="p">
+        {collection?.summary}
+      </LocaleString>
+
       <Button className="absolute top-0 right-0 flex gap-2 items-center" onClick={() => setOpen(true)}>
         <CollectionIcon className="text-lg" /> Open preview
       </Button>
