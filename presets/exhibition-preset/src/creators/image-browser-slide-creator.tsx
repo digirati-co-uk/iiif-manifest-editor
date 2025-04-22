@@ -1,9 +1,4 @@
-import {
-  type CreatorFunctionContext,
-  creatorHelper,
-  defineCreator,
-  exampleFunction,
-} from "@manifest-editor/creator-api";
+import { type CreatorFunctionContext, creatorHelper, defineCreator } from "@manifest-editor/creator-api";
 import { type IIIFBrowserCreatorPayload, iiifBrowserCreator } from "@manifest-editor/creators";
 
 declare module "@manifest-editor/creator-api" {

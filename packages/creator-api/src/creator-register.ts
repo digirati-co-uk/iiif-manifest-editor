@@ -1,6 +1,3 @@
-// types and helpers for the creator register.
-
-import type { InternationalString } from "@iiif/presentation-3";
 import type {
   AllAvailableParentTypes,
   AllParentTypes,
@@ -120,28 +117,6 @@ type HelperInArray<ToFind, Array extends readonly any[]> = Array extends readonl
     : HelperInArray<ToFind, Tail>
   : false;
 
-// type HelperInArray_test = HelperInArray<"ContentResource", ["ContentResource", "Manifest"]>;
-
-// type SupportsManifest = CreatorSupportsParentResourceType<typeof imageUrlCreator, "ContentResource">;
-
-// type FilterCreatorsByParentType<
-//   Creators extends Record<any, CreatorDefinition>,
-//   Type extends AllAvailableParentTypes,
-// > = {
-//   [K in keyof Creators as keyof Creators]: CreatorSupportsParentResourceType<Creators[K], Type> extends true
-//     ? Creators[K]["id"]
-//     : never;
-// }[keyof Creators];
-
-// type RecordToArray<Rec extends Record<any, any>> = {
-//   [K in keyof Rec]: Rec[K];
-// }[keyof Rec][];
-
-// type Values<T> = T[keyof T];
-// type CreatorDefinitionsArray = Array<Values<IIIFManifestEditor.CreatorDefinitions>>;
-
-// type AllIds = CreatorDefinitionsArray[number]["id"];
-
 export type CreatorDefinitionFilterByParent<
   Type extends AllAvailableParentTypes,
   Field extends AllProperties = AllProperties,
@@ -149,38 +124,3 @@ export type CreatorDefinitionFilterByParent<
 > = {
   [K in keyof CD]: CreatorSupportsParent<CD[K], Type, Field> extends true ? CD[K] : never;
 }[keyof CD];
-
-// type FilterCreatorsByParentType2<
-//   Creators extends Array<CreatorDefinition>,
-//   Type extends AllAvailableParentTypes,
-//   ReturnType extends Array<CreatorDefinition> = [],
-// > = Creators extends [infer Head extends CreatorDefinition, ...infer Tail extends Array<CreatorDefinition>]
-//   ? CreatorSupportsParentResourceType<Head, Type> extends true
-//     ? FilterCreatorsByParentType2<Tail, Type, [...ReturnType, Head]>
-//     : ReturnType
-//   : ReturnType;
-
-// type FirstCreator<
-//   Creators extends Array<CreatorDefinition>,
-//   Type extends AllAvailableParentTypes,
-//   ReturnType extends Array<CreatorDefinition> = [],
-// > = Creators extends [infer Head, ...infer Tail] ? Head : never;
-
-// type t2 = FilterCreatorsByParentType2<CreatorDefinitionsArray, "ContentResource">;
-
-// type t1 = typeof imageUrlCreator.additionalTypes;
-
-// // No we want functions that use the register.
-export function exampleFunction<
-  const ResourceType extends AllAvailableParentTypes,
-  const ResourceField extends GetSupportedResourceFields<ResourceType>,
-  const CID extends CreatorDefinitionFilterByParent<ResourceType, ResourceField>["id"],
->(
-  resourceType: ResourceType,
-  resourceField: ResourceField,
-  creator: CID,
-): (args: ExtractCreatorGenerics<IIIFManifestEditor.CreatorDefinitions[CID]>["Payload"]) => void {
-  // Implementation here
-  //
-  return () => {};
-}
