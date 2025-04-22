@@ -1,24 +1,29 @@
-import type {
-  CreatorDefinition,
-  CreatorFunctionContext,
-  GetCreatorPayload,
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  defineCreator,
+  exampleFunction,
 } from "@manifest-editor/creator-api";
-import { iiifBrowserCreator } from "@manifest-editor/creators";
-import { imageSlideCreator } from "./image-slide-creator";
+import { type IIIFBrowserCreatorPayload, iiifBrowserCreator } from "@manifest-editor/creators";
 
-export const imageBrowserSlideCreator: CreatorDefinition = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/browser-creator": typeof imageBrowserSlideCreator;
+    }
+  }
+}
+
+export const imageBrowserSlideCreator = defineCreator({
   ...iiifBrowserCreator,
   id: "@exhibitions/browser-creator",
   create: createBrowser,
   tags: ["image", "exhibition-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
-};
+});
 
-async function createBrowser(
-  data: GetCreatorPayload<typeof iiifBrowserCreator>,
-  ctx: CreatorFunctionContext,
-) {
+async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
@@ -27,9 +32,14 @@ async function createBrowser(
 
   const dimensions = { width: 0, height: 0 };
 
-  // 1. Call the original creator to get the annotation
-  const annotation = await ctx.create<typeof iiifBrowserCreator>(
-    iiifBrowserCreator.id,
+  const createBrowserAnnotation = creatorHelper(
+    ctx,
+    { id: pageId, type: "AnnotationPage" },
+    "items",
+    "@manifest-editor/iiif-browser-creator",
+  );
+
+  const annotation = await createBrowserAnnotation(
     {
       ...data,
       trackSize({ width, height }) {
@@ -38,20 +48,18 @@ async function createBrowser(
       },
     },
     {
+      targetType: "Annotation",
       target: {
         id: canvasId,
         type: "Canvas",
       },
-      targetType: "Annotation",
-      parent: {
-        resource: { id: pageId, type: "AnnotationPage" },
-        property: "items",
-      },
     },
   );
 
+  const createSlide = creatorHelper(ctx, "Manifest", "items", "@exhibitions/image-slide-creator");
+
   // 2. Pass that to an empty slide.
-  return await ctx.create<typeof imageSlideCreator>(imageSlideCreator.id, {
+  return await createSlide({
     canvasId,
     width: dimensions.width,
     height: dimensions.height,

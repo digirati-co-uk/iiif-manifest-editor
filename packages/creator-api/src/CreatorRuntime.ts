@@ -1,9 +1,9 @@
-import { Reference } from "@iiif/presentation-3";
-import { Vault } from "@iiif/helpers/vault";
-import { importEntities, addMappings, batchActions } from "@iiif/helpers/vault/actions";
+import type { Vault } from "@iiif/helpers/vault";
+import { addMappings, batchActions, importEntities } from "@iiif/helpers/vault/actions";
+import type { Reference } from "@iiif/presentation-3";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
-import { CreatorDefinition, CreatorOptions } from "./types";
+import type { CreatorDefinition, CreatorOptions } from "./types";
 import { resolveType } from "./utils";
 
 export class CreatorRuntime {
@@ -22,7 +22,7 @@ export class CreatorRuntime {
     payload: any,
     createConfigs: CreatorDefinition[],
     previewVault: Vault,
-    options?: Partial<CreatorOptions>
+    options?: Partial<CreatorOptions>,
   ) {
     this.vault = vault;
     this.previewVault = previewVault;
@@ -30,7 +30,7 @@ export class CreatorRuntime {
     this.payload = payload;
     this.configs = createConfigs;
     this.options = {
-      targetType: (options || {}).targetType || definition.resourceType,
+      targetType: options?.targetType || definition.resourceType,
       ...(options || {}),
     };
   }

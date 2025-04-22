@@ -1,10 +1,17 @@
-import { Vault } from "@iiif/helpers/vault";
-import { CreatorDefinition, CreatorFunctionContext, CreatorOptions } from "./types";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Vault } from "@iiif/helpers/vault";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { InputShape } from "polygon-editor";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
-import { InputShape } from "polygon-editor";
+import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
+import type {
+  AllAvailableParentTypes,
+  CreatorDefinition,
+  CreatorFunctionContext,
+  CreatorOptions,
+  GetSupportedResourceFields,
+} from "./types";
 import { randomId } from "./utils";
 
 export class CreatorInstance implements CreatorFunctionContext {

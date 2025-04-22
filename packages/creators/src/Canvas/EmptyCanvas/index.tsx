@@ -1,14 +1,25 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import { defineCreator } from "@manifest-editor/creator-api";
 
-export const emptyCanvas: CreatorDefinition<{
-  label?: InternationalString;
-  width?: number;
-  height?: number;
-}> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/empty-canvas": typeof emptyCanvas;
+    }
+  }
+}
+
+export const emptyCanvas = defineCreator({
   id: "@manifest-editor/empty-canvas",
-  create: (data, ctx) => {
+  create: (
+    data: {
+      label?: InternationalString;
+      width?: number;
+      height?: number;
+    },
+    ctx,
+  ) => {
     const canvasId = ctx.generateId("canvas");
     const page = ctx.embed({
       id: ctx.generateId("annotation-page", { id: canvasId, type: "Canvas" }),
@@ -34,4 +45,4 @@ export const emptyCanvas: CreatorDefinition<{
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
-};
+});

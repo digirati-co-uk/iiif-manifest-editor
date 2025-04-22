@@ -1,8 +1,8 @@
-import { Reference } from "@iiif/presentation-3";
 import { Vault } from "@iiif/helpers/vault";
-import { CreatorRuntime } from "./CreatorRuntime";
-import { CreatableResource, CreatorDefinition, CreatorOptions } from "./types";
 import { entityActions } from "@iiif/helpers/vault/actions";
+import type { Reference } from "@iiif/presentation-3";
+import { CreatorRuntime } from "./CreatorRuntime";
+import type { CreatableResource, CreatorDefinition, CreatorOptions } from "./types";
 import { matchBasedOnResource } from "./utils";
 
 export class Creator {
@@ -17,11 +17,7 @@ export class Creator {
   }
 
   matchBasedOnResource(resource: CreatableResource) {
-    return matchBasedOnResource(
-      resource,
-      this.configs || [],
-      { vault: this.vault },
-    );
+    return matchBasedOnResource(resource, this.configs || [], { vault: this.vault });
   }
 
   async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<Reference> {
@@ -46,7 +42,7 @@ export class Creator {
         const type = foundDefinition.supports.parentFieldMap[options.parent.resource.type];
         if (!type || !type.includes(options.parent.property)) {
           throw new Error(
-            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`
+            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`,
           );
         }
       }
@@ -71,7 +67,7 @@ export class Creator {
             type: options.parent.resource.type as any,
             value: resource.ref(),
             key: options.parent.property,
-          })
+          }),
         );
       } else {
         afterActions.push(
@@ -81,7 +77,7 @@ export class Creator {
             reference: resource.ref(),
             key: options.parent.property,
             index: options.parent.atIndex,
-          })
+          }),
         );
       }
     }

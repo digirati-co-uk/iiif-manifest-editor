@@ -8,9 +8,9 @@ const externalProperties = [
   "logo",
   "body",
   "annotations",
-];
+] as const;
 
-const inlineProperties = ["service", "services"];
+const inlineProperties = ["service", "services"] as const;
 
 const internalProperties = [
   "target",
@@ -22,7 +22,7 @@ const internalProperties = [
   "items",
   "structures",
   "annotations",
-];
+] as const;
 
 const all = [
   "target",
@@ -43,9 +43,9 @@ const all = [
   "items",
   "structures",
   "annotations",
-];
+] as const;
 
-const single = ["start", "target"];
+const single = ["start", "target"] as const;
 
 export const references = {
   all,

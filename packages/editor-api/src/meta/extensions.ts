@@ -1,8 +1,8 @@
-import { NavPlaceExtension, TextGranularityExtension } from "@iiif/presentation-3";
+import type { NavPlaceExtension, TextGranularityExtension } from "@iiif/presentation-3";
 
 export type ExtensionProperties = TextGranularityExtension & NavPlaceExtension;
 
-const required: ExtensionsMap = {
+const required = {
   Collection: [],
   Manifest: [],
   Canvas: [],
@@ -12,9 +12,9 @@ const required: ExtensionsMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies ExtensionsMap;
 
-const recommended: ExtensionsMap = {
+const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
@@ -24,9 +24,9 @@ const recommended: ExtensionsMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies ExtensionsMap;
 
-const optional: ExtensionsMap = {
+const optional = {
   Collection: ["navPlace"],
   Manifest: ["navPlace"],
   Canvas: ["navPlace"],
@@ -36,9 +36,9 @@ const optional: ExtensionsMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies ExtensionsMap;
 
-const notAllowed: ExtensionsMap = {
+const notAllowed = {
   Collection: ["textGranularity"],
   Manifest: ["textGranularity"],
   Canvas: ["textGranularity"],
@@ -48,7 +48,7 @@ const notAllowed: ExtensionsMap = {
   AnnotationCollection: ["textGranularity", "navPlace"],
   ContentResource: ["textGranularity", "navPlace"],
   Agent: ["textGranularity", "navPlace"],
-} as const;
+} as const satisfies ExtensionsMap;
 
 type ExtensionsMap = Record<
   | "Collection"

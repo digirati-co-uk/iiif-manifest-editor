@@ -44,7 +44,6 @@ import "@manifest-editor/shell/dist/index.css";
 import "@manifest-editor/components/dist/index.css";
 import "@manifest-editor/exhibition-preset/dist/index.css";
 import { createThumbnailHelper } from "@iiif/helpers";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { useInStack } from "@manifest-editor/editors";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";

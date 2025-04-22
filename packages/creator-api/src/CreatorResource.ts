@@ -1,9 +1,9 @@
+import type { Vault } from "@iiif/helpers/vault";
+import { HAS_PART, PART_OF } from "@iiif/parser";
+import type { SpecificResource } from "@iiif/presentation-3";
 import { references } from "@manifest-editor/editor-api";
-import { Vault } from "@iiif/helpers/vault";
 import { ReferencedResource } from "./ReferencedResource";
 import { getEmptyType, resolveType } from "./utils";
-import { HAS_PART, PART_OF } from "@iiif/parser";
-import { SpecificResource } from "@iiif/presentation-3";
 
 export class CreatorResource {
   resource: any;
@@ -29,7 +29,7 @@ export class CreatorResource {
 
     for (const key of properties) {
       // These properties are NOT references and can be just included normally.
-      if (references.inlineProperties.includes(key) || !references.all.includes(key)) {
+      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
         continue;
       }
 
@@ -45,7 +45,6 @@ export class CreatorResource {
           const rangeRef = new ReferencedResource(range, vault);
           newRange.push(rangeRef);
           data[key] = rangeRef;
-          continue;
         }
         data[key] = newRange;
         continue;
@@ -82,12 +81,12 @@ export class CreatorResource {
       }
 
       // @todo Handle single item cases. (not caught by the above 2 cases)
-      if (references.single.includes(key)) {
+      if (references.single.includes(key as any)) {
         continue;
       }
 
       // This property SHOULD already be in the Vault OR an instance of creator resource.
-      if (references.externalProperties.includes(key) || references.internalProperties.includes(key)) {
+      if (references.externalProperties.includes(key as any) || references.internalProperties.includes(key as any)) {
         const _items = (data[key] || []) as any[];
         const items = Array.isArray(_items) ? _items : [_items];
         const newItems: any[] = [];
@@ -154,12 +153,12 @@ export class CreatorResource {
 
     for (const key of properties) {
       // Skip these, they are just normal inline values.
-      if (references.inlineProperties.includes(key) || !references.all.includes(key)) {
+      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
         newResource[key] = resource[key];
         continue;
       }
 
-      if (references.single.includes(key)) {
+      if (references.single.includes(key as any)) {
         const ref = resource[key];
         if (ref instanceof ReferencedResource) {
           // These MUST be specific resources.

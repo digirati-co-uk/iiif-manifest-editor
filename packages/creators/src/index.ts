@@ -32,6 +32,7 @@ export * from "./ContentResource/ImageUrlCreator/create-image-url";
 export * from "./ContentResource/PlaintextCreator/create-plaintext";
 export * from "./ContentResource/WebPageCreator/create-web-page";
 export * from "./ContentResource/YouTubeCreator/create-youtube-body";
+export * from "./Manifest/ManifestBrowserCreator/manifest-browser-creator";
 
 export const allCreators = [
   // Images first.

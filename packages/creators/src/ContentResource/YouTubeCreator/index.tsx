@@ -1,12 +1,16 @@
 import { YouTubeIcon } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import {
-  type CreateYouTubeBodyPayload,
-  YouTubeForm,
-  createYoutubeBody,
-} from "./create-youtube-body";
+import { defineCreator } from "@manifest-editor/creator-api";
+import { YouTubeForm, createYoutubeBody } from "./create-youtube-body";
 
-export const youTubeBodyCreator: CreatorDefinition<CreateYouTubeBodyPayload> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/youtube": typeof youTubeBodyCreator;
+    }
+  }
+}
+
+export const youTubeBodyCreator = defineCreator({
   id: "@manifest-editor/youtube",
   create: createYoutubeBody,
   label: "YouTube",
@@ -27,4 +31,4 @@ export const youTubeBodyCreator: CreatorDefinition<CreateYouTubeBodyPayload> = {
   staticFields: {
     type: "Video",
   },
-};
+});

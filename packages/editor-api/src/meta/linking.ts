@@ -1,6 +1,6 @@
-import { LinkingProperties } from "@iiif/presentation-3";
+import type { LinkingProperties } from "@iiif/presentation-3";
 
-const required: LinkingMap = {
+const required = {
   Collection: [],
   Manifest: [],
   Canvas: [],
@@ -10,9 +10,9 @@ const required: LinkingMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies LinkingMap;
 
-const recommended: LinkingMap = {
+const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
@@ -22,9 +22,9 @@ const recommended: LinkingMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: ["homepage", "logo"],
-} as const;
+} as const satisfies LinkingMap;
 
-const optional: LinkingMap = {
+const optional = {
   Collection: ["seeAlso", "service", "homepage", "rendering", "partOf", "services"],
   Manifest: ["seeAlso", "service", "homepage", "rendering", "partOf", "start", "services"],
   Canvas: ["seeAlso", "service", "homepage", "rendering", "partOf"],
@@ -34,9 +34,9 @@ const optional: LinkingMap = {
   AnnotationCollection: ["seeAlso", "service", "homepage", "rendering", "partOf"],
   ContentResource: ["seeAlso", "service", "homepage", "rendering", "partOf"],
   Agent: ["seeAlso"],
-} as const;
+} as const satisfies LinkingMap;
 
-const notAllowed: LinkingMap = {
+const notAllowed = {
   Collection: ["supplementary", "logo"],
   Manifest: ["supplementary", "logo"],
   Canvas: ["start", "supplementary", "services", "logo"],
@@ -46,7 +46,7 @@ const notAllowed: LinkingMap = {
   AnnotationCollection: ["start", "supplementary", "services", "logo"],
   ContentResource: ["start", "supplementary", "services", "logo"],
   Agent: ["service", "homepage", "rendering", "partOf", "services", "start", "supplementary"],
-} as const;
+} as const satisfies LinkingMap;
 
 type LinkingMap = Record<
   | "Collection"

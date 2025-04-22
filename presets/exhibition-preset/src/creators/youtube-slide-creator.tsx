@@ -1,17 +1,25 @@
 import { emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import type { CreatorDefinition, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 import { youTubeBodyCreator } from "@manifest-editor/creators";
 import { getYouTubeId } from "@manifest-editor/editors";
 
-export const youtubeSlideCreator: CreatorDefinition = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/youtube-creator": typeof youtubeSlideCreator;
+    }
+  }
+}
+
+export const youtubeSlideCreator = defineCreator({
   ...youTubeBodyCreator,
   id: "@exhibitions/youtube-creator",
   create: createYoutube,
   tags: ["video", "exhibition-slide"],
   label: "YouTube",
   summary: "A YouTube for an exhibition",
-};
+});
 
 interface YouTubeCreatePayload {
   youtubeUrl: string;
