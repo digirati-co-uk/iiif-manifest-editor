@@ -1,15 +1,11 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
+import { type CreatorContext, type CreatorFunctionContext, creatorHelper } from "@manifest-editor/creator-api";
 import {
   CreateImageServerForm,
   type CreateImageServicePayload,
 } from "../../ContentResource/ImageServiceCreator/create-image-service";
 
-export interface CreateImageServiceAnnotationPayload
-  extends CreateImageServicePayload {
+export interface CreateImageServiceAnnotationPayload extends CreateImageServicePayload {
   label?: InternationalString;
   motivation?: string;
 }
@@ -17,20 +13,18 @@ export interface CreateImageServiceAnnotationPayload
 export async function createImageServiceAnnotation(
   data: CreateImageServiceAnnotationPayload,
   ctx: CreatorFunctionContext,
-) {
+): Promise<any> {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
   };
   const targetType = ctx.options.targetType as "Annotation" | "Canvas";
 
-  const resource = await ctx.create(
-    "@manifest-editor/image-service-creator",
-    data,
-    {
-      parent: { resource: annotation, property: "body" },
-    },
-  );
+  const createImage = creatorHelper(ctx, "Annotation", "body", "@manifest-editor/image-service-creator");
+
+  const resource = await createImage(data, {
+    parent: { resource: annotation, property: "body" },
+  });
 
   if (targetType === "Annotation") {
     return {
@@ -75,8 +69,6 @@ export async function createImageServiceAnnotation(
   }
 }
 
-export function CreateImageServiceAnnotationForm(
-  props: CreatorContext<CreateImageServicePayload>,
-) {
+export function CreateImageServiceAnnotationForm(props: CreatorContext<CreateImageServicePayload>) {
   return <CreateImageServerForm {...props} />;
 }

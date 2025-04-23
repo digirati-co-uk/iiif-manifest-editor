@@ -1,4 +1,9 @@
-import { type CreatorFunctionContext, creatorHelper, defineCreator } from "@manifest-editor/creator-api";
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  type CreatorResource,
+  defineCreator,
+} from "@manifest-editor/creator-api";
 import { type CreateImageUrlPayload, imageUrlCreator } from "@manifest-editor/creators";
 
 declare module "@manifest-editor/creator-api" {
@@ -23,7 +28,7 @@ export const imageUrlSlideCreator = defineCreator({
   },
 });
 
-async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionContext) {
+async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionContext): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,

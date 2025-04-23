@@ -1,4 +1,9 @@
-import { type CreatorFunctionContext, creatorHelper, defineCreator } from "@manifest-editor/creator-api";
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  type CreatorResource,
+  defineCreator,
+} from "@manifest-editor/creator-api";
 import { type IIIFBrowserCreatorPayload, iiifBrowserCreator } from "@manifest-editor/creators";
 
 declare module "@manifest-editor/creator-api" {
@@ -18,7 +23,7 @@ export const imageBrowserSlideCreator = defineCreator({
   summary: "Browse IIIF Resources",
 });
 
-async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
+async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
@@ -59,6 +64,6 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     width: dimensions.width,
     height: dimensions.height,
     type: "default", // default / left / right / bottom
-    items: [annotation],
+    items: annotation,
   });
 }

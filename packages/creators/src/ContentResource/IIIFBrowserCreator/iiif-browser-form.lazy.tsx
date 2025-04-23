@@ -1,12 +1,6 @@
 import { Vault } from "@iiif/helpers";
 import type { CreatorContext } from "@manifest-editor/creator-api";
-import { IIIFExplorer } from "@manifest-editor/iiif-browser";
-import {
-  HOMEPAGE_COLLECTION,
-  PreviewVaultBoundary,
-  usePreviewHistory,
-  usePreviewVault,
-} from "@manifest-editor/shell";
+import { PreviewVaultBoundary } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useMemo } from "react";
 
@@ -17,15 +11,19 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
       {
         type: "callback",
         label: "Select",
-        supportedTypes: [
-          "Canvas",
-          "CanvasList",
-          "CanvasRegion",
-          "ImageService",
-          "ImageServiceRegion",
-        ],
+        supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
         cb: (resource) => props.runCreate({ output: resource }),
-        format: { type: "content-state" },
+        format: {
+          type: "custom",
+          format: (resource, parent, vault) => {
+            const resourcesAsArray = Array.isArray(resource) ? resource : [{ ...resource, parent }];
+            const resources = [];
+            for (const resource of resourcesAsArray) {
+              resources.push({ resource: vault.get(resource), parent: resource.parent, selector: resource.selector });
+            }
+            return resources;
+          },
+        },
       },
     ] as IIIFBrowserProps["output"];
   }, [props.runCreate]);
@@ -37,7 +35,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
       canSelectManifest: false,
       canSelectCollection: false,
       // @todo fix the output so this one works.
-      multiSelect: false,
+      multiSelect: true,
     };
   }, []);
 
@@ -50,7 +48,6 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   return (
     <PreviewVaultBoundary>
       <IIIFBrowser
-        debug
         ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"

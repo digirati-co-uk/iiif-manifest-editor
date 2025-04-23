@@ -1,4 +1,9 @@
-import { type CreatorFunctionContext, creatorHelper, defineCreator } from "@manifest-editor/creator-api";
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  type CreatorResource,
+  defineCreator,
+} from "@manifest-editor/creator-api";
 import { type CreateImageServicePayload, imageServiceCreator } from "@manifest-editor/creators";
 import { imageSlideCreator } from "./image-slide-creator";
 
@@ -24,7 +29,10 @@ export const imageServiceSlideCreator = defineCreator({
   },
 });
 
-async function createImageService(data: CreateImageServicePayload, ctx: CreatorFunctionContext) {
+async function createImageService(
+  data: CreateImageServicePayload,
+  ctx: CreatorFunctionContext,
+): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
