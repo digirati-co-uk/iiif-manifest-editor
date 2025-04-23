@@ -165,7 +165,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     return new CreatorResource(data, this.vault);
   }
 
-  async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource> {
+  async create(definition: string, payload: any, options?: Partial<CreatorOptions>) {
     const foundDefinition = this.configs.find((t) => t.id === definition);
     if (!foundDefinition) {
       throw new Error(`Creator config ${definition} not found`);
@@ -173,6 +173,6 @@ export class CreatorInstance implements CreatorFunctionContext {
 
     const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, this.previewVault, options);
 
-    return await runtime.run();
+    return (await runtime.run()) as any;
   }
 }

@@ -48,6 +48,7 @@ export function defineCreator<
   const AllResourceTypes = [ResourceType, ...AdditionalResourceTypes],
   const SupportsParentTypes extends Array<AllAvailableParentTypes> = AllParentTypes,
   const SupportsParentFields extends Array<AllProperties> = [],
+  const CreateReturnType = any,
 >(
   options: SpecificCreatorDefinition<
     Payload,
@@ -56,7 +57,8 @@ export function defineCreator<
     AdditionalResourceTypes,
     AllResourceTypes,
     SupportsParentTypes,
-    SupportsParentFields
+    SupportsParentFields,
+    CreateReturnType
   >,
 ) {
   return options;
@@ -74,7 +76,8 @@ export type ExtractCreatorGenerics<T extends CreatorDefinition> = T extends Spec
   infer AdditionalResourceTypes,
   infer AllResourceTypes,
   infer SupportsParentTypes,
-  infer SupportsParentFields
+  infer SupportsParentFields,
+  infer CreateReturnType
 >
   ? {
       Payload: Payload;
@@ -84,6 +87,7 @@ export type ExtractCreatorGenerics<T extends CreatorDefinition> = T extends Spec
       AllResourceTypes: AllResourceTypes;
       SupportsParentTypes: SupportsParentTypes;
       SupportsParentFields: SupportsParentFields;
+      CreateReturnType: CreateReturnType;
     }
   : never;
 

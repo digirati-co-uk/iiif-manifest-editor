@@ -19,7 +19,9 @@ import type {
   CreatorDefinition,
   CreatorFunctionContext,
   CreatorOptions,
+  GetCreatorPayload,
   GetSupportedResourceFields,
+  ResolvedCreatorReturn,
 } from "./types";
 
 export function resolveType(type: string): keyof Entities {
@@ -136,14 +138,15 @@ export function creatorHelper<
   const Parent extends { id: string; type: ResourceType },
   const ResourceField extends GetSupportedResourceFields<ResourceType>,
   const CID extends CreatorDefinitionFilterByParent<ResourceType, ResourceField>["id"],
-  Payload = ExtractCreatorGenerics<IIIFManifestEditor.CreatorDefinitions[CID]>["Payload"],
+  Payload = GetCreatorPayload<IIIFManifestEditor.CreatorDefinitions[CID]>,
+  Return = ResolvedCreatorReturn<IIIFManifestEditor.CreatorDefinitions[CID]>,
 >(
   ctx: CreatorFunctionContext,
   parent: Parent | ResourceType,
   property: ResourceField,
   definition: CID,
-): (payload: Payload, options?: Partial<CreatorOptions>) => Promise<CreatorResource> {
-  return (payload, options = {}) => {
+): (payload: Payload, options?: Partial<CreatorOptions>) => Promise<Return> {
+  return (payload: Payload, options = {}) => {
     if (typeof parent !== "string") {
       options.parent = {
         property,
@@ -151,6 +154,6 @@ export function creatorHelper<
         atIndex: options?.parent?.atIndex,
       };
     }
-    return ctx.create(definition, payload, options);
+    return ctx.create(definition, payload, options) as any;
   };
 }

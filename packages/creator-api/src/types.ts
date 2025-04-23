@@ -23,17 +23,27 @@ export interface CreatorContext<T = any> {
   runCreate: (payload: T) => void;
 }
 
+export type ResolvedCreatorReturn<T extends CreatorDefinition> = Awaited<
+  ExtractCreatorGenerics<T>["CreateReturnType"]
+> extends any[]
+  ? CreatorResource[]
+  : CreatorResource;
+
 export interface CreatorFunctionContext {
   options: CreatorOptions;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
 
-  create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource>;
+  create(
+    definition: string,
+    payload: any,
+    options?: Partial<CreatorOptions>,
+  ): Promise<CreatorResource | CreatorResource[]>;
   create<Definition extends CreatorDefinition = any>(
     definition: Definition["id"],
     payload: GetCreatorPayload<Definition>,
     options?: Partial<CreatorOptions>,
-  ): Promise<CreatorResource>;
+  ): Promise<ResolvedCreatorReturn<Definition>>;
 
   generateId(type: string, parent?: Reference | ReferencedResource): string;
   getParent(): Reference | undefined;
@@ -94,6 +104,7 @@ export interface SpecificCreatorDefinition<
   AllResourceTypes = [ResourceType, ...AdditionalResourceTypes],
   SupportsParentTypes extends Array<AllAvailableParentTypes> = AllParentTypes,
   SupportsParentFields extends Array<AllProperties> = [],
+  CreateReturnType = any | Promise<any> | any[] | Promise<any[]>,
 > {
   // The creation itself
   readonly id: ID;
@@ -103,7 +114,7 @@ export interface SpecificCreatorDefinition<
   dependencies?: string[];
   tags?: string[];
 
-  create: (payload: Payload, ctx: CreatorInstance) => any | Promise<any>;
+  create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
 
   render?: (ctx: CreatorContext<Payload>) => ReactNode;
