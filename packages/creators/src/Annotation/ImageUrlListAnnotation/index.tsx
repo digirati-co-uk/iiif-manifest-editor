@@ -1,28 +1,29 @@
-import { AddImageIcon } from "@manifest-editor/components";
+import { ImageListIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
+import { CreateImageUrlListForm } from "../../ContentResource/ImageUrlListCreator/create-image-url-list";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
-import { CreateImageUrlAnnotationForm, createImageUrlAnnotation } from "./create-image-url-annotation";
+import { createImageUrlListAnnotation } from "./create-image-url-list-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
     interface CreatorDefinitions {
-      "@manifest-editor/image-url-annotation": typeof imageUrlAnnotation;
+      "@manifest-editor/image-url-list-annotation": typeof imageUrlListAnnotation;
     }
   }
 }
 
-export const imageUrlAnnotation = defineCreator({
-  id: "@manifest-editor/image-url-annotation",
-  create: createImageUrlAnnotation,
-  label: "Image",
-  dependencies: ["@manifest-editor/image-url-creator"],
-  summary: "Image from URL",
+export const imageUrlListAnnotation = defineCreator({
+  id: "@manifest-editor/image-url-list-annotation",
+  create: createImageUrlListAnnotation,
+  label: "List of Images",
+  dependencies: ["@manifest-editor/image-url-annotation"],
+  summary: "List of Images from URLs",
   tags: ["image"],
-  icon: <AddImageIcon />,
+  icon: <ImageListIcon />,
   render(ctx) {
-    return <CreateImageUrlAnnotationForm {...ctx} />;
+    return <CreateImageUrlListForm {...ctx} />;
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],

@@ -1,8 +1,8 @@
 import { descriptiveProperties } from "./descriptive";
+import { extensionProperties } from "./extensions";
 import { linkingProperties } from "./linking";
 import { structuralProperties } from "./structural";
 import { technicalProperties } from "./technical";
-import { extensionProperties } from "./extensions";
 
 const all = [
   "Collection",
@@ -14,36 +14,38 @@ const all = [
   "AnnotationCollection",
   "ContentResource",
   "Agent",
-];
+] as const;
 
-function getSupported(type: string) {
+export type AllResourceTypes = (typeof all)[number];
+
+function getSupported<const Type extends AllResourceTypes>(type: Type) {
   const required = [
-    ...(technicalProperties.required[(type || "ContentResource") as "Manifest"] || []),
-    ...(descriptiveProperties.required[(type || "ContentResource") as "Manifest"] || []),
-    ...(linkingProperties.required[(type || "ContentResource") as "Manifest"] || []),
-    ...(structuralProperties.required[(type || "ContentResource") as "Manifest"] || []),
-    ...(extensionProperties.required[(type || "ContentResource") as "Manifest"] || []),
+    ...(technicalProperties.required[type] || []),
+    ...(descriptiveProperties.required[type] || []),
+    ...(linkingProperties.required[type] || []),
+    ...(structuralProperties.required[type] || []),
+    ...(extensionProperties.required[type] || []),
   ];
   const recommended = [
-    ...(technicalProperties.recommended[(type || "ContentResource") as "Manifest"] || []),
-    ...(descriptiveProperties.recommended[(type || "ContentResource") as "Manifest"] || []),
-    ...(linkingProperties.recommended[(type || "ContentResource") as "Manifest"] || []),
-    ...(structuralProperties.recommended[(type || "ContentResource") as "Manifest"] || []),
-    ...(extensionProperties.recommended[(type || "ContentResource") as "Manifest"] || []),
+    ...(technicalProperties.recommended[type] || []),
+    ...(descriptiveProperties.recommended[type] || []),
+    ...(linkingProperties.recommended[type] || []),
+    ...(structuralProperties.recommended[type] || []),
+    ...(extensionProperties.recommended[type] || []),
   ];
   const notAllowed = [
-    ...(technicalProperties.notAllowed[(type || "ContentResource") as "Manifest"] || []),
-    ...(descriptiveProperties.notAllowed[(type || "ContentResource") as "Manifest"] || []),
-    ...(linkingProperties.notAllowed[(type || "ContentResource") as "Manifest"] || []),
-    ...(structuralProperties.notAllowed[(type || "ContentResource") as "Manifest"] || []),
-    ...(extensionProperties.notAllowed[(type || "ContentResource") as "Manifest"] || []),
+    ...(technicalProperties.notAllowed[type] || []),
+    ...(descriptiveProperties.notAllowed[type] || []),
+    ...(linkingProperties.notAllowed[type] || []),
+    ...(structuralProperties.notAllowed[type] || []),
+    ...(extensionProperties.notAllowed[type] || []),
   ];
   const optional = [
-    ...(technicalProperties.optional[(type || "ContentResource") as "Manifest"] || []),
-    ...(descriptiveProperties.optional[(type || "ContentResource") as "Manifest"] || []),
-    ...(linkingProperties.optional[(type || "ContentResource") as "Manifest"] || []),
-    ...(structuralProperties.optional[(type || "ContentResource") as "Manifest"] || []),
-    ...(extensionProperties.optional[(type || "ContentResource") as "Manifest"] || []),
+    ...(technicalProperties.optional[type] || []),
+    ...(descriptiveProperties.optional[type] || []),
+    ...(linkingProperties.optional[type] || []),
+    ...(structuralProperties.optional[type] || []),
+    ...(extensionProperties.optional[type] || []),
   ];
 
   const allowed = [...required, ...recommended, ...optional];

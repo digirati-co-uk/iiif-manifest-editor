@@ -1,14 +1,20 @@
 import { emptyAnnotationPage, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
-import type {
-  CreatorContext,
-  CreatorDefinition,
-  CreatorFunctionContext,
-  CreatorResource,
-} from "@manifest-editor/creator-api";
+import { type CreatorFunctionContext, type CreatorResource, defineCreator } from "@manifest-editor/creator-api";
 
-export const imageSlideCreator: CreatorDefinition<InfoBoxPayload> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/image-slide-creator": typeof imageSlideCreator;
+      "@exhibitions/image-slide-creator-bottom": typeof imageSlideBottomCreator;
+      "@exhibitions/image-slide-creator-left": typeof imageSlideLeftCreator;
+      "@exhibitions/image-slide-creator-right": typeof imageSlideRightCreator;
+    }
+  }
+}
+
+export const imageSlideCreator = defineCreator({
   id: "@exhibitions/image-slide-creator",
   create: createImageSlide,
   label: "Empty slide",
@@ -21,36 +27,34 @@ export const imageSlideCreator: CreatorDefinition<InfoBoxPayload> = {
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
-};
+});
 
-export const imageSlideLeftCreator: CreatorDefinition = {
+export const imageSlideLeftCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-left",
   label: "Image (Left)",
   summary: "An image with text on the left.",
   icon: <div>IMAGE (LEFT)</div>,
   create: (payload, ctx) => createImageSlide({ ...payload, type: "left" }, ctx),
-};
+});
 
-export const imageSlideRightCreator: CreatorDefinition = {
+export const imageSlideRightCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-right",
   label: "Image (Right)",
   summary: "An image with text on the right.",
   icon: <div>IMAGE (RIGHT)</div>,
-  create: (payload, ctx) =>
-    createImageSlide({ ...payload, type: "right" }, ctx),
-};
+  create: (payload, ctx) => createImageSlide({ ...payload, type: "right" }, ctx),
+});
 
-export const imageSlideBottomCreator: CreatorDefinition = {
+export const imageSlideBottomCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-bottom",
   label: "Image (Bottom)",
   summary: "An image with text at the bottom.",
   icon: <div>IMAGE (BOTTOM)</div>,
-  create: (payload, ctx) =>
-    createImageSlide({ ...payload, type: "bottom" }, ctx),
-};
+  create: (payload, ctx) => createImageSlide({ ...payload, type: "bottom" }, ctx),
+});
 
 interface InfoBoxPayload {
   canvasId?: string;
@@ -61,10 +65,7 @@ interface InfoBoxPayload {
   items?: CreatorResource[];
 }
 
-function createImageSlide(
-  payload: InfoBoxPayload,
-  ctx: CreatorFunctionContext,
-) {
+function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) {
   const canvasId = payload.canvasId || ctx.generateId("Canvas");
   const itemsPageId = ctx.generateId("AnnotationPage", {
     id: canvasId,

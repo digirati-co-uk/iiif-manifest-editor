@@ -1,30 +1,30 @@
-import { StructuralProperties } from "@iiif/presentation-3";
+import type { StructuralProperties } from "@iiif/presentation-3";
 
-const required: StructuralMap = {
+const required = {
   Collection: ["items"],
   Manifest: ["items"],
   Canvas: [],
-  Annotation: [],
+  Annotation: ["target"],
   AnnotationPage: [],
   Range: [],
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies StructuralMap;
 
-const recommended: StructuralMap = {
+const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: ["items"],
-  Annotation: [],
+  Annotation: ["body"],
   AnnotationPage: ["items"],
   Range: [],
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies StructuralMap;
 
-const optional: StructuralMap = {
+const optional = {
   Collection: ["annotations"],
   Manifest: ["structures", "annotations"],
   Canvas: ["annotations"],
@@ -34,24 +34,26 @@ const optional: StructuralMap = {
   AnnotationCollection: [],
   ContentResource: ["annotations"],
   Agent: [],
-} as const;
+} as const satisfies StructuralMap;
 
-const notAllowed: StructuralMap = {
-  Collection: ["structures"],
-  Manifest: [],
-  Canvas: ["structures"],
+const notAllowed = {
+  Collection: ["structures", "target", "body"],
+  Manifest: ["target", "body"],
+  Canvas: ["structures", "target", "body"],
   Annotation: ["items", "structures", "annotations"],
-  AnnotationPage: ["structures", "annotations"],
-  Range: ["structures"],
+  AnnotationPage: ["structures", "annotations", "target", "body"],
+  Range: ["structures", "target", "body"],
   AnnotationCollection: [
     // Leaving this out, as it's technically valid - just not withing a Presentation 3 context.
     // "items",
     "structures",
     "annotations",
+    "target",
+    "body",
   ],
-  ContentResource: ["items", "structures"],
-  Agent: ["items", "structures", "annotations"],
-} as const;
+  ContentResource: ["items", "structures", "target", "body"],
+  Agent: ["items", "structures", "annotations", "target", "body"],
+} as const satisfies StructuralMap;
 
 type StructuralMap = Record<
   | "Collection"
@@ -63,10 +65,10 @@ type StructuralMap = Record<
   | "AnnotationCollection"
   | "ContentResource"
   | "Agent",
-  readonly (keyof StructuralProperties<unknown>)[]
+  readonly (keyof StructuralProperties<unknown> | "body" | "target")[]
 >;
 
-const all: readonly (keyof StructuralProperties<unknown>)[] = ["annotations", "items", "structures"] as const;
+const all = ["annotations", "items", "structures"] as const;
 
 export const structuralProperties = {
   all,

@@ -1,14 +1,21 @@
-import type {
-  CreatorDefinition,
-  CreatorFunctionContext,
-  GetCreatorPayload,
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  type CreatorResource,
+  defineCreator,
 } from "@manifest-editor/creator-api";
-import { imageServiceCreator } from "@manifest-editor/creators";
+import { type CreateImageServicePayload, imageServiceCreator } from "@manifest-editor/creators";
 import { imageSlideCreator } from "./image-slide-creator";
 
-export const imageServiceSlideCreator: CreatorDefinition<
-  GetCreatorPayload<typeof imageServiceCreator>
-> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/image-service-creator": typeof imageServiceSlideCreator;
+    }
+  }
+}
+
+export const imageServiceSlideCreator = defineCreator({
   ...imageServiceCreator,
   id: "@exhibitions/image-service-creator",
   create: createImageService,
@@ -20,34 +27,33 @@ export const imageServiceSlideCreator: CreatorDefinition<
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
-};
+});
 
 async function createImageService(
-  data: GetCreatorPayload<typeof imageServiceCreator>,
+  data: CreateImageServicePayload,
   ctx: CreatorFunctionContext,
-) {
+): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
     type: "Canvas",
   });
+  const annotationId = ctx.generateId("annotation");
+
+  const createImageService = creatorHelper(
+    ctx,
+    { id: annotationId, type: "Annotation" },
+    "body",
+    "@manifest-editor/image-service-creator",
+  );
 
   // 1. Call the original creator to get the annotation
-  const resource = await ctx.create<typeof imageServiceCreator>(
-    imageServiceCreator.id,
-    data,
-    {
-      target: {
-        id: canvasId,
-        type: "Canvas",
-      },
-      targetType: "Annotation",
-      parent: {
-        resource: { id: pageId, type: "AnnotationPage" },
-        property: "items",
-      },
+  const resource = await createImageService(data, {
+    target: {
+      id: canvasId,
+      type: "Canvas",
     },
-  );
+  });
 
   const { width, height } = resource.get();
 
@@ -63,7 +69,8 @@ async function createImageService(
   });
 
   // 2. Pass that to an empty slide.
-  return await ctx.create<typeof imageSlideCreator>(imageSlideCreator.id, {
+  const createSlide = creatorHelper(ctx, "Manifest", "items", "@exhibitions/image-slide-creator");
+  return await createSlide({
     canvasId,
     width,
     height,

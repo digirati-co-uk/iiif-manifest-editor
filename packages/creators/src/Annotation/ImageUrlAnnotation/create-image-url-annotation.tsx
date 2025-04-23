@@ -1,12 +1,11 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorFunctionContext,
-  CreatorContext,
-} from "@manifest-editor/creator-api";
 import {
-  type CreateImageUrlPayload,
-  CreateImageUrlForm,
-} from "../../ContentResource/ImageUrlCreator/create-image-url";
+  type CreatorContext,
+  type CreatorFunctionContext,
+  type CreatorResource,
+  creatorHelper,
+} from "@manifest-editor/creator-api";
+import { CreateImageUrlForm, type CreateImageUrlPayload } from "../../ContentResource/ImageUrlCreator/create-image-url";
 
 export interface CreateImageUrlAnnotationPayload extends CreateImageUrlPayload {
   label?: InternationalString;
@@ -16,28 +15,26 @@ export interface CreateImageUrlAnnotationPayload extends CreateImageUrlPayload {
 export async function createImageUrlAnnotation(
   data: CreateImageUrlAnnotationPayload,
   ctx: CreatorFunctionContext,
-) {
+): Promise<CreatorResource> {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
   };
   const targetType = ctx.options.targetType as "Annotation" | "Canvas";
 
-  const resource = await ctx.create(
-    "@manifest-editor/image-url-creator",
-    data,
-    {
-      parent: { resource: annotation, property: "body" },
-    },
-  );
+  const createImage = creatorHelper(ctx, "Annotation", "body", "@manifest-editor/image-url-creator");
+
+  const resource = await createImage(data, {
+    parent: { resource: annotation, property: "body" },
+  });
 
   if (targetType === "Annotation") {
-    return {
+    return ctx.embed({
       ...annotation,
       body: [resource],
       motivation: data.motivation || "painting",
       target: ctx.getTarget(),
-    };
+    });
   }
 
   if (targetType === "Canvas") {
@@ -72,10 +69,10 @@ export async function createImageUrlAnnotation(
       items: [page],
     });
   }
+
+  throw new Error("Unsupported target type");
 }
 
-export function CreateImageUrlAnnotationForm(
-  props: CreatorContext<CreateImageUrlPayload>,
-) {
+export function CreateImageUrlAnnotationForm(props: CreatorContext<CreateImageUrlPayload>) {
   return <CreateImageUrlForm {...props} />;
 }

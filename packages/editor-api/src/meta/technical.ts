@@ -1,6 +1,6 @@
-import { TechnicalProperties } from "@iiif/presentation-3";
+import type { TechnicalProperties } from "@iiif/presentation-3";
 
-const required: TechnicalMap = {
+const required = {
   Collection: ["id", "type"],
   Manifest: ["id", "type"],
   Canvas: ["id", "type"],
@@ -10,9 +10,9 @@ const required: TechnicalMap = {
   AnnotationCollection: ["id", "type"],
   ContentResource: ["id", "type"],
   Agent: ["id", "type"],
-} as const;
+} as const satisfies TechnicalMap;
 
-const recommended: TechnicalMap = {
+const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
@@ -22,9 +22,9 @@ const recommended: TechnicalMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: [],
-} as const;
+} as const satisfies TechnicalMap;
 
-const optional: TechnicalMap = {
+const optional = {
   Collection: ["viewingDirection", "behavior"],
   Manifest: ["viewingDirection", "behavior"],
   Canvas: ["height", "width", "duration", "behavior"],
@@ -34,11 +34,11 @@ const optional: TechnicalMap = {
   AnnotationCollection: ["behavior"],
   ContentResource: ["format", "height", "width", "duration", "behavior"],
   Agent: [],
-} as const;
+} as const satisfies TechnicalMap;
 
 const annotationOnly = ["motivation"] as const;
 
-const notAllowed: TechnicalMap = {
+const notAllowed = {
   Collection: ["format", "profile", "height", "width", "duration", "timeMode", ...annotationOnly],
   Manifest: ["format", "profile", "height", "width", "duration", "timeMode", ...annotationOnly],
   Canvas: ["format", "profile", "viewingDirection", "timeMode", ...annotationOnly],
@@ -76,7 +76,7 @@ const notAllowed: TechnicalMap = {
     "behavior",
     ...annotationOnly,
   ],
-} as const;
+} as const satisfies TechnicalMap;
 
 type TechnicalMap = Record<
   | "Collection"
@@ -91,7 +91,7 @@ type TechnicalMap = Record<
   readonly (keyof TechnicalProperties)[]
 >;
 
-const all: readonly (keyof TechnicalProperties)[] = [
+const all = [
   "id",
   "type",
   "format",

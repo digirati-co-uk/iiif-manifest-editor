@@ -32,6 +32,7 @@ export * from "./ItemWithHandle";
 export * from "./HandleContainer";
 export * from "./CollectionListItem";
 export * from "./ManifestListItem";
+export * from "./Spinner";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";
@@ -54,6 +55,7 @@ export * from "./icons/MoreMenu";
 export * from "./icons/ManifestIcon";
 export * from "./icons/CollectionIcon";
 export * from "./icons/PreviewIcon";
+export * from "./icons/ImageListIcon";
 
 // Messages
 export * from "./ErrorMessage";

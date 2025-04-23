@@ -1,12 +1,16 @@
 import { HTMLIcon } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import {
-  CreateHTMLAnnotation,
-  type CreateHTMLAnnotationPayload,
-  createHtmlAnnotation,
-} from "./create-html-annotation";
+import { defineCreator } from "@manifest-editor/creator-api";
+import { CreateHTMLAnnotation, createHtmlAnnotation } from "./create-html-annotation";
 
-export const htmlAnnotation: CreatorDefinition<CreateHTMLAnnotationPayload> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/html-annotation": typeof htmlAnnotation;
+    }
+  }
+}
+
+export const htmlAnnotation = defineCreator({
   id: "@manifest-editor/html-annotation",
   create: createHtmlAnnotation,
   label: "HTML",
@@ -26,4 +30,4 @@ export const htmlAnnotation: CreatorDefinition<CreateHTMLAnnotationPayload> = {
   staticFields: {
     type: "Annotation",
   },
-};
+});

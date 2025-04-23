@@ -1,4 +1,4 @@
-import { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/presentation-3";
 
 export interface BehaviorChoice {
   id: string;

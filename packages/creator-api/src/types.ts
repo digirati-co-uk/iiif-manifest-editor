@@ -1,9 +1,20 @@
 import type { Vault } from "@iiif/helpers/vault";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type {
+  Annotation,
+  DescriptiveProperties,
+  LinkingProperties,
+  NavPlaceExtension,
+  Reference,
+  SpecificResource,
+  StructuralProperties,
+  TechnicalProperties,
+} from "@iiif/presentation-3";
+import type { resources, technicalProperties } from "@manifest-editor/editor-api";
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";
 import type { CreatorResource } from "./CreatorResource";
 import type { ReferencedResource } from "./ReferencedResource";
+import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
 
 export interface CreatorContext<T = any> {
   vault: Vault;
@@ -11,6 +22,12 @@ export interface CreatorContext<T = any> {
   validate: (payload: T) => Promise<boolean> | boolean;
   runCreate: (payload: T) => void;
 }
+
+export type ResolvedCreatorReturn<T extends CreatorDefinition> = Awaited<
+  ExtractCreatorGenerics<T>["CreateReturnType"]
+> extends any[]
+  ? CreatorResource[]
+  : CreatorResource;
 
 export interface CreatorFunctionContext {
   options: CreatorOptions;
@@ -21,12 +38,12 @@ export interface CreatorFunctionContext {
     definition: string,
     payload: any,
     options?: Partial<CreatorOptions>,
-  ): Promise<CreatorResource>;
+  ): Promise<CreatorResource | CreatorResource[]>;
   create<Definition extends CreatorDefinition = any>(
     definition: Definition["id"],
     payload: GetCreatorPayload<Definition>,
     options?: Partial<CreatorOptions>,
-  ): Promise<CreatorResource>;
+  ): Promise<ResolvedCreatorReturn<Definition>>;
 
   generateId(type: string, parent?: Reference | ReferencedResource): string;
   getParent(): Reference | undefined;
@@ -35,8 +52,9 @@ export interface CreatorFunctionContext {
   getPreviewVault(): Vault;
 }
 
-export type GetCreatorPayload<T extends CreatorDefinition> =
-  T extends CreatorDefinition<infer Payload> ? Payload : never;
+export type GetCreatorPayload<T extends CreatorDefinition> = T extends CreatorDefinition<infer Payload>
+  ? Payload
+  : never;
 
 interface CreatorParent {
   resource: Reference;
@@ -50,16 +68,53 @@ export interface CreatorOptions {
   initialData?: any;
 }
 
-export interface CreatorDefinition<Payload = any> {
+export type AllAvailableParentTypes = keyof typeof resources.supported;
+
+type ManifestFields = typeof resources.supported.Manifest.all;
+
+export type GetSupportedResourceFields<Resource extends AllAvailableParentTypes> =
+  {} & (typeof resources.supported)[Resource]["allowed"][number];
+
+export type AllProperties =
+  | ({} & keyof LinkingProperties)
+  | ({} & keyof StructuralProperties<any>)
+  | ({} & keyof TechnicalProperties)
+  | ({} & keyof DescriptiveProperties)
+  | ({} & keyof Annotation)
+  | ({} & keyof NavPlaceExtension);
+
+export type AllParentTypes = [
+  "Collection",
+  "Manifest",
+  "Canvas",
+  "Annotation",
+  "AnnotationPage",
+  "Range",
+  "AnnotationCollection",
+  "ContentResource",
+  "Agent",
+];
+
+export interface SpecificCreatorDefinition<
+  //
+  Payload = any,
+  ID = Readonly<string>,
+  ResourceType extends AllAvailableParentTypes = never,
+  AdditionalResourceTypes extends Array<AllAvailableParentTypes> = [],
+  AllResourceTypes = [ResourceType, ...AdditionalResourceTypes],
+  SupportsParentTypes extends Array<AllAvailableParentTypes> = AllParentTypes,
+  SupportsParentFields extends Array<AllProperties> = [],
+  CreateReturnType = any | Promise<any> | any[] | Promise<any[]>,
+> {
   // The creation itself
-  id: string;
+  readonly id: ID;
   label: string;
   summary?: string;
   icon?: any;
   dependencies?: string[];
   tags?: string[];
 
-  create: (payload: Payload, ctx: CreatorInstance) => any | Promise<any>;
+  create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
 
   render?: (ctx: CreatorContext<Payload>) => ReactNode;
@@ -67,8 +122,8 @@ export interface CreatorDefinition<Payload = any> {
   renderModal?: (ctx: CreatorContext<Payload>) => ReactNode;
 
   // What is being created.
-  resourceType: string;
-  additionalTypes?: string[];
+  resourceType: ResourceType;
+  additionalTypes?: AdditionalResourceTypes;
   resourceFields: string[];
   embeddedResources?: string[];
   // This is completely static values. (e.g. {type: 'Image'})
@@ -79,8 +134,8 @@ export interface CreatorDefinition<Payload = any> {
   // Where is it valid?
   supports: {
     initialData?: boolean;
-    parentTypes?: string[];
-    parentFields?: string[];
+    parentTypes?: SupportsParentTypes;
+    parentFields?: SupportsParentFields;
     parentFieldMap?: Record<string, string[]>;
     custom?: (parent: CreatorParent, vault: Vault) => boolean;
     // Edge-case for painting annotations.
@@ -90,11 +145,11 @@ export interface CreatorDefinition<Payload = any> {
   sideEffects?: Array<CreatorSideEffect>;
 }
 
+// Keep this for compatibility.
+export type CreatorDefinition<Payload = any> = SpecificCreatorDefinition<Payload, any, any, any, any, any, any>;
+
 export interface CreatorSideEffect {
-  run?: (
-    result: any,
-    ctx: { options: CreatorOptions; vault: Vault },
-  ) => void | Promise<void>;
+  run?: (result: any, ctx: { options: CreatorOptions; vault: Vault }) => void | Promise<void>;
   temporal?: boolean;
   spatial?: boolean;
   replaceSiblings?: boolean;

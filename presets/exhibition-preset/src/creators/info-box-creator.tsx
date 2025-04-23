@@ -1,22 +1,22 @@
 import { emptyAnnotation, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorDefinition,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
+import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 
-export const infoBoxCreator: CreatorDefinition = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/info-box-creator": typeof infoBoxCreator;
+    }
+  }
+}
+
+export const infoBoxCreator = defineCreator({
   id: "@exhibitions/info-box-creator",
   create: createInfoBox,
   label: "Info box",
   summary: "A text panel for an exhibition",
   icon: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
       <title>Info box</title>
       <path
         fill="currentColor"
@@ -31,7 +31,7 @@ export const infoBoxCreator: CreatorDefinition = {
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
-};
+});
 
 interface InfoBoxPayload {
   label?: InternationalString;
@@ -39,10 +39,7 @@ interface InfoBoxPayload {
   width?: number;
 }
 
-async function createInfoBox(
-  data: InfoBoxPayload,
-  ctx: CreatorFunctionContext,
-) {
+async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,

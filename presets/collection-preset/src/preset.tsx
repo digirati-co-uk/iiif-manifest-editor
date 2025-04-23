@@ -5,8 +5,7 @@ import {
   manifestBrowserCreator,
   webPageCreator,
 } from "@manifest-editor/creators";
-import { allEditors, combinedProperties, metadata, useInStack } from "@manifest-editor/editors";
-import { descriptiveProperties, linkingProperties, technicalProperties } from "@manifest-editor/editors";
+import { allEditors, useInStack } from "@manifest-editor/editors";
 import { IIIFExplorer } from "@manifest-editor/iiif-browser";
 import {
   type Config,

@@ -1,4 +1,4 @@
-import { Label, Form as RAForm, Input, LabelProps, RadioGroup, Radio } from "react-aria-components";
+import { Input, Label, type LabelProps, Form as RAForm, Radio, RadioGroup, TextArea } from "react-aria-components";
 import { cn } from "./utils";
 
 function MeLabel({ className, ...props }: LabelProps) {
@@ -7,7 +7,7 @@ function MeLabel({ className, ...props }: LabelProps) {
       className={cn(
         //
         "font-semibold text-sm",
-        className
+        className,
       )}
       {...props}
     />
@@ -20,7 +20,7 @@ function MeRadioGroup({ className, ...props }: any) {
       className={cn(
         //
         "",
-        className
+        className,
       )}
       {...props}
     />
@@ -34,7 +34,7 @@ function MeRadio({ className, ...props }: any) {
         cn(
           //
           "outline outline-me-primary-500 outline-offset-2 w-5 h-5 rounded-full bg-white transition-all border-[7px] border-gray-700 group-pressed:border-gray-800 outline-0",
-          className
+          className,
         )
       }
       {...props}
@@ -48,7 +48,7 @@ function MeForm({ className, ...props }: any) {
       className={cn(
         //
         "",
-        className
+        className,
       )}
       {...props}
     />
@@ -62,7 +62,21 @@ function MeInput({ className, ...props }: any) {
         //
         "p-2 bg-me-gray-100 border-b border-b-me-gray-500",
         "focus:ring-0 outline-0 focus:border-me-primary-500 focus:bg-[#ECEEF5]",
-        className
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function MeTextArea({ className, ...props }: any) {
+  return (
+    <TextArea
+      className={cn(
+        //
+        "p-2 bg-me-gray-100 border-b border-b-me-gray-500",
+        "focus:ring-0 outline-0 focus:border-me-primary-500 focus:bg-[#ECEEF5]",
+        className,
       )}
       {...props}
     />
@@ -80,7 +94,7 @@ function MeInputContainer({
         //
         "flex flex-col gap-2",
         horizontal && "flex-row",
-        className
+        className,
       )}
       {...props}
     />
@@ -94,4 +108,5 @@ export const Form = {
   InputContainer: MeInputContainer,
   RadioGroup: MeRadioGroup,
   Radio: MeRadio,
+  TextArea: MeTextArea,
 };

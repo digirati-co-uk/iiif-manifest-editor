@@ -1,4 +1,4 @@
-import { Entities, Vault } from "@iiif/helpers/vault";
+import type { Entities, Vault } from "@iiif/helpers/vault";
 import {
   emptyAgent,
   emptyAnnotation,
@@ -10,7 +10,19 @@ import {
   emptyService,
   toRef,
 } from "@iiif/parser";
-import { CreatableResource, CreatorDefinition } from "./types";
+import type { CreatorResource } from "./CreatorResource";
+import { CreatorRuntime } from "./CreatorRuntime";
+import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
+import type {
+  AllAvailableParentTypes,
+  CreatableResource,
+  CreatorDefinition,
+  CreatorFunctionContext,
+  CreatorOptions,
+  GetCreatorPayload,
+  GetSupportedResourceFields,
+  ResolvedCreatorReturn,
+} from "./types";
 
 export function resolveType(type: string): keyof Entities {
   switch (type) {
@@ -99,19 +111,13 @@ export function matchBasedOnResource(
       }
 
       if (def.supports.custom) {
-        const isValid = def.supports.custom(
-          { property, resource: parent, atIndex: resource.index },
-          options.vault,
-        );
+        const isValid = def.supports.custom({ property, resource: parent, atIndex: resource.index }, options.vault);
         if (!isValid) {
           continue;
         }
       }
 
-      if (
-        !def.supports.initialData &&
-        Object.keys(resource.initialData || {}).length !== 0
-      ) {
+      if (!def.supports.initialData && Object.keys(resource.initialData || {}).length !== 0) {
         continue;
       }
 
@@ -125,4 +131,29 @@ export function matchBasedOnResource(
   }
 
   return supported;
+}
+
+export function creatorHelper<
+  const ResourceType extends AllAvailableParentTypes,
+  const Parent extends { id: string; type: ResourceType },
+  const ResourceField extends GetSupportedResourceFields<ResourceType>,
+  const CID extends CreatorDefinitionFilterByParent<ResourceType, ResourceField>["id"],
+  Payload = GetCreatorPayload<IIIFManifestEditor.CreatorDefinitions[CID]>,
+  Return = ResolvedCreatorReturn<IIIFManifestEditor.CreatorDefinitions[CID]>,
+>(
+  ctx: CreatorFunctionContext,
+  parent: Parent | ResourceType,
+  property: ResourceField,
+  definition: CID,
+): (payload: Payload, options?: Partial<CreatorOptions>) => Promise<Return> {
+  return (payload: Payload, options = {}) => {
+    if (typeof parent !== "string") {
+      options.parent = {
+        property,
+        resource: parent,
+        atIndex: options?.parent?.atIndex,
+      };
+    }
+    return ctx.create(definition, payload, options) as any;
+  };
 }

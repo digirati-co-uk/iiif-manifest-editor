@@ -16,7 +16,7 @@ const CC_BY_NC = "http://creativecommons.org/licenses/by-nc/4.0/";
 const CC_BY_NC_SA = "http://creativecommons.org/licenses/by-nc-sa/4.0/";
 const CC_BY_NC_ND = "http://creativecommons.org/licenses/by-nc-nd/4.0/";
 
-export const allRights = [CC0, CC_BY, CC_BY_SA, CC_BY_ND, CC_BY_NC, CC_BY_NC_SA, CC_BY_NC_ND];
+export const allRights = [CC0, CC_BY, CC_BY_SA, CC_BY_ND, CC_BY_NC, CC_BY_NC_SA, CC_BY_NC_ND] as const;
 
 export const creativeCommons: CCDefinition[] = [
   {
