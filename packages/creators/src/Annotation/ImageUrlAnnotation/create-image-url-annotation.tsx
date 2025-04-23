@@ -15,7 +15,7 @@ export interface CreateImageUrlAnnotationPayload extends CreateImageUrlPayload {
 export async function createImageUrlAnnotation(
   data: CreateImageUrlAnnotationPayload,
   ctx: CreatorFunctionContext,
-): Promise<any> {
+): Promise<CreatorResource> {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -29,12 +29,12 @@ export async function createImageUrlAnnotation(
   });
 
   if (targetType === "Annotation") {
-    return {
+    return ctx.embed({
       ...annotation,
       body: [resource],
       motivation: data.motivation || "painting",
       target: ctx.getTarget(),
-    };
+    });
   }
 
   if (targetType === "Canvas") {
