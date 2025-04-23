@@ -74,7 +74,7 @@ export function ManifestPreviewItem() {
           onClick={() => setOpen(true)}
         >
           <PreviewIcon />
-          <DefaultTooltipContent>Preview Manifest</DefaultTooltipContent>
+          <DefaultTooltipContent>Browse Manifest</DefaultTooltipContent>
         </TooltipTrigger>
       </Tooltip>
 

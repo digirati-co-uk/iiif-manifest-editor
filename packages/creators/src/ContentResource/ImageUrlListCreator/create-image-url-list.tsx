@@ -44,7 +44,7 @@ export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListP
     <PaddedSidebarContainer>
       <Form.Form onSubmit={onSubmit}>
         <Form.InputContainer className="mb-4">
-          <Form.Label>Enter a list of URLs</Form.Label>
+          <Form.Label>Enter a list of URLs (one per line)</Form.Label>
           <Form.TextArea name="urls" rows="10" />
         </Form.InputContainer>
         <Button type="submit">Create</Button>

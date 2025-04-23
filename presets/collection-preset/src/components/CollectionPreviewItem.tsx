@@ -74,7 +74,7 @@ export function CollectionPreviewItem() {
           onClick={() => setOpen(true)}
         >
           <PreviewIcon />
-          <DefaultTooltipContent>Preview Collection</DefaultTooltipContent>
+          <DefaultTooltipContent>Browse Collection</DefaultTooltipContent>
         </TooltipTrigger>
       </Tooltip>
 

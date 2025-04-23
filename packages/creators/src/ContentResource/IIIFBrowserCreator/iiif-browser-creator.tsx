@@ -1,5 +1,6 @@
 import { type BoxSelector, type ContentState, Vault, normaliseContentState, parseContentState } from "@iiif/helpers";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
+import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
@@ -58,7 +59,11 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         const canvas = previewVault.get(canvasRef);
 
         if (targetType === "Canvas" && selector?.type !== "BoxSelector") {
-          returnResources.push(ctx.embed(previewVault.toPresentation3(canvas)));
+          const fullCanvas = previewVault.toPresentation3<Canvas>(canvas)!;
+          if (!fullCanvas.label) {
+            fullCanvas.label = { en: ["Untitled canvas"] };
+          }
+          returnResources.push(ctx.embed(fullCanvas));
           continue;
         }
 
@@ -150,6 +155,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                 ctx.embed({
                   id: canvasId,
                   type: "Canvas",
+                  label: { en: ["Untitled canvas"] },
                   width: ~~selector.spatial.width,
                   height: ~~selector.spatial.height,
                   thumbnail: thumbnailId
