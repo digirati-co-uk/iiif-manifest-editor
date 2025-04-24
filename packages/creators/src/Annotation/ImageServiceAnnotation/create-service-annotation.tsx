@@ -1,5 +1,10 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { type CreatorContext, type CreatorFunctionContext, creatorHelper } from "@manifest-editor/creator-api";
+import {
+  type CreatorContext,
+  type CreatorFunctionContext,
+  type CreatorResource,
+  creatorHelper,
+} from "@manifest-editor/creator-api";
 import {
   CreateImageServerForm,
   type CreateImageServicePayload,
@@ -8,6 +13,7 @@ import {
 export interface CreateImageServiceAnnotationPayload extends CreateImageServicePayload {
   label?: InternationalString;
   motivation?: string;
+  thumbnailSize?: number;
 }
 
 export async function createImageServiceAnnotation(
@@ -58,12 +64,23 @@ export async function createImageServiceAnnotation(
       items: [annotationResource],
     });
 
+    let thumbnail: CreatorResource | undefined = undefined;
+    if (data.service?.sizes) {
+      // We can use the creator declaratively to get a thumbnail from the service.
+      const createThumbnail = creatorHelper(ctx, "Canvas", "thumbnail", "@manifest-editor/thumbnail-image");
+      thumbnail = await createThumbnail({
+        service: data.service,
+        width: data.thumbnailSize || 400,
+      });
+    }
+
     return ctx.embed({
       id: canvasId,
       type: "Canvas",
       label: data.label || { en: ["Untitled canvas"] },
       height: resource.resource.height || 1000,
       width: resource.resource.width || 1000,
+      thumbnail: thumbnail ? [thumbnail] : undefined,
       items: [page],
     });
   }

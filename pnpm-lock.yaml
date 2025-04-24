@@ -104,10 +104,10 @@ importers:
         version: 3.2.2(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -451,10 +451,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -491,10 +491,10 @@ importers:
         version: 2.2.0
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -561,10 +561,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -610,10 +610,10 @@ importers:
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -770,10 +770,10 @@ importers:
         version: 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -878,10 +878,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -957,10 +957,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1070,10 +1070,10 @@ importers:
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1225,10 +1225,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1301,10 +1301,10 @@ importers:
         version: 3.2.2(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1374,10 +1374,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: ^1.3.1
-        version: 1.3.1(@iiif/parser@2.1.7)
+        version: 1.3.1(@iiif/parser@2.1.8)
       '@iiif/parser':
-        specifier: ^2.1.7
-        version: 2.1.7
+        specifier: ^2.1.8
+        version: 2.1.8
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -2890,9 +2890,6 @@ packages:
     resolution: {integrity: sha512-zVqgvvrUhKVq8JR1Gz8VXp+dD3SDdleAg/yJfGJ7cFvqFXiNQRtgY1ZbKxUfj/5ej5w5pgD/UuFF+E2CjcbxwQ==}
     peerDependencies:
       '@iiif/parser': ^2.1.7
-
-  '@iiif/parser@2.1.7':
-    resolution: {integrity: sha512-a3NrHOdW6RbmUeBCFJ751FBBuzS251O7owbRjUHUvRRs9GoFwNIDk5slh9qP5FFHycIbuyWjyl1lIxbikxAq/g==}
 
   '@iiif/parser@2.1.8':
     resolution: {integrity: sha512-87ifvY3Pq6dzSbHKrCr6/aIiZZDeaozIFz+EAYWYGxmpxn213t3kISCrSCC/XJ03jdXW7mQgPUEPcmztX5uh1A==}
@@ -14296,18 +14293,6 @@ snapshots:
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/helpers@1.3.1(@iiif/parser@2.1.7)':
-    dependencies:
-      '@iiif/parser': 2.1.7
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      '@types/geojson': 7946.0.13
-    optionalDependencies:
-      abs-svg-path: 0.1.1
-      parse-svg-path: 0.1.2
-      svg-arc-to-cubic-bezier: 3.2.0
-
   '@iiif/helpers@1.3.1(@iiif/parser@2.1.8)':
     dependencies:
       '@iiif/parser': 2.1.8
@@ -14319,13 +14304,6 @@ snapshots:
       abs-svg-path: 0.1.1
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
-
-  '@iiif/parser@2.1.7':
-    dependencies:
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      '@types/geojson': 7946.0.14
 
   '@iiif/parser@2.1.8':
     dependencies:
@@ -21010,8 +20988,8 @@ snapshots:
   iiif-browser@2.0.1(@types/react@18.3.3)(immer@10.1.1):
     dependencies:
       '@atlas-viewer/atlas': 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
-      '@iiif/parser': 2.1.7
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.8)
+      '@iiif/parser': 2.1.8
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       history: 5.3.0
@@ -23806,8 +23784,8 @@ snapshots:
     dependencies:
       '@atlas-viewer/atlas': 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.7)
-      '@iiif/parser': 2.1.7
+      '@iiif/helpers': 1.3.1(@iiif/parser@2.1.8)
+      '@iiif/parser': 2.1.8
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7

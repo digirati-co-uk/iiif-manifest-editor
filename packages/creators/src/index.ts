@@ -15,6 +15,7 @@ import { imageServiceCreator } from "./ContentResource/ImageServiceCreator";
 import { imageUrlCreator } from "./ContentResource/ImageUrlCreator";
 import { imageUrlListCreator } from "./ContentResource/ImageUrlListCreator";
 import { plaintextCreator } from "./ContentResource/PlaintextCreator";
+import { thumbnailCreator } from "./ContentResource/ThumbnailCreator";
 import { webPageCreator } from "./ContentResource/WebPageCreator";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
@@ -34,6 +35,7 @@ export * from "./ContentResource/ImageServiceCreator/create-image-service";
 export * from "./ContentResource/ImageUrlCreator/create-image-url";
 export * from "./ContentResource/ImageUrlListCreator/create-image-url-list";
 export * from "./ContentResource/PlaintextCreator/create-plaintext";
+export * from "./ContentResource/ThumbnailCreator/create-thumbnail";
 export * from "./ContentResource/WebPageCreator/create-web-page";
 export * from "./ContentResource/YouTubeCreator/create-youtube-body";
 export * from "./Manifest/ManifestBrowserCreator/manifest-browser-creator";
@@ -59,6 +61,7 @@ export const allCreators = [
   captionedImageAnnotation,
   imageUrlListCreator,
   imageUrlListAnnotation,
+  thumbnailCreator,
 ];
 
 export {
