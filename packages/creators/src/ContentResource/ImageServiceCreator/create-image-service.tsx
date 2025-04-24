@@ -57,8 +57,6 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
     originalPath: (request as any).originalPath,
   });
 
-  console.log(imageId);
-
   const resource = ctx.embed({
     id: imageId,
     type: "Image",

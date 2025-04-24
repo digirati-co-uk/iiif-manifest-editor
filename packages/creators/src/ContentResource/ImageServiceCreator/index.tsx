@@ -1,5 +1,5 @@
+import { IIIFLogo } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
 import { CreateImageServerForm, createImageServer } from "./create-image-service";
 
 declare module "@manifest-editor/creator-api" {
@@ -15,7 +15,7 @@ export const imageServiceCreator = defineCreator({
   create: createImageServer,
   label: "Image Service",
   summary: "Add an image from Image Service",
-  icon: <TextFormatIcon />,
+  icon: <IIIFLogo style={{ padding: 10 }} />,
   render(ctx) {
     return <CreateImageServerForm {...ctx} />;
   },
