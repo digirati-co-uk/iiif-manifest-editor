@@ -169,7 +169,7 @@ export function BaseCreator(props: BaseCreatorProps) {
     <ModalBackSlot>
       <IconButton
         root={document.getElementById("headlessui-portal-root") || undefined}
-        label="Back to creators"
+        label="Back to Add content options"
         className="group"
         placement="right"
         onPress={() => setCurrentId("")}
