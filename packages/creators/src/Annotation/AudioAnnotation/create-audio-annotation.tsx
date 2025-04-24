@@ -1,10 +1,9 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ErrorMessage } from "@manifest-editor/components";
+import { ActionButton, ErrorMessage } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { FormFieldWrapper, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useEffect, useState } from "react";
 import { CanvasPanel } from "react-iiif-vault";
@@ -102,7 +101,7 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
     <PaddedSidebarContainer>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
-      <InputContainer>
+      <InputContainer $wide>
         <InputLabel htmlFor="audio-url">URL</InputLabel>
         <Input type="text" id="audio-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
@@ -125,7 +124,7 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
           <MediaControls
             key={`${url}__${duration}`}
             onError={(error) => setError(error)}
-            onDuration={(duration) => setDuration(duration)}
+            onDuration={(duration) => setDuration(~~duration)}
           />
         </CanvasPanel.AudioHTML>
       ) : null}
@@ -137,7 +136,9 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
         </FormFieldWrapper>
       ) : null}
 
-      {url && !error && <Button onClick={onSubmit}>Add audio</Button>}
+      <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url || !!error}>
+        Add audio
+      </ActionButton>
     </PaddedSidebarContainer>
   );
 }

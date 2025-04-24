@@ -1,5 +1,13 @@
 import { toRef } from "@iiif/parser";
-import { CreatorGrid, ErrorMessage, Spinner } from "@manifest-editor/components";
+import {
+  BackIcon,
+  CreatorGrid,
+  ErrorMessage,
+  GridIcon,
+  IconButton,
+  ModalBackSlot,
+  Spinner,
+} from "@manifest-editor/components";
 import {
   type CreatableResource,
   type CreatorDefinition,
@@ -11,7 +19,7 @@ import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useLayoutActions } from "../Layout/Layout.context";
-import { useSetCustomTitle } from "../Layout/components/ModularPanel";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { useInlineCreator } from "./BaseCreator.hooks";
 
@@ -157,18 +165,35 @@ export function BaseCreator(props: BaseCreatorProps) {
     return <div>Not currently supported</div>;
   }
 
+  const backButton = (
+    <ModalBackSlot>
+      <IconButton
+        root={document.getElementById("headlessui-portal-root") || undefined}
+        label="Back to creators"
+        className="group"
+        placement="right"
+        onPress={() => setCurrentId("")}
+      >
+        <GridIcon className="text-2xl opacity-50 group-hover:opacity-70" />
+      </IconButton>
+    </ModalBackSlot>
+  );
+
   if (current) {
     const shouldHideModal = current.hiddenModal;
 
     if (shouldHideModal) {
-      return <RenderCreator creator={current} resource={props.resource} />;
+      return (
+        <>
+          {backButton}
+          <RenderCreator creator={current} resource={props.resource} />
+        </>
+      );
     }
 
     return (
       <div>
-        <div className="bg-me-gray-100 p-2">
-          <Button onClick={() => setCurrentId("")}>Back</Button>
-        </div>
+        {backButton}
         <div className="p-2 py-6">
           <RenderCreator creator={current} resource={props.resource} />
         </div>

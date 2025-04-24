@@ -11,17 +11,11 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "require": {
@@ -61,7 +55,7 @@
     "@manifest-editor/shell": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.1",
+    "react-iiif-vault": "^1.5.6",
     "styled-components": "6.1.8"
   },
   "devDependencies": {

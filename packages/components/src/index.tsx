@@ -56,6 +56,8 @@ export * from "./icons/ManifestIcon";
 export * from "./icons/CollectionIcon";
 export * from "./icons/PreviewIcon";
 export * from "./icons/ImageListIcon";
+export * from "./icons/BackIcon";
+export * from "./icons/GridIcon";
 
 // Messages
 export * from "./ErrorMessage";

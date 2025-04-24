@@ -1,16 +1,10 @@
-import { useState } from "react";
+import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorFunctionContext,
-  CreatorContext,
-} from "@manifest-editor/creator-api";
-import {
-  InputContainer,
-  InputLabel,
-  LanguageFieldEditor,
-} from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
+import { ActionButton } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { useState } from "react";
 
 export interface CreateHTMLAnnotationPayload {
   label?: InternationalString;
@@ -20,10 +14,7 @@ export interface CreateHTMLAnnotationPayload {
   width?: number;
 }
 
-export async function createHtmlAnnotation(
-  data: CreateHTMLAnnotationPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ctx: CreatorFunctionContext) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -52,8 +43,7 @@ export async function createHtmlAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -93,10 +83,10 @@ export async function createHtmlAnnotation(
   }
 }
 
-export function CreateHTMLAnnotation(
-  props: CreatorContext<CreateHTMLAnnotationPayload>,
-) {
+export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
   const [body, setBody] = useState<InternationalString>({ en: [""] });
+
+  const isEmpty = getValue(body).trim() === "";
 
   const onSubmit = () => {
     props.runCreate({
@@ -106,17 +96,16 @@ export function CreateHTMLAnnotation(
 
   return (
     <PaddedSidebarContainer>
-      <InputContainer>
-        <InputLabel>HTML Body</InputLabel>
-        <LanguageFieldEditor
-          focusId={"html-content"}
-          label={"HTML Content"}
-          fields={body}
-          onSave={(e: any) => setBody(e.toInternationalString())}
-        />
-      </InputContainer>
+      <LanguageFieldEditor
+        focusId={"html-content"}
+        label={"HTML Content"}
+        fields={body}
+        onSave={(e: any) => setBody(e.toInternationalString())}
+      />
 
-      <Button onClick={() => onSubmit()}>Create</Button>
+      <ActionButton primary large type="button" onPress={onSubmit} isDisabled={isEmpty}>
+        Create
+      </ActionButton>
     </PaddedSidebarContainer>
   );
 }

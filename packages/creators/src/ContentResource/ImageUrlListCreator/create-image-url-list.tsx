@@ -5,8 +5,6 @@ import {
   type CreatorResource,
   creatorHelper,
 } from "@manifest-editor/creator-api";
-import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import type { FormEvent } from "react";
 import type { CreateImageUrlPayload } from "../ImageUrlCreator/create-image-url";
@@ -47,7 +45,9 @@ export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListP
           <Form.Label>Enter a list of URLs (one per line)</Form.Label>
           <Form.TextArea name="urls" rows="10" />
         </Form.InputContainer>
-        <Button type="submit">Create</Button>
+        <ActionButton primary large type="submit">
+          Create
+        </ActionButton>
       </Form.Form>
     </PaddedSidebarContainer>
   );

@@ -1,16 +1,19 @@
-import { FormEvent } from "react";
-import { ImageService } from "@iiif/presentation-3";
 import {
-  imageServiceRequestToString,
-  createImageServiceRequest,
-  RegionParameter,
-  SizeParameter,
+  type RegionParameter,
+  type SizeParameter,
   canonicalServiceUrl,
+  createImageServiceRequest,
+  imageServiceRequestToString,
+  parseImageServiceRequest,
 } from "@iiif/parser/image-3";
-import { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import type { ImageService } from "@iiif/presentation-3";
+import { ActionButton } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { InputContainer, InputLabel, Input } from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
+import { type FormEvent, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { ImageService as ImageServiceComponent } from "react-iiif-vault";
 
 export interface CreateImageServicePayload {
   url: string;
@@ -24,7 +27,15 @@ export interface CreateImageServicePayload {
 }
 
 export async function createImageServer(data: CreateImageServicePayload, ctx: CreatorFunctionContext) {
-  const request = createImageServiceRequest(data.service);
+  const service = { ...data.service };
+  if (service["@id"]) {
+    service.id = service["@id"];
+  }
+  if (service["@type"]) {
+    service.type = service["@type"];
+  }
+
+  const request = createImageServiceRequest(service);
   const imageId = imageServiceRequestToString({
     identifier: request.identifier,
     server: request.server,
@@ -46,12 +57,14 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
     originalPath: (request as any).originalPath,
   });
 
+  console.log(imageId);
+
   const resource = ctx.embed({
     id: imageId,
     type: "Image",
     format: data.format || "image/jpeg",
-    height: data.height || data.service.height,
-    width: data.width || data.service.width,
+    height: data.height || service.height,
+    width: data.width || service.width,
     service: data.embedService === false ? undefined : [data.service],
   });
 
@@ -60,8 +73,19 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
   return resource;
 }
 
+function getCanonicalUrl(url: string) {
+  return url.endsWith("default.jpg")
+    ? imageServiceRequestToString({
+        ...parseImageServiceRequest(url),
+        type: "info",
+      })
+    : canonicalServiceUrl(url);
+}
+
 // @todo cover a lot more things - like offering size dropdown.
 export function CreateImageServerForm(props: CreatorContext<CreateImageServicePayload>) {
+  const [url, setUrl] = useState("");
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -70,16 +94,15 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
     const url = formData.url;
 
     if (url) {
-      const canon = canonicalServiceUrl(url);
-      fetch(canon)
+      const info = getCanonicalUrl(url);
+
+      if (!info) {
+        throw new Error("Invalid image service request");
+      }
+
+      fetch(info)
         .then((r) => r.json())
         .then((service) => {
-          if (service["@id"]) {
-            service.id = service["@id"];
-          }
-          if (service["@type"]) {
-            service.type = service["@type"];
-          }
           props.runCreate({ url: formData.url, service });
         });
     }
@@ -88,12 +111,43 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
   return (
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
-        <InputContainer $wide>
-          <InputLabel htmlFor="id">Link to image service</InputLabel>
-          <Input id="url" name="url" defaultValue="" />
-        </InputContainer>
+        <div className="flex gap-2 items-center">
+          <InputContainer $wide>
+            <InputLabel htmlFor="id">Link to image service</InputLabel>
+            <Input
+              id="url"
+              name="url"
+              defaultValue=""
+              onPaste={(e) => {
+                const text = e.clipboardData.getData("text/plain");
+                setUrl(text ? getCanonicalUrl(text) : "");
+              }}
+              onBlur={(e) => setUrl(e.currentTarget.value ? getCanonicalUrl(e.currentTarget.value) : "")}
+            />
+          </InputContainer>
+        </div>
 
-        <Button type="submit">Create</Button>
+        <div className="relative flex z-0 my-5 h-96 min-h-0 min-w-0 overflow-hidden bg-gray-200 rounded items-center justify-center">
+          {url.trim() ? (
+            <ErrorBoundary fallbackRender={() => <div>Invalid service</div>}>
+              <ImageServiceComponent
+                src={url}
+                fluid
+                errorFallback={() => <div>Invalid service</div>}
+                background="rgb(229,231,235)"
+                className="h-full w-full"
+                containerProps={{ className: "w-full h-full z-10" }}
+              />
+            </ErrorBoundary>
+          ) : (
+            <div className="text-grey-600">Preview</div>
+          )}
+        </div>
+        <div>
+          <ActionButton primary large type="submit" isDisabled={!url}>
+            Create
+          </ActionButton>
+        </div>
       </form>
     </PaddedSidebarContainer>
   );

@@ -1,15 +1,7 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import {
-  Input,
-  InputContainer,
-  InputLabel,
-  LanguageFieldEditor,
-} from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
+import { ActionButton } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
@@ -66,8 +58,7 @@ export async function createCaptionedImageAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -108,9 +99,7 @@ export async function createCaptionedImageAnnotation(
   }
 }
 
-export function CreateCaptionedImageAnnotation(
-  props: CreatorContext<CreateCaptionedImageAnnotationPayload>,
-) {
+export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
   const [body, setBody] = useState<InternationalString>({ en: [""] });
 
   const onSubmit = (e: FormEvent) => {
@@ -144,7 +133,9 @@ export function CreateCaptionedImageAnnotation(
           />
         </InputContainer>
 
-        <Button type="submit">Create</Button>
+        <ActionButton primary large type="submit">
+          Create
+        </ActionButton>
       </PaddedSidebarContainer>
     </form>
   );
