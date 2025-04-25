@@ -9,6 +9,7 @@
   },
   "keywords": [],
   "author": "",
+  "private": true,
   "license": "ISC",
   "devDependencies": {
     "@manifest-editor/editor-api": "workspace:*",
