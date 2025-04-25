@@ -137,7 +137,7 @@ const ModulePanelSpacer = styled.div`
   flex: 1 1 0px;
 `;
 
-const ModularPanelLabel = styled.h2`
+const ModularPanelLabel = styled.div`
   font-size: 0.875em;
   flex: 1 1 0px;
   padding-left: 1em;

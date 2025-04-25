@@ -17,6 +17,7 @@ export function RegionHighlight({
   onClick,
   onHover,
   onSave,
+  aspectRatio,
   maintainAspectRatio,
   disableCardinalControls,
   isEditing,
@@ -28,6 +29,7 @@ export function RegionHighlight({
   onSave: (annotation: RegionHighlightType) => void;
   onClick: (annotation: RegionHighlightType) => void;
   onHover: (annotation: RegionHighlightType) => void;
+  aspectRatio?: number;
   maintainAspectRatio?: boolean;
   disableCardinalControls?: boolean;
   interactive?: boolean;
@@ -63,6 +65,7 @@ export function RegionHighlight({
       x={region.x}
       y={region.y}
       width={region.width}
+      aspectRatio={aspectRatio}
       height={region.height}
       resizable={isEditing}
       onSave={saveCallback}

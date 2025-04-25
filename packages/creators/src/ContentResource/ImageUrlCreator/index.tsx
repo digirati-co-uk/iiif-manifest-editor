@@ -1,12 +1,16 @@
 import { AddImageIcon } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import {
-  CreateImageUrlForm,
-  type CreateImageUrlPayload,
-  createImageUrl,
-} from "./create-image-url";
+import { defineCreator } from "@manifest-editor/creator-api";
+import { CreateImageUrlForm, createImageUrl } from "./create-image-url";
 
-export const imageUrlCreator: CreatorDefinition<CreateImageUrlPayload> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/image-url-creator": typeof imageUrlCreator;
+    }
+  }
+}
+
+export const imageUrlCreator = defineCreator({
   id: "@manifest-editor/image-url-creator",
   create: createImageUrl,
   label: "Image",
@@ -23,4 +27,4 @@ export const imageUrlCreator: CreatorDefinition<CreateImageUrlPayload> = {
   staticFields: {
     type: "Image",
   },
-};
+});

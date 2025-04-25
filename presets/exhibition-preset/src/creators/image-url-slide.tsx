@@ -1,14 +1,20 @@
-import type {
-  CreatorDefinition,
-  CreatorFunctionContext,
-  GetCreatorPayload,
+import {
+  type CreatorFunctionContext,
+  creatorHelper,
+  type CreatorResource,
+  defineCreator,
 } from "@manifest-editor/creator-api";
-import { imageUrlCreator } from "@manifest-editor/creators";
-import { imageSlideCreator } from "./image-slide-creator";
+import { type CreateImageUrlPayload, imageUrlCreator } from "@manifest-editor/creators";
 
-export const imageUrlSlideCreator: CreatorDefinition<
-  GetCreatorPayload<typeof imageUrlCreator>
-> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@exhibitions/image-url-creator": typeof imageUrlSlideCreator;
+    }
+  }
+}
+
+export const imageUrlSlideCreator = defineCreator({
   ...imageUrlCreator,
   id: "@exhibitions/image-url-creator",
   create: createUrlSlide,
@@ -20,39 +26,36 @@ export const imageUrlSlideCreator: CreatorDefinition<
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
-};
+});
 
-async function createUrlSlide(
-  data: GetCreatorPayload<typeof imageUrlCreator>,
-  ctx: CreatorFunctionContext,
-) {
+async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionContext): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
     type: "Canvas",
   });
+  const annotationId = ctx.generateId("annotation");
+
+  const createImageUrl = creatorHelper(
+    ctx,
+    { id: annotationId, type: "Annotation" },
+    "body",
+    "@manifest-editor/image-url-creator",
+  );
 
   // 1. Call the original creator to get the annotation
-  const resource = await ctx.create<typeof imageUrlCreator>(
-    imageUrlCreator.id,
-    data,
-    {
-      target: {
-        id: canvasId,
-        type: "Canvas",
-      },
-      targetType: "Annotation",
-      parent: {
-        resource: { id: pageId, type: "AnnotationPage" },
-        property: "items",
-      },
+  const resource = await createImageUrl(data, {
+    target: {
+      id: canvasId,
+      type: "Canvas",
     },
-  );
+    targetType: "Annotation",
+  });
 
   const { width, height } = resource.get();
 
   const annotation = ctx.embed({
-    id: ctx.generateId("annotation"),
+    id: annotationId,
     type: "Annotation",
     motivation: "painting",
     body: [resource],
@@ -63,7 +66,8 @@ async function createUrlSlide(
   });
 
   // 2. Pass that to an empty slide.
-  return await ctx.create<typeof imageSlideCreator>(imageSlideCreator.id, {
+  const createSlide = creatorHelper(ctx, "Manifest", "items", "@exhibitions/image-slide-creator");
+  return await createSlide({
     canvasId,
     width,
     height,

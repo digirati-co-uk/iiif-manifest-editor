@@ -19,6 +19,11 @@
   --total-gap-width: 1.5rem;
 }
 
+div[data-floating-ui-portal] {
+  z-index: 505;
+  position: relative;
+}
+
 .grid-lg,
 .grid-md,
 .grid-sm {

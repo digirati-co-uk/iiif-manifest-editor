@@ -1,6 +1,6 @@
-import { DescriptiveProperties } from "@iiif/presentation-3";
+import type { DescriptiveProperties } from "@iiif/presentation-3";
 
-const required: DescriptiveMap = {
+const required = {
   Collection: ["label"],
   Manifest: ["label"],
   Canvas: [],
@@ -10,9 +10,9 @@ const required: DescriptiveMap = {
   AnnotationCollection: [],
   ContentResource: [],
   Agent: ["label"],
-} as const;
+} as const satisfies DescriptiveMap;
 
-const recommended: DescriptiveMap = {
+const recommended = {
   Collection: ["metadata", "summary", "provider", "thumbnail"],
   Manifest: ["metadata", "summary", "provider", "thumbnail"],
   Canvas: ["label"],
@@ -22,9 +22,9 @@ const recommended: DescriptiveMap = {
   AnnotationCollection: ["label"],
   ContentResource: ["label"],
   Agent: [],
-} as const;
+} as const satisfies DescriptiveMap;
 
-const optional: DescriptiveMap = {
+const optional = {
   Collection: ["requiredStatement", "rights", "navDate", "placeholderCanvas", "accompanyingCanvas"],
   Manifest: ["requiredStatement", "rights", "navDate", "placeholderCanvas", "accompanyingCanvas"],
   Canvas: [
@@ -54,9 +54,9 @@ const optional: DescriptiveMap = {
   AnnotationCollection: ["metadata", "summary", "requiredStatement", "rights", "provider", "thumbnail"],
   ContentResource: ["label", "metadata", "summary", "requiredStatement", "rights", "provider", "thumbnail"],
   Agent: [],
-} as const;
+} as const satisfies DescriptiveMap;
 
-const notAllowed: DescriptiveMap = {
+const notAllowed = {
   Collection: ["language"],
   Manifest: ["language"],
   Canvas: ["language"],
@@ -77,7 +77,7 @@ const notAllowed: DescriptiveMap = {
     "placeholderCanvas",
     "accompanyingCanvas",
   ],
-} as const;
+} as const satisfies DescriptiveMap;
 
 type DescriptiveMap = Record<
   | "Collection"
@@ -92,7 +92,7 @@ type DescriptiveMap = Record<
   readonly (keyof DescriptiveProperties)[]
 >;
 
-const all: readonly (keyof DescriptiveProperties)[] = [
+const all = [
   "label",
   "summary",
   "metadata",
@@ -104,7 +104,7 @@ const all: readonly (keyof DescriptiveProperties)[] = [
   "provider",
   "placeholderCanvas",
   "accompanyingCanvas",
-];
+] as const;
 
 export const descriptiveProperties = {
   all,

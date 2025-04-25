@@ -66,7 +66,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
     const blocksFromHTML = convertFromHTML(textState);
     return EditorState.createWithContent(
       ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
-      decorator
+      decorator,
     );
   });
   const [showLinkForm, setShowLinkForm] = useState(false);
@@ -74,7 +74,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const saveChanges = () => {
     props.onUpdate(getTextValue());
   };
-  const debounceSave = useDebounce(saveChanges, 400);
+  const debounceSave = useDebounce(saveChanges, 300);
   const [showControls, setShowControls] = useState(false);
 
   const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (s) => {
@@ -185,13 +185,13 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         textState
           .replace(/<\/p>\n<p>/g, "</p><p>")
           .replace(/<br\/>\n/g, "<br/>")
-          .replace(/\n/g, "<br/>")
+          .replace(/\n/g, "<br/>"),
       );
       setEditorState(
         EditorState.createWithContent(
           ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
-          decorator
-        )
+          decorator,
+        ),
       );
     }
 
@@ -232,8 +232,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           .replace(/<br\/>\n/, "\n")
           .replace(/<br\/>/, "\n")
           .replace(/<\/p><p/, "</p>\n<p"),
-        { ALLOWED_TAGS: [] }
-      )
+        { ALLOWED_TAGS: [] },
+      ),
     );
   };
 
@@ -339,8 +339,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
                 ref={editorRef}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => {
-                  setIsFocused(false);
                   saveChanges();
+                  setIsFocused(false);
                 }}
                 editorState={editorState}
                 handleKeyCommand={handleKeyCommand}
@@ -355,8 +355,8 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
             as={Textarea}
             onFocus={() => setIsFocused(true)}
             onBlur={() => {
-              setIsFocused(false);
               saveChanges();
+              setIsFocused(false);
             }}
             value={textState}
             onChange={(e: any) => setTextState(e.currentTarget.value)}

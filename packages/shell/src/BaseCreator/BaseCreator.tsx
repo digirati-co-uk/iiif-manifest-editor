@@ -1,5 +1,13 @@
 import { toRef } from "@iiif/parser";
-import { CreatorGrid } from "@manifest-editor/components";
+import {
+  BackIcon,
+  CreatorGrid,
+  ErrorMessage,
+  GridIcon,
+  IconButton,
+  ModalBackSlot,
+  Spinner,
+} from "@manifest-editor/components";
 import {
   type CreatableResource,
   type CreatorDefinition,
@@ -7,12 +15,11 @@ import {
   matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useLayoutActions } from "../Layout/Layout.context";
-import { useSetCustomTitle } from "../Layout/components/ModularPanel";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { useInlineCreator } from "./BaseCreator.hooks";
 
@@ -27,6 +34,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const vault = useVault();
   const { edit, modal } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const creator = useInlineCreator();
   const isCreatingRef = useRef(false);
 
@@ -47,17 +55,34 @@ export const RenderCreator = memo(function RenderCreator(props: {
   };
 
   const runCreate = (payload: any) => {
-    if (isCreating || isCreatingRef.current) return;
-    setIsCreating(true);
-    isCreatingRef.current = true;
-    creator.create(props.creator.id, payload, options).then((ref) => {
-      modal.popStack();
-      edit(ref, {
-        parent: toRef(props.resource.parent),
-        property: props.resource.property,
-        index: props.resource.index,
-      });
-    });
+    try {
+      if (isCreating || isCreatingRef.current) return;
+      setIsCreating(true);
+      isCreatingRef.current = true;
+      creator
+        .create(props.creator.id, payload, options)
+        .catch((err) => {
+          setError(err?.message || "Unknown error");
+          return null;
+        })
+        .then(async (ref) => {
+          if (!ref) return;
+          const singleRef = Array.isArray(ref) ? ref[0] : ref;
+          setIsCreating(false);
+          modal.popStack();
+          modal.close();
+          // Ref might be an array?
+          if (singleRef) {
+            edit(singleRef!, {
+              parent: toRef(props.resource.parent),
+              property: props.resource.property,
+              index: props.resource.index,
+            });
+          }
+        });
+    } catch (err: any) {
+      setError(err?.message || "Unknown error");
+    }
   };
 
   const validate = async () => {
@@ -70,15 +95,24 @@ export const RenderCreator = memo(function RenderCreator(props: {
     }
   }, [props.creator]);
 
-  useEffect(() => {
-    if (isCreating) {
-      modal.popStack();
-      modal.close();
-    }
-  });
+  if (error) {
+    return (
+      <div className="flex flex-col items-center p-4">
+        <ErrorMessage>{error}</ErrorMessage>
+      </div>
+    );
+  }
+
+  const spinner = (
+    <div className="flex flex-col items-center py-8">
+      <div className="flex gap-2 items-center">
+        <Spinner /> <span>Loading</span>
+      </div>
+    </div>
+  );
 
   if (isCreating) {
-    return null;
+    return spinner;
   }
 
   if (!props.creator.render) {
@@ -91,7 +125,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
   return (
     <>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={spinner}>
         {props.creator.render({
           vault,
           runCreate,
@@ -106,9 +140,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
   const vault = useVault();
-  const [currentId, setCurrentId] = useState(
-    props.resource.initialCreator || "",
-  );
+  const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -133,18 +165,35 @@ export function BaseCreator(props: BaseCreatorProps) {
     return <div>Not currently supported</div>;
   }
 
+  const backButton = (
+    <ModalBackSlot>
+      <IconButton
+        root={document.getElementById("headlessui-portal-root") || undefined}
+        label="Back to Add content options"
+        className="group"
+        placement="right"
+        onPress={() => setCurrentId("")}
+      >
+        <GridIcon className="text-2xl opacity-50 group-hover:opacity-70" />
+      </IconButton>
+    </ModalBackSlot>
+  );
+
   if (current) {
     const shouldHideModal = current.hiddenModal;
 
     if (shouldHideModal) {
-      return <RenderCreator creator={current} resource={props.resource} />;
+      return (
+        <>
+          {backButton}
+          <RenderCreator creator={current} resource={props.resource} />
+        </>
+      );
     }
 
     return (
       <div>
-        <div className="bg-me-gray-100 p-2">
-          <Button onClick={() => setCurrentId("")}>Back</Button>
-        </div>
+        {backButton}
         <div className="p-2 py-6">
           <RenderCreator creator={current} resource={props.resource} />
         </div>

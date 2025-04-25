@@ -2,7 +2,7 @@ import { Modal } from "@manifest-editor/components";
 import { analyse } from "@manifest-editor/shell";
 import { useMutation } from "@tanstack/react-query";
 import { useLayoutEffect, useRef } from "react";
-import { createManifestFromId } from "./browser-state";
+import { createCollectionFromId, createManifestFromId } from "./browser-state";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 
@@ -12,15 +12,28 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
   const create = useMutation({
     mutationFn: analyse,
     onSuccess: (data) => {
-      if (data && data.type === "Manifest") {
+      if (!data) return;
+
+      if (data.type === "Manifest") {
         createProject.mutate(data);
         posthog.capture("manifest-imported", { manifest_id: data.id });
+      }
+
+      if (data.type === 'Collection') {
+        createCollectionProject.mutate(data);
       }
     },
   });
 
   const createProject = useMutation({
     mutationFn: createManifestFromId,
+    onSuccess: (data) => {
+      router.push(`/editor/${data.id}`);
+    },
+  });
+
+  const createCollectionProject = useMutation({
+    mutationFn: createCollectionFromId,
     onSuccess: (data) => {
       router.push(`/editor/${data.id}`);
     },
@@ -73,8 +86,8 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
           <div className="text-[red] mt-4">Failed to open the Manifest. Please check the URL and try again.</div>
         )}
 
-        {create.data && create.data.type !== "Manifest" && (
-          <div className="text-[red] mt-4">The URL provided does not point to a valid Manifest.</div>
+        {create.data && create.data.type !== "Manifest" && create.data.type !== "Collection" && (
+          <div className="text-[red] mt-4">The URL provided does not point to a valid Manifest or Collection.</div>
         )}
       </div>
     </Modal>

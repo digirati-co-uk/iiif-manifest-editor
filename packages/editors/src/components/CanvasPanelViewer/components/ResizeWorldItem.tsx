@@ -4,6 +4,7 @@ import { type CSSProperties, type ReactNode, useMemo } from "react";
 type ResizeWorldItemProps = JSX.IntrinsicElements["worldObject"] & {
   handleSize?: number;
   resizable?: boolean;
+  aspectRatio?: number;
   onSave: (
     pos: Partial<{ x: number; y: number; width: number; height: number }>,
   ) => void;
@@ -19,12 +20,13 @@ export function ResizeWorldItem({
   children,
   maintainAspectRatio,
   disableCardinalControls,
+  aspectRatio,
   ...props
 }: ResizeWorldItemProps) {
   const handleSize =
     typeof _handleSize === "undefined"
       ? maintainAspectRatio
-        ? 10
+        ? 12
         : 8
       : _handleSize;
   const { portalRef, mode, mouseEvent, isEditing } = useResizeWorldItem(
@@ -33,10 +35,12 @@ export function ResizeWorldItem({
       y: props.y || 0,
       width: props.width,
       height: props.height,
+      aspectRatio: aspectRatio,
       maintainAspectRatio,
     },
     onSave,
   );
+
   const translate = useMemo(() => mouseEvent("translate"), [mouseEvent]);
   const east = useMemo(() => mouseEvent("east"), [mouseEvent]);
   const west = useMemo(() => mouseEvent("west"), [mouseEvent]);
@@ -51,7 +55,7 @@ export function ResizeWorldItem({
   const baseStyle: CSSProperties = {
     zIndex: 999,
     boxShadow: "0px 2px 3px 0 rgba(0,0,0,0.2)",
-    border: "1px solid rgba(155,155,155,.7)",
+    outline: "2px solid rgba(155,155,155,.7)",
     borderRadius: maintainAspectRatio || disableCardinalControls ? "50%" : 2,
     position: "absolute",
     background: "#fff",
@@ -79,7 +83,9 @@ export function ResizeWorldItem({
                     display: "block",
                     width: "100%",
                     height: "100%",
-                    border: "1px solid rgba(155,155,155, .7)",
+                    cursor: 'move',
+                    border: "1px solid rgba(255,255,255, .7)",
+                    outline: "2px solid rgba(155,155,155, .7)",
                     boxSizing: "border-box",
                     pointerEvents: isEditing
                       ? "none"

@@ -1,20 +1,20 @@
-import * as React from "react";
 import {
-  useFloating,
+  FloatingPortal,
   autoUpdate,
-  offset,
   flip,
+  offset,
   shift,
-  useHover,
-  useFocus,
   useDismiss,
-  useRole,
+  useFloating,
+  useFocus,
+  useHover,
   useInteractions,
   useMergeRefs,
-  FloatingPortal,
+  useRole,
 } from "@floating-ui/react";
 import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
 import type { UseFloatingReturn } from "@floating-ui/react-dom";
+import * as React from "react";
 import { Button } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 
@@ -95,18 +95,11 @@ export const useTooltipContext = () => {
   return context;
 };
 
-export function Tooltip({
-  children,
-  ...options
-}: { children: React.ReactNode } & TooltipOptions) {
+export function Tooltip({ children, ...options }: { children: React.ReactNode } & TooltipOptions) {
   // This can accept any props as options, e.g. `placement`,
   // or other positioning options.
   const tooltip = useTooltip(options);
-  return (
-    <TooltipContext.Provider value={tooltip}>
-      {children}
-    </TooltipContext.Provider>
-  );
+  return <TooltipContext.Provider value={tooltip}>{children}</TooltipContext.Provider>;
 }
 
 export const TooltipTrigger = React.forwardRef<
@@ -144,15 +137,15 @@ export const TooltipTrigger = React.forwardRef<
 
 export const TooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLProps<HTMLDivElement>
->(function TooltipContent({ style, ...props }, propRef) {
+  React.HTMLProps<HTMLDivElement> & { root?: HTMLElement }
+>(function TooltipContent({ style, root, ...props }, propRef) {
   const context = useTooltipContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
 
   if (!context.open) return null;
 
   return (
-    <FloatingPortal>
+    <FloatingPortal root={root}>
       <div
         ref={ref}
         style={{
@@ -167,14 +160,13 @@ export const TooltipContent = React.forwardRef<
 
 export function DefaultTooltipContent(props: {
   className?: string;
+  root?: HTMLElement;
   children: React.ReactNode;
 }) {
   return (
     <TooltipContent
-      className={twMerge(
-        "bg-me-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-90 z-50",
-        props.className,
-      )}
+      root={props.root}
+      className={twMerge("bg-me-gray-900 text-white text-sm px-3 py-2 rounded opacity-90 z-50", props.className)}
     >
       {props.children}
     </TooltipContent>

@@ -1,12 +1,16 @@
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import { defineCreator } from "@manifest-editor/creator-api";
 import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
-import {
-  CreatePlaintextForm,
-  createPlaintext,
-  type CreatePlaintextPayload,
-} from "./create-plaintext";
+import { CreatePlaintextForm, createPlaintext } from "./create-plaintext";
 
-export const plaintextCreator: CreatorDefinition<CreatePlaintextPayload> = {
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/plaintext-creator": typeof plaintextCreator;
+    }
+  }
+}
+
+export const plaintextCreator = defineCreator({
   id: "@manifest-editor/plaintext-creator",
   create: createPlaintext,
   label: "Plaintext",
@@ -23,4 +27,4 @@ export const plaintextCreator: CreatorDefinition<CreatePlaintextPayload> = {
   staticFields: {
     format: "text/plain",
   },
-};
+});

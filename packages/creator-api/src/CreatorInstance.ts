@@ -1,10 +1,17 @@
-import { Vault } from "@iiif/helpers/vault";
-import { CreatorDefinition, CreatorFunctionContext, CreatorOptions } from "./types";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Vault } from "@iiif/helpers/vault";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { InputShape } from "polygon-editor";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
-import { InputShape } from "polygon-editor";
+import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
+import type {
+  AllAvailableParentTypes,
+  CreatorDefinition,
+  CreatorFunctionContext,
+  CreatorOptions,
+  GetSupportedResourceFields,
+} from "./types";
 import { randomId } from "./utils";
 
 export class CreatorInstance implements CreatorFunctionContext {
@@ -158,7 +165,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     return new CreatorResource(data, this.vault);
   }
 
-  async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<CreatorResource> {
+  async create(definition: string, payload: any, options?: Partial<CreatorOptions>) {
     const foundDefinition = this.configs.find((t) => t.id === definition);
     if (!foundDefinition) {
       throw new Error(`Creator config ${definition} not found`);
@@ -166,6 +173,6 @@ export class CreatorInstance implements CreatorFunctionContext {
 
     const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, this.previewVault, options);
 
-    return await runtime.run();
+    return (await runtime.run()) as any;
   }
 }

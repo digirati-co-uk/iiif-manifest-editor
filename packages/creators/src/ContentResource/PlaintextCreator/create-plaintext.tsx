@@ -1,15 +1,7 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorFunctionContext,
-  CreatorContext,
-} from "@manifest-editor/creator-api";
-import {
-  LanguageFieldEditor,
-  InputContainer,
-  InputLabel,
-  Input,
-} from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
+import { ActionButton } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
@@ -18,10 +10,7 @@ export interface CreatePlaintextPayload {
   label?: InternationalString;
 }
 
-export async function createPlaintext(
-  data: CreatePlaintextPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createPlaintext(data: CreatePlaintextPayload, ctx: CreatorFunctionContext) {
   return ctx.embed({
     id: data.url,
     type: "Text",
@@ -60,7 +49,9 @@ export function CreatePlaintextForm(props: CreatorContext) {
           <Input id="url" name="url" defaultValue="" />
         </InputContainer>
 
-        <Button type="submit">Create</Button>
+        <ActionButton primary large type="submit">
+          Create
+        </ActionButton>
       </form>
     </PaddedSidebarContainer>
   );

@@ -1,15 +1,11 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
+import { ActionButton } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import type { FormEvent } from "react";
 
-const ytRegex =
-  /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#&?]*).*/;
+const ytRegex = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#&?]*).*/;
 
 export interface CreateYouTubeBodyPayload {
   youtubeUrl: string;
@@ -28,10 +24,7 @@ export function validateYouTube(data: CreateYouTubeBodyPayload) {
   return !!getYouTubeId(data.youtubeUrl);
 }
 
-export async function createYoutubeBody(
-  data: CreateYouTubeBodyPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
   const id = getYouTubeId(data.youtubeUrl);
   const body = ctx.embed({
     id: `https://www.youtube.com/watch?v=${id}`,
@@ -117,7 +110,9 @@ export function YouTubeForm(props: CreatorContext) {
           <Input id="youtubeUrl" name="youtubeUrl" defaultValue="" />
         </InputContainer>
 
-        <Button type="submit">Create</Button>
+        <ActionButton primary large type="submit">
+          Create
+        </ActionButton>
       </form>
     </PaddedSidebarContainer>
   );

@@ -1,22 +1,12 @@
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import type { InternationalString } from "@iiif/presentation-3";
-import { useEffect, useState } from "react";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { ErrorMessage } from "@manifest-editor/components";
-import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { CanvasPanel } from "react-iiif-vault";
 import { getValue } from "@iiif/helpers";
-import {
-  Input,
-  InputContainer,
-  InputLabel,
-  LanguageFieldEditor,
-  FormFieldWrapper,
-} from "@manifest-editor/editors";
-import { Button } from "@manifest-editor/ui/atoms/Button";
+import type { InternationalString } from "@iiif/presentation-3";
+import { ActionButton, ErrorMessage } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { FormFieldWrapper, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
+import { MediaControls } from "@manifest-editor/ui/MediaControls";
+import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { useEffect, useState } from "react";
+import { CanvasPanel } from "react-iiif-vault";
 
 export interface CreateAudioAnnotationPayload {
   label?: InternationalString;
@@ -25,10 +15,7 @@ export interface CreateAudioAnnotationPayload {
   url: string;
 }
 
-export async function createAudioAnnotation(
-  data: CreateAudioAnnotationPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, ctx: CreatorFunctionContext) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -36,7 +23,7 @@ export async function createAudioAnnotation(
 
   const targetType = ctx.options.targetType as "Annotation" | "Canvas";
 
-  const body = await ctx.embed({
+  const body = ctx.embed({
     id: data.url,
     type: "Sound",
     format: "audio/mp4",
@@ -47,8 +34,7 @@ export async function createAudioAnnotation(
     return ctx.embed({
       ...annotation,
       label: getValue(data.label) && data.label,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body,
       target: ctx.getTarget(),
     });
@@ -87,9 +73,7 @@ export async function createAudioAnnotation(
   }
 }
 
-export function CreateAudioAnnotationForm(
-  props: CreatorContext<CreateAudioAnnotationPayload>,
-) {
+export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnotationPayload>) {
   const [url, setUrl] = useState("");
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState("");
@@ -117,20 +101,15 @@ export function CreateAudioAnnotationForm(
     <PaddedSidebarContainer>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
-      <InputContainer>
+      <InputContainer $wide>
         <InputLabel htmlFor="audio-url">URL</InputLabel>
-        <Input
-          type="text"
-          id="audio-url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
+        <Input type="text" id="audio-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
 
       {url && !error ? (
         <div>
           <LanguageFieldEditor
-            key={url + "__" + duration}
+            key={`${url}__${duration}`}
             containerId={"label"}
             focusId={"label_"}
             label={"Label"}
@@ -141,14 +120,11 @@ export function CreateAudioAnnotationForm(
       ) : null}
 
       {url && !error ? (
-        <CanvasPanel.AudioHTML
-          key={url + "__" + duration}
-          media={{ url, duration, type: "Sound" } as any}
-        >
+        <CanvasPanel.AudioHTML key={`${url}__${duration}`} media={{ url, duration, type: "Sound" } as any}>
           <MediaControls
-            key={url + "__" + duration}
+            key={`${url}__${duration}`}
             onError={(error) => setError(error)}
-            onDuration={(duration) => setDuration(duration)}
+            onDuration={(duration) => setDuration(~~duration)}
           />
         </CanvasPanel.AudioHTML>
       ) : null}
@@ -156,16 +132,13 @@ export function CreateAudioAnnotationForm(
       {duration && !error ? (
         <FormFieldWrapper>
           <InputLabel htmlFor="duration">Duration</InputLabel>
-          <Input
-            type="number"
-            id="duration"
-            value={duration}
-            onChange={(e) => setDuration(e.target.valueAsNumber)}
-          />
+          <Input type="number" id="duration" value={duration} onChange={(e) => setDuration(e.target.valueAsNumber)} />
         </FormFieldWrapper>
       ) : null}
 
-      {url && !error && <Button onClick={onSubmit}>Add audio</Button>}
+      <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url || !!error}>
+        Add audio
+      </ActionButton>
     </PaddedSidebarContainer>
   );
 }

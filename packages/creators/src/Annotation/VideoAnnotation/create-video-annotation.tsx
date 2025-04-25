@@ -1,19 +1,9 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ErrorMessage } from "@manifest-editor/components";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import {
-  DimensionsTriplet,
-  Input,
-  InputContainer,
-  InputLabel,
-  LanguageFieldEditor,
-} from "@manifest-editor/editors";
+import { ActionButton, ErrorMessage } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { DimensionsTriplet, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { VideoPlayer } from "@manifest-editor/ui/VideoPlayer";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useEffect, useState } from "react";
 
@@ -26,10 +16,7 @@ export interface CreateVideoAnnotationPayload {
   height: number;
 }
 
-export async function createVideoAnnotation(
-  data: CreateVideoAnnotationPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, ctx: CreatorFunctionContext) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -50,8 +37,7 @@ export async function createVideoAnnotation(
     return ctx.embed({
       ...annotation,
       label: getValue(data.label) && data.label,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body,
       target: ctx.getTarget(),
     });
@@ -92,9 +78,7 @@ export async function createVideoAnnotation(
   }
 }
 
-export function CreateVideoAnnotationForm(
-  props: CreatorContext<CreateVideoAnnotationPayload>,
-) {
+export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnotationPayload>) {
   const [url, setUrl] = useState("");
   const [duration, setDuration] = useState(0);
   const [width, setWidth] = useState(0);
@@ -126,20 +110,15 @@ export function CreateVideoAnnotationForm(
     <PaddedSidebarContainer>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
-      <InputContainer>
+      <InputContainer $wide>
         <InputLabel htmlFor="video-url">URL</InputLabel>
-        <Input
-          type="text"
-          id="video-url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
+        <Input type="text" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
 
       {url && !error ? (
         <div>
           <LanguageFieldEditor
-            key={url + "__" + duration}
+            key={`${url}__${duration}`}
             containerId={"label"}
             focusId={"label_"}
             label={"Label"}
@@ -150,24 +129,26 @@ export function CreateVideoAnnotationForm(
       ) : null}
 
       {url && !error ? (
-        <VideoPlayer
-          duration={duration}
-          onDuration={(d) => setDuration(d)}
-          onError={(err) => setError(err)}
-          media={
-            {
-              url,
-              duration,
-              height,
-              width,
-              type: "Video",
-            } as any
-          }
-          onDimensions={(w, h) => {
-            setWidth(w || 0);
-            setHeight(h || 0);
-          }}
-        />
+        <div className="mb-4 bg-black">
+          <VideoPlayer
+            duration={duration}
+            onDuration={(d) => setDuration(d)}
+            onError={(err) => setError(err)}
+            media={
+              {
+                url,
+                duration,
+                height,
+                width,
+                type: "Video",
+              } as any
+            }
+            onDimensions={(w, h) => {
+              setWidth(w || 0);
+              setHeight(h || 0);
+            }}
+          />
+        </div>
       ) : null}
 
       {!error && (duration || width || height) ? (
@@ -186,7 +167,9 @@ export function CreateVideoAnnotationForm(
         </InputContainer>
       ) : null}
 
-      {url && !error && <Button onClick={onSubmit}>Add video</Button>}
+      <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url || !!error}>
+        Add video
+      </ActionButton>
     </PaddedSidebarContainer>
   );
 }

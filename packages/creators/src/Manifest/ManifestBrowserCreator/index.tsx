@@ -1,12 +1,19 @@
 import { IIIFBrowserIcon } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import {
-  type ManifestBrowserCreatorPayload,
-  createFromManifestBrowserOutput,
-} from "./manifest-browser-creator";
+import { defineCreator } from "@manifest-editor/creator-api";
+import { createFromManifestBrowserOutput } from "./manifest-browser-creator";
 import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
 
-export const manifestBrowserCreator: CreatorDefinition = {
+export type { ManifestBrowserCreatorPayload } from "./manifest-browser-creator";
+
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/manifest-browser-creator": typeof manifestBrowserCreator;
+    }
+  }
+}
+
+export const manifestBrowserCreator = defineCreator({
   id: "@manifest-editor/manifest-browser-creator",
   create: createFromManifestBrowserOutput,
   label: "IIIF Browser",
@@ -26,4 +33,4 @@ export const manifestBrowserCreator: CreatorDefinition = {
   },
   sideEffects: [],
   staticFields: {},
-};
+});
