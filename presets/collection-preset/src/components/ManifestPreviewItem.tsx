@@ -1,4 +1,5 @@
 import {
+  AccessibilityButton,
   DefaultTooltipContent,
   ManifestIcon,
   Modal,
@@ -12,6 +13,8 @@ import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useState } from "react";
 import { LocaleString, useManifest, useThumbnail } from "react-iiif-vault";
 import { PreviewManifestInBrowser } from "./PreviewManifestInBrowser";
+import { usePress } from "react-aria";
+import { getValue } from "@iiif/helpers";
 
 export function ManifestPreviewItem() {
   const [open, setOpen] = useState(false);
@@ -22,6 +25,9 @@ export function ManifestPreviewItem() {
   const editor = useGenericEditor(manifest);
   const manifestInStack = useEditingResource();
   const isSelected = manifestInStack?.resource.source?.id === manifest?.id;
+  const { pressProps } = usePress({
+    onPress: () => edit(manifest!),
+  });
 
   const rawThumb = editor.descriptive.thumbnail.get();
 
@@ -42,15 +48,19 @@ export function ManifestPreviewItem() {
       setOpen(false);
       edit(manifest!);
     },
-    [creator, edit, editor, manifest],
+    [creator, edit, editor, manifest]
   );
 
   return (
-    <div
+    <li
+      aria-label={getValue(manifest?.label)}
       data-selected={isSelected || undefined}
       className="bg-white p-2 relative data-[selected]:ring-2 ring-me-gray-500 data-[selected]:ring-me-primary-500 hover:ring-2 rounded"
-      onClick={() => edit(manifest!)}
+      {...pressProps}
     >
+      <div className="absolute top-3 left-3 z-20">
+        <AccessibilityButton onPress={() => edit(manifest!)}>Edit Manifest</AccessibilityButton>
+      </div>
       <div className="aspect-square bg-gray-100 mb-2 relative rounded-sm overflow-hidden">
         {thumbnail && rawThumb.length ? (
           <img className="w-full h-full object-contain" src={thumbnail.id} alt="Manifest Thumbnail" />
@@ -81,6 +91,6 @@ export function ManifestPreviewItem() {
       <Modal title="Preview Manifest" open={open} onClose={() => setOpen(false)}>
         {manifest && open ? <PreviewManifestInBrowser id={manifest.id} setThumbnail={setThumbnail} /> : null}
       </Modal>
-    </div>
+    </li>
   );
 }

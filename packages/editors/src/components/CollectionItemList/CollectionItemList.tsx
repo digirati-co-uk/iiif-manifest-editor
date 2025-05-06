@@ -69,7 +69,7 @@ export function CollectionItemList(props: CollectionItemListProps) {
   }
 
   return (
-    <div id={props.id}>
+    <ul aria-label="Collection items" id={props.id}>
       {props.list.map((item, index) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return ref.type === "Manifest" ? (
@@ -82,6 +82,6 @@ export function CollectionItemList(props: CollectionItemListProps) {
           </CollectionContext>
         );
       })}
-    </div>
+    </ul>
   );
 }

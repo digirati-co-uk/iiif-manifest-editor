@@ -1,4 +1,5 @@
 import {
+  AccessibilityButton,
   CollectionIcon,
   DefaultTooltipContent,
   Modal,
@@ -12,6 +13,8 @@ import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useState } from "react";
 import { LocaleString, useCollection, useManifest, useThumbnail } from "react-iiif-vault";
 import { PreviewManifestInBrowser } from "./PreviewManifestInBrowser";
+import { usePress } from "react-aria";
+import { getValue } from "@iiif/helpers";
 
 export function CollectionPreviewItem() {
   const [open, setOpen] = useState(false);
@@ -21,6 +24,9 @@ export function CollectionPreviewItem() {
   const editor = useGenericEditor(collection);
   const collectionInstack = useEditingResource();
   const isSelected = collectionInstack?.resource.source?.id === collection?.id;
+  const { pressProps } = usePress({
+    onPress: () => edit(collection!),
+  });
 
   const rawThumb = editor.descriptive.thumbnail.get();
 
@@ -41,15 +47,20 @@ export function CollectionPreviewItem() {
       setOpen(false);
       edit(collection!);
     },
-    [creator, edit, editor, collection],
+    [creator, edit, editor, collection]
   );
 
   return (
-    <div
+    <li
+      tabIndex={-1}
+      aria-label={getValue(collection?.label)}
       data-selected={isSelected || undefined}
       className="bg-white p-2 relative data-[selected]:ring-2 ring-me-gray-500 data-[selected]:ring-me-primary-500 hover:ring-2 rounded"
-      onClick={() => edit(collection!)}
+      {...pressProps}
     >
+      <div className="absolute top-3 left-3 z-20">
+        <AccessibilityButton onPress={() => edit(collection!)}>Edit Collection</AccessibilityButton>
+      </div>
       <div className="aspect-square bg-gray-100 mb-2 relative rounded-sm overflow-hidden">
         {rawThumb.length ? (
           <img className="w-full h-full object-contain" src={rawThumb[0]!.id} alt="Collection Thumbnail" />
@@ -79,8 +90,11 @@ export function CollectionPreviewItem() {
       </Tooltip>
 
       <Modal title="Preview Collection" open={open} onClose={() => setOpen(false)}>
-        {collection && open ? <PreviewManifestInBrowser id={collection.id} setThumbnail={setThumbnail} /> : null}
+        {collection && open ? (
+          <PreviewManifestInBrowser id={collection.id} type="Collection" setThumbnail={setThumbnail} />
+        ) : null}
       </Modal>
-    </div>
+    </li>
   );
+  t;
 }

@@ -48,6 +48,7 @@
     "iiif-browser": "^2.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-aria": "^3.38.1",
     "react-iiif-vault": "^1.5.6",
     "styled-components": "6.1.8"
   },
