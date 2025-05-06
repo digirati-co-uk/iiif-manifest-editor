@@ -134,6 +134,7 @@ export const TabPanel: React.FC<{
         })}
         {hidden ? (
           <AppDropdown
+            aria-label="More tabs"
             as={TabMore}
             style={{ marginLeft: "auto", height: "1.5em", width: "1.5em", alignSelf: "center", marginRight: "0.2em" }}
             data-active={menu.length - hidden <= selected}
