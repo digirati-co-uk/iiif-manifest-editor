@@ -4,11 +4,7 @@ import { HandleContainer } from "./ReorderListItem.styles";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { MoreMenu } from "@manifest-editor/components";
 
-interface ReorderListItemProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
+interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   as?: any;
   children: ReactNode;
   reorderEnabled?: boolean;
@@ -24,10 +20,7 @@ interface ReorderListItemProps
 }
 
 export const ReorderListItem = forwardRef<any, ReorderListItemProps>(
-  (
-    { handleProps, reorderEnabled, as, inlineHandle, children, ...props },
-    ref,
-  ) => {
+  ({ handleProps, reorderEnabled, as, inlineHandle, children, ...props }, ref) => {
     const Component = as || "div";
 
     if (!reorderEnabled) {
@@ -46,12 +39,12 @@ export const ReorderListItem = forwardRef<any, ReorderListItemProps>(
             <MoreMenu />
           </HandleContainer>
           {inlineHandle ? null : (
-            <HandleContainer {...handleProps}>
+            <HandleContainer aria-label="Reorder item" {...handleProps}>
               <ResizeHandleIcon />
             </HandleContainer>
           )}
         </FlexContainer>
       </Component>
     );
-  },
+  }
 );

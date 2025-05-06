@@ -170,7 +170,7 @@ export const HandleControls = forwardRef<
             <ResetIcon />
           </IconControl>
         ) : null}
-        {open ? <ResizeHandle /> : null}
+        {open ? <ResizeHandle aria-label="Reorder item" /> : null}
       </InnerHandleContainer>
     </HandleContainer>
   );

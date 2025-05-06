@@ -7,11 +7,7 @@ import { type ReactNode, useMemo } from "react";
 import { AppDropdown, type AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { HandleContainer } from "./ReorderListItem.styles";
 
-interface ReorderListItemProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
+interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   as?: any;
   item: { id: string; type?: string };
   children: ReactNode;
@@ -36,14 +32,7 @@ export function ReorderListItem({
   grid,
   ...props
 }: ReorderListItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
     id: item.id,
     data: { ref: item },
     transition: {
@@ -67,25 +56,19 @@ export function ReorderListItem({
   }
 
   return (
-    <Component
-      {...props}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...(inlineHandle ? listeners : {})}
-    >
+    <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
       <ItemWithHandle
         grid={grid}
         actions={
           actions?.length ? (
-            <AppDropdown as={HandleContainer} items={actions}>
+            <AppDropdown aria-label="Action menu" as={HandleContainer} items={actions}>
               <MoreMenu />
             </AppDropdown>
           ) : null
         }
         handle={
           inlineHandle ? null : (
-            <HandleContainer ref={setActivatorNodeRef} {...listeners}>
+            <HandleContainer aria-label="Reorder item" ref={setActivatorNodeRef} {...listeners}>
               <ResizeHandleIcon />
             </HandleContainer>
           )

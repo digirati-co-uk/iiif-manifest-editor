@@ -32,11 +32,12 @@ export interface AppDropdownItem {
 interface AppDropdownProps {
   as?: any;
   items: AppDropdownItem[];
+  "aria-label"?: string;
   children: any;
   style?: CSSProperties;
 }
 
-export function AppDropdown({ as, items, children, style, ...props }: AppDropdownProps) {
+export function AppDropdown({ as, items, children, "aria-label": ariaLabel, style, ...props }: AppDropdownProps) {
   const Comp: any = as || Button;
 
   const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
@@ -86,7 +87,7 @@ export function AppDropdown({ as, items, children, style, ...props }: AppDropdow
 
   return (
     <div className={$.menuOuter} style={style}>
-      <Comp {...buttonProps} {...props} onClick={onClick} onKeyDown={onKeyDown}>
+      <Comp {...buttonProps} {...props} aria-label={ariaLabel} onClick={onClick} onKeyDown={onKeyDown}>
         {children}
       </Comp>
       {isOpen && (
