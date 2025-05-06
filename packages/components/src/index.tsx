@@ -3,6 +3,7 @@ import "./index.css";
 import "iiif-browser/dist/index.css";
 
 export * from "./ActionButton";
+export * from "./AccessibilityButton";
 export * from "./Sidebar";
 export * from "./PanelSideMenu";
 export * from "./Tooltip";

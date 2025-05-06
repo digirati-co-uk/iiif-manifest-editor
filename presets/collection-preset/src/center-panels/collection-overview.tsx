@@ -25,7 +25,7 @@ export function CollectionOverviewCenterPanel() {
   const items = structural.items.get();
 
   return (
-    <div className="grid grid-md p-3 gap-3 overflow-y-auto">
+    <ul aria-label="Collection items" className="grid grid-md p-3 gap-3 overflow-y-auto">
       {items.map((item) => {
         if (item.type === "Manifest") {
           return (
@@ -41,6 +41,6 @@ export function CollectionOverviewCenterPanel() {
           </CollectionContext>
         );
       })}
-    </div>
+    </ul>
   );
 }
