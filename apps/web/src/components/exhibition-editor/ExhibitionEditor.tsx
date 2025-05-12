@@ -37,6 +37,14 @@ const config: Partial<Config> = {
       },
     },
     {
+      id: "delft-viewer-leeds",
+      type: "external-manifest-preview",
+      label: "Leeds Exhibition Preview",
+      config: {
+        url: "https://leedsunilibrary.exhibitionviewer.org/custom?manifest={manifestId}",
+      },
+    },
+    {
       id: "iiif-preview",
       type: "iiif-preview-service",
       label: "IIIF Preview",
