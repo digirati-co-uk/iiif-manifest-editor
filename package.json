@@ -34,7 +34,7 @@
     "next": "^14.2.25",
     "tslib": "^2.8.1",
     "turbo": "^2.0.3",
-    "lerna": "^8.1.5",
+    "lerna": "^8.2.2",
     "biome": "0.3.3",
     "typescript": "^5.7.3",
     "typescript-plugin-css-modules": "^5.1.0"
