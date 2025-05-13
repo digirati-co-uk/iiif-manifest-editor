@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/iiif-browser",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
