@@ -63,6 +63,9 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           if (!fullCanvas.label) {
             fullCanvas.label = { en: ["Untitled canvas"] };
           }
+          // Load before embedding.
+          ctx.vault.loadSync(fullCanvas.id, fullCanvas);
+          // Then embed.
           returnResources.push(ctx.embed(fullCanvas));
           continue;
         }

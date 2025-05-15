@@ -33,6 +33,10 @@ export const config: Partial<Config> = {
       fields: ["label", "summary", "metadata", "thumbnail"],
       singleTab: "@manifest-editor/overview",
     },
+    EmbeddedCollection: {
+      fields: ["label", "summary", "metadata", "thumbnail"],
+      singleTab: "@manifest-editor/overview",
+    },
     Collection: {
       fields: ["label", "summary", "requiredStatement", "thumbnail"],
     },

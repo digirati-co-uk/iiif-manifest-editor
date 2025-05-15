@@ -11,9 +11,19 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       {
         type: "callback",
         label: "Select",
-        supportedTypes: ["Manifest", "Collection"],
+        supportedTypes: ["Manifest", "Collection", "ManifestList", "CollectionList", "CollectionItemList"],
         cb: (resource) => props.runCreate({ output: resource }),
-        format: { type: "content-state" },
+        format: {
+          type: "custom",
+          format: (resource, parent, vault) => {
+            const resourcesAsArray = Array.isArray(resource) ? resource : [{ ...resource, parent }];
+            const resources = [];
+            for (const resource of resourcesAsArray) {
+              resources.push({ resource: vault.get(resource), parent: resource.parent, selector: resource.selector });
+            }
+            return resources;
+          },
+        },
       },
     ] as IIIFBrowserProps["output"];
   }, [props.runCreate]);
@@ -24,8 +34,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       canSelectCanvas: false,
       canSelectManifest: true,
       canSelectCollection: true,
-      // @todo fix the output so this one works.
-      multiSelect: false,
+      multiSelect: true,
     };
   }, []);
 

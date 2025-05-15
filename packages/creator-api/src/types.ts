@@ -30,6 +30,7 @@ export type ResolvedCreatorReturn<T extends CreatorDefinition> = Awaited<
   : CreatorResource;
 
 export interface CreatorFunctionContext {
+  vault: Vault;
   options: CreatorOptions;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
