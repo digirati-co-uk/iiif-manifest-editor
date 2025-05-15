@@ -162,8 +162,6 @@ export class CreatorInstance implements CreatorFunctionContext {
   }
 
   embed(data: any) {
-    // Load before embedding.
-    this.vault.load(data.id, data);
     return new CreatorResource(data, this.vault);
   }
 
