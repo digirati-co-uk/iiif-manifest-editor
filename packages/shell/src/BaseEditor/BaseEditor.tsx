@@ -5,6 +5,7 @@ import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { type ReactNode, useContext, useEffect, useMemo } from "react";
 import { ResourceReactContext, useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
+import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
@@ -123,14 +124,20 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   const resource = useEditingResource();
   const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
+  const rootResource = useAppResource();
   const vault = useVault();
   const { change } = useLayoutActions();
   const set = useSetCustomTitle();
   const { editorConfig } = useConfig();
-  const resourceConfig: EditorConfig =
-    (resource?.resource.source?.type
-      ? (editorConfig as any)[resource?.resource.source?.type as any]
-      : editorConfig.All) || {};
+  const resourceId = resource?.resource.source?.id;
+  let resourceType = resource?.resource.source?.type;
+  // Could use this is for later.
+  const isNested = resourceId !== rootResource.id;
+  if (resourceId && isNested && rootResource.type === "Collection" && resourceType === "Collection") {
+    resourceType = "EmbeddedCollection";
+  }
+
+  const resourceConfig: EditorConfig = (resourceType ? (editorConfig as any)[resourceType] : editorConfig.All) || {};
 
   const newResourceContext = useMemo(() => {
     const newCtx = { ...currentResourceContext };
@@ -184,7 +191,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
 
   useEffect(() => {
     set(match?.label || "");
-  });
+  }, [match]);
 
   useEffect(() => {
     const availableKeys = match?.editors.map((editor, key) => editor.id + key) || [];
@@ -216,6 +223,8 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
 
   return wrap(
     <SidebarTabs
+      isNested={isNested}
+      rootResource={rootResource}
       key={resource.resource.source?.id}
       menuId={resource.resource.source.id}
       menu={(match?.editors || []).map((editor, key) => {
