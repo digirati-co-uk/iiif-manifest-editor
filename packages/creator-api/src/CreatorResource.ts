@@ -15,8 +15,9 @@ export class CreatorResource {
   vault: Vault;
   specificResource?: SpecificResource;
 
-  constructor(data: any, vault: Vault) {
+  constructor(inputData: any, vault: Vault) {
     this.vault = vault;
+    let data = { ...inputData };
 
     if (data.type === "SpecificResource") {
       const source = data.source;

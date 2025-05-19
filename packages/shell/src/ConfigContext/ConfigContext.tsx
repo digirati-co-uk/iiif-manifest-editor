@@ -1,6 +1,6 @@
-import { Collection } from "@iiif/presentation-3";
-import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
-import { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
+import type { Collection } from "@iiif/presentation-3";
+import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
+import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 
 export interface Config {
   // Previous configuration.
@@ -20,6 +20,8 @@ export interface Config {
     Range?: EditorConfig;
     Collection?: EditorConfig;
     ContentResource?: EditorConfig;
+    // Collection inside collection.
+    EmbeddedCollection?: EditorConfig;
   };
 
   editorFeatureFlags: {
@@ -125,7 +127,7 @@ export function ConfigProvider({
       ...(config || {}),
       ...(runtimeConfig || {}),
     }),
-    [config, runtimeConfig]
+    [config, runtimeConfig],
   );
 
   const memoSaveConfig = useCallback(
@@ -135,7 +137,7 @@ export function ConfigProvider({
         saveConfig(config);
       }
     },
-    [config]
+    [config],
   );
 
   return (

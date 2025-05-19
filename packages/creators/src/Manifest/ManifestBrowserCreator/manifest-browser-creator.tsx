@@ -1,5 +1,6 @@
-import { type ContentState, createThumbnailHelper, normaliseContentState, parseContentState } from "@iiif/helpers";
-import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { type BoxSelector, createThumbnailHelper, normaliseContentState, parseContentState } from "@iiif/helpers";
+import type { CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
+import type { Resource } from "@manifest-editor/shell";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 
@@ -7,69 +8,65 @@ export interface ManifestBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
-  output: string | ContentState | ContentState[];
+  output: Array<{ resource: any; parent: { id: string; type: string } | undefined; selector: BoxSelector | undefined }>;
 }
 
 export async function createFromManifestBrowserOutput(
   data: ManifestBrowserCreatorPayload,
   ctx: CreatorFunctionContext,
 ) {
-  const targetType = ctx.options.targetType as "Manifest" | "Collection";
+  const inputItems = data.output || [];
+  const itemsToAdd: CreatorResource[] = [];
 
-  // For now..
-  if (Array.isArray(data.output)) {
-    throw new Error("Multiple items not yet supported");
+  for (const item of inputItems) {
+    const { resource, parent, selector } = item;
+
+    const previewVault = ctx.getPreviewVault();
+    const thumbnails = createThumbnailHelper(previewVault);
+
+    if (resource.type === "Manifest") {
+      const manifestId = resource.id;
+      invariant(manifestId, "Could not find Manifest ID");
+      // 1st. Check the preview vault.
+      const manifest = await previewVault.loadManifest(manifestId);
+      const thumbnail = await thumbnails.getBestThumbnailAtSize(manifest, { width: 256, height: 256 }, false);
+
+      invariant(manifest, "Manifest not found");
+      itemsToAdd.push(
+        ctx.embed({
+          id: resource.id,
+          type: "Manifest",
+          label: manifest.label,
+          summary: manifest.summary,
+          thumbnail: thumbnail?.best
+            ? [
+                {
+                  id: thumbnail.best.id,
+                  type: "Image",
+                },
+              ]
+            : undefined,
+        }),
+      );
+      continue;
+    }
+
+    if (resource.type === "Collection") {
+      const collectionId = resource.id;
+      invariant(collectionId, "Could not find Manifest ID");
+      const collection = await previewVault.loadManifest(collectionId);
+
+      invariant(collection, "Collection not found");
+      itemsToAdd.push(
+        ctx.embed({
+          id: resource.id,
+          type: "Collection",
+          label: collection.label,
+        }),
+      );
+    }
   }
 
-  const contentState = normaliseContentState(
-    typeof data.output === "string" ? parseContentState(data.output) : data.output,
-  );
-
-  const target = contentState.target[0];
-  const previewVault = ctx.getPreviewVault();
-  const thumbnails = createThumbnailHelper(previewVault);
-
-  if (!target) {
-    throw new Error("No target found in content state");
-  }
-
-  if (targetType === "Manifest") {
-    const manifestId = target.source.id;
-    invariant(manifestId, "Could not find Manifest ID");
-    // 1st. Check the preview vault.
-    const manifest = await previewVault.loadManifest(manifestId);
-    const thumbnail = await thumbnails.getBestThumbnailAtSize(manifest, { width: 256, height: 256 }, false);
-
-    invariant(manifest, "Manifest not found");
-    return ctx.embed({
-      id: target.source.id,
-      type: "Manifest",
-      label: manifest.label,
-      summary: manifest.summary,
-      thumbnail: thumbnail?.best
-        ? [
-            {
-              id: thumbnail.best.id,
-              type: "Image",
-            },
-          ]
-        : undefined,
-    });
-  }
-
-  if (targetType === "Collection") {
-    const collectionId = target.source.id;
-    invariant(collectionId, "Could not find Manifest ID");
-    const collection = await previewVault.loadManifest(collectionId);
-
-    invariant(collection, "Collection not found");
-    return ctx.embed({
-      id: target.source.id,
-      type: "Collection",
-      label: collection.label,
-    });
-  }
-
-  throw new Error("Not yet supported.");
+  return itemsToAdd;
 }
 export const ManifestBrowserCreatorForm = lazy(() => import("./manifest-browser-form.lazy"));
