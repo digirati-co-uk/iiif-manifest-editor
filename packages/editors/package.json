@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/editors",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
