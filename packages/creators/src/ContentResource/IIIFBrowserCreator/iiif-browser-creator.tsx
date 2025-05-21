@@ -100,8 +100,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           // Check for selector on state.
           if (selector?.type === "BoxSelector") {
             const imageApiSelector = {
-              "@context": "http://iiif.io/api/annex/openannotation/context.json",
-              type: "iiif:ImageApiSelector",
+              type: "ImageApiSelector",
               region: [
                 ~~selector.spatial.x,
                 ~~selector.spatial.y,
