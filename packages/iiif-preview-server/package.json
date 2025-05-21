@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/iiif-preview-server",
-  "version": "1.3.1",
+  "version": "1.4.3",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -11,12 +11,23 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
-  "nodeDependencies": ["http", "net", "url", "timers"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
+  "nodeDependencies": [
+    "http",
+    "net",
+    "url",
+    "timers"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": {

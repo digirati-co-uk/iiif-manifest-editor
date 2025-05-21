@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/editor-api",
-  "version": "1.4.0",
+  "version": "1.4.3",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -11,11 +11,17 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": {
