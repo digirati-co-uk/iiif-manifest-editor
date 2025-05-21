@@ -11,23 +11,12 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": [
-    "iiif",
-    "editor",
-    "typescript"
-  ],
-  "nodeDependencies": [
-    "http",
-    "net",
-    "url",
-    "timers"
-  ],
+  "keywords": ["iiif", "editor", "typescript"],
+  "nodeDependencies": ["http", "net", "url", "timers"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": {
@@ -48,7 +37,7 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.2.12",
+    "@iiif/helpers": "^1.3.2",
     "@iiif/presentation-3": "^2.2.3",
     "uuid": "^9.0.1",
     "ws": "^8.16.0"
