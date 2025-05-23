@@ -6,7 +6,7 @@ import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { InputContainer, InputLabel, InputLabelEdit } from "@/editors/Input";
 import { EmptyState } from "@/madoc/components/EmptyState";
 import { AnnotationList } from "@/_components/ui/AnnotationList/AnnotationList";
-import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
+import { createAppActions, emptyCallback } from "@/_editors/LinkingProperties/LinkingProperties.helpers";
 import { Button } from "@/atoms/Button";
 
 export function PaintingAnnotationList() {
@@ -49,7 +49,7 @@ export function PaintingAnnotationList() {
               inlineHandle={false}
               reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
               onSelect={(item, idx) => annotationActions.edit(item, idx)}
-              createActions={createAppActions(items)}
+              createActions={createAppActions(items, emptyCallback)}
             />
           </InputContainer>
           {canCreateAnnotation ? <Button onClick={() => annotationActions.create()}>Add media</Button> : null}

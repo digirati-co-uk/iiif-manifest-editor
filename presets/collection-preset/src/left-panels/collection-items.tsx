@@ -8,7 +8,13 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@manifest-editor/components";
-import { CollectionItemList, createAppActions, useInStack, useToggleList } from "@manifest-editor/editors";
+import {
+  CollectionItemList,
+  createAppActions,
+  emptyCallback,
+  useInStack,
+  useToggleList,
+} from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useCollectionEditor,
@@ -69,7 +75,7 @@ function CollectionItemsPanel() {
           onSelect={(item, idx) =>
             toRef(item)?.type === "Manifest" ? manifestActions.edit(item, idx) : collectionActions.edit(item, idx)
           }
-          createActions={createAppActions(items)}
+          createActions={createAppActions(items, emptyCallback)}
         />
       </SidebarContent>
     </Sidebar>
