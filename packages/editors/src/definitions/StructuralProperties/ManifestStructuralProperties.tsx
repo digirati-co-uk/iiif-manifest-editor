@@ -5,7 +5,7 @@ import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { InputContainer, InputLabel, InputLabelEdit } from "../../components/Input";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { useToggleList } from "../../helpers";
-import { createAppActions } from "../../helpers/create-app-actions";
+import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
 import { CanvasList } from "../../components/CanvasList/CanvasList";
 
 export function ManifestStructuralProperties() {
@@ -41,7 +41,7 @@ export function ManifestStructuralProperties() {
               inlineHandle={false}
               reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
               onSelect={(item, idx) => canvasActions.edit(item, idx)}
-              createActions={createAppActions(items)}
+              createActions={createAppActions(items, emptyCallback)}
             />
           </InputContainer>
           {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
@@ -54,7 +54,7 @@ export function ManifestStructuralProperties() {
           property="structures"
           items={structures.getSortable()}
           reorder={(ctx) => structures.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(structures)}
+          createActions={createAppActions(structures, emptyCallback)}
           creationType="Range"
           emptyLabel="No ranges"
           parent={resource?.resource}
