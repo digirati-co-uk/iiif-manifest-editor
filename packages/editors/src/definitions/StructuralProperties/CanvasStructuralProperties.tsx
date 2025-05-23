@@ -4,7 +4,7 @@ import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarC
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";
-import { createAppActions } from "../../helpers/create-app-actions";
+import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
 
 export function CanvasStructuralProperties() {
   const resource = useEditingResource();
@@ -20,9 +20,7 @@ export function CanvasStructuralProperties() {
   return (
     <PaddedSidebarContainer>
       {unsupported ? (
-        <ErrorMessage className="mb-2">
-          Multiple painting annotation pages are not supported.
-        </ErrorMessage>
+        <ErrorMessage className="mb-2">Multiple painting annotation pages are not supported.</ErrorMessage>
       ) : null}
       <CanvasContext canvas={technical.id.get()}>
         <AnnotationPageContext annotationPage={page.id}>
@@ -35,7 +33,7 @@ export function CanvasStructuralProperties() {
           property="annotations"
           items={annotations.get()}
           reorder={(ctx) => annotations.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(annotations)}
+          createActions={createAppActions(annotations, emptyCallback)}
           creationType="AnnotationPage"
           emptyLabel="No annotations"
           parent={resource?.resource}

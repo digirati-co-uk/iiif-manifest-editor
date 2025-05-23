@@ -3,7 +3,7 @@ import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarC
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";
-import { createAppActions } from "../../helpers/create-app-actions";
+import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
 import { CanvasContext, AnnotationPageContext } from "react-iiif-vault";
 
 export function OverviewCanvasEditor() {
@@ -39,7 +39,7 @@ export function OverviewCanvasEditor() {
             property="annotations"
             items={annotations.get()}
             reorder={(ctx) => annotations.reorder(ctx.startIndex, ctx.endIndex)}
-            createActions={createAppActions(annotations)}
+            createActions={createAppActions(annotations, emptyCallback)}
             creationType="AnnotationPage"
             emptyLabel="No annotations"
             parent={resource?.resource}
