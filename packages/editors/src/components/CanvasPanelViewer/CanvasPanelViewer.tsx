@@ -65,8 +65,6 @@ export function CanvasPanelViewer({
     return app.layout.annotations || [];
   }, [app.layout.annotations]);
 
-  console.log("Canvas", canvas);
-
   const store = useAtlasStore();
   const mode = useStore(store, (state) => state.mode);
 
@@ -84,7 +82,6 @@ export function CanvasPanelViewer({
   const { resources, regions } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
   const [complete] = useTaskRunner("refresh-canvas", () => {
-    console.log("refreshing canvas");
     refresh();
     complete();
   });
