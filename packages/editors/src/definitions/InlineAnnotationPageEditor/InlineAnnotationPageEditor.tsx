@@ -9,7 +9,7 @@ import invariant from "tiny-invariant";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputLabel } from "../../components/Input";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 
 export function InlineAnnotationPageEditor() {
   const editor = useEditor();
@@ -42,7 +42,7 @@ export function InlineAnnotationPageEditor() {
         inlineHandle={false}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
-        createActions={createAppActions(items, emptyCallback)}
+        createActions={createAppActions(items)}
       />
       <br />
       {canCreateAnnotation ? (

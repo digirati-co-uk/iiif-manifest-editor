@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import { useToggleList } from "../../helpers";
 import { InputContainer, InputLabel, InputLabelEdit } from "../Input";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 import { AnnotationList } from "../AnnotationList/AnnotationList";
 import { ActionButton, AddIcon, EmptyState } from "@manifest-editor/components";
 
@@ -46,7 +46,7 @@ export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: 
               inlineHandle={false}
               reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
               onSelect={(item, idx) => annotationActions.edit(item, idx)}
-              createActions={createAppActions(items, emptyCallback)}
+              createActions={createAppActions(items)}
             />
           </div>
           {canCreateAnnotation ? (

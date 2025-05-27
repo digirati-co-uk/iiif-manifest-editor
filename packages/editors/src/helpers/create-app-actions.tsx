@@ -7,15 +7,15 @@ import type { MetadataEditor, BaseReferenceListEditor } from "@manifest-editor/e
 
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any>,
-  callback: () => void
+  callback?: () => void | undefined
 ): (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 export function createAppActions(
   editor: MetadataEditor<any>,
-  callback: () => void
+  callback?: () => void
 ): (ref: MetadataItem, index: number, item: MetadataItem) => AppDropdownItem[];
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any> | MetadataEditor<any>,
-  callback: () => void
+  callback?: () => void
 ): (
   ref: MetadataItem | Reference,
   index: number,
@@ -44,13 +44,9 @@ export function createAppActions(
         icon: <DeleteIcon />,
         onClick: () => {
           editor.deleteAtIndex(index);
-          callback();
+          callback && callback();
         },
       },
     ];
   };
-}
-
-export function emptyCallback() {
-  //do nothing
 }

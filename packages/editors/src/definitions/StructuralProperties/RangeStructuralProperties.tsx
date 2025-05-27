@@ -1,7 +1,7 @@
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { InputContainer, InputLabel, InputLabelEdit } from "@manifest-editor/ui/editors/Input";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 import { toRef } from "@iiif/parser";
 import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
@@ -44,7 +44,7 @@ export function RangeStructuralProperties() {
               onSelect={(item, idx) =>
                 toRef(item)?.type === "Canvas" ? canvasActions.edit(item) : rangeActions.edit(item)
               }
-              createActions={createAppActions(items, emptyCallback)}
+              createActions={createAppActions(items)}
             />
           </InputContainer>
           {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}

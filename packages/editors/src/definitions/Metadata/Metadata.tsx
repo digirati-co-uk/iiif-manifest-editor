@@ -7,7 +7,7 @@ import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContain
 import { Fragment, useState } from "react";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { ReorderList } from "../../components/ReorderList/ReorderList.dndkit";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 
 export function Metadata() {
   const { descriptive } = useEditor();
@@ -49,7 +49,7 @@ export function Metadata() {
           inlineHandle={false}
           items={items}
           renderItem={renderItem}
-          createActions={createAppActions(descriptive.metadata, emptyCallback)}
+          createActions={createAppActions(descriptive.metadata)}
         />
       ) : (
         (items || []).map(renderItem)

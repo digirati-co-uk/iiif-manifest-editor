@@ -1,5 +1,5 @@
 import { toRef } from "@iiif/parser";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 import { CanvasContext } from "react-iiif-vault";
 import { useToggleList } from "../../helpers";
 import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
@@ -37,7 +37,7 @@ export function LinkingProperties() {
           property="seeAlso"
           items={seeAlso.get()}
           reorder={(ctx) => seeAlso.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(seeAlso, emptyCallback)}
+          createActions={createAppActions(seeAlso)}
           creationType="ContentResource"
           emptyLabel="No see also"
           parent={resource?.resource}
@@ -51,7 +51,7 @@ export function LinkingProperties() {
           property="rendering"
           items={rendering.get()}
           reorder={(ctx) => rendering.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(rendering, emptyCallback)}
+          createActions={createAppActions(rendering)}
           creationType="ContentResource"
           emptyLabel="No rendering"
           parent={resource?.resource}
@@ -65,7 +65,7 @@ export function LinkingProperties() {
           property="supplementary"
           items={supplementary.get()}
           reorder={(ctx) => supplementary.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(supplementary, emptyCallback)}
+          createActions={createAppActions(supplementary)}
           creationType="AnnotationCollection"
           emptyLabel="No supplementary"
           parent={resource?.resource}
@@ -121,7 +121,7 @@ export function LinkingProperties() {
               onSelect={(e, index) => {
                 logoActions.edit(e, index);
               }}
-              createActions={createAppActions(logo, emptyCallback)}
+              createActions={createAppActions(logo)}
             />
           </InputContainer>
           {canCreateLogo ? <Button onClick={() => logoActions.create()}>Add logo</Button> : null}

@@ -10,7 +10,7 @@ import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarC
 import { InputContainer, InputLabel, Input, InputFieldset } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
 
 export function DescriptiveProperties() {
@@ -62,7 +62,7 @@ export function DescriptiveProperties() {
             items={thumbnail.get()}
             singleMode
             reorder={(ctx) => thumbnail.reorder(ctx.startIndex, ctx.endIndex)}
-            createActions={createAppActions(thumbnail, emptyCallback)}
+            createActions={createAppActions(thumbnail)}
             creationType="ContentResource"
             emptyLabel="No thumbnail"
             parent={resource?.resource}

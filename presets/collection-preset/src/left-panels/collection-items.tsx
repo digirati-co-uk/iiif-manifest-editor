@@ -75,7 +75,7 @@ function CollectionItemsPanel() {
           onSelect={(item, idx) =>
             toRef(item)?.type === "Manifest" ? manifestActions.edit(item, idx) : collectionActions.edit(item, idx)
           }
-          createActions={createAppActions(items, emptyCallback)}
+          createActions={createAppActions(items)}
         />
       </SidebarContent>
     </Sidebar>

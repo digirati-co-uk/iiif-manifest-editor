@@ -4,7 +4,7 @@ import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarC
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";
-import { createAppActions, emptyCallback } from "../../helpers/create-app-actions";
+import { createAppActions } from "../../helpers/create-app-actions";
 
 export function CanvasStructuralProperties() {
   const resource = useEditingResource();
@@ -33,7 +33,7 @@ export function CanvasStructuralProperties() {
           property="annotations"
           items={annotations.get()}
           reorder={(ctx) => annotations.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(annotations, emptyCallback)}
+          createActions={createAppActions(annotations)}
           creationType="AnnotationPage"
           emptyLabel="No annotations"
           parent={resource?.resource}
