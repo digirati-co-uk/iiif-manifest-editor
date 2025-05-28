@@ -8,6 +8,7 @@ import {
   ThumbnailGridContainer,
   useFastList,
 } from "@manifest-editor/components";
+import { manifestBrowserCreator } from "@manifest-editor/creators";
 import {
   CanvasGrid,
   CanvasList,
@@ -23,6 +24,7 @@ import {
   useManifestEditor,
   useEditingStack,
 } from "@manifest-editor/shell";
+import { useManifest, useCollection } from "react-iiif-vault";
 import { type SVGProps, useEffect, useLayoutEffect } from "react";
 
 export const CanvasListingIcon = ({
@@ -195,16 +197,24 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
 
 export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const { canvas, items, canvasActions, open } = useEditCanvasItems();
+  const manifest = useManifest();
   const editingStack = useEditingStack();
   const canvases = items.get();
   const canvasId = canvas?.resource.source.id;
-  // find current canvas to get its index before deleting it
+
+  // Find current canvas to get its index before deleting it.
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
-  const prevCanvasIndex = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas
-    canvasActions.edit(canvases[prevCanvasIndex]); // move to previous canvas
+    const newCanvases = items.get(); // refresh canvases
+
+    if (newCanvases && newCanvases.length > 0) {
+      canvasActions.edit(newCanvases[prevCanvasIndex]);
+    } else {
+      canvasActions.edit(manifest);
+    }
   }
 
   return (
