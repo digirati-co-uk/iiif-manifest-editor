@@ -197,8 +197,6 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
 
 export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const { canvas, items, canvasActions, open } = useEditCanvasItems();
-  const collection = useCollection({} as any);
-  const [manifestActions] = useCreator(collection, "items", "Manifest");
   const manifest = useManifest();
   const editingStack = useEditingStack();
   const canvases = items.get();
@@ -215,7 +213,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
     if (newCanvases && newCanvases.length > 0) {
       canvasActions.edit(newCanvases[prevCanvasIndex]);
     } else {
-      console.log("canvas actions manifest");
+      console.log("canvas actions manifest2");
       canvasActions.edit(manifest);
     }
   }
