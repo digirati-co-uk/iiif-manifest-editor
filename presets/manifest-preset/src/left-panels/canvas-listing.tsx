@@ -168,11 +168,25 @@ export function useEditCanvasItems() {
 }
 
 export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
-  const { canvas, items, canvases, canvasActions, open } = useEditCanvasItems();
+  const { canvas, items, canvasActions, open } = useEditCanvasItems();
+  const manifest = useManifest();
   const editingStack = useEditingStack();
+  const canvases = items.get();
+  const canvasId = canvas?.resource.source.id;
+
+  // Find current canvas to get its index before deleting it
+  const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
+  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
-    editingStack.close();
+    editingStack.close(); // close the deleted canvas
+    const newCanvases = items.get(); // refresh canvases
+
+    if (newCanvases && newCanvases.length > 0) {
+      canvasActions.edit(newCanvases[prevCanvasIndex]);
+    } else {
+      canvasActions.edit(manifest);
+    }
   }
 
   return (
