@@ -215,7 +215,8 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
     if (newCanvases && newCanvases.length > 0) {
       canvasActions.edit(newCanvases[prevCanvasIndex]);
     } else {
-      manifestActions.edit(manifest);
+      console.log("canvas actions manifest");
+      canvasActions.edit(manifest);
     }
   }
 
