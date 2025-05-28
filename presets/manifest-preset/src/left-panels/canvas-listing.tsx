@@ -204,7 +204,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const canvases = items.get();
   const canvasId = canvas?.resource.source.id;
 
-  // find current canvas to get its index before deleting it
+  // Find current canvas to get its index before deleting it
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
   const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
@@ -213,7 +213,6 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
     const newCanvases = items.get(); // refresh canvases
 
     if (newCanvases && newCanvases.length > 0) {
-      console.log(newCanvases.length);
       canvasActions.edit(newCanvases[prevCanvasIndex]);
     } else {
       manifestActions.edit(manifest);
