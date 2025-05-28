@@ -1,9 +1,4 @@
-import {
-  type DefaultPresetOptions,
-  DrawBox,
-  ModeProvider,
-  type Runtime,
-} from "@atlas-viewer/atlas";
+import { type DefaultPresetOptions, DrawBox, ModeProvider, type Runtime } from "@atlas-viewer/atlas";
 import { AtlasBanner } from "@manifest-editor/components";
 import {
   useApp,
@@ -18,24 +13,10 @@ import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
 import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { Loading } from "@manifest-editor/ui/atoms/Loading";
-import {
-  PaddingComponentMedium,
-  PaddingComponentSmall,
-} from "@manifest-editor/ui/atoms/PaddingComponent";
-import {
-  CanvasContainer,
-  GhostCanvas,
-} from "@manifest-editor/ui/components/layout/CanvasContainer";
+import { PaddingComponentMedium, PaddingComponentSmall } from "@manifest-editor/ui/atoms/PaddingComponent";
+import { CanvasContainer, GhostCanvas } from "@manifest-editor/ui/components/layout/CanvasContainer";
 import { BlockIcon } from "@manifest-editor/ui/icons/BlockIcon";
-import {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
+import { Fragment, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
   AnnotationContext,
@@ -51,10 +32,7 @@ import { useAnnotationEditing } from "../../helpers/annotation-editing";
 import { useEditingMode } from "../../helpers/editing-mode";
 import { DrawPolygon } from "../DrawPolygon/DrawPolygon";
 import * as S from "./CanvasPanelViewer.styles";
-import {
-  AdditionalContextBridge,
-  AdditionalContextBridgeInner,
-} from "./components/AdditionalContextBridge";
+import { AdditionalContextBridge, AdditionalContextBridgeInner } from "./components/AdditionalContextBridge";
 import { AnnotationEditingTools } from "./components/AnnotationEditingTools";
 import { AnnotationTargetEditor } from "./components/AnnotationTargetEditor";
 import { Annotations } from "./components/Annotations";
@@ -82,9 +60,7 @@ export function CanvasPanelViewer({
   const runtime = useRef<Runtime>();
   const manifest = useManifest(); // @todo remove.
   const canvas = useCanvas();
-  const annotation = useAnnotation(
-    highlightAnnotation ? { id: highlightAnnotation } : undefined,
-  );
+  const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
   const customAnnotationComponents = useMemo(() => {
     return app.layout.annotations || [];
   }, [app.layout.annotations]);
@@ -95,22 +71,16 @@ export function CanvasPanelViewer({
   const { rightPanel } = useLayoutState();
   const { editMode, toggleEditMode } = useEditingMode();
   const [createMode, toggleCreateAnnotation] = useReducer(
-    (a: boolean, action?: boolean) =>
-      typeof action === "undefined" ? !a : action,
-    false,
+    (a: boolean, action?: boolean) => (typeof action === "undefined" ? !a : action),
+    false
   );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
-    () =>
-      [
-        "default-preset",
-        { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions,
-      ] as any,
-    [],
+    () => ["default-preset", { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions] as any,
+    []
   );
   const { resources, regions } = useHighlightedImageResource();
-  const { setAnnotation, annotationId: currentlyEditingAnnotation } =
-    useAnnotationEditing();
+  const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
   const [complete] = useTaskRunner("refresh-canvas", () => {
     refresh();
     complete();
@@ -188,12 +158,8 @@ export function CanvasPanelViewer({
           <BlockIcon color="grey" />
           <PaddingComponentSmall> No canvas selected</PaddingComponentSmall>
           <PaddingComponentMedium />
-          <PaddingComponentSmall>
-            Manage your canvases on the left{" "}
-          </PaddingComponentSmall>
-          <PaddingComponentSmall>
-            Edit your manifest properties on the right
-          </PaddingComponentSmall>
+          <PaddingComponentSmall>Manage your canvases on the left </PaddingComponentSmall>
+          <PaddingComponentSmall>Edit your manifest properties on the right</PaddingComponentSmall>
         </GhostCanvas>
       </CanvasContainer>
     );
@@ -216,9 +182,7 @@ export function CanvasPanelViewer({
           <S.ViewerContainer>
             {(createMode && createAnnotation && !editMode) ||
             ((currentlyEditingAnnotation || annotation) && editMode) ? (
-              <AtlasBanner controlsId="atlas-controls">
-                Draw a box or select a shape
-              </AtlasBanner>
+              <AtlasBanner controlsId="atlas-controls">Draw a box or select a shape</AtlasBanner>
             ) : null}
             <AuthProvider>
               <CanvasPanel.Viewer
@@ -235,29 +199,17 @@ export function CanvasPanelViewer({
                     <InternalRenderCanvas
                       backgroundStyle={{ background: "#fff" }}
                       alwaysShowBackground
-                      onClickPaintingAnnotation={
-                        annotation ? () => void 0 : onClickPaintingAnnotation
-                      }
+                      onClickPaintingAnnotation={annotation ? () => void 0 : onClickPaintingAnnotation}
                     >
                       {customAnnotationComponents.map((custom) => {
-                        return (
-                          <Fragment key={custom.id}>{custom.render()}</Fragment>
-                        );
+                        return <Fragment key={custom.id}>{custom.render()}</Fragment>;
                       })}
                       <RenderAnnotationEditing />
                       {!currentlyEditingAnnotation && resources.length
-                        ? resources.map((resource) => (
-                            <Highlight key={resource} id={resource} />
-                          ))
+                        ? resources.map((resource) => <Highlight key={resource} id={resource} />)
                         : null}
-                      {(currentlyEditingAnnotation || annotation) &&
-                      editMode ? (
-                        <AnnotationContext
-                          annotation={
-                            annotation?.id ||
-                            (currentlyEditingAnnotation as string)
-                          }
-                        >
+                      {(currentlyEditingAnnotation || annotation) && editMode ? (
+                        <AnnotationContext annotation={annotation?.id || (currentlyEditingAnnotation as string)}>
                           <AnnotationTargetEditor />
                         </AnnotationContext>
                       ) : null}
@@ -288,10 +240,9 @@ export function CanvasPanelViewer({
                       })}
                     </InternalRenderCanvas>
                   </CanvasContext>
-                  {rightPanel.current === "canvas-properties" &&
-                    rightPanel.state.current === 5 && (
-                      <Annotations canvasId={canvasId} />
-                    )}
+                  {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
+                    <Annotations canvasId={canvasId} />
+                  )}
 
                   {createMode && createAnnotation && !editMode ? (
                     <DrawPolygon
@@ -337,9 +288,7 @@ export function CanvasPanelViewer({
             editMode={editMode}
             toggleEditMode={toggleEditMode}
             createMode={createMode}
-            toggleCreateAnnotation={
-              createAnnotation ? toggleCreateAnnotation : undefined
-            }
+            toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
           />
         )}
         viewControlsDeps={[editMode, createMode, createAnnotation, annotation]}

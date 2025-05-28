@@ -20,9 +20,7 @@ export function CanvasStructuralProperties() {
   return (
     <PaddedSidebarContainer>
       {unsupported ? (
-        <ErrorMessage className="mb-2">
-          Multiple painting annotation pages are not supported.
-        </ErrorMessage>
+        <ErrorMessage className="mb-2">Multiple painting annotation pages are not supported.</ErrorMessage>
       ) : null}
       <CanvasContext canvas={technical.id.get()}>
         <AnnotationPageContext annotationPage={page.id}>

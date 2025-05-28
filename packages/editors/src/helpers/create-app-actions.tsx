@@ -2,32 +2,24 @@ import type { AppDropdownItem } from "../components/AppDropdown/AppDropdown";
 import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
-import type {
-  MetadataItem,
-  Reference,
-  SpecificResource,
-} from "@iiif/presentation-3";
-import type {
-  MetadataEditor,
-  BaseReferenceListEditor,
-} from "@manifest-editor/editor-api";
+import type { MetadataItem, Reference, SpecificResource } from "@iiif/presentation-3";
+import type { MetadataEditor, BaseReferenceListEditor } from "@manifest-editor/editor-api";
 
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any>,
-): (
-  ref: Reference,
-  index: number,
-  item: Reference | SpecificResource,
-) => AppDropdownItem[];
+  callback?: () => void | undefined
+): (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 export function createAppActions(
   editor: MetadataEditor<any>,
+  callback?: () => void
 ): (ref: MetadataItem, index: number, item: MetadataItem) => AppDropdownItem[];
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any> | MetadataEditor<any>,
+  callback?: () => void
 ): (
   ref: MetadataItem | Reference,
   index: number,
-  item: MetadataItem | Reference | SpecificResource,
+  item: MetadataItem | Reference | SpecificResource
 ) => AppDropdownItem[] {
   return (ref, index, item) => {
     const hasMultiple = editor.get();
@@ -50,7 +42,10 @@ export function createAppActions(
       {
         label: "Delete",
         icon: <DeleteIcon />,
-        onClick: () => editor.deleteAtIndex(index),
+        onClick: () => {
+          editor.deleteAtIndex(index);
+          callback && callback();
+        },
       },
     ];
   };
