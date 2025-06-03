@@ -24,6 +24,14 @@ const collectionWithPreviews = extendApp(collectionPreset, collectionPreset.meta
         },
       },
       {
+        id: "iiif-timeline",
+        type: "external-manifest-preview",
+        label: "IIIF Timeline",
+        config: {
+          url: "https://jamesmisson.github.io/iiif-timeline/?c={manifestId}",
+        },
+      },
+      {
         id: "iiif-preview",
         type: "iiif-preview-service",
         label: "IIIF Preview",
