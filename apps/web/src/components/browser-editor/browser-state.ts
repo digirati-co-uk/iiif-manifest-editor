@@ -272,7 +272,7 @@ export function useBrowserProject(id: string) {
     mutationFn: async () => {
       try {
         await saveVaultData.mutateAsync({ force: false });
-      } catch (e) { }
+      } catch (e) {}
       await closeBrowserProject(id);
     },
     onSuccess: async () => {
@@ -312,6 +312,38 @@ export function useBrowserProject(id: string) {
     reopenProject,
     userForceUpdate,
   };
+}
+
+export async function createBlankCollection() {
+  const id = randomId();
+  const collection = {
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    id: `https://example.org/${id}`,
+    type: "Collection",
+    label: {
+      en: ["Blank Collection"],
+    },
+    items: [],
+  };
+
+  const vault = new Vault();
+  vault.loadCollectionSync(collection.id, collection);
+  const vaultData = vault.getState().iiif;
+
+  const project = await createBrowserProject(
+    id,
+    {
+      id: collection.id,
+      type: "Collection",
+      label: { en: ["Blank Collection"] },
+      thumbnail: "",
+    },
+    { id: "blank-collection", type: "Template" },
+    vaultData,
+    {}
+  );
+
+  return project;
 }
 
 export async function createBlankManifest() {
@@ -419,7 +451,6 @@ export async function createManifestFromId(url: string, extra: any = {}) {
 
   return project;
 }
-
 
 export async function createCollectionFromId(url: string, extra: any = {}) {
   const { projectId, ...extraFields } = extra;
