@@ -30,11 +30,11 @@ export default {
 export const config: Partial<Config> = {
   editorConfig: {
     Manifest: {
-      fields: ["label", "summary", "metadata", "thumbnail"],
+      fields: ["label", "summary", "metadata", "thumbnail", "navDate"],
       singleTab: "@manifest-editor/overview",
     },
     EmbeddedCollection: {
-      fields: ["label", "summary", "metadata", "thumbnail"],
+      fields: ["label", "summary", "metadata", "thumbnail", "navDate"],
       singleTab: "@manifest-editor/overview",
     },
     Collection: {
