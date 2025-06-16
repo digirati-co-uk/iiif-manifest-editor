@@ -50,7 +50,7 @@
     "@manifest-editor/shell": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.9"
+    "react-iiif-vault": "^1.5.10"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
