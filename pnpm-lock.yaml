@@ -7,7 +7,7 @@ settings:
 overrides:
   polygon-editor: 0.0.6
   next: ^14.2.25
-  '@atlas-viewer/atlas': 2.3.1
+  '@atlas-viewer/atlas': 2.3.5
   '@iiif/helpers': ^1.3.2
 
 importers:
@@ -179,8 +179,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -399,8 +399,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -478,8 +478,8 @@ importers:
         specifier: 0.0.6
         version: 0.0.6
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -542,8 +542,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -598,8 +598,8 @@ importers:
   packages/editors:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.1
-        version: 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.5
+        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -697,8 +697,8 @@ importers:
         specifier: 14.1.0
         version: 14.1.0(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet:
         specifier: ^4.2.1
         version: 4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -776,8 +776,8 @@ importers:
   packages/iiif-browser:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.1
-        version: 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.5
+        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
         specifier: ^1.3.2
         version: 1.3.2(@iiif/parser@2.1.8)
@@ -800,8 +800,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -923,8 +923,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -999,8 +999,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1070,8 +1070,8 @@ importers:
   packages/shell:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.1
-        version: 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.5
+        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1133,8 +1133,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1191,8 +1191,8 @@ importers:
   packages/ui:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.1
-        version: 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.5
+        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1215,8 +1215,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1273,8 +1273,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1355,8 +1355,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1416,8 +1416,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.6
-        version: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.10
+        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1518,8 +1518,8 @@ packages:
     resolution: {integrity: sha512-ByenQQ0BtqqY0pvlmipvkDv/cKl/9vVjBydS7hloXOdmXPoUF0pHdlilC7ZfrRW97EzPQQZT2jgHl2tu7zg9QA==}
     engines: {node: '>= 10'}
 
-  '@atlas-viewer/atlas@2.3.1':
-    resolution: {integrity: sha512-Q6H5xaey69+8zJ4QoXyCcavKd1pTWYUMyFR+Nt1LapL2DRl+ZY1Gc3mWIhPXvfM/85yKWawZS4oO1YjbcUriIg==}
+  '@atlas-viewer/atlas@2.3.5':
+    resolution: {integrity: sha512-Ef7PwasNibNkbQJIpMvqk69KI6skhTMPNTqS5eqjBasw9ECiLhk0vXs9hiTguvi+pCsOAE+lnmsPkiLOwSCfog==}
     peerDependencies:
       react: '>=17.0'
       react-dom: '>=17.0'
@@ -10259,14 +10259,8 @@ packages:
       react-native:
         optional: true
 
-  react-iiif-vault@1.2.1:
-    resolution: {integrity: sha512-rTwJfsmW/LBe0xXb3R0SA1Km+hUkWivoDKsBcW40akYmpWyFzXfkpAGuaMF0GPMSckQMwtKIzW5mJ+qyGkkEPQ==}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
-  react-iiif-vault@1.5.6:
-    resolution: {integrity: sha512-ViJTR3GerN+IKTzwUwwYdO1FDRq4XdYtUR1lmhvTbG7M3fCP3wggMzt9QjOiev6HjCjw4bRlP1QsZADtN15W1A==}
+  react-iiif-vault@1.5.10:
+    resolution: {integrity: sha512-kF0Qe28XsT57zMlcxtVsEtaqK+ZzUmknmXmwcxYmSi9dnPZgIOtGnI9dvQrENjf5TLs3DYRwCmtm9s/MDXpDgA==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -12163,7 +12157,7 @@ snapshots:
       '@ast-grep/napi-win32-ia32-msvc': 0.36.2
       '@ast-grep/napi-win32-x64-msvc': 0.36.2
 
-  '@atlas-viewer/atlas@2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@atlas-viewer/atlas@2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.0
@@ -18063,7 +18057,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
@@ -19745,7 +19739,7 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       eslint-plugin-turbo: 2.0.6(eslint@9.10.0(jiti@1.21.0))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
 
@@ -19762,7 +19756,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.16.1
       eslint: 9.10.0(jiti@1.21.0)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -19774,7 +19768,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -19801,7 +19795,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -20930,7 +20924,7 @@ snapshots:
 
   iiif-browser@2.0.1(@types/react@18.3.3)(immer@10.1.1):
     dependencies:
-      '@atlas-viewer/atlas': 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@atlas-viewer/atlas': 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
       '@iiif/parser': 2.1.8
       '@iiif/presentation-3': 2.2.3
@@ -20945,7 +20939,7 @@ snapshots:
       react-aria: 3.38.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-aria-components: 1.7.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
-      react-iiif-vault: 1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-iiif-vault: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router-dom: 7.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-timeago: 8.0.0(react@18.3.1)
@@ -23720,31 +23714,9 @@ snapshots:
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
 
-  react-iiif-vault@1.2.1(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-iiif-vault@1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@atlas-viewer/atlas': 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
-      '@iiif/parser': 2.1.8
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      mitt: 3.0.1
-      polygon-editor: 0.0.6
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-error-boundary: 4.0.13(react@18.3.1)
-      react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-reconciler: 0.29.2(react@18.3.1)
-      zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-
-  react-iiif-vault@1.5.6(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@atlas-viewer/atlas': 2.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@atlas-viewer/atlas': 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
       '@iiif/parser': 2.1.8
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
