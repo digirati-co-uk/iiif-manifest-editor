@@ -91,22 +91,6 @@ const previews: PreviewConfiguration[] = [
     },
   },
   {
-    id: "delft-viewer",
-    type: "external-manifest-preview",
-    label: "Delft viewer",
-    config: {
-      url: "https://delft-viewer.netlify.app/#manifest={manifestId}",
-    },
-  },
-  {
-    id: "delft-viewer-leeds",
-    type: "external-manifest-preview",
-    label: "Leeds Exhibition Preview",
-    config: {
-      url: "https://leedsunilibrary.exhibitionviewer.org/custom?manifest={manifestId}",
-    },
-  },
-  {
     id: "iiif-preview",
     type: "iiif-preview-service",
     label: "IIIF Preview",
@@ -541,7 +525,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
               presetPath,
               canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
             })
-          : "",
+          : ""
       )}
     </div>
   );

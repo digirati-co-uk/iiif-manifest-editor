@@ -44,8 +44,38 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
         value: "bottom",
       },
       {
+        label: { en: ["Text on top"] },
+        value: "top",
+      },
+      {
         label: { en: ["Only image"] },
         value: "image",
+      },
+    ],
+  },
+  {
+    id: "floating",
+    type: "choice",
+    label: { en: ["Floating"] },
+    initialOpen: false,
+    addNone: true,
+    groupBehavior: "floating",
+    items: [
+      {
+        label: { en: ["Float top left"] },
+        value: "float-top-left",
+      },
+      {
+        label: { en: ["Float top right"] },
+        value: "float-top-right",
+      },
+      {
+        label: { en: ["Float bottom left"] },
+        value: "float-bottom-left",
+      },
+      {
+        label: { en: ["Float bottom right"] },
+        value: "float-bottom-right",
       },
     ],
   },
@@ -58,6 +88,35 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
     supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
   },
 ];
+
+export function RoundGridIcon(props: { index: number } & React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
+      <path
+        fill={props.index === 0 ? "currentColor" : "none"}
+        stroke="currentColor"
+        d="M5 11h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"
+      />
+      <path
+        fill={props.index === 1 ? "currentColor" : "none"}
+        stroke="currentColor"
+        d="M5 21h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"
+      />
+      <path
+        fill={props.index === 2 ? "currentColor" : "none"}
+        stroke="currentColor"
+        d="M13 5v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2"
+      />
+      <path
+        fill={props.index === 3 ? "currentColor" : "none"}
+        stroke="currentColor"
+        d="M15 21h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"
+      />
+    </svg>
+  );
+}
+
 function parseBehaviors(items: string[]) {
   let width = 0;
   let height = 0;

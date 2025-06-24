@@ -19,6 +19,7 @@
     "@dnd-kit/utilities": "^3.2.1",
     "@iiif/helpers": "^1.3.2",
     "@iiif/parser": "^2.1.8",
+    "@iiif/builder": "^2.0.1",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/collection-preset": "workspace:*",
