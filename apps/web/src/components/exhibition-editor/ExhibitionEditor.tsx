@@ -49,7 +49,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Light slideshow",
       config: {
-        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&floating=true&minimal=true",
+        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true",
       },
     },
     {
