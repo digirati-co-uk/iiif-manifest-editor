@@ -21,27 +21,35 @@ const exhibitionOnboarding: Step[] = [
 const config: Partial<Config> = {
   previews: [
     {
-      id: "delft-exhibition-viewer",
+      id: "delft-theme",
       type: "external-manifest-preview",
-      label: "Exhibition viewer",
+      label: "Delft exhibition",
       config: {
-        url: "https://delft-exhibition-viewer.pages.dev/?manifest={manifestId}",
+        url: "https://exhibitionviewer.org/preview/delft?manifest={manifestId}",
       },
     },
     {
-      id: "delft-exhibition-embed-viewer",
+      id: "delft-slideshow",
       type: "external-manifest-preview",
-      label: "Exhibition slideshow viewer",
+      label: "Delft slideshow",
       config: {
-        url: "https://delft-exhibition-viewer.pages.dev/embed?manifest={manifestId}",
+        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}",
       },
     },
     {
-      id: "delft-viewer-leeds",
+      id: "minimal-theme",
       type: "external-manifest-preview",
-      label: "Leeds Exhibition Preview",
+      label: "Light exhibition",
       config: {
-        url: "https://leedsunilibrary.exhibitionviewer.org/custom?manifest={manifestId}",
+        url: "https://exhibitionviewer.org/preview/minimal?manifest={manifestId}",
+      },
+    },
+    {
+      id: "minimal-slideshow",
+      type: "external-manifest-preview",
+      label: "Light slideshow",
+      config: {
+        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&floating=true&minimal=true",
       },
     },
     {
