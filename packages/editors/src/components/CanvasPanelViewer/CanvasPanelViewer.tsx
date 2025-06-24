@@ -76,7 +76,16 @@ export function CanvasPanelViewer({
   );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
-    () => ["default-preset", { runtimeOptions: { visibilityRatio: 1.2 } } as DefaultPresetOptions] as any,
+    () =>
+      [
+        "default-preset",
+        {
+          runtimeOptions: {
+            visibilityRatio: 0.45,
+            maxOverZoom: 5,
+          },
+        } as DefaultPresetOptions,
+      ] as any,
     []
   );
   const { resources, regions } = useHighlightedImageResource();
@@ -193,6 +202,7 @@ export function CanvasPanelViewer({
                 }}
                 renderPreset={config}
                 mode={chosenMode}
+                runtimeOptions={config[1].runtimeOptions}
               >
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
