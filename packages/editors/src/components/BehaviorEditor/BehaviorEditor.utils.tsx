@@ -71,6 +71,9 @@ export function RenderCustomBehaviorEditor(props: {
       const setNewChoice = (choice: string) => {
         if (firstIndex !== -1 && choice) {
           filtered.splice(firstIndex, 0, choice);
+          if (groupBehavior) {
+            filtered.splice(0, 0, groupBehavior);
+          }
           props.setBehaviors(filtered);
         } else {
           if (groupBehavior) {
