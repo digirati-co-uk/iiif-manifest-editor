@@ -53,12 +53,13 @@ export function RenderCustomBehaviorEditor(props: {
     }
 
     case "choice": {
+      const groupBehavior = props.config.groupBehavior;
       const items = props.config.addNone
         ? [{ label: { en: ["None"] }, value: "" }, ...props.config.items]
         : props.config.items;
 
       const values = items.map((i) => i.value);
-      const filtered = props.behaviors.filter((b) => !values.includes(b));
+      const filtered = props.behaviors.filter((b) => !values.includes(b) && b !== groupBehavior);
       let selected = props.behaviors.filter((b) => values.includes(b));
 
       if (selected.length === 0 && props.config.addNone) {
@@ -70,9 +71,16 @@ export function RenderCustomBehaviorEditor(props: {
       const setNewChoice = (choice: string) => {
         if (firstIndex !== -1 && choice) {
           filtered.splice(firstIndex, 0, choice);
+          if (groupBehavior) {
+            filtered.splice(0, 0, groupBehavior);
+          }
           props.setBehaviors(filtered);
         } else {
-          props.setBehaviors(choice ? [...filtered, choice] : filtered);
+          if (groupBehavior) {
+            props.setBehaviors(choice ? [...filtered, groupBehavior, choice] : filtered);
+          } else {
+            props.setBehaviors(choice ? [...filtered, choice] : filtered);
+          }
         }
       };
 
