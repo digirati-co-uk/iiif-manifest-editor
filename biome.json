@@ -1,11 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "files": {
-    "ignore": ["node_modules/**/*", ".next/**/*", ".turbo/**/*", ".vercel/**/*"]
-  },
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.1.0/schema.json",
   "linter": {
     "enabled": true,
     "rules": {
@@ -27,7 +21,6 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": [],
     "attributePosition": "auto",
     "indentStyle": "space",
     "indentWidth": 2,

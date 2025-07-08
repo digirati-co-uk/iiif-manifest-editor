@@ -150,12 +150,18 @@ export function usePreviewActions(
 
           invariant(handler, `Missing handler for Preview requirement "${requirement}"`);
           const existing = previews.find((p) => p.id === handlerId);
+          const existingIsActive = state.active.find((a) => a === handlerId);
 
-          if (!existing || !(await handler.isPreviewValid(instanceId, existing))) {
+          const alwaysCreate = true as boolean;
+
+          if (alwaysCreate || !existing || !(await handler.isPreviewValid(instanceId, existing))) {
             const contextualPreview = await handler.createPreview(instanceId, resource, vault, context);
             Object.assign(context, contextualPreview?.data || {});
             previewActions.setPreview(contextualPreview);
-            dispatch({ type: "activatePreview", payload: contextualPreview.id });
+            dispatch({
+              type: "activatePreview",
+              payload: contextualPreview.id,
+            });
           } else {
             Object.assign(context, existing?.data || {});
             dispatch({ type: "activatePreview", payload: existing.id });
@@ -171,10 +177,17 @@ export function usePreviewActions(
   }
 
   return useMemo(
-    () => ({ selectPreview, deletePreview, focusPreview, activatePreview, updatePreviews, getPreviewLink }),
+    () => ({
+      selectPreview,
+      deletePreview,
+      focusPreview,
+      activatePreview,
+      updatePreviews,
+      getPreviewLink,
+    }),
     // Dispatch has a stable identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handlerMap, instanceId, vault, state.selected, previews],
+    [handlerMap, instanceId, vault, state.selected, state.active, previews],
   );
 }
 
