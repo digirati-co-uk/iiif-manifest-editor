@@ -2,8 +2,8 @@
 import { exhibitionEditorPreset } from "@manifest-editor/exhibition-preset";
 import type { Config } from "@manifest-editor/shell";
 import type { Step } from "react-joyride";
-import { OnboardingTour } from "../OnboardingTour";
 import BrowserEditor from "../browser-editor/BrowserEditor";
+import { OnboardingTour } from "../OnboardingTour";
 
 const exhibitionOnboarding: Step[] = [
   // {
@@ -50,6 +50,14 @@ const config: Partial<Config> = {
       label: "Light slideshow",
       config: {
         url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true",
+      },
+    },
+    {
+      id: "minimal-floating-tour",
+      type: "external-manifest-preview",
+      label: "Floating tour",
+      config: {
+        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true&floating=true",
       },
     },
     {
