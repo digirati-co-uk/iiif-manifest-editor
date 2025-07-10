@@ -7,10 +7,7 @@ import { useMemo } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { createManifestFromId } from "./browser-state";
 
-export function IIIFBrowserModal({
-  isOpen,
-  setIsOpen,
-}: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
+export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const router = useRouter();
   const createProject = useMutation({
     mutationFn: createManifestFromId,
@@ -48,11 +45,7 @@ export function IIIFBrowserModal({
 
   if (createProject.isPending) {
     return (
-      <Modal
-        open={isOpen}
-        title="Loading manifest"
-        onClose={() => setIsOpen(false)}
-      >
+      <Modal open={isOpen} title="Loading manifest" onClose={() => setIsOpen(false)}>
         <div className="p-16 text-center">
           Loading <strong>{createProject.variables}</strong>
         </div>
@@ -61,11 +54,7 @@ export function IIIFBrowserModal({
   }
 
   return (
-    <Modal
-      open={isOpen}
-      title="Open a Manifest from a URL"
-      onClose={() => setIsOpen(false)}
-    >
+    <Modal open={isOpen} title="Open a Manifest or Collection from a URL" onClose={() => setIsOpen(false)}>
       <VaultProvider useGlobal={false}>
         <IIIFBrowser
           className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
