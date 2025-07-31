@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { RichMediaLinkStyles } from "./RichMediaLink.styles";
 
 export interface RichMediaLinkProps {
@@ -8,6 +8,7 @@ export interface RichMediaLinkProps {
   title: string | ReactNode;
   link: string;
   noLink?: boolean;
+  isVisible?: boolean;
   label?: string;
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
   containerProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -17,6 +18,7 @@ export function RichMediaLink(props: RichMediaLinkProps) {
   return (
     <RichMediaLinkStyles.Container
       data-margin={props.margin}
+      data-visible={props.isVisible === false ? "false" : "true"}
       onClick={props.onClick}
       $interactive={!!props.onClick}
       {...((props.containerProps as any) || {})}

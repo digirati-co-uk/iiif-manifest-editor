@@ -1,68 +1,72 @@
 import { useMemo } from "react";
+import { useAtlasStore } from "react-iiif-vault";
 import { useStore } from "zustand";
-import { useAtlasStore } from "../AtlasStore/AtlasStoreProvider";
 
 export function useSvgTools() {
   const store = useAtlasStore();
   const switchTool = useStore(store, (s) => s.switchTool);
-  const state = useStore(store, (s) => s.polygons.state.slowState);
+  const currentTool = useStore(store, (s) => s.polygonState.currentTool);
+  const selectedStamp = useStore(store, (s) => s.polygonState.selectedStamp);
+  const showBoundingBox = useStore(store, (s) => s.polygonState.showBoundingBox);
 
   return useMemo(
     () => ({
+      currentTool,
+      selectedStamp,
       // Draw tool.
       draw: {
-        active: !state.lineMode && !state.selectedStamp && state.drawMode,
+        active: currentTool === "pencil",
         enable: switchTool.draw,
       },
 
       // Polygon.
       polygon: {
-        active: !state.lineMode && !state.selectedStamp && !state.drawMode,
-        enable: switchTool.polygon,
+        active: currentTool === "pen",
+        enable: switchTool.pen,
       },
 
       // Line
       line: {
-        active: state.lineMode && !state.lineBoxMode,
+        active: currentTool === "line",
         enable: switchTool.line,
       },
 
       // Line box.
       lineBox: {
-        active: state.lineBoxMode,
+        active: currentTool === "lineBox",
         enable: switchTool.lineBox,
       },
 
       // Square.
       square: {
-        active: state.selectedStamp?.id === "square",
-        enable: switchTool.square,
+        active: currentTool === "box",
+        enable: switchTool.box,
       },
 
       // Triangle.
       triangle: {
-        active: state.selectedStamp?.id === "triangle",
+        active: selectedStamp?.id === "triangle",
         enable: switchTool.triangle,
       },
 
       // Hexagon.
       hexagon: {
-        active: state.selectedStamp?.id === "hexagon",
+        active: selectedStamp?.id === "hexagon",
         enable: switchTool.hexagon,
       },
 
       // Circle
       circle: {
-        active: state.selectedStamp?.id === "circle40",
+        active: selectedStamp?.id === "circle",
         enable: switchTool.circle,
       },
 
       // Delete
       remove: {
-        active: state.showBoundingBox,
+        active: showBoundingBox,
         enable: switchTool.remove,
       },
     }),
-    [state, switchTool],
+    [showBoundingBox, selectedStamp, currentTool, switchTool],
   );
 }

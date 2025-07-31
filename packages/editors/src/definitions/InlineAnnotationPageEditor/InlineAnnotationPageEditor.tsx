@@ -28,7 +28,7 @@ export function InlineAnnotationPageEditor() {
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
   );
 
   // Does the canvas have multiple media?
@@ -40,6 +40,7 @@ export function InlineAnnotationPageEditor() {
         id={items.focusId()}
         list={items.get() || []}
         inlineHandle={false}
+        canvasId={canvasId}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
         createActions={createAppActions(items)}
@@ -73,7 +74,7 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       }
       return toList;
     },
-    [id, ...deps]
+    [id, ...deps],
   );
 }
 
@@ -92,7 +93,7 @@ export function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems]
+    [targets, totalItems],
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -131,7 +132,7 @@ export function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        }
+                        },
                       );
                     }}
                   />

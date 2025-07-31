@@ -1,18 +1,11 @@
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { ImageService } from "@iiif/presentation-3";
-import {
-  useEditor,
-  useGenericEditor,
-  useLayoutActions,
-} from "@manifest-editor/shell";
-import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
+import { useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
-import {
-  FlexContainerColumn,
-  FlexImage,
-} from "@manifest-editor/ui/components/layout/FlexContainer";
+import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
@@ -24,6 +17,7 @@ import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelect
 import { centerRectangles } from "../../helpers/center-rectangles";
 import { getYouTubeId } from "../../helpers/get-youtube-id";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { MediaTargetEditor } from "./MediaTargetEditor";
 
 function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
   return (
@@ -66,14 +60,7 @@ export function MediaEditor() {
     index: 0,
   });
 
-  const {
-    id,
-    width,
-    height,
-    mediaType: type,
-    format,
-    duration,
-  } = resourceEditor.technical;
+  const { id, width, height, mediaType: type, format, duration } = resourceEditor.technical;
   const { service } = resourceEditor.linking;
   const { label, summary } = annotationEditor.descriptive;
   const { target, body } = annotationEditor.annotation;
@@ -87,9 +74,7 @@ export function MediaEditor() {
   const canvas = useCanvas({ id: canvasId });
 
   //type.get()
-  const isYouTube = !!(service.get() || []).find(
-    (r) => (r as any).profile === "https://www.youtube.com",
-  );
+  const isYouTube = !!(service.get() || []).find((r) => (r as any).profile === "https://www.youtube.com");
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
 
   // VideoYouTubeHTML
@@ -121,9 +106,7 @@ export function MediaEditor() {
           height={height.get() || 0}
           changeHeight={(v) => height.set(v)}
           duration={duration.get() || 0}
-          changeDuration={
-            type.get() !== "Image" ? (v) => duration.set(v) : undefined
-          }
+          changeDuration={type.get() !== "Image" ? (v) => duration.set(v) : undefined}
         />
       </InputContainer>
 
@@ -228,9 +211,7 @@ export function MediaEditor() {
 
                   if (!dimensionsSet) {
                     // Check image resource width/height vs. service.
-                    const imageService = serviceList.find((s) =>
-                      isImageService(s),
-                    ) as ImageService | undefined;
+                    const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
                     if (imageService) {
                       if (imageService.width && imageService.height) {
                         if (imageService.width !== width.get()) {
@@ -261,36 +242,14 @@ export function MediaEditor() {
           </ButtonGroup>
         </InputContainer>
       ) : null}
-      {currentSelector && currentSelector.type === "BoxSelector" ? (
-        <InputContainer $wide>
-          <BoxSelectorField
-            selector={currentSelector}
-            form
-            inlineFieldset
-            onSubmit={(data) => {
-              target.setPosition(data.spatial);
-            }}
-          >
-            <ButtonGroup $right>
-              <Button type="button" onClick={() => target.removeSelector()}>
-                Target whole canvas
-              </Button>
-              <Button type="submit">Update target</Button>
-            </ButtonGroup>
-          </BoxSelectorField>
-        </InputContainer>
-      ) : null}
+      {currentSelector && currentSelector.type === "BoxSelector" ? <MediaTargetEditor /> : null}
     </>
   );
 
   return (
     <FlexContainerColumn>
       <FlexImage>
-        {thumbnail ? (
-          <img src={thumbnail.id} />
-        ) : youtubeId ? (
-          <EmbedYoutube youTubeId={youtubeId} />
-        ) : null}
+        {thumbnail ? <img src={thumbnail.id} /> : youtubeId ? <EmbedYoutube youTubeId={youtubeId} /> : null}
       </FlexImage>
 
       <InputContainer $wide>
@@ -301,9 +260,7 @@ export function MediaEditor() {
         items={[
           {
             label: "Descriptive",
-            initialOpen:
-              Object.keys(label.get() || {}).length !== 0 ||
-              Object.keys(summary.get() || {}).length !== 0,
+            initialOpen: Object.keys(label.get() || {}).length !== 0 || Object.keys(summary.get() || {}).length !== 0,
             children: descriptive,
           },
           {

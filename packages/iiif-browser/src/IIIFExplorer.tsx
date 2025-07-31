@@ -1,16 +1,16 @@
-import $ from "./styles/HoverCard.module.css";
-import { CollectionListing } from "./components/CollectionListing";
-import { Vault } from "@iiif/helpers/vault";
-import { VaultProvider } from "react-iiif-vault";
-import { ExplorerStoreProvider } from "./IIIFExplorer.store";
-import { ExplorerEntry } from "./components/ExplorerEntry";
-import { ManifestListing } from "./components/ManifestListing";
-import { CanvasView } from "./components/CanvasView";
+import type { BoxStyle } from "@atlas-viewer/atlas";
+import type { Vault } from "@iiif/helpers/vault";
 import { useState } from "react";
-import { FilterProvider, ItemFilter } from "./components/ItemFilter";
+import { VaultProvider } from "react-iiif-vault";
+import { CanvasView } from "./components/CanvasView";
+import { CollectionListing } from "./components/CollectionListing";
+import { ExplorerEntry } from "./components/ExplorerEntry";
 import { ExplorerOutput } from "./components/ExplorerOutput";
-import { OutputFormat, OutputTarget, OutputType, HistoryItem } from "./IIIFExplorer.types";
-import { BoxStyle } from "@atlas-viewer/atlas";
+import { FilterProvider, ItemFilter } from "./components/ItemFilter";
+import { ManifestListing } from "./components/ManifestListing";
+import { ExplorerStoreProvider } from "./IIIFExplorer.store";
+import type { HistoryItem, OutputFormat, OutputTarget, OutputType } from "./IIIFExplorer.types";
+import $ from "./styles/HoverCard.module.css";
 import "./IIIFExplorer.css";
 import { CanvasRegionView } from "./components/CanvasRegionView";
 
@@ -84,7 +84,7 @@ export function IIIFExplorer({
   const canResetLast = allowRemoveEntry || entry?.type === "Text";
 
   return (
-    <VaultProvider vault={vault}>
+    <VaultProvider vault={vault as any}>
       <FilterProvider>
         <ExplorerStoreProvider
           entry={entry.type !== "Text" ? entry : undefined}

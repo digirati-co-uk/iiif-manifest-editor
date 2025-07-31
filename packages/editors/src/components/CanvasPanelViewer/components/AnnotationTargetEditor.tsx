@@ -2,24 +2,14 @@ import { HTMLPortal, useMode } from "@atlas-viewer/atlas";
 import type { SupportedTarget, SvgSelector } from "@iiif/helpers";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useGenericEditor } from "@manifest-editor/shell";
-import {
-  PolygonSelector,
-  RenderSvgEditorControls,
-  useAnnotation,
-  useCanvas,
-  useVault,
-} from "react-iiif-vault";
+import { PolygonSelector, RenderSvgEditorControls, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { constrainPosition } from "../../../helpers/constrain-position";
 import { ResizeWorldItem } from "./ResizeWorldItem";
 
 export function AnnotationTargetEditor() {
   const canvas = useCanvas();
-  const annotation = useAnnotation<
-    AnnotationNormalized & { target: SupportedTarget }
-  >();
-  const editor = useGenericEditor(
-    annotation ? { id: annotation.id, type: "Annotation" } : undefined,
-  );
+  const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
+  const editor = useGenericEditor(annotation ? { id: annotation.id, type: "Annotation" } : undefined);
 
   const updateAnnotationTarget = (input: any) => {
     if (input.type === "polygon" && canvas) {
@@ -57,11 +47,7 @@ export function AnnotationTargetEditor() {
     return null;
   }
 
-  if (
-    !annotation ||
-    !annotation.target ||
-    annotation.target.selector?.type !== "BoxSelector"
-  ) {
+  if (!annotation || !annotation.target || annotation.target.selector?.type !== "BoxSelector") {
     // Refused to show the resizing if it's targeting the whole canvas.
     if (canvas && annotation?.target.selector === null) {
       return (
@@ -95,11 +81,7 @@ export function AnnotationTargetEditor() {
           annotationBucket="default"
           renderControls={(helper, state, showShapes) => (
             <>
-              <RenderSvgEditorControls
-                helper={helper}
-                state={state}
-                showShapes={showShapes}
-              />
+              <RenderSvgEditorControls showShapes={showShapes} />
             </>
           )}
         />
@@ -112,7 +94,6 @@ export function AnnotationTargetEditor() {
   const bodyWidth = (annotation as any).body?.[0].width;
   const bodyHeight = (annotation as any).body?.[0].height;
   const bodyAspectRatio = bodyWidth && bodyHeight ? bodyWidth / bodyHeight : undefined;
-
 
   return (
     <ResizeWorldItem

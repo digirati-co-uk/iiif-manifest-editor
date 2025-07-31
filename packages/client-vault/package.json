@@ -42,7 +42,7 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.2.12"
+    "@iiif/helpers": "^1.4.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

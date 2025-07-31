@@ -11,11 +11,17 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": {
@@ -37,15 +43,15 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "2.3.5",
+    "@atlas-viewer/atlas": "2.3.6",
     "@atlas-viewer/iiif-image-api": "^2.2.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "7.0.0",
     "@dnd-kit/sortable": "8.0.0",
     "@dnd-kit/utilities": "^3.2.1",
     "@floating-ui/react": "^0.26.13",
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "^1.4.0",
+    "@iiif/parser": "^2.2.0",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/components": "workspace:*",
@@ -60,7 +66,7 @@
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "mitt": "^3.0.1",
-    "polygon-editor": "^0.0.6",
+    "polygon-editor": "0.0.10",
     "react": "^18.3.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-beautiful-dnd": "^13.1.0",
@@ -70,7 +76,7 @@
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.0.13",
     "react-i18next": "14.1.0",
-    "react-iiif-vault": "^1.5.10",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault",
     "react-leaflet": "^4.2.1",
     "react-leaflet-draw": "^0.20.4",
     "react-select-search": "^4.1.2",
