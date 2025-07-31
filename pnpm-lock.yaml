@@ -5,10 +5,11 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  polygon-editor: 0.0.6
+  polygon-editor: 0.0.10
   next: ^14.2.25
-  '@atlas-viewer/atlas': 2.3.5
-  '@iiif/helpers': ^1.3.2
+  '@atlas-viewer/atlas': 2.3.6
+  '@iiif/helpers': ^1.4.0
+  '@iiif/parser': ^2.2.0
 
 importers:
 
@@ -107,11 +108,11 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -182,8 +183,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -326,8 +327,8 @@ importers:
   packages/client-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -348,8 +349,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -375,8 +376,8 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0
       polygon-editor:
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.10
+        version: 0.0.10
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -402,8 +403,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -463,11 +464,11 @@ importers:
   packages/creator-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -478,11 +479,11 @@ importers:
         specifier: workspace:*
         version: link:../editor-api
       polygon-editor:
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.10
+        version: 0.0.10
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -503,11 +504,11 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -545,8 +546,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -573,11 +574,11 @@ importers:
   packages/editor-api:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -585,8 +586,8 @@ importers:
         specifier: ^0.9.7
         version: 0.9.7
       polygon-editor:
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.10
+        version: 0.0.10
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -601,8 +602,8 @@ importers:
   packages/editors:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.5
-        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.6
+        version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -622,11 +623,11 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -670,8 +671,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       polygon-editor:
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.10
+        version: 0.0.10
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -700,8 +701,8 @@ importers:
         specifier: 14.1.0
         version: 14.1.0(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet:
         specifier: ^4.2.1
         version: 4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -779,14 +780,14 @@ importers:
   packages/iiif-browser:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.5
-        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.6
+        version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -803,8 +804,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -855,8 +856,8 @@ importers:
   packages/iiif-preview-server:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -890,11 +891,11 @@ importers:
   packages/manifest-editor:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -926,8 +927,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -969,11 +970,11 @@ importers:
   packages/projects:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1002,8 +1003,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1042,8 +1043,8 @@ importers:
   packages/server-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1073,8 +1074,8 @@ importers:
   packages/shell:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.5
-        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.6
+        version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1082,11 +1083,11 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1118,8 +1119,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       polygon-editor:
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.10
+        version: 0.0.10
       query-string:
         specifier: ^9.0.0
         version: 9.0.0
@@ -1136,8 +1137,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1194,14 +1195,14 @@ importers:
   packages/ui:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 2.3.5
-        version: 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.3.6
+        version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -1218,8 +1219,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1237,11 +1238,11 @@ importers:
   presets/collection-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1276,8 +1277,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1316,11 +1317,11 @@ importers:
         specifier: ^3.2.1
         version: 3.2.2(react@18.3.1)
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1358,8 +1359,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1389,11 +1390,11 @@ importers:
   presets/manifest-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: ^1.3.2
-        version: 1.3.2(@iiif/parser@2.1.8)
+        specifier: ^1.4.0
+        version: 1.4.0(@iiif/parser@2.2.0)
       '@iiif/parser':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.2.0
+        version: 2.2.0
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1419,11 +1420,14 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: ^1.5.10
-        version: 1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -1521,8 +1525,8 @@ packages:
     resolution: {integrity: sha512-ByenQQ0BtqqY0pvlmipvkDv/cKl/9vVjBydS7hloXOdmXPoUF0pHdlilC7ZfrRW97EzPQQZT2jgHl2tu7zg9QA==}
     engines: {node: '>= 10'}
 
-  '@atlas-viewer/atlas@2.3.5':
-    resolution: {integrity: sha512-Ef7PwasNibNkbQJIpMvqk69KI6skhTMPNTqS5eqjBasw9ECiLhk0vXs9hiTguvi+pCsOAE+lnmsPkiLOwSCfog==}
+  '@atlas-viewer/atlas@2.3.6':
+    resolution: {integrity: sha512-QfE1WGOx8qgwKOUHH2KtpAmAP/NREqeK5BMYeTjZQRjO2NLgiCyElYgCPZoQvUtMt73+HhpsmSBhgH14btfWcw==}
     peerDependencies:
       react: '>=17.0'
       react-dom: '>=17.0'
@@ -2810,14 +2814,26 @@ packages:
   '@floating-ui/core@1.6.2':
     resolution: {integrity: sha512-+2XpQV9LLZeanU4ZevzRnGFg2neDeKHgFLjP6YLW+tly0IvrhqT4u8enLGjLH3qeh85g19xY5rsAusfwTdn5lg==}
 
+  '@floating-ui/core@1.7.3':
+    resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
+
   '@floating-ui/dom@1.6.13':
     resolution: {integrity: sha512-umqzocjDgNRGTuO7Q8CU32dkHkECqI8ZdMZ5Swb6QAM0t5rnlrN3lGo1hdpscRd3WS8T6DKYK4ephgIH9iRh3w==}
 
   '@floating-ui/dom@1.6.5':
     resolution: {integrity: sha512-Nsdud2X65Dz+1RHjAIP0t8z5e2ff/IRbei6BqFrl1urT8sDVzM1HMQ+R0XcU5ceRfyO3I6ayeqIfh+6Wb8LGTw==}
 
+  '@floating-ui/dom@1.7.3':
+    resolution: {integrity: sha512-uZA413QEpNuhtb3/iIKoYMSK07keHPYeXF02Zhd6e213j+d1NamLix/mCLxBUDW/Gx52sPH2m+chlUsyaBs/Ag==}
+
   '@floating-ui/react-dom@2.1.0':
     resolution: {integrity: sha512-lNzj5EQmEKn5FFKc04+zasr09h/uX8RtJRNj5gUXsSQIXHVWTVh+hVAg1vOMCexkX8EgvemMvIFpQfkosnVNyA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@floating-ui/react-dom@2.1.5':
+    resolution: {integrity: sha512-HDO/1/1oH9fjj4eLgegrlH3dklZpHtUYYFiVwMUwfGvk9jWDRWqkklA2/NFScknrcNSspbV868WjXORvreDX+Q==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -2827,6 +2843,15 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+
+  '@floating-ui/react@0.27.15':
+    resolution: {integrity: sha512-0LGxhBi3BB1DwuSNQAmuaSuertFzNAerlMdPbotjTVnvPtdOs7CkrHLaev5NIXemhzDXNC0tFzuseut7cWA5mw==}
+    peerDependencies:
+      react: '>=17.0.0'
+      react-dom: '>=17.0.0'
+
+  '@floating-ui/utils@0.2.10':
+    resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
   '@floating-ui/utils@0.2.2':
     resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
@@ -2899,13 +2924,13 @@ packages:
   '@iiif/builder@2.0.1':
     resolution: {integrity: sha512-9Wlxi1qn0GfvkFWxlZEuMkFGOKpZtcN/1t1zzYnOMy7OOssBNTQvao7zDZlCmtdimZ4QtQ/MMiC0z+oKI2Ax/Q==}
 
-  '@iiif/helpers@1.3.2':
-    resolution: {integrity: sha512-ZCf29ZFF4P8aKze+Apcdz75iUDpZZqM5sZRIjeDM6wVr80IatjMlFIoVcmNX3iVsJi2/DXJwGOnq3qhBmlRt/w==}
+  '@iiif/helpers@1.4.0':
+    resolution: {integrity: sha512-bUNJW7kJNl50wzpeFx3ctKl5F6TqzqDYqOg3ub6vzq/uNreFczbYYRkeSIrl8fCc5Zn7hhqpkbBnHMLLU8frJQ==}
     peerDependencies:
-      '@iiif/parser': ^2.1.7
+      '@iiif/parser': ^2.2.0
 
-  '@iiif/parser@2.1.8':
-    resolution: {integrity: sha512-87ifvY3Pq6dzSbHKrCr6/aIiZZDeaozIFz+EAYWYGxmpxn213t3kISCrSCC/XJ03jdXW7mQgPUEPcmztX5uh1A==}
+  '@iiif/parser@2.2.0':
+    resolution: {integrity: sha512-WMa9NNq0AyKmSjeYpvwlQx6gqf3drcKa72DlIy9nIYvCBCG+LrLAEKsnrVZW7pZiFYJQAAxcM+kJ0KhoayM1Og==}
 
   '@iiif/presentation-2@1.0.4':
     resolution: {integrity: sha512-hJakpq62VBajesLJrYPtFm6hcn6c/HkKP7CmKZ5atuzu40m0nifWYsqigR1l9sZGvhhHb/DRshPmiW/0GNrJoA==}
@@ -9875,8 +9900,8 @@ packages:
   points-on-path@0.2.1:
     resolution: {integrity: sha512-25ClnWWuw7JbWZcgqY/gJ4FQWadKxGWk+3kR/7kD0tCaDtPPMj7oHu2ToLaVhfpnHrZzYby2w6tUA0eOIuUg8g==}
 
-  polygon-editor@0.0.6:
-    resolution: {integrity: sha512-mQbsAg02d17NwilQQnXuSjPbki3kavg9xXLz1Z4wvkmnSfyEm3xGhdBu3bRm9Vb/cLREGxMNK3TbVjheqfNswg==}
+  polygon-editor@0.0.10:
+    resolution: {integrity: sha512-LU9y3z85ydlB/eElsXCmYFiGRraFRqBROGcyp8VWaXPWYUgJeq4nQgEN3oOlHfcrfhBVrgx7F8moDsGCNfp6wg==}
 
   popper.js@1.16.1:
     resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
@@ -10267,6 +10292,20 @@ packages:
 
   react-iiif-vault@1.5.10:
     resolution: {integrity: sha512-kF0Qe28XsT57zMlcxtVsEtaqK+ZzUmknmXmwcxYmSi9dnPZgIOtGnI9dvQrENjf5TLs3DYRwCmtm9s/MDXpDgA==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault:
+    resolution: {tarball: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault}
+    version: 1.5.10
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault:
+    resolution: {tarball: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault}
+    version: 1.5.10
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -12163,12 +12202,12 @@ snapshots:
       '@ast-grep/napi-win32-ia32-msvc': 0.36.2
       '@ast-grep/napi-win32-x64-msvc': 0.36.2
 
-  '@atlas-viewer/atlas@2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@atlas-viewer/atlas@2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
-      '@iiif/parser': 2.1.8
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       lru-cache: 7.18.3
       normalize-wheel: 1.0.1
@@ -14156,6 +14195,10 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.2
 
+  '@floating-ui/core@1.7.3':
+    dependencies:
+      '@floating-ui/utils': 0.2.10
+
   '@floating-ui/dom@1.6.13':
     dependencies:
       '@floating-ui/core': 1.6.2
@@ -14166,9 +14209,20 @@ snapshots:
       '@floating-ui/core': 1.6.2
       '@floating-ui/utils': 0.2.2
 
+  '@floating-ui/dom@1.7.3':
+    dependencies:
+      '@floating-ui/core': 1.7.3
+      '@floating-ui/utils': 0.2.10
+
   '@floating-ui/react-dom@2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@floating-ui/dom': 1.6.5
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@floating-ui/react-dom@2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/dom': 1.7.3
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
@@ -14179,6 +14233,16 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tabbable: 6.2.0
+
+  '@floating-ui/react@0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@floating-ui/utils': 0.2.10
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tabbable: 6.2.0
+
+  '@floating-ui/utils@0.2.10': {}
 
   '@floating-ui/utils@0.2.2': {}
 
@@ -14264,14 +14328,14 @@ snapshots:
 
   '@iiif/builder@2.0.1':
     dependencies:
-      '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
-      '@iiif/parser': 2.1.8
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
 
-  '@iiif/helpers@1.3.2(@iiif/parser@2.1.8)':
+  '@iiif/helpers@1.4.0(@iiif/parser@2.2.0)':
     dependencies:
-      '@iiif/parser': 2.1.8
+      '@iiif/parser': 2.2.0
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -14281,7 +14345,7 @@ snapshots:
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/parser@2.1.8':
+  '@iiif/parser@2.2.0':
     dependencies:
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
@@ -15583,7 +15647,7 @@ snapshots:
 
   '@radix-ui/react-popper@1.2.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@floating-ui/react-dom': 2.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-arrow': 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-compose-refs': 1.1.1(@types/react@18.3.3)(react@18.3.1)
       '@radix-ui/react-context': 1.1.1(@types/react@18.3.3)(react@18.3.1)
@@ -18070,7 +18134,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.10.0(jiti@1.21.0))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)))
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
@@ -19752,7 +19816,7 @@ snapshots:
       eslint: 9.10.0(jiti@1.21.0)
       eslint-plugin-turbo: 2.0.6(eslint@9.10.0(jiti@1.21.0))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
 
@@ -19769,7 +19833,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.16.1
       eslint: 9.10.0(jiti@1.21.0)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -19781,7 +19845,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -19808,7 +19872,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.10.0(jiti@1.21.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.10.0(jiti@1.21.0))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.10.0(jiti@1.21.0))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.10.0(jiti@1.21.0)))(eslint@9.10.0(jiti@1.21.0))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -20937,16 +21001,16 @@ snapshots:
 
   iiif-browser@2.0.1(@types/react@18.3.3)(immer@10.1.1):
     dependencies:
-      '@atlas-viewer/atlas': 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
-      '@iiif/parser': 2.1.8
+      '@atlas-viewer/atlas': 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       history: 5.3.0
       minisearch: 7.1.2
       mitt: 3.0.1
       path-to-regexp: 8.2.0
-      polygon-editor: 0.0.6
+      polygon-editor: 0.0.10
       react: 18.3.1
       react-accessible-dropdown-menu-hook: 4.0.0
       react-aria: 3.38.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -23257,7 +23321,7 @@ snapshots:
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
 
-  polygon-editor@0.0.6: {}
+  polygon-editor@0.0.10: {}
 
   popper.js@1.16.1: {}
 
@@ -23729,14 +23793,60 @@ snapshots:
 
   react-iiif-vault@1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@atlas-viewer/atlas': 2.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 1.3.2(@iiif/parser@2.1.8)
-      '@iiif/parser': 2.1.8
+      '@atlas-viewer/atlas': 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       mitt: 3.0.1
-      polygon-editor: 0.0.6
+      polygon-editor: 0.0.10
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-error-boundary: 4.0.13(react@18.3.1)
+      react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-reconciler: 0.29.2(react@18.3.1)
+      tiny-invariant: 1.3.3
+      zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - immer
+      - react-native
+
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@atlas-viewer/atlas': 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@floating-ui/react': 0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
+      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
+      '@iiif/presentation-3': 2.2.3
+      '@iiif/presentation-3-normalized': 0.9.7
+      mitt: 3.0.1
+      polygon-editor: 0.0.10
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-error-boundary: 4.0.13(react@18.3.1)
+      react-lazy-load-image-component: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-reconciler: 0.29.2(react@18.3.1)
+      tiny-invariant: 1.3.3
+      zustand: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - immer
+      - react-native
+
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/c7ecc2f5/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@atlas-viewer/atlas': 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@floating-ui/react': 0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@iiif/helpers': 1.4.0(@iiif/parser@2.2.0)
+      '@iiif/parser': 2.2.0
+      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
+      '@iiif/presentation-3': 2.2.3
+      '@iiif/presentation-3-normalized': 0.9.7
+      mitt: 3.0.1
+      polygon-editor: 0.0.10
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)

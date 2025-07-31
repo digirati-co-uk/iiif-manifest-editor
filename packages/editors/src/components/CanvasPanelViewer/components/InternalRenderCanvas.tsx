@@ -1,23 +1,22 @@
+import type { BoxStyle } from "@atlas-viewer/atlas";
+import { IIIFMediaPlayer } from "@manifest-editor/components";
+import type { ReactNode } from "react";
 import {
-  useCanvas,
+  CanvasWorldObject,
+  type ImageWithOptionalService,
+  Render3DModelStrategy,
+  RenderAccompanyingCanvas,
+  RenderAnnotationEditing,
+  RenderAnnotationStrategy,
   RenderAudioStrategy,
+  RenderComplexTimelineStrategy,
   RenderEmptyStrategy,
   RenderImageStrategy,
-  RenderVideoStrategy,
-  Render3DModelStrategy,
-  RenderAnnotationStrategy,
-  RenderComplexTimelineStrategy,
   RenderTextualContentStrategy,
+  RenderVideoStrategy,
   RenderYouTubeStrategy,
-  RenderAccompanyingCanvas,
-  CanvasWorldObject,
-  ImageWithOptionalService,
-  useStrategy,
+  type SVGTheme,
 } from "react-iiif-vault";
-import { ReactNode, useMemo } from "react";
-import { IIIFMediaPlayer } from '@manifest-editor/components';
-import { BoxStyle } from "@atlas-viewer/atlas";
-
 
 interface InternalRenderCanvasProps {
   x?: number;
@@ -29,6 +28,8 @@ interface InternalRenderCanvasProps {
   isStatic?: boolean;
   enableYouTube?: boolean;
   onClickPaintingAnnotation?: (id: string, image: ImageWithOptionalService, e: any) => void;
+  annotationPopup?: React.ReactNode;
+  svgTheme?: Partial<SVGTheme>;
 }
 
 export function InternalRenderCanvas({
@@ -41,16 +42,15 @@ export function InternalRenderCanvas({
   isStatic,
   onClickPaintingAnnotation,
   children,
+  svgTheme,
+  annotationPopup,
 }: InternalRenderCanvasProps) {
   const keepCanvasScale = false;
 
   return (
     <>
       <CanvasWorldObject keepCanvasScale={keepCanvasScale} x={x} y={y}>
-        <RenderEmptyStrategy
-          alwaysShowBackground={alwaysShowBackground}
-          backgroundStyle={backgroundStyle}
-        />
+        <RenderEmptyStrategy alwaysShowBackground={alwaysShowBackground} backgroundStyle={backgroundStyle} />
         <RenderComplexTimelineStrategy />
         <RenderTextualContentStrategy />
         <RenderImageStrategy
@@ -63,6 +63,7 @@ export function InternalRenderCanvas({
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
         <RenderYouTubeStrategy />
+        <RenderAnnotationEditing theme={svgTheme}>{annotationPopup}</RenderAnnotationEditing>
         {children}
       </CanvasWorldObject>
       <RenderAccompanyingCanvas />

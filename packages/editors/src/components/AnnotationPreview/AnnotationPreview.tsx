@@ -1,13 +1,19 @@
-import { AnnotationContext, LocaleString, useAnnotation, useRenderingStrategy } from "react-iiif-vault";
-import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { getValue } from "@iiif/helpers";
+import { isSpecificResource } from "@iiif/parser";
+import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { useHoverHighlightImageResource } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { useHoverHighlightImageResource } from "@manifest-editor/shell";
-import { getAnnotationType } from "../../helpers/get-annotation-type";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import { getValue } from "@iiif/helpers";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import {
+  AnnotationContext,
+  LocaleString,
+  targetIntersects,
+  useAnnotation,
+  useRenderingStrategy,
+} from "react-iiif-vault";
+import { getAnnotationType } from "../../helpers/get-annotation-type";
+import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -39,9 +45,11 @@ export function AnnotationTargetLabel({ id }: { id: string }) {
 export function AnnotationPreview({
   onClick,
   margin,
+  viewport,
 }: {
   onClick?: (annotation: AnnotationNormalized) => void;
   margin?: boolean;
+  viewport?: { width: number; height: number; x: number; y: number } | null;
 }) {
   const annotation = useAnnotation();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
@@ -58,9 +66,14 @@ export function AnnotationPreview({
   const annotationTarget =
     (annotation as any)?.target.source?.type === "Annotation" ? (annotation as any)?.target.source?.id : null;
 
+  const annoSelector = (annotation.target as any)?.selector;
+  const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
+  const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+
   return (
     <>
       <RichMediaLink
+        isVisible={isVisible}
         margin={margin}
         title={
           annotation.label ? (
