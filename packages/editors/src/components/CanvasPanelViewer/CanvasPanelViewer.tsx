@@ -215,8 +215,6 @@ export function CanvasPanelViewer({
                         return <Fragment key={custom.id}>{custom.render()}</Fragment>;
                       })}
 
-                      <RenderAnnotationEditing />
-
                       {!currentlyEditingAnnotation && resources.length
                         ? resources.map((resource) => <Highlight key={resource} id={resource} />)
                         : null}

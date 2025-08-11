@@ -43,7 +43,7 @@
     "prepack": "tsup src/index.ts"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "2.3.6",
+    "@atlas-viewer/atlas": "2.3.7",
     "@iiif/helpers": "^1.4.0",
     "@iiif/parser": "^2.2.0",
     "@iiif/presentation-3": "^2.2.3",
@@ -51,7 +51,7 @@
     "react": "^18.3.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/650b8814/react-iiif-vault",
     "react-lazy-load-image-component": "^1.6.0",
     "zustand": "^4.5.2"
   },

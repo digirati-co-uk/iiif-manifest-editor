@@ -21,7 +21,7 @@ export function AnnotationPopupTools() {
   }
 
   return (
-    <div className="animate-fadeIn bg-BaseBackground shadow p-2 rounded">
+    <div className="animate-fadeIn bg-white shadow rounded">
       {mode !== "sketch" && (
         <ActionButton
           onPress={() => {

@@ -13,6 +13,7 @@ export * from "./BaseEditor";
 export * from "./BaseEditor/BaseEditor";
 export * from "./ConfigContext/ConfigContext";
 export * from "./ConfigContext/ConfigEditor";
+export * from "./ContextMenu/ContextMenuContext";
 export * from "./EditingStack/EditingStack";
 export * from "./EditingStack/EditingStack.types";
 export * from "./ExportPanel/ExportPanel";

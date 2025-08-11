@@ -1,8 +1,9 @@
 import type { BoxStyle } from "@atlas-viewer/atlas";
 import { IIIFMediaPlayer } from "@manifest-editor/components";
-import type { ReactNode } from "react";
+import { type ReactNode, useContext } from "react";
 import {
   CanvasWorldObject,
+  ContextBridge,
   type ImageWithOptionalService,
   Render3DModelStrategy,
   RenderAccompanyingCanvas,
@@ -15,8 +16,16 @@ import {
   RenderTextualContentStrategy,
   RenderVideoStrategy,
   RenderYouTubeStrategy,
+  StrategyReactContext,
   type SVGTheme,
+  useContextBridge,
+  useCustomContextBridge,
+  useStrategy,
 } from "react-iiif-vault";
+import { AnnotationEditingTools } from "./AnnotationEditingTools";
+import { AnnotationPopupTools } from "./AnnotationPopupTools";
+import { RenderContextMenu } from "./RenderContextMenu";
+import { RenderCurrentContextMenuItem } from "./RenderCurrentContextMenuItem";
 
 interface InternalRenderCanvasProps {
   x?: number;
@@ -45,11 +54,25 @@ export function InternalRenderCanvas({
   svgTheme,
   annotationPopup,
 }: InternalRenderCanvasProps) {
-  const keepCanvasScale = false;
+  const strategy = useStrategy();
+  const keepCanvasScale = true;
+  const bridge = useContextBridge();
+  const customBridge = useCustomContextBridge();
 
   return (
     <>
-      <CanvasWorldObject keepCanvasScale={keepCanvasScale} x={x} y={y}>
+      <CanvasWorldObject
+        renderContextMenu={(data) => (
+          <StrategyReactContext.Provider value={strategy}>
+            <ContextBridge bridge={bridge} custom={customBridge}>
+              <RenderContextMenu {...data} />
+            </ContextBridge>
+          </StrategyReactContext.Provider>
+        )}
+        keepCanvasScale={keepCanvasScale}
+        x={x}
+        y={y}
+      >
         <RenderEmptyStrategy alwaysShowBackground={alwaysShowBackground} backgroundStyle={backgroundStyle} />
         <RenderComplexTimelineStrategy />
         <RenderTextualContentStrategy />
@@ -63,7 +86,10 @@ export function InternalRenderCanvas({
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
         <RenderYouTubeStrategy />
-        <RenderAnnotationEditing theme={svgTheme}>{annotationPopup}</RenderAnnotationEditing>
+        <RenderAnnotationEditing theme={svgTheme}>
+          {annotationPopup || <AnnotationPopupTools />}
+        </RenderAnnotationEditing>
+        <RenderCurrentContextMenuItem />
         {children}
       </CanvasWorldObject>
       <RenderAccompanyingCanvas />

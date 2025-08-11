@@ -41,14 +41,14 @@ export function TourNormalAnnotationEditor({ highlightProps }: { highlightProps:
       if (target.type === "BoxSelector") {
         const p = target.spatial;
         return requestAnnotation({
-          type: "polygon",
-          open: false,
-          points: [
-            [p.x, p.y],
-            [p.x + p.width, p.y],
-            [p.x + p.width, p.y + p.height],
-            [p.x, p.y + p.height],
-          ],
+          type: "box",
+          selector: {
+            x: p.x,
+            y: p.y,
+            width: p.width,
+            height: p.height,
+          },
+          selectByDefault: true,
         });
       }
     }

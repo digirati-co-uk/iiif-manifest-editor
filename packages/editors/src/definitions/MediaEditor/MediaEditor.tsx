@@ -1,6 +1,6 @@
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { ImageService } from "@iiif/presentation-3";
-import { useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
+import { useCustomContextMenu, useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
@@ -76,6 +76,86 @@ export function MediaEditor() {
   //type.get()
   const isYouTube = !!(service.get() || []).find((r) => (r as any).profile === "https://www.youtube.com");
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
+  const currentTarget = target.get();
+  const currentSelector = target.getParsedSelector();
+
+  const moveAndResizeImage = () => {
+    vault.batch(() => {
+      if (!canvas) {
+        return;
+      }
+      let dimensionsSet = false;
+
+      // However.. if it's cropped this won't work.
+      if (body.hasIIIFSelector()) {
+        const dimensions = body.getIIIFSelectorHeightWidth();
+        if (dimensions) {
+          dimensionsSet = true;
+          if (dimensions.width !== width.get()) {
+            width.set(dimensions.width);
+          }
+          if (dimensions.height !== height.get()) {
+            height.set(dimensions.height);
+          }
+
+          const imagePosition = centerRectangles(
+            canvas,
+            {
+              width: dimensions.width,
+              height: dimensions.height,
+            },
+            0.6,
+          );
+
+          target.setPosition(imagePosition);
+
+          return;
+        }
+      }
+
+      if (!dimensionsSet) {
+        // Check image resource width/height vs. service.
+        const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
+        if (imageService) {
+          if (imageService.width && imageService.height) {
+            if (imageService.width !== width.get()) {
+              width.set(imageService.width);
+            }
+            if (imageService.height !== height.get()) {
+              height.set(imageService.height);
+            }
+          }
+        }
+      }
+
+      const imagePosition = centerRectangles(
+        canvas,
+        {
+          width: width.get(),
+          height: height.get(),
+        },
+        0.6,
+      );
+
+      target.setPosition(imagePosition);
+    });
+  };
+
+  useCustomContextMenu(
+    {
+      resource: annotationEditor.ref(),
+      items: currentTarget?.selector
+        ? []
+        : [
+            {
+              id: "target-region",
+              label: "Target specific region",
+              onAction: moveAndResizeImage,
+            },
+          ],
+    },
+    [currentTarget?.selector],
+  );
 
   // VideoYouTubeHTML
 
@@ -158,9 +238,6 @@ export function MediaEditor() {
     </>
   ) : null;
 
-  const currentTarget = target.get();
-  const currentSelector = target.getParsedSelector();
-
   const targetElements = (
     <>
       {canvas && !currentTarget.selector ? (
@@ -177,68 +254,7 @@ export function MediaEditor() {
             This image fills the whole Canvas.
           </div>
           <ButtonGroup $right>
-            <Button
-              onClick={() => {
-                vault.batch(() => {
-                  let dimensionsSet = false;
-
-                  // However.. if it's cropped this won't work.
-                  if (body.hasIIIFSelector()) {
-                    const dimensions = body.getIIIFSelectorHeightWidth();
-                    if (dimensions) {
-                      dimensionsSet = true;
-                      if (dimensions.width !== width.get()) {
-                        width.set(dimensions.width);
-                      }
-                      if (dimensions.height !== height.get()) {
-                        height.set(dimensions.height);
-                      }
-
-                      const imagePosition = centerRectangles(
-                        canvas,
-                        {
-                          width: dimensions.width,
-                          height: dimensions.height,
-                        },
-                        0.6,
-                      );
-
-                      target.setPosition(imagePosition);
-
-                      return;
-                    }
-                  }
-
-                  if (!dimensionsSet) {
-                    // Check image resource width/height vs. service.
-                    const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
-                    if (imageService) {
-                      if (imageService.width && imageService.height) {
-                        if (imageService.width !== width.get()) {
-                          width.set(imageService.width);
-                        }
-                        if (imageService.height !== height.get()) {
-                          height.set(imageService.height);
-                        }
-                      }
-                    }
-                  }
-
-                  const imagePosition = centerRectangles(
-                    canvas,
-                    {
-                      width: width.get(),
-                      height: height.get(),
-                    },
-                    0.6,
-                  );
-
-                  target.setPosition(imagePosition);
-                });
-              }}
-            >
-              Change
-            </Button>
+            <Button onClick={moveAndResizeImage}>Change</Button>
           </ButtonGroup>
         </InputContainer>
       ) : null}

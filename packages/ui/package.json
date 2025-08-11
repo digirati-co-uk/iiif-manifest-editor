@@ -55,12 +55,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "2.3.6",
+    "@atlas-viewer/atlas": "2.3.7",
     "@floating-ui/react": "^0.26.13",
     "react": "^18.3.1",
     "@iiif/helpers": "^1.4.0",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/86ccb66a/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/650b8814/react-iiif-vault",
     "styled-components": "6.1.8",
     "classnames": "^2.5.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",

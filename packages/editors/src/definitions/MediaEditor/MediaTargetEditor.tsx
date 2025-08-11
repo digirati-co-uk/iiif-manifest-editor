@@ -1,14 +1,16 @@
-import { polygonToBoundingBox, useEditor } from "@manifest-editor/shell";
+import { polygonToBoundingBox, useCustomContextMenu, useEditor } from "@manifest-editor/shell";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
-import { useAtlasStore, useCurrentAnnotationTransition, useRequestAnnotation } from "react-iiif-vault";
+import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation } from "react-iiif-vault";
+import { useDebounce } from "tiny-use-debounce";
 import { useStore } from "zustand";
 import { InputContainer } from "../../components";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
 
 export function MediaTargetEditor() {
-  const { requestAnnotation } = useRequestAnnotation({
+  const canvas = useCanvas();
+  const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
+  const { requestAnnotation, isPending, completeRequest, cancelRequest } = useRequestAnnotation({
     onSuccess: (response) => {
-      console.log(response);
       if (response.boundingBox) {
         target.setPosition(response.boundingBox);
       }
@@ -17,6 +19,46 @@ export function MediaTargetEditor() {
   const annotationEditor = useEditor();
   const { target } = annotationEditor.annotation;
   const currentSelector = target.getParsedSelector();
+
+  useCustomContextMenu(
+    {
+      resource: annotationEditor.ref(),
+      items: [
+        {
+          id: "save-changes",
+          label: "Save changes",
+          enabled: isPending,
+          onAction: () => {
+            completeRequest();
+          },
+        },
+        {
+          id: "discard-changes",
+          label: "Discard changes",
+          enabled: isPending,
+          onAction: () => {
+            cancelRequest();
+          },
+        },
+        {
+          id: "edit-position",
+          label: "Edit position",
+          enabled: !isPending && currentSelector?.type === "BoxSelector",
+          onAction: () =>
+            currentSelector?.type === "BoxSelector"
+              ? requestAnnotation({ type: "target", bounds, selector: currentSelector.spatial as any })
+              : undefined,
+        },
+        {
+          id: "target-whole-canvas",
+          label: "Target whole canvas",
+          enabled: currentSelector?.type === "BoxSelector",
+          onAction: () => target.removeSelector(),
+        },
+      ],
+    },
+    [currentSelector, isPending],
+  );
 
   const store = useAtlasStore();
   const helper = useStore(store, (s) => s.polygons);
@@ -55,7 +97,7 @@ export function MediaTargetEditor() {
         }}
       >
         <ButtonGroup $right>
-          <Button onClick={() => requestAnnotation({ type: "target", selector: currentSelector.spatial })}>
+          <Button onClick={() => requestAnnotation({ type: "target", bounds, selector: currentSelector.spatial })}>
             Resize on canvas
           </Button>
           <Button type="button" onClick={() => target.removeSelector()}>
