@@ -182,7 +182,7 @@ function ExhibitionRightPanel() {
                       onPress={completeRequest}
                       className="bg-me-100 text-me-500 rounded-sm p-3"
                     >
-                      Save changes
+                      Confirm new step
                     </Button>
                   </div>
                 ) : (
