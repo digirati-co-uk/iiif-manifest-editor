@@ -43,7 +43,7 @@
     "react": "^18.3.1",
     "react-aria-components": "^1.7.1",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/650b8814/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/44d90073/react-iiif-vault",
     "react-joyride": "^2.9.3",
     "styled-components": "6.1.8",
     "superjson": "^2.2.2",

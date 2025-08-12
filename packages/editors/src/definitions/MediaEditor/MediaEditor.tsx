@@ -104,7 +104,7 @@ export function MediaEditor() {
               width: dimensions.width,
               height: dimensions.height,
             },
-            0.6,
+            0.6
           );
 
           target.setPosition(imagePosition);
@@ -134,7 +134,7 @@ export function MediaEditor() {
           width: width.get(),
           height: height.get(),
         },
-        0.6,
+        0.6
       );
 
       target.setPosition(imagePosition);
@@ -143,6 +143,7 @@ export function MediaEditor() {
 
   useCustomContextMenu(
     {
+      sectionTitle: "Painting annotation",
       resource: annotationEditor.ref(),
       items: currentTarget?.selector
         ? []
@@ -154,7 +155,7 @@ export function MediaEditor() {
             },
           ],
     },
-    [currentTarget?.selector],
+    [currentTarget?.selector]
   );
 
   // VideoYouTubeHTML

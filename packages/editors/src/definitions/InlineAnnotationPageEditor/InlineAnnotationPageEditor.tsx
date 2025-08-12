@@ -28,7 +28,7 @@ export function InlineAnnotationPageEditor() {
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined
   );
 
   // Does the canvas have multiple media?
@@ -74,7 +74,7 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       }
       return toList;
     },
-    [id, ...deps],
+    [id, ...deps]
   );
 }
 
@@ -93,7 +93,7 @@ export function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems],
+    [targets, totalItems]
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -113,9 +113,9 @@ export function PromptToAddPaintingAnnotations({
     <div key={paintingAnnotations?.items.length}>
       <FlexContainer style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          {validToAdd.map((item) => {
+          {validToAdd.map((item, idx) => {
             return (
-              <CanvasContext canvas={canvasId as string} key={canvasId}>
+              <CanvasContext canvas={canvasId as string} key={`${canvasId} + ${idx}`}>
                 <AnnotationContext annotation={item.id}>
                   <AnnotationPreview
                     margin
@@ -132,7 +132,7 @@ export function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        },
+                        }
                       );
                     }}
                   />

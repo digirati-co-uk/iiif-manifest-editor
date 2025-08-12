@@ -213,7 +213,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const { canvas, items, canvasActions, open } = useEditCanvasItems();
   const manifest = useManifest();
   const editingStack = useEditingStack();
-  const canvases = items.get();
+  const canvases = items.get() || [];
   const canvasId = canvas?.resource.source.id;
 
   // Find current canvas to get its index before deleting it

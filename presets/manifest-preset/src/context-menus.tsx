@@ -36,18 +36,19 @@ function CanvasContextMenu() {
     canvasRef,
     {
       isPainting: true,
-    },
+    }
   );
 
   useCustomContextMenu(
     {
+      sectionTitle: "Canvas",
       resource: { type: "Canvas" },
       items: [
         {
           id: "edit-canvas",
-          label: "Edit Canvas",
+          label: "Edit metadata",
           enabled: true,
-          onAction: ({ resource }) => edit(resource),
+          onAction: () => edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }),
         },
         {
           id: "add-media",
@@ -73,7 +74,7 @@ function CanvasContextMenu() {
         },
       ],
     },
-    [canvasRef, currentId, canCreateAnnotation],
+    [canvasRef, currentId, canCreateAnnotation]
   );
 
   return null;

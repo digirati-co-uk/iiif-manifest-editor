@@ -6,7 +6,8 @@ import {
   useLayoutActions,
   useResourceContextMenuItems,
 } from "@manifest-editor/shell";
-import { Menu, MenuItem, MenuSection } from "react-aria-components";
+import { useMemo } from "react";
+import { Header, Menu, MenuItem, MenuSection } from "react-aria-components";
 import { flushSync } from "react-dom";
 import { useCanvas, useStrategy } from "react-iiif-vault";
 
@@ -33,7 +34,14 @@ export function RenderContextMenu({
         imagePosition.y < position.y &&
         imagePosition.y + imagePosition.height > position.y
       ) {
-        return <PaintingAnnotationContextMenu position={position} annotationId={image.annotationId} close={close} />;
+        return (
+          <PaintingAnnotationContextMenu
+            canvasId={canvasId}
+            position={position}
+            annotationId={image.annotationId}
+            close={close}
+          />
+        );
       }
     }
   }
@@ -64,10 +72,11 @@ function CanvasContextMenu({
     items.length === 0
       ? [
           {
+            sectionTitle: "Canvas",
             items: [
               {
                 id: "edit",
-                label: "Edit",
+                label: "Edit canvas",
                 onAction: () => edit({ id: canvasId, type: "Canvas" }),
               },
             ],
@@ -86,34 +95,44 @@ function CanvasContextMenu({
 }
 
 function PaintingAnnotationContextMenu({
+  canvasId,
   position,
   annotationId,
   close,
 }: {
+  canvasId?: string;
   position: { x: number; y: number };
   annotationId: string;
   close: () => void;
 }) {
   const { edit } = useLayoutActions();
+  const canvasItems = useResourceContextMenuItems({
+    id: canvasId,
+    type: "Canvas",
+  });
   const items = useResourceContextMenuItems({
     id: annotationId,
     type: "Annotation",
   });
 
-  const menuItems =
-    items.length === 0
-      ? [
-          {
-            items: [
-              {
-                id: "edit",
-                label: "Edit",
-                onAction: () => edit({ id: annotationId, type: "Annotation" }),
-              },
-            ],
-          },
-        ]
-      : items;
+  const menuItems = useMemo(() => {
+    if (items.length === 0) {
+      return [
+        {
+          sectionTitle: "Painting annotation",
+          items: [
+            {
+              id: "edit",
+              label: "Edit",
+              onAction: () => edit({ id: annotationId, type: "Annotation" }),
+            },
+          ],
+        },
+        ...canvasItems,
+      ];
+    }
+    return [...items, ...canvasItems];
+  }, [canvasItems, items, annotationId, edit]);
 
   return (
     <GenericContextMenu
@@ -133,13 +152,16 @@ function GenericContextMenu({
 }: {
   position: { x: number; y: number };
   resource: { id: string; type: string };
-  menuItems: Array<{ items: ContextMenuItem[] }>;
+  menuItems: Array<{ sectionTitle?: string; items: ContextMenuItem[] }>;
   close: () => void;
 }) {
   return (
-    <Menu className="bg-white rounded p-0.5 shadow-xl min-w-32 border border-gray-200">
+    <Menu className="bg-white rounded shadow-xl min-w-32 border border-gray-200">
       {menuItems.map((item, key) => (
         <MenuSection key={key}>
+          {item.sectionTitle ? (
+            <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{item.sectionTitle}</Header>
+          ) : null}
           {item?.items.map((item, key2) => {
             if (item.enabled === false) {
               return null;
@@ -150,7 +172,7 @@ function GenericContextMenu({
 
             return (
               <MenuItem
-                className="hover:bg-gray-100 px-2 py-1 text-sm"
+                className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5"
                 key={key2}
                 isDisabled={item.disabled}
                 onAction={() => {

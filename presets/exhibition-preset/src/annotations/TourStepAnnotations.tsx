@@ -1,9 +1,4 @@
-import {
-  type AnnotationPanel,
-  useAtlasStore,
-  useGenericEditor,
-  useLayoutState,
-} from "@manifest-editor/shell";
+import { type AnnotationPanel, useAtlasStore, useGenericEditor, useLayoutState } from "@manifest-editor/shell";
 import {
   AnnotationContext,
   AnnotationPageContext,
@@ -24,15 +19,13 @@ export const tourStepAnnotations: AnnotationPanel = {
 function TourStepAnnotations() {
   const canvas = useCanvas();
   const store = useAtlasStore();
-  const tool = useStore(store, (s) => s.tool);
+  const toolEnabled = useStore(store, (s) => s.tool.enabled);
   const { rightPanel } = useLayoutState();
   const isRightPanel = rightPanel.current === "@manifest-editor/editor";
-  const isTour =
-    isRightPanel &&
-    rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps");
+  const isTour = isRightPanel && rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps");
   const firstAnnotationPage = canvas?.annotations[0];
 
-  if (!isTour || !canvas || tool.enabled || !firstAnnotationPage) {
+  if (!isTour || !canvas || toolEnabled || !firstAnnotationPage) {
     return null;
   }
 

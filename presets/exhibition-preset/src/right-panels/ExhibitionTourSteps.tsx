@@ -4,6 +4,7 @@ import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
+  useConfig,
   useCreator,
   useGenericEditor,
   useInlineCreator,
@@ -13,6 +14,7 @@ import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { getGridStats } from "../helpers";
+import { ExhibitionTourStepPopup } from "./ExhibitionTourStepPopup";
 
 export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
@@ -71,7 +73,7 @@ function PromptCreationOfTourSteps() {
             type: "Canvas",
           },
         },
-      },
+      }
     );
   };
 
@@ -99,12 +101,14 @@ function ExhibitionRightPanel() {
 
   const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } = useRequestAnnotation({
     onSuccess: (resp) => {
+      const bodyValue = resp.metadata.bodyValue || "";
+
       if (!resp.cancelled && resp.target && firstAnnotationPage) {
         creator.create(
           "@manifest-editor/html-annotation",
           {
             label: { en: ["Tour step"] },
-            body: { en: ["<h2>New step</h2><p>Description</p>"] },
+            body: { en: [bodyValue || "<h2>New step</h2><p>Description</p>"] },
             motivation: "describing",
           } as {
             label?: InternationalString;
@@ -135,7 +139,7 @@ function ExhibitionRightPanel() {
                     }
                   : resp.boundingBox,
             },
-          },
+          }
         );
       }
     },
@@ -171,7 +175,7 @@ function ExhibitionRightPanel() {
                   </div>
                 ) : (
                   <Button
-                    onPress={() => requestAnnotation({ type: "polygon" })}
+                    onPress={() => requestAnnotation({ type: "box", annotationPopup: <ExhibitionTourStepPopup /> })}
                     className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
                   >
                     + Add new step

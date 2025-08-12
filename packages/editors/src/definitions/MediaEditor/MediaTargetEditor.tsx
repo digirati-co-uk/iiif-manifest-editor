@@ -22,6 +22,7 @@ export function MediaTargetEditor() {
 
   useCustomContextMenu(
     {
+      sectionTitle: "Painting Annotation",
       resource: annotationEditor.ref(),
       items: [
         {
@@ -57,7 +58,7 @@ export function MediaTargetEditor() {
         },
       ],
     },
-    [currentSelector, isPending],
+    [currentSelector, isPending]
   );
 
   const store = useAtlasStore();

@@ -1,27 +1,38 @@
 import { useAnnotation } from "react-iiif-vault";
+import { useMemo } from "react";
 
 export function HTMLAnnotationBodyRender({ className, locale }: { className?: string; locale?: string }) {
   const annotation = useAnnotation();
-  const filteredBodies =
-    locale && annotation
-      ? annotation?.body.filter((body: any) => {
-          const language = Array.isArray(body.language) ? body.language[0] : body.language;
-          return language === locale;
-        })
-      : annotation?.body || [];
 
-  const bodiesToRender = filteredBodies.length
-    ? filteredBodies
-    : locale
-      ? [(annotation?.body || [])[0]]
-      : annotation?.body || [];
+  const htmlValues = useMemo(() => {
+    if (!annotation?.body) return [];
+
+    let bodiesToRender: any[] = [];
+
+    if (locale && annotation) {
+      const filteredBodies = annotation.body.filter((body: any) => {
+        const language = Array.isArray(body.language) ? body.language[0] : body.language;
+        return language === locale;
+      });
+
+      if (filteredBodies.length) {
+        bodiesToRender = filteredBodies;
+      } else {
+        bodiesToRender = [annotation.body[0]];
+      }
+    } else {
+      bodiesToRender = annotation.body;
+    }
+
+    return bodiesToRender.map((body: any) => body.value).filter(Boolean);
+  }, [locale, annotation]);
 
   return (
     <div className={className}>
-      {bodiesToRender.map((body: any, idx) => {
+      {htmlValues.map((htmlValue: string, idx) => {
         return (
-          <div key={idx} className="prose-headings:mt-1 prose-headings:mb-1 prose-sm leading-normal">
-            <div dangerouslySetInnerHTML={{ __html: body.value }} />
+          <div key={idx} className="prose-headings:mt-1 prose-headings:mb-1 prose-sm">
+            <div dangerouslySetInnerHTML={{ __html: htmlValue }} />
           </div>
         );
       })}
