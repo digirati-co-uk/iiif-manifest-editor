@@ -1,13 +1,5 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
-import {
-  type LayoutPanel,
-  useLayoutActions,
-  useManifestEditor,
-} from "@manifest-editor/shell";
+import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { type LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { type SVGProps, useEffect, useRef } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
 
@@ -17,13 +9,7 @@ export function ManifestIcon({
   ...props
 }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      aria-labelledby={titleId}
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-labelledby={titleId} {...props}>
       {title ? <title id={titleId}>{title}</title> : null}
 
       <path d="M0 0h24v24H0V0z" fill="none" />
@@ -64,6 +50,12 @@ export function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
+    const queryString = new URLSearchParams(window.location.search);
+    const canvas = queryString.get("canvas");
+    if (canvas) {
+      return;
+    }
+
     // if (!current || !isInitial.current) {
     edit(manifest);
     // }
@@ -75,10 +67,7 @@ export function ManifestPanel() {
   return (
     <>
       {label ? (
-        <LocaleString
-          as="h2"
-          className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
-        >
+        <LocaleString as="h2" className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400">
           {label}
         </LocaleString>
       ) : null}
@@ -103,10 +92,7 @@ export function ManifestPanel() {
             >
               {requiredStatement.label}
             </LocaleString>
-            <LocaleString
-              enableDangerouslySetInnerHTML
-              className="text-sm [&>a]:underline [&>a]:hover:text-slate-400"
-            >
+            <LocaleString enableDangerouslySetInnerHTML className="text-sm [&>a]:underline [&>a]:hover:text-slate-400">
               {requiredStatement.value}
             </LocaleString>
           </div>
@@ -117,8 +103,7 @@ export function ManifestPanel() {
 
       {metadata && metadata.length === 0 ? (
         <div className="py-2 text-gray-400">
-          You can add some descriptive metadata for this manifest using the
-          editing panel on the right
+          You can add some descriptive metadata for this manifest using the editing panel on the right
         </div>
       ) : null}
 
@@ -128,8 +113,7 @@ export function ManifestPanel() {
           container: "w-full",
           row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
           label: "font-bold text-black w-full text-sm font-semibold mb-1",
-          value:
-            "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
+          value: "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
           empty: "text-gray-400",
         }}
       />

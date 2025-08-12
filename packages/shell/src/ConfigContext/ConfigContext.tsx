@@ -27,6 +27,7 @@ export interface Config {
   editorFeatureFlags: {
     enableMultiImageCanvases?: boolean;
     enableMultiMediaCanvases?: boolean;
+    rememberCanvasId?: boolean;
   };
 
   // Internationalisation options
@@ -127,7 +128,7 @@ export function ConfigProvider({
       ...(config || {}),
       ...(runtimeConfig || {}),
     }),
-    [config, runtimeConfig],
+    [config, runtimeConfig]
   );
 
   const memoSaveConfig = useCallback(
@@ -137,7 +138,7 @@ export function ConfigProvider({
         saveConfig(config);
       }
     },
-    [config],
+    [config]
   );
 
   return (

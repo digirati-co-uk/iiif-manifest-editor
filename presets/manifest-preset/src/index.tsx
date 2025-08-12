@@ -6,6 +6,7 @@ import { contextMenus } from "./context-menus";
 import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
+import { queryStringTask } from "./query-string";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
@@ -37,7 +38,7 @@ export const leftPanels: LayoutPanel[] = [
   // },
 ];
 
-export const background: BackgroundPanel[] = [contextMenus];
+export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 
