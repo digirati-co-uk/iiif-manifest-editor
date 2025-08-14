@@ -119,7 +119,7 @@ function PaintingAnnotationContextMenu({
     if (items.length === 0) {
       return [
         {
-          sectionTitle: "Painting annotation",
+          sectionTitle: "Painting Annotation",
           items: [
             {
               id: "edit",
@@ -157,37 +157,39 @@ function GenericContextMenu({
 }) {
   return (
     <Menu className="bg-white rounded shadow-xl min-w-32 border border-gray-200">
-      {menuItems.map((item, key) => (
-        <MenuSection key={key}>
-          {item.sectionTitle ? (
-            <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{item.sectionTitle}</Header>
-          ) : null}
-          {item?.items.map((item, key2) => {
-            if (item.enabled === false) {
-              return null;
-            }
-            if (item.enabledFunction && !item.enabledFunction({ resource })) {
-              return null;
-            }
+      {menuItems.map((item, key) => {
+        return (
+          <MenuSection key={key}>
+            {item.sectionTitle ? (
+              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{item.sectionTitle}</Header>
+            ) : null}
+            {item?.items.map((item, key2) => {
+              if (item.enabled === false) {
+                return null;
+              }
+              if (item.enabledFunction && !item.enabledFunction({ resource })) {
+                return null;
+              }
 
-            return (
-              <MenuItem
-                className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5"
-                key={key2}
-                isDisabled={item.disabled}
-                onAction={() => {
-                  flushSync(() => {
-                    item.onAction({ resource, position });
-                    close();
-                  });
-                }}
-              >
-                {item.label}
-              </MenuItem>
-            );
-          })}
-        </MenuSection>
-      ))}
+              return (
+                <MenuItem
+                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5"
+                  key={key2}
+                  isDisabled={item.disabled}
+                  onAction={() => {
+                    flushSync(() => {
+                      item.onAction({ resource, position });
+                      close();
+                    });
+                  }}
+                >
+                  {item.label}
+                </MenuItem>
+              );
+            })}
+          </MenuSection>
+        );
+      })}
     </Menu>
   );
 }
