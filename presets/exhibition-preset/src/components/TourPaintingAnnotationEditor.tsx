@@ -1,12 +1,9 @@
-import { ActionButton, DeleteForeverIcon, DeleteIcon } from "@manifest-editor/components";
+import { ActionButton, DeleteIcon, EditTextIcon } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
-import { ListEditIcon } from "@manifest-editor/manifest-preset/components";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
-import { CloseIcon } from "@manifest-editor/ui/madoc/components/icons/CloseIcon";
 import { useState } from "react";
 import { LocaleString, useAnnotation, useAnnotationPage } from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
-import { EditIcon } from "./TourNormalAnnotationEditor";
 
 export function TourPaintingAnnotationEditor({
   originalAnnotationId,
@@ -65,7 +62,7 @@ export function TourPaintingAnnotationEditor({
           </ActionButton>
         ) : (
           <ActionButton onPress={() => setIsOpen(true)}>
-            <EditIcon /> Edit body
+            <EditTextIcon /> Edit body
           </ActionButton>
         )}
 
