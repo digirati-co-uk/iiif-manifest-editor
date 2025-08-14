@@ -52,8 +52,9 @@ export * from "./icons/VideoIcon";
 export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
-export * from "./icons/AddIcon";
+export * from "./icons/AddIcon"; 
 export * from "./icons/DeleteForeverIcon";
+export * from "./icons/DeleteIcon";
 export * from "./icons/TextIcon";
 export * from "./icons/MoreMenu";
 export * from "./icons/ManifestIcon";
@@ -63,6 +64,7 @@ export * from "./icons/ImageListIcon";
 export * from "./icons/BackIcon";
 export * from "./icons/GridIcon";
 export * from "./icons/ScaledImageIcon";
+export * from './icons/TargetIcon';
 
 // Messages
 export * from "./ErrorMessage";

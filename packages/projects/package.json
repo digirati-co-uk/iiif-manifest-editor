@@ -53,7 +53,7 @@
     "react": "^18.3.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/44d90073/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/5b82598e/react-iiif-vault",
     "styled-components": "6.1.8",
     "tiny-use-debounce": "^1.0.4"
   },

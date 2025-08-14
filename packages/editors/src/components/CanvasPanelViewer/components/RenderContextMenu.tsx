@@ -157,20 +157,26 @@ function GenericContextMenu({
 }) {
   return (
     <Menu className="bg-white rounded shadow-xl min-w-32 border border-gray-200">
-      {menuItems.map((item, key) => {
+      {menuItems.map((section, key) => {
+        const sectionItems = section.items?.filter((item) => {
+          if (item.enabled === false) {
+            return false;
+          }
+          if (item.enabledFunction) {
+            return item.enabledFunction({ resource });
+          }
+          return true;
+        });
+        if (sectionItems.length === 0) {
+          return null;
+        }
+
         return (
           <MenuSection key={key}>
-            {item.sectionTitle ? (
-              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{item.sectionTitle}</Header>
+            {section.sectionTitle ? (
+              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{section.sectionTitle}</Header>
             ) : null}
-            {item?.items.map((item, key2) => {
-              if (item.enabled === false) {
-                return null;
-              }
-              if (item.enabledFunction && !item.enabledFunction({ resource })) {
-                return null;
-              }
-
+            {sectionItems.map((item, key2) => {
               return (
                 <MenuItem
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5"

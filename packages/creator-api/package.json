@@ -47,8 +47,8 @@
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
-    "polygon-editor": "0.0.21",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/44d90073/react-iiif-vault"
+    "polygon-editor": "0.0.23",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/5b82598e/react-iiif-vault"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

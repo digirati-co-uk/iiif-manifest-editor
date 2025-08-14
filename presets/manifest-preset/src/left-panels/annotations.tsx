@@ -12,6 +12,15 @@ export const annotationsPanel: LayoutPanel = {
 };
 
 function AnnotationsPanel() {
+  // - Create page: There is no Annotation page OR only external annotation pages
+  // - Listing existing annotations
+  // - Creating new annotation
+  // - Editing an annotation inline
+
+  return <AnnotationDebug />;
+}
+
+function AnnotationDebug() {
   const store = useAtlasStore();
   const { polygon, polygonState, polygons, ...data } = useStore(store, (s) => s);
   return (

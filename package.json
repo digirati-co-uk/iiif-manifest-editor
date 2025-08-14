@@ -18,7 +18,7 @@
   },
   "pnpm": {
     "overrides": {
-      "polygon-editor": "0.0.21",
+      "polygon-editor": "0.0.23",
       "next": "$next",
       "@atlas-viewer/atlas": "2.3.7",
       "@iiif/helpers": "^1.4.0",
