@@ -26,7 +26,7 @@ export const exhibitionTourSteps: EditorDefinition = {
       const full = vault.get(resource);
       const stats = getGridStats(full.behavior);
 
-      if (full.type === "Canvas" && !stats.isInfo && !stats.isBottom) {
+      if (full.type === "Canvas" && !stats.isInfo) {
         return true;
       }
       return false;
@@ -73,7 +73,7 @@ function PromptCreationOfTourSteps() {
             type: "Canvas",
           },
         },
-      }
+      },
     );
   };
 
@@ -139,7 +139,7 @@ function ExhibitionRightPanel() {
                     }
                   : resp.boundingBox,
             },
-          }
+          },
         );
       }
     },

@@ -1,4 +1,4 @@
-import { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 
 const heightMap = {
   "h-1": "lg:min-h-[100px] row-span-1",
@@ -94,8 +94,8 @@ export function getGridStats(behavior?: string[]) {
   const isLeft = behavior?.includes("left");
   const isBottom = behavior?.includes("bottom");
   const isTop = behavior?.includes("top");
-  const isInfo = behavior?.includes("info");
   const isImage = behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+  const isInfo = behavior?.includes("info");
 
   return {
     isRight,
