@@ -5,7 +5,12 @@ export function AtlasRenderBoxSelector({
   target,
   style,
   onClick,
-}: { id: string; target: BoxSelector; style?: any; onClick?: () => void }) {
+}: {
+  id: string;
+  target: BoxSelector;
+  style?: any;
+  onClick?: () => void;
+}) {
   const { x, y, width, height } = target.spatial;
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>

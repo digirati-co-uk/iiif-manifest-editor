@@ -49,7 +49,7 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
                     },
                   },
                   initialData: {},
-                }
+                },
               );
             }}
           >

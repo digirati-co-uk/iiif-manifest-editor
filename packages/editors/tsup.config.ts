@@ -1,4 +1,4 @@
-import { type Options, defineConfig } from "tsup";
+import { defineConfig, type Options } from "tsup";
 
 export default defineConfig((options: Options) => ({
   dts: true,
@@ -13,6 +13,7 @@ export default defineConfig((options: Options) => ({
   ],
   loader: {
     ".css": "local-css",
+    ".global.css": "css",
   },
   define: {
     "global.setImmediate": "window.setImmediate",

@@ -42,7 +42,8 @@ export function ManifestPanel() {
   const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const isInitial = useRef(true);
+  const hasCanvasQueryString = new URLSearchParams(window.location.search).get("canvas");
+  const isInitial = useRef(!hasCanvasQueryString);
 
   const label = descriptive.label.get();
   const summary = descriptive.summary.get();

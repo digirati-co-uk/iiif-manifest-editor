@@ -1,5 +1,5 @@
-import { useAnnotation } from "react-iiif-vault";
 import { useMemo } from "react";
+import { useAnnotation } from "react-iiif-vault";
 
 export function HTMLAnnotationBodyRender({ className, locale }: { className?: string; locale?: string }) {
   const annotation = useAnnotation();

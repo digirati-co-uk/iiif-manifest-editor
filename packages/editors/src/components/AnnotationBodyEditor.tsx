@@ -1,7 +1,7 @@
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import { Input, Label } from "@manifest-editor/editors";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useEffect } from "react";
+import { Input, Label } from "../";
 
 export function AnnotationBodyEditor({
   editorClassName,

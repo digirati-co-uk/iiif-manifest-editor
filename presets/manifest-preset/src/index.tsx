@@ -1,6 +1,14 @@
 import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
-import { type BackgroundPanel, baseCreator, baseEditor, ExportPanel, type LayoutPanel } from "@manifest-editor/shell";
+import {
+  type AnnotationPanel,
+  type BackgroundPanel,
+  baseCreator,
+  baseEditor,
+  ExportPanel,
+  type LayoutPanel,
+} from "@manifest-editor/shell";
+import { canvasAnnotations } from "./annotations/CanvasAnnotations";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { contextMenus } from "./context-menus";
 import { annotationsPanel } from "./left-panels/annotations";
@@ -37,6 +45,8 @@ export const leftPanels: LayoutPanel[] = [
   //   render: () => <ManifestItemsGrid />,
   // },
 ];
+
+export const annotations: AnnotationPanel[] = [canvasAnnotations];
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 

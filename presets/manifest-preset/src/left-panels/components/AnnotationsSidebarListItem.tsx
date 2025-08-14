@@ -1,16 +1,17 @@
 import {
   ActionButton,
+  CheckIcon,
   DeleteIcon,
   EditTextIcon,
   HTMLAnnotationBodyRender,
   TargetIcon,
 } from "@manifest-editor/components";
-import { HTMLAnnotationEditor, useAnnotationEditor } from "@manifest-editor/editors";
+import { HTMLAnnotationEditor, useAnnotationEditor, useAnnotationInfo } from "@manifest-editor/editors";
 import { useState } from "react";
-import { CheckIcon } from "../icons/CheckIcon";
 
-export function TourNormalAnnotationEditor({ highlightProps }: { highlightProps: any }) {
+export function AnnotationsSidebarListItem() {
   const { isPending, cancelRequest, busy, requestAnnotationFromTarget, deleteAnnotation } = useAnnotationEditor();
+  const [annotation, { highlightProps }] = useAnnotationInfo();
 
   const [isOpen, setIsOpen] = useState(false);
   // This is an annotatino within a page.
@@ -46,7 +47,6 @@ export function TourNormalAnnotationEditor({ highlightProps }: { highlightProps:
           <DeleteIcon /> Delete
         </ActionButton>
       </div>
-      <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
     </div>
   );
 }

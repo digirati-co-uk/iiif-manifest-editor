@@ -1,9 +1,12 @@
+import { useInStack } from "@manifest-editor/editors";
 import type { LayoutPanel } from "@manifest-editor/shell";
-import { useAtlasStore, useRequestAnnotation } from "react-iiif-vault";
+import { AnnotationPageContext, CanvasContext, useAtlasStore, useCanvas } from "react-iiif-vault";
 import { useStore } from "zustand";
+import { AnnotationsCreateEmptyPage } from "./components/AnnotationsCreateEmptyPage";
+import { AnnotationsListingAnnotations } from "./components/AnnotationsListingAnnotations";
 
 export const annotationsPanel: LayoutPanel = {
-  id: "annotations",
+  id: "@manifest-editor/canvas-annotation-listing",
   label: "Annotations",
   icon: <AnnotationsIcon />,
   render: (state, ctx, app) => {
@@ -12,12 +15,30 @@ export const annotationsPanel: LayoutPanel = {
 };
 
 function AnnotationsPanel() {
-  // - Create page: There is no Annotation page OR only external annotation pages
-  // - Listing existing annotations
-  // - Creating new annotation
-  // - Editing an annotation inline
+  const canvasRef = useInStack("Canvas");
+  const canvasId = canvasRef?.resource.source?.id;
+  const canvas = useCanvas({ id: canvasId });
+  const firstPage = canvas?.annotations[0];
 
-  return <AnnotationDebug />;
+  if (!canvas) {
+    return <div>Select a canvas</div>;
+  }
+
+  if (firstPage) {
+    return (
+      <AnnotationPageContext annotationPage={firstPage.id}>
+        <CanvasContext canvas={canvas.id}>
+          <AnnotationsListingAnnotations />
+        </CanvasContext>
+      </AnnotationPageContext>
+    );
+  }
+
+  return (
+    <CanvasContext canvas={canvas.id}>
+      <AnnotationsCreateEmptyPage />
+    </CanvasContext>
+  );
 }
 
 function AnnotationDebug() {
@@ -29,10 +50,6 @@ function AnnotationDebug() {
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
-}
-
-function MakeAnno() {
-  const {} = useRequestAnnotation();
 }
 
 export function AnnotationsIcon(props: React.SVGProps<SVGSVGElement>) {

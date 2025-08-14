@@ -5,7 +5,12 @@ export function AtlasRenderSVGSelector({
   target,
   style,
   onClick,
-}: { id: string; target: SvgSelector; style?: any; onClick?: () => void }) {
+}: {
+  id: string;
+  target: SvgSelector;
+  style?: any;
+  onClick?: () => void;
+}) {
   const canvas = useCanvas();
   if (!canvas) return null;
   return (
@@ -24,7 +29,7 @@ export function AtlasRenderSVGSelector({
           },
         }
       }
-      // @ts-ignore
+      // @ts-expect-error
       onClick={onClick}
     />
   );
