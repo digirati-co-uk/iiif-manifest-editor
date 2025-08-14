@@ -8,7 +8,14 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import {
+  parseSelector,
+  useAtlasStore,
+  useCanvas,
+  useRequestAnnotation,
+  useVault,
+  useVaultSelector,
+} from "react-iiif-vault";
 
 export const contextMenus: BackgroundPanel = {
   id: "manifest-context-menus",
@@ -38,7 +45,7 @@ function CanvasContextMenu() {
     canvasRef,
     {
       isPainting: true,
-    },
+    }
   );
 
   useCustomContextMenu(
@@ -76,7 +83,7 @@ function CanvasContextMenu() {
         },
       ],
     },
-    [canvasRef, currentId, canCreateAnnotation],
+    [canvasRef, currentId, canCreateAnnotation]
   );
 
   return null;
@@ -98,7 +105,7 @@ function PaintingAnnotationContextMenu() {
   const annotationPage = canvas?.items?.[0]?.id;
   const fullAnnotationPage = useVaultSelector(
     (_, v) => (annotationPage ? v.get(annotationPage) : null),
-    [annotationPage],
+    [annotationPage]
   );
 
   const annotationPageEditor = useMemo(() => {
@@ -152,7 +159,100 @@ function PaintingAnnotationContextMenu() {
         },
       ],
     },
-    [currentId, annotationPageEditor, fullAnnotationPage],
+    [currentId, annotationPageEditor, fullAnnotationPage]
+  );
+
+  return null;
+}
+
+/**
+ * This is not working yet.
+ */
+function MediaTargetContextMenu() {
+  // const canvas = useCanvas();
+  const vault = useVault();
+  const store = useAtlasStore();
+  const { edit } = useLayoutActions();
+  // const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
+  const bounds = null;
+  const { requestAnnotation, isPending, completeRequest, cancelRequest } = useRequestAnnotation({
+    onSuccess: (response) => {
+      console.log("response", response);
+      if (response.boundingBox) {
+        console.log(`target.setPosition(${JSON.stringify(response.boundingBox)})`);
+        // target.setPosition(response.boundingBox);
+      }
+    },
+  });
+
+  useCustomContextMenu(
+    {
+      sectionTitle: "Painting Annotation",
+      resource: { type: "Annotation" },
+      items: [
+        {
+          id: "edit-painting",
+          label: "Edit metadata",
+          enabled: true,
+          onAction: ({ resource }) => {
+            edit(resource);
+          },
+        },
+        {
+          id: "save-changes",
+          label: "Save changes",
+          enabled: isPending,
+          onAction: () => {
+            console.log("complete request?");
+            completeRequest();
+          },
+        },
+        {
+          id: "discard-changes",
+          label: "Discard changes",
+          enabled: isPending,
+          onAction: () => {
+            console.log("cancel request?");
+            cancelRequest();
+          },
+        },
+        {
+          id: "edit-position",
+          label: "Edit position",
+          enabled: !isPending,
+          enabledFunction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            return selector?.type === "BoxSelector";
+          },
+          onAction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            console.log("on action", selector?.spatial);
+
+            if (selector?.type === "BoxSelector") {
+              requestAnnotation({ type: "target", bounds, selector: selector.spatial });
+              console.log(store.getState().validRequestIds);
+              console.log(store.getState().tool);
+            }
+          },
+        },
+        {
+          id: "target-whole-canvas",
+          label: "Target whole canvas",
+          enabledFunction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            return selector?.type !== "BoxSelector";
+          },
+          onAction: ({ resource }) => {
+            // target.removeSelector()
+            console.log("target.removeSelector()");
+          },
+        },
+      ],
+    },
+    [isPending]
   );
 
   return null;

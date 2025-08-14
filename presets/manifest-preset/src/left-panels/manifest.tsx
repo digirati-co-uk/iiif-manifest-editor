@@ -50,15 +50,9 @@ export function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    const queryString = new URLSearchParams(window.location.search);
-    const canvas = queryString.get("canvas");
-    if (canvas) {
-      return;
+    if (!isInitial.current) {
+      edit(manifest);
     }
-
-    // if (!current || !isInitial.current) {
-    edit(manifest);
-    // }
     open({ id: "overview" });
 
     isInitial.current = false;
