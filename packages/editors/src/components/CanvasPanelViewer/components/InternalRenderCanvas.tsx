@@ -26,6 +26,7 @@ import { AnnotationEditingTools } from "./AnnotationEditingTools";
 import { AnnotationPopupTools } from "./AnnotationPopupTools";
 import { RenderContextMenu } from "./RenderContextMenu";
 import { RenderCurrentContextMenuItem } from "./RenderCurrentContextMenuItem";
+import { RenderImageOverlayControls } from "./RenderImageOverlayControls";
 
 interface InternalRenderCanvasProps {
   x?: number;
@@ -86,6 +87,7 @@ export function InternalRenderCanvas({
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
         <RenderYouTubeStrategy />
+        <RenderImageOverlayControls />
         <RenderAnnotationEditing theme={svgTheme}>
           {annotationPopup || <AnnotationPopupTools />}
         </RenderAnnotationEditing>

@@ -4,6 +4,7 @@ import {
   AppStateReactContext,
   AtlasStoreReactContext,
   ContextMenuReactContext,
+  EditingStackContext,
   LayoutActionsReactContext,
   LayoutStateReactContext,
   PrimeAppReactContext,
@@ -26,6 +27,7 @@ export function AdditionalContextBridge(props: { children: React.ReactNode }) {
       AppReactContext,
       AppStateReactContext,
       ContextMenuReactContext,
+      EditingStackContext,
     };
   }, []);
 
@@ -46,6 +48,7 @@ export function AdditionalContextBridgeInner(props: { children: React.ReactNode 
       AppReactContext,
       AppStateReactContext,
       ContextMenuReactContext,
+      EditingStackContext,
     };
   }, []);
 
