@@ -183,8 +183,39 @@ export function useResourceContextMenuItems(req: { id?: string; type: string }) 
       }
     }
 
-    return returnSections;
+    return mergeSectionsWithTheSameTitle(returnSections);
   }, [specificMenus, resourceMenus, req.id, req.type]);
+}
+
+function mergeSectionsWithTheSameTitle(sections: Array<{ sectionTitle?: string; items: Array<ContextMenuItem> }>) {
+  const sectionMap: Record<string, ContextMenuItem[]> = {};
+  const emptySections: ContextMenuItem[] = [];
+
+  sections.forEach((section) => {
+    if (!section) return;
+    const title = section.sectionTitle;
+    if (!title) {
+      emptySections.push(...(section.items || []));
+      return;
+    }
+    if (!sectionMap[title]) {
+      sectionMap[title] = [];
+    }
+    sectionMap[title].push(...section.items);
+  });
+
+  const returnSections: Array<{ sectionTitle?: string; items: Array<ContextMenuItem> }> = Object.entries(
+    sectionMap,
+  ).map(([title, items]) => ({
+    sectionTitle: title,
+    items,
+  }));
+
+  if (emptySections.length) {
+    returnSections.push({ items: emptySections });
+  }
+
+  return returnSections;
 }
 
 export function useCustomContextMenu(req: ContextMenuRequest, deps: any[] = []) {

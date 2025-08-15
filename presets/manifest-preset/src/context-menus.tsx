@@ -1,3 +1,4 @@
+import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import {
   type BackgroundPanel,
@@ -6,7 +7,15 @@ import {
   useEditingResource,
   useLayoutActions,
 } from "@manifest-editor/shell";
-import { useCanvas } from "react-iiif-vault";
+import { useMemo } from "react";
+import {
+  parseSelector,
+  useAtlasStore,
+  useCanvas,
+  useRequestAnnotation,
+  useVault,
+  useVaultSelector,
+} from "react-iiif-vault";
 
 export const contextMenus: BackgroundPanel = {
   id: "manifest-context-menus",
@@ -75,6 +84,175 @@ function CanvasContextMenu() {
       ],
     },
     [canvasRef, currentId, canCreateAnnotation]
+  );
+
+  return null;
+}
+
+/**
+ * This is currently not used, needs work.
+ */
+function PaintingAnnotationContextMenu() {
+  const canvasResource = useInStack("Canvas");
+  const canvasRef = canvasResource?.resource.source;
+
+  const current = useEditingResource();
+  const currentId = current?.resource?.source?.id;
+
+  const canvas = useCanvas(canvasRef ? canvasRef : undefined);
+  const { edit } = useLayoutActions();
+  const vault = useVault();
+  const annotationPage = canvas?.items?.[0]?.id;
+  const fullAnnotationPage = useVaultSelector(
+    (_, v) => (annotationPage ? v.get(annotationPage) : null),
+    [annotationPage]
+  );
+
+  const annotationPageEditor = useMemo(() => {
+    if (canvas && fullAnnotationPage) {
+      return new EditorInstance({ vault, reference: { id: fullAnnotationPage.id, type: "AnnotationPage" } });
+    }
+    return null;
+  }, [fullAnnotationPage, canvas, vault]);
+
+  // Annotation ordering
+  useCustomContextMenu(
+    {
+      sectionTitle: "Painting Annotation",
+      resource: { type: "Annotation" },
+      items: [
+        {
+          id: "edit",
+          label: "Edit",
+          enabledFunction({ resource }) {
+            return resource.id !== currentId;
+          },
+          onAction: ({ resource }) => {
+            edit(resource);
+          },
+        },
+        {
+          id: "reorder-bring-to-front",
+          label: "Bring to front",
+          enabled: !!(annotationPageEditor && (fullAnnotationPage?.items.length || 0) > 1),
+          onAction: ({ resource }) => {
+            if (annotationPageEditor) {
+              const index = fullAnnotationPage.items.findIndex((item: any) => item.id === resource.id);
+              if (index !== -1 && index !== fullAnnotationPage.items.length - 1) {
+                annotationPageEditor?.structural.items.moveToEnd(index);
+              }
+            }
+          },
+        },
+        {
+          id: "reorder-send-to-back",
+          label: "Send to back",
+          enabled: !!(annotationPageEditor && (fullAnnotationPage?.items.length || 0) > 1),
+          onAction: ({ resource }) => {
+            if (annotationPageEditor) {
+              const index = fullAnnotationPage.items.findIndex((item: any) => item.id === resource.id);
+              if (index !== -1 && index !== 0) {
+                annotationPageEditor?.structural.items.moveToStart(index);
+              }
+            }
+          },
+        },
+      ],
+    },
+    [currentId, annotationPageEditor, fullAnnotationPage]
+  );
+
+  return null;
+}
+
+/**
+ * This is not working yet.
+ */
+function MediaTargetContextMenu() {
+  // const canvas = useCanvas();
+  const vault = useVault();
+  const store = useAtlasStore();
+  const { edit } = useLayoutActions();
+  // const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
+  const bounds = null;
+  const { requestAnnotation, isPending, completeRequest, cancelRequest } = useRequestAnnotation({
+    onSuccess: (response) => {
+      console.log("response", response);
+      if (response.boundingBox) {
+        console.log(`target.setPosition(${JSON.stringify(response.boundingBox)})`);
+        // target.setPosition(response.boundingBox);
+      }
+    },
+  });
+
+  useCustomContextMenu(
+    {
+      sectionTitle: "Painting Annotation",
+      resource: { type: "Annotation" },
+      items: [
+        {
+          id: "edit-painting",
+          label: "Edit metadata",
+          enabled: true,
+          onAction: ({ resource }) => {
+            edit(resource);
+          },
+        },
+        {
+          id: "save-changes",
+          label: "Save changes",
+          enabled: isPending,
+          onAction: () => {
+            console.log("complete request?");
+            completeRequest();
+          },
+        },
+        {
+          id: "discard-changes",
+          label: "Discard changes",
+          enabled: isPending,
+          onAction: () => {
+            console.log("cancel request?");
+            cancelRequest();
+          },
+        },
+        {
+          id: "edit-position",
+          label: "Edit position",
+          enabled: !isPending,
+          enabledFunction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            return selector?.type === "BoxSelector";
+          },
+          onAction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            console.log("on action", selector?.spatial);
+
+            if (selector?.type === "BoxSelector") {
+              requestAnnotation({ type: "target", bounds, selector: selector.spatial });
+              console.log(store.getState().validRequestIds);
+              console.log(store.getState().tool);
+            }
+          },
+        },
+        {
+          id: "target-whole-canvas",
+          label: "Target whole canvas",
+          enabledFunction: ({ resource }) => {
+            const annotation = vault.get(resource);
+            const selector = parseSelector(annotation.target?.selector)?.selector;
+            return selector?.type !== "BoxSelector";
+          },
+          onAction: ({ resource }) => {
+            // target.removeSelector()
+            console.log("target.removeSelector()");
+          },
+        },
+      ],
+    },
+    [isPending]
   );
 
   return null;

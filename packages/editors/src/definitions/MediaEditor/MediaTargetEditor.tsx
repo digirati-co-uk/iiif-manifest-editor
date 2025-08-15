@@ -22,7 +22,7 @@ export function MediaTargetEditor() {
 
   useCustomContextMenu(
     {
-      sectionTitle: "Painting Annotation",
+      sectionTitle: "Painting Annotation Target",
       resource: annotationEditor.ref(),
       items: [
         {
@@ -41,6 +41,16 @@ export function MediaTargetEditor() {
             cancelRequest();
           },
         },
+      ],
+    },
+    [isPending],
+  );
+
+  useCustomContextMenu(
+    {
+      sectionTitle: "Painting Annotation",
+      resource: annotationEditor.ref(),
+      items: [
         {
           id: "edit-position",
           label: "Edit position",
@@ -58,7 +68,7 @@ export function MediaTargetEditor() {
         },
       ],
     },
-    [currentSelector, isPending]
+    [currentSelector, isPending],
   );
 
   const store = useAtlasStore();

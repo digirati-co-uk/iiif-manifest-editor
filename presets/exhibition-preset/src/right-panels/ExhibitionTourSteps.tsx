@@ -12,9 +12,10 @@ import {
 import { useState } from "react";
 import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
+import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { getGridStats } from "../helpers";
-import { ExhibitionTourStepPopup } from "./ExhibitionTourStepPopup";
+import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 
 export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
@@ -165,14 +166,7 @@ function ExhibitionRightPanel() {
 
               {!busy ? (
                 isPending ? (
-                  <div className="border grid grid-cols-2 gap-2 disabled:opacity-50 border-gray-300 shadow-sm rounded p-1 bg-white relative text-black/40">
-                    <Button onPress={cancelRequest} className="text-black/80 rounded-sm p-3">
-                      Cancel
-                    </Button>
-                    <Button onPress={completeRequest} className="bg-me-100 text-me-500 rounded-sm p-3">
-                      Save changes
-                    </Button>
-                  </div>
+                  <PendingTourStepAnnotation />
                 ) : (
                   <Button
                     onPress={() => requestAnnotation({ type: "box", annotationPopup: <ExhibitionTourStepPopup /> })}

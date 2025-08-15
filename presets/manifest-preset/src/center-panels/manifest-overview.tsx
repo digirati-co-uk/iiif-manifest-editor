@@ -8,6 +8,7 @@ import {
   type LayoutPanel,
   useCreator,
   useLayoutActions,
+  useLayoutState,
   useManifestEditor,
 } from "@manifest-editor/shell";
 
@@ -24,20 +25,15 @@ export function ManifestOverviewCenterPanel() {
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(
-    manifest,
-    "items",
-    "Canvas",
-  );
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
   const canvases = useFastList(items.get(), 24);
+  const { leftPanel } = useLayoutState();
+  const isEditingManifest = leftPanel.current === "manifest-summary";
 
   if (!canvases || canvases.length === 0) {
     return (
       <div>
-        <ManifestOverviewEmptyState
-          onCreate={canvasActions.create}
-          canCreate={canCreateCanvas}
-        />
+        <ManifestOverviewEmptyState onCreate={canvasActions.create} canCreate={canCreateCanvas} />
       </div>
     );
   }
@@ -49,7 +45,9 @@ export function ManifestOverviewCenterPanel() {
           key={item.id}
           onClick={() => {
             open({ id: "current-canvas" });
-            open({ id: "canvas-listing", state: { gridView: true } });
+            if (isEditingManifest) {
+              open({ id: "canvas-listing", state: { gridView: true } });
+            }
             canvasActions.edit(item);
           }}
         />

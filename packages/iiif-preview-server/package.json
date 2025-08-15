@@ -61,11 +61,11 @@
     }
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsup"
+    "prepack": "tsdown"
   },
   "optionalDependencies": {
     "next": "^14"
@@ -81,7 +81,7 @@
     "@types/node": "^20.11.24",
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.10",
-    "tsup": "^8.0.2"
+    "tsdown": "^0.14.1"
   },
   "publishConfig": {
     "access": "public"

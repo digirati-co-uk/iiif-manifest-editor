@@ -1,9 +1,5 @@
 // All components.
 import "./index.css";
-import "iiif-browser/dist/index.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
 
 export * from "./ActionButton";
 export * from "./AccessibilityButton";
@@ -54,6 +50,7 @@ export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
 export * from "./icons/AddIcon";
 export * from "./icons/DeleteForeverIcon";
+export * from "./icons/DeleteIcon";
 export * from "./icons/TextIcon";
 export * from "./icons/MoreMenu";
 export * from "./icons/ManifestIcon";
@@ -63,6 +60,9 @@ export * from "./icons/ImageListIcon";
 export * from "./icons/BackIcon";
 export * from "./icons/GridIcon";
 export * from "./icons/ScaledImageIcon";
+export * from "./icons/TargetIcon";
+export * from "./icons/EditTextIcon";
+export * from "./icons/CheckIcon";
 
 // Messages
 export * from "./ErrorMessage";
@@ -72,6 +72,7 @@ export * from "./hooks";
 
 // Renderers
 export * from "./RenderTextualContent";
+export * from "./HTMLAnnotationBodyRender";
 export * from "./IIIFMediaPlayer";
 
 // Extra class names:
@@ -80,3 +81,4 @@ export * from "./IIIFMediaPlayer";
 // top-3 right-3 left-5
 // prose-headings:mt-1 prose-headings:mb-1 prose-sm
 // prose-p:text-slate-600
+// min-w-4xl min-w-3xl

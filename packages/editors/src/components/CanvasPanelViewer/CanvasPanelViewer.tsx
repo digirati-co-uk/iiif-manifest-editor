@@ -6,6 +6,7 @@ import {
   useAtlasStore,
   useEmitter,
   useHighlightedImageResource,
+  useLayoutActions,
   useLayoutState,
   useTaskRunner,
 } from "@manifest-editor/shell";
@@ -23,7 +24,6 @@ import {
   AuthProvider,
   CanvasContext,
   CanvasPanel,
-  RenderAnnotationEditing,
   useAnnotation,
   useCanvas,
   useManifest,
@@ -60,6 +60,7 @@ export function CanvasPanelViewer({
   const manifest = useManifest(); // @todo remove.
   const canvas = useCanvas();
   const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
+  const { edit } = useLayoutActions();
   const customAnnotationComponents = useMemo(() => {
     return app.layout.annotations || [];
   }, [app.layout.annotations]);
@@ -67,11 +68,34 @@ export function CanvasPanelViewer({
   const store = useAtlasStore();
   const mode = useStore(store, (state) => state.mode);
 
+  const onNextCanvas = useMemo(() => {
+    //
+    const currentCanvasIndex = manifest?.items?.findIndex((item) => item.id === canvas?.id);
+    const nextCanvas = typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex + 1] : undefined;
+    if (nextCanvas) {
+      return () => {
+        edit({ id: nextCanvas.id, type: "Canvas" });
+      };
+    }
+  }, []);
+
+  const onPreviousCanvas = useMemo(() => {
+    //
+    const currentCanvasIndex = manifest?.items?.findIndex((item) => item.id === canvas?.id);
+    const previousCanvas =
+      typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex - 1] : undefined;
+    if (previousCanvas) {
+      return () => {
+        edit({ id: previousCanvas.id, type: "Canvas" });
+      };
+    }
+  }, []);
+
   const { rightPanel } = useLayoutState();
   const { editMode, toggleEditMode } = useEditingMode();
   const [createMode, toggleCreateAnnotation] = useReducer(
     (a: boolean, action?: boolean) => (typeof action === "undefined" ? !a : action),
-    false,
+    false
   );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
@@ -85,7 +109,7 @@ export function CanvasPanelViewer({
           },
         } as DefaultPresetOptions,
       ] as any,
-    [],
+    []
   );
   const { resources, regions } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
@@ -282,10 +306,13 @@ export function CanvasPanelViewer({
             editMode={editMode}
             toggleEditMode={toggleEditMode}
             createMode={createMode}
+            enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
+            onNext={onNextCanvas}
+            onPrevious={onPreviousCanvas}
             toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
           />
         )}
-        viewControlsDeps={[editMode, createMode, createAnnotation, annotation]}
+        viewControlsDeps={[editMode, createMode, createAnnotation, annotation, onNextCanvas, onPreviousCanvas]}
         renderMediaControls={() => <MediaControls />}
       >
         <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>

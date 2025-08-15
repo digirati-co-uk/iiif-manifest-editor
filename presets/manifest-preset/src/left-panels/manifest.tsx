@@ -42,7 +42,8 @@ export function ManifestPanel() {
   const { descriptive, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const isInitial = useRef(true);
+  const hasCanvasQueryString = new URLSearchParams(window.location.search).get("canvas");
+  const isInitial = useRef(!hasCanvasQueryString);
 
   const label = descriptive.label.get();
   const summary = descriptive.summary.get();
@@ -50,16 +51,10 @@ export function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    const queryString = new URLSearchParams(window.location.search);
-    const canvas = queryString.get("canvas");
-    if (canvas) {
-      return;
-    }
-
-    // if (!current || !isInitial.current) {
-    edit(manifest);
-    // }
     open({ id: "overview" });
+    if (isInitial.current) {
+      edit(manifest);
+    }
 
     isInitial.current = false;
   }, []);
