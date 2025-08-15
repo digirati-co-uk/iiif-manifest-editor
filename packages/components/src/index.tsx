@@ -1,9 +1,5 @@
 // All components.
 import "./index.css";
-import "iiif-browser/dist/index.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
 
 export * from "./ActionButton";
 export * from "./AccessibilityButton";
@@ -52,7 +48,7 @@ export * from "./icons/VideoIcon";
 export * from "./icons/AudioIcon";
 export * from "./icons/EmptyCanvasIcon";
 export * from "./icons/DownloadIcon";
-export * from "./icons/AddIcon"; 
+export * from "./icons/AddIcon";
 export * from "./icons/DeleteForeverIcon";
 export * from "./icons/DeleteIcon";
 export * from "./icons/TextIcon";

@@ -19,7 +19,7 @@ export function ActionButton({
           center ? "place-content-center" : "",
           large ? "px-4 py-2" : "px-2 py-1",
           t.isDisabled ? "opacity-70 cursor-not-allowed pointer-events-none" : "",
-          typeof className === "string" ? className : className?.(t),
+          typeof className === "string" ? className : className?.(t)
         )
       }
       {...props}

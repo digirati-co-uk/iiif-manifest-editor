@@ -28,7 +28,6 @@
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/exhibition-preset": "workspace:*",
-    "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/shell": "workspace:*",

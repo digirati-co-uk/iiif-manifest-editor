@@ -4,7 +4,7 @@ import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
-import { memo, useContext, useLayoutEffect, useMemo } from "react";
+import { Fragment, memo, useContext, useLayoutEffect, useMemo } from "react";
 import { ReactVaultContext } from "react-iiif-vault";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";
@@ -52,8 +52,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
 
   const isLoading = props.isLoading || false;
   const backgroundItems = useMemo(() => {
-    return (layout.background || []).map((bg) => {
-      return bg.render();
+    return (layout.background || []).map((bg, key) => {
+      return (
+        <Fragment key={key}>
+          {bg.render()}
+        </Fragment>
+      );
     });
   }, [layout.background]);
 

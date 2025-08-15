@@ -36,6 +36,7 @@ export function RenderContextMenu({
       ) {
         return (
           <PaintingAnnotationContextMenu
+            key={image.id}
             canvasId={canvasId}
             position={position}
             annotationId={image.annotationId}
@@ -158,7 +159,7 @@ function GenericContextMenu({
   return (
     <Menu className="bg-white rounded shadow-xl min-w-32 border border-gray-200">
       {menuItems.map((section, key) => {
-        const sectionItems = section.items?.filter((item) => {
+        const sectionItems = section.items?.filter((item, keyInner) => {
           if (item.enabled === false) {
             return false;
           }
@@ -172,7 +173,7 @@ function GenericContextMenu({
         }
 
         return (
-          <MenuSection key={key}>
+          <MenuSection key={keyInner}>
             {section.sectionTitle ? (
               <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{section.sectionTitle}</Header>
             ) : null}

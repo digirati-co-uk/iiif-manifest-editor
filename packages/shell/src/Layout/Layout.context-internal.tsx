@@ -71,7 +71,6 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
 
       emitter.emit("layout.open", openData);
       actions.open(openData);
-      console.log("Open data:", openData);
     }
   }
 

@@ -36,12 +36,12 @@
     "./dist/index.css": "./dist/index.css"
   },
   "scripts": {
-    "build": "tsup src/index.tsx",
-    "dev": "tsup src/index.tsx --watch",
+    "build": "tsdown src/index.tsx",
+    "dev": "tsdown src/index.tsx --watch",
     "storybook": "vite --port=7007 --host=0.0.0.0 --open",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsup src/index.tsx"
+    "prepack": "tsdown src/index.tsx"
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.13",
@@ -60,13 +60,13 @@
     "react": "^18.3.1",
     "react-aria": "^3.38.1",
     "react-aria-components": "^1.7.1",
+    "react-calendar": "^4.8.0",
+    "react-clock": "^4.6.0",
+    "react-datetime-picker": "^5.6.0",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.0.13",
     "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/5b82598e/react-iiif-vault",
     "react-lazy-load-image-component": "^1.6.0",
-    "react-calendar": "^4.8.0",
-    "react-clock": "^4.6.0",
-    "react-datetime-picker": "^5.6.0",
     "showdown": "^2.1.0",
     "tailwind-merge": "^2.3.0",
     "tiny-use-debounce": "^1.0.4",
@@ -77,14 +77,18 @@
     "@repo/eslint-config": "workspace:*",
     "@storylite/storylite": "^0.15.1",
     "@storylite/vite-plugin": "^0.15.0",
+    "@tailwindcss/postcss": "^4.1.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-lazy-load-image-component": "^1.6.4",
     "@types/showdown": "^2.0.6",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "postcss": "^8.4.38",
+    "postcss-import": "^16.1.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "tailwindcss": "^3.4.3",
-    "tsup": "^8.0.2",
+    "tsdown": "^0.14.1",
+    "unplugin-lightningcss": "^0.4.1",
     "vite": "^5.4.1"
   },
   "publishConfig": {

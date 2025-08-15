@@ -4,8 +4,8 @@ import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import cx from "classnames";
 import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import $ from "../CanvasListPreview/CanvasListPreview.module.css";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
+import {twMerge} from 'tailwind-merge';
 
 import { CollectionListItem, ManifestListItem } from "@manifest-editor/components";
 
@@ -23,8 +23,11 @@ export function ManifestItem(props: { margin?: boolean; active?: boolean; onClic
   const manifest = useManifest();
 
   return (
-    <div className={cx($.Item, props.margin && $.ItemMargin)} aria-selected={props.active} onClick={props.onClick}>
-      <div className={$.Label}>
+    <div className={twMerge(cx(
+      "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+      props.active && "bg-gray-50 text-black border-[#892c4e]",
+    ))} aria-selected={props.active} onClick={props.onClick}>
+      <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
         {getValue(manifest?.label) || <span style={{ color: "#999" }}>Untitled manifest</span>}
       </div>
     </div>
@@ -35,8 +38,12 @@ export function CollectionItem(props: { margin?: boolean; active?: boolean; onCl
   const collection = useCollection({} as any);
 
   return (
-    <div className={cx($.Item, props.margin && $.ItemMargin)} aria-selected={props.active} onClick={props.onClick}>
-      <div className={$.Label}>
+    <div className={twMerge(cx(
+      "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+      props.active && "bg-gray-50 text-black border-[#892c4e]",
+      props.margin && "block"
+    ))} aria-selected={props.active} onClick={props.onClick}>
+      <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
         {getValue(collection?.label) || <span style={{ color: "#999" }}>Untitled collection</span>}
       </div>
     </div>

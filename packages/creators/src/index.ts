@@ -1,3 +1,4 @@
+import './index.css';
 import { audioAnnotation } from "./Annotation/AudioAnnotation";
 import { captionedImageAnnotation } from "./Annotation/CaptionedImageAnnotation";
 import { htmlAnnotation } from "./Annotation/HTMLAnnotation";

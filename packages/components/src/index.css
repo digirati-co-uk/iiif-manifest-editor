@@ -1,3 +1,8 @@
+@import "iiif-browser/dist/index.css";
+@import "react-datetime-picker/dist/DateTimePicker.css";
+@import "react-calendar/dist/Calendar.css";
+@import "react-clock/dist/Clock.css";
+
 @tailwind components;
 @tailwind utilities;
 
@@ -124,4 +129,23 @@ div.mdxeditor-popup-container > *[role="dialog"] {
 
 div.mdxeditor-toolbar {
   flex-wrap: balance;
+}
+
+.OverrideScrollbar {
+  /* For Safari, Chrome, and offshoots */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #D75281;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* For Firefox and offshoots */
+  scrollbar-color: #D75281 transparent;
+  scrollbar-width: thin;
 }

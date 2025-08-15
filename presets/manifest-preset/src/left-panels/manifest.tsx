@@ -51,10 +51,10 @@ export function ManifestPanel() {
   const metadata = descriptive.metadata.get();
 
   useEffect(() => {
-    if (!isInitial.current) {
+    open({ id: "overview" });
+    if (isInitial.current) {
       edit(manifest);
     }
-    open({ id: "overview" });
 
     isInitial.current = false;
   }, []);
