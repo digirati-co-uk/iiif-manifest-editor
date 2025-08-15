@@ -173,7 +173,7 @@ function GenericContextMenu({
         }
 
         return (
-          <MenuSection key={keyInner}>
+          <MenuSection key={key}>
             {section.sectionTitle ? (
               <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{section.sectionTitle}</Header>
             ) : null}

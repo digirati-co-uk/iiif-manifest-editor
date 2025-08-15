@@ -72,8 +72,6 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
 
   invariant(manifest, "Manifest is not loaded");
 
-  console.log('manifest ->', vault.get(manifest))
-
   return (
     <VaultProvider vault={vault}>
       <IIIFBrowser

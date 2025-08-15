@@ -52,8 +52,9 @@ export function ManifestPanel() {
 
   useEffect(() => {
     open({ id: "overview" });
-    if (isInitial.current) {
+    if (!isInitial.current) {
       edit(manifest);
+      //
     }
 
     isInitial.current = false;
