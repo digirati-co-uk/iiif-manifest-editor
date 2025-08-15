@@ -6,16 +6,17 @@ import {
   useAtlasStore,
   useEmitter,
   useHighlightedImageResource,
+  useLayoutActions,
   useLayoutState,
   useTaskRunner,
 } from "@manifest-editor/shell";
-import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
-import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { Loading } from "@manifest-editor/ui/atoms/Loading";
 import { PaddingComponentMedium, PaddingComponentSmall } from "@manifest-editor/ui/atoms/PaddingComponent";
 import { CanvasContainer, GhostCanvas } from "@manifest-editor/ui/components/layout/CanvasContainer";
+import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
 import { BlockIcon } from "@manifest-editor/ui/icons/BlockIcon";
+import { MediaControls } from "@manifest-editor/ui/MediaControls";
+import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { Fragment, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
@@ -34,12 +35,10 @@ import { DrawPolygon } from "../DrawPolygon/DrawPolygon";
 import * as S from "./CanvasPanelViewer.styles";
 import { AdditionalContextBridge, AdditionalContextBridgeInner } from "./components/AdditionalContextBridge";
 import { AnnotationEditingTools } from "./components/AnnotationEditingTools";
-import { AnnotationTargetEditor } from "./components/AnnotationTargetEditor";
 import { Annotations } from "./components/Annotations";
 import { Highlight } from "./components/Highlight";
 import { InternalRenderCanvas } from "./components/InternalRenderCanvas";
 import { NonAtlasStrategyRenderer } from "./components/NonAtlasStrategyRenderer";
-import { RenderAnnotationEditing } from "./components/RenderAnnotationEditing";
 import { CustomStrategyProvider } from "./components/StrategyContext";
 
 export interface CanvasPanelViewerProps {
@@ -61,12 +60,36 @@ export function CanvasPanelViewer({
   const manifest = useManifest(); // @todo remove.
   const canvas = useCanvas();
   const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
+  const { edit } = useLayoutActions();
   const customAnnotationComponents = useMemo(() => {
     return app.layout.annotations || [];
   }, [app.layout.annotations]);
 
   const store = useAtlasStore();
   const mode = useStore(store, (state) => state.mode);
+
+  const onNextCanvas = useMemo(() => {
+    //
+    const currentCanvasIndex = manifest?.items?.findIndex((item) => item.id === canvas?.id);
+    const nextCanvas = typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex + 1] : undefined;
+    if (nextCanvas) {
+      return () => {
+        edit({ id: nextCanvas.id, type: "Canvas" });
+      };
+    }
+  }, []);
+
+  const onPreviousCanvas = useMemo(() => {
+    //
+    const currentCanvasIndex = manifest?.items?.findIndex((item) => item.id === canvas?.id);
+    const previousCanvas =
+      typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex - 1] : undefined;
+    if (previousCanvas) {
+      return () => {
+        edit({ id: previousCanvas.id, type: "Canvas" });
+      };
+    }
+  }, []);
 
   const { rightPanel } = useLayoutState();
   const { editMode, toggleEditMode } = useEditingMode();
@@ -203,6 +226,7 @@ export function CanvasPanelViewer({
                 renderPreset={config}
                 mode={chosenMode}
                 runtimeOptions={config[1].runtimeOptions}
+                updateViewportTimeout={500}
               >
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
@@ -214,26 +238,10 @@ export function CanvasPanelViewer({
                       {customAnnotationComponents.map((custom) => {
                         return <Fragment key={custom.id}>{custom.render()}</Fragment>;
                       })}
-                      <RenderAnnotationEditing />
+
                       {!currentlyEditingAnnotation && resources.length
                         ? resources.map((resource) => <Highlight key={resource} id={resource} />)
                         : null}
-                      {(currentlyEditingAnnotation || annotation) && editMode ? (
-                        <AnnotationContext annotation={annotation?.id || (currentlyEditingAnnotation as string)}>
-                          <AnnotationTargetEditor />
-                        </AnnotationContext>
-                      ) : null}
-
-                      {annotation && !editMode ? (
-                        <Highlight
-                          key={annotation.id}
-                          style={{
-                            border: "4px solid #D45380",
-                            boxShadow: "0px 3px 10px 2px #000",
-                          }}
-                          id={annotation.id}
-                        />
-                      ) : null}
 
                       {Object.keys(regions).map((key) => {
                         return regions[key] ? (
@@ -298,10 +306,13 @@ export function CanvasPanelViewer({
             editMode={editMode}
             toggleEditMode={toggleEditMode}
             createMode={createMode}
+            enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
+            onNext={onNextCanvas}
+            onPrevious={onPreviousCanvas}
             toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
           />
         )}
-        viewControlsDeps={[editMode, createMode, createAnnotation, annotation]}
+        viewControlsDeps={[editMode, createMode, createAnnotation, annotation, onNextCanvas, onPreviousCanvas]}
         renderMediaControls={() => <MediaControls />}
       >
         <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>

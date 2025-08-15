@@ -18,9 +18,9 @@ import {
   DropdownItem,
 } from "@manifest-editor/ui/atoms/Dropdown";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
-import { ChangeIcon } from "@manifest-editor/ui/icons/ChangeIcon";
 import { useAppState } from "../../AppContext/AppContext";
-import { OverrideScrollbar } from "./ModularPanel.module.css";
+
+const OverrideScrollbar = 'OverrideScrollbar';
 
 interface ModularPanelProps {
   panel?: LayoutPanel;

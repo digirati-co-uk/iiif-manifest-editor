@@ -1,16 +1,16 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
-import { EditableResource, EditingStackActions, EditingStackState } from "./EditingStack.types";
-import { editingStackReducer } from "./EditingStack.reducer";
-import { EditorInstance } from "@manifest-editor/editor-api";
-import invariant from "tiny-invariant";
-import { useResourceContext, useVault } from "react-iiif-vault";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { toRef } from "@iiif/parser";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { EditorInstance } from "@manifest-editor/editor-api";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
 import { flushSync } from "react-dom";
+import { useResourceContext, useVault } from "react-iiif-vault";
+import invariant from "tiny-invariant";
 import { useAppInstance } from "../AppContext/AppContext";
+import { editingStackReducer } from "./EditingStack.reducer";
+import type { EditableResource, EditingStackActions, EditingStackState } from "./EditingStack.types";
 
 const defaultState: EditingStackState = { stack: [], current: null, create: null };
-const EditingStackContext = createContext<EditingStackState>(defaultState);
+export const EditingStackContext = createContext<EditingStackState>(defaultState);
 const EditingStackActionsContext = createContext<EditingStackActions>({
   edit() {},
   close() {},
@@ -87,7 +87,7 @@ export function useCollectionEditor() {
 
 export function useGenericEditor(
   ref: Reference<any> | SpecificResource | undefined,
-  ctx: { parent?: Reference; parentProperty?: string; index?: number } = {}
+  ctx: { parent?: Reference; parentProperty?: string; index?: number } = {},
 ) {
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
@@ -164,12 +164,12 @@ export function EditingStack(props: { children?: any; editing?: { id: string; ty
 
   const edit = useCallback(
     (resource: EditableResource, reset = false) => dispatch({ type: "edit", payload: { resource, reset } }),
-    []
+    [],
   );
 
   const updateCurrent = useCallback(
     (resource: EditableResource) => dispatch({ type: "updateCurrent", payload: { resource } }),
-    []
+    [],
   );
 
   const close = useCallback(() => dispatch({ type: "close" }), []);

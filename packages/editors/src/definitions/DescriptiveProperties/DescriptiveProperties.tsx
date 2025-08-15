@@ -12,12 +12,22 @@ import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/Langua
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { createAppActions } from "../../helpers/create-app-actions";
 import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
+import type { ResourceProvider } from "@iiif/presentation-3";
 
 export function DescriptiveProperties() {
   const resource = useEditingResource();
   const { descriptive, notAllowed } = useEditor();
   const [requiredStatementVisible, setRequiredStatementVisible] = useState(false);
-  const { edit } = useLayoutActions();
+  const [providerVisible, setProviderVisible] = useState(false);
+  const getProvider = () => (provider.get() || [])[0];
+  const setProvider = (next: any | null) => provider.set(next ? [next] : []);
+
+  const emptyProvider = () => ({
+    id: "",
+    type: "Agent",
+    label: { en: [""] },
+  });
+
   const {
     label,
     summary,
@@ -31,6 +41,7 @@ export function DescriptiveProperties() {
     accompanyingCanvas,
     placeholderCanvas,
   } = descriptive;
+
 
   return (
     <>
@@ -130,16 +141,51 @@ export function DescriptiveProperties() {
           </InputContainer>
         ) : null}
 
-        {!notAllowed.includes("provider") && provider.get() ? (
+        {!notAllowed.includes("provider") ? (
           <InputContainer $wide id={provider.containerId()}>
-            <InputLabel>Provider</InputLabel>
-            {(provider.get() || []).map((item) => {
-              return (
-                <div key={item.id} onClick={() => edit(item)}>
-                  {item.id}
-                </div>
-              );
-            })}
+            <InputLabel htmlFor={provider.focusId()}>Provider</InputLabel>
+            {(!getProvider() && !providerVisible) ? (
+              <EmptyPrompt
+                action={{
+                  id: provider.focusId(),
+                  label: "Add new",
+                  onClick: () => {
+                    setProviderVisible(true);
+                    setProvider(emptyProvider());
+                  },
+                }}
+              >
+                No provider
+              </EmptyPrompt>
+            ) : (
+              <InputFieldset id={provider.focusId()}>
+                {(() => {
+                  const p = getProvider() || emptyProvider();
+                  return (
+                    <>
+                      <InputLabel htmlFor={`${provider.focusId()}_id`}>ID</InputLabel>
+                      <Input
+                        id={`${provider.focusId()}_id`}
+                        value={p.id}
+                        onChange={(e) => setProvider({ ...p, id: e.target.value, type: "Agent" })}
+                        placeholder=""
+                      />
+
+                      <LanguageFieldEditor
+                        focusId={`${provider.focusId()}_label`}
+                        label="Label"
+                        fields={p?.label}
+                        onSave={(e: any) =>
+                          setProvider({ ...p, label: e.toInternationalString(), type: "Agent" })
+                        }
+                      />
+
+                      {/* TODO add; homepage, logo, seeAlso */}
+                    </>
+                  );
+                })()}
+              </InputFieldset>
+            )}
           </InputContainer>
         ) : null}
 

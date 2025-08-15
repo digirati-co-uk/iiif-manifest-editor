@@ -1,20 +1,19 @@
-import { PlayIcon } from "@manifest-editor/ui/icons/PlayIcon";
-import { PauseIcon } from "@manifest-editor/ui/icons/PauseIcon";
-import $ from "./AppDropdown.module.css";
-import cx from "classnames";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
-import { Button } from "@manifest-editor/ui/atoms/Button";
-import { CSSProperties, Fragment, useEffect, useLayoutEffect } from "react";
 import {
-  useFloating,
   autoUpdate,
+  FloatingFocusManager,
+  FloatingOverlay,
+  FloatingPortal,
   flip,
   offset,
   shift,
-  FloatingPortal,
-  FloatingFocusManager,
-  FloatingOverlay,
+  useFloating,
 } from "@floating-ui/react";
+import { Button } from "@manifest-editor/ui/atoms/Button";
+import { PauseIcon } from "@manifest-editor/ui/icons/PauseIcon";
+import { PlayIcon } from "@manifest-editor/ui/icons/PlayIcon";
+import cx from "classnames";
+import { type CSSProperties, Fragment, useLayoutEffect } from "react";
+import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 
 export interface AppDropdownItem {
   label: string;
@@ -86,7 +85,7 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
   }, []);
 
   return (
-    <div className={$.menuOuter} style={style}>
+    <div className="relative" style={style}>
       <Comp {...buttonProps} {...props} aria-label={ariaLabel} onClick={onClick} onKeyDown={onKeyDown}>
         {children}
       </Comp>
@@ -95,7 +94,7 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
           <FloatingOverlay lockScroll style={{ zIndex: 60 }}>
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
-                className={$.container}
+                className="absolute bg-white border border-gray-300 shadow-lg rounded-md p-1 list-none m-0 min-w-0"
                 ref={refs.setFloating}
                 style={{
                   position: strategy,
@@ -107,30 +106,42 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                   const listItem = (
                     <li
                       key={key}
-                      className={cx($.itemContainer, item.active && $.itemContainerActive)}
+                      className={cx(
+                        "bg-white rounded-sm flex text-sm",
+                        item.active && "font-semibold shadow-[0_0_0_2px_#bfd1ed]",
+                      )}
                       {...(itemProps as any)[key]}
                       onClick={item.onClick}
                     >
                       {item.onClick ? (
-                        <button className={cx($.actionButton, $.buttonReset)}>
-                          {item.icon ? <span className={$.itemIcon}>{item.icon}</span> : null}
-                          <span className={$.itemLabel}>{item.label}</span>
-                          {item.hotkey ? <span className={$.itemHotkey}>{item.hotkey}</span> : null}
+                        <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex-1 text-left p-1.5 rounded-sm flex hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]">
+                          {item.icon ? (
+                            <span className="flex items-center px-1 text-xl">
+                              <span className="w-3.5">{item.icon}</span>
+                            </span>
+                          ) : null}
+                          <span className="flex-1 px-1 pr-4">{item.label}</span>
+                          {item.hotkey ? <span className="font-light text-sm text-gray-500">{item.hotkey}</span> : null}
                         </button>
                       ) : (
-                        <div className={$.splitItem}>
-                          <button onClick={item.action} className={cx($.buttonReset, $.iconAction)}>
-                            {item.icon || (item.isRunning ? <PauseIcon /> : <PlayIcon title="" />)}
+                        <div className="flex-1 text-left h-9.5 flex items-center">
+                          <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex items-center py-2.5 px-2.5 rounded-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]">
+                            <span className="w-3">
+                              {item.icon || (item.isRunning ? <PauseIcon /> : <PlayIcon title="" />)}
+                            </span>
                           </button>
-                          <span className={$.itemLabel} data-running={item.isRunning}>
+                          <span
+                            className={cx("flex-1 px-1 pr-4", item.isRunning && "text-gray-500")}
+                            data-running={item.isRunning}
+                          >
                             {item.label}
                           </span>
                           {item.actionLink ? (
-                            <button onClick={item.actionLink} className={cx($.buttonReset, $.itemLink)}>
+                            <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit text-blue-500 underline px-2 focus:outline-2 focus:outline-[#bfd1ed]">
                               {item.actionLinkLabel || "view"}
                             </button>
                           ) : null}
-                          {item.hotkey ? <span className={$.itemHotkey}>{item.hotkey}</span> : null}
+                          {item.hotkey ? <span className="font-light text-sm text-gray-500">{item.hotkey}</span> : null}
                         </div>
                       )}
                     </li>
@@ -139,8 +150,10 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                   if (item.sectionAbove) {
                     return (
                       <Fragment key={key}>
-                        {item.sectionAbove.divider ? <hr className={$.divider} /> : null}
-                        <li className={$.sectionLabel}>{item.sectionAbove.label}</li>
+                        {item.sectionAbove.divider ? (
+                          <hr className="mt-1 mb-1 -ml-1 -mr-1 h-px bg-gray-300 border-none" />
+                        ) : null}
+                        <li className="text-xs text-gray-500 font-medium py-1 px-1">{item.sectionAbove.label}</li>
                         {listItem}
                       </Fragment>
                     );

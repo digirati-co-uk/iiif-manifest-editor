@@ -18,6 +18,7 @@ export interface LayoutProviderProps {
   centerPanels: Array<LayoutPanel>;
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
+  background?: Array<BackgroundPanel>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -38,20 +39,10 @@ export interface LayoutActions {
   stack(args: { id: string; state?: any }): void;
 
   open(id: string, state?: any): void;
-  open(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  open(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   change(id: string, state?: any): void;
-  change(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   close(id: string, state?: any): void;
   close(args: { id: string; state?: any }): void;
@@ -89,18 +80,8 @@ export interface PanelState {
 }
 
 export interface PanelActions {
-  change(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
-  open(args?: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  open(args?: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
   close(): void;
   toggle(): void;
   minimise(): void;
@@ -154,6 +135,12 @@ export interface AnnotationPanel {
   render: () => React.ReactNode | null;
 }
 
+export interface BackgroundPanel {
+  id: string;
+  label: string;
+  render: () => React.ReactNode | null;
+}
+
 export interface LayoutPanel {
   id: string;
   label: string;
@@ -167,19 +154,9 @@ export interface LayoutPanel {
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
-  backAction?: (
-    state: any,
-    ctx: { current: PanelActions } & LayoutContext,
-    app: AppState,
-  ) => void;
-  renderBackAction?: (options: {
-    backAction: (e?: React.MouseEvent) => void;
-    fallback: any;
-  }) => ReactNode | null;
-  renderCloseAction?: (options: {
-    closeAction: () => void;
-    fallback: any;
-  }) => ReactNode | null;
+  backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
+  renderBackAction?: (options: { backAction: (e?: React.MouseEvent) => void; fallback: any }) => ReactNode | null;
+  renderCloseAction?: (options: { closeAction: () => void; fallback: any }) => ReactNode | null;
   options?: {
     minWidth?: number;
     maxWidth?: number;
@@ -201,11 +178,7 @@ export interface CanvasEditorDefinition {
   id: string;
   label: string;
   supports: {
-    strategy: (
-      strategy: RenderingStrategy,
-      resource: EditableResource,
-      vault: Vault,
-    ) => boolean;
+    strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault) => boolean;
   };
   component: (strategy: RenderingStrategy) => ReactNode | null;
 }

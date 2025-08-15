@@ -12,20 +12,20 @@ import { manifestBrowserCreator } from "@manifest-editor/creators";
 import {
   CanvasGrid,
   CanvasList,
-  InputContainer,
   createAppActions,
+  InputContainer,
   useInStack,
   useToggleList,
 } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useCreator,
+  useEditingStack,
   useLayoutActions,
   useManifestEditor,
-  useEditingStack,
 } from "@manifest-editor/shell";
-import { useManifest, useCollection } from "react-iiif-vault";
 import { type SVGProps, useEffect, useLayoutEffect } from "react";
+import { useCollection, useManifest } from "react-iiif-vault";
 
 export const CanvasListingIcon = ({
   title,
@@ -213,7 +213,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const { canvas, items, canvasActions, open } = useEditCanvasItems();
   const manifest = useManifest();
   const editingStack = useEditingStack();
-  const canvases = items.get();
+  const canvases = items.get() || [];
   const canvasId = canvas?.resource.source.id;
 
   // Find current canvas to get its index before deleting it

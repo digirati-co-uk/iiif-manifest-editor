@@ -40,6 +40,7 @@ export function InlineAnnotationPageEditor() {
         id={items.focusId()}
         list={items.get() || []}
         inlineHandle={false}
+        canvasId={canvasId}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
         createActions={createAppActions(items)}
@@ -112,9 +113,9 @@ export function PromptToAddPaintingAnnotations({
     <div key={paintingAnnotations?.items.length}>
       <FlexContainer style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          {validToAdd.map((item) => {
+          {validToAdd.map((item, idx) => {
             return (
-              <CanvasContext canvas={canvasId as string} key={canvasId}>
+              <CanvasContext canvas={canvasId as string} key={`${canvasId} + ${idx}`}>
                 <AnnotationContext annotation={item.id}>
                   <AnnotationPreview
                     margin

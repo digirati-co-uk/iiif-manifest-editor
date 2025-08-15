@@ -36,10 +36,9 @@ export const exhibitionCanvasEditor: EditorDefinition = {
 function ExhibitionRightPanel() {
   const canvas = useCanvas();
   const resource = useEditingResource();
-  const { structural, technical, descriptive } = useEditor();
+  const { structural, descriptive } = useEditor();
   const { items } = structural;
   const { thumbnail } = descriptive;
-  const { width, height } = technical;
   const pages = items.get();
   const page = pages[0];
 
