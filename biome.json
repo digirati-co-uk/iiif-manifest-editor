@@ -11,10 +11,10 @@
     "includes": [
       "src/**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,html,css,scss,sass}",
       "!**/node_modules/**/*",
-      "!**/.next/**",
-      "!**/dist/**",
-      "!**/out/**",
-      "!**/.vercel/**"
+      "!**/.next",
+      "!**/dist",
+      "!**/out",
+      "!**/.vercel"
     ]
   },
   "linter": {

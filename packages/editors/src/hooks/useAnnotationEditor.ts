@@ -33,6 +33,7 @@ export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: Rea
             type: "polygon",
             open: true,
             points: target.points,
+            annotationPopup,
           });
         }
 
@@ -47,10 +48,11 @@ export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: Rea
               height: p.height,
             },
             selectByDefault: true,
+            annotationPopup,
           });
         }
       }
-      return requestAnnotation({ type: "polygon", open: true, points: [] });
+      return requestAnnotation({ type: "polygon", open: true, points: [], annotationPopup });
     },
     [target, requestAnnotation],
   );

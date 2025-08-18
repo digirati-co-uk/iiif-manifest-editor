@@ -3,12 +3,14 @@ import {
   AppReactContext,
   AppStateReactContext,
   AtlasStoreReactContext,
+  ConfigReactContext,
   ContextMenuReactContext,
   EditingStackContext,
   LayoutActionsReactContext,
   LayoutStateReactContext,
   PrimeAppReactContext,
   ResourceEditingReactContext,
+  SaveConfigReactContext,
 } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import { ControlsReactContext, CustomContextBridgeProvider, StrategyReactContext } from "react-iiif-vault";
@@ -28,6 +30,8 @@ export function AdditionalContextBridge(props: { children: React.ReactNode }) {
       AppStateReactContext,
       ContextMenuReactContext,
       EditingStackContext,
+      ConfigReactContext,
+      SaveConfigReactContext,
     };
   }, []);
 

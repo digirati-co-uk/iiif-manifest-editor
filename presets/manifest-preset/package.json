@@ -63,7 +63,7 @@
     "react": "^18.3.1",
     "zustand": "^4.5.2",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/5b82598e/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/2aea0446/react-iiif-vault",
     "styled-components": "6.1.8"
   },
   "devDependencies": {

@@ -88,7 +88,7 @@ export function ShellProvider({
                     <ContextMenuProvider>
                       {/* @todo swap these out for (config?.previews || []) */}
                       <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
-                        <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                        <AtlasStoreProvider atlasStoreConfig={{debug: true}}>{children}</AtlasStoreProvider>
                       </PreviewProvider>
                     </ContextMenuProvider>
                   </LayoutProvider>
