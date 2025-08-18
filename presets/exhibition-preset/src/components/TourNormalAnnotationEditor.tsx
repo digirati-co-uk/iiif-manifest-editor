@@ -10,6 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { CheckIcon } from "../icons/CheckIcon";
 import { ResourceEditingReactContext, useConfig, useSaveConfig } from "@manifest-editor/shell";
 import { AnnotationContext, useAnnotation, useCurrentAnnotationActions } from "react-iiif-vault";
+import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
 
 export function TourNormalAnnotationEditor({ highlightProps }: { highlightProps: any }) {
   const value = useContext(ResourceEditingReactContext);
@@ -91,19 +92,14 @@ function TourAnnotationPopupEditor() {
 
 
   if (!annotationPopups) {
-    return <div className="flex gap-2">
-
-
-    <ActionButton primary onPress={() => {
-      saveAnnotation();
-    }}><CheckIcon /> Finish editing
-  </ActionButton>
-  <ActionButton
-    onPress={ () => saveConfig({ editorFeatureFlags: {...editorFeatureFlags, annotationPopups: annotationPopups ? false : true } })}
-  >
-    { annotationPopups ? <PopinIcon /> : <PopoutIcon /> }
-  </ActionButton>
-    </div>
+    return (
+      <div className="flex gap-2">
+        <ActionButton primary onPress={() => saveAnnotation()}>
+          <CheckIcon /> Finish editing
+        </ActionButton>
+        <ActionButtonPopupSwitcher />
+      </div>
+    );
   }
 
   return (
@@ -118,12 +114,7 @@ function TourAnnotationPopupEditor() {
         }}>
           <CheckIcon /> Finish editing
         </ActionButton>
-        <ActionButton
-          className="ml-auto"
-          onPress={ () => saveConfig({ editorFeatureFlags: {...editorFeatureFlags, annotationPopups: annotationPopups ? false : true } })}
-        >
-          { annotationPopups ? <PopinIcon /> : <PopoutIcon /> }
-        </ActionButton>
+        <ActionButtonPopupSwitcher />
       </div>
     </div>
   );
