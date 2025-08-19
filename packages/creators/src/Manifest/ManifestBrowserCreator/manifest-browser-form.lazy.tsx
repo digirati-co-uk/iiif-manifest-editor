@@ -11,15 +11,27 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       {
         type: "callback",
         label: "Select",
-        supportedTypes: ["Manifest", "Collection", "ManifestList", "CollectionList", "CollectionItemList"],
+        supportedTypes: [
+          "Manifest",
+          "Collection",
+          "ManifestList",
+          "CollectionList",
+          "CollectionItemList",
+        ],
         cb: (resource) => props.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: (resource, parent, vault) => {
-            const resourcesAsArray = Array.isArray(resource) ? resource : [{ ...resource, parent }];
+            const resourcesAsArray = Array.isArray(resource)
+              ? resource
+              : [{ ...resource, parent }];
             const resources = [];
             for (const resource of resourcesAsArray) {
-              resources.push({ resource: vault.get(resource), parent: resource.parent, selector: resource.selector });
+              resources.push({
+                resource: vault.get(resource),
+                parent: resource.parent,
+                selector: resource.selector,
+              });
             }
             return resources;
           },
@@ -47,7 +59,6 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   return (
     <PreviewVaultBoundary>
       <IIIFBrowser
-        debug
         ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"

@@ -1,10 +1,47 @@
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, CheckIcon } from "@manifest-editor/components";
 import { Button, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
-import { useCurrentAnnotationActions } from "react-iiif-vault";
+import {
+  polygonToTarget,
+  useAnnotationPage,
+  useCanvas,
+  useCurrentAnnotationActions,
+  useCurrentAnnotationRequest,
+} from "react-iiif-vault";
 import { ModalCloseIcon } from "../../../ui/madoc/components/Modal";
+import {
+  BaseAnnotationCreator,
+  useAtlasStore,
+  useConfig,
+} from "@manifest-editor/shell";
+import { AnnotationPopUpSwitcherButton } from "./AnnotationPopUpSwitcherButton";
+import { useStore } from "zustand";
 
-export function AnnotationCreationPopup() {
+export function AnnotationCreationPopup({
+  annotationPageId,
+  canvasId,
+}: {
+  annotationPageId: string;
+  canvasId: string;
+}) {
+  const store = useAtlasStore();
+  const mode = useStore(store, (s) => s.mode);
+  const changeMode = useStore(store, (s) => s.changeMode);
   const { cancelRequest, saveAnnotation } = useCurrentAnnotationActions();
+  const { editorFeatureFlags } = useConfig();
+  const shape = useStore(store, (state) => state.polygon);
+  const { annotationPopups } = editorFeatureFlags;
+  const fullCanvas = useCanvas({ id: canvasId });
+
+  if (!annotationPopups) {
+    return (
+      <div className="flex gap-2">
+        <ActionButton primary onPress={() => saveAnnotation()}>
+          <CheckIcon /> Finish editing
+        </ActionButton>
+        <AnnotationPopUpSwitcherButton />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded shadow-xl w-[420px]">
@@ -13,62 +50,44 @@ export function AnnotationCreationPopup() {
 
         {/*<div>Color</div>*/}
         <div>
-          <ActionButton>Edit target</ActionButton>
+          {mode === "explore" ? (
+            <ActionButton onPress={() => changeMode("sketch")}>
+              Edit target
+            </ActionButton>
+          ) : (
+            <ActionButton onPress={() => changeMode("explore")}>
+              Pan and zoom
+            </ActionButton>
+          )}
         </div>
-        <Button onPress={() => cancelRequest()} className="bg-white hover:bg-gray-100 p-1 rounded-sm">
+        <Button
+          onPress={() => cancelRequest()}
+          className="bg-white hover:bg-gray-100 p-1 rounded-sm"
+        >
           <ModalCloseIcon className="text-2xl" />
         </Button>
       </div>
 
-      <Tabs>
-        <TabList className="flex gap-2 border-b p-1 bg-gray-100">
-          <Tab className="aria-[selected=true]:white p-1 text-sm rounded-sm" id="html">
-            HTML
-          </Tab>
-          <Tab className="aria-[selected=true]:white p-1 text-sm rounded-sm" id="text">
-            Text
-          </Tab>
-          <Tab className="aria-[selected=true]:white p-1 text-sm rounded-sm" id="tagging">
-            Tagging
-          </Tab>
-          <Tab className="aria-[selected=true]:white p-1 text-sm rounded-sm" id="image">
-            Image
-          </Tab>
-        </TabList>
-        <TabPanel id="html" className="p-4">
-          <p>HTML testing</p>
-          <p>HTML testing</p>
-          <p>HTML testing</p>
-          <p>HTML testing</p>
-        </TabPanel>
-
-        <TabPanel id="text" className="p-4">
-          <p>Text testing</p>
-          <p>Text testing</p>
-          <p>Text testing</p>
-          <p>Text testing</p>
-        </TabPanel>
-
-        <TabPanel id="tagging" className="p-4">
-          <p>Tagging testing</p>
-          <p>Tagging testing</p>
-          <p>Tagging testing</p>
-          <p>Tagging testing</p>
-        </TabPanel>
-
-        <TabPanel id="image" className="p-4">
-          <p>Image testing</p>
-          <p>Image testing</p>
-          <p>Image testing</p>
-          <p>Image testing</p>
-        </TabPanel>
-      </Tabs>
-
-      <div className="flex gap-2 p-2">
-        <ActionButton onPress={() => saveAnnotation()} primary>
-          Add annotation
-        </ActionButton>
-      </div>
+      <BaseAnnotationCreator
+        onCreate={() => saveAnnotation()}
+        resource={{
+          property: "items",
+          type: "Annotation",
+          isPainting: false,
+          parent: {
+            id: annotationPageId,
+            type: "AnnotationPage",
+          },
+          target: { id: canvasId, type: "Canvas" },
+          initialData: {
+            showEmptyForm: true,
+            getSerialisedSelector: () =>
+              shape ? polygonToTarget(shape) : undefined, // @todo
+            motivation: "describing", // @todo.
+            on: { width: fullCanvas?.width, height: fullCanvas?.height },
+          },
+        }}
+      />
     </div>
   );
 }

@@ -1,22 +1,37 @@
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
-import { AtlasStoreProvider, ImageServiceLoaderContext } from "react-iiif-vault";
+import {
+  AtlasStoreProvider,
+  ImageServiceLoaderContext,
+} from "react-iiif-vault";
 import { ThemeProvider } from "styled-components";
-import { AppResourceProvider, type Resource } from "../AppResourceProvider/AppResourceProvider";
-import { type Config, ConfigProvider, useConfig } from "../ConfigContext/ConfigContext";
+import {
+  AppResourceProvider,
+  type Resource,
+} from "../AppResourceProvider/AppResourceProvider";
+import {
+  type Config,
+  ConfigProvider,
+  useConfig,
+} from "../ConfigContext/ConfigContext";
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
-import type { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
+import type {
+  Preview,
+  PreviewConfiguration,
+} from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { defaultTheme } from "./default-theme";
 
 const previewConfigs: PreviewConfiguration[] = [
   {
     id: "universal-viewer",
-    config: { url: "https://universalviewer.dev/#?iiifManifestId={manifestId}" },
+    config: {
+      url: "https://universalviewer.dev/#?iiifManifestId={manifestId}",
+    },
     type: "external-manifest-preview",
     label: "Universal viewer",
   },
@@ -87,8 +102,11 @@ export function ShellProvider({
                   <LayoutProvider>
                     <ContextMenuProvider>
                       {/* @todo swap these out for (config?.previews || []) */}
-                      <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
-                        <AtlasStoreProvider atlasStoreConfig={{debug: true}}>{children}</AtlasStoreProvider>
+                      <PreviewProvider
+                        previews={previews || []}
+                        configs={mergedConfig.previews}
+                      >
+                        <AtlasStoreProvider>{children}</AtlasStoreProvider>
                       </PreviewProvider>
                     </ContextMenuProvider>
                   </LayoutProvider>

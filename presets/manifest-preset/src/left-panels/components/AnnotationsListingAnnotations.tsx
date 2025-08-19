@@ -1,9 +1,16 @@
-import { AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import {
+  AddIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  TargetIcon,
+} from "@manifest-editor/components";
 import { AnnotationCreationPopup } from "@manifest-editor/editors";
 import {
   AnnotationContext,
   CanvasContext,
   useAnnotationPage,
+  useCanvas,
   useRenderingStrategy,
   useRequestAnnotation,
   useStrategy,
@@ -11,6 +18,7 @@ import {
 import { AnnotationsSidebarListItem } from "./AnnotationsSidebarListItem";
 
 export function AnnotationsListingAnnotations() {
+  const canvas = useCanvas();
   const page = useAnnotationPage();
   const { requestAnnotation, isPending } = useRequestAnnotation();
   const [strategy] = useRenderingStrategy();
@@ -33,14 +41,27 @@ export function AnnotationsListingAnnotations() {
             title: "Add annotation",
             disabled: isPending,
             onClick: () => {
-              requestAnnotation({ type: "box", annotationPopup: <AnnotationCreationPopup /> }).then((response) => {
+              requestAnnotation({
+                type: "box",
+                annotationPopup: (
+                  <AnnotationCreationPopup
+                    annotationPageId={page.id}
+                    canvasId={canvas!.id}
+                  />
+                ),
+              }).then((response) => {
                 console.log("response", response);
               });
             },
           },
         ]}
       />
-      {isPending ? <div>Draw a box or select an annotation tool on the image</div> : null}
+      {isPending ? (
+        <div className="bg-me-primary-500 text-white p-2 m-1 rounded flex gap-2">
+          <TargetIcon />
+          Draw a box on the canvas
+        </div>
+      ) : null}
       <SidebarContent className="w-full p-2 flex flex-col gap-2">
         {page.items.map((annotation) => {
           return (

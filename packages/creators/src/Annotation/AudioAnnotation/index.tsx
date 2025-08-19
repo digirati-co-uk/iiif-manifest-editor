@@ -1,6 +1,9 @@
 import { AudioIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { CreateAudioAnnotationForm, createAudioAnnotation } from "./create-audio-annotation";
+import {
+  CreateAudioAnnotationForm,
+  createAudioAnnotation,
+} from "./create-audio-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -24,6 +27,7 @@ export const audioAnnotation = defineCreator({
   additionalTypes: ["Canvas"],
   supports: {
     initialData: true,
+    onlyPainting: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },

@@ -9,12 +9,19 @@ import type {
   StructuralProperties,
   TechnicalProperties,
 } from "@iiif/presentation-3";
-import type { resources, technicalProperties } from "@manifest-editor/editor-api";
+import type {
+  resources,
+  technicalProperties,
+} from "@manifest-editor/editor-api";
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";
 import type { CreatorResource } from "./CreatorResource";
 import type { ReferencedResource } from "./ReferencedResource";
-import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
+import type {
+  CreatorDefinitionFilterByParent,
+  ExtractCreatorGenerics,
+  IIIFManifestEditor,
+} from "./creator-register";
 
 export interface CreatorContext<T = any> {
   vault: Vault;
@@ -23,11 +30,10 @@ export interface CreatorContext<T = any> {
   runCreate: (payload: T) => void;
 }
 
-export type ResolvedCreatorReturn<T extends CreatorDefinition> = Awaited<
-  ExtractCreatorGenerics<T>["CreateReturnType"]
-> extends any[]
-  ? CreatorResource[]
-  : CreatorResource;
+export type ResolvedCreatorReturn<T extends CreatorDefinition> =
+  Awaited<ExtractCreatorGenerics<T>["CreateReturnType"]> extends any[]
+    ? CreatorResource[]
+    : CreatorResource;
 
 export interface CreatorFunctionContext {
   vault: Vault;
@@ -53,9 +59,8 @@ export interface CreatorFunctionContext {
   getPreviewVault(): Vault;
 }
 
-export type GetCreatorPayload<T extends CreatorDefinition> = T extends CreatorDefinition<infer Payload>
-  ? Payload
-  : never;
+export type GetCreatorPayload<T extends CreatorDefinition> =
+  T extends CreatorDefinition<infer Payload> ? Payload : never;
 
 interface CreatorParent {
   resource: Reference;
@@ -73,8 +78,9 @@ export type AllAvailableParentTypes = keyof typeof resources.supported;
 
 type ManifestFields = typeof resources.supported.Manifest.all;
 
-export type GetSupportedResourceFields<Resource extends AllAvailableParentTypes> =
-  {} & (typeof resources.supported)[Resource]["allowed"][number];
+export type GetSupportedResourceFields<
+  Resource extends AllAvailableParentTypes,
+> = {} & (typeof resources.supported)[Resource]["allowed"][number];
 
 export type AllProperties =
   | ({} & keyof LinkingProperties)
@@ -125,6 +131,7 @@ export interface SpecificCreatorDefinition<
   // What is being created.
   resourceType: ResourceType;
   additionalTypes?: AdditionalResourceTypes;
+  actionButton?: string;
   resourceFields: string[];
   embeddedResources?: string[];
   // This is completely static values. (e.g. {type: 'Image'})
@@ -141,16 +148,28 @@ export interface SpecificCreatorDefinition<
     custom?: (parent: CreatorParent, vault: Vault) => boolean;
     // Edge-case for painting annotations.
     disallowPainting?: boolean;
+    onlyPainting?: boolean;
   };
 
   sideEffects?: Array<CreatorSideEffect>;
 }
 
 // Keep this for compatibility.
-export type CreatorDefinition<Payload = any> = SpecificCreatorDefinition<Payload, any, any, any, any, any, any>;
+export type CreatorDefinition<Payload = any> = SpecificCreatorDefinition<
+  Payload,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any
+>;
 
 export interface CreatorSideEffect {
-  run?: (result: any, ctx: { options: CreatorOptions; vault: Vault }) => void | Promise<void>;
+  run?: (
+    result: any,
+    ctx: { options: CreatorOptions; vault: Vault },
+  ) => void | Promise<void>;
   temporal?: boolean;
   spatial?: boolean;
   replaceSiblings?: boolean;

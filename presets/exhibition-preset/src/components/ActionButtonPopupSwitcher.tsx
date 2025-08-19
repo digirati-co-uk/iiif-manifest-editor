@@ -1,6 +1,5 @@
 import { ActionButton } from "@manifest-editor/components";
 import { useConfig, useSaveConfig } from "@manifest-editor/shell";
-import { PopinIcon, PopoutIcon } from "./TourNormalAnnotationEditor";
 
 export function ActionButtonPopupSwitcher() {
   const { editorFeatureFlags } = useConfig();

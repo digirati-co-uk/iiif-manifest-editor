@@ -1,8 +1,11 @@
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import { useCurrentAnnotationActions, useCurrentAnnotationMetadata } from "react-iiif-vault";
+import {
+  useCurrentAnnotationActions,
+  useCurrentAnnotationMetadata,
+} from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
-import { useConfig, useSaveConfig } from "@manifest-editor/shell";
-import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
+import { useConfig } from "@manifest-editor/shell";
+import { AnnotationPopUpSwitcherButton } from "@manifest-editor/editors";
 
 export const DEFAULT_TOUR_STEP_HTML = "<h2>New step</h2><p>Description</p>";
 
@@ -12,18 +15,16 @@ export function ExhibitionTourStepPopup() {
   const { editorFeatureFlags } = useConfig();
   const { annotationPopups } = editorFeatureFlags;
 
-
   if (!annotationPopups) {
     return (
       <div className="flex gap-2">
         <ActionButton primary onPress={() => saveAnnotation()}>
           <CheckIcon /> Finish editing
         </ActionButton>
-        <ActionButtonPopupSwitcher />
+        <AnnotationPopUpSwitcherButton />
       </div>
     );
   }
-
 
   return (
     <div className="bg-white shadow-md rounded-lg">
@@ -39,7 +40,7 @@ export function ExhibitionTourStepPopup() {
         <ActionButton primary onPress={() => saveAnnotation()}>
           <CheckIcon /> Finish editing
         </ActionButton>
-        <ActionButtonPopupSwitcher />
+        <AnnotationPopUpSwitcherButton />
       </div>
     </div>
   );

@@ -1,7 +1,10 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
-import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { ActionButton, HTMLEditor } from "@manifest-editor/components";
+import type {
+  CreatorContext,
+  CreatorFunctionContext,
+} from "@manifest-editor/creator-api";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
@@ -14,7 +17,10 @@ export interface CreateHTMLAnnotationPayload {
   width?: number;
 }
 
-export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ctx: CreatorFunctionContext) {
+export async function createHtmlAnnotation(
+  data: CreateHTMLAnnotationPayload,
+  ctx: CreatorFunctionContext,
+) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -43,7 +49,8 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation:
+        data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -83,29 +90,35 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
   }
 }
 
-export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
-  const [body, setBody] = useState<InternationalString>({ en: [""] });
+export function CreateHTMLAnnotation(
+  props: CreatorContext<CreateHTMLAnnotationPayload>,
+) {
+  const [body, setBody] = useState("");
 
   const isEmpty = getValue(body).trim() === "";
 
   const onSubmit = () => {
     props.runCreate({
-      body,
+      body: { en: [body] },
     });
   };
 
   return (
-    <PaddedSidebarContainer>
-      <LanguageFieldEditor
-        focusId={"html-content"}
-        label={"HTML Content"}
-        fields={body}
-        onSave={(e: any) => setBody(e.toInternationalString())}
+    <>
+      <HTMLEditor
+        className="border-none"
+        value={body}
+        onChange={(newValue) => setBody(newValue)}
       />
 
-      <ActionButton primary large type="button" onPress={onSubmit} isDisabled={isEmpty}>
+      <ActionButton
+        primary
+        type="button"
+        onPress={onSubmit}
+        isDisabled={isEmpty}
+      >
         Create
       </ActionButton>
-    </PaddedSidebarContainer>
+    </>
   );
 }

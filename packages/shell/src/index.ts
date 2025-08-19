@@ -11,6 +11,7 @@ export * from "./BaseCreator";
 export * from "./BaseCreator/BaseCreator.hooks";
 export * from "./BaseEditor";
 export * from "./BaseEditor/BaseEditor";
+export * from "./BaseCreator/BaseAnnotationCreator";
 export * from "./ConfigContext/ConfigContext";
 export * from "./ConfigContext/ConfigEditor";
 export * from "./ContextMenu/ContextMenuContext";

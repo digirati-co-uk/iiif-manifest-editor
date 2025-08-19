@@ -63,6 +63,8 @@ export * from "./icons/ScaledImageIcon";
 export * from "./icons/TargetIcon";
 export * from "./icons/EditTextIcon";
 export * from "./icons/CheckIcon";
+export * from "./icons/AnnotationPopInIcon";
+export * from "./icons/AnnotationPopOutIcon";
 
 // Messages
 export * from "./ErrorMessage";

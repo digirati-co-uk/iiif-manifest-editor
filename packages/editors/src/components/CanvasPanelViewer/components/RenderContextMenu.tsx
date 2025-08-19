@@ -1,15 +1,12 @@
 import {
   type ContextMenuItem,
-  useCreator,
-  useEditingResource,
-  useEditingStack,
   useLayoutActions,
   useResourceContextMenuItems,
 } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import { Header, Menu, MenuItem, MenuSection } from "react-aria-components";
 import { flushSync } from "react-dom";
-import { useCanvas, useStrategy } from "react-iiif-vault";
+import { useStrategy } from "react-iiif-vault";
 
 export function RenderContextMenu({
   position,
@@ -51,7 +48,9 @@ export function RenderContextMenu({
 
   // If nothing, show canvas options.
 
-  return <CanvasContextMenu canvasId={canvasId} close={close} position={position} />;
+  return (
+    <CanvasContextMenu canvasId={canvasId} close={close} position={position} />
+  );
 }
 
 function CanvasContextMenu({
@@ -175,7 +174,9 @@ function GenericContextMenu({
         return (
           <MenuSection key={key}>
             {section.sectionTitle ? (
-              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{section.sectionTitle}</Header>
+              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">
+                {section.sectionTitle}
+              </Header>
             ) : null}
             {sectionItems.map((item, key2) => {
               return (

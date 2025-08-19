@@ -20,3 +20,4 @@ export * from "./ReorderList/ReorderList.dndkit";
 export * from "./RichTextLanguageField/RichTextLanguageField";
 export * from "./ViewerAnnotation";
 export * from "./ViewerAnnotationPage";
+export * from "./AnnotationPopUpSwitcherButton";
