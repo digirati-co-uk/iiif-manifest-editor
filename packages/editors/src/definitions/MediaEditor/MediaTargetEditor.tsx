@@ -1,15 +1,14 @@
-import { polygonToBoundingBox, useCustomContextMenu, useEditor } from "@manifest-editor/shell";
-import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
+import { useCustomContextMenu, useEditor } from "@manifest-editor/shell";
 import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation } from "react-iiif-vault";
-import { useDebounce } from "tiny-use-debounce";
 import { useStore } from "zustand";
 import { InputContainer } from "../../components";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
+import { ActionButton, CheckIcon } from "@manifest-editor/components";
 
 export function MediaTargetEditor() {
   const canvas = useCanvas();
   const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
-  const { requestAnnotation, isPending, completeRequest, cancelRequest } = useRequestAnnotation({
+  const { requestAnnotation, isPending, isActive, busy, completeRequest, cancelRequest, requestId } = useRequestAnnotation({
     onSuccess: (response) => {
       if (response.boundingBox) {
         target.setPosition(response.boundingBox);
@@ -28,7 +27,7 @@ export function MediaTargetEditor() {
         {
           id: "save-changes",
           label: "Save changes",
-          enabled: isPending,
+          enabled: isActive,
           onAction: () => {
             completeRequest();
           },
@@ -36,7 +35,7 @@ export function MediaTargetEditor() {
         {
           id: "discard-changes",
           label: "Discard changes",
-          enabled: isPending,
+          enabled: isActive,
           onAction: () => {
             cancelRequest();
           },
@@ -74,6 +73,7 @@ export function MediaTargetEditor() {
   const store = useAtlasStore();
   const helper = useStore(store, (s) => s.polygons);
   useCurrentAnnotationTransition({
+    requestId,
     onTransition: () => {
       // Assume 4 points.
       if (helper.state.transitionPoints) {
@@ -102,20 +102,31 @@ export function MediaTargetEditor() {
       <BoxSelectorField
         selector={currentSelector}
         form
+        isDisabled={isActive}
         inlineFieldset
         onSubmit={(data) => {
           target.setPosition(data.spatial);
         }}
       >
-        <ButtonGroup $right>
-          <Button onClick={() => requestAnnotation({ type: "target", bounds, selector: currentSelector.spatial })}>
-            Resize on canvas
-          </Button>
-          <Button type="button" onClick={() => target.removeSelector()}>
+        <ActionButton isDisabled={isActive} type="submit">Update target</ActionButton>
+        <h3 className="text-md font-semibold my-4">Change position on canvas</h3>
+        <div className="flex gap-2">
+          {isActive ? (
+            <ActionButton primary onPress={() => completeRequest()}>
+              <CheckIcon /> Finish editing
+            </ActionButton>
+          ) : (
+            <ActionButton
+              isDisabled={busy}
+              onPress={() => requestAnnotation({ type: "target", bounds, selector: currentSelector.spatial })}
+            >
+              Reposition
+            </ActionButton>
+          )}
+          <ActionButton type="button" onPress={() => target.removeSelector()}>
             Target whole canvas
-          </Button>
-          <Button type="submit">Update target</Button>
-        </ButtonGroup>
+          </ActionButton>
+        </div>
       </BoxSelectorField>
     </InputContainer>
   );

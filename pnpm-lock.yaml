@@ -180,8 +180,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -400,8 +400,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-lazy-load-image-component:
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -491,8 +491,8 @@ importers:
         specifier: 0.0.23
         version: 0.0.23
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -552,8 +552,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -716,8 +716,8 @@ importers:
         specifier: 14.1.0
         version: 14.1.0(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-leaflet:
         specifier: ^4.2.1
         version: 4.2.1(leaflet@1.9.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -878,8 +878,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -957,8 +957,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1091,8 +1091,8 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1179,8 +1179,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1234,8 +1234,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1316,8 +1316,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1386,8 +1386,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-iiif-vault:
-        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault
-        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault
+        version: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -10608,8 +10608,8 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault:
-    resolution: {tarball: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault}
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault:
+    resolution: {tarball: https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault}
     version: 1.5.10
     peerDependencies:
       react: ^18.2.0
@@ -24692,7 +24692,7 @@ snapshots:
       - immer
       - react-native
 
-  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@atlas-viewer/atlas': 2.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react': 0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
