@@ -14,6 +14,8 @@ import {
 } from "react-iiif-vault";
 import { getAnnotationType } from "../../helpers/get-annotation-type";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
+import { Button } from "react-aria-components";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -70,6 +72,26 @@ export function AnnotationPreview({
   const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
   const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
 
+  if (firstBody.type === "TextualBody") {
+    return (
+      <Button
+        className="border border-gray-300 text-left hover:border-me-500 w-full shadow-sm rounded bg-white relative mb-2"
+        onPress={
+          onClick
+            ? (e) => {
+                onClick(annotation);
+              }
+            : undefined
+        }
+      >
+        <HTMLAnnotationBodyRender
+          className="px-3 pt-3 prose-p:text-slate-600"
+          locale="en"
+        />
+      </Button>
+    )
+  }
+
   return (
     <>
       <RichMediaLink
@@ -83,7 +105,7 @@ export function AnnotationPreview({
           ) : item?.type || annotationTarget ? (
             <AnnotationTargetLabel id={annotationTarget} />
           ) : (
-            "Untitled annotation"
+            firstBody?.value
           )
         }
         icon={

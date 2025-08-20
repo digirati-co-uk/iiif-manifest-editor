@@ -48,6 +48,7 @@ export function BaseAnnotationCreator(props: BaseAnnotationCreatorProps) {
                   creator={item}
                   resource={props.resource}
                   onCreate={props.onCreate}
+                  skipEditingOnCreate
                 />
               </ThemeProvider>
             </TabPanel>

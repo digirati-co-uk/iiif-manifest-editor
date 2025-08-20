@@ -32,16 +32,17 @@ export function AnnotationCreationPopup({
   const { annotationPopups } = editorFeatureFlags;
   const fullCanvas = useCanvas({ id: canvasId });
 
-  if (!annotationPopups) {
-    return (
-      <div className="flex gap-2">
-        <ActionButton primary onPress={() => saveAnnotation()}>
-          <CheckIcon /> Finish editing
-        </ActionButton>
-        <AnnotationPopUpSwitcherButton />
-      </div>
-    );
-  }
+  // @todo disabled for now, always show.
+  // if (!annotationPopups) {
+  //   return (
+  //     <div className="flex gap-2">
+  //       <ActionButton primary onPress={() => saveAnnotation()}>
+  //         <CheckIcon /> Finish editing
+  //       </ActionButton>
+  //       <AnnotationPopUpSwitcherButton />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="bg-white rounded shadow-xl w-[420px]">

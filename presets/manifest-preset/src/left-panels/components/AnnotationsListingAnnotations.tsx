@@ -49,9 +49,7 @@ export function AnnotationsListingAnnotations() {
                     canvasId={canvas!.id}
                   />
                 ),
-              }).then((response) => {
-                console.log("response", response);
-              });
+              })
             },
           },
         ]}

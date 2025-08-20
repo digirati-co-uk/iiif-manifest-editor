@@ -36,6 +36,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   resource: CreatableResource;
   creator: CreatorDefinition;
   onCreate?: () => void;
+  skipEditingOnCreate?: boolean;
 }) {
   const vault = useVault();
   const { edit, modal } = useLayoutActions();
@@ -73,6 +74,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
         })
         .then(async (ref) => {
           props.onCreate?.();
+          if (props.skipEditingOnCreate) return;
           if (!ref) return;
           const singleRef = Array.isArray(ref) ? ref[0] : ref;
           setIsCreating(false);

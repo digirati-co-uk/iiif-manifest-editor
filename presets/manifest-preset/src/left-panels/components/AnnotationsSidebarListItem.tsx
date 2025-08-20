@@ -70,7 +70,6 @@ export function AnnotationsSidebarListItem() {
         <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>
           <DeleteIcon /> Delete
         </ActionButton>
-        {isOpen && isPending ? <AnnotationPopUpSwitcherButton /> : null}
       </div>
     </div>
   );
