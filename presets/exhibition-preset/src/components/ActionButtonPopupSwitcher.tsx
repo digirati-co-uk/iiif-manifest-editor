@@ -1,4 +1,4 @@
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, AnnotationPopInIcon, AnnotationPopOutIcon } from "@manifest-editor/components";
 import { useConfig, useSaveConfig } from "@manifest-editor/shell";
 
 export function ActionButtonPopupSwitcher() {
@@ -11,7 +11,7 @@ export function ActionButtonPopupSwitcher() {
       className="ml-auto"
       onPress={() => saveConfig({ editorFeatureFlags: { ...editorFeatureFlags, annotationPopups: annotationPopups ? false : true } })}
     >
-      {annotationPopups ? <PopinIcon /> : <PopoutIcon />}
+      {annotationPopups ? <AnnotationPopInIcon /> : <AnnotationPopOutIcon />}
     </ActionButton>
   );
 }
