@@ -1,5 +1,5 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import { useAnnotationCreatorState, type CreatorContext, type CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
@@ -119,28 +119,24 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
 
   return (
     <form onSubmit={onSubmit}>
-      <PaddedSidebarContainer>
-        <InputContainer>
-          <InputContainer $wide>
-            <InputLabel htmlFor="id">Link to Image</InputLabel>
-            <Input id="url" name="url" defaultValue="" />
-          </InputContainer>
+      <>
+
+        <InputContainer $wide>
+          <InputLabel htmlFor="id">Link to Image</InputLabel>
+          <Input id="url" name="url" defaultValue="" />
         </InputContainer>
 
-        <InputContainer>
-          <InputLabel>Image Caption</InputLabel>
-          <LanguageFieldEditor
-            focusId={"html-content"}
-            label={"HTML Content"}
-            fields={body}
-            onSave={(e: any) => setBody(e.toInternationalString())}
-          />
-        </InputContainer>
 
-        <ActionButton primary large type="submit">
+        <HTMLEditor
+          className="border-none"
+          value={body.en?.[0] || ""}
+          onChange={(newValue) => setBody({en: [newValue]})}
+        />
+
+        <ActionButton primary type="submit">
           Create
         </ActionButton>
-      </PaddedSidebarContainer>
+      </>
     </form>
   );
 }

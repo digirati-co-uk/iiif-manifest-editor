@@ -120,6 +120,7 @@ div[data-floating-ui-portal] {
 div.mdxeditor-popup-container {
   position: relative;
   z-index: 1000000;
+  padding: 0 !important;
 }
 
 div.mdxeditor-popup-container > *[role="dialog"] {
