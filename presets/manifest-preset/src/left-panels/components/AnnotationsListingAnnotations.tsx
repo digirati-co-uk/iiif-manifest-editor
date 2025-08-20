@@ -1,4 +1,5 @@
 import {
+    ActionButton,
   AddIcon,
   Sidebar,
   SidebarContent,
@@ -20,7 +21,7 @@ import { AnnotationsSidebarListItem } from "./AnnotationsSidebarListItem";
 export function AnnotationsListingAnnotations() {
   const canvas = useCanvas();
   const page = useAnnotationPage();
-  const { requestAnnotation, isPending } = useRequestAnnotation();
+  const { requestAnnotation, isActive, busy } = useRequestAnnotation();
   const [strategy] = useRenderingStrategy();
 
   if (strategy.type !== "images") {
@@ -31,6 +32,16 @@ export function AnnotationsListingAnnotations() {
     return null;
   }
 
+  const createAnnotation = () => requestAnnotation({
+    type: "box",
+    annotationPopup: (
+      <AnnotationCreationPopup
+        annotationPageId={page.id}
+        canvasId={canvas!.id}
+      />
+    ),
+  });
+
   return (
     <Sidebar>
       <SidebarHeader
@@ -39,22 +50,12 @@ export function AnnotationsListingAnnotations() {
           {
             icon: <AddIcon />,
             title: "Add annotation",
-            disabled: isPending,
-            onClick: () => {
-              requestAnnotation({
-                type: "box",
-                annotationPopup: (
-                  <AnnotationCreationPopup
-                    annotationPageId={page.id}
-                    canvasId={canvas!.id}
-                  />
-                ),
-              })
-            },
+            disabled: isActive || busy,
+            onClick: createAnnotation,
           },
         ]}
       />
-      {isPending ? (
+      {isActive ? (
         <div className="bg-me-primary-500 text-white p-2 m-1 rounded flex gap-2">
           <TargetIcon />
           Draw a box on the canvas
@@ -68,6 +69,23 @@ export function AnnotationsListingAnnotations() {
             </AnnotationContext>
           );
         })}
+
+        {page.items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-4">
+            <div className="p-4 opacity-50 text-center">
+              This image does not yet have any inline annotations.
+            </div>
+
+            <ActionButton
+              large
+              primary
+              isDisabled={isActive}
+              onPress={() => createAnnotation()}
+            >
+              Start annotating
+            </ActionButton>
+          </div>
+        ) : null}
       </SidebarContent>
     </Sidebar>
   );
