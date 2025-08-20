@@ -56,7 +56,7 @@
     "@manifest-editor/shell": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/40213b98/react-iiif-vault"
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/a32bf2e2/react-iiif-vault"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

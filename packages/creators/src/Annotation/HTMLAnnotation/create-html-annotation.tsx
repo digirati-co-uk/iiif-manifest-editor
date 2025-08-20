@@ -1,13 +1,15 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
+import {
+  type CreatorContext,
+  type CreatorFunctionContext,
+  useAnnotationCreatorState,
 } from "@manifest-editor/creator-api";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
+import { useCurrentAnnotationMetadata } from "react-iiif-vault";
 
 export interface CreateHTMLAnnotationPayload {
   label?: InternationalString;
@@ -93,13 +95,17 @@ export async function createHtmlAnnotation(
 export function CreateHTMLAnnotation(
   props: CreatorContext<CreateHTMLAnnotationPayload>,
 ) {
-  const [body, setBody] = useState("");
+  const [body, setBody] = useAnnotationCreatorState<InternationalString>({
+    key: "bodyValue",
+    initialValue: { en: [""] },
+    requestId: props.options.initialData?.requestId,
+  });
 
   const isEmpty = getValue(body).trim() === "";
 
   const onSubmit = () => {
     props.runCreate({
-      body: { en: [body] },
+      body,
     });
   };
 
@@ -107,8 +113,8 @@ export function CreateHTMLAnnotation(
     <>
       <HTMLEditor
         className="border-none"
-        value={body}
-        onChange={(newValue) => setBody(newValue)}
+        value={body.en?.[0] || ""}
+        onChange={(newValue) => setBody({en: [newValue]})}
       />
 
       <ActionButton

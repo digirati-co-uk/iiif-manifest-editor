@@ -1,6 +1,6 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton } from "@manifest-editor/components";
-import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { useAnnotationCreatorState, type CreatorContext, type CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
@@ -100,7 +100,11 @@ export async function createCaptionedImageAnnotation(
 }
 
 export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
-  const [body, setBody] = useState<InternationalString>({ en: [""] });
+  const [body, setBody] = useAnnotationCreatorState<InternationalString>({
+    key: "bodyValue",
+    initialValue: { en: [""] },
+    requestId: props.options.initialData?.requestId,
+  });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
