@@ -23,9 +23,9 @@ export function ModalBackSlot({ children }: { children: React.ReactNode }) {
 export function Modal({ id, title, open = true, onClose, actions, children }: ModalProps) {
   return (
     <>
-      <Dialog open={open} onClose={onClose} id={id} className="relative z-[500]">
-        <div className={`fixed inset-0 bg-black/30 animate-fadeIn z-[501]`} aria-hidden="true" />
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[502]">
+      <Dialog open={open} onClose={onClose} id={id} className="relative z-[1000002]">
+        <div className={`fixed inset-0 bg-black/30 animate-fadeIn z-[1000003]`} aria-hidden="true" />
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[1000004]">
           <div className="relative p-4 w-full max-w-4xl max-h-full">
             <DialogPanel className="relative bg-white rounded-lg overflow-hidden shadow-2xl max-h-[80vh] flex flex-col">
               <div className="flex  items-center justify-between gap-3 p-4 rounded-t-lg sticky top-0 bg-white">
