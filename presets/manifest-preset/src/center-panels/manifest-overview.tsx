@@ -28,7 +28,7 @@ export function ManifestOverviewCenterPanel() {
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
   const canvases = useFastList(items.get(), 24);
   const { leftPanel } = useLayoutState();
-  const isEditingManifest = leftPanel.current === "manifest-summary";
+  const isEditingManifest = leftPanel.current === "left-panel-manifest";
 
   if (!canvases || canvases.length === 0) {
     return (
