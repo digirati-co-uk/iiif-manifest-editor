@@ -35,7 +35,7 @@ export class DescriptiveEditor<T extends Partial<DescriptiveProperties>> extends
     this.language = new BasePropertyEditor(config, "language");
 
     this.thumbnail = new BaseReferenceListEditor<T, Reference<"ContentResource">>(config, "thumbnail");
-    this.provider = new BasePropertyEditor(config, "provider");
+    this.provider = new BaseReferenceListEditor<T, Reference<"Agent">>(config, "provider");
     this.placeholderCanvas = new BasePropertyEditor(config, "placeholderCanvas");
     this.accompanyingCanvas = new BasePropertyEditor(config, "accompanyingCanvas");
     // @todo maybe move this..
