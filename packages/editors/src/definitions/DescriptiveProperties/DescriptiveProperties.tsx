@@ -13,20 +13,19 @@ import { LinkingPropertyList } from "../../components/LinkingPropertyList/Linkin
 import { createAppActions } from "../../helpers/create-app-actions";
 import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
 import type { ResourceProvider } from "@iiif/presentation-3";
+import { EmptyState, ActionButton, AddIcon } from "@manifest-editor/components";
+import { useCreator } from "@manifest-editor/shell";
 
 export function DescriptiveProperties() {
   const resource = useEditingResource();
-  const { descriptive, notAllowed } = useEditor();
   const [requiredStatementVisible, setRequiredStatementVisible] = useState(false);
-  const [providerVisible, setProviderVisible] = useState(false);
-  const getProvider = () => (provider.get() || [])[0];
-  const setProvider = (next: any | null) => provider.set(next ? [next] : []);
+  const { descriptive, notAllowed } = useEditor();
 
-  const emptyProvider = () => ({
-    id: "",
-    type: "Agent",
-    label: { en: [""] },
-  });
+  const [canCreateProvider, providerActions] = useCreator(
+    resource?.resource,
+    "provider",
+    "Manifest"
+  );
 
   const {
     label,
@@ -41,7 +40,6 @@ export function DescriptiveProperties() {
     accompanyingCanvas,
     placeholderCanvas,
   } = descriptive;
-
 
   return (
     <>
@@ -144,47 +142,62 @@ export function DescriptiveProperties() {
         {!notAllowed.includes("provider") ? (
           <InputContainer $wide id={provider.containerId()}>
             <InputLabel htmlFor={provider.focusId()}>Provider</InputLabel>
-            {(!getProvider() && !providerVisible) ? (
-              <EmptyPrompt
-                action={{
-                  id: provider.focusId(),
-                  label: "Add new",
-                  onClick: () => {
-                    setProviderVisible(true);
-                    setProvider(emptyProvider());
-                  },
-                }}
-              >
-                No provider
-              </EmptyPrompt>
+
+            {!(provider.get() || []).length ? (
+              <>
+                <EmptyState $noMargin $box>No provider</EmptyState>
+                <ActionButton
+                  onPress={async () => {
+                    const ref = await providerActions.creator("@manifest-editor/provider", {
+                      id: "",
+                      type: "Agent",
+                      label: { en: ["New provider"] },
+                    });
+                    if (ref) {
+                      edit(ref, { property: "provider" });
+                    }
+                  }}
+                >
+                  <AddIcon /> Add Provider
+                </ActionButton>
+              </>
             ) : (
-              <InputFieldset id={provider.focusId()}>
-                {(() => {
-                  const p = getProvider() || emptyProvider();
-                  return (
-                    <>
-                      <InputLabel htmlFor={`${provider.focusId()}_id`}>ID</InputLabel>
-                      <Input
-                        id={`${provider.focusId()}_id`}
-                        value={p.id}
-                        onChange={(e) => setProvider({ ...p, id: e.target.value, type: "Agent" })}
-                        placeholder=""
-                      />
-
-                      <LanguageFieldEditor
-                        focusId={`${provider.focusId()}_label`}
-                        label="Label"
-                        fields={p?.label}
-                        onSave={(e: any) =>
-                          setProvider({ ...p, label: e.toInternationalString(), type: "Agent" })
+              <>
+                <div className="flex flex-col gap-2">
+                  {(provider.get() || []).map((ref, i) => (
+                    <div
+                      key={ref.id || i}
+                      role="button"
+                      tabIndex={0}
+                      className="cursor-pointer rounded border px-3 py-2 hover:bg-gray-50"
+                      onClick={() => edit(ref, { property: "provider" })}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          edit(ref, { property: "provider" });
                         }
-                      />
+                      }}
+                    >
+                      {ref.id || ""}
+                    </div>
+                  ))}
+                </div>
 
-                      {/* TODO add; homepage, logo, seeAlso */}
-                    </>
-                  );
-                })()}
-              </InputFieldset>
+                <ActionButton
+                  onPress={async () => {
+                    const ref = await providerActions.creator("@manifest-editor/provider", {
+                      id: "",
+                      type: "Agent",
+                      label: { en: ["New provider"] },
+                    });
+                    if (ref) {
+                      edit(ref, { property: "provider" });
+                    }
+                  }}
+                >
+                  <AddIcon /> Add Provider
+                </ActionButton>
+              </>
             )}
           </InputContainer>
         ) : null}
