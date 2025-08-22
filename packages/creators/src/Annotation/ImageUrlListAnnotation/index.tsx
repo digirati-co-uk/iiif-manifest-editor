@@ -29,10 +29,15 @@ export const imageUrlListAnnotation = defineCreator({
   resourceFields: ["id", "type", "motivation", "body", "target"],
   additionalTypes: ["Canvas"],
   supports: {
+    onlyPainting: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
-  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
+  sideEffects: [
+    resizeToFitService,
+    resizeResourceToEmptyCanvas,
+    repositionMultipleImages,
+  ],
   staticFields: {
     type: "Annotation",
   },

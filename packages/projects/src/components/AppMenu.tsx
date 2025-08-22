@@ -1,7 +1,7 @@
 import { MenuIcon } from "@manifest-editor/ui/icons/MenuIcon";
 import { Dropdown, DropdownDivider, DropdownLabel, DropdownMenu } from "@manifest-editor/ui/atoms/Dropdown";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "@manifest-editor/shell";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { useProjectContext } from "../ProjectContext";
 import { MappedApp, useApps } from "@manifest-editor/shell";

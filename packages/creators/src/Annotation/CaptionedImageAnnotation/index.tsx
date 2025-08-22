@@ -1,6 +1,9 @@
 import { AddImageIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { CreateCaptionedImageAnnotation, createCaptionedImageAnnotation } from "./create-captioned-image-annotation";
+import {
+  CreateCaptionedImageAnnotation,
+  createCaptionedImageAnnotation,
+} from "./create-captioned-image-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -24,6 +27,7 @@ export const captionedImageAnnotation = defineCreator({
   additionalTypes: ["Canvas"],
   supports: {
     initialData: true,
+    disallowPainting: true,
     parentTypes: ["AnnotationPage"],
     parentFields: ["items"],
   },

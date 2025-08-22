@@ -1,4 +1,5 @@
 import { ActionButton } from "@manifest-editor/components";
+import { AnnotationBodyEditor } from "@manifest-editor/editors";
 import {
   type CanvasEditorDefinition,
   useGenericEditor,
@@ -11,7 +12,6 @@ import {
   useCanvas,
   useVaultSelector,
 } from "react-iiif-vault";
-import { AnnotationBodyEditor } from "../components/AnnotationBodyEditor";
 
 export const infoBlockEditor: CanvasEditorDefinition = {
   id: "info-block-editor",

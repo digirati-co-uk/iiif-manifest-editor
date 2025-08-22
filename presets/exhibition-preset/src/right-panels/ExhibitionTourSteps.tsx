@@ -8,16 +8,22 @@ import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
+  useConfig,
   useCreator,
   useGenericEditor,
   useInlineCreator,
-  useRequestAnnotation,
 } from "@manifest-editor/shell";
 import { useState } from "react";
 import { Button } from "react-aria-components";
-import { AnnotationPageContext, useCanvas } from "react-iiif-vault";
+import {
+  AnnotationPageContext,
+  useCanvas,
+  useRequestAnnotation,
+} from "react-iiif-vault";
+import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { getGridStats } from "../helpers";
+import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 
 export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
@@ -29,7 +35,7 @@ export const exhibitionTourSteps: EditorDefinition = {
       const full = vault.get(resource);
       const stats = getGridStats(full.behavior);
 
-      if (full.type === "Canvas" && !stats.isInfo && !stats.isBottom) {
+      if (full.type === "Canvas" && !stats.isInfo) {
         return true;
       }
       return false;
@@ -107,12 +113,16 @@ function ExhibitionRightPanel() {
   const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } =
     useRequestAnnotation({
       onSuccess: (resp) => {
+        const bodyValue = resp.metadata.bodyValue || "";
+
         if (!resp.cancelled && resp.target && firstAnnotationPage) {
           creator.create(
             "@manifest-editor/html-annotation",
             {
               label: { en: ["Tour step"] },
-              body: { en: ["<h2>New step</h2><p>Description</p>"] },
+              body: {
+                en: [bodyValue || "<h2>New step</h2><p>Description</p>"],
+              },
               motivation: "describing",
             } as {
               label?: InternationalString;
@@ -135,13 +145,7 @@ function ExhibitionRightPanel() {
                 },
               },
               initialData: {
-                selector:
-                  resp.target.type === "SvgSelector"
-                    ? {
-                        type: "polygon",
-                        shape: resp.polygon,
-                      }
-                    : resp.boundingBox,
+                selector: resp,
               },
             },
           );
@@ -171,23 +175,15 @@ function ExhibitionRightPanel() {
 
               {!busy ? (
                 isPending ? (
-                  <div className="border grid grid-cols-2 gap-2 disabled:opacity-50 border-gray-300 shadow-sm rounded p-1 bg-white relative text-black/40">
-                    <Button
-                      onPress={cancelRequest}
-                      className="text-black/80 rounded-sm p-3"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onPress={completeRequest}
-                      className="bg-me-100 text-me-500 rounded-sm p-3"
-                    >
-                      Save changes
-                    </Button>
-                  </div>
+                  <PendingTourStepAnnotation />
                 ) : (
                   <Button
-                    onPress={() => requestAnnotation({ type: "polygon" })}
+                    onPress={() =>
+                      requestAnnotation({
+                        type: "box",
+                        annotationPopup: <ExhibitionTourStepPopup />,
+                      })
+                    }
                     className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
                   >
                     + Add new step

@@ -56,6 +56,7 @@ const invisibleReset = css`
 
 const Text = styled.input.attrs({ type: "text" })`
   ${invisibleReset}
+  overflow-y:hidden;
 `;
 
 const Number = styled.input.attrs({ type: "number" })`

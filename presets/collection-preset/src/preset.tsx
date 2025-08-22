@@ -6,7 +6,6 @@ import {
   webPageCreator,
 } from "@manifest-editor/creators";
 import { allEditors, useInStack } from "@manifest-editor/editors";
-import { IIIFExplorer } from "@manifest-editor/iiif-browser";
 import {
   type Config,
   ExportPanel,
@@ -88,9 +87,5 @@ function ViewManifest() {
   }
 
   // @todo "use as thumbnail" option.
-  return (
-    <PreviewVaultBoundary key={manifest.resource.source.id}>
-      <IIIFExplorer hideBack entry={manifest.resource.source} hideHeader window={false} />
-    </PreviewVaultBoundary>
-  );
+  return null;
 }

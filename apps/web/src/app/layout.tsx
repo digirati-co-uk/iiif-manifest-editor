@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { SiteProvider } from "../components/site/Provider";
 import "@manifest-editor/components/dist/index.css";
-import "@manifest-editor/iiif-browser/dist/index.css";
 import "manifest-editor/dist/index.css";
 import "@manifest-editor/editors/dist/index.css";
 import "@manifest-editor/shell/dist/index.css";

@@ -1,7 +1,7 @@
 import { AppMenu, DraftTitleEditor } from "@manifest-editor/projects";
 import { useApps, PreviewButton } from "@manifest-editor/shell";
 import { ManifestEditorLogo } from "@manifest-editor/components";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "@manifest-editor/shell";
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
 import { memo } from "react";
 import { ShellOptions } from "./ShellOptions";

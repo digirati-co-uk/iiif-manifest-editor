@@ -1,5 +1,5 @@
 "use client";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "@manifest-editor/shell";
 import { useLayoutEffect, useState } from "react";
 import Joyride, { type Step, type CallBackProps } from "react-joyride";
 

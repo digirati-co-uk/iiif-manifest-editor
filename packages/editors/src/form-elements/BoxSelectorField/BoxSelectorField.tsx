@@ -9,9 +9,10 @@ interface BoxSelectorFieldProps {
   inlineFieldset?: boolean;
   onSubmit?: (selector: BoxSelector) => void;
   children?: ReactNode;
+  isDisabled?: boolean;
 }
 
-export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, children }: BoxSelectorFieldProps) {
+export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, isDisabled, children }: BoxSelectorFieldProps) {
   const formEl = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
             <InputLabel $margin htmlFor="type">
               x
             </InputLabel>
-            <Input id="selector-x" name="selector.x" type="number" defaultValue={selector.spatial.x} />
+            <Input id="selector-x" name="selector.x" type="number" defaultValue={selector.spatial.x} disabled={isDisabled} />
           </InputContainer>
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
@@ -41,7 +42,7 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
             <InputLabel $margin htmlFor="selector-y">
               y
             </InputLabel>
-            <Input id="selector-y" name="selector.y" type="number" defaultValue={selector.spatial.y} />
+            <Input id="selector-y" name="selector.y" type="number" defaultValue={selector.spatial.y} disabled={isDisabled} />
           </InputContainer>
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
@@ -49,7 +50,7 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
             <InputLabel $margin htmlFor="type">
               width
             </InputLabel>
-            <Input id="selector-width" name="selector.width" type="number" defaultValue={selector.spatial.width} />
+            <Input id="selector-width" name="selector.width" type="number" defaultValue={selector.spatial.width} disabled={isDisabled} />
           </InputContainer>
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
@@ -57,7 +58,7 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
             <InputLabel $margin htmlFor="selector-y">
               height
             </InputLabel>
-            <Input id="selector-height" name="selector.height" type="number" defaultValue={selector.spatial.height} />
+            <Input id="selector-height" name="selector.height" type="number" defaultValue={selector.spatial.height} disabled={isDisabled} />
           </InputContainer>
         </FlexContainerColumn>
       </FlexContainer>

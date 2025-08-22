@@ -1,18 +1,11 @@
 import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
-import {
-  type ReactNode,
-  type SetStateAction,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import { useLocalStorage } from "../hooks/use-local-storage";
+import { createContext, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import { type Config, ConfigProvider } from "../ConfigContext/ConfigContext";
 import type {
   AnnotationPanel,
+  BackgroundPanel,
   CanvasEditorDefinition,
   EditorDefinition,
   LayoutPanel,
@@ -56,6 +49,7 @@ export interface AppExtension {
   creators?: CreatorDefinition[];
   canvasEditors?: CanvasEditorDefinition[];
   annotations?: AnnotationPanel[];
+  background?: BackgroundPanel[];
   // Config.
   leftPanelIds?: string[];
 
@@ -66,8 +60,8 @@ export interface AppExtension {
 export type AppState = { state: null | any; setState: SetStateAction<any> };
 
 export const PrimeAppReactContext = createContext<MappedApp | null>(null);
-const AppReactContext = createContext<AppContext | null>(null);
-const AppStateReactContext = createContext<{
+export const AppReactContext = createContext<AppContext | null>(null);
+export const AppStateReactContext = createContext<{
   state: null | any;
   setState: SetStateAction<any>;
 }>({
@@ -109,11 +103,8 @@ function AppStateProvider(props: {
   );
 
   const setState = useCallback((partial: any) => {
-    const existing = stateRef.current
-      ? JSON.parse(stateRef.current || "{}")
-      : {};
-    const partialState =
-      (typeof partial === "function" ? partial(existing) : partial) || {};
+    const existing = stateRef.current ? JSON.parse(stateRef.current || "{}") : {};
+    const partialState = (typeof partial === "function" ? partial(existing) : partial) || {};
 
     _setState({
       ...existing,
@@ -127,16 +118,9 @@ function AppStateProvider(props: {
     }
   }, [props.appId]);
 
-  const ctx = useMemo(
-    () => ({ state: state || {}, setState }),
-    [setState, state],
-  );
+  const ctx = useMemo(() => ({ state: state || {}, setState }), [setState, state]);
 
-  return (
-    <AppStateReactContext.Provider value={ctx}>
-      {props.children}
-    </AppStateReactContext.Provider>
-  );
+  return <AppStateReactContext.Provider value={ctx}>{props.children}</AppStateReactContext.Provider>;
 }
 
 export function AppProvider({
@@ -154,10 +138,7 @@ export function AppProvider({
   definition: MappedApp;
   children: ReactNode;
 }) {
-  const ctx = useMemo(
-    () => ({ instanceId, appId, args }),
-    [instanceId, appId, args],
-  );
+  const ctx = useMemo(() => ({ instanceId, appId, args }), [instanceId, appId, args]);
   const _initialState = useMemo(() => initialState || {}, [instanceId]);
 
   // Current App is now put in the "Prime" context.
@@ -165,12 +146,7 @@ export function AppProvider({
     <ConfigProvider config={definition.config || {}}>
       <PrimeAppReactContext.Provider value={definition}>
         <AppReactContext.Provider value={ctx}>
-          <AppStateProvider
-            instanceId={ctx.instanceId}
-            appId={ctx.appId}
-            args={ctx.args}
-            initialState={_initialState}
-          >
+          <AppStateProvider instanceId={ctx.instanceId} appId={ctx.appId} args={ctx.args} initialState={_initialState}>
             {children}
           </AppStateProvider>
         </AppReactContext.Provider>

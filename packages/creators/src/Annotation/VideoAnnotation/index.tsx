@@ -1,6 +1,9 @@
 import { VideoIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { CreateVideoAnnotationForm, createVideoAnnotation } from "./create-video-annotation";
+import {
+  CreateVideoAnnotationForm,
+  createVideoAnnotation,
+} from "./create-video-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -23,6 +26,7 @@ export const videoAnnotation = defineCreator({
   resourceFields: ["id", "type", "motivation", "body", "target"],
   additionalTypes: ["Canvas"],
   supports: {
+    onlyPainting: true,
     initialData: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],

@@ -3,7 +3,10 @@ import { defineCreator } from "@manifest-editor/creator-api";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
-import { CreateImageUrlAnnotationForm, createImageUrlAnnotation } from "./create-image-url-annotation";
+import {
+  CreateImageUrlAnnotationForm,
+  createImageUrlAnnotation,
+} from "./create-image-url-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -28,10 +31,15 @@ export const imageUrlAnnotation = defineCreator({
   resourceFields: ["id", "type", "motivation", "body", "target"],
   additionalTypes: ["Canvas"],
   supports: {
+    onlyPainting: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
-  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
+  sideEffects: [
+    resizeToFitService,
+    resizeResourceToEmptyCanvas,
+    repositionMultipleImages,
+  ],
   staticFields: {
     type: "Annotation",
   },

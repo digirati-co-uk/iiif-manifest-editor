@@ -1,7 +1,9 @@
 import { toRef } from "@iiif/parser";
 import {
+  ActionButton,
   BackIcon,
   CreatorGrid,
+  EmptyState,
   ErrorMessage,
   GridIcon,
   IconButton,
@@ -19,7 +21,10 @@ import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useLayoutActions } from "../Layout/Layout.context";
-import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
+import {
+  ModulePanelButton,
+  useSetCustomTitle,
+} from "../Layout/components/ModularPanel";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { useInlineCreator } from "./BaseCreator.hooks";
 
@@ -30,6 +35,8 @@ interface BaseCreatorProps {
 export const RenderCreator = memo(function RenderCreator(props: {
   resource: CreatableResource;
   creator: CreatorDefinition;
+  onCreate?: () => void;
+  skipEditingOnCreate?: boolean;
 }) {
   const vault = useVault();
   const { edit, modal } = useLayoutActions();
@@ -66,6 +73,8 @@ export const RenderCreator = memo(function RenderCreator(props: {
           return null;
         })
         .then(async (ref) => {
+          props.onCreate?.();
+          if (props.skipEditingOnCreate) return;
           if (!ref) return;
           const singleRef = Array.isArray(ref) ? ref[0] : ref;
           setIsCreating(false);
@@ -90,6 +99,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
   };
 
   useEffect(() => {
+    if (props.resource.initialData?.showEmptyForm) {
+      return;
+    }
+
     if (!props.creator.render && !isCreating) {
       runCreate({});
     }
@@ -117,9 +130,12 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
   if (!props.creator.render) {
     return (
-      <div>
-        <Button onClick={() => runCreate({})}>Create</Button>
-      </div>
+      <>
+        <EmptyState>No options available</EmptyState>
+        <ActionButton primary onPress={() => runCreate({})}>
+          {props.creator.actionButton || "Create"}
+        </ActionButton>
+      </>
     );
   }
 
@@ -140,7 +156,9 @@ export const RenderCreator = memo(function RenderCreator(props: {
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
   const vault = useVault();
-  const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
+  const [currentId, setCurrentId] = useState(
+    props.resource.initialCreator || "",
+  );
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -194,7 +212,7 @@ export function BaseCreator(props: BaseCreatorProps) {
     return (
       <div>
         {backButton}
-        <div className="p-2 py-6">
+        <div className={"p-2 py-6"}>
           <RenderCreator creator={current} resource={props.resource} />
         </div>
       </div>

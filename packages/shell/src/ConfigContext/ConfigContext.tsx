@@ -27,6 +27,8 @@ export interface Config {
   editorFeatureFlags: {
     enableMultiImageCanvases?: boolean;
     enableMultiMediaCanvases?: boolean;
+    rememberCanvasId?: boolean;
+    annotationPopups?: boolean;
   };
 
   // Internationalisation options
@@ -100,8 +102,8 @@ const DEFAULT_CONFIG: Config = {
   },
 };
 
-const ConfigReactContext = createContext<Config>(DEFAULT_CONFIG);
-const SaveConfigReactContext = createContext<(config: Partial<Config>) => void>(() => {});
+export const ConfigReactContext = createContext<Config>(DEFAULT_CONFIG);
+export const SaveConfigReactContext = createContext<(config: Partial<Config>) => void>(() => {});
 
 export function useConfig() {
   return useContext(ConfigReactContext);
@@ -126,8 +128,13 @@ export function ConfigProvider({
       ...DEFAULT_CONFIG,
       ...(config || {}),
       ...(runtimeConfig || {}),
+      editorFeatureFlags: {
+        ...DEFAULT_CONFIG.editorFeatureFlags,
+        ...(config?.editorFeatureFlags || {}),
+        ...runtimeConfig?.editorFeatureFlags
+      },
     }),
-    [config, runtimeConfig],
+    [config, runtimeConfig]
   );
 
   const memoSaveConfig = useCallback(
@@ -137,7 +144,7 @@ export function ConfigProvider({
         saveConfig(config);
       }
     },
-    [config],
+    [config]
   );
 
   return (

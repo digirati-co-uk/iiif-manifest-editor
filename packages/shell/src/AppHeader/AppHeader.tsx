@@ -3,7 +3,7 @@ import { PreviewButton } from "../PreviewButton/PreviewButton";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 
 import { memo } from "react";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "../hooks/use-local-storage";
 
 interface AppHeaderProps {
   onClickLogo?: () => void;

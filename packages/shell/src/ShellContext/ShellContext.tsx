@@ -1,18 +1,21 @@
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
-import { ImageServiceLoaderContext } from "react-iiif-vault";
+import {
+  AtlasStoreProvider,
+  ImageServiceLoaderContext,
+} from "react-iiif-vault";
 import { ThemeProvider } from "styled-components";
 import {
   AppResourceProvider,
   type Resource,
 } from "../AppResourceProvider/AppResourceProvider";
-import { AtlasStoreProvider } from "../AtlasStore/AtlasStoreProvider";
 import {
   type Config,
   ConfigProvider,
   useConfig,
 } from "../ConfigContext/ConfigContext";
+import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
@@ -26,7 +29,9 @@ import { defaultTheme } from "./default-theme";
 const previewConfigs: PreviewConfiguration[] = [
   {
     id: "universal-viewer",
-    config: { url: "https://universalviewer.dev/#?iiifManifestId={manifestId}" },
+    config: {
+      url: "https://universalviewer.dev/#?iiifManifestId={manifestId}",
+    },
     type: "external-manifest-preview",
     label: "Universal viewer",
   },
@@ -95,13 +100,15 @@ export function ShellProvider({
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
                 <EditingStack>
                   <LayoutProvider>
-                    {/* @todo swap these out for (config?.previews || []) */}
-                    <PreviewProvider
-                      previews={previews || []}
-                      configs={mergedConfig.previews}
-                    >
-                      <AtlasStoreProvider>{children}</AtlasStoreProvider>
-                    </PreviewProvider>
+                    <ContextMenuProvider>
+                      {/* @todo swap these out for (config?.previews || []) */}
+                      <PreviewProvider
+                        previews={previews || []}
+                        configs={mergedConfig.previews}
+                      >
+                        <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                      </PreviewProvider>
+                    </ContextMenuProvider>
                   </LayoutProvider>
                 </EditingStack>
               </ConfigProvider>

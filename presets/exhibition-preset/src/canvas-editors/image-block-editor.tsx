@@ -1,8 +1,7 @@
 import { ActionButton } from "@manifest-editor/components";
 import { CanvasPanelEditor, useInStack, useToggleList } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition, LayoutPanel } from "@manifest-editor/shell";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
-import { Button } from "react-aria-components";
+import { useLocalStorage } from "@manifest-editor/shell";
 import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";

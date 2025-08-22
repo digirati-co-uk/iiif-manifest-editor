@@ -30,6 +30,10 @@ export function ConfigEditor() {
         version: formValues.get("isVersion2") === "on" ? 2 : 3,
         baseIdentifier: (formValues.get("base") as string) || null,
       },
+      editorFeatureFlags: {
+        ...(config.editorFeatureFlags || ({} as any)),
+        rememberCanvasId: formValues.get("rememberCanvasId") === "on",
+      },
     };
 
     setConfig(newConfig);
@@ -81,6 +85,16 @@ export function ConfigEditor() {
               defaultChecked={config.i18n?.textGranularityEnabled || false}
             />
             <Form.Label htmlFor="textGranularityEnabled">Enable text granularity</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="rememberCanvasId"
+              id="rememberCanvasId"
+              defaultChecked={config.editorFeatureFlags?.rememberCanvasId || false}
+            />
+            <Form.Label htmlFor="rememberCanvasId">Remember Canvas ID</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">

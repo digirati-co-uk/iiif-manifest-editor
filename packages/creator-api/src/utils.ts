@@ -10,9 +10,10 @@ import {
   emptyService,
   toRef,
 } from "@iiif/parser";
-import type { CreatorResource } from "./CreatorResource";
-import { CreatorRuntime } from "./CreatorRuntime";
-import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
+import type {
+  CreatorDefinitionFilterByParent,
+  IIIFManifestEditor,
+} from "./creator-register";
 import type {
   AllAvailableParentTypes,
   CreatableResource,
@@ -63,7 +64,7 @@ export function getEmptyType(type: string): any {
 }
 
 export function randomId() {
-  return `${Math.random().toString(36).substr(2)}-${Date.now().toString(36)}`;
+  return `${Math.random().toString(36).substring(2)}-${Date.now().toString(36)}`;
 }
 
 export function matchBasedOnResource(
@@ -109,15 +110,24 @@ export function matchBasedOnResource(
       if (def.supports.disallowPainting && resource.isPainting) {
         continue;
       }
+      if (def.supports.onlyPainting && !resource.isPainting) {
+        continue;
+      }
 
       if (def.supports.custom) {
-        const isValid = def.supports.custom({ property, resource: parent, atIndex: resource.index }, options.vault);
+        const isValid = def.supports.custom(
+          { property, resource: parent, atIndex: resource.index },
+          options.vault,
+        );
         if (!isValid) {
           continue;
         }
       }
 
-      if (!def.supports.initialData && Object.keys(resource.initialData || {}).length !== 0) {
+      if (
+        !def.supports.initialData &&
+        Object.keys(resource.initialData || {}).length !== 0
+      ) {
         continue;
       }
 
@@ -137,7 +147,10 @@ export function creatorHelper<
   const ResourceType extends AllAvailableParentTypes,
   const Parent extends { id: string; type: ResourceType },
   const ResourceField extends GetSupportedResourceFields<ResourceType>,
-  const CID extends CreatorDefinitionFilterByParent<ResourceType, ResourceField>["id"],
+  const CID extends CreatorDefinitionFilterByParent<
+    ResourceType,
+    ResourceField
+  >["id"],
   Payload = GetCreatorPayload<IIIFManifestEditor.CreatorDefinitions[CID]>,
   Return = ResolvedCreatorReturn<IIIFManifestEditor.CreatorDefinitions[CID]>,
 >(
