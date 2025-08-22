@@ -104,7 +104,7 @@ export function CanvasPanelViewer({
         : undefined;
     if (nextCanvas) {
       return () => {
-        edit({ id: nextCanvas.id, type: "Canvas" });
+        edit({ id: nextCanvas.id, type: "Canvas" }, undefined, { forceOpen: false });
       };
     }
   }, []);
@@ -120,7 +120,7 @@ export function CanvasPanelViewer({
         : undefined;
     if (previousCanvas) {
       return () => {
-        edit({ id: previousCanvas.id, type: "Canvas" });
+        edit({ id: previousCanvas.id, type: "Canvas" }, undefined, { forceOpen: false });
       };
     }
   }, []);

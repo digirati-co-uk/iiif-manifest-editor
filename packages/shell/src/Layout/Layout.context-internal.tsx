@@ -124,10 +124,12 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
       reset,
       property,
       stacked,
+      forceOpen,
     }: {
       reset?: boolean;
       property?: string;
       stacked?: boolean | undefined;
+      forceOpen?: boolean;
     } = {}
   ) {
     const toEdit: EditableResource = {
@@ -144,12 +146,21 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     actions.editingStack.edit(toEdit, reset);
 
     if (available.rightPanels.find((e) => e.id === "@manifest-editor/editor")) {
-      actions.rightPanel.open({
-        id: "@manifest-editor/editor",
-        stacked: stacked !== false,
-        state: { property },
-        unique: true,
-      });
+      if (forceOpen) {
+        actions.rightPanel.open({
+          id: "@manifest-editor/editor",
+          stacked: stacked !== false,
+          state: { property },
+          unique: true,
+        });
+      } else {
+        actions.rightPanel.change({
+          id: "@manifest-editor/editor",
+          stacked: stacked !== false,
+          state: { property },
+          unique: true,
+        });
+      }
     }
   }
 

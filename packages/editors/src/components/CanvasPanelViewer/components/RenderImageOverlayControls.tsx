@@ -30,13 +30,13 @@ export function RenderImageOverlayControls() {
           />
         );
       })}
-      <world-object
+      {canvas ? <world-object
         width={canvas.width}
         height={canvas.height}
         onClick={() => {
           setSelected(null);
         }}
-      />
+      /> : null}
     </>
   );
 }
@@ -78,7 +78,7 @@ function SingleImageOverlay(props: {
               gap: "0.35em",
             }}
           >
-            <ActionButton isDisabled={isSelected} onPress={() => edit({ id: props.id, type: "Annotation" })}>
+            <ActionButton isDisabled={isSelected} onPress={() => edit({ id: props.id, type: "Annotation" }, undefined, { forceOpen: true })}>
               Edit
             </ActionButton>
             <ActionButton

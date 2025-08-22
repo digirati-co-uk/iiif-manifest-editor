@@ -57,7 +57,7 @@ function CanvasContextMenu() {
           id: "edit-canvas",
           label: "Edit metadata",
           enabled: true,
-          onAction: () => edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }),
+          onAction: () => edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }, undefined, { forceOpen: true }),
         },
         {
           id: "add-media",
@@ -128,7 +128,7 @@ function PaintingAnnotationContextMenu() {
             return resource.id !== currentId;
           },
           onAction: ({ resource }) => {
-            edit(resource);
+            edit(resource, undefined, { forceOpen: true });
           },
         },
         {
@@ -228,12 +228,9 @@ function MediaTargetContextMenu() {
           onAction: ({ resource }) => {
             const annotation = vault.get(resource);
             const selector = parseSelector(annotation.target?.selector)?.selector;
-            console.log("on action", selector?.spatial);
 
             if (selector?.type === "BoxSelector") {
               requestAnnotation({ type: "target", bounds, selector: selector.spatial });
-              console.log(store.getState().validRequestIds);
-              console.log(store.getState().tool);
             }
           },
         },
@@ -247,7 +244,6 @@ function MediaTargetContextMenu() {
           },
           onAction: ({ resource }) => {
             // target.removeSelector()
-            console.log("target.removeSelector()");
           },
         },
       ],

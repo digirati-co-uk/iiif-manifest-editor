@@ -59,6 +59,7 @@ export interface LayoutActions {
       property?: string;
       stacked?: boolean | undefined;
       selectedTab?: string;
+      forceOpen?: boolean;
     },
   ): void;
   create(resource: CreatableResource): void;
