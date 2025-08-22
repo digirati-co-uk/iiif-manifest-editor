@@ -194,7 +194,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   }, [match]);
 
   useEffect(() => {
-    const availableKeys = match?.editors.map((editor, key) => editor.id + key) || [];
+    const availableKeys = match?.editors.map((editor) => editor.id) || [];
     const currentKey = availableKeys.find((key) => key === currentTab);
     if (!currentKey) {
       change("@manifest-editor/editor", { currentTab: availableKeys[0] });
@@ -229,7 +229,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       menuId={resource.resource.source.id}
       menu={(match?.editors || []).map((editor, key) => {
         return {
-          id: editor.id + key,
+          id: editor.id,
           label: editor.label,
           renderComponent: () => editor.component(resourceConfig),
         };
