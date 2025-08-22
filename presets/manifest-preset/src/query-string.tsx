@@ -29,7 +29,7 @@ function setCanvasIdQueryString(canvasId: string | null | undefined) {
 function QueryStringBackgroundTask() {
   const manifest = useManifest();
   const canvas = useInStack("Canvas");
-  const { leftPanel } = useLayoutState();
+  const { leftPanel, rightPanel } = useLayoutState();
   const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { canvasActions, open } = useEditCanvasItems();
   const { editorFeatureFlags: { rememberCanvasId = true } = {} } = useConfig();
@@ -93,11 +93,16 @@ function QueryStringBackgroundTask() {
     }
 
     // Close the right panel
-    if (leftPanel.current === annotationsPanel.id) {
+    if (leftPanel.current === annotationsPanel.id && rightPanel.open) {
       flushSync(() => {
         rightPanelActions.close();
       });
       setWasLeftPanelOpenedAutomatically(true);
+    }
+
+    if (leftPanel.current !== annotationsPanel.id && wasLeftPanelOpenedAutomatically) {
+      rightPanelActions.open();
+      setWasLeftPanelOpenedAutomatically(false);
     }
 
 
