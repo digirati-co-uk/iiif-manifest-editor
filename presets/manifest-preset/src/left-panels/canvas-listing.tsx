@@ -76,10 +76,8 @@ export function CanvasListing({
   gridView: boolean;
   onChangeGridView: (gridView: boolean) => void;
 }) {
-  const { open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const [toggled, toggle] = useToggleList();
-  const canvas = useInStack("Canvas");
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
@@ -91,24 +89,6 @@ export function CanvasListing({
     { isPainting: true },
   );
   const canvases = useFastList(items.get(), 24);
-
-  useEffect(() => {
-    if (canvas?.resource.source.id) {
-      // @todo check if this is still needed..
-      // const key = items.get().findIndex((c) => c.id === canvas.resource.source.id);
-      // if (key !== -1) {
-      //   open({ id: "current-canvas" });
-      //   canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
-      //   return;
-      // }
-      return;
-    }
-
-    if (items.get().length) {
-      open({ id: "current-canvas" });
-      canvasActions.edit(items.get()[0]);
-    }
-  }, []);
 
   useLayoutEffect(() => {
     const selected = document.querySelector('[data-canvas-selected="true"]');

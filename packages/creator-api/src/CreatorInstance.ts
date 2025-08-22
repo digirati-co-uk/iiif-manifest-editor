@@ -86,8 +86,6 @@ export class CreatorInstance implements CreatorFunctionContext {
     const target = this.target;
     const serialisedSelector = this.getSerialisedSelector();
 
-    console.log("serialisedSelector", serialisedSelector);
-
     if (serialisedSelector) {
       return {
         type: "SpecificResource",

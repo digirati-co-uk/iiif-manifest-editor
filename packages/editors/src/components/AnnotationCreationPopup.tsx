@@ -1,4 +1,4 @@
-import { ActionButton, CheckIcon } from "@manifest-editor/components";
+import { ActionButton, CheckIcon, EditTextIcon } from "@manifest-editor/components";
 import { Button, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import {
   polygonToTarget,
@@ -53,7 +53,7 @@ export function AnnotationCreationPopup({
         <div>
           {mode === "explore" ? (
             <ActionButton onPress={() => changeMode("sketch")}>
-              Edit target
+              <EditTextIcon className="text-xl" /> Edit target
             </ActionButton>
           ) : (
             <ActionButton onPress={() => changeMode("explore")}>
@@ -82,8 +82,7 @@ export function AnnotationCreationPopup({
           target: { id: canvasId, type: "Canvas" },
           initialData: {
             showEmptyForm: true,
-            getSerialisedSelector: () =>
-              shape ? polygonToTarget(shape) : undefined, // @todo
+            getSerialisedSelector: () => shape ? polygonToTarget(shape, fullCanvas) : undefined,
             motivation: "describing", // @todo.
             on: { width: fullCanvas?.width, height: fullCanvas?.height },
           },

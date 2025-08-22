@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useEventHandler } from "@manifest-editor/ui/madoc/use-event-handler";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "../../hooks/use-local-storage";
 import { panelSizing } from "../Layout.helpers";
 
 function distance(x1: number, y1: number, x2: number, y2: number) {

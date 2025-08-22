@@ -1,5 +1,5 @@
 import type { CreatorDefinition } from "@manifest-editor/creator-api";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "../hooks/use-local-storage";
 import { createContext, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
 import { type Config, ConfigProvider } from "../ConfigContext/ConfigContext";

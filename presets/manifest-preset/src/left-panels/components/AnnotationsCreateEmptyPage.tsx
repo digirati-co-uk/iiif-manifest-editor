@@ -1,7 +1,8 @@
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { useInlineCreator } from "@manifest-editor/shell";
 import { useCanvas } from "react-iiif-vault";
+import { AddAnnotationIcon } from "./AnnotationsListingAnnotations";
 
 export function AnnotationsCreateEmptyPage() {
   const canvasRef = useInStack("Canvas");
@@ -34,18 +35,36 @@ export function AnnotationsCreateEmptyPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className="p-4 opacity-50 text-center">
-        This image does not yet have any inline annotations.
-      </div>
+    <Sidebar>
+      <SidebarHeader
+        title="Annotations"
+        actions={[
+          {
+            icon: <AddAnnotationIcon className="text-2xl" />,
+            title: "Add annotation",
+            disabled: true,
+            onClick: () => void 0,
+          },
+        ]}
+      />
+      <SidebarContent>
+        <div className="flex flex-col items-center justify-center p-4">
+          <div className="p-4 opacity-50 text-center">
+            This canvas does not yet have any inline annotations. To add inline annotations,
+            an AnnotationPage is created which will be linked to this canvas, and can
+            then used to add your annotations. Simply use the link below to start
+            adding your annotations
+          </div>
 
-      <ActionButton
-        large
-        primary
-        onPress={() => createEmptyAnnotationPage()}
-      >
-        Create empty page
-      </ActionButton>
-    </div>
+          <ActionButton
+            large
+            primary
+            onPress={() => createEmptyAnnotationPage()}
+          >
+            <AddIcon className="text-xl" /> Create empty page
+          </ActionButton>
+        </div>
+      </SidebarContent>
+    </Sidebar>
   );
 }

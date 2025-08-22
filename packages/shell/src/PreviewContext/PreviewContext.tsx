@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import { usePreviewActions, usePreviewHandlers } from "./PreviewContext.hooks";
 import { getDefaultPreviewState, previewContextReducer } from "./PreviewContext.reducer";
 import { useAppResourceInstance } from "../AppResourceProvider/AppResourceProvider";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "../hooks/use-local-storage";
 
 const PreviewReactContext = createContext<PreviewContext | null>(null);
 const AvailablePreviewReactContext = createContext<Preview[]>([] as Preview[]);

@@ -57,7 +57,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.0.13",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/dc699a5a/react-iiif-vault",
+    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/7651d8ef/react-iiif-vault",
     "styled-components": "6.1.8"
   },
   "devDependencies": {

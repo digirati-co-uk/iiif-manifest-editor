@@ -38,27 +38,11 @@ export const manifestPanel: LayoutPanel = {
 };
 
 export function ManifestPanel() {
-  const { edit, open } = useLayoutActions();
-  const { descriptive, technical } = useManifestEditor();
-  const manifestId = technical.id.get();
-  const manifest = { id: manifestId, type: "Manifest" };
-  const hasCanvasQueryString = new URLSearchParams(window.location.search).get("canvas");
-  const isInitial = useRef(!hasCanvasQueryString);
-
+  const { descriptive } = useManifestEditor();
   const label = descriptive.label.get();
   const summary = descriptive.summary.get();
   const requiredStatement = descriptive.requiredStatement.get();
   const metadata = descriptive.metadata.get();
-
-  useEffect(() => {
-    open({ id: "overview" });
-    if (isInitial.current) {
-      edit(manifest);
-      //
-    }
-
-    isInitial.current = false;
-  }, []);
 
   return (
     <>

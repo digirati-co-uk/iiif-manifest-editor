@@ -1,7 +1,6 @@
 import { useInStack } from "@manifest-editor/editors";
 import type { LayoutPanel } from "@manifest-editor/shell";
-import { AnnotationPageContext, CanvasContext, useAtlasStore, useCanvas } from "react-iiif-vault";
-import { useStore } from "zustand";
+import { AnnotationPageContext, CanvasContext, useCanvas } from "react-iiif-vault";
 import { AnnotationsCreateEmptyPage } from "./components/AnnotationsCreateEmptyPage";
 import { AnnotationsListingAnnotations } from "./components/AnnotationsListingAnnotations";
 
@@ -9,7 +8,7 @@ export const annotationsPanel: LayoutPanel = {
   id: "@manifest-editor/canvas-annotation-listing",
   label: "Annotations",
   icon: <AnnotationsIcon />,
-  render: (state, ctx, app) => {
+  render: () => {
     return <AnnotationsPanel />;
   },
 };
@@ -21,7 +20,15 @@ function AnnotationsPanel() {
   const firstPage = canvas?.annotations[0];
 
   if (!canvas) {
-    return <div>Select a canvas</div>;
+    return (
+      <div className="flex flex-col gap-5 text-center p-4 items-center justify-center">
+        <AnnotationsIcon className="w-32 h-32 text-gray-300" />
+        <p className="text-gray-500">
+          Annotations are associated with Canvases in a IIIF Manifest. To view or add
+          annotations, first create a Canvas and then select the Annotations link
+        </p>
+      </div>
+    );
   }
 
   if (firstPage) {
@@ -38,17 +45,6 @@ function AnnotationsPanel() {
     <CanvasContext canvas={canvas.id}>
       <AnnotationsCreateEmptyPage />
     </CanvasContext>
-  );
-}
-
-function AnnotationDebug() {
-  const store = useAtlasStore();
-  const { polygon, polygonState, polygons, ...data } = useStore(store, (s) => s);
-  return (
-    <div>
-      Hello annotations
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
   );
 }
 

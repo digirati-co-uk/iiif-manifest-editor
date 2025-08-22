@@ -112,7 +112,7 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
     const formData = Object.fromEntries(data.entries()) as any;
 
     props.runCreate({
-      body,
+      body: {en: [formData.caption]},
       imageUrl: formData.url,
     });
   };
@@ -122,16 +122,21 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
       <>
 
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link to Image</InputLabel>
-          <Input id="url" name="url" defaultValue="" />
+          <InputLabel htmlFor="url">URL to Image</InputLabel>
+          <Input id="url" name="url" defaultValue="" placeholder="https://example.org/image.jpg"/>
         </InputContainer>
 
 
-        <HTMLEditor
-          className="border-none"
-          value={body.en?.[0] || ""}
-          onChange={(newValue) => setBody({en: [newValue]})}
-        />
+        <InputContainer $wide>
+          <InputLabel htmlFor="caption">Caption</InputLabel>
+          <Input
+            id="caption"
+            name="caption"
+            placeholder="Enter a caption"
+            onChange={(e: any) => setBody({en: [e.target.value]})}
+            value={body.en?.[0] || ""}
+          />
+        </InputContainer>
 
         <ActionButton primary type="submit">
           Create

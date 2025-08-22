@@ -1,19 +1,24 @@
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
-import { useAnnotation, useAnnotationPage, useRequestAnnotation } from "react-iiif-vault";
+import { useAnnotation, useAnnotationPage, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 
-export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: React.ReactNode } = {}) {
+export function useAnnotationEditor({ annotationPopup, bounds: inputBounds }: { annotationPopup?: React.ReactNode, bounds?: { x: number, y: number, width: number, height: number } } = {}) {
   const annotation = useAnnotation();
+  const canvas = useCanvas();
   const editor = useGenericEditor(annotation);
   const pageEditor = useGenericEditor(useAnnotationPage());
   const target = editor.annotation.target.getParsedSelector();
   const { requestAnnotation, isPending, cancelRequest, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       if (resp.target) {
+        console.log('success!', resp.target)
         editor.annotation.target.setSelector(resp.target);
       }
     },
   });
+
+  const bounds = inputBounds || (canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null);
+
   // Request Annotation selector correctly.
   // biome-ignore lint/correctness/useExhaustiveDependencies: We don't support changing it.
   const requestAnnotationFromTarget = useCallback(
@@ -25,6 +30,7 @@ export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: Rea
             open: false,
             points: target.points,
             annotationPopup,
+            bounds,
           });
         }
 
@@ -34,6 +40,7 @@ export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: Rea
             open: true,
             points: target.points,
             annotationPopup,
+            bounds,
           });
         }
 
@@ -49,10 +56,11 @@ export function useAnnotationEditor({ annotationPopup }: { annotationPopup?: Rea
             },
             selectByDefault: true,
             annotationPopup,
+            bounds,
           });
         }
       }
-      return requestAnnotation({ type: "polygon", open: true, points: [], annotationPopup });
+      return requestAnnotation({ type: "polygon", open: true, points: [], annotationPopup, bounds });
     },
     [target, requestAnnotation],
   );

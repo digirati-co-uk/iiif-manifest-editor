@@ -1,6 +1,6 @@
 import { SplashTabsStyles as S } from "./SplashTabs.styles";
 import { ReactNode } from "react";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useLocalStorage } from "@manifest-editor/shell";
 
 export function SplashTabs({ children }: { children: Record<string, ReactNode> }) {
   const [current, setCurrent] = useLocalStorage("splash-tabs", "getting-started");

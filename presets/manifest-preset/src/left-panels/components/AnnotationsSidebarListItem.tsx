@@ -24,6 +24,9 @@ export function AnnotationsSidebarListItem() {
   } = useAnnotationEditor();
   const [annotation, { highlightProps }] = useAnnotationInfo();
 
+  const isBodyEmpty = !annotation || annotation.body.length === 0;
+
+
   const [isOpen, setIsOpen] = useState(false);
   // This is an annotatino within a page.
   return (
@@ -32,14 +35,18 @@ export function AnnotationsSidebarListItem() {
       className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
     >
       <div className="relative">
-        {isOpen ? (
-          <HTMLAnnotationEditor className="border-none" />
-        ) : (
-          <HTMLAnnotationBodyRender
-            className="px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
-            locale="en"
-          />
-        )}
+        {isBodyEmpty ? <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">This annotation has no body.</div> :
+          <>
+            {isOpen ? (
+              <HTMLAnnotationEditor className="border-none" />
+            ) : (
+              <HTMLAnnotationBodyRender
+                className="px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
+                locale="en"
+              />
+            )}
+          </>
+        }
       </div>
       <div className="flex gap-2 p-2">
         {isOpen && isPending ? (
@@ -64,7 +71,7 @@ export function AnnotationsSidebarListItem() {
               });
             }}
           >
-            <EditTextIcon /> Edit
+              <EditTextIcon /> {isBodyEmpty ? "Edit target" : "Edit"}
           </ActionButton>
         )}
         <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>

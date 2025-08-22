@@ -72,7 +72,7 @@ export function AnnotationPreview({
   const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
   const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
 
-  if (firstBody.type === "TextualBody") {
+  if (!firstBody || firstBody.type === "TextualBody") {
     return (
       <Button
         className="border border-gray-300 text-left hover:border-me-500 w-full shadow-sm rounded bg-white relative mb-2"
@@ -84,10 +84,17 @@ export function AnnotationPreview({
             : undefined
         }
       >
-        <HTMLAnnotationBodyRender
-          className="px-3 pt-3 prose-p:text-slate-600"
-          locale="en"
-        />
+        {firstBody ? (
+          <HTMLAnnotationBodyRender
+            className="px-3 pt-3 prose-p:text-slate-600"
+            locale="en"
+          />
+        ) : (
+            <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
+              This annotation has no body.
+            </div>
+          )
+        }
       </Button>
     )
   }
