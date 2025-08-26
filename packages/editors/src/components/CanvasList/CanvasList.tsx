@@ -12,7 +12,11 @@ interface CanvasListProps {
   inlineHandle?: boolean;
   activeId?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
-  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  createActions?: (
+    ref: Reference,
+    index: number,
+    item: Reference | SpecificResource,
+  ) => AppDropdownItem[];
 }
 
 export function CanvasList(props: CanvasListProps) {
