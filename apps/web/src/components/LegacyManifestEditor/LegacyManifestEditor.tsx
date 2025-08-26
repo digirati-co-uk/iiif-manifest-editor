@@ -1,7 +1,17 @@
 "use client";
 
-import { ProjectProvider, useOptionalCurrentProject, useProjectCreators } from "@manifest-editor/projects";
-import { Layout, MultiAppProvider, PreviewConfiguration, ShellProvider, mapApp } from "@manifest-editor/shell";
+import {
+  ProjectProvider,
+  useOptionalCurrentProject,
+  useProjectCreators,
+} from "@manifest-editor/projects";
+import {
+  Layout,
+  MultiAppProvider,
+  PreviewConfiguration,
+  ShellProvider,
+  mapApp,
+} from "@manifest-editor/shell";
 import * as aboutApp from "./apps/About";
 import * as splashApp from "./apps/Splash";
 import * as manifestEditorApp from "@manifest-editor/manifest-preset";
@@ -9,7 +19,6 @@ import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import { AppHeader } from "./components/AppHeader";
 // import "manifest-editor/dist/index.css";
 import "@manifest-editor/editors/dist/index.css";
-import "@manifest-editor/shell/dist/index.css";
 import "@manifest-editor/components/dist/index.css";
 import { useState } from "react";
 
@@ -87,7 +96,11 @@ const config = { previews };
 export default function LegacyManifestEditor() {
   return (
     <div className="flex flex-1 h-[100vh] w-full">
-      <MultiAppProvider apps={apps} instanceId="default" initialApp={{ id: "splash" }}>
+      <MultiAppProvider
+        apps={apps}
+        instanceId="default"
+        initialApp={{ id: "splash" }}
+      >
         <ProjectProvider>
           <InternalEditor />
         </ProjectProvider>
@@ -104,9 +117,13 @@ function InternalEditor() {
   if (!project) {
     return (
       <div className="m-auto text-center">
-        <h4 className={`text-3xl text-center text-slate-700 mb-8`}>Welcome to Manifest editor</h4>
+        <h4 className={`text-3xl text-center text-slate-700 mb-8`}>
+          Welcome to Manifest editor
+        </h4>
         {loading ? (
-          <div className={`text-2xl text-center text-slate-500 mb-8`}>Loading...</div>
+          <div className={`text-2xl text-center text-slate-500 mb-8`}>
+            Loading...
+          </div>
         ) : (
           <button
             className="bg-me-primary-500 text-white py-2 px-4 rounded"

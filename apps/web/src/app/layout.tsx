@@ -5,7 +5,6 @@ import { SiteProvider } from "../components/site/Provider";
 import "@manifest-editor/components/dist/index.css";
 import "manifest-editor/dist/index.css";
 import "@manifest-editor/editors/dist/index.css";
-import "@manifest-editor/shell/dist/index.css";
 import "@manifest-editor/components/dist/index.css";
 import "@manifest-editor/exhibition-preset/dist/index.css";
 import { Posthog } from "../components/PostHog";
@@ -19,7 +18,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: { children: React.ReactNode }): JSX.Element {
+}: {
+  children: React.ReactNode;
+}): JSX.Element {
   return (
     <html lang="en">
       <head>
