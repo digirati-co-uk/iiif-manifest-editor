@@ -1,5 +1,12 @@
 import type { Collection } from "@iiif/presentation-3";
-import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 
 export interface Config {
@@ -29,6 +36,7 @@ export interface Config {
     enableMultiMediaCanvases?: boolean;
     rememberCanvasId?: boolean;
     annotationPopups?: boolean;
+    manifestGridOptions?: boolean;
   };
 
   // Internationalisation options
@@ -94,6 +102,9 @@ const DEFAULT_CONFIG: Config = {
   editorFeatureFlags: {
     enableMultiImageCanvases: true,
     enableMultiMediaCanvases: true,
+    annotationPopups: false,
+    rememberCanvasId: true,
+    manifestGridOptions: false,
   },
   uploadBackends: [],
   export: {
@@ -103,7 +114,9 @@ const DEFAULT_CONFIG: Config = {
 };
 
 export const ConfigReactContext = createContext<Config>(DEFAULT_CONFIG);
-export const SaveConfigReactContext = createContext<(config: Partial<Config>) => void>(() => {});
+export const SaveConfigReactContext = createContext<
+  (config: Partial<Config>) => void
+>(() => {});
 
 export function useConfig() {
   return useContext(ConfigReactContext);
@@ -122,7 +135,9 @@ export function ConfigProvider({
   config?: Partial<Config>;
   saveConfig?: (config: Partial<Config>) => void;
 }) {
-  const [runtimeConfig, setRuntimeConfig] = useState<Partial<Config> | null>(null);
+  const [runtimeConfig, setRuntimeConfig] = useState<Partial<Config> | null>(
+    null,
+  );
   const resolvedConfig: Config = useMemo(
     () => ({
       ...DEFAULT_CONFIG,
@@ -131,10 +146,10 @@ export function ConfigProvider({
       editorFeatureFlags: {
         ...DEFAULT_CONFIG.editorFeatureFlags,
         ...(config?.editorFeatureFlags || {}),
-        ...runtimeConfig?.editorFeatureFlags
+        ...runtimeConfig?.editorFeatureFlags,
       },
     }),
-    [config, runtimeConfig]
+    [config, runtimeConfig],
   );
 
   const memoSaveConfig = useCallback(
@@ -144,12 +159,14 @@ export function ConfigProvider({
         saveConfig(config);
       }
     },
-    [config]
+    [config],
   );
 
   return (
     <SaveConfigReactContext.Provider value={memoSaveConfig}>
-      <ConfigReactContext.Provider value={resolvedConfig}>{children}</ConfigReactContext.Provider>
+      <ConfigReactContext.Provider value={resolvedConfig}>
+        {children}
+      </ConfigReactContext.Provider>
     </SaveConfigReactContext.Provider>
   );
 }
