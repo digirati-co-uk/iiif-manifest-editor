@@ -25,6 +25,7 @@ export * from "./hooks/use-event";
 export * from "./hooks/use-match-media";
 export * from "./hooks/use-save-vault";
 export * from "./hooks/use-svg-tools";
+export * from "./hooks/use-annotation-creator-state";
 export * from "./Layout/components/HandleControls";
 export * from "./Layout/components/ModularPanel";
 export * from "./Layout/components/PanelError";

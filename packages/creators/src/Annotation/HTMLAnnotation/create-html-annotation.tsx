@@ -4,8 +4,8 @@ import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import {
   type CreatorContext,
   type CreatorFunctionContext,
-  useAnnotationCreatorState,
 } from "@manifest-editor/creator-api";
+import { useAnnotationCreatorState } from "@manifest-editor/shell";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
@@ -114,7 +114,7 @@ export function CreateHTMLAnnotation(
       <HTMLEditor
         className="border-none"
         value={body.en?.[0] || ""}
-        onChange={(newValue) => setBody({en: [newValue]})}
+        onChange={(newValue) => setBody({ en: [newValue] })}
       />
 
       <ActionButton
