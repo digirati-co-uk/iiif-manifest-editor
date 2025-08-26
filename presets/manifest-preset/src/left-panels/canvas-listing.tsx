@@ -60,10 +60,17 @@ export const canvasListing: LayoutPanel = {
   render: (state, ctx, app) => {
     return (
       <CanvasListing
-        gridView={state.gridView || false}
-        onChangeGridView={(gridView) =>
-          ctx.actions.change("canvas-listing", { gridView })
+        gridView={
+          state.gridView ||
+          localStorage.getItem("canvas-listing-view-mode") === "grid"
         }
+        onChangeGridView={(gridView) => {
+          localStorage.setItem(
+            "canvas-listing-view-mode",
+            gridView ? "grid" : "list",
+          );
+          ctx.actions.change("canvas-listing", { gridView });
+        }}
       />
     );
   },
