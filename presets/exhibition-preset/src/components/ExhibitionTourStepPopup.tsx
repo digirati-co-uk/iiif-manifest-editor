@@ -28,7 +28,7 @@ export function ExhibitionTourStepPopup() {
 
   return (
     <div className="bg-white shadow-md rounded-lg">
-      <div className="prose-headings:mt-1 overflow-hidden rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
+      <div className="prose-headings:mt-1 overflow-y-auto rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
         <HTMLEditor
           className="border-none"
           value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}

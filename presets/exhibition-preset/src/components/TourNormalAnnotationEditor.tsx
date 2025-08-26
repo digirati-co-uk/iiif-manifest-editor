@@ -122,12 +122,12 @@ function TourAnnotationPopupEditor() {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-lg">
-      <div className="prose-headings:mt-1 overflow-hidden rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
+    <div className="bg-white shadow-md rounded-lg relative max-h-[50vh] overflow-y-auto">
+      <div className="prose-headings:mt-1 rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
         <HTMLAnnotationEditor className="border-none" />
       </div>
 
-      <div className="flex gap-2 p-2">
+      <div className="flex gap-2 p-2 sticky bottom-0 z-50 bg-white">
         <ActionButton
           primary
           onPress={() => {

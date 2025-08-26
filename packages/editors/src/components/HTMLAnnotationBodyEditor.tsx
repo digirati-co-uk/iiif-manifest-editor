@@ -1,5 +1,9 @@
 import { ActionButton } from "@manifest-editor/components";
-import { useConfig, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
+import {
+  useConfig,
+  useGenericEditor,
+  useInlineCreator,
+} from "@manifest-editor/shell";
 import { useAnnotation } from "react-iiif-vault";
 import { AnnotationBodyEditor } from "./AnnotationBodyEditor";
 

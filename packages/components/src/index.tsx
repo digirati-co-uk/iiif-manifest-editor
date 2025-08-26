@@ -84,3 +84,4 @@ export * from "./IIIFMediaPlayer";
 // prose-headings:mt-1 prose-headings:mb-1 prose-sm
 // prose-p:text-slate-600
 // min-w-4xl min-w-3xl
+// max-h-[50vh] overflow-y-auto
