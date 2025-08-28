@@ -1,13 +1,13 @@
 import { useInStack } from "@manifest-editor/editors";
-import { BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
+import { type BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { useEditCanvasItems } from "./components";
-import { useManifest } from "react-iiif-vault";
-import { manifestPanel } from "./left-panels/manifest";
-import { canvasListing } from "./left-panels/canvas-listing";
-import { annotationsPanel } from "./left-panels/annotations";
-import { manifestOverview } from "./center-panels/manifest-overview";
 import { flushSync } from "react-dom";
+import { useManifest } from "react-iiif-vault";
+import { manifestOverview } from "./center-panels/manifest-overview";
+import { useEditCanvasItems } from "./components";
+import { annotationsPanel } from "./left-panels/annotations";
+import { canvasListing } from "./left-panels/canvas-listing";
+import { manifestPanel } from "./left-panels/manifest";
 
 export const queryStringTask: BackgroundPanel = {
   id: "manifest-query-string",
@@ -41,7 +41,7 @@ function QueryStringBackgroundTask() {
     if (isLeftPanelOpen) {
       setWasLeftPanelOpenedAutomatically(false);
     }
-  }, [isLeftPanelOpen])
+  }, [isLeftPanelOpen]);
 
   // This rule opens up the canvas listing on the initial render if there is
   // a canvas ID in the query string.
@@ -75,16 +75,13 @@ function QueryStringBackgroundTask() {
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);
-      manifest && edit(manifest)
+      manifest && edit(manifest);
       open({ id: manifestOverview.id });
     }
 
     // When the canvas listing OR annotations is opened, then
     // Edit the first canvas (or last).
-    if (
-      leftPanel.current === canvasListing.id ||
-      leftPanel.current === annotationsPanel.id
-    ) {
+    if (leftPanel.current === canvasListing.id || leftPanel.current === annotationsPanel.id) {
       const firstCanvas = lastCanvas.current || manifest?.items?.[0]?.id;
       if (firstCanvas) {
         open({ id: "current-canvas" });
@@ -104,8 +101,6 @@ function QueryStringBackgroundTask() {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }
-
-
   }, [leftPanel.current]);
 
   return null;

@@ -5,18 +5,6 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "files": {
-    "ignoreUnknown": false,
-    "experimentalScannerIgnores": ["node_modules", ".next"],
-    "includes": [
-      "src/**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,html,css,scss,sass}",
-      "!**/node_modules/**/*",
-      "!**/.next",
-      "!**/dist",
-      "!**/out",
-      "!**/.vercel"
-    ]
-  },
   "linter": {
     "enabled": true,
     "rules": {

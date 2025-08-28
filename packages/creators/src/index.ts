@@ -20,15 +20,16 @@ import { thumbnailCreator } from "./ContentResource/ThumbnailCreator";
 import { webPageCreator } from "./ContentResource/WebPageCreator";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
+import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
 
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
 export * from "./Annotation/CaptionedImageAnnotation/create-captioned-image-annotation";
 export * from "./Annotation/HTMLAnnotation/create-html-annotation";
+export * from "./Annotation/ImageServiceAnnotation/create-service-annotation";
 export * from "./Annotation/ImageUrlAnnotation/create-image-url-annotation";
 export * from "./Annotation/ImageUrlListAnnotation/create-image-url-list-annotation";
-export * from "./Annotation/ImageServiceAnnotation/create-service-annotation";
-export * from "./Annotation/VideoAnnotation/create-video-annotation";
 export * from "./Annotation/NoBodyAnnotation/index";
+export * from "./Annotation/VideoAnnotation/create-video-annotation";
 export * from "./Canvas/InternalCanvas/index";
 export * from "./ContentResource/HTMLBodyCreator/create-html-body";
 export * from "./ContentResource/IIIFBrowserCreator/iiif-browser-creator";
@@ -40,6 +41,7 @@ export * from "./ContentResource/ThumbnailCreator/create-thumbnail";
 export * from "./ContentResource/WebPageCreator/create-web-page";
 export * from "./ContentResource/YouTubeCreator/create-youtube-body";
 export * from "./Manifest/ManifestBrowserCreator/manifest-browser-creator";
+export * from "./Range/TopLevelRangeCreator/create-range-top-level";
 
 export const allCreators = [
   // Images first.
@@ -63,6 +65,7 @@ export const allCreators = [
   imageUrlListCreator,
   imageUrlListAnnotation,
   thumbnailCreator,
+  rangeTopLevel,
 ];
 
 export {
@@ -84,6 +87,7 @@ export {
   captionedImageAnnotation,
   imageUrlListCreator,
   imageUrlListAnnotation,
+  rangeTopLevel,
   // Not included
   manifestBrowserCreator,
 };

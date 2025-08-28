@@ -4,6 +4,7 @@
   "extends": "./base.json",
   "compilerOptions": {
     "module": "ESNext",
+    "declarationMap": true,
     "moduleResolution": "Bundler",
     "allowJs": true
   }

@@ -15,6 +15,7 @@ import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { queryStringTask } from "./query-string";
+import { rangesPanel } from "./left-panels/range-listing";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
@@ -37,6 +38,7 @@ export const centerPanels: LayoutPanel[] = [
 export const leftPanels: LayoutPanel[] = [
   manifestPanel,
   canvasListing,
+  rangesPanel,
   annotationsPanel,
   // @todo we will come back to the image grid
   // {

@@ -65,9 +65,11 @@ export * from "./icons/EditTextIcon";
 export * from "./icons/CheckIcon";
 export * from "./icons/AnnotationPopInIcon";
 export * from "./icons/AnnotationPopOutIcon";
+export * from "./icons/RangesIcon";
 
 // Messages
 export * from "./ErrorMessage";
+export * from "./WarningMessage";
 
 // Helpers
 export * from "./hooks";
