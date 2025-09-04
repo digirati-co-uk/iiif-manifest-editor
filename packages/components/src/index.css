@@ -139,7 +139,7 @@ div.mdxeditor-toolbar {
     height: 8px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #D75281;
+    background: #d75281;
     border-radius: 8px;
   }
   &::-webkit-scrollbar-track {
@@ -147,6 +147,10 @@ div.mdxeditor-toolbar {
   }
 
   /* For Firefox and offshoots */
-  scrollbar-color: #D75281 transparent;
+  scrollbar-color: #d75281 transparent;
   scrollbar-width: thin;
+}
+
+.react-aria-TreeItem {
+  padding-left: calc((var(--tree-item-level) - 1) * 20px);
 }
