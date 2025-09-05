@@ -32,14 +32,10 @@ export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
+  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []))
 
-  const topLevelRange = useMemo(() => {
-    if (!manifest?.structures?.[0]) {
-      return null;
-    }
 
-    return helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
-  }, [manifest]);
+  console.log('render', topLevelRange);
 
   const isContiguous = useMemo(() => {
     if (!manifest?.structures?.[0]) {
@@ -61,7 +57,7 @@ export function RangeLeftPanel() {
           <WarningMessage className="mb-2">This is a virtual top level range</WarningMessage>
         ) : null}
         {!isContiguous ? <WarningMessage className="mb-2">Warning: Non-contiguous range</WarningMessage> : null}
-        <RangeTree range={topLevelRange} />
+        <RangeTree />
       </SidebarContent>
     </Sidebar>
   );

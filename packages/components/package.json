@@ -59,7 +59,7 @@
     "polygon-editor": "0.0.23",
     "react": "^18.3.1",
     "react-aria": "^3.38.1",
-    "react-aria-components": "^1.7.1",
+    "react-aria-components": "^1.12",
     "react-calendar": "^4.8.0",
     "react-clock": "^4.6.0",
     "react-datetime-picker": "^5.6.0",

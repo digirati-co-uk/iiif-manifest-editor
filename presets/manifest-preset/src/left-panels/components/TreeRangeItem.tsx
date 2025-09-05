@@ -17,7 +17,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       {...props}
     >
       <TreeItemContent>
-        {({ isExpanded, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
+        {({ isExpanded, selectionBehavior, isDropTarget, selectionMode }: TreeItemContentRenderProps) => (
           <>
             {selectionBehavior === "toggle" && selectionMode !== "none" && <Checkbox slot="selection" />}
 
@@ -27,7 +27,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               />
             </Button>
 
-            <LocaleString>{props.range.label || "Untitled range"}</LocaleString>
+            <LocaleString className={isDropTarget ? "bg-[red]" : ""}>
+              {props.range.label || "Untitled range"}
+            </LocaleString>
           </>
         )}
       </TreeItemContent>

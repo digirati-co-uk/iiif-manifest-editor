@@ -40,7 +40,7 @@
     "next": "^14.2.25",
     "posthog-js": "^1.144.1",
     "react": "^18.3.1",
-    "react-aria-components": "^1.7.1",
+    "react-aria-components": "^1.12",
     "react-dom": "^18.3.1",
     "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/40a6d11c/react-iiif-vault",
     "react-joyride": "^2.9.3",
