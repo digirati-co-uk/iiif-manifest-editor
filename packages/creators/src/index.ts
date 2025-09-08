@@ -17,6 +17,7 @@ import { imageUrlCreator } from "./ContentResource/ImageUrlCreator";
 import { imageUrlListCreator } from "./ContentResource/ImageUrlListCreator";
 import { plaintextCreator } from "./ContentResource/PlaintextCreator";
 import { thumbnailCreator } from "./ContentResource/ThumbnailCreator";
+import { providerCreator } from "./Agent/ProviderCreator";
 import { webPageCreator } from "./ContentResource/WebPageCreator";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
@@ -63,6 +64,7 @@ export const allCreators = [
   imageUrlListCreator,
   imageUrlListAnnotation,
   thumbnailCreator,
+  providerCreator,
 ];
 
 export {
