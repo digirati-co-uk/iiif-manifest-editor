@@ -1,16 +1,7 @@
-import {
-  ActionButton,
-  Form,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
+import { ActionButton, Form, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
-import {
-  usePreviewContext,
-  usePreviews,
-} from "../PreviewContext/PreviewContext";
 import { useDecayState } from "../hooks/use-decay-state";
+import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 
 export function ConfigEditor() {
@@ -29,9 +20,7 @@ export function ConfigEditor() {
       i18n: {
         ...(config.i18n || ({} as any)),
         advancedLanguageMode: formValues.get("advancedLanguageMode") === "on",
-        availableLanguages: (
-          (formValues.get("availableLanguages") as string) || ""
-        )
+        availableLanguages: ((formValues.get("availableLanguages") as string) || "")
           .split(",")
           .map((t: string) => t.trim()),
         defaultLanguage: formValues.get("defaultLanguage") as string,
@@ -44,8 +33,11 @@ export function ConfigEditor() {
       editorFeatureFlags: {
         ...(config.editorFeatureFlags || ({} as any)),
         rememberCanvasId: formValues.get("rememberCanvasId") === "on",
+        rememberLeftPanelId: formValues.get("rememberLeftPanelId") === "on",
         annotationPopups: formValues.get("annotationPopups") === "on",
         manifestGridOptions: formValues.get("manifestGridOptions") === "on",
+        enableMultiImageCanvases: formValues.get("enableMultiImageCanvases") === "on",
+        enableMultiMediaCanvases: formValues.get("enableMultiMediaCanvases") === "on",
       },
     };
 
@@ -57,11 +49,7 @@ export function ConfigEditor() {
   return (
     <Sidebar>
       <SidebarHeader title="Workspace configuration" />
-      {isSaved ? (
-        <div className="bg-me-primary-500 text-white p-3 text-sm">
-          Changes saved
-        </div>
-      ) : null}
+      {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">Changes saved</div> : null}
       <SidebarContent className="p-4">
         <Form.Form onSubmit={onSubmit} className="flex flex-col gap-3">
           <Form.InputContainer>
@@ -75,9 +63,7 @@ export function ConfigEditor() {
           </Form.InputContainer>
 
           <Form.InputContainer>
-            <Form.Label htmlFor="availableLanguages">
-              Available Languages
-            </Form.Label>
+            <Form.Label htmlFor="availableLanguages">Available Languages</Form.Label>
             <Form.Input
               type="text"
               name="availableLanguages"
@@ -93,9 +79,7 @@ export function ConfigEditor() {
               id="advancedLanguageMode"
               defaultChecked={config.i18n?.advancedLanguageMode || false}
             />
-            <Form.Label htmlFor="advancedLanguageMode">
-              Advanced Language Mode
-            </Form.Label>
+            <Form.Label htmlFor="advancedLanguageMode">Advanced Language Mode</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -105,9 +89,7 @@ export function ConfigEditor() {
               id="textGranularityEnabled"
               defaultChecked={config.i18n?.textGranularityEnabled || false}
             />
-            <Form.Label htmlFor="textGranularityEnabled">
-              Enable text granularity
-            </Form.Label>
+            <Form.Label htmlFor="textGranularityEnabled">Enable text granularity</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -115,13 +97,19 @@ export function ConfigEditor() {
               type="checkbox"
               name="rememberCanvasId"
               id="rememberCanvasId"
-              defaultChecked={
-                config.editorFeatureFlags?.rememberCanvasId || false
-              }
+              defaultChecked={config.editorFeatureFlags?.rememberCanvasId || false}
             />
-            <Form.Label htmlFor="rememberCanvasId">
-              Remember Canvas ID
-            </Form.Label>
+            <Form.Label htmlFor="rememberCanvasId">Remember Canvas ID</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="rememberLeftPanelId"
+              id="rememberLeftPanelId"
+              defaultChecked={config.editorFeatureFlags?.rememberLeftPanelId || false}
+            />
+            <Form.Label htmlFor="rememberLeftPanelId">Remember Left panel</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -129,13 +117,9 @@ export function ConfigEditor() {
               type="checkbox"
               name="manifestGridOptions"
               id="manifestGridOptions"
-              defaultChecked={
-                config.editorFeatureFlags?.manifestGridOptions || false
-              }
+              defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
             />
-            <Form.Label htmlFor="manifestGridOptions">
-              Manifest Grid Options
-            </Form.Label>
+            <Form.Label htmlFor="manifestGridOptions">Manifest Grid Options</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -145,9 +129,7 @@ export function ConfigEditor() {
               id="isVersion2"
               defaultChecked={config.export?.version === 2}
             />
-            <Form.Label htmlFor="isVersion2">
-              Export Presentation 2 {resource.type}s
-            </Form.Label>
+            <Form.Label htmlFor="isVersion2">Export Presentation 2 {resource.type}s</Form.Label>
           </Form.InputContainer>
 
           {/* <Form.InputContainer>
@@ -175,11 +157,7 @@ export function ConfigEditor() {
                       id={preview.id}
                       name="defaultPreview"
                       value={preview.id}
-                      defaultChecked={
-                        !config.defaultPreview
-                          ? key === 0
-                          : config.defaultPreview === preview.id
-                      }
+                      defaultChecked={!config.defaultPreview ? key === 0 : config.defaultPreview === preview.id}
                     />
                     <label htmlFor={preview.id}>{preview.label}</label>
                   </Form.InputContainer>

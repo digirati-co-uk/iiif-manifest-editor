@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useManifest } from "react-iiif-vault";
 import { manifestOverview } from "./center-panels/manifest-overview";
+import { rangeWorkbench } from "./center-panels/range-workbench";
 import { useEditCanvasItems } from "./components";
 import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
+import { rangesPanel } from "./left-panels/range-listing";
 
 export const queryStringTask: BackgroundPanel = {
   id: "manifest-query-string",
@@ -15,15 +17,23 @@ export const queryStringTask: BackgroundPanel = {
   render: () => <QueryStringBackgroundTask />,
 };
 
-function setCanvasIdQueryString(canvasId: string | null | undefined) {
+function setQueryString(key: string, value: string | null | undefined) {
   const currentQueryString = new URLSearchParams(window.location.search);
   const newQueryString = new URLSearchParams(currentQueryString);
-  if (canvasId) {
-    newQueryString.set("canvas", canvasId);
+  if (value) {
+    newQueryString.set(key, value);
   } else {
-    newQueryString.delete("canvas");
+    newQueryString.delete(key);
   }
   window.history.replaceState(null, "", `?${newQueryString.toString()}`);
+}
+
+function setCanvasIdQueryString(value: string | null | undefined) {
+  setQueryString("canvas", value);
+}
+
+function setLeftPanelIdQueryString(value: string | null | undefined) {
+  setQueryString("leftPanel", value);
 }
 
 function QueryStringBackgroundTask() {
@@ -32,8 +42,9 @@ function QueryStringBackgroundTask() {
   const { leftPanel, rightPanel } = useLayoutState();
   const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { canvasActions, open } = useEditCanvasItems();
-  const { editorFeatureFlags: { rememberCanvasId = true } = {} } = useConfig();
+  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
   const lastCanvas = useRef<string | null>(null);
+  const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
   const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
 
@@ -56,7 +67,19 @@ function QueryStringBackgroundTask() {
       open({ id: "current-canvas" });
       canvasActions.edit({ id: canvasId, type: "Canvas" });
     }
+
+    const leftPanelId = initialQueryString.get("leftPanel");
+    lastLeftPanel.current = leftPanelId;
+    if (leftPanelId) {
+      leftPanelActions.open({ id: leftPanelId });
+    }
   }, []);
+
+  useEffect(() => {
+    if (rememberLeftPanelId) {
+      setLeftPanelIdQueryString(leftPanel.current);
+    }
+  }, [leftPanel.current]);
 
   // This rule will set the query string when the canvas changes.
   useEffect(() => {
@@ -79,6 +102,10 @@ function QueryStringBackgroundTask() {
       open({ id: manifestOverview.id });
     }
 
+    if (leftPanel.current === rangesPanel.id) {
+      open({ id: rangeWorkbench.id });
+    }
+
     // When the canvas listing OR annotations is opened, then
     // Edit the first canvas (or last).
     if (leftPanel.current === canvasListing.id || leftPanel.current === annotationsPanel.id) {
@@ -90,14 +117,22 @@ function QueryStringBackgroundTask() {
     }
 
     // Close the right panel
-    if (leftPanel.current === annotationsPanel.id && rightPanel.open) {
+    const shouldCloseRightPanel =
+      // Annotations panel
+      leftPanel.current === annotationsPanel.id ||
+      // Ranges panel.
+      leftPanel.current === rangesPanel.id;
+
+    if (shouldCloseRightPanel && rightPanel.open) {
       flushSync(() => {
         rightPanelActions.close();
       });
       setWasLeftPanelOpenedAutomatically(true);
     }
 
-    if (leftPanel.current !== annotationsPanel.id && wasLeftPanelOpenedAutomatically) {
+    const shouldOpenRightPanel = leftPanel.current !== annotationsPanel.id && leftPanel.current !== rangesPanel.id;
+
+    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

@@ -10,12 +10,13 @@ import {
 } from "@manifest-editor/shell";
 import { canvasAnnotations } from "./annotations/CanvasAnnotations";
 import { manifestOverview } from "./center-panels/manifest-overview";
+import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
 import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
-import { queryStringTask } from "./query-string";
 import { rangesPanel } from "./left-panels/range-listing";
+import { queryStringTask } from "./query-string";
 
 export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
 
@@ -27,6 +28,7 @@ export const centerPanels: LayoutPanel[] = [
     icon: "",
     render: (state, { actions }) => <CanvasPanelEditor />,
   },
+  rangeWorkbench,
   {
     id: "export",
     label: "Export",
