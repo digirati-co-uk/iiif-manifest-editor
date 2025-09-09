@@ -1,6 +1,9 @@
 import { RangesIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { createRangeTopLevel, TopLevelRangeCreatorForm } from "./create-range-top-level";
+import {
+  createRangeTopLevel,
+  TopLevelRangeCreatorForm,
+} from "./create-range-top-level";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {

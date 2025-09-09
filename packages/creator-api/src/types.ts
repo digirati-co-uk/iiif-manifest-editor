@@ -72,6 +72,7 @@ export interface CreatorOptions {
   target?: Reference;
   parent?: CreatorParent;
   initialData?: any;
+  rootId?: string;
 }
 
 export type AllAvailableParentTypes = keyof typeof resources.supported;

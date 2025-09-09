@@ -1,25 +1,41 @@
 import type { InternationalString, Reference } from "@iiif/presentation-3";
 import { ActionButton } from "@manifest-editor/components";
-import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import type {
+  CreatorContext,
+  CreatorFunctionContext,
+  CreatorResource,
+} from "@manifest-editor/creator-api";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
 export interface CreateTopLevelRangePayload {
+  type: "Range";
   label?: InternationalString | string;
-  items?: Array<Reference<"Canvas">>;
+  items?: Array<Reference<"Canvas"> | Reference<"Range">>;
 }
 
-export async function createRangeTopLevel(data: CreateTopLevelRangePayload, ctx: CreatorFunctionContext) {
+export async function createRangeTopLevel(
+  data: CreateTopLevelRangePayload,
+  ctx: CreatorFunctionContext,
+  parentId?: string,
+): Promise<CreatorResource> {
+  const rangeId = ctx.generateId(
+    `range`,
+    parentId ? { id: parentId, type: "Range" } : undefined,
+  );
+
   return ctx.embed({
-    id: ctx.generateId(`range`),
+    id: rangeId,
     type: "Range",
     label: data.label || "Table of Contents",
     items: (data.items || []).map((item) => ctx.ref(item)),
   });
 }
 
-export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRangePayload>) {
+export function TopLevelRangeCreatorForm(
+  props: CreatorContext<CreateTopLevelRangePayload>,
+) {
   const [label, setLabel] = useState<InternationalString>({ en: [""] });
 
   const onSubmit = (e: FormEvent) => {
@@ -28,7 +44,7 @@ export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRan
     const formData = Object.fromEntries(data.entries()) as any;
 
     if (formData.url) {
-      props.runCreate({ label });
+      props.runCreate({ type: "Range", label });
     }
   };
 

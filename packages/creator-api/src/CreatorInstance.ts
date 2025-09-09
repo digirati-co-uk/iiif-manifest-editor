@@ -114,6 +114,9 @@ export class CreatorInstance implements CreatorFunctionContext {
     if (parent && parent instanceof ReferencedResource) {
       parent = parent.ref();
     }
+    if (this.options.rootId) {
+      parent = { id: this.options.rootId, type: "none" };
+    }
 
     return `${(parent || this.options.parent?.resource)?.id}/${type}/${randomId()}`;
   }
