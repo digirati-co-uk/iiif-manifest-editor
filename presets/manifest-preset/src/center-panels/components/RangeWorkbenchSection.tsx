@@ -2,6 +2,7 @@ import { RangeTableOfContentsNode } from "@iiif/helpers";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
+  RangesIcon,
 } from "@manifest-editor/components";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
@@ -20,19 +21,23 @@ export function RangeWorkbenchSection({
           {range.label || "Untitled range"}
         </LocaleString>
         <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
-          Edit
+          {range.isRangeLeaf ? "Bulk actions" : "Edit range"}
         </ActionButton>
       </div>
       <div className="grid grid-sm gap-3">
         {(range.items || []).map((item) => {
           if (item.type !== "Canvas") {
             return (
-              <div key={item.id}>
+              <div
+                key={item.id}
+                className="aspect-square bg-gray-100 rounded items-center justify-center flex flex-col"
+              >
+                <RangesIcon className="w-12 h-12" />
                 <LocaleString>{item.label || "Untitled range"}</LocaleString>
                 <ActionButton
-                  onPress={() => edit({ id: range.id, type: "Range" })}
+                  onPress={() => edit({ id: item.id, type: "Range" })}
                 >
-                  Edit
+                  {item.isRangeLeaf ? "Bulk actions" : "Edit range"}
                 </ActionButton>
               </div>
             );
