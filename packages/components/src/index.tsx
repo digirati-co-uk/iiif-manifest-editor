@@ -70,6 +70,7 @@ export * from "./icons/RangesIcon";
 // Messages
 export * from "./ErrorMessage";
 export * from "./WarningMessage";
+export * from "./InfoMessage";
 
 // Helpers
 export * from "./hooks";

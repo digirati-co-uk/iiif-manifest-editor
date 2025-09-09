@@ -5,6 +5,7 @@ import {
 } from "@iiif/helpers";
 import { RangeNormalized } from "@iiif/presentation-3-normalized";
 import {
+  AddImageIcon,
   ErrorMessage,
   Sidebar,
   SidebarContent,
@@ -12,7 +13,7 @@ import {
   WarningMessage,
 } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   LocaleString,
   useCanvas,
@@ -21,6 +22,7 @@ import {
 } from "react-iiif-vault";
 import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
 import { RangeTree } from "./components/RangeTree";
+import { useRangeSplittingStore } from "../store/range-splitting-store";
 
 export const rangesPanel: LayoutPanel = {
   id: "@manifest-editor/ranges-listing",
@@ -49,6 +51,24 @@ export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+export function SplitRangeIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      {/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}
+      <path
+        fill="currentColor"
+        d="M4 18V6zm2-2v-5h9v5zm-2 4q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v6h-2V6H4v12h9v2zm12.5-8V9.5H9V8h9v4zM18 22v-3h-3v-2h3v-3h2v3h3v2h-3v3z"
+      />
+    </svg>
+  );
+}
+
 export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
@@ -56,6 +76,11 @@ export function RangeLeftPanel() {
   const topLevelRange = helper.rangesToTableOfContentsTree(
     vault.get(manifest!.structures || []),
   );
+  const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
+
+  useEffect(() => {
+    return splitEffect();
+  }, []);
 
   console.log("render", topLevelRange);
 
@@ -77,7 +102,17 @@ export function RangeLeftPanel() {
 
   return (
     <Sidebar>
-      <SidebarHeader title={topLevelRange.label || "Untitled range"} />
+      <SidebarHeader
+        title={topLevelRange.label || "Untitled range"}
+        actions={[
+          {
+            title: "Split range",
+            icon: <SplitRangeIcon className="text-xl" />,
+            onClick: () => setIsSplitting(!isSplitting),
+            toggled: isSplitting,
+          },
+        ]}
+      />
       <SidebarContent className="p-2">
         {topLevelRange.isVirtual ? (
           <WarningMessage className="mb-2">
@@ -89,7 +124,8 @@ export function RangeLeftPanel() {
             Warning: Non-contiguous range
           </WarningMessage>
         ) : null}
-        <RangeTree />
+
+        {isSplitting ? <div>Splitting...</div> : <RangeTree />}
       </SidebarContent>
     </Sidebar>
   );

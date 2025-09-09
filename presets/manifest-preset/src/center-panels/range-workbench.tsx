@@ -3,6 +3,8 @@ import { toRef } from "@iiif/parser";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
+  InfoMessage,
+  WarningMessage,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -19,6 +21,7 @@ import {
   useVaultSelector,
 } from "react-iiif-vault";
 import { flattenedRanges } from "../left-panels/components/RangeTree";
+import { useRangeSplittingStore } from "../store/range-splitting-store";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -32,7 +35,7 @@ function RangeWorkbench() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-
+  const { isSplitting } = useRangeSplittingStore();
   const topLevelRange = useVaultSelector(
     (_, vault) => {
       const selected = toRef<any>(selectedRange?.resource);
@@ -67,6 +70,9 @@ function RangeWorkbench() {
         {topLevelRange.label}
       </LocaleString>
       <hr className="my-4 border-b border-b-gray-300" />
+      {isSplitting ? (
+        <InfoMessage className="my-4">Splitting range</InfoMessage>
+      ) : null}
       <div className="grid grid-sm gap-3">
         {(topLevelRange.items || []).map((item) => {
           if (item.type !== "Canvas") {
