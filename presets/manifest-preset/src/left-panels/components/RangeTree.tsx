@@ -26,7 +26,7 @@ interface RangeTreeProps {
   hideCanvases?: boolean;
 }
 
-function flattenedRanges(range: RangeTableOfContentsNode) {
+export function flattenedRanges(range: RangeTableOfContentsNode) {
   const flatList: {
     item: RangeTableOfContentsNode;
     parent: RangeTableOfContentsNode | null;
@@ -88,6 +88,13 @@ export function RangeTree(props: RangeTreeProps) {
           "text/plain": item.toString(),
         };
       });
+    },
+    renderDragPreview(items) {
+      return (
+        <div className="opacity-50 bg-gray-200 rounded p-1">
+          <span className="">{items.length} items</span>
+        </div>
+      );
     },
     onDrop: async (e) => {
       const items = await deserialiseRangeItems(e.items);

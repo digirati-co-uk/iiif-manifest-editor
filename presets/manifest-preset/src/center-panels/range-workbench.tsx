@@ -1,4 +1,5 @@
 import { createRangeHelper } from "@iiif/helpers";
+import { toRef } from "@iiif/parser";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
@@ -15,7 +16,9 @@ import {
   LocaleString,
   useManifest,
   useVault,
+  useVaultSelector,
 } from "react-iiif-vault";
+import { flattenedRanges } from "../left-panels/components/RangeTree";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -29,14 +32,23 @@ function RangeWorkbench() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const topLevelRange =
-    selectedRange && selectedRange.resource.source
-      ? helper.rangeToTableOfContentsTree(
-          vault.get(selectedRange.resource.source || {}),
-        )
-      : manifest!.structures
-        ? helper.rangesToTableOfContentsTree(vault.get(manifest!.structures))
-        : null;
+
+  const topLevelRange = useVaultSelector(
+    (_, vault) => {
+      const selected = toRef<any>(selectedRange?.resource);
+      if (selected) {
+        return helper.rangeToTableOfContentsTree(vault.get(selected)!);
+      }
+
+      if (!manifest!.structures) {
+        return null;
+      }
+
+      const structures = vault.get(manifest!.structures || []);
+      return helper.rangesToTableOfContentsTree(structures)! || {};
+    },
+    [manifest, selectedRange],
+  );
 
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
