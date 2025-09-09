@@ -1,9 +1,21 @@
 import { createRangeHelper } from "@iiif/helpers";
-import { ActionButton, CanvasThumbnailGridItem } from "@manifest-editor/components";
+import {
+  ActionButton,
+  CanvasThumbnailGridItem,
+} from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
-import { type LayoutPanel, useEditingStack, useLayoutActions } from "@manifest-editor/shell";
+import {
+  type LayoutPanel,
+  useEditingStack,
+  useLayoutActions,
+} from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { CanvasContext, LocaleString, useManifest, useVault } from "react-iiif-vault";
+import {
+  CanvasContext,
+  LocaleString,
+  useManifest,
+  useVault,
+} from "react-iiif-vault";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -17,9 +29,14 @@ function RangeWorkbench() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const topLevelRange = selectedRange
-    ? helper.rangeToTableOfContentsTree(vault.get(selectedRange.resource.source))
-    : helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
+  const topLevelRange =
+    selectedRange && selectedRange.resource.source
+      ? helper.rangeToTableOfContentsTree(
+          vault.get(selectedRange.resource.source || {}),
+        )
+      : manifest!.structures
+        ? helper.rangesToTableOfContentsTree(vault.get(manifest!.structures))
+        : null;
 
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
@@ -31,7 +48,9 @@ function RangeWorkbench() {
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <span className="text-gray-500">Range workbench</span>
-      {selectedRange ? <ActionButton onPress={() => back()}>Go Back</ActionButton> : null}
+      {selectedRange ? (
+        <ActionButton onPress={() => back()}>Go Back</ActionButton>
+      ) : null}
       <LocaleString as="h3" className="text-2xl">
         {topLevelRange.label}
       </LocaleString>
@@ -40,9 +59,13 @@ function RangeWorkbench() {
         {(topLevelRange.items || []).map((item) => {
           if (item.type !== "Canvas") {
             return (
-              <div>
+              <div key={item.id}>
                 <LocaleString>{item.label || "Untitled range"}</LocaleString>
-                <ActionButton onPress={() => edit({ id: item.id, type: "Range" })}>Edit</ActionButton>
+                <ActionButton
+                  onPress={() => edit({ id: item.id, type: "Range" })}
+                >
+                  Edit
+                </ActionButton>
               </div>
             );
           }
