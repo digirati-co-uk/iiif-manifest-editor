@@ -1,8 +1,12 @@
-import { getValue, type RangeTableOfContentsNode, rangeToTableOfContentsTree } from "@iiif/helpers";
+import {
+  getValue,
+  type RangeTableOfContentsNode,
+  rangeToTableOfContentsTree,
+} from "@iiif/helpers";
 import { useMemo, useState } from "react";
 import { Collection, Tree, useDragAndDrop } from "react-aria-components";
 import { CanvasContext, useVault, useManifest } from "react-iiif-vault";
-import { createRangeHelper } from '@iiif/helpers';
+import { createRangeHelper } from "@iiif/helpers";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
 import { EditorInstance } from "@manifest-editor/editor-api";
@@ -12,7 +16,10 @@ interface RangeTreeProps {
 }
 
 function flattenedRanges(range: RangeTableOfContentsNode) {
-  const flatList: { item: RangeTableOfContentsNode; parent: RangeTableOfContentsNode | null }[] = [];
+  const flatList: {
+    item: RangeTableOfContentsNode;
+    parent: RangeTableOfContentsNode | null;
+  }[] = [];
   flatList.push({ item: range, parent: null });
   for (const item of range.items || []) {
     flatList.push({ item, parent: range });
@@ -27,12 +34,14 @@ export function RangeTree(props: RangeTreeProps) {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const range = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []))!;
+  const range = helper.rangesToTableOfContentsTree(
+    vault.get(manifest!.structures || []),
+  )!;
 
   const defaultExpandedKeys = useMemo(() => {
     return [range.id, ...(range.items || []).map((r) => r.id)];
   }, [range]);
-  const [iterate, setIterate] = useState(1)
+  const [iterate, setIterate] = useState(1);
   const flatItems = useMemo(() => flattenedRanges(range), [range, iterate]);
 
   const { dragAndDropHooks } = useDragAndDrop({
@@ -41,7 +50,10 @@ export function RangeTree(props: RangeTreeProps) {
         const found = flatItems.find((i) => i.item.id === item);
         if (found) {
           return {
-            "text/plain": JSON.stringify({ item: found.item.id, parent: found.parent }),
+            "text/plain": JSON.stringify({
+              item: found.item.id,
+              parent: found.parent,
+            }),
           };
         }
         return {
@@ -64,42 +76,38 @@ export function RangeTree(props: RangeTreeProps) {
         }),
       );
 
-      console.log('on drop', e)
+      console.log("on drop", e);
 
       const toMove = items[0]; // Only support one at the moment.
       if (e.target.type === "item") {
-        const fullItemTarget = flatItems.find((item) => (e.target as any).key === item.item.id);
+        const fullItemTarget = flatItems.find(
+          (item) => (e.target as any).key === item.item.id,
+        );
         console.log("Move", items, "to", fullItemTarget);
         const parent = toMove.parent;
 
-
-
-
         if (fullItemTarget?.parent?.id !== toMove.parent.id) {
-
           const editor = new EditorInstance({
             reference: { id: parent.id, type: "Range" },
             vault,
           });
           const currentItems = editor.structural.items.getWithoutTracking();
 
-
           // 1. Remove from existing.
           const toMoveIndex = currentItems.findIndex((item: any) => {
             if (item.type === "Range") {
               return item.id === toMove.item;
             }
-            return item.source.id === toMove.item
+            return item.source.id === toMove.item;
           });
           const reference = currentItems[toMoveIndex]!;
           editor.structural.items.deleteAtIndex(toMoveIndex);
 
-
-          if (e.target.dropPosition === 'on') {
+          if (e.target.dropPosition === "on") {
             const targetEditor = new EditorInstance({
               reference: { id: fullItemTarget?.item?.id!, type: "Range" },
               vault,
-            })
+            });
 
             targetEditor.structural.items.add(reference);
           }
@@ -117,15 +125,14 @@ export function RangeTree(props: RangeTreeProps) {
             return item.source.id === fullItemTarget?.item.id;
           });
 
-          if (e.target.dropPosition === 'after') {
+          if (e.target.dropPosition === "after") {
             parentEditor.structural.items.addAfter(endIndex, reference);
           }
-          if (e.target.dropPosition === 'before') {
+          if (e.target.dropPosition === "before") {
             parentEditor.structural.items.addBefore(endIndex, reference);
           }
 
-
-          setIterate(i => i + 1);
+          setIterate((i) => i + 1);
           console.log("NEED TO REPARENT");
           return;
         }
@@ -136,14 +143,14 @@ export function RangeTree(props: RangeTreeProps) {
           vault,
         });
 
-        if (e.dropOperation === 'move') {
+        if (e.dropOperation === "move") {
           const currentItems = editor.structural.items.getWithoutTracking();
 
           const startIndex = currentItems.findIndex((item: any) => {
             if (item.type === "Range") {
               return item.id === toMove.item;
             }
-            return item.source.id === toMove.item
+            return item.source.id === toMove.item;
           });
           const endIndex = currentItems.findIndex((item: any) => {
             if (item.type === "Range") {
@@ -152,13 +159,17 @@ export function RangeTree(props: RangeTreeProps) {
             return item.source.id === fullItemTarget?.item.id;
           });
 
-          console.log('startIndex', toMove)
-          console.log('end', fullItemTarget?.item.id)
-          console.log('looking', {currentItems, startIndex, endIndex}, fullItemTarget?.item.id)
+          console.log("startIndex", toMove);
+          console.log("end", fullItemTarget?.item.id);
+          console.log(
+            "looking",
+            { currentItems, startIndex, endIndex },
+            fullItemTarget?.item.id,
+          );
 
-          console.log('reorder', startIndex, endIndex)
+          console.log("reorder", startIndex, endIndex);
           editor.structural.items.reorder(startIndex, endIndex);
-          setIterate(i => i + 1);
+          setIterate((i) => i + 1);
           console.log("REORDER");
         }
       }
@@ -207,7 +218,9 @@ export function RangeTree(props: RangeTreeProps) {
 
         return (
           <TreeRangeItem range={item} hasChildItems={!!item.items}>
-            <Collection items={item.items || []}>{(t) => renderItem(t, item)}</Collection>
+            <Collection items={item.items || []}>
+              {(t) => renderItem(t, item)}
+            </Collection>
           </TreeRangeItem>
         );
       }}

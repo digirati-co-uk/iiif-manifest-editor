@@ -1,9 +1,24 @@
-import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import {
+  createRangeHelper,
+  getValue,
+  type RangeTableOfContentsNode,
+} from "@iiif/helpers";
 import { RangeNormalized } from "@iiif/presentation-3-normalized";
-import { ErrorMessage, Sidebar, SidebarContent, SidebarHeader, WarningMessage } from "@manifest-editor/components";
+import {
+  ErrorMessage,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  WarningMessage,
+} from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { LocaleString, useCanvas, useManifest, useVault } from "react-iiif-vault";
+import {
+  LocaleString,
+  useCanvas,
+  useManifest,
+  useVault,
+} from "react-iiif-vault";
 import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
 import { RangeTree } from "./components/RangeTree";
 
@@ -18,7 +33,13 @@ export const rangesPanel: LayoutPanel = {
 
 export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -32,17 +53,22 @@ export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []))
+  const topLevelRange = helper.rangesToTableOfContentsTree(
+    vault.get(manifest!.structures || []),
+  );
 
-
-  console.log('render', topLevelRange);
+  console.log("render", topLevelRange);
 
   const isContiguous = useMemo(() => {
     if (!manifest?.structures?.[0]) {
       return null;
     }
 
-    return helper.isContiguous((manifest!.structures || [])[0]!, manifest!.items, { detail: true });
+    return helper.isContiguous(
+      (manifest!.structures || [])[0]!,
+      manifest!.items,
+      { detail: true },
+    );
   }, [manifest]);
 
   if (!topLevelRange) {
@@ -54,9 +80,15 @@ export function RangeLeftPanel() {
       <SidebarHeader title={topLevelRange.label || "Untitled range"} />
       <SidebarContent className="p-2">
         {topLevelRange.isVirtual ? (
-          <WarningMessage className="mb-2">This is a virtual top level range</WarningMessage>
+          <WarningMessage className="mb-2">
+            This is a virtual top level range
+          </WarningMessage>
         ) : null}
-        {!isContiguous ? <WarningMessage className="mb-2">Warning: Non-contiguous range</WarningMessage> : null}
+        {!isContiguous ? (
+          <WarningMessage className="mb-2">
+            Warning: Non-contiguous range
+          </WarningMessage>
+        ) : null}
         <RangeTree />
       </SidebarContent>
     </Sidebar>
@@ -65,7 +97,13 @@ export function RangeLeftPanel() {
 
 export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -77,7 +115,13 @@ export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function CanvasesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"

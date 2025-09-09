@@ -61,6 +61,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "react-aria-components": "^1.12",
+    "tailwind-merge": "^2.3.0",
     "react": "^18.3.1",
     "zustand": "^4.5.2",
     "react-dom": "^18.3.1",
