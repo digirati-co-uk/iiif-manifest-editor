@@ -16,12 +16,15 @@ import { useMemo } from "react";
 import {
   CanvasContext,
   LocaleString,
+  RangeContext,
   useManifest,
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
 import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
+import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
+import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -60,6 +63,10 @@ function RangeWorkbench() {
     return null;
   }
 
+  const hasCanvases = (topLevelRange.items || []).filter(
+    (item) => item.type === "Canvas",
+  );
+
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <span className="text-gray-500">Range workbench</span>
@@ -73,27 +80,21 @@ function RangeWorkbench() {
       {isSplitting ? (
         <InfoMessage className="my-4">Splitting range</InfoMessage>
       ) : null}
-      <div className="grid grid-sm gap-3">
+      <div className="">
         {(topLevelRange.items || []).map((item) => {
-          if (item.type !== "Canvas") {
-            return (
-              <div key={item.id}>
-                <LocaleString>{item.label || "Untitled range"}</LocaleString>
-                <ActionButton
-                  onPress={() => edit({ id: item.id, type: "Range" })}
-                >
-                  Edit
-                </ActionButton>
-              </div>
-            );
+          if (item.type === "Canvas") {
+            return null;
           }
 
-          return (
-            <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
-              <CanvasThumbnailGridItem id={item.resource!.source!.id} />
-            </CanvasContext>
-          );
+          return <RangeWorkbenchSection key={item.id} range={item} />;
         })}
+      </div>
+      <div>
+        {hasCanvases.length ? (
+          <RangeContext range={topLevelRange.id}>
+            <BulkActionsWorkbench />
+          </RangeContext>
+        ) : null}
       </div>
     </div>
   );
