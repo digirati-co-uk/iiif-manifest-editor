@@ -5,14 +5,14 @@ import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
-export interface CreateTopLevelRangePayload {
+export interface CreateRangeWithItemsPayload {
   type: "Range";
   label?: InternationalString | string;
   items?: Array<Reference<"Canvas"> | Reference<"Range">>;
 }
 
-export async function createRangeTopLevel(
-  data: CreateTopLevelRangePayload,
+export async function createRangeWithItems(
+  data: CreateRangeWithItemsPayload,
   ctx: CreatorFunctionContext,
   parentId?: string,
 ): Promise<CreatorResource> {
@@ -21,12 +21,12 @@ export async function createRangeTopLevel(
   return ctx.embed({
     id: rangeId,
     type: "Range",
-    label: data.label || { en: ["Table of Contents"] },
+    label: data.label || { en: ["Untitled range"] },
     items: (data.items || []).map((item) => ctx.ref(item)),
   });
 }
 
-export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRangePayload>) {
+export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithItemsPayload>) {
   const [label, setLabel] = useState<InternationalString>({ en: [""] });
 
   const onSubmit = (e: FormEvent) => {

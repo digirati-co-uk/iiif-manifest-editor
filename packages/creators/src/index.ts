@@ -20,6 +20,7 @@ import { thumbnailCreator } from "./ContentResource/ThumbnailCreator";
 import { webPageCreator } from "./ContentResource/WebPageCreator";
 import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
+import { rangeWithItems } from "./Range/RangeWithItems";
 import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
 
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
@@ -41,6 +42,7 @@ export * from "./ContentResource/ThumbnailCreator/create-thumbnail";
 export * from "./ContentResource/WebPageCreator/create-web-page";
 export * from "./ContentResource/YouTubeCreator/create-youtube-body";
 export * from "./Manifest/ManifestBrowserCreator/manifest-browser-creator";
+export * from "./Range/RangeWithItems/create-range-with-items";
 export * from "./Range/TopLevelRangeCreator/create-range-top-level";
 
 export const allCreators = [
@@ -66,6 +68,7 @@ export const allCreators = [
   imageUrlListAnnotation,
   thumbnailCreator,
   rangeTopLevel,
+  rangeWithItems,
 ];
 
 export {
@@ -88,6 +91,7 @@ export {
   imageUrlListCreator,
   imageUrlListAnnotation,
   rangeTopLevel,
+  rangeWithItems,
   // Not included
   manifestBrowserCreator,
 };

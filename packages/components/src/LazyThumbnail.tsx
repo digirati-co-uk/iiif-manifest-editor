@@ -1,31 +1,12 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  useCanvas,
-  useRenderingStrategy,
-  useStrategy,
-  useThumbnail,
-  useVault,
-} from "react-iiif-vault";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCanvas, useRenderingStrategy, useStrategy, useThumbnail, useVault } from "react-iiif-vault";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { twMerge } from "tailwind-merge";
-import { Spinner } from "./Spinner";
 import { TextIcon } from "./icons/TextIcon";
-import { createThumbnailHelper } from "@iiif/helpers";
+import { Spinner } from "./Spinner";
 
-export function LazyThumbnail({
-  cover,
-  fade = true,
-}: {
-  cover?: boolean;
-  fade?: boolean;
-}) {
+export function LazyThumbnail({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   return (
     <LazyLoadComponent>
       <LazyThumbnailOuter cover={cover} fade={fade} />
@@ -35,13 +16,7 @@ export function LazyThumbnail({
 
 const renderCache = new Map<string, string>();
 
-function LazyThumbnailOuter({
-  cover,
-  fade = true,
-}: {
-  cover?: boolean;
-  fade?: boolean;
-}) {
+function LazyThumbnailOuter({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   const [strategy] = useRenderingStrategy();
 
   if (strategy.type === "images" && strategy.images.length > 1) {
@@ -50,7 +25,7 @@ function LazyThumbnailOuter({
 
   if (strategy.type === "textual-content") {
     return (
-      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0 z-20">
+      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
         <TextIcon className="w-16 h-16" />
       </div>
     );
@@ -59,13 +34,7 @@ function LazyThumbnailOuter({
   return <LazyThumbnailInner cover={cover} fade={fade} />;
 }
 
-function LazyThumbnailInner({
-  cover,
-  fade = true,
-}: {
-  cover?: boolean;
-  fade?: boolean;
-}) {
+function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   const img = useRef<HTMLImageElement>(null);
   const canvas = useCanvas();
   const isCached = canvas ? !!renderCache.get(canvas?.id) : false;
@@ -128,26 +97,20 @@ function ThumbnailFallback() {
 
   if (strategy.type === "textual-content") {
     return (
-      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0 z-20">
+      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
         <TextIcon className="w-16 h-16" />
       </div>
     );
   }
 
   return (
-    <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0 z-20">
+    <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
       No thumbnail
     </div>
   );
 }
 
-function ComplexCanvasThumbnail({
-  cover,
-  fade = true,
-}: {
-  cover?: boolean;
-  fade?: boolean;
-}) {
+function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   const canvas = useCanvas();
   const [strategy] = useRenderingStrategy();
   const vault = useVault();
@@ -160,11 +123,7 @@ function ComplexCanvasThumbnail({
     const abort = new AbortController();
 
     (async () => {
-      if (
-        !canvas ||
-        strategy.type !== "images" ||
-        strategy.images.length <= 1
-      ) {
+      if (!canvas || strategy.type !== "images" || strategy.images.length <= 1) {
         return;
       }
 
@@ -232,10 +191,7 @@ function ComplexCanvasThumbnail({
                 left: `${(image.target.spatial.x / canvas.width) * 100}%`,
               }}
             >
-              <img
-                className="w-full h-full object-cover"
-                src={image.image.id}
-              />
+              <img className="w-full h-full object-cover" src={image.image.id} />
             </div>
           );
         })}

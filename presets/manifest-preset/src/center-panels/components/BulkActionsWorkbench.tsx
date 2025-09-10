@@ -1,8 +1,5 @@
 import { toRef } from "@iiif/parser";
-import {
-  ActionButton,
-  CanvasThumbnailGridItem,
-} from "@manifest-editor/components";
+import { ActionButton, CanvasThumbnailGridItem } from "@manifest-editor/components";
 import { CanvasContext, useRange } from "react-iiif-vault";
 
 export function BulkActionsWorkbench() {
@@ -14,14 +11,10 @@ export function BulkActionsWorkbench() {
 
   return (
     <div>
-      <h3 className="text-xl font-bold mb-3">
-        Bulk Actions ({range.items?.length || 0} canvases)
-      </h3>
+      <h3 className="text-xl font-bold mb-3">Bulk Actions ({range.items?.length || 0} canvases)</h3>
       <div className="flex gap-2 mb-8">
-        <ActionButton>Example action 1</ActionButton>
-        <ActionButton>Example action 2</ActionButton>
-        <ActionButton>Example action 3</ActionButton>
-        <ActionButton>Example action 4</ActionButton>
+        <ActionButton>Split into multiple ranges</ActionButton>
+        <ActionButton>Sequential labelling</ActionButton>
       </div>
 
       <div className="grid grid-md gap-3">
