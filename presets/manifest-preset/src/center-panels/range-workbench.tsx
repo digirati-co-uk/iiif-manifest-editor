@@ -25,7 +25,7 @@ function RangeWorkbench() {
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const creator = useInlineCreator();
 
-  const { isSplitting } = useRangeSplittingStore();
+  const { isSplitting, setIsSplitting } = useRangeSplittingStore();
   const topLevelRange = useVaultSelector(
     (_, vault) => {
       const selected = toRef<any>(selectedRange?.resource);
@@ -97,6 +97,8 @@ function RangeWorkbench() {
           },
         },
       );
+
+      setIsSplitting(false);
     },
     [topLevelRange, vault, creator],
   );

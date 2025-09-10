@@ -18,11 +18,13 @@ export async function createRangeWithItems(
 ): Promise<CreatorResource> {
   const rangeId = ctx.generateId(`range`, parentId ? { id: parentId, type: "Range" } : undefined);
 
+  console.log(data.items);
+
   return ctx.embed({
     id: rangeId,
     type: "Range",
     label: data.label || { en: ["Untitled range"] },
-    items: (data.items || []).map((item) => ctx.ref(item)),
+    items: data.items || [],
   });
 }
 
