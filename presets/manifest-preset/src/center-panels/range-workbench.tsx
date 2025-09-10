@@ -4,7 +4,7 @@ import { ActionButton, CanvasThumbnailGridItem, InfoMessage, WarningMessage } fr
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import { type LayoutPanel, useEditingStack, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { CanvasContext, LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
@@ -25,7 +25,10 @@ function RangeWorkbench() {
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const creator = useInlineCreator();
 
-  const { isSplitting, setIsSplitting } = useRangeSplittingStore();
+  const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
+
+  useEffect(splitEffect, [selectedRange]);
+
   const topLevelRange = useVaultSelector(
     (_, vault) => {
       const selected = toRef<any>(selectedRange?.resource);

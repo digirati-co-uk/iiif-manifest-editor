@@ -9,7 +9,7 @@ interface RangeSplittingStore {
 export const useRangeSplittingStore = create<RangeSplittingStore>((set) => ({
   isSplitting: false,
   setIsSplitting: (value) => set({ isSplitting: value }),
-  splitEffect: () => () => {
+  splitEffect: () => {
     return () => {
       set({ isSplitting: false });
     };
