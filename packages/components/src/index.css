@@ -230,3 +230,8 @@ div.mdxeditor-toolbar {
 
 .split-range-highlight:has(~ *[aria-selected="true"]) .split-range-highlight-inner {
 }
+
+/** Fix for IIIF Explorer position */
+div[data-trigger="DialogTrigger"] {
+  position: absolute !important;
+}
