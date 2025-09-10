@@ -235,3 +235,7 @@ div.mdxeditor-toolbar {
 div[data-trigger="DialogTrigger"] {
   position: absolute !important;
 }
+/** Fix for menu z-index */
+div[data-trigger="MenuTrigger"] {
+  z-index: 10000000 !important;
+}
