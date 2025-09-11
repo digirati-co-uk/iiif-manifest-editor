@@ -17,6 +17,7 @@ import {
   useStrategy,
 } from "react-iiif-vault";
 import { AnnotationsSidebarListItem } from "./AnnotationsSidebarListItem";
+import { SecondaryButton, SmallButton } from "@manifest-editor/ui/atoms/Button";
 
 export function AddAnnotationIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -27,7 +28,7 @@ export function AddAnnotationIcon(props: React.SVGProps<SVGSVGElement>) {
 export function AnnotationsListingAnnotations() {
   const canvas = useCanvas();
   const page = useAnnotationPage();
-  const { requestAnnotation, isActive, busy } = useRequestAnnotation();
+  const { requestAnnotation, isActive, busy, cancelRequest } = useRequestAnnotation();
   const [strategy] = useRenderingStrategy();
 
   if (strategy.type !== "images") {
@@ -62,6 +63,8 @@ export function AnnotationsListingAnnotations() {
         ]}
       />
       {isActive ? (
+        <>
+        <SecondaryButton onClick={() => {cancelRequest()}}>Exit edit mode </SecondaryButton>
         <div className="flex flex-col gap-5 text-center p-4 items-center justify-center">
           <TargetIcon className="w-32 h-32 text-gray-300" />
           <p className="text-gray-500">
@@ -69,6 +72,7 @@ export function AnnotationsListingAnnotations() {
 
           </p>
         </div>
+        </>
       ) : null}
       <SidebarContent className="w-full p-2 flex flex-col gap-2">
         {page.items.map((annotation) => {
