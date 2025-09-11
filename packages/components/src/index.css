@@ -152,7 +152,8 @@ div.mdxeditor-toolbar {
 }
 
 .react-aria-TreeItem {
-  padding-left: calc((var(--tree-item-level) - 1) * 1em);
+    margin-left: calc((var(--tree-item-level) - 1) * 1em);
+    border-left: #e5e7eb solid 1px;
 }
 
 .react-aria-TreeItem-active ~ .react-aria-TreeItem {

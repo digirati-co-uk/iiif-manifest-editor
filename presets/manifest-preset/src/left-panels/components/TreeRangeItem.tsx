@@ -21,7 +21,7 @@ interface TreeRangeItemProps extends Partial<TreeItemProps> {
 export function TreeRangeItem(props: TreeRangeItemProps) {
   return (
     <TreeItem
-      className="react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2"
+      className="react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5 pl-4"
       textValue={getValue(props.range.label)}
       id={props.range.id}
       {...props}
@@ -48,7 +48,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               />
             </Button>
 
-            <LocaleString className="truncate whitespace-nowrap flex-1 min-w-0">
+            <LocaleString className="truncate whitespace-nowrap flex-1 min-w-0 border-b border-gray-200">
               {props.range.label || "Untitled range"}
             </LocaleString>
           </>

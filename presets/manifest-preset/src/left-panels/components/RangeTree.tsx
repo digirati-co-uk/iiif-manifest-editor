@@ -16,11 +16,13 @@ import {
   useManifest,
   useVaultSelector,
 } from "react-iiif-vault";
+import type { Key as RACKey } from "@react-types/shared";
 import { createRangeHelper } from "@iiif/helpers";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
 import { Editor, EditorInstance } from "@manifest-editor/editor-api";
 import { toRef } from "@iiif/parser";
+import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 
 interface RangeTreeProps {
   hideCanvases?: boolean;
@@ -71,6 +73,16 @@ export function RangeTree(props: RangeTreeProps) {
     return [range.id, ...(range.items || []).map((r) => r.id)];
   }, [range]);
   const [iterate, setIterate] = useState(1);
+
+  const expandAllKeys = useMemo<RACKey[]>(() =>
+      flatItems
+        .filter(({ item }) => item.type === "Range" && item.items?.length)
+        .map(({ item }) => item.id as RACKey),
+    [flatItems]);
+
+  const [expandedKeys, setExpandedKeys] = useState<Iterable<RACKey>>(
+    []
+  );
 
   const { dragAndDropHooks } = useDragAndDrop({
     getItems: (keys, items) => {
@@ -286,10 +298,15 @@ export function RangeTree(props: RangeTreeProps) {
   });
 
   return (
+    <>
+    <div className='flex gap-2'>
+      <SmallButton onClick={() => setExpandedKeys(expandAllKeys)}>Expand all</SmallButton>
+      <SmallButton onClick={() => setExpandedKeys([])}>Collapse all</SmallButton>
+    </div>
     <Tree
-      //
       aria-label={getValue(range.label)}
       items={[range]}
+      expandedKeys={expandedKeys}
       defaultExpandedKeys={defaultExpandedKeys}
       dragAndDropHooks={dragAndDropHooks}
     >
@@ -315,5 +332,6 @@ export function RangeTree(props: RangeTreeProps) {
         );
       }}
     </Tree>
+    </>
   );
 }

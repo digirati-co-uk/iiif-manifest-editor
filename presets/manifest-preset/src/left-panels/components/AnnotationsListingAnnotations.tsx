@@ -64,7 +64,7 @@ export function AnnotationsListingAnnotations() {
       />
       {isActive ? (
         <>
-        <SecondaryButton onClick={() => {cancelRequest()}}>Exit edit mode </SecondaryButton>
+        <SecondaryButton aria-label={'cancel add annotation'} onClick={() => {cancelRequest()}}>Exit edit mode </SecondaryButton>
         <div className="flex flex-col gap-5 text-center p-4 items-center justify-center">
           <TargetIcon className="w-32 h-32 text-gray-300" />
           <p className="text-gray-500">
