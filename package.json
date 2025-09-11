@@ -22,7 +22,7 @@
       "next": "$next",
       "react-aria-components": "^1.12",
       "@atlas-viewer/atlas": "2.3.7",
-      "@iiif/helpers": "https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/242e1b41/@iiif/helpers",
+      "@iiif/helpers": "https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/c9401d0c/@iiif/helpers",
       "@iiif/parser": "^2.2.0"
     }
   },

@@ -152,9 +152,9 @@ div.mdxeditor-toolbar {
 }
 
 .react-aria-TreeItem {
-    margin-left: calc((var(--tree-item-level) - 1) * 1em);
-    padding-left: 5px;
-    border-left: #e5e7eb solid 1px;
+  margin-left: calc((var(--tree-item-level) - 1) * 1em);
+  padding-left: 5px;
+  border-left: #e5e7eb solid 1px;
 }
 
 .react-aria-TreeItem-active ~ .react-aria-TreeItem {
@@ -188,15 +188,20 @@ div.mdxeditor-toolbar {
 }
 
 .split-range-highlight:hover,
-.split-range-highlight:hover ~ .split-range-highlight {
+.split-range-highlight:hover ~ .split-range-highlight,
+div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentation"]:has(.split-range-highlight) {
   outline: 3px solid red;
 }
 
-.split-range-highlight:has(~ .split-range-highlight:hover) {
+.split-range-highlight:has(~ .split-range-highlight:hover),
+div[role="presentation"]:has(.split-range-highlight):has(~ div[role="presentation"] > .split-range-highlight:hover) {
   transform: translate(0, -1em);
   outline: 3px solid blue;
 }
 
+div[role="presentation"]:has(.split-range-highlight):has(
+    ~ div[role="presentation"] > .split-range-highlight:hover
+  ):first-child:before,
 .split-range-highlight:hover:before,
 .split-range-highlight:has(~ .split-range-highlight:hover):first-child:before {
   background: blue;

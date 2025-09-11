@@ -1,5 +1,5 @@
 import type { RangeTableOfContentsNode } from "@iiif/helpers";
-import { ActionButton, CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
+import { ActionButton, CanvasThumbnailGridItem, RangesIcon, useFastList } from "@manifest-editor/components";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 
@@ -13,6 +13,7 @@ export function RangeWorkbenchSection({
   onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
 }) {
   const { edit } = useLayoutActions();
+  const rangeItems = useFastList(range.items, 24);
 
   return (
     <div key={range.id} className="w-full border-b border-b-gray-200 mb-8">
@@ -23,7 +24,7 @@ export function RangeWorkbenchSection({
         </ActionButton>
       </div>
       <div className="grid grid-sm gap-3">
-        {(range.items || []).map((item) => {
+        {(rangeItems || []).map((item) => {
           if (item.type !== "Canvas") {
             return (
               <div

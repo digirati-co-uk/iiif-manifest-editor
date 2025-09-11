@@ -1,4 +1,5 @@
 import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import { ActionButton, CanvasThumbnailGridItem, InfoMessage, WarningMessage } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
@@ -10,7 +11,6 @@ import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
@@ -47,7 +47,7 @@ function RangeWorkbench() {
   );
 
   const onSplit = useCallback(
-    (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => {
+    async (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => {
       if (!topLevelRange) {
         return;
       }
@@ -61,22 +61,24 @@ function RangeWorkbench() {
         return;
       }
 
-      // 1. Remove the items
-      const slicedItems = fullRange.items!.slice(index);
-      const rangeEditor = new EditorInstance({
-        reference: { id: range.id, type: "Range" },
-        vault,
-      });
+      const length = fullRange.items.length - index;
 
-      if (slicedItems.length === 0 || slicedItems.length === fullRange.items!.length) {
-        console.error("No items to split");
-        return;
-      }
+      // // 1. Remove the items
+      // const slicedItems = fullRange.items!.slice(index);
+      // const rangeEditor = new EditorInstance({
+      //   reference: { id: range.id, type: "Range" },
+      //   vault,
+      // });
 
-      for (let i = index; i < fullRange.items.length; i++) {
-        rangeEditor.structural.items.deleteAtIndex(index);
-      }
-      // 2. Create new range, with new items.
+      // if (slicedItems.length === 0 || slicedItems.length === fullRange.items!.length) {
+      //   console.error("No items to split");
+      //   return;
+      // }
+
+      // for (let i = index; i < fullRange.items.length; i++) {
+      //   rangeEditor.structural.items.deleteAtIndex(index);
+      // }
+      // // 2. Create new range, with new items.
 
       const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
       if (atIndex === -1) {
@@ -85,12 +87,12 @@ function RangeWorkbench() {
       }
 
       // slicedItems
-      creator.create(
+      const newRange = (await creator.create(
         "@manifest-editor/range-with-items",
         {
           type: "Range",
           label: { en: ["Untitled range"] },
-          items: slicedItems,
+          items: [],
         },
         {
           parent: {
@@ -99,9 +101,28 @@ function RangeWorkbench() {
             atIndex,
           },
         },
-      );
+      )) as { id: string; type: "Range" };
 
-      setIsSplitting(false);
+      vault.dispatch(
+        moveEntities({
+          subjects: {
+            type: "slice",
+            startIndex: index,
+            length: length,
+          },
+          from: {
+            id: range.id,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: newRange.id,
+            type: "Range",
+            key: "items",
+            // index not specified - should append to end
+          },
+        }),
+      );
     },
     [topLevelRange, vault, creator],
   );
