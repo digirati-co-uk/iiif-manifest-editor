@@ -21,7 +21,7 @@ interface TreeRangeItemProps extends Partial<TreeItemProps> {
 export function TreeRangeItem(props: TreeRangeItemProps) {
   return (
     <TreeItem
-      className="react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5 pl-4"
+      className="react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5"
       textValue={getValue(props.range.label)}
       id={props.range.id}
       {...props}

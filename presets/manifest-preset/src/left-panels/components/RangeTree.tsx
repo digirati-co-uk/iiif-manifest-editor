@@ -309,6 +309,7 @@ export function RangeTree(props: RangeTreeProps) {
       expandedKeys={expandedKeys}
       defaultExpandedKeys={defaultExpandedKeys}
       dragAndDropHooks={dragAndDropHooks}
+      onExpandedChange={setExpandedKeys}
     >
       {function renderItem(item, parent?: RangeTableOfContentsNode) {
         if (item.type === "Canvas") {
