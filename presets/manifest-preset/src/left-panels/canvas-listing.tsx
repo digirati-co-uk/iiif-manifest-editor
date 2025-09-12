@@ -60,15 +60,9 @@ export const canvasListing: LayoutPanel = {
   render: (state, ctx, app) => {
     return (
       <CanvasListing
-        gridView={
-          state.gridView ||
-          localStorage.getItem("canvas-listing-view-mode") === "grid"
-        }
+        gridView={state.gridView || localStorage.getItem("canvas-listing-view-mode") === "grid"}
         onChangeGridView={(gridView) => {
-          localStorage.setItem(
-            "canvas-listing-view-mode",
-            gridView ? "grid" : "list",
-          );
+          localStorage.setItem("canvas-listing-view-mode", gridView ? "grid" : "list");
           ctx.actions.change("canvas-listing", { gridView });
         }}
       />
@@ -88,13 +82,7 @@ export function CanvasListing({
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(
-    manifest,
-    "items",
-    "Canvas",
-    undefined,
-    { isPainting: true },
-  );
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
   const canvases = useFastList(items.get(), 24);
 
   useLayoutEffect(() => {
@@ -110,15 +98,7 @@ export function CanvasListing({
         title="Canvases"
         actions={[
           {
-            icon: (
-              <>
-                {gridView ? (
-                  <CanvasListingIcon width={24} height={24} />
-                ) : (
-                  <CanvasThumbnailsIcon />
-                )}
-              </>
-            ),
+            icon: <>{gridView ? <CanvasListingIcon width={24} height={24} /> : <CanvasThumbnailsIcon />}</>,
             title: gridView ? "List view" : "Grid view",
             onClick: () => {
               onChangeGridView(!gridView);
@@ -133,8 +113,7 @@ export function CanvasListing({
           {
             icon: <IIIFBrowserIcon className="text-2xl" />,
             title: "IIIF Browser",
-            onClick: () =>
-              canvasActions.creator("@manifest-editor/iiif-browser-creator"),
+            onClick: () => canvasActions.creator("@manifest-editor/iiif-browser-creator"),
             disabled: !canCreateCanvas,
           },
           {
@@ -145,11 +124,7 @@ export function CanvasListing({
           },
         ]}
       />
-      {gridView ? (
-        <CanvasGridView isEditing={toggled.items} />
-      ) : (
-        <CanvasListView isEditing={toggled.items} />
-      )}
+      {gridView ? <CanvasGridView isEditing={toggled.items} /> : <CanvasListView isEditing={toggled.items} />}
     </Sidebar>
   );
 }
@@ -162,13 +137,7 @@ export function useEditCanvasItems() {
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const canvases = useFastList(items.get(), 24);
-  const [canCreateCanvas, canvasActions] = useCreator(
-    manifest,
-    "items",
-    "Canvas",
-    undefined,
-    { isPainting: true },
-  );
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
 
   return {
     canvas,
@@ -190,8 +159,7 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
 
   // Find current canvas to get its index before deleting it
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
-  const prevCanvasIndex: number =
-    canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas
@@ -212,11 +180,7 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
           list={items.get() || []}
           inlineHandle={false}
           activeId={canvas?.resource.source.id}
-          reorder={
-            isEditing
-              ? (t: any) => items.reorder(t.startIndex, t.endIndex)
-              : undefined
-          }
+          reorder={isEditing ? (t: any) => items.reorder(t.startIndex, t.endIndex) : undefined}
           onSelect={(item: any, idx: number) => {
             open({ id: "current-canvas" });
             canvasActions.edit(item, idx);
@@ -237,8 +201,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
 
   // Find current canvas to get its index before deleting it
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
-  const prevCanvasIndex: number =
-    canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas
@@ -259,11 +222,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
           list={items.get() || []}
           inlineHandle={false}
           activeId={canvas?.resource.source.id}
-          reorder={
-            isEditing
-              ? (t) => items.reorder(t.startIndex, t.endIndex)
-              : undefined
-          }
+          reorder={isEditing ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
           onSelect={(item, idx) => {
             open({ id: "current-canvas" });
             canvasActions.edit(item, idx);
@@ -275,28 +234,21 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-export function ListEditIcon() {
+export function ListEditIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="24"
-      viewBox="0 0 24 24"
-      width="24"
-    >
+    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
+      <path
+        d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
 
 export function CanvasThumbnailsIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="24"
-      viewBox="0 0 24 24"
-      width="24"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path
         d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"

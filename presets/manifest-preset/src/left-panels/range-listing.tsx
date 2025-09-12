@@ -1,28 +1,13 @@
-import {
-  createRangeHelper,
-  getValue,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
-import { RangeNormalized } from "@iiif/presentation-3-normalized";
-import {
-  AddImageIcon,
-  ErrorMessage,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  WarningMessage,
-} from "@manifest-editor/components";
+import { createRangeHelper } from "@iiif/helpers";
+import { ListEditIcon, Sidebar, SidebarContent, SidebarHeader, WarningMessage } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useEffect, useMemo } from "react";
-import {
-  LocaleString,
-  useCanvas,
-  useManifest,
-  useVault,
-} from "react-iiif-vault";
-import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
-import { RangeTree } from "./components/RangeTree";
+import { Menu, MenuItem } from "react-aria-components";
+import { useManifest, useVault } from "react-iiif-vault";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
+import { RangeSplittingPreview } from "./components/RangeSplittingPreview";
+import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
+import { RangeTree, useRangeTreeOptions } from "./components/RangeTree";
 
 export const rangesPanel: LayoutPanel = {
   id: "@manifest-editor/ranges-listing",
@@ -35,13 +20,7 @@ export const rangesPanel: LayoutPanel = {
 
 export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -53,13 +32,7 @@ export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function SplitRangeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -73,28 +46,21 @@ export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const topLevelRange = helper.rangesToTableOfContentsTree(
-    vault.get(manifest!.structures || []),
-  );
+  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
+  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 
   useEffect(() => {
     return splitEffect();
-  }, []);
-
-  console.log("render", topLevelRange);
+  }, [splitEffect]);
 
   const isContiguous = useMemo(() => {
     if (!manifest?.structures?.[0]) {
       return null;
     }
 
-    return helper.isContiguous(
-      (manifest!.structures || [])[0]!,
-      manifest!.items,
-      { detail: true },
-    );
-  }, [manifest]);
+    return helper.isContiguous((manifest!.structures || [])[0]!, manifest!.items, { detail: true });
+  }, [manifest, helper]);
 
   if (!topLevelRange) {
     return <RangeCreateEmpty />;
@@ -106,6 +72,23 @@ export function RangeLeftPanel() {
         title={topLevelRange.label || "Untitled range"}
         actions={[
           {
+            title: "Edit ranges",
+            icon: <ListEditIcon className="text-xl" />,
+            toggled: isEditing,
+            onClick: toggleIsEditing,
+          },
+          {
+            title: "Display options",
+            icon: <DisplaySettingsIcon className="text-xl" />,
+            menu: (
+              <Menu className="bg-white rounded drop-shadow-xl p-1">
+                <MenuItem className="hover:bg-gray-100 rounded px-2 py-1" onAction={toggleShowCanvases}>
+                  {showCanvases ? "Hide canvases" : "Show canvases"}
+                </MenuItem>
+              </Menu>
+            ),
+          },
+          {
             title: "Split range",
             icon: <SplitRangeIcon className="text-xl" />,
             onClick: () => setIsSplitting(!isSplitting),
@@ -115,17 +98,11 @@ export function RangeLeftPanel() {
       />
       <SidebarContent className="p-2">
         {topLevelRange.isVirtual ? (
-          <WarningMessage className="mb-2">
-            This is a virtual top level range
-          </WarningMessage>
+          <WarningMessage className="mb-2">This is a virtual top level range</WarningMessage>
         ) : null}
-        {!isContiguous ? (
-          <WarningMessage className="mb-2">
-            Warning: Non-contiguous range
-          </WarningMessage>
-        ) : null}
+        {!isContiguous ? <WarningMessage className="mb-2">Warning: Non-contiguous range</WarningMessage> : null}
 
-        {isSplitting ? <div>Splitting...</div> : <RangeTree />}
+        {isSplitting ? <RangeSplittingPreview /> : <RangeTree hideCanvases={!showCanvases} />}
       </SidebarContent>
     </Sidebar>
   );
@@ -133,13 +110,7 @@ export function RangeLeftPanel() {
 
 export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -151,17 +122,27 @@ export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function CanvasesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
         d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 18H6V4h5v7l2.5-1.5L16 11V4h2zm-4.38-6.5L17 18H7l2.38-3.17L11 17z"
+      />
+    </svg>
+  );
+}
+
+export function DisplaySettingsIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
+      <path
+        fill="currentColor"
+        d="M20 3H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h4v2h8v-2h4c1.1 0 2-.9 2-2V5a2 2 0 0 0-2-2m0 14H4V5h16z"
+      />
+      <path
+        fill="currentColor"
+        d="M6 8.25h8v1.5H6zm10.5 1.5H18v-1.5h-1.5V7H15v4h1.5zm-6.5 2.5h8v1.5h-8zM7.5 15H9v-4H7.5v1.25H6v1.5h1.5z"
       />
     </svg>
   );

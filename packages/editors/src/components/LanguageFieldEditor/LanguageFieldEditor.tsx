@@ -1,19 +1,21 @@
-import { useMemo, useState } from "react";
-import { SmallButton } from "@manifest-editor/ui/atoms/Button";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { InputGroup, InputLabel } from "../Input";
-import { useDebounce } from "tiny-use-debounce";
-import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
-import { flushSync } from "react-dom";
-import { UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
 import { ControlButton, OpaqueControls } from "@manifest-editor/components";
 import { useConfig, useDecayState } from "@manifest-editor/shell";
+import { SmallButton } from "@manifest-editor/ui/atoms/Button";
+import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { useMemo, useState } from "react";
+import { flushSync } from "react-dom";
+import { useDebounce } from "tiny-use-debounce";
+import { type UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
+import { InputGroup, InputLabel } from "../Input";
 import { RichTextLanguageField } from "../RichTextLanguageField/RichTextLanguageField";
+import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
   index?: number;
+  className?: string;
   containerId?: string;
+  autoFocus?: boolean;
   property?: "label" | "value";
   focusId?: string;
   guidanceReference?: string;
@@ -34,7 +36,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     saveChanges,
     removeItem,
   } = useMetadataEditor(props);
-  const debounceSave = useDebounce(saveChanges, 400);
+  const debounceSave = useDebounce(saveChanges, 200);
   const [active, activeState] = useDecayState(2000);
   const [isReorderMode, setIsReorderMode] = useState(false);
   const {
@@ -93,6 +95,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                 onMouseLeave={() => activeState.clear(true)}
               >
                 <RichTextLanguageField
+                  autoFocus={n === 0 ? props.autoFocus : undefined}
+                  disableMultiline={props.disableMultiline}
                   disallowHTML={props.disallowHTML}
                   id={n === 0 ? focusId : undefined}
                   language={field.language}
@@ -149,7 +153,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   ) : null;
 
   return (
-    <div className="mb-4" id={props.containerId}>
+    <div className={props.className || "mb-4"} id={props.containerId}>
       <>
         <InputLabel htmlFor={focusId}>{props.label}</InputLabel>
       </>

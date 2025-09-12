@@ -145,24 +145,25 @@ function RangeWorkbench() {
       </LocaleString>
       <hr className="my-4 border-b border-b-gray-300" />
       {isSplitting ? (
-        <InfoMessage className="my-4">Splitting range, click to confirm the two new ranges</InfoMessage>
+        <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
+          Splitting range, click to confirm the two new ranges
+          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
+        </InfoMessage>
       ) : null}
-      <div className="">
-        {(topLevelRange.items || []).map((item) => {
-          if (item.type === "Canvas") {
-            return null;
-          }
 
-          return <RangeWorkbenchSection isSplitting={isSplitting} onSplit={onSplit} key={item.id} range={item} />;
-        })}
-      </div>
-      <div>
-        {hasCanvases.length ? (
-          <RangeContext range={topLevelRange.id}>
-            <BulkActionsWorkbench />
-          </RangeContext>
-        ) : null}
-      </div>
+      {(topLevelRange.items || []).map((item) => {
+        if (item.type === "Canvas") {
+          return null;
+        }
+
+        return <RangeWorkbenchSection isSplitting={isSplitting} onSplit={onSplit} key={item.id} range={item} />;
+      })}
+
+      {hasCanvases.length ? (
+        <RangeContext range={topLevelRange.id}>
+          <BulkActionsWorkbench />
+        </RangeContext>
+      ) : null}
     </div>
   );
 }
