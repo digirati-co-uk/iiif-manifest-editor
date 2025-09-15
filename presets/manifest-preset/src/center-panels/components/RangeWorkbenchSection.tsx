@@ -70,10 +70,14 @@ export function RangeWorkbenchSection({
   range,
   isSplitting,
   onSplit,
+  onMergeDown,
+  onMergeUp,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
   onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
+  onMergeUp?: (range: RangeTableOfContentsNode) => void;
+  onMergeDown?: (range: RangeTableOfContentsNode) => void;
 }) {
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -136,6 +140,17 @@ export function RangeWorkbenchSection({
           <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
             {range.isRangeLeaf ? "Bulk actions" : "Edit range"}
           </ActionButton>
+
+          {onMergeUp ? (
+            <ActionButton onPress={() => onMergeUp(range)}>
+              <MergeUpIcon className="text-2xl" /> Merge with previous
+            </ActionButton>
+          ) : null}
+          {onMergeDown ? (
+            <ActionButton onPress={() => onMergeDown(range)}>
+              <MergeDownIcon className="text-2xl" /> Merge with next
+            </ActionButton>
+          ) : null}
         </div>
         {isExpanded ? (
           <>
@@ -177,5 +192,23 @@ export function RangeWorkbenchSection({
       </div>
       {intersector}
     </>
+  );
+}
+
+export function MergeUpIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
+      <path fill="currentColor" d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z" />
+    </svg>
+  );
+}
+
+export function MergeDownIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
+      <path fill="currentColor" d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z" />
+    </svg>
   );
 }

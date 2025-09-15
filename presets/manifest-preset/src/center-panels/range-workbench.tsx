@@ -4,7 +4,13 @@ import { toRef } from "@iiif/parser";
 import { ActionButton, CanvasThumbnailGridItem, InfoMessage, WarningMessage } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
-import { type LayoutPanel, useEditingStack, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
+import {
+  type LayoutPanel,
+  useEditingStack,
+  useGenericEditor,
+  useInlineCreator,
+  useLayoutActions,
+} from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo } from "react";
 import { CanvasContext, LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { flattenedRanges } from "../left-panels/components/RangeTree";
@@ -44,6 +50,48 @@ function RangeWorkbench() {
       return helper.rangesToTableOfContentsTree(structures)! || {};
     },
     [manifest, selectedRange],
+  );
+
+  const rangeEditor = useGenericEditor({ id: topLevelRange?.id!, type: "Range" });
+
+  const onMerge = useCallback(
+    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode) => {
+      if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
+
+      const foundIndex = rangeEditor.structural.items
+        .getWithoutTracking()
+        .findIndex((item) => toRef(item)?.id === mergeRange.id);
+
+      if (foundIndex === -1) {
+        console.error(`Range ${mergeRange.id} not found in ${toMergeRange.id}`);
+        return;
+      }
+
+      const fullMergeRange = vault.get({ id: mergeRange.id, type: "Range" });
+
+      vault.dispatch(
+        moveEntities({
+          subjects: {
+            type: "slice",
+            startIndex: 0,
+            length: fullMergeRange.items.length,
+          },
+          from: {
+            id: fullMergeRange.id,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: toMergeRange.id,
+            type: "Range",
+            key: "items",
+          },
+        }),
+      );
+      // Then remove the range.
+      rangeEditor.structural.items.deleteAtIndex(foundIndex);
+    },
+    [vault, rangeEditor],
   );
 
   const onSplit = useCallback(
@@ -151,12 +199,27 @@ function RangeWorkbench() {
         </InfoMessage>
       ) : null}
 
-      {(topLevelRange.items || []).map((item) => {
+      {(topLevelRange.items || []).map((item, idx) => {
         if (item.type === "Canvas") {
           return null;
         }
 
-        return <RangeWorkbenchSection isSplitting={isSplitting} onSplit={onSplit} key={item.id} range={item} />;
+        const prevIdx = idx - 1;
+        const nextIdx = idx + 1;
+
+        return (
+          <RangeWorkbenchSection
+            //
+            isSplitting={isSplitting}
+            onSplit={onSplit}
+            key={item.id}
+            range={item}
+            onMergeUp={idx !== 0 ? () => onMerge(item, topLevelRange.items?.[prevIdx]!) : undefined}
+            onMergeDown={
+              topLevelRange.items?.[nextIdx] ? () => onMerge(item, topLevelRange.items?.[nextIdx]!) : undefined
+            }
+          />
+        );
       })}
 
       {hasCanvases.length ? (
