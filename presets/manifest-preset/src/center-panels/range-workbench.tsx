@@ -47,12 +47,14 @@ function RangeWorkbench() {
       }
 
       const structures = vault.get(manifest!.structures || []);
-      return helper.rangesToTableOfContentsTree(structures)! || {};
+      return helper.rangesToTableOfContentsTree(structures)! || null;
     },
     [manifest, selectedRange],
   );
 
-  const rangeEditor = useGenericEditor({ id: topLevelRange?.id!, type: "Range" });
+  const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
+    allowNull: true,
+  });
 
   const onMerge = useCallback(
     (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode) => {

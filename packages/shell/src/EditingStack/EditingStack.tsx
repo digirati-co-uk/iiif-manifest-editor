@@ -87,29 +87,35 @@ export function useCollectionEditor() {
 
 export function useGenericEditor(
   ref: Reference<any> | SpecificResource | undefined,
-  ctx: { parent?: Reference; parentProperty?: string; index?: number } = {},
+  ctx: { parent?: Reference; parentProperty?: string; index?: number; allowNull?: boolean } = {},
 ) {
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
-  invariant(ref, "Resource not found");
+  !ctx.allowNull && invariant(ref, "Resource not found");
 
   const editor = useMemo(() => {
+    if (ctx.allowNull && !ref) {
+      return null as any as EditorInstance<{}>;
+    }
+
     return new EditorInstance({
       reference: toRef(ref) as any,
       vault,
-      context: { resource: ref, parent: ctx.parent, index: ctx.index, parentProperty: ctx.parentProperty },
+      context: { resource: ref!, parent: ctx.parent, index: ctx.index, parentProperty: ctx.parentProperty },
     });
   }, [ref, vault]);
 
   useEffect(() => {
-    return editor.observe.start(invalidate);
+    return editor?.observe.start(invalidate);
   }, [editor]);
 
-  editor.observe.key = `${key}`;
-  editor.observe.reset();
+  if (editor) {
+    editor.observe.key = `${key}`;
+    editor.observe.reset();
+  }
 
-  return editor;
+  return editor!;
 }
 
 export function useAnnotationPageEditor() {
