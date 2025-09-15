@@ -246,3 +246,10 @@ div[data-trigger="DialogTrigger"] {
 div[data-trigger="MenuTrigger"] {
   z-index: 10000000 !important;
 }
+
+.atlas-container {
+  min-width: 0;
+  min-height: 0;
+  --atlas-container-flex: 1 1 0px;
+  --atlas-background: #e5e7f0;
+}
