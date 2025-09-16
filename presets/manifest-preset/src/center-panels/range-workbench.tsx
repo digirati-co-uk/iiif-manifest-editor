@@ -35,6 +35,7 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 import { Button } from "react-aria-components";
+import { SplitRangeIcon } from "../icons";
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
@@ -242,9 +243,16 @@ function RangeWorkbench() {
               </ActionButton>
             </div>
           )}
+          {!isSplitting && (
+            <ActionButton onPress={() => setIsSplitting(true)}>
+              <SplitRangeIcon className="text-xl" /> Split range
+            </ActionButton>
+          )}
         </div>
+
         {gridOptions}
       </div>
+
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
           Splitting range, click to confirm the two new ranges
