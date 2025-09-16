@@ -1,29 +1,50 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { Button, MenuTrigger, Popover } from "react-aria-components";
 import { LocaleString } from "react-iiif-vault";
-import { DefaultTooltipContent, Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+import {
+  DefaultTooltipContent,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "./Tooltip";
 import { cn } from "./utils";
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
-  return <div className="w-full h-full flex flex-col overflow-hidden">{children}</div>;
+  return (
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {children}
+    </div>
+  );
 }
 
 export function SidebarContent({
+  id,
   children,
   className,
   padding,
 }: {
+  id?: string;
   children: React.ReactNode;
   className?: string;
   padding?: boolean;
 }) {
   return (
-    <div className={cn("flex-1 min-h-0 overflow-y-auto pb-64", className, padding && "px-3 pt-3")}>{children}</div>
+    <div
+      id={id}
+      className={cn(
+        "flex-1 min-h-0 overflow-y-auto pb-64",
+        className,
+        padding && "px-3 pt-3",
+      )}
+    >
+      {children}
+    </div>
   );
 }
 
 interface SidebarHeaderProps {
   actions?: Array<{
+    id?: string;
     icon: any;
     onClick?: () => void;
     disabled?: boolean;
@@ -48,13 +69,16 @@ export function SidebarHeader(props: SidebarHeaderProps) {
               <MenuTrigger key={index}>
                 <Button
                   key={index}
+                  id={action.id}
                   className={cn(
                     //
                     `p-1 rounded hover:bg-me-gray-300`,
                     action.toggled && "bg-me-gray-300",
                     action.disabled && "opacity-50 cursor-not-allowed",
                   )}
-                  aria-label={typeof action.title === "string" ? action.title : ""}
+                  aria-label={
+                    typeof action.title === "string" ? action.title : ""
+                  }
                   isDisabled={action.disabled}
                 >
                   {action.icon}
@@ -69,6 +93,7 @@ export function SidebarHeader(props: SidebarHeaderProps) {
               <TooltipTrigger asChild>
                 <Button
                   key={index}
+                  id={action.id}
                   className={cn(
                     //
                     `p-1 rounded hover:bg-me-gray-300`,
@@ -76,13 +101,17 @@ export function SidebarHeader(props: SidebarHeaderProps) {
                     action.disabled && "opacity-50 cursor-not-allowed",
                   )}
                   onPress={action.onClick}
-                  aria-label={typeof action.title === "string" ? action.title : ""}
+                  aria-label={
+                    typeof action.title === "string" ? action.title : ""
+                  }
                   isDisabled={action.disabled}
                 >
                   {action.icon}
                 </Button>
               </TooltipTrigger>
-              {!action.disabled ? <DefaultTooltipContent>{action.title}</DefaultTooltipContent> : null}
+              {!action.disabled ? (
+                <DefaultTooltipContent>{action.title}</DefaultTooltipContent>
+              ) : null}
             </Tooltip>
           );
         })}
