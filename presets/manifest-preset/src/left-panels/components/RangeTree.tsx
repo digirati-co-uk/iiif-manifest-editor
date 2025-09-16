@@ -368,7 +368,11 @@ function RenderItem({
   }
 
   return (
-    <TreeRangeItem range={item} hasChildItems={!!item.items}>
+    <TreeRangeItem
+      range={item}
+      hasChildItems={!!item.items}
+      parentId={parent?.id}
+    >
       <Collection items={item.items || []}>
         {(t) => <RenderItem item={t} parent={item} />}
       </Collection>
