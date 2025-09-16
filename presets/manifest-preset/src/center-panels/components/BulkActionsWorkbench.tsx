@@ -71,7 +71,6 @@ export function BulkActionsWorkbench() {
         >
           Split into multiple ranges
         </ActionButton>
-        <ActionButton>Sequential labelling</ActionButton>
       </div>
 
       <div className="grid grid-md gap-3">
