@@ -1,7 +1,16 @@
-import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import {
+  createRangeHelper,
+  type RangeTableOfContentsNode,
+} from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
-import { ActionButton, CanvasThumbnailGridItem, InfoMessage, WarningMessage } from "@manifest-editor/components";
+import {
+  ActionButton,
+  CanvasThumbnailGridItem,
+  InfoMessage,
+  useGridOptions,
+  WarningMessage,
+} from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -12,7 +21,14 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo } from "react";
-import { CanvasContext, LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import {
+  CanvasContext,
+  LocaleString,
+  RangeContext,
+  useManifest,
+  useVault,
+  useVaultSelector,
+} from "react-iiif-vault";
 import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
@@ -26,6 +42,10 @@ export const rangeWorkbench: LayoutPanel = {
 
 function RangeWorkbench() {
   const selectedRange = useInStack("Range");
+  const [{ size }, gridOptions] = useGridOptions(
+    "default-grid-size",
+    "grid-sm",
+  );
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
@@ -52,12 +72,18 @@ function RangeWorkbench() {
     [manifest, selectedRange],
   );
 
-  const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
-    allowNull: true,
-  });
+  const rangeEditor = useGenericEditor(
+    topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
+    {
+      allowNull: true,
+    },
+  );
 
   const onMerge = useCallback(
-    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode) => {
+    (
+      mergeRange: RangeTableOfContentsNode,
+      toMergeRange: RangeTableOfContentsNode,
+    ) => {
       if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
 
       const foundIndex = rangeEditor.structural.items
@@ -184,20 +210,29 @@ function RangeWorkbench() {
     return null;
   }
 
-  const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
+  const hasCanvases = (topLevelRange.items || []).filter(
+    (item) => item.type === "Canvas",
+  );
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <span className="text-gray-500">Range workbench</span>
-      {selectedRange ? <ActionButton onPress={() => back()}>Go Back</ActionButton> : null}
-      <LocaleString as="h3" className="text-2xl">
-        {topLevelRange.label}
-      </LocaleString>
+      {selectedRange ? (
+        <ActionButton onPress={() => back()}>Go Back</ActionButton>
+      ) : null}
+      <div className="flex flex-row justify-between">
+        <LocaleString as="h3" className="text-2xl">
+          {topLevelRange.label}
+        </LocaleString>
+        {gridOptions}
+      </div>
       <hr className="my-4 border-b border-b-gray-300" />
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
           Splitting range, click to confirm the two new ranges
-          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
+          <ActionButton onPress={() => setIsSplitting(false)}>
+            Exit splitting mode
+          </ActionButton>
         </InfoMessage>
       ) : null}
 
@@ -216,9 +251,15 @@ function RangeWorkbench() {
             onSplit={onSplit}
             key={item.id}
             range={item}
-            onMergeUp={idx !== 0 ? () => onMerge(item, topLevelRange.items?.[prevIdx]!) : undefined}
+            onMergeUp={
+              idx !== 0
+                ? () => onMerge(item, topLevelRange.items?.[prevIdx]!)
+                : undefined
+            }
             onMergeDown={
-              topLevelRange.items?.[nextIdx] ? () => onMerge(item, topLevelRange.items?.[nextIdx]!) : undefined
+              topLevelRange.items?.[nextIdx]
+                ? () => onMerge(item, topLevelRange.items?.[nextIdx]!)
+                : undefined
             }
           />
         );

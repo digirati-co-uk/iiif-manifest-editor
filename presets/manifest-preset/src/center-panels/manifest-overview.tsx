@@ -6,8 +6,9 @@ import {
   ManifestOverviewEmptyState,
   ThumbnailGridContainer,
   useFastList,
+  useGridOptions,
 } from "@manifest-editor/components";
-import { useConfig, useLocalStorage } from "@manifest-editor/shell";
+import { useConfig } from "@manifest-editor/shell";
 import {
   type LayoutPanel,
   useCreator,
@@ -43,10 +44,7 @@ export function ManifestOverviewCenterPanel() {
   const canvases = useFastList(items.get(), 24);
   const { leftPanel } = useLayoutState();
   const isEditingManifest = leftPanel.current === "left-panel-manifest";
-  const [size, setSize] = useLocalStorage<"grid-sm" | "grid-md" | "grid-lg">(
-    "manifest-grid-size",
-    "grid-md",
-  );
+  const [{ size }, gridOptions] = useGridOptions("manifest-grid-size");
 
   if (!canvases || canvases.length === 0) {
     return (
@@ -62,27 +60,7 @@ export function ManifestOverviewCenterPanel() {
     <>
       {manifestGridOptions ? (
         <div className="p-2 flex gap-2 justify-between items-center">
-          <div className="flex gap-2 items-center">
-            <div className="opacity-50 text-sm">Grid size</div>
-            <ActionButton
-              primary={size === "grid-sm"}
-              onPress={() => setSize("grid-sm")}
-            >
-              Small
-            </ActionButton>
-            <ActionButton
-              primary={size === "grid-md"}
-              onPress={() => setSize("grid-md")}
-            >
-              Medium
-            </ActionButton>
-            <ActionButton
-              primary={size === "grid-lg"}
-              onPress={() => setSize("grid-lg")}
-            >
-              Large
-            </ActionButton>
-          </div>
+          {gridOptions}
           <div className="flex gap-2">
             <ActionButton
               isDisabled={!canCreateCanvas}

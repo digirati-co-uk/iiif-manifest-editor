@@ -1,8 +1,26 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { ActionButton, CanvasThumbnailGridItem, Modal, RangesIcon, useFastList } from "@manifest-editor/components";
-import { Input, LanguageFieldEditor, LanguageMapEditor } from "@manifest-editor/editors";
+import {
+  ActionButton,
+  CanvasThumbnailGridItem,
+  Modal,
+  RangesIcon,
+  useFastList,
+  useGridOptions,
+} from "@manifest-editor/components";
+import {
+  Input,
+  LanguageFieldEditor,
+  LanguageMapEditor,
+} from "@manifest-editor/editors";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
@@ -63,7 +81,12 @@ function useLoadMoreItems<T extends object>(
 
   return [
     isFullyLoaded ? items : itemsFiltered,
-    { intersector: isFullyLoaded ? null : intersector, loadMore, isFullyLoaded, reset },
+    {
+      intersector: isFullyLoaded ? null : intersector,
+      loadMore,
+      isFullyLoaded,
+      reset,
+    },
   ] as const;
 }
 
@@ -76,27 +99,37 @@ export function RangeWorkbenchSection({
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
-  onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
+  onSplit: (
+    range: RangeTableOfContentsNode,
+    item: RangeTableOfContentsNode,
+  ) => void;
   onMergeUp?: (range: RangeTableOfContentsNode) => void;
   onMergeDown?: (range: RangeTableOfContentsNode) => void;
 }) {
+  const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
   const rangeEditor = useGenericEditor(range);
-  const [selectedCanvas, _setSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const [lastSelectedCanvas, setLastSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
+  const [selectedCanvas, _setSelectedCanvas] =
+    useState<RangeTableOfContentsNode | null>(null);
+  const [lastSelectedCanvas, setLastSelectedCanvas] =
+    useState<RangeTableOfContentsNode | null>(null);
 
-  const setSelectedCanvas = useCallback((canvas: RangeTableOfContentsNode | null) => {
-    _setSelectedCanvas(canvas);
-    if (canvas) {
-      setLastSelectedCanvas(canvas);
-    }
-  }, []);
+  const setSelectedCanvas = useCallback(
+    (canvas: RangeTableOfContentsNode | null) => {
+      _setSelectedCanvas(canvas);
+      if (canvas) {
+        setLastSelectedCanvas(canvas);
+      }
+    },
+    [],
+  );
 
   const [isEditingLabel, setIsEditingLabel] = useState(false);
-  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
-    batchSize: 32,
-  });
+  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] =
+    useLoadMoreItems(range.items || [], {
+      batchSize: 32,
+    });
   return (
     <>
       {selectedCanvas ? (
@@ -131,12 +164,18 @@ export function RangeWorkbenchSection({
                 transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
               }}
             />
-            {isEditingLabel ? null : <LocaleString className="text-xl">{range.label || "Untitled range"}</LocaleString>}
+            {isEditingLabel ? null : (
+              <LocaleString className="text-xl">
+                {range.label || "Untitled range"}
+              </LocaleString>
+            )}
           </Button>
 
           {isEditingLabel ? (
             <form
-              className={twMerge("flex gap-2 items-center justify-center w-full max-w-xl")}
+              className={twMerge(
+                "flex gap-2 items-center justify-center w-full max-w-xl",
+              )}
               onSubmit={(e) => {
                 e.preventDefault();
                 setIsEditingLabel(false);
@@ -148,7 +187,9 @@ export function RangeWorkbenchSection({
                 className="mb-0 w-full"
                 label=""
                 fields={rangeEditor.descriptive.label.get()}
-                onSave={(e) => rangeEditor.descriptive.label.set(e.toInternationalString())}
+                onSave={(e) =>
+                  rangeEditor.descriptive.label.set(e.toInternationalString())
+                }
                 disableMultiline={true}
                 disallowHTML={true}
               />
@@ -180,7 +221,7 @@ export function RangeWorkbenchSection({
         </div>
         {isExpanded ? (
           <>
-            <div className="grid grid-sm gap-3">
+            <div className={`grid gap-3 ${size}`}>
               {(rangeItems || []).map((item) => {
                 if (item.type !== "Canvas") {
                   return (
@@ -189,8 +230,12 @@ export function RangeWorkbenchSection({
                       className="aspect-square bg-gray-100 rounded items-center justify-center flex flex-col"
                     >
                       <RangesIcon className="w-12 h-12" />
-                      <LocaleString>{item.label || "Untitled range"}</LocaleString>
-                      <ActionButton onPress={() => edit({ id: item.id, type: "Range" })}>
+                      <LocaleString>
+                        {item.label || "Untitled range"}
+                      </LocaleString>
+                      <ActionButton
+                        onPress={() => edit({ id: item.id, type: "Range" })}
+                      >
                         {item.isRangeLeaf ? "Bulk actions" : "Edit range"}
                       </ActionButton>
                     </div>
@@ -198,7 +243,10 @@ export function RangeWorkbenchSection({
                 }
 
                 return (
-                  <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
+                  <CanvasContext
+                    key={item.id}
+                    canvas={item.resource!.source!.id}
+                  >
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
                       onClick={() => {
@@ -221,7 +269,9 @@ export function RangeWorkbenchSection({
                 );
               })}
             </div>
-            {!isFullyLoaded ? <ActionButton onPress={loadMore}>Load more</ActionButton> : null}
+            {!isFullyLoaded ? (
+              <ActionButton onPress={loadMore}>Load more</ActionButton>
+            ) : null}
           </>
         ) : null}
       </div>
@@ -232,7 +282,13 @@ export function RangeWorkbenchSection({
 
 export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -244,18 +300,36 @@ export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function MergeUpIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path fill="currentColor" d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z" />
+      <path
+        fill="currentColor"
+        d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"
+      />
     </svg>
   );
 }
 
 export function MergeDownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path fill="currentColor" d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z" />
+      <path
+        fill="currentColor"
+        d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
+      />
     </svg>
   );
 }

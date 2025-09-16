@@ -18,7 +18,7 @@ export const PreviewProvider = memo(function PreviewProvider({
   configs: PreviewConfiguration[];
 }) {
   const instanceId = useAppResourceInstance();
-  const handlers = usePreviewHandlers(configs);
+  const handlers = usePreviewHandlers(configs); 
   const [previews, setPreviews] = useLocalStorage<Preview[]>(`preview-${instanceId}`, []);
 
   const [state, dispatch] = useReducer(previewContextReducer, undefined, getDefaultPreviewState);
