@@ -4,6 +4,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  useLocalStorage,
   WarningMessage,
 } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
@@ -13,7 +14,9 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { RangeSplittingPreview } from "./components/RangeSplittingPreview";
 import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
 import { RangeTree, useRangeTreeOptions } from "./components/RangeTree";
-import { RangesIcon, SplitRangeIcon } from "../icons";
+import { CardsViewIcon, RangesIcon, SplitRangeIcon } from "../icons";
+import { CanvasListingIcon } from "./canvas-listing";
+import { RangeCardView } from "./components/RangeCardView";
 
 export const rangesPanel: LayoutPanel = {
   id: "@manifest-editor/ranges-listing",
@@ -28,6 +31,7 @@ export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
+  const [isCardView, setIsCardView] = useLocalStorage("isCardView", false);
   const topLevelRange = helper.rangesToTableOfContentsTree(
     vault.get(manifest!.structures || []),
   );
@@ -61,6 +65,17 @@ export function RangeLeftPanel() {
         title={topLevelRange.label || "Untitled range"}
         actions={[
           {
+            title: isCardView ? "Tree view" : "Card view",
+            icon: isCardView ? (
+              <CanvasListingIcon className="text-xl" />
+            ) : (
+              <CardsViewIcon className="text-xl" />
+            ),
+            onClick: () => {
+              setIsCardView(!isCardView);
+            },
+          },
+          {
             title: "Edit ranges",
             icon: <ListEditIcon className="text-xl" />,
             toggled: isEditing,
@@ -88,6 +103,8 @@ export function RangeLeftPanel() {
 
         {isSplitting ? (
           <RangeSplittingPreview />
+        ) : isCardView ? (
+          <RangeCardView />
         ) : (
           <RangeTree hideCanvases={!showCanvases} />
         )}
