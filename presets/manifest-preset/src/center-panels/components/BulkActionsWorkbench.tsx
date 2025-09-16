@@ -1,5 +1,9 @@
+import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
-import { ActionButton, CanvasThumbnailGridItem } from "@manifest-editor/components";
+import {
+  ActionButton,
+  CanvasThumbnailGridItem,
+} from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInlineCreator } from "@manifest-editor/shell";
 import { CanvasContext, useRange, useVault } from "react-iiif-vault";
@@ -15,22 +19,25 @@ export function BulkActionsWorkbench() {
 
   return (
     <div>
-      <h3 className="text-xl font-bold mb-3">Bulk Actions ({range.items?.length || 0} canvases)</h3>
+      <h3 className="text-xl font-bold mb-3">
+        Bulk Actions ({range.items?.length || 0} canvases)
+      </h3>
       <div className="flex gap-2 mb-8">
         <ActionButton
-          onPress={() => {
-            const rangeEditor = new EditorInstance({ reference: { id: range.id, type: "Range" }, vault });
-            for (let i = 0; i < range.items.length; i++) {
-              rangeEditor.structural.items.deleteAtIndex(i);
-            }
+          onPress={async () => {
+            const rangeEditor = new EditorInstance({
+              reference: { id: range.id, type: "Range" },
+              vault,
+            });
+            const items = rangeEditor.structural.items.getWithoutTracking();
 
-            // Then create sub range.
-            creator.create(
+            // Create sub range.
+            const createdRange = (await creator.create(
               "@manifest-editor/range-with-items",
               {
                 type: "Range",
                 label: { en: ["Untitled range"] },
-                items: range.items || [],
+                items: [],
               },
               {
                 parent: {
@@ -39,6 +46,26 @@ export function BulkActionsWorkbench() {
                   atIndex: 0,
                 },
               },
+            )) as { id: string; type: "Range" };
+
+            vault.dispatch(
+              moveEntities({
+                subjects: {
+                  type: "slice",
+                  startIndex: 1,
+                  length: items.length,
+                },
+                from: {
+                  id: range.id,
+                  type: "Range",
+                  key: "items",
+                },
+                to: {
+                  id: createdRange.id,
+                  type: "Range",
+                  key: "items",
+                },
+              }),
             );
           }}
         >
