@@ -57,8 +57,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
             <div
               className={twMerge(
-                "flex items-center gap-2 border-b border-gray-200 flex-1",
+                "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
                 isDropTarget && "bg-me-primary-100/50",
+                !showCanvases && props.range.isRangeLeaf && "border-none",
               )}
             >
               <LocaleString className="truncate whitespace-nowrap flex-1 min-w-0">
@@ -66,7 +67,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               </LocaleString>
 
               {!showCanvases && props.range.isRangeLeaf ? (
-                <div>{props.range.items?.length}</div>
+                <div className="text-right bg-gray-200 py-0.5 px-2 text-xs rounded-full">
+                  {props.range.items?.length}
+                </div>
               ) : null}
 
               {isEditing ? (

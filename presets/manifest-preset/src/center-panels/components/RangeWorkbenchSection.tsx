@@ -31,6 +31,7 @@ import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { ArrowForwardIcon } from "../../icons";
 import { InternationalString } from "@iiif/presentation-3";
+import { RangeGridThumbnail } from "./RangeGridThumbnail";
 
 export function RangeWorkbenchSection({
   range,
@@ -194,17 +195,12 @@ export function RangeWorkbenchSection({
                   return (
                     <div
                       key={item.id}
-                      className="aspect-square bg-gray-100 rounded items-center justify-center flex flex-col"
+                      className="items-center justify-center flex flex-col"
                     >
-                      <RangesIcon className="w-12 h-12" />
-                      <LocaleString>
+                      <RangeGridThumbnail range={item} />
+                      <LocaleString className="text-center truncate overflow-ellipsis max-w-full text-sm">
                         {item.label || "Untitled range"}
                       </LocaleString>
-                      <ActionButton
-                        onPress={() => edit({ id: item.id, type: "Range" })}
-                      >
-                        {item.isRangeLeaf ? "Bulk actions" : "Edit range"}
-                      </ActionButton>
                     </div>
                   );
                 }
