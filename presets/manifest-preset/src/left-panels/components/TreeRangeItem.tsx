@@ -1,8 +1,16 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { ActionButton } from "@manifest-editor/components";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
-import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
-import { Button, Checkbox, TreeItem, TreeItemContent } from "react-aria-components";
+import type {
+  TreeItemContentRenderProps,
+  TreeItemProps,
+} from "react-aria-components";
+import {
+  Button,
+  Checkbox,
+  TreeItem,
+  TreeItemContent,
+} from "react-aria-components";
 import { LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowDownIcon } from "./ArrowDownIcon";
@@ -23,13 +31,25 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       {...props}
     >
       <TreeItemContent>
-        {({ isExpanded, selectionBehavior, isDropTarget, selectionMode }: TreeItemContentRenderProps) => (
+        {({
+          isExpanded,
+          selectionBehavior,
+          isDropTarget,
+          selectionMode,
+        }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && <Checkbox slot="selection" />}
+            {selectionBehavior === "toggle" && selectionMode !== "none" && (
+              <Checkbox slot="selection" />
+            )}
 
             <Button slot="chevron">
               <ArrowDownIcon
-                className={twMerge("text-xl", !showCanvases && props.range.isRangeLeaf && "opacity-50")}
+                className={twMerge(
+                  "text-xl",
+                  !showCanvases &&
+                    props.range.isRangeLeaf &&
+                    "opacity-20 cursor-not-allowed",
+                )}
                 style={{
                   transition: "transform .2s",
                   transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
@@ -47,7 +67,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                 {props.range.label || "Untitled range"}
               </LocaleString>
 
-              {!showCanvases && props.range.isRangeLeaf ? <div>{props.range.items?.length}</div> : null}
+              {!showCanvases && props.range.isRangeLeaf ? (
+                <div>{props.range.items?.length}</div>
+              ) : null}
 
               {isEditing ? (
                 <Button slot="drag">
