@@ -86,14 +86,22 @@ function CanvasViewerNavigation(props: {
   return (
     <div className="bg-transparent absolute bottom-4 left-4 right-4 pointer-events-none flex items-center justify-center">
       <div className="bg-white/90 gap-2 inline-flex mx-auto pointer-events-auto items-center gap-4 rounded overflow-hidden shadow-md">
-        <Button onClick={props.onPrevious} className="p-2 hover:bg-gray-200">
+        <Button
+          isDisabled={!props.onPrevious}
+          onClick={props.onPrevious}
+          className="p-2 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
           <ArrowBackwardIcon className="text-2xl" />
           <span className="sr-only">Previous</span>
         </Button>
         <LocaleString className="text-center w-[120px] text-sm truncate overflow-ellipsis">
           {canvas?.label}
         </LocaleString>
-        <Button onClick={props.onNext} className="p-2 hover:bg-gray-200">
+        <Button
+          isDisabled={!props.onNext}
+          onClick={props.onNext}
+          className="p-2 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
           <ArrowForwardIcon className="text-2xl" />
           <span className="sr-only">Next</span>
         </Button>
