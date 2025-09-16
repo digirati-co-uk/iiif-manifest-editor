@@ -6,6 +6,9 @@ import {
   RangesIcon,
   useLoadMoreItems,
   useGridOptions,
+  MoreMenuIcon,
+  EditTextIcon,
+  ListingIcon,
 } from "@manifest-editor/components";
 import {
   InlineLabelEditor,
@@ -13,12 +16,21 @@ import {
 } from "@manifest-editor/editors";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useCallback, useState } from "react";
-import { Button } from "react-aria-components";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ListEditIcon } from "../../components";
 import { ArrowDownIcon } from "../../left-panels/components/ArrowDownIcon";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import { ArrowForwardIcon } from "../../icons";
+import { InternationalString } from "@iiif/presentation-3";
 
 export function RangeWorkbenchSection({
   range,
@@ -26,6 +38,8 @@ export function RangeWorkbenchSection({
   onSplit,
   onMergeDown,
   onMergeUp,
+  mergeDownLabel,
+  mergeUpLabel,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
@@ -33,7 +47,9 @@ export function RangeWorkbenchSection({
     range: RangeTableOfContentsNode,
     item: RangeTableOfContentsNode,
   ) => void;
+  mergeUpLabel?: InternationalString;
   onMergeUp?: (range: RangeTableOfContentsNode) => void;
+  mergeDownLabel?: InternationalString;
   onMergeDown?: (range: RangeTableOfContentsNode) => void;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
@@ -110,25 +126,65 @@ export function RangeWorkbenchSection({
             />
           ) : null}
 
-          {isEditingLabel ? null : (
-            <ActionButton onPress={() => setIsEditingLabel((ed) => !ed)}>
-              <ListEditIcon className="text-2xl" />
+          <MenuTrigger>
+            <ActionButton>
+              <MoreMenuIcon className="text-xl" />
             </ActionButton>
-          )}
-          <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
-            {range.isRangeLeaf ? "Bulk actions" : "Edit range"}
-          </ActionButton>
+            <Popover className="bg-white shadow-md rounded-md p-1">
+              <Menu>
+                <MenuItem
+                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  onAction={() => setIsEditingLabel((ed) => !ed)}
+                >
+                  <EditTextIcon />
+                  Edit label
+                </MenuItem>
+                <MenuItem
+                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  onAction={() =>
+                    edit(
+                      range,
+                      { property: "metadata" },
+                      {
+                        forceOpen: true,
+                        selectedTab: "@manifest-editor/metadata",
+                      },
+                    )
+                  }
+                >
+                  <ListingIcon />
+                  Edit range metadata
+                </MenuItem>
+                {onMergeUp && (
+                  <MenuItem
+                    onPress={() => onMergeUp(range)}
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
+                  >
+                    <MergeUpIcon className="text-md" /> Merge into
+                    <LocaleString className="font-semibold">
+                      {mergeUpLabel}
+                    </LocaleString>
+                  </MenuItem>
+                )}
+                {onMergeDown && (
+                  <MenuItem
+                    onPress={() => onMergeDown(range)}
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
+                  >
+                    <MergeDownIcon className="text-md" /> Merge into
+                    <LocaleString className="font-semibold">
+                      {mergeDownLabel}
+                    </LocaleString>
+                  </MenuItem>
+                )}
+              </Menu>
+            </Popover>
+          </MenuTrigger>
 
-          {onMergeUp ? (
-            <ActionButton onPress={() => onMergeUp(range)}>
-              <MergeUpIcon className="text-2xl" /> Merge with previous
-            </ActionButton>
-          ) : null}
-          {onMergeDown ? (
-            <ActionButton onPress={() => onMergeDown(range)}>
-              <MergeDownIcon className="text-2xl" /> Merge with next
-            </ActionButton>
-          ) : null}
+          <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
+            {range.isRangeLeaf ? "View range" : "Edit range items"}
+            <ArrowForwardIcon className="text-xl" />
+          </ActionButton>
         </div>
         {isExpanded ? (
           <>

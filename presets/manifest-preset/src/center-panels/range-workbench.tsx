@@ -279,6 +279,14 @@ function RangeWorkbench() {
                 ? () => onMerge(item, topLevelRange.items?.[nextIdx]!)
                 : undefined
             }
+            mergeUpLabel={
+              prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""
+            }
+            mergeDownLabel={
+              nextIdx !== topLevelRange.items?.length
+                ? topLevelRange.items?.[nextIdx]?.label
+                : ""
+            }
           />
         );
       })}

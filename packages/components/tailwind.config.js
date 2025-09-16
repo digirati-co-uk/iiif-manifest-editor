@@ -8,6 +8,8 @@ module.exports = {
     "./stories/**/*.{js,jsx,ts,tsx}",
     // @todo fix bundle issues.
     "../editors/src/**/*.{js,jsx,ts,tsx}",
+
+    "../../presets/*/src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     colors: {
