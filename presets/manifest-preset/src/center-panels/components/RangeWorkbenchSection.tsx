@@ -4,91 +4,21 @@ import {
   CanvasThumbnailGridItem,
   Modal,
   RangesIcon,
-  useFastList,
+  useLoadMoreItems,
   useGridOptions,
 } from "@manifest-editor/components";
 import {
-  Input,
+  InlineLabelEditor,
   LanguageFieldEditor,
-  LanguageMapEditor,
 } from "@manifest-editor/editors";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useState } from "react";
 import { Button } from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ListEditIcon } from "../../components";
 import { ArrowDownIcon } from "../../left-panels/components/ArrowDownIcon";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
-
-function useLoadMoreItems<T extends object>(
-  items: T[],
-  options: {
-    batchSize: number;
-  },
-) {
-  const [index, setIndex] = useState(options.batchSize);
-
-  const itemsFiltered = useMemo(() => {
-    return items.slice(0, index);
-  }, [items, index]);
-
-  const loadMore = useCallback(() => {
-    setIndex((prevIndex) => prevIndex + options.batchSize);
-  }, [options.batchSize]);
-
-  const intersector = useMemo(
-    () => (
-      <div
-        style={{ width: 1, height: 1 }}
-        ref={(intersectorRef) => {
-          const observer = new IntersectionObserver(
-            (entries) => {
-              if (entries[0]?.isIntersecting) {
-                loadMore();
-              }
-            },
-            { root: intersectorRef?.parentElement, threshold: 0.1 },
-          );
-
-          if (intersectorRef) {
-            observer.observe(intersectorRef);
-          }
-
-          return () => {
-            if (intersectorRef) {
-              observer.unobserve(intersectorRef);
-            }
-          };
-        }}
-      />
-    ),
-    [loadMore],
-  );
-
-  const isFullyLoaded = index >= items.length;
-
-  const reset = () => {
-    setIndex(options.batchSize);
-  };
-
-  return [
-    isFullyLoaded ? items : itemsFiltered,
-    {
-      intersector: isFullyLoaded ? null : intersector,
-      loadMore,
-      isFullyLoaded,
-      reset,
-    },
-  ] as const;
-}
 
 export function RangeWorkbenchSection({
   range,
@@ -109,7 +39,6 @@ export function RangeWorkbenchSection({
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
-  const rangeEditor = useGenericEditor(range);
   const [selectedCanvas, _setSelectedCanvas] =
     useState<RangeTableOfContentsNode | null>(null);
   const [lastSelectedCanvas, setLastSelectedCanvas] =
@@ -148,8 +77,11 @@ export function RangeWorkbenchSection({
           )}
         </Modal>
       ) : null}
-      <div key={range.id} className="w-full border-b border-b-gray-200 mb-8">
-        <div className="flex items-center gap-4 mb-2">
+      <div
+        key={range.id}
+        className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300"
+      >
+        <div className="flex items-center gap-4">
           <Button
             className="flex items-center gap-2"
             onPress={() => {
@@ -172,31 +104,10 @@ export function RangeWorkbenchSection({
           </Button>
 
           {isEditingLabel ? (
-            <form
-              className={twMerge(
-                "flex gap-2 items-center justify-center w-full max-w-xl",
-              )}
-              onSubmit={(e) => {
-                e.preventDefault();
-                setIsEditingLabel(false);
-              }}
-            >
-              <LanguageFieldEditor
-                singleValue
-                autoFocus
-                className="mb-0 w-full"
-                label=""
-                fields={rangeEditor.descriptive.label.get()}
-                onSave={(e) =>
-                  rangeEditor.descriptive.label.set(e.toInternationalString())
-                }
-                disableMultiline={true}
-                disallowHTML={true}
-              />
-              <ActionButton primary type="submit">
-                Save
-              </ActionButton>
-            </form>
+            <InlineLabelEditor
+              resource={{ id: range.id, type: "Range" }}
+              onSubmit={() => setIsEditingLabel(false)}
+            />
           ) : null}
 
           {isEditingLabel ? null : (
@@ -221,7 +132,7 @@ export function RangeWorkbenchSection({
         </div>
         {isExpanded ? (
           <>
-            <div className={`grid gap-3 ${size}`}>
+            <div className={`grid pt-4 gap-3 ${size}`}>
               {(rangeItems || []).map((item) => {
                 if (item.type !== "Canvas") {
                   return (

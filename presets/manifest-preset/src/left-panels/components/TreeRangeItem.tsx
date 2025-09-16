@@ -1,5 +1,4 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { ActionButton } from "@manifest-editor/components";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import type {
   TreeItemContentRenderProps,
@@ -15,7 +14,6 @@ import { LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowDownIcon } from "./ArrowDownIcon";
 import { useRangeTreeOptions } from "./RangeTree";
-import { SplitIcon } from "./SplitIcon";
 
 interface TreeRangeItemProps extends Partial<TreeItemProps> {
   range: RangeTableOfContentsNode;

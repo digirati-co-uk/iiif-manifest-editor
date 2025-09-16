@@ -1,14 +1,20 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { ActionButton, AddImageIcon } from "@manifest-editor/components";
-import { ReorderList } from "@manifest-editor/editors";
+import { AddImageIcon } from "@manifest-editor/components";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useState } from "react";
-import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
-import { Button, Checkbox, TreeItem, TreeItemContent } from "react-aria-components";
+import type {
+  TreeItemContentRenderProps,
+  TreeItemProps,
+} from "react-aria-components";
+import {
+  Button,
+  Checkbox,
+  TreeItem,
+  TreeItemContent,
+} from "react-aria-components";
 import { LocaleString, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { useRangeTreeOptions } from "./RangeTree";
-import { SplitIcon } from "./SplitIcon";
 
 interface TreeCanvasItemProps extends Partial<TreeItemProps> {
   rangeItem: RangeTableOfContentsNode;
@@ -24,7 +30,9 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
     return null;
   }
 
-  const id = props?.parent?.resource ? `${props.parent.resource.id}$__$${props.rangeItem.id}` : props.rangeItem.id;
+  const id = props?.parent?.resource
+    ? `${props.parent.resource.id}$__$${props.rangeItem.id}`
+    : props.rangeItem.id;
 
   return (
     <TreeItem
@@ -38,9 +46,16 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
       value={props.rangeItem}
     >
       <TreeItemContent>
-        {({ allowsDragging, isDragging, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
+        {({
+          allowsDragging,
+          isDragging,
+          selectionBehavior,
+          selectionMode,
+        }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && <Checkbox slot="selection" />}
+            {selectionBehavior === "toggle" && selectionMode !== "none" && (
+              <Checkbox slot="selection" />
+            )}
             <div
               className={twMerge(
                 `flex flex-1 min-w-0 truncate whitespace-nowrap items-center gap-2 flex-shrink-0`,

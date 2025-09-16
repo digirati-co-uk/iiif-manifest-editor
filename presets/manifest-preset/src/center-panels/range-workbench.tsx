@@ -6,13 +6,14 @@ import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import {
   ActionButton,
+  BackIcon,
   CanvasThumbnailGridItem,
   InfoMessage,
   useGridOptions,
   WarningMessage,
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
-import { useInStack } from "@manifest-editor/editors";
+import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useEditingStack,
@@ -20,7 +21,7 @@ import {
   useInlineCreator,
   useLayoutActions,
 } from "@manifest-editor/shell";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CanvasContext,
   LocaleString,
@@ -33,6 +34,7 @@ import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
+import { Button } from "react-aria-components";
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
@@ -50,6 +52,7 @@ function RangeWorkbench() {
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const creator = useInlineCreator();
+  const [isEditingLabel, setIsEditingLabel] = useState(false);
 
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
 
@@ -215,18 +218,33 @@ function RangeWorkbench() {
   );
 
   return (
-    <div className="flex-1 overflow-y-auto p-4">
-      <span className="text-gray-500">Range workbench</span>
-      {selectedRange ? (
-        <ActionButton onPress={() => back()}>Go Back</ActionButton>
-      ) : null}
-      <div className="flex flex-row justify-between">
-        <LocaleString as="h3" className="text-2xl">
-          {topLevelRange.label}
-        </LocaleString>
+    <div className="flex-1 overflow-y-auto">
+      <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+        <div className="flex items-center gap-4">
+          {selectedRange ? (
+            <ActionButton onPress={() => back()}>
+              <BackIcon className="text-xl" />
+            </ActionButton>
+          ) : null}
+          {isEditingLabel && !topLevelRange.isVirtual ? (
+            <InlineLabelEditor
+              className="m-0 pt-2"
+              resource={topLevelRange}
+              onSubmit={() => setIsEditingLabel(false)}
+            />
+          ) : (
+            <div className="flex items-center gap-4">
+              <LocaleString as="h3" className="text-xl">
+                {topLevelRange.label}
+              </LocaleString>
+              <ActionButton onPress={() => setIsEditingLabel(true)}>
+                Edit
+              </ActionButton>
+            </div>
+          )}
+        </div>
         {gridOptions}
       </div>
-      <hr className="my-4 border-b border-b-gray-300" />
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
           Splitting range, click to confirm the two new ranges

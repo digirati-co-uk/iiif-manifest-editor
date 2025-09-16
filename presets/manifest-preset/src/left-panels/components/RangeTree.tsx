@@ -4,7 +4,7 @@ import {
   type RangeTableOfContentsNode,
 } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
-import { Editor, EditorInstance } from "@manifest-editor/editor-api";
+import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { useMemo, useState } from "react";
 import {
@@ -23,7 +23,6 @@ import {
 import { create } from "zustand";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
-import { ActionButton } from "@manifest-editor/components";
 
 interface RangeTreeProps {
   hideCanvases?: boolean;
