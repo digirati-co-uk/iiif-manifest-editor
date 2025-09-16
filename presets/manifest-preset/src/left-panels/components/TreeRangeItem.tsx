@@ -22,11 +22,12 @@ import { useRangeTreeOptions } from "./RangeTree";
 import { useInStack } from "@manifest-editor/editors";
 import {
   ActionButton,
+  AddImageIcon,
   DeleteForeverIcon,
   MoreMenuIcon,
 } from "@manifest-editor/components";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
-import { useInlineCreator } from "@manifest-editor/shell";
+import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useCallback } from "react";
 
@@ -36,6 +37,7 @@ interface TreeRangeItemProps extends Partial<TreeItemProps> {
 }
 
 export function TreeRangeItem(props: TreeRangeItemProps) {
+  const manifestEditor = useManifestEditor();
   const range = useInStack("Range");
   const creator = useInlineCreator();
   const vault = useVault();
@@ -77,6 +79,31 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       );
     },
     [creator],
+  );
+
+  const insertSequenceRange = useCallback(
+    (range: RangeTableOfContentsNode) => {
+      creator.create(
+        "@manifest-editor/range-with-items",
+        {
+          type: "Range",
+          label: { en: ["Untitled sequence"] },
+          items: manifestEditor.structural.items
+            .getWithoutTracking()
+            .map((item) => ({
+              type: "Canvas",
+              id: item.id,
+            })),
+        },
+        {
+          parent: {
+            property: "items",
+            resource: { id: range.id, type: "Range" },
+          },
+        },
+      );
+    },
+    [creator, manifestEditor],
   );
 
   const { isEditing, showCanvases } = useRangeTreeOptions();
@@ -150,6 +177,12 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                         >
                           <PlusIcon /> Insert empty range
+                        </MenuItem>
+                        <MenuItem
+                          onAction={() => insertSequenceRange(props.range)}
+                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                        >
+                          <AddImageIcon /> Insert full range
                         </MenuItem>
                         <MenuItem
                           onAction={() => deleteRange(props.range)}
