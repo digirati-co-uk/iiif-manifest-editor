@@ -1,5 +1,11 @@
 import { createRangeHelper } from "@iiif/helpers";
-import { ListEditIcon, Sidebar, SidebarContent, SidebarHeader, WarningMessage } from "@manifest-editor/components";
+import {
+  ListEditIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  WarningMessage,
+} from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useEffect, useMemo } from "react";
 import { Menu, MenuItem } from "react-aria-components";
@@ -20,7 +26,13 @@ export const rangesPanel: LayoutPanel = {
 
 export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -32,7 +44,13 @@ export function RangesIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function SplitRangeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -46,9 +64,12 @@ export function RangeLeftPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
-  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
+  const topLevelRange = helper.rangesToTableOfContentsTree(
+    vault.get(manifest!.structures || []),
+  );
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
-  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
+  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } =
+    useRangeTreeOptions();
 
   useEffect(() => {
     return splitEffect();
@@ -59,7 +80,11 @@ export function RangeLeftPanel() {
       return null;
     }
 
-    return helper.isContiguous((manifest!.structures || [])[0]!, manifest!.items, { detail: true });
+    return helper.isContiguous(
+      (manifest!.structures || [])[0]!,
+      manifest!.items,
+      { detail: true },
+    );
   }, [manifest, helper]);
 
   if (!topLevelRange) {
@@ -78,17 +103,6 @@ export function RangeLeftPanel() {
             onClick: toggleIsEditing,
           },
           {
-            title: "Display options",
-            icon: <DisplaySettingsIcon className="text-xl" />,
-            menu: (
-              <Menu className="bg-white rounded drop-shadow-xl p-1">
-                <MenuItem className="hover:bg-gray-100 rounded px-2 py-1" onAction={toggleShowCanvases}>
-                  {showCanvases ? "Hide canvases" : "Show canvases"}
-                </MenuItem>
-              </Menu>
-            ),
-          },
-          {
             title: "Split range",
             icon: <SplitRangeIcon className="text-xl" />,
             onClick: () => setIsSplitting(!isSplitting),
@@ -98,11 +112,21 @@ export function RangeLeftPanel() {
       />
       <SidebarContent className="p-2">
         {topLevelRange.isVirtual ? (
-          <WarningMessage className="mb-2">This is a virtual top level range</WarningMessage>
+          <WarningMessage className="mb-2">
+            This is a virtual top level range
+          </WarningMessage>
         ) : null}
-        {!isContiguous ? <WarningMessage className="mb-2">Warning: Non-contiguous range</WarningMessage> : null}
+        {!isContiguous ? (
+          <WarningMessage className="mb-2">
+            Warning: Non-contiguous range
+          </WarningMessage>
+        ) : null}
 
-        {isSplitting ? <RangeSplittingPreview /> : <RangeTree hideCanvases={!showCanvases} />}
+        {isSplitting ? (
+          <RangeSplittingPreview />
+        ) : (
+          <RangeTree hideCanvases={!showCanvases} />
+        )}
       </SidebarContent>
     </Sidebar>
   );
@@ -110,7 +134,13 @@ export function RangeLeftPanel() {
 
 export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -122,7 +152,13 @@ export function RangesListIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function CanvasesListIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -134,7 +170,13 @@ export function CanvasesListIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function DisplaySettingsIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
