@@ -26,12 +26,12 @@ import {
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ListEditIcon } from "../../components";
-import { ArrowDownIcon } from "../../left-panels/components/ArrowDownIcon";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { ArrowForwardIcon } from "../../icons";
 import { InternationalString } from "@iiif/presentation-3";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
+import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 
 export function RangeWorkbenchSection({
   range,
@@ -41,6 +41,7 @@ export function RangeWorkbenchSection({
   onMergeUp,
   mergeDownLabel,
   mergeUpLabel,
+  idx,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
@@ -52,6 +53,7 @@ export function RangeWorkbenchSection({
   onMergeUp?: (range: RangeTableOfContentsNode) => void;
   mergeDownLabel?: InternationalString;
   onMergeDown?: (range: RangeTableOfContentsNode) => void;
+  idx: number;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
   const { edit } = useLayoutActions();
@@ -95,6 +97,7 @@ export function RangeWorkbenchSection({
         </Modal>
       ) : null}
       <div
+        id={`workbench-${idx}`}
         key={range.id}
         className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300"
       >
@@ -106,7 +109,7 @@ export function RangeWorkbenchSection({
               setIsExpanded(!isExpanded);
             }}
           >
-            <ArrowDownIcon
+            <ChevronDownIcon
               className="text-xl"
               style={{
                 transition: "transform .2s",

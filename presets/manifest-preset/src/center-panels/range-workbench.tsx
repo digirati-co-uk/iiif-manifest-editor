@@ -21,7 +21,7 @@ import {
   useInlineCreator,
   useLayoutActions,
 } from "@manifest-editor/shell";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CanvasContext,
   LocaleString,
@@ -34,8 +34,10 @@ import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-import { Button } from "react-aria-components";
 import { SplitRangeIcon } from "../icons";
+import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
+import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
+
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
@@ -210,6 +212,42 @@ function RangeWorkbench() {
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
 
+  const [isLastInView, setIsLastInView] = useState(false);
+
+  const rangeItemsLen =
+    (topLevelRange?.items || []).filter((i: any) => i.type !== "Canvas").length;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || rangeItemsLen === 0) {
+      setIsLastInView(false);
+      return;
+    }
+
+    const lastId = `workbench-${rangeItemsLen - 1}`;
+    const last = document.getElementById(lastId);
+    if (!last) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setIsLastInView(entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0,
+        rootMargin: "0px 0px -1px 0px",
+      }
+    );
+
+    io.observe(last);
+
+    const r = last.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    setIsLastInView(r.top < vh && r.bottom > 0);
+
+    return () => io.disconnect();
+  }, [rangeItemsLen]);
+
+
   if (!topLevelRange) {
     return null;
   }
@@ -217,6 +255,13 @@ function RangeWorkbench() {
   const hasCanvases = (topLevelRange.items || []).filter(
     (item) => item.type === "Canvas",
   );
+
+  const rangeItems = (topLevelRange.items || []).filter(
+    (item) => item.type !== "Canvas",
+  );
+
+  const lastWorkbench = document.getElementById(`workbench-${(rangeItems.length - 1)}`);
+  const firstWorkbench = document.getElementById('workbench-0');
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -273,6 +318,7 @@ function RangeWorkbench() {
         return (
           <RangeWorkbenchSection
             //
+            idx={idx}
             isSplitting={isSplitting}
             onSplit={onSplit}
             key={item.id}
@@ -304,6 +350,19 @@ function RangeWorkbench() {
           <BulkActionsWorkbench />
         </RangeContext>
       ) : null}
+
+      <div className="sticky bottom-5 float-right right-5 ">
+        {isLastInView ? (
+          <ActionButton primary onPress={() => {firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}}>
+            Scroll to top <ArrowUpIcon />
+          </ActionButton>
+        ) : (
+          <ActionButton primary onPress={() => {lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}}>
+            Scroll to bottom <ArrowDownIcon />
+          </ActionButton>
+        )}
+
+      </div>
     </div>
   );
 }

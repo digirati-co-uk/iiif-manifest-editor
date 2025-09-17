@@ -17,7 +17,7 @@ import {
 } from "react-aria-components";
 import { LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { ArrowDownIcon } from "./ArrowDownIcon";
+import { ChevronDownIcon } from "./ChevronDownIcon";
 import { useRangeTreeOptions } from "./RangeTree";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -130,7 +130,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             )}
 
             <Button slot="chevron">
-              <ArrowDownIcon
+              <ChevronDownIcon
                 className={twMerge(
                   "text-xl",
                   !showCanvases &&
