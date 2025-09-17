@@ -33,6 +33,7 @@ export * from "./HandleContainer";
 export * from "./CollectionListItem";
 export * from "./ManifestListItem";
 export * from "./Spinner";
+export * from "./OnboardingTour";
 
 // Icons
 export * from "./icons/CreateCanvasIcon";

@@ -6,6 +6,7 @@ import {
   SidebarHeader,
   useLocalStorage,
   WarningMessage,
+  OnboardingTour,
 } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useEffect, useMemo } from "react";
@@ -65,6 +66,7 @@ export function RangeLeftPanel() {
         title={topLevelRange.label || "Untitled range"}
         actions={[
           {
+            id: "card-view",
             title: isCardView ? "Tree view" : "Card view",
             icon: isCardView ? (
               <CanvasListingIcon className="text-xl" />
@@ -76,12 +78,14 @@ export function RangeLeftPanel() {
             },
           },
           {
+            id: "edit-ranges",
             title: "Edit ranges",
             icon: <ListEditIcon className="text-xl" />,
             toggled: isEditing,
             onClick: toggleIsEditing,
           },
           {
+            id: "split-range",
             title: "Split range",
             icon: <SplitRangeIcon className="text-xl" />,
             onClick: () => setIsSplitting(!isSplitting),
@@ -89,7 +93,7 @@ export function RangeLeftPanel() {
           },
         ]}
       />
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-2" id="range-listing-sidebar">
         {topLevelRange.isVirtual ? (
           <WarningMessage className="mb-2">
             This is a virtual top level range
@@ -108,6 +112,40 @@ export function RangeLeftPanel() {
         ) : (
           <RangeTree hideCanvases={!showCanvases} />
         )}
+
+        <OnboardingTour
+          id="range-listing-tour"
+          steps={[
+            // {
+            //   content: <h2>Let's begin our journey!</h2>,
+            //   locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
+            //   placement: "center",
+            //   target: "body",
+            // },
+            {
+              target: "#split-range",
+              content: "You can split this range into multiple ranges.",
+            },
+            {
+              target: "#edit-ranges",
+              content:
+                "You can enable edit more here and reorder or edit the ranges.",
+            },
+            {
+              target: "#card-view",
+              content: "You can switch between card and tree view.",
+            },
+            {
+              target: "#range-listing-sidebar",
+              content: "Here all of the ranges are listed",
+              placement: "right-start",
+            },
+            {
+              target: "#grid-options",
+              content: "You can change the grid size here.",
+            },
+          ]}
+        />
       </SidebarContent>
     </Sidebar>
   );

@@ -49,9 +49,9 @@ export function RangeWorkbenchSection({
     range: RangeTableOfContentsNode,
     item: RangeTableOfContentsNode,
   ) => void;
-  mergeUpLabel?: InternationalString;
+  mergeUpLabel?: InternationalString | string | null;
   onMergeUp?: (range: RangeTableOfContentsNode) => void;
-  mergeDownLabel?: InternationalString;
+  mergeDownLabel?: InternationalString | string | null;
   onMergeDown?: (range: RangeTableOfContentsNode) => void;
   idx: number;
 }) {
