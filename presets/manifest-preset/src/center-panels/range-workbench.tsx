@@ -34,7 +34,7 @@ import { flattenedRanges } from "../left-panels/components/RangeTree";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-import { SplitRangeIcon } from "../icons";
+import { SplitRangeIcon, HelpIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 
@@ -214,8 +214,9 @@ function RangeWorkbench() {
 
   const [isLastInView, setIsLastInView] = useState(false);
 
-  const rangeItemsLen =
-    (topLevelRange?.items || []).filter((i: any) => i.type !== "Canvas").length;
+  const rangeItemsLen = (topLevelRange?.items || []).filter(
+    (i: any) => i.type !== "Canvas",
+  ).length;
 
   useEffect(() => {
     if (typeof window === "undefined" || rangeItemsLen === 0) {
@@ -235,7 +236,7 @@ function RangeWorkbench() {
         root: null,
         threshold: 0,
         rootMargin: "0px 0px -1px 0px",
-      }
+      },
     );
 
     io.observe(last);
@@ -246,7 +247,6 @@ function RangeWorkbench() {
 
     return () => io.disconnect();
   }, [rangeItemsLen]);
-
 
   if (!topLevelRange) {
     return null;
@@ -260,8 +260,10 @@ function RangeWorkbench() {
     (item) => item.type !== "Canvas",
   );
 
-  const lastWorkbench = document.getElementById(`workbench-${(rangeItems.length - 1)}`);
-  const firstWorkbench = document.getElementById('workbench-0');
+  const lastWorkbench = document.getElementById(
+    `workbench-${rangeItems.length - 1}`,
+  );
+  const firstWorkbench = document.getElementById("workbench-0");
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -293,6 +295,14 @@ function RangeWorkbench() {
               <SplitRangeIcon className="text-xl" /> Split range
             </ActionButton>
           )}
+
+          <ActionButton
+            onPress={() => {
+              window.dispatchEvent(new CustomEvent("onboarding:restart", { detail: { id: 'range-listing-tour' } }));
+            }}
+          >
+            <HelpIcon />
+          </ActionButton>
         </div>
 
         {gridOptions}
@@ -353,15 +363,32 @@ function RangeWorkbench() {
 
       <div className="sticky bottom-5 float-right right-5 ">
         {isLastInView ? (
-          <ActionButton primary onPress={() => {firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}}>
+          <ActionButton
+            primary
+            onPress={() => {
+              firstWorkbench?.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+                inline: "nearest",
+              });
+            }}
+          >
             Scroll to top <ArrowUpIcon />
           </ActionButton>
         ) : (
-          <ActionButton primary onPress={() => {lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}}>
+          <ActionButton
+            primary
+            onPress={() => {
+              lastWorkbench?.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+                inline: "nearest",
+              });
+            }}
+          >
             Scroll to bottom <ArrowDownIcon />
           </ActionButton>
         )}
-
       </div>
     </div>
   );

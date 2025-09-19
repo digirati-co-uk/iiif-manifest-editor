@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/useUniqueElementIds: <explanation> */
 import { createRangeHelper } from "@iiif/helpers";
 import {
   ListEditIcon,
@@ -116,33 +117,42 @@ export function RangeLeftPanel() {
         <OnboardingTour
           id="range-listing-tour"
           steps={[
-            // {
-            //   content: <h2>Let's begin our journey!</h2>,
-            //   locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
-            //   placement: "center",
-            //   target: "body",
-            // },
             {
               target: "#split-range",
-              content: "You can split this range into multiple ranges.",
-            },
-            {
-              target: "#edit-ranges",
-              content:
-                "You can enable edit more here and reorder or edit the ranges.",
-            },
-            {
-              target: "#card-view",
-              content: "You can switch between card and tree view.",
+              title: "Working with ranges",
+              content: 'Ranges let you organise your content This short tour shows you the main tools for creating and manging ranges ',
             },
             {
               target: "#range-listing-sidebar",
-              content: "Here all of the ranges are listed",
+              title: 'Range list',
+              content: 'This panel shows all ranges in your document. Expand or collapse sections to navigate.',
               placement: "right-start",
             },
             {
+              target: "#split-range",
+              title: 'Split a range',
+              content: 'Split this range into multiple ranges to make your content easier to manage.',
+            },
+            {
+              target: "#edit-ranges",
+              title: 'Edit or reorder ranges',
+              content: 'Add new ranges, insert full or empty ranges, or delete ones you don’t need. Drag ranges up or down to reorder.',
+            },
+            {
+              target: "#card-view",
+              title: 'Switch view',
+              content: 'Toggle between card view and tree view. Card view is simplified and visual, while tree view is detailed and hierarchical.',
+            },
+            {
               target: "#grid-options",
-              content: "You can change the grid size here.",
+              title: 'Adjust grid size',
+              content: 'Change the canvas thumbnail size to suit your workflow.'
+
+            },
+            {
+              target: "body",
+              title: 'That’s it!',
+              content: 'Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu.'
             },
           ]}
         />

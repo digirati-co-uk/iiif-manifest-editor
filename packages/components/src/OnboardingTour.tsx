@@ -1,6 +1,6 @@
 "use client";
 import { useLocalStorage } from "@manifest-editor/components";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Joyride, { type Step, type CallBackProps } from "react-joyride";
 
 interface OnboardingTourProps {
@@ -12,12 +12,7 @@ interface OnboardingTourProps {
 export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
   const [_isEnabled_, _setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
   const [isEnabled, setIsEnabled] = useState(false);
-
-  const lifecycle = (e: CallBackProps) => {
-    if (e.action === "close") {
-      _setIsEnabled(false);
-    }
-  };
+  const [key, setKey] = useState(0);
 
   useLayoutEffect(() => {
     setTimeout(() => {
@@ -25,12 +20,32 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
     }, 2000);
   }, []);
 
+  useEffect(() => {
+    const onRestart = (e: Event) => {
+      const target = (e as CustomEvent<{ id?: string }>).detail?.id;
+      if (target === id) {
+        setIsEnabled(false);
+        setKey((k) => k + 1);
+        requestAnimationFrame(() => setIsEnabled(true));
+      }
+    };
+    window.addEventListener("onboarding:restart", onRestart as EventListener);
+    return () => window.removeEventListener("onboarding:restart", onRestart as EventListener);
+  }, [id]);
+
+  const lifecycle = (e: CallBackProps) => {
+    if (e.action === "close") {
+      _setIsEnabled(false);
+    }
+  };
+
   if ((!_isEnabled_ || steps.length === 0) && !forceStart) {
     return null;
   }
 
   return (
     <Joyride
+      key={`${id}-${key}`}
       showProgress
       showSkipButton
       continuous
@@ -38,6 +53,13 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
       run={isEnabled || forceStart}
       debug
       callback={lifecycle}
+      styles={{
+        options: {
+          primaryColor: '#b84c74',
+          textColor: '#000000',
+          zIndex: 10000,
+        },
+      }}
     />
   );
 }
