@@ -29,6 +29,7 @@ export function RangeWorkbenchSection({
   onMergeUp,
   mergeDownLabel,
   mergeUpLabel,
+  nextRangeLabel,
   onDelete,
   idx,
 }: {
@@ -40,6 +41,7 @@ export function RangeWorkbenchSection({
   mergeDownLabel?: InternationalString | string | null;
   onMergeDown?: (range: RangeTableOfContentsNode, empty?: boolean) => void;
   onDelete?: (range: RangeTableOfContentsNode) => void;
+  nextRangeLabel?: string;
   idx: number;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
@@ -220,6 +222,10 @@ export function RangeWorkbenchSection({
                         if (isSplitting) {
                           onSplit(range, item);
                         }
+                      }}
+                      containerProps={{
+                        "data-range1-label": getValue(range.label),
+                        "data-range2-label": nextRangeLabel || "Untitled range",
                       }}
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}

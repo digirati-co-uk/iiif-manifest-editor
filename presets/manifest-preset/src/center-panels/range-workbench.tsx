@@ -1,4 +1,4 @@
-import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import { ActionButton, BackIcon, InfoMessage, useGridOptions } from "@manifest-editor/components";
@@ -216,8 +216,8 @@ function RangeWorkbench() {
       setIsLastInView(false);
       return;
     }
-    const lastId  = rangeItems[rangeItems.length - 1]?.id;
-    const last =  document.getElementById(`workbench-${lastId}`)
+    const lastId = rangeItems[rangeItems.length - 1]?.id;
+    const last = document.getElementById(`workbench-${lastId}`);
     if (!last) return;
 
     const io = new IntersectionObserver(
@@ -246,14 +246,15 @@ function RangeWorkbench() {
 
   const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
 
-  const rangeItems =
-    (topLevelRange.items ?? []).filter((item): item is { id: string; type: "Range" } => item.type === "Range");
+  const rangeItems = (topLevelRange.items ?? []).filter(
+    (item): item is { id: string; type: "Range" } => item.type === "Range",
+  );
 
   const firstId = rangeItems[0]?.id;
-  const lastId  = rangeItems[rangeItems.length - 1]?.id;
+  const lastId = rangeItems[rangeItems.length - 1]?.id;
 
   const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
-  const lastWorkbench  = lastId  ? document.getElementById(`workbench-${lastId}`)  : null;
+  const lastWorkbench = lastId ? document.getElementById(`workbench-${lastId}`) : null;
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -305,6 +306,11 @@ function RangeWorkbench() {
         const prevIdx = idx - 1;
         const nextIdx = idx + 1;
 
+        const nextRangeLabel =
+          nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
+            ? getValue(topLevelRange.items?.[nextIdx]?.label)
+            : undefined;
+
         return (
           <RangeWorkbenchSection
             //
@@ -319,6 +325,7 @@ function RangeWorkbench() {
                 ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
                 : undefined
             }
+            nextRangeLabel={nextRangeLabel}
             onDelete={() => onDelete(idx)}
             mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
             mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}

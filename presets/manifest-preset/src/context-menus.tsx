@@ -45,7 +45,7 @@ function CanvasContextMenu() {
     canvasRef,
     {
       isPainting: true,
-    }
+    },
   );
 
   useCustomContextMenu(
@@ -57,7 +57,8 @@ function CanvasContextMenu() {
           id: "edit-canvas",
           label: "Edit metadata",
           enabled: true,
-          onAction: () => edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }, undefined, { forceOpen: true }),
+          onAction: () =>
+            edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }, undefined, { forceOpen: true }),
         },
         {
           id: "add-media",
@@ -83,7 +84,7 @@ function CanvasContextMenu() {
         },
       ],
     },
-    [canvasRef, currentId, canCreateAnnotation]
+    [canvasRef, currentId, canCreateAnnotation],
   );
 
   return null;
@@ -105,7 +106,7 @@ function PaintingAnnotationContextMenu() {
   const annotationPage = canvas?.items?.[0]?.id;
   const fullAnnotationPage = useVaultSelector(
     (_, v) => (annotationPage ? v.get(annotationPage) : null),
-    [annotationPage]
+    [annotationPage],
   );
 
   const annotationPageEditor = useMemo(() => {
@@ -159,7 +160,7 @@ function PaintingAnnotationContextMenu() {
         },
       ],
     },
-    [currentId, annotationPageEditor, fullAnnotationPage]
+    [currentId, annotationPageEditor, fullAnnotationPage],
   );
 
   return null;
@@ -177,9 +178,7 @@ function MediaTargetContextMenu() {
   const bounds = null;
   const { requestAnnotation, isPending, completeRequest, cancelRequest } = useRequestAnnotation({
     onSuccess: (response) => {
-      console.log("response", response);
       if (response.boundingBox) {
-        console.log(`target.setPosition(${JSON.stringify(response.boundingBox)})`);
         // target.setPosition(response.boundingBox);
       }
     },
@@ -203,7 +202,6 @@ function MediaTargetContextMenu() {
           label: "Save changes",
           enabled: isPending,
           onAction: () => {
-            console.log("complete request?");
             completeRequest();
           },
         },
@@ -212,7 +210,6 @@ function MediaTargetContextMenu() {
           label: "Discard changes",
           enabled: isPending,
           onAction: () => {
-            console.log("cancel request?");
             cancelRequest();
           },
         },
@@ -248,7 +245,7 @@ function MediaTargetContextMenu() {
         },
       ],
     },
-    [isPending]
+    [isPending],
   );
 
   return null;

@@ -53,8 +53,6 @@ export function RangeLeftPanel() {
     return <RangeCreateEmpty />;
   }
 
-  console.log("topLevelRange", vault.get({ id: topLevelRange.items[0].id, type: "Range" }));
-
   return (
     <Sidebar>
       <SidebarHeader

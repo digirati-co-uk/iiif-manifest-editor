@@ -14,6 +14,7 @@ interface CanvasThumbnailGridItemProps {
   className?: string;
   icon?: React.ReactNode;
   hideLabel?: boolean;
+  containerProps?: any;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   const { pressProps } = usePress({
@@ -25,6 +26,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         {...pressProps}
         className={twMerge("flex flex-col", props.className)}
         data-canvas-selected={props.selected}
+        {...(props.containerProps || {})}
       >
         <div className="bg-me-gray-100 relative w-full aspect-square group flex-1 overflow-hidden rounded">
           <Card3D
@@ -39,9 +41,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
           </Card3D>
           {props.icon || null}
         </div>
-        {props.hideLabel ? null : (
-          <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />
-        )}
+        {props.hideLabel ? null : <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />}
       </div>
     </CanvasContext>
   );

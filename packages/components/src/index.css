@@ -209,7 +209,7 @@ div[role="presentation"]:has(.split-range-highlight):has(
   z-index: 20;
   top: 0.3em;
   left: 0.3em;
-  content: "Range 1";
+  content: attr(data-range1-label);
   color: white;
   padding: 0.5em;
   border-radius: 4px;
@@ -217,7 +217,7 @@ div[role="presentation"]:has(.split-range-highlight):has(
 
 .split-range-highlight:hover:before {
   background: red;
-  content: "Range 2";
+  content: attr(data-range2-label);
 }
 
 .split-range-highlight:hover {
