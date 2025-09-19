@@ -171,7 +171,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                           <AddImageIcon /> Insert full range
                         </MenuItem>
                         <MenuItem
-                          onAction={() => deleteRange(props.range)}
+                          onAction={() =>
+                            window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                          }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
                           <DeleteForeverIcon /> Delete range
