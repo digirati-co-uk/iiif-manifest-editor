@@ -48,7 +48,7 @@
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.4.0",
+    "@iiif/helpers": "^1.5.1",
     "@iiif/presentation-3": "^2.2.3",
     "uuid": "^9.0.1",
     "ws": "^8.16.0"
