@@ -17,6 +17,7 @@ import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
+import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 
 export const rangeWorkbench: LayoutPanel = {
@@ -283,13 +284,7 @@ function RangeWorkbench() {
             </ActionButton>
           )}
 
-          <ActionButton
-            onPress={() => {
-              window.dispatchEvent(new CustomEvent("onboarding:restart", { detail: { id: "range-listing-tour" } }));
-            }}
-          >
-            <HelpIcon className="text-xl" />
-          </ActionButton>
+          <RangeOnboarding />
         </div>
 
         {gridOptions}

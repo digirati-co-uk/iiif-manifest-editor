@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect } from "react";
 import Joyride, { type CallBackProps, type Step } from "react-joyride";
 import { useLocalStorage } from "./hooks/use-local-storage";
 
@@ -7,26 +7,18 @@ interface OnboardingTourProps {
   id: string;
   steps: Step[];
   forceStart?: boolean;
+  onClose?: () => void;
 }
 
-export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
-  const [_isEnabled_, _setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [key, setKey] = useState(0);
+export function OnboardingTour({ id, steps, forceStart, onClose }: OnboardingTourProps) {
+  const [isEnabled, setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
 
-  useLayoutEffect(() => {
-    setTimeout(() => {
-      setIsEnabled(true);
-    }, 2000);
-  }, []);
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies: like setState in React.
   useEffect(() => {
     const onRestart = (e: Event) => {
       const target = (e as CustomEvent<{ id?: string }>).detail?.id;
       if (target === id) {
-        setIsEnabled(false);
-        setKey((k) => k + 1);
-        requestAnimationFrame(() => setIsEnabled(true));
+        setIsEnabled(true);
       }
     };
     window.addEventListener("onboarding:restart", onRestart as EventListener);
@@ -34,21 +26,19 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
   }, [id]);
 
   const lifecycle = (e: CallBackProps) => {
-    if (e.action === "close") {
-      _setIsEnabled(false);
+    if (e.action === "close" || e.action === "skip" || e.action === "stop" || e.action === "reset") {
+      setIsEnabled(false);
+      onClose?.();
     }
   };
 
-  if ((!_isEnabled_ || steps.length === 0) && !forceStart) {
+  if (steps.length === 0) {
     return null;
   }
 
-  console.log({ forceStart, id, _isEnabled_ });
-
   return (
     <Joyride
-      //
-      key={`${id}-${key}`}
+      key={id}
       showProgress
       showSkipButton
       continuous

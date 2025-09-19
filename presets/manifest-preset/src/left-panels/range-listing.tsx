@@ -97,49 +97,6 @@ export function RangeLeftPanel() {
         ) : (
           <RangeTree hideCanvases={!showCanvases} />
         )}
-
-        <OnboardingTour
-          id="range-listing-tour"
-          steps={[
-            {
-              target: "#split-range",
-              title: "Working with ranges",
-              content: 'Ranges let you organise your content This short tour shows you the main tools for creating and manging ranges ',
-            },
-            {
-              target: "#range-listing-sidebar",
-              title: 'Range list',
-              content: 'This panel shows all ranges in your document. Expand or collapse sections to navigate.',
-              placement: "right-start",
-            },
-            {
-              target: "#split-range",
-              title: 'Split a range',
-              content: 'Split this range into multiple ranges to make your content easier to manage.',
-            },
-            {
-              target: "#edit-ranges",
-              title: 'Edit or reorder ranges',
-              content: 'Add new ranges, insert full or empty ranges, or delete ones you don’t need. Drag ranges up or down to reorder.',
-            },
-            {
-              target: "#card-view",
-              title: 'Switch view',
-              content: 'Toggle between card view and tree view. Card view is simplified and visual, while tree view is detailed and hierarchical.',
-            },
-            {
-              target: "#grid-options",
-              title: 'Adjust grid size',
-              content: 'Change the canvas thumbnail size to suit your workflow.'
-
-            },
-            {
-              target: "body",
-              title: 'That’s it!',
-              content: 'Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu.'
-            },
-          ]}
-        />
       </SidebarContent>
     </Sidebar>
   );
