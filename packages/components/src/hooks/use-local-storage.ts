@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
 import mitt from "mitt";
+import { useEffect, useRef, useState } from "react";
 
-// @ts-ignore
+// @ts-expect-error
 globalThis.MS_LS_EMITTER = globalThis.MS_LS_EMITTER || mitt();
-// @ts-ignore
+// @ts-expect-error
 const lsEmitter = globalThis.MS_LS_EMITTER;
 
 export function useOptionalLocalStorage<T>(
@@ -26,7 +26,7 @@ export function useOptionalLocalStorage<T>(
 export function useLocalStorage<T>(key: string, initialValue?: T) {
   const lastStoredValue = useRef<string>();
 
-  if (!lastStoredValue.current && initialValue) {
+  if (!lastStoredValue.current && typeof initialValue !== "undefined") {
     lastStoredValue.current = JSON.stringify(initialValue);
   }
 
@@ -42,7 +42,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T) {
       }
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
-      if (item) {
+      if (typeof item !== "undefined" && item !== null) {
         lastStoredValue.current = item;
       }
       // Parse stored json or if none return initialValue

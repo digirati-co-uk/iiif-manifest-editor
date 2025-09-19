@@ -1,7 +1,7 @@
 "use client";
-import { useLocalStorage } from "./hooks/use-local-storage";
 import { useEffect, useLayoutEffect, useState } from "react";
 import Joyride, { type CallBackProps, type Step } from "react-joyride";
+import { useLocalStorage } from "./hooks/use-local-storage";
 
 interface OnboardingTourProps {
   id: string;
@@ -43,6 +43,8 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
     return null;
   }
 
+  console.log({ forceStart, id, _isEnabled_ });
+
   return (
     <Joyride
       //
@@ -55,8 +57,8 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
       callback={lifecycle}
       styles={{
         options: {
-          primaryColor: '#b84c74',
-          textColor: '#000000',
+          primaryColor: "#b84c74",
+          textColor: "#000000",
           zIndex: 10000,
         },
       }}

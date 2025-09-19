@@ -12,13 +12,12 @@ import {
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
-import { SplitRangeIcon, HelpIcon } from "../icons";
+import { HelpIcon, SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -286,10 +285,10 @@ function RangeWorkbench() {
 
           <ActionButton
             onPress={() => {
-              window.dispatchEvent(new CustomEvent("onboarding:restart", { detail: { id: 'range-listing-tour' } }));
+              window.dispatchEvent(new CustomEvent("onboarding:restart", { detail: { id: "range-listing-tour" } }));
             }}
           >
-            <HelpIcon />
+            <HelpIcon className="text-xl" />
           </ActionButton>
         </div>
 
