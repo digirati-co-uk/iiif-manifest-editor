@@ -7,18 +7,14 @@ import {
   ListingIcon,
   Modal,
   MoreMenuIcon,
-  RangesIcon,
   useGridOptions,
   useLoadMoreItems,
 } from "@manifest-editor/components";
-import { InlineLabelEditor, LanguageFieldEditor } from "@manifest-editor/editors";
-import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import { InlineLabelEditor } from "@manifest-editor/editors";
+import { useLayoutActions } from "@manifest-editor/shell";
 import { useCallback, useState } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
-import { twMerge } from "tailwind-merge";
-import { ListEditIcon } from "../../components";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
@@ -44,8 +40,6 @@ export function RangeWorkbenchSection({
   idx: number;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
-
-  console.log("size", size);
 
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
