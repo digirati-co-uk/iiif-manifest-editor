@@ -3,6 +3,7 @@ import type { InternationalString } from "@iiif/presentation-3";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
+  DeleteForeverIcon,
   EditTextIcon,
   ListingIcon,
   Modal,
@@ -13,7 +14,7 @@ import {
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { useCallback, useState } from "react";
-import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
@@ -28,15 +29,17 @@ export function RangeWorkbenchSection({
   onMergeUp,
   mergeDownLabel,
   mergeUpLabel,
+  onDelete,
   idx,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
   onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
   mergeUpLabel?: InternationalString | string | null;
-  onMergeUp?: (range: RangeTableOfContentsNode) => void;
+  onMergeUp?: (range: RangeTableOfContentsNode, empty?: boolean) => void;
   mergeDownLabel?: InternationalString | string | null;
-  onMergeDown?: (range: RangeTableOfContentsNode) => void;
+  onMergeDown?: (range: RangeTableOfContentsNode, empty?: boolean) => void;
+  onDelete?: (range: RangeTableOfContentsNode) => void;
   idx: number;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
@@ -57,6 +60,9 @@ export function RangeWorkbenchSection({
   const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
     batchSize: 32,
   });
+
+  const isEmpty = !range.items || range.items?.length === 0;
+
   return (
     <>
       {selectedCanvas ? (
@@ -102,19 +108,14 @@ export function RangeWorkbenchSection({
             <InlineLabelEditor resource={{ id: range.id, type: "Range" }} onSubmit={() => setIsEditingLabel(false)} />
           ) : null}
 
+          {!isEditingLabel ? <ActionButton onPress={() => setIsEditingLabel(true)}>Edit</ActionButton> : null}
+
           <MenuTrigger>
             <ActionButton>
               <MoreMenuIcon className="text-xl" />
             </ActionButton>
             <Popover className="bg-white shadow-md rounded-md p-1">
               <Menu>
-                <MenuItem
-                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                  onAction={() => setIsEditingLabel((ed) => !ed)}
-                >
-                  <EditTextIcon />
-                  Edit label
-                </MenuItem>
                 <MenuItem
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() =>
@@ -131,24 +132,62 @@ export function RangeWorkbenchSection({
                   <ListingIcon />
                   Edit range metadata
                 </MenuItem>
-                {onMergeUp && (
+                {!isEmpty && onMergeUp && (
                   <MenuItem
-                    onPress={() => onMergeUp(range)}
+                    onPress={() => onMergeUp(range, true)}
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  >
+                    <MergeUpIcon className="text-md" /> Empty contents into
+                    <LocaleString className="font-semibold">{mergeUpLabel}</LocaleString>
+                  </MenuItem>
+                )}
+                {!isEmpty && onMergeDown && (
+                  <MenuItem
+                    onPress={() => onMergeDown(range, true)}
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  >
+                    <MergeDownIcon className="text-md" /> Empty contents into
+                    <LocaleString className="font-semibold">{mergeDownLabel}</LocaleString>
+                  </MenuItem>
+                )}
+                {!isEmpty && <Separator className="h-0.5 bg-gray-200" />}
+                {!isEmpty && onMergeUp && (
+                  <MenuItem
+                    onPress={() =>
+                      window.confirm(
+                        "This range will be removed and the items will be merged into the previous range.",
+                      ) && onMergeUp(range)
+                    }
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
                     <MergeUpIcon className="text-md" /> Merge into
                     <LocaleString className="font-semibold">{mergeUpLabel}</LocaleString>
                   </MenuItem>
                 )}
-                {onMergeDown && (
+                {!isEmpty && onMergeDown && (
                   <MenuItem
-                    onPress={() => onMergeDown(range)}
+                    onPress={() => {
+                      window.confirm("This range will be removed and the items will be merged into the next range.") &&
+                        onMergeDown(range);
+                    }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
                     <MergeDownIcon className="text-md" /> Merge into
                     <LocaleString className="font-semibold">{mergeDownLabel}</LocaleString>
                   </MenuItem>
                 )}
+                {onMergeUp || onMergeDown ? <Separator className="h-0.5 bg-gray-200" /> : null}
+                {onDelete ? (
+                  <MenuItem
+                    onPress={() => {
+                      (range.items?.length ? window.confirm("This range and it's items will be removed.") : true) &&
+                        onDelete(range);
+                    }}
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
+                  >
+                    <DeleteForeverIcon /> Delete range
+                  </MenuItem>
+                ) : null}
               </Menu>
             </Popover>
           </MenuTrigger>

@@ -61,7 +61,7 @@ function RangeWorkbench() {
   });
 
   const onMerge = useCallback(
-    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode) => {
+    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) => {
       if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
 
       const foundIndex = rangeEditor.structural.items
@@ -95,9 +95,19 @@ function RangeWorkbench() {
         }),
       );
       // Then remove the range.
-      rangeEditor.structural.items.deleteAtIndex(foundIndex);
+      if (!empty) {
+        rangeEditor.structural.items.deleteAtIndex(foundIndex);
+      }
     },
     [vault, rangeEditor],
+  );
+
+  const onDelete = useCallback(
+    async (indexToDelete: number) => {
+      if (indexToDelete === -1) return;
+      rangeEditor.structural.items.deleteAtIndex(indexToDelete);
+    },
+    [rangeEditor],
   );
 
   const onSplit = useCallback(
@@ -140,22 +150,34 @@ function RangeWorkbench() {
         return;
       }
 
+      let existingEmptyRange: { id: string; type: "Range" } | null = null;
+      // Check if there is an empty range after.
+      const existingRange = (topLevelRange.items || [])[atIndex];
+      if (existingRange && existingRange.type === "Range") {
+        const fullExistingRange = vault.get(existingRange);
+        if (fullExistingRange.items.length === 0) {
+          existingEmptyRange = { id: fullExistingRange.id, type: "Range" };
+        }
+      }
+
       // slicedItems
-      const newRange = (await creator.create(
-        "@manifest-editor/range-with-items",
-        {
-          type: "Range",
-          label: { en: ["Untitled range"] },
-          items: [],
-        },
-        {
-          parent: {
-            property: "items",
-            resource: { id: topLevelRange.id, type: "Range" },
-            atIndex,
+      const newRange =
+        existingEmptyRange ||
+        ((await creator.create(
+          "@manifest-editor/range-with-items",
+          {
+            type: "Range",
+            label: { en: ["Untitled range"] },
+            items: [],
           },
-        },
-      )) as { id: string; type: "Range" };
+          {
+            parent: {
+              property: "items",
+              resource: { id: topLevelRange.id, type: "Range" },
+              atIndex,
+            },
+          },
+        )) as { id: string; type: "Range" });
 
       vault.dispatch(
         moveEntities({
@@ -285,10 +307,13 @@ function RangeWorkbench() {
             onSplit={onSplit}
             key={item.id}
             range={item}
-            onMergeUp={idx !== 0 ? () => onMerge(item, topLevelRange.items?.[prevIdx]!) : undefined}
+            onMergeUp={idx !== 0 ? (r, empty) => onMerge(item, topLevelRange.items?.[prevIdx]!, empty) : undefined}
             onMergeDown={
-              topLevelRange.items?.[nextIdx] ? () => onMerge(item, topLevelRange.items?.[nextIdx]!) : undefined
+              topLevelRange.items?.[nextIdx]
+                ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
+                : undefined
             }
+            onDelete={() => onDelete(idx)}
             mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
             mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
           />
