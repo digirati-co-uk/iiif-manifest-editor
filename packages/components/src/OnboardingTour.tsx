@@ -45,6 +45,7 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
 
   return (
     <Joyride
+      //
       key={`${id}-${key}`}
       showProgress
       showSkipButton

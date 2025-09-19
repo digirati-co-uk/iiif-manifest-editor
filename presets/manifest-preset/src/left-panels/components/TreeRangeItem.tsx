@@ -106,6 +106,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
     [creator, manifestEditor],
   );
 
+  const getWorkbench = (idx: number | string) => {
+    return document.getElementById(`workbench-${idx}`);
+  }
+
   const { isEditing, showCanvases } = useRangeTreeOptions();
   return (
     <TreeItem
@@ -116,6 +120,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       textValue={getValue(props.range.label)}
       id={props.range.id}
       {...props}
+      onPress={() => getWorkbench(props.range.id)?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}
     >
       <TreeItemContent>
         {({

@@ -216,9 +216,8 @@ function RangeWorkbench() {
       setIsLastInView(false);
       return;
     }
-
-    const lastId = `workbench-${rangeItemsLen - 1}`;
-    const last = document.getElementById(lastId);
+    const lastId  = rangeItems[rangeItems.length - 1]?.id;
+    const last =  document.getElementById(`workbench-${lastId}`)
     if (!last) return;
 
     const io = new IntersectionObserver(
@@ -247,10 +246,14 @@ function RangeWorkbench() {
 
   const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
 
-  const rangeItems = (topLevelRange.items || []).filter((item) => item.type !== "Canvas");
+  const rangeItems =
+    (topLevelRange.items ?? []).filter((item): item is { id: string; type: "Range" } => item.type === "Range");
 
-  const lastWorkbench = document.getElementById(`workbench-${rangeItems.length - 1}`);
-  const firstWorkbench = document.getElementById("workbench-0");
+  const firstId = rangeItems[0]?.id;
+  const lastId  = rangeItems[rangeItems.length - 1]?.id;
+
+  const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
+  const lastWorkbench  = lastId  ? document.getElementById(`workbench-${lastId}`)  : null;
 
   return (
     <div className="flex-1 overflow-y-auto">

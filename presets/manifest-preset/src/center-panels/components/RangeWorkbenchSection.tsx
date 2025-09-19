@@ -82,7 +82,7 @@ export function RangeWorkbenchSection({
         </Modal>
       ) : null}
       <div
-        id={`workbench-${idx}`}
+        id={`workbench-${range.id}`}
         key={range.id}
         className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300"
       >
