@@ -1,15 +1,10 @@
 import { createRangeHelper } from "@iiif/helpers";
-import {
-  CanvasThumbnailGridItem,
-  RangesIcon,
-} from "@manifest-editor/components";
-import { useMemo } from "react";
+import { CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
+import { memo, useMemo } from "react";
 import { CanvasContext, useRange, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 
-export function RangeGridThumbnail(props: {
-  range: { id: string; type: string };
-}) {
+export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { range: { id: string; type: string } }) {
   const range = useRange({ id: props.range.id });
   const vault = useVault();
   const canvases = useMemo(() => {
@@ -19,6 +14,8 @@ export function RangeGridThumbnail(props: {
     const seenCanvasIds: string[] = [];
     const deDuplicatedCanvases = [];
 
+    console.log("canvases", { canvases, range });
+
     for (const canvas of canvases) {
       if (!seenCanvasIds.includes(canvas.id)) {
         seenCanvasIds.push(canvas.id);
@@ -27,7 +24,9 @@ export function RangeGridThumbnail(props: {
     }
 
     return deDuplicatedCanvases;
-  }, [range]);
+  }, [range, vault]);
+
+  console.log("r?", { range, canvases });
 
   if (canvases.length === 0) return <div>EMPTY</div>;
 
@@ -47,14 +46,11 @@ export function RangeGridThumbnail(props: {
       {canvases.slice(0, 4).map((canvas, index) => (
         <CanvasThumbnailGridItem
           key={index}
-          className={twMerge(
-            "rounded",
-            canvases.length === 3 && index === 2 && "col-span-2",
-          )}
+          className={twMerge("rounded", canvases.length === 3 && index === 2 && "col-span-2")}
           hideLabel
           id={canvas.id}
         />
       ))}
     </div>
   );
-}
+});

@@ -1,5 +1,5 @@
 import type { Vault } from "@iiif/helpers/vault";
-import { HAS_PART, PART_OF } from "@iiif/parser";
+import { HAS_PART, isSpecificResource, PART_OF } from "@iiif/parser";
 import type { SpecificResource } from "@iiif/presentation-3";
 import { references } from "@manifest-editor/editor-api";
 import { ReferencedResource } from "./ReferencedResource";
@@ -139,6 +139,13 @@ export class CreatorResource {
     return this.resource;
   }
 
+  getSpecificResource() {
+    const reference = this.ref();
+    return isSpecificResource(reference)
+      ? reference
+      : { type: "SpecificResource", source: reference };
+  }
+
   ref() {
     if (this.specificResource) {
       return this.specificResource;
@@ -199,6 +206,24 @@ export class CreatorResource {
       if (resource[key]) {
         newResource[key] = [];
         for (const item of resource[key] || []) {
+          if (resource.type === "Range" && key === "items") {
+            if (item instanceof ReferencedResource) {
+              if (item.ref().type === "Canvas") {
+                newResource[key].push(item.specificResource());
+              } else {
+                newResource[key].push(item.ref());
+              }
+            }
+            if (item instanceof CreatorResource) {
+              if (item.ref().type === "Canvas") {
+                newResource[key].push(item.getSpecificResource());
+              } else {
+                newResource[key].push(item.ref());
+              }
+            }
+            continue;
+          }
+
           if (item instanceof ReferencedResource) {
             newResource[key].push(item.optionalSpecificResource());
           }

@@ -1,23 +1,23 @@
 import { createRangeHelper } from "@iiif/helpers";
 import {
   ListEditIcon,
+  OnboardingTour,
   Sidebar,
   SidebarContent,
   SidebarHeader,
   useLocalStorage,
   WarningMessage,
-  OnboardingTour,
 } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useEffect, useMemo } from "react";
 import { useManifest, useVault } from "react-iiif-vault";
+import { CardsViewIcon, RangesIcon, SplitRangeIcon } from "../icons";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
+import { CanvasListingIcon } from "./canvas-listing";
+import { RangeCardView } from "./components/RangeCardView";
 import { RangeSplittingPreview } from "./components/RangeSplittingPreview";
 import { RangeCreateEmpty } from "./components/RangesCreateEmpty";
 import { RangeTree, useRangeTreeOptions } from "./components/RangeTree";
-import { CardsViewIcon, RangesIcon, SplitRangeIcon } from "../icons";
-import { CanvasListingIcon } from "./canvas-listing";
-import { RangeCardView } from "./components/RangeCardView";
 
 export const rangesPanel: LayoutPanel = {
   id: "@manifest-editor/ranges-listing",
@@ -33,12 +33,9 @@ export function RangeLeftPanel() {
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const [isCardView, setIsCardView] = useLocalStorage("isCardView", false);
-  const topLevelRange = helper.rangesToTableOfContentsTree(
-    vault.get(manifest!.structures || []),
-  );
+  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
-  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } =
-    useRangeTreeOptions();
+  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 
   useEffect(() => {
     return splitEffect();
@@ -49,16 +46,14 @@ export function RangeLeftPanel() {
       return null;
     }
 
-    return helper.isContiguous(
-      (manifest!.structures || [])[0]!,
-      manifest!.items,
-      { detail: true },
-    );
+    return helper.isContiguous((manifest!.structures || [])[0]!, manifest!.items, { detail: true });
   }, [manifest, helper]);
 
   if (!topLevelRange) {
     return <RangeCreateEmpty />;
   }
+
+  console.log("topLevelRange", vault.get({ id: topLevelRange.items[0].id, type: "Range" }));
 
   return (
     <Sidebar>
@@ -68,11 +63,7 @@ export function RangeLeftPanel() {
           {
             id: "card-view",
             title: isCardView ? "Tree view" : "Card view",
-            icon: isCardView ? (
-              <CanvasListingIcon className="text-xl" />
-            ) : (
-              <CardsViewIcon className="text-xl" />
-            ),
+            icon: isCardView ? <CanvasListingIcon className="text-xl" /> : <CardsViewIcon className="text-xl" />,
             onClick: () => {
               setIsCardView(!isCardView);
             },
@@ -95,15 +86,9 @@ export function RangeLeftPanel() {
       />
       <SidebarContent className="p-2" id="range-listing-sidebar">
         {topLevelRange.isVirtual ? (
-          <WarningMessage className="mb-2">
-            This is a virtual top level range
-          </WarningMessage>
+          <WarningMessage className="mb-2">This is a virtual top level range</WarningMessage>
         ) : null}
-        {!isContiguous ? (
-          <WarningMessage className="mb-2">
-            Warning: Non-contiguous range
-          </WarningMessage>
-        ) : null}
+        {!isContiguous ? <WarningMessage className="mb-2">Warning: Non-contiguous range</WarningMessage> : null}
 
         {isSplitting ? (
           <RangeSplittingPreview />
@@ -128,8 +113,7 @@ export function RangeLeftPanel() {
             },
             {
               target: "#edit-ranges",
-              content:
-                "You can enable edit more here and reorder or edit the ranges.",
+              content: "You can enable edit more here and reorder or edit the ranges.",
             },
             {
               target: "#card-view",

@@ -1,7 +1,7 @@
 "use client";
-import { useLocalStorage } from "@manifest-editor/components";
 import { useLayoutEffect, useState } from "react";
-import Joyride, { type Step, type CallBackProps } from "react-joyride";
+import Joyride, { type CallBackProps, type Step } from "react-joyride";
+import { useLocalStorage } from "./hooks/use-local-storage";
 
 interface OnboardingTourProps {
   id: string;
@@ -31,12 +31,12 @@ export function OnboardingTour({ id, steps, forceStart }: OnboardingTourProps) {
 
   return (
     <Joyride
+      //
       showProgress
       showSkipButton
       continuous
       steps={steps}
       run={isEnabled || forceStart}
-      debug
       callback={lifecycle}
     />
   );
