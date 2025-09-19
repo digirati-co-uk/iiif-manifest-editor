@@ -1,9 +1,12 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { ActionButton, AddImageIcon, DeleteForeverIcon, MoreMenuIcon } from "@manifest-editor/components";
+import { EditorInstance } from "@manifest-editor/editor-api";
+import { useInStack } from "@manifest-editor/editors";
+import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
+import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
-import type {
-  TreeItemContentRenderProps,
-  TreeItemProps,
-} from "react-aria-components";
+import { useCallback } from "react";
+import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
   Button,
   Checkbox,
@@ -19,17 +22,6 @@ import { LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { useRangeTreeOptions } from "./RangeTree";
-import { useInStack } from "@manifest-editor/editors";
-import {
-  ActionButton,
-  AddImageIcon,
-  DeleteForeverIcon,
-  MoreMenuIcon,
-} from "@manifest-editor/components";
-import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
-import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
-import { EditorInstance } from "@manifest-editor/editor-api";
-import { useCallback } from "react";
 
 interface TreeRangeItemProps extends Partial<TreeItemProps> {
   range: RangeTableOfContentsNode;
@@ -45,20 +37,27 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
   const deleteRange = useCallback(
     (range: RangeTableOfContentsNode) => {
-      if (!props.parentId) return;
+      if (!props.parentId) {
+        // This is the top level one.
+        const structures = manifestEditor.structural.structures.getWithoutTracking();
+        const index = structures.findIndex((structure) => structure.id === range.id);
+        if (index !== -1) {
+          manifestEditor.structural.structures.deleteAtIndex(index);
+        }
+        return;
+      }
       const editor = new EditorInstance({
         reference: { id: props.parentId, type: "Range" },
         vault,
       });
 
-      const index = editor.structural.items
-        .getWithoutTracking()
-        .findIndex((item) => item.id === range.id);
+      const index = editor.structural.items.getWithoutTracking().findIndex((item) => item.id === range.id);
+
       if (index !== -1) {
         editor.structural.items.deleteAtIndex(index);
       }
     },
-    [props.parentId, vault],
+    [props.parentId, manifestEditor, vault],
   );
 
   const insertEmptyRange = useCallback(
@@ -88,12 +87,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {
           type: "Range",
           label: { en: ["Untitled sequence"] },
-          items: manifestEditor.structural.items
-            .getWithoutTracking()
-            .map((item) => ({
-              type: "Canvas",
-              id: item.id,
-            })),
+          items: manifestEditor.structural.items.getWithoutTracking().map((item) => ({
+            type: "Canvas",
+            id: item.id,
+          })),
         },
         {
           parent: {
@@ -123,24 +120,15 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       onPress={() => getWorkbench(props.range.id)?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}
     >
       <TreeItemContent>
-        {({
-          isExpanded,
-          selectionBehavior,
-          isDropTarget,
-          selectionMode,
-        }: TreeItemContentRenderProps) => (
+        {({ isExpanded, selectionBehavior, isDropTarget, selectionMode }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && (
-              <Checkbox slot="selection" />
-            )}
+            {selectionBehavior === "toggle" && selectionMode !== "none" && <Checkbox slot="selection" />}
 
             <Button slot="chevron">
               <ChevronDownIcon
                 className={twMerge(
                   "text-xl",
-                  !showCanvases &&
-                    props.range.isRangeLeaf &&
-                    "opacity-20 cursor-not-allowed",
+                  !showCanvases && props.range.isRangeLeaf && "opacity-20 cursor-not-allowed",
                 )}
                 style={{
                   transition: "transform .2s",
@@ -153,9 +141,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
                 isDropTarget && "bg-me-primary-100/50",
-                !showCanvases &&
-                  props.range.isRangeLeaf &&
-                  "border-transparent",
+                !showCanvases && props.range.isRangeLeaf && "border-transparent",
                 isActive && "border-transparent",
               )}
             >
@@ -190,7 +176,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                           <AddImageIcon /> Insert full range
                         </MenuItem>
                         <MenuItem
-                          onAction={() => deleteRange(props.range)}
+                          onAction={() =>
+                            window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                          }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
                           <DeleteForeverIcon /> Delete range
