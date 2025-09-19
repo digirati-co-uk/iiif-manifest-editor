@@ -1,7 +1,7 @@
 import { createRangeHelper } from "@iiif/helpers";
 import { CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
 import { memo, useMemo } from "react";
-import { CanvasContext, useRange, useVault } from "react-iiif-vault";
+import { useRange, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 
 export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { range: { id: string; type: string } }) {
@@ -14,8 +14,6 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { rang
     const seenCanvasIds: string[] = [];
     const deDuplicatedCanvases = [];
 
-    console.log("canvases", { canvases, range });
-
     for (const canvas of canvases) {
       if (!seenCanvasIds.includes(canvas.id)) {
         seenCanvasIds.push(canvas.id);
@@ -25,8 +23,6 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { rang
 
     return deDuplicatedCanvases;
   }, [range, vault]);
-
-  console.log("r?", { range, canvases });
 
   if (canvases.length === 0) return <div>EMPTY</div>;
 
