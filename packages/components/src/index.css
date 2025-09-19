@@ -19,7 +19,7 @@
 }
 
 .grid-sm {
-  --grid-column-count: 8;
+  --grid-column-count: 12;
   --grid-item--min-width: 120px;
   --total-gap-width: 1.5rem;
 }
