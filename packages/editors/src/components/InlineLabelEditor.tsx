@@ -19,6 +19,8 @@ export function InlineLabelEditor(props: {
   className?: string;
   actionLabel?: string;
   onSubmit?: (value: InternationalString) => void;
+  onCancel?: () => void;
+
 }) {
   const editor = useGenericEditor(props.resource, props.ctx);
 
@@ -48,6 +50,9 @@ export function InlineLabelEditor(props: {
       />
       <ActionButton primary type="submit">
         {props.actionLabel || "Save"}
+      </ActionButton>
+      <ActionButton type="button" onClick={props.onCancel}>
+        Cancel
       </ActionButton>
     </form>
   );

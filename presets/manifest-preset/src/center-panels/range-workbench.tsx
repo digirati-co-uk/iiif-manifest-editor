@@ -270,6 +270,7 @@ function RangeWorkbench() {
               className="m-0 pt-2"
               resource={topLevelRange}
               onSubmit={() => setIsEditingLabel(false)}
+              onCancel={() => setIsEditingLabel(false)}
             />
           ) : (
             <div className="flex items-center gap-4">
