@@ -256,6 +256,8 @@ function RangeWorkbench() {
   const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
   const lastWorkbench = lastId ? document.getElementById(`workbench-${lastId}`) : null;
 
+  console.log(firstWorkbench, lastWorkbench);
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
@@ -345,7 +347,7 @@ function RangeWorkbench() {
           <ActionButton
             primary
             onPress={() => {
-              firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+              firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
             }}
           >
             Scroll to top <ArrowUpIcon />
@@ -354,7 +356,7 @@ function RangeWorkbench() {
           <ActionButton
             primary
             onPress={() => {
-              lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+              lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
             }}
           >
             Scroll to bottom <ArrowDownIcon />
