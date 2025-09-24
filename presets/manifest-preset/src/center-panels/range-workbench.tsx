@@ -256,8 +256,6 @@ function RangeWorkbench() {
   const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
   const lastWorkbench = lastId ? document.getElementById(`workbench-${lastId}`) : null;
 
-  console.log(firstWorkbench, lastWorkbench);
-
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">

@@ -37,6 +37,7 @@ export function RangeLeftPanel() {
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
   const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 
+
   useEffect(() => {
     return splitEffect();
   }, [splitEffect]);
