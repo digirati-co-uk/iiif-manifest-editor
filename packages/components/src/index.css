@@ -193,6 +193,13 @@ div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentat
   outline: 3px solid red;
 }
 
+.split-range-highlight[data-split-first]:hover { outline: none; }
+.split-range-highlight[data-split-first]:hover:before { content: none; }
+
+.split-range-highlight[data-split-first]:hover ~ .split-range-highlight { outline: none; }
+
+div[role="presentation"]:has(> .split-range-highlight[data-split-first]:hover) ~ div[role="presentation"]:has(.split-range-highlight) { outline: none; }
+
 .split-range-highlight:has(~ .split-range-highlight:hover),
 div[role="presentation"]:has(.split-range-highlight):has(~ div[role="presentation"] > .split-range-highlight:hover) {
   transform: translate(0, -1em);

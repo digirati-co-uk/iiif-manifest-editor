@@ -81,6 +81,9 @@ export function RangeWorkbenchSection({
 
   const isEmpty = !range.items || range.items?.length === 0;
 
+  const firstCanvasId = (range.items ?? []).find(i => i.type === "Canvas")?.id;
+
+
   return (
     <>
       {selectedCanvas ? (
@@ -245,6 +248,7 @@ export function RangeWorkbenchSection({
           <>
             <div className={`grid pt-4 gap-3 ${size}`}>
               {(rangeItems || []).map((item) => {
+                const isFirstCanvas = item.id === firstCanvasId;
                 if (item.type !== "Canvas") {
                   return (
                     <div
@@ -266,14 +270,16 @@ export function RangeWorkbenchSection({
                   >
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
+                      aria-disabled={item.id === firstCanvasId}
                       onClick={() => {
-                        if (isSplitting) {
+                        if (isSplitting && !isFirstCanvas) {
                           onSplit(range, item);
                         }
                       }}
                       containerProps={{
                         "data-range1-label": getValue(range.label),
                         "data-range2-label": nextRangeLabel || "Untitled range",
+                        ...(isFirstCanvas ? { "data-split-first": "true" } : {}),
                       }}
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}
