@@ -31,10 +31,8 @@ export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRan
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const data = new FormData(e.target as HTMLFormElement);
-    const formData = Object.fromEntries(data.entries()) as any;
 
-    if (formData.url) {
+    if (label) {
       props.runCreate({ type: "Range", label });
     }
   };
@@ -50,7 +48,7 @@ export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRan
         />
 
         <ActionButton primary type="submit">
-          Create link
+          Create range
         </ActionButton>
       </form>
     </PaddedSidebarContainer>
