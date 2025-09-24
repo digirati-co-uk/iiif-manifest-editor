@@ -37,7 +37,6 @@ export function RangeLeftPanel() {
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
   const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 
-
   useEffect(() => {
     return splitEffect();
   }, [splitEffect]);
@@ -80,6 +79,7 @@ export function RangeLeftPanel() {
             icon: <SplitRangeIcon className="text-xl" />,
             onClick: () => setIsSplitting(!isSplitting),
             toggled: isSplitting,
+            disabled: (topLevelRange?.items?.length ?? 0) <= 1,
           },
         ]}
       />

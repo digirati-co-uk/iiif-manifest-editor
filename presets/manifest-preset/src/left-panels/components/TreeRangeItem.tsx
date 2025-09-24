@@ -108,6 +108,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   }
 
   const { isEditing, showCanvases } = useRangeTreeOptions();
+
   return (
     <TreeItem
       className={twMerge(
@@ -186,9 +187,11 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                       </Menu>
                     </Popover>
                   </MenuTrigger>
-                  <Button slot="drag">
-                    <ResizeHandleIcon className="text-xl" />
-                  </Button>
+                  {!!props.parentId && (
+                    <Button slot="drag">
+                      <ResizeHandleIcon className="text-xl" />
+                    </Button>
+                  )}
                 </div>
               ) : null}
             </div>
