@@ -83,7 +83,6 @@ export function RangeWorkbenchSection({
 
   const firstCanvasId = (range.items ?? []).find(i => i.type === "Canvas")?.id;
 
-
   return (
     <>
       {selectedCanvas ? (

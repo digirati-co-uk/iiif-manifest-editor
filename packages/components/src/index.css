@@ -190,7 +190,7 @@ div.mdxeditor-toolbar {
 .split-range-highlight:hover,
 .split-range-highlight:hover ~ .split-range-highlight,
 div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentation"]:has(.split-range-highlight) {
-  outline: 3px solid red;
+  outline: 3px solid #b84c74;
 }
 
 .split-range-highlight[data-split-first]:hover { outline: none; }
@@ -203,7 +203,7 @@ div[role="presentation"]:has(> .split-range-highlight[data-split-first]:hover) ~
 .split-range-highlight:has(~ .split-range-highlight:hover),
 div[role="presentation"]:has(.split-range-highlight):has(~ div[role="presentation"] > .split-range-highlight:hover) {
   transform: translate(0, -1em);
-  outline: 3px solid blue;
+  outline: 3px solid #4c9fb8;
 }
 
 div[role="presentation"]:has(.split-range-highlight):has(
@@ -211,19 +211,27 @@ div[role="presentation"]:has(.split-range-highlight):has(
   ):first-child:before,
 .split-range-highlight:hover:before,
 .split-range-highlight:has(~ .split-range-highlight:hover):first-child:before {
-  background: blue;
+  background: #4c9fb8;
   position: absolute;
   z-index: 20;
   top: 0.3em;
   left: 0.3em;
+  max-width: 55%;
+  display: block;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
   content: attr(data-range1-label);
   color: white;
   padding: 0.5em;
   border-radius: 4px;
+    font-size: 14px;
 }
 
 .split-range-highlight:hover:before {
-  background: red;
+  background: #b84c74;
   content: attr(data-range2-label);
 }
 
