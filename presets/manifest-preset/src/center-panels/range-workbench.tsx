@@ -299,7 +299,7 @@ function RangeWorkbench() {
               <ActionButton onPress={() => setIsEditingLabel(true)}>Edit</ActionButton>
             </div>
           )}
-          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && (
+          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
             <ActionButton onPress={() => setIsSplitting(true)}>
               <SplitRangeIcon className="text-xl" /> Split range
             </ActionButton>

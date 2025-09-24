@@ -1,12 +1,10 @@
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
-import {
-  ActionButton,
-  CanvasThumbnailGridItem,
-} from "@manifest-editor/components";
+import { ActionButton, CanvasThumbnailGridItem } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInlineCreator } from "@manifest-editor/shell";
 import { CanvasContext, useRange, useVault } from "react-iiif-vault";
+import { RangeGridThumbnail } from "./RangeGridThumbnail";
 
 export function BulkActionsWorkbench() {
   const range = useRange();
@@ -18,10 +16,8 @@ export function BulkActionsWorkbench() {
   }
 
   return (
-    <div>
-      <h3 className="text-xl font-bold mb-3">
-        Bulk Actions ({range.items?.length || 0} canvases)
-      </h3>
+    <div className="p-4">
+      <h3 className="text-xl font-bold mb-3">Range actions ({range.items?.length || 0} canvases)</h3>
       <div className="flex gap-2 mb-8">
         <ActionButton
           onPress={async () => {
@@ -76,6 +72,10 @@ export function BulkActionsWorkbench() {
       <div className="grid grid-md gap-3">
         {(range.items || []).map((ref) => {
           const item = toRef(ref)!;
+
+          if (item.type === "Range") {
+            return <RangeGridThumbnail key={item.id} range={item} />;
+          }
 
           return (
             <CanvasContext key={item.id} canvas={item.id}>
