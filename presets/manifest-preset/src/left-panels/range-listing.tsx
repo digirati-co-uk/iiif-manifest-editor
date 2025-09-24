@@ -33,7 +33,9 @@ export function RangeLeftPanel() {
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const [isCardView, setIsCardView] = useLocalStorage("isCardView", false);
-  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []));
+  const topLevelRange = helper.rangesToTableOfContentsTree(vault.get(manifest!.structures || []), undefined, {
+    showNoNav: true,
+  });
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
   const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 

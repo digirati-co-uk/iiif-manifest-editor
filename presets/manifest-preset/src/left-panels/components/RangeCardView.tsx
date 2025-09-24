@@ -1,15 +1,10 @@
-import {
-  createRangeHelper,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
-import {
-  ActionButton,
-  BackIcon,
-  EmptyState,
-} from "@manifest-editor/components";
-import { useInStack } from "@manifest-editor/editors";
-import { useEditingStack, useLayoutActions } from "@manifest-editor/shell";
+import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { toRef } from "@iiif/parser";
+import { ActionButton, BackIcon, DeleteForeverIcon, EmptyState, MoreMenuIcon } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
+import { useInStack } from "@manifest-editor/editors";
+import { useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback, useMemo } from "react";
 import {
   Button,
@@ -22,17 +17,8 @@ import {
   Popover,
   useDragAndDrop,
 } from "react-aria-components";
-import {
-  LocaleString,
-  useManifest,
-  useVault,
-  useVaultSelector,
-} from "react-iiif-vault";
+import { LocaleString, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { flattenedRanges, useRangeTreeOptions } from "./RangeTree";
-import { toRef } from "@iiif/parser";
-import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
-import { DeleteForeverIcon, MoreMenuIcon } from "@manifest-editor/components";
-import { useManifestEditor } from "@manifest-editor/shell";
 
 export function RangeCardView() {
   const vault = useVault();
@@ -47,13 +33,11 @@ export function RangeCardView() {
   const range = useVaultSelector(
     (_, vault) => {
       if (rangeInStack) {
-        return helper.rangeToTableOfContentsTree(
-          vault.get(rangeInStack.resource),
-        )!;
+        return helper.rangeToTableOfContentsTree(vault.get(rangeInStack.resource), { showNoNav: true })!;
       }
 
       const structures = vault.get(manifest!.structures || []);
-      return helper.rangesToTableOfContentsTree(structures)! || {};
+      return helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || {};
     },
     [vault, manifest, rangeInStack],
   );
@@ -116,15 +100,9 @@ export function RangeCardView() {
         return;
       }
 
-      const fullItemTarget = flatItems.find(
-        (item) => (e.target as any).key === item.item.id,
-      );
+      const fullItemTarget = flatItems.find((item) => (e.target as any).key === item.item.id);
 
-      if (
-        e.target.type === "item" &&
-        e.target.dropPosition === "on" &&
-        fullItemTarget?.item.type === "Canvas"
-      ) {
+      if (e.target.type === "item" && e.target.dropPosition === "on" && fullItemTarget?.item.type === "Canvas") {
         return;
       }
 
@@ -178,16 +156,11 @@ export function RangeCardView() {
         vault,
       });
 
-      if (
-        e.target.type === "root" ||
-        (e.target.type === "item" && e.target.dropPosition === "on")
-      ) {
+      if (e.target.type === "root" || (e.target.type === "item" && e.target.dropPosition === "on")) {
         /////
         ///// PERFORM MOVE - moving from one range to another (no position).
         /////
-        const toMoveReference = fullParentVault.items.find(
-          (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
-        );
+        const toMoveReference = fullParentVault.items.find((item) => toRef(item, "Canvas")?.id === toMoveItem.item.id);
         if (!toMoveReference) {
           console.log("[error] No valid reference found for item to move");
           return;
@@ -208,12 +181,8 @@ export function RangeCardView() {
         /////
         ///// PERFORM REORDER within the same parent.
         /////
-        const startIndex = fullParentVault.items.findIndex(
-          (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
-        );
-        const endIndex = fullParentVault.items.findIndex(
-          (item) => toRef(item, "Canvas")?.id === targetId,
-        );
+        const startIndex = fullParentVault.items.findIndex((item) => toRef(item, "Canvas")?.id === toMoveItem.item.id);
+        const endIndex = fullParentVault.items.findIndex((item) => toRef(item, "Canvas")?.id === targetId);
 
         if (startIndex === endIndex) {
           console.log("[error] No valid index found for item to move");
@@ -255,9 +224,7 @@ export function RangeCardView() {
         return;
       }
 
-      const targetFromParentIndex = targetParentFullVault.items.findIndex(
-        (item) => toRef(item)?.id === targetId,
-      );
+      const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
 
       console.log({ targetId, targetParentId, targetParentFullVault });
 
@@ -268,16 +235,10 @@ export function RangeCardView() {
 
       let didUpdate = false;
       if (e.target.dropPosition === "after") {
-        didUpdate = targetEditor.structural.items.addAfter(
-          targetFromParentIndex,
-          reference,
-        );
+        didUpdate = targetEditor.structural.items.addAfter(targetFromParentIndex, reference);
       }
       if (e.target.dropPosition === "before") {
-        didUpdate = targetEditor.structural.items.addBefore(
-          targetFromParentIndex,
-          reference,
-        );
+        didUpdate = targetEditor.structural.items.addBefore(targetFromParentIndex, reference);
       }
 
       if (didUpdate) {
@@ -293,11 +254,8 @@ export function RangeCardView() {
   const deleteRange = useCallback(
     (child: RangeTableOfContentsNode) => {
       if (range.isVirtual) {
-        const structures =
-          manifestEditor.structural.structures.getWithoutTracking();
-        const index = structures.findIndex(
-          (structure) => structure.id === child.id,
-        );
+        const structures = manifestEditor.structural.structures.getWithoutTracking();
+        const index = structures.findIndex((structure) => structure.id === child.id);
         if (index !== -1) {
           manifestEditor.structural.structures.deleteAtIndex(index);
         }
@@ -309,12 +267,12 @@ export function RangeCardView() {
       });
 
       const items = parentEditor.structural.items.getWithoutTracking();
-      const idx = items.findIndex(ref => ref.id === child.id);
+      const idx = items.findIndex((ref) => ref.id === child.id);
       if (idx !== -1) {
         parentEditor.structural.items.deleteAtIndex(idx);
       }
     },
-    [range.id, range.isVirtual, manifestEditor, vault]
+    [range.id, range.isVirtual, manifestEditor, vault],
   );
 
   const title = (
@@ -360,17 +318,16 @@ export function RangeCardView() {
         {(item) => (
           <GridListItem
             id={item.id}
-            onAction={() => { if (!isEditing) edit(item); }}
+            onAction={() => {
+              if (!isEditing) edit(item);
+            }}
             className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative p-4"
           >
             <div className="flex justify-between items-center">
               <div>
-                <LocaleString className="text-lg mb-4">
-                  {item.label}
-                </LocaleString>
+                <LocaleString className="text-lg mb-4">{item.label}</LocaleString>
                 <div className="text-sm text-me-primary-600">
-                  {item.items?.length}{" "}
-                  {item.isRangeLeaf ? "Canvases" : "Ranges"}
+                  {item.items?.length} {item.isRangeLeaf ? "Canvases" : "Ranges"}
                 </div>
               </div>
               {isEditing ? (
