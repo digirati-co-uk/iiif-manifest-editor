@@ -44,7 +44,7 @@ function RangeWorkbench() {
     (_, vault) => {
       const selected = toRef<any>(selectedRange?.resource);
       if (selected) {
-        return helper.rangeToTableOfContentsTree(vault.get(selected)!);
+        return helper.rangeToTableOfContentsTree(vault.get(selected)!, { showNoNav: true });
       }
 
       if (!manifest!.structures) {
@@ -52,7 +52,7 @@ function RangeWorkbench() {
       }
 
       const structures = vault.get(manifest!.structures || []);
-      return helper.rangesToTableOfContentsTree(structures)! || null;
+      return helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || null;
     },
     [manifest, selectedRange],
   );

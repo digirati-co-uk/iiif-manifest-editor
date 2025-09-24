@@ -66,7 +66,7 @@ export function RangeTree(props: RangeTreeProps) {
 
   const { range, flatItems } = useVaultSelector((_, vault) => {
     const structures = vault.get(manifest!.structures || []);
-    const range = helper.rangesToTableOfContentsTree(structures)! || {};
+    const range = helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || {};
     const flatItems = flattenedRanges(range);
 
     return { structures, range, flatItems };

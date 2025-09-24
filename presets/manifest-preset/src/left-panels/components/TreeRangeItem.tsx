@@ -34,6 +34,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const creator = useInlineCreator();
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
+  const isNoNav = props.range.isNoNav;
 
   const deleteRange = useCallback(
     (range: RangeTableOfContentsNode) => {
@@ -105,7 +106,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
   const getWorkbench = (idx: number | string) => {
     return document.getElementById(`workbench-${idx}`);
-  }
+  };
 
   const { isEditing, showCanvases } = useRangeTreeOptions();
 
@@ -114,11 +115,14 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       className={twMerge(
         "react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5",
         isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
+        isNoNav ? "opacity-40" : "",
       )}
       textValue={getValue(props.range.label)}
       id={props.range.id}
       {...props}
-      onPress={() => getWorkbench(props.range.id)?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })}
+      onPress={() =>
+        getWorkbench(props.range.id)?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
+      }
     >
       <TreeItemContent>
         {({ isExpanded, selectionBehavior, isDropTarget, selectionMode }: TreeItemContentRenderProps) => (
