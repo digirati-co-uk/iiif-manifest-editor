@@ -69,7 +69,7 @@ export function RangeLeftPanel() {
           },
           {
             id: "edit-ranges",
-            title: "Edit ranges",
+            title: "Edit range",
             icon: <ListEditIcon className="text-xl" />,
             toggled: isEditing,
             onClick: toggleIsEditing,

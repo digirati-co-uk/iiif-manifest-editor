@@ -229,7 +229,7 @@ export function RangeWorkbenchSection({
                     }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
-                    <DeleteForeverIcon /> Delete range
+                    <DeleteForeverIcon /> Delete range items
                   </MenuItem>
                 ) : null}
               </Menu>
@@ -237,7 +237,7 @@ export function RangeWorkbenchSection({
           </MenuTrigger>
 
           <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
-            {range.isRangeLeaf ? "View range" : "Edit range items"}
+            {range.isRangeLeaf ? "View range items" : "Edit range items"}
             <ArrowForwardIcon className="text-xl" />
           </ActionButton>
         </div>

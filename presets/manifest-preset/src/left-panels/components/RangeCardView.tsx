@@ -387,7 +387,7 @@ export function RangeCardView() {
                           }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
-                          <DeleteForeverIcon /> Delete range
+                          <DeleteForeverIcon /> Delete range items
                         </MenuItem>
                       </Menu>
                     </Popover>
