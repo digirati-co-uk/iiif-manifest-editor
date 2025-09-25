@@ -14,14 +14,25 @@ export function RangeSplittingPreview() {
       <div className="flex flex-col justify-center items-center px-4 gap-4">
         <SplitRangeIcon className="w-32 h-32 text-gray-300" />
         <div className="text-center text-black/80">
-          Hover to select items and then click to split a new range
+          Hover or focus a canvas to preview. Click to split here. The first canvas can’t be split.
         </div>
-        <div style={{ background: '#EFF6FF', padding: '1em', border: '1px solid #1E40AF', borderRadius: '4px' }}>
-          <InfoIcon fontSize={'18px'} height={30} fill={'#31539F'} style={{float: 'right'}} />
-          When creating an initial range for the selected manifest, two range items will be created: one containing the
-          items within the selected range and another containing the remaining items outside of that range
+        <div
+          style={{
+            background: "#EFF6FF",
+            padding: "1em",
+            border: "1px solid #1E40AF",
+            borderRadius: "4px",
+          }}
+        >
+          <InfoIcon
+            fontSize={"18px"}
+            height={30}
+            fill={"#31539F"}
+            style={{ float: "right" }}
+          />
+          Creating your first range adds one range called “All items”
+          that contains every canvas. You can rename it, split it, or move canvases into sub-ranges.
         </div>
-
       </div>
     </SidebarContent>
   );

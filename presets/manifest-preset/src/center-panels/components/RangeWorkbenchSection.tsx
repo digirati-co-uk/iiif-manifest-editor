@@ -239,7 +239,7 @@ export function RangeWorkbenchSection({
           </MenuTrigger>
 
           <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
-            {range.isRangeLeaf ? "View range items" : "Edit range items"}
+            {range.isRangeLeaf ? "View range item" : "Edit range item"}
             <ArrowForwardIcon className="text-xl" />
           </ActionButton>
         </div>

@@ -18,10 +18,16 @@ export function BulkActionsWorkbench() {
   }
 
   return (
-    <div>
-      <h3 className="text-xl font-bold mb-3">
-        Bulk Actions ({range.items?.length || 0} canvases)
-      </h3>
+    <div className="p-5 ">
+      <div className="flex gap-5 items-baseline">
+      <div className="flex items-baseline gap-3 mb-3">
+        <h3 className="text-xl font-bold ">
+          Canvases in at this level
+        </h3>
+        <span>
+          ({range.items?.length || 0} {range.items?.length > 1  ? "canvases" : "canvas" })
+        </span>
+      </div>
       <div className="flex gap-2 mb-8">
         <ActionButton
           onPress={async () => {
@@ -69,8 +75,9 @@ export function BulkActionsWorkbench() {
             );
           }}
         >
-          Split into multiple ranges
+          Move into new sub-range
         </ActionButton>
+      </div>
       </div>
 
       <div className="grid grid-md gap-3">

@@ -340,27 +340,29 @@ function RangeWorkbench() {
         </RangeContext>
       ) : null}
 
-      <div className="sticky bottom-5 float-right right-5 ">
-        {isLastInView ? (
-          <ActionButton
-            primary
-            onPress={() => {
-              firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
-            }}
-          >
-            Scroll to top <ArrowUpIcon />
-          </ActionButton>
-        ) : (
-          <ActionButton
-            primary
-            onPress={() => {
-              lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
-            }}
-          >
-            Scroll to bottom <ArrowDownIcon />
-          </ActionButton>
-        )}
-      </div>
+      {((firstWorkbench && lastWorkbench) && (firstId !== lastId)) && (
+        <div className="sticky bottom-5 float-right right-5 ">
+          {isLastInView ? (
+            <ActionButton
+              primary
+              onPress={() => {
+                firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+              }}
+            >
+              Scroll to top <ArrowUpIcon />
+            </ActionButton>
+          ) : (
+            <ActionButton
+              primary
+              onPress={() => {
+                lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
+              }}
+            >
+              Scroll to bottom <ArrowDownIcon />
+            </ActionButton>
+          )}
+        </div>
+      )}
     </div>
   );
 }

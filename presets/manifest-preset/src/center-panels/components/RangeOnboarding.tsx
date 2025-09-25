@@ -8,31 +8,31 @@ const steps: Step[] = [
     placement: "center",
     title: "Working with ranges",
     content:
-      "Ranges let you organise your content This short tour shows you the main tools for creating and manging ranges ",
+      "Ranges help you organise canvases into sections. This short tour shows you the main tools for creating and manging ranges ",
     target: "body",
   },
   {
     target: "#range-listing-sidebar",
     title: "Range list",
-    content: "This panel shows all ranges in your document. Expand or collapse sections to navigate.",
+    content: "Browse all ranges. Expand/collapse to navigate. In Edit mode you can drag to reorder or use the ••• menu to insert/delete",
     placement: "right-start",
   },
   {
     target: "#split-range",
     title: "Split a range",
-    content: "Split this range into multiple ranges to make your content easier to manage.",
+    content: "Enter split mode. Hover a canvas to preview: canvases from that point onward move to a new sibling range. The first canvas can’t be split. Click to confirm.",
   },
   {
     target: "#edit-ranges",
     title: "Edit or reorder ranges",
     content:
-      "Add new ranges, insert full or empty ranges, or delete ones you don’t need. Drag ranges up or down to reorder.",
+      "Toggle Edit to reveal handles and the ••• menu. Insert an empty range, create a full range from all canvases, or delete. Drag to reorder.",
   },
   {
     target: "#card-view",
     title: "Switch view",
     content:
-      "Toggle between card view and tree view. Card view is simplified and visual, while tree view is detailed and hierarchical.",
+      "Card view is visual; Tree view shows the full hierarchy and precise drag/drop.",
   },
   {
     target: "#grid-options",
