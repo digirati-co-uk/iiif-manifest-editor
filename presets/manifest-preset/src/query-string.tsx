@@ -1,10 +1,5 @@
 import { useInStack } from "@manifest-editor/editors";
-import {
-  type BackgroundPanel,
-  useConfig,
-  useLayoutActions,
-  useLayoutState,
-} from "@manifest-editor/shell";
+import { type BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useManifest } from "react-iiif-vault";
@@ -45,23 +40,13 @@ function QueryStringBackgroundTask() {
   const manifest = useManifest();
   const canvas = useInStack("Canvas");
   const { leftPanel, rightPanel } = useLayoutState();
-  const {
-    edit,
-    leftPanel: leftPanelActions,
-    rightPanel: rightPanelActions,
-  } = useLayoutActions();
+  const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { canvasActions, open } = useEditCanvasItems();
-  const {
-    editorFeatureFlags: {
-      rememberCanvasId = true,
-      rememberLeftPanelId = false,
-    } = {},
-  } = useConfig();
+  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
   const lastCanvas = useRef<string | null>(null);
   const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
-  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] =
-    useState(false);
+  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
 
   useEffect(() => {
     if (isLeftPanelOpen) {
@@ -123,14 +108,19 @@ function QueryStringBackgroundTask() {
 
     // When the canvas listing OR annotations is opened, then
     // Edit the first canvas (or last).
-    if (
-      leftPanel.current === canvasListing.id ||
-      leftPanel.current === annotationsPanel.id
-    ) {
+    if (leftPanel.current === canvasListing.id || leftPanel.current === annotationsPanel.id) {
       const firstCanvas = lastCanvas.current || manifest?.items?.[0]?.id;
       if (firstCanvas) {
         open({ id: "current-canvas" });
         canvasActions.edit({ id: firstCanvas, type: "Canvas" });
+      }
+    }
+
+    if (leftPanel.current === rangesPanel.id) {
+      // Open first range?
+      const firstStructure = manifest?.structures?.[0]?.id;
+      if (firstStructure && manifest?.structures?.length === 1) {
+        edit({ id: firstStructure, type: "Range" });
       }
     }
 
@@ -146,15 +136,9 @@ function QueryStringBackgroundTask() {
       setWasLeftPanelOpenedAutomatically(true);
     }
 
-    const shouldOpenRightPanel =
-      leftPanel.current !== annotationsPanel.id &&
-      leftPanel.current !== rangesPanel.id;
+    const shouldOpenRightPanel = leftPanel.current !== annotationsPanel.id && leftPanel.current !== rangesPanel.id;
 
-    if (
-      !rightPanel.open &&
-      shouldOpenRightPanel &&
-      wasLeftPanelOpenedAutomatically
-    ) {
+    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

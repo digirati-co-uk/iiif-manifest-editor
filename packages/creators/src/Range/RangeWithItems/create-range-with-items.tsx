@@ -33,10 +33,8 @@ export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithI
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const data = new FormData(e.target as HTMLFormElement);
-    const formData = Object.fromEntries(data.entries()) as any;
 
-    if (formData.url) {
+    if (label) {
       props.runCreate({ type: "Range", label });
     }
   };
@@ -52,7 +50,7 @@ export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithI
         />
 
         <ActionButton primary type="submit">
-          Create link
+          Create range
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

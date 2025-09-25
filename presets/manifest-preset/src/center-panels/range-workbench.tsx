@@ -1,6 +1,7 @@
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
+import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, BackIcon, InfoMessage, useGridOptions } from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
@@ -12,7 +13,7 @@ import {
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
-import { HelpIcon, SplitRangeIcon } from "../icons";
+import { SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
@@ -26,6 +27,24 @@ export const rangeWorkbench: LayoutPanel = {
   icon: "",
   render: () => <RangeWorkbench />,
 };
+
+function getNextRangeLabel(label: InternationalString | null) {
+  // Example: "Page 1" or "Range 1" or "Chapter 1" should return "Page 2" or "Range 2" or "Chapter 2"
+  const valueAsString = getValue(label);
+
+  if (!valueAsString) {
+    return "Untitled range";
+  }
+
+  const match = valueAsString.match(/(.+)(\d+)/);
+
+  if (!match) {
+    return "Untitled range";
+  }
+
+  const number = match?.[2] ? parseInt(match[2], 10) : 1;
+  return `${match ? match[1] : ""}${number + 1}`;
+}
 
 function RangeWorkbench() {
   const selectedRange = useInStack("Range");
@@ -168,7 +187,7 @@ function RangeWorkbench() {
           "@manifest-editor/range-with-items",
           {
             type: "Range",
-            label: { en: ["Untitled range"] },
+            label: { en: [getNextRangeLabel(range.label)] },
             items: [],
           },
           {
@@ -280,7 +299,7 @@ function RangeWorkbench() {
               <ActionButton onPress={() => setIsEditingLabel(true)}>Edit</ActionButton>
             </div>
           )}
-          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && (
+          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
             <ActionButton onPress={() => setIsSplitting(true)}>
               <SplitRangeIcon className="text-xl" /> Split range
             </ActionButton>
@@ -306,11 +325,12 @@ function RangeWorkbench() {
 
         const prevIdx = idx - 1;
         const nextIdx = idx + 1;
+        const previousRange = prevIdx >= 0 ? topLevelRange.items?.[prevIdx]! : null;
 
         const nextRangeLabel =
           nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
             ? getValue(topLevelRange.items?.[nextIdx]?.label)
-            : undefined;
+            : getNextRangeLabel(item.label);
 
         return (
           <RangeWorkbenchSection
