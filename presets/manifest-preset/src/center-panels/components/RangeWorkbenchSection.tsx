@@ -13,7 +13,7 @@ import {
 } from "@manifest-editor/components";
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Button,
   Menu,
@@ -62,6 +62,8 @@ export function RangeWorkbenchSection({
     useState<RangeTableOfContentsNode | null>(null);
   const [lastSelectedCanvas, setLastSelectedCanvas] =
     useState<RangeTableOfContentsNode | null>(null);
+  const itemsSig = useMemo(() => (range.items || []).map(i => i.id).join("|"), [range.items]);
+
 
   const setSelectedCanvas = useCallback(
     (canvas: RangeTableOfContentsNode | null) => {
@@ -78,6 +80,10 @@ export function RangeWorkbenchSection({
     useLoadMoreItems(range.items || [], {
       batchSize: 32,
     });
+
+  useEffect(() => {
+    reset();
+  }, [range.id, itemsSig, reset]);
 
   const isEmpty = !range.items || range.items?.length === 0;
 
