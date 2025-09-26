@@ -29,7 +29,6 @@ export const rangeWorkbench: LayoutPanel = {
 };
 
 function getNextRangeLabel(label: InternationalString | null) {
-  // Example: "Page 1" or "Range 1" or "Chapter 1" should return "Page 2" or "Range 2" or "Chapter 2"
   const valueAsString = getValue(label);
 
   if (!valueAsString) {
@@ -56,7 +55,6 @@ function RangeWorkbench() {
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
-
   useEffect(splitEffect, [selectedRange]);
 
   const topLevelRange = useVaultSelector(
@@ -146,24 +144,6 @@ function RangeWorkbench() {
       }
 
       const length = fullRange.items.length - index;
-
-      // // 1. Remove the items
-      // const slicedItems = fullRange.items!.slice(index);
-      // const rangeEditor = new EditorInstance({
-      //   reference: { id: range.id, type: "Range" },
-      //   vault,
-      // });
-
-      // if (slicedItems.length === 0 || slicedItems.length === fullRange.items!.length) {
-      //   console.error("No items to split");
-      //   return;
-      // }
-
-      // for (let i = index; i < fullRange.items.length; i++) {
-      //   rangeEditor.structural.items.deleteAtIndex(index);
-      // }
-      // // 2. Create new range, with new items.
-
       const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
       if (atIndex === -1) {
         console.error("Range not found", range.id);
@@ -171,7 +151,6 @@ function RangeWorkbench() {
       }
 
       let existingEmptyRange: { id: string; type: "Range" } | null = null;
-      // Check if there is an empty range after.
       const existingRange = (topLevelRange.items || [])[atIndex];
       if (existingRange && existingRange.type === "Range") {
         const fullExistingRange = vault.get(existingRange);
@@ -180,7 +159,6 @@ function RangeWorkbench() {
         }
       }
 
-      // slicedItems
       const newRange =
         existingEmptyRange ||
         ((await creator.create(
@@ -226,48 +204,67 @@ function RangeWorkbench() {
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
 
-  const [isLastInView, setIsLastInView] = useState(false);
+  const [isLastInView, setIsLastInView] = useState(false); // multi-section: last section visible within container
+  const [isAtEnd, setIsAtEnd] = useState(false); // single or multi: end of container reached
 
-  const rangeItemsLen = (topLevelRange?.items || []).filter((i: any) => i.type !== "Canvas").length;
+  const rangeItems = (topLevelRange?.items ?? []).filter(
+    (item): item is { id: string; type: "Range" } => item.type === "Range",
+  );
+  const rangeItemsLen = rangeItems.length;
 
   useEffect(() => {
     if (typeof window === "undefined" || rangeItemsLen === 0) {
       setIsLastInView(false);
       return;
     }
+    const container = document.getElementById("range-workbench-scroll") as HTMLElement | null;
     const lastId = rangeItems[rangeItems.length - 1]?.id;
-    const last = document.getElementById(`workbench-${lastId}`);
-    if (!last) return;
+    const last = lastId ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null) : null;
+    if (!container || !last) return;
 
     const io = new IntersectionObserver(
-      ([entry]) => {
-        setIsLastInView(entry.isIntersecting);
-      },
-      {
-        root: null,
-        threshold: 0,
-        rootMargin: "0px 0px -1px 0px",
-      },
+      ([entry]) => setIsLastInView(entry.isIntersecting),
+      { root: container, threshold: 0, rootMargin: "0px 0px -1px 0px" },
     );
 
     io.observe(last);
 
     const r = last.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    setIsLastInView(r.top < vh && r.bottom > 0);
+    const cr = container.getBoundingClientRect();
+    const visible = r.top < cr.bottom && r.bottom > cr.top;
+    setIsLastInView(!!visible);
 
     return () => io.disconnect();
-  }, [rangeItemsLen]);
+  }, [rangeItemsLen, rangeItems]);
+
+  useEffect(() => {
+    const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+    if (!el) return;
+
+    const compute = () => {
+      const { scrollTop, clientHeight, scrollHeight } = el;
+      setIsAtEnd(scrollTop + clientHeight >= scrollHeight - 2);
+    };
+
+    const raf = requestAnimationFrame(compute);
+    el.addEventListener("scroll", compute);
+    const ro = new ResizeObserver(compute);
+    ro.observe(el);
+    window.addEventListener("resize", compute);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("scroll", compute);
+      window.removeEventListener("resize", compute);
+      ro.disconnect();
+    };
+  }, [topLevelRange?.id, rangeItemsLen, isSplitting, size]);
 
   if (!topLevelRange) {
     return null;
   }
 
   const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
-
-  const rangeItems = (topLevelRange.items ?? []).filter(
-    (item): item is { id: string; type: "Range" } => item.type === "Range",
-  );
 
   const firstId = rangeItems[0]?.id;
   const lastId = rangeItems[rangeItems.length - 1]?.id;
@@ -276,7 +273,7 @@ function RangeWorkbench() {
   const lastWorkbench = lastId ? document.getElementById(`workbench-${lastId}`) : null;
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
       <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
         <div className="flex items-center gap-4">
           {selectedRange ? (
@@ -325,7 +322,6 @@ function RangeWorkbench() {
 
         const prevIdx = idx - 1;
         const nextIdx = idx + 1;
-        const previousRange = prevIdx >= 0 ? topLevelRange.items?.[prevIdx]! : null;
 
         const nextRangeLabel =
           nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
@@ -334,11 +330,10 @@ function RangeWorkbench() {
 
         return (
           <RangeWorkbenchSection
-            //
+            key={item.id}
             idx={idx}
             isSplitting={isSplitting}
             onSplit={onSplit}
-            key={item.id}
             range={item}
             onMergeUp={idx !== 0 ? (r, empty) => onMerge(item, topLevelRange.items?.[prevIdx]!, empty) : undefined}
             onMergeDown={
@@ -360,8 +355,37 @@ function RangeWorkbench() {
         </RangeContext>
       ) : null}
 
-      {((firstWorkbench && lastWorkbench) && (firstId !== lastId)) && (
-        <div className="sticky bottom-5 float-right right-5 ">
+      {rangeItems.length === 1 ? (
+        <div className="sticky bottom-5 float-right right-5">
+          {isAtEnd ? (
+            <ActionButton
+              primary
+              onPress={() => {
+                const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+                el?.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Scroll to top <ArrowUpIcon />
+            </ActionButton>
+          ) : (
+            <ActionButton
+              primary
+              onPress={() => {
+                // scroll single section to its end (keeps your previous feel)
+                if (lastWorkbench) {
+                  lastWorkbench.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
+                } else {
+                  const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+                  el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+                }
+              }}
+            >
+              Scroll to bottom <ArrowDownIcon />
+            </ActionButton>
+          )}
+        </div>
+      ) : firstWorkbench && lastWorkbench && firstId !== lastId ? (
+        <div className="sticky bottom-5 float-right right-5">
           {isLastInView ? (
             <ActionButton
               primary
@@ -382,7 +406,7 @@ function RangeWorkbench() {
             </ActionButton>
           )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

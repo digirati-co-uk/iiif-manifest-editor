@@ -1,12 +1,20 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { ActionButton, AddImageIcon, DeleteForeverIcon, MoreMenuIcon } from "@manifest-editor/components";
+import {
+  ActionButton,
+  AddImageIcon,
+  DeleteForeverIcon,
+  MoreMenuIcon,
+} from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback } from "react";
-import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
+import type {
+  TreeItemContentRenderProps,
+  TreeItemProps,
+} from "react-aria-components";
 import {
   Button,
   Checkbox,
@@ -36,12 +44,19 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const isActive = props.range.id === range?.resource.source?.id;
   const isNoNav = props.range.isNoNav;
 
+  const items = props.range.items ?? [];
+  const hasChildRanges = items.some((i) => i.type === "Range");
+  const hasCanvases = items.some((i) => i.type === "Canvas");
+
   const deleteRange = useCallback(
     (range: RangeTableOfContentsNode) => {
       if (!props.parentId) {
         // This is the top level one.
-        const structures = manifestEditor.structural.structures.getWithoutTracking();
-        const index = structures.findIndex((structure) => structure.id === range.id);
+        const structures =
+          manifestEditor.structural.structures.getWithoutTracking();
+        const index = structures.findIndex(
+          (structure) => structure.id === range.id,
+        );
         if (index !== -1) {
           manifestEditor.structural.structures.deleteAtIndex(index);
         }
@@ -52,7 +67,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         vault,
       });
 
-      const index = editor.structural.items.getWithoutTracking().findIndex((item) => item.id === range.id);
+      const index = editor.structural.items
+        .getWithoutTracking()
+        .findIndex((item) => item.id === range.id);
 
       if (index !== -1) {
         editor.structural.items.deleteAtIndex(index);
@@ -88,10 +105,12 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {
           type: "Range",
           label: { en: ["Untitled sequence"] },
-          items: manifestEditor.structural.items.getWithoutTracking().map((item) => ({
-            type: "Canvas",
-            id: item.id,
-          })),
+          items: manifestEditor.structural.items
+            .getWithoutTracking()
+            .map((item) => ({
+              type: "Canvas",
+              id: item.id,
+            })),
         },
         {
           parent: {
@@ -109,6 +128,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   };
 
   const { isEditing, showCanvases } = useRangeTreeOptions();
+  const hasVisibleChildren = hasChildRanges || (showCanvases && hasCanvases);
 
   return (
     <TreeItem
@@ -120,33 +140,51 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       textValue={getValue(props.range.label)}
       id={props.range.id}
       {...props}
-      onPress={() =>
-        getWorkbench(props.range.id)?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
-      }
     >
       <TreeItemContent>
-        {({ isExpanded, selectionBehavior, isDropTarget, selectionMode }: TreeItemContentRenderProps) => (
+        {({
+          isExpanded,
+          selectionBehavior,
+          isDropTarget,
+          selectionMode,
+        }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && <Checkbox slot="selection" />}
+            {selectionBehavior === "toggle" && selectionMode !== "none" && (
+              <Checkbox slot="selection" />
+            )}
 
-            <Button slot="chevron">
-              <ChevronDownIcon
-                className={twMerge(
-                  "text-xl",
-                  !showCanvases && props.range.isRangeLeaf && "opacity-20 cursor-not-allowed",
-                )}
-                style={{
-                  transition: "transform .2s",
-                  transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
-                }}
-              />
-            </Button>
+            {hasVisibleChildren ? (
+              <Button slot="chevron">
+                <ChevronDownIcon
+                  className={twMerge("text-xl")}
+                  style={{
+                    transition: "transform .2s",
+                    transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
+                  }}
+                />
+              </Button>
+            ) : (
+              <span slot="chevron" aria-hidden tabIndex={-1} className="pointer-events-none">
+                <ChevronDownIcon
+                  className={twMerge(
+                    "text-xl",
+                    "opacity-20 cursor-not-allowed",
+                  )}
+                  style={{
+                    transition: "transform .2s",
+                    transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
+                  }}
+                />
+              </span>
+            )}
 
             <div
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
                 isDropTarget && "bg-me-primary-100/50",
-                !showCanvases && props.range.isRangeLeaf && "border-transparent",
+                !showCanvases &&
+                  props.range.isRangeLeaf &&
+                  "border-transparent",
                 isActive && "border-transparent",
               )}
             >
@@ -182,7 +220,9 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                         </MenuItem>
                         <MenuItem
                           onAction={() =>
-                            window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                            window.confirm(
+                              "Are you sure you want to delete this range?",
+                            ) && deleteRange(props.range)
                           }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >

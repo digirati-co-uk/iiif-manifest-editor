@@ -292,6 +292,11 @@ export function RangeTree(props: RangeTreeProps) {
         expandedKeys={expandedKeys}
         dragAndDropHooks={dragAndDropHooks}
         onExpandedChange={setExpandedKeys}
+        selectionMode="single"
+        onAction={(key) => {
+          const el = document.getElementById(`workbench-${String(key)}`);
+          el?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+        }}
       >
         {function renderItem(item) {
           return <RenderItem item={item} />;
