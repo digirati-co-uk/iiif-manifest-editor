@@ -7,7 +7,7 @@ import {
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
-import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
+import { useInlineCreator, useManifestEditor, useLayoutActions, useEditingStack } from "@manifest-editor/shell";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback } from "react";
@@ -40,8 +40,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const manifestEditor = useManifestEditor();
   const range = useInStack("Range");
   const creator = useInlineCreator();
+  const { back } = useEditingStack();
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
+  const activeId = range?.resource.source?.id;
   const isNoNav = props.range.isNoNav;
 
   const items = props.range.items ?? [];
@@ -57,25 +59,24 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         const index = structures.findIndex(
           (structure) => structure.id === range.id,
         );
-        if (index !== -1) {
-          manifestEditor.structural.structures.deleteAtIndex(index);
+        if (index !== -1) manifestEditor.structural.structures.deleteAtIndex(index);
+      } else {
+        const editor = new EditorInstance({
+          reference: { id: props.parentId, type: "Range" },
+          vault,
+        });
+        const idx = editor.structural.items.getWithoutTracking().findIndex((i) => i.id === range.id);
+        if (idx !== -1) editor.structural.items.deleteAtIndex(idx);
+      }
+      requestAnimationFrame(() => {
+        if (!activeId) return;
+        const stillRendered = document.getElementById(`workbench-${activeId}`);
+        if (!stillRendered) {
+          back();
         }
-        return;
-      }
-      const editor = new EditorInstance({
-        reference: { id: props.parentId, type: "Range" },
-        vault,
       });
-
-      const index = editor.structural.items
-        .getWithoutTracking()
-        .findIndex((item) => item.id === range.id);
-
-      if (index !== -1) {
-        editor.structural.items.deleteAtIndex(index);
-      }
     },
-    [props.parentId, manifestEditor, vault],
+    [props.parentId, manifestEditor, vault, activeId, back]
   );
 
   const insertEmptyRange = useCallback(
