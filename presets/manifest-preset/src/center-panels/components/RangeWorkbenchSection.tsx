@@ -13,7 +13,7 @@ import {
 } from "@manifest-editor/components";
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   Menu,
@@ -62,9 +62,11 @@ export function RangeWorkbenchSection({
     useState<RangeTableOfContentsNode | null>(null);
   const [lastSelectedCanvas, setLastSelectedCanvas] =
     useState<RangeTableOfContentsNode | null>(null);
-  const itemsSig = useMemo(() => (range.items || []).map(i => i.id).join("|"), [range.items]);
-
-
+  const idsSig = useMemo(
+    () => (range.items ?? []).map(i => i.id).join(","),
+    [range.items]
+  );
+  const sourceItems = useMemo(() => range.items ?? [], [idsSig]);
   const setSelectedCanvas = useCallback(
     (canvas: RangeTableOfContentsNode | null) => {
       _setSelectedCanvas(canvas);
@@ -77,13 +79,44 @@ export function RangeWorkbenchSection({
 
   const [isEditingLabel, setIsEditingLabel] = useState(false);
   const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] =
-    useLoadMoreItems(range.items || [], {
+    useLoadMoreItems(sourceItems || [], {
       batchSize: 32,
     });
 
+  const didMountRef = useRef(false);
+  const prevRangeIdRef = useRef<string | null>(null);
+  const prevSigRef = useRef<string | null>(null);
+
   useEffect(() => {
-    reset();
-  }, [range.id, itemsSig, reset]);
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      prevRangeIdRef.current = range.id;
+      prevSigRef.current = idsSig;
+      return;
+    }
+
+    if (prevRangeIdRef.current !== range.id) {
+      prevRangeIdRef.current = range.id;
+      prevSigRef.current = idsSig;
+      reset();
+      return;
+    }
+
+    if (prevSigRef.current === idsSig) return;
+
+    const prevIds = (prevSigRef.current ?? "").split(",").filter(Boolean);
+    const nextIds = (idsSig ?? "").split(",").filter(Boolean);
+
+    const isPureAppend =
+      prevIds.length <= nextIds.length &&
+      prevIds.every((id, idx) => id === nextIds[idx]);
+
+    if (!isPureAppend) {
+      reset();
+    }
+    prevSigRef.current = idsSig;
+  }, [range.id, idsSig]);
+
 
   const isEmpty = !range.items || range.items?.length === 0;
 
