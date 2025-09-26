@@ -231,7 +231,8 @@ export function RangeWorkbenchSection({
                     }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
-                    <DeleteForeverIcon /> Delete range items
+                    <DeleteForeverIcon /> Delete range item
+
                   </MenuItem>
                 ) : null}
               </Menu>

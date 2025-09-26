@@ -14,7 +14,8 @@ export function RangeSplittingPreview() {
       <div className="flex flex-col justify-center items-center px-4 gap-4">
         <SplitRangeIcon className="w-32 h-32 text-gray-300" />
         <div className="text-center text-black/80">
-          Hover or focus a canvas to preview. Click to split here. The first canvas can’t be split.
+          Hover over the Canvases to select where you want to add a new range item. Click to select that Canvas.
+          Note the first canvas can’t be split.
         </div>
         <div
           style={{
@@ -30,7 +31,7 @@ export function RangeSplittingPreview() {
             fill={"#31539F"}
             style={{ float: "right" }}
           />
-          Creating your first range adds one range called “All items”
+          Creating your first range adds one range called “Range 1”
           that contains every canvas. You can rename it, split it, or move canvases into sub-ranges.
         </div>
       </div>

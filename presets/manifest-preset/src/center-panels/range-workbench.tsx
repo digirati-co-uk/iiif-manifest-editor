@@ -313,7 +313,7 @@ function RangeWorkbench() {
 
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
-          Splitting range, click to confirm the two new ranges
+          Splitting range, click to confirm the the new range item
           <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
         </InfoMessage>
       ) : null}
