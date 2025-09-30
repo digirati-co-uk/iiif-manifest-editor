@@ -2,7 +2,8 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 import { entityActions } from "@iiif/helpers/vault/actions";
-import { randomId } from "./utils";
+import { flattenRanges, randomId } from "./utils";
+import { createRangeHelper } from "@iiif/helpers";
 
 export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
   Entity,
@@ -96,15 +97,46 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
 
     const toRemove = list[index];
     if (toRemove) {
-      this.config.vault.dispatch(
-        entityActions.removeReference({
-          id: this.getId(),
-          type: this.getType() as any,
-          key: this.property,
-          reference: toRemove,
-          index: index,
-        }),
-      );
+      this.config.vault.batch((vault) => {
+        // Edge-case, if this is a Manifest, we need to ALSO check the ranges.
+        if (this.getType() === "Manifest" && this.property === "items") {
+          const fullManifest = vault.get(this.ref());
+          const toRemoveId = vault.get(toRemove)?.id;
+          if (toRemoveId && fullManifest && (fullManifest.structures || []).length > 0) {
+            // Grab all ranges.
+            const allRanges = createRangeHelper(vault).rangesToTableOfContentsTree(fullManifest.structures);
+            if (allRanges) {
+              const flattened = flattenRanges(allRanges);
+              for (const item of flattened) {
+                if (item.items) {
+                  const idx = item.items.findIndex((i) => i.type === "Canvas" && i.id === toRemoveId);
+                  if (idx !== -1) {
+                    vault.dispatch(
+                      entityActions.removeReference({
+                        id: item.id,
+                        type: "Range",
+                        key: "items",
+                        reference: item.items[idx]!.resource,
+                        index: idx,
+                      }),
+                    )
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        vault.dispatch(
+          entityActions.removeReference({
+            id: this.getId(),
+            type: this.getType() as any,
+            key: this.property,
+            reference: toRemove,
+            index: index,
+          }),
+        );
+      });
       return true;
     }
     return false;

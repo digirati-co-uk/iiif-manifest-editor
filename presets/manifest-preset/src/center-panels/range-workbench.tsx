@@ -312,7 +312,7 @@ function RangeWorkbench() {
     ? document.getElementById(`workbench-${firstId}`)
     : null;
   const lastWorkbench = lastId
-    ? document.getElementById(`workbench-${lastId}`)
+    ? document.getElementById(`workbench-bottom`)
     : null;
 
   return (
@@ -485,6 +485,7 @@ function RangeWorkbench() {
           )}
         </div>
       ) : null}
+      <div id="workbench-bottom" />
     </div>
   );
 }
