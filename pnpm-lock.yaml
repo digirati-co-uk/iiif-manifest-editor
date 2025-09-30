@@ -9,7 +9,7 @@ overrides:
   next: ^14.2.25
   react-aria-components: ^1.12
   '@atlas-viewer/atlas': 2.3.7
-  iiif-browser: 2.0.5
+  iiif-browser: 2.0.4
   '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
   '@iiif/parser': ^2.2.0
 
@@ -161,8 +161,8 @@ importers:
         specifier: ^6.2.1
         version: 6.2.1
       iiif-browser:
-        specifier: 2.0.5
-        version: 2.0.5(@types/react@18.3.3)(immer@10.1.1)
+        specifier: 2.0.4
+        version: 2.0.4(@types/react@18.3.3)(immer@10.1.1)
       manifest-editor:
         specifier: workspace:*
         version: link:../../packages/manifest-editor
@@ -369,8 +369,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       iiif-browser:
-        specifier: 2.0.5
-        version: 2.0.5(@types/react@18.3.3)(immer@10.1.1)
+        specifier: 2.0.4
+        version: 2.0.4(@types/react@18.3.3)(immer@10.1.1)
       lexical:
         specifier: ^0.28.0
         version: 0.28.0
@@ -548,8 +548,8 @@ importers:
         specifier: workspace:*
         version: link:../shell
       iiif-browser:
-        specifier: 2.0.5
-        version: 2.0.5(@types/react@18.3.3)(immer@10.1.1)
+        specifier: 2.0.4
+        version: 2.0.4(@types/react@18.3.3)(immer@10.1.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1230,8 +1230,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shell
       iiif-browser:
-        specifier: 2.0.5
-        version: 2.0.5(@types/react@18.3.3)(immer@10.1.1)
+        specifier: 2.0.4
+        version: 2.0.4(@types/react@18.3.3)(immer@10.1.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -8785,8 +8785,8 @@ packages:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
 
-  iiif-browser@2.0.5:
-    resolution: {integrity: sha512-UpzztBj+2m5mKC3Jf31Gepo13HewcDCBx2OtO4k1zyEKuMmIQcoZfoNzWCMNK+SHhgORt2NeNLheG9qq9N84VA==}
+  iiif-browser@2.0.4:
+    resolution: {integrity: sha512-76OJH9HN280tAm/SfduEJ0XULUxQPv24NNGAiQbACXQ9FKjrRaENrNKAaxOLm3miuO8SZ5q43r1HRLXZZHfBFw==}
     engines: {node: '>=18.14.1'}
 
   image-size@0.5.5:
@@ -23097,7 +23097,7 @@ snapshots:
 
   ignore@5.3.1: {}
 
-  iiif-browser@2.0.5(@types/react@18.3.3)(immer@10.1.1):
+  iiif-browser@2.0.4(@types/react@18.3.3)(immer@10.1.1):
     dependencies:
       '@atlas-viewer/atlas': 2.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
