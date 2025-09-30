@@ -1,11 +1,11 @@
 import { Vault } from "@iiif/helpers";
 import type { CreatorContext } from "@manifest-editor/creator-api";
-import { PreviewVaultBoundary } from "@manifest-editor/shell";
+import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useMemo } from "react";
 
 export default function ManifestBrowserCreatorForm(props: CreatorContext) {
-  const vault = useMemo(() => new Vault(), []);
+  const vault = usePreviewVault();
   const output = useMemo(() => {
     return [
       {

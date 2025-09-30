@@ -1,5 +1,13 @@
-import { type BoxSelector, createThumbnailHelper, normaliseContentState, parseContentState } from "@iiif/helpers";
-import type { CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
+import {
+  type BoxSelector,
+  createThumbnailHelper,
+  normaliseContentState,
+  parseContentState,
+} from "@iiif/helpers";
+import type {
+  CreatorFunctionContext,
+  CreatorResource,
+} from "@manifest-editor/creator-api";
 import type { Resource } from "@manifest-editor/shell";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
@@ -8,7 +16,11 @@ export interface ManifestBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
-  output: Array<{ resource: any; parent: { id: string; type: string } | undefined; selector: BoxSelector | undefined }>;
+  output: Array<{
+    resource: any;
+    parent: { id: string; type: string } | undefined;
+    selector: BoxSelector | undefined;
+  }>;
 }
 
 export async function createFromManifestBrowserOutput(
@@ -27,9 +39,15 @@ export async function createFromManifestBrowserOutput(
     if (resource.type === "Manifest") {
       const manifestId = resource.id;
       invariant(manifestId, "Could not find Manifest ID");
+
       // 1st. Check the preview vault.
       const manifest = await previewVault.loadManifest(manifestId);
-      const thumbnail = await thumbnails.getBestThumbnailAtSize(manifest, { width: 256, height: 256 }, false);
+      console.log({ manifestId, manifest });
+      const thumbnail = await thumbnails.getBestThumbnailAtSize(
+        manifest,
+        { width: 256, height: 256 },
+        false,
+      );
 
       invariant(manifest, "Manifest not found");
       itemsToAdd.push(
@@ -69,4 +87,6 @@ export async function createFromManifestBrowserOutput(
 
   return itemsToAdd;
 }
-export const ManifestBrowserCreatorForm = lazy(() => import("./manifest-browser-form.lazy"));
+export const ManifestBrowserCreatorForm = lazy(
+  () => import("./manifest-browser-form.lazy"),
+);
