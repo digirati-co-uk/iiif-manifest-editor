@@ -63,8 +63,8 @@ export function RangeWorkbenchSection({
   const [lastSelectedCanvas, setLastSelectedCanvas] =
     useState<RangeTableOfContentsNode | null>(null);
   const idsSig = useMemo(
-    () => (range.items ?? []).map(i => i.id).join(","),
-    [range.items]
+    () => (range.items ?? []).map((i) => i.id).join(","),
+    [range.items],
   );
   const sourceItems = useMemo(() => range.items ?? [], [idsSig]);
   const setSelectedCanvas = useCallback(
@@ -117,10 +117,11 @@ export function RangeWorkbenchSection({
     prevSigRef.current = idsSig;
   }, [range.id, idsSig]);
 
-
   const isEmpty = !range.items || range.items?.length === 0;
 
-  const firstCanvasId = (range.items ?? []).find(i => i.type === "Canvas")?.id;
+  const firstCanvasId = (range.items ?? []).find(
+    (i) => i.type === "Canvas",
+  )?.id;
 
   return (
     <>
@@ -141,13 +142,13 @@ export function RangeWorkbenchSection({
         </Modal>
       ) : null}
       <div
-        id={`workbench-${range.id}`}
         key={range.id}
-        className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300"
+        className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative"
       >
-        <div className="flex items-center gap-4">
+        <div id={`workbench-${range.id}`} className="absolute -top-16" />
+        <div className="flex items-center gap-4 max-w-full">
           <Button
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 min-w-0"
             onPress={() => {
               if (isExpanded) reset();
               setIsExpanded(!isExpanded);
@@ -161,7 +162,7 @@ export function RangeWorkbenchSection({
               }}
             />
             {isEditingLabel ? null : (
-              <LocaleString className="text-xl">
+              <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0 flex-1">
                 {range.label || "Untitled range"}
               </LocaleString>
             )}
@@ -271,7 +272,6 @@ export function RangeWorkbenchSection({
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
                     <DeleteForeverIcon /> Delete range item
-
                   </MenuItem>
                 ) : null}
               </Menu>
@@ -295,7 +295,7 @@ export function RangeWorkbenchSection({
                       className="items-center justify-center flex flex-col"
                     >
                       <RangeGridThumbnail range={item} />
-                      <LocaleString className="text-center truncate overflow-ellipsis max-w-full text-sm">
+                      <LocaleString className="truncate overflow-ellipsis max-w-full text-sm">
                         {item.label || "Untitled range"}
                       </LocaleString>
                     </div>
@@ -318,7 +318,9 @@ export function RangeWorkbenchSection({
                       containerProps={{
                         "data-range1-label": getValue(range.label),
                         "data-range2-label": nextRangeLabel || "Untitled range",
-                        ...(isFirstCanvas ? { "data-split-first": "true" } : {}),
+                        ...(isFirstCanvas
+                          ? { "data-split-first": "true" }
+                          : {}),
                       }}
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}

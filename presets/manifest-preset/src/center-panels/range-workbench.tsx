@@ -1,8 +1,17 @@
-import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import {
+  createRangeHelper,
+  getValue,
+  type RangeTableOfContentsNode,
+} from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, BackIcon, InfoMessage, useGridOptions } from "@manifest-editor/components";
+import {
+  ActionButton,
+  BackIcon,
+  InfoMessage,
+  useGridOptions,
+} from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
@@ -12,7 +21,13 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import {
+  LocaleString,
+  RangeContext,
+  useManifest,
+  useVault,
+  useVaultSelector,
+} from "react-iiif-vault";
 import { SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
@@ -47,7 +62,10 @@ function getNextRangeLabel(label: InternationalString | null) {
 
 function RangeWorkbench() {
   const selectedRange = useInStack("Range");
-  const [{ size }, gridOptions] = useGridOptions("default-grid-size", "grid-sm");
+  const [{ size }, gridOptions] = useGridOptions(
+    "default-grid-size",
+    "grid-sm",
+  );
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
@@ -61,7 +79,9 @@ function RangeWorkbench() {
     (_, vault) => {
       const selected = toRef<any>(selectedRange?.resource);
       if (selected) {
-        return helper.rangeToTableOfContentsTree(vault.get(selected)!, { showNoNav: true });
+        return helper.rangeToTableOfContentsTree(vault.get(selected)!, {
+          showNoNav: true,
+        });
       }
 
       if (!manifest!.structures) {
@@ -69,17 +89,28 @@ function RangeWorkbench() {
       }
 
       const structures = vault.get(manifest!.structures || []);
-      return helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || null;
+      return (
+        helper.rangesToTableOfContentsTree(structures, undefined, {
+          showNoNav: true,
+        })! || null
+      );
     },
     [manifest, selectedRange],
   );
 
-  const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
-    allowNull: true,
-  });
+  const rangeEditor = useGenericEditor(
+    topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
+    {
+      allowNull: true,
+    },
+  );
 
   const onMerge = useCallback(
-    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) => {
+    (
+      mergeRange: RangeTableOfContentsNode,
+      toMergeRange: RangeTableOfContentsNode,
+      empty?: boolean,
+    ) => {
       if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
 
       const foundIndex = rangeEditor.structural.items
@@ -208,7 +239,7 @@ function RangeWorkbench() {
   const [isAtEnd, setIsAtEnd] = useState(false); // single or multi: end of container reached
 
   const rangeItems = (topLevelRange?.items ?? []).filter(
-    (item): item is { id: string; type: "Range" } => item.type === "Range",
+    (item: any): item is { id: string; type: "Range" } => item.type === "Range",
   );
   const rangeItemsLen = rangeItems.length;
 
@@ -217,13 +248,17 @@ function RangeWorkbench() {
       setIsLastInView(false);
       return;
     }
-    const container = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+    const container = document.getElementById(
+      "range-workbench-scroll",
+    ) as HTMLElement | null;
     const lastId = rangeItems[rangeItems.length - 1]?.id;
-    const last = lastId ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null) : null;
+    const last = lastId
+      ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null)
+      : null;
     if (!container || !last) return;
 
     const io = new IntersectionObserver(
-      ([entry]) => setIsLastInView(entry.isIntersecting),
+      ([entry]) => setIsLastInView(entry!.isIntersecting),
       { root: container, threshold: 0, rootMargin: "0px 0px -1px 0px" },
     );
 
@@ -238,7 +273,9 @@ function RangeWorkbench() {
   }, [rangeItemsLen, rangeItems]);
 
   useEffect(() => {
-    const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+    const el = document.getElementById(
+      "range-workbench-scroll",
+    ) as HTMLElement | null;
     if (!el) return;
 
     const compute = () => {
@@ -264,13 +301,19 @@ function RangeWorkbench() {
     return null;
   }
 
-  const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
+  const hasCanvases = (topLevelRange.items || []).filter(
+    (item) => item.type === "Canvas",
+  );
 
   const firstId = rangeItems[0]?.id;
   const lastId = rangeItems[rangeItems.length - 1]?.id;
 
-  const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
-  const lastWorkbench = lastId ? document.getElementById(`workbench-${lastId}`) : null;
+  const firstWorkbench = firstId
+    ? document.getElementById(`workbench-${firstId}`)
+    : null;
+  const lastWorkbench = lastId
+    ? document.getElementById(`workbench-${lastId}`)
+    : null;
 
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
@@ -293,14 +336,18 @@ function RangeWorkbench() {
               <LocaleString as="h3" className="text-xl">
                 {topLevelRange.label}
               </LocaleString>
-              <ActionButton onPress={() => setIsEditingLabel(true)}>Edit</ActionButton>
+              <ActionButton onPress={() => setIsEditingLabel(true)}>
+                Edit
+              </ActionButton>
             </div>
           )}
-          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
-            <ActionButton onPress={() => setIsSplitting(true)}>
-              <SplitRangeIcon className="text-xl" /> Split range
-            </ActionButton>
-          )}
+          {!isSplitting &&
+            (topLevelRange?.items?.length ?? 0) > 0 &&
+            !topLevelRange.isRangeLeaf && (
+              <ActionButton onPress={() => setIsSplitting(true)}>
+                <SplitRangeIcon className="text-xl" /> Split range
+              </ActionButton>
+            )}
 
           <RangeOnboarding />
         </div>
@@ -311,7 +358,9 @@ function RangeWorkbench() {
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
           Splitting range, click to confirm the the new range item
-          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
+          <ActionButton onPress={() => setIsSplitting(false)}>
+            Exit splitting mode
+          </ActionButton>
         </InfoMessage>
       ) : null}
 
@@ -324,7 +373,8 @@ function RangeWorkbench() {
         const nextIdx = idx + 1;
 
         const nextRangeLabel =
-          nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
+          nextIdx !== topLevelRange.items?.length &&
+          topLevelRange.items?.[nextIdx]?.items?.length === 0
             ? getValue(topLevelRange.items?.[nextIdx]?.label)
             : getNextRangeLabel(item.label);
 
@@ -335,16 +385,28 @@ function RangeWorkbench() {
             isSplitting={isSplitting}
             onSplit={onSplit}
             range={item}
-            onMergeUp={idx !== 0 ? (r, empty) => onMerge(item, topLevelRange.items?.[prevIdx]!, empty) : undefined}
+            onMergeUp={
+              idx !== 0
+                ? (r, empty) =>
+                    onMerge(item, topLevelRange.items?.[prevIdx]!, empty)
+                : undefined
+            }
             onMergeDown={
               topLevelRange.items?.[nextIdx]
-                ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
+                ? (r, empty) =>
+                    onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
                 : undefined
             }
             nextRangeLabel={nextRangeLabel}
             onDelete={() => onDelete(idx)}
-            mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
-            mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
+            mergeUpLabel={
+              prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""
+            }
+            mergeDownLabel={
+              nextIdx !== topLevelRange.items?.length
+                ? topLevelRange.items?.[nextIdx]?.label
+                : ""
+            }
           />
         );
       })}
@@ -361,7 +423,9 @@ function RangeWorkbench() {
             <ActionButton
               primary
               onPress={() => {
-                const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+                const el = document.getElementById(
+                  "range-workbench-scroll",
+                ) as HTMLElement | null;
                 el?.scrollTo({ top: 0, behavior: "smooth" });
               }}
             >
@@ -373,9 +437,15 @@ function RangeWorkbench() {
               onPress={() => {
                 // scroll single section to its end (keeps your previous feel)
                 if (lastWorkbench) {
-                  lastWorkbench.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
+                  lastWorkbench.scrollIntoView({
+                    behavior: "smooth",
+                    block: "end",
+                    inline: "end",
+                  });
                 } else {
-                  const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+                  const el = document.getElementById(
+                    "range-workbench-scroll",
+                  ) as HTMLElement | null;
                   el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
                 }
               }}
@@ -390,7 +460,11 @@ function RangeWorkbench() {
             <ActionButton
               primary
               onPress={() => {
-                firstWorkbench?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+                firstWorkbench?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                  inline: "start",
+                });
               }}
             >
               Scroll to top <ArrowUpIcon />
@@ -399,7 +473,11 @@ function RangeWorkbench() {
             <ActionButton
               primary
               onPress={() => {
-                lastWorkbench?.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
+                lastWorkbench?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "end",
+                  inline: "end",
+                });
               }}
             >
               Scroll to bottom <ArrowDownIcon />
