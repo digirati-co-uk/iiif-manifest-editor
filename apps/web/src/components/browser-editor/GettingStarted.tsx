@@ -7,9 +7,14 @@ import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useState } from "react";
 import { Button, Dialog, DialogTrigger, Toolbar } from "react-aria-components";
+import {
+  createBlankCollection,
+  createBlankExhibition,
+  createBlankManifest,
+  createManifestFromJson,
+} from "./browser-state";
 import { CreateFromUrlModal } from "./CreateFromUrlModal";
 import { IIIFBrowserModal } from "./IIIFBrowserModal";
-import { createBlankManifest, createBlankCollection, createManifestFromJson } from "./browser-state";
 
 export default function GettingStarted() {
   const router = useRouter();
@@ -31,6 +36,16 @@ export default function GettingStarted() {
       if (data) {
         posthog.capture("blank-collection-created", {});
         router.push(`/editor/${data.id}`);
+      }
+    },
+  });
+
+  const blankExhibition = useMutation({
+    mutationFn: createBlankExhibition,
+    onSuccess: (data) => {
+      if (data) {
+        posthog.capture("blank-exhibition-created", {});
+        router.push(`/editor/${data.id}/exhibition`);
       }
     },
   });
@@ -109,6 +124,17 @@ export default function GettingStarted() {
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Collection</div>
+        </Button>
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default"
+          onPress={() => blankExhibition.mutate()}
+        >
+          <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
+            <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
+              <AddIcon />
+            </div>
+          </div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Exhibition</div>
         </Button>
       </Toolbar>
       <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />

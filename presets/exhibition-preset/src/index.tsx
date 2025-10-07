@@ -10,6 +10,7 @@ import { imageServiceSlideCreator } from "./creators/image-service-slide-creator
 import { imageSlideCreator } from "./creators/image-slide-creator";
 import { imageUrlSlideCreator } from "./creators/image-url-slide";
 import { infoBoxCreator } from "./creators/info-box-creator";
+import { videoSlideCreator } from "./creators/video-slide-creator";
 import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
@@ -58,6 +59,7 @@ export const exhibitionEditorPreset = extendApp(
       infoBlockEditor,
     ],
     editors: [
+      //
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,
@@ -70,6 +72,7 @@ export const exhibitionEditorPreset = extendApp(
       imageBrowserSlideCreator,
       imageSlideCreator,
       imageUrlSlideCreator,
+      videoSlideCreator,
     ],
   },
 );
