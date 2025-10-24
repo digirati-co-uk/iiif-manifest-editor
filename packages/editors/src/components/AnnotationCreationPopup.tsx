@@ -1,4 +1,5 @@
 import { ActionButton, CheckIcon, EditTextIcon } from "@manifest-editor/components";
+import { BaseAnnotationCreator, useAtlasStore, useConfig } from "@manifest-editor/shell";
 import { Button, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import {
   polygonToTarget,
@@ -7,14 +8,9 @@ import {
   useCurrentAnnotationActions,
   useCurrentAnnotationRequest,
 } from "react-iiif-vault";
-import { ModalCloseIcon } from "../../../ui/madoc/components/Modal";
-import {
-  BaseAnnotationCreator,
-  useAtlasStore,
-  useConfig,
-} from "@manifest-editor/shell";
-import { AnnotationPopUpSwitcherButton } from "./AnnotationPopUpSwitcherButton";
 import { useStore } from "zustand";
+import { ModalCloseIcon } from "../../../ui/madoc/components/Modal";
+import { AnnotationPopUpSwitcherButton } from "./AnnotationPopUpSwitcherButton";
 
 export function AnnotationCreationPopup({
   annotationPageId,
@@ -56,15 +52,10 @@ export function AnnotationCreationPopup({
               <EditTextIcon className="text-xl" /> Edit target
             </ActionButton>
           ) : (
-            <ActionButton onPress={() => changeMode("explore")}>
-              Pan and zoom
-            </ActionButton>
+            <ActionButton onPress={() => changeMode("explore")}>Pan and zoom</ActionButton>
           )}
         </div>
-        <Button
-          onPress={() => cancelRequest()}
-          className="bg-white hover:bg-gray-100 p-1 rounded-sm"
-        >
+        <Button onPress={() => cancelRequest()} className="bg-white hover:bg-gray-100 p-1 rounded-sm">
           <ModalCloseIcon className="text-2xl" />
         </Button>
       </div>
@@ -82,8 +73,8 @@ export function AnnotationCreationPopup({
           target: { id: canvasId, type: "Canvas" },
           initialData: {
             showEmptyForm: true,
-            getSerialisedSelector: () => shape ? polygonToTarget(shape, fullCanvas) : undefined,
-            motivation: "describing", // @todo.
+            getSerialisedSelector: () => (shape ? polygonToTarget(shape, fullCanvas) : undefined),
+            motivation: "tagging", // @todo.
             on: { width: fullCanvas?.width, height: fullCanvas?.height },
           },
         }}

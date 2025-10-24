@@ -1,9 +1,5 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import {
-  ActionButton,
-  Sidebar,
-  SidebarContent,
-} from "@manifest-editor/components";
+import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
@@ -15,15 +11,11 @@ import {
 } from "@manifest-editor/shell";
 import { useState } from "react";
 import { Button } from "react-aria-components";
-import {
-  AnnotationPageContext,
-  useCanvas,
-  useRequestAnnotation,
-} from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
+import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { getGridStats } from "../helpers";
-import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 
 export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
@@ -88,9 +80,7 @@ function PromptCreationOfTourSteps() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="p-4 opacity-50 text-center">
-        This image does not yet have a tour.
-      </div>
+      <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
 
       <Button
         className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
@@ -110,48 +100,47 @@ function ExhibitionRightPanel() {
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
 
-  const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } =
-    useRequestAnnotation({
-      onSuccess: (resp) => {
-        const bodyValue = resp.metadata.bodyValue || "";
+  const { requestAnnotation, isPending, busy, cancelRequest, completeRequest } = useRequestAnnotation({
+    onSuccess: (resp) => {
+      const bodyValue = resp.metadata.bodyValue || "";
 
-        if (!resp.cancelled && resp.target && firstAnnotationPage) {
-          creator.create(
-            "@manifest-editor/html-annotation",
-            {
-              label: { en: ["Tour step"] },
-              body: {
-                en: [bodyValue || "<h2>New step</h2><p>Description</p>"],
-              },
-              motivation: "describing",
-            } as {
-              label?: InternationalString;
-              body: InternationalString;
-              motivation?: string;
-              height?: number;
-              width?: number;
+      if (!resp.cancelled && resp.target && firstAnnotationPage) {
+        creator.create(
+          "@manifest-editor/html-annotation",
+          {
+            label: { en: ["Tour step"] },
+            body: {
+              en: [bodyValue || "<h2>New step</h2><p>Description</p>"],
             },
-            {
-              target: {
-                id: canvas.id,
-                type: "Canvas",
-              },
-              targetType: "Annotation",
-              parent: {
-                property: "items",
-                resource: {
-                  id: firstAnnotationPage.id,
-                  type: "AnnotationPage",
-                },
-              },
-              initialData: {
-                selector: resp,
+            motivation: "tagging",
+          } as {
+            label?: InternationalString;
+            body: InternationalString;
+            motivation?: string;
+            height?: number;
+            width?: number;
+          },
+          {
+            target: {
+              id: canvas.id,
+              type: "Canvas",
+            },
+            targetType: "Annotation",
+            parent: {
+              property: "items",
+              resource: {
+                id: firstAnnotationPage.id,
+                type: "AnnotationPage",
               },
             },
-          );
-        }
-      },
-    });
+            initialData: {
+              selector: resp,
+            },
+          },
+        );
+      }
+    },
+  });
 
   if (!canvas) return null;
   if (!firstAnnotationPage) {
@@ -163,9 +152,7 @@ function ExhibitionRightPanel() {
       <SidebarContent padding>
         <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
           <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
-          <ActionButton onPress={() => setReorderable((r) => !r)}>
-            {reorderable ? "Done" : "Reorder"}
-          </ActionButton>
+          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
         </div>
 
         <ResourceEditingProvider resource={canvas}>
@@ -193,9 +180,7 @@ function ExhibitionRightPanel() {
             </div>
             {itemsAnnotationPage /*&& hasMultiplePainting*/ ? (
               <>
-                <h3 className="text-md border-b pt-4 pb-2 mb-2">
-                  Available tour steps from images
-                </h3>
+                <h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>
                 <PromptToAddPaintingAnnotations
                   painting={itemsAnnotationPage}
                   page={editor.ref()}

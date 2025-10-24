@@ -83,7 +83,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const longDescriptionResource = ctx.embed({
     id: annotationLongId,
     type: "Annotation",
-    motivation: "describing",
+    motivation: "tagging",
     body: [
       await ctx.create(
         "@manifest-editor/html-body-creator",

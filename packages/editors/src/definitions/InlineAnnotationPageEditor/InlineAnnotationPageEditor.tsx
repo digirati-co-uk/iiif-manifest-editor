@@ -1,17 +1,23 @@
 import { isSpecificResource, toRef } from "@iiif/parser";
 import type { Reference } from "@iiif/presentation-3";
+import { ActionButton, TargetIcon } from "@manifest-editor/components";
 import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
-import { AnnotationContext, CanvasContext, useAnnotationPage, useRequestAnnotation, useVaultSelector } from "react-iiif-vault";
+import {
+  AnnotationContext,
+  CanvasContext,
+  useAnnotationPage,
+  useRequestAnnotation,
+  useVaultSelector,
+} from "react-iiif-vault";
 import invariant from "tiny-invariant";
+import { AnnotationCreationPopup } from "../../components/AnnotationCreationPopup";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputLabel } from "../../components/Input";
 import { createAppActions } from "../../helpers/create-app-actions";
-import { AnnotationCreationPopup } from "../../components/AnnotationCreationPopup";
-import { ActionButton, TargetIcon } from "@manifest-editor/components";
 
 export function InlineAnnotationPageEditor() {
   const editor = useEditor();
@@ -32,7 +38,7 @@ export function InlineAnnotationPageEditor() {
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
   );
 
   // Does the canvas have multiple media?
@@ -56,13 +62,8 @@ export function InlineAnnotationPageEditor() {
           onPress={() => {
             requestAnnotation({
               type: "box",
-              annotationPopup: (
-                <AnnotationCreationPopup
-                  annotationPageId={annotationPageId}
-                  canvasId={canvasId}
-                />
-              ),
-            })
+              annotationPopup: <AnnotationCreationPopup annotationPageId={annotationPageId} canvasId={canvasId} />,
+            });
           }}
         >
           Create annotation
@@ -92,7 +93,7 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       }
       return toList;
     },
-    [id, ...deps]
+    [id, ...deps],
   );
 }
 
@@ -111,7 +112,7 @@ export function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems]
+    [targets, totalItems],
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -140,7 +141,7 @@ export function PromptToAddPaintingAnnotations({
                     onClick={async () => {
                       await creator.create(
                         "@manifest-editor/no-body-annotation",
-                        { motivation: "describing" },
+                        { motivation: "tagging" },
                         {
                           parent: {
                             resource: page,
@@ -150,7 +151,7 @@ export function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        }
+                        },
                       );
                     }}
                   />
