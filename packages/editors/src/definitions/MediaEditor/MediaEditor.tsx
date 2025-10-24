@@ -40,9 +40,11 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
           `}
       </style>
       <iframe
+        title="YouTube video player"
         className="video-yt3"
-        src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}`}
-        referrerPolicy="no-referrer"
+        src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}&modestbranding=1&rel=0`}
+        // @ts-expect-error
+        referrerPolicy="no-referrer compute-pressure"
         sandbox="allow-scripts allow-same-origin allow-presentation"
       ></iframe>
     </div>
@@ -104,7 +106,7 @@ export function MediaEditor() {
               width: dimensions.width,
               height: dimensions.height,
             },
-            0.6
+            0.6,
           );
 
           target.setPosition(imagePosition);
@@ -134,7 +136,7 @@ export function MediaEditor() {
           width: width.get(),
           height: height.get(),
         },
-        0.6
+        0.6,
       );
 
       target.setPosition(imagePosition);
@@ -155,7 +157,7 @@ export function MediaEditor() {
             },
           ],
     },
-    [currentTarget?.selector]
+    [currentTarget?.selector],
   );
 
   // VideoYouTubeHTML
