@@ -97,6 +97,47 @@ function RangeWorkbench() {
     },
     [manifest, selectedRange],
   );
+  
+  // Get the breadcrumb trail for the currently selected range
+  const breadcrumbTrail = useMemo(() => {
+    if (!selectedRange || !manifest?.structures) {
+      return [];
+    }
+    
+    const trail: Array<{ id: string; label: InternationalString | null }> = [];
+    const structures = vault.get(manifest.structures);
+    const rootRange = helper.rangesToTableOfContentsTree(structures, undefined, {
+      showNoNav: true,
+    });
+    
+    if (!rootRange) return trail;
+    
+    // Build path from root to selected range
+    const findPath = (
+      current: RangeTableOfContentsNode,
+      targetId: string,
+      path: Array<{ id: string; label: InternationalString | null }>
+    ): boolean => {
+      if (current.id === targetId) {
+        return true;
+      }
+      
+      for (const item of current.items || []) {
+        if (item.type === "Range") {
+          path.push({ id: item.id, label: item.label });
+          if (findPath(item, targetId, path)) {
+            return true;
+          }
+          path.pop();
+        }
+      }
+      
+      return false;
+    };
+    
+    findPath(rootRange, selectedRange.resource.source.id, trail);
+    return trail;
+  }, [selectedRange, manifest, vault, helper]);
 
   const rangeEditor = useGenericEditor(
     topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
@@ -332,7 +373,21 @@ function RangeWorkbench() {
               onCancel={() => setIsEditingLabel(false)}
             />
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {/* Breadcrumb trail for nested ranges */}
+              {breadcrumbTrail.length > 0 && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  {breadcrumbTrail.map((crumb, idx) => (
+                    <span key={crumb.id} className="flex items-center gap-2">
+                      {idx > 0 && <span>/</span>}
+                      <LocaleString className="max-w-[150px] truncate">
+                        {crumb.label}
+                      </LocaleString>
+                    </span>
+                  ))}
+                  <span>/</span>
+                </div>
+              )}
               <LocaleString as="h3" className="text-xl">
                 {topLevelRange.label}
               </LocaleString>

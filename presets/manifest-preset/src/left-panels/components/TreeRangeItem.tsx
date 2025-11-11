@@ -49,6 +49,25 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const items = props.range.items ?? [];
   const hasChildRanges = items.some((i) => i.type === "Range");
   const hasCanvases = items.some((i) => i.type === "Canvas");
+  
+  // Check if this range is an ancestor of the currently active range
+  const isAncestor = activeId && props.range.items?.some((item) => {
+    if (item.type !== "Range") return false;
+    
+    // Direct child is active
+    if (item.id === activeId) return true;
+    
+    // Check recursively for descendants
+    const checkDescendants = (range: RangeTableOfContentsNode): boolean => {
+      if (range.id === activeId) return true;
+      return (range.items ?? []).some((child) => {
+        if (child.type !== "Range") return false;
+        return checkDescendants(child);
+      });
+    };
+    
+    return checkDescendants(item);
+  });
 
   const deleteRange = useCallback(
     (range: RangeTableOfContentsNode) => {
@@ -135,7 +154,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
     <TreeItem
       className={twMerge(
         "react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5",
-        isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
+        isActive ? "bg-me-primary-500/80 hover:bg-me-primary-600/80 text-white" : "",
+        isAncestor && !isActive ? "bg-me-primary-100 hover:bg-me-primary-200" : "",
         isNoNav ? "opacity-40" : "",
       )}
       textValue={getValue(props.range.label)}

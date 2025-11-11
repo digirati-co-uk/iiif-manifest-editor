@@ -20,6 +20,7 @@ import {
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
+import { useLayoutActions } from "@manifest-editor/shell";
 import { create } from "zustand";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
@@ -78,6 +79,7 @@ export function RangeTree(props: RangeTreeProps) {
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const { isEditing, showCanvases, toggleShowCanvases } = useRangeTreeOptions();
+  const { edit } = useLayoutActions();
 
   const { range, flatItems } = useVaultSelector((_, vault) => {
     const structures = vault.get(manifest!.structures || []);
@@ -342,12 +344,28 @@ export function RangeTree(props: RangeTreeProps) {
         onExpandedChange={setExpandedKeys}
         selectionMode="single"
         onAction={(key) => {
-          const el = document.getElementById(`workbench-${String(key)}`);
-          el?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "start",
-          });
+          // Find the clicked item in the flattened list
+          const clickedItem = flatItems.find(({ item }) => item.id === key);
+          
+          if (!clickedItem) {
+            return;
+          }
+          
+          // Check if this is a direct child of the top-level range (has workbench section)
+          const isTopLevelChild = clickedItem.parent?.id === range.id;
+          
+          if (isTopLevelChild) {
+            // Scroll to the workbench section for top-level children
+            const el = document.getElementById(`workbench-${String(key)}`);
+            el?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+              inline: "start",
+            });
+          } else {
+            // Navigate into the sub-range for nested items
+            edit({ id: String(key), type: "Range" });
+          }
         }}
       >
         {function renderItem(item) {
