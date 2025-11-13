@@ -6,6 +6,7 @@ import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
 import { TransitionStatus } from "react-transition-group";
+import { DefaultTooltipContent, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -151,26 +152,43 @@ export const HandleControls = forwardRef<
       </UnscaledContainer>
       <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
         {open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.close();
-            }}
-          >
-            <CloseIcon />
-          </IconControl>
+          <Tooltip placement="right">
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.close();
+                }}
+              >
+                <CloseIcon />
+              </IconControl>
+              <DefaultTooltipContent>Close</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
         {reset && open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              reset();
-            }}
-          >
-            <ResetIcon />
-          </IconControl>
+          <Tooltip placement="right">
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  reset();
+                }}
+              >
+                <ResetIcon />
+              </IconControl>
+              <DefaultTooltipContent>Reset</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
-        {open ? <ResizeHandle aria-label="Reorder item" /> : null}
+        {open ? (
+          <Tooltip placement="right">
+            <TooltipTrigger>
+              <ResizeHandle aria-label="Resize panel" />
+              <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
+        ) : null}
       </InnerHandleContainer>
     </HandleContainer>
   );
