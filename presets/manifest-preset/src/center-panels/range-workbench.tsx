@@ -35,6 +35,10 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
+import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import { MoreMenuIcon } from "@manifest-editor/components";
+
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -332,15 +336,26 @@ function RangeWorkbench() {
               onCancel={() => setIsEditingLabel(false)}
             />
           ) : (
-            <div className="flex items-center gap-4">
-              <LocaleString as="h3" className="text-xl">
-                {topLevelRange.label}
-              </LocaleString>
-              <ActionButton onPress={() => setIsEditingLabel(true)}>
-                Edit
-              </ActionButton>
-            </div>
+            <LocaleString as="h3" className="text-xl">
+              {topLevelRange.label}
+            </LocaleString>
           )}
+          <MenuTrigger>
+            <ActionButton>
+              <MoreMenuIcon className="text-xl" />
+            </ActionButton>
+            <Popover className="bg-white shadow-md rounded-md p-1">
+              <Menu>
+                <MenuItem
+                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  onAction={() => setIsEditingLabel(true)}
+                >
+                  <EditIcon  />
+                  Edit range label
+                </MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
           {!isSplitting &&
             (topLevelRange?.items?.length ?? 0) > 0 &&
             !topLevelRange.isRangeLeaf && (

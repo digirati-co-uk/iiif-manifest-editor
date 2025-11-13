@@ -19,6 +19,7 @@ import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 
 export function RangeWorkbenchSection({
   range,
@@ -115,14 +116,19 @@ export function RangeWorkbenchSection({
             />
           ) : null}
 
-          {!isEditingLabel ? <ActionButton onPress={() => setIsEditingLabel(true)}>Edit</ActionButton> : null}
-
           <MenuTrigger>
             <ActionButton>
               <MoreMenuIcon className="text-xl" />
             </ActionButton>
             <Popover className="bg-white shadow-md rounded-md p-1">
               <Menu>
+                <MenuItem
+                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  onAction={() => setIsEditingLabel(true)}
+                >
+                  <EditIcon  />
+                  Edit range label
+                </MenuItem>
                 <MenuItem
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() =>
