@@ -46,6 +46,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const activeId = range?.resource.source?.id;
   const isNoNav = props.range.isNoNav;
 
+  const { edit } = useLayoutActions();
+
   const items = props.range.items ?? [];
   const hasChildRanges = items.some((i) => i.type === "Range");
   const hasCanvases = items.some((i) => i.type === "Canvas");
@@ -179,7 +181,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               </span>
             )}
 
-            <div
+            <button onClick={() =>  edit({ id: props.range.id, type: "Range" })}
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
                 isDropTarget && "bg-me-primary-100/50",
@@ -239,7 +241,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                   )}
                 </div>
               ) : null}
-            </div>
+            </button>
           </>
         )}
       </TreeItemContent>
