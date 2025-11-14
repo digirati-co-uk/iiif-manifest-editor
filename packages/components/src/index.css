@@ -151,10 +151,10 @@ div.mdxeditor-toolbar {
   scrollbar-width: thin;
 }
 
-.react-aria-TreeItem {
-  margin-left: calc((var(--tree-item-level) - 1) * 1em);
-  padding-left: 5px;
-  border-left: #e5e7eb solid 1px;
+.react-aria-TreeItem:is(.bg-me-primary-500, [aria-selected="true"], [data-selected="true"], [aria-current="true"])
+~ .react-aria-TreeItem {
+    border-left-color: rgba(215, 82, 129, 0.2) !important; /* everything after it in this list */
+    border-left: 2px solid;
 }
 
 .react-aria-TreeItem-active ~ .react-aria-TreeItem {
