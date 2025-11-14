@@ -20,6 +20,7 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
+import { getValue, createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
