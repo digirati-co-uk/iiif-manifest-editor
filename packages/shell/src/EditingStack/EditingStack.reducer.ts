@@ -1,8 +1,22 @@
-import { EditingStackActionCreators, EditingStackState } from "./EditingStack.types";
 import { toRef } from "@iiif/parser";
+import type {
+  EditingStackActionCreators,
+  EditingStackState,
+} from "./EditingStack.types";
 
-export function editingStackReducer(state: EditingStackState, action: EditingStackActionCreators): EditingStackState {
+export function editingStackReducer(
+  state: EditingStackState,
+  action: EditingStackActionCreators,
+): EditingStackState {
   switch (action.type) {
+    case "setStack": {
+      return {
+        ...state,
+        stack: action.payload.resources,
+        current: action.payload.resources[0] || null,
+      };
+    }
+
     case "edit": {
       let reset = action.payload.reset;
       if (
@@ -12,7 +26,10 @@ export function editingStackReducer(state: EditingStackState, action: EditingSta
         reset = true;
       }
 
-      if (state.current?.resource.source.id === action.payload.resource?.resource.source.id) {
+      if (
+        state.current?.resource.source.id ===
+        action.payload.resource?.resource.source.id
+      ) {
         return {
           ...state,
           current: action.payload.resource,
@@ -22,7 +39,11 @@ export function editingStackReducer(state: EditingStackState, action: EditingSta
       return {
         ...state,
         current: action.payload.resource,
-        stack: reset ? [] : state.current ? [state.current, ...state.stack] : state.stack,
+        stack: reset
+          ? []
+          : state.current
+            ? [state.current, ...state.stack]
+            : state.stack,
       };
     }
     case "syncRemoval": {
@@ -36,10 +57,11 @@ export function editingStackReducer(state: EditingStackState, action: EditingSta
         return state;
       }
 
-      const newCurrent = state.current?.resource.id === item.id ? null : state.current;
+      const newCurrent =
+        state.current?.resource.id === item.id ? null : state.current;
       const newStack = filterStack(
         state.stack.filter((r) => toRef(r.resource)?.id !== item.id),
-        newCurrent
+        newCurrent,
       );
 
       return {
@@ -89,7 +111,7 @@ export function editingStackReducer(state: EditingStackState, action: EditingSta
 
 function filterStack(
   newStackWithDuplicates: EditingStackState["stack"],
-  current: EditingStackState["current"]
+  current: EditingStackState["current"],
 ): EditingStackState["stack"] {
   const newStack = [];
   let prev = null;
