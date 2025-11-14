@@ -24,13 +24,17 @@ export default async function Page({ searchParams }: { searchParams: { tab?: str
       <div className="px-8">
         <Tabs className="" key={defaultTab} defaultSelectedKey={defaultTab}>
           <TabList aria-label="Get started with Manifest Editor" className="my-4">
-            <Tab id="recent">Recent</Tab>
-            <Tab id="examples">Examples</Tab>
+            <Tab className="" id="recent">
+              Recent
+            </Tab>
+            <Tab className="" id="examples">
+              Examples
+            </Tab>
           </TabList>
-          <TabPanel id="recent">
+          <TabPanel className="" id="recent">
             <BrowserRecents />
           </TabPanel>
-          <TabPanel id="examples">
+          <TabPanel className="" id="examples">
             <ExampleListing examples={examples} />
           </TabPanel>
         </Tabs>
