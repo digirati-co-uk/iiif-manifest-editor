@@ -377,22 +377,22 @@ function RangeWorkbench() {
 
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
-      <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+      <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
         <div className="flex items-center gap-4">
           {hasParent ? (
             <ActionButton onPress={() => goToParent()}>
-              <BackIcon className="text-xl" /> up
+              <ArrowUpIcon className="text-xl" />
             </ActionButton>
           ) : null}
           {isEditingLabel && !topLevelRange.isVirtual ? (
             <InlineLabelEditor
-              className="m-0 pt-2"
+              className=""
               resource={topLevelRange}
               onSubmit={() => setIsEditingLabel(false)}
               onCancel={() => setIsEditingLabel(false)}
             />
           ) : (
-            <LocaleString as="h3" className="text-xl">
+            <LocaleString as="h3" className="text-xl text-white">
               {topLevelRange.label}
             </LocaleString>
           )}
