@@ -189,6 +189,14 @@ export function RangeTree(props: RangeTreeProps) {
         vault,
       });
 
+      const toMoveItems = items
+        .map((toMoveItem) => {
+          const item = flatItems.find((item) => toMoveItem.item === item.item.id);
+          if (!item) return null;
+          return { id: item?.item.id, type: item?.item.type };
+        })
+        .filter((t) => t !== null);
+
       const toMove = items[0] as { item: string };
       const toMoveItem = flatItems.find((item) => toMove.item === item.item.id);
       if (!toMoveItem) {
@@ -229,13 +237,24 @@ export function RangeTree(props: RangeTreeProps) {
           return;
         }
 
-        targetEditor.structural.items.add(toMoveReference);
-        parentEditor.structural.items.deleteAtIndex(toRemoveIndex);
+        const moveAction = moveEntities({
+          subjects: { type: "list", items: toMoveItems },
+          from: {
+            id: toMoveItem.parent.id,
+            type: "Range",
+          },
+          to: {
+            id: targetParentId,
+            type: "Range",
+          },
+        });
+        console.log("[DROP ON] move from one range to another", moveAction);
+        vault.dispatch(moveAction);
 
         return;
       }
 
-      if (toMoveItem.parent.id === targetParentId) {
+      if (toMoveItem.parent.id === targetParentId && e.dropOperation === "move") {
         /////
         ///// PERFORM REORDER within the same parent.
         /////
@@ -256,7 +275,15 @@ export function RangeTree(props: RangeTreeProps) {
           return;
         }
 
-        parentEditor.structural.items.reorder(startIndex, endIndex);
+        if (startIndex > endIndex && e.target.dropPosition === "after") {
+          endIndex++;
+        }
+
+
+        parentEditor.structural.items.reorder(
+          e.target.dropPosition === "after" ? startIndex : startIndex,
+          e.target.dropPosition === "after" ? endIndex : endIndex,
+        );
         return;
       }
 
@@ -286,38 +313,29 @@ export function RangeTree(props: RangeTreeProps) {
         return;
       }
 
-      const targetFromParentIndex = targetParentFullVault.items.findIndex(
-        (item) => toRef(item)?.id === targetId,
-      );
-
-      console.log({ targetId, targetParentId, targetParentFullVault });
+      const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
 
       if (targetFromParentIndex === -1) {
         console.log("[error] Invalid target item found");
         return;
       }
 
-      let didUpdate = false;
-      if (e.target.dropPosition === "after") {
-        didUpdate = targetEditor.structural.items.addAfter(
-          targetFromParentIndex,
-          reference,
-        );
-      }
-      if (e.target.dropPosition === "before") {
-        didUpdate = targetEditor.structural.items.addBefore(
-          targetFromParentIndex,
-          reference,
-        );
-      }
 
-      if (didUpdate) {
-        // Remove from parent
-        const toRemoveIndex = fullParentVault.items.indexOf(reference);
-        if (toRemoveIndex !== -1) {
-          parentEditor.structural.items.deleteAtIndex(toRemoveIndex);
-        }
-      }
+      const moveAction = moveEntities({
+        subjects: { type: "list", items: toMoveItems },
+        from: {
+          id: toMoveItem.parent.id,
+          type: "Range",
+          key: "items",
+        },
+        to: {
+          id: targetParentId,
+          type: "Range",
+          key: "items",
+          index: e.target.dropPosition === "after" ? targetFromParentIndex + 1 : targetFromParentIndex,
+        },
+      });
+      vault.dispatch(moveAction);
     },
   });
 
