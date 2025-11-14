@@ -6,9 +6,6 @@ export default {
       typesetting: "article",
     },
   },
-  docs: { type: "page", title: "Documentation" },
+  docs: { type: "page", title: "User guide" },
   developer: { type: "page", title: "Developers" },
-  rfcs: { type: "page", title: "RFCs" },
-  wiki: { type: "page", title: "Wiki" },
-  "user-testing": { type: "page", title: "User testing" },
 };
