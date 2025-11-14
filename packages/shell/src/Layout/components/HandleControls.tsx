@@ -87,8 +87,8 @@ const OpenControl = styled(HandleControl)<{ $dir: "left" | "right" }>`
 const InnerHandleContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>`
   background: rgba(0, 0, 0, 0);
   position: absolute;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
   top: 0;
   bottom: 0;
   z-index: 50; // This will always be quite high.
@@ -118,8 +118,8 @@ const UnscaledContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>
   background: rgba(0, 0, 0, 0);
   position: absolute;
   pointer-events: none;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
   top: 0;
   bottom: 0;
   z-index: 51; // This will always be quite high.

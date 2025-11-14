@@ -1,5 +1,5 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { AddImageIcon } from "@manifest-editor/components";
+import { AddImageIcon, SelectionCheckbox } from "@manifest-editor/components";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useState } from "react";
 import type {
@@ -38,6 +38,7 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
     <TreeItem
       className={twMerge(
         "react-aria-TreeItem relative hover:bg-gray-100 flex items-center gap-2 overflow-x-clip px-1.5",
+        "data-[dragging]:opacity-50",
         isActive && "pt-8 react-aria-TreeItem-active",
       )}
       textValue={getValue(canvas.label)}
@@ -53,17 +54,15 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
           selectionMode,
         }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && (
-              <Checkbox slot="selection" />
-            )}
             <div
               className={twMerge(
-                `flex flex-1 min-w-0 truncate whitespace-nowrap items-center gap-2 flex-shrink-0`,
+                `flex flex-1 min-w-0 truncate whitespace-nowrap items-center gap-2 flex-shrink-0 pl-4`,
                 isActive && "pl-4",
                 isDragging ? "cursor-grabbing opacity-50" : "cursor-pointer",
               )}
             >
-              <AddImageIcon className="text-xl flex-shrink-0" />
+              {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
+              <AddImageIcon className="text-xl flex-shrink-0 text-gray-400" />
               <LocaleString>{canvas.label}</LocaleString>
             </div>
             {isEditing ? (

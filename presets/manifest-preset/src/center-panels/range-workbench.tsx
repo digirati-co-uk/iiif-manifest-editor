@@ -1,17 +1,6 @@
-import {
-  createRangeHelper,
-  getValue,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
-import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import {
-  ActionButton,
-  BackIcon,
-  InfoMessage,
-  useGridOptions,
-} from "@manifest-editor/components";
+import { ActionButton, BackIcon, InfoMessage, MoreMenuIcon, useGridOptions } from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
@@ -20,14 +9,10 @@ import {
   useInlineCreator,
   useLayoutActions,
 } from "@manifest-editor/shell";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  LocaleString,
-  RangeContext,
-  useManifest,
-  useVault,
-  useVaultSelector,
-} from "react-iiif-vault";
+import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
@@ -35,10 +20,7 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { MoreMenuIcon } from "@manifest-editor/components";
-
+import { getValue, createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -77,6 +59,7 @@ function RangeWorkbench() {
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Hook needs it.
   useEffect(splitEffect, [selectedRange]);
 
   const topLevelRange = useVaultSelector(
@@ -110,49 +93,10 @@ function RangeWorkbench() {
   );
 
   const onMerge = useCallback(
-    (
-      mergeRange: RangeTableOfContentsNode,
-      toMergeRange: RangeTableOfContentsNode,
-      empty?: boolean,
-    ) => {
-      if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
-
-      const foundIndex = rangeEditor.structural.items
-        .getWithoutTracking()
-        .findIndex((item) => toRef(item)?.id === mergeRange.id);
-
-      if (foundIndex === -1) {
-        console.error(`Range ${mergeRange.id} not found in ${toMergeRange.id}`);
-        return;
-      }
-
-      const fullMergeRange = vault.get({ id: mergeRange.id, type: "Range" });
-
-      vault.dispatch(
-        moveEntities({
-          subjects: {
-            type: "slice",
-            startIndex: 0,
-            length: fullMergeRange.items.length,
-          },
-          from: {
-            id: fullMergeRange.id,
-            type: "Range",
-            key: "items",
-          },
-          to: {
-            id: toMergeRange.id,
-            type: "Range",
-            key: "items",
-          },
-        }),
-      );
-      // Then remove the range.
-      if (!empty) {
-        rangeEditor.structural.items.deleteAtIndex(foundIndex);
-      }
+    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) => {
+      rangeEditor.structural.ranges.mergeRanges(mergeRange, toMergeRange, empty);
     },
-    [vault, rangeEditor],
+    [rangeEditor],
   );
 
   const onDelete = useCallback(
@@ -169,71 +113,29 @@ function RangeWorkbench() {
         return;
       }
 
-      // @todo Batch all of these actions as one.
-
-      const index = (range.items || []).indexOf(item);
-      const fullRange = vault.get({ id: range.id, type: "Range" });
-      if (!fullRange) {
-        console.error("Range not found", range.id);
-        return;
-      }
-
-      const length = fullRange.items.length - index;
-      const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
-      if (atIndex === -1) {
-        console.error("Range not found", range.id);
-        return;
-      }
-
-      let existingEmptyRange: { id: string; type: "Range" } | null = null;
-      const existingRange = (topLevelRange.items || [])[atIndex];
-      if (existingRange && existingRange.type === "Range") {
-        const fullExistingRange = vault.get(existingRange);
-        if (fullExistingRange.items.length === 0) {
-          existingEmptyRange = { id: fullExistingRange.id, type: "Range" };
-        }
-      }
-
-      const newRange =
-        existingEmptyRange ||
-        ((await creator.create(
-          "@manifest-editor/range-with-items",
-          {
-            type: "Range",
-            label: { en: [getNextRangeLabel(range.label)] },
-            items: [],
-          },
-          {
-            parent: {
-              property: "items",
-              resource: { id: topLevelRange.id, type: "Range" },
-              atIndex,
+      await rangeEditor.structural.ranges.splitRange(
+        topLevelRange,
+        range,
+        item,
+        (atIndex: number) =>
+          creator.create(
+            "@manifest-editor/range-with-items",
+            {
+              type: "Range",
+              label: { en: [getNextRangeLabel(range.label)] },
+              items: [],
             },
-          },
-        )) as { id: string; type: "Range" });
-
-      vault.dispatch(
-        moveEntities({
-          subjects: {
-            type: "slice",
-            startIndex: index,
-            length: length,
-          },
-          from: {
-            id: range.id,
-            type: "Range",
-            key: "items",
-          },
-          to: {
-            id: newRange.id,
-            type: "Range",
-            key: "items",
-            // index not specified - should append to end
-          },
-        }),
+            {
+              parent: {
+                property: "items",
+                resource: { id: topLevelRange.id, type: "Range" },
+                atIndex,
+              },
+            },
+          ) as Promise<{ id: string; type: "Range" }>,
       );
     },
-    [topLevelRange, vault, creator],
+    [topLevelRange, rangeEditor, creator],
   );
 
   const { edit } = useLayoutActions();

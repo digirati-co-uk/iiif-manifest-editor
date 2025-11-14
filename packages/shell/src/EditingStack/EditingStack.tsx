@@ -15,6 +15,7 @@ const EditingStackActionsContext = createContext<EditingStackActions>({
   edit() {},
   close() {},
   back() {},
+  setStack() {},
   updateCurrent() {},
   create() {
     return () => {};
@@ -173,6 +174,11 @@ export function EditingStack(props: { children?: any; editing?: { id: string; ty
     [],
   );
 
+  const setStack = useCallback(
+    (resources: EditableResource[]) => dispatch({ type: "setStack", payload: { resources } }),
+    [],
+  );
+
   const updateCurrent = useCallback(
     (resource: EditableResource) => dispatch({ type: "updateCurrent", payload: { resource } }),
     [],
@@ -192,7 +198,7 @@ export function EditingStack(props: { children?: any; editing?: { id: string; ty
   }, []);
 
   const actions: EditingStackActions = useMemo(() => {
-    return { edit, updateCurrent, close, back, create };
+    return { edit, updateCurrent, close, back, create, setStack };
   }, []);
 
   const { instanceId } = useAppInstance();
