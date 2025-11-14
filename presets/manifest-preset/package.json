@@ -63,6 +63,7 @@
     "react-aria-components": "^1.12",
     "tailwind-merge": "^2.3.0",
     "react": "^18.3.1",
+    "react-aria": "^3.38.1",
     "react-joyride": "^2.9.3",
     "zustand": "^4.5.2",
     "react-dom": "^18.3.1",

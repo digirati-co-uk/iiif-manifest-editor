@@ -69,7 +69,7 @@ export function RangeCardView() {
           return {
             "text/plain": JSON.stringify({
               item: found.item.id,
-              parent: found.parent,
+              parent: found.parent ? { id: found.parent.id } : undefined,
             }),
           };
         }

@@ -73,7 +73,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
           ref={checkImage}
           src={thumbnail?.id}
           alt=""
-          className={`w-full h-full ${cover ? "object-cover" : "object-contain"} ${!isLoading ? (isCached ? "" : "animate-fadeIn") : "opacity-0"}`}
+          className={`select-none w-full h-full ${cover ? "object-cover" : "object-contain"} ${!isLoading ? (isCached ? "" : "animate-fadeIn") : "opacity-0"}`}
         />
       ) : (
         <ThumbnailFallback />
@@ -217,7 +217,7 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
                 left: `${(image.target.spatial.x / canvas.width) * 100}%`,
               }}
             >
-              <img className="w-full h-full object-cover" src={image.image.id} />
+              <img className="w-full h-full object-cover select-none" src={image.image.id} />
             </div>
           );
         })}

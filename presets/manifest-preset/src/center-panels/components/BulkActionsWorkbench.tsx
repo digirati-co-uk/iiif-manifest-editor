@@ -1,9 +1,6 @@
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
-import {
-  ActionButton,
-  CanvasThumbnailGridItem,
-} from "@manifest-editor/components";
+import { ActionButton, CanvasThumbnailGridItem } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInlineCreator } from "@manifest-editor/shell";
 import { CanvasContext, useRange, useVault } from "react-iiif-vault";
@@ -24,8 +21,7 @@ export function BulkActionsWorkbench() {
         <div className="flex items-baseline gap-3 mb-3">
           <h3 className="text-xl font-bold ">Canvases at this level</h3>
           <span>
-            ({range.items?.length || 0}{" "}
-            {range.items?.length > 1 ? "canvases" : "canvas"})
+            ({range.items?.length || 0} {range.items?.length > 1 ? "canvases" : "canvas"})
           </span>
         </div>
         <div className="flex gap-2 mb-8">
@@ -90,7 +86,13 @@ export function BulkActionsWorkbench() {
 
           return (
             <CanvasContext key={item.id} canvas={item.id}>
-              <CanvasThumbnailGridItem id={item.id} />
+              <CanvasThumbnailGridItem
+                dragState={{
+                  item: item.id,
+                  parent: { id: range.id },
+                }}
+                id={item.id}
+              />
             </CanvasContext>
           );
         })}
