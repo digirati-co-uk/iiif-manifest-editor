@@ -40,11 +40,13 @@ export function flattenedRanges(range: RangeTableOfContentsNode) {
   return flatList;
 }
 
-async function deserialiseRangeItems(items: DropItem[]) {
+export async function deserialiseRangeItems(items: DropItem[]) {
   return Promise.all(
     items.map(async (item) => {
       if (item.kind === "text") {
-        const text = JSON.parse(await item.getText("text/plain"));
+        const parsed = await item.getText("text/plain");
+        if (!parsed) return null;
+        const text = JSON.parse(parsed);
         return text;
       }
       return null as never;
