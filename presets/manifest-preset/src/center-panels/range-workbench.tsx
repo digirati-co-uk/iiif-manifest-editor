@@ -38,6 +38,7 @@ import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { MoreMenuIcon } from "@manifest-editor/components";
+import { EmptyRangeMessage } from "./components/EmptyRangeMessage";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -430,9 +431,7 @@ function RangeWorkbench() {
           <BulkActionsWorkbench />
         </RangeContext>
       ) : (
-        <div className="p-2 m-2 bg-white rounded-md text-sm flex flex-row text-gray-700 max-w-32 justify-center">
-          <span>Range is empty</span>
-        </div>
+        <EmptyRangeMessage extraClasses="mx-3 my-4" />
       )}
 
       {rangeItems.length === 1 ? (

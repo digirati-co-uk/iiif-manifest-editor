@@ -27,6 +27,7 @@ import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import { EmptyRangeMessage } from "./EmptyRangeMessage";
 
 export function RangeWorkbenchSection({
   range,
@@ -247,12 +248,10 @@ export function RangeWorkbenchSection({
         </div>
         {isExpanded ? (
           <>
+            {(rangeItems || []).length === 0 && (
+              <EmptyRangeMessage extraClasses="mt-4" />
+            )}
             <div className={`grid pt-4 gap-3 ${size}`}>
-              {(rangeItems || []).length === 0 && (
-                <div className="p-2 bg-white rounded-md text-sm flex flex-row justify-center text-gray-700">
-                  <span>Range is empty</span>
-                </div>
-              )}
               {(rangeItems || []).map((item) => {
                 const isFirstCanvas = item.id === firstCanvasId;
                 if (item.type !== "Canvas") {
