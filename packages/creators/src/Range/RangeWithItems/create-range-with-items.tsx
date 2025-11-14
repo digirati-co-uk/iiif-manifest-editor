@@ -18,8 +18,6 @@ export async function createRangeWithItems(
 ): Promise<CreatorResource> {
   const rangeId = ctx.generateId(`range`, parentId ? { id: parentId, type: "Range" } : undefined);
 
-  console.log(data.items);
-
   return ctx.embed({
     id: rangeId,
     type: "Range",

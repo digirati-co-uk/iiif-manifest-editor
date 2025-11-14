@@ -13,8 +13,15 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
     return this.property;
   }
 
-  observe(cb: (selected: T, resource: Entity, context: any) => void, skipInitial = true) {
-    this._observe((entity) => entity && (entity as any)[this.property], cb, skipInitial);
+  observe(
+    cb: (selected: T, resource: Entity, context: any) => void,
+    skipInitial = true,
+  ) {
+    this._observe(
+      (entity) => entity && (entity as any)[this.property],
+      cb,
+      skipInitial,
+    );
   }
 
   focusId() {
@@ -26,30 +33,38 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
   }
 
   getContainerProps() {
-    return { "data-property": this.property, "data-resource-id": this.getId(), "data-resource-type": this.getType() };
+    return {
+      "data-property": this.property,
+      "data-resource-id": this.getId(),
+      "data-resource-type": this.getType(),
+    };
   }
 
   isRequired() {
     const type = this.getType();
-    const required = descriptiveProperties.required[type as unknown as "Manifest"] || [];
+    const required =
+      descriptiveProperties.required[type as unknown as "Manifest"] || [];
     return required.indexOf(this.property as any) !== -1;
   }
 
   isRecommended() {
     const type = this.getType();
-    const recommended = descriptiveProperties.recommended[type as unknown as "Manifest"] || [];
+    const recommended =
+      descriptiveProperties.recommended[type as unknown as "Manifest"] || [];
     return recommended.indexOf(this.property as any) !== -1;
   }
 
   isNotAllowed() {
     const type = this.getType();
-    const notAllowed = descriptiveProperties.notAllowed[type as unknown as "Manifest"] || [];
+    const notAllowed =
+      descriptiveProperties.notAllowed[type as unknown as "Manifest"] || [];
     return notAllowed.indexOf(this.property as any) !== -1;
   }
 
   isOptional(orRecommended = false) {
     const type = this.getType();
-    const optional = descriptiveProperties.optional[type as unknown as "Manifest"] || [];
+    const optional =
+      descriptiveProperties.optional[type as unknown as "Manifest"] || [];
     if (!optional && orRecommended) {
       return this.isRecommended();
     }
@@ -69,9 +84,16 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
     if (entity && type && validators.length) {
       if (type) {
         for (const validator of validators) {
-          if (validator.types.includes(type) && validator.properties.includes(this.property)) {
+          if (
+            validator.types.includes(type) &&
+            validator.properties.includes(this.property)
+          ) {
             try {
-              const isValid = validator.valid(entity, this.config.vault, this.config.context);
+              const isValid = validator.valid(
+                entity,
+                this.config.vault,
+                this.config.context,
+              );
               if (!isValid) {
                 if (validator.error) {
                   response.isError = true;
@@ -103,6 +125,10 @@ export class BasePropertyEditor<Entity, T> extends BaseEditor<Entity> {
   }
 
   set(value: T) {
-    this.config.vault.modifyEntityField(this.config.reference as any, this.property, value);
+    this.config.vault.modifyEntityField(
+      this.config.reference as any,
+      this.property,
+      value,
+    );
   }
 }
