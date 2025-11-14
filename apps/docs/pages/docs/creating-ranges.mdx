@@ -1,0 +1,34 @@
+# Range Editor
+
+The Range Editor workbench enables users to create, edit and update IIIF Range items (most commonly Table of Contents) for use with a IIIF Manifest. The Range Editor supports the creation of a single IIIF Range, which can be labelled, edited and managed.
+
+The IIIF Manifest should already contain the IIIF content (Canvases) you wish to include in your range, although you can continue to add to or edit your range as you update the Manifest. 
+
+Changes in your Manifest are not automatically reflected in the range, so you do need to keep the range updated should the Manifest change significantly in structure (for example if you add new Canvas(es)). Ideally ranges should be added when the Manifest structure is confirmed; however, you can always delete the range and create a new one, should the Manifest structure need to be revised after you’ve added a range.
+
+The implementation has developed support for https://iiif.io/api/presentation/3.0/#54-range with some minor, but notable caveats:
+
+- In developing and testing the implementation we have encountered many varied interpretations of the IIIF Range specification. The Range Editor doesn’t attempt to “fix” inconsistencies, these can be addressed by removing the range and creating a new one.
+
+- Parts of Canvases are not yet supported by the Range Editor. That is, it is not possible to add a “part of a canvas” as a target within a Range Item. Given the lack of widespread viewer support, this feature has not been added. In future, with better IIIF Viewer support, an approach to accommodate this can be addressed.
+
+- A single IIIF Range per Manifest is currently only supported. Given examples of use case(s) with multiple ranges, we can assess how best to accommodate supporting multiple IIIF Range(s) should they be required.
+
+## Accessing the Range Editor
+
+Open the Manifest you wish to add a IIIF Range to, using the standard Manifest Editor options.
+
+With the Manifest you wish to work on open in the Manifest Editor, click the Range Editor link to access the workbench. This will allow you to add a range or edit an existing range. The following sections provide an overview of the functionality available.
+
+## Creating and editing a new IIIF Range
+
+The Range Editor provides different routes to create a range reflecting the differing use cases for our users. You can mix and match the routes to find the best approach for your own use cases. 
+
+Select the ‘Create new range’ link to add a new IIIF Range to your Manifest. On selecting to create your range, this will:
+
+- Create a new IIIF Range labelled ‘Table of contents’
+- Create a range item within the IIIF Range labelled ‘Range 1’, in which all Canvases in the open Manifest will be placed
+
+## Viewing and managing the range structure
+
+The left menu panel for the Range Editor provides a number of options when editing a range. By default, the left menu panel displays the hierarchical range structure (tree view).
