@@ -7,5 +7,6 @@ export default {
   "image-composition": { title: "Layering multiple images" },
   "creating-annotations": { title: "Creating annotations" },
   "multilingual-manifests": { title: "Multilingual manifests" },
+  "using-iiif-browser": { title: "Using the IIIF Browser" },
   guides: { title: "Guides", open: true },
 };
