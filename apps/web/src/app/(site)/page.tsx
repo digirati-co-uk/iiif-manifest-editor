@@ -8,19 +8,11 @@ import { HandleQueryString } from "../../components/query-string/HandleQueryStri
 
 const { examples } = allExamples;
 
-const BrowserRecents = dynamic(
-  () => import("../../components/browser-editor/BrowserRecents"),
-  { ssr: false },
-);
+const BrowserRecents = dynamic(() => import("../../components/browser-editor/BrowserRecents"), { ssr: false });
 
-const GettingStarted = dynamic(
-  () => import("../../components/browser-editor/GettingStarted"),
-  { ssr: false },
-);
+const GettingStarted = dynamic(() => import("../../components/browser-editor/GettingStarted"), { ssr: false });
 
-export default async function Page({
-  searchParams,
-}: { searchParams: { tab?: string } }) {
+export default async function Page({ searchParams }: { searchParams: { tab?: string } }) {
   const defaultTab = searchParams.tab || "recent";
 
   return (
@@ -30,11 +22,8 @@ export default async function Page({
       <GettingStarted />
 
       <div className="px-8">
-        <Tabs key={defaultTab} defaultSelectedKey={defaultTab}>
-          <TabList
-            aria-label="Get started with Manifest Editor"
-            className="my-4"
-          >
+        <Tabs className="" key={defaultTab} defaultSelectedKey={defaultTab}>
+          <TabList aria-label="Get started with Manifest Editor" className="my-4">
             <Tab id="recent">Recent</Tab>
             <Tab id="examples">Examples</Tab>
           </TabList>
