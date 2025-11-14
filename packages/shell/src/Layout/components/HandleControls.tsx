@@ -6,6 +6,7 @@ import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
 import { TransitionStatus } from "react-transition-group";
+import { DefaultTooltipContent, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -138,39 +139,61 @@ export const HandleControls = forwardRef<
     <HandleContainer onClick={() => actions.open()}>
       <UnscaledContainer $open={open} $dir={dir}>
         {!open ? (
-          <OpenControl
-            $dir={dir}
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.open();
-            }}
-          >
-            <DownIcon rotate={dir === "right" ? 90 : 270} />
-          </OpenControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <OpenControl
+                $dir={dir}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.open();
+                }}
+              >
+                <DownIcon rotate={dir === "right" ? 90 : 270} />
+              </OpenControl>
+              <DefaultTooltipContent>Open</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
       </UnscaledContainer>
       <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
         {open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.close();
-            }}
-          >
-            <CloseIcon />
-          </IconControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.close();
+                }}
+              >
+                <CloseIcon />
+              </IconControl>
+              <DefaultTooltipContent>Close</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
         {reset && open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              reset();
-            }}
-          >
-            <ResetIcon />
-          </IconControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  reset();
+                }}
+              >
+                <ResetIcon />
+              </IconControl>
+              <DefaultTooltipContent>Reset</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
-        {open ? <ResizeHandle aria-label="Reorder item" /> : null}
+        {open ? (
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <ResizeHandle aria-label="Resize panel" />
+              <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
+        ) : null}
       </InnerHandleContainer>
     </HandleContainer>
   );
