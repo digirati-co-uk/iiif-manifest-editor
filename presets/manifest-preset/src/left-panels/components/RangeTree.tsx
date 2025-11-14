@@ -1,8 +1,5 @@
-import {
-  createRangeHelper,
-  getValue,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
+import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
@@ -237,20 +234,21 @@ export function RangeTree(props: RangeTreeProps) {
           return;
         }
 
-        const moveAction = moveEntities({
-          subjects: { type: "list", items: toMoveItems },
-          from: {
-            id: toMoveItem.parent.id,
-            type: "Range",
-          },
-          to: {
-            id: targetParentId,
-            type: "Range",
-          },
-        });
-        console.log("[DROP ON] move from one range to another", moveAction);
-        vault.dispatch(moveAction);
-
+        vault.dispatch(
+          moveEntities({
+            subjects: { type: "list", items: toMoveItems },
+            from: {
+              id: toMoveItem.parent.id,
+              type: "Range",
+              key: "items",
+            },
+            to: {
+              id: targetParentId,
+              type: "Range",
+              key: "items",
+            },
+          })
+        );
         return;
       }
 
@@ -320,22 +318,22 @@ export function RangeTree(props: RangeTreeProps) {
         return;
       }
 
-
-      const moveAction = moveEntities({
-        subjects: { type: "list", items: toMoveItems },
-        from: {
-          id: toMoveItem.parent.id,
-          type: "Range",
-          key: "items",
-        },
-        to: {
-          id: targetParentId,
-          type: "Range",
-          key: "items",
-          index: e.target.dropPosition === "after" ? targetFromParentIndex + 1 : targetFromParentIndex,
-        },
-      });
-      vault.dispatch(moveAction);
+        vault.dispatch(
+          moveEntities({
+          subjects: { type: "list", items: toMoveItems },
+          from: {
+            id: toMoveItem.parent.id,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: targetParentId,
+            type: "Range",
+            key: "items",
+            index: e.target.dropPosition === "after" ? targetFromParentIndex + 1 : targetFromParentIndex,
+          },
+        })
+      );
     },
   });
 
