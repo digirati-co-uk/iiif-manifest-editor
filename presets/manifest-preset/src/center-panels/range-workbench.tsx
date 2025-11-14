@@ -39,7 +39,6 @@ import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { MoreMenuIcon } from "@manifest-editor/components";
 
-
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
@@ -350,7 +349,7 @@ function RangeWorkbench() {
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() => setIsEditingLabel(true)}
                 >
-                  <EditIcon  />
+                  <EditIcon />
                   Edit range label
                 </MenuItem>
               </Menu>
@@ -430,7 +429,11 @@ function RangeWorkbench() {
         <RangeContext range={topLevelRange.id}>
           <BulkActionsWorkbench />
         </RangeContext>
-      ) : null}
+      ) : (
+        <div className="p-2 m-2 bg-white rounded-md text-sm flex flex-row text-gray-700 max-w-32 justify-center">
+          <span>Range is empty</span>
+        </div>
+      )}
 
       {rangeItems.length === 1 ? (
         <div className="sticky bottom-5 float-right right-5">

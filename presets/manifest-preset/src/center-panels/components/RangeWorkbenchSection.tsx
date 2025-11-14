@@ -13,7 +13,14 @@ import {
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { useCallback, useState } from "react";
-import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+  Separator,
+} from "react-aria-components";
 import { CanvasContext, LocaleString } from "react-iiif-vault";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
@@ -35,7 +42,10 @@ export function RangeWorkbenchSection({
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
-  onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
+  onSplit: (
+    range: RangeTableOfContentsNode,
+    item: RangeTableOfContentsNode,
+  ) => void;
   mergeUpLabel?: InternationalString | string | null;
   onMergeUp?: (range: RangeTableOfContentsNode, empty?: boolean) => void;
   mergeDownLabel?: InternationalString | string | null;
@@ -48,23 +58,31 @@ export function RangeWorkbenchSection({
 
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedCanvas, _setSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const [lastSelectedCanvas, setLastSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const setSelectedCanvas = useCallback((canvas: RangeTableOfContentsNode | null) => {
-    _setSelectedCanvas(canvas);
-    if (canvas) {
-      setLastSelectedCanvas(canvas);
-    }
-  }, []);
+  const [selectedCanvas, _setSelectedCanvas] =
+    useState<RangeTableOfContentsNode | null>(null);
+  const [lastSelectedCanvas, setLastSelectedCanvas] =
+    useState<RangeTableOfContentsNode | null>(null);
+  const setSelectedCanvas = useCallback(
+    (canvas: RangeTableOfContentsNode | null) => {
+      _setSelectedCanvas(canvas);
+      if (canvas) {
+        setLastSelectedCanvas(canvas);
+      }
+    },
+    [],
+  );
 
   const [isEditingLabel, setIsEditingLabel] = useState(false);
-  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
-    batchSize: 32,
-  });
+  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] =
+    useLoadMoreItems(range.items || [], {
+      batchSize: 32,
+    });
 
   const isEmpty = !range.items || range.items?.length === 0;
 
-  const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
+  const firstCanvasId = (range.items ?? []).find(
+    (i) => i.type === "Canvas",
+  )?.id;
 
   return (
     <>
@@ -84,7 +102,10 @@ export function RangeWorkbenchSection({
           )}
         </Modal>
       ) : null}
-      <div key={range.id} className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative">
+      <div
+        key={range.id}
+        className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative"
+      >
         <div id={`workbench-${range.id}`} className="absolute -top-16" />
         <div className="flex items-center gap-4 max-w-full">
           <Button
@@ -126,7 +147,7 @@ export function RangeWorkbenchSection({
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() => setIsEditingLabel(true)}
                 >
-                  <EditIcon  />
+                  <EditIcon />
                   Edit range label
                 </MenuItem>
                 <MenuItem
@@ -151,7 +172,9 @@ export function RangeWorkbenchSection({
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   >
                     <MergeUpIcon className="text-md" /> Empty contents into
-                    <LocaleString className="font-semibold">{mergeUpLabel}</LocaleString>
+                    <LocaleString className="font-semibold">
+                      {mergeUpLabel}
+                    </LocaleString>
                   </MenuItem>
                 )}
                 {!isEmpty && onMergeDown && (
@@ -160,7 +183,9 @@ export function RangeWorkbenchSection({
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   >
                     <MergeDownIcon className="text-md" /> Empty contents into
-                    <LocaleString className="font-semibold">{mergeDownLabel}</LocaleString>
+                    <LocaleString className="font-semibold">
+                      {mergeDownLabel}
+                    </LocaleString>
                   </MenuItem>
                 )}
                 {!isEmpty && <Separator className="h-0.5 bg-gray-200" />}
@@ -174,27 +199,37 @@ export function RangeWorkbenchSection({
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
                     <MergeUpIcon className="text-md" /> Merge into
-                    <LocaleString className="font-semibold">{mergeUpLabel}</LocaleString>
+                    <LocaleString className="font-semibold">
+                      {mergeUpLabel}
+                    </LocaleString>
                   </MenuItem>
                 )}
                 {!isEmpty && onMergeDown && (
                   <MenuItem
                     onPress={() => {
-                      window.confirm("This range will be removed and the items will be merged into the next range.") &&
-                        onMergeDown(range);
+                      window.confirm(
+                        "This range will be removed and the items will be merged into the next range.",
+                      ) && onMergeDown(range);
                     }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
                     <MergeDownIcon className="text-md" /> Merge into
-                    <LocaleString className="font-semibold">{mergeDownLabel}</LocaleString>
+                    <LocaleString className="font-semibold">
+                      {mergeDownLabel}
+                    </LocaleString>
                   </MenuItem>
                 )}
-                {onMergeUp || onMergeDown ? <Separator className="h-0.5 bg-gray-200" /> : null}
+                {onMergeUp || onMergeDown ? (
+                  <Separator className="h-0.5 bg-gray-200" />
+                ) : null}
                 {onDelete ? (
                   <MenuItem
                     onPress={() => {
-                      (range.items?.length ? window.confirm("This range and it's items will be removed.") : true) &&
-                        onDelete(range);
+                      (range.items?.length
+                        ? window.confirm(
+                            "This range and it's items will be removed.",
+                          )
+                        : true) && onDelete(range);
                     }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
@@ -213,11 +248,19 @@ export function RangeWorkbenchSection({
         {isExpanded ? (
           <>
             <div className={`grid pt-4 gap-3 ${size}`}>
+              {(rangeItems || []).length === 0 && (
+                <div className="p-2 bg-white rounded-md text-sm flex flex-row justify-center text-gray-700">
+                  <span>Range is empty</span>
+                </div>
+              )}
               {(rangeItems || []).map((item) => {
                 const isFirstCanvas = item.id === firstCanvasId;
                 if (item.type !== "Canvas") {
                   return (
-                    <div key={item.id} className="items-center justify-center flex flex-col">
+                    <div
+                      key={item.id}
+                      className="items-center justify-center flex flex-col"
+                    >
                       <RangeGridThumbnail range={item} />
                       <LocaleString className="truncate overflow-ellipsis max-w-full text-sm">
                         {item.label || "Untitled range"}
@@ -227,7 +270,10 @@ export function RangeWorkbenchSection({
                 }
 
                 return (
-                  <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
+                  <CanvasContext
+                    key={item.id}
+                    canvas={item.resource!.source!.id}
+                  >
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
@@ -239,7 +285,9 @@ export function RangeWorkbenchSection({
                       containerProps={{
                         "data-range1-label": getValue(range.label),
                         "data-range2-label": nextRangeLabel || "Untitled range",
-                        ...(isFirstCanvas ? { "data-split-first": "true" } : {}),
+                        ...(isFirstCanvas
+                          ? { "data-split-first": "true" }
+                          : {}),
                       }}
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}
@@ -256,7 +304,9 @@ export function RangeWorkbenchSection({
                 );
               })}
             </div>
-            {!isFullyLoaded ? <ActionButton onPress={loadMore}>Load more</ActionButton> : null}
+            {!isFullyLoaded ? (
+              <ActionButton onPress={loadMore}>Load more</ActionButton>
+            ) : null}
           </>
         ) : null}
       </div>
@@ -267,7 +317,13 @@ export function RangeWorkbenchSection({
 
 export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -279,18 +335,36 @@ export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function MergeUpIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path fill="currentColor" d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z" />
+      <path
+        fill="currentColor"
+        d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"
+      />
     </svg>
   );
 }
 
 export function MergeDownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path fill="currentColor" d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z" />
+      <path
+        fill="currentColor"
+        d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
+      />
     </svg>
   );
 }
