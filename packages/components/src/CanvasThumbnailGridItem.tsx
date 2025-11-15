@@ -17,6 +17,7 @@ interface CanvasThumbnailGridItemProps {
   hideLabel?: boolean;
   containerProps?: any;
   dragState?: any;
+  isSplitting?: boolean;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   const { pressProps } = usePress({
@@ -36,8 +37,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   return (
     <CanvasContext canvas={props.id}>
       <div
-        {...pressProps}
-        {...dragProps}
+        {...(props.isSplitting ? pressProps : dragProps)}
         className={twMerge("flex flex-col", props.className)}
         data-canvas-selected={props.selected}
         {...(props.containerProps || {})}

@@ -5,7 +5,7 @@
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
     "directory": "packages/manifest-preset"
   },
   "engines": {
@@ -18,31 +18,20 @@
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      },
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./components": {
-      "require": {
-        "types": "./dist/components.d.ts",
-        "default": "./dist/components.cjs"
-      },
-      "import": {
-        "types": "./dist/components.d.ts",
-        "default": "./dist/components.js"
-      }
-    }
+      "import": "./dist/components.js",
+      "require": "./dist/components.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsdown",

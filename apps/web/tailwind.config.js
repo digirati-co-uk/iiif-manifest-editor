@@ -6,8 +6,8 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./content/**/*.{md,mdx}",
-    "../../packages/shell/src/**/*.{js,jsx,ts,tsx}",
-    "../../presets/manifest-preset/src/**/*.{js,jsx,ts,tsx}",
+    //
+    "./node_modules/@manifest-editor/**/*.{js}",
   ],
   theme: {
     colors: {

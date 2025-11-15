@@ -226,8 +226,6 @@ export function RangeCardView() {
 
       const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
 
-      console.log({ targetId, targetParentId, targetParentFullVault });
-
       if (targetFromParentIndex === -1) {
         console.log("[error] Invalid target item found");
         return;

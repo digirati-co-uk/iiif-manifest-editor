@@ -6,6 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowJs": true,
+    "declarationMap": true,
+    "declaration": true,
     "jsx": "react-jsx",
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   }
