@@ -518,9 +518,6 @@ importers:
 
   packages/creators:
     dependencies:
-      '@atlas-viewer/iiif-image-api':
-        specifier: ^2.2.0
-        version: 2.2.0
       '@iiif/helpers':
         specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
         version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
@@ -567,6 +564,9 @@ importers:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@atlas-viewer/iiif-image-api':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@manifest-editor/ui':
         specifier: workspace:*
         version: link:../ui
