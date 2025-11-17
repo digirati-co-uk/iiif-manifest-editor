@@ -23,22 +23,22 @@
     "timers"
   ],
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./netlify": {
-      "import": "./dist/netlify.js",
+      "import": "./dist/netlify.mjs",
       "require": "./dist/netlify.cjs"
     },
     "./next-app-router": {
-      "import": "./dist/next-app-router.js",
+      "import": "./dist/next-app-router.mjs",
       "require": "./dist/next-app-router.cjs"
     },
     "./package.json": "./package.json"
