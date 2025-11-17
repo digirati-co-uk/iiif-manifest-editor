@@ -70,7 +70,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         behavior: "smooth",
         block: "start",
         inline: "start",
-      });
+        container: "nearest",
+      } as any);
       return;
     }
 
