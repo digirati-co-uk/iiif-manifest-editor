@@ -77,7 +77,7 @@ export function RangeWorkbenchCanvas(props: {
               <>
                 <ViewControls editIcon />
                 <CanvasViewerNavigation
-                  enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
+                  enableNavigation={true}
                   onNext={onNextCanvas}
                   onPrevious={onPreviousCanvas}
                 />
