@@ -7,7 +7,7 @@ const config: DocsThemeConfig = {
     content: (
       <span>
         Check out the{" "}
-        <a style={{ textDecoration: "underline" }} href="https://manifest-editor-site.netlify.app">
+        <a style={{ textDecoration: "underline" }} href="https://manifest-editor.digirati.services/">
           Manifest Editor →
         </a>
       </span>
