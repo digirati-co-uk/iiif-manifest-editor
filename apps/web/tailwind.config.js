@@ -1,13 +1,78 @@
 import typography from "@tailwindcss/typography";
 import colors from "tailwindcss/colors";
 
+// Module import isn't working...
+const exhibitionTypography = {
+  DEFAULT: {
+    css: {
+      a: {
+        "text-decoration": "none",
+        "font-weight": "500",
+      },
+      "h1, h2, h3, h4, h5": {
+        "font-weight": "500",
+      },
+      strong: {
+        "font-weight": "500",
+      },
+      blockquote: {
+        "font-weight": "normal",
+      },
+    },
+  },
+};
+
+export const exhibitionViewerTailwindColors = {
+  // Background colors
+  BackgroundPrimary: "var(--delft-bg-primary)",
+  BackgroundSecondary: "var(--delft-bg-secondary)",
+  BackgroundOverlay: "var(--delft-bg-overlay)",
+
+  // Text colors
+  TextPrimary: "var(--delft-text-primary)",
+  TextSecondary: "var(--delft-text-secondary)",
+  ImageCaption: "var(--delft-image-caption)",
+  AnnotationSelected: "var(--delft-annotation-selected)",
+
+  // UI elements
+  ControlBar: "var(--delft-control-bar)",
+  ControlBarBorder: "var(--delft-control-bar-border)",
+  ControlHover: "var(--delft-control-hover)",
+
+  ProgressBar: "var(--delft-progress-bar)",
+
+  CloseBackground: "var(--delft-close-background)",
+  CloseBackgroundHover: "var(--delft-close-background-hover)",
+  CloseText: "var(--delft-close-text)",
+
+  // Title elements
+  TitleCard: "var(--delft-title-card)",
+  TitleCardText: "var(--delft-title-card-text)",
+
+  // Info blocks
+  InfoBlock: "var(--delft-info-block)",
+  InfoBlockText: "var(--delft-info-block-text)",
+
+  // Viewer elements
+  ViewerBackground: "var(--delft-viewer-background)",
+};
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./content/**/*.{md,mdx}",
-    //
-    // "./node_modules/@manifest-editor/**/*.{js,mjs,cjs}",
+
+    "../../presets/collection-preset/src/**/*.{ts,tsx,css}",
+    "../../presets/exhibition-preset/src/**/*.{ts,tsx,css}",
+    "../../presets/manifest-preset/src/**/*.{ts,tsx,css}",
+
+    "../../packages/components/src/**/*.{ts,tsx,css}",
+    "../../packages/editors/src/**/*.{ts,tsx,css}",
+    "../../packages/creators/src/**/*.{ts,tsx,css}",
+    "../../packages/shell/src/**/*.{ts,tsx,css}",
+
+    "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
   ],
   theme: {
     colors: {
@@ -56,7 +121,9 @@ export default {
         900: "#6e2d42",
         950: "#421524",
       },
+      ...exhibitionViewerTailwindColors,
     },
+    typography: exhibitionTypography,
     extend: {},
   },
   plugins: [typography],

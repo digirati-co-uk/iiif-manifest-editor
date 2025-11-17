@@ -7,7 +7,7 @@ const routes = createIIIFPreviewNextApiHandler({
   config: {
     accessControlAllowPrivateNetwork: true,
   },
-});
+}) as any;
 
 export const dynamic = "force-dynamic";
 

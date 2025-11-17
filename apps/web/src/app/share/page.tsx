@@ -1,7 +1,8 @@
+"use client";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import dynamic from "next/dynamic";
-import { GlobalNav } from "../../components/site/GlobalNav";
 import Link from "next/link";
+import { GlobalNav } from "../../components/site/GlobalNav";
 
 const SharePage = dynamic(() => import("../../components/share/SharePage"), {
   ssr: false,

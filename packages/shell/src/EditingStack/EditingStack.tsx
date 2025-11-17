@@ -151,7 +151,7 @@ export function useEditor() {
   return editor;
 }
 
-export function EditingStack(props: { children?: any; editing?: { id: string; type: string } }) {
+function useInternalEditingStackActions(defaultState: EditingStackState) {
   const vault = useVault();
   const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
 
@@ -201,11 +201,52 @@ export function EditingStack(props: { children?: any; editing?: { id: string; ty
     return { edit, updateCurrent, close, back, create, setStack };
   }, []);
 
+  return [state, actions] as const;
+}
+
+export function EditingStack(props: {
+  children?: any;
+  initialState?: EditingStackState;
+  editing?: { id: string; type: string };
+}) {
   const { instanceId } = useAppInstance();
+  const [state, actions] = useInternalEditingStackActions(props.initialState || defaultState);
 
   return (
     <EditingStackActionsContext.Provider value={actions} key={instanceId}>
       <EditingStackContext.Provider value={state}>{props.children}</EditingStackContext.Provider>
+    </EditingStackActionsContext.Provider>
+  );
+}
+
+export function InlineEditingStack({
+  resource,
+  children,
+}: {
+  resource: { id: string; type: string };
+  children?: React.ReactNode;
+}) {
+  const { instanceId } = useAppInstance();
+  const initialState = useMemo(() => {
+    return {
+      create: null,
+      stack: [],
+      current: {
+        resource: {
+          type: "SpecificResource",
+          source: {
+            id: resource.id,
+            type: resource.type,
+          },
+        },
+      },
+    } as EditingStackState;
+  }, []);
+  const [state, actions] = useInternalEditingStackActions(initialState);
+
+  return (
+    <EditingStackActionsContext.Provider value={actions} key={instanceId}>
+      <EditingStackContext.Provider value={state}>{children}</EditingStackContext.Provider>
     </EditingStackActionsContext.Provider>
   );
 }

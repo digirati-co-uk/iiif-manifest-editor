@@ -37,13 +37,13 @@
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.5.1",
+    "@iiif/helpers": "catalog:",
     "@iiif/parser": "^2.2.0",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
     "polygon-editor": "0.0.23",
-    "react-iiif-vault": "2.0.2"
+    "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
