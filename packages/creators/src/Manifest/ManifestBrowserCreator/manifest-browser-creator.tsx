@@ -42,7 +42,6 @@ export async function createFromManifestBrowserOutput(
 
       // 1st. Check the preview vault.
       const manifest = await previewVault.loadManifest(manifestId);
-      console.log({ manifestId, manifest });
       const thumbnail = await thumbnails.getBestThumbnailAtSize(
         manifest,
         { width: 256, height: 256 },

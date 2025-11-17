@@ -1,11 +1,26 @@
 import { createRangeHelper } from "@iiif/helpers";
 import { CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
 import { memo, useMemo } from "react";
+import { useDrag } from "react-aria";
 import { useRange, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 
-export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { range: { id: string; type: string } }) {
+export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
+  dragState?: any;
+  range: { id: string; type: string };
+  onClick?: () => void;
+}) {
   const range = useRange({ id: props.range.id });
+  const { dragProps } = useDrag({
+    isDisabled: !props.dragState,
+    getItems() {
+      return [
+        {
+          "text/plain": JSON.stringify(props.dragState),
+        },
+      ];
+    },
+  });
   const vault = useVault();
   const canvases = useMemo(() => {
     if (!range) return [];
@@ -28,6 +43,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { rang
 
   return (
     <div
+      {...dragProps}
       className={twMerge(
         "grid relative grid-cols-2 grid-rows-2 aspect-square overflow-hidden w-full gap-1 p-1 bg-gray-300 rounded-md",
         canvases.length === 1 && "grid-cols-1 grid-rows-1",
@@ -45,6 +61,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: { rang
           className={twMerge("rounded", canvases.length === 3 && index === 2 && "col-span-2")}
           hideLabel
           id={canvas.id}
+          onClick={props.onClick}
         />
       ))}
     </div>

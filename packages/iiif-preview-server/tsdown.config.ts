@@ -1,9 +1,9 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
-  dts: true,
   clean: !options.watch,
   target: ["es2020"],
+  exports: true,
   format: ["esm", "cjs"],
   platform: "node",
   entry: {

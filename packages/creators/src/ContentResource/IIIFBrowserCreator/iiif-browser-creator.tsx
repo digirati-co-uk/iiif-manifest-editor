@@ -1,10 +1,4 @@
-import {
-  type BoxSelector,
-  type ContentState,
-  Vault,
-  normaliseContentState,
-  parseContentState,
-} from "@iiif/helpers";
+import { type BoxSelector, type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -38,14 +32,8 @@ export interface IIIFBrowserCreatorPayload {
   trackSize?: (dimensions: { width: number; height: number }) => void;
 }
 
-export async function createFromIIIFBrowserOutput(
-  data: IIIFBrowserCreatorPayload,
-  ctx: CreatorFunctionContext,
-) {
-  const targetType = ctx.options.targetType as
-    | "Annotation"
-    | "Canvas"
-    | "ContentResource";
+export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
+  const targetType = ctx.options.targetType as "Annotation" | "Canvas" | "ContentResource";
   const resources = data.output;
 
   const returnResources: any[] = [];
@@ -55,11 +43,7 @@ export async function createFromIIIFBrowserOutput(
     const previewVault = new Vault();
 
     // Case 1 - we want the WHOLE canvas to come across.
-    if (
-      targetType === "Canvas" ||
-      targetType === "Annotation" ||
-      targetType === "ContentResource"
-    ) {
+    if (targetType === "Canvas" || targetType === "Annotation" || targetType === "ContentResource") {
       // Then we should have gotten eit
 
       if (type === "Canvas") {
@@ -72,13 +56,7 @@ export async function createFromIIIFBrowserOutput(
           type: "Manifest",
         });
         // 1st. Check the preview vault.
-        const manifest =
-          existingManifest || (await previewVault.loadManifest(manifestId));
-
-        console.log({
-          manifest,
-          manifestId,
-        });
+        const manifest = existingManifest || (await previewVault.loadManifest(manifestId));
 
         invariant(manifest, "Manifest not found");
 
@@ -98,19 +76,13 @@ export async function createFromIIIFBrowserOutput(
           // Load before embedding.
           ctx.vault.loadSync(fullCanvas.id, fullCanvas);
           // Then embed.
-          returnResources.push(
-            ctx.embed({ id: fullCanvas.id, type: "Canvas" }),
-          );
+          returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
           continue;
         }
 
         const annotationPage = previewVault.get(canvas.items[0]!);
         const annotation = previewVault.get(annotationPage.items[0]!);
-        if (
-          targetType === "Annotation" ||
-          targetType === "Canvas" ||
-          targetType === "ContentResource"
-        ) {
+        if (targetType === "Annotation" || targetType === "Canvas" || targetType === "ContentResource") {
           const fullAnnotation = previewVault.toPresentation3<any>(annotation);
           fullAnnotation.id = ctx.generateId("Annotation");
 
@@ -205,10 +177,7 @@ export async function createFromIIIFBrowserOutput(
                           type: "Image",
                           format: "image/jpeg",
                           width: 512,
-                          height: Math.round(
-                            (selector.spatial.height / selector.spatial.width) *
-                              512,
-                          ),
+                          height: Math.round((selector.spatial.height / selector.spatial.width) * 512),
                         }),
                       ]
                     : undefined,
@@ -240,6 +209,4 @@ export async function createFromIIIFBrowserOutput(
 
   return returnResources;
 }
-export const IIIFBrowserCreatorForm = lazy(
-  () => import("./iiif-browser-form.lazy"),
-);
+export const IIIFBrowserCreatorForm = lazy(() => import("./iiif-browser-form.lazy"));

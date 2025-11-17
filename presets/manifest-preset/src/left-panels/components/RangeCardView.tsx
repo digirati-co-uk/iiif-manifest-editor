@@ -69,7 +69,7 @@ export function RangeCardView() {
           return {
             "text/plain": JSON.stringify({
               item: found.item.id,
-              parent: found.parent,
+              parent: found.parent ? { id: found.parent.id } : undefined,
             }),
           };
         }
@@ -225,8 +225,6 @@ export function RangeCardView() {
       }
 
       const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
-
-      console.log({ targetId, targetParentId, targetParentFullVault });
 
       if (targetFromParentIndex === -1) {
         console.log("[error] Invalid target item found");

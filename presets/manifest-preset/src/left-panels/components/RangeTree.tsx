@@ -1,25 +1,11 @@
-import {
-  createRangeHelper,
-  getValue,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
+import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { useMemo, useState } from "react";
-import {
-  Collection,
-  type DropItem,
-  type Key,
-  Tree,
-  useDragAndDrop,
-} from "react-aria-components";
-import {
-  CanvasContext,
-  useManifest,
-  useVault,
-  useVaultSelector,
-} from "react-iiif-vault";
+import { Collection, type DropItem, type Key, Tree, useDragAndDrop } from "react-aria-components";
+import { CanvasContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { create } from "zustand";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
@@ -43,11 +29,13 @@ export function flattenedRanges(range: RangeTableOfContentsNode) {
   return flatList;
 }
 
-async function deserialiseRangeItems(items: DropItem[]) {
+export async function deserialiseRangeItems(items: DropItem[]) {
   return Promise.all(
     items.map(async (item) => {
       if (item.kind === "text") {
-        const text = JSON.parse(await item.getText("text/plain"));
+        const parsed = await item.getText("text/plain");
+        if (!parsed) return null;
+        const text = JSON.parse(parsed);
         return text;
       }
       return null as never;
@@ -97,6 +85,7 @@ export function RangeTree(props: RangeTreeProps) {
       flatItems
         .filter(({ item }) => item.type === "Range" && item.items?.length)
         .filter(({ item }) => (item.items?.length || 0) < maxNodeSize)
+        .filter(({ item }) => !item.isRangeLeaf && !item.isCanvasLeaf)
         //
         .map(({ item }) => item.id as Key),
     [flatItems],
@@ -104,11 +93,10 @@ export function RangeTree(props: RangeTreeProps) {
 
   const rangeItems = useMemo(() => [range], [range]);
 
-  const [expandedKeys, setExpandedKeys] =
-    useState<Iterable<Key>>(expandAllKeys);
+  const [expandedKeys, setExpandedKeys] = useState<Iterable<Key>>(expandAllKeys);
 
   const { dragAndDropHooks } = useDragAndDrop({
-    isDisabled: !isEditing,
+    isDisabled: false,
     getItems: (keys, items) => {
       return [...keys].map((item) => {
         const found = flatItems.find((i) => i.item.id === item);
@@ -132,6 +120,7 @@ export function RangeTree(props: RangeTreeProps) {
         </div>
       );
     },
+
     onDrop: async (e) => {
       const items = await deserialiseRangeItems(e.items);
       let targetId = null;
@@ -147,17 +136,13 @@ export function RangeTree(props: RangeTreeProps) {
         return;
       }
 
-      const fullItemTarget = flatItems.find(
-        (item) => (e.target as any).key === item.item.id,
-      );
+      const fullItemTarget = flatItems.find((item) => (e.target as any).key === item.item.id);
 
-      if (
-        e.target.type === "item" &&
-        e.target.dropPosition === "on" &&
-        fullItemTarget?.item.type === "Canvas"
-      ) {
+      if (e.target.type === "item" && e.target.dropPosition === "on" && fullItemTarget?.item.type === "Canvas") {
         return;
       }
+
+      if (!fullItemTarget) return;
 
       let targetParentId: string = targetId.toString();
       if (e.dropOperation === "move" && e.target.type === "item") {
@@ -184,10 +169,19 @@ export function RangeTree(props: RangeTreeProps) {
         return;
       }
 
-      const targetEditor = new EditorInstance({
-        reference: { id: targetParentId, type: "Range" },
-        vault,
-      });
+      const toMoveItems = items
+        .map((toMoveItem) => {
+          const itemIndex = flatItems.findIndex((item) => toMoveItem.item === item.item.id);
+          if (itemIndex === -1) return null;
+
+          const item = flatItems[itemIndex];
+          return { id: item?.item.id, type: item?.item.type, order: itemIndex };
+        })
+        .filter((item) => item !== null)
+        .sort((a, b) => a.order - b.order)
+        .map((item) => {
+          return { id: item.id, type: item.type };
+        });
 
       const toMove = items[0] as { item: string };
       const toMoveItem = flatItems.find((item) => toMove.item === item.item.id);
@@ -204,47 +198,35 @@ export function RangeTree(props: RangeTreeProps) {
         id: toMoveItem.parent.id,
         type: "Range",
       });
-      const parentEditor = new EditorInstance({
-        reference: { id: toMoveItem.parent.id, type: "Range" },
-        vault,
-      });
 
-      if (
-        e.target.type === "root" ||
-        (e.target.type === "item" && e.target.dropPosition === "on")
-      ) {
+      if (e.target.type === "root" || (e.target.type === "item" && e.target.dropPosition === "on")) {
         /////
         ///// PERFORM MOVE - moving from one range to another (no position).
         /////
-        const toMoveReference = fullParentVault.items.find(
-          (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
+        vault.dispatch(
+          moveEntities({
+            subjects: { type: "list", items: toMoveItems },
+            from: {
+              id: toMoveItem.parent.id,
+              type: "Range",
+              key: "items",
+            },
+            to: {
+              id: targetParentId,
+              type: "Range",
+              key: "items",
+            },
+          }),
         );
-        if (!toMoveReference) {
-          console.log("[error] No valid reference found for item to move");
-          return;
-        }
-        const toRemoveIndex = fullParentVault.items.indexOf(toMoveReference);
-        if (toRemoveIndex === -1) {
-          console.log("[error] No valid index found for item to move");
-          return;
-        }
-
-        targetEditor.structural.items.add(toMoveReference);
-        parentEditor.structural.items.deleteAtIndex(toRemoveIndex);
-
         return;
       }
 
-      if (toMoveItem.parent.id === targetParentId) {
+      if (toMoveItem.parent.id === targetParentId && e.dropOperation === "move") {
         /////
         ///// PERFORM REORDER within the same parent.
         /////
-        const startIndex = fullParentVault.items.findIndex(
-          (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
-        );
-        const endIndex = fullParentVault.items.findIndex(
-          (item) => toRef(item, "Canvas")?.id === targetId,
-        );
+        const startIndex = fullParentVault.items.findIndex((item) => toRef(item, "Canvas")?.id === toMoveItem.item.id);
+        let endIndex = fullParentVault.items.findIndex((item) => toRef(item, "Canvas")?.id === targetId);
 
         if (startIndex === endIndex) {
           console.log("[error] No valid index found for item to move");
@@ -256,7 +238,29 @@ export function RangeTree(props: RangeTreeProps) {
           return;
         }
 
-        parentEditor.structural.items.reorder(startIndex, endIndex);
+        if (startIndex > endIndex && e.target.dropPosition === "after") {
+          endIndex += 1;
+        }
+        if (startIndex < endIndex && e.target.dropPosition === "after") {
+          endIndex -= toMoveItems.length - 1;
+        }
+
+        vault.dispatch(
+          moveEntities({
+            subjects: { type: "list", items: toMoveItems },
+            from: {
+              id: targetParentId,
+              type: "Range",
+              key: "items",
+            },
+            to: {
+              id: targetParentId,
+              type: "Range",
+              key: "items",
+              index: endIndex,
+            },
+          }),
+        );
         return;
       }
 
@@ -286,53 +290,38 @@ export function RangeTree(props: RangeTreeProps) {
         return;
       }
 
-      const targetFromParentIndex = targetParentFullVault.items.findIndex(
-        (item) => toRef(item)?.id === targetId,
-      );
-
-      console.log({ targetId, targetParentId, targetParentFullVault });
+      const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
 
       if (targetFromParentIndex === -1) {
         console.log("[error] Invalid target item found");
         return;
       }
 
-      let didUpdate = false;
-      if (e.target.dropPosition === "after") {
-        didUpdate = targetEditor.structural.items.addAfter(
-          targetFromParentIndex,
-          reference,
-        );
-      }
-      if (e.target.dropPosition === "before") {
-        didUpdate = targetEditor.structural.items.addBefore(
-          targetFromParentIndex,
-          reference,
-        );
-      }
-
-      if (didUpdate) {
-        // Remove from parent
-        const toRemoveIndex = fullParentVault.items.indexOf(reference);
-        if (toRemoveIndex !== -1) {
-          parentEditor.structural.items.deleteAtIndex(toRemoveIndex);
-        }
-      }
+      vault.dispatch(
+        moveEntities({
+          subjects: { type: "list", items: toMoveItems },
+          from: {
+            id: toMoveItem.parent.id,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: targetParentId,
+            type: "Range",
+            key: "items",
+            index: e.target.dropPosition === "after" ? targetFromParentIndex + 1 : targetFromParentIndex,
+          },
+        }),
+      );
     },
   });
 
   return (
     <>
       <div className="flex gap-2">
-        <SmallButton onClick={() => setExpandedKeys(expandAllKeys)}>
-          Expand all
-        </SmallButton>
-        <SmallButton onClick={() => setExpandedKeys([])}>
-          Collapse all
-        </SmallButton>
-        <SmallButton onClick={toggleShowCanvases}>
-          {showCanvases ? "Hide canvases" : "Show canvases"}
-        </SmallButton>
+        <SmallButton onClick={() => setExpandedKeys(expandAllKeys)}>Expand all</SmallButton>
+        <SmallButton onClick={() => setExpandedKeys([])}>Collapse all</SmallButton>
+        <SmallButton onClick={toggleShowCanvases}>{showCanvases ? "Hide canvases" : "Show canvases"}</SmallButton>
       </div>
       <Tree
         aria-label={getValue(range.label)}
@@ -340,15 +329,8 @@ export function RangeTree(props: RangeTreeProps) {
         expandedKeys={expandedKeys}
         dragAndDropHooks={dragAndDropHooks}
         onExpandedChange={setExpandedKeys}
-        selectionMode="single"
-        onAction={(key) => {
-          const el = document.getElementById(`workbench-${String(key)}`);
-          el?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "start",
-          });
-        }}
+        selectionMode={isEditing ? "multiple" : "single"}
+        selectionBehavior="toggle"
       >
         {function renderItem(item) {
           return <RenderItem item={item} />;
@@ -358,13 +340,7 @@ export function RangeTree(props: RangeTreeProps) {
   );
 }
 
-function RenderItem({
-  item,
-  parent,
-}: {
-  item: RangeTableOfContentsNode;
-  parent?: RangeTableOfContentsNode;
-}) {
+function RenderItem({ item, parent }: { item: RangeTableOfContentsNode; parent?: RangeTableOfContentsNode }) {
   const { showCanvases } = useRangeTreeOptions();
   if (item.type === "Canvas") {
     if (!item.resource || !showCanvases) {
@@ -379,14 +355,8 @@ function RenderItem({
   }
 
   return (
-    <TreeRangeItem
-      range={item}
-      hasChildItems={!!item.items}
-      parentId={parent?.id}
-    >
-      <Collection items={item.items || []}>
-        {(t) => <RenderItem item={t} parent={item} />}
-      </Collection>
+    <TreeRangeItem range={item} hasChildItems={!!item.items} parentId={parent?.id}>
+      <Collection items={item.items || []}>{(t) => <RenderItem item={t} parent={item} />}</Collection>
     </TreeRangeItem>
   );
 }
