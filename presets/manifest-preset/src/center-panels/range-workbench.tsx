@@ -204,24 +204,80 @@ function RangeWorkbench() {
   const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
   const lastWorkbench = lastId ? document.getElementById(`workbench-bottom`) : null;
 
+  const rootToc = useVaultSelector(
+    (_, v) => {
+      if (!manifest?.structures) return null;
+      const structures = v.get(manifest.structures || []);
+      return (
+        helper.rangesToTableOfContentsTree(structures, undefined, {
+          showNoNav: true,
+        }) || null
+      );
+    },
+    [manifest]
+  );
+
+  const parentIndex = useMemo(() => {
+    const map = new Map<string, string>();
+
+    const walk = (node?: any) => {
+      if (!node?.items) return;
+      for (const item of node.items) {
+        if (item?.type === "Range") {
+          map.set(item.id, node.id);
+          walk(item);
+        }
+      }
+    };
+    if (rootToc) {
+      walk(rootToc);
+    }
+
+    return map;
+  }, [rootToc]);
+
+  const selectedId =
+    toRef<any>(selectedRange?.resource)?.id ??
+    (selectedRange?.resource as any)?.id ??
+    null;
+
+  const goToParent = useCallback(() => {
+    if (!selectedId) {
+      back();
+      return;
+    }
+    const parentId = parentIndex.get(selectedId);
+    if (parentId) {
+      edit({ id: parentId, type: "Range" });
+    } else {
+      back();
+    }
+  }, [selectedId, parentIndex, edit, back]);
+
+  const hasParent = useMemo(
+    () => !!(selectedId && parentIndex.has(selectedId)),
+    [selectedId, parentIndex]
+  );
+
+
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
-      <div className="flex flex-row justify-between bg-white/90 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+      <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
         <div className="flex items-center gap-4">
-          {selectedRange ? (
-            <ActionButton onPress={() => back()}>
-              <BackIcon className="text-xl" />
+          {hasParent ? (
+            <ActionButton onPress={() => goToParent()}>
+              <ArrowUpIcon className="text-xl" />
             </ActionButton>
           ) : null}
           {isEditingLabel && !topLevelRange.isVirtual ? (
             <InlineLabelEditor
-              className="m-0 pt-2"
+              className=""
               resource={topLevelRange}
               onSubmit={() => setIsEditingLabel(false)}
               onCancel={() => setIsEditingLabel(false)}
             />
           ) : (
-            <LocaleString as="h3" className="text-xl">
+            <LocaleString as="h3" className="text-xl text-white">
               {topLevelRange.label}
             </LocaleString>
           )}

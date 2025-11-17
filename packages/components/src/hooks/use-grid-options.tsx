@@ -12,7 +12,7 @@ export function useGridOptions(
 
   const component = (
     <div className="flex gap-2 items-center" id="grid-options">
-      <div className="opacity-50 text-sm">Grid size</div>
+      <div className="opacity-90 text-white text-sm">Grid size:</div>
       <ActionButton
         primary={size === "grid-sm"}
         onPress={() => setSize("grid-sm")}

@@ -11,7 +11,7 @@ overrides:
   react-aria-components: ^1.12
   '@atlas-viewer/atlas': 2.3.7
   iiif-browser: 2.0.4
-  '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
+  '@iiif/helpers': 1.5.5
   '@iiif/parser': ^2.2.0
 
 importers:
@@ -111,8 +111,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -327,8 +327,8 @@ importers:
   packages/client-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -349,8 +349,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -482,8 +482,8 @@ importers:
   packages/creator-api:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -519,8 +519,8 @@ importers:
   packages/creators:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -595,8 +595,8 @@ importers:
   packages/editor-api:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -644,8 +644,8 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -819,8 +819,8 @@ importers:
   packages/iiif-preview-server:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -854,8 +854,8 @@ importers:
   packages/manifest-editor:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -933,8 +933,8 @@ importers:
   packages/projects:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1006,8 +1006,8 @@ importers:
   packages/server-vault:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
@@ -1046,8 +1046,8 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1170,8 +1170,8 @@ importers:
         specifier: ^0.26.13
         version: 0.26.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -1207,8 +1207,8 @@ importers:
   presets/collection-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1283,8 +1283,8 @@ importers:
         specifier: ^3.2.1
         version: 3.2.2(react@18.3.1)
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1362,8 +1362,8 @@ importers:
   presets/manifest-preset:
     dependencies:
       '@iiif/helpers':
-        specifier: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers
-        version: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+        specifier: 1.5.5
+        version: 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser':
         specifier: ^2.2.0
         version: 2.2.0
@@ -2870,9 +2870,8 @@ packages:
   '@iiif/builder@2.0.1':
     resolution: {integrity: sha512-9Wlxi1qn0GfvkFWxlZEuMkFGOKpZtcN/1t1zzYnOMy7OOssBNTQvao7zDZlCmtdimZ4QtQ/MMiC0z+oKI2Ax/Q==}
 
-  '@iiif/helpers@https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers':
-    resolution: {tarball: https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers}
-    version: 1.5.1
+  '@iiif/helpers@1.5.5':
+    resolution: {integrity: sha512-YKNUth19MbZm42uLxQAP2pQxM/Dn/mT7HrwfxeCWWDydfeDnTNVZzq8/948tZ0+RWm+CkKUxKK5Kz/fku4XEgA==}
     peerDependencies:
       '@iiif/parser': ^2.2.0
 
@@ -13158,7 +13157,7 @@ snapshots:
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.0
-      '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+      '@iiif/helpers': 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       lru-cache: 7.18.3
@@ -15305,12 +15304,12 @@ snapshots:
 
   '@iiif/builder@2.0.1':
     dependencies:
-      '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+      '@iiif/helpers': 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
 
-  '@iiif/helpers@https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)':
+  '@iiif/helpers@1.5.5(@iiif/parser@2.2.0)':
     dependencies:
       '@iiif/parser': 2.2.0
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
@@ -15471,7 +15470,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.30
 
   '@jridgewell/gen-mapping@0.3.5':
@@ -15501,12 +15500,12 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.30':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.9':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@js-sdsl/ordered-map@4.4.2': {}
 
@@ -23125,7 +23124,7 @@ snapshots:
   iiif-browser@2.0.4(@types/react@18.3.3)(immer@10.1.1):
     dependencies:
       '@atlas-viewer/atlas': 2.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+      '@iiif/helpers': 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser': 2.2.0
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
@@ -26371,7 +26370,7 @@ snapshots:
   react-iiif-vault@1.5.10(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@atlas-viewer/atlas': 2.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+      '@iiif/helpers': 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser': 2.2.0
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
@@ -26394,7 +26393,7 @@ snapshots:
     dependencies:
       '@atlas-viewer/atlas': 2.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react': 0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': https://pkg.csb.dev/IIIF-Commons/iiif-helpers/commit/d2cc6bc3/@iiif/helpers(@iiif/parser@2.2.0)
+      '@iiif/helpers': 1.5.5(@iiif/parser@2.2.0)
       '@iiif/parser': 2.2.0
       '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
       '@iiif/presentation-3': 2.2.3
