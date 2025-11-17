@@ -9,6 +9,7 @@ import {
   ActionButton,
   InfoMessage,
   useGridOptions,
+  MoreMenuIcon,
 } from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
@@ -35,7 +36,6 @@ import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { MoreMenuIcon } from "@manifest-editor/components";
 import { EmptyRangeMessage } from "./components/EmptyRangeMessage";
 
 export const rangeWorkbench: LayoutPanel = {
