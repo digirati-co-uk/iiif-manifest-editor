@@ -85,6 +85,7 @@ export function RangeTree(props: RangeTreeProps) {
       flatItems
         .filter(({ item }) => item.type === "Range" && item.items?.length)
         .filter(({ item }) => (item.items?.length || 0) < maxNodeSize)
+        .filter(({ item }) => !item.isRangeLeaf && !item.isCanvasLeaf)
         //
         .map(({ item }) => item.id as Key),
     [flatItems],

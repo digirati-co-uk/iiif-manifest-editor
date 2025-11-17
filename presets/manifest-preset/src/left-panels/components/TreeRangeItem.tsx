@@ -177,7 +177,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {({ isExpanded, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
           <>
             {hasVisibleChildren ? (
-              <Button slot="chevron">
+              <Button slot="chevron" className="hover:bg-gray-300 rounded">
                 <ChevronDownIcon
                   className={"text-xl"}
                   style={{
@@ -211,8 +211,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                 {props.range.label || "Untitled range"}
               </LocaleString>
 
-              {!isEditing && !showCanvases && props.range.isRangeLeaf ? (
-                <div className="text-right bg-gray-200 py-0.5 px-2 text-xs rounded-full text-black/80">
+              {!isEditing && props.range.isRangeLeaf ? (
+                <div className="text-right bg-gray-100 py-0.5 px-2 text-xs rounded text-black/70">
                   {props.range.items?.length}
                 </div>
               ) : null}

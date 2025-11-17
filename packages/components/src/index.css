@@ -160,8 +160,9 @@ div.mdxeditor-toolbar {
   border-left: 2px solid #d75281;
 }
 
-.react-aria-TreeItem-active ~ .react-aria-TreeItem {
-  padding-left: calc((var(--tree-item-level)) * 1em);
+/** Because tailwind specificity */
+div.react-aria-TreeItem {
+  margin-left: calc((var(--tree-item-level) - 1) * 1em);
 }
 
 /*.react-aria-DropIndicator {
