@@ -281,6 +281,9 @@ export function RangeWorkbenchSection({
                           item: item.id,
                           parent: { id: range.id },
                         }}
+                        onClick={() => {
+                          edit({ id: item.id, type: "Range" });
+                        }}
                       />
                       <LocaleString className="truncate overflow-ellipsis max-w-full text-sm">
                         {item.label || "Untitled range"}

@@ -8,6 +8,7 @@ import { twMerge } from "tailwind-merge";
 export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
   dragState?: any;
   range: { id: string; type: string };
+  onClick?: () => void;
 }) {
   const range = useRange({ id: props.range.id });
   const { dragProps } = useDrag({
@@ -60,6 +61,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
           className={twMerge("rounded", canvases.length === 3 && index === 2 && "col-span-2")}
           hideLabel
           id={canvas.id}
+          onClick={props.onClick}
         />
       ))}
     </div>
