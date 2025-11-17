@@ -1,18 +1,13 @@
 import { Vault } from "@iiif/helpers/vault";
 import invariant from "tiny-invariant";
-import {
-  decrypt,
-  encrypt,
-  generateId,
-  getBaseUrl,
-  getHeaders,
-  getKeys,
-} from "../helpers";
-import { type RouteConfig, StorageInterface } from "../types";
+import { decrypt, encrypt, generateId, getHeaders, getKeys } from "../helpers";
+import type { RouteConfig } from "../types";
 
 export async function updateRoute(
   request: Request,
-  params: { keys: string; key3: string },
+  params:
+    | Promise<{ keys: string; key3: string }>
+    | { keys: string; key3: string },
   config: RouteConfig,
 ): Promise<Response> {
   const {
@@ -25,9 +20,10 @@ export async function updateRoute(
     updateKeyLength,
   } = config;
   const corsHeaders = getHeaders(request);
+  const awaitedParams = await params;
   const { key1, key2, key3, storeKey } = getKeys(
-    params.keys,
-    params.key3,
+    awaitedParams.keys,
+    awaitedParams.key3,
     partLength,
     encryptedEnabled,
   );
@@ -35,7 +31,7 @@ export async function updateRoute(
   const object = await storage.get(storeKey);
 
   invariant(
-    object && object.update && object.manifest && object.delete,
+    object?.update && object.manifest && object.delete,
     "Invalid Object",
   );
 

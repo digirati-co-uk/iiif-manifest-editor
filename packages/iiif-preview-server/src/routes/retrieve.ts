@@ -4,13 +4,13 @@ import type { RouteConfig } from "../types";
 
 export async function retrieveRoute(
   request: Request,
-  params: { keys: string },
+  params: Promise<{ keys: string }> | { keys: string },
   config: RouteConfig,
 ): Promise<Response> {
   const { encryptedEnabled, partLength, storage } = config;
   const corsHeaders = getHeaders(request);
 
-  const { keys } = params;
+  const { keys } = await params;
   const key1 = keys.slice(0, partLength);
   const key2 = keys.slice(partLength);
   const storeKey = encryptedEnabled ? key1 : key1 + key2;
@@ -30,7 +30,9 @@ export async function retrieveRoute(
 
   invariant(data, "Item not found");
 
-  const manifest = encryptedEnabled ? await decrypt(data.manifest, key1) : data.manifest;
+  const manifest = encryptedEnabled
+    ? await decrypt(data.manifest, key1)
+    : data.manifest;
 
   return new Response(manifest, {
     status: 200,

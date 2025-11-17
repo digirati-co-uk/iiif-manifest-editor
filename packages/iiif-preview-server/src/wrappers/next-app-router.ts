@@ -68,7 +68,7 @@ export function createIIIFPreviewNextApiHandler({
     },
     async GET(
       request: NextRequest,
-      { params }: { params: { slug: string[] } },
+      { params }: { params: Promise<{ slug: string[] }> },
     ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
@@ -82,7 +82,8 @@ export function createIIIFPreviewNextApiHandler({
         invariant(valid, "Unauthorized");
       }
 
-      const [p3, id] = params.slug;
+      const awaitedParams = await params;
+      const [p3, id] = awaitedParams.slug;
       invariant(p3 === "p3", "Invalid path");
       invariant(id, "Invalid resource");
 
@@ -96,7 +97,7 @@ export function createIIIFPreviewNextApiHandler({
     },
     async POST(
       request: NextRequest,
-      { params }: { params: { slug: string[] } },
+      { params }: { params: Promise<{ slug: string[] }> },
     ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
@@ -110,9 +111,10 @@ export function createIIIFPreviewNextApiHandler({
         invariant(valid, "Unauthorized");
       }
 
-      const [store] = params.slug;
+      const awaitedParams = await params;
+      const [store] = awaitedParams.slug;
       invariant(store === "store", "Invalid path");
-      invariant(params.slug.length === 1, "Invalid path");
+      invariant(awaitedParams.slug.length === 1, "Invalid path");
 
       const config = {
         ...baseConfig,
@@ -124,7 +126,7 @@ export function createIIIFPreviewNextApiHandler({
     },
     async PUT(
       request: NextRequest,
-      { params }: { params: { slug: string[] } },
+      { params }: { params: Promise<{ slug: string[] }> },
     ) {
       const url = new URL(request.url);
       const baseUrl = new URL(baseConfig.baseUrl);
@@ -138,11 +140,12 @@ export function createIIIFPreviewNextApiHandler({
         invariant(valid, "Unauthorized");
       }
 
-      const [update, id, key3] = params.slug;
+      const awaitedParams = await params;
+      const [update, id, key3] = awaitedParams.slug;
       invariant(update === "update", "Invalid path");
       invariant(id, "Invalid path");
       invariant(key3, "Invalid path");
-      invariant(params.slug.length === 3, "Invalid path");
+      invariant(awaitedParams.slug.length === 3, "Invalid path");
 
       const config = {
         ...baseConfig,
@@ -154,19 +157,20 @@ export function createIIIFPreviewNextApiHandler({
     },
     async DELETE(
       request: NextRequest,
-      { params }: { params: { slug: string[] } },
+      { params }: { params: Promise<{ slug: string[] }> },
     ) {
       if (validate) {
         const valid = await validate(request);
         invariant(valid, "Unauthorized");
       }
 
-      const [deletePath, id, key3] = params.slug;
+      const awaitedParams = await params;
+      const [deletePath, id, key3] = awaitedParams.slug;
 
       invariant(deletePath === "delete", "Invalid path");
       invariant(id, "Invalid path");
       invariant(key3, "Invalid path");
-      invariant(params.slug.length === 3, "Invalid path");
+      invariant(awaitedParams.slug.length === 3, "Invalid path");
 
       const config = {
         ...baseConfig,
@@ -191,7 +195,7 @@ function getBaseUrl() {
 
   const url = process.env.URL;
 
-  if (url?.includes('localhost')) {
+  if (url?.includes("localhost")) {
     return url;
   }
 
