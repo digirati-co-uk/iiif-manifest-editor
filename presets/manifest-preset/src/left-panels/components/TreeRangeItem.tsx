@@ -20,7 +20,7 @@ import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback } from "react";
 import { usePress } from "react-aria";
-import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
+import type { Key, TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
   Button,
   Checkbox,
@@ -32,6 +32,7 @@ import {
   TreeItem,
   TreeItemContent,
 } from "react-aria-components";
+import { flushSync } from "react-dom";
 import { LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ChevronDownIcon } from "./ChevronDownIcon";
@@ -47,23 +48,35 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const range = useInStack("Range");
   const creator = useInlineCreator();
   const { back } = useEditingStack();
+  const { edit } = useLayoutActions();
 
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
   const activeId = range?.resource.source?.id;
   const isNoNav = props.range.isNoNav;
-  const { pressProps } = usePress({
-    isDisabled: props.range.isRangeLeaf && props.parentId === activeId,
-    onPress: () => {
-      if (props.range.isRangeLeaf && props.parentId) {
-        edit({ id: props.parentId, type: "Range" });
-      } else {
-        edit({ id: props.range.id, type: "Range" });
-      }
-    },
-  });
 
-  const { edit } = useLayoutActions();
+  const onAction = useCallback(() => {
+    // Need to change parent item (isRangeLeaf)
+    if (props.range.isRangeLeaf && props.parentId) {
+      if (activeId !== props.parentId) {
+        // Ensure this update happens before scrolling.
+        flushSync(() => {
+          edit({ id: props.parentId!, type: "Range" });
+        });
+      }
+      // Scroll into view.
+      const el = document.getElementById(`workbench-${String(props.range.id)}`);
+      el?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
+      return;
+    }
+
+    // Otherwise just select the range.
+    edit({ id: props.range.id, type: "Range" });
+  }, [activeId, props.parentId, edit, props.range.isRangeLeaf, props.range.id]);
 
   const items = props.range.items ?? [];
   const hasChildRanges = items.some((i) => i.type === "Range");
@@ -122,12 +135,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {
           type: "Range",
           label: { en: ["Untitled sequence"] },
-          items: manifestEditor.structural.items
-            .getWithoutTracking()
-            .map((item) => ({
-              type: "Canvas",
-              id: item.id,
-            })),
+          items: manifestEditor.structural.items.getWithoutTracking().map((item) => ({
+            type: "Canvas",
+            id: item.id,
+          })),
         },
         {
           parent: {
@@ -159,6 +170,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       data-parent-active={props.parentId === activeId}
       textValue={getValue(props.range.label)}
       id={props.range.id}
+      onAction={onAction}
       {...props}
     >
       <TreeItemContent>
@@ -189,7 +201,6 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
 
             <div
-              {...pressProps}
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
                 !showCanvases && props.range.isRangeLeaf && "border-transparent",
