@@ -137,7 +137,35 @@ export function RangeWorkbenchSection({
       {selectedCanvas ? (
         <Modal
           className="max-w-[90vw] w-full h-[90vh]"
-          title={getValue(range.label)}
+          title={
+            <div className="flex flex-row gap-3 items-center w-full">
+              <span>{getValue(range.label)}</span>
+              <MenuTrigger>
+                <ActionButton>
+                  <MoreMenuIcon className="text-xl" />
+                </ActionButton>
+                <Popover className="bg-white shadow-md rounded-md p-1">
+                  <Menu>
+                    <MenuItem
+                      className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                      onAction={() => setIsEditingLabel(true)}
+                    >
+                      <EditIcon />
+                      Edit range label
+                    </MenuItem>
+                  </Menu>
+                </Popover>
+              </MenuTrigger>
+              {isEditingLabel && (
+                <InlineLabelEditor
+                  className="text-base font-normal mt-1"
+                  resource={range}
+                  onSubmit={() => setIsEditingLabel(false)}
+                  onCancel={() => setIsEditingLabel(false)}
+                />
+              )}
+            </div>
+          }
           onClose={() => setSelectedCanvas(null)}
         >
           {selectedCanvas && (
