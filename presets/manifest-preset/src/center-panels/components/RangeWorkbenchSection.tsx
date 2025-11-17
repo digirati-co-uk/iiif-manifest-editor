@@ -24,19 +24,13 @@ import {
   Popover,
   Separator,
 } from "react-aria-components";
-import {
-  CanvasContext,
-  LanguageString,
-  LocaleString,
-  useVault,
-} from "react-iiif-vault";
+import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { EmptyRangeMessage } from "./EmptyRangeMessage";
 
 export function RangeWorkbenchSection({

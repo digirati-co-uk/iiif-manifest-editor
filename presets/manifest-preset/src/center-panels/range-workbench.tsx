@@ -7,9 +7,7 @@ import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import {
   ActionButton,
-  BackIcon,
   InfoMessage,
-  MoreMenuIcon,
   useGridOptions,
 } from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
@@ -20,9 +18,7 @@ import {
   useInlineCreator,
   useLayoutActions,
 } from "@manifest-editor/shell";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import {
   LocaleString,
   RangeContext,
