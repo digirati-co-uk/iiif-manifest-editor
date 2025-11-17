@@ -1,21 +1,14 @@
-import typography from "@tailwindcss/typography";
-import colors from "tailwindcss/colors";
+const colors = require("tailwindcss/colors");
 
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./content/**/*.{md,mdx}",
-    //
-    // "./node_modules/@manifest-editor/**/*.{js,mjs,cjs}",
-  ],
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     colors: {
       //
       black: "#000",
       white: "#fff",
       gray: colors.gray,
-      slate: colors.slate,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",
@@ -42,7 +35,6 @@ export default {
       "me-gray-900": "#333333",
       transparent: "transparent",
 
-      // Testing new pallette
       me: {
         50: "#fbf4f7",
         100: "#f8ebf1",
@@ -57,7 +49,26 @@ export default {
         950: "#421524",
       },
     },
-    extend: {},
+    extend: {
+      // that is animation class
+      animation: {
+        fadeIn: "fadeIn 300ms ease-in-out",
+        fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
+      },
+
+      // that is actual animation
+      keyframes: () => ({
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        fadeInDelayed: {
+          "0%": { opacity: 0 },
+          "85%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+      }),
+    },
   },
-  plugins: [typography],
+  plugins: [],
 };

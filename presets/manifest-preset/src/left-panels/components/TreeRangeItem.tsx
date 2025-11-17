@@ -19,10 +19,8 @@ import {
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback } from "react";
-import type {
-  TreeItemContentRenderProps,
-  TreeItemProps,
-} from "react-aria-components";
+import { usePress } from "react-aria";
+import type { Key, TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
   Button,
   Checkbox,
@@ -34,6 +32,7 @@ import {
   TreeItem,
   TreeItemContent,
 } from "react-aria-components";
+import { flushSync } from "react-dom";
 import { LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ChevronDownIcon } from "./ChevronDownIcon";
@@ -49,13 +48,35 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const range = useInStack("Range");
   const creator = useInlineCreator();
   const { back } = useEditingStack();
+  const { edit } = useLayoutActions();
 
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
   const activeId = range?.resource.source?.id;
   const isNoNav = props.range.isNoNav;
 
-  const { edit } = useLayoutActions();
+  const onAction = useCallback(() => {
+    // Need to change parent item (isRangeLeaf)
+    if (props.range.isRangeLeaf && props.parentId) {
+      if (activeId !== props.parentId) {
+        // Ensure this update happens before scrolling.
+        flushSync(() => {
+          edit({ id: props.parentId!, type: "Range" });
+        });
+      }
+      // Scroll into view.
+      const el = document.getElementById(`workbench-${String(props.range.id)}`);
+      el?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
+      return;
+    }
+
+    // Otherwise just select the range.
+    edit({ id: props.range.id, type: "Range" });
+  }, [activeId, props.parentId, edit, props.range.isRangeLeaf, props.range.id]);
 
   const items = props.range.items ?? [];
   const hasChildRanges = items.some((i) => i.type === "Range");
@@ -65,11 +86,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
     (range: RangeTableOfContentsNode) => {
       if (!props.parentId) {
         // This is the top level one.
-        const structures =
-          manifestEditor.structural.structures.getWithoutTracking();
-        const index = structures.findIndex(
-          (structure) => structure.id === range.id,
-        );
+        const structures = manifestEditor.structural.structures.getWithoutTracking();
+        const index = structures.findIndex((structure) => structure.id === range.id);
         if (index !== -1) manifestEditor.structural.structures.deleteAtIndex(index);
       } else {
         const editor = new EditorInstance({
@@ -87,7 +105,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         }
       });
     },
-    [props.parentId, manifestEditor, vault, activeId, back]
+    [props.parentId, manifestEditor, vault, activeId, back],
   );
 
   const insertEmptyRange = useCallback(
@@ -117,12 +135,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {
           type: "Range",
           label: { en: ["Untitled sequence"] },
-          items: manifestEditor.structural.items
-            .getWithoutTracking()
-            .map((item) => ({
-              type: "Canvas",
-              id: item.id,
-            })),
+          items: manifestEditor.structural.items.getWithoutTracking().map((item) => ({
+            type: "Canvas",
+            id: item.id,
+          })),
         },
         {
           parent: {
@@ -150,15 +166,18 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
         isNoNav ? "opacity-40" : "",
       )}
+      data-active={isActive}
+      data-parent-active={props.parentId === activeId}
       textValue={getValue(props.range.label)}
       id={props.range.id}
+      onAction={onAction}
       {...props}
     >
       <TreeItemContent>
         {({ isExpanded, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
           <>
             {hasVisibleChildren ? (
-              <Button slot="chevron">
+              <Button slot="chevron" className="hover:bg-gray-300 rounded">
                 <ChevronDownIcon
                   className={"text-xl"}
                   style={{
@@ -170,10 +189,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             ) : (
               <span slot="chevron" aria-hidden tabIndex={-1} className="pointer-events-none">
                 <ChevronDownIcon
-                  className={twMerge(
-                    "text-xl",
-                    "opacity-20 cursor-not-allowed",
-                  )}
+                  className={twMerge("text-xl", "opacity-20 cursor-not-allowed")}
                   style={{
                     transition: "transform .2s",
                     transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
@@ -184,12 +200,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
             {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
 
-            <button onClick={() =>  edit({ id: props.range.id, type: "Range" })}
+            <div
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
-                !showCanvases &&
-                  props.range.isRangeLeaf &&
-                  "border-transparent",
+                !showCanvases && props.range.isRangeLeaf && "border-transparent",
                 isActive && "border-transparent",
               )}
             >
@@ -197,8 +211,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                 {props.range.label || "Untitled range"}
               </LocaleString>
 
-              {!isEditing && !showCanvases && props.range.isRangeLeaf ? (
-                <div className="text-right bg-gray-200 py-0.5 px-2 text-xs rounded-full text-black/80">
+              {!isEditing && props.range.isRangeLeaf ? (
+                <div className="text-right bg-gray-100 py-0.5 px-2 text-xs rounded text-black/70">
                   {props.range.items?.length}
                 </div>
               ) : null}
@@ -225,9 +239,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                         </MenuItem>
                         <MenuItem
                           onAction={() =>
-                            window.confirm(
-                              "Are you sure you want to delete this range?",
-                            ) && deleteRange(props.range)
+                            window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
                           }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
@@ -243,7 +255,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                   )}
                 </div>
               ) : null}
-            </button>
+            </div>
           </>
         )}
       </TreeItemContent>
