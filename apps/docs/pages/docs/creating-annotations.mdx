@@ -16,7 +16,7 @@ This will add an Annotation Page onto which your individual annotations can be a
 
 Use the annotation toolbar to select the appropriate region of the Canvas where you want to add an annotation. The toolbar provides a number of region selection options including a standard box, line, free form edit, triangle, polygon and circle shapes to get you started. 
 
-![Use the toolbar to create region](../../public/annotations-add-new-annotations-to-canvas3.PNG)
+![Use the toolbar to create region](../../public/annotations-add-new-annotations-to-canvas3.png)
 
 Draw your region on the Canvas. The Annotation selection modal will then be presented, allowing you to select one of three options:
 
@@ -38,22 +38,24 @@ You can preview your Annotations using a IIIF viewer, in the screenshot below, T
 
 ## Viewing existing Annotations
 
-To view existing Annotations associated with one or more Canvases in your selected Manifest, click on the Annotations icon which will open the Annotations listing view. 
-
-You can view an example of annotations, navigate to the ‘Examples’ tab on the Manifest Editor homepage, and select the Victorian and Albert Museum’s ‘Ocean Liners’ IIIF Manifest example. 
+To view existing Annotations associated with one or more Canvases in your selected Manifest, you can access the Annotations icon which will open the Annotations listing view for the selected canvas. To see how this works, you can view an example, if you navigate to the ‘Examples’ tab on the Manifest Editor homepage, and select the Victorian and Albert Museum’s ‘Ocean Liners’ IIIF Manifest example. 
 
 ![Viewing existing annotations example](../../public/annotations-accessing-ocean-liners-example0.PNG)
 
-This Manifest contains a single Canvas with a series of annotations. Once you have opened it, select the Annotations option in the left hand toolbar to view these annotations:
+This Manifest contains a single Canvas with a series of annotations. Once you have opened it, select the Annotations option in the left toolbar to view these annotations:
 
 ![Editing existing annotations example](../../public/annotations-editing-viewing-ocean-liners-example.PNG)
 
 
 
-## Some notes:
+## Notes on annotation editing:
 
--  As indicated in the IIIF Presentation specification, the association of images and other content with the Canvases is via W3C Annotations. The structure created when using the Manifest Editor follows the resource structure of an Annotation Page with Annotations. 
-- The right metadata panel continues to provide access to create / edit and update inline annotations and can still be used
+As indicated in the [IIIF Presentation specification](https://iiif.io/api/presentation/3.0/#55-annotation-page), the association of images and other content with the Canvases is via W3C Annotations. The structure created when using the Manifest Editor follows the resource structure of an Annotation Page with Annotations. 
+
+While the latest Manifest Editor release has introduced the left toolbar Annotations link for ease of access, the right metadata panel (Structure tab) continues to provide access to create / edit and update inline annotations and can still be used.
+
+When working with the standard Manifest Editor note that:
+
 - Any annotations created will be stored within the IIIF Manifest you create
 - The Manifest is stored in temporary browser storage when you are working with the standard Manifest Editor
 - To save your work, you should ensure you have downloaded and saved the Manifest to appropriate persistent storage
