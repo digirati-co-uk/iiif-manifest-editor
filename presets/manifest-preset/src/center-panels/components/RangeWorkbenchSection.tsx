@@ -13,7 +13,7 @@ import {
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDrop } from "react-aria";
 import {
   Button,
