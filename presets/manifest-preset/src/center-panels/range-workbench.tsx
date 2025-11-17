@@ -1,17 +1,7 @@
-import {
-  createRangeHelper,
-  getValue,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
-import { moveEntities } from "@iiif/helpers/vault/actions";
+import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import {
-  ActionButton,
-  BackIcon,
-  InfoMessage,
-  useGridOptions,
-} from "@manifest-editor/components";
+import { ActionButton, BackIcon, InfoMessage, MoreMenuIcon, useGridOptions } from "@manifest-editor/components";
 import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
@@ -20,14 +10,10 @@ import {
   useInlineCreator,
   useLayoutActions,
 } from "@manifest-editor/shell";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  LocaleString,
-  RangeContext,
-  useManifest,
-  useVault,
-  useVaultSelector,
-} from "react-iiif-vault";
+import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
@@ -35,10 +21,6 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
-import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { MoreMenuIcon } from "@manifest-editor/components";
-
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -66,10 +48,7 @@ function getNextRangeLabel(label: InternationalString | null) {
 
 function RangeWorkbench() {
   const selectedRange = useInStack("Range");
-  const [{ size }, gridOptions] = useGridOptions(
-    "default-grid-size",
-    "grid-sm",
-  );
+  const [{ size }, gridOptions] = useGridOptions("default-grid-size", "grid-sm");
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
@@ -77,6 +56,7 @@ function RangeWorkbench() {
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Hook needs it.
   useEffect(splitEffect, [selectedRange]);
 
   const topLevelRange = useVaultSelector(
@@ -102,57 +82,15 @@ function RangeWorkbench() {
     [manifest, selectedRange],
   );
 
-  const rangeEditor = useGenericEditor(
-    topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
-    {
-      allowNull: true,
-    },
-  );
+  const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
+    allowNull: true,
+  });
 
   const onMerge = useCallback(
-    (
-      mergeRange: RangeTableOfContentsNode,
-      toMergeRange: RangeTableOfContentsNode,
-      empty?: boolean,
-    ) => {
-      if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
-
-      const foundIndex = rangeEditor.structural.items
-        .getWithoutTracking()
-        .findIndex((item) => toRef(item)?.id === mergeRange.id);
-
-      if (foundIndex === -1) {
-        console.error(`Range ${mergeRange.id} not found in ${toMergeRange.id}`);
-        return;
-      }
-
-      const fullMergeRange = vault.get({ id: mergeRange.id, type: "Range" });
-
-      vault.dispatch(
-        moveEntities({
-          subjects: {
-            type: "slice",
-            startIndex: 0,
-            length: fullMergeRange.items.length,
-          },
-          from: {
-            id: fullMergeRange.id,
-            type: "Range",
-            key: "items",
-          },
-          to: {
-            id: toMergeRange.id,
-            type: "Range",
-            key: "items",
-          },
-        }),
-      );
-      // Then remove the range.
-      if (!empty) {
-        rangeEditor.structural.items.deleteAtIndex(foundIndex);
-      }
+    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) => {
+      rangeEditor.structural.ranges.mergeRanges(mergeRange, toMergeRange, empty);
     },
-    [vault, rangeEditor],
+    [rangeEditor],
   );
 
   const onDelete = useCallback(
@@ -169,71 +107,29 @@ function RangeWorkbench() {
         return;
       }
 
-      // @todo Batch all of these actions as one.
-
-      const index = (range.items || []).indexOf(item);
-      const fullRange = vault.get({ id: range.id, type: "Range" });
-      if (!fullRange) {
-        console.error("Range not found", range.id);
-        return;
-      }
-
-      const length = fullRange.items.length - index;
-      const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
-      if (atIndex === -1) {
-        console.error("Range not found", range.id);
-        return;
-      }
-
-      let existingEmptyRange: { id: string; type: "Range" } | null = null;
-      const existingRange = (topLevelRange.items || [])[atIndex];
-      if (existingRange && existingRange.type === "Range") {
-        const fullExistingRange = vault.get(existingRange);
-        if (fullExistingRange.items.length === 0) {
-          existingEmptyRange = { id: fullExistingRange.id, type: "Range" };
-        }
-      }
-
-      const newRange =
-        existingEmptyRange ||
-        ((await creator.create(
-          "@manifest-editor/range-with-items",
-          {
-            type: "Range",
-            label: { en: [getNextRangeLabel(range.label)] },
-            items: [],
-          },
-          {
-            parent: {
-              property: "items",
-              resource: { id: topLevelRange.id, type: "Range" },
-              atIndex,
+      await rangeEditor.structural.ranges.splitRange(
+        topLevelRange,
+        range,
+        item,
+        (atIndex: number) =>
+          creator.create(
+            "@manifest-editor/range-with-items",
+            {
+              type: "Range",
+              label: { en: [getNextRangeLabel(range.label)] },
+              items: [],
             },
-          },
-        )) as { id: string; type: "Range" });
-
-      vault.dispatch(
-        moveEntities({
-          subjects: {
-            type: "slice",
-            startIndex: index,
-            length: length,
-          },
-          from: {
-            id: range.id,
-            type: "Range",
-            key: "items",
-          },
-          to: {
-            id: newRange.id,
-            type: "Range",
-            key: "items",
-            // index not specified - should append to end
-          },
-        }),
+            {
+              parent: {
+                property: "items",
+                resource: { id: topLevelRange.id, type: "Range" },
+                atIndex,
+              },
+            },
+          ) as Promise<{ id: string; type: "Range" }>,
       );
     },
-    [topLevelRange, vault, creator],
+    [topLevelRange, rangeEditor, creator],
   );
 
   const { edit } = useLayoutActions();
@@ -252,19 +148,16 @@ function RangeWorkbench() {
       setIsLastInView(false);
       return;
     }
-    const container = document.getElementById(
-      "range-workbench-scroll",
-    ) as HTMLElement | null;
+    const container = document.getElementById("range-workbench-scroll") as HTMLElement | null;
     const lastId = rangeItems[rangeItems.length - 1]?.id;
-    const last = lastId
-      ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null)
-      : null;
+    const last = lastId ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null) : null;
     if (!container || !last) return;
 
-    const io = new IntersectionObserver(
-      ([entry]) => setIsLastInView(entry!.isIntersecting),
-      { root: container, threshold: 0, rootMargin: "0px 0px -1px 0px" },
-    );
+    const io = new IntersectionObserver(([entry]) => setIsLastInView(entry!.isIntersecting), {
+      root: container,
+      threshold: 0,
+      rootMargin: "0px 0px -1px 0px",
+    });
 
     io.observe(last);
 
@@ -277,9 +170,7 @@ function RangeWorkbench() {
   }, [rangeItemsLen, rangeItems]);
 
   useEffect(() => {
-    const el = document.getElementById(
-      "range-workbench-scroll",
-    ) as HTMLElement | null;
+    const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
     if (!el) return;
 
     const compute = () => {
@@ -305,19 +196,13 @@ function RangeWorkbench() {
     return null;
   }
 
-  const hasCanvases = (topLevelRange.items || []).filter(
-    (item) => item.type === "Canvas",
-  );
+  const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
 
   const firstId = rangeItems[0]?.id;
   const lastId = rangeItems[rangeItems.length - 1]?.id;
 
-  const firstWorkbench = firstId
-    ? document.getElementById(`workbench-${firstId}`)
-    : null;
-  const lastWorkbench = lastId
-    ? document.getElementById(`workbench-bottom`)
-    : null;
+  const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
+  const lastWorkbench = lastId ? document.getElementById(`workbench-bottom`) : null;
 
   const rootToc = useVaultSelector(
     (_, v) => {
@@ -406,19 +291,17 @@ function RangeWorkbench() {
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() => setIsEditingLabel(true)}
                 >
-                  <EditIcon  />
+                  <EditIcon />
                   Edit range label
                 </MenuItem>
               </Menu>
             </Popover>
           </MenuTrigger>
-          {!isSplitting &&
-            (topLevelRange?.items?.length ?? 0) > 0 &&
-            !topLevelRange.isRangeLeaf && (
-              <ActionButton onPress={() => setIsSplitting(true)}>
-                <SplitRangeIcon className="text-xl" /> Split range
-              </ActionButton>
-            )}
+          {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
+            <ActionButton onPress={() => setIsSplitting(true)}>
+              <SplitRangeIcon className="text-xl" /> Split range
+            </ActionButton>
+          )}
 
           <RangeOnboarding />
         </div>
@@ -429,9 +312,7 @@ function RangeWorkbench() {
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
           Splitting range, click to confirm the the new range item
-          <ActionButton onPress={() => setIsSplitting(false)}>
-            Exit splitting mode
-          </ActionButton>
+          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
         </InfoMessage>
       ) : null}
 
@@ -444,8 +325,7 @@ function RangeWorkbench() {
         const nextIdx = idx + 1;
 
         const nextRangeLabel =
-          nextIdx !== topLevelRange.items?.length &&
-          topLevelRange.items?.[nextIdx]?.items?.length === 0
+          nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
             ? getValue(topLevelRange.items?.[nextIdx]?.label)
             : getNextRangeLabel(item.label);
 
@@ -456,28 +336,16 @@ function RangeWorkbench() {
             isSplitting={isSplitting}
             onSplit={onSplit}
             range={item}
-            onMergeUp={
-              idx !== 0
-                ? (r, empty) =>
-                    onMerge(item, topLevelRange.items?.[prevIdx]!, empty)
-                : undefined
-            }
+            onMergeUp={idx !== 0 ? (r, empty) => onMerge(item, topLevelRange.items?.[prevIdx]!, empty) : undefined}
             onMergeDown={
               topLevelRange.items?.[nextIdx]
-                ? (r, empty) =>
-                    onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
+                ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
                 : undefined
             }
             nextRangeLabel={nextRangeLabel}
             onDelete={() => onDelete(idx)}
-            mergeUpLabel={
-              prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""
-            }
-            mergeDownLabel={
-              nextIdx !== topLevelRange.items?.length
-                ? topLevelRange.items?.[nextIdx]?.label
-                : ""
-            }
+            mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
+            mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
           />
         );
       })}
@@ -494,9 +362,7 @@ function RangeWorkbench() {
             <ActionButton
               primary
               onPress={() => {
-                const el = document.getElementById(
-                  "range-workbench-scroll",
-                ) as HTMLElement | null;
+                const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
                 el?.scrollTo({ top: 0, behavior: "smooth" });
               }}
             >
@@ -514,9 +380,7 @@ function RangeWorkbench() {
                     inline: "end",
                   });
                 } else {
-                  const el = document.getElementById(
-                    "range-workbench-scroll",
-                  ) as HTMLElement | null;
+                  const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
                   el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
                 }
               }}

@@ -1,13 +1,21 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { Reference } from "@iiif/presentation-3";
 import {
   ActionButton,
   AddImageIcon,
   DeleteForeverIcon,
   MoreMenuIcon,
+  SelectionCheckbox,
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
-import { useInlineCreator, useManifestEditor, useLayoutActions, useEditingStack } from "@manifest-editor/shell";
+import {
+  useEditingResource,
+  useEditingStack,
+  useInlineCreator,
+  useLayoutActions,
+  useManifestEditor,
+} from "@manifest-editor/shell";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback } from "react";
@@ -41,6 +49,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const range = useInStack("Range");
   const creator = useInlineCreator();
   const { back } = useEditingStack();
+
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
   const activeId = range?.resource.source?.id;
@@ -137,6 +146,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
     <TreeItem
       className={twMerge(
         "react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5",
+        "data-[dragging]:opacity-50 data-[drop-target]:bg-me-primary-500 data-[drop-target]:text-white",
         isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
         isNoNav ? "opacity-40" : "",
       )}
@@ -145,21 +155,12 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       {...props}
     >
       <TreeItemContent>
-        {({
-          isExpanded,
-          selectionBehavior,
-          isDropTarget,
-          selectionMode,
-        }: TreeItemContentRenderProps) => (
+        {({ isExpanded, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
           <>
-            {selectionBehavior === "toggle" && selectionMode !== "none" && (
-              <Checkbox slot="selection" />
-            )}
-
             {hasVisibleChildren ? (
               <Button slot="chevron">
                 <ChevronDownIcon
-                  className={twMerge("text-xl")}
+                  className={"text-xl"}
                   style={{
                     transition: "transform .2s",
                     transform: `rotate(${isExpanded ? "0deg" : "-90deg"})`,
@@ -181,10 +182,11 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               </span>
             )}
 
+            {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
+
             <button onClick={() =>  edit({ id: props.range.id, type: "Range" })}
               className={twMerge(
                 "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
-                isDropTarget && "bg-me-primary-100/50",
                 !showCanvases &&
                   props.range.isRangeLeaf &&
                   "border-transparent",

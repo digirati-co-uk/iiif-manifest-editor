@@ -6,6 +6,7 @@ import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
 import { TransitionStatus } from "react-transition-group";
+import { DefaultTooltipContent, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -86,8 +87,8 @@ const OpenControl = styled(HandleControl)<{ $dir: "left" | "right" }>`
 const InnerHandleContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>`
   background: rgba(0, 0, 0, 0);
   position: absolute;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
   top: 0;
   bottom: 0;
   z-index: 50; // This will always be quite high.
@@ -117,8 +118,8 @@ const UnscaledContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>
   background: rgba(0, 0, 0, 0);
   position: absolute;
   pointer-events: none;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
   top: 0;
   bottom: 0;
   z-index: 51; // This will always be quite high.
@@ -138,39 +139,61 @@ export const HandleControls = forwardRef<
     <HandleContainer onClick={() => actions.open()}>
       <UnscaledContainer $open={open} $dir={dir}>
         {!open ? (
-          <OpenControl
-            $dir={dir}
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.open();
-            }}
-          >
-            <DownIcon rotate={dir === "right" ? 90 : 270} />
-          </OpenControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <OpenControl
+                $dir={dir}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.open();
+                }}
+              >
+                <DownIcon rotate={dir === "right" ? 90 : 270} />
+              </OpenControl>
+              <DefaultTooltipContent>Open</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
       </UnscaledContainer>
       <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
         {open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.close();
-            }}
-          >
-            <CloseIcon />
-          </IconControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.close();
+                }}
+              >
+                <CloseIcon />
+              </IconControl>
+              <DefaultTooltipContent>Close</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
         {reset && open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              reset();
-            }}
-          >
-            <ResetIcon />
-          </IconControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <IconControl
+                onClick={(e) => {
+                  e.stopPropagation();
+                  reset();
+                }}
+              >
+                <ResetIcon />
+              </IconControl>
+              <DefaultTooltipContent>Reset</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
         ) : null}
-        {open ? <ResizeHandle aria-label="Reorder item" /> : null}
+        {open ? (
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger>
+              <ResizeHandle aria-label="Resize panel" />
+              <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+            </TooltipTrigger>
+          </Tooltip>
+        ) : null}
       </InnerHandleContainer>
     </HandleContainer>
   );

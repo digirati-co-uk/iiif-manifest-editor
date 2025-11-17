@@ -161,15 +161,20 @@ div.mdxeditor-toolbar {
   padding-left: calc((var(--tree-item-level)) * 1em);
 }
 
+/*.react-aria-DropIndicator {
+  background: red;
+  height: 20px;
+}*/
+
 .react-aria-DropIndicator {
   &[data-drop-target] {
-    outline: 1px solid #d75281;
+    outline: 2px solid #d75281;
     margin-left: calc(
       8px +
       var(--checkbox-width, 0px) +
       var(--drag-button-width, 0px) +
       26px +
-      (var(--tree-item-level) - 1) *
+      (var(--tree-item-level) - 2) *
       16px
     );
   }
@@ -193,12 +198,21 @@ div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentat
   outline: 3px solid #b84c74;
 }
 
-.split-range-highlight[data-split-first]:hover { outline: none; }
-.split-range-highlight[data-split-first]:hover:before { content: none; }
+.split-range-highlight[data-split-first]:hover {
+  outline: none;
+}
+.split-range-highlight[data-split-first]:hover:before {
+  content: none;
+}
 
-.split-range-highlight[data-split-first]:hover ~ .split-range-highlight { outline: none; }
+.split-range-highlight[data-split-first]:hover ~ .split-range-highlight {
+  outline: none;
+}
 
-div[role="presentation"]:has(> .split-range-highlight[data-split-first]:hover) ~ div[role="presentation"]:has(.split-range-highlight) { outline: none; }
+div[role="presentation"]:has(> .split-range-highlight[data-split-first]:hover)
+  ~ div[role="presentation"]:has(.split-range-highlight) {
+  outline: none;
+}
 
 .split-range-highlight:has(~ .split-range-highlight:hover),
 div[role="presentation"]:has(.split-range-highlight):has(~ div[role="presentation"] > .split-range-highlight:hover) {
@@ -227,7 +241,7 @@ div[role="presentation"]:has(.split-range-highlight):has(
   color: white;
   padding: 0.5em;
   border-radius: 4px;
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .split-range-highlight:hover:before {

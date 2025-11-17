@@ -34,7 +34,7 @@ export * from "./CollectionListItem";
 export * from "./ManifestListItem";
 export * from "./Spinner";
 export * from "./OnboardingTour";
-
+export * from "./SelectionCheckbox";
 // Icons
 export * from "./icons/CreateCanvasIcon";
 export * from "./icons/AddImageIcon";

@@ -1,4 +1,5 @@
-import { usePress } from "react-aria";
+import { useRef } from "react";
+import { useDrag, useDraggableItem, usePress } from "react-aria";
 import { CanvasContext } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { CanvasLabel } from "./CanvasLabel";
@@ -15,15 +16,28 @@ interface CanvasThumbnailGridItemProps {
   icon?: React.ReactNode;
   hideLabel?: boolean;
   containerProps?: any;
+  dragState?: any;
+  isSplitting?: boolean;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   const { pressProps } = usePress({
     onPress: props.onClick,
   });
+  const { dragProps } = useDrag({
+    isDisabled: !props.dragState,
+    getItems() {
+      return [
+        {
+          "text/plain": JSON.stringify(props.dragState),
+        },
+      ];
+    },
+  });
+
   return (
     <CanvasContext canvas={props.id}>
       <div
-        {...pressProps}
+        {...(props.isSplitting ? pressProps : dragProps)}
         className={twMerge("flex flex-col", props.className)}
         data-canvas-selected={props.selected}
         {...(props.containerProps || {})}
@@ -33,7 +47,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
             data-canvas-selected={props.active}
             aria-selected={props.active}
             className={cn(
-              "border-2 border-transparent  p-1 w-full h-full rounded",
+              "border-2 border-transparent  p-1 w-full h-full rounded select-none",
               props.selected && "border-me-primary-500",
             )}
           >

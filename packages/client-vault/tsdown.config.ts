@@ -1,16 +1,14 @@
-import { defineConfig, type Options } from "tsdown";
+import { defineConfig } from "tsdown";
 
-export default defineConfig((options: Options) => ({
+export default defineConfig((options) => ({
   dts: true,
+  exports: true,
   banner: {
     js: "'use client'",
   },
+  clean: !options.watch,
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
-  external: [
-    // -
-    "@iiif/helpers",
-  ],
-  ...options,
+  minify: !options.watch,
 }));

@@ -1,4 +1,5 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { moveEntities } from "@iiif/helpers/vault/actions";
 import type { InternationalString } from "@iiif/presentation-3";
 import {
   ActionButton,
@@ -12,14 +13,17 @@ import {
 } from "@manifest-editor/components";
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
-import { useCallback, useState } from "react";
+import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import { useCallback, useRef, useState } from "react";
+import { useDrop } from "react-aria";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
-import { CanvasContext, LocaleString } from "react-iiif-vault";
+import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
+import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
+import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
-import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 
 export function RangeWorkbenchSection({
   range,
@@ -62,6 +66,50 @@ export function RangeWorkbenchSection({
     batchSize: 32,
   });
 
+  const vault = useVault();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { isDropTarget, dropProps } = useDrop({
+    ref,
+    async onDrop(e) {
+      const items = await deserialiseRangeItems(e.items);
+
+      const firstItem = items[0];
+      if (!firstItem) return;
+
+      const parentRangeId = firstItem.parent?.id;
+      if (!parentRangeId) return;
+
+      const itemsToMove = items
+        .map((t) => {
+          const fullVault = vault.get(t.item);
+
+          if (!fullVault?.type) return null;
+
+          return { id: fullVault.id, type: fullVault.type };
+        })
+        .filter((t) => t !== null);
+
+      if (!itemsToMove.length) return;
+      if (parentRangeId === range.id) return;
+
+      vault.dispatch(
+        moveEntities({
+          subjects: { type: "list", items: itemsToMove },
+          from: {
+            id: parentRangeId,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: range.id,
+            type: "Range",
+            key: "items",
+          },
+        }),
+      );
+    },
+  });
+
   const isEmpty = !range.items || range.items?.length === 0;
 
   const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
@@ -84,7 +132,16 @@ export function RangeWorkbenchSection({
           )}
         </Modal>
       ) : null}
-      <div key={range.id} className="w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative">
+      <div
+        key={range.id}
+        ref={ref}
+        {...dropProps}
+        data-drop-target={isDropTarget}
+        className={twMerge(
+          "w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative",
+          isDropTarget && "bg-me-primary-100",
+        )}
+      >
         <div id={`workbench-${range.id}`} className="absolute -top-16" />
         <div className="flex items-center gap-4 max-w-full">
           <Button
@@ -126,7 +183,7 @@ export function RangeWorkbenchSection({
                   className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() => setIsEditingLabel(true)}
                 >
-                  <EditIcon  />
+                  <EditIcon />
                   Edit range label
                 </MenuItem>
                 <MenuItem
@@ -218,7 +275,13 @@ export function RangeWorkbenchSection({
                 if (item.type !== "Canvas") {
                   return (
                     <div key={item.id} className="items-center justify-center flex flex-col">
-                      <RangeGridThumbnail range={item} />
+                      <RangeGridThumbnail
+                        range={item}
+                        dragState={{
+                          item: item.id,
+                          parent: { id: range.id },
+                        }}
+                      />
                       <LocaleString className="truncate overflow-ellipsis max-w-full text-sm">
                         {item.label || "Untitled range"}
                       </LocaleString>
@@ -231,10 +294,15 @@ export function RangeWorkbenchSection({
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
+                      isSplitting={isSplitting}
                       onClick={() => {
                         if (isSplitting && !isFirstCanvas) {
                           onSplit(range, item);
                         }
+                      }}
+                      dragState={{
+                        item: item.id,
+                        parent: { id: range.id },
                       }}
                       containerProps={{
                         "data-range1-label": getValue(range.label),

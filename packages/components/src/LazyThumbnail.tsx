@@ -1,4 +1,4 @@
-import { createThumbnailHelper } from "@iiif/helpers";
+import { type BoxSelector, createThumbnailHelper, type FixedSizeImage, type TemporalBoxSelector } from "@iiif/helpers";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useCanvas, useRenderingStrategy, useStrategy, useThumbnail, useVault } from "react-iiif-vault";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
@@ -73,7 +73,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
           ref={checkImage}
           src={thumbnail?.id}
           alt=""
-          className={`w-full h-full ${cover ? "object-cover" : "object-contain"} ${!isLoading ? (isCached ? "" : "animate-fadeIn") : "opacity-0"}`}
+          className={`select-none w-full h-full ${cover ? "object-cover" : "object-contain"} ${!isLoading ? (isCached ? "" : "animate-fadeIn") : "opacity-0"}`}
         />
       ) : (
         <ThumbnailFallback />
@@ -117,7 +117,13 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
   const helper = useMemo(() => {
     return createThumbnailHelper(vault);
   }, [vault]);
-  const [state, setState] = useState<any>({});
+  const [state, setState] = useState<{
+    canvasId: string | null;
+    imagesToRender: { image: FixedSizeImage; target: BoxSelector | TemporalBoxSelector }[];
+  }>({
+    canvasId: null,
+    imagesToRender: [],
+  });
 
   useEffect(() => {
     const abort = new AbortController();
@@ -127,19 +133,39 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
         return;
       }
 
-      const imagesToRender: any[] = [];
+      const imagesToRender: { image: FixedSizeImage; target: BoxSelector | TemporalBoxSelector }[] = [];
       for (const image of strategy.images) {
+        const resource = image.annotation.body[0] ? vault.get(image.annotation.body[0]) : image.annotation;
         await helper
-          .getBestThumbnailAtSize(image.annotation, {
+          .getBestThumbnailAtSize(resource, {
             width: 256,
             height: 256,
+            maxWidth: 768,
+            maxHeight: 768,
+            unsafeImageService: true,
+            allowUnsafe: true,
+            returnAllOptions: true,
           })
           .then((thumbnail) => {
             if (abort.signal.aborted) return;
-            imagesToRender.push({
-              image: thumbnail.best,
-              target: image.target,
-            });
+            if (thumbnail.best?.type === "fixed") {
+              // @todo this is broken.
+              if (thumbnail.best.id.includes("/full/full/")) {
+                imagesToRender.push({
+                  image: {
+                    ...thumbnail.best,
+                    id: thumbnail.best.id.replace("/full/full/", "/full/256,/"),
+                  },
+                  target: image.target,
+                });
+                return;
+              }
+
+              imagesToRender.push({
+                image: thumbnail.best,
+                target: image.target,
+              });
+            }
           });
 
         if (abort.signal.aborted) return;
@@ -156,7 +182,7 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
     return () => {
       abort.abort();
     };
-  }, [strategy]);
+  }, [strategy, helper]);
 
   if (!state || !canvas || state.canvasId !== canvas?.id) {
     return (
@@ -174,12 +200,12 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div
-        className="relative overflow-hidden margin-auto w-full bg-white"
+        className="relative overflow-hidden margin-auto h-full w-full basis-[content] bg-white"
         style={{
           aspectRatio: `${canvas.width / canvas.height}`,
         }}
       >
-        {state.imagesToRender.map((image: any) => {
+        {state.imagesToRender.map((image) => {
           return (
             <div
               className="absolute"
@@ -191,7 +217,7 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
                 left: `${(image.target.spatial.x / canvas.width) * 100}%`,
               }}
             >
-              <img className="w-full h-full object-cover" src={image.image.id} />
+              <img className="w-full h-full object-cover select-none" src={image.image.id} />
             </div>
           );
         })}
