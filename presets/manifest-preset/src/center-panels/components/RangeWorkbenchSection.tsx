@@ -24,7 +24,12 @@ import {
   Popover,
   Separator,
 } from "react-aria-components";
-import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
+import {
+  CanvasContext,
+  LanguageString,
+  LocaleString,
+  useVault,
+} from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
@@ -132,6 +137,8 @@ export function RangeWorkbenchSection({
     (i) => i.type === "Canvas",
   )?.id;
 
+  const oldLabel = JSON.parse(JSON.stringify(range.label));
+
   return (
     <>
       {selectedCanvas ? (
@@ -139,30 +146,33 @@ export function RangeWorkbenchSection({
           className="max-w-[90vw] w-full h-[90vh]"
           title={
             <div className="flex flex-row gap-3 items-center w-full">
-              <span>{getValue(range.label)}</span>
-              <MenuTrigger>
-                <ActionButton>
-                  <MoreMenuIcon className="text-xl" />
-                </ActionButton>
-                <Popover className="bg-white shadow-md rounded-md p-1">
-                  <Menu>
-                    <MenuItem
-                      className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                      onAction={() => setIsEditingLabel(true)}
-                    >
-                      <EditIcon />
-                      Edit range label
-                    </MenuItem>
-                  </Menu>
-                </Popover>
-              </MenuTrigger>
-              {isEditingLabel && (
+              {isEditingLabel ? (
                 <InlineLabelEditor
                   className="text-base font-normal mt-1"
                   resource={range}
                   onSubmit={() => setIsEditingLabel(false)}
                   onCancel={() => setIsEditingLabel(false)}
                 />
+              ) : (
+                <>
+                  <span>{getValue(range.label)}</span>
+                  <MenuTrigger>
+                    <ActionButton>
+                      <MoreMenuIcon className="text-xl" />
+                    </ActionButton>
+                    <Popover className="bg-white shadow-md rounded-md p-1">
+                      <Menu>
+                        <MenuItem
+                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                          onAction={() => setIsEditingLabel(true)}
+                        >
+                          <EditIcon />
+                          Edit range label
+                        </MenuItem>
+                      </Menu>
+                    </Popover>
+                  </MenuTrigger>
+                </>
               )}
             </div>
           }
