@@ -1,12 +1,12 @@
-import styled, { css } from "styled-components";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { PanelActions } from "../Layout.types";
-import { forwardRef } from "react";
-import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
-import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
-import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
-import { TransitionStatus } from "react-transition-group";
 import { DefaultTooltipContent, Tooltip, TooltipTrigger } from "@manifest-editor/components";
+import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
+import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
+import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
+import { forwardRef } from "react";
+import type { TransitionStatus } from "react-transition-group";
+import styled, { css } from "styled-components";
+import type { PanelActions } from "../Layout.types";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -140,7 +140,7 @@ export const HandleControls = forwardRef<
       <UnscaledContainer $open={open} $dir={dir}>
         {!open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <OpenControl
                 $dir={dir}
                 onClick={(e) => {
@@ -158,7 +158,7 @@ export const HandleControls = forwardRef<
       <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
         {open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <IconControl
                 onClick={(e) => {
                   e.stopPropagation();
@@ -173,7 +173,7 @@ export const HandleControls = forwardRef<
         ) : null}
         {reset && open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <IconControl
                 onClick={(e) => {
                   e.stopPropagation();
@@ -188,7 +188,7 @@ export const HandleControls = forwardRef<
         ) : null}
         {open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <ResizeHandle aria-label="Resize panel" />
               <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
             </TooltipTrigger>

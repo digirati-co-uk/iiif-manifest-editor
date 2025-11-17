@@ -1,16 +1,14 @@
 import { Tab, TabList, TabPanel, Tabs } from "@manifest-editor/components";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-
+import { Suspense } from "react";
 import allExamples from "../../../../../examples.json";
+import BrowserRecents from "../../components/browser-editor/BrowserRecents";
+import GettingStarted from "../../components/browser-editor/GettingStarted";
 import { ExampleListing } from "../../components/example-listing/ExampleListing";
 import { HandleQueryString } from "../../components/query-string/HandleQueryString";
 
 const { examples } = allExamples;
-
-const BrowserRecents = dynamic(() => import("../../components/browser-editor/BrowserRecents"), { ssr: false });
-
-const GettingStarted = dynamic(() => import("../../components/browser-editor/GettingStarted"), { ssr: false });
 
 export default async function Page({ searchParams }: { searchParams: { tab?: string } }) {
   const defaultTab = searchParams.tab || "recent";
@@ -32,7 +30,9 @@ export default async function Page({ searchParams }: { searchParams: { tab?: str
             </Tab>
           </TabList>
           <TabPanel className="" id="recent">
-            <BrowserRecents />
+            <Suspense>
+              <BrowserRecents />
+            </Suspense>
           </TabPanel>
           <TabPanel className="" id="examples">
             <ExampleListing examples={examples} />

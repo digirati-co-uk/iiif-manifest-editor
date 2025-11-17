@@ -9,10 +9,13 @@ import { createStore, del, delMany, get, keys, set } from "idb-keyval";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { queryClient } from "../site/Provider";
 
-const localStore = createStore(
-  "manifest-editor-projects-v2",
-  "manifest-editor-project-store",
-);
+const localStore =
+  typeof window !== "undefined"
+    ? createStore(
+        "manifest-editor-projects-v2",
+        "manifest-editor-project-store",
+      )
+    : undefined;
 
 export interface LocalBrowserProjectSnippet {
   id: string;
@@ -48,6 +51,9 @@ export interface LocalBrowserProject {
 export async function listBrowserProjects(): Promise<
   LocalBrowserProjectSnippet[]
 > {
+  if (!localStore) {
+    return [];
+  }
   const projectIds = await keys(localStore);
   const projects: LocalBrowserProjectSnippet[] = [];
   for (const projectId of projectIds) {

@@ -4,3 +4,14 @@ packages:
   - "internal-packages/*"
   - "presets/*"
   - "!examples/**"
+
+catalog:
+  react-iiif-vault: 2.0.2
+  react: 19.2.0
+  react-dom: 19.2.0
+  styled-components: 6.1.8
+  zustand: 4.5.2
+  "@iiif/helpers": 1.5.5
+  "iiif-browser": "2.0.4"
+  "@atlas-viewer/atlas": "3.0.3"
+  "react-aria-components": "^1.12"

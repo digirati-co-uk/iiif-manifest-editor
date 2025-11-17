@@ -294,7 +294,6 @@ export function RangeWorkbenchSection({
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
-                      isSplitting={isSplitting}
                       onClick={() => {
                         if (isSplitting && !isFirstCanvas) {
                           onSplit(range, item);

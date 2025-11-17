@@ -3,7 +3,7 @@
 import { upgrade } from "@iiif/parser/upgrader";
 import { useQuery } from "@tanstack/react-query";
 import { ManifestEditor } from "manifest-editor";
-import "manifest-editor/dist/index.css";
+// import "manifest-editor/dist/index.css";
 
 export default function ExampleEditor({
   example,
