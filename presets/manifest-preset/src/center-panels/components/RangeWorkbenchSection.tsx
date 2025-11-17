@@ -6,7 +6,6 @@ import {
   CanvasThumbnailGridItem,
   DeleteForeverIcon,
   ListingIcon,
-  Modal,
   MoreMenuIcon,
   useGridOptions,
   useLoadMoreItems,
@@ -14,7 +13,7 @@ import {
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { useCallback, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { useDrop } from "react-aria";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
 import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
@@ -23,7 +22,6 @@ import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
-import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 
 export function RangeWorkbenchSection({
   range,
@@ -36,6 +34,7 @@ export function RangeWorkbenchSection({
   nextRangeLabel,
   onDelete,
   idx,
+  onPreviewCanvas,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
@@ -47,20 +46,15 @@ export function RangeWorkbenchSection({
   onDelete?: (range: RangeTableOfContentsNode) => void;
   nextRangeLabel?: string;
   idx: number;
+  onPreviewCanvas?: (
+    range: RangeTableOfContentsNode,
+    canvas: RangeTableOfContentsNode
+  ) => void;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
 
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedCanvas, _setSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const [lastSelectedCanvas, setLastSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const setSelectedCanvas = useCallback((canvas: RangeTableOfContentsNode | null) => {
-    _setSelectedCanvas(canvas);
-    if (canvas) {
-      setLastSelectedCanvas(canvas);
-    }
-  }, []);
-
   const [isEditingLabel, setIsEditingLabel] = useState(false);
   const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
     batchSize: 32,
@@ -116,22 +110,6 @@ export function RangeWorkbenchSection({
 
   return (
     <>
-      {selectedCanvas ? (
-        <Modal
-          className="max-w-[90vw] w-full h-[90vh]"
-          title={getValue(selectedCanvas.label) || "Canvas"}
-          onClose={() => setSelectedCanvas(null)}
-        >
-          {selectedCanvas && (
-            <RangeWorkbenchCanvas
-              range={range}
-              canvas={selectedCanvas}
-              onBack={() => setSelectedCanvas(null)}
-              setCanvas={setSelectedCanvas}
-            />
-          )}
-        </Modal>
-      ) : null}
       <div
         key={range.id}
         ref={ref}
@@ -291,11 +269,9 @@ export function RangeWorkbenchSection({
                     </div>
                   );
                 }
-
                 return (
                   <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
                     <CanvasThumbnailGridItem
-                      selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
                       isSplitting={isSplitting}
                       onClick={() => {
@@ -317,7 +293,7 @@ export function RangeWorkbenchSection({
                       icon={
                         <ActionButton
                           className="absolute top-2 right-2 hidden group-hover:block"
-                          onPress={() => setSelectedCanvas(item)}
+                          onPress={() => onPreviewCanvas?.(range, item)}
                         >
                           <CanvasPreviewIcon className="text-2xl" />
                         </ActionButton>

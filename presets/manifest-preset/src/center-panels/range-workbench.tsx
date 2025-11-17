@@ -12,7 +12,13 @@ import {
 } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
@@ -21,6 +27,7 @@ import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { BulkActionsWorkbench } from "./components/BulkActionsWorkbench";
 import { RangeOnboarding } from "./components/RangeOnboarding";
 import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
+import { RangeWorkbenchCanvas } from "./components/RangeWorkbenchCanvas";
 
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
@@ -55,6 +62,18 @@ function RangeWorkbench() {
   const creator = useInlineCreator();
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
+  const [preview, setPreview] = useState<{
+    range: RangeTableOfContentsNode;
+    canvas: RangeTableOfContentsNode;
+  } | null>(null);
+
+  const handlePreviewCanvas = useCallback(
+    (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => {
+      setPreview({ range, canvas });
+    },
+    [],
+  );
+
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
   // biome-ignore lint/correctness/useExhaustiveDependencies: Hook needs it.
   useEffect(splitEffect, [selectedRange]);
@@ -81,6 +100,27 @@ function RangeWorkbench() {
     },
     [manifest, selectedRange],
   );
+  useEffect(() => {
+    if (!topLevelRange) {
+      setPreview(null);
+      return;
+    }
+
+    const items = topLevelRange.items || [];
+    const firstCanvas = items.find((item: any) => item.type === "Canvas");
+
+    if (firstCanvas) {
+      setPreview(prev => {
+        if (prev && prev.range.id === topLevelRange.id) return prev;
+        return {
+          range: topLevelRange as RangeTableOfContentsNode,
+          canvas: firstCanvas as RangeTableOfContentsNode,
+        };
+      });
+    } else {
+      setPreview(null);
+    }
+  }, [topLevelRange?.id]);
 
   const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
     allowNull: true,
@@ -262,6 +302,7 @@ function RangeWorkbench() {
 
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
+      {!preview && (
       <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
         <div className="flex items-center gap-4">
           {hasParent ? (
@@ -308,6 +349,7 @@ function RangeWorkbench() {
 
         {gridOptions}
       </div>
+      )}
 
       {isSplitting ? (
         <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
@@ -316,7 +358,20 @@ function RangeWorkbench() {
         </InfoMessage>
       ) : null}
 
-      {(topLevelRange.items || []).map((item, idx) => {
+      {preview && (
+        <div className="my-4 border-b border-gray-200">
+          <RangeWorkbenchCanvas
+            range={preview.range}
+            canvas={preview.canvas}
+            onBack={() => setPreview(null)}
+            setCanvas={(canvas) =>
+              setPreview((prev) => (prev ? { ...prev, canvas } : prev))
+            }
+          />
+        </div>
+      )}
+      {!preview &&
+      (topLevelRange.items || []).map((item, idx) => {
         if (item.type === "Canvas") {
           return null;
         }
@@ -346,17 +401,18 @@ function RangeWorkbench() {
             onDelete={() => onDelete(idx)}
             mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
             mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
+            onPreviewCanvas={handlePreviewCanvas}
           />
         );
       })}
 
-      {hasCanvases.length ? (
+      {!preview && hasCanvases.length ? (
         <RangeContext range={topLevelRange.id}>
           <BulkActionsWorkbench />
         </RangeContext>
       ) : null}
 
-      {rangeItems.length === 1 ? (
+      {! preview && rangeItems.length === 1 ? (
         <div className="sticky bottom-5 float-right right-5">
           {isAtEnd ? (
             <ActionButton
