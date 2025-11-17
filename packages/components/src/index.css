@@ -190,7 +190,7 @@ div.mdxeditor-toolbar {
 .split-range-highlight:hover,
 .split-range-highlight:hover ~ .split-range-highlight,
 div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentation"]:has(.split-range-highlight) {
-  outline: 3px solid #b84c74;
+  outline: 3px solid #FF991c;
 }
 
 .split-range-highlight[data-split-first]:hover { outline: none; }
