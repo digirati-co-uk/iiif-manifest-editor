@@ -1,22 +1,61 @@
-
 # Creating annotations
 
-- **TODO: Add more common annotation options**
-		- Tagging with external resource
-		- Plaintext annotation
-		- Image URL + description
-		- Geolocation
+The Manifest Editor left hand toolbar provides a link to view and edit Annotations associated with Canvases in your selected Manifest.  
 
-## Example: Ocean Liners
+Clicking on the Annotations option will either present annotations associated with the canvas (if there are existing inline annotations) or allow you to create an empty Annotation Page to start adding annotations to the canvas.
 
-## Creating an annotation page
+## Creating annotations
 
-## Drawing a target for an annotation
+To add new annotations to a Canvas in your Manifest, click on the Annotations link, and select the option to ‘Create empty page’
 
-## Annotation content options
+![Create annotation page](../../public/annotations-add-new-annotations-to-canvas1.PNG)
 
-## Editing an annotation
+This will add an Annotation Page onto which your individual annotations can be added. Click to ‘Add annotation’ to start adding annotations to your canvas.
 
-## Viewer matrix
+![Add annotation](../../public/annotations-add-new-annotations-to-canvas2.PNG)
 
-TODO: Matrix of viewer support for annotations
+Use the annotation toolbar to select the appropriate region of the Canvas where you want to add an annotation. The toolbar provides a number of region selection options including a standard box, line, free form edit, triangle, polygon and circle shapes to get you started. 
+
+![Use the toolbar to create region](../../public/annotations-add-new-annotations-to-canvas3.PNG)
+
+Draw your region on the Canvas. The Annotation selection modal will then be presented, allowing you to select one of three options:
+
+- HTML annotation - enabling you to add HTML content
+- Annotation without body - no additional content added, the annotation is simply the region of the canvas selected.
+- Captioned image - you can select an image using its URL and add a caption.
+
+Once you have added any annotation content, click create to add your annotation.
+
+![Creating HTML annotation](../../public/annotations-add-new-annotations-to-canvas4.PNG)
+
+As you add your Annotations, they are listed in the left hand panel where you can click to Edit or Delete them as required.
+
+![Adding second annotation](../../public/annotations-add-new-annotations-to-canvas5.PNG)
+
+You can preview your Annotations using a IIIF viewer, in the screenshot below, Theseus is used to validate how the annotations are displayed, by selecting the ‘Show annotations’ link when viewing a Canvas with annotations.
+
+![Previewing your annotations in Theseus](../../public/annotations-preview-in-theseus-example.PNG)
+
+## Viewing existing Annotations
+
+To view existing Annotations associated with one or more Canvases in your selected Manifest, click on the Annotations icon which will open the Annotations listing view. 
+
+You can view an example of annotations, navigate to the ‘Examples’ tab on the Manifest Editor homepage, and select the Victorian and Albert Museum’s ‘Ocean Liners’ IIIF Manifest example. 
+
+![Viewing existing annotations example](../../public/annotations-accessing-ocean-liners-example0.PNG)
+
+This Manifest contains a single Canvas with a series of annotations. Once you have opened it, select the Annotations option in the left hand toolbar to view these annotations:
+
+![Editing existing annotations example](../../public/annotations-editing-viewing-ocean-liners-example.PNG)
+
+
+
+## Some notes:
+
+-  As indicated in the IIIF Presentation specification, the association of images and other content with the Canvases is via W3C Annotations. The structure created when using the Manifest Editor follows the resource structure of an Annotation Page with Annotations. 
+- The right metadata panel continues to provide access to create / edit and update inline annotations and can still be used
+- Any annotations created will be stored within the IIIF Manifest you create
+- The Manifest is stored in temporary browser storage when you are working with the standard Manifest Editor
+- To save your work, you should ensure you have downloaded and saved the Manifest to appropriate persistent storage
+
+
