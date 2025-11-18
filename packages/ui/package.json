@@ -55,13 +55,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "2.3.7",
+    "@atlas-viewer/atlas": "catalog",
     "@floating-ui/react": "^0.26.13",
-    "react": "^18.3.1",
-    "@iiif/helpers": "^1.5.1",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "2.0.2",
-    "styled-components": "6.1.8",
+    "react": "catalog:",
+    "@iiif/helpers": "catalog:",
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "styled-components": "catalog:",
     "classnames": "^2.5.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "mitt": "^3.0.1"

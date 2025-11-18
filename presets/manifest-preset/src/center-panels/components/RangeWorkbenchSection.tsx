@@ -17,7 +17,7 @@ import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useRef, useState } from "react";
 import { useDrop } from "react-aria";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
-import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
+import { CanvasContext, LanguageString, LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
@@ -114,6 +114,8 @@ export function RangeWorkbenchSection({
   const isEmpty = !range.items || range.items?.length === 0;
 
   const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
+
+  const oldLabel = JSON.parse(JSON.stringify(range.label));
 
   return (
     <>
@@ -278,18 +280,6 @@ export function RangeWorkbenchSection({
                     <LocaleString className="font-semibold">{mergeDownLabel}</LocaleString>
                   </MenuItem>
                 )}
-                {onMergeUp || onMergeDown ? <Separator className="h-0.5 bg-gray-200" /> : null}
-                {onDelete ? (
-                  <MenuItem
-                    onPress={() => {
-                      (range.items?.length ? window.confirm("This range and it's items will be removed.") : true) &&
-                        onDelete(range);
-                    }}
-                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
-                  >
-                    <DeleteForeverIcon /> Delete range item
-                  </MenuItem>
-                ) : null}
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -330,7 +320,6 @@ export function RangeWorkbenchSection({
                     <CanvasThumbnailGridItem
                       selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
-                      isSplitting={isSplitting}
                       onClick={() => {
                         if (isSplitting && !isFirstCanvas) {
                           onSplit(range, item);

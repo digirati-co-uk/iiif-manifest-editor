@@ -9,14 +9,24 @@ export default defineConfig((config) => ({
     js: "'use client'",
   },
   clean: !config.watch,
+  exports: {
+    customExports: (exports) => {
+      exports["./dist/lib.css"] = "./dist/lib.css";
+      return exports;
+    },
+  },
   minify: true,
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
-  plugins: [
-    (postcss as any as typeof postcss.default)({
-      plugins: [postcssImport()],
-      extract: "index.css",
-    }),
-  ],
+  entry: {
+    index: "./src/index.tsx",
+    lib: "./src/lib.css",
+  },
+  // plugins: [
+  //   (postcss as any as typeof postcss.default)({
+  //     plugins: [postcssImport()],
+  //     extract: "index.css",
+  //   }),
+  // ],
 }));

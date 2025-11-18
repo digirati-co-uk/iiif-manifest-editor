@@ -1,14 +1,14 @@
 "use client";
 
-import { FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
-import { ManifestEditor } from "manifest-editor";
-import { useEffect, useMemo, useState } from "react";
-import "manifest-editor/dist/index.css";
-import Link from "next/link";
-import { ManifestEditorLogo } from "@manifest-editor/components";
-import { GlobalNav } from "../site/GlobalNav";
 import { Vault } from "@iiif/helpers";
 import { upgrade } from "@iiif/parser/upgrader";
+import { ManifestEditorLogo } from "@manifest-editor/components";
+import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
+import { ManifestEditor } from "manifest-editor";
+// import "manifest-editor/dist/index.css";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { GlobalNav } from "../site/GlobalNav";
 
 export default function LocalEditor() {
   const [file, setFile] = useState<FileWithHandle | null>(null);
@@ -82,7 +82,7 @@ export default function LocalEditor() {
                 fileName: file.name,
                 extensions: [".json"],
               },
-              file.handle
+              file.handle,
             );
             if (handle) {
               const file = await handle.getFile();
@@ -101,7 +101,11 @@ export default function LocalEditor() {
       </div>
       <div className="flex flex-col flex-1">
         <div className="w-full flex flex-1 max-w-full min-w-0">
-          <ManifestEditor vault={vault as any} resource={{ id: manifest.id, type: "Manifest" }} data={manifest as any} />
+          <ManifestEditor
+            vault={vault as any}
+            resource={{ id: manifest.id, type: "Manifest" }}
+            data={manifest as any}
+          />
         </div>
       </div>
     </>

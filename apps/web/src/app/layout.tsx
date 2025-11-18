@@ -1,14 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { SiteProvider } from "../components/site/Provider";
-import "@manifest-editor/components/dist/index.css";
-import "manifest-editor/dist/index.css";
-import "@manifest-editor/editors/dist/index.css";
-import "@manifest-editor/components/dist/index.css";
+import "exhibition-viewer/dist/lib.css";
+import "@manifest-editor/components/dist/lib.css";
 import "@manifest-editor/exhibition-preset/dist/index.css";
-import "@manifest-editor/manifest-preset/dist/index.css";
 import { Posthog } from "../components/PostHog";
+import { SiteProvider } from "../components/site/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -8,16 +8,16 @@ import {
   AppProvider,
   Layout,
   type MappedApp,
-  ShellProvider,
   mapApp,
+  ShellProvider,
   useDecayState,
   useSaveVault,
 } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import "@manifest-editor/exhibition-preset/dist/index.css";
+// import "@manifest-editor/exhibition-preset/dist/index.css";
 import { type SVGProps, useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-aria-components";
-import { VaultProvider, useExistingVault } from "react-iiif-vault";
+import { useExistingVault, VaultProvider } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 
 const presets: Record<string, MappedApp> = {
@@ -25,10 +25,7 @@ const presets: Record<string, MappedApp> = {
   exhibition: exhibitionEditorPreset,
 };
 
-export default function ExternalEditor({
-  manifest,
-  preset,
-}: { manifest: string; preset?: string }) {
+export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
   const vault = useMemo(() => {
     return new Vault();
   }, [manifest, preset]);
@@ -38,9 +35,7 @@ export default function ExternalEditor({
     return {};
   }, [preset]);
 
-  const resolvedPreset = (
-    preset ? presets[preset] || presets.manifest : presets.manifest
-  ) as MappedApp;
+  const resolvedPreset = (preset ? presets[preset] || presets.manifest : presets.manifest) as MappedApp;
 
   const [saved, setSaved] = useDecayState(5000);
 
@@ -67,10 +62,7 @@ export default function ExternalEditor({
 
       const manifestJson: any = await resp.json();
 
-      const loaded = vault.loadManifestSync(
-        manifestJson.id || manifestJson["@id"],
-        manifestJson,
-      );
+      const loaded = vault.loadManifestSync(manifestJson.id || manifestJson["@id"], manifestJson);
 
       if (!loaded) {
         return null;
@@ -97,9 +89,7 @@ export default function ExternalEditor({
   const onVaultSave = useCallback(() => {
     if (manifestData?.ref) {
       console.log("save");
-      const manifest = JSON.stringify(
-        vault.toPresentation3(manifestData.ref as any),
-      );
+      const manifest = JSON.stringify(vault.toPresentation3(manifestData.ref as any));
       if (lastSavedJson.current !== manifest) {
         setUnsavedChanges(true);
         setSaved.clear();
@@ -152,10 +142,7 @@ export default function ExternalEditor({
       <div className="flex-1 flex flex-col items-center">
         <div className="bg-gray-100 py-2 px-4 rounded flex gap-2">
           <span className="text-black/50">Remote resource:</span>
-          <a
-            className="text-me-primary-500 font-semibold underline"
-            href={manifest}
-          >
+          <a className="text-me-primary-500 font-semibold underline" href={manifest}>
             {manifest}
           </a>
         </div>
@@ -177,18 +164,8 @@ export default function ExternalEditor({
             isDisabled={isPending || !unsavedChanges}
             onPress={() => mutate({})}
           >
-            <CloudIcon
-              className="text-xl translate-y-0 transition-transform"
-              saved={saved}
-              saving={isPending}
-            />{" "}
-            {isPending
-              ? "Saving..."
-              : unsavedChanges
-                ? "Save changes"
-                : saved
-                  ? "Saved"
-                  : "No changes"}
+            <CloudIcon className="text-xl translate-y-0 transition-transform" saved={saved} saving={isPending} />{" "}
+            {isPending ? "Saving..." : unsavedChanges ? "Save changes" : saved ? "Saved" : "No changes"}
           </ActionButton>
         </div>
       </div>
@@ -198,11 +175,7 @@ export default function ExternalEditor({
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider
-          appId="manifest-editor"
-          definition={resolvedPreset}
-          instanceId={manifest}
-        >
+        <AppProvider appId="manifest-editor" definition={resolvedPreset} instanceId={manifest}>
           <VaultProvider vault={vault}>
             <ShellProvider resource={manifestData.ref} config={mergedConfig}>
               <Layout header={header} />

@@ -4,7 +4,7 @@ import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
-import { Fragment, memo, useContext, useLayoutEffect, useMemo } from "react";
+import { Fragment, memo, useContext, useLayoutEffect, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext } from "react-iiif-vault";
 import { Transition, type TransitionStatus } from "react-transition-group";
@@ -41,6 +41,8 @@ export const Layout = memo(function Layout(props: LayoutProps) {
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
   const vault = _vault || undefined;
+  const leftPanelRef = useRef<HTMLDivElement | null>(null);
+  const rightPanelRef = useRef<HTMLDivElement | null>(null);
   const { loading, state, leftPanels, centerPanels, rightPanels, modals = [], actions } = layout;
   const leftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
@@ -379,10 +381,20 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         ) : null}
 
         {leftPanels.length > 0 ? (
-          <Transition in={state.leftPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
+          <Transition
+            nodeRef={leftPanelRef}
+            in={state.leftPanel.open}
+            timeout={enableMotion ? 400 : 0}
+            unmountOnExit={false}
+          >
             {(transition) => (
               <>
-                <L.LeftPanel $width={leftPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                <L.LeftPanel
+                  ref={leftPanelRef}
+                  $width={leftPanelResizer.widthB}
+                  $state={transition}
+                  $motion={enableMotion}
+                >
                   {renderLeftPanel(transition)}
                 </L.LeftPanel>
                 <HandleControls
@@ -399,7 +411,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
         ) : null}
         <L.CenterPanel>{renderCenterPanel()}</L.CenterPanel>
         {rightPanels.length > 0 ? (
-          <Transition in={state.rightPanel.open} timeout={enableMotion ? 400 : 0} unmountOnExit={false}>
+          <Transition
+            nodeRef={rightPanelRef}
+            in={state.rightPanel.open}
+            timeout={enableMotion ? 400 : 0}
+            unmountOnExit={false}
+          >
             {(transition) => (
               <>
                 <HandleControls
@@ -409,7 +426,12 @@ export const Layout = memo(function Layout(props: LayoutProps) {
                   open={state.rightPanel.open}
                   actions={actions.rightPanel}
                 />
-                <L.RightPanel $width={rightPanelResizer.widthB} $state={transition} $motion={enableMotion}>
+                <L.RightPanel
+                  ref={rightPanelRef}
+                  $width={rightPanelResizer.widthB}
+                  $state={transition}
+                  $motion={enableMotion}
+                >
                   {renderRightPanel(transition)}
                 </L.RightPanel>
               </>

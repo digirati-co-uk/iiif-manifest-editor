@@ -6,11 +6,12 @@ export function SelectionCheckbox({ alwaysVisible }: { alwaysVisible?: boolean }
     <Checkbox
       slot="selection"
       className={twMerge(
+        "bg-white/50",
         "group-hover:opacity-100 block h-5 w-5 shrink-0 rounded border border-gray-300 hover:border-gray-400 ring-offset-1",
-        "data-[disabled]:hidden data-[indeterminate]:bg-me-primary-500 data-[selected]:bg-me-primary-500 data-[indeterminate]:text-white",
-        "data-[selected]:border-me-primary-500 data-[indeterminate]:border-me-primary-500",
+        "data-[disabled]:hidden data-[indeterminate]:bg-me-700 data-[selected]:bg-me-700 data-[indeterminate]:text-white",
+        "data-[selected]:border-me-700 data-[indeterminate]:border-me-700",
         "data-[selected]:text-white data-[disabled]:opacity-50 data-[focus-visible]:outline-none data-[focus-visible]:ring-2",
-        "data-[focus-visible]:ring-me-primary-500 data-[focus-visible]:ring-offset-2 data-[focus-visible]:opacity-100",
+        "data-[focus-visible]:ring-me-700 data-[focus-visible]:ring-offset-2 data-[focus-visible]:opacity-100",
         !alwaysVisible &&
           "opacity-0 group-hover:opacity-100 data-[selected]:opacity-100 data-[indeterminate]:opacity-100",
       )}

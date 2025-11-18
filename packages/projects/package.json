@@ -37,7 +37,7 @@
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.5.1",
+    "@iiif/helpers": "catalog:",
     "@iiif/parser": "^2.2.0",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
@@ -45,11 +45,11 @@
     "@manifest-editor/shell": "workspace:*",
     "immer": "^10.0.4",
     "localforage": "^1.10.0",
-    "react": "^18.3.1",
+    "react": "catalog:",
     "react-accessible-dropdown-menu-hook": "4.0.0",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "2.0.2",
-    "styled-components": "6.1.8",
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "styled-components": "catalog:",
     "tiny-use-debounce": "^1.0.4"
   },
   "devDependencies": {
