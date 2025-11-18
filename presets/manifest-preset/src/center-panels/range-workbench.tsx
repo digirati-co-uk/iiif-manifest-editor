@@ -534,6 +534,6 @@ function RangeWorkbench() {
         </div>
       ) : null}
       <div id="workbench-bottom" ref={bottomRef} />
-    </Activity>
+    </div>
   );
 }
