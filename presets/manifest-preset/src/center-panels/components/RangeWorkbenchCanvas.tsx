@@ -10,6 +10,7 @@ import {
   useCanvas,
 } from "react-iiif-vault";
 import { ArrowBackwardIcon, ArrowForwardIcon } from "../../icons";
+import { ActionButton } from "@manifest-editor/components";
 
 export function RangeWorkbenchCanvas(props: {
   range: RangeTableOfContentsNode;
@@ -63,13 +64,6 @@ export function RangeWorkbenchCanvas(props: {
 
   return (
     <div className="relative w-full h-[85vh] flex flex-col pr-3">
-      <Button
-        onPress={props.onBack}
-        className="absolute top-3 left-3 z-20 bg-white/90 px-3 py-3 rounded shadow hover:bg-gray-100 text-sm"
-      >
-        Close
-      </Button>
-
       <CanvasContext canvas={ctxCanvasId}>
         <CanvasPanel.Viewer className="h-[85vh]">
           <CanvasPanel.RenderCanvas

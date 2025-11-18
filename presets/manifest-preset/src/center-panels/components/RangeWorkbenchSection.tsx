@@ -33,6 +33,7 @@ import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
+import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 
 export function RangeWorkbenchSection({
   range,

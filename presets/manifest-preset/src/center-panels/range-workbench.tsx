@@ -29,7 +29,7 @@ import {
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
-import { SplitRangeIcon } from "../icons";
+import { ArrowBackwardIcon, SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
@@ -118,26 +118,27 @@ function RangeWorkbench() {
       return;
     }
 
-    const items = topLevelRange.items || [];
-    const firstCanvas = items.find((item: any) => item.type === "Canvas");
+    // Don't auto-set preview if we just cleared it intentionally
+    setPreview((prev) => {
+      if (prev === null) return null; // Keep it null if we cleared it
 
-    if (firstCanvas) {
-      setPreview((prev) => {
-        if (
-          prev &&
-          prev.range.id === topLevelRange.id &&
-          prev.canvas.id === firstCanvas.id
-        )
+      const items = topLevelRange.items || [];
+      const firstCanvas = items.find((item: any) => item.type === "Canvas");
+
+      if (firstCanvas) {
+        // Only update if preview is for a different range
+        if (prev?.range.id === topLevelRange.id) {
           return prev;
+        }
         return {
           range: topLevelRange as RangeTableOfContentsNode,
           canvas: firstCanvas as RangeTableOfContentsNode,
         };
-      });
-    } else {
-      setPreview(null);
-    }
+      }
+      return null;
+    });
   }, [topLevelRange?.id]);
+
 
   const rangeEditor = useGenericEditor(
     topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
@@ -418,7 +419,10 @@ function RangeWorkbench() {
 
       {preview && (
         <div className="border-b border-gray-200">
-          <div className="flex bg-white sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
+          <div className="flex bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
+            <ActionButton onPress={() => setPreview(null)}>
+              <ArrowBackwardIcon className="text-xl" />
+            </ActionButton>
             {isEditingLabel && !topLevelRange.isVirtual ? (
               <InlineLabelEditor
                 className="text-base font-normal mt-1"
@@ -428,7 +432,7 @@ function RangeWorkbench() {
               />
             ) : (
               <>
-                <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0">
+                <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0 text-white">
                   {previewRangeLabel}
                 </LocaleString>
                 <MenuTrigger>
@@ -505,6 +509,7 @@ function RangeWorkbench() {
                   : ""
               }
               onPreviewCanvas={handlePreviewCanvas}
+              onClosePreview={() => setPreview(null)}
             />
           );
         })}
@@ -529,6 +534,6 @@ function RangeWorkbench() {
         </div>
       ) : null}
       <div id="workbench-bottom" ref={bottomRef} />
-    </div>
+    </Activity>
   );
 }
