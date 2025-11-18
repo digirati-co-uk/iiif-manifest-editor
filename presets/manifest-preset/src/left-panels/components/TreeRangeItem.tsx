@@ -4,6 +4,8 @@ import {
   ActionButton,
   AddImageIcon,
   DeleteForeverIcon,
+  ListResizeDragHandle,
+  MoreMenuButton,
   MoreMenuIcon,
   SelectionCheckbox,
 } from "@manifest-editor/components";
@@ -16,9 +18,10 @@ import {
   useLayoutActions,
   useManifestEditor,
 } from "@manifest-editor/shell";
+import { MinusIcon } from "@manifest-editor/ui/icons/MinusIcon";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { usePress } from "react-aria";
 import type { Key, TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
@@ -34,13 +37,15 @@ import {
 } from "react-aria-components";
 import { flushSync } from "react-dom";
 import { LocaleString, useVault } from "react-iiif-vault";
-import { twMerge } from "tailwind-merge";
+import { twJoin, twMerge } from "tailwind-merge";
+import { RangesIcon } from "../../icons";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { useRangeTreeOptions } from "./RangeTree";
 
 interface TreeRangeItemProps extends Partial<TreeItemProps> {
   range: RangeTableOfContentsNode;
   parentId?: string;
+  expandRangeItem: (range: RangeTableOfContentsNode, collapse?: boolean) => void;
 }
 
 export function TreeRangeItem(props: TreeRangeItemProps) {
@@ -49,6 +54,8 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const creator = useInlineCreator();
   const { back } = useEditingStack();
   const { edit } = useLayoutActions();
+  const popoverRef = useRef<HTMLElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const vault = useVault();
   const isActive = props.range.id === range?.resource.source?.id;
@@ -161,12 +168,26 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
   return (
     <TreeItem
+      onContextMenu={(e) => {
+        if (isEditing) return;
+        if (e.button === 2) {
+          e.preventDefault();
+          flushSync(() => {
+            setIsMenuOpen(true);
+          });
+          if (popoverRef.current) {
+            popoverRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+          }
+        }
+      }}
       className={twMerge(
         "react-aria-TreeItem hover:bg-gray-100 flex items-center gap-2 p-1.5",
         "data-[dragging]:opacity-50 data-[drop-target]:bg-me-primary-500 data-[drop-target]:text-white",
+        isMenuOpen ? "bg-me-200" : "",
         isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
         isNoNav ? "opacity-40" : "",
       )}
+      data-menu-open={isMenuOpen}
       data-active={isActive}
       data-parent-active={props.parentId === activeId}
       textValue={getValue(props.range.label)}
@@ -178,7 +199,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         {({ isExpanded, selectionBehavior, selectionMode }: TreeItemContentRenderProps) => (
           <>
             {hasVisibleChildren ? (
-              <Button slot="chevron" className="hover:bg-gray-300 rounded">
+              <Button slot="chevron" className={twJoin("rounded", isActive ? "hover:bg-me-500" : "hover:bg-gray-300")}>
                 <ChevronDownIcon
                   className={"text-xl"}
                   style={{
@@ -203,12 +224,16 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
             <div
               className={twMerge(
-                "flex items-center gap-2 border-b border-gray-200 flex-1 min-w-0",
+                "flex items-center gap-2 flex-1 min-w-0",
                 !showCanvases && props.range.isRangeLeaf && "border-transparent",
-                isActive && "border-transparent",
               )}
             >
-              <LocaleString className="truncate whitespace-nowrap flex-1 min-w-0">
+              <LocaleString
+                className={twMerge(
+                  "truncate whitespace-nowrap flex-1 min-w-0 border-b border-gray-200",
+                  (isMenuOpen || isActive) && "border-transparent",
+                )}
+              >
                 {props.range.label || "Untitled range"}
               </LocaleString>
 
@@ -218,44 +243,48 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                 </div>
               ) : null}
 
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <MenuTrigger>
-                    <ActionButton>
-                      <MoreMenuIcon className="text-lg" />
-                    </ActionButton>
-                    <Popover className="bg-white shadow-md rounded-md p-1">
-                      <Menu>
-                        <MenuItem
-                          onAction={() => insertEmptyRange(props.range)}
-                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                        >
-                          <PlusIcon /> Insert empty range
-                        </MenuItem>
-                        <MenuItem
-                          onAction={() => insertSequenceRange(props.range)}
-                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                        >
-                          <AddImageIcon /> Insert full range
-                        </MenuItem>
-                        <MenuItem
-                          onAction={() =>
-                            window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
-                          }
-                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
-                        >
-                          <DeleteForeverIcon /> Delete range item
-                        </MenuItem>
-                      </Menu>
-                    </Popover>
-                  </MenuTrigger>
-                  {!!props.parentId && (
-                    <Button slot="drag">
-                      <ResizeHandleIcon className="text-xl" />
-                    </Button>
-                  )}
-                </div>
-              ) : null}
+              <div className="flex items-center gap-2">
+                <MenuTrigger isOpen={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                  {isEditing ? <MoreMenuButton /> : null}
+                  <Popover ref={popoverRef} className="bg-white shadow-md rounded-md p-1">
+                    <Menu>
+                      <MenuItem
+                        onAction={() => insertEmptyRange(props.range)}
+                        className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                      >
+                        <RangesIcon /> Insert empty range
+                      </MenuItem>
+                      <MenuItem
+                        onAction={() => props.expandRangeItem(props.range, false)}
+                        className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                      >
+                        <PlusIcon /> Expand all
+                      </MenuItem>
+                      <MenuItem
+                        onAction={() => props.expandRangeItem(props.range, true)}
+                        className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                      >
+                        <MinusIcon /> Collapse all
+                      </MenuItem>
+
+                      {props.parentId ? (
+                        <>
+                          {/* */}
+                          <MenuItem
+                            onAction={() =>
+                              window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                            }
+                            className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
+                          >
+                            <DeleteForeverIcon /> Delete range item
+                          </MenuItem>
+                        </>
+                      ) : null}
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+                {isEditing && !!props.parentId && <ListResizeDragHandle />}
+              </div>
             </div>
           </>
         )}
