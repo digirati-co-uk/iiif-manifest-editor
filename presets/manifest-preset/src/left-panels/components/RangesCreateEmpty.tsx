@@ -1,10 +1,4 @@
-import {
-  ActionButton,
-  AddIcon,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
+import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
 
 export function RangeCreateEmpty() {
@@ -59,8 +53,8 @@ export function RangeCreateEmpty() {
       <SidebarContent>
         <div className="flex flex-col items-center justify-center p-4">
           <div className="p-4 opacity-50 text-center">
-            This manifest does not yet have a range(s). If you want to offer
-            navigation, such as a table of contents, you can create a range.
+            This manifest does not yet have a range(s). If you want to offer navigation, such as a table of contents,
+            you can create a range.
           </div>
 
           <ActionButton large primary onPress={() => createTopLevelRange()}>
