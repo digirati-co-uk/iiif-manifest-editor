@@ -345,7 +345,7 @@ function RangeWorkbench() {
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
       {!preview && (
-        <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+        <div className="z-50 flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
           <div className="flex items-center gap-4">
             {hasParent ? (
               <ActionButton onPress={() => goToParent()}>
