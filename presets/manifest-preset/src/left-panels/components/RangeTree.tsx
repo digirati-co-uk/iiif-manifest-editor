@@ -3,7 +3,7 @@ import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Collection, type DropItem, type Key, Tree, useDragAndDrop } from "react-aria-components";
 import { CanvasContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { create } from "zustand";
@@ -50,7 +50,7 @@ export const useRangeTreeOptions = create<{
   toggleIsEditing: () => void;
 }>()((set, get) => {
   return {
-    showCanvases: false,
+    showCanvases: true,
     toggleShowCanvases() {
       set((e) => ({ showCanvases: !e.showCanvases }));
     },
@@ -316,31 +316,56 @@ export function RangeTree(props: RangeTreeProps) {
     },
   });
 
+  const expandRangeItem = useCallback((range: RangeTableOfContentsNode, collapse?: boolean) => {
+    if (range.isCanvasLeaf) return;
+
+    const itemIds = (range.items || []).map((item) => item.id);
+
+    if (collapse) {
+      setExpandedKeys((keys) => {
+        return Array.from(keys).filter((key) => !itemIds.includes(key.toString()));
+      });
+      return;
+    }
+
+    setExpandedKeys((keys) => {
+      return Array.from(
+        new Set([
+          //
+          ...keys,
+          range.id,
+          ...itemIds,
+        ]),
+      );
+    });
+  }, []);
+
   return (
-    <>
-      <div className="flex gap-2">
-        <SmallButton onClick={() => setExpandedKeys(expandAllKeys)}>Expand all</SmallButton>
-        <SmallButton onClick={() => setExpandedKeys([])}>Collapse all</SmallButton>
-        <SmallButton onClick={toggleShowCanvases}>{showCanvases ? "Hide canvases" : "Show canvases"}</SmallButton>
-      </div>
-      <Tree
-        aria-label={getValue(range.label)}
-        items={rangeItems}
-        expandedKeys={expandedKeys}
-        dragAndDropHooks={dragAndDropHooks}
-        onExpandedChange={setExpandedKeys}
-        selectionMode={isEditing ? "multiple" : "single"}
-        selectionBehavior="toggle"
-      >
-        {function renderItem(item) {
-          return <RenderItem item={item} />;
-        }}
-      </Tree>
-    </>
+    <Tree
+      aria-label={getValue(range.label)}
+      items={rangeItems}
+      expandedKeys={expandedKeys}
+      dragAndDropHooks={dragAndDropHooks}
+      onExpandedChange={setExpandedKeys}
+      selectionMode={isEditing ? "multiple" : "single"}
+      selectionBehavior="toggle"
+    >
+      {function renderItem(item) {
+        return <RenderItem item={item} expandRangeItem={expandRangeItem} />;
+      }}
+    </Tree>
   );
 }
 
-function RenderItem({ item, parent }: { item: RangeTableOfContentsNode; parent?: RangeTableOfContentsNode }) {
+function RenderItem({
+  item,
+  parent,
+  expandRangeItem,
+}: {
+  item: RangeTableOfContentsNode;
+  parent?: RangeTableOfContentsNode;
+  expandRangeItem: (range: RangeTableOfContentsNode, collapse?: boolean) => void;
+}) {
   const { showCanvases } = useRangeTreeOptions();
   if (item.type === "Canvas") {
     if (!item.resource || !showCanvases) {
@@ -355,8 +380,10 @@ function RenderItem({ item, parent }: { item: RangeTableOfContentsNode; parent?:
   }
 
   return (
-    <TreeRangeItem range={item} hasChildItems={!!item.items} parentId={parent?.id}>
-      <Collection items={item.items || []}>{(t) => <RenderItem item={t} parent={item} />}</Collection>
+    <TreeRangeItem range={item} hasChildItems={!!item.items} parentId={parent?.id} expandRangeItem={expandRangeItem}>
+      <Collection items={item.items || []}>
+        {(t) => <RenderItem item={t} parent={item} expandRangeItem={expandRangeItem} />}
+      </Collection>
     </TreeRangeItem>
   );
 }
