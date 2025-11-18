@@ -13,13 +13,11 @@ export * from "./ControlButton";
 export * from "./CreatorGrid";
 export * from "./DownloadButton";
 export * from "./EmptyState";
-// Messages
 export * from "./ErrorMessage";
 export * from "./Forms";
 export * from "./HandleContainer";
 export * from "./HTMLAnnotationBodyRender";
 export * from "./HTMLEditor";
-// Helpers
 export * from "./hooks";
 export * from "./IconButton";
 export * from "./IIIFMediaPlayer";
@@ -33,7 +31,6 @@ export * from "./icons/AudioIcon";
 export * from "./icons/BackIcon";
 export * from "./icons/CheckIcon";
 export * from "./icons/CollectionIcon";
-// Icons
 export * from "./icons/CreateCanvasIcon";
 export * from "./icons/DeleteForeverIcon";
 export * from "./icons/DeleteIcon";
@@ -52,22 +49,24 @@ export * from "./icons/ManifestIcon";
 export * from "./icons/MoreMenu";
 export * from "./icons/PreviewIcon";
 export * from "./icons/RangesIcon";
+export * from "./icons/ResizeHandleIcon";
 export * from "./icons/ScaledImageIcon";
 export * from "./icons/TargetIcon";
 export * from "./icons/TextIcon";
 export * from "./icons/VideoIcon";
 export * from "./icons/YouTubeIcon";
 export * from "./LazyThumbnail";
+export * from "./ListResizeDragHandle";
 export * from "./ManifestEditorLogo";
 export * from "./ManifestListItem";
 export * from "./ManifestOverviewEmptyState";
 export * from "./MDXEditor";
 export * from "./MetadataContainer";
 export * from "./Modal";
+export * from "./MoreMenuButton";
 export * from "./OnboardingTour";
 export * from "./OpaqueControls";
 export * from "./PanelSideMenu";
-// Renderers
 export * from "./RenderTextualContent";
 export * from "./SelectionCheckbox";
 export * from "./Sidebar";
