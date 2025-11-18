@@ -1,4 +1,4 @@
-import { Callout } from 'nextra/components'
+import { Callout } from "nextra/components";
 
 # Editing a Manifest
 
@@ -6,39 +6,46 @@ import { Callout } from 'nextra/components'
 
 After selecting to open an existing manifest, or creating a new manifest (see [Getting started](./getting-started)) the Manifest Editor opens in the default workbench view:
 
-![Standard Manifest Editor workbench](../../public/manifest-editing-overview-1.PNG)
+![Standard Manifest Editor workbench](../../public/manifest-editing-overview-1.png)
 
 The Manifest summary information is presented in the left panel, with the detailed metadata information in the right metadata panel, together with any canvases that are present in the manifest displayed in the central panel.
 
 In the right metadata panel, you will see any completed properties in the “Overview” tab. This makes is easy to make quick edits without going through all the available properties or searching through the tabs. The tabs are organized in the same way as the IIIF Presentation API documentation. You can click on a tab to see all the properties that are available.
 
-Some resources have a lot of properties. You can click on the “more” tab to see other tabs that are not shown by default. 
+Some resources have a lot of properties. You can click on the “more” tab to see other tabs that are not shown by default.
 
 You can also resize either of the two sizebars to make more room for the editor by dragging the divider between the sidebar and the main panel.
-
 
 ## Navigating the editor layout
 
 ### Editing Manifest metadata
 
-When you first open a manifest in the editor, you will see any Manifest summary in the left panel. You can start to edit the Manifest properties using the right metadata panel, with your changes to metadata properties (including the Label and Summary) reflected in the Manifest summary, autosaving as you edit.  
+When you first open a manifest in the editor, you will see any Manifest summary in the left panel. You can start to edit the Manifest properties using the right metadata panel, with your changes to metadata properties (including the Label and Summary) reflected in the Manifest summary, autosaving as you edit.
 
 ### Editing Canvases
 
 If you click on an existing canvas, displayed in the central panel the editor will switch to editing the properties of that canvas. Alternatively, you can select the "Canvases" icon in the left toolbar, which will
 open the Canvas view. You can get back to editing the manifest properties by clicking on the "Information" icon (Manifest Summary) in the sidebar.
 
-<video src="/Navigating to Canvas view.mp4" autoplay loop muted controls playsinline style={{ margin: '3em 0' }} />
+<video
+  src="/Navigating to Canvas view.mp4"
+  autoPlay
+  loop
+  muted
+  controls
+  playsInline
+  style={{ margin: "3em 0" }}
+/>
 
 The Canvas view presents the list of available canvases in the left hand panel. You can access the list of canvases contained in the manifest using the list view or using a grid view of thumbnails.
 
 The selected canvas is presented in the central view with deep zoom controls, with the right hand panel opening the detailed metadata for the selected Canvas.
 
-![Canvas selected](../../public/manifest-editing-overview-2-canvas-selected.PNG)
-
+![Canvas selected](../../public/manifest-editing-overview-2-canvas-selected.png)
 
 ### Deep zoom controls
-![](../../public/manifest-editing-overview-deep-zoom-1.PNG)
+
+![](../../public/manifest-editing-overview-deep-zoom-1.png)
 
 When you select a canvas, you can deep zoom into the image by using the zoom controls at the top right of the main panel. You can also pan around the image by clicking and dragging.
 
@@ -58,7 +65,15 @@ The right metadata panel with tabs for each aspect of the IIIF specification, pr
 
 This example demonstrates adding a required statement to a Manifest.
 
-<video src="/required-statement.mp4" autoplay loop muted controls playsinline style={{ margin: '3em 0' }} />
+<video
+  src="/required-statement.mp4"
+  autoPlay
+  loop
+  muted
+  controls
+  playsInline
+  style={{ margin: "3em 0" }}
+/>
 
 ## Ordering the canvases in your manifest
 
@@ -66,7 +81,7 @@ As you create your new Manifest or edit an existing Manifest, you may want to ch
 
 ![Adjusting the order of canvases](../../public/manifest-editing-overview-edit-canvas-order-1.png)
 
-To edit and change the structure of your Manifest, select the 'Edit Canvases' link to access the controls in both the list or grid views. Use the '=' icon to select and drag a canvas to a specific location in the list or use the options available via the 'three dots' icon.  
+To edit and change the structure of your Manifest, select the 'Edit Canvases' link to access the controls in both the list or grid views. Use the '=' icon to select and drag a canvas to a specific location in the list or use the options available via the 'three dots' icon.
 
 ![Use the three dots menu](../../public/manifest-editing-overview-edit-canvas-order-2.png)
 
@@ -74,4 +89,4 @@ To edit and change the structure of your Manifest, select the 'Edit Canvases' li
 
 When you make changes to your Manifest, you can preview the changes in a number of IIIF viewers that are configured and available within the Manifest Editor including Theseus, Universal Viewer, Mirador and others.
 
-![Previewing a change](../../public/manifest-editing-preview-1.PNG)
+![Previewing a change](../../public/manifest-editing-preview-1.png)

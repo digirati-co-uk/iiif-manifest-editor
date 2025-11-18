@@ -1,0 +1,8 @@
+server:
+  url: http://localhost:7111
+
+stores:
+  content:
+    type: iiif-json
+    path: ./content
+    pattern: "**/*.json"
