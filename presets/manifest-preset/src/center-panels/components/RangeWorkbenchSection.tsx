@@ -25,7 +25,6 @@ import {
 } from "react-aria-components";
 import {
   CanvasContext,
-  LanguageString,
   LocaleString,
   useVault,
 } from "react-iiif-vault";
@@ -125,8 +124,6 @@ export function RangeWorkbenchSection({
   const firstCanvasId = (range.items ?? []).find(
     (i) => i.type === "Canvas",
   )?.id;
-
-  const oldLabel = JSON.parse(JSON.stringify(range.label));
 
   return (
     <>

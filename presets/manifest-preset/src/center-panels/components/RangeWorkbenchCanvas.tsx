@@ -62,7 +62,7 @@ export function RangeWorkbenchCanvas(props: {
   const ctxCanvasId = canvasRef?.id ?? canvasId!;
 
   return (
-    <div className="relative w-full h-[90vh] flex flex-col">
+    <div className="relative w-full h-[90vh] flex flex-col pr-3">
       <Button
         onPress={props.onBack}
         className="absolute top-3 left-3 z-20 bg-white/90 px-3 py-3 rounded shadow hover:bg-gray-100 text-sm"

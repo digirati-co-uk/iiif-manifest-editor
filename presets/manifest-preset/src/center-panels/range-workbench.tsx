@@ -122,8 +122,13 @@ function RangeWorkbench() {
     const firstCanvas = items.find((item: any) => item.type === "Canvas");
 
     if (firstCanvas) {
-      setPreview(prev => {
-        if (prev && prev.range.id === topLevelRange.id && prev.canvas.id === firstCanvas.id) return prev;
+      setPreview((prev) => {
+        if (
+          prev &&
+          prev.range.id === topLevelRange.id &&
+          prev.canvas.id === firstCanvas.id
+        )
+          return prev;
         return {
           range: topLevelRange as RangeTableOfContentsNode,
           canvas: firstCanvas as RangeTableOfContentsNode,
@@ -340,54 +345,54 @@ function RangeWorkbench() {
   return (
     <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
       {!preview && (
-      <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
-        <div className="flex items-center gap-4">
-          {hasParent ? (
-            <ActionButton onPress={() => goToParent()}>
-              <ArrowUpIcon className="text-xl" />
-            </ActionButton>
-          ) : null}
-          {isEditingLabel && !topLevelRange.isVirtual ? (
-            <InlineLabelEditor
-              className=""
-              resource={topLevelRange}
-              onSubmit={() => setIsEditingLabel(false)}
-              onCancel={() => setIsEditingLabel(false)}
-            />
-          ) : (
-            <LocaleString as="h3" className="text-xl text-white">
-              {topLevelRange.label}
-            </LocaleString>
-          )}
-          <MenuTrigger>
-            <ActionButton>
-              <MoreMenuIcon className="text-xl" />
-            </ActionButton>
-            <Popover className="bg-white shadow-md rounded-md p-1">
-              <Menu>
-                <MenuItem
-                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                  onAction={() => setIsEditingLabel(true)}
-                >
-                  <EditIcon />
-                  Edit range label
-                </MenuItem>
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-          {!isSplitting &&
-            (topLevelRange?.items?.length ?? 0) > 0 &&
-            !topLevelRange.isRangeLeaf && (
-              <ActionButton onPress={() => setIsSplitting(true)}>
-                <SplitRangeIcon className="text-xl" /> Split range
+        <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+          <div className="flex items-center gap-4">
+            {hasParent ? (
+              <ActionButton onPress={() => goToParent()}>
+                <ArrowUpIcon className="text-xl" />
               </ActionButton>
+            ) : null}
+            {isEditingLabel && !topLevelRange.isVirtual ? (
+              <InlineLabelEditor
+                className=""
+                resource={topLevelRange}
+                onSubmit={() => setIsEditingLabel(false)}
+                onCancel={() => setIsEditingLabel(false)}
+              />
+            ) : (
+              <LocaleString as="h3" className="text-xl text-white">
+                {topLevelRange.label}
+              </LocaleString>
             )}
+            <MenuTrigger>
+              <ActionButton>
+                <MoreMenuIcon className="text-xl" />
+              </ActionButton>
+              <Popover className="bg-white shadow-md rounded-md p-1">
+                <Menu>
+                  <MenuItem
+                    className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                    onAction={() => setIsEditingLabel(true)}
+                  >
+                    <EditIcon />
+                    Edit range label
+                  </MenuItem>
+                </Menu>
+              </Popover>
+            </MenuTrigger>
+            {!isSplitting &&
+              (topLevelRange?.items?.length ?? 0) > 0 &&
+              !topLevelRange.isRangeLeaf && (
+                <ActionButton onPress={() => setIsSplitting(true)}>
+                  <SplitRangeIcon className="text-xl" /> Split range
+                </ActionButton>
+              )}
 
-          <RangeOnboarding />
+            <RangeOnboarding />
+          </div>
+
+          {gridOptions}
         </div>
-
-        {gridOptions}
-      </div>
       )}
 
       {isSplitting ? (
@@ -400,7 +405,41 @@ function RangeWorkbench() {
       ) : null}
 
       {preview && (
-        <div className="my-4 border-b border-gray-200">
+        <div className="border-b border-gray-200">
+          <div className="flex bg-white sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
+            {isEditingLabel ? (
+              <InlineLabelEditor
+                className="text-base font-normal mt-1"
+                resource={preview.range}
+                onSubmit={() => setIsEditingLabel(false)}
+                onCancel={() => setIsEditingLabel(false)}
+              />
+            ) : (
+              <>
+                {isEditingLabel ? null : (
+                  <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0">
+                    {preview.range.label || "Untitled range"}
+                  </LocaleString>
+                )}
+                <MenuTrigger>
+                  <ActionButton>
+                    <MoreMenuIcon className="text-xl" />
+                  </ActionButton>
+                  <Popover className="bg-white shadow-md rounded-md p-1">
+                    <Menu>
+                      <MenuItem
+                        className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                        onAction={() => setIsEditingLabel(true)}
+                      >
+                        <EditIcon />
+                        Edit range label
+                      </MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              </>
+            )}
+          </div>
           <RangeWorkbenchCanvas
             range={preview.range}
             canvas={preview.canvas}
@@ -412,46 +451,53 @@ function RangeWorkbench() {
         </div>
       )}
       {!preview &&
-      (topLevelRange.items || []).map((item, idx) => {
-        if (item.type === "Canvas") {
-          return null;
-        }
+        (topLevelRange.items || []).map((item, idx) => {
+          if (item.type === "Canvas") {
+            return null;
+          }
 
-        const prevIdx = idx - 1;
-        const nextIdx = idx + 1;
+          const prevIdx = idx - 1;
+          const nextIdx = idx + 1;
 
-        const nextRangeLabel =
-          nextIdx !== topLevelRange.items?.length &&
-          topLevelRange.items?.[nextIdx]?.items?.length === 0
-            ? getValue(topLevelRange.items?.[nextIdx]?.label)
-            : getNextRangeLabel(item.label);
+          const nextRangeLabel =
+            nextIdx !== topLevelRange.items?.length &&
+            topLevelRange.items?.[nextIdx]?.items?.length === 0
+              ? getValue(topLevelRange.items?.[nextIdx]?.label)
+              : getNextRangeLabel(item.label);
 
-        return (
-          <RangeWorkbenchSection
-            key={item.id}
-            idx={idx}
-            isSplitting={isSplitting}
-            onSplit={onSplit}
-            range={item}
-            onMergeUp={
-              idx !== 0
-                ? (r, empty) =>
-                    onMerge(item, topLevelRange.items?.[prevIdx]!, empty)
-                : undefined
-            }
-            onMergeDown={
-              topLevelRange.items?.[nextIdx]
-                ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
-                : undefined
-            }
-            nextRangeLabel={nextRangeLabel}
-            onDelete={() => onDelete(idx)}
-            mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
-            mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
-            onPreviewCanvas={handlePreviewCanvas}
-          />
-        );
-      })}
+          return (
+            <RangeWorkbenchSection
+              key={item.id}
+              idx={idx}
+              isSplitting={isSplitting}
+              onSplit={onSplit}
+              range={item}
+              onMergeUp={
+                idx !== 0
+                  ? (r, empty) =>
+                      onMerge(item, topLevelRange.items?.[prevIdx]!, empty)
+                  : undefined
+              }
+              onMergeDown={
+                topLevelRange.items?.[nextIdx]
+                  ? (r, empty) =>
+                      onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
+                  : undefined
+              }
+              nextRangeLabel={nextRangeLabel}
+              onDelete={() => onDelete(idx)}
+              mergeUpLabel={
+                prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""
+              }
+              mergeDownLabel={
+                nextIdx !== topLevelRange.items?.length
+                  ? topLevelRange.items?.[nextIdx]?.label
+                  : ""
+              }
+              onPreviewCanvas={handlePreviewCanvas}
+            />
+          );
+        })}
 
       {!preview && hasCanvases.length ? (
         <RangeContext range={topLevelRange.id}>
