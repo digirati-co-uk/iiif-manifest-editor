@@ -3,8 +3,19 @@ import invariant from "tiny-invariant";
 import { encrypt, generateId, getHeaders } from "../helpers";
 import type { RouteConfig } from "../types";
 
-export async function storeRoute(request: Request, params: any, config: RouteConfig): Promise<Response> {
-  const { storage, baseUrl, encryptedEnabled, expirationTtl, partLength, updateKeyLength } = config;
+export async function storeRoute(
+  request: Request,
+  params: any,
+  config: RouteConfig,
+): Promise<Response> {
+  const {
+    storage,
+    baseUrl,
+    encryptedEnabled,
+    expirationTtl,
+    partLength,
+    updateKeyLength,
+  } = config;
   const body: any = await request.json();
   const headers = getHeaders(request);
 
@@ -15,7 +26,10 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
   const type = body.type || body["@type"];
 
   invariant(
-    type === "Manifest" || type === "Collection" || type === "sc:Manifest" || type === "sc:Collection",
+    type === "Manifest" ||
+      type === "Collection" ||
+      type === "sc:Manifest" ||
+      type === "sc:Collection",
     "Invalid Type",
   );
 
@@ -34,7 +48,9 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
   const storeKey = encryptedEnabled ? key1 : key1 + key2;
 
   const data = vault.toPresentation3(manifest);
-  const manifestJson = encryptedEnabled ? await encrypt(JSON.stringify(data), key1) : JSON.stringify(data);
+  const manifestJson = encryptedEnabled
+    ? await encrypt(JSON.stringify(data), key1)
+    : JSON.stringify(data);
 
   await storage.put(
     storeKey,

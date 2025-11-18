@@ -1,7 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import "manifest-editor/dist/index.css";
+// import "manifest-editor/dist/index.css";
 import { Vault } from "@iiif/helpers";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";

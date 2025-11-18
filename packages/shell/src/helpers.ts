@@ -2,8 +2,10 @@ import { toRef } from "@iiif/parser";
 import type { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import type { AppExtension, MappedApp } from "./AppContext/AppContext";
 
-export async function getManifestNomalized(id: string): Promise<ManifestNormalized | undefined> {
-  let responseData: ManifestNormalized | undefined = undefined;
+export async function getManifestNomalized(
+  id: string,
+): Promise<ManifestNormalized | undefined> {
+  let responseData: ManifestNormalized | undefined;
   try {
     await fetch(id)
       .then((response) => {
@@ -20,13 +22,22 @@ export async function getManifestNomalized(id: string): Promise<ManifestNormaliz
   return responseData;
 }
 
-export function createActionIdentity(type: string, property: string, parent: any) {
+export function createActionIdentity(
+  type: string,
+  property: string,
+  parent: any,
+) {
   return `create_${type}_${property}_${toRef(parent)?.type || "unknown"}`;
 }
 
-export function createDownload(data: any, fileName: string, fileType = "text/json") {
+export function createDownload(
+  data: any,
+  fileName: string,
+  fileType = "text/json",
+) {
   // Create a blob with the data we want to download as a file
-  const blob = data instanceof Blob ? data : new Blob([data], { type: fileType });
+  const blob =
+    data instanceof Blob ? data : new Blob([data], { type: fileType });
   // Create an anchor element and dispatch a click event on it
   // to trigger a download
   const a = document.createElement("a");
@@ -42,14 +53,19 @@ export function createDownload(data: any, fileName: string, fileType = "text/jso
 }
 
 export async function copyToClipboard(json: string | any) {
-  return navigator.clipboard.writeText(typeof json === "string" ? json : JSON.stringify(json, null, 2));
+  return navigator.clipboard.writeText(
+    typeof json === "string" ? json : JSON.stringify(json, null, 2),
+  );
 }
 
 export function randomId() {
   return `${Math.random().toString(36).substr(2)}-${Date.now().toString(36)}`;
 }
 
-export function mapApp(input: any, map?: (app: MappedApp) => MappedApp): MappedApp {
+export function mapApp(
+  input: any,
+  map?: (app: MappedApp) => MappedApp,
+): MappedApp {
   const { default: metadata, config, ...props } = input;
   const app = {
     metadata: metadata as any,
@@ -65,7 +81,11 @@ export function mapApp(input: any, map?: (app: MappedApp) => MappedApp): MappedA
   return map ? map(app) : app;
 }
 
-export function extendApp(app: MappedApp, metadata: MappedApp["metadata"], extensions: AppExtension): MappedApp {
+export function extendApp(
+  app: MappedApp,
+  metadata: MappedApp["metadata"],
+  extensions: AppExtension,
+): MappedApp {
   return {
     ...app,
     metadata,
@@ -84,17 +104,39 @@ export function extendApp(app: MappedApp, metadata: MappedApp["metadata"], exten
         }),
         ...(extensions?.leftPanels || []),
       ],
-      annotations: [...(extensions?.annotations || []), ...(app.layout.annotations || [])],
-      canvasEditors: [...(extensions?.canvasEditors || []), ...(app.layout.canvasEditors || [])],
-      creators: [...(extensions?.creators || []), ...(app.layout.creators || [])],
+      annotations: [
+        ...(extensions?.annotations || []),
+        ...(app.layout.annotations || []),
+      ],
+      canvasEditors: [
+        ...(extensions?.canvasEditors || []),
+        ...(app.layout.canvasEditors || []),
+      ],
+      creators: [
+        ...(extensions?.creators || []),
+        ...(app.layout.creators || []),
+      ],
+      background: [
+        ...(app.layout?.background || []),
+        ...(extensions?.background || []),
+      ],
       editors: [
         //
         ...(extensions?.editors || []),
         ...(app.layout.editors || []),
       ],
-      rightPanels: [...(app.layout.rightPanels || []), ...(extensions?.rightPanels || [])],
-      centerPanels: [...(app.layout.centerPanels || []), ...(extensions?.centerPanels || [])],
-      modals: [...(app.layout.modals || []), ...(extensions?.modalPanels || [])],
+      rightPanels: [
+        ...(app.layout.rightPanels || []),
+        ...(extensions?.rightPanels || []),
+      ],
+      centerPanels: [
+        ...(app.layout.centerPanels || []),
+        ...(extensions?.centerPanels || []),
+      ],
+      modals: [
+        ...(app.layout.modals || []),
+        ...(extensions?.modalPanels || []),
+      ],
     },
   };
 }
