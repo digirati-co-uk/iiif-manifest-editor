@@ -345,6 +345,15 @@ function RangeWorkbench() {
     [selectedId, parentIndex],
   );
 
+  const previewRangeLabel = useVaultSelector(
+    (_, v) => {
+      if (!preview?.range?.id) return null;
+      const live = v.get(preview.range.id);
+      return live?.label ? getValue(live.label as InternationalString | null) : getValue(preview.range.label);
+    },
+    [preview?.range?.id],
+  );
+
   return (
     <div id="range-workbench-scroll" ref={scrollRef} className="flex-1 overflow-y-auto">
       {!preview && (
@@ -410,7 +419,7 @@ function RangeWorkbench() {
       {preview && (
         <div className="border-b border-gray-200">
           <div className="flex bg-white sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
-            {isEditingLabel ? (
+            {isEditingLabel && !topLevelRange.isVirtual ? (
               <InlineLabelEditor
                 className="text-base font-normal mt-1"
                 resource={preview.range}
@@ -419,11 +428,9 @@ function RangeWorkbench() {
               />
             ) : (
               <>
-                {isEditingLabel ? null : (
-                  <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0">
-                    {preview.range.label || "Untitled range"}
-                  </LocaleString>
-                )}
+                <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0">
+                  {previewRangeLabel}
+                </LocaleString>
                 <MenuTrigger>
                   <ActionButton>
                     <MoreMenuIcon className="text-xl" />
