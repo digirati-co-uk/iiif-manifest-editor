@@ -20,7 +20,7 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import {
   LocaleString,
@@ -203,46 +203,17 @@ function RangeWorkbench() {
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
 
-  const [isLastInView, setIsLastInView] = useState(false); // multi-section: last section visible within container
-  const [isAtEnd, setIsAtEnd] = useState(false); // single or multi: end of container reached
+  const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const [isBottomVisible, setIsBottomVisible] = useState(false);
 
   const rangeItems = (topLevelRange?.items ?? []).filter(
     (item: any): item is { id: string; type: "Range" } => item.type === "Range",
   );
   const rangeItemsLen = rangeItems.length;
-
-  useEffect(() => {
-    if (typeof window === "undefined" || rangeItemsLen === 0) {
-      setIsLastInView(false);
-      return;
-    }
-    const container = document.getElementById(
-      "range-workbench-scroll",
-    ) as HTMLElement | null;
-    const lastId = rangeItems[rangeItems.length - 1]?.id;
-    const last = lastId
-      ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null)
-      : null;
-    if (!container || !last) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => setIsLastInView(entry!.isIntersecting),
-      {
-        root: container,
-        threshold: 0,
-        rootMargin: "0px 0px -1px 0px",
-      },
-    );
-
-    io.observe(last);
-
-    const r = last.getBoundingClientRect();
-    const cr = container.getBoundingClientRect();
-    const visible = r.top < cr.bottom && r.bottom > cr.top;
-    setIsLastInView(!!visible);
-
-    return () => io.disconnect();
-  }, [rangeItemsLen, rangeItems]);
 
   useEffect(() => {
     const el = document.getElementById(
@@ -255,19 +226,41 @@ function RangeWorkbench() {
       setIsAtEnd(scrollTop + clientHeight >= scrollHeight - 2);
     };
 
-    const raf = requestAnimationFrame(compute);
+    compute();
+
     el.addEventListener("scroll", compute);
     const ro = new ResizeObserver(compute);
     ro.observe(el);
     window.addEventListener("resize", compute);
 
     return () => {
-      cancelAnimationFrame(raf);
       el.removeEventListener("scroll", compute);
       window.removeEventListener("resize", compute);
       ro.disconnect();
     };
   }, [topLevelRange?.id, rangeItemsLen, isSplitting, size]);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    const bottom = bottomRef.current;
+    if (!container || !bottom) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsBottomVisible(entry.isIntersecting);
+      },
+      {
+        root: container,
+        threshold: 0.01, // as soon as it *just* appears
+      },
+    );
+
+    observer.observe(bottom);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [rangeItemsLen, isSplitting, preview]);
 
   if (!topLevelRange) {
     return null;
@@ -277,15 +270,25 @@ function RangeWorkbench() {
     (item) => item.type === "Canvas",
   );
 
-  const firstId = rangeItems[0]?.id;
-  const lastId = rangeItems[rangeItems.length - 1]?.id;
+  const scrollToTop = useCallback(() => {
+    const el = scrollRef.current;
+    el?.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
-  const firstWorkbench = firstId
-    ? document.getElementById(`workbench-${firstId}`)
-    : null;
-  const lastWorkbench = lastId
-    ? document.getElementById(`workbench-bottom`)
-    : null;
+  const scrollToBottom = useCallback(() => {
+    const bottom = bottomRef.current;
+    const container = scrollRef.current;
+
+    if (bottom && container) {
+      bottom.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "end",
+      });
+    } else if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
+  }, []);
 
   const rootToc = useVaultSelector(
     (_, v) => {
@@ -343,7 +346,7 @@ function RangeWorkbench() {
   );
 
   return (
-    <div id="range-workbench-scroll" className="flex-1 overflow-y-auto">
+    <div id="range-workbench-scroll" ref={scrollRef} className="flex-1 overflow-y-auto">
       {!preview && (
         <div className="z-50 flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
           <div className="flex items-center gap-4">
@@ -505,75 +508,20 @@ function RangeWorkbench() {
         </RangeContext>
       ) : null}
 
-      {!preview && rangeItems.length === 1 ? (
+      {!preview && rangeItems.length > 0 ? (
         <div className="sticky bottom-5 float-right right-5">
-          {isAtEnd ? (
-            <ActionButton
-              primary
-              onPress={() => {
-                const el = document.getElementById(
-                  "range-workbench-scroll",
-                ) as HTMLElement | null;
-                el?.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-            >
+          {isBottomVisible ? (
+            <ActionButton primary onPress={scrollToTop}>
               Scroll to top <ArrowUpIcon />
             </ActionButton>
           ) : (
-            <ActionButton
-              primary
-              onPress={() => {
-                // scroll single section to its end (keeps your previous feel)
-                if (lastWorkbench) {
-                  lastWorkbench.scrollIntoView({
-                    behavior: "smooth",
-                    block: "end",
-                    inline: "end",
-                  });
-                } else {
-                  const el = document.getElementById(
-                    "range-workbench-scroll",
-                  ) as HTMLElement | null;
-                  el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-                }
-              }}
-            >
-              Scroll to bottom <ArrowDownIcon />
-            </ActionButton>
-          )}
-        </div>
-      ) : firstWorkbench && lastWorkbench && firstId !== lastId ? (
-        <div className="sticky bottom-5 float-right right-5">
-          {isLastInView ? (
-            <ActionButton
-              primary
-              onPress={() => {
-                firstWorkbench?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                  inline: "start",
-                });
-              }}
-            >
-              Scroll to top <ArrowUpIcon />
-            </ActionButton>
-          ) : (
-            <ActionButton
-              primary
-              onPress={() => {
-                lastWorkbench?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "end",
-                  inline: "end",
-                });
-              }}
-            >
+            <ActionButton primary onPress={scrollToBottom}>
               Scroll to bottom <ArrowDownIcon />
             </ActionButton>
           )}
         </div>
       ) : null}
-      <div id="workbench-bottom" />
+      <div id="workbench-bottom" ref={bottomRef} />
     </div>
   );
 }
