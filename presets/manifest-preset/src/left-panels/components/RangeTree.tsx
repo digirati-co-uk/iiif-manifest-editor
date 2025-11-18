@@ -333,6 +333,7 @@ export function RangeTree(props: RangeTreeProps) {
         new Set([
           //
           ...keys,
+          range.id,
           ...itemIds,
         ]),
       );
