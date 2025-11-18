@@ -7,7 +7,6 @@ import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import {
   ActionButton,
-  BackIcon,
   InfoMessage,
   MoreMenuIcon,
   useGridOptions,
@@ -22,7 +21,7 @@ import {
 } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import {
   LocaleString,
   RangeContext,
@@ -124,7 +123,7 @@ function RangeWorkbench() {
 
     if (firstCanvas) {
       setPreview(prev => {
-        if (prev && prev.range.id === topLevelRange.id) return prev;
+        if (prev && prev.range.id === topLevelRange.id && prev.canvas.id === firstCanvas.id) return prev;
         return {
           range: topLevelRange as RangeTableOfContentsNode,
           canvas: firstCanvas as RangeTableOfContentsNode,
