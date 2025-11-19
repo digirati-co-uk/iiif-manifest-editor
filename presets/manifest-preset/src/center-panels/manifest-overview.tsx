@@ -8,6 +8,7 @@ import {
   useFastList,
   useGridOptions,
 } from "@manifest-editor/components";
+import { EditableCanvasLabel } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useConfig,

@@ -1,6 +1,9 @@
-export * from "./types";
+export * from "./BasePropertyEditor";
+export * from "./BaseReferenceListEditor";
 export * from "./Editor";
-
+export * from "./EditorInstance";
+export * from "./InternationalStringEditor";
+export * from "./MetadataEditor";
 export * from "./meta/behavior";
 export * from "./meta/descriptive";
 export * from "./meta/documentation";
@@ -11,8 +14,4 @@ export * from "./meta/resources";
 export * from "./meta/rights";
 export * from "./meta/structural";
 export * from "./meta/technical";
-
-export * from "./EditorInstance";
-export * from "./BasePropertyEditor";
-export * from "./MetadataEditor";
-export * from "./BaseReferenceListEditor";
+export * from "./types";

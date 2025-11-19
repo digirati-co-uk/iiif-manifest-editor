@@ -1,3 +1,4 @@
+import type { InternationalString } from "@iiif/presentation-3";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
 import { CanvasContext } from "react-iiif-vault";
@@ -17,6 +18,7 @@ interface CanvasThumbnailGridItemProps {
   hideLabel?: boolean;
   containerProps?: any;
   dragState?: any;
+  customLabel?: (opts: { className: string; children: InternationalString }) => React.ReactNode;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   const { pressProps } = usePress({
@@ -55,7 +57,11 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
           </Card3D>
           {props.icon || null}
         </div>
-        {props.hideLabel ? null : <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />}
+        {props.hideLabel ? null : props.customLabel ? (
+          props.customLabel({ className: "text-sm text-center truncate mt-1" })
+        ) : (
+          <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />
+        )}
       </div>
     </CanvasContext>
   );

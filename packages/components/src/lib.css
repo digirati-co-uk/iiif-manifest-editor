@@ -20,6 +20,15 @@
   --total-gap-width: 1.5rem;
 }
 
+.field-sizing-content {
+  field-sizing: content;
+}
+
+.textarea-reset {
+  text-align: inherit;
+  display: block;
+}
+
 div[data-floating-ui-portal] {
   z-index: 505;
   position: relative;

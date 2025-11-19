@@ -1,9 +1,9 @@
-import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { isSpecificResource, toRef } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import { CanvasContext } from "react-iiif-vault";
+import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
+import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
+import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 
 interface CanvasListProps {
   id?: string;
@@ -12,11 +12,7 @@ interface CanvasListProps {
   inlineHandle?: boolean;
   activeId?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
-  createActions?: (
-    ref: Reference,
-    index: number,
-    item: Reference | SpecificResource,
-  ) => AppDropdownItem[];
+  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 }
 
 export function CanvasList(props: CanvasListProps) {
@@ -32,6 +28,7 @@ export function CanvasList(props: CanvasListProps) {
           <CanvasContext canvas={toRef(ref)?.id as string}>
             <CanvasListPreview
               key={ref.id}
+              editing
               active={props?.activeId === toRef(ref)?.id}
               onClick={() => props.onSelect(ref, index)}
             />

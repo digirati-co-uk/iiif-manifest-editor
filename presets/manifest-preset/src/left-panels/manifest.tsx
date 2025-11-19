@@ -1,14 +1,7 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
-import {
-  type LayoutPanel,
-  useLayoutActions,
-  useManifestEditor,
-} from "@manifest-editor/shell";
-import { type SVGProps } from "react";
+import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { InlineLocaleStringEditor } from "@manifest-editor/editors";
+import { type LayoutPanel, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import type { SVGProps } from "react";
 import { LocaleString, ManifestMetadata } from "react-iiif-vault";
 
 export function ManifestIcon({
@@ -17,13 +10,7 @@ export function ManifestIcon({
   ...props
 }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      aria-labelledby={titleId}
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-labelledby={titleId} {...props}>
       {title ? <title id={titleId}>{title}</title> : null}
 
       <path d="M0 0h24v24H0V0z" fill="none" />
@@ -46,13 +33,7 @@ export const manifestPanel: LayoutPanel = {
 
 function EditManifestMetadataIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -89,12 +70,13 @@ export function ManifestPanel() {
       />
       <SidebarContent className="p-4">
         {label ? (
-          <LocaleString
+          <InlineLocaleStringEditor
             as="h2"
             className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
+            editor={descriptive.label}
           >
             {label}
-          </LocaleString>
+          </InlineLocaleStringEditor>
         ) : null}
 
         {summary ? (
@@ -131,8 +113,7 @@ export function ManifestPanel() {
 
         {metadata && metadata.length === 0 ? (
           <div className="py-2 text-gray-400">
-            You can add some descriptive metadata for this manifest using the
-            editing panel on the right
+            You can add some descriptive metadata for this manifest using the editing panel on the right
           </div>
         ) : null}
 
@@ -142,8 +123,7 @@ export function ManifestPanel() {
             container: "w-full",
             row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
             label: "font-bold text-black w-full text-sm font-semibold mb-1",
-            value:
-              "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
+            value: "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
             empty: "text-gray-400",
           }}
         />

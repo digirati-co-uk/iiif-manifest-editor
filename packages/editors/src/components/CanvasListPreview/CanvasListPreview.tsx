@@ -1,13 +1,14 @@
-import { useCanvas } from "react-iiif-vault";
 import { getValue } from "@iiif/helpers";
 import cx from "classnames";
-import {twMerge} from 'tailwind-merge';
-
+import { LocaleString, useCanvas } from "react-iiif-vault";
+import { twMerge } from "tailwind-merge";
+import { EditableCanvasLabel } from "../EditableCanvasLabel";
 
 interface CanvasListPreviewProps {
   onClick?: () => void;
   margin?: boolean;
   active?: boolean;
+  editing?: boolean;
 }
 
 export function CanvasListPreview(props: CanvasListPreviewProps) {
@@ -16,10 +17,12 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
   return (
     <button
       data-canvas-selected={props.active}
-      className={twMerge(cx(
-        "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
-        props.active && "bg-gray-50 text-black border-[#892c4e]",
-      ))}
+      className={twMerge(
+        cx(
+          "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+          props.active && "bg-gray-50 text-black border-[#892c4e]",
+        ),
+      )}
       aria-selected={props.active}
       onClick={props.onClick}
     >
@@ -34,7 +37,13 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
         <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
       </svg>
       <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
-        {getValue(canvas?.label) || <span className="text-gray-500">Untitled canvas</span>}
+        {props.editing ? (
+          <EditableCanvasLabel buttonClassName="w-full block" className="w-full block" placeholder="Untitled canvas" />
+        ) : (
+          <LocaleString defaultText={(<span className="text-gray-500">Untitled canvas</span>) as any}>
+            {canvas?.label}
+          </LocaleString>
+        )}
       </div>
     </button>
   );
