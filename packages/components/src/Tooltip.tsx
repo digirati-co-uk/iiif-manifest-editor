@@ -104,7 +104,7 @@ export function Tooltip({ children, ...options }: { children: React.ReactNode } 
 
 export const TooltipTrigger = React.forwardRef<
   HTMLElement,
-  React.HTMLProps<HTMLElement> & { asChild?: boolean; onPress?: any; as?: any }
+  React.HTMLProps<HTMLElement> & { asChild?: boolean; onPress?: any; as?: any; $dir?: any }
 >(function TooltipTrigger({ children, as: Component, asChild = false, ...props }, propRef) {
   const context = useTooltipContext();
   const childrenRef = (children as any).ref;

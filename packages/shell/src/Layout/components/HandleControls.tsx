@@ -136,7 +136,7 @@ export const HandleControls = forwardRef<
       <UnscaledContainer $open={open} $dir={dir}>
         {!open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger as={OpenControl} onClick={(e) => actions.open()}>
+            <TooltipTrigger as={OpenControl} $dir={dir} onClick={(e) => actions.open()}>
               <DownIcon className="text-2xl" rotate={dir === "right" ? 90 : 270} />
             </TooltipTrigger>
             <DefaultTooltipContent>Open</DefaultTooltipContent>
