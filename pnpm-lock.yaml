@@ -41,8 +41,8 @@ importers:
         specifier: 2.2.0
         version: 2.2.0
       '@netlify/plugin-nextjs':
-        specifier: ^5.4.0
-        version: 5.5.0
+        specifier: ^5.14.6
+        version: 5.14.6
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:internal-packages/eslint-config
@@ -244,8 +244,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       '@netlify/plugin-nextjs':
-        specifier: ^5.4.0
-        version: 5.5.0
+        specifier: ^5.14.6
+        version: 5.14.6
       '@next/eslint-plugin-next':
         specifier: ^14.1.1
         version: 14.2.3
@@ -3375,8 +3375,8 @@ packages:
     resolution: {integrity: sha512-IrZHVqillU0x12eDbsap4Ba6poi+4IdVCYjZa+tA0eD95TaSbSqfw1zNkO27MiKw0pOjPB6+RXFK4pdfOs/qUQ==}
     engines: {node: ^14.16.0 || >=16.0.0}
 
-  '@netlify/plugin-nextjs@5.5.0':
-    resolution: {integrity: sha512-Fcsc0fRk2t3VAz8CZ3b2IQzlIwluktjroeaNRRXWionK5z4hXHvTbG+R/+qz5XIACaX+D23+t1k31uuYevD+Ww==}
+  '@netlify/plugin-nextjs@5.14.6':
+    resolution: {integrity: sha512-kgvUsRfLPZHGDk5PaZWtKvjipu9cEYTllSqzgVDOLeIDYPnu2+oFN58wDCw7ej6FKl0Q0Gn4fIrJZmdYYwfypQ==}
     engines: {node: '>=18.0.0'}
 
   '@next/env@16.0.3':
@@ -16487,7 +16487,7 @@ snapshots:
 
   '@netlify/blobs@8.0.1': {}
 
-  '@netlify/plugin-nextjs@5.5.0': {}
+  '@netlify/plugin-nextjs@5.14.6': {}
 
   '@next/env@16.0.3': {}
 

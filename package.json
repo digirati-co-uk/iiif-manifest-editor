@@ -30,7 +30,7 @@
     }
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.4.0",
+    "@netlify/plugin-nextjs": "^5.14.6",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "prettier": "^3.2.5",
