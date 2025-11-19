@@ -21,7 +21,6 @@ import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
-import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 
 export function RangeWorkbenchSection({
   range,
@@ -33,6 +32,7 @@ export function RangeWorkbenchSection({
   mergeUpLabel,
   nextRangeLabel,
   onPreviewCanvas,
+  onClosePreview,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
@@ -48,6 +48,7 @@ export function RangeWorkbenchSection({
     range: RangeTableOfContentsNode,
     canvas: RangeTableOfContentsNode
   ) => void;
+  onClosePreview?: () => void;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
 

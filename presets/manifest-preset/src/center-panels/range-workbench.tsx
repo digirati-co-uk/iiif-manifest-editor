@@ -81,10 +81,23 @@ function RangeWorkbench() {
 
   const handlePreviewCanvas = useCallback(
     (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => {
+      if (scrollRef.current) {
+        savedScrollRef.current = scrollRef.current.scrollTop;
+      }
       setPreview({ range, canvas });
     },
     [],
   );
+
+  const handleClosePreview = useCallback(() => {
+    setPreview(null);
+    // Restore scroll position after the DOM updates
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = savedScrollRef.current;
+      }
+    });
+  }, []);
 
   const { isSplitting, setIsSplitting, splitEffect } = useRangeSplittingStore();
   // biome-ignore lint/correctness/useExhaustiveDependencies: Hook needs it.
@@ -112,6 +125,7 @@ function RangeWorkbench() {
     },
     [manifest, selectedRange],
   );
+
   useEffect(() => {
     if (!topLevelRange) {
       setPreview(null);
@@ -208,6 +222,7 @@ function RangeWorkbench() {
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const savedScrollRef = useRef<number>(0);
 
   const [isBottomVisible, setIsBottomVisible] = useState(false);
 
@@ -248,14 +263,15 @@ function RangeWorkbench() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsBottomVisible(entry.isIntersecting);
+        if (entry) {
+          setIsBottomVisible(entry.isIntersecting);
+        }
       },
       {
         root: container,
-        threshold: 0.01, // as soon as it *just* appears
+        threshold: 0.01,
       },
     );
-
     observer.observe(bottom);
 
     return () => {
@@ -346,6 +362,7 @@ function RangeWorkbench() {
     [selectedId, parentIndex],
   );
 
+
   const previewRangeLabel = useVaultSelector(
     (_, v) => {
       if (!preview?.range?.id) return null;
@@ -420,7 +437,7 @@ function RangeWorkbench() {
       {preview && (
         <div className="border-b border-gray-200">
           <div className="flex bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
-            <ActionButton onPress={() => setPreview(null)}>
+            <ActionButton onPress={handleClosePreview}>
               <ArrowBackwardIcon className="text-xl" />
             </ActionButton>
             {isEditingLabel && !topLevelRange.isVirtual ? (
