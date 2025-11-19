@@ -15,6 +15,7 @@ import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useRef, useState } from "react";
 import { useDrop } from "react-aria";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
+import { flushSync } from "react-dom";
 import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
@@ -112,10 +113,7 @@ export function RangeWorkbenchSection({
         ref={ref}
         {...dropProps}
         data-drop-target={isDropTarget}
-        className={twMerge(
-          "w-full border-b border-b-gray-200 p-4 border-t border-t-gray-300 relative",
-          isDropTarget && "bg-me-primary-100",
-        )}
+        className={twMerge("w-full border-b border-b-gray-500/20 p-4 relative", isDropTarget && "bg-me-primary-100")}
       >
         <div id={`workbench-${range.id}`} className="absolute -top-16" />
         <div className="flex items-center gap-4 max-w-full">
@@ -246,6 +244,24 @@ export function RangeWorkbenchSection({
                           parent: { id: range.id },
                         }}
                         onClick={() => {
+                          // Need to change parent item (isRangeLeaf)
+                          if (item.isRangeLeaf && item.parent?.id) {
+                            // Ensure this update happens before scrolling.
+                            flushSync(() => {
+                              edit({ id: item.parent?.id!, type: "Range" });
+                            });
+
+                            // Scroll into view.
+                            const el = document.getElementById(`workbench-${String(item.id)}`);
+                            el?.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                              inline: "start",
+                              container: "nearest",
+                            } as any);
+                            return;
+                          }
+                          // Otherwise just select the range.
                           edit({ id: item.id, type: "Range" });
                         }}
                       />
@@ -262,6 +278,9 @@ export function RangeWorkbenchSection({
                       onClick={() => {
                         if (isSplitting && !isFirstCanvas) {
                           onSplit(range, item);
+                        }
+                        if (!isSplitting) {
+                          onPreviewCanvas?.(range, item);
                         }
                       }}
                       dragState={{
