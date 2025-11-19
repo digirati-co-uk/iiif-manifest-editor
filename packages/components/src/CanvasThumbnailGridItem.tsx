@@ -21,9 +21,6 @@ interface CanvasThumbnailGridItemProps {
   customLabel?: (opts: { className: string; children: InternationalString }) => React.ReactNode;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
-  const { pressProps } = usePress({
-    onClick: props.onClick,
-  });
   const { dragProps } = useDrag({
     isDisabled: !props.dragState,
     getItems() {
@@ -38,8 +35,8 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   return (
     <CanvasContext canvas={props.id}>
       <div
-        {...pressProps}
         {...(props.dragState ? dragProps : {})}
+        onClick={props.onClick}
         className={twMerge("flex flex-col", props.className)}
         data-canvas-selected={props.selected}
         {...(props.containerProps || {})}
