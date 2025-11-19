@@ -65,9 +65,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const onAction = useCallback(() => {
     // Check if top range and scroll to top
     if (!props.range.parent) {
-      const el = document.getElementById(
-        "range-workbench-scroll",
-      ) as HTMLElement | null;
+      const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
       el?.scrollTo({ top: 0, behavior: "smooth" });
     }
     // Need to change parent item (isRangeLeaf)
@@ -274,19 +272,14 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                         <MinusIcon /> Collapse all
                       </MenuItem>
 
-                      {props.parentId ? (
-                        <>
-                          {/* */}
-                          <MenuItem
-                            onAction={() =>
-                              window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
-                            }
-                            className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
-                          >
-                            <DeleteForeverIcon /> Delete range item
-                          </MenuItem>
-                        </>
-                      ) : null}
+                      <MenuItem
+                        onAction={() =>
+                          window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                        }
+                        className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
+                      >
+                        <DeleteForeverIcon /> Delete range item
+                      </MenuItem>
                     </Menu>
                   </Popover>
                 </MenuTrigger>

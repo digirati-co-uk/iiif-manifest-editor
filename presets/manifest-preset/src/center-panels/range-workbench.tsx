@@ -275,11 +275,7 @@ function RangeWorkbench() {
     };
   }, [rangeItemsLen, isSplitting, preview]);
 
-  if (!topLevelRange) {
-    return null;
-  }
-
-  const hasCanvases = (topLevelRange.items || []).filter((item) => item.type === "Canvas");
+  const hasCanvases = (topLevelRange?.items || []).filter((item) => item.type === "Canvas");
 
   const scrollToTop = useCallback(() => {
     const el = scrollRef.current;
@@ -358,6 +354,10 @@ function RangeWorkbench() {
     },
     [preview?.range?.id],
   );
+
+  if (!topLevelRange) {
+    return null;
+  }
 
   return (
     <div id="range-workbench-scroll" ref={scrollRef} className="flex-1 overflow-y-auto">
