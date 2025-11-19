@@ -2,7 +2,7 @@ import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iii
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, InfoMessage, MoreMenuIcon, useGridOptions } from "@manifest-editor/components";
-import { InlineLabelEditor, useInStack } from "@manifest-editor/editors";
+import { InlineLabelEditor, InlineLocaleStringEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useEditingStack,
@@ -11,10 +11,10 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
-import { SplitRangeIcon } from "../icons";
+import { ArrowBackwardIcon, SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
@@ -189,7 +189,8 @@ function RangeWorkbench() {
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
 
-  const [isAtEnd, setIsAtEnd] = useState(false);
+  const [isLastInView, setIsLastInView] = useState(false); // multi-section: last section visible within container
+  const [isAtEnd, setIsAtEnd] = useState(false); // single or multi: end of container reached
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -300,9 +301,6 @@ function RangeWorkbench() {
     }
   }, []);
 
-  const firstWorkbench = firstId ? document.getElementById(`workbench-${firstId}`) : null;
-  const lastWorkbench = lastId ? document.getElementById(`workbench-bottom`) : null;
-
   const rootToc = useVaultSelector(
     (_, v) => {
       if (!manifest?.structures) return null;
@@ -364,7 +362,7 @@ function RangeWorkbench() {
   return (
     <div id="range-workbench-scroll" ref={scrollRef} className="flex-1 overflow-y-auto">
       {!preview && (
-        <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b">
+        <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-30 border-me-400 border-b">
           <div className="flex items-center gap-4">
             {hasParent ? (
               <ActionButton onPress={() => goToParent()}>
@@ -379,9 +377,14 @@ function RangeWorkbench() {
                 onCancel={() => setIsEditingLabel(false)}
               />
             ) : (
-              <LocaleString as="h3" className="text-xl text-white">
+              <InlineLocaleStringEditor
+                key={topLevelRange.id}
+                editor={rangeEditor.descriptive.label}
+                as="h3"
+                className="text-xl text-white"
+              >
                 {topLevelRange.label}
-              </LocaleString>
+              </InlineLocaleStringEditor>
             )}
             <MenuTrigger>
               <ActionButton>
@@ -413,14 +416,14 @@ function RangeWorkbench() {
       )}
 
       {isSplitting ? (
-        <InfoMessage className="my-4 flex gap-4 sticky top-2 z-20">
+        <InfoMessage className="my-4 flex gap-4 sticky top-16 rounded-none z-30">
           Splitting range, click to confirm the the new range item
           <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
         </InfoMessage>
       ) : null}
 
       {preview && (
-        <div className="border-b border-gray-200">
+        <div className="flex flex-col h-full">
           <div className="flex bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
             <ActionButton onPress={handleClosePreview}>
               <ArrowBackwardIcon className="text-xl" />
@@ -505,9 +508,9 @@ function RangeWorkbench() {
         <RangeContext range={topLevelRange.id}>
           <BulkActionsWorkbench />
         </RangeContext>
-      ) : (
-        <EmptyRangeMessage extraClasses="mx-3 my-4" />
-      )}
+      ) : null}
+
+      {hasCanvases.length === 0 && rangeItems.length === 0 && <EmptyRangeMessage extraClasses="mx-3 my-4" />}
 
       {!preview && rangeItems.length > 0 ? (
         <div className="sticky bottom-5 float-right right-5">
