@@ -156,7 +156,7 @@ export const HandleControls = forwardRef<
         ) : null}
       </UnscaledContainer>
       <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
-        {open ? (
+        {open ? null : (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger asChild>
               <IconControl
@@ -170,7 +170,7 @@ export const HandleControls = forwardRef<
               <DefaultTooltipContent>Close</DefaultTooltipContent>
             </TooltipTrigger>
           </Tooltip>
-        ) : null}
+        )}
         {reset && open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger asChild>
@@ -182,16 +182,16 @@ export const HandleControls = forwardRef<
               >
                 <ResetIcon />
               </IconControl>
-              <DefaultTooltipContent>Reset</DefaultTooltipContent>
             </TooltipTrigger>
+            <DefaultTooltipContent>Reset</DefaultTooltipContent>
           </Tooltip>
         ) : null}
         {open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger asChild>
               <ResizeHandle aria-label="Resize panel" />
-              <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
             </TooltipTrigger>
+            <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
           </Tooltip>
         ) : null}
       </InnerHandleContainer>
