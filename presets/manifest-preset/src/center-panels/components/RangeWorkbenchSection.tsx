@@ -20,6 +20,7 @@ import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
+import { EmptyRangeMessage } from "./EmptyRangeMessage";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 
 export function RangeWorkbenchSection({
@@ -44,10 +45,7 @@ export function RangeWorkbenchSection({
   onDelete?: (range: RangeTableOfContentsNode) => void;
   nextRangeLabel?: string;
   idx: number;
-  onPreviewCanvas?: (
-    range: RangeTableOfContentsNode,
-    canvas: RangeTableOfContentsNode
-  ) => void;
+  onPreviewCanvas?: (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => void;
   onClosePreview?: () => void;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
@@ -105,9 +103,7 @@ export function RangeWorkbenchSection({
 
   const isEmpty = !range.items || range.items?.length === 0;
 
-  const firstCanvasId = (range.items ?? []).find(
-    (i) => i.type === "Canvas",
-  )?.id;
+  const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
 
   return (
     <>
@@ -236,6 +232,7 @@ export function RangeWorkbenchSection({
         </div>
         {isExpanded ? (
           <>
+            {(rangeItems || []).length === 0 && <EmptyRangeMessage extraClasses="mt-4" />}
             <div className={`grid pt-4 gap-3 ${size}`}>
               {(rangeItems || []).map((item) => {
                 const isFirstCanvas = item.id === firstCanvasId;
