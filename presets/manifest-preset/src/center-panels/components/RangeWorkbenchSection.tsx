@@ -149,14 +149,14 @@ export function RangeWorkbenchSection({
             <Popover className="bg-white shadow-md rounded-md p-1">
               <Menu>
                 <MenuItem
-                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  className="hover:bg-me-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() => setIsEditingLabel(true)}
                 >
                   <EditIcon />
                   Edit range label
                 </MenuItem>
                 <MenuItem
-                  className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
+                  className="hover:bg-me-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   onAction={() =>
                     edit(
                       range,

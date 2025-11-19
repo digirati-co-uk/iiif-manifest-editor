@@ -73,6 +73,7 @@ export default {
     "../../packages/shell/src/**/*.{ts,tsx,css}",
 
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
+    "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",
   ],
   theme: {
     colors: {
@@ -81,6 +82,8 @@ export default {
       white: "#fff",
       gray: colors.gray,
       slate: colors.slate,
+      blue: colors.blue,
+      orange: colors.orange,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",
