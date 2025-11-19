@@ -10,6 +10,7 @@ import {
   useCanvas,
 } from "react-iiif-vault";
 import { ArrowBackwardIcon, ArrowForwardIcon } from "../../icons";
+import { ActionButton } from "@manifest-editor/components";
 
 export function RangeWorkbenchCanvas(props: {
   range: RangeTableOfContentsNode;
@@ -18,27 +19,35 @@ export function RangeWorkbenchCanvas(props: {
   setCanvas: (canvas: RangeTableOfContentsNode) => void;
 }) {
   const canvasRef = toRef(props.canvas.resource);
+  const canvasId = props.canvas.id ?? canvasRef?.id ?? null;
+  const items = props.range.items || [];
 
-  const nextCanvas = useMemo(() => {
-    const items = props.range.items || [];
-    const idx = items.findIndex((item) => toRef(item)?.id === canvasRef?.id);
+  const currentIndex = useMemo(() => {
+    if (!canvasId) return -1;
+    return items.findIndex((item) => item.id === canvasId);
+  }, [items, canvasId]);
 
-    if (idx === -1) {
-      return null;
+  const nextCanvas = useMemo<RangeTableOfContentsNode | null>(() => {
+    if (currentIndex === -1) return null;
+    for (let i = currentIndex + 1; i < items.length; i++) {
+      const candidate = items[i];
+      if (candidate?.type === "Canvas") {
+        return candidate as RangeTableOfContentsNode;
+      }
     }
+    return null;
+  }, [items, currentIndex]);
 
-    return items[idx + 1];
-  }, [props.range, canvasRef]);
-
-  const previousCanvas = useMemo(() => {
-    const items = props.range.items || [];
-    const idx = items.findIndex((item) => toRef(item)?.id === canvasRef?.id);
-    if (idx === -1 || idx === 0) {
-      return null;
+  const previousCanvas = useMemo<RangeTableOfContentsNode | null>(() => {
+    if (currentIndex <= 0) return null;
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      const candidate = items[i];
+      if (candidate?.type === "Canvas") {
+        return candidate as RangeTableOfContentsNode;
+      }
     }
-
-    return items[idx - 1];
-  }, [props.range, canvasRef]);
+    return null;
+  }, [items, currentIndex]);
 
   const onNextCanvas = nextCanvas
     ? () => props.setCanvas(nextCanvas)
@@ -47,14 +56,16 @@ export function RangeWorkbenchCanvas(props: {
     ? () => props.setCanvas(previousCanvas)
     : undefined;
 
-  if (!canvasRef) {
+  if (!canvasRef && !canvasId) {
     return <div>No canvas preview available</div>;
   }
 
+  const ctxCanvasId = canvasRef?.id ?? canvasId!;
+
   return (
-    <div className="w-full h-[90vh] flex flex-col">
-      <CanvasContext canvas={canvasRef.id}>
-        <CanvasPanel.Viewer className="h-[90vh]">
+    <div className="relative w-full h-[85vh] flex flex-col pr-3">
+      <CanvasContext canvas={ctxCanvasId}>
+        <CanvasPanel.Viewer className="h-[85vh]">
           <CanvasPanel.RenderCanvas
             renderViewerControls={() => (
               <>

@@ -4,9 +4,7 @@ import type { InternationalString } from "@iiif/presentation-3";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
-  DeleteForeverIcon,
   ListingIcon,
-  Modal,
   MoreMenuIcon,
   useGridOptions,
   useLoadMoreItems,
@@ -14,16 +12,15 @@ import {
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDrop } from "react-aria";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
-import { CanvasContext, LanguageString, LocaleString, useVault } from "react-iiif-vault";
+import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";
 import { deserialiseRangeItems } from "../../left-panels/components/RangeTree";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
-import { RangeWorkbenchCanvas } from "./RangeWorkbenchCanvas";
 
 export function RangeWorkbenchSection({
   range,
@@ -34,8 +31,8 @@ export function RangeWorkbenchSection({
   mergeDownLabel,
   mergeUpLabel,
   nextRangeLabel,
-  onDelete,
-  idx,
+  onPreviewCanvas,
+  onClosePreview,
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
@@ -47,20 +44,16 @@ export function RangeWorkbenchSection({
   onDelete?: (range: RangeTableOfContentsNode) => void;
   nextRangeLabel?: string;
   idx: number;
+  onPreviewCanvas?: (
+    range: RangeTableOfContentsNode,
+    canvas: RangeTableOfContentsNode
+  ) => void;
+  onClosePreview?: () => void;
 }) {
   const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
 
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedCanvas, _setSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const [lastSelectedCanvas, setLastSelectedCanvas] = useState<RangeTableOfContentsNode | null>(null);
-  const setSelectedCanvas = useCallback((canvas: RangeTableOfContentsNode | null) => {
-    _setSelectedCanvas(canvas);
-    if (canvas) {
-      setLastSelectedCanvas(canvas);
-    }
-  }, []);
-
   const [isEditingLabel, setIsEditingLabel] = useState(false);
   const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
     batchSize: 32,
@@ -112,59 +105,12 @@ export function RangeWorkbenchSection({
 
   const isEmpty = !range.items || range.items?.length === 0;
 
-  const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
-
-  const oldLabel = JSON.parse(JSON.stringify(range.label));
+  const firstCanvasId = (range.items ?? []).find(
+    (i) => i.type === "Canvas",
+  )?.id;
 
   return (
     <>
-      {selectedCanvas ? (
-        <Modal
-          className="max-w-[90vw] w-full h-[90vh]"
-          title={
-            <div className="flex flex-row gap-3 items-center w-full">
-              {isEditingLabel ? (
-                <InlineLabelEditor
-                  className="text-base font-normal mt-1"
-                  resource={range}
-                  onSubmit={() => setIsEditingLabel(false)}
-                  onCancel={() => setIsEditingLabel(false)}
-                />
-              ) : (
-                <>
-                  <span>{getValue(range.label)}</span>
-                  <MenuTrigger>
-                    <ActionButton>
-                      <MoreMenuIcon className="text-xl" />
-                    </ActionButton>
-                    <Popover className="bg-white shadow-md rounded-md p-1">
-                      <Menu>
-                        <MenuItem
-                          className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
-                          onAction={() => setIsEditingLabel(true)}
-                        >
-                          <EditIcon />
-                          Edit range label
-                        </MenuItem>
-                      </Menu>
-                    </Popover>
-                  </MenuTrigger>
-                </>
-              )}
-            </div>
-          }
-          onClose={() => setSelectedCanvas(null)}
-        >
-          {selectedCanvas && (
-            <RangeWorkbenchCanvas
-              range={range}
-              canvas={selectedCanvas}
-              onBack={() => setSelectedCanvas(null)}
-              setCanvas={setSelectedCanvas}
-            />
-          )}
-        </Modal>
-      ) : null}
       <div
         key={range.id}
         ref={ref}
@@ -312,11 +258,9 @@ export function RangeWorkbenchSection({
                     </div>
                   );
                 }
-
                 return (
                   <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
                     <CanvasThumbnailGridItem
-                      selected={item.id === lastSelectedCanvas?.id}
                       aria-disabled={item.id === firstCanvasId}
                       onClick={() => {
                         if (isSplitting && !isFirstCanvas) {
@@ -337,7 +281,7 @@ export function RangeWorkbenchSection({
                       icon={
                         <ActionButton
                           className="absolute top-2 right-2 hidden group-hover:block"
-                          onPress={() => setSelectedCanvas(item)}
+                          onPress={() => onPreviewCanvas?.(range, item)}
                         >
                           <CanvasPreviewIcon className="text-2xl" />
                         </ActionButton>

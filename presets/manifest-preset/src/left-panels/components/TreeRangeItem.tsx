@@ -63,6 +63,13 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const isNoNav = props.range.isNoNav;
 
   const onAction = useCallback(() => {
+    // Check if top range and scroll to top
+    if (!props.range.parent) {
+      const el = document.getElementById(
+        "range-workbench-scroll",
+      ) as HTMLElement | null;
+      el?.scrollTo({ top: 0, behavior: "smooth" });
+    }
     // Need to change parent item (isRangeLeaf)
     if (props.range.isRangeLeaf && props.parentId) {
       if (activeId !== props.parentId) {
