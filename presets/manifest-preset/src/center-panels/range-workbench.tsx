@@ -370,12 +370,7 @@ function RangeWorkbench() {
               </ActionButton>
             ) : null}
             {isEditingLabel && !topLevelRange.isVirtual ? (
-              <InlineLabelEditor
-                className=""
-                resource={topLevelRange}
-                onSubmit={() => setIsEditingLabel(false)}
-                onCancel={() => setIsEditingLabel(false)}
-              />
+              <InlineLabelEditor className="" resource={topLevelRange} onSubmit={() => setIsEditingLabel(false)} />
             ) : (
               <InlineLocaleStringEditor
                 key={topLevelRange.id}
@@ -433,7 +428,6 @@ function RangeWorkbench() {
                 className="text-base font-normal mt-1"
                 resource={preview.range}
                 onSubmit={() => setIsEditingLabel(false)}
-                onCancel={() => setIsEditingLabel(false)}
               />
             ) : (
               <>

@@ -1,8 +1,4 @@
-import {
-  InternationalString,
-  Reference,
-  SpecificResource,
-} from "@iiif/presentation-3";
+import type { InternationalString, Reference, SpecificResource } from "@iiif/presentation-3";
 import { ActionButton } from "@manifest-editor/components";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { twMerge } from "tailwind-merge";
@@ -20,16 +16,12 @@ export function InlineLabelEditor(props: {
   actionLabel?: string;
   onSubmit?: (value: InternationalString) => void;
   onCancel?: () => void;
-
 }) {
   const editor = useGenericEditor(props.resource, props.ctx);
 
   return (
     <form
-      className={twMerge(
-        "flex gap-2 items-center justify-center w-full max-w-xl",
-        props.className,
-      )}
+      className={twMerge("flex gap-2 items-center justify-center w-full max-w-xl", props.className)}
       onSubmit={(e) => {
         e.preventDefault();
         // Hack to avoid stale state.
@@ -49,11 +41,13 @@ export function InlineLabelEditor(props: {
         disallowHTML={true}
       />
       <ActionButton primary type="submit">
-        {props.actionLabel || "Save"}
+        {props.actionLabel || "Finish editing"}
       </ActionButton>
-      <ActionButton type="button" onClick={props.onCancel}>
-        Cancel
-      </ActionButton>
+      {props.onCancel ? (
+        <ActionButton type="button" onClick={props.onCancel}>
+          Cancel
+        </ActionButton>
+      ) : null}
     </form>
   );
 }

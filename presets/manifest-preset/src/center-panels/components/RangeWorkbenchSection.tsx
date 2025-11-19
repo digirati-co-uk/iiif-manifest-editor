@@ -139,11 +139,7 @@ export function RangeWorkbenchSection({
           </Button>
 
           {isEditingLabel ? (
-            <InlineLabelEditor
-              resource={{ id: range.id, type: "Range" }}
-              onSubmit={() => setIsEditingLabel(false)}
-              onCancel={() => setIsEditingLabel(false)}
-            />
+            <InlineLabelEditor resource={{ id: range.id, type: "Range" }} onSubmit={() => setIsEditingLabel(false)} />
           ) : null}
 
           <MenuTrigger>
