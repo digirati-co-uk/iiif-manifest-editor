@@ -204,7 +204,7 @@ div.react-aria-TreeItem {
 .split-range-highlight:hover,
 .split-range-highlight:hover ~ .split-range-highlight,
 div[role="presentation"]:has(.split-range-highlight):hover ~ div[role="presentation"]:has(.split-range-highlight) {
-  outline: 3px solid #b84c74;
+  outline: 3px solid #ff991c;
 }
 
 .split-range-highlight[data-split-first]:hover {
@@ -254,7 +254,7 @@ div[role="presentation"]:has(.split-range-highlight):has(
 }
 
 .split-range-highlight:hover:before {
-  background: #b84c74;
+  background: #ff991c;
   content: attr(data-range2-label);
 }
 
