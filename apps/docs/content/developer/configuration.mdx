@@ -1,0 +1,113 @@
+# Configuration reference
+
+```ts
+export interface Config {
+  previews: PreviewConfiguration[];
+  behaviorPresets: string[];
+  defaultPreview: string | null;
+
+  editorConfig: {
+    All?: EditorConfig;
+    Manifest?: EditorConfig;
+    Canvas?: EditorConfig;
+    Annotation?: EditorConfig;
+    AnnotationPage?: EditorConfig;
+    AnnotationCollection?: EditorConfig;
+    Range?: EditorConfig;
+    Collection?: EditorConfig;
+    ContentResource?: EditorConfig;
+  };
+
+  editorFeatureFlags: {
+    enableMultiImageCanvases?: boolean;
+    enableMultiMediaCanvases?: boolean;
+  };
+
+  // Internationalisation options
+  i18n: {
+    defaultLanguage: string;
+    availableLanguages: string[];
+    advancedLanguageMode: boolean;
+  };
+
+  // Options when exporting from Vault.
+  export: {
+    baseIdentifier: string | null;
+    version: 3 | 2;
+  };
+}
+
+export interface EditorConfig {
+  singleTab?: string;
+  fields?: string[];
+  hideTabs?: string[];
+  onlyTabs?: string[];
+}
+```
+
+### Default config
+
+```ts
+const DEFAULT_CONFIG: Config = {
+  previews: [],
+  behaviorPresets: [
+    "auto-advance",
+    "no-auto-advance",
+    "repeat",
+    "no-repeat",
+    "unordered",
+    "individuals",
+    "continuous",
+    "paged",
+    "non-paged",
+    "facing-pages",
+    "multi-part",
+    "together",
+    "sequence",
+    "thumbnail-nav",
+    "no-nav",
+    "hidden",
+  ],
+  defaultPreview: null,
+  editorConfig: {},
+  newTemplates: null,
+  i18n: {
+    advancedLanguageMode: false,
+    availableLanguages: ["en", "cy", "nl", "fr"],
+    defaultLanguage: "en",
+  },
+  editorFeatureFlags: {
+    enableMultiImageCanvases: true,
+    enableMultiMediaCanvases: true,
+  },
+  uploadBackends: [],
+  export: {
+    baseIdentifier: null,
+    version: 3,
+  },
+};
+```
+
+### Example configuration
+
+Limits which tabs are available on Manifests and Canvas editors.
+
+```ts
+const compatConfig: Partial<Config> = {
+  editorConfig: {
+    Manifest: {
+      // singleTab: "@manifest-editor/overview",
+      onlyTabs: [
+        //
+        "@manifest-editor/overview",
+        "@manifest-editor/metadata",
+      ],
+      fields: ["label", "summary", "metadata", "rights", "requiredStatement", "rendering"],
+    },
+    Canvas: {
+      singleTab: "@manifest-editor/overview",
+      fields: ["items", "label", "metadata", "annotations"],
+    },
+  },
+};
+```

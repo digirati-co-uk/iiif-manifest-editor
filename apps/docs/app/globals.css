@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Optional: import Nextra theme styles */
+@import "nextra-theme-docs/style.css";
+
+@variant dark (&:where(.dark *));
+
+body {
+  --nextra-bg: 255 255 255;
+}
+
+.nextra-banner {
+  background-color: #b84c74;
+}

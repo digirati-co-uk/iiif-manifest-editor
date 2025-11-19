@@ -1,0 +1,15 @@
+export default {
+  "getting-started": { title: "Getting started" },
+  "manifest-editing": { title: "Editing an existing Manifest" },
+  "adding-images": { title: "Creating a new Manifest" },
+  "managing-workspaces": { title: "Managing your work" },
+  "creating-ranges": { title: "Creating Ranges" },
+  "creating-annotations": { title: "Creating annotations" },
+  "exhibition-building": { title: "Creating exhibitions using IIIF Manifests" },
+  "using-iiif-browser": { title: "Using the IIIF Browser" },
+  "adding-av": { title: "Adding Audio and video" },
+  "image-composition": { title: "Layering multiple images" },
+  "multilingual-manifests": { title: "Multi-lingual Manifests" },
+  "product-vision": { title: "Product vision" },
+  guides: { title: "Guides" },
+};
