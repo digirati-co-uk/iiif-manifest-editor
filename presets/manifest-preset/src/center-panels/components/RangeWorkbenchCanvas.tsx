@@ -1,16 +1,11 @@
 import type { RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
+import { ActionButton } from "@manifest-editor/components";
 import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
-import {
-  CanvasContext,
-  CanvasPanel,
-  LocaleString,
-  useCanvas,
-} from "react-iiif-vault";
+import { CanvasContext, CanvasPanel, LocaleString, useCanvas } from "react-iiif-vault";
 import { ArrowBackwardIcon, ArrowForwardIcon } from "../../icons";
-import { ActionButton } from "@manifest-editor/components";
 
 export function RangeWorkbenchCanvas(props: {
   range: RangeTableOfContentsNode;
@@ -49,12 +44,8 @@ export function RangeWorkbenchCanvas(props: {
     return null;
   }, [items, currentIndex]);
 
-  const onNextCanvas = nextCanvas
-    ? () => props.setCanvas(nextCanvas)
-    : undefined;
-  const onPreviousCanvas = previousCanvas
-    ? () => props.setCanvas(previousCanvas)
-    : undefined;
+  const onNextCanvas = nextCanvas ? () => props.setCanvas(nextCanvas) : undefined;
+  const onPreviousCanvas = previousCanvas ? () => props.setCanvas(previousCanvas) : undefined;
 
   if (!canvasRef && !canvasId) {
     return <div>No canvas preview available</div>;
@@ -63,18 +54,14 @@ export function RangeWorkbenchCanvas(props: {
   const ctxCanvasId = canvasRef?.id ?? canvasId!;
 
   return (
-    <div className="relative w-full h-[85vh] flex flex-col pr-3">
+    <div className="relative w-full flex-1 flex flex-col pr-3">
       <CanvasContext canvas={ctxCanvasId}>
         <CanvasPanel.Viewer className="h-[85vh]">
           <CanvasPanel.RenderCanvas
             renderViewerControls={() => (
               <>
                 <ViewControls editIcon />
-                <CanvasViewerNavigation
-                  enableNavigation={true}
-                  onNext={onNextCanvas}
-                  onPrevious={onPreviousCanvas}
-                />
+                <CanvasViewerNavigation enableNavigation={true} onNext={onNextCanvas} onPrevious={onPreviousCanvas} />
               </>
             )}
             viewControlsDeps={[onNextCanvas, onPreviousCanvas]}
@@ -85,17 +72,14 @@ export function RangeWorkbenchCanvas(props: {
   );
 }
 
-function CanvasViewerNavigation(props: {
-  enableNavigation: boolean;
-  onNext?: () => void;
-  onPrevious?: () => void;
-}) {
+function CanvasViewerNavigation(props: { enableNavigation: boolean; onNext?: () => void; onPrevious?: () => void }) {
   const canvas = useCanvas();
+
   if (!props.enableNavigation) {
     return null;
   }
   return (
-    <div className="bg-transparent absolute bottom-4 left-4 right-4 pointer-events-none flex items-center justify-center">
+    <div className="bg-transparent absolute bottom-4 left-4 right-4 pointer-events-none flex items-center justify-center z-50">
       <div className="bg-white/90 gap-2 inline-flex mx-auto pointer-events-auto items-center gap-4 rounded overflow-hidden shadow-md">
         <Button
           isDisabled={!props.onPrevious}
