@@ -50,7 +50,10 @@ function getNextRangeLabel(label: InternationalString | null) {
 
 function RangeWorkbench() {
   const selectedRange = useInStack("Range");
-  const [{ size }, gridOptions] = useGridOptions("default-grid-size", "grid-sm");
+  const [{ size }, gridOptions] = useGridOptions("default-grid-size", {
+    defaultGridSize: "grid-sm",
+    onDark: true,
+  });
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
