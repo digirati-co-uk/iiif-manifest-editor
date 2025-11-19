@@ -1,12 +1,26 @@
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
+import type { Reference } from "@iiif/presentation-3";
+import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useMemo, useState } from "react";
-import { Collection, type DropItem, type Key, Tree, useDragAndDrop } from "react-aria-components";
+import {
+  Button,
+  Collection,
+  Disclosure,
+  DisclosurePanel,
+  type DropItem,
+  Heading,
+  type Key,
+  Tree,
+  useDragAndDrop,
+} from "react-aria-components";
 import { CanvasContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { create } from "zustand";
+import { ChevronDownIcon } from "./ChevronDownIcon";
+import { OrphanedTreeCanvasItem } from "./OrphanedTreeCanvasItem";
 import { TreeCanvasItem } from "./TreeCanvasItem";
 import { TreeRangeItem } from "./TreeRangeItem";
 
@@ -27,6 +41,14 @@ export function flattenedRanges(range: RangeTableOfContentsNode) {
     }
   }
   return flatList;
+}
+
+function getCanvasesNotInRanges(
+  flatItems: { item: RangeTableOfContentsNode; parent: RangeTableOfContentsNode | null }[],
+  canvases: Reference<"Canvas">[],
+) {
+  const canvasesInRanges = new Set(flatItems.filter((item) => item.item.type === "Canvas").map((item) => item.item.id));
+  return canvases.filter((canvas) => !canvasesInRanges.has(canvas.id));
 }
 
 export async function deserialiseRangeItems(items: DropItem[]) {
@@ -67,7 +89,7 @@ export function RangeTree(props: RangeTreeProps) {
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
   const { isEditing, showCanvases, toggleShowCanvases } = useRangeTreeOptions();
 
-  const { range, flatItems } = useVaultSelector((_, vault) => {
+  const { range, flatItems, canvasesNotInRanges } = useVaultSelector((_, vault) => {
     const structures = vault.get(manifest!.structures || []);
     const range =
       helper.rangesToTableOfContentsTree(structures, undefined, {
@@ -75,7 +97,9 @@ export function RangeTree(props: RangeTreeProps) {
       })! || {};
     const flatItems = flattenedRanges(range);
 
-    return { structures, range, flatItems };
+    const canvasesNotInRanges = getCanvasesNotInRanges(flatItems, manifest?.items || []);
+
+    return { structures, range, flatItems, canvasesNotInRanges };
   });
 
   const maxNodeSize = 500; // @todo config?
@@ -186,7 +210,37 @@ export function RangeTree(props: RangeTreeProps) {
       const toMove = items[0] as { item: string };
       const toMoveItem = flatItems.find((item) => toMove.item === item.item.id);
       if (!toMoveItem) {
-        console.log("[error] No valid item found for item to move");
+        // This could be moving a canvas into it.
+        const fullVaultItem = vault.get(toMove.item);
+        if (!fullVaultItem?.id || !fullVaultItem?.type) {
+          console.log("[error] No valid item found in Vault");
+          return;
+        }
+        const targetParentFullVault = vault.get({
+          id: targetParentId,
+          type: "Range",
+        });
+        const targetFromParentIndex = targetParentFullVault.items.findIndex((item) => toRef(item)?.id === targetId);
+        const reference: any = {
+          type: "SpecificResource",
+          source: { id: fullVaultItem.id, type: fullVaultItem.type },
+        };
+        const targetEditor = new EditorInstance({
+          reference: { id: targetParentId, type: "Range" },
+          vault,
+        });
+
+        if (e.target.type === "item") {
+          if (e.target.dropPosition === "on") {
+            targetEditor.structural.items.add(reference);
+          }
+          if (e.target.dropPosition === "after") {
+            targetEditor.structural.items.addAfter(targetFromParentIndex, reference);
+          }
+          if (e.target.dropPosition === "before") {
+            targetEditor.structural.items.addBefore(targetFromParentIndex, reference);
+          }
+        }
         return;
       }
       if (!toMoveItem.parent) {
@@ -341,19 +395,65 @@ export function RangeTree(props: RangeTreeProps) {
   }, []);
 
   return (
-    <Tree
-      aria-label={getValue(range.label)}
-      items={rangeItems}
-      expandedKeys={expandedKeys}
-      dragAndDropHooks={dragAndDropHooks}
-      onExpandedChange={setExpandedKeys}
-      selectionMode={isEditing ? "multiple" : "single"}
-      selectionBehavior="toggle"
-    >
-      {function renderItem(item) {
-        return <RenderItem item={item} expandRangeItem={expandRangeItem} />;
-      }}
-    </Tree>
+    <>
+      <Tree
+        aria-label={getValue(range.label)}
+        items={rangeItems}
+        expandedKeys={expandedKeys}
+        dragAndDropHooks={dragAndDropHooks}
+        onExpandedChange={setExpandedKeys}
+        selectionMode={isEditing ? "multiple" : "single"}
+        selectionBehavior="toggle"
+      >
+        {function renderItem(item) {
+          return <RenderItem item={item} expandRangeItem={expandRangeItem} />;
+        }}
+      </Tree>
+
+      {canvasesNotInRanges.length === 0 ? null : (
+        <Disclosure className="w-full">
+          <Heading>
+            <Button
+              slot="trigger"
+              className="group flex items-center hover:bg-gray-100 px-2 py-1.5 gap-3 w-full text-gray-500"
+            >
+              <ChevronDownIcon
+                className={`text-xl group-[&[aria-expanded="true"]]:rotate-0 -rotate-90 transition-transform`}
+              />
+              <span className="flex items-center gap-1">
+                <WarningIcon className="text-xl" />
+                Canvases without a range
+              </span>
+            </Button>
+          </Heading>
+          <DisclosurePanel>
+            {canvasesNotInRanges.map((item) => {
+              return (
+                <CanvasContext key={item.id} canvas={item.id}>
+                  <OrphanedTreeCanvasItem />
+                </CanvasContext>
+              );
+            })}
+          </DisclosurePanel>
+        </Disclosure>
+      )}
+    </>
+  );
+}
+
+import type { SVGProps } from "react";
+
+interface SVGRProps {
+  title?: string;
+  titleId?: string;
+}
+
+function WarningIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
+      <path fill="currentColor" d="M1 21h22L12 2zm3.47-2L12 5.99L19.53 19zM11 16h2v2h-2zm0-6h2v4h-2z" />
+    </svg>
   );
 }
 

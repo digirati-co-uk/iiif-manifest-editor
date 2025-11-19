@@ -9,6 +9,7 @@ import {
   useGridOptions,
   useLoadMoreItems,
 } from "@manifest-editor/components";
+import { EditorInstance } from "@manifest-editor/editor-api";
 import { InlineLabelEditor } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
@@ -69,7 +70,26 @@ export function RangeWorkbenchSection({
       if (!firstItem) return;
 
       const parentRangeId = firstItem.parent?.id;
-      if (!parentRangeId) return;
+      if (!parentRangeId) {
+        if (e.type === "drop") {
+          const fullVaultItem = vault.get(firstItem.item);
+          if (!fullVaultItem?.id || !fullVaultItem?.type) {
+            console.log("[error] No valid item found in Vault");
+            return;
+          }
+          const targetParentId = range.id;
+          const reference: any = {
+            type: "SpecificResource",
+            source: { id: fullVaultItem.id, type: fullVaultItem.type },
+          };
+          const targetEditor = new EditorInstance({
+            reference: { id: targetParentId, type: "Range" },
+            vault,
+          });
+
+          targetEditor.structural.items.add(reference);
+        }
+      }
 
       const itemsToMove = items
         .map((t) => {

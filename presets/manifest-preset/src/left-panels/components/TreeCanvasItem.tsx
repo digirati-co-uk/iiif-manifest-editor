@@ -100,7 +100,9 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
             >
               {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
               <AddImageIcon className="text-xl flex-shrink-0 text-gray-400" />
-              <LocaleString>{canvas.label}</LocaleString>
+              <LocaleString defaultText={(<span className="text-gray-500">Untitled canvas</span>) as any}>
+                {canvas.label}
+              </LocaleString>
             </div>
 
             <MenuTrigger isOpen={isMenuOpen} onOpenChange={setIsMenuOpen}>
