@@ -134,7 +134,7 @@ export const HandleControls = forwardRef<
 >(function HandleControls({ dir, open, actions, reset }, ref) {
   const [showDragTooltip, setShowDragToolTip] = useState(true);
   const dragTooltipMt = "mt-[calc(50vh+8px)]";
-  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[-14px]`;
+  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[3px]`;
   return (
     <HandleContainer onClick={() => actions.open()}>
       <UnscaledContainer $open={open} $dir={dir} className="group">
