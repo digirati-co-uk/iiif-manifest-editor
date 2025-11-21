@@ -10,8 +10,8 @@ import { HandleQueryString } from "../../components/query-string/HandleQueryStri
 
 const { examples } = allExamples;
 
-export default async function Page({ searchParams }: { searchParams: { tab?: string } }) {
-  const defaultTab = searchParams.tab || "recent";
+export default async function Page({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const defaultTab = (await searchParams).tab || "recent";
 
   return (
     <div className="bg-white">

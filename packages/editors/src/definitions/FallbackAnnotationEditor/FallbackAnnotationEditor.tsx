@@ -1,8 +1,8 @@
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor, useLayoutActions } from "@manifest-editor/shell";
-import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
-import { ButtonGroup, Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
+import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputContainer, InputLabel } from "../../components/Input";
@@ -43,7 +43,7 @@ export function FallbackAnnotationEditor() {
                       width: 100,
                       height: 100,
                     },
-                    0.6
+                    0.6,
                   );
 
                   target.setPosition(imagePosition);

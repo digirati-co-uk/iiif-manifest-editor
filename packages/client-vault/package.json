@@ -37,11 +37,11 @@
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.5.1"
+    "@iiif/helpers": "catalog:"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "tsdown": "^0.14.1"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

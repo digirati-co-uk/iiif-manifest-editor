@@ -2,17 +2,17 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
-import { useState } from "react";
-import $ from "./DescriptiveProperties.module.css";
+import type { ResourceProvider } from "@iiif/presentation-3";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { allRights } from "@manifest-editor/editor-api";
 import { useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { InputContainer, InputLabel, Input, InputFieldset } from "../../components/Input";
+import { useState } from "react";
+import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
+import { Input, InputContainer, InputFieldset, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { createAppActions } from "../../helpers/create-app-actions";
-import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
-import type { ResourceProvider } from "@iiif/presentation-3";
+import $ from "./DescriptiveProperties.module.css";
 
 export function DescriptiveProperties() {
   const resource = useEditingResource();
@@ -41,7 +41,6 @@ export function DescriptiveProperties() {
     accompanyingCanvas,
     placeholderCanvas,
   } = descriptive;
-
 
   return (
     <>
@@ -144,7 +143,7 @@ export function DescriptiveProperties() {
         {!notAllowed.includes("provider") ? (
           <InputContainer $wide id={provider.containerId()}>
             <InputLabel htmlFor={provider.focusId()}>Provider</InputLabel>
-            {(!getProvider() && !providerVisible) ? (
+            {!getProvider() && !providerVisible ? (
               <EmptyPrompt
                 action={{
                   id: provider.focusId(),
@@ -175,9 +174,7 @@ export function DescriptiveProperties() {
                         focusId={`${provider.focusId()}_label`}
                         label="Label"
                         fields={p?.label}
-                        onSave={(e: any) =>
-                          setProvider({ ...p, label: e.toInternationalString(), type: "Agent" })
-                        }
+                        onSave={(e: any) => setProvider({ ...p, label: e.toInternationalString(), type: "Agent" })}
                       />
 
                       {/* TODO add; homepage, logo, seeAlso */}

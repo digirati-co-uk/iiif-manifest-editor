@@ -48,7 +48,7 @@ export function TourPaintingAnnotationEditor({
                 {annotation?.label}
               </LocaleString>
               <LocaleString className="text-gray-500 text-sm bg-white line-clamp-2" as="div">
-                {annotation?.label}
+                {annotation?.summary}
               </LocaleString>
             </>
           )}

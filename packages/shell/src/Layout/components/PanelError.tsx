@@ -1,15 +1,14 @@
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { ErrorMessage } from "@manifest-editor/components";
+import { ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import { Button, CalltoButton } from "@manifest-editor/ui/atoms/Button";
 import { ExperimentalMessage } from "@manifest-editor/ui/madoc/components/callouts/ExperimentalMessage";
+import { WarningMessage } from "@manifest-editor/ui/madoc/components/callouts/WarningMessage";
 import { ExperimentalIcon } from "@manifest-editor/ui/madoc/components/icons/ExperimentalIcon";
 // import { LimitationError } from "../../../helpers/limitation";
 // import { FixMeError } from "@/helpers/fix-me";
 import { useState } from "react";
-import { WarningMessage } from "@manifest-editor/ui/madoc/components/callouts/WarningMessage";
 
 export function PanelError(props: { error: Error; resetErrorBoundary: () => void }) {
-  let error = props.error.toString();
+  const error = props.error.toString();
   const [isFixing, setIsFixing] = useState(false);
 
   // @todo come back to.

@@ -8,7 +8,7 @@ An open-source, IIIF editing tool, the Manifest Editor is designed to provide a 
 
 ## What is the Digirati IIIF Manifest Editor?
 
-The Manifest Editor is an open-source web based editor, built from the ground up using IIIF, JS and HTML. You can use it to create new manifests, adding metadata, creating and managing canvases for simple and complex IIIF manifest requirements. You can preview your work in progress in a range of configured IIIF viewers, whilst you can share your work in progress or completed manifest with other users. 
+The Manifest Editor is an open-source web based editor, built from the ground up using IIIF, JS and HTML. You can use it to create new manifests, adding metadata, creating and managing canvases for simple and complex IIIF manifest requirements. You can preview your work in progress in a range of configured IIIF viewers, whilst you can share your work in progress or completed manifest with other users.
 
 You can edit existing manifests to update and test changes ranging from simple metadata additions, to adding annotations, changing manifest behaviours and adding navPlace data to support enriching your presentation with map-based interfaces.
 
@@ -27,14 +27,13 @@ It is also possible to simply provide the option to allow users to view manifest
 
 ## The latest version
 
-The current Manifest Editor reflects our experience gained in building content creation tools and custom viewing experiences, while user research has helped inform some of the core functional and usability improvements. 
+The current Manifest Editor reflects our experience gained in building content creation tools and custom viewing experiences, while user research has helped inform some of the core functional and usability improvements.
 
-We have taken an approach to ensure the tool is more sustainable, both by continuing to build the tool using existing components (which are used by others in a range of scenarios) and by ensuring it is easier (and cheaper) for us and others to customise and adapt. 
+We have taken an approach to ensure the tool is more sustainable, both by continuing to build the tool using existing components (which are used by others in a range of scenarios) and by ensuring it is easier (and cheaper) for us and others to customise and adapt.
 
 This means a separation of viewing/previewing from content creation for most scenarios. We have ended up with multiple versions of the Manifest Editor in the past, with different IIIF capabilities, user interfaces, and persistence mechanisms. Some versions integrate with our IIIF Cloud Services platform, allowing drag-and-drop creation of IIIF Image Services in real time.
 
 We don't want to needlessly throw away the capabilities we have, but we want to maintain one editor going forward, that is simple and reliable to use, with excellent user experience. The needs of different adopters and users should be met by configuration, and choice of plugins, rather than different versions of the core editor.
-
 
 ## Background
 
@@ -61,3 +60,7 @@ The development of the IIIF Manifest Editor has been supported by:
 - [Delft University of Technology Library](https://www.tudelft.nl/library)
 - [The National Gallery](https://www.nationalgallery.org.uk/), [Practical applications of IIIF](https://tanc-ahrc.github.io/IIIF-TNC/) project funded by [AHRC](https://ahrc.ukri.org/) as a [Foundation Project](https://www.nationalcollection.org.uk/Foundation-Projects) within the [Towards a National Collection](https://www.nationalcollection.org.uk/) programme. [Dec 2021 - Apr 2022]
 - [Canadian Research Knowledge Network](https://www.crkn-rcdr.ca/en)
+
+## Release Flow
+
+Adapted from [azu/monorepo-github-releases](https://github.com/azu/monorepo-github-releases/tree/main) see instructions.

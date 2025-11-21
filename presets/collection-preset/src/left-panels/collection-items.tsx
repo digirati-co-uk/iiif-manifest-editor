@@ -4,6 +4,7 @@ import {
   IIIFBrowserIcon,
   ListEditIcon,
   ListingIcon,
+  PaddedSidebarContainer,
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -23,7 +24,6 @@ import {
   useSetCustomTitle,
 } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useCollection } from "react-iiif-vault";
 
 export const collectionItems: LayoutPanel = {

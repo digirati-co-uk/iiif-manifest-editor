@@ -1,11 +1,10 @@
+import type { ViewingDirection } from "@iiif/presentation-3";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-
-import { Input, InputContainer, InputLabel } from "../../components/Input";
-import { ViewingDirection } from "@iiif/presentation-3";
 import { BehaviorEditor } from "../../components/BehaviorEditor/BehaviorEditor";
-import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
+import { Input, InputContainer, InputLabel } from "../../components/Input";
+import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 
 export function TechnicalProperties() {
   const { technical, notAllowed } = useEditor();

@@ -1,9 +1,8 @@
 import { isSpecificResource, toRef } from "@iiif/parser";
 import type { Reference } from "@iiif/presentation-3";
-import { ActionButton, TargetIcon } from "@manifest-editor/components";
+import { ActionButton, PaddedSidebarContainer, TargetIcon } from "@manifest-editor/components";
 import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import {
   AnnotationContext,

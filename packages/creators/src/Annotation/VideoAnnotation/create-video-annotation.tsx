@@ -1,10 +1,9 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, ErrorMessage } from "@manifest-editor/components";
+import { ActionButton, ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { DimensionsTriplet, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { VideoPlayer } from "@manifest-editor/ui/VideoPlayer";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useEffect, useState } from "react";
 
 export interface CreateVideoAnnotationPayload {
