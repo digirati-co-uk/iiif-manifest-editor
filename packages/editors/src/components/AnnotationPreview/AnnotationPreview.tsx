@@ -1,10 +1,12 @@
 import { getValue } from "@iiif/helpers";
 import { isSpecificResource } from "@iiif/parser";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
 import { useHoverHighlightImageResource } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import { Button } from "react-aria-components";
 import {
   AnnotationContext,
   LocaleString,
@@ -14,8 +16,6 @@ import {
 } from "react-iiif-vault";
 import { getAnnotationType } from "../../helpers/get-annotation-type";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
-import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
-import { Button } from "react-aria-components";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -85,18 +85,14 @@ export function AnnotationPreview({
         }
       >
         {firstBody ? (
-          <HTMLAnnotationBodyRender
-            className="px-3 pt-3 prose-p:text-slate-600"
-            locale="en"
-          />
+          <HTMLAnnotationBodyRender className="px-3 pt-3 prose-p:text-slate-600" locale="en" />
         ) : (
-            <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
-              This annotation has no body.
-            </div>
-          )
-        }
+          <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
+            This annotation has no body.
+          </div>
+        )}
       </Button>
-    )
+    );
   }
 
   return (

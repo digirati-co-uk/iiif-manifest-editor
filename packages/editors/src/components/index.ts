@@ -1,6 +1,7 @@
 export * from "./AnnotationBodyEditor";
 export * from "./AnnotationCreationPopup";
 export * from "./AnnotationPopUpSwitcherButton";
+export * from "./AnnotationPreview/AnnotationPreview";
 export * from "./AtlasRenderBoxSelector";
 export * from "./AtlasRenderSVGSelector";
 export * from "./BehaviorEditor/BehaviorEditor";
@@ -9,6 +10,7 @@ export * from "./CanvasList/CanvasList";
 export * from "./CanvasPanelEditor/CanvasPanelEditor";
 export * from "./CanvasPanelViewer/CanvasPanelViewer";
 export * from "./CanvasPanelViewer/components/AnnotationTargetEditor";
+export * from "./CanvasTargetContext";
 export * from "./CollectionItemList/CollectionItemList";
 export * from "./DimensionsTriplet";
 export * from "./EditableCanvasLabel";
