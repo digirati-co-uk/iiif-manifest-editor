@@ -1,15 +1,7 @@
-import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import type {
-  CreatorContext,
-  CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import {
-  InputContainer,
-  InputLabel,
-  RichTextLanguageField,
-} from "@manifest-editor/editors";
+import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { InputContainer, InputLabel, RichTextLanguageField } from "@manifest-editor/editors";
 import { useConfig } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
 
 export interface CreateHTMLBodyPayload {
@@ -17,10 +9,7 @@ export interface CreateHTMLBodyPayload {
   body: string;
 }
 
-export async function createHtmlBody(
-  data: CreateHTMLBodyPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createHtmlBody(data: CreateHTMLBodyPayload, ctx: CreatorFunctionContext) {
   return ctx.embed({
     id: ctx.generateId(`html/${data.language}`),
     language: data.language,
@@ -30,9 +19,7 @@ export async function createHtmlBody(
   });
 }
 
-export function CreateHTMLBodyForm(
-  props: CreatorContext<CreateHTMLBodyPayload>,
-) {
+export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>) {
   const { i18n } = useConfig();
   const [body, setBodyValue] = useState<string>("<p></p>");
   const [language, setLang] = useState(i18n.defaultLanguage);
@@ -46,11 +33,7 @@ export function CreateHTMLBodyForm(
 
   return (
     <PaddedSidebarContainer>
-      <HTMLEditor
-        className="border-none"
-        value={body}
-        onChange={(newValue) => setBodyValue(newValue)}
-      />
+      <HTMLEditor className="border-none" value={body} onChange={(newValue) => setBodyValue(newValue)} />
 
       <ActionButton primary large type="button" onPress={onSubmit}>
         Create

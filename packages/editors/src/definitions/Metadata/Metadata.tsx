@@ -1,8 +1,6 @@
-import { MetadataContainer } from "@manifest-editor/components";
-import { EmptyState } from "@manifest-editor/components";
+import { EmptyState, MetadataContainer, PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { Fragment, useState } from "react";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";

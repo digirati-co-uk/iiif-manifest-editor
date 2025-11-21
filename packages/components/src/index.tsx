@@ -68,6 +68,7 @@ export * from "./Modal";
 export * from "./MoreMenuButton";
 export * from "./OnboardingTour";
 export * from "./OpaqueControls";
+export * from "./PaddedSidebarContainer";
 export * from "./PanelSideMenu";
 export * from "./RenderTextualContent";
 export * from "./ResizeHandle";

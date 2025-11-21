@@ -1,17 +1,8 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, HTMLEditor } from "@manifest-editor/components";
+import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
+import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { useAnnotationCreatorState } from "@manifest-editor/shell";
-import {
-  type CreatorContext,
-  type CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import {
-  Input,
-  InputContainer,
-  InputLabel,
-  LanguageFieldEditor,
-} from "@manifest-editor/editors";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
 export interface CreateCaptionedImageAnnotationPayload {
@@ -67,8 +58,7 @@ export async function createCaptionedImageAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -109,9 +99,7 @@ export async function createCaptionedImageAnnotation(
   }
 }
 
-export function CreateCaptionedImageAnnotation(
-  props: CreatorContext<CreateCaptionedImageAnnotationPayload>,
-) {
+export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
     initialValue: { en: [""] },
@@ -134,12 +122,7 @@ export function CreateCaptionedImageAnnotation(
       <>
         <InputContainer $wide>
           <InputLabel htmlFor="url">URL to Image</InputLabel>
-          <Input
-            id="url"
-            name="url"
-            defaultValue=""
-            placeholder="https://example.org/image.jpg"
-          />
+          <Input id="url" name="url" defaultValue="" placeholder="https://example.org/image.jpg" />
         </InputContainer>
 
         <InputContainer $wide>

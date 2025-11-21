@@ -1,11 +1,10 @@
-import { ActionButton, Form } from "@manifest-editor/components";
+import { ActionButton, Form, PaddedSidebarContainer } from "@manifest-editor/components";
 import {
   type CreatorContext,
   type CreatorFunctionContext,
   type CreatorResource,
   creatorHelper,
 } from "@manifest-editor/creator-api";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import type { FormEvent } from "react";
 import type { CreateImageUrlPayload } from "../ImageUrlCreator/create-image-url";
 

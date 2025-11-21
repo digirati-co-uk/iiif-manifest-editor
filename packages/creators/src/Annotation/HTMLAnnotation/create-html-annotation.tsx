@@ -1,13 +1,9 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import {
-  type CreatorContext,
-  type CreatorFunctionContext,
-} from "@manifest-editor/creator-api";
-import { useAnnotationCreatorState } from "@manifest-editor/shell";
+import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
+import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { useAnnotationCreatorState } from "@manifest-editor/shell";
 import { useState } from "react";
 import { useCurrentAnnotationMetadata } from "react-iiif-vault";
 
@@ -19,10 +15,7 @@ export interface CreateHTMLAnnotationPayload {
   width?: number;
 }
 
-export async function createHtmlAnnotation(
-  data: CreateHTMLAnnotationPayload,
-  ctx: CreatorFunctionContext,
-) {
+export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ctx: CreatorFunctionContext) {
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -51,8 +44,7 @@ export async function createHtmlAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation:
-        data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -92,9 +84,7 @@ export async function createHtmlAnnotation(
   }
 }
 
-export function CreateHTMLAnnotation(
-  props: CreatorContext<CreateHTMLAnnotationPayload>,
-) {
+export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
     initialValue: { en: [""] },
@@ -117,12 +107,7 @@ export function CreateHTMLAnnotation(
         onChange={(newValue) => setBody({ en: [newValue] })}
       />
 
-      <ActionButton
-        primary
-        type="button"
-        onPress={onSubmit}
-        isDisabled={isEmpty}
-      >
+      <ActionButton primary type="button" onPress={onSubmit} isDisabled={isEmpty}>
         Create
       </ActionButton>
     </>

@@ -1,10 +1,10 @@
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";
 import { createAppActions } from "../../helpers/create-app-actions";
-import { CanvasContext, AnnotationPageContext } from "react-iiif-vault";
 
 export function OverviewCanvasEditor() {
   const resource = useEditingResource();

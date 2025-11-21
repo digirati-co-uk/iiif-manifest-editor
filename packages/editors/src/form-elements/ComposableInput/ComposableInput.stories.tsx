@@ -1,6 +1,6 @@
-import { ComposableInput } from "./ComposableInput";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { InputContainer, InputLabel } from "../../components/Input";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { ComposableInput } from "./ComposableInput";
 
 export default { title: "Composable Input", panel: "right" };
 

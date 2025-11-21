@@ -410,8 +410,8 @@ function RangeWorkbench() {
         </div>
       )}
 
-      {isSplitting ? (
-        <InfoMessage className="my-4 flex gap-4 sticky top-16 rounded-none z-30">
+      {isSplitting && !preview ? (
+        <InfoMessage className="mb-4 flex gap-4 sticky top-16 rounded-none z-30">
           Splitting range, click to confirm the the new range item
           <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
         </InfoMessage>

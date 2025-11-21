@@ -84,7 +84,7 @@ const InnerHandleContainer = styled.div<{ $open: boolean; $dir: "left" | "right"
   background: rgba(0, 0, 0, 0);
   position: absolute;
   width: 16px;
-  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
+  left: ${(props) => (props.$dir === "left" ? 0 : "1px")};
   top: 0;
   bottom: 0;
   z-index: 50; // This will always be quite high.

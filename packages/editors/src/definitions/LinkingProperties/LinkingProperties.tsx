@@ -1,16 +1,16 @@
 import { toRef } from "@iiif/parser";
-import { createAppActions } from "../../helpers/create-app-actions";
-import { CanvasContext } from "react-iiif-vault";
-import { useToggleList } from "../../helpers";
-import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
+import { useCreator, useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { CanvasContext } from "react-iiif-vault";
 import { CanvasListPreview } from "../../components/CanvasListPreview/CanvasListPreview";
 import { ContentResourceList } from "../../components/ContentResourceList/ContentResourceList";
 import { InputContainer, InputLabel, InputLabelEdit } from "../../components/Input";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
+import { useToggleList } from "../../helpers";
+import { createAppActions } from "../../helpers/create-app-actions";
 
 export function useCreators() {}
 

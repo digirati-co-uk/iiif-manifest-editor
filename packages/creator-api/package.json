@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@iiif/helpers": "catalog:",
-    "@iiif/parser": "^2.2.0",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
