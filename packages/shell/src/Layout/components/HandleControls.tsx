@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   DefaultTooltipContent,
   IconHandle,
@@ -131,6 +132,9 @@ export const HandleControls = forwardRef<
     reset?: () => void;
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {
+  const [showDragTooltip, setShowDragToolTip] = useState(true);
+  const dragTooltipMt = "mt-[calc(50vh+8px)]";
+  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[3px]`;
   return (
     <HandleContainer onClick={() => actions.open()}>
       <UnscaledContainer $open={open} $dir={dir} className="group">
@@ -143,32 +147,66 @@ export const HandleControls = forwardRef<
           </Tooltip>
         ) : null}
       </UnscaledContainer>
-      <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
-        {open ? (
-          <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
-              <CloseIcon />
-            </TooltipTrigger>
-            <DefaultTooltipContent>Close</DefaultTooltipContent>
-          </Tooltip>
-        ) : null}
-        {reset && open ? (
-          <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger as={IconHandle} onPress={() => reset()}>
-              <ResetIcon />
-            </TooltipTrigger>
-            <DefaultTooltipContent>Reset</DefaultTooltipContent>
-          </Tooltip>
-        ) : null}
-        {open ? (
-          <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger asChild aria-label="Resize panel">
-              <ResizeHandle aria-label="Resize panel" />
-            </TooltipTrigger>
-            <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
-          </Tooltip>
-        ) : null}
-      </InnerHandleContainer>
+      <Tooltip placement={dir === "left" ? "right" : "left"}>
+        <TooltipTrigger aria-label="Resize panel" asChild>
+          <div>
+            <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
+              {open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <CloseIcon />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Close</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+              {reset && open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger as={IconHandle} onPress={() => reset()}>
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <ResetIcon />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Reset</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+              {open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger asChild aria-label="Resize panel">
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <ResizeHandle aria-label="Resize panel" />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+            </InnerHandleContainer>
+          </div>
+        </TooltipTrigger>
+        {showDragTooltip && <DefaultTooltipContent className={dragTooltipClasses}>Resize panel</DefaultTooltipContent>}
+      </Tooltip>
     </HandleContainer>
   );
 });
