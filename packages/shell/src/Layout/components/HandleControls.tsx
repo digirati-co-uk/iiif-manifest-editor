@@ -134,8 +134,8 @@ export const HandleControls = forwardRef<
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {
   const [showDragTooltip, setShowDragToolTip] = useState(true);
-  const dragTooltipMt = "mt-[calc(50vh-10px)]"
-  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[14px]` : `${dragTooltipMt} ml-[-14px]`;
+  const dragTooltipMt = "mt-[calc(50vh+8px)]"
+  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[-14px]`;
   return (
     <HandleContainer onClick={() => actions.open()} className="group">
       <UnscaledContainer $open={open} $dir={dir}>
@@ -149,7 +149,8 @@ export const HandleControls = forwardRef<
         ) : null}
       </UnscaledContainer>
       <Tooltip placement={dir === "left" ? "right" : "left"}>
-        <TooltipTrigger aria-label="Resize panel">
+        <TooltipTrigger aria-label="Resize panel" asChild>
+          <div>
           <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
             {open ? (
               <Tooltip placement={dir === "left" ? "right" : "left"}>
@@ -176,6 +177,7 @@ export const HandleControls = forwardRef<
               </Tooltip>
             ) : null}
           </InnerHandleContainer>
+          </div>
         </TooltipTrigger>
         {showDragTooltip && <DefaultTooltipContent className={dragTooltipClasses}>Resize panel</DefaultTooltipContent>}
       </Tooltip>
