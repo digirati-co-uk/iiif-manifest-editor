@@ -156,7 +156,7 @@ export const HandleControls = forwardRef<
                 <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
                   <div onMouseOut={()=>{setShowDragToolTip(true)}} onMouseOver={()=>{setShowDragToolTip(false)}}><CloseIcon /></div>
                 </TooltipTrigger>
-                <DefaultTooltipContent className="absolute left">Close</DefaultTooltipContent>
+                <DefaultTooltipContent>Close</DefaultTooltipContent>
               </Tooltip>
             ) : null}
             {reset && open ? (
