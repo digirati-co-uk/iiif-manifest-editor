@@ -149,7 +149,7 @@ export const HandleControls = forwardRef<
         ) : null}
       </UnscaledContainer>
       <Tooltip placement={dir === "left" ? "right" : "left"}>
-        <TooltipTrigger>
+        <TooltipTrigger aria-label="Resize panel">
           <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
             {open ? (
               <Tooltip placement={dir === "left" ? "right" : "left"}>
