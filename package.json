@@ -14,7 +14,17 @@
     "mismatch": "syncpack list-mismatches",
     "fix-deps": "syncpack fix-mismatches",
     "bump": "syncpack fix-mismatches && lerna version --no-private && syncpack fix-mismatches",
-    "release": "lerna publish --no-private"
+    "versionup": "lerna version --conventional-commits --no-git-tag-version",
+    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
+    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
+    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version",
+    "postversionup": "pnpm run commit-version",
+    "postversionup:patch": "pnpm run commit-version",
+    "postversionup:minor": "pnpm run commit-version",
+    "postversionup:major": "pnpm run commit-version",
+    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\"",
+    "release": "lerna publish from-package --no-private",
+    "release:canary": "lerna publish --canary --no-private --preid next --dist-tag next --force-publish='*' --no-push --no-git-tag-version --yes"
   },
   "pnpm": {
     "overrides": {
@@ -31,17 +41,20 @@
     }
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "@lerna-lite/cli": "^4.9.3",
+    "@lerna-lite/list": "^4.9.3",
+    "@lerna-lite/publish": "^4.9.3",
+    "@lerna-lite/version": "^4.9.3",
     "@netlify/plugin-nextjs": "^5.4.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "prettier": "^3.2.5",
     "publint": "^0.2.7",
-    "syncpack": "^12.3.0",
+    "syncpack": "^13.0.4",
     "tailwindcss": "^3.4.3",
     "tslib": "^2.8.1",
     "turbo": "^2.0.3",
-    "lerna": "^8.2.2",
-    "@biomejs/biome": "2.2.0",
     "typescript": "^5.7.3",
     "typescript-plugin-css-modules": "^5.1.0"
   },

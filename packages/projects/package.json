@@ -61,7 +61,7 @@
     "shallowequal": "^1.1.0",
     "slugify": "^1.6.6",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "^0.14.1"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

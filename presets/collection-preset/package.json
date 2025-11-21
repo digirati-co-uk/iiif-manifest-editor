@@ -44,7 +44,7 @@
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "iiif-browser": "^2.0.1",
+    "iiif-browser": "^2.0.4",
     "react": "catalog:",
     "react-aria": "^3.38.1",
     "react-dom": "catalog:",
@@ -57,7 +57,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "^0.14.1"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

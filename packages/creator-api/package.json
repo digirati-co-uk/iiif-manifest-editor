@@ -49,7 +49,7 @@
     "@repo/eslint-config": "workspace:*",
     "@types/react": "^18.3.3",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "^0.14.1"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"
