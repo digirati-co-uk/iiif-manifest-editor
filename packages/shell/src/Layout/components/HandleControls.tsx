@@ -132,8 +132,8 @@ export const HandleControls = forwardRef<
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {
   return (
-    <HandleContainer onClick={() => actions.open()} className="group">
-      <UnscaledContainer $open={open} $dir={dir}>
+    <HandleContainer onClick={() => actions.open()}>
+      <UnscaledContainer $open={open} $dir={dir} className="group">
         {!open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger as={OpenControl} $dir={dir} onClick={(e) => actions.open()}>
@@ -143,7 +143,7 @@ export const HandleControls = forwardRef<
           </Tooltip>
         ) : null}
       </UnscaledContainer>
-      <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
+      <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
         {open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
