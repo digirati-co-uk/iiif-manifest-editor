@@ -1,24 +1,28 @@
-name: Create Pull Request
+name: Create Release PR
 on:
-  issue_comment:
-    types: [ created ]
-
-# require public member
-# private member is treated as CONTRIBUTOR
+  workflow_dispatch:
+    inputs:
+      semver:
+        description: 'New Version(semver)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 permissions:
-  contents: write # for checkout and commit
-  pull-requests: write  # for create pr
+  contents: write
+  pull-requests: write
 
 jobs:
-  createPullRequest:
-    if: |
-      github.event_name == 'issue_comment' &&
-      (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER') &&
-      startsWith(github.event.comment.body, '/create release')
+  create-release-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - uses: pnpm/action-setup@v4
         with:
@@ -34,49 +38,50 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Git Identity
+      - name: Update Version
         run: |
-          git config --global user.name '${GITHUB_ACTOR}'
-          git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
+          git config --global user.email "${GIT_AUTHOR_EMAIL}"
+          git config --global user.name "${GIT_AUTHOR_NAME}"
+          pnpm run ci:versionup:${SEMVER} --yes
         env:
+          SEMVER: ${{ github.event.inputs.semver }}
+          GIT_AUTHOR_NAME: ${{ github.actor }}
+          GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
+      - name: Set PACKAGE_VERSION
+        run: echo "PACKAGE_VERSION=$(cat lerna.json | jq -r .version)" >> $GITHUB_ENV
+      - name: Set GitHub Release Note
+        id: release_note
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const result = await exec.getExecOutput(`gh api "/repos/{owner}/{repo}/releases/generate-notes" -f tag_name="v${process.env.PACKAGE_VERSION}" --jq .body`, [], {
+              ignoreReturnCode: true,
+            })
+            core.setOutput('stdout', result.stdout)
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
-      - name: Versionup commit
-        run: |
-          pnpm run versionup --yes
-      - name: Set current CHANGELOG to output
-        id: changelog
-        shell: bash -ex {0}
-        run: |
-          version=$(node -p 'require("./lerna.json").version')
-          echo "::set-output name=version::${version}"
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update v${{ steps.changelog.outputs.version }}"
+          commit-message: "chore(release): v${{ env.PACKAGE_VERSION }}"
           committer: GitHub <noreply@github.com>
-          author: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-          title: 'v${{ steps.changelog.outputs.version }}'
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          assignees: ${{ github.actor }}
+          signoff: false
+          branch: release/${{ env.PACKAGE_VERSION }}
+          branch-suffix: timestamp
+          delete-branch: true
+          title: 'v${{ env.PACKAGE_VERSION }}'
           body: |
-            ## v${{ steps.changelog.outputs.version }}
-
-            ### Breaking Changes
-
-            - [ ] TODO
-
-            ### Features
-
-            - [ ] TODO
-
-            ### Bug Fixes
-
-            - [ ] TODO
+            ${{ steps.release_note.outputs.stdout }}
           labels: "Type: Release"
-          branch: "release/next"
-          request-to-parent: false
-      - name: Check outputs
+      - name: Check Pull Request
         run: |
-          echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pr_number }}"
+          echo "Pull Request Number - ${STEPS_CPR_OUTPUTS_PULL_REQUEST_NUMBER}"
+          echo "Pull Request URL - ${STEPS_CPR_OUTPUTS_PULL_REQUEST_URL}"
+        env:
+          STEPS_CPR_OUTPUTS_PULL_REQUEST_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          STEPS_CPR_OUTPUTS_PULL_REQUEST_URL: ${{ steps.cpr.outputs.pull-request-url }}
