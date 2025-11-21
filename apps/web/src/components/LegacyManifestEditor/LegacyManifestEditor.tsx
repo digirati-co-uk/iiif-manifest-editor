@@ -1,17 +1,16 @@
 "use client";
 
+import * as collectionEditorApp from "@manifest-editor/collection-preset";
+import * as manifestEditorApp from "@manifest-editor/manifest-preset";
 import { ProjectProvider, useOptionalCurrentProject, useProjectCreators } from "@manifest-editor/projects";
-import { Layout, MultiAppProvider, PreviewConfiguration, ShellProvider, mapApp } from "@manifest-editor/shell";
+import { Layout, MultiAppProvider, mapApp, type PreviewConfiguration, ShellProvider } from "@manifest-editor/shell";
+// import "manifest-editor/dist/index.css";
+// import "@manifest-editor/editors/dist/index.css";
+// import "@manifest-editor/components/dist/index.css";
+import { useState } from "react";
 import * as aboutApp from "./apps/About";
 import * as splashApp from "./apps/Splash";
-import * as manifestEditorApp from "@manifest-editor/manifest-preset";
-import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import { AppHeader } from "./components/AppHeader";
-// import "manifest-editor/dist/index.css";
-import "@manifest-editor/editors/dist/index.css";
-import "@manifest-editor/shell/dist/index.css";
-import "@manifest-editor/components/dist/index.css";
-import { useState } from "react";
 
 // Aim: For this to be exactly like the current manifest editor.
 

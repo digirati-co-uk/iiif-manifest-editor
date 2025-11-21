@@ -1,6 +1,6 @@
-import { Vault } from "@iiif/helpers/vault";
-import { EditorConfig } from "./types";
-import { Reference } from "@iiif/presentation-3";
+import type { Vault } from "@iiif/helpers/vault";
+import type { Reference } from "@iiif/presentation-3";
+import type { EditorConfig } from "./types";
 
 export class BaseEditor<T> {
   protected config: EditorConfig;
@@ -17,9 +17,9 @@ export class BaseEditor<T> {
     return this.config.vault.get(ref, { skipSelfReturn: false });
   }
 
-  protected ref(): Reference {
+  ref = (): Reference => {
     return this.config.reference;
-  }
+  };
 
   protected getId(): string {
     const ref = this.ref();
@@ -39,14 +39,14 @@ export class BaseEditor<T> {
   protected _observe(
     selector: (resource: T, context: any, vault: Vault) => any,
     cb: (selected: any, resource: T, context: any) => void,
-    skipInitial = true
+    skipInitial = true,
   ) {
     return this.config.vault.subscribe(
       () => selector(this.entity(), this.config.context, this.config.vault),
       (selected) => {
         cb(selected, this.entity(), this.config.context);
       },
-      skipInitial
+      skipInitial,
     );
   }
 }

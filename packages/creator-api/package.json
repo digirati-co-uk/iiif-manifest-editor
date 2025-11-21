@@ -5,50 +5,51 @@
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
     "directory": "packages/creator-api"
   },
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsdown src/index.ts",
+    "dev": "tsdown src/index.ts --watch",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsup src/index.ts"
+    "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
-    "polygon-editor": "^0.0.6",
-    "react-iiif-vault": "^1.5.10"
+    "polygon-editor": "0.0.23",
+    "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@types/react": "^18.3.3",
     "tiny-invariant": "^1.3.3",
-    "tsup": "^8.0.2"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

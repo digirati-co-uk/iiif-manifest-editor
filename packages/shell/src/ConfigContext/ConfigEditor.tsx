@@ -1,7 +1,7 @@
 import { ActionButton, Form, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
-import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { useDecayState } from "../hooks/use-decay-state";
+import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 
 export function ConfigEditor() {
@@ -29,6 +29,15 @@ export function ConfigEditor() {
         ...(config.export || ({} as any)),
         version: formValues.get("isVersion2") === "on" ? 2 : 3,
         baseIdentifier: (formValues.get("base") as string) || null,
+      },
+      editorFeatureFlags: {
+        ...(config.editorFeatureFlags || ({} as any)),
+        rememberCanvasId: formValues.get("rememberCanvasId") === "on",
+        rememberLeftPanelId: formValues.get("rememberLeftPanelId") === "on",
+        annotationPopups: formValues.get("annotationPopups") === "on",
+        manifestGridOptions: formValues.get("manifestGridOptions") === "on",
+        enableMultiImageCanvases: formValues.get("enableMultiImageCanvases") === "on",
+        enableMultiMediaCanvases: formValues.get("enableMultiMediaCanvases") === "on",
       },
     };
 
@@ -81,6 +90,36 @@ export function ConfigEditor() {
               defaultChecked={config.i18n?.textGranularityEnabled || false}
             />
             <Form.Label htmlFor="textGranularityEnabled">Enable text granularity</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="rememberCanvasId"
+              id="rememberCanvasId"
+              defaultChecked={config.editorFeatureFlags?.rememberCanvasId || false}
+            />
+            <Form.Label htmlFor="rememberCanvasId">Remember Canvas ID</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="rememberLeftPanelId"
+              id="rememberLeftPanelId"
+              defaultChecked={config.editorFeatureFlags?.rememberLeftPanelId || false}
+            />
+            <Form.Label htmlFor="rememberLeftPanelId">Remember Left panel</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="manifestGridOptions"
+              id="manifestGridOptions"
+              defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
+            />
+            <Form.Label htmlFor="manifestGridOptions">Manifest Grid Options</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">

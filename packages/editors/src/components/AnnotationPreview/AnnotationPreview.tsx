@@ -1,13 +1,21 @@
-import { AnnotationContext, LocaleString, useAnnotation, useRenderingStrategy } from "react-iiif-vault";
-import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { getValue } from "@iiif/helpers";
+import { isSpecificResource } from "@iiif/parser";
+import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
+import { useHoverHighlightImageResource } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
-import { useHoverHighlightImageResource } from "@manifest-editor/shell";
-import { getAnnotationType } from "../../helpers/get-annotation-type";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import { getValue } from "@iiif/helpers";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import { Button } from "react-aria-components";
+import {
+  AnnotationContext,
+  LocaleString,
+  targetIntersects,
+  useAnnotation,
+  useRenderingStrategy,
+} from "react-iiif-vault";
+import { getAnnotationType } from "../../helpers/get-annotation-type";
+import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -39,9 +47,11 @@ export function AnnotationTargetLabel({ id }: { id: string }) {
 export function AnnotationPreview({
   onClick,
   margin,
+  viewport,
 }: {
   onClick?: (annotation: AnnotationNormalized) => void;
   margin?: boolean;
+  viewport?: { width: number; height: number; x: number; y: number } | null;
 }) {
   const annotation = useAnnotation();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
@@ -58,9 +68,37 @@ export function AnnotationPreview({
   const annotationTarget =
     (annotation as any)?.target.source?.type === "Annotation" ? (annotation as any)?.target.source?.id : null;
 
+  const annoSelector = (annotation.target as any)?.selector;
+  const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
+  const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+
+  if (!firstBody || firstBody.type === "TextualBody") {
+    return (
+      <Button
+        className="border border-gray-300 text-left hover:border-me-500 w-full shadow-sm rounded bg-white relative mb-2"
+        onPress={
+          onClick
+            ? (e) => {
+                onClick(annotation);
+              }
+            : undefined
+        }
+      >
+        {firstBody ? (
+          <HTMLAnnotationBodyRender className="px-3 pt-3 prose-p:text-slate-600" locale="en" />
+        ) : (
+          <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
+            This annotation has no body.
+          </div>
+        )}
+      </Button>
+    );
+  }
+
   return (
     <>
       <RichMediaLink
+        isVisible={isVisible}
         margin={margin}
         title={
           annotation.label ? (
@@ -70,7 +108,7 @@ export function AnnotationPreview({
           ) : item?.type || annotationTarget ? (
             <AnnotationTargetLabel id={annotationTarget} />
           ) : (
-            "Untitled annotation"
+            firstBody?.value
           )
         }
         icon={

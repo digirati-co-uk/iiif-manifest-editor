@@ -18,6 +18,7 @@ export interface LayoutProviderProps {
   centerPanels: Array<LayoutPanel>;
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
+  background?: Array<BackgroundPanel>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -68,6 +69,7 @@ export interface LayoutActions {
       property?: string;
       stacked?: boolean | undefined;
       selectedTab?: string;
+      forceOpen?: boolean;
     },
   ): void;
   create(resource: CreatableResource): void;
@@ -149,6 +151,12 @@ export type LayoutFunction = (
 ) => ReactNode;
 
 export interface AnnotationPanel {
+  id: string;
+  label: string;
+  render: () => React.ReactNode | null;
+}
+
+export interface BackgroundPanel {
   id: string;
   label: string;
   render: () => React.ReactNode | null;
@@ -251,6 +259,7 @@ export interface LayoutProps {
   centerPanels: Array<LayoutPanel>;
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
+  background?: Array<BackgroundPanel>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;

@@ -56,8 +56,9 @@ export function YouTubeEditor({ strategy, video }: { strategy: MediaStrategy; vi
             title="YouTube video"
             className="border-none w-full h-full object-contain"
             ref={player}
-            src={`https://www.youtube.com/embed/${media.youTubeId}?enablejsapi=1&origin=${window.location.host}`}
-            referrerPolicy="no-referrer"
+            src={`https://www.youtube.com/embed/${media.youTubeId}?enablejsapi=1&origin=${window.location.host}&modestbranding=1&rel=0`}
+            // @ts-expect-error
+            referrerPolicy="no-referrer compute-pressure"
             sandbox="allow-scripts allow-same-origin allow-presentation"
           />
         </div>

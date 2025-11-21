@@ -1,5 +1,5 @@
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
-import { CreatableResource } from "@manifest-editor/creator-api";
+import type { CreatableResource } from "@manifest-editor/creator-api";
 
 export interface EditableResource {
   parent?: Reference;
@@ -20,19 +20,21 @@ export interface EditingStackActions {
   updateCurrent(resource: Partial<EditableResource>): void;
   close(): void;
   back(): void;
+  setStack(stack: EditableResource[]): void;
   create(resource: CreatableResource, options?: any): () => void;
 }
 
 export type EditingStackActionCreators =
   | {
-    type: "edit";
-    payload: { resource: EditableResource | null; reset?: boolean };
-  }
+      type: "edit";
+      payload: { resource: EditableResource | null; reset?: boolean };
+    }
   | { type: "updateCurrent"; payload: { resource: EditableResource } }
   | { type: "syncRemoval"; payload: { resource: EditableResource } }
   | { type: "back" }
+  | { type: "setStack"; payload: { resources: EditableResource[] } }
   | {
-    type: "create";
-    payload: { resource: CreatableResource | null; options?: any };
-  }
+      type: "create";
+      payload: { resource: CreatableResource | null; options?: any };
+    }
   | { type: "close" };

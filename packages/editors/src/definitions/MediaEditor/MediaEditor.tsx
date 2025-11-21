@@ -1,18 +1,11 @@
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { ImageService } from "@iiif/presentation-3";
-import {
-  useEditor,
-  useGenericEditor,
-  useLayoutActions,
-} from "@manifest-editor/shell";
-import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
+import { useCustomContextMenu, useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
-import {
-  FlexContainerColumn,
-  FlexImage,
-} from "@manifest-editor/ui/components/layout/FlexContainer";
+import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
+import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
@@ -24,6 +17,7 @@ import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelect
 import { centerRectangles } from "../../helpers/center-rectangles";
 import { getYouTubeId } from "../../helpers/get-youtube-id";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { MediaTargetEditor } from "./MediaTargetEditor";
 
 function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
   return (
@@ -46,9 +40,11 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
           `}
       </style>
       <iframe
+        title="YouTube video player"
         className="video-yt3"
-        src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}`}
-        referrerPolicy="no-referrer"
+        src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}&modestbranding=1&rel=0`}
+        // @ts-expect-error
+        referrerPolicy="no-referrer compute-pressure"
         sandbox="allow-scripts allow-same-origin allow-presentation"
       ></iframe>
     </div>
@@ -66,14 +62,7 @@ export function MediaEditor() {
     index: 0,
   });
 
-  const {
-    id,
-    width,
-    height,
-    mediaType: type,
-    format,
-    duration,
-  } = resourceEditor.technical;
+  const { id, width, height, mediaType: type, format, duration } = resourceEditor.technical;
   const { service } = resourceEditor.linking;
   const { label, summary } = annotationEditor.descriptive;
   const { target, body } = annotationEditor.annotation;
@@ -87,10 +76,89 @@ export function MediaEditor() {
   const canvas = useCanvas({ id: canvasId });
 
   //type.get()
-  const isYouTube = !!(service.get() || []).find(
-    (r) => (r as any).profile === "https://www.youtube.com",
-  );
+  const isYouTube = !!(service.get() || []).find((r) => (r as any).profile === "https://www.youtube.com");
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
+  const currentTarget = target.get();
+  const currentSelector = target.getParsedSelector();
+
+  const moveAndResizeImage = () => {
+    vault.batch(() => {
+      if (!canvas) {
+        return;
+      }
+      let dimensionsSet = false;
+
+      // However.. if it's cropped this won't work.
+      if (body.hasIIIFSelector()) {
+        const dimensions = body.getIIIFSelectorHeightWidth();
+        if (dimensions) {
+          dimensionsSet = true;
+          if (dimensions.width !== width.get()) {
+            width.set(dimensions.width);
+          }
+          if (dimensions.height !== height.get()) {
+            height.set(dimensions.height);
+          }
+
+          const imagePosition = centerRectangles(
+            canvas,
+            {
+              width: dimensions.width,
+              height: dimensions.height,
+            },
+            0.6,
+          );
+
+          target.setPosition(imagePosition);
+
+          return;
+        }
+      }
+
+      if (!dimensionsSet) {
+        // Check image resource width/height vs. service.
+        const imageService = serviceList.find((s) => isImageService(s)) as ImageService | undefined;
+        if (imageService) {
+          if (imageService.width && imageService.height) {
+            if (imageService.width !== width.get()) {
+              width.set(imageService.width);
+            }
+            if (imageService.height !== height.get()) {
+              height.set(imageService.height);
+            }
+          }
+        }
+      }
+
+      const imagePosition = centerRectangles(
+        canvas,
+        {
+          width: width.get(),
+          height: height.get(),
+        },
+        0.6,
+      );
+
+      target.setPosition(imagePosition);
+    });
+  };
+
+  useCustomContextMenu(
+    {
+      sectionTitle: "Painting annotation",
+      resource: annotationEditor.ref(),
+      items: currentTarget?.selector
+        ? []
+        : [
+            {
+              id: "target-region",
+              label: "Target specific region",
+              onAction: moveAndResizeImage,
+            },
+          ],
+    },
+    [currentTarget?.selector],
+  );
 
   // VideoYouTubeHTML
 
@@ -121,9 +189,7 @@ export function MediaEditor() {
           height={height.get() || 0}
           changeHeight={(v) => height.set(v)}
           duration={duration.get() || 0}
-          changeDuration={
-            type.get() !== "Image" ? (v) => duration.set(v) : undefined
-          }
+          changeDuration={type.get() !== "Image" ? (v) => duration.set(v) : undefined}
         />
       </InputContainer>
 
@@ -175,9 +241,6 @@ export function MediaEditor() {
     </>
   ) : null;
 
-  const currentTarget = target.get();
-  const currentSelector = target.getParsedSelector();
-
   const targetElements = (
     <>
       {canvas && !currentTarget.selector ? (
@@ -194,103 +257,18 @@ export function MediaEditor() {
             This image fills the whole Canvas.
           </div>
           <ButtonGroup $right>
-            <Button
-              onClick={() => {
-                vault.batch(() => {
-                  let dimensionsSet = false;
-
-                  // However.. if it's cropped this won't work.
-                  if (body.hasIIIFSelector()) {
-                    const dimensions = body.getIIIFSelectorHeightWidth();
-                    if (dimensions) {
-                      dimensionsSet = true;
-                      if (dimensions.width !== width.get()) {
-                        width.set(dimensions.width);
-                      }
-                      if (dimensions.height !== height.get()) {
-                        height.set(dimensions.height);
-                      }
-
-                      const imagePosition = centerRectangles(
-                        canvas,
-                        {
-                          width: dimensions.width,
-                          height: dimensions.height,
-                        },
-                        0.6,
-                      );
-
-                      target.setPosition(imagePosition);
-
-                      return;
-                    }
-                  }
-
-                  if (!dimensionsSet) {
-                    // Check image resource width/height vs. service.
-                    const imageService = serviceList.find((s) =>
-                      isImageService(s),
-                    ) as ImageService | undefined;
-                    if (imageService) {
-                      if (imageService.width && imageService.height) {
-                        if (imageService.width !== width.get()) {
-                          width.set(imageService.width);
-                        }
-                        if (imageService.height !== height.get()) {
-                          height.set(imageService.height);
-                        }
-                      }
-                    }
-                  }
-
-                  const imagePosition = centerRectangles(
-                    canvas,
-                    {
-                      width: width.get(),
-                      height: height.get(),
-                    },
-                    0.6,
-                  );
-
-                  target.setPosition(imagePosition);
-                });
-              }}
-            >
-              Change
-            </Button>
+            <Button onClick={moveAndResizeImage}>Change</Button>
           </ButtonGroup>
         </InputContainer>
       ) : null}
-      {currentSelector && currentSelector.type === "BoxSelector" ? (
-        <InputContainer $wide>
-          <BoxSelectorField
-            selector={currentSelector}
-            form
-            inlineFieldset
-            onSubmit={(data) => {
-              target.setPosition(data.spatial);
-            }}
-          >
-            <ButtonGroup $right>
-              <Button type="button" onClick={() => target.removeSelector()}>
-                Target whole canvas
-              </Button>
-              <Button type="submit">Update target</Button>
-            </ButtonGroup>
-          </BoxSelectorField>
-        </InputContainer>
-      ) : null}
+      {currentSelector && currentSelector.type === "BoxSelector" ? <MediaTargetEditor /> : null}
     </>
   );
 
   return (
     <FlexContainerColumn>
       <FlexImage>
-        {thumbnail ? (
-          <img src={thumbnail.id} />
-        ) : youtubeId ? (
-          <EmbedYoutube youTubeId={youtubeId} />
-        ) : null}
+        {thumbnail ? <img src={thumbnail.id} /> : youtubeId ? <EmbedYoutube youTubeId={youtubeId} /> : null}
       </FlexImage>
 
       <InputContainer $wide>
@@ -301,9 +279,7 @@ export function MediaEditor() {
         items={[
           {
             label: "Descriptive",
-            initialOpen:
-              Object.keys(label.get() || {}).length !== 0 ||
-              Object.keys(summary.get() || {}).length !== 0,
+            initialOpen: Object.keys(label.get() || {}).length !== 0 || Object.keys(summary.get() || {}).length !== 0,
             children: descriptive,
           },
           {

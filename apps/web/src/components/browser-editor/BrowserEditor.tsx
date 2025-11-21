@@ -1,5 +1,10 @@
 "use client";
 
+// import "manifest-editor/dist/index.css";
+// import "@manifest-editor/editors/dist/index.css";
+// import "@manifest-editor/components/dist/index.css";
+// import "@manifest-editor/exhibition-preset/dist/index.css";
+import { createThumbnailHelper } from "@iiif/helpers";
 import {
   DefaultTooltipContent,
   ManifestEditorLogo,
@@ -10,6 +15,7 @@ import {
   Tooltip,
   TooltipTrigger,
 } from "@manifest-editor/components";
+import { useInStack } from "@manifest-editor/editors";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -19,14 +25,14 @@ import {
   type Config,
   ConfigEditor,
   type EditorDefinition,
+  extendApp,
   Layout,
   type LayoutPanel,
   type MappedApp,
+  mapApp,
   PreviewButton,
   type PreviewConfiguration,
   ShellProvider,
-  extendApp,
-  mapApp,
   useAppResource,
   useEditingResource,
   useLayoutActions,
@@ -34,20 +40,13 @@ import {
   usePreviewContext,
   useSaveVault,
 } from "@manifest-editor/shell";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { useBrowserProject } from "./browser-state";
-import "manifest-editor/dist/index.css";
-import "@manifest-editor/editors/dist/index.css";
-import "@manifest-editor/shell/dist/index.css";
-import "@manifest-editor/components/dist/index.css";
-import "@manifest-editor/exhibition-preset/dist/index.css";
-import { createThumbnailHelper } from "@iiif/helpers";
-import { useInStack } from "@manifest-editor/editors";
-import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import posthog from "posthog-js";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -525,7 +524,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
               presetPath,
               canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
             })
-          : ""
+          : "",
       )}
     </div>
   );

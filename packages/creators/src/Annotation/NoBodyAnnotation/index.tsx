@@ -1,6 +1,9 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
-import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
+import {
+  type CreatorFunctionContext,
+  defineCreator,
+} from "@manifest-editor/creator-api";
 
 // @todo combine this with the content resource one.
 
@@ -31,18 +34,23 @@ export const noBodyAnnotation = defineCreator({
     parentFields: ["items"],
     disallowPainting: true,
   },
+  actionButton: "Create empty annotation",
   sideEffects: [],
   staticFields: {
     type: "Annotation",
   },
 });
 
-export function createNoBodyAnnotation(data: NoBodyAnnotationPayload, ctx: CreatorFunctionContext) {
+export function createNoBodyAnnotation(
+  data: NoBodyAnnotationPayload,
+  ctx: CreatorFunctionContext,
+) {
   return ctx.embed({
     id: ctx.generateId("annotation"),
     type: "Annotation",
     label: data?.label,
-    motivation: data.motivation || ctx.options.initialData?.motivation || "highlighting",
+    motivation:
+      data.motivation || ctx.options.initialData?.motivation || "highlighting",
     target: ctx.getTarget(),
   });
 }

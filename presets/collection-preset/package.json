@@ -11,40 +11,45 @@
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup src/index.tsx",
-    "dev": "tsup src/index.tsx --watch",
+    "build": "tsdown src/index.tsx",
+    "dev": "tsdown src/index.tsx --watch",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsup src/index.tsx"
+    "prepack": "tsdown src/index.tsx"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
-    "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "iiif-browser": "^2.0.1",
-    "react": "^18.3.1",
+    "iiif-browser": "^2.0.4",
+    "react": "catalog:",
     "react-aria": "^3.38.1",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.10",
-    "styled-components": "6.1.8"
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "styled-components": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
@@ -52,7 +57,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "tiny-invariant": "^1.3.3",
-    "tsup": "^8.0.2"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

@@ -8,7 +8,8 @@ module.exports = {
     "./stories/**/*.{js,jsx,ts,tsx}",
     // @todo fix bundle issues.
     "../editors/src/**/*.{js,jsx,ts,tsx}",
-    "../creators/src/**/*.{js,jsx,ts,tsx}",
+
+    "../../presets/*/src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     colors: {
@@ -17,6 +18,7 @@ module.exports = {
       white: "#fff",
       gray: colors.gray,
       red: colors.red,
+      orange: colors.orange,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",

@@ -1,12 +1,12 @@
+import { ActionButton, AddIcon, EmptyState } from "@manifest-editor/components";
 import { useAnnotationPageEditor, useCreator } from "@manifest-editor/shell";
+import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useResourceContext } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { useToggleList } from "../../helpers";
-import { InputContainer, InputLabel, InputLabelEdit } from "../Input";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { createAppActions } from "../../helpers/create-app-actions";
 import { AnnotationList } from "../AnnotationList/AnnotationList";
-import { ActionButton, AddIcon, EmptyState } from "@manifest-editor/components";
+import { InputContainer, InputLabel, InputLabelEdit } from "../Input";
 
 export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: () => void; createFilter?: string }) {
   const { annotationPage, canvas } = useResourceContext();
@@ -21,7 +21,7 @@ export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: 
     "items",
     "Annotation",
     canvas ? { id: canvas, type: "Canvas" } : undefined,
-    { isPainting: true }
+    { isPainting: true },
   );
 
   return (
@@ -43,6 +43,7 @@ export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: 
               id={items.focusId()}
               list={items.get()}
               isMedia
+              canvasId={canvas}
               inlineHandle={false}
               reorder={toggled.items ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
               onSelect={(item, idx) => annotationActions.edit(item, idx)}

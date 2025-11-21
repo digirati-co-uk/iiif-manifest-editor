@@ -48,3 +48,4 @@ prev/
 
 # Env
 .dev.env.dev
+.vscode/settings.json

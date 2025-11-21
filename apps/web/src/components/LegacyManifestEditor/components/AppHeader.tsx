@@ -1,7 +1,9 @@
 import { AppMenu, DraftTitleEditor } from "@manifest-editor/projects";
 import { useApps, PreviewButton } from "@manifest-editor/shell";
-import { ManifestEditorLogo } from "@manifest-editor/components";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import {
+  ManifestEditorLogo,
+  useLocalStorage,
+} from "@manifest-editor/components";
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
 import { memo } from "react";
 import { ShellOptions } from "./ShellOptions";
@@ -26,7 +28,9 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
 
         <div className="flex-1" />
 
-        {app && app.metadata.drafts === false ? null : <PreviewButton downloadEnabled />}
+        {app && app.metadata.drafts === false ? null : (
+          <PreviewButton downloadEnabled />
+        )}
 
         {/*<IconButton>•</IconButton>*/}
       </Container>

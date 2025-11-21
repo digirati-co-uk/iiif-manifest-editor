@@ -1,17 +1,15 @@
-import { InputContainer, InputLabel } from "../Input";
-import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
-import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
-import { AddIcon } from "@manifest-editor/ui/icons/AddIcon";
-import { AccordionContainer, AccordionItem, AccordionItemRef } from "@manifest-editor/ui/atoms/Accordion";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { createRef, RefObject, useMemo, useState } from "react";
-import { changeBehavior, filteredBehaviors, RenderCustomBehaviorEditor } from "./BehaviorEditor.utils";
-
-import { BehaviorEditorConfiguration } from "./BehaviorEditor.types";
+import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
+import { AccordionContainer, AccordionItem, type AccordionItemRef } from "@manifest-editor/ui/atoms/Accordion";
 import { Button } from "@manifest-editor/ui/atoms/Button";
+import { AddIcon } from "@manifest-editor/ui/icons/AddIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
+import { createRef, type RefObject, useMemo, useState } from "react";
 import { LocaleString } from "react-iiif-vault";
-import { ActionButton } from "@manifest-editor/components";
+import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
+import { InputContainer, InputLabel } from "../Input";
+import type { BehaviorEditorConfiguration } from "./BehaviorEditor.types";
+import { changeBehavior, filteredBehaviors, RenderCustomBehaviorEditor } from "./BehaviorEditor.utils";
 
 export interface BehaviorEditorProps {
   id?: string;
@@ -48,7 +46,12 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
           </PaddedSidebarContainer>
           <AccordionContainer>
             {Object.values(parsedConfig).map(({ ref, config }) => (
-              <AccordionItem key={config.id} initialOpen={config.initialOpen} ref={ref} label={<LocaleString>{config.label}</LocaleString>}>
+              <AccordionItem
+                key={config.id}
+                initialOpen={config.initialOpen}
+                ref={ref}
+                label={<LocaleString>{config.label}</LocaleString>}
+              >
                 <RenderCustomBehaviorEditor behaviors={props.behavior} setBehaviors={props.onChange} config={config} />
               </AccordionItem>
             ))}
@@ -86,7 +89,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
                   <CloseIcon />
                 </Button>
               </ComposableInput.Container>
-            )
+            ),
           )}
         </InputContainer>
 

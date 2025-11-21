@@ -1,11 +1,18 @@
 import { isSpecificResource, toRef } from "@iiif/parser";
 import type { Reference } from "@iiif/presentation-3";
+import { ActionButton, PaddedSidebarContainer, TargetIcon } from "@manifest-editor/components";
 import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
-import { AnnotationContext, CanvasContext, useAnnotationPage, useVaultSelector } from "react-iiif-vault";
+import {
+  AnnotationContext,
+  CanvasContext,
+  useAnnotationPage,
+  useRequestAnnotation,
+  useVaultSelector,
+} from "react-iiif-vault";
 import invariant from "tiny-invariant";
+import { AnnotationCreationPopup } from "../../components/AnnotationCreationPopup";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputLabel } from "../../components/Input";
@@ -16,19 +23,21 @@ export function InlineAnnotationPageEditor() {
   const canvasId = editor.getPartOf();
 
   invariant(canvasId, "Canvas id not found.");
+  const { requestAnnotation, isActive, busy } = useRequestAnnotation();
 
   const canvasEditor = useGenericEditor({ id: canvasId, type: "Canvas" });
   const page = canvasEditor.structural.items.get();
-  const annoPage = useAnnotationPage({ id: page[0]!.id });
+  const annoPage = useAnnotationPage({ id: page?.[0]!.id });
   const hasMultiplePainting = (annoPage?.items.length || 0) > 1;
 
+  const annotationPageId = editor.technical.id.get();
   const { items } = editor.structural;
 
   const [canCreateAnnotation, annotationActions] = useCreator(
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
   );
 
   // Does the canvas have multiple media?
@@ -40,20 +49,30 @@ export function InlineAnnotationPageEditor() {
         id={items.focusId()}
         list={items.get() || []}
         inlineHandle={false}
+        canvasId={canvasId}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
         createActions={createAppActions(items)}
       />
       <br />
       {canCreateAnnotation ? (
-        <Button
-          onClick={() => {
-            // @ts-ignore
-            document.querySelector('button[data-control="create"]')?.click();
+        <ActionButton
+          isDisabled={!annotationPageId || busy}
+          onPress={() => {
+            requestAnnotation({
+              type: "box",
+              annotationPopup: <AnnotationCreationPopup annotationPageId={annotationPageId} canvasId={canvasId} />,
+            });
           }}
         >
           Create annotation
-        </Button>
+        </ActionButton>
+      ) : null}
+      {isActive ? (
+        <div className="bg-me-primary-500 text-white p-2 m-1 rounded flex gap-2">
+          <TargetIcon />
+          Draw a box on the canvas
+        </div>
       ) : null}
     </PaddedSidebarContainer>
   );
@@ -73,7 +92,7 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       }
       return toList;
     },
-    [id, ...deps]
+    [id, ...deps],
   );
 }
 
@@ -92,7 +111,7 @@ export function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems]
+    [targets, totalItems],
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -110,18 +129,18 @@ export function PromptToAddPaintingAnnotations({
 
   return (
     <div key={paintingAnnotations?.items.length}>
-      <FlexContainer style={{ alignItems: "center" }}>
+      <FlexContainer style={{ alignItems: "center", gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          {validToAdd.map((item) => {
+          {validToAdd.map((item, idx) => {
             return (
-              <CanvasContext canvas={canvasId as string} key={canvasId}>
+              <CanvasContext canvas={canvasId as string} key={`${canvasId} + ${idx}`}>
                 <AnnotationContext annotation={item.id}>
                   <AnnotationPreview
                     margin
                     onClick={async () => {
                       await creator.create(
                         "@manifest-editor/no-body-annotation",
-                        { motivation: "describing" },
+                        { motivation: "tagging" },
                         {
                           parent: {
                             resource: page,
@@ -131,7 +150,7 @@ export function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        }
+                        },
                       );
                     }}
                   />

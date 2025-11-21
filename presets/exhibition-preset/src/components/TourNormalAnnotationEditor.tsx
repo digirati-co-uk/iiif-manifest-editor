@@ -1,125 +1,143 @@
-import { ActionButton, DeleteForeverIcon } from "@manifest-editor/components";
-import { ListEditIcon } from "@manifest-editor/manifest-preset/components";
-import { useGenericEditor, useRequestAnnotation } from "@manifest-editor/shell";
-import { CloseIcon } from "@manifest-editor/ui/madoc/components/icons/CloseIcon";
-import { useState } from "react";
-import { useAnnotation, useAnnotationPage } from "react-iiif-vault";
-import { HTMLAnnotationBodyRender } from "./HTMLAnnotationBodyRender";
-import { HTMLAnnotationEditor } from "./HTMLAnnotationEditor";
+import {
+  ActionButton,
+  DeleteIcon,
+  EditTextIcon,
+  HTMLAnnotationBodyRender,
+} from "@manifest-editor/components";
+import {
+  AnnotationPopUpSwitcherButton,
+  HTMLAnnotationEditor,
+  useAnnotationEditor,
+} from "@manifest-editor/editors";
+import { useContext, useEffect, useState } from "react";
+import { CheckIcon } from "../icons/CheckIcon";
+import { ResourceEditingReactContext, useConfig } from "@manifest-editor/shell";
+import {
+  AnnotationContext,
+  useAnnotation,
+  useCurrentAnnotationActions,
+} from "react-iiif-vault";
+import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
 
 export function TourNormalAnnotationEditor({
   highlightProps,
-}: { highlightProps: any }) {
+}: {
+  highlightProps: any;
+}) {
+  const value = useContext(ResourceEditingReactContext);
   const annotation = useAnnotation();
-  const editor = useGenericEditor(annotation);
-  const pageEditor = useGenericEditor(useAnnotationPage());
-  const target = editor.annotation.target.getParsedSelector();
-  const { requestAnnotation, isPending, cancelRequest, busy } =
-    useRequestAnnotation({
-      onSuccess: (resp) => {
-        if (resp.target) {
-          editor.annotation.target.setSelector(resp.target);
-        }
-      },
-    });
-  // Request Annotation selector correctly.
-  function requestAnnotationFromTarget() {
-    if (target) {
-      if (target.type === "SvgSelector") {
-        return requestAnnotation({
-          type: "polygon",
-          open: false,
-          points: target.points,
-        });
-      }
+  const { editorFeatureFlags } = useConfig();
+  const { annotationPopups } = editorFeatureFlags;
 
-      if (target.type === "PointSelector") {
-        return requestAnnotation({
-          type: "polygon",
-          open: true,
-          points: target.points,
-        });
-      }
-
-      if (target.type === "BoxSelector") {
-        const p = target.spatial;
-        return requestAnnotation({
-          type: "polygon",
-          open: false,
-          points: [
-            [p.x, p.y],
-            [p.x + p.width, p.y],
-            [p.x + p.width, p.y + p.height],
-            [p.x, p.y + p.height],
-          ],
-        });
-      }
-    }
-    return requestAnnotation({ type: "polygon", open: true, points: [] });
-  }
-
-  const deleteAnnotation = () => {
-    if (
-      annotation &&
-      confirm("Are you sure you want to delete this annotation?")
-    ) {
-      // Delete the original annotation.
-      const index = pageEditor.structural.items
-        .getWithoutTracking()
-        .findIndex((item) => item.id === annotation.id);
-      pageEditor.structural.items.deleteAtIndex(index);
-    }
-  };
+  const {
+    isPending,
+    cancelRequest,
+    busy,
+    requestAnnotationFromTarget,
+    deleteAnnotation,
+  } = useAnnotationEditor({
+    annotationPopup: (
+      <AnnotationContext annotation={annotation!.id}>
+        <ResourceEditingReactContext.Provider value={value}>
+          <TourAnnotationPopupEditor />
+        </ResourceEditingReactContext.Provider>
+      </AnnotationContext>
+    ),
+  });
 
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && !isPending) {
+      setIsOpen(true);
+    }
+  }, [isPending, isOpen]);
+
   // This is an annotatino within a page.
   return (
     <div
       {...highlightProps}
-      className="border border-gray-300 p-3 hover:border-me-500 shadow-sm rounded bg-white relative"
+      className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
     >
-      <div className="absolute top-1 right-1 z-20 flex gap-2">
-        <ActionButton onPress={() => deleteAnnotation()}>
-          <DeleteForeverIcon />
-        </ActionButton>
-        <ActionButton onPress={() => setIsOpen((o) => !o)}>
-          {isOpen ? <CloseIcon /> : <ListEditIcon />}
-        </ActionButton>
+      <div className="relative">
+        {isOpen && !annotationPopups ? (
+          <HTMLAnnotationEditor className="border-none" />
+        ) : (
+          <HTMLAnnotationBodyRender
+            className="px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
+            locale="en"
+          />
+        )}
       </div>
-      <div className="mb-2 relative">
-        {isOpen ? (
+      <div className="flex gap-2 p-2">
+        {isOpen && isPending ? (
           <>
-            <h3 className="text-lg font-semibold border-b pt-1 pb-2 mb-2">
-              Edit step
-            </h3>
-            <HTMLAnnotationEditor />
+            <ActionButton
+              primary
+              onPress={() => {
+                setIsOpen(false);
+                cancelRequest();
+              }}
+            >
+              <CheckIcon /> Finish editing
+            </ActionButton>
+            <AnnotationPopUpSwitcherButton />
           </>
         ) : (
-          <>
-            <HTMLAnnotationBodyRender
-              className="line-clamp-3 prose-p:text-slate-600"
-              locale="en"
-            />
-          </>
+          <ActionButton
+            isDisabled={busy}
+            onPress={() => {
+              setIsOpen(true);
+              requestAnnotationFromTarget().then(() => {
+                setIsOpen(false);
+              });
+            }}
+          >
+            <EditTextIcon /> Edit
+          </ActionButton>
         )}
-        {!isOpen ? (
-          <div>
-            {isPending ? (
-              <ActionButton onPress={cancelRequest}>
-                Discard changes
-              </ActionButton>
-            ) : (
-              <ActionButton
-                isDisabled={busy}
-                onPress={requestAnnotationFromTarget}
-              >
-                Edit region
-              </ActionButton>
-            )}
-          </div>
-        ) : null}
+        <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>
+          <DeleteIcon /> Delete
+        </ActionButton>
       </div>
-      <div className="absolute -bottom-5 h-5 border-l-2 border-gray-300 w-0" />
+      <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
+    </div>
+  );
+}
+
+function TourAnnotationPopupEditor() {
+  const { editorFeatureFlags } = useConfig();
+  const { annotationPopups } = editorFeatureFlags;
+  const { saveAnnotation } = useCurrentAnnotationActions();
+
+  if (!annotationPopups) {
+    return (
+      <div className="flex gap-2">
+        <ActionButton primary onPress={() => saveAnnotation()}>
+          <CheckIcon /> Finish editing
+        </ActionButton>
+        <AnnotationPopUpSwitcherButton />
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white shadow-md rounded-lg relative max-h-[50vh] overflow-y-auto">
+      <div className="prose-headings:mt-1 rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
+        <HTMLAnnotationEditor className="border-none" />
+      </div>
+
+      <div className="flex gap-2 p-2 sticky bottom-0 z-50 bg-white">
+        <ActionButton
+          primary
+          onPress={() => {
+            saveAnnotation();
+          }}
+        >
+          <CheckIcon /> Finish editing
+        </ActionButton>
+        <ActionButtonPopupSwitcher />
+      </div>
     </div>
   );
 }

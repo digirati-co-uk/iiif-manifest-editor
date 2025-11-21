@@ -1,26 +1,44 @@
 // 1. List projects
 // 2. Get project by ID
 
-import { InternationalString } from "@iiif/presentation-3";
+import { createThumbnailHelper, Vault } from "@iiif/helpers";
+import type { InternationalString } from "@iiif/presentation-3";
+import { type Config, randomId, useConfig } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createStore, set, get, keys, del, delMany } from "idb-keyval";
+import { createStore, del, delMany, get, keys, set } from "idb-keyval";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { queryClient } from "../site/Provider";
-import { Config, randomId, useConfig } from "@manifest-editor/shell";
-import { Vault, createThumbnailHelper } from "@iiif/helpers";
 
-const localStore = createStore("manifest-editor-projects-v2", "manifest-editor-project-store");
+const localStore =
+  typeof window !== "undefined"
+    ? createStore(
+        "manifest-editor-projects-v2",
+        "manifest-editor-project-store",
+      )
+    : undefined;
 
 export interface LocalBrowserProjectSnippet {
   id: string;
-  resource: { id: string; type: string; label: InternationalString; thumbnail: string };
+  resource: {
+    id: string;
+    type: string;
+    label: InternationalString;
+    thumbnail: string;
+    preset?: string;
+  };
   extraData: any;
   updated: number;
 }
 
 export interface LocalBrowserProject {
   id: string;
-  resource: { id: string; type: string; label: InternationalString; thumbnail: string };
+  resource: {
+    id: string;
+    type: string;
+    label: InternationalString;
+    thumbnail: string;
+    preset?: string;
+  };
   source: { id: string; type: string };
   vaultData: any;
   extraData: { config?: Config } & { [key: string]: any };
@@ -30,7 +48,12 @@ export interface LocalBrowserProject {
   etag: string | null;
 }
 
-export async function listBrowserProjects(): Promise<LocalBrowserProjectSnippet[]> {
+export async function listBrowserProjects(): Promise<
+  LocalBrowserProjectSnippet[]
+> {
+  if (!localStore) {
+    return [];
+  }
   const projectIds = await keys(localStore);
   const projects: LocalBrowserProjectSnippet[] = [];
   for (const projectId of projectIds) {
@@ -47,12 +70,14 @@ export async function listBrowserProjects(): Promise<LocalBrowserProjectSnippet[
   return projects.sort((a, b) => b.updated - a.updated);
 }
 
-export async function internal_getBrowserProjectById(projectId: string): Promise<LocalBrowserProject | null> {
+export async function internal_getBrowserProjectById(
+  projectId: string,
+): Promise<LocalBrowserProject | null> {
   return (await get(projectId, localStore)) || null;
 }
 
 export async function openBrowserProject(
-  id: string
+  id: string,
 ): Promise<{ project: LocalBrowserProject; wasAlreadyOpen: boolean }> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
@@ -64,7 +89,9 @@ export async function openBrowserProject(
   };
 }
 
-export async function closeBrowserProject(id: string): Promise<LocalBrowserProject> {
+export async function closeBrowserProject(
+  id: string,
+): Promise<LocalBrowserProject> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   const project = { ...current, isOpen: false };
@@ -77,7 +104,7 @@ export async function createBrowserProject(
   resource: LocalBrowserProject["resource"],
   source: LocalBrowserProject["source"],
   vaultData: LocalBrowserProject["vaultData"],
-  extraData: LocalBrowserProject["extraData"]
+  extraData: LocalBrowserProject["extraData"],
 ): Promise<LocalBrowserProject> {
   const project: LocalBrowserProject = {
     id,
@@ -97,12 +124,13 @@ export async function createBrowserProject(
 export async function saveBrowserProjectResource(
   id: string,
   resource: LocalBrowserProject["resource"],
-  etag: string
+  etag: string,
 ): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag)
+    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const project = { ...current, resource, updated: Date.now(), etag: newEtag };
   await set(id, project, localStore);
@@ -113,12 +141,13 @@ export async function saveBrowserProjectVaultData(
   id: string,
   data: object,
   etag: string,
-  resource?: LocalBrowserProject["resource"]
+  resource?: LocalBrowserProject["resource"],
 ): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag)
+    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const project = {
     ...current,
@@ -131,14 +160,24 @@ export async function saveBrowserProjectVaultData(
   return newEtag;
 }
 
-export async function saveBrowserProjectExtraData(id: string, data: object, etag: string): Promise<string> {
+export async function saveBrowserProjectExtraData(
+  id: string,
+  data: object,
+  etag: string,
+): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag)
+    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const newExtraData = { ...(current.extraData || {}), ...data };
-  const project = { ...current, extraData: newExtraData, updated: Date.now(), etag: newEtag };
+  const project = {
+    ...current,
+    extraData: newExtraData,
+    updated: Date.now(),
+    etag: newEtag,
+  };
   await set(id, project, localStore);
   return newEtag;
 }
@@ -203,10 +242,17 @@ export function useBrowserProject(id: string) {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) throw new Error("project not loaded");
       if (!etag.current) throw new Error("etag not set");
-      const newEtag = await saveBrowserProjectExtraData(id, data, etag.current!);
+      const newEtag = await saveBrowserProjectExtraData(
+        id,
+        data,
+        etag.current!,
+      );
       etag.current = newEtag;
       queryClient.setQueryData(["browser-project", id], {
-        project: { ...projectData.project, extraData: { ...(projectData.project.extraData || {}), ...data } },
+        project: {
+          ...projectData.project,
+          extraData: { ...(projectData.project.extraData || {}), ...data },
+        },
         wasAlreadyOpen: projectData.wasAlreadyOpen,
       });
     },
@@ -222,7 +268,10 @@ export function useBrowserProject(id: string) {
   }, []);
 
   const saveResource = useMutation({
-    mutationFn: async (data: LocalBrowserProject["resource"], force = false) => {
+    mutationFn: async (
+      data: LocalBrowserProject["resource"],
+      force = false,
+    ) => {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) throw new Error("project not loaded");
       if (!etag.current) throw new Error("etag not set");
@@ -241,7 +290,10 @@ export function useBrowserProject(id: string) {
   });
 
   const saveVaultData = useMutation({
-    mutationFn: async ({ force = false, resource }: { force?: boolean; resource?: object } = {}) => {
+    mutationFn: async ({
+      force = false,
+      resource,
+    }: { force?: boolean; resource?: object } = {}) => {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) return null;
       if (!etag.current) throw new Error("etag not set");
@@ -255,7 +307,12 @@ export function useBrowserProject(id: string) {
         return;
       }
 
-      etag.current = await saveBrowserProjectVaultData(id, data, etag.current!, resource as any);
+      etag.current = await saveBrowserProjectVaultData(
+        id,
+        data,
+        etag.current!,
+        resource as any,
+      );
       queryClient.setQueryData(["browser-project", id], {
         project: { ...projectData.project, vaultData: data },
         wasAlreadyOpen: projectData.wasAlreadyOpen,
@@ -302,7 +359,9 @@ export function useBrowserProject(id: string) {
     isProjectLoading: isLoading,
     isProjectError: isError,
     wasAlreadyOpen: projectData?.wasAlreadyOpen,
-    projectConfig: projectData?.project?.extraData?.config as Partial<Config> | undefined,
+    projectConfig: projectData?.project?.extraData?.config as
+      | Partial<Config>
+      | undefined,
     saveProjectConfig,
     project: projectData?.project,
     saveExtraData,
@@ -312,6 +371,39 @@ export function useBrowserProject(id: string) {
     reopenProject,
     userForceUpdate,
   };
+}
+
+export async function createBlankExhibition() {
+  const id = randomId();
+  const manifest = {
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    id: `https://example.org/${id}`,
+    type: "Manifest",
+    label: {
+      en: ["New Exhibition"],
+    },
+    items: [],
+  };
+
+  const vault = new Vault();
+  vault.loadCollectionSync(manifest.id, manifest);
+  const vaultData = vault.getState().iiif;
+
+  const project = await createBrowserProject(
+    id,
+    {
+      id: manifest.id,
+      type: "Manifest",
+      label: { en: ["New Exhibition"] },
+      thumbnail: "",
+      preset: "exhibition",
+    },
+    { id: "blank-exhibition", type: "Template" },
+    vaultData,
+    {},
+  );
+
+  return project;
 }
 
 export async function createBlankCollection() {
@@ -340,7 +432,7 @@ export async function createBlankCollection() {
     },
     { id: "blank-collection", type: "Template" },
     vaultData,
-    {}
+    {},
   );
 
   return project;
@@ -372,7 +464,7 @@ export async function createBlankManifest() {
     },
     { id: "blank-manifest", type: "Template" },
     vaultData,
-    {}
+    {},
   );
 
   return project;
@@ -395,7 +487,7 @@ export async function createManifestFromJson(json: any, extra: any = {}) {
       width: 256,
       height: 256,
     },
-    true
+    true,
   );
   const thumb = thumbnail?.best?.id;
 
@@ -409,7 +501,7 @@ export async function createManifestFromJson(json: any, extra: any = {}) {
     },
     { id: json.id, type: "Import" },
     vaultData,
-    extraFields
+    extraFields,
   );
 
   return project;
@@ -432,7 +524,7 @@ export async function createManifestFromId(url: string, extra: any = {}) {
       width: 256,
       height: 256,
     },
-    true
+    true,
   );
   const thumb = thumbnail?.best?.id;
 
@@ -446,7 +538,7 @@ export async function createManifestFromId(url: string, extra: any = {}) {
     },
     { id: url, type: "Template" },
     vaultData,
-    extraFields
+    extraFields,
   );
 
   return project;
@@ -472,7 +564,7 @@ export async function createCollectionFromId(url: string, extra: any = {}) {
     },
     { id: url, type: "Template" },
     vaultData,
-    extraFields
+    extraFields,
   );
 
   return project;

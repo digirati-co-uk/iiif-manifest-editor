@@ -1,8 +1,7 @@
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { InputContainer, InputLabel, RichTextLanguageField } from "@manifest-editor/editors";
 import { useConfig } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useState } from "react";
 
 export interface CreateHTMLBodyPayload {
@@ -34,17 +33,7 @@ export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>)
 
   return (
     <PaddedSidebarContainer>
-      <InputContainer>
-        <InputLabel>HTML Body</InputLabel>
-
-        <RichTextLanguageField
-          value={body}
-          language={language}
-          onUpdateLanguage={(lng) => setLang(lng)}
-          languages={i18n.availableLanguages}
-          onUpdate={(e) => setBodyValue(e)}
-        />
-      </InputContainer>
+      <HTMLEditor className="border-none" value={body} onChange={(newValue) => setBodyValue(newValue)} />
 
       <ActionButton primary large type="button" onPress={onSubmit}>
         Create

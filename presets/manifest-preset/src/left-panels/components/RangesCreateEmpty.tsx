@@ -1,0 +1,67 @@
+import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
+
+export function RangeCreateEmpty() {
+  const { ref, structural } = useManifestEditor();
+  const creator = useInlineCreator();
+
+  const createTopLevelRange = async () => {
+    if (!ref) return;
+    const allItemsRange = await creator.create(
+      "@manifest-editor/range-top-level",
+      {
+        label: { en: ["Range 1"] },
+        type: "Range",
+        items: structural.items.getWithoutTracking().map((item) => {
+          return item;
+        }),
+      },
+      {
+        rootId: ref().id,
+      },
+    );
+
+    creator.create(
+      "@manifest-editor/range-top-level",
+      {
+        type: "Range",
+        label: { en: ["Table of contents"] },
+        items: [allItemsRange],
+      },
+      {
+        parent: {
+          property: "structures",
+          resource: ref(),
+        },
+      },
+    );
+  };
+
+  return (
+    <Sidebar>
+      <SidebarHeader
+        title="Ranges"
+        actions={[
+          {
+            icon: <AddIcon className="text-2xl" />,
+            title: "Add range",
+            disabled: true,
+            onClick: () => void 0,
+          },
+        ]}
+      />
+      <SidebarContent>
+        <div className="flex flex-col items-center justify-center p-4">
+          <div className="p-4 opacity-50 text-center">
+            This manifest does not yet have a range(s). If you want to offer navigation, such as a table of contents,
+            you can create a range.
+          </div>
+
+          <ActionButton large primary onPress={() => createTopLevelRange()}>
+            <AddIcon className="text-xl" /> Create new range
+          </ActionButton>
+        </div>
+      </SidebarContent>
+    </Sidebar>
+  );
+}

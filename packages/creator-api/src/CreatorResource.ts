@@ -1,5 +1,5 @@
 import type { Vault } from "@iiif/helpers/vault";
-import { HAS_PART, PART_OF } from "@iiif/parser";
+import { HAS_PART, isSpecificResource, PART_OF } from "@iiif/parser";
 import type { SpecificResource } from "@iiif/presentation-3";
 import { references } from "@manifest-editor/editor-api";
 import { ReferencedResource } from "./ReferencedResource";
@@ -21,7 +21,10 @@ export class CreatorResource {
 
     if (data.type === "SpecificResource") {
       const source = data.source;
-      this.specificResource = { ...data, source: { id: source.id, type: resolveType(source.type) } };
+      this.specificResource = {
+        ...data,
+        source: { id: source.id, type: resolveType(source.type) },
+      };
       data = source;
     }
 
@@ -30,7 +33,10 @@ export class CreatorResource {
 
     for (const key of properties) {
       // These properties are NOT references and can be just included normally.
-      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
+      if (
+        references.inlineProperties.includes(key as any) ||
+        !references.all.includes(key as any)
+      ) {
         continue;
       }
 
@@ -47,6 +53,7 @@ export class CreatorResource {
           newRange.push(rangeRef);
           data[key] = rangeRef;
         }
+
         data[key] = newRange;
         continue;
       }
@@ -87,7 +94,10 @@ export class CreatorResource {
       }
 
       // This property SHOULD already be in the Vault OR an instance of creator resource.
-      if (references.externalProperties.includes(key as any) || references.internalProperties.includes(key as any)) {
+      if (
+        references.externalProperties.includes(key as any) ||
+        references.internalProperties.includes(key as any)
+      ) {
         const _items = (data[key] || []) as any[];
         const items = Array.isArray(_items) ? _items : [_items];
         const newItems: any[] = [];
@@ -106,7 +116,10 @@ export class CreatorResource {
           const exists = this.vault.get(item, { skipSelfReturn: true });
           if (exists) {
             const type = resolveType(item.type);
-            const newItem = new ReferencedResource({ id: item.id, type }, vault);
+            const newItem = new ReferencedResource(
+              { id: item.id, type },
+              vault,
+            );
             this.references.push(newItem);
             newItems.push(newItem);
           } else {
@@ -126,12 +139,22 @@ export class CreatorResource {
     return this.resource;
   }
 
+  getSpecificResource() {
+    const reference = this.ref();
+    return isSpecificResource(reference)
+      ? reference
+      : { type: "SpecificResource", source: reference };
+  }
+
   ref() {
     if (this.specificResource) {
       return this.specificResource;
     }
 
-    return { id: this.resource.id, type: resolveType(this.resource.type as string) as any };
+    return {
+      id: this.resource.id,
+      type: resolveType(this.resource.type as string) as any,
+    };
   }
 
   getAllReferencedResources() {
@@ -154,7 +177,10 @@ export class CreatorResource {
 
     for (const key of properties) {
       // Skip these, they are just normal inline values.
-      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
+      if (
+        references.inlineProperties.includes(key as any) ||
+        !references.all.includes(key as any)
+      ) {
         newResource[key] = resource[key];
         continue;
       }
@@ -180,6 +206,24 @@ export class CreatorResource {
       if (resource[key]) {
         newResource[key] = [];
         for (const item of resource[key] || []) {
+          if (resource.type === "Range" && key === "items") {
+            if (item instanceof ReferencedResource) {
+              if (item.ref().type === "Canvas") {
+                newResource[key].push(item.specificResource());
+              } else {
+                newResource[key].push(item.ref());
+              }
+            }
+            if (item instanceof CreatorResource) {
+              if (item.ref().type === "Canvas") {
+                newResource[key].push(item.getSpecificResource());
+              } else {
+                newResource[key].push(item.ref());
+              }
+            }
+            continue;
+          }
+
           if (item instanceof ReferencedResource) {
             newResource[key].push(item.optionalSpecificResource());
           }

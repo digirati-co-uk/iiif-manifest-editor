@@ -1,12 +1,12 @@
+import { toRef } from "@iiif/parser";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
+import { useCreator, useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { InputContainer, InputLabel, InputLabelEdit } from "@manifest-editor/ui/editors/Input";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { createAppActions } from "../../helpers/create-app-actions";
-import { toRef } from "@iiif/parser";
-import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
-import { useToggleList } from "../../helpers";
 import { RangeList } from "../../components/RangeList";
+import { useToggleList } from "../../helpers";
+import { createAppActions } from "../../helpers/create-app-actions";
 
 export function RangeStructuralProperties() {
   const resource = useEditingResource();
@@ -16,7 +16,9 @@ export function RangeStructuralProperties() {
   const { items, structures } = structural;
 
   const [canCreateRange, rangeActions] = useCreator(resource?.resource, "items", "Range");
-  const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas", undefined, {
+    onlyReference: true,
+  });
 
   return (
     <PaddedSidebarContainer>

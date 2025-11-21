@@ -1,9 +1,8 @@
 import type { ImageService } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { getFormat, getImageDimensions } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import type { FormEvent } from "react";
 
 export interface CreateImageUrlPayload {

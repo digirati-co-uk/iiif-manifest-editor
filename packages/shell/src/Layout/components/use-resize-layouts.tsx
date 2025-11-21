@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
 import { useEventHandler } from "@manifest-editor/ui/madoc/use-event-handler";
-import { useLocalStorage } from "@manifest-editor/ui/madoc/use-local-storage";
+import { useEffect, useRef, useState } from "react";
+import { useLocalStorage } from "../../hooks/use-local-storage";
 import { panelSizing } from "../Layout.helpers";
 
 function distance(x1: number, y1: number, x2: number, y2: number) {
-  return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));
+  return Math.sqrt(Math.abs(x2 - x1) ** 2 + Math.abs(y2 - y1) ** 2);
 }
 
 function getMaxWidthPct(container: number, defaultMaxWidthPct: number, maxWidthPct?: number, maxWidthPixel?: number) {
@@ -24,6 +24,7 @@ export function useResizeLayout(
   options: {
     left?: boolean;
     widthA?: any;
+    marginLeft?: number;
     widthB?: any;
     maxWidthPx?: number;
     maxWidthPct?: number;
@@ -31,7 +32,7 @@ export function useResizeLayout(
     minWidthPct?: number;
     onDragEnd?: () => void;
     loading?: boolean;
-  } = {}
+  } = {},
 ) {
   const container = useRef<HTMLDivElement | null>(null);
   const resizableDiv = useRef<HTMLDivElement | null>(null);
@@ -58,6 +59,7 @@ export function useResizeLayout(
     (e) => {
       startPos.current.x = e.pageX;
       startPos.current.y = e.pageY;
+
       if (isEventTimeout.current) {
         clearTimeout(isEventTimeout.current);
         isEventTimeout.current = 0;
@@ -67,7 +69,7 @@ export function useResizeLayout(
         isEventDragging.current = true;
       }, 350) as any;
     },
-    [loading]
+    [loading],
   );
 
   useEventHandler(
@@ -78,22 +80,23 @@ export function useResizeLayout(
       if (current && isEventDragging.current) {
         const { x, width } = current.getBoundingClientRect();
 
+        const ml = options.marginLeft || 0;
         const maxWidthPct = getMaxWidthPct(width, 0.8, options.maxWidthPct, options.maxWidthPx) * width;
         const minWidthPct = getMaxWidthPct(width, 0.2, options.minWidthPct, options.minWidthPx) * width;
 
         if (options.left) {
-          const newWidthB = newPct.current * width;
+          const newWidthB = (newPct.current * width) - ml;
 
           setWidths({
-            widthA: `${(1 - newPct.current) * width}`,
+            widthA: `${((1 - newPct.current) * width) - ml}`,
             widthB: `${newWidthB > maxWidthPct ? maxWidthPct : newWidthB < minWidthPct ? minWidthPct : newWidthB}px`,
           });
         } else {
-          const newWidthA = 1 - newPct.current * width;
+          const newWidthA = 1 - (newPct.current * width) - ml;
 
           setWidths({
             widthA: `${newWidthA > maxWidthPct ? maxWidthPct : newWidthA < minWidthPct ? minWidthPct : newWidthA}px`,
-            widthB: `${newPct.current * width}px`,
+            widthB: `${(newPct.current * width) - ml}px`,
           });
         }
 
@@ -107,7 +110,7 @@ export function useResizeLayout(
       clearTimeout(isEventTimeout.current);
       isEventTimeout.current = 0;
     },
-    [loading]
+    [loading],
   );
 
   useEventHandler(
@@ -128,6 +131,7 @@ export function useResizeLayout(
         if (current) {
           const { x, width } = current.getBoundingClientRect();
 
+          const ml = options.marginLeft || 0;
           const isLeft = options.left || false;
 
           const maxWidthPct = getMaxWidthPct(width, 0.8, options.maxWidthPct, options.maxWidthPx);
@@ -140,11 +144,11 @@ export function useResizeLayout(
           newPct.current = newPct.current < minWidthPct ? minWidthPct : newPct.current;
           newPct.current = newPct.current > maxWidthPct ? maxWidthPct : newPct.current;
 
-          resizableDiv.current.style.width = `${newPct.current * width}px`;
+          resizableDiv.current.style.width = `${(newPct.current * width) - ml}px`;
         }
       }
     },
-    [isDragging, loading]
+    [isDragging, loading],
   );
 
   return {

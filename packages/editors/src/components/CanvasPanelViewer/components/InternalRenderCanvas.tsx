@@ -1,23 +1,32 @@
+import type { BoxStyle } from "@atlas-viewer/atlas";
+import { IIIFMediaPlayer } from "@manifest-editor/components";
+import { type ReactNode, useContext } from "react";
 import {
-  useCanvas,
+  CanvasWorldObject,
+  ContextBridge,
+  type ImageWithOptionalService,
+  Render3DModelStrategy,
+  RenderAccompanyingCanvas,
+  RenderAnnotationEditing,
+  RenderAnnotationStrategy,
   RenderAudioStrategy,
+  RenderComplexTimelineStrategy,
   RenderEmptyStrategy,
   RenderImageStrategy,
-  RenderVideoStrategy,
-  Render3DModelStrategy,
-  RenderAnnotationStrategy,
-  RenderComplexTimelineStrategy,
   RenderTextualContentStrategy,
+  RenderVideoStrategy,
   RenderYouTubeStrategy,
-  RenderAccompanyingCanvas,
-  CanvasWorldObject,
-  ImageWithOptionalService,
+  StrategyReactContext,
+  type SVGTheme,
+  useContextBridge,
+  useCustomContextBridge,
   useStrategy,
 } from "react-iiif-vault";
-import { ReactNode, useMemo } from "react";
-import { IIIFMediaPlayer } from '@manifest-editor/components';
-import { BoxStyle } from "@atlas-viewer/atlas";
-
+import { AnnotationEditingTools } from "./AnnotationEditingTools";
+import { AnnotationPopupTools } from "./AnnotationPopupTools";
+import { RenderContextMenu } from "./RenderContextMenu";
+import { RenderCurrentContextMenuItem } from "./RenderCurrentContextMenuItem";
+import { RenderImageOverlayControls } from "./RenderImageOverlayControls";
 
 interface InternalRenderCanvasProps {
   x?: number;
@@ -29,6 +38,8 @@ interface InternalRenderCanvasProps {
   isStatic?: boolean;
   enableYouTube?: boolean;
   onClickPaintingAnnotation?: (id: string, image: ImageWithOptionalService, e: any) => void;
+  annotationPopup?: React.ReactNode;
+  svgTheme?: Partial<SVGTheme>;
 }
 
 export function InternalRenderCanvas({
@@ -41,16 +52,29 @@ export function InternalRenderCanvas({
   isStatic,
   onClickPaintingAnnotation,
   children,
+  svgTheme,
+  annotationPopup,
 }: InternalRenderCanvasProps) {
-  const keepCanvasScale = false;
+  const strategy = useStrategy();
+  const keepCanvasScale = true;
+  const bridge = useContextBridge();
+  const customBridge = useCustomContextBridge();
 
   return (
     <>
-      <CanvasWorldObject keepCanvasScale={keepCanvasScale} x={x} y={y}>
-        <RenderEmptyStrategy
-          alwaysShowBackground={alwaysShowBackground}
-          backgroundStyle={backgroundStyle}
-        />
+      <CanvasWorldObject
+        renderContextMenu={(data) => (
+          <StrategyReactContext.Provider value={strategy}>
+            <ContextBridge bridge={bridge} custom={customBridge}>
+              <RenderContextMenu {...data} />
+            </ContextBridge>
+          </StrategyReactContext.Provider>
+        )}
+        keepCanvasScale={keepCanvasScale}
+        x={x}
+        y={y}
+      >
+        <RenderEmptyStrategy alwaysShowBackground={alwaysShowBackground} backgroundStyle={backgroundStyle} />
         <RenderComplexTimelineStrategy />
         <RenderTextualContentStrategy />
         <RenderImageStrategy
@@ -63,6 +87,11 @@ export function InternalRenderCanvas({
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
         <RenderYouTubeStrategy />
+        <RenderImageOverlayControls />
+        <RenderAnnotationEditing theme={svgTheme}>
+          {annotationPopup || <AnnotationPopupTools />}
+        </RenderAnnotationEditing>
+        <RenderCurrentContextMenuItem />
         {children}
       </CanvasWorldObject>
       <RenderAccompanyingCanvas />

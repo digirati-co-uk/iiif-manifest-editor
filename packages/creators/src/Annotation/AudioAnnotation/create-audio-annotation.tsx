@@ -1,10 +1,9 @@
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, ErrorMessage } from "@manifest-editor/components";
+import { ActionButton, ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { FormFieldWrapper, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { useEffect, useState } from "react";
 import { CanvasPanel } from "react-iiif-vault";
 

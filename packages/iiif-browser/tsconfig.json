@@ -1,5 +1,0 @@
-{
-  "extends": "@repo/typescript-config/react-library.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx", "../components/src/CreatorGrid.tsx"],
-  "exclude": ["node_modules"]
-}

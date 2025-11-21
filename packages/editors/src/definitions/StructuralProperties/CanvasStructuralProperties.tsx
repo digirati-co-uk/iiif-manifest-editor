@@ -1,6 +1,5 @@
-import { ErrorMessage } from "@manifest-editor/components";
+import { ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/PaintingAnnotationList";

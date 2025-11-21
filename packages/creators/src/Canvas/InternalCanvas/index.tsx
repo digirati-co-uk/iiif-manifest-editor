@@ -1,8 +1,9 @@
 import { type CreatorContext, type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
-import { IIIFExplorer } from "@manifest-editor/iiif-browser";
+import { IIIFBrowser, IIIFBrowserProps } from "iiif-browser";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault, VaultProvider } from "react-iiif-vault";
 import invariant from "tiny-invariant";
+import { useMemo } from "react";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -31,27 +32,55 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
   const manifest = useManifest();
   const vault = useVault();
 
+  const navigationOptions = useMemo(() => {
+    return {
+      canSelectCanvas: false,
+      canSelectCollection: false,
+      canSelectManifest: true,
+      canCropImage: false,
+      alwaysShowNavigationArrow: false,
+      multiSelect: false,
+    } as IIIFBrowserProps["navigation"];
+  }, []);
+
+  const output = useMemo(() => {
+    return [
+      {
+        type: "callback",
+        cb: (url: string) => props.runCreate({ id: url }),
+        label: "Select canvas",
+        supportedTypes: ["Canvas"],
+        format: { type: "url" },
+      },
+    ] as IIIFBrowserProps["output"];
+  }, [props.runCreate]);
+
+  const historyOptions = useMemo(() => {
+    return {
+      saveToLocalStorage: false,
+      restoreFromLocalStorage: false,
+      initialHistory: [
+        {
+          url: manifest?.id,
+          resource: manifest?.id,
+          route: `/loading?id=${manifest?.id}`,
+          metadata: { type: "Manifest" },
+        },
+      ],
+    } as IIIFBrowserProps["history"];
+  }, [manifest?.id]);
+
   invariant(manifest, "Manifest is not loaded");
 
   return (
-    <IIIFExplorer
-      vault={vault}
-      entry={manifest}
-      window={false}
-      hideHeader={true}
-      hideBack
-      output={{ type: "url" }}
-      outputTargets={[
-        {
-          type: "callback",
-          label: "Select canvas",
-          cb: (url: string) => {
-            props.runCreate({ id: url });
-          },
-        },
-      ]}
-      outputTypes={["Canvas"]}
-    />
+    <VaultProvider vault={vault}>
+      <IIIFBrowser
+        vault={vault}
+        navigation={navigationOptions}
+        output={output}
+        history={historyOptions}
+      />
+    </VaultProvider>
   );
 }
 

@@ -5,62 +5,64 @@
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
     "directory": "packages/creators"
   },
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsdown src/index.ts",
+    "dev": "tsdown src/index.ts --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsup src/index.ts"
+    "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@atlas-viewer/iiif-image-api": "^2.2.0",
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
-    "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "iiif-browser": "^2.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "iiif-browser": "^2.0.4",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-error-boundary": "^4.0.13",
-    "react-iiif-vault": "^1.5.10",
+    "react-iiif-vault": "catalog:",
     "styled-components": "6.1.8"
   },
   "devDependencies": {
+    "@atlas-viewer/iiif-image-api": "^2.2.0",
     "@manifest-editor/ui": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "postcss-import": "^16.1.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "tiny-invariant": "^1.3.3",
-    "tsup": "^8.0.2"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

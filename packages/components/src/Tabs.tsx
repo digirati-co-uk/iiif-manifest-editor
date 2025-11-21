@@ -1,16 +1,16 @@
 import {
-  Tabs as BaseTabs,
-  TabList as BaseTabList,
   Tab as BaseTab,
+  TabList as BaseTabList,
   TabPanel as BaseTabPanel,
-  TabsProps,
-  TabListProps,
-  TabProps,
-  TabPanelProps,
+  Tabs as BaseTabs,
+  type TabListProps,
+  type TabPanelProps,
+  type TabProps,
+  type TabsProps,
 } from "react-aria-components";
 import { cn } from "./utils";
 
-export function Tabs({ className, children, ...props }: TabsProps & React.RefAttributes<HTMLDivElement>) {
+export function Tabs({ className, children, ...props }: TabsProps) {
   return (
     <BaseTabs
       className={(state) => {
@@ -24,11 +24,7 @@ export function Tabs({ className, children, ...props }: TabsProps & React.RefAtt
   );
 }
 
-export function TabList<T extends object>({
-  className,
-  children,
-  ...props
-}: TabListProps<T> & React.RefAttributes<HTMLDivElement>) {
+export function TabList<T extends object>({ className, children, ...props }: TabListProps<T>) {
   return (
     <BaseTabList
       className={(state) => {
@@ -42,7 +38,7 @@ export function TabList<T extends object>({
   );
 }
 
-export function Tab({ className, children, ...props }: TabProps & React.RefAttributes<HTMLDivElement>) {
+export function Tab({ className, children, ...props }: TabProps) {
   return (
     <BaseTab
       className={(state) => {
@@ -51,7 +47,7 @@ export function Tab({ className, children, ...props }: TabProps & React.RefAttri
           "cursor-default outline-none group py-1 font-semibold px-2 border-b-2 text-me-gray-700",
           state.isSelected && "border-b-me-primary-600 text-black",
           state.isFocusVisible && "focus-visible:bg-me-primary-100",
-          cs
+          cs,
         );
       }}
       {...props}
@@ -61,7 +57,7 @@ export function Tab({ className, children, ...props }: TabProps & React.RefAttri
   );
 }
 
-export function TabPanel({ className, children, ...props }: TabPanelProps & React.RefAttributes<HTMLDivElement>) {
+export function TabPanel({ className, children, ...props }: TabPanelProps) {
   return (
     <BaseTabPanel
       className={(state) => {

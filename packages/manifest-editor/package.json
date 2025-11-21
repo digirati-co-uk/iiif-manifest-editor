@@ -5,52 +5,52 @@
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
     "directory": "packages/manifest-editor"
   },
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist", "reset.css"],
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist",
+    "reset.css"
+  ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
-    "./dist/index.css": "./dist/index.css",
-    "./reset.css": "./reset.css"
+    "./package.json": "./package.json",
+    "./dist/index.css": "./dist/index.css"
   },
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsdown src/index.ts",
+    "dev": "tsdown src/index.ts --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsup src/index.ts"
+    "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/collection-preset": "workspace:*",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
-    "@manifest-editor/iiif-browser": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.10"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
@@ -59,8 +59,9 @@
     "@types/react-dom": "^18.3.0",
     "postcss": "^8.4.38",
     "postcss-import": "^16.1.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "tiny-invariant": "^1.3.3",
-    "tsup": "^8.0.2"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

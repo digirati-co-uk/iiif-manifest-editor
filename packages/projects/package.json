@@ -5,50 +5,51 @@
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
     "directory": "packages/projects"
   },
   "engines": {
     "node": ">=18.14.1"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsdown src/index.ts",
+    "dev": "tsdown src/index.ts --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsup src/index.ts"
+    "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
-    "@iiif/helpers": "^1.3.2",
-    "@iiif/parser": "^2.1.8",
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/client-vault": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "immer": "^10.0.4",
     "localforage": "^1.10.0",
-    "react": "^18.3.1",
+    "react": "catalog:",
     "react-accessible-dropdown-menu-hook": "4.0.0",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.10",
-    "styled-components": "6.1.8",
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "styled-components": "catalog:",
     "tiny-use-debounce": "^1.0.4"
   },
   "devDependencies": {
@@ -60,7 +61,7 @@
     "shallowequal": "^1.1.0",
     "slugify": "^1.6.6",
     "tiny-invariant": "^1.3.3",
-    "tsup": "^8.0.2"
+    "tsdown": "0.16.4"
   },
   "publishConfig": {
     "access": "public"

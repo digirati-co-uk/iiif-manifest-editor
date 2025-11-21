@@ -21,6 +21,7 @@ export const youTubeBodyCreator = defineCreator({
   resourceFields: ["id", "type", "service"],
   render: (ctx) => <YouTubeForm {...ctx} />,
   supports: {
+    onlyPainting: true,
     parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
     parentFieldMap: {
       Annotation: ["body"],

@@ -1,6 +1,7 @@
+import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
 import {
-  FloatingPortal,
   autoUpdate,
+  FloatingPortal,
   flip,
   offset,
   shift,
@@ -12,7 +13,6 @@ import {
   useMergeRefs,
   useRole,
 } from "@floating-ui/react";
-import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
 import type { UseFloatingReturn } from "@floating-ui/react-dom";
 import * as React from "react";
 import { Button } from "react-aria-components";
@@ -104,8 +104,8 @@ export function Tooltip({ children, ...options }: { children: React.ReactNode } 
 
 export const TooltipTrigger = React.forwardRef<
   HTMLElement,
-  React.HTMLProps<HTMLElement> & { asChild?: boolean; onPress?: any }
->(function TooltipTrigger({ children, asChild = false, ...props }, propRef) {
+  React.HTMLProps<HTMLElement> & { asChild?: boolean; onPress?: any; as?: any; $dir?: any }
+>(function TooltipTrigger({ children, as: Component, asChild = false, ...props }, propRef) {
   const context = useTooltipContext();
   const childrenRef = (children as any).ref;
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -123,15 +123,17 @@ export const TooltipTrigger = React.forwardRef<
     );
   }
 
+  const Btn = (Component as typeof Button) || Button;
+
   return (
-    <Button
+    <Btn
       ref={ref}
       // The user can style the trigger based on the state
       data-state={context.open ? "open" : "closed"}
       {...context.getReferenceProps(props)}
     >
       {children}
-    </Button>
+    </Btn>
   );
 });
 
@@ -158,11 +160,7 @@ export const TooltipContent = React.forwardRef<
   );
 });
 
-export function DefaultTooltipContent(props: {
-  className?: string;
-  root?: HTMLElement;
-  children: React.ReactNode;
-}) {
+export function DefaultTooltipContent(props: { className?: string; root?: HTMLElement; children: React.ReactNode }) {
   return (
     <TooltipContent
       root={props.root}

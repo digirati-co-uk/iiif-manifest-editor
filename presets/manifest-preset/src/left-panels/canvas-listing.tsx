@@ -12,20 +12,20 @@ import { manifestBrowserCreator } from "@manifest-editor/creators";
 import {
   CanvasGrid,
   CanvasList,
-  InputContainer,
   createAppActions,
+  InputContainer,
   useInStack,
   useToggleList,
 } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useCreator,
+  useEditingStack,
   useLayoutActions,
   useManifestEditor,
-  useEditingStack,
 } from "@manifest-editor/shell";
-import { useManifest, useCollection } from "react-iiif-vault";
 import { type SVGProps, useEffect, useLayoutEffect } from "react";
+import { useCollection, useManifest } from "react-iiif-vault";
 
 export const CanvasListingIcon = ({
   title,
@@ -60,8 +60,11 @@ export const canvasListing: LayoutPanel = {
   render: (state, ctx, app) => {
     return (
       <CanvasListing
-        gridView={state.gridView || false}
-        onChangeGridView={(gridView) => ctx.actions.change("canvas-listing", { gridView })}
+        gridView={state.gridView || localStorage.getItem("canvas-listing-view-mode") === "grid"}
+        onChangeGridView={(gridView) => {
+          localStorage.setItem("canvas-listing-view-mode", gridView ? "grid" : "list");
+          ctx.actions.change("canvas-listing", { gridView });
+        }}
       />
     );
   },
@@ -74,33 +77,13 @@ export function CanvasListing({
   gridView: boolean;
   onChangeGridView: (gridView: boolean) => void;
 }) {
-  const { open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const [toggled, toggle] = useToggleList();
-  const canvas = useInStack("Canvas");
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
   const canvases = useFastList(items.get(), 24);
-
-  useEffect(() => {
-    if (canvas?.resource.source.id) {
-      // @todo check if this is still needed..
-      // const key = items.get().findIndex((c) => c.id === canvas.resource.source.id);
-      // if (key !== -1) {
-      //   open({ id: "current-canvas" });
-      //   canvasActions.edit({ id: canvas.resource.source.id, type: "Canvas" }, key);
-      //   return;
-      // }
-      return;
-    }
-
-    if (items.get().length) {
-      open({ id: "current-canvas" });
-      canvasActions.edit(items.get()[0]);
-    }
-  }, []);
 
   useLayoutEffect(() => {
     const selected = document.querySelector('[data-canvas-selected="true"]');
@@ -154,7 +137,7 @@ export function useEditCanvasItems() {
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const canvases = useFastList(items.get(), 24);
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
 
   return {
     canvas,
@@ -213,7 +196,7 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   const { canvas, items, canvasActions, open } = useEditCanvasItems();
   const manifest = useManifest();
   const editingStack = useEditingStack();
-  const canvases = items.get();
+  const canvases = items.get() || [];
   const canvasId = canvas?.resource.source.id;
 
   // Find current canvas to get its index before deleting it
@@ -251,11 +234,14 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-export function ListEditIcon() {
+export function ListEditIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
+      <path
+        d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

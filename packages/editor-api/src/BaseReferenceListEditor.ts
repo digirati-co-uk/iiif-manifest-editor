@@ -2,11 +2,17 @@ import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 import { entityActions } from "@iiif/helpers/vault/actions";
-import { randomId } from "./utils";
+import { flattenRanges, randomId } from "./utils";
+import { createRangeHelper } from "@iiif/helpers";
 
-export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entity, T[]> {
+export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
+  Entity,
+  T[]
+> {
   protected cachedList: T[] | undefined;
-  protected cachedSortableList: Array<Reference | ({ id: string } & SpecificResource)> | undefined;
+  protected cachedSortableList:
+    | Array<Reference | ({ id: string } & SpecificResource)>
+    | undefined;
   protected idCache = new Map();
   constructor(config: EditorConfig, property: string) {
     super(config, property);
@@ -50,6 +56,9 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
   }
 
   moveToStart(index: number) {
+    if (index <= 0) {
+      return false;
+    }
     this.config.vault.dispatch(
       entityActions.reorderEntityField({
         id: this.getId(),
@@ -57,12 +66,16 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         startIndex: index,
         endIndex: 0,
         key: this.property,
-      })
+      }),
     );
+    return true;
   }
 
   moveToEnd(index: number) {
     const list = this.getWithoutTracking();
+    if (index >= list.length || index < 0) {
+      return false;
+    }
     this.config.vault.dispatch(
       entityActions.reorderEntityField({
         id: this.getId(),
@@ -70,27 +83,88 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         startIndex: index,
         endIndex: list.length,
         key: this.property,
-      })
+      }),
     );
+    return true;
   }
 
   deleteAtIndex(index: number) {
     const list = this.getWithoutTracking();
+
+    if (index < 0 || index >= list.length) {
+      return false;
+    }
+
     const toRemove = list[index];
     if (toRemove) {
-      this.config.vault.dispatch(
-        entityActions.removeReference({
-          id: this.getId(),
-          type: this.getType() as any,
-          key: this.property,
-          reference: toRemove,
-          index: index,
-        })
-      );
+      this.config.vault.batch((vault) => {
+        // Edge-case, if this is a Manifest, we need to ALSO check the ranges.
+        if (this.getType() === "Manifest" && this.property === "items") {
+          const fullManifest = vault.get(this.ref());
+          const toRemoveId = vault.get(toRemove)?.id;
+          if (toRemoveId && fullManifest && (fullManifest.structures || []).length > 0) {
+            // Grab all ranges.
+            const allRanges = createRangeHelper(vault).rangesToTableOfContentsTree(fullManifest.structures);
+            if (allRanges) {
+              const flattened = flattenRanges(allRanges);
+              for (const item of flattened) {
+                if (item.items) {
+                  const idx = item.items.findIndex((i) => i.type === "Canvas" && i.id === toRemoveId);
+                  if (idx !== -1) {
+                    vault.dispatch(
+                      entityActions.removeReference({
+                        id: item.id,
+                        type: "Range",
+                        key: "items",
+                        reference: item.items[idx]!.resource,
+                        index: idx,
+                      }),
+                    )
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        vault.dispatch(
+          entityActions.removeReference({
+            id: this.getId(),
+            type: this.getType() as any,
+            key: this.property,
+            reference: toRemove,
+            index: index,
+          }),
+        );
+      });
+      return true;
     }
+    return false;
   }
 
   addAfter(index: number, reference: Reference | SpecificResource) {
+    if (!reference) {
+      return false;
+    }
+    this.config.vault.dispatch(
+      entityActions.addReference({
+        id: this.getId(),
+        type: this.getType() as any,
+        key: this.property,
+        reference,
+        index: index + 1,
+      }),
+    );
+    return true;
+  }
+
+  addBefore(index: number, reference: Reference | SpecificResource) {
+    if (!reference) {
+      return false;
+    }
+    if (index < 0) {
+      return false;
+    }
     this.config.vault.dispatch(
       entityActions.addReference({
         id: this.getId(),
@@ -98,34 +172,34 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         key: this.property,
         reference,
         index: index,
-      })
+      }),
     );
-  }
-
-  addBefore(index: number, reference: Reference | SpecificResource) {
-    this.config.vault.dispatch(
-      entityActions.addReference({
-        id: this.getId(),
-        type: this.getType() as any,
-        key: this.property,
-        reference,
-        index: index - 1,
-      })
-    );
+    return true;
   }
 
   add(reference: Reference | SpecificResource) {
+    if (!reference) {
+      return false;
+    }
     this.config.vault.dispatch(
       entityActions.addReference({
         id: this.getId(),
         type: this.getType() as any,
         key: this.property,
         reference,
-      })
+      }),
     );
+    return true;
   }
 
   reorder(startIndex: number, endIndex: number) {
+    if (startIndex === -1 || endIndex === -1) {
+      return false;
+    }
+    if (startIndex === endIndex) {
+      return false;
+    }
+
     this.config.vault.dispatch(
       entityActions.reorderEntityField({
         id: this.getId(),
@@ -133,11 +207,16 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         startIndex,
         endIndex,
         key: this.property,
-      })
+      }),
     );
+    return true;
   }
 
   moveUpBy(index: number, steps: number) {
+    if (index === -1 || steps === 0) {
+      return false;
+    }
+
     this.config.vault.dispatch(
       entityActions.reorderEntityField({
         id: this.getId(),
@@ -145,11 +224,16 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         startIndex: index,
         endIndex: Math.max(0, index - steps),
         key: this.property,
-      })
+      }),
     );
+    return true;
   }
 
   moveDownBy(index: number, steps: number) {
+    if (index === -1 || steps === 0) {
+      return false;
+    }
+
     const list = this.getWithoutTracking();
     this.config.vault.dispatch(
       entityActions.reorderEntityField({
@@ -159,8 +243,9 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         // Maybe not +1
         endIndex: Math.min(list.length + 1, index + steps),
         key: this.property,
-      })
+      }),
     );
+    return true;
   }
 
   private duplicate(index: number) {
@@ -179,12 +264,15 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
           reference: { ...item },
           index: index + 1,
           key: this.property,
-        })
+        }),
       );
     }
   }
 
   updateReference(index: number, item: Reference | SpecificResource) {
+    if (!item) {
+      return;
+    }
     this.config.vault.dispatch(
       entityActions.updateReference({
         id: this.getId(),
@@ -192,7 +280,7 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<Entit
         reference: item,
         index: index,
         key: this.property,
-      })
+      }),
     );
   }
 

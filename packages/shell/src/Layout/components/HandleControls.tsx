@@ -1,11 +1,19 @@
-import styled, { css } from "styled-components";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { PanelActions } from "../Layout.types";
-import { forwardRef } from "react";
-import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
-import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
+import { useState } from "react";
+import {
+  DefaultTooltipContent,
+  IconHandle,
+  ResetIcon,
+  ResizeHandle,
+  Tooltip,
+  TooltipTrigger,
+} from "@manifest-editor/components";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
-import { TransitionStatus } from "react-transition-group";
+import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
+import { forwardRef } from "react";
+import type { TransitionStatus } from "react-transition-group";
+import styled, { css } from "styled-components";
+import type { PanelActions } from "../Layout.types";
 
 export const HandleContainer = styled.div`
   position: relative;
@@ -26,16 +34,6 @@ const HandleControl = styled(ButtonReset)`
   &:focus {
     outline: 2px solid salmon;
   }
-`;
-
-const ResizeHandle = styled(HandleControl)`
-  position: relative;
-  background: #fff;
-  height: 40px;
-  width: 15px;
-  border-radius: 3px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-  user-select: none;
 `;
 
 const IconControl = styled(HandleControl)`
@@ -86,8 +84,8 @@ const OpenControl = styled(HandleControl)<{ $dir: "left" | "right" }>`
 const InnerHandleContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>`
   background: rgba(0, 0, 0, 0);
   position: absolute;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "1px")};
   top: 0;
   bottom: 0;
   z-index: 50; // This will always be quite high.
@@ -117,8 +115,8 @@ const UnscaledContainer = styled.div<{ $open: boolean; $dir: "left" | "right" }>
   background: rgba(0, 0, 0, 0);
   position: absolute;
   pointer-events: none;
-  width: 21px;
-  left: ${(props) => (props.$open ? "-10px" : props.$dir === "left" ? 0 : "-20px")};
+  width: 16px;
+  left: ${(props) => (props.$dir === "left" ? 0 : "-16px")};
   top: 0;
   bottom: 0;
   z-index: 51; // This will always be quite high.
@@ -134,44 +132,81 @@ export const HandleControls = forwardRef<
     reset?: () => void;
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {
+  const [showDragTooltip, setShowDragToolTip] = useState(true);
+  const dragTooltipMt = "mt-[calc(50vh+8px)]";
+  const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[3px]`;
   return (
     <HandleContainer onClick={() => actions.open()}>
-      <UnscaledContainer $open={open} $dir={dir}>
+      <UnscaledContainer $open={open} $dir={dir} className="group">
         {!open ? (
-          <OpenControl
-            $dir={dir}
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.open();
-            }}
-          >
-            <DownIcon rotate={dir === "right" ? 90 : 270} />
-          </OpenControl>
+          <Tooltip placement={dir === "left" ? "right" : "left"}>
+            <TooltipTrigger as={OpenControl} $dir={dir} onClick={(e) => actions.open()}>
+              <DownIcon className="text-2xl" rotate={dir === "right" ? 90 : 270} />
+            </TooltipTrigger>
+            <DefaultTooltipContent>Open</DefaultTooltipContent>
+          </Tooltip>
         ) : null}
       </UnscaledContainer>
-      <InnerHandleContainer ref={ref} $open={open} $dir={dir}>
-        {open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.close();
-            }}
-          >
-            <CloseIcon />
-          </IconControl>
-        ) : null}
-        {reset && open ? (
-          <IconControl
-            onClick={(e) => {
-              e.stopPropagation();
-              reset();
-            }}
-          >
-            <ResetIcon />
-          </IconControl>
-        ) : null}
-        {open ? <ResizeHandle aria-label="Reorder item" /> : null}
-      </InnerHandleContainer>
+      <Tooltip placement={dir === "left" ? "right" : "left"}>
+        <TooltipTrigger aria-label="Resize panel" asChild>
+          <div>
+            <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
+              {open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <CloseIcon />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Close</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+              {reset && open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger as={IconHandle} onPress={() => reset()}>
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <ResetIcon />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Reset</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+              {open ? (
+                <Tooltip placement={dir === "left" ? "right" : "left"}>
+                  <TooltipTrigger asChild aria-label="Resize panel">
+                    <div
+                      onMouseOut={() => {
+                        setShowDragToolTip(true);
+                      }}
+                      onMouseOver={() => {
+                        setShowDragToolTip(false);
+                      }}
+                    >
+                      <ResizeHandle aria-label="Resize panel" />
+                    </div>
+                  </TooltipTrigger>
+                  <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+                </Tooltip>
+              ) : null}
+            </InnerHandleContainer>
+          </div>
+        </TooltipTrigger>
+        {showDragTooltip && <DefaultTooltipContent className={dragTooltipClasses}>Resize panel</DefaultTooltipContent>}
+      </Tooltip>
     </HandleContainer>
   );
 });

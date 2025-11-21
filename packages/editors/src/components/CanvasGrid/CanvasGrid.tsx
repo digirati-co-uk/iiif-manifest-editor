@@ -2,8 +2,15 @@ import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { isSpecificResource, toRef } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { CanvasContext } from "react-iiif-vault";
+import {
+  CanvasContext,
+  useCanvas,
+  useRenderingStrategy,
+  useVault,
+} from "react-iiif-vault";
 import { CanvasThumbnailGridItem } from "@manifest-editor/components";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { useMemo, useState, useEffect } from "react";
 
 interface CanvasGridProps {
   id?: string;
@@ -12,7 +19,11 @@ interface CanvasGridProps {
   inlineHandle?: boolean;
   activeId?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
-  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  createActions?: (
+    ref: Reference,
+    index: number,
+    item: Reference | SpecificResource,
+  ) => AppDropdownItem[];
 }
 
 export function CanvasGrid(props: CanvasGridProps) {

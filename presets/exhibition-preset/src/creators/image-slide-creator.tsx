@@ -61,6 +61,7 @@ interface InfoBoxPayload {
   label?: InternationalString;
   height?: number;
   width?: number;
+  duration?: number;
   type: "default" | "left" | "right" | "bottom";
   items?: CreatorResource[];
 }
@@ -123,6 +124,7 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     behavior,
     label: payload.label || { en: ["Untitled"] },
     height: payload.height || 2000,
+    duration: payload.duration,
     width: payload.width || width,
     items: [
       ctx.embed({

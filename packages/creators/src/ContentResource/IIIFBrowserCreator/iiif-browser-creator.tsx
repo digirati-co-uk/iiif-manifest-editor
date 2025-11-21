@@ -1,4 +1,4 @@
-import { type BoxSelector, type ContentState, Vault, normaliseContentState, parseContentState } from "@iiif/helpers";
+import { type BoxSelector, type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -24,7 +24,11 @@ export interface IIIFBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
-  output: Array<{ resource: any; parent: { id: string; type: string } | undefined; selector: BoxSelector | undefined }>;
+  output: Array<{
+    resource: any;
+    parent: { id: string; type: string } | undefined;
+    selector: BoxSelector | undefined;
+  }>;
   trackSize?: (dimensions: { width: number; height: number }) => void;
 }
 
@@ -47,8 +51,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         const manifestId = parent?.type === "Manifest" ? parent.id : undefined;
         invariant(manifestId, "Could not find Manifest");
 
+        const existingManifest = previewVault.get({
+          id: manifestId,
+          type: "Manifest",
+        });
         // 1st. Check the preview vault.
-        const manifest = await previewVault.loadManifest(manifestId);
+        const manifest = existingManifest || (await previewVault.loadManifest(manifestId));
 
         invariant(manifest, "Manifest not found");
 
@@ -63,10 +71,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           if (!fullCanvas.label) {
             fullCanvas.label = { en: ["Untitled canvas"] };
           }
+
+          console.log("loading full canvas", fullCanvas);
           // Load before embedding.
           ctx.vault.loadSync(fullCanvas.id, fullCanvas);
           // Then embed.
-          returnResources.push(ctx.embed(fullCanvas));
+          returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
           continue;
         }
 

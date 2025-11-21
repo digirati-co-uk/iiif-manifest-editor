@@ -24,6 +24,10 @@ const Container = styled.div<{ $interactive?: boolean }>`
   &[data-margin="true"] {
     margin-bottom: 0.5em;
   }
+
+  &[data-visible="false"] {
+    opacity: 0.5;
+  }
 `;
 
 const Icon = styled.div`

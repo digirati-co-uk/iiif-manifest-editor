@@ -8,25 +8,26 @@ import {
   CompositeDecorator,
   type ContentBlock,
   ContentState,
+  convertFromHTML,
   type DraftHandleValue,
   Editor,
   type EditorCommand,
   EditorState,
   RichUtils,
-  convertFromHTML,
 } from "draft-js";
 import type React from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Textarea from "react-textarea-autosize";
 import { useDebounce } from "tiny-use-debounce";
 import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
-import * as S from "./RichTextLanguageField.styles";
 import { useCreateLink } from "./hooks/use-create-link";
+import * as S from "./RichTextLanguageField.styles";
 
 interface RichTextLanguageField {
   id?: string;
   language: string;
   value: string;
+  disableMultiline?: boolean;
   onUpdate: (value: string) => void;
   onRemove?: () => void;
   languages?: string[];
@@ -34,6 +35,7 @@ interface RichTextLanguageField {
   onFocus?: () => void;
   onBlur?: () => void;
   disallowHTML?: boolean;
+  autoFocus?: boolean;
 }
 
 const Link = (props: any) => {
@@ -74,7 +76,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const saveChanges = () => {
     props.onUpdate(getTextValue());
   };
-  const debounceSave = useDebounce(saveChanges, 300);
+  const debounceSave = useDebounce(saveChanges, 100);
   const [showControls, setShowControls] = useState(false);
 
   const setEditorState: React.Dispatch<React.SetStateAction<EditorState>> = (s) => {
@@ -352,12 +354,13 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         ) : (
           <ComposableInput.Text
             id={props.id}
-            as={Textarea}
+            as={props.disableMultiline ? "input" : Textarea}
             onFocus={() => setIsFocused(true)}
             onBlur={() => {
               saveChanges();
               setIsFocused(false);
             }}
+            autoFocus={props.autoFocus}
             value={textState}
             onChange={(e: any) => setTextState(e.currentTarget.value)}
           />

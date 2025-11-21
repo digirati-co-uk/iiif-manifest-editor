@@ -1,4 +1,6 @@
+"use client";
 import dynamic from "next/dynamic";
+import { use } from "react";
 import allExamples from "../../../../../../examples.json";
 
 const { examples } = allExamples;
@@ -7,7 +9,8 @@ const ExampleEditor = dynamic(() => import("../../../components/example-editor/E
   ssr: false,
 });
 
-export default function ExamplePage({ params }: { params: { example: string } }) {
+export default function ExamplePage(props: { params: Promise<{ example: string }> }) {
+  const params = use(props.params);
   const example = examples.find((e) => e.id === params.example);
 
   if (!example) {

@@ -1,6 +1,6 @@
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useState } from "react";
 import { InputContainer, InputLabel } from "../../components/Input";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { InlineSelect } from "./InlineSelect";
 
 export default { title: "Inline Select", panel: "right" };

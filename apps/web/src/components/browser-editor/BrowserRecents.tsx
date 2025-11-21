@@ -1,7 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import "manifest-editor/dist/index.css";
+// import "manifest-editor/dist/index.css";
 import { Vault } from "@iiif/helpers";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -32,7 +32,7 @@ export default function BrowserRecents() {
       {projects.data?.map((project) => (
         <div className="relative" key={project.id}>
           <ProjectContextualMenu id={project.id} />
-          <Link href={`/editor/${project.id}`}>
+          <Link href={`/editor/${project.id}${project.resource.preset ? `/${project.resource.preset}` : ""}`}>
             <div className="border flex flex-col rounded hover:border-me-primary-500 overflow-hidden">
               <div className="bg-gray-200 w-full h-48 transition-transform">
                 {project.resource.thumbnail ? (

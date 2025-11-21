@@ -44,20 +44,24 @@
     "./RichTextLanguageField": "./ui/RichTextLanguageField/RichTextLanguageField.tsx",
     "./use-local-storage": "./madoc/use-local-storage.ts"
   },
-  "keywords": ["iiif", "editor", "typescript"],
+  "keywords": [
+    "iiif",
+    "editor",
+    "typescript"
+  ],
   "main": "./index.tsx",
   "types": "./index.tsx",
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "2.3.5",
+    "@atlas-viewer/atlas": "catalog",
     "@floating-ui/react": "^0.26.13",
-    "react": "^18.3.1",
-    "@iiif/helpers": "^1.3.2",
-    "react-dom": "^18.3.1",
-    "react-iiif-vault": "^1.5.10",
-    "styled-components": "6.1.8",
+    "react": "catalog:",
+    "@iiif/helpers": "catalog:",
+    "react-dom": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "styled-components": "catalog:",
     "classnames": "^2.5.1",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "mitt": "^3.0.1"

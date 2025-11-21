@@ -1,8 +1,8 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
+import { useAnnotationCreatorState } from "@manifest-editor/shell";
 import { type FormEvent, useState } from "react";
 
 export interface CreateCaptionedImageAnnotationPayload {
@@ -100,7 +100,11 @@ export async function createCaptionedImageAnnotation(
 }
 
 export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
-  const [body, setBody] = useState<InternationalString>({ en: [""] });
+  const [body, setBody] = useAnnotationCreatorState<InternationalString>({
+    key: "bodyValue",
+    initialValue: { en: [""] },
+    requestId: props.options.initialData?.requestId,
+  });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -108,35 +112,34 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
     const formData = Object.fromEntries(data.entries()) as any;
 
     props.runCreate({
-      body,
+      body: { en: [formData.caption] },
       imageUrl: formData.url,
     });
   };
 
   return (
     <form onSubmit={onSubmit}>
-      <PaddedSidebarContainer>
-        <InputContainer>
-          <InputContainer $wide>
-            <InputLabel htmlFor="id">Link to Image</InputLabel>
-            <Input id="url" name="url" defaultValue="" />
-          </InputContainer>
+      <>
+        <InputContainer $wide>
+          <InputLabel htmlFor="url">URL to Image</InputLabel>
+          <Input id="url" name="url" defaultValue="" placeholder="https://example.org/image.jpg" />
         </InputContainer>
 
-        <InputContainer>
-          <InputLabel>Image Caption</InputLabel>
-          <LanguageFieldEditor
-            focusId={"html-content"}
-            label={"HTML Content"}
-            fields={body}
-            onSave={(e: any) => setBody(e.toInternationalString())}
+        <InputContainer $wide>
+          <InputLabel htmlFor="caption">Caption</InputLabel>
+          <Input
+            id="caption"
+            name="caption"
+            placeholder="Enter a caption"
+            onChange={(e: any) => setBody({ en: [e.target.value] })}
+            value={body.en?.[0] || ""}
           />
         </InputContainer>
 
-        <ActionButton primary large type="submit">
+        <ActionButton primary type="submit">
           Create
         </ActionButton>
-      </PaddedSidebarContainer>
+      </>
     </form>
   );
 }

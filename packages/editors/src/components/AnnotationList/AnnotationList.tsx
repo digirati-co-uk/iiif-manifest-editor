@@ -1,14 +1,16 @@
-import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { AnnotationContext } from "react-iiif-vault";
-import { AnnotationPreview } from "../AnnotationPreview/AnnotationPreview";
-import { CanvasTargetContext } from "../CanvasTargetContext";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import { EmptyState } from "@manifest-editor/components";
+import { AnnotationContext, useAtlasStore } from "react-iiif-vault";
+import { useStore } from "zustand";
+import { AnnotationPreview } from "../AnnotationPreview/AnnotationPreview";
+import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
+import { CanvasTargetContext } from "../CanvasTargetContext";
+import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 
 interface AnnotationListProps {
   id?: string;
+  canvasId?: string;
   list: Array<Reference>;
   reorder?: (result: { startIndex: number; endIndex: number }) => void;
   inlineHandle?: boolean;
@@ -18,13 +20,14 @@ interface AnnotationListProps {
 }
 
 export function AnnotationList(props: AnnotationListProps) {
+  const store = useAtlasStore();
+  const viewport = useStore(store, (s) => (props.canvasId ? s.canvasViewports[props.canvasId] : null));
+
   if (props.list.length === 0) {
     return (
-      <>
-        <EmptyState $noMargin $box>
-          No {props.isMedia ? "media" : "annotations"}
-        </EmptyState>
-      </>
+      <EmptyState $noMargin $box>
+        No {props.isMedia ? "media" : "annotations"}
+      </EmptyState>
     );
   }
 
@@ -41,7 +44,7 @@ export function AnnotationList(props: AnnotationListProps) {
           return (
             <AnnotationContext annotation={ref.id} key={ref.id}>
               <CanvasTargetContext>
-                <AnnotationPreview key={ref.id} onClick={() => props.onSelect(item, index)} />
+                <AnnotationPreview viewport={viewport} key={ref.id} onClick={() => props.onSelect(item, index)} />
               </CanvasTargetContext>
             </AnnotationContext>
           );
@@ -58,7 +61,7 @@ export function AnnotationList(props: AnnotationListProps) {
         return (
           <AnnotationContext annotation={ref.id} key={ref.id}>
             <CanvasTargetContext>
-              <AnnotationPreview margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
+              <AnnotationPreview viewport={viewport} margin key={ref.id} onClick={() => props.onSelect(ref, idx)} />
             </CanvasTargetContext>
           </AnnotationContext>
         );

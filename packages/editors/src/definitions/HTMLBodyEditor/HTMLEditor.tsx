@@ -1,9 +1,9 @@
 import type { Reference } from "@iiif/presentation-3";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { InputContainer, InputLabel } from "../../components/Input";
-import { TextGranularityEditor } from "../../components/TextGranularityEditor/TextGranularityEditor";
 import { RichTextLanguageField } from "../../components/RichTextLanguageField/RichTextLanguageField";
+import { TextGranularityEditor } from "../../components/TextGranularityEditor/TextGranularityEditor";
 
 export function HTMLEditor() {
   const { annotation } = useEditor();

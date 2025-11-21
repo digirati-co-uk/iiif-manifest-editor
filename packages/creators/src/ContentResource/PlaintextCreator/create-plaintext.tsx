@@ -1,8 +1,7 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
+import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { type FormEvent, useState } from "react";
 
 export interface CreatePlaintextPayload {

@@ -1,8 +1,16 @@
 import { ModeContext } from "@atlas-viewer/atlas";
 import {
+  AppReactContext,
+  AppStateReactContext,
   AtlasStoreReactContext,
+  ConfigReactContext,
+  ContextMenuReactContext,
+  EditingStackContext,
+  LayoutActionsReactContext,
   LayoutStateReactContext,
+  PrimeAppReactContext,
   ResourceEditingReactContext,
+  SaveConfigReactContext,
 } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import {
@@ -20,6 +28,14 @@ export function AdditionalContextBridge(props: { children: React.ReactNode }) {
       atlas: AtlasStoreReactContext,
       layout: LayoutStateReactContext,
       resource: ResourceEditingReactContext,
+      layoutActions: LayoutActionsReactContext,
+      PrimeAppReactContext,
+      AppReactContext,
+      AppStateReactContext,
+      ContextMenuReactContext,
+      EditingStackContext,
+      ConfigReactContext,
+      SaveConfigReactContext,
     };
   }, []);
 
@@ -41,6 +57,12 @@ export function AdditionalContextBridgeInner(props: {
       atlas: AtlasStoreReactContext,
       layout: LayoutStateReactContext,
       resource: ResourceEditingReactContext,
+      layoutActions: LayoutActionsReactContext,
+      PrimeAppReactContext,
+      AppReactContext,
+      AppStateReactContext,
+      ContextMenuReactContext,
+      EditingStackContext,
     };
   }, []);
 

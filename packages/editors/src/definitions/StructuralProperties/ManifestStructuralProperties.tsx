@@ -1,12 +1,12 @@
-import { useEditingResource, useEditor, useCreator } from "@manifest-editor/shell";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
+import { useCreator, useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { PaddedSidebarContainer } from "@manifest-editor/ui/atoms/PaddedSidebarContainer";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { CanvasList } from "../../components/CanvasList/CanvasList";
 import { InputContainer, InputLabel, InputLabelEdit } from "../../components/Input";
 import { LinkingPropertyList } from "../../components/LinkingPropertyList/LinkingPropertyList";
 import { useToggleList } from "../../helpers";
 import { createAppActions } from "../../helpers/create-app-actions";
-import { CanvasList } from "../../components/CanvasList/CanvasList";
 
 export function ManifestStructuralProperties() {
   const resource = useEditingResource();
@@ -15,7 +15,9 @@ export function ManifestStructuralProperties() {
 
   const { items, structures } = structural;
 
-  const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas", undefined, {
+    isPainting: true,
+  });
 
   return (
     <PaddedSidebarContainer>
