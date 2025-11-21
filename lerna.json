@@ -1,7 +1,11 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "1.4.3",
+  "version": "2.0.0",
   "npmClient": "pnpm",
-  "packages": ["packages/*", "presets/*", "apps/*"],
+  "packages": [
+    "packages/*",
+    "presets/*",
+    "apps/*"
+  ],
   "includeMergedTags": true
 }

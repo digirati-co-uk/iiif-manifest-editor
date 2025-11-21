@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/ui",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -57,19 +57,19 @@
   "dependencies": {
     "@atlas-viewer/atlas": "catalog",
     "@floating-ui/react": "^0.26.13",
-    "react": "catalog:",
     "@iiif/helpers": "catalog:",
+    "classnames": "^2.5.1",
+    "mitt": "^3.0.1",
+    "react": "catalog:",
+    "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-dom": "catalog:",
     "react-iiif-vault": "catalog:",
-    "styled-components": "catalog:",
-    "classnames": "^2.5.1",
-    "react-accessible-dropdown-menu-hook": "4.0.0",
-    "mitt": "^3.0.1"
+    "styled-components": "catalog:"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@repo/eslint-config": "workspace:*"
+    "@types/react-dom": "^18.3.0"
   },
   "private": true
 }
