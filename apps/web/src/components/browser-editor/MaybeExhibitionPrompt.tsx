@@ -53,7 +53,6 @@ export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; a
           className="inline-flex gap-1 items-center text-me-primary-500 underline"
           onPress={() => setDismissed(true)}
         >
-          <CloseIcon className="text-lg" />
           Dismiss this message
         </Button>
       </div>
