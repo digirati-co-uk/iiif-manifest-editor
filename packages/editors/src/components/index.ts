@@ -2,6 +2,7 @@ export * from "./AnnotationBodyEditor";
 export * from "./AnnotationCreationPopup";
 export * from "./AnnotationPopUpSwitcherButton";
 export * from "./AnnotationPreview/AnnotationPreview";
+export * from "./AppDropdown/AppDropdown";
 export * from "./AtlasRenderBoxSelector";
 export * from "./AtlasRenderSVGSelector";
 export * from "./BehaviorEditor/BehaviorEditor";

@@ -1,30 +1,28 @@
 import {
+  closestCenter,
   DndContext,
   type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  rectSortingStrategy,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
-import {
-  useCreator,
-  useLayoutActions,
-  useManifestEditor,
-} from "@manifest-editor/shell";
-import { useCallback } from "react";
-import { CanvasContext } from "react-iiif-vault";
+import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { createAppActions, useInStack } from "@manifest-editor/editors";
+import { useEditCanvasItems } from "@manifest-editor/manifest-preset/components";
+import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import { useCallback, useMemo } from "react";
+import { CanvasContext, useManifest } from "react-iiif-vault";
 import { ExhibitionContainer } from "./ExhibitionContainer";
 import { SortableExhibitionItem } from "./SortableExhibitionItem";
 
 export function SortableExhibitionGrid() {
+  const manifest = useManifest();
   const { structural, technical } = useManifestEditor();
+  const editingStack = useEditingStack();
+  const editingCanvas = useInStack("Canvas");
+
   const items = structural.items.get();
   const { open } = useLayoutActions();
   const sensors = useSensors(
@@ -37,11 +35,7 @@ export function SortableExhibitionGrid() {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const [, canvasActions] = useCreator(
-    { id: technical.id.get(), type: "Manifest" },
-    "items",
-    "Manifest",
-  );
+  const [, canvasActions] = useCreator({ id: technical.id.get(), type: "Manifest" }, "items", "Manifest");
 
   const onDragEnd = useCallback(
     (result: DragEndEvent) => {
@@ -54,6 +48,26 @@ export function SortableExhibitionGrid() {
       }
     },
     [items, structural.items],
+  );
+
+  const canvasId = editingCanvas?.resource.source.id;
+  const canvasIndex = canvasId ? items.findIndex((canv) => canv.id === canvasId) : -1;
+  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+
+  function onDeleteCanvas() {
+    editingStack.close(); // close the deleted canvas
+    const newCanvases = structural.items.get(); // refresh canvases
+
+    if (newCanvases && newCanvases.length > 0) {
+      canvasActions.edit(newCanvases[prevCanvasIndex]);
+    } else {
+      canvasActions.edit(manifest);
+    }
+  }
+
+  const createActions = useMemo(
+    () => createAppActions(structural.items, onDeleteCanvas),
+    [structural.items, onDeleteCanvas],
   );
 
   return (
@@ -77,6 +91,7 @@ export function SortableExhibitionGrid() {
                     open({ id: "current-canvas" });
                     canvasActions.edit(item, idx);
                   }}
+                  actions={createActions(item, idx, manifest!)}
                 />
               </CanvasContext>
             );
