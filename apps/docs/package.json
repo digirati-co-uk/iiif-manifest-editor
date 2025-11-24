@@ -1,23 +1,32 @@
 {
   "name": "docs",
-  "license": "MIT",
-  "private": true,
-  "type": "module",
+  "version": "2.0.0",
+  "description": "Nextra docs starter with search included.",
   "scripts": {
+    "dev": "next dev --port 3003",
     "build": "next build",
-    "clean": "rimraf .next .turbo",
-    "dev": "next --port=3003",
-    "start": "next start"
+    "start": "next start",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
+  "repository": {
+    "type": "module",
+    "url": "https://github.com/phucbm/nextra-docs-starter"
+  },
+  "author": "PHUCBM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phucbm/nextra-docs-starter/issues"
+  },
+  "homepage": "https://github.com/phucbm/nextra-docs-starter#readme",
   "dependencies": {
-    "@types/node": "^20.11.24",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "next": "^14.2.3",
-    "nextra": "3.0.0-alpha.42",
-    "nextra-theme-docs": "3.0.0-alpha.42",
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "@tailwindcss/postcss": "^4.1.16",
+    "next": "^16.0.1",
+    "nextra": "^4.6.0",
+    "nextra-theme-docs": "^4.6.0",
+    "postcss": "^8.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.16"
   },
   "dependenciesMeta": {
     "nextra": {
@@ -27,5 +36,10 @@
       "injected": true
     }
   },
-  "version": "2.0.0"
+  "devDependencies": {
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "pagefind": "^1.4.0",
+    "typescript": "^5.9.3"
+  }
 }

@@ -1,0 +1,319 @@
+import { Callout } from "nextra/components";
+
+In the [quick start guide](./quick-start) we used the `manifest-editor` package, and the `<ManifestEditor />` component directly to
+get an instance of the editor running. This is a good way to get started, but it is not the best way to integrate the editor into a
+production application.
+
+Let's take a look at that `<ManifestEditor />` component to see how it works:
+
+```tsx
+import { Vault } from "@iiif/helpers";
+import { Manifest } from "@iiif/presentation-3";
+import { AppProvider, Layout, ShellProvider, mapApp } from "@manifest-editor/shell";
+import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
+import { useExistingVault, VaultProvider } from "react-iiif-vault";
+import invariant from "tiny-invariant";
+
+const manifestEditor = mapApp(manifestEditorPreset);
+
+interface ManifestEditorProps {
+  resource: { id: string; type: "Manifest" };
+  data?: Manifest;
+  vault?: Vault;
+}
+
+export function ManifestEditor(props: ManifestEditorProps) {
+  const vault = useExistingVault(props.vault);
+
+  invariant(props.resource);
+  invariant(props.data, "Data is required");
+  invariant(props.resource.type === "Manifest", "Only Manifests are supported at the moment");
+
+  if (!vault.requestStatus(props.resource.id)) {
+    vault.loadManifestSync(props.resource.id, props.data);
+  }
+
+  return (
+    <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId="test-1">
+      <VaultProvider vault={vault}>
+        <ShellProvider resource={props.resource}>
+          <Layout />
+        </ShellProvider>
+      </VaultProvider>
+    </AppProvider>
+  );
+}
+```
+
+### IIIF Vault
+
+There is quite a few things happening here, so lets start from the Vault.
+
+Vault is a utility for loading IIIF Manifests, Collections and Annotations. It will convert older versions
+of IIIF to the latest version, and it will also load the manifest from a URL if you provide one. It also
+allows you to pull out Manifests from the Vault for exporting.
+
+All of the editing in the Manifest Editor happens inside of the Vault. The Vault will store
+data in a format similar to a Database, with a shallow version of each resource type:
+
+```js
+const vaultStorageExample = {
+  Manifest: {
+    "https://example.org/manifest": {
+      id: "https://example.org/manifest",
+      label: { none: ["My manifest"] },
+      // ... All other properties of a Manifest ...
+      items: [
+        {
+          // It stores references to other resources
+          id: "https://example.org/canvas",
+          type: "Canvas",
+        },
+      ],
+    },
+    Canvas: {
+      "https://example.org/canvas": {
+        id: "https://example.org/canvas",
+        label: { none: ["My canvas"] },
+        // ... All other properties of a Canvas ...
+      },
+    },
+  },
+};
+```
+
+This allows editing operations of the Manifest Editor to be fast and efficient, as it only needs to know the type and
+identifier of the resource to make a change. UI elements also only need this information to react to changes.
+
+There is a React library that makes working with, and loading resources into the Vault easy.
+
+#### React IIIF Vault
+
+Installation:
+
+```sh npm2yarn
+npm i react-iiif-vault
+```
+
+This package allows you to create Vaults and scope specific parts of your application to them. For example,
+following from the quick start guide, we can add a custom Vault around the `ManifestEditor` component:
+
+```ts
+import { VaultProvider } from 'react-iiif-vault';
+import { Vault } from '@iiif/helpers';
+//...
+
+const myCustomVault = new Vault();
+
+function App() {
+  // ...
+  return (
+    <VaultProvider vault={myCustomVault}>
+      <div style={{ width: "100vw", height: "100vh", display: "flex" }}>
+        <ManifestEditor resource={{ id: data.id, type: "Manifest" }} data={data} />
+      </div>
+    </VaultProvider>
+  );
+}
+```
+
+Any components inside of the `VaultProvider` will have access to the Vault, so you can write custom UI that
+subscribes to changes being made in the Editor.
+
+For example, you could listen to a change in the Manifest label:
+
+```tsx
+import { useManifest } from "react-iiif-vault";
+
+export function ManifestLabelUpdates() {
+  const manifest = useManifest();
+
+  if (!manifest) return null;
+
+  // This will crash!
+  return <h1>{manifest.label}</h1>;
+}
+```
+
+Ah - but the manifest label is a language map, so we need to handle that:
+
+```tsx
+import { LocaleString, useManifest } from "react-iiif-vault";
+
+export function ManifestLabelUpdates() {
+  const manifest = useManifest();
+
+  if (!manifest) return null;
+
+  // LocaleString will choose a language based on the user's browser settings by default.
+  return (
+    <h1>
+      <LocaleString value={manifest.label} />
+    </h1>
+  );
+}
+```
+
+There are also some useful hooks for loading resources into the Vault:
+
+```jsx
+import { useExternalManifest } from "react-iiif-vault";
+// ...me imports...
+
+export function RemoteManifestEditor(props) {
+  const manifestId = props.manifestId;
+  // Load the manifest into the Vault
+  // it returns:
+  //   id: string;
+  //   requestId: string;
+  //   isLoaded: boolean;
+  //   cached?: boolean;
+  //   error: any;
+  //   manifest?: ManifestNormalized;
+  const { isLoaded, manifest } = useExternalManifest(manifestId);
+
+  if (!isLoaded || !manifest) return <div>Loading...</div>;
+
+  return <ManifestEditor resource={{ id: manifestId, type: "Manifest" }} data={manifest} />;
+}
+```
+
+But you will need to ensure you wrap this component in a `VaultProvider` to ensure the Vault is available:
+
+```jsx
+export function App() {
+  return (
+    <VaultProvider vault={myCustomVault}>
+      <RemoteManifestEditor manifestId="https://example.org/manifest" />
+    </VaultProvider>
+  );
+}
+```
+
+In the `<ManifestEditor />` wrapper, we leave the loading of the IIIF to the external application.
+
+It does this by using the `useExistingVault()` hook which looks for a Vault, or uses a global one, and
+then it calls `loadManifestSync()` to load the manifest into the Vault.
+
+### Manifest Editor
+
+Let's take a look now at the structure of the Manifest Editor:
+
+```tsx
+<AppProvider appId="manifest-editor" definition={manifestEditor} instanceId="test-1">
+  <VaultProvider vault={vault}>
+    <ShellProvider resource={props.resource}>
+      <Layout />
+    </ShellProvider>
+  </VaultProvider>
+</AppProvider>
+```
+
+We have 4 main components here:
+
+- `<AppProvider />` - App specific code
+- `<VaultProvider />` - Providing the Vault (data store)
+- `<ShellProvider />` - The "API" for the editing functionality
+- `<Layout />` - The UI for the sidebars, main sections - populated by the app
+
+We could change the "Manifest Editor" into a "Collection Editor" by changing what we pass
+to the `<AppProvider/>`.
+
+We could change which resource we are editing by changing the resource we pass to the
+`<ShellProvider />`.
+
+We could create a completely different layout for all the editors and UI by replacing
+the `<Layout />` component. (Not covered in these docs!)
+
+### Manifest preset
+
+There is a package called: `@manifest-editor/manifest-preset` which contains all
+of the UI, editors, creation forms and UI for editing Manifests. A preset consits of:
+
+- Metadata (label, identifier, what types of IIIF it supports editing)
+- Center panels - thumbnail grids, deep zoom viewers
+- Left panels - appear on the left side of the screen, entry points for editing
+- Right panels - default is just "editing" panel, but could be anything
+- Modals - popups used in the application
+- Editors - Which editors are available for each resource type
+- Creators - Which forms are available for each resource type
+
+The preset has access to the `<Shell />` which offers hooks for navigating from one panel
+to another, and for selecting which resource to edit in the right sidebar. This essentially
+allows the preset to control the entire UI of the application, but not the layout directly.
+
+The different sections (left, right and center panels) are "slots" that can be filled with
+components. The preset can define which components are used in each slot.
+
+However, directly creating a preset from scratch is not recommended. It is better to
+extend an existing preset.
+
+To do that, you can use the `mapApp()` helper. In the example at the top, you can see that
+the `<ManifestEditor />` wrapper uses this to load the preset:
+
+```tsx
+import { mapApp } from "@manifest-editor/shell";
+import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
+
+const manifestEditor = mapApp(manifestEditorPreset);
+```
+
+There is a second optional argument that you can use to extend the preset.
+
+For the hosted Manifest Editor, we extend the preset to include a config panel and a share modal:
+
+<Callout type="info">We are looking at ways to make extending presets easier using helper functions.</Callout>
+
+```tsx
+const manifestEditor = useMemo(
+  () =>
+    mapApp(manifestEditorPreset, (app) => {
+      return {
+        ...app,
+        layout: {
+          ...app.layout,
+          leftPanels: [
+            ...(app.layout.leftPanels || []),
+            {
+              divide: true,
+              id: "config",
+              label: "Config",
+              icon: <SettingsIcon />,
+              render: () => <ConfigEditor />,
+            },
+          ],
+          modals: [
+            ...(app.layout.modals || []),
+            {
+              id: "share-modal",
+              icon: <ShareIcon />,
+              label: "Share workspace",
+              render: () => <SharePanel projectId={id} />,
+            },
+          ],
+        },
+      };
+    }),
+  [project]
+);
+```
+
+This allows you to add new panels, modals, editors, creators, etc. to the preset. You can also
+filter and remove presets or panels that you don't want to see.
+
+For example, if you are integrating this into a CMS, you might want to have an image
+explorer panel that allows you to select images from the CMS to add to the manifest.
+
+All panels inside have access to the Shell API, which allows you to navigate to different
+panels but also to edit and save resources.
+
+### Shell options
+
+The shell provides a lot of the editing functionality of the application. It has a number of options:
+
+- `config` - general configuration for the shell, hiding editors, creator, previews, i18n etc.
+- `saveConfig` - An optional custom callback, if you wanted to save config changes externally
+- `resource` - the resource that is currently being edited
+- `previews` - A list of custom Preview configuration for previewing inside external viewers.
+
+Check the [configuration](./configuration) and [preview](./previews) sections for more information.

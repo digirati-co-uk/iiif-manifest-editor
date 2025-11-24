@@ -1,0 +1,152 @@
+# Saving Manifests
+
+As mentioned in the [How it works](./how-it-works) section, you can pass a custom instance of Vault to the
+Manifest Editor. This allows you to listen for changes and save the Manifest outside of the Editor when it changes
+or on a user action.
+
+There are two main strategies for saving the Manifest:
+
+- Saving the Vault data directly
+- Exporting the Manifest and saving it
+
+The first approach is good for frequent changes as there is very little work needed to export that data. The second
+approach is good for saving the Manifest to a file or a database - for use with other tools.
+
+The rest of this page will assume that you have a handle on the `Vault` instance that you have passed into the
+editor.
+
+## Listening for changes
+
+Manifest Editor shell package includes a React hook for listening to changes in the Manifest.
+
+```jsx
+import { useSaveVault } from "@manifest-editor/shell";
+
+
+function App() {
+  const vault = ...
+
+  const saveVault = useCallback(() => {
+    // Save logic here.
+    vault.get(...)
+  }, []);
+
+  useSaveVault(
+    // The instance of the vault.
+    vault,
+    // Callback to save the vault.
+    saveVault,
+    // How often it should save the vault (debounce)
+    5000,
+    // enable flag (optional)
+    vaultReady
+  );
+}
+```
+
+You can use this hook outside of a Vault context and outside of the Manifest Editor context - since you pass
+the Vault instance into it.
+
+This is what the hook is doing under the hood:
+
+```tsx
+export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval: number, enabled = true) {
+  const debounceSaveChanges = useDebounce(saveChanges, saveInterval);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return () => void 0;
+    }
+    window.addEventListener("beforeunload", saveChanges, false);
+
+    return () => {
+      saveChanges();
+      window.removeEventListener("beforeunload", saveChanges);
+    };
+  }, [saveChanges]);
+
+  useEffect(() => {
+    if (vault && enabled) {
+      return vault.subscribe(debounceSaveChanges, true);
+    }
+  }, [debounceSaveChanges, vault, enabled]);
+}
+```
+
+This handles saving the Vault data when the user closes the tab or the browser. It also debounces the save function
+to prevent saving too often. Whenever anything in the Vault changes - the `saveChanges` function will be called.
+
+The `vault.subscribe()` can take in a narrower set of changes to listen to, so you can take this and adapt it to
+your needs.
+
+## Saving the Vault data directly
+
+Inside of the `saveChanges` function, you can save the Vault data directly. This is the "normalized" data that you
+can save somewhere, like localstorage, and then use to rehydrate the Vault later.
+
+```tsx
+const vault = ...
+
+const saveVault = useCallback(() => {
+  // Save logic here.
+  const data = vault.getState().iiif;
+
+  // Save the data to localstorage
+  localStorage.setItem("manifest-id-or-similar", JSON.stringify(data));
+}, []);
+```
+
+This is a very simple example, if you wanted to restore the state of the Vault, maybe when a user reloads the page,
+you can do something like this:
+
+```tsx
+
+function App() {
+  const vault = ...
+  const [isVaultReady, setIsVaultReady] = useState(false);
+
+  useEffect(() => {
+    // Only run once.
+    if (isVaultReady) {
+      return;
+    }
+    // Get the data from localstorage
+    const vaultDataText = localStorage.getItem("manifest-id-or-similar");
+    const vaultData = JSON.parse(vaultDataText);
+    // Set the data in the vault
+    vault.getStore().setState({ iiif: vaultData as any });
+    // Set the vault as ready
+    setVaultReady(true);
+
+  }, [vault]);
+}
+```
+
+## Exporting the Manifest
+
+You can also export the Manifest as a valid IIIF resource. You will need to know the ID of the
+resource you are loading.
+
+```tsx
+const manifestId = 'https://example.org/manifest-1';
+const vault = ...
+
+const saveVault = useCallback(() => {
+  // Returns Presentation 3 Manifest.
+  const data = vault.toPresentation3({ id: manifestId, type: 'Manifest' });
+
+  // Save the data to somewhere else...
+  fetch('/api/save-manifests', {
+    method: 'POST',
+    body: {
+      id: manifestId,
+      data
+    }
+  });
+  // ...
+}, []);
+```
+
+This example takes more time to process, and for larger Manifests may decrease the user experience when saving.
+
+For saving the full Manifest it's recommended to hook this up to a user action, like a "Save" button.

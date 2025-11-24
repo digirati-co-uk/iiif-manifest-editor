@@ -1,0 +1,121 @@
+---
+title: Getting started
+---
+
+# Getting started
+
+To get started, navigate to the IIIF Manifest Editor (https://manifest-editor.digirati.services/)
+
+![Standard Manifest Editor Homepage](../../public/default-manifest-editor-homepage-with-examples.png)
+
+If you have an existing IIIF Manifest you wish to edit, you can open that using one of the available options:
+
+- Open manifest URL - paste the public URL of the specific manifest
+- Open manifest file - browse to existing IIIF content on your local machine or network drive
+- Browse for IIIF - this launches the IIIF Browser, enabling you to search through existing IIIF content to find a specific item.
+
+## Opening an existing IIIF Manifest
+
+Using the Open manifest URL option, you just need the URL for the Manifest you wish to open.
+
+From the [Manifest Editor](https://manifest-editor.digirati.services) homepage, click on the "Open manifest URL" button at the top of the page. Paste the link in the text box, and click "Open", which will open the manifest for editing.
+
+<video
+  src="/Opening a manifest - URL option.mp4"
+  autoPlay
+  loop
+  muted
+  controls
+  playsInline
+  style={{ margin: "3em 0" }}
+/>
+
+Alternatively if you want to open a manifest from your local or network drive, click on the "Open manifest file" button and browse to locate your item, before opening it to allow editing.
+
+The "Browse for IIIF" option, allows you to browse, search and select a IIIF Manifest to open from a specific IIIF Collection. The section [Using the IIIF Browser](./using-iiif-browser) describes how to use this feature, which is available for easy access to existing IIIF content in various locations in the Manifest Editor user interface.
+
+## Creating a new IIIF manifest
+
+To create a new manifest, select the option the [Manifest Editor](https://manifest-editor.digirati.services) homepage, click on the "Create new manifest" button at the top of the page.
+
+This will open a new empty manifest in the editor, where you can start curating the content you want to add to it. See [Creating a new IIIF Manifest](./adding-images) for more details.
+
+## Opening a manifest from a file
+
+If you have previously download a Manifest from the Editor you can open it by clicking on the "Open file" button at the top of the page. This will open a file picker where you can select the manifest file you want to open.
+
+## Basic editing
+
+As a quick example, the following video demonstrates changing the label (or title) of the Manifest. This is usually a prominent title that describes the content of the Manifest.
+
+<video
+  src="/editing-label.mp4"
+  autoPlay
+  loop
+  muted
+  controls
+  playsInline
+  style={{ margin: "3em 0" }}
+/>
+
+The key steps include:
+
+- Ensure the "Manifest summary" sidebar is selected
+- Click on the "Overview" tab
+- Edit the "Label" field to change the title of the Manifest
+
+You will see the Label of the Manifest change in the overview on the left hand side of the screen.
+
+For more details on editing, please see the section [Editing an existing Manifest](./manifest-editing)
+
+## Previewing changes
+
+The Manifest Editor is configured to support easy previewing of your Manifest within a number of the most common IIIF compliant viewers.
+
+Once you have made changes to the Manifest, you can preview those changes in a IIIF viewer. You can open the preview by clicking on the "Preview" button at the top of the page. By default this will use [Theseus Viewer](https://theseusviewer.org) to display the Manifest. You can click on the drop down to select a different viewer.
+
+<video
+  src="/preview.mp4"
+  autoPlay
+  loop
+  muted
+  controls
+  playsInline
+  style={{ margin: "3em 0" }}
+/>
+
+As you edit and make your changes, clicking on the ‘Preview’ link should trigger the reloading of the viewer with your updated Manifest, and your changes should be visible.
+
+The viewers that are available are:
+
+- [Theseus Viewer](https://theseusviewer.org)
+- [Universal Viewer](https://universalviewer.io/)
+- [Mirador 3](https://projectmirador.org/)
+- [Annona](https://ncsu-libraries.github.io/annona/imageviewer/)
+- [Clover](https://samvera-labs.github.io/clover-iiif/)
+
+Note: All viewers have some different approaches in how they present IIIF Manifests; some differ in where metadata is presented, what metadata is available by default and so on. The choice of viewer will ultimately depend on what content you are presenting, how your users will typically interact with that content and what information is a priority to you in presenting to your users.
+
+You can also view the JSON-LD for your Manifest, using the ‘Preview’ option “Raw Manifest” from the dropdown.
+
+### Changing the default viewer
+
+If you want to view your Manifest in a different viewer, simply click on the drop down option next to the “Preview” link and select the viewer from the list of options. This selection will then open a new browser tab with the selected viewer presenting your Manifest.
+
+The most recently selected viewer is now set to be your default viewer, and the drop down list indicates this with the green dot icon.
+
+If you wish to clear the selected viewer(s), clicking on the ‘X’ icon next to the viewer in the list will clear the selection and close the browser tab (if it is still open).
+
+### Sharing links
+
+It is possible to share the ‘Preview’ link generated by the Manifest Editor. This enables users to share their work in progress IIIF Manifest that they have created. Note the link will only be available for a short period of time before expiring.
+
+## Browser limitations
+
+The default Manifest Editor is reliant on your browser to store and cache information about your IIIF Manifests; it doesn’t explicitly store any information on your behalf\*. As a consequence, you may encounter some browser related issues depending on your own browser settings.
+
+The ability to always correctly preview Manifest edits within the configured viewing tools is one such area where users have reported issues. These limitations relate to the fact that browser settings may interfere with the visibility of changes by aggressively caching content, thus when you attempt to preview your changes, the latest Manifest content is not visible in the viewer.
+
+Closing browser tabs and hard refreshing your browser typically resolves these issues.
+
+\*The Manifest Editor can be hosted separately and configured to use a specific storage location for an institute or organisation. Please contact Digirati if this is a requirement for your project.
