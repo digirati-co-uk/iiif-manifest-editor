@@ -10,15 +10,26 @@ An open-source, IIIF editing tool, the Manifest Editor is designed to provide a 
 
 The latest release includes a new feature, the Range Editor workbench, developed in collaboration with CRKN. This workbench enables users to create or edit an existing range, and visually develop simple or complex range structure to present users with an accessible table of contents.
 
-See the Range Editor (TODO - ADD LINK) guide for full details.
+See the [Range Editor guide](https://manifest-editor-docs.netlify.app/docs/creating-ranges) for full details.
+
+![Range Editing screenshot](latest-open-range-editor-example-01.png)
+
 
 ### Enhancements to Exhibition Editor tools
 
 The Exhibition Editor, developed in collaboration with TU Delft earlier in 2025 has been updated to address user feedback captured in user testing and recent workshops. We’ve enabled a more realistic preview of your exhibition, provided more intuitive tour step creation and editing and added some further Exhibition Viewer modes.
 
+See the section [Creating exhibitions using IIIF Manifests](https://manifest-editor-docs.netlify.app/docs/creating-annotations) for further information.
+
+![Exhibition Editor screenshot](../public/exhibition-editor-overview-gen-ai-example1.png)
+
 ### Improved access to Annotation creation and editing
 
 A new ‘Annotations’ toolbar link is now available when editing your IIIF content. It allows the Annotations functionality to be more visible, but more importantly provides an improved editing experience when creating and updating inline annotations.
+
+See the section [Creating annotations](https://manifest-editor-docs.netlify.app/docs/creating-annotations) for further guidance.
+
+![Annotation Editing screenshot](../public/annotations-summary-edit-ocean-liner-example.png)
 
 ## What is the Digirati IIIF Manifest Editor?
 
