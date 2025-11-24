@@ -189,8 +189,17 @@ function RangeWorkbench() {
   const { edit } = useLayoutActions();
   const { back } = useEditingStack();
 
-  const [isLastInView, setIsLastInView] = useState(false); // multi-section: last section visible within container
-  const [isAtEnd, setIsAtEnd] = useState(false); // single or multi: end of container reached
+  useEffect(() => {
+    edit(
+      preview?.canvas?.resource?.source?.id
+        ? { id: preview.canvas.resource.source.id, type: "Canvas" }
+        : { id: manifest?.id, type: "Manifest" }
+    );
+  }, [preview, manifest, edit]);
+
+
+  const [isLastInView, setIsLastInView] = useState(false)
+  const [isAtEnd, setIsAtEnd] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
