@@ -7,5 +7,6 @@ export default {
   "creating-annotations": { title: "Creating annotations" },
   "exhibition-building": { title: "Creating exhibitions using IIIF Manifests" },
   "using-iiif-browser": { title: "Using the IIIF Browser" },
-  guides: { title: "Guides" },
+  "adding-av" : { display: 'hidden' },
+  guides: { title: "Guides" }
 };
