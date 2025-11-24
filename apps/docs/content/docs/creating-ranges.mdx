@@ -12,16 +12,14 @@ TODO: INSERT VIDEO.
 
 ## Accessing the Range Editor
 
-Open the Manifest you wish to add a IIIF Range to, using the standard Manifest Editor options.
-
-With the Manifest you wish to work on open in the Manifest Editor, click the Range Editor link to access the workbench. This will allow you to add a range or edit an existing range. The following sections provide an overview of the functionality available.
+Open the Manifest you wish to work in the Manifest Editor, then select the Range Editor link to access the workbench. This will allow you to add a range or edit an existing range. The following sections provide an overview of the functionality available.
 
 ![Create new range](../../public/access-the-range-editor-1.png)
 
 
 ## Creating and editing a new IIIF Range
 
-The Range Editor provides different routes to create a range reflecting the differing use cases for our users. You can mix and match the routes to find the best approach for your own use cases. 
+The Range Editor provides different routes to create a range reflecting the differing known use cases (to date). You can mix and match the routes to find the best approach for your own range editing workflow. 
 
 Select the ‘Create new range’ link to add a new IIIF Range to your Manifest. On selecting to create your range, this will:
 
@@ -32,13 +30,13 @@ Select the ‘Create new range’ link to add a new IIIF Range to your Manifest.
 
 ### Building your range structure
 
-With the initial range in place, you can develop this structure to reflect the Table of Contents you want to use. To start, you can add more range items into the structure, moving the content of your IIIF Manifest into these new range items.
+With the initial range in place, you can develop this structure to reflect the Table of Contents you want to use. You can add more range items into the structure, moving the content of your IIIF Manifest into these new range items and organising them as needed.
 
 To start, select the option to 'Split range'. 
 
 ![Split range](../../public/creating-new-range-2.png)
 
-On selecting the 'Split range' option, the range splitting mode is enabled providing you with the ability to split the content into the required ranges. 
+On selecting the 'Split range' option, the range splitting mode is enabled providing you with the ability to split the content into the required range items. 
 
 ![Canvas splitting mode](../../public/creating-new-range-3.png)
 
@@ -51,13 +49,13 @@ To split the contents of 'Range 1' into one or more range items:
 
 ![New range item 2 added](../../public/creating-new-range-4.png)
 
-Select the 'Exit splitting mode' link to close the range splitting view.
+- Select the 'Exit splitting mode' link to close the range splitting view.
 
 Range items can contain other range items, perhaps to reflect the structure within a chapter of a book or the structure of a collection. 
 
 To nest range items within an existing range item, you simply move the Canvas content from that range into a new sub-range, where you can then manage that content further using the 'Split range' option to create additional range items at that level.
 
-Using 'Range 2' example indicated in the previous screenshot, the following steps detail how to move all of the canvases contained within that 'Range 2' into two sub-range items:
+Using 'Range 2' example indicated in the previous screenshot, the following steps detail how to move all of the canvases contained within that 'Range 2' item into two new sub-range items:
 
 - Select the ‘View range item’ option for Range 2
 
@@ -67,7 +65,7 @@ Using 'Range 2' example indicated in the previous screenshot, the following step
 
 ![Select move into sub-range](../../public/creating-new-range-6.png)
 
-- This action moves the Canvases into a new sub-range ("Range 1") within Range 2. 
+- This action moves the Canvases into a new sub-range item ("Range 1") within Range 2. 
 
 ![Canvases in new sub-range](../../public/creating-new-range-7.png)
 
@@ -83,20 +81,68 @@ The workbench view provides additional range management options to support movin
 - (a) Empty contents of a range item into another range item. This option moves all canvases from that range item into the selected range, leaving an empty range item.
 - (b) Merge a range item and its content into another range item. This option moves all canvases from that range into the selected range, deleting the range item.
 
-![Empty and merge options(../../public/creating-new-range-10.png)
+![Empty and merge options](../../public/creating-new-range-10.png)
 
 
 ### Editing range item labels
 
 Using the 'three dot menu' you can select to 'Edit range label', to update the range item labels to the appropriate value for your range:
 
-![Edit range label](../../public/creating-new-range-9.png)
+![Edit range label](../../public/edit-range-structure-1.png)
 
 
 
-## Viewing and managing the range structure
+### Viewing and managing the range structure
 
-The left menu panel for the Range Editor provides a number of options when editing a range. By default, the left menu panel displays the hierarchical range structure (tree view). This enables you to view and navigate through the full structure of your range. A series of options to manage the structure are provided..
+The left menu panel for the Range Editor provides a number of options when editing a range. A simple, card view is available enabling display and navigation of the range structure. By default, the left menu panel displays the hierarchical range structure (tree view). This enables you to view and navigate through the full structure of your range. Clicking on the range items within the navigation tree structure will display the selected range item in the centre workbench.
+ 
+### Edit range structure
+
+Select the 'Edit range' option in the left menu panel to edit and update the range structure.
+
+![Edit range structure](../../public/edit-range-structure-1.png)
+
+Once selected, you can then edit the range structure using the additional options. The 'three dot menu' link, provides contextual options relevant to the Range, range item or canvas you are viewing.  
+
+![Edit range structure options](../../public/edit-range-structure-2.png)
+
+- Insert empty range - allows the creation of range items within the structure into which canvases can be moved
+- Expand all - opens the range structure
+- Collapse all - closes the range structure
+- Delete range item - allows the removal of a range item.
+
+#### Reorder the range content
+
+In the 'Edit range' structure, you can use the 'drag handle' (= icon) next to each element in the tree view hierarchical range structure, to select and move the content. This supports quickly moving canvases between range items, changing the order of range items and moving range items into other range items.
+
+#### Deleting range and range items
+
+The 'Delete range item' available within the 'three dot menu' for the IIIF range allows the deletion of the entire range. Similarly, the 'Delete range item' can be used for removing range items from the range structure.
+
+When a range item, containing one or more canvases is deleted from the range structure, the orphaned canvases are added to a separate (non visible) range item labelled 'Canvases without a range'. In the screenshot below, you can see two canvases listed in this range item. These canvases can be moved elsewhere within the range structure (if required).
+
+![Canvases without a range](../../public/edit-range-structure-3.png)
+
+#### Deleting canvases from the range
+
+Similar to the delete range option, each canvas can be individually removed from the range structure. Use the 'three dot menu' for the specific canvas and select the 'Remove canvas' option. This will result in that canvas being added to the separate (non visible) range item ('Canvases without a range').
+
+### Viewing Canvases in the Range Editor
+
+The Range Editor workbench provides an option to enable users to view a Canvas in detail whilst working on a range. Use the “Expand Canvas” option on the individual canvas to open a detailed view, which supports deep zoom whilst working on the range.
+
+![Expand canvas option](../../public/edit-range-structure-4.png)
+
+You can then navigate between Canvases in the current range item, using the available controls as indicated in the screenshot below. Additionally you can edit and update the Range item label whilst using this view.
+
+![Expand canvas option](../../public/edit-range-structure-5.png)
+
+### Tour of Range Editing functionality
+
+The Range Editor workbench has a small, guided tour available that highlights the key aspects of the functionality available. Select the 'Help' icon at the top of the centre panel to recall the tour at any time.
+
+![Expand canvas option](../../public/edit-range-structure-6.png)
+
 
 ## Notes on implementation
 
