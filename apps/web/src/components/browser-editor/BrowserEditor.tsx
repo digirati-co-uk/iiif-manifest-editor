@@ -47,6 +47,7 @@ import posthog from "posthog-js";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { useBrowserProject } from "./browser-state";
+import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -238,21 +239,24 @@ export default function BrowserEditor({
   }, [project]);
 
   const header = (
-    <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
-      <Link href="/" className="w-96 flex justify-start items-center gap-2">
-        <ManifestEditorLogo />
-        {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
-      </Link>
-      <div className="flex-1" />
-      <div className="flex items-center justify-center gap-5">
-        {/* Github links etc. */}
-        {/* <GlobalNav noMenu /> */}
-        <div className="flex items-center gap-2">
-          <ShareButton />
-          <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
+    <>
+      <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
+        <Link href="/" className="flex justify-start items-center gap-2">
+          <ManifestEditorLogo />
+          {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
+        </Link>
+        <div className="flex-1" />
+        <div className="flex items-center justify-center gap-5">
+          {/* Github links etc. */}
+          {/* <GlobalNav noMenu /> */}
+          <div className="flex items-center gap-2">
+            <ShareButton />
+            <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <MaybeExhibitionPrompt id={id} alreadyExhibition={presetPath === "exhibition"} />
+    </>
   );
 
   if (isProjectLoading) return <div>Loading...</div>;
