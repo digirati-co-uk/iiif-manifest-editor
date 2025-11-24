@@ -8,5 +8,8 @@ export default {
   "exhibition-building": { title: "Creating exhibitions using IIIF Manifests" },
   "using-iiif-browser": { title: "Using the IIIF Browser" },
   "adding-av" : { display: 'hidden' },
+  "image-composition" : { display: 'hidden' },
+  "multilingual-manifests" :  { display: 'hidden' },
+  "product-vision" :  { display: 'hidden' },
   guides: { title: "Guides" }
 };
