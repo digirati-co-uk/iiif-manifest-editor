@@ -85,7 +85,7 @@ type ContextType = ReturnType<typeof useTooltip> | null;
 
 const TooltipContext = React.createContext<ContextType>(null);
 
-export const useTooltipContext = () => {
+const useTooltipContext = () => {
   const context = React.useContext(TooltipContext);
 
   if (context == null) {

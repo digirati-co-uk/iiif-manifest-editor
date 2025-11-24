@@ -1,4 +1,5 @@
-import React, { ReactElement, ReactNode, useLayoutEffect, useRef, useState } from "react";
+import React, { type ReactElement, type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   InnerModalContainer,
   ModalBackground,
@@ -10,7 +11,6 @@ import {
   ModalHeaderTitle,
   ModalResizeIcon,
 } from "./Modal";
-import { createPortal } from "react-dom";
 
 export const ModalButton: React.FC<{
   ref?: any;
@@ -19,8 +19,8 @@ export const ModalButton: React.FC<{
   as?: any;
   onClose?: () => void;
   onOpen?: () => void;
-  render: (opts: { close: () => void }) => JSX.Element | null;
-  renderFooter?: (opts: { close: () => void }) => JSX.Element;
+  render: (opts: { close: () => void }) => ReactElement | null;
+  renderFooter?: (opts: { close: () => void }) => ReactElement;
   className?: string;
   autoHeight?: boolean;
   footerAlignRight?: boolean;
@@ -55,12 +55,12 @@ export const ModalButton: React.FC<{
     tabIndex,
     role,
   },
-  ref
+  ref,
 ) {
-  const portalEl = useRef<HTMLElement>();
+  const portalEl = useRef<HTMLElement | undefined>(undefined);
   const [ready, setIsReady] = useState(false);
   const [expanded, setIsExpanded] = useState(false);
-  const containerRef = useRef<any>();
+  const containerRef = useRef<any>(null);
 
   useLayoutEffect(() => {
     const element = document.createElement("div");
@@ -117,7 +117,7 @@ export const ModalButton: React.FC<{
                 </InnerModalContainer>
               </ModalContainer>
             </>,
-            portalEl.current
+            portalEl.current,
           )
         : null}
       <Component

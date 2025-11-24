@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "Digirati Manifest Editor",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>

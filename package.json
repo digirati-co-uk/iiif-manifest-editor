@@ -31,6 +31,10 @@
       "exhibition-viewer": "https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz",
       "react-reconciler": "0.33.0",
       "iiif-browser": "2.0.4",
+      "react": "catalog:",
+      "react-dom": "catalog:",
+      "@types/react": "^19",
+      "@types/react-dom": "^19",
       "@iiif/helpers": "catalog:",
       "@iiif/parser": "catalog:",
       "dompurify": "3.1.3"

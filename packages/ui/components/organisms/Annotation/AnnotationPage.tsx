@@ -1,11 +1,11 @@
 import { useVault } from "react-iiif-vault";
 import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
-import { InputLabel, Input } from "@/editors/Input";
+import { Input, InputLabel } from "@/editors/Input";
 import { useAnnotationPage } from "@/hooks/useAnnotationPage";
 import { useConfig } from "@/shell";
 
-export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element => {
+export const AnnotationPage: React.FC<{ id: string }> = ({ id }) => {
   const annotationPage = useAnnotationPage({ id: id });
   const vault = useVault();
   const { defaultLanguages } = useConfig();
@@ -25,7 +25,7 @@ export const AnnotationPage: React.FC<{ id: string }> = ({ id }): JSX.Element =>
           vault.modifyEntityField(
             { id: annotationPage.id, type: "AnnotationPage" },
             "label",
-            e.toInternationalString()
+            e.toInternationalString(),
           );
         }}
         property={"label"}

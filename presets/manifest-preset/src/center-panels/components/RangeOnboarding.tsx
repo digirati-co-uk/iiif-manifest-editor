@@ -14,13 +14,15 @@ const steps: Step[] = [
   {
     target: "#range-listing-sidebar",
     title: "Range structure",
-    content: "Browse and navigate your range. Use Edit mode to add more range items, drag to reorder or use the ••• menu to insert empty range items or to delete from the range.",
+    content:
+      "Browse and navigate your range. Use Edit mode to add more range items, drag to reorder or use the ••• menu to insert empty range items or to delete from the range.",
     placement: "right-start",
   },
   {
     target: "#split-range",
     title: "Split a range",
-    content: "Using the splittling mode, you can build and manage the contents of your range. Hover over a canvas to preview, then click to create a new range with canvases from that point onward move into the new range.",
+    content:
+      "Using the splittling mode, you can build and manage the contents of your range. Hover over a canvas to preview, then click to create a new range with canvases from that point onward move into the new range.",
   },
   {
     target: "#edit-ranges",
@@ -42,7 +44,8 @@ const steps: Step[] = [
   {
     target: "#launch_range_tour",
     title: "That’s it!",
-    content: "Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu. Alternatively, you can view the <a href="/docs/creating-ranges" target="_blank" rel="noopener noreferrer">Creating Ranges guide</a>",
+    content:
+      'Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu. Alternatively, you can view the <a href="/docs/creating-ranges" target="_blank" rel="noopener noreferrer">Creating Ranges guide</a>',
   },
 ];
 
@@ -50,7 +53,8 @@ export function RangeOnboarding() {
   const [forceStart, setForceStart] = useState(false);
   return (
     <>
-      <ActionButton id="launch_range_tour"
+      <ActionButton
+        id="launch_range_tour"
         primary={forceStart}
         onPress={() => {
           setForceStart(true);
