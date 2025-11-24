@@ -34,6 +34,7 @@ interface AppDropdownProps {
   "aria-label"?: string;
   children: any;
   style?: CSSProperties;
+  className?: string;
 }
 
 export function AppDropdown({ as, items, children, "aria-label": ariaLabel, style, ...props }: AppDropdownProps) {
