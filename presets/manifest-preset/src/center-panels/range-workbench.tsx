@@ -109,32 +109,53 @@ function RangeWorkbench() {
     [manifest, selectedRange],
   );
 
-  useEffect(() => {
-    if (!topLevelRange) {
-      setPreview(null);
-      return;
+  function findFirstCanvas(node?: RangeTableOfContentsNode | null): RangeTableOfContentsNode | null {
+    if (!node?.items) return null;
+
+    for (const item of node.items as any[]) {
+      if (item.type === "Canvas") {
+        return item as RangeTableOfContentsNode;
+      }
+      if (item.type === "Range") {
+        const found = findFirstCanvas(item as RangeTableOfContentsNode);
+        if (found) return found;
+      }
     }
 
-    // Don't auto-set preview if we just cleared it intentionally
+    return null;
+  }
+
+  useEffect(() => {
+    if (!preview) return;
+
+    const selectedRef = toRef<any>(selectedRange?.resource);
+    if (!selectedRef || selectedRef.type !== "Range") return;
+
+    const liveRange = vault.get(selectedRef);
+    if (!liveRange) return;
+    const toc = helper.rangeToTableOfContentsTree(liveRange, {
+      showNoNav: true,
+    }) as RangeTableOfContentsNode | null;
+
+    if (!toc) return;
+
+    const firstCanvas = findFirstCanvas(toc);
+    if (!firstCanvas) return;
+
     setPreview((prev) => {
-      if (prev === null) return null; // Keep it null if we cleared it
+      if (!prev) return prev;
 
-      const items = topLevelRange.items || [];
-      const firstCanvas = items.find((item: any) => item.type === "Canvas");
-
-      if (firstCanvas) {
-        // Only update if preview is for a different range
-        if (prev?.range.id === topLevelRange.id) {
-          return prev;
-        }
-        return {
-          range: topLevelRange as RangeTableOfContentsNode,
-          canvas: firstCanvas as RangeTableOfContentsNode,
-        };
+      if (prev.range.id === toc.id && prev.canvas.id === firstCanvas.id) {
+        return prev;
       }
-      return null;
+
+      return {
+        range: toc,
+        canvas: firstCanvas as RangeTableOfContentsNode,
+      };
     });
-  }, [topLevelRange?.id]);
+  }, [selectedRange, preview, helper, vault]);
+
 
   const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
     allowNull: true,

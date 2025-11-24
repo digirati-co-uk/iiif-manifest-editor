@@ -1,18 +1,13 @@
-import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { Reference } from "@iiif/presentation-3";
+import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";;
 import {
-  ActionButton,
-  AddImageIcon,
   DeleteForeverIcon,
   ListResizeDragHandle,
   MoreMenuButton,
-  MoreMenuIcon,
   SelectionCheckbox,
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import {
-  useEditingResource,
   useEditingStack,
   useInlineCreator,
   useLayoutActions,
@@ -20,14 +15,10 @@ import {
 } from "@manifest-editor/shell";
 import { MinusIcon } from "@manifest-editor/ui/icons/MinusIcon";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
-import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { useCallback, useRef, useState } from "react";
-import { usePress } from "react-aria";
-import type { Key, TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
+import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
   Button,
-  Checkbox,
-  Dialog,
   Menu,
   MenuItem,
   MenuTrigger,
@@ -46,11 +37,15 @@ interface TreeRangeItemProps extends Partial<TreeItemProps> {
   range: RangeTableOfContentsNode;
   parentId?: string;
   expandRangeItem: (range: RangeTableOfContentsNode, collapse?: boolean) => void;
+  isPreviewOpen?: boolean;
+  openPreviewForCanvas?: (canvasId: string) => void;
 }
 
 export function TreeRangeItem(props: TreeRangeItemProps) {
   const manifestEditor = useManifestEditor();
   const range = useInStack("Range");
+  const canvas = useInStack("Canvas");
+  const isPreviewOpen = !!canvas;
   const creator = useInlineCreator();
   const { back } = useEditingStack();
   const { edit } = useLayoutActions();
@@ -63,15 +58,18 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const isNoNav = props.range.isNoNav;
 
   const onAction = useCallback(() => {
+    if (isPreviewOpen) {
+      edit({ id: props.range.id, type: "Range" });
+      return;
+    }
     // Check if top range and scroll to top
     if (!props.range.parent) {
       const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
       el?.scrollTo({ top: 0, behavior: "smooth" });
     }
-    // Need to change parent item (isRangeLeaf)
+
     if (props.range.isRangeLeaf && props.parentId) {
       if (activeId !== props.parentId) {
-        // Ensure this update happens before scrolling.
         flushSync(() => {
           edit({ id: props.parentId!, type: "Range" });
         });
@@ -86,10 +84,16 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
       } as any);
       return;
     }
-
-    // Otherwise just select the range.
     edit({ id: props.range.id, type: "Range" });
-  }, [activeId, props.parentId, edit, props.range.isRangeLeaf, props.range.id]);
+  }, [
+    isPreviewOpen,
+    activeId,
+    props.parentId,
+    edit,
+    props.range.isRangeLeaf,
+    props.range.id,
+    props.range.parent,
+  ]);
 
   const items = props.range.items ?? [];
   const hasChildRanges = items.some((i) => i.type === "Range");

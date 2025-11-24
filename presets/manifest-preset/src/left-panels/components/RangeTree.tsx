@@ -2,9 +2,7 @@ import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iii
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import type { Reference } from "@iiif/presentation-3";
-import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 import { EditorInstance } from "@manifest-editor/editor-api";
-import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useMemo, useState } from "react";
 import {
   Button,

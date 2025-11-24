@@ -8,14 +8,10 @@ import {
   SelectionCheckbox,
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
-import { useGenericEditor, useManifestEditor } from "@manifest-editor/shell";
-import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
-import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
+import { useManifestEditor } from "@manifest-editor/shell";
 import { useRef, useState } from "react";
 import type { TreeItemContentRenderProps, TreeItemProps } from "react-aria-components";
 import {
-  Button,
-  Checkbox,
   Menu,
   MenuItem,
   MenuTrigger,

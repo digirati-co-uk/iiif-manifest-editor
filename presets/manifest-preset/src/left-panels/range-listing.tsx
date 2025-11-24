@@ -1,7 +1,6 @@
 import { createRangeHelper } from "@iiif/helpers";
 import {
   ListEditIcon,
-  OnboardingTour,
   Sidebar,
   SidebarContent,
   SidebarHeader,
