@@ -44,8 +44,20 @@ const steps: Step[] = [
   {
     target: "#launch_range_tour",
     title: "That’s it!",
-    content:
-      'Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu. Alternatively, you can view the <a href="/docs/creating-ranges" target="_blank" rel="noopener noreferrer">Creating Ranges guide</a>',
+    content: (
+      <>
+        Now you know the basics of working with ranges. You can restart this tour anytime from the Help menu.
+        Alternatively, you can view the{" "}
+        <a
+          className="text-me-600 underline"
+          href="https://manifest-editor-docs.netlify.app/docs/creating-ranges"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Creating Ranges guide
+        </a>
+      </>
+    ),
   },
 ];
 

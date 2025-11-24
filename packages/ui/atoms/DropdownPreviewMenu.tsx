@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { Button } from "./Button";
 import { FlexContainerColumn } from "../components/layout/FlexContainer";
-import { PreviewIcon } from "../icons/PreviewIcon";
 import { DownIcon } from "../icons/DownIcon";
+import { PreviewIcon } from "../icons/PreviewIcon";
+import { Button } from "./Button";
 import { VerticalDivider } from "./VerticalDivider";
 
 export const DropdownItem = styled.div`
@@ -52,7 +52,7 @@ export const MenuContainer = styled.div`
 `;
 
 export const DropdownPreviewMenu: React.FC<{
-  label: string | JSX.Element;
+  label: string | React.ReactElement;
   options: Array<DropdownOption>;
   onPreviewClick: () => Promise<void>;
   setSelectedPreviewIndex: (index: number) => void;
