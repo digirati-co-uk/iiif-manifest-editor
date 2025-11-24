@@ -4,15 +4,11 @@ The Range Editor workbench enables users to create, edit and update IIIF Range i
 
 The IIIF Manifest should already contain the IIIF content (Canvases) you wish to include in your range, although you can continue to add to or edit your range as you update the Manifest. 
 
-Changes in your Manifest are not automatically reflected in the range, so you do need to keep the range updated should the Manifest change significantly in structure (for example if you add new Canvas(es)). Ideally ranges should be added when the Manifest structure is confirmed; however, you can always delete the range and create a new one, should the Manifest structure need to be revised after you’ve added a range.
+## Creating and managing a range example
 
-The implementation has developed support for https://iiif.io/api/presentation/3.0/#54-range with some minor, but notable caveats:
+In the following video, the IIIF Cookbook example for ["Table of Contents of Book Chapters"](https://iiif.io/api/cookbook/recipe/0024-book-4-toc/) is used to demonstrate how to add a table of contents (range), manage that range through the addition of additional range items, moving the content (canvases) to the correct range item to reflect the desired structure.
 
-- In developing and testing the implementation we have encountered many varied interpretations of the IIIF Range specification. The Range Editor doesn’t attempt to “fix” inconsistencies, these can be addressed by removing the range and creating a new one.
-
-- Parts of Canvases are not yet supported by the Range Editor. That is, it is not possible to add a “part of a canvas” as a target within a Range Item. Given the lack of widespread viewer support, this feature has not been added. In future, with better IIIF Viewer support, an approach to accommodate this can be addressed.
-
-- A single IIIF Range per Manifest is currently only supported. Given examples of use case(s) with multiple ranges, we can assess how best to accommodate supporting multiple IIIF Range(s) should they be required.
+TODO: INSERT VIDEO.
 
 ## Accessing the Range Editor
 
@@ -34,6 +30,82 @@ Select the ‘Create new range’ link to add a new IIIF Range to your Manifest.
 
 ![View new range](../../public/creating-new-range-1.png)
 
+### Building your range structure
+
+With the initial range in place, you can develop this structure to reflect the Table of Contents you want to use. To start, you can add more range items into the structure, moving the content of your IIIF Manifest into these new range items.
+
+To start, select the option to 'Split range'. 
+
+![Split range](../../public/creating-new-range-2.png)
+
+On selecting the 'Split range' option, the range splitting mode is enabled providing you with the ability to split the content into the required ranges. 
+
+![Canvas splitting mode](../../public/creating-new-range-3.png)
+
+To split the contents of 'Range 1' into one or more range items:
+
+- Identify the Canvas where you want to create a new range
+- Hover over that Canvas thumbnail, which will highlight "Range 2" and the contents that will be included in the new range
+- Click on the Canvas thumbnail, to create the new range ("Range 2")
+- The new range item will be listed, with the content of that range reflecting the selection
+
+![New range item 2 added](../../public/creating-new-range-4.png)
+
+Select the 'Exit splitting mode' link to close the range splitting view.
+
+Range items can contain other range items, perhaps to reflect the structure within a chapter of a book or the structure of a collection. 
+
+To nest range items within an existing range item, you simply move the Canvas content from that range into a new sub-range, where you can then manage that content further using the 'Split range' option to create additional range items at that level.
+
+Using 'Range 2' example indicated in the previous screenshot, the following steps detail how to move all of the canvases contained within that 'Range 2' into two sub-range items:
+
+- Select the ‘View range item’ option for Range 2
+
+![View range 2 item](../../public/creating-new-range-5.png)
+
+- Within the Range 2 view, all of the Canvases contained in that range item are displayed. Select the option to 'Move into new sub-range'. 
+
+![Select move into sub-range](../../public/creating-new-range-6.png)
+
+- This action moves the Canvases into a new sub-range ("Range 1") within Range 2. 
+
+![Canvases in new sub-range](../../public/creating-new-range-7.png)
+
+- You can then use the 'Split range' option to manage the content further.
+- In the example below, the Canvases have been split further, moving two canvases into a second sub-range "Range 2"
+
+![Canvases split into further sub-range](../../public/creating-new-range-8.png)
+
+You can continue to repeat this process of creating new range items as required, to develop the necessary hierarchy to support the navigation structure you want to provide to users interacting with your IIIF Manifest.
+
+The workbench view provides additional range management options to support moving content between range items as required. The 'three dot menu' for each range item includes the options:
+
+- (a) Empty contents of a range item into another range item. This option moves all canvases from that range item into the selected range, leaving an empty range item.
+- (b) Merge a range item and its content into another range item. This option moves all canvases from that range into the selected range, deleting the range item.
+
+![Empty and merge options(../../public/creating-new-range-10.png)
+
+
+### Editing range item labels
+
+Using the 'three dot menu' you can select to 'Edit range label', to update the range item labels to the appropriate value for your range:
+
+![Edit range label](../../public/creating-new-range-9.png)
+
+
+
 ## Viewing and managing the range structure
 
 The left menu panel for the Range Editor provides a number of options when editing a range. By default, the left menu panel displays the hierarchical range structure (tree view). This enables you to view and navigate through the full structure of your range. A series of options to manage the structure are provided..
+
+## Notes on implementation
+
+Changes in your Manifest are not automatically reflected in the range, so you do need to keep the range updated should the Manifest change significantly in structure (for example if you add new Canvas(es)). Ideally ranges should be added when the Manifest structure is confirmed; however, you can always delete the range and create a new one, should the Manifest structure need to be revised after you’ve added a range.
+
+The implementation has developed support for https://iiif.io/api/presentation/3.0/#54-range with some minor, but notable caveats:
+
+- In developing and testing the implementation we have encountered many varied interpretations of the IIIF Range specification. The Range Editor doesn’t attempt to “fix” inconsistencies, these can be addressed by removing the range and creating a new one.
+
+- Parts of Canvases are not yet supported by the Range Editor. That is, it is not possible to add a “part of a canvas” as a target within a Range Item. Given the lack of widespread viewer support, this feature has not been added. In future, with better IIIF Viewer support, an approach to accommodate this can be addressed.
+
+- A single IIIF Range per Manifest is currently only supported. Given examples of use case(s) with multiple ranges, we can assess how best to accommodate supporting multiple IIIF Range(s) should they be required.
