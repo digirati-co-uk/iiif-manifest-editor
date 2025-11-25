@@ -155,7 +155,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
     <L.PanelContainer
       $menu={props.leftPanelMenuPosition || "bottom"}
       ref={leftPanelResizer.refs.resizableDiv}
-      className={transition && enableMotion ? `transition transition-${transition}` : ""}
+      className={["manifest-editor", transition && enableMotion ? `transition transition-${transition}` : ""].join(" ")}
       style={{
         width: state.leftPanel.open || transition !== "exited" ? leftPanelResizer.widthB : undefined,
         minWidth: leftPanel?.options?.minWidth,
