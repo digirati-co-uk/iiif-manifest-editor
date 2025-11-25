@@ -1,4 +1,5 @@
 import { defineCreator } from "@manifest-editor/creator-api";
+import { CreateProviderForm, createProvider } from "./create-provider";
 
 export const providerCreator = defineCreator({
   id: "@manifest-editor/provider",
@@ -9,11 +10,10 @@ export const providerCreator = defineCreator({
   supports: {
     parentTypes: ["Manifest", "Collection"],
     parentFields: ["provider"],
+    initialData: true,
   },
-  create: () => ({
-    ...getEmptyType("Agent"),
-    id: "",
-    type: "Agent",
-    label: { en: ["New provider"] },
-  }),
+  create: createProvider,
+  render(ctx) {
+    return <CreateProviderForm {...ctx} />;
+  },
 });

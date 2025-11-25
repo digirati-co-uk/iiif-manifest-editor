@@ -96,4 +96,5 @@ export {
   rangeWithItems,
   // Not included
   manifestBrowserCreator,
+  providerCreator,
 };

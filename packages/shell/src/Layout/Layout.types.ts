@@ -72,7 +72,7 @@ export interface LayoutActions {
       forceOpen?: boolean;
     },
   ): void;
-  create(resource: CreatableResource): void;
+  create(resource: CreatableResource): Promise<any>;
 
   leftPanel: PanelActions;
   centerPanel: PanelActions;

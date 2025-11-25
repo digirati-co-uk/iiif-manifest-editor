@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import styled, { css } from "styled-components";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
+import React, { useRef } from "react";
+import styled, { css } from "styled-components";
 
 export const InputLabel = styled.label<{
   $caps?: boolean;
@@ -175,7 +175,7 @@ export const Submit = styled.input.attrs({
 `;
 
 export const Input: typeof _Input = React.forwardRef((props: any, ref) =>
-  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />
+  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />,
 ) as any;
 
 export const HighlightInput: typeof _Input = ((props: any) => {
@@ -223,7 +223,7 @@ export const InputContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  max-width: ${(props: any) => (props.$$fluid ? "100%" : props.$wide ? "550px" : "360px")};
+  max-width: ${(props: any) => (props.$fluid ? "100%" : props.$wide ? "550px" : "360px")};
   margin-bottom: 1.5em;
   width: 100%;
 
