@@ -1,4 +1,5 @@
 import "./index.css";
+import { providerCreator } from "./Agent/ProviderCreator";
 import { audioAnnotation } from "./Annotation/AudioAnnotation";
 import { captionedImageAnnotation } from "./Annotation/CaptionedImageAnnotation";
 import { htmlAnnotation } from "./Annotation/HTMLAnnotation";
@@ -69,6 +70,7 @@ export const allCreators = [
   thumbnailCreator,
   rangeTopLevel,
   rangeWithItems,
+  providerCreator,
 ];
 
 export {
