@@ -1,6 +1,14 @@
 import { defineCreator } from "@manifest-editor/creator-api";
 import { CreateProviderForm, createProvider } from "./create-provider";
 
+declare module "@manifest-editor/creator-api" {
+  namespace IIIFManifestEditor {
+    interface CreatorDefinitions {
+      "@manifest-editor/provider": typeof createProvider;
+    }
+  }
+}
+
 export const providerCreator = defineCreator({
   id: "@manifest-editor/provider",
   label: "Provider",

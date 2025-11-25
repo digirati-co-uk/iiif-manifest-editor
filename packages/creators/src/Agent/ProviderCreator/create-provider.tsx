@@ -102,7 +102,6 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
         {homepage ? (
           <div>
             <LanguageFieldEditor
-              placeholder="Homepage"
               containerId={"homepageLabel"}
               focusId={"homepageLabel_"}
               label={"Homepage label"}

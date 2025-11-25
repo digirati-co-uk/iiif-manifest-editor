@@ -24,6 +24,7 @@ import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 import { rangeWithItems } from "./Range/RangeWithItems";
 import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
 
+export * from "./Agent/ProviderCreator/create-provider";
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
 export * from "./Annotation/CaptionedImageAnnotation/create-captioned-image-annotation";
 export * from "./Annotation/HTMLAnnotation/create-html-annotation";
