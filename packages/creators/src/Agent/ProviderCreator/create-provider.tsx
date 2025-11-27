@@ -113,9 +113,11 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
 
         <InputContainer $fluid>
           <InputLabel $margin={false} htmlFor="provider-url">
-            Custom Identifier
+            Provider ID
           </InputLabel>
-          <span className="text-gray-500 text-sm mb-2">Will be generated if not specified</span>
+          <span className="text-gray-500 text-sm mb-2">
+            Will be generated if not specified, this is not a URL that the user can follow
+          </span>
           <Input
             placeholder="https://id.loc.gov/authorities/abc123"
             type="text"
@@ -125,7 +127,7 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
           />
         </InputContainer>
 
-        <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url}>
+        <ActionButton primary large type="button" onPress={onSubmit}>
           Add provider
         </ActionButton>
       </div>
