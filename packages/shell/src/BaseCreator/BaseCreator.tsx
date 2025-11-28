@@ -17,15 +17,12 @@ import {
   matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
-import { useLayoutActions } from "../Layout/Layout.context";
-import {
-  ModulePanelButton,
-  useSetCustomTitle,
-} from "../Layout/components/ModularPanel";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
+import { useLayoutActions } from "../Layout/Layout.context";
 import { useInlineCreator } from "./BaseCreator.hooks";
 
 interface BaseCreatorProps {
@@ -156,9 +153,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
   const vault = useVault();
-  const [currentId, setCurrentId] = useState(
-    props.resource.initialCreator || "",
-  );
+  const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -180,7 +175,7 @@ export function BaseCreator(props: BaseCreatorProps) {
   });
 
   if (supported.length === 0) {
-    return <div>Not currently supported</div>;
+    return <EmptyState>Not currently supported</EmptyState>;
   }
 
   const backButton = (

@@ -4,6 +4,7 @@ const meta: MetaRecord = {
   index: {
     type: "page",
     theme: {
+      copyPage: true,
       layout: "default",
       toc: false,
       timestamp: false,

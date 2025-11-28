@@ -4,9 +4,9 @@ import { Creator, matchBasedOnResource } from "@manifest-editor/creator-api";
 import { useCallback, useMemo } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
+import { createActionIdentity } from "../helpers";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { usePreviewVault } from "../PreviewVault/PreviewVault";
-import { createActionIdentity } from "../helpers";
 
 export function useCreator(
   parent: any,
@@ -19,12 +19,7 @@ export function useCreator(
   const app = useApp();
   const { create, edit } = useLayoutActions();
   const supported = useMemo(
-    () =>
-      matchBasedOnResource(
-        { type, parent, index: 0, property },
-        app.layout.creators || [],
-        { vault },
-      ),
+    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault }),
     [parent, property, app.layout.creators, type, vault],
   );
   const canCreate = parent && supported.length !== 0;
@@ -32,7 +27,7 @@ export function useCreator(
   const wrappedCreate = useCallback(
     (index?: number, initialData?: any) => {
       if (parent) {
-        create({
+        return create({
           type,
           parent: toRef(parent),
           property,
@@ -49,7 +44,7 @@ export function useCreator(
   const wrappedFilteredCreate = useCallback(
     (filter: string, index?: number, initialData?: any) => {
       if (parent) {
-        create({
+        return create({
           type,
           filter,
           parent: toRef(parent),
@@ -66,10 +61,7 @@ export function useCreator(
 
   const wrappedEdit = useCallback(
     (resource: any, index?: number) => {
-      edit(
-        resource,
-        parent ? { parent: toRef(parent), property, index } : undefined,
-      );
+      edit(resource, parent ? { parent: toRef(parent), property, index } : undefined);
     },
     [edit, parent, property],
   );
@@ -77,7 +69,7 @@ export function useCreator(
   const wrappedCreator = useCallback(
     (initialCreator: string, initialData?: any) => {
       if (parent) {
-        create({
+        return create({
           type,
           initialCreator,
           parent: toRef(parent),

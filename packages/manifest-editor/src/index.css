@@ -1,2 +1,8 @@
-@import "@manifest-editor/editors/dist/index.css";
-@import "@manifest-editor/components/dist/index.css";
+.manifest-editor {
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  @import "@manifest-editor/components/dist/lib.css";
+  @import "@manifest-editor/exhibition-preset/dist/index.css";
+}

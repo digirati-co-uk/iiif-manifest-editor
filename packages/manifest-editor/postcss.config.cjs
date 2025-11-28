@@ -1,5 +1,9 @@
-const postCssImport = require("postcss-import");
-
 module.exports = {
-  plugins: [postCssImport],
+  plugins: [
+    //
+    require("postcss-import"),
+    require("autoprefixer"),
+    require("postcss-nested"),
+    require("tailwindcss"),
+  ],
 };

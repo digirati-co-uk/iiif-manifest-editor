@@ -81,6 +81,7 @@ export * from "./SvgControlBar";
 export * from "./Tabs";
 export * from "./ThumbnailGridContainer";
 export * from "./Tooltip";
+export * from "./ViewProvider";
 export * from "./WarningMessage";
 // Extra class names:
 // border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full -translate-y-1 data-[selected]:ring-2 data-[selected]:bg-me-primary-100

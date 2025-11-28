@@ -1,4 +1,5 @@
 import "./index.css";
+import { providerCreator } from "./Agent/ProviderCreator";
 import { audioAnnotation } from "./Annotation/AudioAnnotation";
 import { captionedImageAnnotation } from "./Annotation/CaptionedImageAnnotation";
 import { htmlAnnotation } from "./Annotation/HTMLAnnotation";
@@ -23,6 +24,7 @@ import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 import { rangeWithItems } from "./Range/RangeWithItems";
 import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
 
+export * from "./Agent/ProviderCreator/create-provider";
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
 export * from "./Annotation/CaptionedImageAnnotation/create-captioned-image-annotation";
 export * from "./Annotation/HTMLAnnotation/create-html-annotation";
@@ -69,6 +71,7 @@ export const allCreators = [
   thumbnailCreator,
   rangeTopLevel,
   rangeWithItems,
+  providerCreator,
 ];
 
 export {
@@ -94,4 +97,5 @@ export {
   rangeWithItems,
   // Not included
   manifestBrowserCreator,
+  providerCreator,
 };
