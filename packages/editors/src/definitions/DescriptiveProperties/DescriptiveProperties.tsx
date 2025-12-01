@@ -169,14 +169,14 @@ export function DescriptiveProperties() {
                   <div key={`provider_${i}`} className="flex flex-col gap-1">
                     <ViewProvider resource={ref} onPress={() => edit(ref)} />
                     <ActionButton
-                      className="pl-4"
+                      className="pl-3"
                       onPress={() => {
                         if (window.confirm("Are you sure you want to delete this provider?")) {
                           provider.deleteAtIndex(i);
                         }
                       }}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon className="mr-1" />
                       Delete Provider
                     </ActionButton>
                   </div>
