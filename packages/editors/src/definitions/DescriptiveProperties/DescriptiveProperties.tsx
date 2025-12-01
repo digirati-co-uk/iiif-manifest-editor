@@ -2,7 +2,14 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
-import { ActionButton, AddIcon, DeleteIcon, EmptyState, PaddedSidebarContainer, ViewProvider } from "@manifest-editor/components";
+import {
+  ActionButton,
+  AddIcon,
+  DeleteIcon,
+  EmptyState,
+  PaddedSidebarContainer,
+  ViewProvider,
+} from "@manifest-editor/components";
 import { allRights } from "@manifest-editor/editor-api";
 import { useCreator, useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useState } from "react";
@@ -159,14 +166,17 @@ export function DescriptiveProperties() {
             <>
               <div className="flex flex-col gap-5 mb-4">
                 {(provider.get() || []).map((ref, i) => (
-                  <div className="flex flex-col gap-1">
-                    <ViewProvider key={i} resource={ref} onPress={() => edit(ref)} />
-                    <ActionButton className="pl-4" key={`delete_${i}`} onPress={()=>{
-                      if(window.confirm('Are you sure you want to delete this provider?')) {
-                        provider.deleteAtIndex(i);
-                      }  
-                    }} >
-                      <DeleteIcon/>
+                  <div key={`provider_${i}`} className="flex flex-col gap-1">
+                    <ViewProvider resource={ref} onPress={() => edit(ref)} />
+                    <ActionButton
+                      className="pl-4"
+                      onPress={() => {
+                        if (window.confirm("Are you sure you want to delete this provider?")) {
+                          provider.deleteAtIndex(i);
+                        }
+                      }}
+                    >
+                      <DeleteIcon />
                       Delete Provider
                     </ActionButton>
                   </div>
