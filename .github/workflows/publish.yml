@@ -84,6 +84,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Set publishing config
+        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
       - name: Publish
         run: pnpm run ci:release
         env:
