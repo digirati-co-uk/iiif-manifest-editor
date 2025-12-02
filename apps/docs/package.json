@@ -2,6 +2,7 @@
   "name": "docs",
   "version": "2.0.0",
   "description": "Nextra docs starter with search included.",
+  "private": true,
   "scripts": {
     "dev": "next dev --port 3003",
     "build": "next build",
