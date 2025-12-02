@@ -1,0 +1,60 @@
+name: Canary Release + Publish
+on:
+  # On every commit to main branch
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write # for checkout and tag
+  pull-requests: write  # for comments
+
+jobs:
+  canary-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Git Identity
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set CANARY_VERSION
+        run: |
+          PACKAGE_VERSION=$(cat lerna.json | jq -r .version)
+          CANARY_VERSION="${PACKAGE_VERSION}-canary.$(date +%Y%m%d%H%M%S)"
+          echo "CANARY_VERSION=${CANARY_VERSION}" >> $GITHUB_ENV
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+          run_install: false
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Publish Canary
+        run: pnpm run ci:release-next
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

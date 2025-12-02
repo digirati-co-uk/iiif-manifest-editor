@@ -20,7 +20,9 @@
     "ci:versionup:major": "lerna version major --no-push --no-git-tag-version --yes && npm run commit-version",
     "commit-version": "git add . && git commit -m \"chore(release): v`node -p 'require(\"./lerna.json\").version'`\"",
     "release": "lerna publish from-package",
-    "ci:release": "lerna publish from-package --yes"
+    "release-next": "lerna publish --preid next --pre-dist-tag next --canary --force-publish --no-git-reset",
+    "ci:release": "lerna publish from-package --yes",
+    "ci:release-next": "lerna publish --preid next --pre-dist-tag next --canary --force-publish --no-git-reset --yes"
   },
   "pnpm": {
     "overrides": {
