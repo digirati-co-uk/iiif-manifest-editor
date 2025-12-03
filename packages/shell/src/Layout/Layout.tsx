@@ -32,6 +32,7 @@ interface LayoutProps {
   hideHeader?: boolean;
   isLoading?: boolean;
   className?: string;
+  htmlId?: string;
   centerPanelMenuPosition?: "top" | "bottom";
   disableSideEffects?: string[];
 }
@@ -347,7 +348,10 @@ export const Layout = memo(function Layout(props: LayoutProps) {
 
   // This is a big ol' work in progress.
   return (
-    <L.OuterWrapper className={`manifest-editor ${props.className}`}>
+    <L.OuterWrapper
+      id={props.htmlId || "manifest-editor-container"}
+      className={`manifest-editor ${props.className || ""}`}
+    >
       {props.hideHeader ? null : (
         <L.Header>
           {props.header || null}

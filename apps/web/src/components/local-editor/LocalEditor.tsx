@@ -5,7 +5,7 @@ import { upgrade } from "@iiif/parser/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
 import { ManifestEditor } from "manifest-editor";
-// import "manifest-editor/dist/index.css";
+
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { GlobalNav } from "../site/GlobalNav";

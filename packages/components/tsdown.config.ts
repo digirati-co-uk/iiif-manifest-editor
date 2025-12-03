@@ -1,6 +1,3 @@
-// @ts-expect-error
-import postcssImport from "postcss-import";
-import postcss from "rollup-plugin-postcss";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((config) => ({
@@ -23,10 +20,4 @@ export default defineConfig((config) => ({
     index: "./src/index.tsx",
     lib: "./src/lib.css",
   },
-  // plugins: [
-  //   (postcss as any as typeof postcss.default)({
-  //     plugins: [postcssImport()],
-  //     extract: "index.css",
-  //   }),
-  // ],
 }));

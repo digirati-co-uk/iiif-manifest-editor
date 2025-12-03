@@ -58,11 +58,19 @@ export const exhibitionViewerTailwindColors = {
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  important: ".manifest-editor",
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    // @todo fix bundle issues.
-    "../../presets/*/src/**/*.{ts,tsx,css}",
-    "../../packages/**/*.{ts,tsx,css}",
+
+    "../../presets/collection-preset/src/**/*.{ts,tsx,css}",
+    "../../presets/exhibition-preset/src/**/*.{ts,tsx,css}",
+    "../../presets/manifest-preset/src/**/*.{ts,tsx,css}",
+
+    "../components/src/**/*.{ts,tsx,css}",
+    "../editors/src/**/*.{ts,tsx,css}",
+    "../creators/src/**/*.{ts,tsx,css}",
+    "../shell/src/**/*.{ts,tsx,css}",
+
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
     "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",
   ],

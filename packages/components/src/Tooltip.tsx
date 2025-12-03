@@ -146,8 +146,10 @@ export const TooltipContent = React.forwardRef<
 
   if (!context.open) return null;
 
+  const rootEl = root || document.getElementById("manifest-editor-container");
+
   return (
-    <FloatingPortal root={root}>
+    <FloatingPortal root={rootEl}>
       <div
         ref={ref}
         style={{

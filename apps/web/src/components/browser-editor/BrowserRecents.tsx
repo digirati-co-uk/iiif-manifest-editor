@@ -1,5 +1,5 @@
 "use client";
-// import "manifest-editor/dist/index.css";
+
 import { Vault } from "@iiif/helpers";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";

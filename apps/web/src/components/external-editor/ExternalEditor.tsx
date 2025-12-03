@@ -14,7 +14,7 @@ import {
   useSaveVault,
 } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
-// import "@manifest-editor/exhibition-preset/dist/index.css";
+
 import { type SVGProps, useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-aria-components";
 import { useExistingVault, VaultProvider } from "react-iiif-vault";

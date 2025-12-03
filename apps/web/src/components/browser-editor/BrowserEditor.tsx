@@ -1,9 +1,5 @@
 "use client";
 
-// import "manifest-editor/dist/index.css";
-// import "@manifest-editor/editors/dist/index.css";
-// import "@manifest-editor/components/dist/index.css";
-// import "@manifest-editor/exhibition-preset/dist/index.css";
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
   DefaultTooltipContent,
