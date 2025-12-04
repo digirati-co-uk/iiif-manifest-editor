@@ -1,7 +1,7 @@
 "use client";
 import { useLocalStorage } from "@manifest-editor/components";
 import { useLayoutEffect, useState } from "react";
-import Joyride, { type Step, type CallBackProps } from "react-joyride";
+import Joyride, { type CallBackProps, type Step } from "react-joyride";
 
 interface OnboardingTourProps {
   id: string;
@@ -36,7 +36,6 @@ export function OnboardingTour({ id, steps }: OnboardingTourProps) {
       scrollToFirstStep
       steps={steps}
       run={isEnabled}
-      debug
       callback={lifecycle}
     />
   );

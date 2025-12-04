@@ -15,7 +15,7 @@ export function PanelSideMenuItem(props: PanelSideMenuItemProps) {
       <TooltipTrigger asChild>
         <Button
           className={cn(
-            "border-none aspect-square w-full flex justify-center items-center hover:bg-me-primary-100 hover:text-black [&>svg]:text-2xl cursor-default",
+            "border-none bg-gray-100 aspect-square w-full flex justify-center items-center hover:bg-me-primary-100 hover:text-black [&>svg]:text-2xl cursor-default",
             props.selected
               ? "bg-me-primary-500 hover:bg-me-primary-600 hover:text-white text-white"
               : "text-me-gray-700",

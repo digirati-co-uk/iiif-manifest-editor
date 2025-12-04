@@ -17,6 +17,13 @@ export function NavPlaceEditor() {
   const mapRef = useRef();
   const ref = React.useRef<L.FeatureGroup>(null);
   const geojson = navPlace.get();
+  const isInitialized = useRef(false);
+  useEffect(() => {
+    isInitialized.current = true;
+    return () => {
+      isInitialized.current = false;
+    };
+  }, []);
 
   const initialiseFromGeoJSON = (geojson: GeoJSON | undefined) => {
     if (ref.current?.getLayers().length === 0 && geojson) {
@@ -51,6 +58,8 @@ export function NavPlaceEditor() {
   if (notAllowed.includes("navPlace")) {
     return null;
   }
+
+  if (!isInitialized) return null;
 
   return (
     <PaddedSidebarContainer>

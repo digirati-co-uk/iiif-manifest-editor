@@ -8,6 +8,7 @@ export default defineConfig((options) => ({
   exports: {
     customExports: (exports) => {
       exports["./dist/index.css"] = "./dist/index.css";
+      exports["./reset.css"] = "./reset.css";
       return exports;
     },
   },

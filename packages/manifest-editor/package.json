@@ -77,7 +77,8 @@
       "require": "./dist/vault.cjs"
     },
     "./package.json": "./package.json",
-    "./dist/index.css": "./dist/index.css"
+    "./dist/index.css": "./dist/index.css",
+    "./reset.css": "./reset.css"
   },
   "scripts": {
     "build": "tsdown",
