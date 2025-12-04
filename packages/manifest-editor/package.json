@@ -28,15 +28,63 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./collection-preset": {
+      "import": "./dist/collection-preset.js",
+      "require": "./dist/collection-preset.cjs"
+    },
+    "./components": {
+      "import": "./dist/components.js",
+      "require": "./dist/components.cjs"
+    },
+    "./creator-api": {
+      "import": "./dist/creator-api.js",
+      "require": "./dist/creator-api.cjs"
+    },
+    "./creators": {
+      "import": "./dist/creators.js",
+      "require": "./dist/creators.cjs"
+    },
+    "./editor-api": {
+      "import": "./dist/editor-api.js",
+      "require": "./dist/editor-api.cjs"
+    },
+    "./editors": {
+      "import": "./dist/editors.js",
+      "require": "./dist/editors.cjs"
+    },
+    "./exhibition-preset": {
+      "import": "./dist/exhibition-preset.js",
+      "require": "./dist/exhibition-preset.cjs"
+    },
+    "./helpers": {
+      "import": "./dist/helpers.js",
+      "require": "./dist/helpers.cjs"
+    },
+    "./manifest-preset": {
+      "import": "./dist/manifest-preset.js",
+      "require": "./dist/manifest-preset.cjs"
+    },
+    "./parser": {
+      "import": "./dist/parser.js",
+      "require": "./dist/parser.cjs"
+    },
+    "./shell": {
+      "import": "./dist/shell.js",
+      "require": "./dist/shell.cjs"
+    },
+    "./vault": {
+      "import": "./dist/vault.js",
+      "require": "./dist/vault.cjs"
+    },
     "./package.json": "./package.json",
     "./dist/index.css": "./dist/index.css"
   },
   "scripts": {
-    "build": "tsdown src/index.ts",
-    "dev": "tsdown src/index.ts --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsdown src/index.ts"
+    "prepack": "tsdown"
   },
   "dependencies": {
     "@iiif/helpers": "catalog:",
@@ -46,7 +94,11 @@
     "@manifest-editor/collection-preset": "workspace:*",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/editor-api": "workspace:*",
+    "@manifest-editor/creators": "workspace:*",
+    "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
