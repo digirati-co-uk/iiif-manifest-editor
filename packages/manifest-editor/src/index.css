@@ -5,6 +5,8 @@
 @import "../node_modules/react-calendar/dist/Calendar.css";
 @import "../node_modules/react-clock/dist/Clock.css";
 
+@import "../node_modules/@mdxeditor/editor/style.css";
+
 @tailwind components;
 @tailwind utilities;
 
