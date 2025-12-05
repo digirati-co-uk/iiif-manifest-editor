@@ -36,7 +36,7 @@
     "classnames": "^2.5.1",
     "exhibition-viewer": "^1.0.10",
     "idb-keyval": "^6.2.1",
-    "iiif-browser": "^2.0.4",
+    "iiif-browser": "catalog:",
     "manifest-editor": "workspace:*",
     "next": "^16.0.7",
     "posthog-js": "^1.144.1",

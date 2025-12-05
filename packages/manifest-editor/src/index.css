@@ -1,4 +1,9 @@
 @import "../node_modules/@manifest-editor/components/dist/lib.css";
+@import "../node_modules/iiif-browser/dist/index.css";
+
+@import "../node_modules/react-datetime-picker/dist/DateTimePicker.css";
+@import "../node_modules/react-calendar/dist/Calendar.css";
+@import "../node_modules/react-clock/dist/Clock.css";
 
 @tailwind components;
 @tailwind utilities;

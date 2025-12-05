@@ -46,7 +46,7 @@
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "iiif-browser": "^2.0.4",
+    "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-error-boundary": "^4.0.13",

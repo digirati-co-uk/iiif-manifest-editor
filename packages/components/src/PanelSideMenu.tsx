@@ -16,7 +16,7 @@ interface PanelSideMenuProps {
 export function PanelSideMenu(props: PanelSideMenuProps) {
   return (
     <div
-      className="bg-me-gray-100 border-me-gray-300 border-t border-r flex flex-col w-12 pb-2 h-full"
+      className="bg-white border-me-gray-300 border-t border-r flex flex-col w-12 pb-2 h-full"
       data-open={props.open}
     >
       {props.items.map((panel) => (
