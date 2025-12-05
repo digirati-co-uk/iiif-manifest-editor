@@ -101,6 +101,7 @@
     "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
+    "@mdxeditor/editor": "^3.29.0",
     "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

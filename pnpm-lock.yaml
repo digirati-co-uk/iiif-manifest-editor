@@ -972,6 +972,9 @@ importers:
       '@manifest-editor/shell':
         specifier: workspace:*
         version: link:../shell
+      '@mdxeditor/editor':
+        specifier: ^3.29.0
+        version: 3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23)
       iiif-browser:
         specifier: 2.0.5-next.95a29ac
         version: 2.0.5-next.95a29ac(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
@@ -15633,7 +15636,7 @@ snapshots:
       globals: 13.24.0
       ignore: 5.3.1
       import-fresh: 3.3.0
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       minimatch: 3.1.2
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
