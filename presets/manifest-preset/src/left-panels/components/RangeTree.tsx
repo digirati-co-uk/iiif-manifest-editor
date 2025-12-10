@@ -26,6 +26,7 @@ import { TreeRangeItem } from "./TreeRangeItem";
 
 interface RangeTreeProps {
   hideCanvases?: boolean;
+  selectedTopLevelRange?: { id: string; type: "Range" } | null;
 }
 
 export function flattenedRanges(range: RangeTableOfContentsNode) {
@@ -90,7 +91,10 @@ export function RangeTree(props: RangeTreeProps) {
   const { isEditing, showCanvases, toggleShowCanvases } = useRangeTreeOptions();
 
   const { range, flatItems, canvasesNotInRanges } = useVaultSelector((_, vault) => {
-    const structures = vault.get(manifest!.structures || []);
+    const structures = props.selectedTopLevelRange
+      ? [vault.get(props.selectedTopLevelRange)]
+      : vault.get(manifest!.structures || []);
+
     const range =
       helper.rangesToTableOfContentsTree(structures, undefined, {
         showNoNav: true,

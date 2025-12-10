@@ -1,9 +1,9 @@
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { BasePropertyEditor } from "./BasePropertyEditor";
-import { EditorConfig } from "./types";
-import { entityActions } from "@iiif/helpers/vault/actions";
-import { flattenRanges, randomId } from "./utils";
 import { createRangeHelper } from "@iiif/helpers";
+import { entityActions } from "@iiif/helpers/vault/actions";
+import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { BasePropertyEditor } from "./BasePropertyEditor";
+import type { EditorConfig } from "./types";
+import { flattenRanges, randomId } from "./utils";
 
 export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
   Entity,
@@ -55,6 +55,10 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
     throw new Error("Cannot set directly");
   }
 
+  empty() {
+    this.config.vault.modifyEntityField(this.ref() as any, this.property, []);
+  }
+
   moveToStart(index: number) {
     if (index <= 0) {
       return false;
@@ -102,14 +106,22 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
         if (this.getType() === "Manifest" && this.property === "items") {
           const fullManifest = vault.get(this.ref());
           const toRemoveId = vault.get(toRemove)?.id;
-          if (toRemoveId && fullManifest && (fullManifest.structures || []).length > 0) {
+          if (
+            toRemoveId &&
+            fullManifest &&
+            (fullManifest.structures || []).length > 0
+          ) {
             // Grab all ranges.
-            const allRanges = createRangeHelper(vault).rangesToTableOfContentsTree(fullManifest.structures);
+            const allRanges = createRangeHelper(
+              vault,
+            ).rangesToTableOfContentsTree(fullManifest.structures);
             if (allRanges) {
               const flattened = flattenRanges(allRanges);
               for (const item of flattened) {
                 if (item.items) {
-                  const idx = item.items.findIndex((i) => i.type === "Canvas" && i.id === toRemoveId);
+                  const idx = item.items.findIndex(
+                    (i) => i.type === "Canvas" && i.id === toRemoveId,
+                  );
                   if (idx !== -1) {
                     vault.dispatch(
                       entityActions.removeReference({
@@ -119,7 +131,7 @@ export class BaseReferenceListEditor<Entity, T> extends BasePropertyEditor<
                         reference: item.items[idx]!.resource,
                         index: idx,
                       }),
-                    )
+                    );
                   }
                 }
               }
