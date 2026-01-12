@@ -24,6 +24,7 @@ import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useInlineCreator } from "./BaseCreator.hooks";
+import { useInitialData } from "./CreatorInitialData";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -45,6 +46,8 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const canvasSelector = props.resource.initialData?.selector;
   useTemporaryHighlight(canvasSelector);
 
+  const initialData = useInitialData(props.creator.id);
+
   const options: CreatorOptions = {
     targetType: props.resource.type,
     parent: props.resource.parent
@@ -55,7 +58,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
         }
       : undefined,
     target: props.resource.target,
-    initialData: props.resource.initialData,
+    initialData: { ...initialData, ...(props.resource.initialData || {}) },
   };
 
   const runCreate = (payload: any) => {

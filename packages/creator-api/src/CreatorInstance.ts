@@ -1,32 +1,24 @@
+import type { SupportedSelector } from "@iiif/helpers";
 import type { Vault } from "@iiif/helpers/vault";
 import type {
   Reference,
   Selector,
   SpecificResource,
 } from "@iiif/presentation-3";
-import type { InputShape } from "polygon-editor";
+import {
+  type AnnotationResponse,
+  annotationResponseToSelector,
+  seraliseSupportedSelector,
+} from "react-iiif-vault";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
-import {
-  annotationResponseToSelector,
-  seraliseSupportedSelector,
-  type AnnotationResponse,
-} from "react-iiif-vault";
 import type {
-  CreatorDefinitionFilterByParent,
-  ExtractCreatorGenerics,
-  IIIFManifestEditor,
-} from "./creator-register";
-import type {
-  AllAvailableParentTypes,
   CreatorDefinition,
   CreatorFunctionContext,
   CreatorOptions,
-  GetSupportedResourceFields,
 } from "./types";
 import { randomId } from "./utils";
-import { SupportedSelector } from "@iiif/helpers";
 
 export class CreatorInstance implements CreatorFunctionContext {
   vault: Vault;

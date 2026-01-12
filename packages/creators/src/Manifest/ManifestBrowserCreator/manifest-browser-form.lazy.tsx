@@ -1,11 +1,18 @@
-import { Vault } from "@iiif/helpers";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useMemo } from "react";
 
+export interface ManifestBrowserCreatorInitialData {
+  iiifBrowserOptions?: Partial<IIIFBrowserProps>;
+}
+
 export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   const vault = usePreviewVault();
+  const initialData: ManifestBrowserCreatorInitialData = useMemo(() => {
+    return props.options.initialData || {};
+  }, [props.options.initialData]);
+
   const output = useMemo(() => {
     return [
       {
@@ -47,12 +54,14 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       canSelectManifest: true,
       canSelectCollection: true,
       multiSelect: true,
+      ...(initialData.iiifBrowserOptions?.navigation || {}),
     };
   }, []);
 
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
+      ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
   }, []);
 
@@ -64,6 +73,8 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}
         navigation={navigationOptions}
+        customPages={(initialData.iiifBrowserOptions?.customPages || {})}
+        history={initialData.iiifBrowserOptions?.history || {}}
       />
     </PreviewVaultBoundary>
   );
