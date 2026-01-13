@@ -67,8 +67,8 @@ export function defineCreator<
 
 export function withInitialData<T extends CreatorDefinition>(
   creator: T,
-  data: any,
-  overrides: any = {},
+  data: Record<string, any>,
+  overrides: Record<string, any> = {},
 ): T {
   const render = creator.render
     ? (ctx: CreatorContext<any>) => {

@@ -56,14 +56,14 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       multiSelect: true,
       ...(initialData.iiifBrowserOptions?.navigation || {}),
     };
-  }, []);
+  }, [initialData.iiifBrowserOptions?.navigation]);
 
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
-  }, []);
+  }, [initialData.iiifBrowserOptions?.ui]);
 
   return (
     <PreviewVaultBoundary>

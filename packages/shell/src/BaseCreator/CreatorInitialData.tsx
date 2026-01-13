@@ -1,13 +1,13 @@
 import { createContext, useContext, useMemo } from "react";
 
-const CreatorInitialDataReactContext = createContext<Record<string, any>>({});
+const CreatorInitialDataReactContext = createContext<Record<string, unknown>>({});
 
-export function useInitialData(id: string) {
+export function useInitialData<T = unknown>(id: string): T | {} {
   const context = useContext(CreatorInitialDataReactContext);
   return context[id] || {};
 }
 
-export function CreatorInitialData(props: { id: string; children: React.ReactNode; data: any }) {
+export function CreatorInitialData<T extends Record<string, unknown>>(props: { id: string; children: React.ReactNode; data: T }) {
   const existingContext = useContext(CreatorInitialDataReactContext);
   const newContext = useMemo(
     () => ({ ...existingContext, [props.id]: props.data }),
