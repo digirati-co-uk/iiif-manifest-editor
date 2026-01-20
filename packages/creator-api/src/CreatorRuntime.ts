@@ -1,5 +1,9 @@
 import type { Vault } from "@iiif/helpers/vault";
-import { addMappings, batchActions, importEntities } from "@iiif/helpers/vault/actions";
+import {
+  addMappings,
+  batchActions,
+  importEntities,
+} from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
@@ -28,15 +32,28 @@ export class CreatorRuntime {
     this.previewVault = previewVault;
     this.definition = definition;
     this.payload = payload;
-    this.configs = createConfigs;
+    this.configs = this.filterCreateConfigs(createConfigs);
     this.options = {
       targetType: options?.targetType || definition.resourceType,
       ...(options || {}),
     };
   }
 
+  filterCreateConfigs(configs: CreatorDefinition[]) {
+    const indexedByIdLastWins: Record<string, CreatorDefinition> = {};
+    for (const config of configs) {
+      indexedByIdLastWins[config.id] = config;
+    }
+    return Object.values(indexedByIdLastWins);
+  }
+
   async run(): Promise<CreatorResource | CreatorResource[]> {
-    const instance = new CreatorInstance(this.vault, this.options, this.configs, this.previewVault);
+    const instance = new CreatorInstance(
+      this.vault,
+      this.options,
+      this.configs,
+      this.previewVault,
+    );
     const result = await this.definition.create(this.payload, instance);
 
     // Could be an array.
@@ -68,7 +85,9 @@ export class CreatorRuntime {
       return [];
     }
 
-    const allResources = Array.isArray(this.resource) ? this.resource : [this.resource];
+    const allResources = Array.isArray(this.resource)
+      ? this.resource
+      : [this.resource];
 
     const actions = [];
 
@@ -108,7 +127,9 @@ export class CreatorRuntime {
     }
 
     const actions = this.getActions();
-    this.vault.dispatch(batchActions({ actions: [...actions, ...afterActions] }));
+    this.vault.dispatch(
+      batchActions({ actions: [...actions, ...afterActions] }),
+    );
 
     if (Array.isArray(this.resource)) {
       return this.resource.map((resource) => resource.ref() as Reference);
