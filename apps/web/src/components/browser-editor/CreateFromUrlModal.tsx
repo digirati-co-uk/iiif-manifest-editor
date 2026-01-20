@@ -1,10 +1,10 @@
 import { Modal } from "@manifest-editor/components";
 import { analyse } from "@manifest-editor/shell";
 import { useMutation } from "@tanstack/react-query";
-import { useLayoutEffect, useRef } from "react";
-import { createCollectionFromId, createManifestFromId } from "./browser-state";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
+import { useLayoutEffect, useRef } from "react";
+import { createCollectionFromId, createManifestFromId } from "./browser-state";
 
 export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const router = useRouter();
@@ -19,7 +19,7 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
         posthog.capture("manifest-imported", { manifest_id: data.id });
       }
 
-      if (data.type === 'Collection') {
+      if (data.type === "Collection") {
         createCollectionProject.mutate(data);
       }
     },
@@ -69,7 +69,7 @@ export function CreateFromUrlModal({ isOpen, setIsOpen }: { isOpen: boolean; set
             className="flex-1 border-b bg-me-gray-100 p-3"
             placeholder="Paste Manifest URL"
             disabled={create.isPending || createProject.isPending}
-            autoComplete="on        setIsOpen(false);"
+            autoComplete="on"
           />
           <button
             type="submit"
