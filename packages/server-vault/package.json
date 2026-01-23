@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/server-vault",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
