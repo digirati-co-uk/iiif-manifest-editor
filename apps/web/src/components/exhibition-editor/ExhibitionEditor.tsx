@@ -21,11 +21,19 @@ const exhibitionOnboarding: Step[] = [
 const config: Partial<Config> = {
   previews: [
     {
+      id: "scroll-theme",
+      type: "external-manifest-preview",
+      label: "Scrolling exhibition",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/scroll?manifest={manifestId}",
+      },
+    },
+    {
       id: "delft-theme",
       type: "external-manifest-preview",
       label: "Delft exhibition",
       config: {
-        url: "https://exhibitionviewer.org/preview/delft?manifest={manifestId}",
+        url: "https://preview.exhibitionviewer.org/preview/delft?manifest={manifestId}",
       },
     },
     {
@@ -33,7 +41,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Delft slideshow",
       config: {
-        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}",
+        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}",
       },
     },
     {
@@ -41,7 +49,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Light exhibition",
       config: {
-        url: "https://exhibitionviewer.org/preview/minimal?manifest={manifestId}",
+        url: "https://preview.exhibitionviewer.org/preview/minimal?manifest={manifestId}",
       },
     },
     {
@@ -49,7 +57,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Light slideshow",
       config: {
-        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true",
+        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true",
       },
     },
     {
@@ -57,7 +65,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Floating tour",
       config: {
-        url: "https://exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true&floating=true",
+        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true&floating=true",
       },
     },
     {
