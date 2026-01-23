@@ -11,6 +11,7 @@ import {
 import { EditableCanvasLabel } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
+  useApp,
   useConfig,
   useCreator,
   useLayoutActions,
@@ -27,6 +28,7 @@ export const manifestOverview: LayoutPanel = {
 };
 
 export function ManifestOverviewCenterPanel() {
+  const { metadata } = useApp();
   const { edit, open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const { items } = structural;
@@ -44,7 +46,17 @@ export function ManifestOverviewCenterPanel() {
   if (!canvases || canvases.length === 0) {
     return (
       <div>
-        <ManifestOverviewEmptyState onCreate={canvasActions.create} canCreate={canCreateCanvas} />
+        <ManifestOverviewEmptyState
+          onCreate={
+            // TODO: this is a bit of a hotfix. The exhibition preset needs its own center panel.
+            metadata.id === "exhibition-editor"
+              ? (index: any, data: any) => {
+                  return canvasActions.createFiltered("exhibition-slide", index, data);
+                }
+              : canvasActions.create
+          }
+          canCreate={canCreateCanvas}
+        />
       </div>
     );
   }
