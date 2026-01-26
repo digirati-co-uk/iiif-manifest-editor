@@ -18,20 +18,12 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
       {
         type: "callback",
         label: "Select",
-        supportedTypes: [
-          "Canvas",
-          "CanvasList",
-          "CanvasRegion",
-          "ImageService",
-          "ImageServiceRegion",
-        ],
+        supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
         cb: (resource) => props.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: (resource, parent, vault) => {
-            const resourcesAsArray = Array.isArray(resource)
-              ? resource
-              : [{ ...resource, parent }];
+            const resourcesAsArray = Array.isArray(resource) ? resource : [{ ...resource, parent }];
             const resources = [];
             for (const resource of resourcesAsArray) {
               resources.push({
@@ -55,14 +47,16 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
       canSelectCollection: false,
       // @todo fix the output so this one works.
       multiSelect: true,
-      ...(initialData.iiifBrowserOptions?.navigation || {})
-    };
+      ...(initialData.iiifBrowserOptions?.navigation || {}),
+    } as IIIFBrowserProps["navigation"];
   }, [initialData]);
 
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
-      ...(initialData.iiifBrowserOptions?.ui || {})
+      homeLink: `${window.location.origin}/collection.json`,
+      // /collection.json
+      ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
   }, [initialData]);
 
@@ -74,7 +68,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}
         navigation={navigationOptions}
-        customPages={(initialData.iiifBrowserOptions?.customPages || {})}
+        customPages={initialData.iiifBrowserOptions?.customPages || {}}
         history={initialData.iiifBrowserOptions?.history || {}}
       />
     </PreviewVaultBoundary>
