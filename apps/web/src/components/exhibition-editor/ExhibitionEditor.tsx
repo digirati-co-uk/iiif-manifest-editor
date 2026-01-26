@@ -65,7 +65,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Floating tour",
       config: {
-        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true&floating=true",
+        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true&floating=true",
       },
     },
     {
