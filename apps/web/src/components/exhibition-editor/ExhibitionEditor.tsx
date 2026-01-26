@@ -41,7 +41,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Delft slideshow",
       config: {
-        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}",
+        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}",
       },
     },
     {
@@ -57,7 +57,7 @@ const config: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Light slideshow",
       config: {
-        url: "https://preview.exhibitionviewer.org/preview/presentation?manifest={manifestId}&minimal=true",
+        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true",
       },
     },
     {
