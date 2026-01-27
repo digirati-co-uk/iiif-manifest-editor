@@ -63,9 +63,9 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
   const [htmlMode, setHtmlMode] = useState(isHtml);
   const [focus, _setIsFocused] = useState(false);
   // Need to hold 2 states, the editorState and the textState
-  const [textState, _setTextState] = useState(props.value);
+  const [textState, _setTextState] = useState(props.value || "");
   const [editorState, _setEditorState] = useState(() => {
-    const blocksFromHTML = convertFromHTML(textState);
+    const blocksFromHTML = convertFromHTML(textState || "");
     return EditorState.createWithContent(
       ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
       decorator,
