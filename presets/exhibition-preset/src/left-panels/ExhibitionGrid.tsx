@@ -20,7 +20,7 @@ function ExhibitionGridLeftPanel() {
   const { technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas");
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, {isPainting: true});
   const [toggled, toggle] = useToggleList();
 
   return (
