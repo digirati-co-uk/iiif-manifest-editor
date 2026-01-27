@@ -1,0 +1,857 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://manifest-editor.digirati.services/collection.json",
+  "type": "Collection",
+  "label": {
+    "en": [
+      "IIIF Examples"
+    ]
+  },
+  "summary": {
+    "en": [
+      "A IIIF collection containing a series of IIIF content examples, that we can use during the workshop."
+    ]
+  },
+  "items": [
+    {
+      "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b8626777x/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "BnF, département Réserve des livres rares, VELINS-559"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://gallica.bnf.fr/ark:/12148/btv1b8626777x/f13.thumbnail",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 189,
+          "width": 128
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.biblissima.fr/chateauroux/B360446201_MS0005/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Manuscrit reconstitué : Châteauroux, Bibliothèque municipale, ms. 5 (Grandes Chroniques de France)"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.irht.cnrs.fr/iiif/France/Ch%C3%A2teauroux/Bibliotheque_municipale/B360446201_MS0005/DEPOT/B360446201_MS0005_0001/full/225,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 169,
+          "width": 225
+        }
+      ]
+    },
+    {
+      "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b52511281h/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "BnF. Bibliothèque de l'Arsenal. Ms-1124"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://gallica.bnf.fr/ark:/12148/btv1b52511281h/f5.thumbnail",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 192,
+          "width": 123
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.library.leeds.ac.uk/presentation/cc/hbzcdj81",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "\"The Blacksmith made all the hinges and snecks\". Original drawing used in \"Yorkshire Cottage\" (1942), page 57"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.library.leeds.ac.uk/thumbs/hbzcdj81_objects_LEEUA_1999.015.119_01.tif/full/200,151/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 151,
+          "width": 200
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.library.leeds.ac.uk/presentation/cc/fbw7jt45",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "R. Jaekel trade card"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.library.leeds.ac.uk/thumbs/v2/fbw7jt45_objects_718642_001.tif/full/270,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 270
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.library.leeds.ac.uk/presentation/cc/mh4cf1hy",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "aureus"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.library.leeds.ac.uk/thumbs/mh4cf1hy_objects_613417_001.tif/full/200,200/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 200,
+          "width": 200
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/b18035723",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Wunder der Vererbung / von Fritz Bolle."
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b18035723_0001.JP2/full/290,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 290
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/collections/archives/MS.1978",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Notebook"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.wellcomecollection.org/thumbs/b19537773_MS_1978_0001.jp2/full/271,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 271
+        }
+      ]
+    },
+    {
+      "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100177809527.0x000001",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Add Ch 75724"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://bl.digirati.io/thumbs/ark:/81055/vdc_100178258042.0x000003/full/200,199/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 199,
+          "width": 200
+        }
+      ]
+    },
+    {
+      "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100104060212.0x000001",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Add MS 74236"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://bl.digirati.io/thumbs/ark:/81055/vdc_100104060214.0x00000f/full/319,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 319
+        }
+      ]
+    },
+    {
+      "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100057739145.0x000001",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "add ms 11390"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://bl.digirati.io/thumbs/ark:/81055/vdc_100057739147.0x00000b/full/306,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 306
+        }
+      ]
+    },
+    {
+      "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100101631432.0x000001",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Add MS 12346"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://bl.digirati.io/thumbs/ark:/81055/vdc_100101631434.0x000006/full/262,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 262
+        }
+      ]
+    },
+    {
+      "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100135827579.0x000001",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Or 7616"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://bl.digirati.io/thumbs/ark:/81055/vdc_100154558457.0x000002/full/266,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 400,
+          "width": 266
+        }
+      ]
+    },
+    {
+      "id": "https://damsssl.llgc.org.uk/iiif/2.0/4628556/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "The Hengwrt Chaucer, [1395]-[1405]"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://damsssl.llgc.org.uk/iiif/2.0/image/4628563/full/256,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 256,
+          "width": 256
+        }
+      ]
+    },
+    {
+      "id": "https://damsssl.llgc.org.uk/iiif/2.0/6160651/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Petition - 16/56 1923"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://damsssl.llgc.org.uk/iiif/2.0/image/6160652/full/256,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 256,
+          "width": 256
+        }
+      ]
+    },
+    {
+      "id": "https://damsssl.llgc.org.uk/iiif/2.0/1131490/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Aberystwith and Cardigan Bay"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://damsssl.llgc.org.uk/iiif/2.0/image/1131490/full/256,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 256,
+          "width": 256
+        }
+      ]
+    },
+    {
+      "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13436/manifest?pageSize=1000",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Processionale ad usum sacri ordinis cisterciensis"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://permalinkbnd.bnportugal.gov.pt/i/?IIIF=/ef/0e/08/a2/ef0e08a2-5010-4980-be89-ad1a1ff7d629/iiif/alc-104_0000_capa-capa_t24-C-R0150_000012.tif/full/182,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 253,
+          "width": 182
+        }
+      ]
+    },
+    {
+      "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13517/manifest?pageSize=1000",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "[Missal segundo o rito cisterciense]"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://permalinkbnd.bnportugal.gov.pt/i/?IIIF=/a6/82/18/58/a6821858-5f51-41f3-9b14-03d75705e8cf/iiif/alc-163_0000_capa-capa_t24-C-R0150_000003.tif/full/316,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 481,
+          "width": 315
+        }
+      ]
+    },
+    {
+      "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13934/manifest?pageSize=1000",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "[Bíblia]"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://permalinkbnd.bnportugal.gov.pt/i/?IIIF=/59/ed/49/99/59ed4999-6f70-4411-97af-33be4bcf7411/iiif/alc-397_0000_capa-capa_t24-C-R0150_000001.tif/full/184,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 266,
+          "width": 183
+        }
+      ]
+    },
+    {
+      "id": "https://ark.digitalcommonwealth.org/ark:/50959/3f462s93b/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "A map of New-England, being the first that ever was here cut, and done by the best pattern that could be had, which being in some places defective, it made the other less exact; yet does it sufficiently shew the scituation of the country, and conveniently well the distance of places"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://ark.digitalcommonwealth.org/ark:/50959/3f462s94m/large_image",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 3832,
+          "width": 4872
+        }
+      ]
+    },
+    {
+      "id": "https://ark.digitalcommonwealth.org/ark:/50959/3f463966q/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Map of Boston"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://ark.digitalcommonwealth.org/ark:/50959/3f4639670/large_image",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 9526,
+          "width": 8088
+        }
+      ]
+    },
+    {
+      "id": "https://ark.digitalcommonwealth.org/ark:/50959/j6733j16t/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Plan for Boston"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://ark.digitalcommonwealth.org/ark:/50959/0c486274h/large_image",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 5423,
+          "width": 7358
+        }
+      ]
+    },
+    {
+      "id": "https://figgy.princeton.edu/concern/scanned_resources/82b92cb5-7b16-4f15-a8ab-aa505facd65b/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "State Turnpike"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif-cloud.princeton.edu/iiif/2/0a%2F5b%2F2d%2F0a5b2d5a150d4e278ff025d71e7b1afc%2Fintermediate_file/full/!200,150/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 146,
+          "width": 200
+        }
+      ]
+    },
+    {
+      "id": "https://figgy.princeton.edu/concern/scanned_resources/4e2b0909-ce4b-43ad-8a75-85ecfb61b8c1/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "The most formidable weapon against errors : the Sid Lapidus '59 Collection and the Age of Reason  / [curator, Steven A. Knowlton]."
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif-cloud.princeton.edu/iiif/2/3d%2F41%2Fc6%2F3d41c6f2c4964b7c88ec5764b1c5927a%2Fintermediate_file/full/!200,150/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 150,
+          "width": 126
+        }
+      ]
+    },
+    {
+      "id": "https://figgy.princeton.edu/concern/scanned_resources/ccc4a05c-78cc-4dde-9cb4-42fb2d314878/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Albert Einstein in Princeton"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif-cloud.princeton.edu/iiif/2/25%2Fec%2F35%2F25ec354b26a34b9789006fd7dcec4c16%2Fintermediate_file/full/!200,150/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 150,
+          "width": 193
+        }
+      ]
+    },
+    {
+      "id": "https://librarylabs.ed.ac.uk/iiif/manifest/calendars/2016:_Cities_of_the_World.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "2016: Cities of the World"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://images.is.ed.ac.uk/MediaManager/srvr?mediafile=/Size0/UoEgal~5~5/164/0057313c.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 70,
+          "width": 96
+        }
+      ]
+    },
+    {
+      "id": "https://view.nls.uk/manifest/8397/83973981/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Lyceum/Royal Lyceum Theatre"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://deriv.nls.uk/dcn4/7442/74426329.4.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 116,
+          "width": 150
+        }
+      ]
+    },
+    {
+      "id": "https://view.nls.uk/manifest/7492/74921376/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Soviet posters"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://deriv.nls.uk/dcn4/7442/74426110.4.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 222,
+          "width": 150
+        }
+      ]
+    },
+    {
+      "id": "https://view.nls.uk/manifest/1334/7515/133475158/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "15th-century English manuscript containing three Middle English texts: 'Liber maundevyle'; the chivalric poem 'Sir Cleges'; and, 'De regimine principum' by Thomas Hoccleve"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://deriv.nls.uk/dcn4/1341/6746/134167467.4.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 212,
+          "width": 150
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/511601ba-b660-4b07-9b68-8251122c0630.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Ashmolean Museum Evans Architectural Plans DQ/1b"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.bodleian.ox.ac.uk/iiif/image/511601ba-b660-4b07-9b68-8251122c0630/full/max/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 8645,
+          "width": 6256,
+          "service": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "protocol": "http://iiif.io/api/image",
+              "width": 6256,
+              "height": 8645,
+              "sizes": [
+                {
+                  "width": 97,
+                  "height": 135
+                },
+                {
+                  "width": 195,
+                  "height": 270
+                },
+                {
+                  "width": 391,
+                  "height": 540
+                },
+                {
+                  "width": 782,
+                  "height": 1080
+                },
+                {
+                  "width": 1564,
+                  "height": 2161
+                },
+                {
+                  "width": 3128,
+                  "height": 4322
+                }
+              ],
+              "tiles": [
+                {
+                  "width": 256,
+                  "height": 256,
+                  "scaleFactors": [
+                    1,
+                    2,
+                    4,
+                    8,
+                    16,
+                    32,
+                    64
+                  ]
+                }
+              ],
+              "@id": "https://iiif.bodleian.ox.ac.uk/iiif/image/511601ba-b660-4b07-9b68-8251122c0630",
+              "profile": [
+                "http://iiif.io/api/image/2/level2.json",
+                {
+                  "formats": [
+                    "jpg",
+                    "png",
+                    "webp"
+                  ],
+                  "qualities": [
+                    "native",
+                    "color",
+                    "gray",
+                    "bitonal"
+                  ],
+                  "supports": [
+                    "regionByPct",
+                    "regionSquare",
+                    "sizeByForcedWh",
+                    "sizeByWh",
+                    "sizeAboveFull",
+                    "sizeUpscaling",
+                    "rotationBy90s",
+                    "mirroring"
+                  ],
+                  "maxWidth": 1000,
+                  "maxHeight": 1000
+                }
+              ],
+              "service": [
+                {
+                  "@context": "http://iiif.io/api/annex/services/physdim/1/context.json",
+                  "profile": "http://iiif.io/api/annex/services/physdim",
+                  "physicalScale": 0.00423333,
+                  "physicalUnits": "cm"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/e2e9eea4-e293-4d63-987f-59cfc3d3def9.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Bodleian Library Animals on Show 1 (4)"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.bodleian.ox.ac.uk/iiif/image/e2e9eea4-e293-4d63-987f-59cfc3d3def9/full/max/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 3888,
+          "width": 8085,
+          "service": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "protocol": "http://iiif.io/api/image",
+              "width": 8085,
+              "height": 3888,
+              "sizes": [
+                {
+                  "width": 252,
+                  "height": 121
+                },
+                {
+                  "width": 505,
+                  "height": 243
+                },
+                {
+                  "width": 1010,
+                  "height": 486
+                },
+                {
+                  "width": 2021,
+                  "height": 972
+                },
+                {
+                  "width": 4042,
+                  "height": 1944
+                }
+              ],
+              "tiles": [
+                {
+                  "width": 256,
+                  "height": 256,
+                  "scaleFactors": [
+                    1,
+                    2,
+                    4,
+                    8,
+                    16,
+                    32
+                  ]
+                }
+              ],
+              "@id": "https://iiif.bodleian.ox.ac.uk/iiif/image/e2e9eea4-e293-4d63-987f-59cfc3d3def9",
+              "profile": [
+                "http://iiif.io/api/image/2/level2.json",
+                {
+                  "formats": [
+                    "jpg",
+                    "png",
+                    "webp"
+                  ],
+                  "qualities": [
+                    "native",
+                    "color",
+                    "gray",
+                    "bitonal"
+                  ],
+                  "supports": [
+                    "regionByPct",
+                    "regionSquare",
+                    "sizeByForcedWh",
+                    "sizeByWh",
+                    "sizeAboveFull",
+                    "sizeUpscaling",
+                    "rotationBy90s",
+                    "mirroring"
+                  ],
+                  "maxWidth": 4000,
+                  "maxHeight": 4000
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://heritage.tudelft.nl/iiif/collection.json",
+      "type": "Collection",
+      "label": {
+        "en": [
+          "TU Delft Academic Heritage"
+        ],
+        "nl": [
+          "Academisch Erfgoed TU Delft"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://dlc.services/thumbs/v3/7/18/313fb6cb-640c-40a6-bb79-40e662da08b5/full/200,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 133,
+          "width": 200
+        }
+      ]
+    },
+    {
+      "id": "https://raw.githubusercontent.com/crkn-rcdr/demo-iiif-collections/refs/heads/main/sciencedimension.json",
+      "type": "Collection",
+      "label": {
+        "en": [
+          "Science Dimensions"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://image-tor.canadiana.ca/iiif/2/69429%2fc0h12v706v5s/full/301,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 407,
+          "width": 301
+        }
+      ]
+    },
+    {
+      "id": "https://sammeltassen-rijks.web.val.run/200109794",
+      "type": "Manifest",
+      "label": {
+        "en": [
+          "Zelfportret"
+        ],
+        "nl": [
+          "Zelfportret"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.micr.io/vjYfT/full/max/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 5558,
+          "width": 4487
+        }
+      ]
+    },
+    {
+      "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b8492135q/manifest.json",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "BnF, département Société de Géographie, SG WA-12"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://gallica.bnf.fr/ark:/12148/btv1b8492135q/f3.thumbnail",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 155,
+          "width": 128
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.wellcomecollection.org/presentation/v3/collections/archives",
+      "type": "Collection",
+      "label": {
+        "en": [
+          "Archives at Wellcome Collection"
+        ]
+      }
+    },
+    {
+      "id": "https://iiif.library.utoronto.ca/presentation/v2/fisher2:F9000/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Liber pantheon"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.library.utoronto.ca/image/v2/fisher2:F9000_0010/full/80,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 120,
+          "width": 80
+        }
+      ]
+    },
+    {
+      "id": "https://iiif.library.utoronto.ca/presentation/v2/fisher2:11960/manifest",
+      "type": "Manifest",
+      "label": {
+        "none": [
+          "Certificate of doctor's degree in favour of Marco Antonio Remena, with the appended seal of Gregorio Cardinal Barbarigo"
+        ]
+      },
+      "thumbnail": [
+        {
+          "id": "https://iiif.library.utoronto.ca/image/v2/fisher2:13513/full/80,/0/default.jpg",
+          "type": "Image",
+          "format": "image/jpeg",
+          "height": 120,
+          "width": 80
+        }
+      ]
+    }
+  ]
+}

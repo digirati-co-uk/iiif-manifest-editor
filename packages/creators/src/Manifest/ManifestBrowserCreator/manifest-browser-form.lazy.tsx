@@ -61,6 +61,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
+      homeLink: `${window.location.origin}/collection.json`,
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
   }, [initialData.iiifBrowserOptions?.ui]);
