@@ -123,7 +123,7 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     id: canvasId,
     behavior,
     label: payload.label || { en: ["Untitled"] },
-    height: payload.height || 2000,
+    height: payload.height || 4000,
     duration: payload.duration,
     width: payload.width || width,
     items: [

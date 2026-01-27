@@ -43,20 +43,17 @@ export function ManifestOverviewCenterPanel() {
   const isEditingManifest = leftPanel.current === "left-panel-manifest";
   const [{ size }, gridOptions] = useGridOptions("manifest-grid-size");
 
+  const createCanvas =
+    metadata.id === "exhibition-editor"
+      ? (index: any, data: any) => {
+          return canvasActions.createFiltered("exhibition-slide", index, data);
+        }
+      : canvasActions.create;
+
   if (!canvases || canvases.length === 0) {
     return (
       <div>
-        <ManifestOverviewEmptyState
-          onCreate={
-            // TODO: this is a bit of a hotfix. The exhibition preset needs its own center panel.
-            metadata.id === "exhibition-editor"
-              ? (index: any, data: any) => {
-                  return canvasActions.createFiltered("exhibition-slide", index, data);
-                }
-              : canvasActions.create
-          }
-          canCreate={canCreateCanvas}
-        />
+        <ManifestOverviewEmptyState onCreate={createCanvas} canCreate={canCreateCanvas} />
       </div>
     );
   }
@@ -66,7 +63,7 @@ export function ManifestOverviewCenterPanel() {
         <div className="p-2 flex gap-2 justify-between items-center">
           {gridOptions}
           <div className="flex gap-2">
-            <ActionButton isDisabled={!canCreateCanvas} onPress={() => canvasActions.create()}>
+            <ActionButton isDisabled={!canCreateCanvas} onPress={() => createCanvas()}>
               <AddIcon className="text-xl" /> Add new canvas
             </ActionButton>
             <ActionButton onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}>

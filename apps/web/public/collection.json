@@ -3,23 +3,17 @@
   "id": "https://manifest-editor.digirati.services/collection.json",
   "type": "Collection",
   "label": {
-    "en": [
-      "IIIF Examples"
-    ]
+    "en": ["IIIF Examples"]
   },
   "summary": {
-    "en": [
-      "A IIIF collection containing a series of IIIF content examples, that we can use during the workshop."
-    ]
+    "en": ["A IIIF collection containing a series of IIIF content examples, that we can use during the workshop."]
   },
   "items": [
     {
       "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b8626777x/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "BnF, département Réserve des livres rares, VELINS-559"
-        ]
+        "none": ["BnF, département Réserve des livres rares, VELINS-559"]
       },
       "thumbnail": [
         {
@@ -32,12 +26,17 @@
       ]
     },
     {
+      "id": "https://heritage.tudelft.nl/iiif/collections/exhibitions/collection.json",
+      "type": "Collection",
+      "label": {
+        "none": ["Delft Exhibitions"]
+      }
+    },
+    {
       "id": "https://iiif.biblissima.fr/chateauroux/B360446201_MS0005/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Manuscrit reconstitué : Châteauroux, Bibliothèque municipale, ms. 5 (Grandes Chroniques de France)"
-        ]
+        "none": ["Manuscrit reconstitué : Châteauroux, Bibliothèque municipale, ms. 5 (Grandes Chroniques de France)"]
       },
       "thumbnail": [
         {
@@ -53,9 +52,7 @@
       "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b52511281h/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "BnF. Bibliothèque de l'Arsenal. Ms-1124"
-        ]
+        "none": ["BnF. Bibliothèque de l'Arsenal. Ms-1124"]
       },
       "thumbnail": [
         {
@@ -89,9 +86,7 @@
       "id": "https://iiif.library.leeds.ac.uk/presentation/cc/fbw7jt45",
       "type": "Manifest",
       "label": {
-        "en": [
-          "R. Jaekel trade card"
-        ]
+        "en": ["R. Jaekel trade card"]
       },
       "thumbnail": [
         {
@@ -107,9 +102,7 @@
       "id": "https://iiif.library.leeds.ac.uk/presentation/cc/mh4cf1hy",
       "type": "Manifest",
       "label": {
-        "en": [
-          "aureus"
-        ]
+        "en": ["aureus"]
       },
       "thumbnail": [
         {
@@ -125,9 +118,7 @@
       "id": "https://iiif.wellcomecollection.org/presentation/b18035723",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Wunder der Vererbung / von Fritz Bolle."
-        ]
+        "en": ["Wunder der Vererbung / von Fritz Bolle."]
       },
       "thumbnail": [
         {
@@ -143,9 +134,7 @@
       "id": "https://iiif.wellcomecollection.org/presentation/collections/archives/MS.1978",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Notebook"
-        ]
+        "en": ["Notebook"]
       },
       "thumbnail": [
         {
@@ -161,9 +150,7 @@
       "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100177809527.0x000001",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Add Ch 75724"
-        ]
+        "en": ["Add Ch 75724"]
       },
       "thumbnail": [
         {
@@ -179,9 +166,7 @@
       "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100104060212.0x000001",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Add MS 74236"
-        ]
+        "en": ["Add MS 74236"]
       },
       "thumbnail": [
         {
@@ -197,9 +182,7 @@
       "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100057739145.0x000001",
       "type": "Manifest",
       "label": {
-        "en": [
-          "add ms 11390"
-        ]
+        "en": ["add ms 11390"]
       },
       "thumbnail": [
         {
@@ -215,9 +198,7 @@
       "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100101631432.0x000001",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Add MS 12346"
-        ]
+        "en": ["Add MS 12346"]
       },
       "thumbnail": [
         {
@@ -233,9 +214,7 @@
       "id": "https://bl.digirati.io/iiif/ark:/81055/vdc_100135827579.0x000001",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Or 7616"
-        ]
+        "en": ["Or 7616"]
       },
       "thumbnail": [
         {
@@ -251,9 +230,7 @@
       "id": "https://damsssl.llgc.org.uk/iiif/2.0/4628556/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "The Hengwrt Chaucer, [1395]-[1405]"
-        ]
+        "none": ["The Hengwrt Chaucer, [1395]-[1405]"]
       },
       "thumbnail": [
         {
@@ -269,9 +246,7 @@
       "id": "https://damsssl.llgc.org.uk/iiif/2.0/6160651/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Petition - 16/56 1923"
-        ]
+        "none": ["Petition - 16/56 1923"]
       },
       "thumbnail": [
         {
@@ -287,9 +262,7 @@
       "id": "https://damsssl.llgc.org.uk/iiif/2.0/1131490/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Aberystwith and Cardigan Bay"
-        ]
+        "none": ["Aberystwith and Cardigan Bay"]
       },
       "thumbnail": [
         {
@@ -305,9 +278,7 @@
       "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13436/manifest?pageSize=1000",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Processionale ad usum sacri ordinis cisterciensis"
-        ]
+        "none": ["Processionale ad usum sacri ordinis cisterciensis"]
       },
       "thumbnail": [
         {
@@ -323,9 +294,7 @@
       "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13517/manifest?pageSize=1000",
       "type": "Manifest",
       "label": {
-        "none": [
-          "[Missal segundo o rito cisterciense]"
-        ]
+        "none": ["[Missal segundo o rito cisterciense]"]
       },
       "thumbnail": [
         {
@@ -341,9 +310,7 @@
       "id": "https://permalinkbnd.bnportugal.gov.pt/iiif/13934/manifest?pageSize=1000",
       "type": "Manifest",
       "label": {
-        "none": [
-          "[Bíblia]"
-        ]
+        "none": ["[Bíblia]"]
       },
       "thumbnail": [
         {
@@ -377,9 +344,7 @@
       "id": "https://ark.digitalcommonwealth.org/ark:/50959/3f463966q/manifest",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Map of Boston"
-        ]
+        "none": ["Map of Boston"]
       },
       "thumbnail": [
         {
@@ -395,9 +360,7 @@
       "id": "https://ark.digitalcommonwealth.org/ark:/50959/j6733j16t/manifest",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Plan for Boston"
-        ]
+        "none": ["Plan for Boston"]
       },
       "thumbnail": [
         {
@@ -413,9 +376,7 @@
       "id": "https://figgy.princeton.edu/concern/scanned_resources/82b92cb5-7b16-4f15-a8ab-aa505facd65b/manifest",
       "type": "Manifest",
       "label": {
-        "none": [
-          "State Turnpike"
-        ]
+        "none": ["State Turnpike"]
       },
       "thumbnail": [
         {
@@ -449,9 +410,7 @@
       "id": "https://figgy.princeton.edu/concern/scanned_resources/ccc4a05c-78cc-4dde-9cb4-42fb2d314878/manifest",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Albert Einstein in Princeton"
-        ]
+        "none": ["Albert Einstein in Princeton"]
       },
       "thumbnail": [
         {
@@ -467,9 +426,7 @@
       "id": "https://librarylabs.ed.ac.uk/iiif/manifest/calendars/2016:_Cities_of_the_World.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "2016: Cities of the World"
-        ]
+        "none": ["2016: Cities of the World"]
       },
       "thumbnail": [
         {
@@ -485,9 +442,7 @@
       "id": "https://view.nls.uk/manifest/8397/83973981/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Lyceum/Royal Lyceum Theatre"
-        ]
+        "none": ["Lyceum/Royal Lyceum Theatre"]
       },
       "thumbnail": [
         {
@@ -503,9 +458,7 @@
       "id": "https://view.nls.uk/manifest/7492/74921376/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Soviet posters"
-        ]
+        "none": ["Soviet posters"]
       },
       "thumbnail": [
         {
@@ -539,9 +492,7 @@
       "id": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/511601ba-b660-4b07-9b68-8251122c0630.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Ashmolean Museum Evans Architectural Plans DQ/1b"
-        ]
+        "none": ["Ashmolean Museum Evans Architectural Plans DQ/1b"]
       },
       "thumbnail": [
         {
@@ -586,32 +537,15 @@
                 {
                   "width": 256,
                   "height": 256,
-                  "scaleFactors": [
-                    1,
-                    2,
-                    4,
-                    8,
-                    16,
-                    32,
-                    64
-                  ]
+                  "scaleFactors": [1, 2, 4, 8, 16, 32, 64]
                 }
               ],
               "@id": "https://iiif.bodleian.ox.ac.uk/iiif/image/511601ba-b660-4b07-9b68-8251122c0630",
               "profile": [
                 "http://iiif.io/api/image/2/level2.json",
                 {
-                  "formats": [
-                    "jpg",
-                    "png",
-                    "webp"
-                  ],
-                  "qualities": [
-                    "native",
-                    "color",
-                    "gray",
-                    "bitonal"
-                  ],
+                  "formats": ["jpg", "png", "webp"],
+                  "qualities": ["native", "color", "gray", "bitonal"],
                   "supports": [
                     "regionByPct",
                     "regionSquare",
@@ -643,9 +577,7 @@
       "id": "https://iiif.bodleian.ox.ac.uk/iiif/manifest/e2e9eea4-e293-4d63-987f-59cfc3d3def9.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Bodleian Library Animals on Show 1 (4)"
-        ]
+        "none": ["Bodleian Library Animals on Show 1 (4)"]
       },
       "thumbnail": [
         {
@@ -686,31 +618,15 @@
                 {
                   "width": 256,
                   "height": 256,
-                  "scaleFactors": [
-                    1,
-                    2,
-                    4,
-                    8,
-                    16,
-                    32
-                  ]
+                  "scaleFactors": [1, 2, 4, 8, 16, 32]
                 }
               ],
               "@id": "https://iiif.bodleian.ox.ac.uk/iiif/image/e2e9eea4-e293-4d63-987f-59cfc3d3def9",
               "profile": [
                 "http://iiif.io/api/image/2/level2.json",
                 {
-                  "formats": [
-                    "jpg",
-                    "png",
-                    "webp"
-                  ],
-                  "qualities": [
-                    "native",
-                    "color",
-                    "gray",
-                    "bitonal"
-                  ],
+                  "formats": ["jpg", "png", "webp"],
+                  "qualities": ["native", "color", "gray", "bitonal"],
                   "supports": [
                     "regionByPct",
                     "regionSquare",
@@ -734,12 +650,8 @@
       "id": "https://heritage.tudelft.nl/iiif/collection.json",
       "type": "Collection",
       "label": {
-        "en": [
-          "TU Delft Academic Heritage"
-        ],
-        "nl": [
-          "Academisch Erfgoed TU Delft"
-        ]
+        "en": ["TU Delft Academic Heritage"],
+        "nl": ["Academisch Erfgoed TU Delft"]
       },
       "thumbnail": [
         {
@@ -755,9 +667,7 @@
       "id": "https://raw.githubusercontent.com/crkn-rcdr/demo-iiif-collections/refs/heads/main/sciencedimension.json",
       "type": "Collection",
       "label": {
-        "en": [
-          "Science Dimensions"
-        ]
+        "en": ["Science Dimensions"]
       },
       "thumbnail": [
         {
@@ -773,12 +683,8 @@
       "id": "https://sammeltassen-rijks.web.val.run/200109794",
       "type": "Manifest",
       "label": {
-        "en": [
-          "Zelfportret"
-        ],
-        "nl": [
-          "Zelfportret"
-        ]
+        "en": ["Zelfportret"],
+        "nl": ["Zelfportret"]
       },
       "thumbnail": [
         {
@@ -794,9 +700,7 @@
       "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b8492135q/manifest.json",
       "type": "Manifest",
       "label": {
-        "none": [
-          "BnF, département Société de Géographie, SG WA-12"
-        ]
+        "none": ["BnF, département Société de Géographie, SG WA-12"]
       },
       "thumbnail": [
         {
@@ -812,18 +716,14 @@
       "id": "https://iiif.wellcomecollection.org/presentation/v3/collections/archives",
       "type": "Collection",
       "label": {
-        "en": [
-          "Archives at Wellcome Collection"
-        ]
+        "en": ["Archives at Wellcome Collection"]
       }
     },
     {
       "id": "https://iiif.library.utoronto.ca/presentation/v2/fisher2:F9000/manifest",
       "type": "Manifest",
       "label": {
-        "none": [
-          "Liber pantheon"
-        ]
+        "none": ["Liber pantheon"]
       },
       "thumbnail": [
         {

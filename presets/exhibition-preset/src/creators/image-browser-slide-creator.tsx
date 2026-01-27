@@ -21,6 +21,17 @@ export const imageBrowserSlideCreator = defineCreator({
   tags: ["image", "exhibition-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
+  resourceType: "Canvas",
+  resourceFields: ["id", "language", "type", "format", "value"],
+  additionalTypes: [],
+  supports: {
+    onlyPainting: true,
+    parentTypes: ["Manifest"],
+    parentFields: ["items"],
+    parentFieldMap: {
+      Manifest: ["items"],
+    },
+  },
 });
 
 async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext): Promise<CreatorResource> {

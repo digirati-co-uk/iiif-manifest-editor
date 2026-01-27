@@ -198,7 +198,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
           returnResources.push(
             ctx.embed({
-              ...previewVault.toPresentation3(annotation),
+              ...fullAnnotation,
               target: ctx.getTarget(),
             }),
           );
