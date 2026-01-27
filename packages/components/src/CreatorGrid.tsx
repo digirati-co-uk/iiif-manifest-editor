@@ -36,12 +36,11 @@ function CreatorGridItem(props: CreatorGridItemProps) {
         )
       }
     >
-      <div className="rounded bg-me-gray-300 mb-2 flex items-center justify-center py-1 aspect-square">
+      <div className="rounded bg-me-gray-300 mb-2 flex items-center justify-center py-1 aspect-square" title={props.id}>
         <div className="text-center [&>svg]:w-16 [&>svg]:h-16">{props.icon}</div>
       </div>
       <div className="text-center font-semibold text-sm">{props.title}</div>
       <div className="text-sm text-center text-black/50">{props.description}</div>
-      <div className="text-xs text-center text-black/50">{props.id}</div>
     </ListBoxItem>
   );
 }
