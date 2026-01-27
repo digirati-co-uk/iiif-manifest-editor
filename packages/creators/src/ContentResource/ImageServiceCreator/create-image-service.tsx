@@ -10,9 +10,10 @@ import type { ImageService } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
+import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { type FormEvent, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ImageService as ImageServiceComponent } from "react-iiif-vault";
+import { ImageService as ImageServiceComponent, useImage } from "react-iiif-vault";
 
 export interface CreateImageServicePayload {
   url: string;
@@ -127,14 +128,7 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
         <div className="relative flex z-0 my-5 h-96 min-h-0 min-w-0 overflow-hidden bg-gray-200 rounded items-center justify-center">
           {url.trim() ? (
             <ErrorBoundary fallbackRender={() => <div>Invalid service</div>}>
-              <ImageServiceComponent
-                src={url}
-                fluid
-                errorFallback={() => <div>Invalid service</div>}
-                background="rgb(229,231,235)"
-                className="h-full w-full"
-                containerProps={{ className: "w-full h-full z-10" }}
-              />
+              <ImageComponent key={url} src={url} />
             </ErrorBoundary>
           ) : (
             <div className="text-grey-600">Preview</div>
@@ -148,4 +142,18 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
       </form>
     </PaddedSidebarContainer>
   );
+}
+
+function ImageComponent({src}: {src: string}) {
+  const image = useImage({ id: src } as any, {
+    size: { width: 512 }
+  })
+
+  if (!image) {
+    return <Spinner />;
+  }
+
+  return <div className="h-full">
+    <img className="w-full h-full object-contain" src={image}/>
+  </div>
 }
