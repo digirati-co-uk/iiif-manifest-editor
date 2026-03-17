@@ -20,7 +20,7 @@ overrides:
   polygon-editor: 0.0.23
   tsdown: 0.16.4
   react-aria-components: ^1.12
-  '@atlas-viewer/atlas': 3.1.1
+  '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
   exhibition-viewer: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
   react-reconciler: 0.33.0
   iiif-browser: 2.0.5-next.95a29ac
@@ -41,7 +41,7 @@ importers:
         version: 2.2.0
       '@lerna-lite/cli':
         specifier: ^4.9.3
-        version: 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
+        version: 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
       '@lerna-lite/list':
         specifier: ^4.9.3
         version: 4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
@@ -50,7 +50,7 @@ importers:
         version: 4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@lerna-lite/version':
         specifier: ^4.9.3
-        version: 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+        version: 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@netlify/plugin-nextjs':
         specifier: ^5.14.6
         version: 5.14.6
@@ -234,7 +234,7 @@ importers:
         version: 2.5.1
       exhibition-viewer:
         specifier: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
-        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3)
+        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3)
       idb-keyval:
         specifier: ^6.2.1
         version: 6.2.1
@@ -261,7 +261,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -484,7 +484,7 @@ importers:
         version: 4.0.13(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -578,7 +578,7 @@ importers:
         version: 0.0.23
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -636,7 +636,7 @@ importers:
         version: 4.0.13(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -700,8 +700,8 @@ importers:
   packages/editors:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.1.1
-        version: 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+        specifier: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
+        version: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -806,7 +806,7 @@ importers:
         version: 14.1.0(i18next@25.6.2(typescript@5.9.3))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-leaflet:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -986,7 +986,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -1083,7 +1083,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1153,8 +1153,8 @@ importers:
   packages/shell:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.1.1
-        version: 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+        specifier: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
+        version: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1217,7 +1217,7 @@ importers:
         version: 4.0.13(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1277,11 +1277,39 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(typescript@5.9.3)
 
+  packages/tools:
+    dependencies:
+      '@iiif/helpers':
+        specifier: 1.5.7
+        version: 1.5.7(@iiif/parser@2.2.8)
+      '@iiif/parser':
+        specifier: 2.2.8
+        version: 2.2.8
+      '@iiif/presentation-3':
+        specifier: ^2.2.3
+        version: 2.2.3
+      '@manifest-editor/creator-api':
+        specifier: workspace:*
+        version: link:../creator-api
+      '@manifest-editor/editor-api':
+        specifier: workspace:*
+        version: link:../editor-api
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal-packages/eslint-config
+      tsdown:
+        specifier: 0.16.4
+        version: 0.16.4(ms@2.1.3)(publint@0.2.8)(typescript@5.9.3)(unplugin-lightningcss@0.4.1)
+      vitest:
+        specifier: v3.0.9
+        version: 3.0.9(@types/debug@4.1.12)(@types/node@24.10.1)(less@4.2.0)(lightningcss@1.30.2)(sass@1.77.2)(stylus@0.62.0)(terser@5.16.9)
+
   packages/ui:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.1.1
-        version: 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+        specifier: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
+        version: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1305,7 +1333,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1360,7 +1388,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1433,7 +1461,7 @@ importers:
         version: link:../../packages/shell
       exhibition-viewer:
         specifier: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
-        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3)
+        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(immer@10.1.1)(typescript@5.9.3)
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1445,7 +1473,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1521,7 +1549,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: 2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1640,8 +1668,9 @@ packages:
     resolution: {integrity: sha512-3ucaaSxV6fxXoqHrE/rxAvP1THnDdY5jNzGlnvx+JvnY9C/dSRKc0jlRMRz59N3El572+/yNRUUpAV1T9aBJug==}
     engines: {node: '>= 10'}
 
-  '@atlas-viewer/atlas@3.1.1':
-    resolution: {integrity: sha512-PqREjEfssP46ObaZJozYAHRUZfrtP7ntSb8M/OkVypDU+XQAmreEELUy3VFABxYRHkSeeqLbDdz/iA+RmSqqSg==}
+  '@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf':
+    resolution: {tarball: https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf}
+    version: 3.1.1
     peerDependencies:
       react: 19.2.0
       react-dom: 19.2.0
@@ -7943,15 +7972,6 @@ packages:
       supports-color:
         optional: true
 
-  debug@4.4.0:
-    resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
   debug@4.4.1:
     resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
     engines: {node: '>=6.0'}
@@ -11614,22 +11634,25 @@ packages:
 
   react-iiif-vault@2.0.5:
     resolution: {integrity: sha512-k1bxM7fjr859beAfO6gw1BQdVVyk/XhRN6+P5Wl6w+Kv+Px8m98oQx4Age2BfgdyH3Mp8U5K+oRtlPdz9WBgtw==}
+    version: 2.0.5
     peerDependencies:
-      '@atlas-viewer/atlas': 3.1.1
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
       react: 19.2.0
       react-dom: 19.2.0
 
   react-iiif-vault@2.0.6:
     resolution: {integrity: sha512-9dRGeVZfXlPT2NuX+L70KyJdCvjTcj/M5vfK5NmncT555R1PaFTfcOrQhUCxqtKftd7lXSdnvRlYfGYwAsUV/w==}
+    version: 2.0.6
     peerDependencies:
-      '@atlas-viewer/atlas': 3.1.1
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
       react: 19.2.0
       react-dom: 19.2.0
 
   react-iiif-vault@2.0.7:
     resolution: {integrity: sha512-ikpkQVmBM3AthxMVWsPq2Gr2q1h0bDCCXQ3WV2BR8okQcQlCMxPfDFpEVTpde4hr8plU6YUC5eT4yhwmeS07pw==}
+    version: 2.0.7
     peerDependencies:
-      '@atlas-viewer/atlas': 3.1.1
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf
       react: 19.2.0
       react-dom: 19.2.0
 
@@ -13597,7 +13620,7 @@ snapshots:
       '@ast-grep/napi-win32-ia32-msvc': 0.35.0
       '@ast-grep/napi-win32-x64-msvc': 0.35.0
 
-  '@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)':
+  '@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.2
@@ -15789,7 +15812,7 @@ snapshots:
       '@antfu/install-pkg': 0.4.1
       '@antfu/utils': 0.7.10
       '@iconify/types': 2.0.0
-      debug: 4.4.1
+      debug: 4.4.3
       kolorist: 1.8.0
       local-pkg: 0.5.0
       mlly: 1.7.1
@@ -16159,7 +16182,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@lerna-lite/cli@4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)':
+  '@lerna-lite/cli@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)':
     dependencies:
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/init': 4.9.3(@types/node@24.10.1)
@@ -16172,7 +16195,7 @@ snapshots:
     optionalDependencies:
       '@lerna-lite/list': 4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/publish': 4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
-      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -16224,7 +16247,7 @@ snapshots:
 
   '@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)':
     dependencies:
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/listable': 4.9.3(@types/node@24.10.1)
     transitivePeerDependencies:
@@ -16259,10 +16282,10 @@ snapshots:
 
   '@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
     dependencies:
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/npmlog': 4.9.3
-      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@npmcli/arborist': 9.1.7
       '@npmcli/package-json': 7.0.3
       byte-size: 9.0.1
@@ -16295,10 +16318,10 @@ snapshots:
       - conventional-commits-filter
       - supports-color
 
-  '@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
+  '@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
     dependencies:
       '@conventional-changelog/git-client': 2.5.1(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.2.1)
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/npmlog': 4.9.3
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -21031,7 +21054,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.4.1
+      debug: 4.4.3
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.3
@@ -21094,7 +21117,7 @@ snapshots:
 
   '@typescript/vfs@1.6.1(typescript@5.9.3)':
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -21114,7 +21137,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.1(jiti@2.6.1))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1)))
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
@@ -21246,7 +21269,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -21461,7 +21484,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.1
+      debug: 4.4.3
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -22301,10 +22324,6 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  debug@4.4.0:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.1:
     dependencies:
       ms: 2.1.3
@@ -22755,7 +22774,7 @@ snapshots:
       eslint: 9.39.1(jiti@2.6.1)
       eslint-plugin-turbo: 2.0.6(eslint@9.39.1(jiti@2.6.1))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
 
@@ -22772,7 +22791,7 @@ snapshots:
       debug: 4.4.1
       enhanced-resolve: 5.18.3
       eslint: 9.39.1(jiti@2.6.1)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -22784,7 +22803,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -22811,7 +22830,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -23184,7 +23203,7 @@ snapshots:
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.2
 
-  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3):
+  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
@@ -23201,7 +23220,7 @@ snapshots:
       react-aria: 3.43.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-dom: 19.2.0(react@19.2.0)
       react-i18next: 16.3.3(i18next@25.6.2(typescript@5.7.3))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.7.3)
-      react-iiif-vault: 2.0.5(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react-iiif-vault: 2.0.5(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-lazy-load-image-component: 1.6.3(react@19.2.0)
       reveal.js: 5.2.1
       tailwind-merge: 2.3.0
@@ -23215,7 +23234,7 @@ snapshots:
       - immer
       - react-native
 
-  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3):
+  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(immer@10.1.1)(typescript@5.9.3):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
@@ -23232,7 +23251,7 @@ snapshots:
       react-aria: 3.43.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-dom: 19.2.0(react@19.2.0)
       react-i18next: 16.3.3(i18next@25.6.2(typescript@5.9.3))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
-      react-iiif-vault: 2.0.5(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react-iiif-vault: 2.0.5(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-lazy-load-image-component: 1.6.3(react@19.2.0)
       reveal.js: 5.2.1
       tailwind-merge: 2.3.0
@@ -23392,7 +23411,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -23934,14 +23953,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.5:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -24003,7 +24022,7 @@ snapshots:
 
   iiif-browser@2.0.5-next.95a29ac(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0)):
     dependencies:
-      '@atlas-viewer/atlas': 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
       '@iiif/parser': 2.2.8
       '@iiif/presentation-3': 2.2.3
@@ -24018,7 +24037,7 @@ snapshots:
       react-aria: 3.43.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-aria-components: 1.12.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-dom: 19.2.0(react@19.2.0)
-      react-iiif-vault: 2.0.7(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react-iiif-vault: 2.0.7(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-lazy-load-image-component: 1.6.3(react@19.2.0)
       react-router-dom: 7.9.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-timeago: 8.3.0(react@19.2.0)
@@ -27051,9 +27070,9 @@ snapshots:
       react-dom: 19.2.0(react@19.2.0)
       typescript: 5.9.3
 
-  react-iiif-vault@2.0.5(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  react-iiif-vault@2.0.5(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      '@atlas-viewer/atlas': 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@floating-ui/react': 0.27.15(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
       '@iiif/parser': 2.2.8
@@ -27073,9 +27092,9 @@ snapshots:
       - '@types/react'
       - immer
 
-  react-iiif-vault@2.0.6(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  react-iiif-vault@2.0.6(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      '@atlas-viewer/atlas': 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@floating-ui/react': 0.27.15(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
       '@iiif/parser': 2.2.8
@@ -27095,9 +27114,9 @@ snapshots:
       - '@types/react'
       - immer
 
-  react-iiif-vault@2.0.7(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  react-iiif-vault@2.0.7(@atlas-viewer/atlas@https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(@types/react@19.0.10)(immer@10.1.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      '@atlas-viewer/atlas': 3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
+      '@atlas-viewer/atlas': https://pkg.pr.new/@atlas-viewer/atlas@b6fbcbf(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@floating-ui/react': 0.27.15(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
       '@iiif/parser': 2.2.8
@@ -27757,7 +27776,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -27828,7 +27847,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -28022,7 +28041,7 @@ snapshots:
   socks-proxy-agent@8.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.4.1
+      debug: 4.4.3
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
@@ -28559,7 +28578,7 @@ snapshots:
   tuf-js@4.0.0:
     dependencies:
       '@tufjs/models': 4.0.0
-      debug: 4.4.1
+      debug: 4.4.3
       make-fetch-happen: 15.0.3
     transitivePeerDependencies:
       - supports-color
@@ -28987,7 +29006,7 @@ snapshots:
   vite-node@3.0.9(@types/node@24.10.1)(less@4.2.0)(lightningcss@1.30.2)(sass@1.77.2)(stylus@0.62.0)(terser@5.16.9):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.1
+      debug: 4.4.3
       es-module-lexer: 1.6.0
       pathe: 2.0.3
       vite: 5.4.21(@types/node@24.10.1)(less@4.2.0)(lightningcss@1.30.2)(sass@1.77.2)(stylus@0.62.0)(terser@5.16.9)
@@ -29045,9 +29064,9 @@ snapshots:
       '@vitest/spy': 3.0.9
       '@vitest/utils': 3.0.9
       chai: 5.2.0
-      debug: 4.4.0
+      debug: 4.4.3
       expect-type: 1.2.0
-      magic-string: 0.30.17
+      magic-string: 0.30.21
       pathe: 2.0.3
       std-env: 3.8.1
       tinybench: 2.9.0
