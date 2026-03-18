@@ -113,13 +113,15 @@ export function ToolResultRenderer(props: {
   // ── Tool Result (collapsed by default) ───────────────────────────
   const output = props.part.output;
   const isPending = props.part.state === "input-streaming" || props.part.state === "input-available";
-  const isError = props.part.state === "output-error";
   const isToolResult = output && typeof output === "object" && "summary" in output && "ok" in output;
+  const isFailureResult = isToolResult && output.ok === false;
+  const isError = props.part.state === "output-error" || isFailureResult;
 
   const hasChangedRefs = isToolResult && Array.isArray(output.changedRefs) && output.changedRefs.length > 0;
   const hasCreatedRefs = isToolResult && Array.isArray(output.createdRefs) && output.createdRefs.length > 0;
   const hasWarnings = isToolResult && Array.isArray(output.warnings) && output.warnings.length > 0;
   const hasData = isToolResult && typeof output.data !== "undefined";
+  const hasErrorDetails = isFailureResult && output.error?.details;
   const hasInput = !!props.part.input;
 
   const statusIcon = isPending ? <SpinnerIcon /> : isError ? <ErrorIcon /> : <CheckIcon />;
@@ -145,8 +147,10 @@ export function ToolResultRenderer(props: {
         ) : null}
 
         {/* Error text */}
-        {isError && props.part.errorText ? (
-          <p className="text-[12px] leading-relaxed text-me-gray-900">{props.part.errorText}</p>
+        {isError && (props.part.errorText || isFailureResult) ? (
+          <p className="text-[12px] leading-relaxed text-me-gray-900">
+            {props.part.errorText || output.error?.message || output.summary}
+          </p>
         ) : null}
 
         {/* Warnings */}
@@ -206,6 +210,15 @@ export function ToolResultRenderer(props: {
             <summary className="cursor-pointer select-none hover:text-me-gray-700">Data</summary>
             <pre className="mt-0.5 max-h-24 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-white p-1 text-[12px] text-me-gray-700">
               {safeJsonStringify(output.data)}
+            </pre>
+          </details>
+        ) : null}
+
+        {hasErrorDetails ? (
+          <details className="mt-0.5 text-[12px] text-me-gray-500">
+            <summary className="cursor-pointer select-none hover:text-me-gray-700">Details</summary>
+            <pre className="mt-0.5 max-h-24 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-white p-1 text-[12px] text-me-gray-700">
+              {safeJsonStringify(output.error.details)}
             </pre>
           </details>
         ) : null}

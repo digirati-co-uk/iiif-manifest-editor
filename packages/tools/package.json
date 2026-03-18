@@ -36,7 +36,7 @@
     "dev": "tsdown src/index.ts --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {

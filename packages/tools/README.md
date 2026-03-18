@@ -26,7 +26,7 @@ const runtime = createManifestEditorToolRuntime({
   creators: mappedApp.layout.creators || [],
 });
 
-const tools = toOpenAITools(runtime.registry);
+const tools = toOpenAITools(runtime.registry, { exposure: "default" });
 
 const result = await invokeTool(runtime, "me_get_root", {});
 ```
@@ -35,4 +35,11 @@ const result = await invokeTool(runtime, "me_get_root", {});
 
 - Pass the active preset's creator list into the runtime.
 - Exhibition support is enabled automatically when exhibition creators are present.
-- Successful mutation tools return changed refs, created refs, a summary, and any warnings.
+- `invokeTool()` validates tool input against each tool's declared JSON schema before execution and returns `INVALID_INPUT` with structured details when validation fails.
+- Successful mutation tools return changed refs, created refs, a summary, warnings, and machine-readable `data` fields such as `normalizedInput`, `primaryRef`, and operation-specific named refs.
+
+## Model Exposure
+
+- Use `exposure: "default"` when exporting tools to a model-facing runtime. This exposes curated discovery and workflow tools only.
+- Generic escape hatches such as `me_create_resource`, `me_add_reference`, `me_remove_reference`, and `me_reorder_references` are marked as `fallback`.
+- The `packages/tools` package no longer carries package-local Vitest coverage. Regression coverage should live in downstream consumers such as OpenRouter, where the actual model-facing tool surface is exercised end to end.

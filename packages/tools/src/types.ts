@@ -4,6 +4,7 @@ import type { InternationalString } from "@iiif/presentation-3";
 
 export type ToolMode = "manifest" | "exhibition";
 export type ResourceType = string;
+export type ToolModelExposure = "default" | "fallback";
 
 export interface ResourceRef {
   id: string;
@@ -113,6 +114,7 @@ export interface ManifestEditorToolDefinition<Input = unknown, Output = unknown>
   name: string;
   description: string;
   inputSchema: ManifestEditorToolJsonSchema;
+  modelExposure?: ToolModelExposure;
   modes?: ToolMode[];
   execute: (
     runtime: ManifestEditorToolRuntime,
@@ -151,4 +153,5 @@ export interface ManifestEditorToolPublicDefinition {
   name: string;
   description: string;
   inputSchema: ManifestEditorToolJsonSchema;
+  modelExposure: ToolModelExposure;
 }

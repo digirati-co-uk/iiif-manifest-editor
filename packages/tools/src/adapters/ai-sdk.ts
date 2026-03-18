@@ -1,5 +1,5 @@
 import { invokeTool } from "../runtime/registry";
-import type { ManifestEditorToolJsonSchema, ManifestEditorToolRuntime } from "../types";
+import type { ManifestEditorToolJsonSchema, ManifestEditorToolRuntime, ToolModelExposure } from "../types";
 
 export interface AiSdkTool<Input = unknown, Output = unknown> {
   description: string;
@@ -9,10 +9,21 @@ export interface AiSdkTool<Input = unknown, Output = unknown> {
 
 export type AiSdkToolSet = Record<string, AiSdkTool>;
 
-export function toAiSdkTools(runtime: ManifestEditorToolRuntime): AiSdkToolSet {
+export function toAiSdkTools(
+  runtime: ManifestEditorToolRuntime,
+  options: {
+    exposure?: ToolModelExposure | "all";
+  } = {},
+): AiSdkToolSet {
   const tools: AiSdkToolSet = {};
+  const exposure = options.exposure || "all";
 
   for (const definition of runtime.registry) {
+    const modelExposure = definition.modelExposure || "default";
+    if (exposure !== "all" && modelExposure !== exposure) {
+      continue;
+    }
+
     if (tools[definition.name]) {
       continue;
     }

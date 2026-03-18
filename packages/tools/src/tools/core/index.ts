@@ -1,7 +1,9 @@
 import {
   addReferenceToList,
+  createMutationResultData,
   createSuccess,
   createWithCreator,
+  ensureNonEmptyArray,
   getResource,
   getResourceCapabilities,
   listVaultResources,
@@ -14,103 +16,20 @@ import {
   updateSingleProperties,
 } from "../../runtime/helpers";
 import type { ManifestEditorToolDefinition } from "../../types";
+import {
+  anyObjectSchema,
+  createResourceRefSchema,
+  metadataPatchSchema,
+  propertyPatchSchema,
+} from "../../runtime/schema";
 
-const resourceRefSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["id", "type"],
-  properties: {
-    id: { type: "string" },
-    type: { type: "string" },
-  },
-};
-
-const languageMapSchema = {
-  oneOf: [
-    {
-      type: "string",
-      description: "Convenience shorthand. Plain strings are treated as English language-map values.",
-    },
-    {
-      type: "object",
-      description: "IIIF language map object.",
-    },
-  ],
-};
-
-const metadataPatchSchema = {
-  oneOf: [
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "label", "value"],
-      properties: {
-        type: {
-          type: "string",
-          enum: ["add"],
-        },
-        label: languageMapSchema,
-        value: languageMapSchema,
-        beforeIndex: {
-          type: "number",
-          description: "Optional insertion index. Omit to append the metadata entry.",
-        },
-      },
-    },
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "index", "label", "value"],
-      properties: {
-        type: {
-          type: "string",
-          enum: ["update"],
-        },
-        index: {
-          type: "number",
-        },
-        label: languageMapSchema,
-        value: languageMapSchema,
-      },
-    },
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "index"],
-      properties: {
-        type: {
-          type: "string",
-          enum: ["delete"],
-        },
-        index: {
-          type: "number",
-        },
-      },
-    },
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "startIndex", "endIndex"],
-      properties: {
-        type: {
-          type: "string",
-          enum: ["reorder"],
-        },
-        startIndex: {
-          type: "number",
-        },
-        endIndex: {
-          type: "number",
-        },
-      },
-    },
-  ],
-};
+const resourceRefSchema = createResourceRefSchema();
 
 export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
   return [
     {
       name: "me_get_root",
+      modelExposure: "default",
       description: "Return the root IIIF resource currently being edited.",
       inputSchema: {
         type: "object",
@@ -130,6 +49,7 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_get_resource",
+      modelExposure: "default",
       description: "Fetch a single IIIF resource from the current Vault.",
       inputSchema: {
         type: "object",
@@ -150,6 +70,7 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_list_resources",
+      modelExposure: "default",
       description: "List resources in the current Vault, optionally filtered by type or id.",
       inputSchema: {
         type: "object",
@@ -177,6 +98,7 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_search_resources",
+      modelExposure: "default",
       description: "Search resources in the current Vault by id, type, or label text.",
       inputSchema: {
         type: "object",
@@ -202,6 +124,7 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_get_resource_capabilities",
+      modelExposure: "default",
       description:
         "Describe which properties, creator-backed fields, and curated workflows are available for a resource.",
       inputSchema: {
@@ -226,6 +149,7 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_update_resource_properties",
+      modelExposure: "default",
       description:
         "Update non-list properties on a resource, including language maps, technical fields, linking fields, and extensions.",
       inputSchema: {
@@ -236,28 +160,34 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
           resource: resourceRefSchema,
           patches: {
             type: "array",
-            items: {
-              type: "object",
-              additionalProperties: false,
-              required: ["property", "value"],
-              properties: {
-                property: { type: "string" },
-                value: {},
-              },
-            },
+            minItems: 1,
+            items: propertyPatchSchema,
           },
         },
       },
       execute(runtime, input: any) {
         const resource = resolveResourceRef(runtime, input.resource);
-        updateSingleProperties(runtime, resource, input.patches || []);
+        const patches = input.patches || [];
+        ensureNonEmptyArray(patches, "me_update_resource_properties requires at least one property patch");
+        updateSingleProperties(runtime, resource, patches);
         return createSuccess("me_update_resource_properties", `Updated ${resource.type} ${resource.id}`, {
           changedRefs: [resource],
+          data: createMutationResultData({
+            normalizedInput: {
+              resource,
+              patches,
+            },
+            primaryRef: resource,
+            extra: {
+              patches,
+            },
+          }),
         });
       },
     },
     {
       name: "me_update_metadata",
+      modelExposure: "default",
       description:
         "Apply add, update, delete, or reorder operations to a resource's metadata array. Pass a non-empty patches array. For bulk additions, include multiple add patches in one call. Clearly marked synthetic test metadata is acceptable when the user is testing the editor.",
       inputSchema: {
@@ -299,16 +229,24 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
         const { entity } = getResource(runtime, resource);
         return createSuccess("me_update_metadata", `Updated metadata on ${resource.type} ${resource.id}`, {
           changedRefs: [resource],
-          data: {
-            patches,
-            metadataCount: Array.isArray((entity as any).metadata) ? (entity as any).metadata.length : 0,
-            metadata: Array.isArray((entity as any).metadata) ? (entity as any).metadata : [],
-          },
+          data: createMutationResultData({
+            normalizedInput: {
+              resource,
+              patches,
+            },
+            primaryRef: resource,
+            extra: {
+              patches,
+              metadataCount: Array.isArray((entity as any).metadata) ? (entity as any).metadata.length : 0,
+              metadata: Array.isArray((entity as any).metadata) ? (entity as any).metadata : [],
+            },
+          }),
         });
       },
     },
     {
       name: "me_add_reference",
+      modelExposure: "fallback",
       description: "Add an existing resource reference to a list property on a resource.",
       inputSchema: {
         type: "object",
@@ -330,17 +268,34 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
           `Added ${reference.type} ${reference.id} to ${resource.type}.${input.property}`,
           {
             changedRefs: [resource],
+            data: createMutationResultData({
+              normalizedInput: {
+                resource,
+                property: input.property,
+                reference,
+                index: input.index,
+              },
+              primaryRef: resource,
+              extra: {
+                reference,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_remove_reference",
+      modelExposure: "fallback",
       description: "Remove an item from a list property on a resource by index or resource reference.",
       inputSchema: {
         type: "object",
         additionalProperties: false,
         required: ["resource", "property"],
+        oneOf: [
+          { required: ["index"] },
+          { required: ["reference"] },
+        ],
         properties: {
           resource: resourceRefSchema,
           property: { type: "string" },
@@ -350,17 +305,28 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
       },
       execute(runtime, input: any) {
         const resource = resolveResourceRef(runtime, input.resource);
+        const reference = input.reference ? resolveResourceRef(runtime, input.reference) : undefined;
         removeReferenceFromList(runtime, resource, input.property, {
           index: input.index,
-          reference: input.reference,
+          reference,
         });
         return createSuccess("me_remove_reference", `Updated ${resource.type}.${input.property}`, {
           changedRefs: [resource],
+          data: createMutationResultData({
+            normalizedInput: {
+              resource,
+              property: input.property,
+              ...(typeof input.index === "number" ? { index: input.index } : {}),
+              ...(reference ? { reference } : {}),
+            },
+            primaryRef: resource,
+          }),
         });
       },
     },
     {
       name: "me_reorder_references",
+      modelExposure: "fallback",
       description: "Reorder items within a list property on a resource.",
       inputSchema: {
         type: "object",
@@ -378,11 +344,21 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
         reorderReferenceList(runtime, resource, input.property, input.startIndex, input.endIndex);
         return createSuccess("me_reorder_references", `Reordered ${resource.type}.${input.property}`, {
           changedRefs: [resource],
+          data: createMutationResultData({
+            normalizedInput: {
+              resource,
+              property: input.property,
+              startIndex: input.startIndex,
+              endIndex: input.endIndex,
+            },
+            primaryRef: resource,
+          }),
         });
       },
     },
     {
       name: "me_create_resource",
+      modelExposure: "fallback",
       description:
         "Create a resource using the active creator registry, then attach it to a parent property in the Vault.",
       inputSchema: {
@@ -397,23 +373,40 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
           filter: { type: "string" },
           index: { type: "number" },
           target: resourceRefSchema,
-          payload: { type: "object" },
-          initialData: { type: "object" },
+          payload: anyObjectSchema,
+          initialData: anyObjectSchema,
           isPainting: { type: "boolean" },
           onlyReference: { type: "boolean" },
         },
       },
       async execute(runtime, input: any) {
         const created = await createWithCreator(runtime, input);
+        const primaryRef = created.createdRefs[0] || null;
         return createSuccess(
           "me_create_resource",
           `Created ${created.createdRefs.length} resource(s) with ${created.creator.id}`,
           {
             changedRefs: created.target ? [created.parent, created.target] : [created.parent],
             createdRefs: created.createdRefs,
-            data: {
-              creatorId: created.creator.id,
-            },
+            data: createMutationResultData({
+              normalizedInput: {
+                parent: created.parent,
+                property: input.property,
+                targetType: input.targetType,
+                creatorId: created.creator.id,
+                filter: input.filter,
+                index: input.index,
+                ...(created.target ? { target: created.target } : {}),
+                ...(input.payload ? { payload: input.payload } : {}),
+                ...(input.initialData ? { initialData: input.initialData } : {}),
+                ...(typeof input.isPainting === "boolean" ? { isPainting: input.isPainting } : {}),
+                ...(typeof input.onlyReference === "boolean" ? { onlyReference: input.onlyReference } : {}),
+              },
+              primaryRef,
+              extra: {
+                creatorId: created.creator.id,
+              },
+            }),
           },
         );
       },

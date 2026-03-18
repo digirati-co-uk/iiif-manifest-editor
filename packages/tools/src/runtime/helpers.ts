@@ -114,6 +114,34 @@ export function dedupeRefs(refs: ResourceRef[]) {
   return output;
 }
 
+export function createMutationResultData<T extends Record<string, unknown>>(options: {
+  normalizedInput: Record<string, unknown>;
+  primaryRef?: ResourceRef | null;
+  extra?: T;
+}) {
+  return {
+    normalizedInput: options.normalizedInput,
+    ...(options.primaryRef ? { primaryRef: options.primaryRef } : {}),
+    ...(options.extra || {}),
+  };
+}
+
+export function ensureNonEmptyArray(value: unknown, message: string) {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw toolError("INVALID_INPUT", message);
+  }
+}
+
+export function ensureDistinctRefs(
+  left: ResourceRef,
+  right: ResourceRef,
+  message: string,
+) {
+  if (left.id === right.id && left.type === right.type) {
+    throw toolError("INVALID_INPUT", message);
+  }
+}
+
 function createTracker(): TrackState {
   return {
     key: "tools",
@@ -438,6 +466,64 @@ function getPropertyDocumentation(meta: ReturnType<typeof getSupportedMeta>) {
   );
 }
 
+function getPropertyEditors(
+  resource: ResourceRef,
+  meta: ReturnType<typeof getSupportedMeta>,
+  listProperties: string[],
+) {
+  return Object.fromEntries(
+    meta.all.map((property) => {
+      const propertyName = String(property);
+
+      if (propertyName === "id" || propertyName === "type") {
+        return [
+          propertyName,
+          {
+            editorType: "readOnly",
+            preferredTools: [] as string[],
+            notes: "Read-only property.",
+          },
+        ];
+      }
+
+      if (propertyName === "metadata") {
+        return [
+          propertyName,
+          {
+            editorType: "metadataList",
+            preferredTools: ["me_update_metadata"],
+            notes: "Metadata is a list of label/value pairs and must be edited with metadata patches.",
+          },
+        ];
+      }
+
+      if (listProperties.includes(propertyName)) {
+        return [
+          propertyName,
+          {
+            editorType: "referenceList",
+            preferredTools: [] as string[],
+            fallbackTools: ["me_add_reference", "me_remove_reference", "me_reorder_references"],
+            notes:
+              resource.type === "Manifest" && ["items", "structures"].includes(propertyName)
+                ? "Prefer curated manifest workflow tools before using raw list mutations."
+                : "This is a list property. Use curated workflows first, then fallback list tools only if no curated workflow fits.",
+          },
+        ];
+      }
+
+      return [
+        propertyName,
+        {
+          editorType: "singleValue",
+          preferredTools: ["me_update_resource_properties"],
+          notes: "Single-value property edited with me_update_resource_properties.",
+        },
+      ];
+    }),
+  );
+}
+
 function getCreatorFieldGuidance(runtime: ManifestEditorToolRuntime, resource: ResourceRef) {
   const creatorFields: Record<
     string,
@@ -689,6 +775,13 @@ const EXHIBITION_CURATED_TOOLS_BY_TYPE: Record<string, string[]> = {
   ],
 };
 
+const FALLBACK_TOOLS = [
+  "me_create_resource",
+  "me_add_reference",
+  "me_remove_reference",
+  "me_reorder_references",
+];
+
 function creatorSupportsProperty(
   runtime: ManifestEditorToolRuntime,
   creator: CreatorDefinition,
@@ -726,11 +819,78 @@ export function getCuratedToolNames(runtime: ManifestEditorToolRuntime, resource
   return Array.from(new Set(tools));
 }
 
+function getDefaultToolNames(runtime: ManifestEditorToolRuntime, resource: ResourceRef, listProperties: string[]) {
+  const tools = ["me_update_resource_properties", ...getCuratedToolNames(runtime, resource)];
+
+  if (listProperties.includes("metadata")) {
+    tools.push("me_update_metadata");
+  }
+
+  return Array.from(
+    new Set(
+      tools.filter((toolName) =>
+        runtime.registry.some(
+          (tool) => tool.name === toolName && (tool.modelExposure || "default") === "default",
+        ),
+      ),
+    ),
+  );
+}
+
+function getFallbackToolNames(runtime: ManifestEditorToolRuntime, resource: ResourceRef, listProperties: string[]) {
+  const tools: string[] = [];
+
+  if (listProperties.some((property) => property !== "metadata")) {
+    tools.push("me_add_reference", "me_remove_reference", "me_reorder_references");
+  }
+
+  if (resource.type !== "Annotation") {
+    tools.push("me_create_resource");
+  }
+
+  return Array.from(
+    new Set(
+      tools.filter((toolName) =>
+        runtime.registry.some(
+          (tool) =>
+            tool.name === toolName &&
+            (tool.modelExposure || "default") === "fallback" &&
+            FALLBACK_TOOLS.includes(toolName),
+        ),
+      ),
+    ),
+  );
+}
+
+function getAntiPatterns(resource: ResourceRef) {
+  switch (resource.type) {
+    case "Manifest":
+      return [
+        "Do not use generic creator or raw reference-list tools when a curated manifest workflow exists.",
+        "Do not build nested range hierarchies by duplicating canvases into both a parent range and its children.",
+      ];
+    case "Canvas":
+      return [
+        "Do not insert annotation JSON manually when a curated annotation workflow exists.",
+      ];
+    case "Range":
+      return [
+        "Do not leave canvases duplicated in both a parent range and its child ranges unless duplication is explicitly requested.",
+      ];
+    default:
+      return [
+        "Prefer curated workflow tools over generic fallback tools whenever both are available.",
+      ];
+  }
+}
+
 export function getResourceCapabilities(runtime: ManifestEditorToolRuntime, resource: ResourceRef) {
   const meta = getSupportedMeta(resource.type);
   const categories = getCapabilityCategories(meta);
   const listProperties = getListPropertyNames(resource.type);
   const creatorFields = getCreatorFieldGuidance(runtime, resource);
+  const defaultTools = getDefaultToolNames(runtime, resource, listProperties);
+  const fallbackTools = getFallbackToolNames(runtime, resource, listProperties);
 
   return {
     resource,
@@ -738,6 +898,7 @@ export function getResourceCapabilities(runtime: ManifestEditorToolRuntime, reso
     categories,
     readOnlyProperties: ["id", "type"],
     listProperties,
+    propertyEditors: getPropertyEditors(resource, meta, listProperties),
     typeDocumentation: (documentation.definedTypes as Record<string, { link: string; summary: string } | undefined>)[
       resource.type
     ] || null,
@@ -750,8 +911,12 @@ export function getResourceCapabilities(runtime: ManifestEditorToolRuntime, reso
           .map((creator) => creator.id),
       ),
     ),
+    defaultTools,
+    fallbackTools,
+    fallbackPolicy: "Use fallback tools only when no curated or default workflow fits the task.",
     workflowTools: getCuratedToolNames(runtime, resource),
     workflowHints: getWorkflowHints(resource),
+    antiPatterns: getAntiPatterns(resource),
   };
 }
 
@@ -879,6 +1044,9 @@ export function updateMetadata(
         metadataEditor.deleteAtIndex(patch.index);
         break;
       case "reorder":
+        if (patch.startIndex === patch.endIndex) {
+          throw toolError("INVALID_INPUT", "Metadata reorder must move an entry to a different index");
+        }
         metadataEditor.reorder(patch.startIndex, patch.endIndex);
         break;
       default:
@@ -953,6 +1121,10 @@ export function reorderReferenceList(
   startIndex: number,
   endIndex: number,
 ) {
+  if (startIndex === endIndex) {
+    throw toolError("INVALID_INPUT", "Reference reorder must move an item to a different index");
+  }
+
   const editor = createEditor(runtime, resource);
   const listEditor = getListPropertyEditor(editor, property);
 
@@ -1370,6 +1542,7 @@ export function mergeRanges(
 ) {
   const sourceRange = resolveResourceRef(runtime, input.sourceRange);
   const targetRange = resolveResourceRef(runtime, input.targetRange);
+  ensureDistinctRefs(sourceRange, targetRange, "Range merge requires distinct source and target ranges");
   const sourceContext = getRangeParentContext(runtime, sourceRange);
   const targetContext = getRangeParentContext(runtime, targetRange);
 

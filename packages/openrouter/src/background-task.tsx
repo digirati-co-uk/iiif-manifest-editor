@@ -150,7 +150,7 @@ function OpenRouterChatController(props: {
 
   const tools = useMemo<ToolSet>(() => {
     const editorTools = Object.fromEntries(
-      Object.entries(toAiSdkTools(runtime)).map(([name, definition]) => [
+      Object.entries(toAiSdkTools(runtime, { exposure: "default" })).map(([name, definition]) => [
         name,
         tool({
           description: definition.description,

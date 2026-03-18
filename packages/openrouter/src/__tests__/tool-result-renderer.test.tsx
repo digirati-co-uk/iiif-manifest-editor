@@ -69,4 +69,41 @@ describe("tool result renderer", () => {
       type: "Canvas",
     });
   });
+
+  it("renders failed tool results with structured details", () => {
+    render(
+      <ToolResultRenderer
+        part={{
+          type: "tool-me_update_metadata",
+          toolCallId: "tool-call-2",
+          state: "output-available",
+          output: {
+            ok: false,
+            summary: "Invalid input for me_update_metadata: $.patches array must contain at least 1 item(s)",
+            warnings: [],
+            changedRefs: [],
+            createdRefs: [],
+            error: {
+              code: "INVALID_INPUT",
+              message: "Invalid input for me_update_metadata: $.patches array must contain at least 1 item(s)",
+              details: {
+                issues: [
+                  {
+                    path: "$.patches",
+                    message: "Array must contain at least 1 item(s)",
+                  },
+                ],
+              },
+            },
+          },
+        }}
+        onOpenRef={vi.fn()}
+        onSelectOption={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Failed")).toBeTruthy();
+    expect(screen.getByText(/Invalid input for me_update_metadata/)).toBeTruthy();
+    expect(screen.getByText("Details")).toBeTruthy();
+  });
 });

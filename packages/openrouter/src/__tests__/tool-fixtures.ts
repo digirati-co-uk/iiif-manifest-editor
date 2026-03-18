@@ -11,11 +11,10 @@ import {
   type CreatorDefinition,
   type CreatorFunctionContext,
 } from "@manifest-editor/creator-api";
+import { createManifestEditorToolRuntime, toAiSdkTools, type ManifestEditorToolRuntime, type ResourceRef, type ToolMode } from "@manifest-editor/tools";
 import { imageServiceAnnotation } from "../../../creators/src/Annotation/ImageServiceAnnotation/index.tsx";
 import { imageServiceCreator } from "../../../creators/src/ContentResource/ImageServiceCreator/index.tsx";
 import { thumbnailCreator } from "../../../creators/src/ContentResource/ThumbnailCreator/index.tsx";
-import { createManifestEditorToolRuntime } from "../runtime/create-runtime";
-import type { ManifestEditorToolRuntime, ResourceRef, ToolMode } from "../types";
 
 function createHtmlBodyResources(
   annotationId: string,
@@ -316,21 +315,6 @@ const exhibitionImageSlideCreator = defineExhibitionSlideCreator("@exhibitions/i
   "h-4",
   "image",
 ]);
-const exhibitionImageSlideLeftCreator = defineExhibitionSlideCreator("@exhibitions/image-slide-creator-left", [
-  "w-12",
-  "h-4",
-  "left",
-]);
-const exhibitionImageSlideRightCreator = defineExhibitionSlideCreator("@exhibitions/image-slide-creator-right", [
-  "w-12",
-  "h-4",
-  "right",
-]);
-const exhibitionImageSlideBottomCreator = defineExhibitionSlideCreator("@exhibitions/image-slide-creator-bottom", [
-  "w-12",
-  "h-4",
-  "bottom",
-]);
 
 const exhibitionInfoBoxCreator = defineCreator({
   id: "@exhibitions/info-box-creator",
@@ -379,9 +363,6 @@ export const manifestToolCreatorsWithImageServices: CreatorDefinition[] = [
 export const exhibitionToolCreators: CreatorDefinition[] = [
   ...manifestToolCreators,
   exhibitionImageSlideCreator,
-  exhibitionImageSlideLeftCreator,
-  exhibitionImageSlideRightCreator,
-  exhibitionImageSlideBottomCreator,
   exhibitionInfoBoxCreator,
 ];
 
@@ -453,6 +434,7 @@ export function createFixtureRuntime(options: {
   runtime: ManifestEditorToolRuntime;
   vault: Vault;
   refs: FixtureRefs;
+  tools: ReturnType<typeof toAiSdkTools>;
 } {
   const manifest = createFixtureManifest();
   const vault = new Vault();
@@ -475,6 +457,7 @@ export function createFixtureRuntime(options: {
       canvas1PaintingPage: { id: `${manifest.items[0]!.id}/page/painting`, type: "AnnotationPage" },
       canvas2PaintingPage: { id: `${manifest.items[1]!.id}/page/painting`, type: "AnnotationPage" },
     },
+    tools: toAiSdkTools(runtime, { exposure: "default" }),
   };
 }
 

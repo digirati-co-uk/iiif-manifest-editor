@@ -24,6 +24,9 @@ export interface OpenRouterNavigationToolDefinition {
     changedRefs: ResourceRef[];
     createdRefs: ResourceRef[];
     data: {
+      primaryRef: ResourceRef;
+      canvas?: ResourceRef;
+      range?: ResourceRef;
       resource: ReturnType<typeof summariseResource>;
       layout: LayoutSnapshot;
     };
@@ -61,14 +64,18 @@ function createSuccessResult(options: {
   summary: string;
   resource: any;
   layout: LayoutSnapshot;
+  namedRefKey?: "canvas" | "range";
 }) {
+  const primaryRef = { id: options.resource.id, type: options.resource.type };
   return {
     ok: true as const,
     summary: options.summary,
     warnings: [],
-    changedRefs: [{ id: options.resource.id, type: options.resource.type }],
+    changedRefs: [primaryRef],
     createdRefs: [],
     data: {
+      primaryRef,
+      ...(options.namedRefKey ? { [options.namedRefKey]: primaryRef } : {}),
       resource: summariseResource(options.resource),
       layout: options.layout,
     },
@@ -103,6 +110,7 @@ export function buildOpenRouterNavigationToolDefinitions(options: {
         return createSuccessResult({
           summary: `Focused canvas ${canvas.id}`,
           resource: canvas,
+          namedRefKey: "canvas",
           layout: {
             ...options.currentLayout,
             leftPanelId: "canvas-listing",
@@ -131,6 +139,7 @@ export function buildOpenRouterNavigationToolDefinitions(options: {
         return createSuccessResult({
           summary: `Focused range ${range.id}`,
           resource: range,
+          namedRefKey: "range",
           layout: {
             ...options.currentLayout,
             leftPanelId: "@manifest-editor/ranges-listing",

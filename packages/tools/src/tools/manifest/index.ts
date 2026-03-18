@@ -7,10 +7,11 @@ import {
   applySelectorToAnnotation,
   buildReferenceResultMessage,
   createEditor,
+  createMutationResultData,
   createSuccess,
   createWithCreator,
+  ensureNonEmptyArray,
   findCanvasForAnnotationPage,
-  getManifest,
   mergeRanges,
   moveRangeItems,
   normaliseCreatedRefs,
@@ -19,16 +20,14 @@ import {
   toolError,
 } from "../../runtime/helpers";
 import type { ManifestEditorToolDefinition, ResourceRef } from "../../types";
+import {
+  anyObjectSchema,
+  createResourceRefSchema,
+  languageMapLikeSchema,
+  selectorSchema,
+} from "../../runtime/schema";
 
-const resourceRefSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["id", "type"],
-  properties: {
-    id: { type: "string" },
-    type: { type: "string" },
-  },
-};
+const resourceRefSchema = createResourceRefSchema();
 
 const manifestCanvasCreatorIds: Record<string, string> = {
   empty: "@manifest-editor/empty-canvas",
@@ -54,6 +53,7 @@ const manifestAnnotationCreatorIds: Record<string, string> = {
   captioned_image: "@manifest-editor/captioned-image-annotation",
   no_body: "@manifest-editor/no-body-annotation",
 };
+const manifestAnnotationKinds = Object.keys(manifestAnnotationCreatorIds);
 
 const canvasPayloadSchema = {
   type: "object",
@@ -69,9 +69,11 @@ const canvasPayloadSchema = {
       description: "Resolved IIIF image service object. Use this when the service metadata is already available.",
     },
     label: {
+      ...languageMapLikeSchema,
       description: "Optional IIIF language map label for the created canvas.",
     },
     body: {
+      ...languageMapLikeSchema,
       description: "Optional body payload for HTML-backed canvas creators.",
     },
     width: {
@@ -90,16 +92,34 @@ const canvasPayloadSchema = {
       type: "string",
       description: "Optional media format override.",
     },
+    youtubeUrl: {
+      type: "string",
+      description: "YouTube URL used by the youtube canvas workflow.",
+    },
+    imageUrl: {
+      type: "string",
+      description: "Image URL used by captioned_image workflows.",
+    },
+    images: {
+      type: "array",
+      description: "Array of image URL payloads used by image_list workflows.",
+      items: anyObjectSchema,
+    },
+    output: {
+      type: "array",
+      description: "IIIF Browser output payload used by the iiif_browser workflow.",
+      items: anyObjectSchema,
+    },
     embedService: {
       type: "boolean",
       description: "When false, create the image resource without embedding the service block.",
     },
     selector: {
-      type: "object",
+      ...anyObjectSchema,
       description: "Optional region selector payload for image-service-backed resources.",
     },
     size: {
-      type: "object",
+      ...anyObjectSchema,
       description: "Optional IIIF image size request override.",
     },
   },
@@ -109,6 +129,41 @@ const canvasPayloadSchema = {
       label: { en: ["Page 1"] },
     },
   ],
+};
+
+const annotationPayloadSchema = {
+  type: "object",
+  additionalProperties: true,
+  properties: {
+    url: {
+      type: "string",
+      description: "Media URL or IIIF image service URL used by the annotation workflow.",
+    },
+    service: {
+      ...anyObjectSchema,
+      description: "Resolved IIIF image service object for image_service workflows.",
+    },
+    label: languageMapLikeSchema,
+    body: languageMapLikeSchema,
+    width: { type: "number" },
+    height: { type: "number" },
+    duration: { type: "number" },
+    format: { type: "string" },
+    youtubeUrl: { type: "string" },
+    imageUrl: { type: "string" },
+    images: {
+      type: "array",
+      items: anyObjectSchema,
+    },
+    output: {
+      type: "array",
+      items: anyObjectSchema,
+    },
+    embedService: { type: "boolean" },
+    size: anyObjectSchema,
+    thumbnailSize: { type: "number" },
+    motivation: { type: "string" },
+  },
 };
 
 function getCanonicalImageServiceInfoUrl(url: string) {
@@ -245,6 +300,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
   return [
     {
       name: "me_create_canvas",
+      modelExposure: "default",
       description:
         "Create a canvas in the manifest using the active creator registry, including media-backed canvas creators.",
       inputSchema: {
@@ -289,6 +345,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         if (!creatorId) {
           throw toolError("INVALID_INPUT", `Unknown manifest canvas kind ${kind}`);
         }
+        const resolvedPayload = await resolveCanvasPayload(kind, inputPayload);
         const created = await createWithCreator(runtime, {
           parent: manifest,
           property: "items",
@@ -296,20 +353,33 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           creatorId,
           index: input.index,
           isPainting: true,
-          payload: await resolveCanvasPayload(kind, inputPayload),
+          payload: resolvedPayload,
         });
 
+        const primaryRef = created.createdRefs[0] || null;
         return createSuccess("me_create_canvas", `Created ${buildReferenceResultMessage(created.createdRefs)}`, {
           changedRefs: [manifest],
           createdRefs: created.createdRefs,
-          data: {
-            creatorId: created.creator.id,
-          },
+          data: createMutationResultData({
+            normalizedInput: {
+              manifest,
+              kind,
+              creatorId: created.creator.id,
+              index: input.index,
+              payload: resolvedPayload,
+            },
+            primaryRef,
+            extra: {
+              creatorId: created.creator.id,
+              canvas: primaryRef,
+            },
+          }),
         });
       },
     },
     {
       name: "me_create_annotation_page",
+      modelExposure: "default",
       description:
         "Create an empty annotation page under a Canvas, Manifest, or Range using the existing empty annotation page creator.",
       inputSchema: {
@@ -319,7 +389,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         properties: {
           parent: resourceRefSchema,
           property: { type: "string" },
-          label: {},
+          label: languageMapLikeSchema,
           creatorId: { type: "string" },
           index: { type: "number" },
         },
@@ -350,18 +420,35 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           },
         });
 
+        const primaryRef = created.createdRefs[0] || null;
         return createSuccess(
           "me_create_annotation_page",
           `Created ${buildReferenceResultMessage(created.createdRefs)}`,
           {
             changedRefs: [parent],
             createdRefs: created.createdRefs,
+            data: createMutationResultData({
+              normalizedInput: {
+                parent,
+                property,
+                creatorId: input.creatorId || "@manifest-editor/empty-annotation-page",
+                index: input.index,
+                payload: {
+                  label: input.label,
+                },
+              },
+              primaryRef,
+              extra: {
+                annotationPage: primaryRef,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_create_annotation",
+      modelExposure: "default",
       description:
         "Create an annotation in an annotation page, optionally setting a target selector on the created annotation.",
       inputSchema: {
@@ -372,12 +459,13 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           annotationPage: resourceRefSchema,
           targetCanvas: resourceRefSchema,
           creatorId: { type: "string" },
-          kind: { type: "string" },
-          painting: { type: "boolean" },
-          payload: { type: "object" },
-          selector: {
-            type: "object",
+          kind: {
+            type: "string",
+            enum: manifestAnnotationKinds,
           },
+          painting: { type: "boolean" },
+          payload: annotationPayloadSchema,
+          selector: selectorSchema,
         },
       },
       async execute(runtime, input: any) {
@@ -410,14 +498,29 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         return createSuccess("me_create_annotation", `Created ${buildReferenceResultMessage(created.createdRefs)}`, {
           changedRefs: [annotationPage, targetCanvas],
           createdRefs: created.createdRefs,
-          data: {
-            creatorId: created.creator.id,
-          },
+          data: createMutationResultData({
+            normalizedInput: {
+              annotationPage,
+              targetCanvas,
+              kind,
+              creatorId: created.creator.id,
+              painting: inferPaintingMode(kind, input.painting),
+              payload: withDefaultAnnotationPayload(kind, input.payload || {}),
+              ...(input.selector ? { selector: input.selector } : {}),
+            },
+            primaryRef: annotation || null,
+            extra: {
+              annotation,
+              targetCanvas,
+              creatorId: created.creator.id,
+            },
+          }),
         });
       },
     },
     {
       name: "me_set_annotation_target",
+      modelExposure: "default",
       description:
         "Set or replace an annotation target using a whole-canvas, xywh, or raw SVG selector input.",
       inputSchema: {
@@ -427,9 +530,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         properties: {
           annotation: resourceRefSchema,
           targetCanvas: resourceRefSchema,
-          selector: {
-            type: "object",
-          },
+          selector: selectorSchema,
         },
       },
       execute(runtime, input: any) {
@@ -438,11 +539,24 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         applySelectorToAnnotation(runtime, annotation, input.selector, targetCanvas);
         return createSuccess("me_set_annotation_target", `Updated target for ${annotation.id}`, {
           changedRefs: targetCanvas ? [annotation, targetCanvas] : [annotation],
+          data: createMutationResultData({
+            normalizedInput: {
+              annotation,
+              ...(targetCanvas ? { targetCanvas } : {}),
+              selector: input.selector,
+            },
+            primaryRef: annotation,
+            extra: {
+              annotation,
+              ...(targetCanvas ? { targetCanvas } : {}),
+            },
+          }),
         });
       },
     },
     {
       name: "me_create_top_level_range",
+      modelExposure: "default",
       description:
         "Create a top-level range structure. By default this uses the existing range workbench semantics with an outer TOC range plus an initial child range containing the manifest canvases. Set includeInitialChild to false for a custom empty top-level range. The result data identifies the top-level range separately from any initial child range.",
       inputSchema: {
@@ -450,8 +564,8 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         additionalProperties: false,
         properties: {
           manifest: resourceRefSchema,
-          topLevelLabel: {},
-          firstRangeLabel: {},
+          topLevelLabel: languageMapLikeSchema,
+          firstRangeLabel: languageMapLikeSchema,
           includeInitialChild: {
             type: "boolean",
             description:
@@ -529,17 +643,28 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           {
             changedRefs: [manifest],
             createdRefs,
-            data: {
-              topLevelRange,
-              initialChildRange,
-              includeInitialChild,
-            },
+            data: createMutationResultData({
+              normalizedInput: {
+                manifest,
+                topLevelLabel: input.topLevelLabel || { en: ["Table of contents"] },
+                firstRangeLabel: input.firstRangeLabel || { en: ["Range 1"] },
+                includeInitialChild,
+                items: initialItems,
+              },
+              primaryRef: topLevelRange,
+              extra: {
+                topLevelRange,
+                initialChildRange,
+                includeInitialChild,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_create_nested_range",
+      modelExposure: "default",
       description: "Create a nested range under an existing range item.",
       inputSchema: {
         type: "object",
@@ -547,7 +672,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         required: ["parentRange"],
         properties: {
           parentRange: resourceRefSchema,
-          label: {},
+          label: languageMapLikeSchema,
           items: {
             type: "array",
             items: resourceRefSchema,
@@ -571,14 +696,28 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           },
         });
 
+        const childRange = created.createdRefs[0] || null;
         return createSuccess("me_create_nested_range", `Created ${buildReferenceResultMessage(created.createdRefs)}`, {
           changedRefs: [parentRange],
           createdRefs: created.createdRefs,
+          data: createMutationResultData({
+            normalizedInput: {
+              parentRange,
+              label: input.label || { en: ["Untitled range"] },
+              items,
+              index: input.index,
+            },
+            primaryRef: childRange,
+            extra: {
+              childRange,
+            },
+          }),
         });
       },
     },
     {
       name: "me_move_range_items",
+      modelExposure: "default",
       description: "Move canvases or child ranges from one range into another range.",
       inputSchema: {
         type: "object",
@@ -589,6 +728,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
           targetRange: resourceRefSchema,
           items: {
             type: "array",
+            minItems: 1,
             items: resourceRefSchema,
           },
           index: { type: "number" },
@@ -597,20 +737,36 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
       execute(runtime, input: any) {
         const sourceRange = resolveResourceRef(runtime, input.sourceRange);
         const targetRange = resolveResourceRef(runtime, input.targetRange);
+        const items = input.items || [];
+        ensureNonEmptyArray(items, "me_move_range_items requires at least one range item");
+        const resolvedItems = items.map((item: any) => resolveResourceRef(runtime, item));
         moveRangeItems(runtime, {
           sourceRange,
           targetRange,
-          items: input.items || [],
+          items: resolvedItems,
           index: input.index,
         });
 
-        return createSuccess("me_move_range_items", `Moved ${(input.items || []).length} range item(s)`, {
+        return createSuccess("me_move_range_items", `Moved ${resolvedItems.length} range item(s)`, {
           changedRefs: [sourceRange, targetRange],
+          data: createMutationResultData({
+            normalizedInput: {
+              sourceRange,
+              targetRange,
+              items: resolvedItems,
+              index: input.index,
+            },
+            primaryRef: targetRange,
+            extra: {
+              movedItems: resolvedItems,
+            },
+          }),
         });
       },
     },
     {
       name: "me_split_range",
+      modelExposure: "default",
       description:
         "Split a nested range at a specific item using the same semantics as the existing range workbench.",
       inputSchema: {
@@ -620,7 +776,7 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         properties: {
           range: resourceRefSchema,
           item: resourceRefSchema,
-          label: {},
+          label: languageMapLikeSchema,
         },
       },
       async execute(runtime, input: any) {
@@ -633,11 +789,20 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         });
         return createSuccess("me_split_range", `Split range ${range.id}`, {
           changedRefs: [range],
+          data: createMutationResultData({
+            normalizedInput: {
+              range,
+              item,
+              ...(input.label ? { label: input.label } : {}),
+            },
+            primaryRef: range,
+          }),
         });
       },
     },
     {
       name: "me_merge_ranges",
+      modelExposure: "default",
       description:
         "Merge or empty one range into a sibling range using the same semantics as the existing range workbench.",
       inputSchema: {
@@ -660,6 +825,18 @@ export function buildManifestToolRegistry(): ManifestEditorToolDefinition[] {
         });
         return createSuccess("me_merge_ranges", `Merged ${sourceRange.id} into ${targetRange.id}`, {
           changedRefs: [sourceRange, targetRange],
+          data: createMutationResultData({
+            normalizedInput: {
+              sourceRange,
+              targetRange,
+              ...(typeof input.keepSource === "boolean" ? { keepSource: input.keepSource } : {}),
+            },
+            primaryRef: targetRange,
+            extra: {
+              sourceRange,
+              targetRange,
+            },
+          }),
         });
       },
     },

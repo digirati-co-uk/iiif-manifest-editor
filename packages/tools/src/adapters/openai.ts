@@ -1,6 +1,6 @@
 import { createFailure, toolError } from "../runtime/helpers";
 import { invokeTool } from "../runtime/registry";
-import type { ManifestEditorToolDefinition, ManifestEditorToolRuntime } from "../types";
+import type { ManifestEditorToolDefinition, ManifestEditorToolRuntime, ToolModelExposure } from "../types";
 
 export interface OpenAIFunctionTool {
   type: "function";
@@ -43,15 +43,26 @@ function parseOpenAIToolArguments(argumentsInput: unknown) {
   throw toolError("INVALID_INPUT", "Tool arguments must be a JSON object or JSON string");
 }
 
-export function toOpenAITools(registry: ManifestEditorToolDefinition[]): OpenAIFunctionTool[] {
-  return registry.map((tool) => ({
-    type: "function",
-    function: {
-      name: tool.name,
-      description: tool.description,
-      parameters: tool.inputSchema,
-    },
-  }));
+export function toOpenAITools(
+  registry: ManifestEditorToolDefinition[],
+  options: {
+    exposure?: ToolModelExposure | "all";
+  } = {},
+): OpenAIFunctionTool[] {
+  const exposure = options.exposure || "all";
+  return registry
+    .filter((tool) => {
+      const modelExposure = tool.modelExposure || "default";
+      return exposure === "all" || modelExposure === exposure;
+    })
+    .map((tool) => ({
+      type: "function",
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.inputSchema,
+      },
+    }));
 }
 
 export async function invokeOpenAIToolCall(

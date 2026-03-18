@@ -2,6 +2,7 @@ import {
   applySelectorToAnnotation,
   buildReferenceResultMessage,
   createEditor,
+  createMutationResultData,
   createSuccess,
   createWithCreator,
   getFirstCanvasAnnotationPage,
@@ -10,16 +11,14 @@ import {
   toolError,
 } from "../../runtime/helpers";
 import type { ManifestEditorToolDefinition, ResourceRef } from "../../types";
+import {
+  anyObjectSchema,
+  createResourceRefSchema,
+  languageMapLikeSchema,
+  selectorSchema,
+} from "../../runtime/schema";
 
-const resourceRefSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["id", "type"],
-  properties: {
-    id: { type: "string" },
-    type: { type: "string" },
-  },
-};
+const resourceRefSchema = createResourceRefSchema();
 
 const exhibitionSlideCreatorIds: Record<string, string> = {
   empty: "@exhibitions/image-slide-creator",
@@ -33,6 +32,7 @@ const exhibitionSlideCreatorIds: Record<string, string> = {
   youtube: "@exhibitions/youtube-creator",
   info_box: "@exhibitions/info-box-creator",
 };
+const exhibitionSlideKinds = Object.keys(exhibitionSlideCreatorIds);
 
 const exhibitionLayoutTokens = ["left", "right", "bottom", "top", "image"] as const;
 const exhibitionFloatingTokens = [
@@ -238,6 +238,7 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
   return [
     {
       name: "me_create_exhibition_slide",
+      modelExposure: "default",
       description: "Create an exhibition slide canvas using the active exhibition creator registry.",
       modes: ["exhibition"],
       inputSchema: {
@@ -246,8 +247,24 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
         properties: {
           manifest: resourceRefSchema,
           creatorId: { type: "string" },
-          kind: { type: "string" },
-          payload: { type: "object" },
+          kind: { type: "string", enum: exhibitionSlideKinds },
+          payload: {
+            type: "object",
+            additionalProperties: true,
+            properties: {
+              label: languageMapLikeSchema,
+              width: { type: "number" },
+              height: { type: "number" },
+              url: { type: "string" },
+              youtubeUrl: { type: "string" },
+              service: anyObjectSchema,
+              output: {
+                type: "array",
+                items: anyObjectSchema,
+              },
+              body: languageMapLikeSchema,
+            },
+          },
           index: { type: "number" },
         },
       },
@@ -265,6 +282,7 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
           index: input.index,
           payload: input.payload || {},
         });
+        const slide = created.createdRefs[0] || null;
 
         return createSuccess(
           "me_create_exhibition_slide",
@@ -272,15 +290,27 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
           {
             changedRefs: [manifest],
             createdRefs: created.createdRefs,
-            data: {
-              creatorId: created.creator.id,
-            },
+            data: createMutationResultData({
+              normalizedInput: {
+                manifest,
+                kind: input.kind || "empty",
+                creatorId: created.creator.id,
+                index: input.index,
+                payload: input.payload || {},
+              },
+              primaryRef: slide,
+              extra: {
+                creatorId: created.creator.id,
+                canvas: slide,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_update_exhibition_layout",
+      modelExposure: "default",
       description:
         "Update an exhibition canvas layout while preserving non-layout behavior tokens such as info and multi-image.",
       modes: ["exhibition"],
@@ -318,14 +348,24 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
 
         return createSuccess("me_update_exhibition_layout", `Updated exhibition layout for ${canvas.id}`, {
           changedRefs: [canvas],
-          data: {
-            behaviors: nextBehaviors,
-          },
+          data: createMutationResultData({
+            normalizedInput: {
+              canvas,
+              ...(Object.prototype.hasOwnProperty.call(input, "layout") ? { layout: input.layout } : {}),
+              ...(Object.prototype.hasOwnProperty.call(input, "floating") ? { floating: input.floating } : {}),
+              ...(Object.prototype.hasOwnProperty.call(input, "grid") ? { grid: input.grid } : {}),
+            },
+            primaryRef: canvas,
+            extra: {
+              behaviors: nextBehaviors,
+            },
+          }),
         });
       },
     },
     {
       name: "me_create_exhibition_tour",
+      modelExposure: "default",
       description: "Ensure a canvas has the first annotation page used for exhibition tour steps.",
       modes: ["exhibition"],
       inputSchema: {
@@ -348,15 +388,22 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
             changedRefs: page.created ? [canvas] : [],
             createdRefs: page.createdRefs,
             warnings: page.warnings,
-            data: {
-              annotationPage: page.page,
-            },
+            data: createMutationResultData({
+              normalizedInput: {
+                canvas,
+              },
+              primaryRef: page.page,
+              extra: {
+                annotationPage: page.page,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_create_exhibition_tour_step",
+      modelExposure: "default",
       description: "Create an HTML tagging annotation in the canvas tour annotation page.",
       modes: ["exhibition"],
       inputSchema: {
@@ -366,8 +413,16 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
         properties: {
           canvas: resourceRefSchema,
           annotationPage: resourceRefSchema,
-          payload: { type: "object" },
-          selector: { type: "object" },
+          payload: {
+            type: "object",
+            additionalProperties: true,
+            properties: {
+              label: languageMapLikeSchema,
+              body: languageMapLikeSchema,
+              motivation: { type: "string" },
+            },
+          },
+          selector: selectorSchema,
         },
       },
       async execute(runtime, input: any) {
@@ -410,16 +465,27 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
             changedRefs: [canvas, ensuredPage.page],
             createdRefs: [...ensuredPage.createdRefs, ...created.createdRefs],
             warnings: ensuredPage.warnings,
-            data: {
-              annotationPage: ensuredPage.page,
-              creatorId: created.creator.id,
-            },
+            data: createMutationResultData({
+              normalizedInput: {
+                canvas,
+                annotationPage: ensuredPage.page,
+                payload: getTourStepPayload(input.payload || {}),
+                selector: input.selector || { type: "whole_canvas" },
+              },
+              primaryRef: annotation || null,
+              extra: {
+                annotation,
+                annotationPage: ensuredPage.page,
+                creatorId: created.creator.id,
+              },
+            }),
           },
         );
       },
     },
     {
       name: "me_reorder_exhibition_tour_steps",
+      modelExposure: "default",
       description: "Reorder exhibition tour step annotations inside a canvas tour annotation page.",
       modes: ["exhibition"],
       inputSchema: {
@@ -436,6 +502,9 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
       execute(runtime, input: any) {
         const canvas = resolveResourceRef(runtime, input.canvas);
         assertCanvasRef(canvas);
+        if (input.startIndex === input.endIndex) {
+          throw toolError("INVALID_INPUT", "Tour step reorder must move an item to a different index");
+        }
         const annotationPage = getCanvasTourPage(
           runtime,
           canvas,
@@ -450,6 +519,15 @@ export function buildExhibitionToolRegistry(): ManifestEditorToolDefinition[] {
           `Reordered tour steps on ${annotationPage.id}`,
           {
             changedRefs: [annotationPage],
+            data: createMutationResultData({
+              normalizedInput: {
+                canvas,
+                annotationPage,
+                startIndex: input.startIndex,
+                endIndex: input.endIndex,
+              },
+              primaryRef: annotationPage,
+            }),
           },
         );
       },

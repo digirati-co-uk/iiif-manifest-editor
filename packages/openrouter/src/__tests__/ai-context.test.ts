@@ -105,11 +105,10 @@ describe("ai context helpers", () => {
     expect(summary.manifest.topLevelRanges).toHaveLength(25);
     expect(summary.manifest.topLevelRangesTruncated).toBe(true);
     expect(prompt).toContain("Before every mutation");
-    expect(prompt).toContain("creator-backed workflows");
-    expect(prompt).toContain("For multiple image services");
-    expect(prompt).toContain("data.topLevelRange");
+    expect(prompt).toContain("Only curated default tools are exposed");
+    expect(prompt).toContain("data.normalizedInput");
+    expect(prompt).toContain("structured validation details");
     expect(prompt).toContain("synthetic, placeholder, or test data");
-    expect(prompt).toContain("non-empty `patches` array");
     expect(prompt).toContain('"canvasCount": 55');
   });
 });
