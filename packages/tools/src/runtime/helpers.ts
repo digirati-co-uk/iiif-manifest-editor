@@ -1,6 +1,6 @@
 import { createRangeHelper, getValue } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
-import { EditorInstance, extensionProperties, resources } from "@manifest-editor/editor-api";
+import { EditorInstance, documentation, extensionProperties, resources } from "@manifest-editor/editor-api";
 import { matchBasedOnResource, resolveType, type CreatorDefinition } from "@manifest-editor/creator-api";
 import type {
   CreateResourceInput,
@@ -285,6 +285,7 @@ function getSupportedMeta(resourceType: string) {
 function getListPropertyNames(resourceType: string) {
   const resolvedType = resolveType(resourceType);
   const listProperties = new Set<string>([
+    "metadata",
     "thumbnail",
     "provider",
     "seeAlso",
@@ -312,6 +313,362 @@ function getListPropertyNames(resourceType: string) {
     const meta = getSupportedMeta(resourceType);
     return meta.allowed.includes(property as never) || property === "provider";
   });
+}
+
+function getCapabilityCategories(meta: ReturnType<typeof getSupportedMeta>) {
+  return {
+    technical: meta.allowed.filter((property) => property && property !== "id" && property !== "type"),
+    descriptive: meta.allowed.filter((property) =>
+      [
+        "label",
+        "summary",
+        "metadata",
+        "requiredStatement",
+        "rights",
+        "navDate",
+        "language",
+        "thumbnail",
+        "provider",
+        "placeholderCanvas",
+        "accompanyingCanvas",
+        "value",
+      ].includes(property as string),
+    ),
+    linking: meta.allowed.filter((property) =>
+      [
+        "seeAlso",
+        "service",
+        "services",
+        "rendering",
+        "partOf",
+        "start",
+        "supplementary",
+        "homepage",
+        "logo",
+      ].includes(property as string),
+    ),
+    structural: meta.allowed.filter((property) =>
+      ["items", "annotations", "structures", "body", "target"].includes(property as string),
+    ),
+    extensions: meta.allowed.filter((property) =>
+      (extensionProperties.all as readonly string[]).includes(property as string),
+    ),
+  };
+}
+
+function getPropertyCategory(property: string) {
+  if ((documentation.descriptive as Record<string, unknown>)[property]) {
+    return "descriptive" as const;
+  }
+
+  if ((documentation.structural as Record<string, unknown>)[property]) {
+    return "structural" as const;
+  }
+
+  if ((documentation.technical as Record<string, unknown>)[property]) {
+    return "technical" as const;
+  }
+
+  if ((documentation.linking as Record<string, unknown>)[property]) {
+    return "linking" as const;
+  }
+
+  if ((extensionProperties.all as readonly string[]).includes(property)) {
+    return "extensions" as const;
+  }
+
+  return null;
+}
+
+function getPropertyStatus(meta: ReturnType<typeof getSupportedMeta>, property: string) {
+  if (meta.required.includes(property as never)) {
+    return "required" as const;
+  }
+
+  if (meta.recommended.includes(property as never)) {
+    return "recommended" as const;
+  }
+
+  if (meta.optional.includes(property as never)) {
+    return "optional" as const;
+  }
+
+  if (meta.notAllowed.includes(property as never)) {
+    return "notAllowed" as const;
+  }
+
+  return null;
+}
+
+function getPropertyDocEntry(property: string) {
+  if ((documentation.descriptive as Record<string, any>)[property]) {
+    return (documentation.descriptive as Record<string, any>)[property];
+  }
+
+  if ((documentation.structural as Record<string, any>)[property]) {
+    return (documentation.structural as Record<string, any>)[property];
+  }
+
+  if ((documentation.technical as Record<string, any>)[property]) {
+    return (documentation.technical as Record<string, any>)[property];
+  }
+
+  if ((documentation.linking as Record<string, any>)[property]) {
+    return (documentation.linking as Record<string, any>)[property];
+  }
+
+  return null;
+}
+
+function getPropertyDocumentation(meta: ReturnType<typeof getSupportedMeta>) {
+  return Object.fromEntries(
+    meta.all.map((property) => {
+      const propertyName = String(property);
+      const docEntry = getPropertyDocEntry(propertyName);
+      return [
+        propertyName,
+        {
+          category: getPropertyCategory(propertyName),
+          status: getPropertyStatus(meta, propertyName),
+          link: docEntry?.link || null,
+          summary: docEntry?.summary || null,
+        },
+      ];
+    }),
+  );
+}
+
+function getCreatorFieldGuidance(runtime: ManifestEditorToolRuntime, resource: ResourceRef) {
+  const creatorFields: Record<
+    string,
+    Array<{
+      id: string;
+      label: string;
+      summary: string | null;
+      tags: string[];
+      targetTypes: string[];
+      supports: {
+        parentTypes: string[];
+        parentFields: string[];
+        parentFieldMap: Record<string, string[]>;
+        onlyPainting: boolean;
+        disallowPainting: boolean;
+      };
+    }>
+  > = {};
+
+  for (const property of getListPropertyNames(resource.type)) {
+    const matches = runtime.creators
+      .filter((creator) => creatorSupportsProperty(runtime, creator, resource, property))
+      .map((creator) => ({
+        id: creator.id,
+        label: creator.label,
+        summary: creator.summary || null,
+        tags: creator.tags || [],
+        targetTypes: [creator.resourceType, ...(creator.additionalTypes || [])],
+        supports: {
+          parentTypes: creator.supports.parentTypes || [],
+          parentFields: creator.supports.parentFields || [],
+          parentFieldMap: creator.supports.parentFieldMap || {},
+          onlyPainting: !!creator.supports.onlyPainting,
+          disallowPainting: !!creator.supports.disallowPainting,
+        },
+      }));
+
+    if (matches.length) {
+      creatorFields[property] = matches;
+    }
+  }
+
+  return creatorFields;
+}
+
+function getWorkflowHints(resource: ResourceRef) {
+  switch (resource.type) {
+    case "Manifest":
+      return [
+        {
+          title: "Create a new canvas",
+          description: "Use me_create_canvas for creator-backed canvas creation instead of assembling canvases by hand.",
+          toolName: "me_create_canvas",
+          examples: [
+            {
+              summary: "Create an empty canvas",
+              input: {
+                manifest: resource,
+                kind: "empty",
+                payload: {
+                  label: { en: ["Page 1"] },
+                  width: 1200,
+                  height: 1800,
+                },
+              },
+            },
+          ],
+        },
+        {
+          title: "Create a canvas from a IIIF image service",
+          description:
+            "Use kind image_service and pass a service URL. The tool can resolve the info.json internally, and for multiple services you should repeat the call once per URL.",
+          toolName: "me_create_canvas",
+          examples: [
+            {
+              summary: "Single image service canvas",
+              input: {
+                manifest: resource,
+                kind: "image_service",
+                payload: {
+                  url: "https://example.org/iiif/image-1/info.json",
+                  label: { en: ["Page 1"] },
+                },
+              },
+            },
+          ],
+        },
+        {
+          title: "Create a top-level range structure",
+          description: "Use the existing range workbench semantics to create the initial table of contents structure.",
+          toolName: "me_create_top_level_range",
+          examples: [
+            {
+              summary: "Create a default top-level range",
+              input: {
+                manifest: resource,
+              },
+            },
+          ],
+        },
+        {
+          title: "Add or update manifest metadata",
+          description:
+            "Use me_update_metadata for metadata arrays. If the user is testing the editor, clearly marked sample metadata is acceptable and should be labelled as test or sample data.",
+          toolName: "me_update_metadata",
+          examples: [
+            {
+              summary: "Add synthetic test metadata entries",
+              input: {
+                resource: resource,
+                patches: [
+                  {
+                    type: "add",
+                    label: { en: ["Test field 1"] },
+                    value: { en: ["Sample value 1"] },
+                  },
+                  {
+                    type: "add",
+                    label: { en: ["Test field 2"] },
+                    value: { en: ["Sample value 2"] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: "Create a custom top-level range hierarchy",
+          description:
+            "When you plan to add named child ranges under a top-level range, set includeInitialChild to false so the top-level range starts empty instead of containing a pre-populated child range of canvases.",
+          toolName: "me_create_top_level_range",
+          examples: [
+            {
+              summary: "Create an empty top-level range ready for custom child ranges",
+              input: {
+                manifest: resource,
+                topLevelLabel: { en: ["Contents"] },
+                includeInitialChild: false,
+              },
+            },
+          ],
+        },
+      ];
+    case "Canvas":
+      return [
+        {
+          title: "Create an annotation page",
+          description: "Add a commentary annotation page before creating non-painting annotations on this canvas.",
+          toolName: "me_create_annotation_page",
+          examples: [
+            {
+              summary: "Create an annotation page on the canvas",
+              input: {
+                parent: resource,
+                label: { en: ["Notes"] },
+              },
+            },
+          ],
+        },
+        {
+          title: "Create annotations for this canvas",
+          description: "Use me_create_annotation on an annotation page and pass a targetCanvas when needed.",
+          toolName: "me_create_annotation",
+          examples: [
+            {
+              summary: "Create an HTML annotation",
+              input: {
+                annotationPage: { id: "annotation-page-id", type: "AnnotationPage" },
+                targetCanvas: resource,
+                kind: "html",
+                payload: {
+                  body: { en: ["<p>Annotation text</p>"] },
+                },
+              },
+            },
+          ],
+        },
+      ];
+    case "AnnotationPage":
+      return [
+        {
+          title: "Create annotations inside this page",
+          description: "Use me_create_annotation and choose the annotation kind instead of inserting annotation JSON manually.",
+          toolName: "me_create_annotation",
+          examples: [
+            {
+              summary: "Create an image service annotation",
+              input: {
+                annotationPage: resource,
+                targetCanvas: { id: "canvas-id", type: "Canvas" },
+                kind: "image_service",
+                payload: {
+                  url: "https://example.org/iiif/image-1/info.json",
+                },
+              },
+            },
+          ],
+        },
+      ];
+    case "Range":
+      return [
+        {
+          title: "Create child ranges under this range",
+          description:
+            "Use me_create_nested_range to add child ranges. If the parent range already contains canvases that should live only inside the new child ranges, move them with me_move_range_items rather than leaving duplicates in both parent and child.",
+          toolName: "me_create_nested_range",
+          examples: [
+            {
+              summary: "Create a child range",
+              input: {
+                parentRange: resource,
+                label: { en: ["Cover pages"] },
+              },
+            },
+            {
+              summary: "Move canvases from the parent range into the child range",
+              input: {
+                sourceRange: resource,
+                targetRange: { id: "child-range-id", type: "Range" },
+                items: [
+                  { id: "canvas-1", type: "Canvas" },
+                  { id: "canvas-2", type: "Canvas" },
+                ],
+              },
+            },
+          ],
+        },
+      ];
+    default:
+      return [];
+  }
 }
 
 const CURATED_TOOLS_BY_TYPE: Record<string, string[]> = {
@@ -371,71 +728,30 @@ export function getCuratedToolNames(runtime: ManifestEditorToolRuntime, resource
 
 export function getResourceCapabilities(runtime: ManifestEditorToolRuntime, resource: ResourceRef) {
   const meta = getSupportedMeta(resource.type);
-  const creatorFields: Record<string, Array<{ id: string; targetTypes: string[]; tags: string[] }>> = {};
+  const categories = getCapabilityCategories(meta);
   const listProperties = getListPropertyNames(resource.type);
-
-  for (const property of listProperties) {
-    const matches = runtime.creators
-      .filter((creator) => creatorSupportsProperty(runtime, creator, resource, property))
-      .map((creator) => ({
-        id: creator.id,
-        targetTypes: [creator.resourceType, ...(creator.additionalTypes || [])],
-        tags: creator.tags || [],
-      }));
-
-    if (matches.length) {
-      creatorFields[property] = matches;
-    }
-  }
+  const creatorFields = getCreatorFieldGuidance(runtime, resource);
 
   return {
     resource,
     mode: runtime.mode,
-    categories: {
-      technical: meta.allowed.filter((property) => property && property !== "id" && property !== "type"),
-      descriptive: meta.allowed.filter((property) =>
-        [
-          "label",
-          "summary",
-          "metadata",
-          "requiredStatement",
-          "rights",
-          "navDate",
-          "language",
-          "thumbnail",
-          "provider",
-          "placeholderCanvas",
-          "accompanyingCanvas",
-          "value",
-        ].includes(property as string),
-      ),
-      linking: meta.allowed.filter((property) =>
-        [
-          "seeAlso",
-          "service",
-          "services",
-          "rendering",
-          "partOf",
-          "start",
-          "supplementary",
-          "homepage",
-          "logo",
-        ].includes(property as string),
-      ),
-      structural: meta.allowed.filter((property) =>
-        ["items", "annotations", "structures", "body", "target"].includes(property as string),
-      ),
-      extensions: meta.allowed.filter((property) =>
-        (extensionProperties.all as readonly string[]).includes(property as string),
-      ),
-    },
+    categories,
     readOnlyProperties: ["id", "type"],
     listProperties,
+    typeDocumentation: (documentation.definedTypes as Record<string, { link: string; summary: string } | undefined>)[
+      resource.type
+    ] || null,
+    propertyDocumentation: getPropertyDocumentation(meta),
     creatorFields,
-    creatorIds: Object.values(creatorFields)
-      .flat()
-      .map((creator) => creator.id),
+    creatorIds: Array.from(
+      new Set(
+        Object.values(creatorFields)
+          .flat()
+          .map((creator) => creator.id),
+      ),
+    ),
     workflowTools: getCuratedToolNames(runtime, resource),
+    workflowHints: getWorkflowHints(resource),
   };
 }
 
@@ -554,10 +870,10 @@ export function updateMetadata(
   for (const patch of patches) {
     switch (patch.type) {
       case "add":
-        metadataEditor.add(patch.label, patch.value, patch.beforeIndex);
+        metadataEditor.add(coerceLanguageMap(patch.label), coerceLanguageMap(patch.value), patch.beforeIndex);
         break;
       case "update":
-        metadataEditor.update(patch.index, patch.label, patch.value);
+        metadataEditor.update(patch.index, coerceLanguageMap(patch.label), coerceLanguageMap(patch.value));
         break;
       case "delete":
         metadataEditor.deleteAtIndex(patch.index);

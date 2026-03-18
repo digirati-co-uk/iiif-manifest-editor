@@ -1,4 +1,5 @@
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
+import { openRouterLeftPanel } from "@manifest-editor/openrouter";
 import { extendApp, mapApp } from "@manifest-editor/shell";
 import "./index.css";
 import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
@@ -59,7 +60,7 @@ export const exhibitionEditorPreset = extendApp(
       //
       tourStepAnnotations,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["left-panel-manifest", openRouterLeftPanel.id],
     background: [exhibitionBackgroundTask],
     canvasEditors: [
       //

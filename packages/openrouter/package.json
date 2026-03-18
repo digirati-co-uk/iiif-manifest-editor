@@ -1,0 +1,75 @@
+{
+  "name": "@manifest-editor/openrouter",
+  "version": "2.0.2",
+  "type": "module",
+  "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "directory": "packages/openrouter"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "keywords": [
+    "iiif",
+    "editor",
+    "openrouter",
+    "ai",
+    "typescript"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./callback-page": {
+      "import": "./dist/callback-page.mjs",
+      "require": "./dist/callback-page.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown --format esm,cjs src/index.ts src/callback-page.ts",
+    "dev": "tsdown --format esm,cjs src/index.ts src/callback-page.ts --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepack": "tsdown --format esm,cjs src/index.ts src/callback-page.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/react": "^3.0.51",
+    "@manifest-editor/components": "workspace:*",
+    "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/shell": "workspace:*",
+    "@manifest-editor/tools": "workspace:*",
+    "@openrouter/ai-sdk-provider": "^2.0.2",
+    "ai": "^6.0.49",
+    "localforage": "^1.10.0",
+    "react": "catalog:",
+    "react-aria-components": "^1.12",
+    "react-dom": "catalog:",
+    "react-hot-toast": "^2.6.0",
+    "react-iiif-vault": "catalog:",
+    "tailwind-merge": "^2.3.0",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "jsdom": "^26.0.0",
+    "tsdown": "0.16.4",
+    "vitest": "v3.0.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

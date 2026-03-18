@@ -1,5 +1,4 @@
-import { CloseIcon, useLocalStorage } from "@manifest-editor/components";
-import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
+import { useLocalStorage } from "@manifest-editor/components";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
 import { useManifest, useVaultSelector } from "react-iiif-vault";
@@ -9,11 +8,13 @@ export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; a
   const [isDismissed, setDismissed] = useLocalStorage(`exhibition-popup/${id}`);
 
   const behaviours = useVaultSelector(
-    (_, v) =>
-      (v.get(manifest?.items || []) || [])
+    (_, v) => {
+      return (v.get(manifest?.items || []) || [])
+        .filter((item): item is { behavior?: string[] } => !!item)
         .slice(0, 5)
-        .map((item) => item.behavior.join(" "))
-        .join(" "),
+        .flatMap((item) => (Array.isArray(item.behavior) ? item.behavior : []))
+        .join(" ");
+    },
     [manifest],
   );
   const isExhibition = useMemo(() => {

@@ -29,6 +29,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/openrouter": "workspace:*",
     "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@tanstack/react-query": "^5.56.2",

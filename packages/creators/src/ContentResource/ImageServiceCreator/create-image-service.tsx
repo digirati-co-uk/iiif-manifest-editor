@@ -13,21 +13,63 @@ import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { type FormEvent, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ImageService as ImageServiceComponent, useImage } from "react-iiif-vault";
+import { useImage } from "react-iiif-vault";
 
 export interface CreateImageServicePayload {
-  url: string;
+  url?: string;
   height?: number;
   width?: number;
   format?: string;
-  service: ImageService;
+  service?: ImageService;
   size?: SizeParameter;
   embedService?: boolean;
   selector?: RegionParameter;
 }
 
+export function getCanonicalImageServiceUrl(url: string) {
+  try {
+    return url.endsWith("default.jpg")
+      ? imageServiceRequestToString({
+          ...parseImageServiceRequest(url),
+          type: "info",
+        })
+      : canonicalServiceUrl(url);
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function resolveImageServicePayload<T extends CreateImageServicePayload>(
+  data: T,
+): Promise<T & { service: ImageService }> {
+  if (data.service) {
+    return data as T & { service: ImageService };
+  }
+
+  if (!data.url) {
+    throw new Error("Invalid image service request");
+  }
+
+  const info = getCanonicalImageServiceUrl(data.url);
+  if (!info) {
+    throw new Error("Invalid image service request");
+  }
+
+  const response = await fetch(info);
+  if (!response.ok) {
+    throw new Error(`Unable to fetch image service metadata from ${info}`);
+  }
+
+  const service = (await response.json()) as ImageService;
+  return {
+    ...data,
+    service,
+  };
+}
+
 export async function createImageServer(data: CreateImageServicePayload, ctx: CreatorFunctionContext) {
-  const service = { ...data.service };
+  const resolvedData = await resolveImageServicePayload(data);
+  const service = { ...resolvedData.service! };
   if (service["@id"]) {
     service.id = service["@id"];
   }
@@ -42,10 +84,10 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
     scheme: request.scheme,
     type: "image",
     size: {
-      max: !data.size?.width && !data.size?.height,
+      max: !resolvedData.size?.width && !resolvedData.size?.height,
       confined: false,
       upscaled: false,
-      ...(data.size || {}),
+      ...(resolvedData.size || {}),
     },
     format: "jpg",
     // This isn't how it should be modelled, always full,
@@ -60,24 +102,15 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
   const resource = ctx.embed({
     id: imageId,
     type: "Image",
-    format: data.format || "image/jpeg",
-    height: data.height || service.height,
-    width: data.width || service.width,
-    service: data.embedService === false ? undefined : [data.service],
+    format: resolvedData.format || "image/jpeg",
+    height: resolvedData.height || service.height,
+    width: resolvedData.width || service.width,
+    service: resolvedData.embedService === false ? undefined : [resolvedData.service!],
   });
 
   // @todo add in support for the region selector (creating specific resource)
 
   return resource;
-}
-
-function getCanonicalUrl(url: string) {
-  return url.endsWith("default.jpg")
-    ? imageServiceRequestToString({
-        ...parseImageServiceRequest(url),
-        type: "info",
-      })
-    : canonicalServiceUrl(url);
 }
 
 // @todo cover a lot more things - like offering size dropdown.
@@ -92,7 +125,7 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
     const url = formData.url;
 
     if (url) {
-      const info = getCanonicalUrl(url);
+      const info = getCanonicalImageServiceUrl(url);
 
       if (!info) {
         throw new Error("Invalid image service request");
@@ -118,9 +151,11 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
               defaultValue=""
               onPaste={(e) => {
                 const text = e.clipboardData.getData("text/plain");
-                setUrl(text ? getCanonicalUrl(text) : "");
+                setUrl(text ? getCanonicalImageServiceUrl(text) || "" : "");
               }}
-              onBlur={(e) => setUrl(e.currentTarget.value ? getCanonicalUrl(e.currentTarget.value) : "")}
+              onBlur={(e) =>
+                setUrl(e.currentTarget.value ? getCanonicalImageServiceUrl(e.currentTarget.value) || "" : "")
+              }
             />
           </InputContainer>
         </div>
@@ -144,16 +179,18 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
   );
 }
 
-function ImageComponent({src}: {src: string}) {
+function ImageComponent({ src }: { src: string }) {
   const image = useImage({ id: src } as any, {
-    size: { width: 512 }
-  })
+    size: { width: 512 },
+  });
 
   if (!image) {
     return <Spinner />;
   }
 
-  return <div className="h-full">
-    <img className="w-full h-full object-contain" src={image}/>
-  </div>
+  return (
+    <div className="h-full">
+      <img className="w-full h-full object-contain" src={image} />
+    </div>
+  );
 }

@@ -8,6 +8,7 @@ import {
 import {
   CreateImageServerForm,
   type CreateImageServicePayload,
+  resolveImageServicePayload,
 } from "../../ContentResource/ImageServiceCreator/create-image-service";
 
 export interface CreateImageServiceAnnotationPayload extends CreateImageServicePayload {
@@ -20,6 +21,7 @@ export async function createImageServiceAnnotation(
   data: CreateImageServiceAnnotationPayload,
   ctx: CreatorFunctionContext,
 ): Promise<any> {
+  const resolvedData = await resolveImageServicePayload(data);
   const annotation = {
     id: ctx.generateId("annotation"),
     type: "Annotation",
@@ -28,7 +30,7 @@ export async function createImageServiceAnnotation(
 
   const createImage = creatorHelper(ctx, "Annotation", "body", "@manifest-editor/image-service-creator");
 
-  const resource = await createImage(data, {
+  const resource = await createImage(resolvedData, {
     parent: { resource: annotation, property: "body" },
   });
 
@@ -36,7 +38,7 @@ export async function createImageServiceAnnotation(
     return {
       ...annotation,
       body: [resource],
-      motivation: data.motivation || "painting",
+      motivation: resolvedData.motivation || "painting",
       target: ctx.getTarget(),
     };
   }
@@ -65,19 +67,19 @@ export async function createImageServiceAnnotation(
     });
 
     let thumbnail: CreatorResource | undefined = undefined;
-    if (data.service?.sizes) {
+    if (resolvedData.service?.sizes) {
       // We can use the creator declaratively to get a thumbnail from the service.
       const createThumbnail = creatorHelper(ctx, "Canvas", "thumbnail", "@manifest-editor/thumbnail-image");
       thumbnail = await createThumbnail({
-        service: data.service,
-        width: data.thumbnailSize || 400,
+        service: resolvedData.service,
+        width: resolvedData.thumbnailSize || 400,
       });
     }
 
     return ctx.embed({
       id: canvasId,
       type: "Canvas",
-      label: data.label || { en: ["Untitled canvas"] },
+      label: resolvedData.label || { en: ["Untitled canvas"] },
       height: resource.resource.height || 1000,
       width: resource.resource.width || 1000,
       thumbnail: thumbnail ? [thumbnail] : undefined,

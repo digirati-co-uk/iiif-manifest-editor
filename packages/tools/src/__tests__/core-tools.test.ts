@@ -28,13 +28,16 @@ describe("core tools", () => {
       patches: [
         {
           type: "add",
-          label: { en: ["Role"] },
-          value: { en: ["Opening"] },
+          label: "Role",
+          value: "Opening",
         },
       ],
     });
 
     expect(metadataResult.ok).toBe(true);
+    if (!metadataResult.ok) {
+      return;
+    }
 
     const canvas = getEntity<any>(vault, refs.canvas1);
     expect(canvas.label.en[0]).toBe("Frontispiece");
@@ -42,6 +45,32 @@ describe("core tools", () => {
     expect(canvas.navPlace.type).toBe("FeatureCollection");
     expect(canvas.metadata).toHaveLength(1);
     expect(canvas.metadata[0].label.en[0]).toBe("Role");
+    expect((metadataResult.data as any).metadataCount).toBe(1);
+    expect((metadataResult.data as any).patches).toEqual([
+      {
+        type: "add",
+        label: "Role",
+        value: "Opening",
+      },
+    ]);
+    expect((metadataResult.data as any).metadata[0].value.en[0]).toBe("Opening");
+  });
+
+  it("rejects empty metadata patch lists", async () => {
+    const { runtime, refs } = createFixtureRuntime();
+
+    const metadataResult = await invokeTool(runtime, "me_update_metadata", {
+      resource: refs.manifest,
+      patches: [],
+    });
+
+    expect(metadataResult.ok).toBe(false);
+    if (metadataResult.ok) {
+      return;
+    }
+
+    expect(metadataResult.error.code).toBe("INVALID_INPUT");
+    expect(metadataResult.error.message).toContain("at least one metadata patch");
   });
 
   it("creates resources and mutates reference lists", async () => {

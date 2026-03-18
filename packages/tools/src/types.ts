@@ -18,15 +18,15 @@ export interface PropertyPatch {
 export type MetadataPatch =
   | {
       type: "add";
-      label: InternationalString;
-      value: InternationalString;
+      label: InternationalString | string;
+      value: InternationalString | string;
       beforeIndex?: number;
     }
   | {
       type: "update";
       index: number;
-      label: InternationalString;
-      value: InternationalString;
+      label: InternationalString | string;
+      value: InternationalString | string;
     }
   | {
       type: "delete";

@@ -51,6 +51,7 @@
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/openrouter": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "exhibition-viewer": "^1.0.10",
     "react": "catalog:",

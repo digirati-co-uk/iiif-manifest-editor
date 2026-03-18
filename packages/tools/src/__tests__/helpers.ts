@@ -11,6 +11,9 @@ import {
   type CreatorDefinition,
   type CreatorFunctionContext,
 } from "@manifest-editor/creator-api";
+import { imageServiceAnnotation } from "../../../creators/src/Annotation/ImageServiceAnnotation/index.tsx";
+import { imageServiceCreator } from "../../../creators/src/ContentResource/ImageServiceCreator/index.tsx";
+import { thumbnailCreator } from "../../../creators/src/ContentResource/ThumbnailCreator/index.tsx";
 import { createManifestEditorToolRuntime } from "../runtime/create-runtime";
 import type { ManifestEditorToolRuntime, ResourceRef, ToolMode } from "../types";
 
@@ -364,6 +367,13 @@ export const manifestToolCreators: CreatorDefinition[] = [
   noBodyAnnotationCreator,
   rangeTopLevelCreator,
   rangeWithItemsCreator,
+];
+
+export const manifestToolCreatorsWithImageServices: CreatorDefinition[] = [
+  ...manifestToolCreators,
+  thumbnailCreator,
+  imageServiceCreator,
+  imageServiceAnnotation,
 ];
 
 export const exhibitionToolCreators: CreatorDefinition[] = [

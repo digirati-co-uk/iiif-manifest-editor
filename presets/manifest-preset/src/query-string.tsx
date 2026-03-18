@@ -1,4 +1,5 @@
 import { useInStack } from "@manifest-editor/editors";
+import { openRouterLeftPanel } from "@manifest-editor/openrouter";
 import { type BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
@@ -95,6 +96,10 @@ function QueryStringBackgroundTask() {
 
   // Changing based on panels.
   useEffect(() => {
+    if (leftPanel.current === openRouterLeftPanel.id) {
+      return;
+    }
+
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);

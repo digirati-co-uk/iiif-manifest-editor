@@ -70,6 +70,7 @@ module.exports = {
     "../editors/src/**/*.{ts,tsx,css}",
     "../creators/src/**/*.{ts,tsx,css}",
     "../shell/src/**/*.{ts,tsx,css}",
+    "../openrouter/src/**/*.{ts,tsx,css}",
 
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
     "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",

@@ -9,6 +9,7 @@ import {
   reorderReferenceList,
   resolveResourceRef,
   searchVaultResources,
+  toolError,
   updateMetadata,
   updateSingleProperties,
 } from "../../runtime/helpers";
@@ -22,6 +23,88 @@ const resourceRefSchema = {
     id: { type: "string" },
     type: { type: "string" },
   },
+};
+
+const languageMapSchema = {
+  oneOf: [
+    {
+      type: "string",
+      description: "Convenience shorthand. Plain strings are treated as English language-map values.",
+    },
+    {
+      type: "object",
+      description: "IIIF language map object.",
+    },
+  ],
+};
+
+const metadataPatchSchema = {
+  oneOf: [
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "label", "value"],
+      properties: {
+        type: {
+          type: "string",
+          enum: ["add"],
+        },
+        label: languageMapSchema,
+        value: languageMapSchema,
+        beforeIndex: {
+          type: "number",
+          description: "Optional insertion index. Omit to append the metadata entry.",
+        },
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "index", "label", "value"],
+      properties: {
+        type: {
+          type: "string",
+          enum: ["update"],
+        },
+        index: {
+          type: "number",
+        },
+        label: languageMapSchema,
+        value: languageMapSchema,
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "index"],
+      properties: {
+        type: {
+          type: "string",
+          enum: ["delete"],
+        },
+        index: {
+          type: "number",
+        },
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "startIndex", "endIndex"],
+      properties: {
+        type: {
+          type: "string",
+          enum: ["reorder"],
+        },
+        startIndex: {
+          type: "number",
+        },
+        endIndex: {
+          type: "number",
+        },
+      },
+    },
+  ],
 };
 
 export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
@@ -175,7 +258,8 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
     },
     {
       name: "me_update_metadata",
-      description: "Apply add, update, delete, or reorder operations to a resource's metadata array.",
+      description:
+        "Apply add, update, delete, or reorder operations to a resource's metadata array. Pass a non-empty patches array. For bulk additions, include multiple add patches in one call. Clearly marked synthetic test metadata is acceptable when the user is testing the editor.",
       inputSchema: {
         type: "object",
         additionalProperties: false,
@@ -184,15 +268,42 @@ export function buildCoreToolRegistry(): ManifestEditorToolDefinition[] {
           resource: resourceRefSchema,
           patches: {
             type: "array",
-            items: { type: "object" },
+            minItems: 1,
+            items: metadataPatchSchema,
+            description:
+              "Metadata operations to apply. Use type add with label and value to append new metadata pairs.",
+            examples: [
+              [
+                {
+                  type: "add",
+                  label: "Test field 1",
+                  value: "Sample value 1",
+                },
+                {
+                  type: "add",
+                  label: "Test field 2",
+                  value: "Sample value 2",
+                },
+              ],
+            ],
           },
         },
       },
       execute(runtime, input: any) {
         const resource = resolveResourceRef(runtime, input.resource);
-        updateMetadata(runtime, resource, input.patches || []);
+        const patches = input.patches || [];
+        if (!patches.length) {
+          throw toolError("INVALID_INPUT", "me_update_metadata requires at least one metadata patch");
+        }
+        updateMetadata(runtime, resource, patches);
+        const { entity } = getResource(runtime, resource);
         return createSuccess("me_update_metadata", `Updated metadata on ${resource.type} ${resource.id}`, {
           changedRefs: [resource],
+          data: {
+            patches,
+            metadataCount: Array.isArray((entity as any).metadata) ? (entity as any).metadata.length : 0,
+            metadata: Array.isArray((entity as any).metadata) ? (entity as any).metadata : [],
+          },
         });
       },
     },
