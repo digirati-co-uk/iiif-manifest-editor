@@ -29,6 +29,9 @@ export const iiifBrowserCreator = defineCreator({
   tags: ["image", "image-service"],
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   additionalTypes: ["Annotation", "Canvas"],
   supports: {
     onlyPainting: true,

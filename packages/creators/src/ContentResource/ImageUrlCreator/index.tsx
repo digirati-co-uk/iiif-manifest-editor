@@ -21,6 +21,9 @@ export const imageUrlCreator = defineCreator({
   },
   resourceType: "ContentResource",
   resourceFields: ["format"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentFields: ["logo", "body", "thumbnail"],
   },

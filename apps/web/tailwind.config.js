@@ -69,6 +69,7 @@ export default {
     "../../packages/creators/src/**/*.{ts,tsx}",
     "../../presets/manifest-preset/src/**/*.{ts,tsx}",
     "../../presets/exhibition-preset/src/**/*.{ts,tsx}",
+    "../../presets/universal-viewer-preset/src/**/*.{ts,tsx}",
   ],
   theme: {
     colors: {

@@ -21,6 +21,9 @@ export const webPageCreator = defineCreator({
   },
   resourceType: "ContentResource",
   resourceFields: ["label", "format"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentFields: ["seeAlso", "rendering", "homepage"],
   },

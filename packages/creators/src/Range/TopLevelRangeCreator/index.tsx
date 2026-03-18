@@ -24,6 +24,9 @@ export const rangeTopLevel = defineCreator({
   },
   resourceType: "Range",
   resourceFields: ["id", "label", "type"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentTypes: ["Manifest"],
     parentFields: ["structures"],

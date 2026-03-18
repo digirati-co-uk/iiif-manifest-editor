@@ -21,6 +21,9 @@ export const thumbnailCreator = defineCreator({
   },
   resourceType: "ContentResource",
   resourceFields: ["id", "type", "format"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentFields: ["thumbnail"],
   },

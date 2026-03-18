@@ -30,6 +30,9 @@ export const emptyAnnotationPage = defineCreator({
   icon: <ThumbnailStripIcon />,
   resourceType: "AnnotationPage",
   resourceFields: ["id", "type", "items"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentTypes: ["Manifest", "Canvas", "Range"],
     parentFieldMap: {

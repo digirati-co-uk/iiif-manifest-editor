@@ -6,6 +6,7 @@ import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
+import type { ReactNode } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
@@ -13,7 +14,6 @@ import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { ServiceContainer } from "../../components/ServiceList/ServiceList.styles";
 import { parseServiceProfile } from "../../components/ServiceList/ServiceList.utility";
-import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
 import { centerRectangles } from "../../helpers/center-rectangles";
 import { getYouTubeId } from "../../helpers/get-youtube-id";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
@@ -66,6 +66,8 @@ export function MediaEditor() {
   const { service } = resourceEditor.linking;
   const { label, summary } = annotationEditor.descriptive;
   const { target, body } = annotationEditor.annotation;
+  const annotationNotAllowed = annotationEditor.notAllowed;
+  const resourceNotAllowed = resourceEditor.notAllowed;
   const canvasId = target.getSourceId();
 
   const { edit } = useLayoutActions();
@@ -80,6 +82,17 @@ export function MediaEditor() {
   const youtubeId = isYouTube ? getYouTubeId(id.get()) : null;
   const currentTarget = target.get();
   const currentSelector = target.getParsedSelector();
+  const showDescriptive =
+    !annotationNotAllowed.includes("label") ||
+    !annotationNotAllowed.includes("summary");
+  const showMediaDetails =
+    !resourceNotAllowed.includes("height") ||
+    !resourceNotAllowed.includes("width") ||
+    !resourceNotAllowed.includes("duration") ||
+    !resourceNotAllowed.includes("type") ||
+    !resourceNotAllowed.includes("format");
+  const showServices = !resourceNotAllowed.includes("service");
+  const showTarget = !annotationNotAllowed.includes("target");
 
   const moveAndResizeImage = () => {
     vault.batch(() => {
@@ -164,64 +177,95 @@ export function MediaEditor() {
 
   const descriptive = (
     <>
-      <LanguageFieldEditor
-        focusId={label.focusId()}
-        label={"Label"}
-        fields={label.get()}
-        onSave={(e: any) => label.set(e.toInternationalString())}
-      />
+      {!annotationNotAllowed.includes("label") ? (
+        <LanguageFieldEditor
+          focusId={label.focusId()}
+          label={"Label"}
+          fields={label.get()}
+          onSave={(e: any) => label.set(e.toInternationalString())}
+        />
+      ) : null}
 
-      <LanguageFieldEditor
-        focusId={summary.focusId()}
-        label={"Summary"}
-        fields={summary.get()}
-        onSave={(e: any) => summary.set(e.toInternationalString())}
-      />
+      {!annotationNotAllowed.includes("summary") ? (
+        <LanguageFieldEditor
+          focusId={summary.focusId()}
+          label={"Summary"}
+          fields={summary.get()}
+          onSave={(e: any) => summary.set(e.toInternationalString())}
+        />
+      ) : null}
     </>
   );
 
   const media = (
     <>
-      <InputContainer $wide>
-        <DimensionsTriplet
-          width={width.get() || 0}
-          changeWidth={(v) => width.set(v)}
-          height={height.get() || 0}
-          changeHeight={(v) => height.set(v)}
-          duration={duration.get() || 0}
-          changeDuration={type.get() !== "Image" ? (v) => duration.set(v) : undefined}
-        />
-      </InputContainer>
+      {!resourceNotAllowed.includes("width") ||
+      !resourceNotAllowed.includes("height") ||
+      !resourceNotAllowed.includes("duration") ? (
+        <InputContainer $wide>
+          <DimensionsTriplet
+            hideWidth={resourceNotAllowed.includes("width")}
+            width={width.get() || 0}
+            changeWidth={
+              !resourceNotAllowed.includes("width")
+                ? (v) => width.set(v)
+                : undefined
+            }
+            hideHeight={resourceNotAllowed.includes("height")}
+            height={height.get() || 0}
+            changeHeight={
+              !resourceNotAllowed.includes("height")
+                ? (v) => height.set(v)
+                : undefined
+            }
+            hideDuration={resourceNotAllowed.includes("duration")}
+            duration={
+              !resourceNotAllowed.includes("duration")
+                ? duration.get() || 0
+                : undefined
+            }
+            changeDuration={
+              !resourceNotAllowed.includes("duration") && type.get() !== "Image"
+                ? (v) => duration.set(v)
+                : undefined
+            }
+          />
+        </InputContainer>
+      ) : null}
 
-      <InputContainer $wide>
-        <InputLabel $margin htmlFor={type.focusId()}>
-          Type
-        </InputLabel>
-        <Input
-          id={type.focusId()}
-          value={type.get()}
-          placeholder={"Image, sound etc"}
-          onChange={(e: any) => type.set(e.target.value)}
-        />
-      </InputContainer>
+      {!resourceNotAllowed.includes("type") ? (
+        <InputContainer $wide>
+          <InputLabel $margin htmlFor={type.focusId()}>
+            Type
+          </InputLabel>
+          <Input
+            id={type.focusId()}
+            value={type.get()}
+            placeholder={"Image, sound etc"}
+            onChange={(e: any) => type.set(e.target.value)}
+          />
+        </InputContainer>
+      ) : null}
 
-      <InputContainer $wide>
-        <InputLabel $margin htmlFor={format.focusId()}>
-          Format
-        </InputLabel>
-        <Input
-          id={format.focusId()}
-          value={format.get()}
-          placeholder={"jpg, png etc."}
-          onChange={(e: any) => format.set(e.target.value)}
-        />
-      </InputContainer>
+      {!resourceNotAllowed.includes("format") ? (
+        <InputContainer $wide>
+          <InputLabel $margin htmlFor={format.focusId()}>
+            Format
+          </InputLabel>
+          <Input
+            id={format.focusId()}
+            value={format.get()}
+            placeholder={"jpg, png etc."}
+            onChange={(e: any) => format.set(e.target.value)}
+          />
+        </InputContainer>
+      ) : null}
     </>
   );
 
   const serviceList = service.get() || [];
 
-  const services = serviceList.length ? (
+  const services = showServices && serviceList.length ? (
     <>
       <ServiceContainer>
         <InputLabel>Services</InputLabel>
@@ -241,7 +285,7 @@ export function MediaEditor() {
     </>
   ) : null;
 
-  const targetElements = (
+  const targetElements = showTarget ? (
     <>
       {canvas && !currentTarget.selector ? (
         <InputContainer $wide>
@@ -263,7 +307,7 @@ export function MediaEditor() {
       ) : null}
       {currentSelector && currentSelector.type === "BoxSelector" ? <MediaTargetEditor /> : null}
     </>
-  );
+  ) : null;
 
   return (
     <FlexContainerColumn>
@@ -271,32 +315,48 @@ export function MediaEditor() {
         {thumbnail ? <img src={thumbnail.id} /> : youtubeId ? <EmbedYoutube youTubeId={youtubeId} /> : null}
       </FlexImage>
 
-      <InputContainer $wide>
-        <Input disabled value={id.get()} />
-      </InputContainer>
+      {!resourceNotAllowed.includes("id") ? (
+        <InputContainer $wide>
+          <Input disabled value={id.get()} />
+        </InputContainer>
+      ) : null}
 
       <Accordion
         items={[
-          {
-            label: "Descriptive",
-            initialOpen: Object.keys(label.get() || {}).length !== 0 || Object.keys(summary.get() || {}).length !== 0,
-            children: descriptive,
-          },
-          {
-            label: "Media information",
-            initialOpen: true,
-            children: media,
-          },
-          {
-            label: "Services",
-            children: services,
-          },
-          {
-            label: "Target",
-            initialOpen: currentSelector !== null,
-            children: targetElements,
-          },
-        ]}
+          showDescriptive
+            ? {
+                label: "Descriptive",
+                initialOpen:
+                  Object.keys(label.get() || {}).length !== 0 ||
+                  Object.keys(summary.get() || {}).length !== 0,
+                children: descriptive,
+              }
+            : null,
+          showMediaDetails
+            ? {
+                label: "Media information",
+                initialOpen: true,
+                children: media,
+              }
+            : null,
+          showServices && services
+            ? {
+                label: "Services",
+                children: services,
+              }
+            : null,
+          showTarget && targetElements
+            ? {
+                label: "Target",
+                initialOpen: currentSelector !== null,
+                children: targetElements,
+              }
+            : null,
+        ].filter(Boolean) as Array<{
+          label: string;
+          initialOpen?: boolean;
+          children: ReactNode;
+        }>}
       />
 
       {annotationEditor.context ? (

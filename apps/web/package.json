@@ -32,6 +32,7 @@
     "@manifest-editor/openrouter": "workspace:*",
     "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
+    "@manifest-editor/universal-viewer-preset": "workspace:*",
     "@tanstack/react-query": "^5.56.2",
     "browser-fs-access": "^0.35.0",
     "classnames": "^2.5.1",

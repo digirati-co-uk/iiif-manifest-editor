@@ -41,6 +41,9 @@ export const emptyCanvas = defineCreator({
   icon: <EmptyCanvasIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   supports: {
     parentTypes: ["Manifest"],
     parentFields: ["items"],

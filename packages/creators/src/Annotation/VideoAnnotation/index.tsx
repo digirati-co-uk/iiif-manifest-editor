@@ -24,6 +24,9 @@ export const videoAnnotation = defineCreator({
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   additionalTypes: ["Canvas"],
   supports: {
     onlyPainting: true,

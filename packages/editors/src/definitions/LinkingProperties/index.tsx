@@ -6,7 +6,7 @@ export const linkingProperties: EditorDefinition = {
   label: "Linking",
   supports: {
     edit: true,
-    properties: ["seeAlso", "rendering", "supplementary", "homepage", "logo"],
+    properties: ["seeAlso", "rendering", "supplementary", "homepage", "start", "logo"],
     resourceTypes: ["Manifest", "Canvas", "ContentResource", "Agent", "Range", "Collection"],
     readOnlyProperties: [],
   },

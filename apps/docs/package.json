@@ -4,9 +4,9 @@
   "description": "Nextra docs starter with search included.",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3003",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node ./scripts/next-with-localstorage-shim.cjs dev --port 3003",
+    "build": "node ./scripts/next-with-localstorage-shim.cjs build",
+    "start": "node ./scripts/next-with-localstorage-shim.cjs start",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
   "repository": {

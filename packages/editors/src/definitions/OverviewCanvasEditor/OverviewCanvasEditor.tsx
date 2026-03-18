@@ -22,18 +22,22 @@ export function OverviewCanvasEditor() {
 
   return (
     <PaddedSidebarContainer>
-      <LanguageFieldEditor
-        focusId={label.focusId()}
-        label={"Label"}
-        fields={label.get()}
-        onSave={(e: any) => label.set(e.toInternationalString())}
-      />
+      {!notAllowed.includes("label") ? (
+        <LanguageFieldEditor
+          focusId={label.focusId()}
+          label={"Label"}
+          fields={label.get()}
+          onSave={(e: any) => label.set(e.toInternationalString())}
+        />
+      ) : null}
       <CanvasContext canvas={technical.id.get()}>
-        <AnnotationPageContext annotationPage={page.id}>
-          <PaintingAnnotationList />
-        </AnnotationPageContext>
+        {!notAllowed.includes("items") ? (
+          <AnnotationPageContext annotationPage={page.id}>
+            <PaintingAnnotationList />
+          </AnnotationPageContext>
+        ) : null}
 
-        {annotationList && annotationList.length ? (
+        {!notAllowed.includes("annotations") && annotationList && annotationList.length ? (
           <LinkingPropertyList
             label="Annotations"
             property="annotations"

@@ -28,6 +28,9 @@ export const noBodyAnnotation = defineCreator({
   icon: <EmptyCanvasIcon />,
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "target"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   supports: {
     initialData: true,
     parentTypes: ["AnnotationPage"],
