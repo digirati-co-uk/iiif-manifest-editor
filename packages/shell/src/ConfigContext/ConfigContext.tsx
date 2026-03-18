@@ -38,6 +38,7 @@ export interface Config {
     rememberLeftPanelId?: boolean;
     annotationPopups?: boolean;
     manifestGridOptions?: boolean;
+    openRouterAssistant?: boolean;
   };
 
   // Internationalisation options
@@ -107,6 +108,7 @@ const DEFAULT_CONFIG: Config = {
     rememberCanvasId: true,
     manifestGridOptions: false,
     rememberLeftPanelId: false,
+    openRouterAssistant: false,
   },
   uploadBackends: [],
   export: {

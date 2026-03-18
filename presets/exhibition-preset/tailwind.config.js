@@ -6,6 +6,7 @@ module.exports = {
     //
     "./src/**/*.{js,jsx,ts,tsx}",
     "./stories/**/*.{js,jsx,ts,tsx}",
+    "../../packages/openrouter/src/**/*.{ts,tsx,css}",
   ],
   theme: {
     colors: {
@@ -58,6 +59,10 @@ module.exports = {
       animation: {
         fadeIn: "fadeIn 300ms ease-in-out",
         fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
+        "ai-pulse": "ai-pulse 1.5s ease-in-out infinite",
+        "ai-fab-in": "ai-fab-in 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "ai-panel-in": "ai-panel-in 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "ai-backdrop-in": "ai-backdrop-in 200ms ease-out",
       },
 
       // that is actual animation
@@ -70,6 +75,22 @@ module.exports = {
           "0%": { opacity: 0 },
           "85%": { opacity: 0 },
           "100%": { opacity: 1 },
+        },
+        "ai-pulse": {
+          "0%, 100%": { opacity: 1, transform: "scale(1)" },
+          "50%": { opacity: 0.6, transform: "scale(0.85)" },
+        },
+        "ai-fab-in": {
+          from: { opacity: 0, transform: "scale(0.5) rotate(-45deg)" },
+          to: { opacity: 1, transform: "scale(1) rotate(0deg)" },
+        },
+        "ai-panel-in": {
+          from: { opacity: 0, transform: "translateY(12px) scale(0.96)" },
+          to: { opacity: 1, transform: "translateY(0) scale(1)" },
+        },
+        "ai-backdrop-in": {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
         },
       }),
     },

@@ -8,6 +8,7 @@ import type {
   BackgroundPanel,
   CanvasEditorDefinition,
   EditorDefinition,
+  FloatingPanel,
   LayoutPanel,
   LayoutProps,
 } from "../Layout/Layout.types";
@@ -45,6 +46,7 @@ export interface AppExtension {
   centerPanels?: LayoutPanel[];
   rightPanels?: LayoutPanel[];
   modalPanels?: LayoutPanel[];
+  floatingPanels?: FloatingPanel[];
   editors?: EditorDefinition[];
   creators?: CreatorDefinition[];
   canvasEditors?: CanvasEditorDefinition[];

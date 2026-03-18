@@ -38,6 +38,7 @@ export function ConfigEditor() {
         manifestGridOptions: formValues.get("manifestGridOptions") === "on",
         enableMultiImageCanvases: formValues.get("enableMultiImageCanvases") === "on",
         enableMultiMediaCanvases: formValues.get("enableMultiMediaCanvases") === "on",
+        openRouterAssistant: formValues.get("openRouterAssistant") === "on",
       },
     };
 
@@ -120,6 +121,16 @@ export function ConfigEditor() {
               defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
             />
             <Form.Label htmlFor="manifestGridOptions">Manifest Grid Options</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="openRouterAssistant"
+              id="openRouterAssistant"
+              defaultChecked={config.editorFeatureFlags?.openRouterAssistant || false}
+            />
+            <Form.Label htmlFor="openRouterAssistant">Enable AI Assistant</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">

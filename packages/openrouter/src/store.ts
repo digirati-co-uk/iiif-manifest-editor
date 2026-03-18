@@ -59,6 +59,7 @@ export interface OpenRouterStoreState {
   chatStatus: OpenRouterChatStatus;
   chatError: string | null;
   controllerChatId: string | null;
+  launcherOpen: boolean;
   setApiKey: (apiKey: string | null) => void;
   applyAuthError: (error: string | null) => void;
   clearError: () => void;
@@ -86,6 +87,9 @@ export interface OpenRouterStoreState {
   regenerateChat: () => Promise<void>;
   showThreads: () => void;
   showChat: () => void;
+  openLauncher: () => void;
+  closeLauncher: () => void;
+  toggleLauncher: () => void;
   setOptionSelection: (toolCallId: string, label: string) => void;
   clearOptionSelections: () => void;
 }
@@ -155,6 +159,7 @@ export function createOpenRouterStore() {
       chatStatus: "ready",
       chatError: null,
       controllerChatId: null,
+      launcherOpen: false,
       setApiKey(apiKey) {
         const storage = getStorage();
         if (storage) {
@@ -449,6 +454,15 @@ export function createOpenRouterStore() {
       },
       showChat() {
         set({ panelView: "chat" });
+      },
+      openLauncher() {
+        set({ launcherOpen: true });
+      },
+      closeLauncher() {
+        set({ launcherOpen: false });
+      },
+      toggleLauncher() {
+        set((state) => ({ launcherOpen: !state.launcherOpen }));
       },
       setOptionSelection(toolCallId, label) {
         set((state) => ({

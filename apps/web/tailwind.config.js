@@ -59,7 +59,17 @@ export const exhibitionViewerTailwindColors = {
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./content/**/*.{md,mdx}"],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./content/**/*.{md,mdx}",
+    "../../packages/openrouter/src/**/*.{ts,tsx}",
+    "../../packages/shell/src/**/*.{ts,tsx}",
+    "../../packages/components/src/**/*.{ts,tsx}",
+    "../../packages/editors/src/**/*.{ts,tsx}",
+    "../../packages/creators/src/**/*.{ts,tsx}",
+    "../../presets/manifest-preset/src/**/*.{ts,tsx}",
+    "../../presets/exhibition-preset/src/**/*.{ts,tsx}",
+  ],
   theme: {
     colors: {
       //
@@ -68,6 +78,7 @@ export default {
       gray: colors.gray,
       slate: colors.slate,
       blue: colors.blue,
+      red: colors.red,
       orange: colors.orange,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
@@ -112,7 +123,32 @@ export default {
       ...exhibitionViewerTailwindColors,
     },
     typography: exhibitionTypography,
-    extend: {},
+    extend: {
+      animation: {
+        "ai-pulse": "ai-pulse 1.5s ease-in-out infinite",
+        "ai-fab-in": "ai-fab-in 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "ai-panel-in": "ai-panel-in 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "ai-backdrop-in": "ai-backdrop-in 200ms ease-out",
+      },
+      keyframes: {
+        "ai-pulse": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.6", transform: "scale(0.85)" },
+        },
+        "ai-fab-in": {
+          from: { opacity: "0", transform: "scale(0.5) rotate(-45deg)" },
+          to: { opacity: "1", transform: "scale(1) rotate(0deg)" },
+        },
+        "ai-panel-in": {
+          from: { opacity: "0", transform: "translateY(12px) scale(0.96)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "ai-backdrop-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+      },
+    },
   },
   plugins: [typography],
 };

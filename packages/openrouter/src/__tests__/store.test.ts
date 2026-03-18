@@ -68,4 +68,20 @@ describe("openrouter store", () => {
     expect(stopStreaming).toHaveBeenCalledWith("document-switch");
     expect(regenerateLastResponse).toHaveBeenCalled();
   });
+
+  it("tracks floating launcher visibility separately from the chat thread state", async () => {
+    const store = createOpenRouterStore();
+
+    expect(store.getState().launcherOpen).toBe(false);
+
+    store.getState().openLauncher();
+    expect(store.getState().launcherOpen).toBe(true);
+
+    await store.getState().ensureThread("manifest", "https://example.org/manifest");
+    expect(store.getState().currentThreadId).toBeTruthy();
+    expect(store.getState().launcherOpen).toBe(true);
+
+    store.getState().toggleLauncher();
+    expect(store.getState().launcherOpen).toBe(false);
+  });
 });

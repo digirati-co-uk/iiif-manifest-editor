@@ -3,6 +3,7 @@ export * from "./background-task";
 export * from "./constants";
 export * from "./components";
 export * from "./open-router-left-panel";
+export * from "./open-router-floating-panel";
 export * from "./store";
 export * from "./thread-storage";
 export * from "./types";

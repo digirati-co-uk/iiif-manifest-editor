@@ -120,6 +120,10 @@ export function extendApp(
         ...(app.layout?.background || []),
         ...(extensions?.background || []),
       ],
+      floatingPanels: [
+        ...(app.layout?.floatingPanels || []),
+        ...(extensions?.floatingPanels || []),
+      ],
       editors: [
         //
         ...(extensions?.editors || []),

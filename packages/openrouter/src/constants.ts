@@ -1,5 +1,6 @@
 export const OPENROUTER_PANEL_ID = "left-panel-openrouter";
 export const OPENROUTER_BACKGROUND_ID = "openrouter-background-task";
+export const OPENROUTER_FLOATING_PANEL_ID = "openrouter-floating-panel";
 export const OPENROUTER_DEFAULT_MODEL_ID = "openrouter/auto";
 export const OPENROUTER_THREAD_STORAGE_NAME = "manifest-editor-openrouter-threads";
 export const OPENROUTER_THREAD_STORAGE_STORE = "threads";
