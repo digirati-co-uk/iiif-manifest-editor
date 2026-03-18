@@ -10,9 +10,8 @@ export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; a
   const behaviours = useVaultSelector(
     (_, v) => {
       return (v.get(manifest?.items || []) || [])
-        .filter((item): item is { behavior?: string[] } => !!item)
         .slice(0, 5)
-        .flatMap((item) => (Array.isArray(item.behavior) ? item.behavior : []))
+        .flatMap((item) => (item && Array.isArray(item.behavior) ? item.behavior : []))
         .join(" ");
     },
     [manifest],
