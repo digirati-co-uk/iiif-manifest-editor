@@ -21,6 +21,22 @@ export function getThreadStorageKey(mode: ToolMode, rootResourceId: string) {
   return `${mode}:${rootResourceId}`;
 }
 
+export function getProjectThreadStorageKey(projectId: string) {
+  return `project:${projectId}`;
+}
+
+export function resolveThreadStorageKey(options: {
+  assistantProjectId?: string | null;
+  mode: ToolMode;
+  rootResourceId: string;
+}) {
+  if (options.assistantProjectId) {
+    return getProjectThreadStorageKey(options.assistantProjectId);
+  }
+
+  return getThreadStorageKey(options.mode, options.rootResourceId);
+}
+
 export function generateThreadId() {
   return `thread-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -53,22 +69,20 @@ function deriveThreadTitle(existingTitle: string, messages: UIMessage[]) {
   return firstText.length > 48 ? `${firstText.slice(0, 48)}...` : firstText;
 }
 
-export async function loadThreadsForDocument(mode: ToolMode, rootResourceId: string) {
-  const key = getThreadStorageKey(mode, rootResourceId);
-  const stored = await threadStore.getItem<OpenRouterThreadBucket>(key);
-  return stored || createEmptyBucket(key);
+export async function loadThreadsForScope(threadScopeKey: string) {
+  const stored = await threadStore.getItem<OpenRouterThreadBucket>(threadScopeKey);
+  return stored || createEmptyBucket(threadScopeKey);
 }
 
-export async function saveThreadsForDocument(bucket: OpenRouterThreadBucket) {
+export async function saveThreadsForScope(bucket: OpenRouterThreadBucket) {
   await threadStore.setItem(bucket.key, bucket);
 }
 
 export async function createThread(
-  mode: ToolMode,
-  rootResourceId: string,
+  threadScopeKey: string,
   title?: string,
 ) {
-  const existing = await loadThreadsForDocument(mode, rootResourceId);
+  const existing = await loadThreadsForScope(threadScopeKey);
   const thread: OpenRouterThread = {
     id: generateThreadId(),
     title: title || `Chat ${existing.threads.length + 1}`,
@@ -84,18 +98,17 @@ export async function createThread(
     currentThreadId: thread.id,
   };
 
-  await saveThreadsForDocument(updated);
+  await saveThreadsForScope(updated);
   return { thread, bucket: updated };
 }
 
 export async function updateThreadMessages(
-  mode: ToolMode,
-  rootResourceId: string,
+  threadScopeKey: string,
   threadId: string,
   messages: UIMessage[],
   metadata: Record<string, OpenRouterMessageMetadata> = {},
 ) {
-  const existing = await loadThreadsForDocument(mode, rootResourceId);
+  const existing = await loadThreadsForScope(threadScopeKey);
   const threadIndex = existing.threads.findIndex((thread) => thread.id === threadId);
 
   if (threadIndex === -1) {
@@ -122,27 +135,26 @@ export async function updateThreadMessages(
     threads,
   };
 
-  await saveThreadsForDocument(updated);
+  await saveThreadsForScope(updated);
   return updated;
 }
 
 export async function setCurrentThread(
-  mode: ToolMode,
-  rootResourceId: string,
+  threadScopeKey: string,
   threadId: string | null,
 ) {
-  const existing = await loadThreadsForDocument(mode, rootResourceId);
+  const existing = await loadThreadsForScope(threadScopeKey);
   const updated: OpenRouterThreadBucket = {
     ...existing,
     currentThreadId: threadId,
   };
 
-  await saveThreadsForDocument(updated);
+  await saveThreadsForScope(updated);
   return updated;
 }
 
-export async function deleteThread(mode: ToolMode, rootResourceId: string, threadId: string) {
-  const existing = await loadThreadsForDocument(mode, rootResourceId);
+export async function deleteThread(threadScopeKey: string, threadId: string) {
+  const existing = await loadThreadsForScope(threadScopeKey);
   const threads = existing.threads.filter((thread) => thread.id !== threadId);
   const currentThreadId =
     existing.currentThreadId === threadId ? threads[0]?.id || null : existing.currentThreadId;
@@ -152,6 +164,6 @@ export async function deleteThread(mode: ToolMode, rootResourceId: string, threa
     currentThreadId,
   };
 
-  await saveThreadsForDocument(updated);
+  await saveThreadsForScope(updated);
   return updated;
 }

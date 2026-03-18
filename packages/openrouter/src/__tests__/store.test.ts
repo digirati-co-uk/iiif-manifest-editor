@@ -20,7 +20,10 @@ describe("openrouter store", () => {
   it("auto-creates the first thread and defaults to chat view", async () => {
     const store = createOpenRouterStore();
 
-    await store.getState().ensureThread("manifest", "https://example.org/manifest");
+    await store.getState().ensureThread({
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    });
 
     const state = store.getState();
     expect(state.hydrated).toBe(true);
@@ -32,7 +35,10 @@ describe("openrouter store", () => {
   it("switches between thread list and chat views for new and selected threads", async () => {
     const store = createOpenRouterStore();
 
-    await store.getState().ensureThread("manifest", "https://example.org/manifest");
+    await store.getState().ensureThread({
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    });
     const firstThreadId = store.getState().currentThreadId!;
 
     store.getState().showThreads();
@@ -77,11 +83,52 @@ describe("openrouter store", () => {
     store.getState().openLauncher();
     expect(store.getState().launcherOpen).toBe(true);
 
-    await store.getState().ensureThread("manifest", "https://example.org/manifest");
+    await store.getState().ensureThread({
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    });
     expect(store.getState().currentThreadId).toBeTruthy();
     expect(store.getState().launcherOpen).toBe(true);
 
     store.getState().toggleLauncher();
     expect(store.getState().launcherOpen).toBe(false);
+  });
+
+  it("shares the same thread bucket across modes when scoped by project ID", async () => {
+    const store = createOpenRouterStore();
+
+    await store.getState().ensureThread({
+      assistantProjectId: "project-123",
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    });
+    const firstThreadId = store.getState().currentThreadId;
+
+    await store.getState().ensureThread({
+      assistantProjectId: "project-123",
+      mode: "exhibition",
+      rootResourceId: "https://example.org/manifest",
+    });
+
+    expect(store.getState().currentThreadId).toBe(firstThreadId);
+    expect(store.getState().threads).toHaveLength(1);
+  });
+
+  it("falls back to document-scoped threads when no project ID is supplied", async () => {
+    const store = createOpenRouterStore();
+
+    await store.getState().ensureThread({
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    });
+    const manifestThreadId = store.getState().currentThreadId;
+
+    await store.getState().ensureThread({
+      mode: "exhibition",
+      rootResourceId: "https://example.org/manifest",
+    });
+
+    expect(store.getState().currentThreadId).not.toBe(manifestThreadId);
+    expect(store.getState().threads).toHaveLength(1);
   });
 });

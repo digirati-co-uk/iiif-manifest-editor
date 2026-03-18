@@ -20,8 +20,8 @@ import {
 import {
   createThread,
   deleteThread,
-  getThreadStorageKey,
-  loadThreadsForDocument,
+  loadThreadsForScope,
+  resolveThreadStorageKey,
   setCurrentThread,
   updateThreadMessages,
 } from "./thread-storage";
@@ -47,7 +47,7 @@ export interface OpenRouterStoreState {
   selectedModelId: string;
   mode: ToolMode | null;
   rootResourceId: string | null;
-  resourceKey: string | null;
+  threadScopeKey: string | null;
   threads: OpenRouterThread[];
   currentThreadId: string | null;
   chatMessages: UIMessage[];
@@ -66,8 +66,16 @@ export interface OpenRouterStoreState {
   setSelectedModelId: (modelId: string) => void;
   login: () => Promise<void>;
   logout: () => void;
-  hydrateDocument: (mode: ToolMode, rootResourceId: string) => Promise<void>;
-  ensureThread: (mode: ToolMode, rootResourceId: string) => Promise<void>;
+  hydrateDocument: (input: {
+    assistantProjectId?: string | null;
+    mode: ToolMode;
+    rootResourceId: string;
+  }) => Promise<void>;
+  ensureThread: (input: {
+    assistantProjectId?: string | null;
+    mode: ToolMode;
+    rootResourceId: string;
+  }) => Promise<void>;
   createThread: (title?: string) => Promise<OpenRouterThread | null>;
   switchThread: (threadId: string) => Promise<void>;
   deleteThread: (threadId: string) => Promise<void>;
@@ -147,7 +155,7 @@ export function createOpenRouterStore() {
       selectedModelId: getStoredModelId(),
       mode: null,
       rootResourceId: null,
-      resourceKey: null,
+      threadScopeKey: null,
       threads: [],
       currentThreadId: null,
       chatMessages: [],
@@ -246,13 +254,18 @@ export function createOpenRouterStore() {
           chatError: null,
         });
       },
-      async hydrateDocument(mode, rootResourceId) {
-        const resourceKey = getThreadStorageKey(mode, rootResourceId);
+      async hydrateDocument(input) {
+        const { assistantProjectId, mode, rootResourceId } = input;
+        const threadScopeKey = resolveThreadStorageKey({
+          assistantProjectId,
+          mode,
+          rootResourceId,
+        });
 
         set({
           mode,
           rootResourceId,
-          resourceKey,
+          threadScopeKey,
           threads: [],
           currentThreadId: null,
           chatMessages: [],
@@ -266,8 +279,8 @@ export function createOpenRouterStore() {
           chatStatus: "ready",
         });
 
-        const bucket = await loadThreadsForDocument(mode, rootResourceId);
-        if (get().resourceKey !== resourceKey) {
+        const bucket = await loadThreadsForScope(threadScopeKey);
+        if (get().threadScopeKey !== threadScopeKey) {
           return;
         }
 
@@ -276,7 +289,7 @@ export function createOpenRouterStore() {
         set({
           mode,
           rootResourceId,
-          resourceKey,
+          threadScopeKey,
           threads: bucket.threads,
           currentThreadId: currentThread?.id || null,
           chatMessages: currentThread?.messages || [],
@@ -287,18 +300,23 @@ export function createOpenRouterStore() {
           panelView: currentThread ? "chat" : "threads",
         });
       },
-      async ensureThread(mode, rootResourceId) {
-        const resourceKey = getThreadStorageKey(mode, rootResourceId);
-        await get().hydrateDocument(mode, rootResourceId);
+      async ensureThread(input) {
+        const { assistantProjectId, mode, rootResourceId } = input;
+        const threadScopeKey = resolveThreadStorageKey({
+          assistantProjectId,
+          mode,
+          rootResourceId,
+        });
+        await get().hydrateDocument(input);
 
-        if (get().resourceKey !== resourceKey) {
+        if (get().threadScopeKey !== threadScopeKey) {
           return;
         }
 
         if (get().threads.length === 0) {
           set({ threadsLoading: true });
           await get().createThread();
-          if (get().resourceKey === resourceKey) {
+          if (get().threadScopeKey === threadScopeKey) {
             set({ threadsLoading: false });
           }
           return;
@@ -309,15 +327,15 @@ export function createOpenRouterStore() {
         }
       },
       async createThread(title) {
-        const { mode, rootResourceId, resourceKey } = get();
-        if (!mode || !rootResourceId || !resourceKey) {
+        const { threadScopeKey } = get();
+        if (!threadScopeKey) {
           return null;
         }
 
         await stopActiveRunIfNeeded("new-thread");
 
-        const created = await createThread(mode, rootResourceId, title);
-        if (get().resourceKey !== resourceKey) {
+        const created = await createThread(threadScopeKey, title);
+        if (get().threadScopeKey !== threadScopeKey) {
           return null;
         }
 
@@ -337,8 +355,8 @@ export function createOpenRouterStore() {
         return created.thread;
       },
       async switchThread(threadId) {
-        const { mode, rootResourceId, threads, resourceKey } = get();
-        if (!mode || !rootResourceId || !resourceKey) {
+        const { threads, threadScopeKey } = get();
+        if (!threadScopeKey) {
           return;
         }
 
@@ -348,8 +366,8 @@ export function createOpenRouterStore() {
         }
 
         await stopActiveRunIfNeeded("thread-switch");
-        await setCurrentThread(mode, rootResourceId, threadId);
-        if (get().resourceKey !== resourceKey) {
+        await setCurrentThread(threadScopeKey, threadId);
+        if (get().threadScopeKey !== threadScopeKey) {
           return;
         }
 
@@ -365,15 +383,15 @@ export function createOpenRouterStore() {
         });
       },
       async deleteThread(threadId) {
-        const { mode, rootResourceId, resourceKey, panelView } = get();
-        if (!mode || !rootResourceId || !resourceKey) {
+        const { threadScopeKey, panelView } = get();
+        if (!threadScopeKey) {
           return;
         }
 
         await stopActiveRunIfNeeded("delete-thread");
 
-        const updated = await deleteThread(mode, rootResourceId, threadId);
-        if (get().resourceKey !== resourceKey) {
+        const updated = await deleteThread(threadScopeKey, threadId);
+        if (get().threadScopeKey !== threadScopeKey) {
           return;
         }
 
@@ -391,7 +409,7 @@ export function createOpenRouterStore() {
         });
       },
       async setChatMessages(messages, newMetadata = {}) {
-        const { mode, rootResourceId, currentThreadId, messageMetadata } = get();
+        const { currentThreadId, messageMetadata, threadScopeKey } = get();
         const mergedMetadata = {
           ...messageMetadata,
           ...newMetadata,
@@ -402,11 +420,11 @@ export function createOpenRouterStore() {
           messageMetadata: mergedMetadata,
         });
 
-        if (!mode || !rootResourceId || !currentThreadId) {
+        if (!threadScopeKey || !currentThreadId) {
           return;
         }
 
-        const updated = await updateThreadMessages(mode, rootResourceId, currentThreadId, messages, mergedMetadata);
+        const updated = await updateThreadMessages(threadScopeKey, currentThreadId, messages, mergedMetadata);
         if (!updated) {
           return;
         }

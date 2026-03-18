@@ -1,6 +1,7 @@
 import { type UIMessage, useChat } from "@ai-sdk/react";
 import {
   useApp,
+  useAppInstance,
   useAppResource,
   useEditingResource,
   useEditingStack,
@@ -448,6 +449,7 @@ function OpenRouterChatController(props: { isAssistantVisible: boolean }) {
 
 export function OpenRouterControllerHost(props: { isAssistantVisible: boolean }) {
   const app = useApp();
+  const appInstance = useAppInstance();
   const rootResource = useAppResource();
   const store = useOpenRouterStoreApi();
   const mode = useMemo(() => {
@@ -458,6 +460,10 @@ export function OpenRouterControllerHost(props: { isAssistantVisible: boolean })
   }, [app.layout.creators, rootResource]);
   const previousDocumentKeyRef = useRef<string | null>(null);
   const assistantVisibilityRef = useRef(props.isAssistantVisible);
+  const assistantProjectId =
+    typeof appInstance.args?.assistantProjectId === "string" && appInstance.args.assistantProjectId.trim()
+      ? appInstance.args.assistantProjectId.trim()
+      : null;
 
   useEffect(() => {
     assistantVisibilityRef.current = props.isAssistantVisible;
@@ -480,11 +486,15 @@ export function OpenRouterControllerHost(props: { isAssistantVisible: boolean })
         }
       }
 
-      await store.getState().ensureThread(mode, rootResource.id);
+      await store.getState().ensureThread({
+        assistantProjectId,
+        mode,
+        rootResourceId: rootResource.id,
+      });
     };
 
     void syncThreads();
-  }, [mode, rootResource.id, store]);
+  }, [assistantProjectId, mode, rootResource.id, store]);
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {

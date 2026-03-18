@@ -6,7 +6,15 @@ const ExternalEditor = dynamic(() => import("../../../components/external-editor
   ssr: false,
 });
 
-export default function ExternalEditorPage(props: { searchParams: Promise<{ manifest: string; preset?: string }> }) {
+export default function ExternalEditorPage(props: {
+  searchParams: Promise<{ manifest: string; preset?: string; projectId?: string }>;
+}) {
   const searchParams = use(props.searchParams);
-  return <ExternalEditor manifest={searchParams.manifest} preset={searchParams.preset} />;
+  return (
+    <ExternalEditor
+      manifest={searchParams.manifest}
+      preset={searchParams.preset}
+      assistantProjectId={searchParams.projectId}
+    />
+  );
 }

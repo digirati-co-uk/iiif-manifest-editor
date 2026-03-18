@@ -44,6 +44,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import { VaultProvider } from "react-iiif-vault";
 import { useBrowserProject } from "./browser-state";
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
+import { useGlobalEditorConfig } from "../site/use-global-editor-config";
 
 const previews: PreviewConfiguration[] = [
   {
@@ -149,9 +150,8 @@ export default function BrowserEditor({
     userForceUpdate,
     vault,
     wasAlreadyOpen,
-    projectConfig,
-    saveProjectConfig,
   } = useBrowserProject(id);
+  const { globalConfig, saveGlobalConfig } = useGlobalEditorConfig();
   const customConfig = browserConfig || {};
   const [allowAnyway, setAllowAnyway] = useState(false);
   const thumbnailHelper = useMemo(() => {
@@ -206,11 +206,11 @@ export default function BrowserEditor({
   const mergedConfig = useMemo(() => {
     return {
       ...config,
-      ...projectConfig,
+      ...globalConfig,
       ...customConfig,
       ...(preset?.config || {}),
     };
-  }, [preset, projectConfig, customConfig]);
+  }, [customConfig, globalConfig, preset]);
 
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {
@@ -220,7 +220,7 @@ export default function BrowserEditor({
           id: "config",
           label: "Config",
           icon: <SettingsIcon />,
-          render: () => <ConfigEditor />,
+          render: () => <ConfigEditor title="Global configuration" />,
         },
       ],
       modalPanels: [
@@ -294,9 +294,14 @@ export default function BrowserEditor({
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
+        <AppProvider
+          appId="manifest-editor"
+          definition={manifestEditor}
+          instanceId={id}
+          args={{ assistantProjectId: id }}
+        >
           <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
+            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveGlobalConfig}>
               <Layout header={header} />
               <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
             </ShellProvider>

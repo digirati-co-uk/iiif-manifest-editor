@@ -5,7 +5,9 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   createThread,
   deleteThread,
-  loadThreadsForDocument,
+  getProjectThreadStorageKey,
+  loadThreadsForScope,
+  resolveThreadStorageKey,
   setCurrentThread,
   updateThreadMessages,
 } from "../thread-storage";
@@ -28,17 +30,17 @@ describe("thread storage", () => {
     });
   });
 
-  it("starts empty for a new mode/resource pair", async () => {
-    await expect(loadThreadsForDocument("manifest", "https://example.org/manifest")).resolves.toEqual({
+  it("starts empty for a new document-scoped key", async () => {
+    await expect(loadThreadsForScope("manifest:https://example.org/manifest")).resolves.toEqual({
       key: "manifest:https://example.org/manifest",
       threads: [],
       currentThreadId: null,
     });
   });
 
-  it("creates and reloads a first thread per mode/resource pair", async () => {
-    const created = await createThread("manifest", "https://example.org/manifest");
-    const reloaded = await loadThreadsForDocument("manifest", "https://example.org/manifest");
+  it("creates and reloads a first thread per storage scope key", async () => {
+    const created = await createThread("manifest:https://example.org/manifest");
+    const reloaded = await loadThreadsForScope("manifest:https://example.org/manifest");
 
     expect(created.thread.id).toBeTruthy();
     expect(reloaded.threads).toHaveLength(1);
@@ -47,10 +49,9 @@ describe("thread storage", () => {
   });
 
   it("persists message metadata and derives the thread title from the first user message", async () => {
-    const created = await createThread("manifest", "https://example.org/manifest");
+    const created = await createThread("manifest:https://example.org/manifest");
     const updated = await updateThreadMessages(
-      "manifest",
-      "https://example.org/manifest",
+      "manifest:https://example.org/manifest",
       created.thread.id,
       [manifestMessage],
       {
@@ -71,14 +72,22 @@ describe("thread storage", () => {
   });
 
   it("tracks the current thread and falls back when the current thread is deleted", async () => {
-    const first = await createThread("manifest", "https://example.org/manifest", "First");
-    const second = await createThread("manifest", "https://example.org/manifest", "Second");
+    const first = await createThread("manifest:https://example.org/manifest", "First");
+    const second = await createThread("manifest:https://example.org/manifest", "Second");
 
-    const current = await setCurrentThread("manifest", "https://example.org/manifest", first.thread.id);
+    const current = await setCurrentThread("manifest:https://example.org/manifest", first.thread.id);
     expect(current.currentThreadId).toBe(first.thread.id);
 
-    const deleted = await deleteThread("manifest", "https://example.org/manifest", first.thread.id);
+    const deleted = await deleteThread("manifest:https://example.org/manifest", first.thread.id);
     expect(deleted.currentThreadId).toBe(second.thread.id);
     expect(deleted.threads).toHaveLength(1);
+  });
+
+  it("resolves project-scoped keys when an assistant project ID is provided", () => {
+    expect(resolveThreadStorageKey({
+      assistantProjectId: "project-123",
+      mode: "manifest",
+      rootResourceId: "https://example.org/manifest",
+    })).toBe(getProjectThreadStorageKey("project-123"));
   });
 });

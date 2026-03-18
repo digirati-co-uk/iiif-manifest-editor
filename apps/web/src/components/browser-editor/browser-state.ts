@@ -3,7 +3,7 @@
 
 import { createThumbnailHelper, Vault } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { type Config, randomId, useConfig } from "@manifest-editor/shell";
+import { randomId } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createStore, del, delMany, get, keys, set } from "idb-keyval";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -41,7 +41,7 @@ export interface LocalBrowserProject {
   };
   source: { id: string; type: string };
   vaultData: any;
-  extraData: { config?: Config } & { [key: string]: any };
+  extraData: { [key: string]: any };
   created: number;
   updated: number;
   isOpen: boolean;
@@ -263,10 +263,6 @@ export function useBrowserProject(id: string) {
     mutationKey: ["save-browser-project-extra-data", id],
   });
 
-  const saveProjectConfig = useCallback((config: Partial<Config>) => {
-    return saveExtraData.mutateAsync({ config });
-  }, []);
-
   const saveResource = useMutation({
     mutationFn: async (
       data: LocalBrowserProject["resource"],
@@ -359,10 +355,6 @@ export function useBrowserProject(id: string) {
     isProjectLoading: isLoading,
     isProjectError: isError,
     wasAlreadyOpen: projectData?.wasAlreadyOpen,
-    projectConfig: projectData?.project?.extraData?.config as
-      | Partial<Config>
-      | undefined,
-    saveProjectConfig,
     project: projectData?.project,
     saveExtraData,
     saveResource,

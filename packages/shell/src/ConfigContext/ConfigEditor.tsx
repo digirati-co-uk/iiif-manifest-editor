@@ -4,7 +4,7 @@ import { useDecayState } from "../hooks/use-decay-state";
 import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 
-export function ConfigEditor() {
+export function ConfigEditor({ title = "Workspace configuration" }: { title?: string }) {
   const previews = usePreviewContext();
   const resource = useAppResource();
   const config = useConfig();
@@ -49,7 +49,7 @@ export function ConfigEditor() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Workspace configuration" />
+      <SidebarHeader title={title} />
       {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">Changes saved</div> : null}
       <SidebarContent className="p-4">
         <Form.Form onSubmit={onSubmit} className="flex flex-col gap-3">
