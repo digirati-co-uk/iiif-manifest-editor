@@ -57,6 +57,7 @@
     "react-hot-toast": "^2.6.0",
     "react-iiif-vault": "catalog:",
     "tailwind-merge": "^2.3.0",
+    "zod": "^4.1.12",
     "zustand": "catalog:"
   },
   "devDependencies": {
