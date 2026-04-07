@@ -1,5 +1,6 @@
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp } from "@manifest-editor/shell";
+import "exhibition-viewer/dist/index.css";
 import "./index.css";
 import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { exhibitionBackgroundTask } from "./background-panel";
@@ -18,6 +19,7 @@ import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
+import { exhibitionThemeEditor } from "./right-panels/ExhibitionThemeEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
@@ -32,6 +34,14 @@ export const exhibitionEditorPreset = extendApp(
   {
     config: {
       editorConfig: {
+        Manifest: {
+          onlyTabs: [
+            "@manifest-editor/overview",
+            exhibitionThemeEditor.id,
+            "@manifest-editor/descriptive-properties",
+            "@manifest-editor/metadata",
+          ],
+        },
         Canvas: {
           hideTabs: [
             "@manifest-editor/overview",
@@ -69,6 +79,7 @@ export const exhibitionEditorPreset = extendApp(
     ],
     editors: [
       //
+      exhibitionThemeEditor,
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,

@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "exhibition-viewer/dist/lib.css";
+import "exhibition-viewer/dist/index.css";
 import "manifest-editor/dist/index.css";
 
 // Hopefully these are not needed.

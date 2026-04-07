@@ -1,6 +1,6 @@
 # Creating exhibits or storytelling using IIIF Manifests
 
-The Manifest Editor supports the creation and development of IIIF content for storytelling or exhibition style presentations. 
+The Manifest Editor supports the creation and development of IIIF content for storytelling or exhibition style presentations.
 
 ## Accessing the Exhibition editor
 
@@ -10,6 +10,7 @@ You can start working on a IIIF Manifest for an exhibition either by:
 
 a. Selecting the 'Create Exhibition' option on the Manifest Editor homepage. This will create a new, empty IIIF Manifest in which you can curate your content.
 b. Open an existing IIIF Manifest, and navigate to the Exhibition Editor via:
+
 - Select the 'Settings cog' in the bottom left hand menu - see screenshot below. This opens the Workspace configuration for the Manifest Editor.
 - Select the link 'Go to Exhibition Editor', which will open your Manifest in the Exhibition Editor
 
@@ -79,13 +80,25 @@ The Exhibition Viewer supports "floating" tours, where any tour step information
 - Floating bottom left
 - Floating bottom right
 
+## Theming the Exhibition Viewer
+
+When you select the Manifest itself rather than an individual slide, the right hand metadata panel now includes a `Theme` tab. This tab stores a custom IIIF `service` on the Manifest containing optional exhibition theme and viewer defaults.
+
+The theme editor allows you to:
+
+- Choose a base preset
+- Start from the built-in `Delft`, `Gallery`, or `Minimal` presets
+- Adjust shared typography
+- Change Delft and Scroll viewer color tokens
+- Set default viewer options for exhibition, presentation, slideshow and scroll modes
+
+These settings are optional. If no theme service is stored, the Exhibition Viewer falls back to its built-in defaults.
 
 ## Summary
 
 The 'Summary' tab presents the existing (Canvas) Label and Summary values if added for the current slide. This information can be presented as part of the exhibition, using the behaviour controls mentioned in the previous section.
 
 These values can be edited and updated as needed.
-
 
 ## Creating a Tour of your Exhibition manifest
 
@@ -105,6 +118,4 @@ As you work on your IIIF Manifest, you can preview how your changes will be disp
 - Delft slideshow (TU Delft specific exhibition slideshow which allows the exhibition to be "played" supporting exhibition display for example)
 - Light exhibition (generic, lightly themed exhibition view - presenting the exhibition as a scrollable page)
 - Light slideshow (generic, lightly themed exhibition slideshow - allows the exhibition to be "played")
-- Floating tour (generic, lightly themed exhibition slideshow, presenting the tour step(s) (annotations) as a floating modal that can have it's position configured) 
-
-
+- Floating tour (generic, lightly themed exhibition slideshow, presenting the tour step(s) (annotations) as a floating modal that can have it's position configured)

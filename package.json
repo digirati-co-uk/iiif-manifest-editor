@@ -30,7 +30,7 @@
       "tsdown": "0.16.4",
       "react-aria-components": "^1.12",
       "@atlas-viewer/atlas": "catalog:",
-      "exhibition-viewer": "https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz",
+      "exhibition-viewer": "^1.0.14",
       "react-reconciler": "0.33.0",
       "iiif-browser": "catalog:",
       "react": "catalog:",

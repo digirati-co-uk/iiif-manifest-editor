@@ -9,9 +9,9 @@ import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useLayoutActions } from "../Layout/Layout.context";
 import type { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
-import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -64,8 +64,8 @@ export function editBasedOnResource(
     const sortKeys: string[] = [];
     const sortKeyFallbacks: Record<string, EditorDefinition> = {};
     // 1. Filter out the
-    const editors = (item.editors || []).filter((editor) => {
-      if (config.hideTabs && config.hideTabs.includes(editor.id)) {
+    let editors = (item.editors || []).filter((editor) => {
+      if (config.hideTabs?.includes(editor.id)) {
         return false;
       }
       if (config.onlyTabs && !config.onlyTabs.includes(editor.id)) {
@@ -97,6 +97,13 @@ export function editBasedOnResource(
 
       return true;
     });
+
+    if (config.onlyTabs) {
+      // Order by onlyTabs
+      editors = config.onlyTabs
+        .map((tabId) => editors.find((editor) => editor.id === tabId))
+        .filter((editor): editor is EditorDefinition => editor !== undefined);
+    }
 
     const missingKeys = Object.keys(sortKeyFallbacks);
     for (const missingKey of missingKeys) {
