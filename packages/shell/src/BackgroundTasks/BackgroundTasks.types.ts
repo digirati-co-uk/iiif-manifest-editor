@@ -120,6 +120,7 @@ export type BackgroundActionTaskRunResult =
 export interface BackgroundActionTaskRunOptions {
   statuses?: BackgroundActionTaskStatus[];
   progressLabel?: (task: BackgroundActionTask, index: number, total: number) => string;
+  yieldEveryMs?: number | false;
 }
 
 export interface BackgroundActionTasksApi {

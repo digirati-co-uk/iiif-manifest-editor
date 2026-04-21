@@ -111,14 +111,14 @@ describe("translation language tag background action", () => {
       expect.objectContaining({
         type: TRANSLATION_LANGUAGE_TAG_TYPE,
         id: "en",
-        label: "English",
+        label: "en",
       }),
     ]);
     expect(getResourceTags(vault, canvas2)).toEqual([
       expect.objectContaining({
         type: TRANSLATION_LANGUAGE_TAG_TYPE,
         id: "cy",
-        label: "Welsh",
+        label: "cy",
       }),
     ]);
     expect(getResourceTags(vault, canvas3)).toEqual([]);

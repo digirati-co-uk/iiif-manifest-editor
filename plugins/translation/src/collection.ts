@@ -1,3 +1,4 @@
+import { getAvailableLanguagesFromResource } from "@iiif/helpers/i18n";
 import type { Vault } from "@iiif/helpers/vault";
 import type { InternationalString, Reference } from "@iiif/presentation-3";
 import type {
@@ -10,7 +11,7 @@ import type {
   TranslationTarget,
   TranslationValueFormat,
 } from "./types";
-import { normaliseLanguageCode, resolveSupportedLanguage } from "./options";
+import { normaliseLanguageCode, resolveSourceLanguage, resolveSupportedLanguage } from "./options";
 
 type CollectContext = {
   vault: Vault;
@@ -134,7 +135,7 @@ export function collectTranslationLanguageProgress(
     (item) => item.language,
   ),
 ): TranslationLanguageProgress[] {
-  return languages.map((language) => {
+  return languages.filter((language) => !!resolveSupportedLanguage(language)).map((language) => {
     const progress: TranslationLanguageProgress = {
       language,
       total: 0,
@@ -380,9 +381,7 @@ function walkDetectedLanguageResource(
     return;
   }
 
-  collectDetectedResourceLanguageMaps(ctx, resource);
-  collectDetectedMetadata(ctx, resource);
-  collectDetectedRequiredStatement(ctx, resource);
+  collectDetectedResourceLanguages(ctx, resource);
 
   for (const provider of toReferences(resource.provider, "Agent")) {
     walkDetectedLanguageResource(ctx, provider);
@@ -416,90 +415,86 @@ function walkDetectedLanguageResource(
       }
       break;
     case "Annotation":
-      collectDetectedAnnotationBodies(ctx, resource);
+      for (const body of toReferences(resource.body, "ContentResource")) {
+        walkDetectedLanguageResource(ctx, body);
+      }
+      break;
+    case "Choice":
+      for (const item of toReferences(resource.items, "ContentResource")) {
+        walkDetectedLanguageResource(ctx, item);
+      }
       break;
   }
 }
 
-function collectDetectedResourceLanguageMaps(
-  ctx: LanguageDetectionContext,
-  resource: any,
-) {
-  addDetectedLanguageMap(ctx, resource.label);
-  addDetectedLanguageMap(ctx, resource.summary);
-}
-
-function collectDetectedMetadata(ctx: LanguageDetectionContext, resource: any) {
-  const metadata = Array.isArray(resource.metadata) ? resource.metadata : [];
-  for (const item of metadata) {
-    addDetectedLanguageMap(ctx, item?.label);
-    addDetectedLanguageMap(ctx, item?.value);
-  }
-}
-
-function collectDetectedRequiredStatement(
-  ctx: LanguageDetectionContext,
-  resource: any,
-) {
-  const requiredStatement = resource.requiredStatement;
-  if (!requiredStatement) {
-    return;
-  }
-
-  addDetectedLanguageMap(ctx, requiredStatement.label);
-  addDetectedLanguageMap(ctx, requiredStatement.value);
-}
-
-function collectDetectedAnnotationBodies(
-  ctx: LanguageDetectionContext,
-  annotation: any,
-) {
-  const bodies = collectAnnotationBodyResources(ctx.vault, annotation);
-
-  for (const { resource: body } of bodies) {
-    collectDetectedResourceLanguageMaps(ctx, body);
-    collectDetectedMetadata(ctx, body);
-    collectDetectedRequiredStatement(ctx, body);
-
-    if (
-      isTextualBody(body) &&
-      normaliseTranslationText(String(body.value || ""))
-    ) {
-      addDetectedTextualBodyLanguage(ctx, body.language);
+function collectDetectedResourceLanguages(ctx: LanguageDetectionContext, resource: any) {
+  for (const language of getAvailableLanguagesFromResourceSafe(resource)) {
+    if (typeof language === "string") {
+      addDetectedLanguage(ctx, language, 1);
     }
   }
 }
 
-function addDetectedLanguageMap(
-  ctx: LanguageDetectionContext,
-  value: LanguageMapLike,
-) {
+function getAvailableLanguagesFromResourceSafe(resource: any): unknown[] {
+  const languages = new Set<string>();
+
+  try {
+    for (const language of getAvailableLanguagesFromResource(resource)) {
+      if (typeof language === "string") {
+        languages.add(language);
+      }
+    }
+  } catch {
+    // The local fallback below covers resource shapes that the helper cannot inspect.
+  }
+
+  for (const language of getFallbackAvailableLanguages(resource)) {
+    languages.add(language);
+  }
+
+  return Array.from(languages);
+}
+
+function getFallbackAvailableLanguages(resource: any): string[] {
+  const languages = new Set<string>();
+
+  addLanguageMapLanguages(languages, resource?.label);
+  addLanguageMapLanguages(languages, resource?.summary);
+
+  if (typeof resource?.language === "string") {
+    languages.add(resource.language);
+  } else if (Array.isArray(resource?.language)) {
+    for (const language of resource.language) {
+      if (typeof language === "string") {
+        languages.add(language);
+      }
+    }
+  }
+
+  const requiredStatement = resource?.requiredStatement;
+  if (requiredStatement && !Array.isArray(requiredStatement)) {
+    addLanguageMapLanguages(languages, requiredStatement.label);
+    addLanguageMapLanguages(languages, requiredStatement.value);
+  }
+
+  if (Array.isArray(resource?.metadata)) {
+    for (const item of resource.metadata) {
+      addLanguageMapLanguages(languages, item?.label);
+      addLanguageMapLanguages(languages, item?.value);
+    }
+  }
+
+  return Array.from(languages);
+}
+
+function addLanguageMapLanguages(languages: Set<string>, value: LanguageMapLike) {
   if (!value || typeof value === "string") {
     return;
   }
 
   for (const [language, values] of Object.entries(value)) {
-    if (!Array.isArray(values)) {
-      continue;
-    }
-
-    const count = values.filter(
-      (item) => typeof item === "string" && normaliseTranslationText(item),
-    ).length;
-    if (count) {
-      addDetectedLanguage(ctx, language, count);
-    }
-  }
-}
-
-function addDetectedTextualBodyLanguage(
-  ctx: LanguageDetectionContext,
-  value: unknown,
-) {
-  const languages = Array.isArray(value) ? value : value ? [value] : [];
-  for (const language of languages) {
-    if (typeof language === "string") {
-      addDetectedLanguage(ctx, language, 1);
+    if (Array.isArray(values) && values.some((item) => typeof item === "string" && normaliseTranslationText(item))) {
+      languages.add(language);
     }
   }
 }
@@ -509,7 +504,7 @@ function addDetectedLanguage(
   rawLanguage: string,
   count: number,
 ) {
-  const language = resolveSupportedLanguage(rawLanguage);
+  const language = resolveSourceLanguage(rawLanguage);
   if (!language) {
     return;
   }

@@ -10,31 +10,31 @@ import {
 import { createStore, type StoreApi, useStore } from "zustand";
 import { useApp, useAppInstance } from "../AppContext/AppContext";
 import { createTrackingCanvasProgressApi, type ManifestEditorCanvasProgressApi } from "../CanvasProgress";
-import {
-  type BackgroundActionContext,
-  type BackgroundActionDefinition,
-  type BackgroundActionError,
-  type BackgroundActionEvent,
-  type BackgroundActionEventType,
-  type BackgroundActionGroup,
-  type BackgroundActionInstance,
-  type BackgroundActionLogEntry,
-  type BackgroundActionLogLevel,
-  type BackgroundActionPersistence,
-  type BackgroundActionPersistenceKey,
-  type BackgroundActionPersistedState,
-  type BackgroundActionPlan,
-  type BackgroundActionProgress,
-  type BackgroundActionProgressInput,
-  type BackgroundActionRunContext,
-  type BackgroundActionStatus,
-  type BackgroundActionTarget,
-  type BackgroundActionTask,
-  type BackgroundActionTaskRunOptions,
-  type BackgroundActionTaskRunResult,
-  type BackgroundActionTaskStatus,
-  type BackgroundActionTasksApi,
-  type BackgroundActionSystemContext,
+import type {
+  BackgroundActionContext,
+  BackgroundActionDefinition,
+  BackgroundActionError,
+  BackgroundActionEvent,
+  BackgroundActionEventType,
+  BackgroundActionGroup,
+  BackgroundActionInstance,
+  BackgroundActionLogEntry,
+  BackgroundActionLogLevel,
+  BackgroundActionPersistence,
+  BackgroundActionPersistenceKey,
+  BackgroundActionPersistedState,
+  BackgroundActionPlan,
+  BackgroundActionProgress,
+  BackgroundActionProgressInput,
+  BackgroundActionRunContext,
+  BackgroundActionStatus,
+  BackgroundActionTarget,
+  BackgroundActionTask,
+  BackgroundActionTaskRunOptions,
+  BackgroundActionTaskRunResult,
+  BackgroundActionTaskStatus,
+  BackgroundActionTasksApi,
+  BackgroundActionSystemContext,
 } from "./BackgroundTasks.types";
 
 export interface BackgroundActionsStore {
@@ -633,10 +633,20 @@ function createTaskApi(
     const pending = getPending(statuses);
     const total = getAll().length;
     const pendingTotal = pending.length;
+    const yieldEveryMs = runOptions.yieldEveryMs === false ? false : (runOptions.yieldEveryMs ?? 16);
+    let lastYieldAt = 0;
 
     for (const [pendingIndex, pendingTask] of pending.entries()) {
       if (signal.aborted) {
         throw new Error("Background action cancelled.");
+      }
+
+      if (shouldYieldToBrowser(lastYieldAt, yieldEveryMs)) {
+        await yieldToBrowser();
+        lastYieldAt = Date.now();
+        if (signal.aborted) {
+          throw new Error("Background action cancelled.");
+        }
       }
 
       const latestTask = getAll().find((task) => task.id === pendingTask.id) || pendingTask;
@@ -741,6 +751,16 @@ function createTaskApi(
     update,
     runEach,
   };
+}
+
+function shouldYieldToBrowser(lastYieldAt: number, yieldEveryMs: number | false) {
+  return yieldEveryMs !== false && (!lastYieldAt || Date.now() - lastYieldAt >= yieldEveryMs);
+}
+
+function yieldToBrowser() {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, 0);
+  });
 }
 
 export function createBackgroundActionsStore(initialDefinitions: BackgroundActionDefinition[] = []) {

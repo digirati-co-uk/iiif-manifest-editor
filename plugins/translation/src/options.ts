@@ -9,6 +9,7 @@ import type {
 
 const defaultSourceLanguage = "en";
 const defaultTargetLanguage = "nl";
+export const TRANSLATION_NONE_LANGUAGE = "none";
 
 export const defaultTranslationContentFilters: TranslationContentFilters = {
   annotationBodies: true,
@@ -21,19 +22,25 @@ export function getDefaultRunOptions(
 ): TranslationRunOptions {
   const availableLanguages = getSupportedAvailableLanguages(config);
   const sourceLanguage =
+    resolveSourceLanguage(settings.defaultSourceLanguage) ||
+    resolveSupportedLanguage(config?.i18n?.defaultLanguage) ||
+    availableLanguages[0] ||
+    defaultSourceLanguage;
+  const modelSourceLanguage =
     resolveSupportedLanguage(settings.defaultSourceLanguage) ||
     resolveSupportedLanguage(config?.i18n?.defaultLanguage) ||
     availableLanguages[0] ||
     defaultSourceLanguage;
   const targetLanguage =
-    resolveSupportedLanguage(settings.defaultTargetLanguage, sourceLanguage) ||
-    availableLanguages.find((language) => language !== sourceLanguage) ||
-    (sourceLanguage === defaultTargetLanguage
+    resolveSupportedLanguage(settings.defaultTargetLanguage, modelSourceLanguage) ||
+    availableLanguages.find((language) => language !== modelSourceLanguage) ||
+    (modelSourceLanguage === defaultTargetLanguage
       ? defaultSourceLanguage
       : defaultTargetLanguage);
 
   return normaliseRunOptions({
     sourceLanguage,
+    modelSourceLanguage,
     targetLanguage,
     runtime: settings.runtimePreference,
     writePolicy: "fill-missing",
@@ -44,19 +51,22 @@ export function normaliseRunOptions(
   options: Partial<TranslationRunOptions> = {},
 ): TranslationRunOptions {
   const sourceLanguage =
-    resolveSupportedLanguage(options.sourceLanguage) || defaultSourceLanguage;
+    resolveSourceLanguage(options.sourceLanguage) || defaultSourceLanguage;
+  const modelSourceLanguage = getModelSourceLanguage(sourceLanguage, options);
   const targetLanguage =
-    resolveSupportedLanguage(options.targetLanguage, sourceLanguage) ||
-    (sourceLanguage === defaultTargetLanguage
+    resolveSupportedLanguage(options.targetLanguage, modelSourceLanguage) ||
+    (modelSourceLanguage === defaultTargetLanguage
       ? defaultSourceLanguage
       : defaultTargetLanguage);
 
   return {
     sourceLanguage,
+    modelSourceLanguage,
     targetLanguage,
     runtime: normaliseRuntimePreference(options.runtime),
     writePolicy: "fill-missing",
     contentFilters: normaliseContentFilters(options.contentFilters),
+    currentResourceOnly: options.currentResourceOnly === true,
   };
 }
 
@@ -103,6 +113,29 @@ export function resolveSupportedLanguage(
   }
 
   return null;
+}
+
+export function resolveSourceLanguage(language: unknown): string | null {
+  if (isNoLanguageCode(language)) {
+    return TRANSLATION_NONE_LANGUAGE;
+  }
+
+  return resolveSupportedLanguage(language);
+}
+
+export function getModelSourceLanguage(
+  sourceLanguage: unknown,
+  options: Partial<TranslationRunOptions> = {},
+) {
+  return (
+    resolveSupportedLanguage(sourceLanguage) ||
+    resolveSupportedLanguage(options.modelSourceLanguage) ||
+    defaultSourceLanguage
+  );
+}
+
+export function isNoLanguageCode(language: unknown) {
+  return typeof language === "string" && normaliseLanguageCode(language) === TRANSLATION_NONE_LANGUAGE;
 }
 
 export function normaliseLanguageCode(language: string) {

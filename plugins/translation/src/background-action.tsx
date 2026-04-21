@@ -18,6 +18,7 @@ import { TRANSLATION_ACTION_ID, TRANSLATION_PLUGIN_ID } from "./constants";
 import { translatePreservingSimpleHtml } from "./html";
 import {
   getDefaultRunOptions,
+  getModelSourceLanguage,
   getSupportedAvailableLanguages,
   normaliseRunOptions,
 } from "./options";
@@ -30,6 +31,7 @@ import { openTranslationResults, renderTranslationResults } from "./results";
 import type {
   TranslationActionResult,
   TranslationPluginSettings,
+  TranslationResourceRef,
   TranslationRunOptions,
   TranslationTarget,
   TranslationTaskResult,
@@ -120,7 +122,7 @@ export function createTranslationBackgroundAction(
         TRANSLATION_PLUGIN_ID,
       );
       const defaults = getDefaultRunOptions(ctx.config, settings);
-      const previewTargets = collectTargets(ctx.vault, ctx.target, defaults);
+      const previewTargets = collectTargets(ctx.vault, getTranslationScope(ctx, defaults), defaults);
       const options =
         queuedOptions.get(ctx.instanceKey) ||
         (await requestConfig(ctx, previewTargets, defaults));
@@ -131,7 +133,7 @@ export function createTranslationBackgroundAction(
       }
 
       const normalisedOptions = normaliseRunOptions(options);
-      const targets = collectTargets(ctx.vault, ctx.target, normalisedOptions);
+      const targets = collectTargets(ctx.vault, getTranslationScope(ctx, normalisedOptions), normalisedOptions);
       return createTranslationPlan(targets, normalisedOptions);
     },
     run: async (ctx) => {
@@ -346,6 +348,18 @@ export function createTranslationPlan(
   };
 }
 
+function getTranslationScope(ctx: BackgroundActionRunContext, options: TranslationRunOptions): TranslationResourceRef {
+  if (options.currentResourceOnly && ctx.currentCanvas) {
+    return {
+      id: ctx.currentCanvas.id,
+      type: ctx.currentCanvas.type,
+      label: ctx.currentCanvas.label,
+    };
+  }
+
+  return ctx.target;
+}
+
 async function defaultRequestConfig(
   ctx: BackgroundActionRunContext,
   targets: TranslationTarget[],
@@ -366,16 +380,23 @@ async function defaultRequestConfig(
     targets,
     availableLanguages: getSupportedAvailableLanguages(ctx.config),
     detectedLanguages,
+    currentResource: ctx.currentCanvas
+      ? {
+          id: ctx.currentCanvas.id,
+          type: ctx.currentCanvas.type,
+          label: ctx.currentCanvas.label,
+        }
+      : undefined,
     getTargets: (options) =>
       collectTranslationTargets(
         ctx.vault,
-        ctx.target,
+        getTranslationScope(ctx, normaliseRunOptions(options)),
         normaliseRunOptions(options),
       ),
     getTargetLanguageProgress: (options) =>
       collectTranslationLanguageProgress(
         ctx.vault,
-        ctx.target,
+        getTranslationScope(ctx, normaliseRunOptions(options)),
         normaliseRunOptions(options),
         detectedLanguageCodes,
       ),
@@ -403,7 +424,7 @@ async function translateTargetText(
   const translate = async (text: string) => {
     const result = await client.translate({
       text,
-      sourceLanguage: target.sourceLanguage,
+      sourceLanguage: getModelSourceLanguage(target.sourceLanguage, options),
       targetLanguage: target.targetLanguage,
       runtime: options.runtime,
     });

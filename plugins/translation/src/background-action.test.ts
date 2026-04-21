@@ -58,10 +58,11 @@ function createVault(overrides: Record<string, unknown> = {}) {
 function createContext(
   vault: Vault,
   definition: ReturnType<typeof createTranslationBackgroundAction>,
+  currentCanvas?: BackgroundActionTarget,
 ): BackgroundActionContext {
   return {
     rootResource: manifestTarget,
-    currentCanvas: undefined,
+    currentCanvas,
     vault,
     tags: createManifestEditorTagsApi(vault),
     canvasProgress: createManifestEditorCanvasProgressApi(vault),
@@ -136,6 +137,96 @@ describe("translation background action", () => {
     ]?.result as TranslationActionResult;
     expect(result.translated).toBe(1);
     expect(result.applied).toBe(2);
+  });
+
+  test("translates IIIF none source values using the configured model source language", async () => {
+    const vault = createVault({
+      label: { none: ["Shared text"] },
+      items: [
+        {
+          id: "https://example.org/canvas/1",
+          type: "Canvas",
+          label: { none: ["Shared text"] },
+          width: 1000,
+          height: 1000,
+          items: [],
+        },
+      ],
+    });
+    const client = createClient();
+    const definition = createTranslationBackgroundAction({
+      createClient: () => client,
+      requestConfig: vi.fn(async () => ({
+        ...options,
+        sourceLanguage: "none",
+        modelSourceLanguage: "en",
+      })),
+    });
+    const store = createBackgroundActionsStore([definition]);
+
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
+
+    expect(client.translate).toHaveBeenCalledTimes(1);
+    expect(client.translate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sourceLanguage: "en",
+        targetLanguage: "cy",
+        text: "Shared text",
+      }),
+    );
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
+      "Shared text [cy]",
+    ]);
+  });
+
+  test("can scope a translation run to the current canvas", async () => {
+    const canvasTarget: BackgroundActionTarget = {
+      id: "https://example.org/canvas/1",
+      type: "Canvas",
+      label: "Current canvas",
+      scope: "canvas",
+    };
+    const vault = createVault({
+      label: { en: ["Manifest text"] },
+      items: [
+        {
+          id: canvasTarget.id,
+          type: "Canvas",
+          label: { en: ["Canvas text"] },
+          width: 1000,
+          height: 1000,
+          items: [],
+        },
+      ],
+    });
+    const client = createClient();
+    const definition = createTranslationBackgroundAction({
+      createClient: () => client,
+      requestConfig: vi.fn(async () => ({
+        ...options,
+        currentResourceOnly: true,
+      })),
+    });
+    const store = createBackgroundActionsStore([definition]);
+
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition, canvasTarget),
+    });
+
+    expect(client.translate).toHaveBeenCalledTimes(1);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toBeUndefined();
+    expect(
+      (
+        vault.get({
+          id: canvasTarget.id,
+          type: "Canvas",
+        } as any) as any
+      ).label.cy,
+    ).toEqual(["Canvas text [cy]"]);
   });
 
   test("never overwrites existing target-language values", async () => {

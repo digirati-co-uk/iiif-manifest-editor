@@ -24,10 +24,12 @@ export type TranslationPluginSettings = {
 
 export type TranslationRunOptions = {
   sourceLanguage: string;
+  modelSourceLanguage?: string;
   targetLanguage: string;
   runtime: TranslationRuntimePreference;
   writePolicy: TranslationWritePolicy;
   contentFilters: TranslationContentFilters;
+  currentResourceOnly?: boolean;
 };
 
 export type TranslationResourceRef = Reference & {

@@ -22,12 +22,17 @@ import {
 } from "./collection";
 import {
   TRANSLATION_ACTION_ID,
-  TRANSLATION_LANGUAGE_TAG_ACTION_ID,
   TRANSLATION_PLUGIN_ID,
   TRANSLATIONS_LEFT_PANEL_ID,
 } from "./constants";
 import { getLanguageLabel, getLanguageProgressLabel, M2M100_LANGUAGES } from "./languages";
-import { getDefaultRunOptions, normaliseRunOptions, resolveSupportedLanguage } from "./options";
+import {
+  getDefaultRunOptions,
+  getModelSourceLanguage,
+  isNoLanguageCode,
+  normaliseRunOptions,
+  resolveSupportedLanguage,
+} from "./options";
 import type {
   TranslationContentFilters,
   TranslationOccurrence,
@@ -145,7 +150,6 @@ function TranslationsPanel() {
   );
   const vault = useVault();
   const action = useTranslationAction();
-  const languageTagAction = useTranslationLanguageTagAction();
   const store = useBackgroundActionsStoreApi();
   const sourceLanguageGroups = useMemo(
     () => [
@@ -164,19 +168,21 @@ function TranslationsPanel() {
     [targetLanguageProgress],
   );
   const unsupportedConfiguredLanguages = useMemo(
-    () => (config.i18n?.availableLanguages || []).filter((language) => !resolveSupportedLanguage(language)),
+    () =>
+      (config.i18n?.availableLanguages || []).filter(
+        (language) => !resolveSupportedLanguage(language) && !isNoLanguageCode(language),
+      ),
     [config.i18n?.availableLanguages],
   );
   const counts = useMemo(() => getStatusCounts(targets), [targets]);
   const currentResourceCounts = useMemo(() => getStatusCounts(currentResourceTargets), [currentResourceTargets]);
   const busy = action?.instance?.status === "preparing" || action?.instance?.status === "running";
-  const languageTagBusy =
-    languageTagAction?.instance?.status === "preparing" || languageTagAction?.instance?.status === "running";
+  const sourceMatchesTarget = getModelSourceLanguage(options.sourceLanguage, options) === options.targetLanguage;
   const canRun =
     !!action &&
     !busy &&
     detectedLanguageCodes.length > 0 &&
-    options.sourceLanguage !== options.targetLanguage &&
+    !sourceMatchesTarget &&
     counts.missing > 0;
 
   const updateOptions = (patch: Partial<TranslationRunOptions>) => {
@@ -198,10 +204,6 @@ function TranslationsPanel() {
     if (!action || !canRun) return;
     queueTranslationRunOptions(action.instanceKey, options);
     void runBackgroundAction({ store, context: action.context });
-  };
-  const runLanguageTagging = () => {
-    if (!languageTagAction || languageTagBusy) return;
-    void runBackgroundAction({ store, context: languageTagAction.context });
   };
 
   const filteredTargets = useMemo(() => {
@@ -279,7 +281,7 @@ function TranslationsPanel() {
             </div>
           ) : null}
 
-          {options.sourceLanguage === options.targetLanguage ? (
+          {sourceMatchesTarget ? (
             <div className="rounded border border-amber-200 bg-amber-50 px-2.5 py-2 text-xs text-amber-800">
               Choose different source and target languages.
             </div>
@@ -307,25 +309,6 @@ function TranslationsPanel() {
               )}
               {targets.length === 0 && <span className="text-zinc-400">No strings found</span>}
             </div>
-            <button
-              type="button"
-              className="flex shrink-0 items-center gap-1.5 rounded border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={!languageTagAction || languageTagBusy}
-              onClick={runLanguageTagging}
-              title="Tag each canvas with its detected language"
-            >
-              {languageTagBusy ? (
-                <>
-                  <SpinnerIcon className="h-3 w-3 animate-spin" />
-                  Tagging…
-                </>
-              ) : (
-                <>
-                  <TagIcon className="h-3 w-3" />
-                  Tag languages
-                </>
-              )}
-            </button>
             <button
               type="button"
               className="flex shrink-0 items-center gap-1.5 rounded border border-me-primary-500 bg-me-primary-500 px-2.5 py-1.5 text-xs font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
@@ -408,10 +391,6 @@ function TranslationsPanel() {
 
 function useTranslationAction() {
   return useAvailableAction(TRANSLATION_ACTION_ID);
-}
-
-function useTranslationLanguageTagAction() {
-  return useAvailableAction(TRANSLATION_LANGUAGE_TAG_ACTION_ID);
 }
 
 function useAvailableAction(actionId: string) {
@@ -647,14 +626,6 @@ function PlayIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
       <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-}
-
-function TagIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.59 13.41 12.58 5.4A2 2 0 0 0 11.17 4H5a1 1 0 0 0-1 1v6.17a2 2 0 0 0 .59 1.41l8.01 8.01a2 2 0 0 0 2.82 0l5.17-5.17a2 2 0 0 0 0-2.82ZM7.5 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
     </svg>
   );
 }

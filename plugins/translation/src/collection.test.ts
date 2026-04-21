@@ -208,10 +208,31 @@ describe("translation string collection", () => {
     expect(languages.map((language) => language.language)).toEqual([
       "en",
       "nl",
+      "none",
     ]);
     expect(
       languages.find((language) => language.language === "en")?.iiifLanguages,
     ).toContain("en-gb");
+    expect(
+      languages.find((language) => language.language === "none")?.iiifLanguages,
+    ).toContain("none");
+  });
+
+  test("can use IIIF none values as the source text", () => {
+    const vault = createVault();
+    vault.modifyEntityField(manifestRef as any, "summary", {
+      none: ["No language"],
+    });
+
+    const targets = collectTranslationTargets(vault, manifestRef, {
+      ...options,
+      sourceLanguage: "none",
+      targetLanguage: "ja",
+    });
+    const target = targets.find((item) => item.sourceText === "No language");
+
+    expect(target?.sourceLanguage).toBe("none");
+    expect(target?.occurrences[0]?.sourceMapLanguage).toBe("none");
   });
 
   test("reports target-language progress for detected languages", () => {

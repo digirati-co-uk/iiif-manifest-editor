@@ -1,3 +1,4 @@
+import { getAvailableLanguagesFromResource } from "@iiif/helpers/i18n";
 import type {
   BackgroundActionDefinition,
   BackgroundActionPlan,
@@ -5,9 +6,8 @@ import type {
   BackgroundActionTask,
   ManifestEditorTag,
 } from "@manifest-editor/shell";
-import { collectDetectedManifestLanguages, type DetectedManifestLanguage } from "./collection";
 import { TRANSLATION_LANGUAGE_TAG_ACTION_ID } from "./constants";
-import { getLanguageLabel } from "./languages";
+import { resolveSourceLanguage } from "./options";
 
 export const TRANSLATION_LANGUAGE_TAG_TYPE = "language";
 
@@ -49,6 +49,12 @@ type CanvasLanguageTagTaskResult =
       type: "skipped";
       skip: CanvasLanguageTagSkip;
     };
+
+type DetectedCanvasLanguage = {
+  language: string;
+  count: number;
+  iiifLanguages: string[];
+};
 
 const LANGUAGE_TAG_PALETTE = [
   { backgroundColor: "#1d4ed8", textColor: "#ffffff" },
@@ -129,10 +135,7 @@ export function createTranslationLanguageTagsBackgroundAction(): BackgroundActio
               return skippedTask(skip);
             }
 
-            const detected = collectDetectedManifestLanguages(ctx.vault, {
-              id: canvasId,
-              type: "Canvas",
-            } as any);
+            const detected = getCanvasAvailableLanguages(ctx, canvas);
             const primary = selectPrimaryDetectedLanguage(detected);
 
             if (!primary) {
@@ -203,21 +206,14 @@ export function createLanguageTag(language: string): ManifestEditorTag {
   return {
     type: TRANSLATION_LANGUAGE_TAG_TYPE,
     id: language,
-    label: getLanguageLabel(language),
+    label: language,
     backgroundColor: colours.backgroundColor,
     textColor: colours.textColor,
   };
 }
 
-export function selectPrimaryDetectedLanguage(languages: DetectedManifestLanguage[]): DetectedManifestLanguage | null {
-  return (
-    [...languages].sort(
-      (a, b) =>
-        b.count - a.count ||
-        getLanguageLabel(a.language).localeCompare(getLanguageLabel(b.language)) ||
-        a.language.localeCompare(b.language),
-    )[0] || null
-  );
+export function selectPrimaryDetectedLanguage(languages: DetectedCanvasLanguage[]): DetectedCanvasLanguage | null {
+  return languages[0] || null;
 }
 
 function createLanguageTagPlan(canvases: any[]): BackgroundActionPlan {
@@ -304,6 +300,154 @@ function getManifestCanvases(ctx: BackgroundActionRunContext) {
 
 function getCanvasById(ctx: BackgroundActionRunContext, canvasId: string) {
   return ctx.vault.get({ id: canvasId, type: "Canvas" } as any) as any;
+}
+
+function getCanvasAvailableLanguages(ctx: BackgroundActionRunContext, canvas: any): DetectedCanvasLanguage[] {
+  const resource = getCanvasPresentationResource(ctx, canvas) || canvas;
+  const languages = getAvailableCanvasLanguages(resource);
+  const detected: DetectedCanvasLanguage[] = [];
+  const seen = new Set<string>();
+
+  for (const language of languages) {
+    const rawLanguage = typeof language === "string" ? language : "";
+    const resolved = resolveSourceLanguage(rawLanguage);
+    if (!resolved || seen.has(resolved)) {
+      continue;
+    }
+
+    seen.add(resolved);
+    detected.push({
+      language: resolved,
+      count: 1,
+      iiifLanguages: [rawLanguage],
+    });
+  }
+
+  return sortDetectedCanvasLanguages(detected, resource);
+}
+
+function getAvailableCanvasLanguages(resource: any) {
+  const languages = new Set<string>();
+
+  for (const language of getAvailableLanguagesFromResource(resource as any)) {
+    if (typeof language === "string") {
+      languages.add(language);
+    }
+  }
+
+  addLanguageMapLanguageCodes(languages, resource?.label);
+  addLanguageMapLanguageCodes(languages, resource?.summary);
+
+  const requiredStatement = resource?.requiredStatement;
+  if (requiredStatement && !Array.isArray(requiredStatement)) {
+    addLanguageMapLanguageCodes(languages, requiredStatement.label);
+    addLanguageMapLanguageCodes(languages, requiredStatement.value);
+  }
+
+  if (Array.isArray(resource?.metadata)) {
+    for (const item of resource.metadata) {
+      addLanguageMapLanguageCodes(languages, item?.label);
+      addLanguageMapLanguageCodes(languages, item?.value);
+    }
+  }
+
+  return Array.from(languages);
+}
+
+function getCanvasPresentationResource(ctx: BackgroundActionRunContext, canvas: any) {
+  if (!canvas?.id) {
+    return null;
+  }
+
+  try {
+    return ctx.vault.toPresentation3({ id: canvas.id, type: "Canvas" } as any);
+  } catch {
+    return null;
+  }
+}
+
+function sortDetectedCanvasLanguages(detected: DetectedCanvasLanguage[], resource: any) {
+  if (detected.length < 2 || hasNestedCanvasContent(resource)) {
+    return detected;
+  }
+
+  const scores = scoreOwnLanguageMaps(resource);
+
+  const scored = detected.map((language) => ({
+    ...language,
+    count: scores.get(language.language) || language.count,
+  }));
+
+  return scored.sort((a, b) => {
+    const score = (scores.get(b.language) || 0) - (scores.get(a.language) || 0);
+    if (score !== 0) {
+      return score;
+    }
+
+    return (
+      detected.findIndex((language) => language.language === a.language) -
+      detected.findIndex((language) => language.language === b.language)
+    );
+  });
+}
+
+function hasNestedCanvasContent(resource: any) {
+  return !!(
+    (Array.isArray(resource?.items) && resource.items.length) ||
+    (Array.isArray(resource?.annotations) && resource.annotations.length)
+  );
+}
+
+function scoreOwnLanguageMaps(resource: any) {
+  const scores = new Map<string, number>();
+
+  addLanguageMapScores(scores, resource?.label);
+  addLanguageMapScores(scores, resource?.summary);
+
+  const requiredStatement = resource?.requiredStatement;
+  if (requiredStatement && !Array.isArray(requiredStatement)) {
+    addLanguageMapScores(scores, requiredStatement.label);
+    addLanguageMapScores(scores, requiredStatement.value);
+  }
+
+  if (Array.isArray(resource?.metadata)) {
+    for (const item of resource.metadata) {
+      addLanguageMapScores(scores, item?.label);
+      addLanguageMapScores(scores, item?.value);
+    }
+  }
+
+  return scores;
+}
+
+function addLanguageMapScores(scores: Map<string, number>, value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return;
+  }
+
+  for (const [language, values] of Object.entries(value)) {
+    const resolved = resolveSourceLanguage(language);
+    if (!resolved || !Array.isArray(values)) {
+      continue;
+    }
+
+    const count = values.filter((item) => typeof item === "string" && item.trim()).length;
+    if (count) {
+      scores.set(resolved, (scores.get(resolved) || 0) + count);
+    }
+  }
+}
+
+function addLanguageMapLanguageCodes(languages: Set<string>, value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return;
+  }
+
+  for (const [language, values] of Object.entries(value)) {
+    if (Array.isArray(values) && values.some((item) => typeof item === "string" && item.trim())) {
+      languages.add(language);
+    }
+  }
 }
 
 function getCanvasLabel(canvas: any, fallback: string) {
