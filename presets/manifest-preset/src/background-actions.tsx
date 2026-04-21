@@ -65,7 +65,9 @@ function requestDemoPrepare(actionId: string, options: Omit<DemoPrepare, "action
   });
 }
 
-function getTargetResource(ctx: BackgroundActionRunContext | Parameters<NonNullable<BackgroundActionDefinition["supports"]>>[0]) {
+function getTargetResource(
+  ctx: BackgroundActionRunContext | Parameters<NonNullable<BackgroundActionDefinition["supports"]>>[0],
+) {
   return ctx.vault.get(ctx.target as any) as any;
 }
 
@@ -190,8 +192,7 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
       ctx.setResultsAvailable(true);
       return result;
     },
-    onResults: (ctx) =>
-      openDemoResults(ctx.definition.id, "Generated canvas label suggestions", ctx.instance?.result),
+    onResults: (ctx) => openDemoResults(ctx.definition.id, "Generated canvas label suggestions", ctx.instance?.result),
   },
   {
     id: "demo-run-local-ocr",

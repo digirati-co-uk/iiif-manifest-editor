@@ -5,6 +5,7 @@ import type { Resource } from "../AppResourceProvider/AppResourceProvider";
 import type { Config } from "../ConfigContext/ConfigContext";
 import type { LayoutActions, LayoutState } from "../Layout/Layout.types";
 import type { ManifestEditorCanvasProgressApi } from "../CanvasProgress";
+import type { PluginRuntimeApi } from "../PluginContext/PluginContext.types";
 import type { ManifestEditorTagsApi } from "../Tags";
 
 export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
@@ -94,6 +95,7 @@ export interface BackgroundActionSystemContext {
   vault: Vault;
   tags: ManifestEditorTagsApi;
   canvasProgress: ManifestEditorCanvasProgressApi;
+  plugins: PluginRuntimeApi;
   config: Config;
   layoutState: LayoutState;
   layoutActions: LayoutActions;

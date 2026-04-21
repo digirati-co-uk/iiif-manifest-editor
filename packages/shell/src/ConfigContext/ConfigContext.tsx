@@ -62,7 +62,7 @@ export interface Config {
       {
         enabled?: string[];
         disabled?: string[];
-        settings?: Record<string, unknown>;
+        settings?: Record<string, Record<string, unknown>> & Record<string, unknown>;
       }
     >;
   };

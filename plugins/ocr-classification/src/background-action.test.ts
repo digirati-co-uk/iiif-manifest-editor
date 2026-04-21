@@ -1,20 +1,17 @@
 import { Vault } from "@iiif/helpers/vault";
 import {
+  type BackgroundActionContext,
+  type BackgroundActionTarget,
   createBackgroundActionsStore,
   createManifestEditorCanvasProgressApi,
   createManifestEditorTagsApi,
   getBackgroundActionInstanceKey,
   getResourceTags,
-  runBackgroundAction,
-  type BackgroundActionContext,
-  type BackgroundActionTarget,
   type ManifestEditorTag,
+  runBackgroundAction,
 } from "@manifest-editor/shell";
 import { describe, expect, test, vi } from "vitest";
-import {
-  createOcrClassificationBackgroundAction,
-  type OcrClassificationActionResult,
-} from "./background-action";
+import { createOcrClassificationBackgroundAction, type OcrClassificationActionResult } from "./background-action";
 import { OCR_DIFFICULTY_TAG_TYPE, selectOcrDifficulty } from "./ocr-difficulty";
 
 const manifestTarget: BackgroundActionTarget = {
@@ -51,13 +48,17 @@ function createCanvas(id: string) {
   };
 }
 
-function createContext(vault: Vault, definition: ReturnType<typeof createOcrClassificationBackgroundAction>): BackgroundActionContext {
+function createContext(
+  vault: Vault,
+  definition: ReturnType<typeof createOcrClassificationBackgroundAction>,
+): BackgroundActionContext {
   return {
     rootResource: manifestTarget,
     currentCanvas: undefined,
     vault,
     tags: createManifestEditorTagsApi(vault),
     canvasProgress: createManifestEditorCanvasProgressApi(vault),
+    plugins: { getSettings: <T extends Record<string, unknown>>() => ({}) as T },
     config: {} as any,
     layoutState: {} as any,
     layoutActions: {} as any,
@@ -148,8 +149,13 @@ describe("OCR classification background action", () => {
     expect(result.skippedCanvases).toEqual([
       {
         canvasId: "https://example.org/canvas/3",
+        canvasLabel: "https://example.org/canvas/3",
         reason: "No painting image found",
       },
+    ]);
+    expect(result.classifications.map((item) => item.canvasLabel)).toEqual([
+      "https://example.org/canvas/1",
+      "https://example.org/canvas/2",
     ]);
   });
 

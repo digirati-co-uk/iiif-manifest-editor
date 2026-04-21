@@ -1,4 +1,5 @@
 import type { BackgroundActionDefinition, BackgroundActionRunContext } from "@manifest-editor/shell";
+import { type CanvasImageForClassification, getCanvasImageForClassification } from "./canvas-image";
 import {
   createOcrDifficultyTag,
   formatOcrScore,
@@ -6,16 +7,13 @@ import {
   OCR_DIFFICULTY_TAG_TYPE,
   type OcrClassifierRun,
 } from "./ocr-difficulty";
-import {
-  getCanvasImageForClassification,
-  type CanvasImageForClassification,
-} from "./canvas-image";
 import { openOcrClassificationResults, renderOcrClassificationResults } from "./results";
 
 export const OCR_CLASSIFICATION_ACTION_ID = "@manifest-editor/ocr-classification/classify-canvases";
 
 export type OcrCanvasClassification = {
   canvasId: string;
+  canvasLabel: string;
   tagId: string;
   label: string;
   score: number;
@@ -25,6 +23,7 @@ export type OcrCanvasClassification = {
 
 export type OcrCanvasClassificationSkip = {
   canvasId: string;
+  canvasLabel: string;
   reason: string;
 };
 
@@ -39,10 +38,7 @@ export type OcrClassificationActionResult = {
 
 export type OcrClassificationActionDependencies = {
   prepareClassifier?: () => Promise<void>;
-  getCanvasImage?: (
-    ctx: BackgroundActionRunContext,
-    canvas: any,
-  ) => Promise<CanvasImageForClassification | null>;
+  getCanvasImage?: (ctx: BackgroundActionRunContext, canvas: any) => Promise<CanvasImageForClassification | null>;
   classifyImage?: (image: Blob) => Promise<OcrClassifierRun>;
 };
 
@@ -88,6 +84,7 @@ export function createOcrClassificationBackgroundAction(
       for (const [index, canvas] of canvases.entries()) {
         throwIfAborted(ctx.signal);
         const canvasId = canvas?.id || `canvas-${index + 1}`;
+        const canvasLabel = getCanvasLabel(canvas, canvasId);
         const label = `Classifying ${index + 1}/${canvases.length}`;
 
         ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "pending");
@@ -100,6 +97,7 @@ export function createOcrClassificationBackgroundAction(
           if (!image) {
             result.skippedCanvases.push({
               canvasId,
+              canvasLabel,
               reason: "No painting image found",
             });
             ctx.appendActionLog("Skipped canvas classification", "warn", {
@@ -121,6 +119,7 @@ export function createOcrClassificationBackgroundAction(
           result.counts[tag.id] = (result.counts[tag.id] || 0) + 1;
           result.classifications.push({
             canvasId,
+            canvasLabel,
             tagId: tag.id,
             label: tag.label,
             score: classification.prediction.score,
@@ -140,6 +139,7 @@ export function createOcrClassificationBackgroundAction(
           const reason = getErrorMessage(error);
           result.skippedCanvases.push({
             canvasId,
+            canvasLabel,
             reason,
           });
           ctx.appendActionLog("Skipped canvas classification", "warn", {
@@ -163,6 +163,12 @@ export function createOcrClassificationBackgroundAction(
       result.skipped = result.skippedCanvases.length;
       ctx.setActionStatus("running", `Classified ${result.classified}/${result.total}`);
       ctx.setActionProgress({ current: canvases.length, total: canvases.length, label: "Classification complete" });
+      ctx.appendActionLog("Classification complete", "info", {
+        total: result.total,
+        classified: result.classified,
+        skipped: result.skipped,
+        counts: result.counts,
+      });
 
       return result;
     },
@@ -198,6 +204,26 @@ function throwIfAborted(signal: AbortSignal) {
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Canvas classification failed";
+}
+
+function getCanvasLabel(canvas: any, fallback: string) {
+  const label = canvas?.label;
+  if (!label) {
+    return fallback;
+  }
+
+  if (typeof label === "string") {
+    return label;
+  }
+
+  const englishLabel = Array.isArray(label.en) ? label.en[0] : undefined;
+  if (englishLabel) {
+    return englishLabel;
+  }
+
+  const firstLanguage = Object.keys(label)[0];
+  const firstValue = firstLanguage && Array.isArray(label[firstLanguage]) ? label[firstLanguage][0] : undefined;
+  return firstValue || fallback;
 }
 
 export { OCR_DIFFICULTY_TAG_TYPE, formatOcrScore };

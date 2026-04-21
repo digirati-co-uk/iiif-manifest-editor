@@ -1,9 +1,11 @@
 import type { BackgroundActionDefinition, BackgroundActionRunContext } from "@manifest-editor/shell";
 import { getCanvasImageForOcr, type CanvasImageForOcr } from "./canvas-image";
 import {
+  applyOcrDoclingPluginSettings,
   getDefaultRunOptions,
   renderOcrDoclingConfigModal,
   requestOcrDoclingConfig,
+  type OcrDoclingPluginSettings,
   type OcrDoclingRunOptions,
 } from "./config-modal";
 import {
@@ -18,6 +20,7 @@ import { openOcrDoclingResults, renderOcrDoclingResults } from "./results";
 import { getCanvasTagOptions, parseTagKey } from "./tags";
 
 export const OCR_DOCLING_ACTION_ID = "@manifest-editor/ocr-docling/run-ocr";
+export const OCR_DOCLING_PLUGIN_ID = "@manifest-editor/ocr-docling";
 
 export type OcrDoclingCanvasResult = {
   canvasId: string;
@@ -249,12 +252,17 @@ async function defaultRequestConfig(
   canvases: any[],
   defaults: OcrDoclingRunOptions,
 ) {
+  const pluginDefaults = applyOcrDoclingPluginSettings(
+    defaults,
+    ctx.plugins.getSettings<OcrDoclingPluginSettings>(OCR_DOCLING_PLUGIN_ID),
+  );
+
   return requestOcrDoclingConfig({
     actionId: ctx.definition.id,
     instanceKey: ctx.instanceKey,
     totalCanvases: canvases.length,
     tags: getCanvasTagOptions(ctx, canvases),
-    defaults,
+    defaults: pluginDefaults,
     signal: ctx.signal,
   });
 }

@@ -66,6 +66,7 @@ function createContext(
     vault,
     tags: createManifestEditorTagsApi(vault),
     canvasProgress: createManifestEditorCanvasProgressApi(vault),
+    plugins: { getSettings: <T extends Record<string, unknown>>() => ({}) as T },
     config: {} as any,
     layoutState: {} as any,
     layoutActions: {} as any,

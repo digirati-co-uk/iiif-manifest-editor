@@ -3,7 +3,7 @@
 
 import { createThumbnailHelper, Vault } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
-import { type Config, mergePartialConfig, randomId, useConfig } from "@manifest-editor/shell";
+import { type Config, mergePartialConfig, randomId } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createStore, del, delMany, get, keys, set } from "idb-keyval";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +16,16 @@ const localStore =
         "manifest-editor-project-store",
       )
     : undefined;
+
+const globalPluginConfigStore =
+  typeof window !== "undefined"
+    ? createStore(
+        "manifest-editor-global-plugin-config-v1",
+        "manifest-editor-global-plugin-config-store",
+      )
+    : undefined;
+
+const globalPluginConfigKey = "global-plugin-config";
 
 export interface LocalBrowserProjectSnippet {
   id: string;
@@ -194,6 +204,51 @@ export async function deleteBrowserProject(id: string): Promise<void> {
 export async function deleteAllBrowserProjects(): Promise<void> {
   const projectIds = await keys(localStore);
   await delMany(projectIds, localStore);
+}
+
+export async function getBrowserGlobalPluginConfig(): Promise<Config["plugins"]> {
+  if (!globalPluginConfigStore) {
+    return { apps: {} };
+  }
+
+  return (await get<Config["plugins"]>(globalPluginConfigKey, globalPluginConfigStore)) || { apps: {} };
+}
+
+export async function saveBrowserGlobalPluginConfig(config: Config["plugins"]): Promise<void> {
+  if (!globalPluginConfigStore) {
+    return;
+  }
+
+  await set(globalPluginConfigKey, config || { apps: {} }, globalPluginConfigStore);
+}
+
+export function useBrowserGlobalPluginConfig() {
+  const query = useQuery({
+    queryKey: ["browser-global-plugin-config"],
+    queryFn: getBrowserGlobalPluginConfig,
+  });
+
+  const save = useMutation({
+    mutationFn: saveBrowserGlobalPluginConfig,
+    onSuccess: (_data, config) => {
+      queryClient.setQueryData(["browser-global-plugin-config"], config || { apps: {} });
+    },
+    mutationKey: ["save-browser-global-plugin-config"],
+  });
+
+  const saveGlobalPluginConfig = useCallback(
+    async (config: Config["plugins"]) => {
+      await save.mutateAsync(config || { apps: {} });
+    },
+    [save],
+  );
+
+  return {
+    globalPluginConfig: query.data || { apps: {} },
+    isGlobalPluginConfigLoading: query.isLoading,
+    globalPluginConfigError: query.error,
+    saveGlobalPluginConfig,
+  };
 }
 
 export function useBrowserProject(id: string) {

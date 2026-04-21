@@ -24,6 +24,8 @@ interface ManifestEditorProps {
   vault?: Vault;
   config?: Partial<Config>;
   saveConfig?: (config: Partial<Config>) => void;
+  globalPluginConfig?: Config["plugins"];
+  saveGlobalPluginConfig?: (config: Config["plugins"]) => void | Promise<void>;
   plugins?: Array<PluginModule | MappedPlugin>;
   enabledPlugins?: string[];
   disabledPlugins?: string[];
@@ -99,7 +101,13 @@ export function ManifestEditor(props: ManifestEditorProps) {
       : props.plugins || [];
 
   return (
-    <PluginProvider plugins={plugins} enabled={props.enabledPlugins} disabled={props.disabledPlugins}>
+    <PluginProvider
+      plugins={plugins}
+      enabled={props.enabledPlugins}
+      disabled={props.disabledPlugins}
+      globalPluginConfig={props.globalPluginConfig}
+      saveGlobalPluginConfig={props.saveGlobalPluginConfig}
+    >
       <AppProvider appId={appId} definition={preset} instanceId="test-1">
         <VaultProvider vault={vault}>
           <ShellProvider resource={resource} config={props.config} saveConfig={props.saveConfig}>

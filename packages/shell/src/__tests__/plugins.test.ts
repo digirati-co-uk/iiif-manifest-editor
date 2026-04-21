@@ -3,11 +3,19 @@ import type { MappedApp } from "../AppContext/AppContext";
 import { mergePartialConfig } from "../ConfigContext/ConfigContext";
 import {
   applyPlugins,
+  createPluginRuntimeApi,
+  enablePluginAndDependenciesInConfig,
   getEnabledPluginsForApp,
+  getEffectivePluginSettings,
+  getPluginSettingsFromConfig,
+  isPluginSelected,
   mapPlugin,
+  resetPluginInConfig,
+  resetPluginSettingsInConfig,
+  setPluginSettingsInConfig,
 } from "../PluginContext/PluginContext.helpers";
 import { createPluginStore } from "../PluginContext/PluginContext.store";
-import type { MappedPlugin, PluginModule } from "../PluginContext/PluginContext.types";
+import type { MappedPlugin, PluginModule, PluginStoreSnapshot } from "../PluginContext/PluginContext.types";
 
 const panel = (id: string) =>
   ({
@@ -63,11 +71,17 @@ describe("plugin mapping", () => {
           annotationPopups: true,
         },
       },
+      settings: {
+        defaults: {
+          mode: "default",
+        },
+      },
     });
 
     expect(mapped.metadata.id).toBe("@example/ocr");
     expect(mapped.extension.leftPanels?.[0]?.id).toBe("ocr-panel");
     expect(mapped.extension.config?.editorFeatureFlags?.annotationPopups).toBe(true);
+    expect(mapped.settings?.defaults).toEqual({ mode: "default" });
   });
 });
 
@@ -127,8 +141,7 @@ describe("plugin application", () => {
     expect(app.layout.leftPanels.map((item) => item.id)).toEqual(["base-left", "manifest-panel"]);
   });
 
-  test("requires dependencies to be active earlier in plugin order", () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  test("applies selected dependencies before dependents regardless of provider order", () => {
     const base = plugin("@example/base");
     const dependent = plugin("@example/dependent", {
       default: {
@@ -137,18 +150,18 @@ describe("plugin application", () => {
         dependencies: ["@example/base"],
       },
     } as any);
-    const state = {
+    const state: PluginStoreSnapshot = {
       plugins: [dependent, base],
       enabled: ["@example/base", "@example/dependent"],
       disabled: [],
+      globalApps: {},
       apps: {},
     };
 
     expect(getEnabledPluginsForApp(state, baseApp(), "manifest-editor").map((item) => item.metadata.id)).toEqual([
       "@example/base",
+      "@example/dependent",
     ]);
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("dependencies are missing"));
-    warn.mockRestore();
   });
 });
 
@@ -189,6 +202,64 @@ describe("plugin store", () => {
       disabled: ["@example/default"],
     });
   });
+
+  test("uses workspace config over global config over provider defaults", () => {
+    const enabledByDefault = plugin("@example/default", {
+      default: {
+        id: "@example/default",
+        label: "Default",
+        defaultEnabled: true,
+      },
+    } as any);
+    const providerEnabled = plugin("@example/provider");
+    const globalEnabled = plugin("@example/global");
+    const workspaceEnabled = plugin("@example/workspace");
+    const state: PluginStoreSnapshot = {
+      plugins: [enabledByDefault, providerEnabled, globalEnabled, workspaceEnabled],
+      enabled: ["@example/provider"],
+      disabled: ["@example/global"],
+      globalApps: {
+        "manifest-editor": {
+          enabled: ["@example/global"],
+          disabled: ["@example/provider"],
+        },
+      },
+      apps: {
+        "manifest-editor": {
+          enabled: ["@example/provider", "@example/workspace"],
+          disabled: ["@example/default"],
+        },
+      },
+    };
+
+    expect(isPluginSelected(enabledByDefault, state, "manifest-editor")).toBe(false);
+    expect(isPluginSelected(providerEnabled, state, "manifest-editor")).toBe(true);
+    expect(isPluginSelected(globalEnabled, state, "manifest-editor")).toBe(true);
+    expect(isPluginSelected(workspaceEnabled, state, "manifest-editor")).toBe(true);
+  });
+
+  test("can enable compatible dependencies into the same scoped config", () => {
+    const base = plugin("@example/base");
+    const dependent = plugin("@example/dependent", {
+      default: {
+        id: "@example/dependent",
+        label: "Dependent",
+        dependencies: ["@example/base"],
+      },
+    } as any);
+    const state: PluginStoreSnapshot = {
+      plugins: [dependent, base],
+      enabled: [],
+      disabled: [],
+      globalApps: {},
+      apps: {},
+    };
+
+    const next = enablePluginAndDependenciesInConfig({}, state, dependent, baseApp(), "manifest-editor");
+
+    expect(next.blocked).toEqual([]);
+    expect(next.config.enabled).toEqual(["@example/base", "@example/dependent"]);
+  });
 });
 
 describe("config merge", () => {
@@ -208,7 +279,10 @@ describe("config merge", () => {
             "manifest-editor": {
               enabled: ["@example/a"],
               settings: {
-                mode: "base",
+                legacyMode: "base",
+                "@example/a": {
+                  mode: "base",
+                },
               },
             },
           },
@@ -228,7 +302,12 @@ describe("config merge", () => {
             "manifest-editor": {
               disabled: ["@example/b"],
               settings: {
-                level: "workspace",
+                "@example/a": {
+                  level: "workspace",
+                },
+                "@example/b": {
+                  enabled: true,
+                },
               },
             },
           },
@@ -248,9 +327,88 @@ describe("config merge", () => {
       enabled: ["@example/a"],
       disabled: ["@example/b"],
       settings: {
-        mode: "base",
-        level: "workspace",
+        legacyMode: "base",
+        "@example/a": {
+          level: "workspace",
+        },
+        "@example/b": {
+          enabled: true,
+        },
       },
+    });
+  });
+
+  test("reads, writes, and resets plugin-keyed settings while preserving legacy keys", () => {
+    const config = {
+      settings: {
+        legacyMode: "keep",
+        "@example/a": {
+          mode: "workspace",
+        },
+      },
+    };
+    const withSettings = setPluginSettingsInConfig(config, "@example/a", { mode: "updated" });
+    const reset = resetPluginSettingsInConfig(withSettings, "@example/a");
+
+    expect(getPluginSettingsFromConfig(withSettings, "@example/a")).toEqual({ mode: "updated" });
+    expect(reset.settings).toEqual({ legacyMode: "keep" });
+  });
+
+  test("merges plugin defaults, global settings, and workspace settings", () => {
+    const configurable = plugin("@example/configurable", {
+      settings: {
+        defaults: {
+          mode: "default",
+          retries: 1,
+        },
+      },
+    });
+    const state: PluginStoreSnapshot = {
+      plugins: [configurable],
+      enabled: [],
+      disabled: [],
+      globalApps: {
+        "manifest-editor": {
+          settings: {
+            "@example/configurable": {
+              mode: "global",
+            },
+          },
+        },
+      },
+      apps: {
+        "manifest-editor": {
+          settings: {
+            "@example/configurable": {
+              retries: 3,
+            },
+          },
+        },
+      },
+    };
+
+    expect(getEffectivePluginSettings(state, "@example/configurable", "manifest-editor")).toEqual({
+      mode: "global",
+      retries: 3,
+    });
+    expect(createPluginRuntimeApi(state, "manifest-editor").getSettings("@example/configurable")).toEqual({
+      mode: "global",
+      retries: 3,
+    });
+  });
+
+  test("resets workspace selection override without changing global selection", () => {
+    const reset = resetPluginInConfig(
+      {
+        enabled: ["@example/a"],
+        disabled: ["@example/b"],
+      },
+      "@example/a",
+    );
+
+    expect(reset).toEqual({
+      enabled: [],
+      disabled: ["@example/b"],
     });
   });
 });

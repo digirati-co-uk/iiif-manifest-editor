@@ -37,6 +37,7 @@ const systemContext: BackgroundActionSystemContext = {
   vault: testVault,
   tags: {} as any,
   canvasProgress: createManifestEditorCanvasProgressApi(testVault),
+  plugins: { getSettings: <T extends Record<string, unknown>>() => ({}) as T },
   config: {} as any,
   layoutState: {} as any,
   layoutActions: {} as any,

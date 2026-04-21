@@ -12,7 +12,6 @@ import {
   type LayoutPanel,
 } from "@manifest-editor/shell";
 import { canvasAnnotations } from "./annotations/CanvasAnnotations";
-import { demoBackgroundActions } from "./background-actions";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
@@ -62,7 +61,7 @@ export const annotations: AnnotationPanel[] = [canvasAnnotations];
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
-export const backgroundActions: BackgroundActionDefinition[] = demoBackgroundActions;
+export const backgroundActions: BackgroundActionDefinition[] = [];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 
@@ -74,8 +73,6 @@ export const creators = allCreators;
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
 
-export { manifestQualityChecksPlugin };
-export { ocrClassificationPlugin };
-export { ocrDoclingPlugin };
+export { manifestQualityChecksPlugin, ocrClassificationPlugin, ocrDoclingPlugin };
 
 export const plugins = [manifestQualityChecksPlugin, ocrClassificationPlugin, ocrDoclingPlugin];

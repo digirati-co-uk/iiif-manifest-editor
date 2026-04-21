@@ -47,7 +47,7 @@ import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { VaultProvider } from "react-iiif-vault";
-import { useBrowserProject } from "./browser-state";
+import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
 const previews: PreviewConfiguration[] = [
@@ -159,6 +159,11 @@ export default function BrowserEditor({
     projectConfig,
     saveProjectConfig,
   } = useBrowserProject(id);
+  const {
+    globalPluginConfig,
+    isGlobalPluginConfigLoading,
+    saveGlobalPluginConfig,
+  } = useBrowserGlobalPluginConfig();
   const customConfig = browserConfig || {};
   const [allowAnyway, setAllowAnyway] = useState(false);
   const thumbnailHelper = useMemo(() => {
@@ -258,7 +263,7 @@ export default function BrowserEditor({
     </>
   );
 
-  if (isProjectLoading) return <div>Loading...</div>;
+  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>Loading...</div>;
   if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
 
   // @todo test without this option and see if its needed
@@ -297,7 +302,11 @@ export default function BrowserEditor({
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <PluginProvider plugins={plugins}>
+        <PluginProvider
+          plugins={plugins}
+          globalPluginConfig={globalPluginConfig}
+          saveGlobalPluginConfig={saveGlobalPluginConfig}
+        >
           <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
             <VaultProvider vault={vault}>
               <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>

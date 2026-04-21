@@ -17,6 +17,12 @@ export type OcrDoclingRunOptions = {
   tagKey?: string;
 };
 
+export type OcrDoclingPluginSettings = {
+  [key: string]: unknown;
+  prompt?: string;
+  imageSize?: OcrDoclingImageSize;
+};
+
 export type OcrDoclingConfigRequest = {
   actionId: string;
   instanceKey: string;
@@ -232,6 +238,20 @@ export function getDefaultRunOptions(): OcrDoclingRunOptions {
     prompt: DOCLING_DEFAULT_PROMPT,
     imageSize: 1024,
     scope: "all",
+  };
+}
+
+export function applyOcrDoclingPluginSettings(
+  defaults: OcrDoclingRunOptions,
+  settings: Partial<OcrDoclingPluginSettings> = {},
+): OcrDoclingRunOptions {
+  return {
+    ...defaults,
+    prompt: typeof settings.prompt === "string" && settings.prompt.trim() ? settings.prompt : defaults.prompt,
+    imageSize:
+      typeof settings.imageSize === "number" && OCR_DOCLING_IMAGE_SIZES.includes(settings.imageSize)
+        ? settings.imageSize
+        : defaults.imageSize,
   };
 }
 
