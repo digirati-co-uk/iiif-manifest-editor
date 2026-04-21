@@ -158,13 +158,79 @@ describe("external annotation page planning", () => {
     const plan = createExternalAnnotationPageInlinePlan({
       loadedPages: references.map((reference) => ({
         reference,
-        json: annotationPage(reference.pageId, []),
+        json: annotationPage(reference.pageId, [
+          annotation(
+            "https://source/annotation/shared",
+            "https://old.example/canvas",
+          ),
+        ]),
       })),
     });
 
     expect(plan.pages).toHaveLength(1);
     expect(plan.skippedPages).toHaveLength(1);
     expect(plan.skippedPages[0]?.reason).toContain("referenced more than once");
+  });
+
+  test("filters annotations by motivation and skips empty pages", () => {
+    const vault = createVault([
+      createCanvas("https://example.org/canvas/1", "Canvas 1"),
+      createCanvas("https://example.org/canvas/2", "Canvas 2", {
+        annotations: [
+          {
+            id: "https://example.org/canvas/2/external-annotations",
+            type: "AnnotationPage",
+          },
+        ],
+      }),
+    ]);
+    const references = findExternalAnnotationPageReferences(
+      vault,
+      getManifestCanvases(vault),
+    );
+    const plan = createExternalAnnotationPageInlinePlan({
+      motivationFilter: ["commenting"],
+      loadedPages: [
+        {
+          reference: references[0]!,
+          json: annotationPage(references[0]!.pageId, [
+            annotation(
+              "https://source/annotation/comment",
+              "https://old.example/canvas",
+              "Comment",
+            ),
+            {
+              ...annotation(
+                "https://source/annotation/tag",
+                "https://old.example/canvas",
+                "Tag",
+              ),
+              motivation: "tagging",
+            },
+          ]),
+        },
+        {
+          reference: references[1]!,
+          json: annotationPage(references[1]!.pageId, []),
+        },
+      ],
+    });
+
+    expect(plan.pages).toHaveLength(1);
+    expect(plan.pages[0]?.annotations.map((item) => item.id)).toEqual([
+      "https://source/annotation/comment",
+    ]);
+    expect(plan.skippedPages).toEqual([
+      expect.objectContaining({
+        pageId: "https://example.org/canvas/2/external-annotations",
+        reason: "Fetched annotation page is empty.",
+      }),
+    ]);
+    expect(plan.warnings).toEqual([
+      expect.stringContaining(
+        "skipped 1 annotation outside the selected motivation filter",
+      ),
+    ]);
   });
 });
 
@@ -234,6 +300,58 @@ describe("external annotation page writing", () => {
       "https://example.org/canvas/1#xywh=1,2,3,4",
     );
     expect(writtenBody.value).toBe("External note");
+  });
+
+  test("upgrades Presentation 2 sc:AnnotationList resources before inlining", () => {
+    const vault = createVault();
+    const references = findExternalAnnotationPageReferences(
+      vault,
+      getManifestCanvases(vault),
+    );
+    const plan = createExternalAnnotationPageInlinePlan({
+      loadedPages: [
+        {
+          reference: references[0]!,
+          json: {
+            "@context": "http://iiif.io/api/presentation/2/context.json",
+            "@id": references[0]!.pageId,
+            "@type": "sc:AnnotationList",
+            resources: [
+              {
+                "@id": "https://source/annotation/p2",
+                "@type": "oa:Annotation",
+                motivation: "oa:commenting",
+                resource: {
+                  "@type": "cnt:ContentAsText",
+                  chars: "Presentation 2 note",
+                  format: "text/plain",
+                },
+                on: "https://old.example/canvas#xywh=4,5,6,7",
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    const result = writeExternalAnnotationPageInlinePlan(vault, plan);
+    const page = vault.get({
+      id: "https://example.org/canvas/1/external-annotations",
+      type: "AnnotationPage",
+    }) as any;
+    const writtenAnnotation = vault.get(page.items[0]) as any;
+    const writtenBody = vault.get(writtenAnnotation.body[0]) as any;
+
+    expect(plan.pages).toHaveLength(1);
+    expect(plan.warnings[0]).toContain(
+      "upgraded Presentation 2 sc:AnnotationList",
+    );
+    expect(result.annotationsWritten).toBe(1);
+    expect(writtenAnnotation.target).toBe(
+      "https://example.org/canvas/1#xywh=4,5,6,7",
+    );
+    expect(writtenBody.type).toBe("TextualBody");
+    expect(writtenBody.value).toBe("Presentation 2 note");
   });
 
   test("preserves Choice annotation bodies and normalises nested body items", () => {

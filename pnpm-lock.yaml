@@ -1337,6 +1337,9 @@ importers:
       '@iiif/helpers':
         specifier: 1.5.7
         version: 1.5.7(@iiif/parser@2.2.8)
+      '@iiif/parser':
+        specifier: 2.2.8
+        version: 2.2.8
       '@manifest-editor/components':
         specifier: workspace:*
         version: link:../../packages/components

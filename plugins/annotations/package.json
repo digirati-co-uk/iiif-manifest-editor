@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/shell": "workspace:*",

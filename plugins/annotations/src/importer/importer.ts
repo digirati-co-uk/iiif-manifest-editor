@@ -4,6 +4,7 @@ import {
   importEntities,
   modifyEntityField,
 } from "@iiif/helpers/vault/actions";
+import { convertPresentation2 } from "@iiif/parser/presentation-2";
 
 const IS_EXTERNAL = "iiif-parser:isExternal";
 const HAS_PART = "iiif-parser:hasPart";
@@ -44,6 +45,7 @@ export type InlineAnnotationPageImport = {
   page: any;
   annotations: any[];
   skippedAnnotations: number;
+  skippedByMotivation: number;
 };
 
 export type ExternalAnnotationPageInlinePlan = {
@@ -112,11 +114,13 @@ export function findExternalAnnotationPageReferences(
 
 export function createExternalAnnotationPageInlinePlan(options: {
   loadedPages: LoadedExternalAnnotationPage[];
+  motivationFilter?: string[];
 }): ExternalAnnotationPageInlinePlan {
   const pages: InlineAnnotationPageImport[] = [];
   const skippedPages: SkippedExternalAnnotationPage[] = [];
   const warnings: string[] = [];
   const seenPageIds = new Set<string>();
+  const motivationFilter = createMotivationFilter(options.motivationFilter);
   let totalAnnotations = 0;
 
   for (const loaded of options.loadedPages) {
@@ -138,24 +142,16 @@ export function createExternalAnnotationPageInlinePlan(options: {
       continue;
     }
 
-    if (!loaded.json || typeof loaded.json !== "object") {
-      skippedPages.push(
-        toSkippedPage(reference, "Fetched resource is not a JSON object."),
-      );
+    const pageResult = normaliseFetchedAnnotationPage(loaded.json, reference);
+    if (pageResult.warning) {
+      warnings.push(pageResult.warning);
+    }
+    if (!pageResult.page) {
+      skippedPages.push(toSkippedPage(reference, pageResult.error));
       continue;
     }
 
-    const page = loaded.json as any;
-    if (page.type !== "AnnotationPage") {
-      skippedPages.push(
-        toSkippedPage(
-          reference,
-          `Fetched resource is ${page.type || "missing a type"}, not AnnotationPage.`,
-        ),
-      );
-      continue;
-    }
-
+    const page = pageResult.page;
     if (!Array.isArray(page.items)) {
       skippedPages.push(
         toSkippedPage(
@@ -166,14 +162,38 @@ export function createExternalAnnotationPageInlinePlan(options: {
       continue;
     }
 
-    const annotations = page.items.filter(
+    const annotationItems = page.items.filter(
       (item: any) => item?.type === "Annotation",
     );
-    const skippedAnnotations = page.items.length - annotations.length;
+    const annotations = annotationItems.filter((annotation: any) =>
+      annotationMatchesMotivationFilter(annotation, motivationFilter),
+    );
+    const skippedAnnotations = page.items.length - annotationItems.length;
+    const skippedByMotivation = annotationItems.length - annotations.length;
+
     if (skippedAnnotations) {
       warnings.push(
         `${reference.pageId}: skipped ${skippedAnnotations} non-Annotation item${skippedAnnotations === 1 ? "" : "s"}.`,
       );
+    }
+    if (skippedByMotivation) {
+      warnings.push(
+        `${reference.pageId}: skipped ${skippedByMotivation} annotation${skippedByMotivation === 1 ? "" : "s"} outside the selected motivation filter.`,
+      );
+    }
+
+    if (!annotations.length) {
+      skippedPages.push(
+        toSkippedPage(
+          reference,
+          getEmptyPageReason(
+            page.items.length,
+            annotationItems.length,
+            motivationFilter,
+          ),
+        ),
+      );
+      continue;
     }
 
     totalAnnotations += annotations.length;
@@ -182,6 +202,7 @@ export function createExternalAnnotationPageInlinePlan(options: {
       page,
       annotations,
       skippedAnnotations,
+      skippedByMotivation,
     });
   }
 
@@ -354,6 +375,111 @@ function toSkippedPage(
   };
 }
 
+function normaliseFetchedAnnotationPage(
+  json: unknown,
+  reference: ExternalAnnotationPageReference,
+): { page?: any; error: string; warning?: string } {
+  if (!json || typeof json !== "object") {
+    return { error: "Fetched resource is not a JSON object." };
+  }
+
+  const resource = json as any;
+  if (resource.type === "AnnotationPage") {
+    return { page: resource, error: "" };
+  }
+
+  if (isPresentation2AnnotationList(resource)) {
+    try {
+      const upgraded = convertPresentation2(resource) as any;
+      if (upgraded?.type === "AnnotationPage") {
+        return {
+          page: upgraded,
+          error: "",
+          warning: `${reference.pageId}: upgraded Presentation 2 sc:AnnotationList to AnnotationPage.`,
+        };
+      }
+
+      return {
+        error: `IIIF upgrade produced ${upgraded?.type || "missing a type"}, not AnnotationPage.`,
+      };
+    } catch (error) {
+      return {
+        error: `Unable to upgrade Presentation 2 sc:AnnotationList: ${error instanceof Error ? error.message : String(error)}`,
+      };
+    }
+  }
+
+  return {
+    error: `Fetched resource is ${resource.type || resource["@type"] || "missing a type"}, not AnnotationPage.`,
+  };
+}
+
+function getEmptyPageReason(
+  itemCount: number,
+  annotationCount: number,
+  motivationFilter: Set<string> | null,
+) {
+  if (!itemCount) {
+    return "Fetched annotation page is empty.";
+  }
+
+  if (!annotationCount) {
+    return "Fetched annotation page does not contain Annotation items.";
+  }
+
+  if (motivationFilter?.size) {
+    return `No annotations matched the selected motivation filter (${Array.from(motivationFilter).join(", ")}).`;
+  }
+
+  return "Fetched annotation page does not contain importable annotations.";
+}
+
+function createMotivationFilter(values: string[] | undefined) {
+  const normalised = dedupeStrings(
+    (values || []).map(normaliseMotivation).filter(Boolean),
+  );
+  return normalised.length ? new Set(normalised) : null;
+}
+
+function annotationMatchesMotivationFilter(
+  annotation: any,
+  motivationFilter: Set<string> | null,
+) {
+  if (!motivationFilter?.size) {
+    return true;
+  }
+
+  return getAnnotationMotivations(annotation).some((motivation) =>
+    motivationFilter.has(motivation),
+  );
+}
+
+function getAnnotationMotivations(annotation: any) {
+  return dedupeStrings(
+    toArray(annotation?.motivation).map(normaliseMotivation).filter(Boolean),
+  );
+}
+
+function normaliseMotivation(value: unknown) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const trimmed = value.trim().toLowerCase();
+  const compact = trimmed.includes(":")
+    ? trimmed.slice(trimmed.lastIndexOf(":") + 1)
+    : trimmed;
+  const slashIndex = compact.lastIndexOf("/");
+  const hashIndex = compact.lastIndexOf("#");
+  const separator = Math.max(slashIndex, hashIndex);
+  return separator >= 0 ? compact.slice(separator + 1) : compact;
+}
+
+function isPresentation2AnnotationList(resource: any) {
+  const type = resource?.["@type"] || resource?.type;
+  return type === "sc:AnnotationList" || type === "AnnotationList";
+}
+
 function normaliseAnnotationBodies(
   body: unknown,
   idFactory: ReturnType<typeof createIdFactory>,
@@ -432,10 +558,11 @@ function normaliseBodyItem(
   }
 
   if (item && typeof item === "object") {
+    const resource = normaliseImportedBodyResource(item);
     entities[bodyId] = {
-      ...cloneJson(item as any),
+      ...resource,
       id: bodyId,
-      type: (item as any).type || "ContentResource",
+      type: resource.type || "ContentResource",
     };
     return { id: bodyId, type: "ContentResource" };
   }
@@ -482,6 +609,24 @@ function normaliseChoiceBody(
   };
 
   return { id: choiceId, type: "ContentResource" };
+}
+
+function normaliseImportedBodyResource(item: unknown) {
+  const resource = cloneJson(item as any);
+
+  if (
+    typeof resource.chars === "string" &&
+    typeof resource.value === "undefined"
+  ) {
+    resource.value = resource.chars;
+    delete resource.chars;
+
+    if (resource.type === "Text") {
+      resource.type = "TextualBody";
+    }
+  }
+
+  return resource;
 }
 
 function isChoiceBody(item: unknown) {
@@ -578,6 +723,10 @@ function getLabelTexts(label: unknown): string[] {
 
 function getLabelText(label: unknown) {
   return getLabelTexts(label)[0] || "";
+}
+
+function dedupeStrings(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 function toArray<T>(value: T | T[] | null | undefined): T[] {
