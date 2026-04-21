@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, SVGProps } from "react";
 import { cn } from "./utils";
 
-export type BackgroundActionMenuStatus = "idle" | "preparing" | "running" | "complete" | "error";
+export type BackgroundActionMenuStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
 
 const statusColours: Record<BackgroundActionMenuStatus, string> = {
   idle: "bg-gray-300",
@@ -9,6 +9,7 @@ const statusColours: Record<BackgroundActionMenuStatus, string> = {
   running: "bg-orange-400",
   complete: "bg-green-600",
   error: "bg-red-600",
+  cancelled: "bg-gray-400",
 };
 
 export function BackgroundActionMenuRoot({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
@@ -189,7 +190,7 @@ export function BackgroundActionMenuActionButton({
       type="button"
       {...props}
     >
-      {running ? <BackgroundActionMenuPauseIcon aria-hidden /> : <BackgroundActionMenuPlayIcon aria-hidden />}
+      {running ? <BackgroundActionMenuStopIcon aria-hidden /> : <BackgroundActionMenuPlayIcon aria-hidden />}
     </button>
   );
 }
@@ -202,7 +203,7 @@ export function BackgroundActionMenuCogIcon(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 20 20"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
     >
       <g id="Header-design" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Artboard" transform="translate(-1125, -19)">
@@ -229,10 +230,10 @@ function BackgroundActionMenuPlayIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function BackgroundActionMenuPauseIcon(props: SVGProps<SVGSVGElement>) {
+function BackgroundActionMenuStopIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...props} viewBox="4 4 16 16" xmlns="http://www.w3.org/2000/svg" height="1em" width="1em">
-      <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+      <path fill="currentColor" d="M7 7h10v10H7z" />
     </svg>
   );
 }

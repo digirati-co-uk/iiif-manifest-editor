@@ -50,6 +50,7 @@
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/ocr-classification": "workspace:*",
+    "@manifest-editor/ocr-docling": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "react": "catalog:",
     "react-aria": "^3.38.1",

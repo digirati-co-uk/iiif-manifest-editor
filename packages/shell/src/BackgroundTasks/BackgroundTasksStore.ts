@@ -16,11 +16,18 @@ import {
 export interface BackgroundActionsStore {
   definitions: BackgroundActionDefinition[];
   instances: Record<string, BackgroundActionInstance>;
+  controllers: Record<string, AbortController>;
   setDefinitions(definitions: BackgroundActionDefinition[]): void;
   registerAction(definition: BackgroundActionDefinition): () => void;
   unregisterAction(id: string): void;
   resetAction(instanceKey: string): void;
-  startAction(instanceKey: string, definition: BackgroundActionDefinition, target: BackgroundActionTarget): void;
+  startAction(
+    instanceKey: string,
+    definition: BackgroundActionDefinition,
+    target: BackgroundActionTarget,
+    controller?: AbortController,
+  ): void;
+  cancelAction(instanceKey: string): void;
   setActionLabel(instanceKey: string, label: string): void;
   setActionStatus(instanceKey: string, status: BackgroundActionStatus, statusText?: string): void;
   setActionError(instanceKey: string, error: unknown, statusText?: string): void;
@@ -179,10 +186,19 @@ function updateInstance(
   };
 }
 
+function isActiveStatus(status: BackgroundActionStatus) {
+  return status === "preparing" || status === "running";
+}
+
+function isCompletedStatus(status: BackgroundActionStatus) {
+  return status === "complete" || status === "error" || status === "cancelled";
+}
+
 export function createBackgroundActionsStore(initialDefinitions: BackgroundActionDefinition[] = []) {
   return createStore<BackgroundActionsStore>((set, get) => ({
     definitions: mergeBackgroundActionDefinitions([], initialDefinitions),
     instances: {},
+    controllers: {},
 
     setDefinitions(definitions) {
       set((prev) => {
@@ -199,6 +215,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         return {
           definitions: nextDefinitions,
           instances: nextInstances,
+          controllers: Object.fromEntries(
+            Object.entries(prev.controllers).filter(([key]) => nextInstances[key]?.status && isActiveStatus(nextInstances[key].status)),
+          ),
         };
       });
     },
@@ -220,22 +239,34 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
         }
 
+        const controllers = { ...prev.controllers };
+        for (const [key, instance] of Object.entries(prev.instances)) {
+          if (instance.actionId === id) {
+            controllers[key]?.abort();
+            delete controllers[key];
+          }
+        }
+
         return {
           definitions: prev.definitions.filter((definition) => definition.id !== id),
           instances,
+          controllers,
         };
       });
     },
 
     resetAction(instanceKey) {
       set((prev) => {
+        prev.controllers[instanceKey]?.abort();
         const instances = { ...prev.instances };
+        const controllers = { ...prev.controllers };
         delete instances[instanceKey];
-        return { instances };
+        delete controllers[instanceKey];
+        return { instances, controllers };
       });
     },
 
-    startAction(instanceKey, definition, target) {
+    startAction(instanceKey, definition, target, controller) {
       set((prev) => ({
         instances: {
           ...prev.instances,
@@ -253,7 +284,28 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
             completedAt: undefined,
           },
         },
+        controllers: controller
+          ? {
+              ...prev.controllers,
+              [instanceKey]: controller,
+            }
+          : prev.controllers,
       }));
+    },
+
+    cancelAction(instanceKey) {
+      const controller = get().controllers[instanceKey];
+      if (!controller || controller.signal.aborted) {
+        return;
+      }
+
+      set((prev) => ({
+        instances: updateInstance(prev.instances, instanceKey, {
+          status: "running",
+          statusText: "Cancelling",
+        }),
+      }));
+      controller.abort();
     },
 
     setActionLabel(instanceKey, label) {
@@ -263,9 +315,12 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
     },
 
     setActionStatus(instanceKey, status, statusText) {
-      const completedAt = status === "complete" || status === "error" ? Date.now() : undefined;
+      const completedAt = isCompletedStatus(status) ? Date.now() : undefined;
       set((prev) => ({
         instances: updateInstance(prev.instances, instanceKey, { status, statusText, completedAt }),
+        controllers: isActiveStatus(status)
+          ? prev.controllers
+          : Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
       }));
     },
 
@@ -277,6 +332,7 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           error: normaliseBackgroundActionError(error),
           completedAt: Date.now(),
         }),
+        controllers: Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
       }));
     },
 
@@ -329,38 +385,77 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
     return existing;
   }
 
-  const signal = options.signal || new AbortController().signal;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const abortFromExternalSignal = () => controller.abort();
 
-  store.getState().startAction(instanceKey, definition, target);
+  if (options.signal) {
+    if (options.signal.aborted) {
+      controller.abort();
+    } else {
+      options.signal.addEventListener("abort", abortFromExternalSignal, { once: true });
+    }
+  }
+
+  store.getState().startAction(instanceKey, definition, target, controller);
 
   try {
     if (definition.prepare) {
       const prepareResult = await definition.prepare(createRunContext(options, signal));
+      if (signal.aborted) {
+        store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
+        return store.getState().instances[instanceKey];
+      }
+
       if (prepareResult === false) {
         store.getState().setActionStatus(instanceKey, "idle");
         return store.getState().instances[instanceKey];
       }
     }
 
+    if (signal.aborted) {
+      store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
+      return store.getState().instances[instanceKey];
+    }
+
     store.getState().setActionStatus(instanceKey, "running", "Running");
     const result = await definition.run(createRunContext(options, signal));
 
-    if (typeof result !== "undefined") {
+    if (signal.aborted) {
+      store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
+      return store.getState().instances[instanceKey];
+    }
+
+    let latest = store.getState().instances[instanceKey];
+    if (typeof result !== "undefined" && latest && !isCompletedStatus(latest.status)) {
       store.getState().setResult(instanceKey, result);
     }
 
-    const latest = store.getState().instances[instanceKey];
-    if (latest?.status !== "error") {
+    latest = store.getState().instances[instanceKey];
+    if (latest && isActiveStatus(latest.status)) {
       store.getState().setActionStatus(instanceKey, "complete", "Complete");
       if (typeof result !== "undefined" || latest?.resultsAvailable) {
         store.getState().setResultsAvailable(instanceKey, true);
       }
     }
   } catch (error) {
-    store.getState().setActionError(instanceKey, error, "Error");
+    if (signal.aborted || isAbortLikeError(error)) {
+      store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
+    } else {
+      store.getState().setActionError(instanceKey, error, "Error");
+    }
+  } finally {
+    options.signal?.removeEventListener("abort", abortFromExternalSignal);
   }
 
   return store.getState().instances[instanceKey];
+}
+
+function isAbortLikeError(error: unknown) {
+  return (
+    error instanceof Error &&
+    (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"))
+  );
 }
 
 export const BackgroundActionsReactContext = createContext<StoreApi<BackgroundActionsStore> | null>(null);

@@ -196,6 +196,10 @@ function getActionStatusLabel(instance: BackgroundActionInstance | undefined) {
     return "Results ready";
   }
 
+  if (instance.status === "cancelled") {
+    return "Cancelled";
+  }
+
   return instance.statusText || instance.status;
 }
 
@@ -231,10 +235,16 @@ export function BackgroundActionsMenu() {
               const currentItemProps = itemProps[itemIndex++] || {};
               const { onKeyDown, ...menuItemProps } = currentItemProps as any;
               const statusLabel = getActionStatusLabel(action.instance);
-              const disabled = isBusy(action.instance);
+              const busy = isBusy(action.instance);
               const runAction = () => {
-                if (!disabled) {
+                if (!busy) {
                   runBackgroundAction({ store, context: action.context });
+                  setIsOpen(true);
+                }
+              };
+              const cancelAction = () => {
+                if (busy) {
+                  store.getState().cancelAction(action.instanceKey);
                   setIsOpen(true);
                 }
               };
@@ -242,20 +252,23 @@ export function BackgroundActionsMenu() {
               return (
                 <BackgroundActionMenuItem key={action.instanceKey} status={action.instance?.status || "idle"}>
                   <BackgroundActionMenuActionButton
-                    running={disabled}
-                    disabled={disabled}
-                    aria-label={disabled ? `${action.definition.label} is running` : `Run ${action.definition.label}`}
+                    running={busy}
+                    aria-label={busy ? `Cancel ${action.definition.label}` : `Run ${action.definition.label}`}
                     onMouseDown={(event) => {
                       event.preventDefault();
                     }}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
-                      runAction();
+                      if (busy) {
+                        cancelAction();
+                      } else {
+                        runAction();
+                      }
                     }}
                   />
                   <BackgroundActionMenuTrigger
-                    disabled={disabled}
+                    disabled={busy}
                     {...menuItemProps}
                     onMouseDown={(event) => {
                       event.preventDefault();

@@ -6,7 +6,7 @@ import type { Config } from "../ConfigContext/ConfigContext";
 import type { LayoutActions, LayoutState } from "../Layout/Layout.types";
 import type { ManifestEditorTagsApi } from "../Tags";
 
-export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error";
+export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
 
 export interface BackgroundActionTarget extends Reference {
   label: string;

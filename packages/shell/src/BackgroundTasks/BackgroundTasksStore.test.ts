@@ -147,6 +147,101 @@ describe("BackgroundTasksStore", () => {
     );
   });
 
+  test("cancels a running action by aborting its signal", async () => {
+    let capturedSignal: AbortSignal | undefined;
+    const run = vi.fn(
+      (ctx) =>
+        new Promise((_resolve, reject) => {
+          capturedSignal = ctx.signal;
+          ctx.signal.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+        }),
+    );
+    const definition = action({ run });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    const promise = runBackgroundAction({ store, context: context(definition) });
+
+    expect(store.getState().instances[instanceKey]?.status).toBe("running");
+
+    store.getState().cancelAction(instanceKey);
+    await promise;
+
+    expect(capturedSignal?.aborted).toBe(true);
+    expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
+    expect(store.getState().instances[instanceKey]?.statusText).toBe("Cancelled");
+  });
+
+  test("does not mark cancelled actions complete when a run resolves after abort", async () => {
+    let finish: (value: unknown) => void = () => {};
+    const definition = action({
+      run: () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    const promise = runBackgroundAction({ store, context: context(definition) });
+    store.getState().cancelAction(instanceKey);
+    finish({ ok: true });
+    await promise;
+
+    const instance = store.getState().instances[instanceKey];
+    expect(instance?.status).toBe("cancelled");
+    expect(instance?.result).toBeUndefined();
+    expect(instance?.resultsAvailable).toBe(false);
+  });
+
+  test("cancels an action while preparing and does not run it", async () => {
+    let capturedSignal: AbortSignal | undefined;
+    let finishPrepare: (value: boolean) => void = () => {};
+    const run = vi.fn();
+    const definition = action({
+      prepare: vi.fn(
+        (ctx) =>
+          new Promise<boolean>((resolve) => {
+            capturedSignal = ctx.signal;
+            finishPrepare = resolve;
+          }),
+      ),
+      run,
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    const promise = runBackgroundAction({ store, context: context(definition) });
+
+    expect(store.getState().instances[instanceKey]?.status).toBe("preparing");
+
+    store.getState().cancelAction(instanceKey);
+    finishPrepare(true);
+    await promise;
+
+    expect(capturedSignal?.aborted).toBe(true);
+    expect(run).not.toHaveBeenCalled();
+    expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
+  });
+
+  test("does not mark actions complete after they set a final cancelled status", async () => {
+    const definition = action({
+      run: (ctx) => {
+        ctx.setActionStatus("cancelled", "Cancelled");
+        return { ok: true };
+      },
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    await runBackgroundAction({ store, context: context(definition) });
+
+    const instance = store.getState().instances[instanceKey];
+    expect(instance?.status).toBe("cancelled");
+    expect(instance?.result).toBeUndefined();
+    expect(instance?.resultsAvailable).toBe(false);
+  });
+
   test("records returned results and marks them available", async () => {
     const definition = action({ run: () => ({ ok: true }) });
     const store = createBackgroundActionsStore([definition]);
