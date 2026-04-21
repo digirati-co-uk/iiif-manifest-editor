@@ -11,7 +11,6 @@ import {
   BackgroundActionMenuProgressBar,
   BackgroundActionMenuRoot,
   BackgroundActionMenuSection,
-  BackgroundActionMenuStatusDot,
   BackgroundActionMenuText,
   BackgroundActionMenuTrigger,
   Modal,
@@ -598,14 +597,14 @@ export function BackgroundActionsMenu() {
 
               return (
                 <BackgroundActionMenuItem key={action.instanceKey} status={action.instance?.status || "idle"}>
-                  <BackgroundActionMenuActionButton
+                  <BackgroundActionMenuTrigger
                     running={busy}
+                    {...menuItemProps}
                     aria-label={busy ? `Cancel ${action.definition.label}` : `Run ${action.definition.label}`}
                     onMouseDown={(event) => {
                       event.preventDefault();
                     }}
                     onClick={(event) => {
-                      event.preventDefault();
                       event.stopPropagation();
                       if (busy) {
                         cancelAction();
@@ -613,30 +612,22 @@ export function BackgroundActionsMenu() {
                         runAction();
                       }
                     }}
-                  />
-                  <BackgroundActionMenuTrigger
-                    disabled={busy}
-                    {...menuItemProps}
-                    onMouseDown={(event) => {
-                      event.preventDefault();
-                    }}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      runAction();
-                    }}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
                         event.stopPropagation();
-                        runAction();
+                        if (busy) {
+                          cancelAction();
+                        } else {
+                          runAction();
+                        }
                       } else {
                         onKeyDown?.(event);
                       }
                     }}
                   >
-                    <BackgroundActionMenuStatusDot status={action.instance?.status || "idle"} />
                     <BackgroundActionMenuText>
-                      <BackgroundActionMenuLabel>
+                      <BackgroundActionMenuLabel running={busy}>
                         {action.instance?.label || action.definition.label}
                       </BackgroundActionMenuLabel>
                       {statusLabel ? (
@@ -645,7 +636,7 @@ export function BackgroundActionsMenu() {
                         </BackgroundActionMenuMeta>
                       ) : null}
                       {action.definition.summary && !statusLabel ? (
-                        <BackgroundActionMenuMeta className="text-slate-400">
+                        <BackgroundActionMenuMeta>
                           {action.definition.summary}
                         </BackgroundActionMenuMeta>
                       ) : null}
@@ -657,6 +648,16 @@ export function BackgroundActionsMenu() {
                       ) : null}
                     </BackgroundActionMenuText>
                   </BackgroundActionMenuTrigger>
+                  {action.instance?.resultsAvailable && action.definition.onResults ? (
+                    <BackgroundActionMenuInlineAction
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        action.definition.onResults?.(action.context);
+                      }}
+                    >
+                      Results
+                    </BackgroundActionMenuInlineAction>
+                  ) : null}
                   {action.instance ? (
                     <BackgroundActionMenuInfoButton
                       aria-label={`View ${action.definition.label} details`}
@@ -667,16 +668,6 @@ export function BackgroundActionsMenu() {
                         setIsOpen(true);
                       }}
                     />
-                  ) : null}
-                  {action.instance?.resultsAvailable && action.definition.onResults ? (
-                    <BackgroundActionMenuInlineAction
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        action.definition.onResults?.(action.context);
-                      }}
-                    >
-                      Results
-                    </BackgroundActionMenuInlineAction>
                   ) : null}
                 </BackgroundActionMenuItem>
               );

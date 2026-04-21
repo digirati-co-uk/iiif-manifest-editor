@@ -4,15 +4,6 @@ import { cn } from "./utils";
 
 export type BackgroundActionMenuStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
 
-const statusColours: Record<BackgroundActionMenuStatus, string> = {
-  idle: "bg-gray-300",
-  preparing: "bg-orange-400",
-  running: "bg-orange-400",
-  complete: "bg-green-600",
-  error: "bg-red-600",
-  cancelled: "bg-gray-400",
-};
-
 export function BackgroundActionMenuRoot({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("relative ml-2", className)} {...props} />;
 }
@@ -65,7 +56,7 @@ export function BackgroundActionMenuPanel({
   return (
     <div
       className={cn(
-        "pointer-events-none absolute right-0 top-full z-50 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-lg border border-zinc-200 bg-white opacity-0 shadow-[0_12px_32px_rgba(0,0,0,0.12)] transition-[opacity,transform] duration-150 ease-out translate-y-2 overflow-hidden",
+        "pointer-events-none absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-lg border border-zinc-200 bg-white opacity-0 shadow-[0_12px_32px_rgba(0,0,0,0.12)] transition-[opacity,transform] duration-150 ease-out translate-y-2 overflow-hidden",
         open && "pointer-events-auto opacity-100 translate-y-0",
         className,
       )}
@@ -77,14 +68,14 @@ export function BackgroundActionMenuPanel({
 export function BackgroundActionMenuSection({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-400", className)}
+      className={cn("px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-400", className)}
       {...props}
     />
   );
 }
 
 export function BackgroundActionMenuDivider({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("my-1 h-px bg-zinc-100", className)} {...props} />;
+  return <div className={cn("my-1.5 h-px bg-zinc-100", className)} {...props} />;
 }
 
 export function BackgroundActionMenuItem({
@@ -95,10 +86,10 @@ export function BackgroundActionMenuItem({
   return (
     <div
       className={cn(
-        "mx-1.5 flex min-h-10 items-center gap-1 rounded-md px-1",
+        "mx-1.5 flex items-stretch gap-0 rounded-md overflow-hidden",
         status === "error" && "bg-red-50 outline outline-1 outline-red-200",
-        status === "running" || status === "preparing" ? "bg-orange-50/50" : "",
-        status === "complete" && "bg-green-50/50",
+        (status === "running" || status === "preparing") && "bg-orange-50/60",
+        status === "complete" && "bg-green-50/60",
         className,
       )}
       {...props}
@@ -106,37 +97,27 @@ export function BackgroundActionMenuItem({
   );
 }
 
-export function BackgroundActionMenuTrigger({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BackgroundActionMenuTrigger({
+  className,
+  running,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { running?: boolean }) {
   return (
     <button
       className={cn(
-        "flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded border-0 bg-transparent px-2 py-1.5 text-left text-black",
-        "hover:bg-zinc-50 focus:bg-zinc-50 focus:outline-none disabled:cursor-default disabled:text-zinc-400",
+        "group flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-md border-0 bg-transparent px-3 py-2 text-left text-black",
+        "hover:bg-black/5 focus:bg-black/5 focus:outline-none",
         className,
       )}
       type="button"
       {...props}
-    />
-  );
-}
-
-export function BackgroundActionMenuStatusDot({
-  className,
-  status = "idle",
-}: {
-  className?: string;
-  status?: BackgroundActionMenuStatus;
-}) {
-  const isActive = status === "running" || status === "preparing";
-  return (
-    <span
-      className={cn(
-        "h-2 w-2 flex-none rounded-full",
-        statusColours[status],
-        isActive && "animate-pulse",
-        className,
-      )}
-    />
+    >
+      {/* Play / Stop icon */}
+      <span className="flex-none text-zinc-400 group-hover:text-zinc-600">
+        {running ? <StopIcon aria-hidden /> : <PlayIcon aria-hidden />}
+      </span>
+      {props.children}
+    </button>
   );
 }
 
@@ -144,8 +125,21 @@ export function BackgroundActionMenuText({ className, ...props }: HTMLAttributes
   return <span className={cn("flex min-w-0 flex-1 flex-col gap-0.5", className)} {...props} />;
 }
 
-export function BackgroundActionMenuLabel({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cn("truncate text-sm font-medium leading-tight", className)} {...props} />;
+export function BackgroundActionMenuLabel({
+  className,
+  running,
+  ...props
+}: HTMLAttributes<HTMLSpanElement> & { running?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "truncate text-sm font-medium leading-tight text-zinc-800",
+        running && "text-zinc-600",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function BackgroundActionMenuMeta({
@@ -173,7 +167,7 @@ export function BackgroundActionMenuInlineAction({
   return (
     <button
       className={cn(
-        "cursor-pointer border-0 bg-transparent px-3 text-sm leading-none text-blue-500 underline hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-200",
+        "flex-none cursor-pointer self-center border-0 bg-transparent px-2 py-1 text-xs font-medium leading-none text-me-primary-500 hover:text-me-primary-600 focus:outline-none focus:ring-2 focus:ring-me-primary-200 rounded",
         className,
       )}
       type="button"
@@ -191,8 +185,8 @@ export function BackgroundActionMenuInfoButton({
   return (
     <button
       className={cn(
-        "flex h-7 w-7 flex-none cursor-pointer items-center justify-center rounded border-0 bg-transparent text-[16px] text-zinc-400",
-        "hover:bg-zinc-100 hover:text-zinc-700 focus:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-200",
+        "flex w-8 flex-none cursor-pointer items-center justify-center self-stretch border-0 border-l border-transparent bg-transparent text-[15px] text-zinc-300",
+        "hover:border-zinc-100 hover:bg-zinc-50 hover:text-zinc-500 focus:outline-none",
         className,
       )}
       type="button"
@@ -216,9 +210,9 @@ export function BackgroundActionMenuProgressBar({
   const rounded = Math.round(value);
 
   return (
-    <span className={cn("flex w-full items-center gap-2 pt-1", className)}>
+    <span className={cn("flex w-full items-center gap-2 pt-0.5", className)}>
       <span
-        className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200"
+        className="h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200"
         role="progressbar"
         aria-label={label || "Background action progress"}
         aria-valuemin={0}
@@ -227,11 +221,12 @@ export function BackgroundActionMenuProgressBar({
       >
         <span className="block h-full rounded-full bg-me-primary-500 transition-[width] duration-500 ease-out" style={{ width: `${value}%` }} />
       </span>
-      <span className="w-8 flex-none text-right text-[10px] font-medium leading-none text-zinc-500">{rounded}%</span>
+      <span className="w-7 flex-none text-right text-[10px] font-medium leading-none text-zinc-400">{rounded}%</span>
     </span>
   );
 }
 
+/** @deprecated — play/stop now lives inside BackgroundActionMenuTrigger */
 export function BackgroundActionMenuActionButton({
   className,
   running,
@@ -240,20 +235,18 @@ export function BackgroundActionMenuActionButton({
   className?: string;
   running?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      className={cn(
-        "flex w-9 flex-none cursor-pointer items-center justify-center rounded border-0 bg-transparent text-sm",
-        "hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-none disabled:cursor-default",
-        running ? "text-zinc-700" : "text-zinc-400",
-        className,
-      )}
-      type="button"
-      {...props}
-    >
-      {running ? <BackgroundActionMenuStopIcon aria-hidden /> : <BackgroundActionMenuPlayIcon aria-hidden />}
-    </button>
-  );
+  return null;
+}
+
+/** @deprecated — status is conveyed by row background and meta text */
+export function BackgroundActionMenuStatusDot({
+  className,
+  status = "idle",
+}: {
+  className?: string;
+  status?: BackgroundActionMenuStatus;
+}) {
+  return null;
 }
 
 export function BackgroundActionMenuCogIcon(props: SVGProps<SVGSVGElement>) {
@@ -283,18 +276,18 @@ export function BackgroundActionMenuCogIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function BackgroundActionMenuPlayIcon(props: SVGProps<SVGSVGElement>) {
+function PlayIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...props} viewBox="4 4 16 16" xmlns="http://www.w3.org/2000/svg" height="1em" width="1em">
-      <path d="M8 5v14l11-7z" fill="currentColor" />
+    <svg {...props} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" height="14" width="14" fill="currentColor">
+      <path d="M3 2.5v11l10-5.5z" />
     </svg>
   );
 }
 
-function BackgroundActionMenuStopIcon(props: SVGProps<SVGSVGElement>) {
+function StopIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...props} viewBox="4 4 16 16" xmlns="http://www.w3.org/2000/svg" height="1em" width="1em">
-      <path fill="currentColor" d="M7 7h10v10H7z" />
+    <svg {...props} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" height="14" width="14" fill="currentColor">
+      <rect x="3" y="3" width="10" height="10" rx="1.5" />
     </svg>
   );
 }

@@ -1,8 +1,9 @@
-import { Modal } from "@manifest-editor/components";
+import { CheckIcon, Modal } from "@manifest-editor/components";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useApp, useAppInstance } from "../AppContext/AppContext";
 import { useConfig, useSaveConfig } from "../ConfigContext/ConfigContext";
 import { useLayoutActions } from "../Layout/Layout.context";
+import { PluginGlobalConfigReactContext, usePluginActions, usePluginConfigApi, usePlugins } from "./PluginContext";
 import {
   disablePluginInConfig,
   enablePluginAndDependenciesInConfig,
@@ -13,12 +14,6 @@ import {
   isPluginSelected,
   resetPluginInConfig,
 } from "./PluginContext.helpers";
-import {
-  PluginGlobalConfigReactContext,
-  usePluginActions,
-  usePluginConfigApi,
-  usePlugins,
-} from "./PluginContext";
 import type {
   MappedPlugin,
   PluginAppConfig,
@@ -60,7 +55,18 @@ function getErrorMessage(error: unknown) {
 
 function ConfigureIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
       <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
@@ -69,7 +75,18 @@ function ConfigureIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function OpenArrowIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
       <path d="M7 7h10v10" />
       <path d="M7 17 17 7" />
     </svg>
@@ -254,9 +271,11 @@ export function PluginManager() {
                   alt={image.alt || plugin.metadata.label}
                 />
               ) : (
-                <div className={`h-9 w-9 rounded flex items-center justify-center flex-none mt-0.5 text-lg ${
-                  active ? "bg-me-primary-50 text-me-primary-500" : "bg-gray-100 text-gray-400"
-                }`}>
+                <div
+                  className={`h-9 w-9 rounded flex items-center justify-center flex-none mt-0.5 text-lg ${
+                    active ? "bg-me-primary-50 text-me-primary-500" : "bg-gray-100 text-gray-400"
+                  }`}
+                >
                   <ConfigureIcon className="w-4 h-4" />
                 </div>
               )}
@@ -266,8 +285,8 @@ export function PluginManager() {
                   <div className="flex flex-wrap items-center gap-1.5 min-w-0">
                     <span className="font-medium text-gray-900 text-xs">{plugin.metadata.label}</span>
                     {plugin.metadata.official ? (
-                      <span className="rounded-full bg-me-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-me-primary-700">
-                        Official
+                      <span className="rounded-full text-me-primary-500 px-1.5 py-0 text-[9px] font-bold inline-flex items-center gap-1">
+                        <CheckIcon className="w-3 h-3" /> Verified
                       </span>
                     ) : null}
                     {plugin.metadata.version ? (
@@ -319,9 +338,7 @@ export function PluginManager() {
                   <p className="text-xs text-gray-500 leading-relaxed">{plugin.metadata.description}</p>
                 ) : null}
 
-                {blocked ? (
-                  <span className="text-xs text-amber-600">Waiting for required dependencies</span>
-                ) : null}
+                {blocked ? <span className="text-xs text-amber-600">Waiting for required dependencies</span> : null}
                 {!compatible && compatibilityReason ? (
                   <span className="text-xs text-gray-400">{compatibilityReason}</span>
                 ) : null}
@@ -343,14 +360,26 @@ export function PluginManager() {
           onClose={() => setSelectedPluginId(null)}
           width="560px"
         >
-          <PluginSettingsEditor plugin={selectedPlugin} onClose={() => setSelectedPluginId(null)} canSaveGlobal={!!saveGlobalPluginConfig} />
+          <PluginSettingsEditor
+            plugin={selectedPlugin}
+            onClose={() => setSelectedPluginId(null)}
+            canSaveGlobal={!!saveGlobalPluginConfig}
+          />
         </Modal>
       ) : null}
     </section>
   );
 }
 
-function PluginSettingsEditor({ plugin, onClose, canSaveGlobal }: { plugin: MappedPlugin; onClose: () => void; canSaveGlobal?: boolean }) {
+function PluginSettingsEditor({
+  plugin,
+  onClose,
+  canSaveGlobal,
+}: {
+  plugin: MappedPlugin;
+  onClose: () => void;
+  canSaveGlobal?: boolean;
+}) {
   const api = usePluginConfigApi(plugin.metadata.id);
   const [scope, setScope] = useState<PluginConfigScope>("workspace");
   const [draft, setDraft] = useState<PluginSettingsValue>({});
@@ -416,9 +445,7 @@ function PluginSettingsEditor({ plugin, onClose, canSaveGlobal }: { plugin: Mapp
           <button
             type="button"
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              scope === "workspace"
-                ? "bg-me-primary-500 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              scope === "workspace" ? "bg-me-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
             onClick={() => setScope("workspace")}
           >
@@ -427,9 +454,7 @@ function PluginSettingsEditor({ plugin, onClose, canSaveGlobal }: { plugin: Mapp
           <button
             type="button"
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              scope === "global"
-                ? "bg-me-primary-500 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              scope === "global" ? "bg-me-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
             onClick={() => setScope("global")}
           >
@@ -518,7 +543,8 @@ function PluginSettingsFieldControl({
     </label>
   );
 
-  const inputClasses = "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-me-primary-500 focus:ring-2 focus:ring-me-primary-500/20 focus:outline-none";
+  const inputClasses =
+    "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-me-primary-500 focus:ring-2 focus:ring-me-primary-500/20 focus:outline-none";
 
   if (field.type === "boolean") {
     return (
