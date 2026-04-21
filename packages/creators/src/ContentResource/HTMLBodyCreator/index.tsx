@@ -22,8 +22,19 @@ export const htmlBodyCreator = defineCreator({
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
   supports: {
-    parentTypes: ["Annotation"],
-    parentFields: ["body"],
+    parentTypes: ["Annotation", "ContentResource"],
+    parentFields: ["body", "items"],
+    custom(parent, vault) {
+      if (parent.resource.type === "Annotation") {
+        return parent.property === "body";
+      }
+
+      const resource = vault.get(
+        parent.resource as any,
+        { skipSelfReturn: false } as any,
+      ) as any;
+      return parent.property === "items" && resource?.type === "Choice";
+    },
   },
   staticFields: {
     type: "TextualBody",

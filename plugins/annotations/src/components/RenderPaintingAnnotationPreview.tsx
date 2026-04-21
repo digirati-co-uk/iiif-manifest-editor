@@ -8,7 +8,7 @@ export function RenderPaintingAnnotationPreview() {
   const canvas = useCanvas();
   const store = useAtlasStore();
   const { edit } = useLayoutActions();
-  const viewport = useStore(store, (s) => (canvas?.id ? s.canvasViewports[canvas.id] : null));
+  const viewport = useStore(store, (state) => (canvas?.id ? state.canvasViewports[canvas.id] : null));
 
   if (!annotation || !canvas || !viewport) return null;
 

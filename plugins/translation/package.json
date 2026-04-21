@@ -1,0 +1,57 @@
+{
+  "name": "@manifest-editor/translation",
+  "version": "2.0.2",
+  "type": "module",
+  "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "directory": "plugins/translation"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "keywords": [
+    "iiif",
+    "editor",
+    "translation"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepack": "tsdown --clean"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.1.0",
+    "@iiif/helpers": "catalog:",
+    "@iiif/presentation-3": "^2.2.3",
+    "@manifest-editor/components": "workspace:*",
+    "@manifest-editor/shell": "workspace:*",
+    "react": "catalog:",
+    "react-iiif-vault": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@types/react": "^18.3.3",
+    "tsdown": "0.16.4",
+    "vitest": "v3.0.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

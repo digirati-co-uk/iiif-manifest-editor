@@ -71,6 +71,8 @@ module.exports = {
     "../creators/src/**/*.{ts,tsx,css}",
     "../shell/src/**/*.{ts,tsx,css}",
 
+    "../../plugins/translation/src/**/*.{ts,tsx}",
+
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
     "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",
   ],

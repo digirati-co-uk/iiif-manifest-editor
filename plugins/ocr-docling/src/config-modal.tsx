@@ -15,6 +15,7 @@ export type OcrDoclingRunOptions = {
   imageSize: OcrDoclingImageSize;
   scope: "all" | "tag";
   tagKey?: string;
+  skipAnnotatedCanvases?: boolean;
 };
 
 export type OcrDoclingPluginSettings = {
@@ -27,6 +28,7 @@ export type OcrDoclingConfigRequest = {
   actionId: string;
   instanceKey: string;
   totalCanvases: number;
+  annotatedCanvases: number;
   tags: OcrDoclingTagOption[];
   defaults: OcrDoclingRunOptions;
   signal?: AbortSignal;
@@ -103,7 +105,11 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
     () => request?.tags.find((tag) => tag.key === options.tagKey),
     [request?.tags, options.tagKey],
   );
-  const targetCount = options.scope === "tag" ? selectedTag?.canvasCount || 0 : request?.totalCanvases || 0;
+  const selectedCount = options.scope === "tag" ? selectedTag?.canvasCount || 0 : request?.totalCanvases || 0;
+  const annotatedSelectedCount =
+    options.scope === "tag" ? selectedTag?.annotatedCanvasCount || 0 : request?.annotatedCanvases || 0;
+  const skippedByExistingAnnotations = options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
+  const runnableCount = Math.max(0, selectedCount - skippedByExistingAnnotations);
 
   if (!request) {
     return null;
@@ -134,7 +140,7 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
           <button
             type="button"
             className="rounded border border-me-primary-500 bg-me-primary-500 px-3 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={targetCount === 0}
+            disabled={runnableCount === 0}
             onClick={() => close(options)}
           >
             Run OCR
@@ -225,8 +231,32 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
           </select>
         </fieldset>
 
+        <label className="flex items-start gap-2 rounded border border-zinc-200 bg-white p-3">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={options.skipAnnotatedCanvases !== false}
+            onChange={(event) =>
+              setOptions((current) => ({ ...current, skipAnnotatedCanvases: event.target.checked }))
+            }
+          />
+          <span className="grid gap-1">
+            <span className="font-medium text-zinc-900">Skip canvases with existing annotations</span>
+            <span className="text-xs text-zinc-500">
+              Do not run OCR on canvases where a canvas annotation page already contains an annotation.
+            </span>
+          </span>
+        </label>
+
         <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
-          {targetCount} canvas{targetCount === 1 ? "" : "es"} selected.
+          {runnableCount} canvas{runnableCount === 1 ? "" : "es"} will run OCR.
+          {skippedByExistingAnnotations ? (
+            <>
+              {" "}
+              {skippedByExistingAnnotations} canvas{skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped
+              because they already have annotations.
+            </>
+          ) : null}
         </div>
       </div>
     </Modal>
@@ -238,6 +268,7 @@ export function getDefaultRunOptions(): OcrDoclingRunOptions {
     prompt: DOCLING_DEFAULT_PROMPT,
     imageSize: 1024,
     scope: "all",
+    skipAnnotatedCanvases: true,
   };
 }
 
@@ -265,5 +296,6 @@ function normaliseDefaults(defaults: OcrDoclingRunOptions, tags: OcrDoclingTagOp
     imageSize: OCR_DOCLING_IMAGE_SIZES.includes(defaults.imageSize) ? defaults.imageSize : 1024,
     scope: defaults.scope === "tag" && tags.length ? "tag" : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
+    skipAnnotatedCanvases: defaults.skipAnnotatedCanvases !== false,
   };
 }

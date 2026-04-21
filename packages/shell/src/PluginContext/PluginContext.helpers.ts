@@ -478,6 +478,21 @@ export function applyPlugins(app: MappedApp, plugins: MappedPlugin[], appId?: st
     activeIds.add(plugin.metadata.id);
   }
 
+  // Reorder leftPanels: built-ins first, then plugin panels (with separator before first),
+  // then divide panels (e.g. settings) always last.
+  const originalIds = new Set(app.layout.leftPanels.map((p) => p.id));
+  const dividePanels = nextApp.layout.leftPanels.filter((p) => p.divide);
+  const nonDividePanels = nextApp.layout.leftPanels.filter((p) => !p.divide);
+
+  let firstPluginPanelMarked = false;
+  const orderedPanels = nonDividePanels.map((panel) => {
+    if (!firstPluginPanelMarked && !originalIds.has(panel.id)) {
+      firstPluginPanelMarked = true;
+      return { ...panel, separator: true };
+    }
+    return panel;
+  });
+
   return {
     ...nextApp,
     config: mergePartialConfig(
@@ -489,6 +504,7 @@ export function applyPlugins(app: MappedApp, plugins: MappedPlugin[], appId?: st
     ),
     layout: {
       ...nextApp.layout,
+      leftPanels: [...orderedPanels, ...dividePanels],
       backgroundActions: mergeBackgroundActionDefinitions([], nextApp.layout.backgroundActions || []),
     },
   };

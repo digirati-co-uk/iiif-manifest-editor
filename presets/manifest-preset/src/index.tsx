@@ -1,9 +1,11 @@
 import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
+import * as annotationsPlugin from "@manifest-editor/annotations";
+import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import * as ocrClassificationPlugin from "@manifest-editor/ocr-classification";
 import * as ocrDoclingPlugin from "@manifest-editor/ocr-docling";
+import * as translationPlugin from "@manifest-editor/translation";
 import {
-  type AnnotationPanel,
   type BackgroundActionDefinition,
   type BackgroundPanel,
   baseCreator,
@@ -11,11 +13,9 @@ import {
   ExportPanel,
   type LayoutPanel,
 } from "@manifest-editor/shell";
-import { canvasAnnotations } from "./annotations/CanvasAnnotations";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
-import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
@@ -48,7 +48,6 @@ export const leftPanels: LayoutPanel[] = [
   canvasListing,
   tagsPanel,
   rangesPanel,
-  annotationsPanel,
   // @todo we will come back to the image grid
   // {
   //   id: "image-grid",
@@ -56,8 +55,6 @@ export const leftPanels: LayoutPanel[] = [
   //   render: () => <ManifestItemsGrid />,
   // },
 ];
-
-export const annotations: AnnotationPanel[] = [canvasAnnotations];
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
@@ -73,6 +70,20 @@ export const creators = allCreators;
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
 
-export { manifestQualityChecksPlugin, ocrClassificationPlugin, ocrDoclingPlugin };
+export {
+  annotationsPlugin,
+  canvasLabelGeneratorPlugin,
+  manifestQualityChecksPlugin,
+  ocrClassificationPlugin,
+  ocrDoclingPlugin,
+  translationPlugin,
+};
 
-export const plugins = [manifestQualityChecksPlugin, ocrClassificationPlugin, ocrDoclingPlugin];
+export const plugins = [
+  annotationsPlugin,
+  manifestQualityChecksPlugin,
+  canvasLabelGeneratorPlugin,
+  translationPlugin,
+  ocrClassificationPlugin,
+  ocrDoclingPlugin,
+];

@@ -20,7 +20,11 @@ import {
   type DoclingEvent,
   type DoclingWorkerClient,
 } from "./docling";
-import { writeDoclingRegionAnnotations, type WrittenOcrAnnotation } from "./annotations";
+import {
+  canvasHasAnnotationPageAnnotations,
+  writeDoclingRegionAnnotations,
+  type WrittenOcrAnnotation,
+} from "./annotations";
 import { openOcrDoclingResults, renderOcrDoclingResults } from "./results";
 import { getCanvasTagOptions, parseTagKey } from "./tags";
 
@@ -126,7 +130,7 @@ export function createOcrDoclingBackgroundAction(
       }
 
       const selectedCanvases = selectCanvases(ctx, canvases, options);
-      return createDoclingPlan(canvases.length, selectedCanvases, options);
+      return createDoclingPlan(canvases.length, selectedCanvases, options, ctx);
     },
     run: async (ctx) => {
       const plan = ctx.plan || createDoclingPlan(0, [], getDefaultRunOptions());
@@ -301,7 +305,12 @@ export function createOcrDoclingBackgroundAction(
   };
 }
 
-function createDoclingPlan(total: number, selectedCanvases: any[], options: OcrDoclingRunOptions): BackgroundActionPlan {
+function createDoclingPlan(
+  total: number,
+  selectedCanvases: any[],
+  options: OcrDoclingRunOptions,
+  ctx?: BackgroundActionRunContext,
+): BackgroundActionPlan {
   return {
     version: 1,
     data: {
@@ -311,6 +320,15 @@ function createDoclingPlan(total: number, selectedCanvases: any[], options: OcrD
     tasks: selectedCanvases.map((canvas, index) => {
       const canvasId = canvas?.id || `canvas-${index + 1}`;
       const label = getCanvasLabel(canvas) || canvasId;
+      const skipExistingAnnotations =
+        options.skipAnnotatedCanvases !== false && ctx ? canvasHasAnnotationPageAnnotations(ctx, canvas) : false;
+      const skip = skipExistingAnnotations
+        ? {
+            canvasId,
+            reason: "Canvas already has annotations",
+          }
+        : null;
+
       return {
         id: `canvas:${canvasId}`,
         label,
@@ -323,7 +341,15 @@ function createDoclingPlan(total: number, selectedCanvases: any[], options: OcrD
         input: {
           canvasId,
         },
-        status: "queued",
+        status: skip ? "skipped" : "queued",
+        statusText: skip ? "Skipped: canvas already has annotations" : undefined,
+        result: skip
+          ? ({
+              type: "skipped",
+              skip,
+            } satisfies OcrDoclingTaskResult)
+          : undefined,
+        completedAt: skip ? Date.now() : undefined,
       };
     }),
   };
@@ -343,6 +369,7 @@ async function defaultRequestConfig(
     actionId: ctx.definition.id,
     instanceKey: ctx.instanceKey,
     totalCanvases: canvases.length,
+    annotatedCanvases: canvases.filter((canvas) => canvasHasAnnotationPageAnnotations(ctx, canvas)).length,
     tags: getCanvasTagOptions(ctx, canvases),
     defaults: pluginDefaults,
     signal: ctx.signal,

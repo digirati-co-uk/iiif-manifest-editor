@@ -373,6 +373,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
               label: panel.label,
               icon: panel.icon,
               divide: panel.divide,
+              separator: panel.separator,
               onClick: () => {
                 if (state.leftPanel.current === panel.id) {
                   actions.leftPanel.toggle();

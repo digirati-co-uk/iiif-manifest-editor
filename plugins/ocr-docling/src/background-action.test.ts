@@ -121,7 +121,23 @@ describe("Docling OCR background action", () => {
   test("collects all canvas tags including the built-in flag tag", () => {
     const vault = createVault([
       createCanvas("https://example.org/canvas/1"),
-      createCanvas("https://example.org/canvas/2"),
+      createCanvas("https://example.org/canvas/2", {
+        annotations: [
+          {
+            id: "https://example.org/canvas/2/annotations",
+            type: "AnnotationPage",
+            items: [
+              {
+                id: "https://example.org/canvas/2/comment",
+                type: "Annotation",
+                motivation: "commenting",
+                body: [],
+                target: "https://example.org/canvas/2",
+              },
+            ],
+          },
+        ],
+      }),
     ]);
     const definition = createOcrDoclingBackgroundAction();
     const ctx = {
@@ -147,6 +163,7 @@ describe("Docling OCR background action", () => {
 
     expect(options.map((option) => option.key)).toEqual([getTagKey(FLAG_TAG), getTagKey(REVIEW_TAG)]);
     expect(options.find((option) => option.key === getTagKey(FLAG_TAG))?.canvasCount).toBe(1);
+    expect(options.find((option) => option.key === getTagKey(FLAG_TAG))?.annotatedCanvasCount).toBe(1);
   });
 
   test("creates a default annotation page and writes scaled region annotations", async () => {
@@ -207,7 +224,7 @@ describe("Docling OCR background action", () => {
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => createClient(rawDocling),
       getCanvasImage: vi.fn(async () => createImage()),
-      requestConfig: vi.fn(async () => getDefaultRunOptions()),
+      requestConfig: vi.fn(async () => ({ ...getDefaultRunOptions(), skipAnnotatedCanvases: false })),
     });
     const store = createBackgroundActionsStore([definition]);
 
@@ -221,6 +238,59 @@ describe("Docling OCR background action", () => {
     const annotation = vault.get({ id: "https://example.org/canvas/1/ocr-docling/1/annotation", type: "Annotation" }) as any;
     const body = vault.get(annotation.body[0]) as any;
     expect(body.value).toBe("New text");
+  });
+
+  test("skips canvases with existing canvas annotations by default", async () => {
+    const vault = createVault([
+      createCanvas("https://example.org/canvas/1", {
+        annotations: [
+          {
+            id: "https://example.org/canvas/1/annotations",
+            type: "AnnotationPage",
+            items: [
+              {
+                id: "https://example.org/user-annotation",
+                type: "Annotation",
+                motivation: "commenting",
+                body: [],
+                target: "https://example.org/canvas/1",
+              },
+            ],
+          },
+        ],
+      }),
+      createCanvas("https://example.org/canvas/2"),
+    ]);
+    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const convert = vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, rawDocling));
+    const definition = createOcrDoclingBackgroundAction({
+      createClient: () => ({
+        preload: vi.fn(async () => undefined),
+        convert,
+        onEvent: vi.fn(() => () => undefined),
+        terminate: vi.fn(),
+      }),
+      getCanvasImage: vi.fn(async () => createImage()),
+      requestConfig: vi.fn(async () => getDefaultRunOptions()),
+    });
+    const store = createBackgroundActionsStore([definition]);
+
+    await runBackgroundAction({ store, context: createContext(vault, definition) });
+
+    const instance = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)];
+    const result = instance?.result as OcrDoclingActionResult;
+
+    expect(convert).toHaveBeenCalledTimes(1);
+    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
+    expect(result.selected).toBe(2);
+    expect(result.processed).toBe(1);
+    expect(result.skipped).toBe(1);
+    expect(result.skippedCanvases).toEqual([
+      {
+        canvasId: "https://example.org/canvas/1",
+        reason: "Canvas already has annotations",
+      },
+    ]);
   });
 
   test("skips canvases with missing dimensions or missing images", async () => {
@@ -294,7 +364,7 @@ describe("Docling OCR background action", () => {
     const definition = createOcrDoclingBackgroundAction({
       createClient: createClientMock,
       getCanvasImage: vi.fn(async () => createImage()),
-      requestConfig: vi.fn(async () => getDefaultRunOptions()),
+      requestConfig: vi.fn(async () => ({ ...getDefaultRunOptions(), skipAnnotatedCanvases: false })),
     });
     const store = createBackgroundActionsStore([definition]);
 

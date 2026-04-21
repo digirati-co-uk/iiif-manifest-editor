@@ -127,6 +127,18 @@ export function writeDoclingRegionAnnotations(
   return annotations;
 }
 
+export function canvasHasAnnotationPageAnnotations(ctx: BackgroundActionRunContext, canvas: any) {
+  const pages = canvas?.annotations ? ctx.vault.get(canvas.annotations) || [] : [];
+
+  for (const page of pages) {
+    if (page?.items?.length) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function getDefaultAnnotationPage(ctx: BackgroundActionRunContext, canvas: any) {
   const firstPage = canvas?.annotations?.[0];
   return firstPage ? ctx.vault.get(firstPage) : null;

@@ -168,6 +168,7 @@ export interface LayoutPanel {
   id: string;
   label: string;
   divide?: boolean;
+  separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
   render: LayoutFunction;
   onMount?: (

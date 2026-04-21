@@ -1,8 +1,10 @@
 import { FLAG_TAG, type BackgroundActionRunContext, type ManifestEditorTag } from "@manifest-editor/shell";
+import { canvasHasAnnotationPageAnnotations } from "./annotations";
 
 export type OcrDoclingTagOption = ManifestEditorTag & {
   key: string;
   canvasCount: number;
+  annotatedCanvasCount: number;
 };
 
 export function getCanvasTagOptions(ctx: BackgroundActionRunContext, canvases: any[]): OcrDoclingTagOption[] {
@@ -12,6 +14,7 @@ export function getCanvasTagOptions(ctx: BackgroundActionRunContext, canvases: a
     ...FLAG_TAG,
     key: getTagKey(FLAG_TAG),
     canvasCount: 0,
+    annotatedCanvasCount: 0,
   });
 
   for (const canvas of canvases) {
@@ -19,17 +22,23 @@ export function getCanvasTagOptions(ctx: BackgroundActionRunContext, canvases: a
       continue;
     }
 
+    const hasAnnotations = canvasHasAnnotationPageAnnotations(ctx, canvas);
+
     for (const tag of ctx.tags.getTags({ id: canvas.id, type: "Canvas" })) {
       const key = getTagKey(tag);
       const existing = tags.get(key);
 
       if (existing) {
         existing.canvasCount += 1;
+        if (hasAnnotations) {
+          existing.annotatedCanvasCount += 1;
+        }
       } else {
         tags.set(key, {
           ...tag,
           key,
           canvasCount: 1,
+          annotatedCanvasCount: hasAnnotations ? 1 : 0,
         });
       }
     }

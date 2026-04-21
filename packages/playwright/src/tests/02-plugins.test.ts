@@ -3,6 +3,22 @@ import { Homepage } from "../pom/homepage";
 import { ManifestPresetPage } from "../pom/manifest-preset-page";
 
 test.describe("Plugin Manager", () => {
+  test("translation plugin appears and opens its sidebar", async ({ page }) => {
+    const homepage = new Homepage(page);
+
+    await homepage.goto();
+    await homepage.createNewManifestButton.click();
+
+    const manifestPage = new ManifestPresetPage(page);
+    await manifestPage.waitForPage();
+    await expect(manifestPage.manifestHeading).toBeVisible();
+
+    await expect(page.getByRole("button", { name: "Translations" })).toBeVisible();
+    await page.getByRole("button", { name: "Translations" }).click();
+    await expect(page.getByText("Translations").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run translation", exact: true })).toBeVisible();
+  });
+
   test("can disable and reset a workspace plugin", async ({ page }) => {
     const homepage = new Homepage(page);
 
@@ -18,11 +34,11 @@ test.describe("Plugin Manager", () => {
 
     const qualityPlugin = page.getByRole("article").filter({ hasText: "Manifest Quality Checks" });
     await expect(qualityPlugin).toContainText("Enabled");
-    await expect(page.getByRole("button", { name: "Quality" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Quality", exact: true })).toBeVisible();
 
     await qualityPlugin.getByRole("button", { name: "Disable workspace" }).click();
     await expect(qualityPlugin).toContainText("Disabled");
-    await expect(page.getByRole("button", { name: "Quality" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Quality", exact: true })).toHaveCount(0);
 
     await page.waitForTimeout(500);
     await page.reload();
@@ -34,6 +50,6 @@ test.describe("Plugin Manager", () => {
 
     await reloadedQualityPlugin.getByRole("button", { name: "Reset workspace" }).click();
     await expect(reloadedQualityPlugin).toContainText("Enabled");
-    await expect(page.getByRole("button", { name: "Quality" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Quality", exact: true })).toBeVisible();
   });
 });
