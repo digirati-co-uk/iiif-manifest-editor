@@ -7,6 +7,17 @@ import type { LayoutActions, LayoutState } from "../Layout/Layout.types";
 import type { ManifestEditorTagsApi } from "../Tags";
 
 export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
+export type BackgroundActionLogLevel = "debug" | "info" | "warn" | "error";
+export type BackgroundActionEventType =
+  | "started"
+  | "label"
+  | "status"
+  | "progress"
+  | "log"
+  | "result"
+  | "results-available"
+  | "error"
+  | "cancel-requested";
 
 export interface BackgroundActionTarget extends Reference {
   label: string;
@@ -19,8 +30,46 @@ export interface BackgroundActionError {
   detail?: unknown;
 }
 
+export interface BackgroundActionLogEntry {
+  id: string;
+  createdAt: number;
+  level: BackgroundActionLogLevel;
+  message: string;
+  data?: unknown;
+}
+
+export interface BackgroundActionEvent {
+  id: string;
+  createdAt: number;
+  type: BackgroundActionEventType;
+  message?: string;
+  data?: unknown;
+}
+
+export interface BackgroundActionProgress {
+  percent: number;
+  current?: number;
+  total?: number;
+  label?: string;
+}
+
+export type BackgroundActionProgressInput =
+  | {
+      percent: number;
+      current?: number;
+      total?: number;
+      label?: string;
+    }
+  | {
+      current: number;
+      total: number;
+      percent?: number;
+      label?: string;
+    };
+
 export interface BackgroundActionInstance {
   id: string;
+  runId: string;
   actionId: string;
   target: BackgroundActionTarget;
   label: string;
@@ -29,8 +78,13 @@ export interface BackgroundActionInstance {
   error?: BackgroundActionError | null;
   result?: unknown;
   resultsAvailable: boolean;
+  logs: BackgroundActionLogEntry[];
+  events: BackgroundActionEvent[];
+  progress?: BackgroundActionProgress;
   startedAt?: number;
   completedAt?: number;
+  cancelRequestedAt?: number;
+  cancelledAt?: number;
 }
 
 export interface BackgroundActionSystemContext {
@@ -54,6 +108,8 @@ export interface BackgroundActionLifecycle {
   setActionLabel(label: string): void;
   setActionStatus(status: BackgroundActionStatus, statusText?: string): void;
   setActionError(error: unknown, statusText?: string): void;
+  appendActionLog(message: string, level?: BackgroundActionLogLevel, data?: unknown): void;
+  setActionProgress(progress: BackgroundActionProgressInput | null): void;
   setResult(result: unknown): void;
   setResultsAvailable(available: boolean): void;
 }

@@ -126,6 +126,8 @@ describe("Docling OCR background action", () => {
       setActionLabel: vi.fn(),
       setActionStatus: vi.fn(),
       setActionError: vi.fn(),
+      appendActionLog: vi.fn(),
+      setActionProgress: vi.fn(),
       setResult: vi.fn(),
       setResultsAvailable: vi.fn(),
     };

@@ -125,13 +125,29 @@ export function createOcrDoclingBackgroundAction(
         for (const [index, canvas] of selectedCanvases.entries()) {
           throwIfAborted(ctx.signal);
           const canvasId = canvas?.id || `canvas-${index + 1}`;
-          ctx.setActionStatus("running", `OCR ${index + 1}/${selectedCanvases.length}`);
+          const label = `OCR ${index + 1}/${selectedCanvases.length}`;
+          ctx.setActionStatus("running", label);
+          ctx.setActionProgress({ current: index, total: selectedCanvases.length, label });
+          ctx.appendActionLog(label, "info", {
+            canvasId,
+            current: index + 1,
+            total: selectedCanvases.length,
+          });
 
           try {
             if (!hasCanvasDimensions(canvas)) {
               result.skippedCanvases.push({
                 canvasId,
                 reason: "Canvas dimensions unavailable",
+              });
+              ctx.appendActionLog("Skipped canvas OCR", "warn", {
+                canvasId,
+                reason: "Canvas dimensions unavailable",
+              });
+              ctx.setActionProgress({
+                current: index + 1,
+                total: selectedCanvases.length,
+                label: `OCR ${index + 1}/${selectedCanvases.length}`,
               });
               continue;
             }
@@ -141,6 +157,15 @@ export function createOcrDoclingBackgroundAction(
               result.skippedCanvases.push({
                 canvasId,
                 reason: "No painting image found",
+              });
+              ctx.appendActionLog("Skipped canvas OCR", "warn", {
+                canvasId,
+                reason: "No painting image found",
+              });
+              ctx.setActionProgress({
+                current: index + 1,
+                total: selectedCanvases.length,
+                label: `OCR ${index + 1}/${selectedCanvases.length}`,
               });
               continue;
             }
@@ -166,16 +191,31 @@ export function createOcrDoclingBackgroundAction(
               annotations: annotations.length,
               durationMs: performance.now() - startedAt,
             });
+            ctx.appendActionLog("Created OCR annotations", "info", {
+              canvasId,
+              annotations: annotations.length,
+            });
           } catch (error) {
             if (ctx.signal.aborted) {
               throw error;
             }
 
+            const reason = getErrorMessage(error);
             result.skippedCanvases.push({
               canvasId,
-              reason: getErrorMessage(error),
+              reason,
+            });
+            ctx.appendActionLog("Skipped canvas OCR", "warn", {
+              canvasId,
+              reason,
             });
           }
+
+          ctx.setActionProgress({
+            current: index + 1,
+            total: selectedCanvases.length,
+            label: `OCR ${index + 1}/${selectedCanvases.length}`,
+          });
         }
       } finally {
         ctx.signal.removeEventListener("abort", abort);
@@ -188,6 +228,7 @@ export function createOcrDoclingBackgroundAction(
       result.annotations = result.canvases.reduce((total, item) => total + item.annotations, 0);
       result.skipped = result.skippedCanvases.length;
       ctx.setActionStatus("running", `Created ${result.annotations} OCR annotations`);
+      ctx.setActionProgress({ current: selectedCanvases.length, total: selectedCanvases.length, label: "OCR complete" });
 
       return result;
     },

@@ -36,9 +36,12 @@ function delay(ms: number, signal: AbortSignal) {
 }
 
 async function progress(ctx: BackgroundActionRunContext, steps: Array<{ label: string; delay: number }>) {
-  for (const step of steps) {
+  for (const [index, step] of steps.entries()) {
     ctx.setActionStatus("running", step.label);
+    ctx.setActionProgress({ current: index, total: steps.length, label: step.label });
+    ctx.appendActionLog(step.label, "info", { step: index + 1, total: steps.length });
     await delay(step.delay, ctx.signal);
+    ctx.setActionProgress({ current: index + 1, total: steps.length, label: step.label });
   }
 }
 

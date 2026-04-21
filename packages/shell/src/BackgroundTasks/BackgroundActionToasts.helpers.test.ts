@@ -19,8 +19,11 @@ function instance(partial: Partial<BackgroundActionInstance> = {}): BackgroundAc
       scope: "root",
     },
     label: "Test action",
+    runId: "run-1",
     status: "idle",
     resultsAvailable: false,
+    logs: [],
+    events: [],
     ...partial,
   };
 }

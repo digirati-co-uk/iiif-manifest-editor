@@ -170,6 +170,12 @@ describe("BackgroundTasksStore", () => {
     expect(capturedSignal?.aborted).toBe(true);
     expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
     expect(store.getState().instances[instanceKey]?.statusText).toBe("Cancelled");
+    expect(store.getState().instances[instanceKey]?.cancelRequestedAt).toBeTypeOf("number");
+    expect(store.getState().instances[instanceKey]?.cancelledAt).toBeTypeOf("number");
+    expect(store.getState().instances[instanceKey]?.events.map((event) => event.type)).toContain(
+      "cancel-requested",
+    );
+    expect(store.getState().histories[instanceKey]).toHaveLength(1);
   });
 
   test("does not mark cancelled actions complete when a run resolves after abort", async () => {
@@ -287,5 +293,89 @@ describe("BackgroundTasksStore", () => {
     expect(instance?.status).toBe("complete");
     expect(instance?.result).toBe("intermediate");
     expect(instance?.resultsAvailable).toBe(true);
+  });
+
+  test("records structured logs and log events", () => {
+    const definition = action();
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    store.getState().startAction(instanceKey, definition, manifestTarget);
+    store.getState().appendActionLog(instanceKey, "Preparing request");
+    store.getState().appendActionLog(instanceKey, "Remote warning", "warn", { code: 503 });
+
+    const instance = store.getState().instances[instanceKey];
+    expect(instance?.logs).toHaveLength(2);
+    expect(instance?.logs[0]).toMatchObject({ level: "info", message: "Preparing request" });
+    expect(instance?.logs[1]).toMatchObject({ level: "warn", message: "Remote warning", data: { code: 503 } });
+    expect(instance?.events.filter((event) => event.type === "log")).toHaveLength(2);
+  });
+
+  test("normalises progress from units, percent, and clear calls", () => {
+    const definition = action();
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    store.getState().startAction(instanceKey, definition, manifestTarget);
+    store.getState().setActionProgress(instanceKey, { current: 2, total: 4, label: "Half way" });
+
+    expect(store.getState().instances[instanceKey]?.progress).toEqual({
+      current: 2,
+      total: 4,
+      percent: 50,
+      label: "Half way",
+    });
+
+    store.getState().setActionProgress(instanceKey, { percent: 125, label: "Too far" });
+    expect(store.getState().instances[instanceKey]?.progress).toEqual({
+      percent: 100,
+      current: undefined,
+      total: undefined,
+      label: "Too far",
+    });
+
+    store.getState().setActionProgress(instanceKey, null);
+    expect(store.getState().instances[instanceKey]?.progress).toBeUndefined();
+    expect(store.getState().instances[instanceKey]?.events.filter((event) => event.type === "progress")).toHaveLength(3);
+  });
+
+  test("preserves progress events in completed history", async () => {
+    const definition = action({
+      run: (ctx) => {
+        ctx.setActionProgress({ current: 1, total: 2, label: "Half way" });
+      },
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    await runBackgroundAction({ store, context: context(definition) });
+
+    const history = store.getState().histories[instanceKey];
+    expect(history).toHaveLength(1);
+    expect(history?.[0]?.progress).toMatchObject({ percent: 50, label: "Half way" });
+    expect(history?.[0]?.events.some((event) => event.type === "progress")).toBe(true);
+  });
+
+  test("preserves completed run history with distinct run ids", async () => {
+    const definition = action({
+      run: vi.fn().mockResolvedValueOnce({ run: 1 }).mockResolvedValueOnce({ run: 2 }),
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    await runBackgroundAction({ store, context: context(definition) });
+    const firstRunId = store.getState().instances[instanceKey]?.runId;
+
+    await runBackgroundAction({ store, context: context(definition) });
+    const secondRunId = store.getState().instances[instanceKey]?.runId;
+
+    expect(firstRunId).toBeTypeOf("string");
+    expect(secondRunId).toBeTypeOf("string");
+    expect(secondRunId).not.toBe(firstRunId);
+    expect(store.getState().instances[instanceKey]?.result).toEqual({ run: 2 });
+    expect(store.getState().histories[instanceKey]?.map((instance) => instance.runId)).toEqual([
+      firstRunId,
+      secondRunId,
+    ]);
   });
 });

@@ -4,8 +4,14 @@ import { useApp } from "../AppContext/AppContext";
 import {
   type BackgroundActionDefinition,
   type BackgroundActionError,
+  type BackgroundActionEvent,
+  type BackgroundActionEventType,
   type BackgroundActionGroup,
   type BackgroundActionInstance,
+  type BackgroundActionLogEntry,
+  type BackgroundActionLogLevel,
+  type BackgroundActionProgress,
+  type BackgroundActionProgressInput,
   type BackgroundActionRunContext,
   type BackgroundActionStatus,
   type BackgroundActionSystemContext,
@@ -16,6 +22,7 @@ import {
 export interface BackgroundActionsStore {
   definitions: BackgroundActionDefinition[];
   instances: Record<string, BackgroundActionInstance>;
+  histories: Record<string, BackgroundActionInstance[]>;
   controllers: Record<string, AbortController>;
   setDefinitions(definitions: BackgroundActionDefinition[]): void;
   registerAction(definition: BackgroundActionDefinition): () => void;
@@ -31,6 +38,8 @@ export interface BackgroundActionsStore {
   setActionLabel(instanceKey: string, label: string): void;
   setActionStatus(instanceKey: string, status: BackgroundActionStatus, statusText?: string): void;
   setActionError(instanceKey: string, error: unknown, statusText?: string): void;
+  appendActionLog(instanceKey: string, message: string, level?: BackgroundActionLogLevel, data?: unknown): void;
+  setActionProgress(instanceKey: string, progress: BackgroundActionProgressInput | null): void;
   setResult(instanceKey: string, result: unknown): void;
   setResultsAvailable(instanceKey: string, available: boolean): void;
 }
@@ -167,22 +176,127 @@ export function getAvailableBackgroundActionGroups({
   return groups;
 }
 
-function updateInstance(
-  instances: Record<string, BackgroundActionInstance>,
-  instanceKey: string,
-  update: Partial<BackgroundActionInstance>,
+let backgroundActionEntryCounter = 0;
+
+function createBackgroundActionEntryId(prefix: string) {
+  backgroundActionEntryCounter += 1;
+  return `${prefix}-${Date.now()}-${backgroundActionEntryCounter}`;
+}
+
+function createBackgroundActionEvent(
+  type: BackgroundActionEventType,
+  message?: string,
+  data?: unknown,
+  createdAt = Date.now(),
+): BackgroundActionEvent {
+  return {
+    id: createBackgroundActionEntryId("event"),
+    createdAt,
+    type,
+    message,
+    data,
+  };
+}
+
+function appendEvent(
+  instance: BackgroundActionInstance,
+  type: BackgroundActionEventType,
+  message?: string,
+  data?: unknown,
+  createdAt = Date.now(),
 ) {
-  const instance = instances[instanceKey];
-  if (!instance) {
-    return instances;
+  return {
+    ...instance,
+    events: [...instance.events, createBackgroundActionEvent(type, message, data, createdAt)],
+  };
+}
+
+function cloneInstanceForHistory(instance: BackgroundActionInstance): BackgroundActionInstance {
+  return {
+    ...instance,
+    logs: [...instance.logs],
+    events: [...instance.events],
+    progress: instance.progress ? { ...instance.progress } : undefined,
+  };
+}
+
+function upsertHistoryInstance(
+  histories: Record<string, BackgroundActionInstance[]>,
+  instanceKey: string,
+  instance: BackgroundActionInstance,
+) {
+  if (!isCompletedStatus(instance.status)) {
+    return histories;
   }
 
+  const history = histories[instanceKey] || [];
+  const snapshot = cloneInstanceForHistory(instance);
+  const existingIndex = history.findIndex((item) => item.runId === instance.runId);
+  const nextHistory =
+    existingIndex >= 0
+      ? history.map((item, index) => (index === existingIndex ? snapshot : item))
+      : [...history, snapshot];
+
   return {
-    ...instances,
-    [instanceKey]: {
-      ...instance,
-      ...update,
-    },
+    ...histories,
+    [instanceKey]: nextHistory,
+  };
+}
+
+function updateStoredInstance(
+  state: Pick<BackgroundActionsStore, "instances" | "histories">,
+  instanceKey: string,
+  updater: (instance: BackgroundActionInstance) => BackgroundActionInstance,
+) {
+  const instance = state.instances[instanceKey];
+  if (!instance) {
+    return {
+      instances: state.instances,
+      histories: state.histories,
+    };
+  }
+
+  const updated = updater(instance);
+  const instances = {
+    ...state.instances,
+    [instanceKey]: updated,
+  };
+
+  return {
+    instances,
+    histories: upsertHistoryInstance(state.histories, instanceKey, updated),
+  };
+}
+
+function clampProgressPercent(percent: number) {
+  if (!Number.isFinite(percent)) {
+    return 0;
+  }
+
+  return Math.min(100, Math.max(0, percent));
+}
+
+function normaliseProgress(progress: BackgroundActionProgressInput): BackgroundActionProgress {
+  const input = progress as {
+    percent?: number;
+    current?: number;
+    total?: number;
+    label?: string;
+  };
+  const current = typeof input.current === "number" && Number.isFinite(input.current) ? input.current : undefined;
+  const total = typeof input.total === "number" && Number.isFinite(input.total) ? input.total : undefined;
+  const percent =
+    typeof input.percent === "number" && Number.isFinite(input.percent)
+      ? input.percent
+      : typeof current === "number" && typeof total === "number" && total > 0
+        ? (current / total) * 100
+        : 0;
+
+  return {
+    percent: clampProgressPercent(percent),
+    current,
+    total,
+    label: input.label,
   };
 }
 
@@ -198,6 +312,7 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
   return createStore<BackgroundActionsStore>((set, get) => ({
     definitions: mergeBackgroundActionDefinitions([], initialDefinitions),
     instances: {},
+    histories: {},
     controllers: {},
 
     setDefinitions(definitions) {
@@ -205,6 +320,7 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         const nextDefinitions = mergeBackgroundActionDefinitions([], definitions);
         const nextDefinitionIds = new Set(nextDefinitions.map((definition) => definition.id));
         const nextInstances: Record<string, BackgroundActionInstance> = {};
+        const nextHistories: Record<string, BackgroundActionInstance[]> = {};
 
         for (const [key, instance] of Object.entries(prev.instances)) {
           if (nextDefinitionIds.has(instance.actionId)) {
@@ -212,9 +328,17 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
         }
 
+        for (const [key, history] of Object.entries(prev.histories)) {
+          const nextHistory = history.filter((instance) => nextDefinitionIds.has(instance.actionId));
+          if (nextHistory.length) {
+            nextHistories[key] = nextHistory;
+          }
+        }
+
         return {
           definitions: nextDefinitions,
           instances: nextInstances,
+          histories: nextHistories,
           controllers: Object.fromEntries(
             Object.entries(prev.controllers).filter(([key]) => nextInstances[key]?.status && isActiveStatus(nextInstances[key].status)),
           ),
@@ -239,6 +363,14 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
         }
 
+        const histories: Record<string, BackgroundActionInstance[]> = {};
+        for (const [key, history] of Object.entries(prev.histories)) {
+          const nextHistory = history.filter((instance) => instance.actionId !== id);
+          if (nextHistory.length) {
+            histories[key] = nextHistory;
+          }
+        }
+
         const controllers = { ...prev.controllers };
         for (const [key, instance] of Object.entries(prev.instances)) {
           if (instance.actionId === id) {
@@ -250,6 +382,7 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         return {
           definitions: prev.definitions.filter((definition) => definition.id !== id),
           instances,
+          histories,
           controllers,
         };
       });
@@ -259,19 +392,23 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
       set((prev) => {
         prev.controllers[instanceKey]?.abort();
         const instances = { ...prev.instances };
+        const histories = { ...prev.histories };
         const controllers = { ...prev.controllers };
         delete instances[instanceKey];
+        delete histories[instanceKey];
         delete controllers[instanceKey];
-        return { instances, controllers };
+        return { instances, histories, controllers };
       });
     },
 
     startAction(instanceKey, definition, target, controller) {
+      const startedAt = Date.now();
       set((prev) => ({
         instances: {
           ...prev.instances,
           [instanceKey]: {
             id: instanceKey,
+            runId: createBackgroundActionEntryId("run"),
             actionId: definition.id,
             target,
             label: definition.label,
@@ -280,8 +417,15 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
             error: null,
             result: undefined,
             resultsAvailable: false,
-            startedAt: Date.now(),
+            logs: [],
+            events: [
+              createBackgroundActionEvent("started", "Preparing", { status: "preparing" }, startedAt),
+            ],
+            progress: undefined,
+            startedAt,
             completedAt: undefined,
+            cancelRequestedAt: undefined,
+            cancelledAt: undefined,
           },
         },
         controllers: controller
@@ -299,25 +443,54 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         return;
       }
 
+      const requestedAt = Date.now();
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, {
-          status: "running",
-          statusText: "Cancelling",
-        }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            {
+              ...instance,
+              status: "running",
+              statusText: "Cancelling",
+              cancelRequestedAt: instance.cancelRequestedAt || requestedAt,
+            },
+            "cancel-requested",
+            "Cancelling",
+            undefined,
+            requestedAt,
+          ),
+        ),
       }));
       controller.abort();
     },
 
     setActionLabel(instanceKey, label) {
+      const createdAt = Date.now();
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, { label }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent({ ...instance, label }, "label", label, { label }, createdAt),
+        ),
       }));
     },
 
     setActionStatus(instanceKey, status, statusText) {
-      const completedAt = isCompletedStatus(status) ? Date.now() : undefined;
+      const createdAt = Date.now();
+      const completedAt = isCompletedStatus(status) ? createdAt : undefined;
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, { status, statusText, completedAt }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            {
+              ...instance,
+              status,
+              statusText,
+              completedAt,
+              cancelledAt: status === "cancelled" ? createdAt : undefined,
+            },
+            "status",
+            statusText || status,
+            { status },
+            createdAt,
+          ),
+        ),
         controllers: isActiveStatus(status)
           ? prev.controllers
           : Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
@@ -325,26 +498,95 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
     },
 
     setActionError(instanceKey, error, statusText) {
+      const createdAt = Date.now();
+      const normalisedError = normaliseBackgroundActionError(error);
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, {
-          status: "error",
-          statusText,
-          error: normaliseBackgroundActionError(error),
-          completedAt: Date.now(),
-        }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            {
+              ...instance,
+              status: "error",
+              statusText,
+              error: normalisedError,
+              completedAt: createdAt,
+              cancelledAt: undefined,
+            },
+            "error",
+            statusText || normalisedError.message,
+            normalisedError,
+            createdAt,
+          ),
+        ),
         controllers: Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
       }));
     },
 
-    setResult(instanceKey, result) {
+    appendActionLog(instanceKey, message, level = "info", data) {
+      const createdAt = Date.now();
+      const log: BackgroundActionLogEntry = {
+        id: createBackgroundActionEntryId("log"),
+        createdAt,
+        level,
+        message,
+        data,
+      };
+
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, { result }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            {
+              ...instance,
+              logs: [...instance.logs, log],
+            },
+            "log",
+            message,
+            { level, data },
+            createdAt,
+          ),
+        ),
+      }));
+    },
+
+    setActionProgress(instanceKey, progress) {
+      const createdAt = Date.now();
+      const nextProgress = progress ? normaliseProgress(progress) : undefined;
+      set((prev) => ({
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            {
+              ...instance,
+              progress: nextProgress,
+            },
+            "progress",
+            nextProgress?.label || (nextProgress ? `${Math.round(nextProgress.percent)}%` : "Progress cleared"),
+            nextProgress || null,
+            createdAt,
+          ),
+        ),
+      }));
+    },
+
+    setResult(instanceKey, result) {
+      const createdAt = Date.now();
+      set((prev) => ({
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent({ ...instance, result }, "result", "Result recorded", undefined, createdAt),
+        ),
       }));
     },
 
     setResultsAvailable(instanceKey, available) {
+      const createdAt = Date.now();
       set((prev) => ({
-        instances: updateInstance(prev.instances, instanceKey, { resultsAvailable: available }),
+        ...updateStoredInstance(prev, instanceKey, (instance) =>
+          appendEvent(
+            { ...instance, resultsAvailable: available },
+            "results-available",
+            available ? "Results available" : "Results hidden",
+            { available },
+            createdAt,
+          ),
+        ),
       }));
     },
   }));
@@ -366,6 +608,12 @@ function createRunContext(options: RunBackgroundActionOptions, signal: AbortSign
     },
     setActionError(error, statusText) {
       store.getState().setActionError(instanceKey, error, statusText);
+    },
+    appendActionLog(message, level, data) {
+      store.getState().appendActionLog(instanceKey, message, level, data);
+    },
+    setActionProgress(progress) {
+      store.getState().setActionProgress(instanceKey, progress);
     },
     setResult(result) {
       store.getState().setResult(instanceKey, result);
@@ -433,10 +681,10 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 
     latest = store.getState().instances[instanceKey];
     if (latest && isActiveStatus(latest.status)) {
-      store.getState().setActionStatus(instanceKey, "complete", "Complete");
       if (typeof result !== "undefined" || latest?.resultsAvailable) {
         store.getState().setResultsAvailable(instanceKey, true);
       }
+      store.getState().setActionStatus(instanceKey, "complete", "Complete");
     }
   } catch (error) {
     if (signal.aborted || isAbortLikeError(error)) {
@@ -490,4 +738,8 @@ export function useBackgroundActionsStore<T = BackgroundActionsStore>(
 
 export function useBackgroundActionInstance(instanceKey: string) {
   return useBackgroundActionsStore((state) => state.instances[instanceKey]);
+}
+
+export function useBackgroundActionHistory(instanceKey: string) {
+  return useBackgroundActionsStore((state) => state.histories[instanceKey] || []);
 }

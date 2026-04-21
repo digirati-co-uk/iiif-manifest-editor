@@ -84,8 +84,11 @@ export function createOcrClassificationBackgroundAction(
       for (const [index, canvas] of canvases.entries()) {
         throwIfAborted(ctx.signal);
         const canvasId = canvas?.id || `canvas-${index + 1}`;
+        const label = `Classifying ${index + 1}/${canvases.length}`;
 
-        ctx.setActionStatus("running", `Classifying ${index + 1}/${canvases.length}`);
+        ctx.setActionStatus("running", label);
+        ctx.setActionProgress({ current: index, total: canvases.length, label });
+        ctx.appendActionLog(label, "info", { canvasId, current: index + 1, total: canvases.length });
 
         try {
           const image = await getCanvasImage(ctx, canvas);
@@ -93,6 +96,15 @@ export function createOcrClassificationBackgroundAction(
             result.skippedCanvases.push({
               canvasId,
               reason: "No painting image found",
+            });
+            ctx.appendActionLog("Skipped canvas classification", "warn", {
+              canvasId,
+              reason: "No painting image found",
+            });
+            ctx.setActionProgress({
+              current: index + 1,
+              total: canvases.length,
+              label: `Classified ${index + 1}/${canvases.length}`,
             });
             continue;
           }
@@ -110,21 +122,38 @@ export function createOcrClassificationBackgroundAction(
             scores: classification.scores,
             imageUrl: image.url,
           });
+          ctx.appendActionLog("Classified canvas", "info", {
+            canvasId,
+            label: tag.label,
+            score: classification.prediction.score,
+          });
         } catch (error) {
           if (ctx.signal.aborted) {
             throw error;
           }
 
+          const reason = getErrorMessage(error);
           result.skippedCanvases.push({
             canvasId,
-            reason: getErrorMessage(error),
+            reason,
+          });
+          ctx.appendActionLog("Skipped canvas classification", "warn", {
+            canvasId,
+            reason,
           });
         }
+
+        ctx.setActionProgress({
+          current: index + 1,
+          total: canvases.length,
+          label: `Classified ${index + 1}/${canvases.length}`,
+        });
       }
 
       result.classified = result.classifications.length;
       result.skipped = result.skippedCanvases.length;
       ctx.setActionStatus("running", `Classified ${result.classified}/${result.total}`);
+      ctx.setActionProgress({ current: canvases.length, total: canvases.length, label: "Classification complete" });
 
       return result;
     },

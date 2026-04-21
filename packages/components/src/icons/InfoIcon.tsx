@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 export function InfoIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> & { title?: string; titleId?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-labelledby={titleId} {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-labelledby={titleId} {...props}>
       {title ? <title id={titleId}>{title}</title> : null}
 
       <path d="M0 0h24v24H0V0z" fill="none" />
