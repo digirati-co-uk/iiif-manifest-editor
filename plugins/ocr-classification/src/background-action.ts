@@ -1,4 +1,9 @@
-import type { BackgroundActionDefinition, BackgroundActionRunContext } from "@manifest-editor/shell";
+import type {
+  BackgroundActionDefinition,
+  BackgroundActionPlan,
+  BackgroundActionRunContext,
+  BackgroundActionTask,
+} from "@manifest-editor/shell";
 import { type CanvasImageForClassification, getCanvasImageForClassification } from "./canvas-image";
 import {
   createOcrDifficultyTag,
@@ -36,6 +41,16 @@ export type OcrClassificationActionResult = {
   skippedCanvases: OcrCanvasClassificationSkip[];
 };
 
+type OcrClassificationTaskResult =
+  | {
+      type: "classified";
+      classification: OcrCanvasClassification;
+    }
+  | {
+      type: "skipped";
+      skip: OcrCanvasClassificationSkip;
+    };
+
 export type OcrClassificationActionDependencies = {
   prepareClassifier?: () => Promise<void>;
   getCanvasImage?: (ctx: BackgroundActionRunContext, canvas: any) => Promise<CanvasImageForClassification | null>;
@@ -56,113 +71,126 @@ export function createOcrClassificationBackgroundAction(
     section: "OCR",
     order: 10,
     resourceTypes: ["Manifest"],
+    resumable: true,
     render: () => renderOcrClassificationResults(OCR_CLASSIFICATION_ACTION_ID),
     onResults: (ctx) => openOcrClassificationResults(ctx.definition.id, ctx.instance?.result),
     supports: (ctx) => {
       const manifest = ctx.vault.get(ctx.target as any) as any;
       return !!manifest?.items?.length;
     },
+    prepare: (ctx) => {
+      return createClassificationPlan(getManifestCanvases(ctx));
+    },
     run: async (ctx) => {
-      const manifest = ctx.vault.get(ctx.target as any) as any;
-      const canvases: any[] = manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
-      const result = createEmptyResult(canvases.length);
+      const plan = ctx.plan || createClassificationPlan(getManifestCanvases(ctx));
+      const tasks = ctx.tasks.getAll();
+      const pendingTasks = ctx.tasks.getPending();
 
       ctx.setActionLabel("Classifying OCR difficulty");
 
-      if (!canvases.length) {
+      if (!tasks.length) {
         ctx.setActionStatus("running", "No canvases to classify");
-        return result;
+        return createEmptyResult(0);
       }
 
-      ctx.canvasProgress.setStatuses(
-        canvases.map((canvas) => ({ id: canvas.id, type: "Canvas" })),
-        "queued",
-      );
-      ctx.setActionStatus("running", "Loading OCR classifier");
-      await prepareClassifier();
+      if (pendingTasks.length) {
+        ctx.canvasProgress.setStatuses(
+          pendingTasks
+            .map((task) => task.target)
+            .filter((target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas"),
+          "queued",
+        );
+        ctx.setActionStatus("running", "Loading OCR classifier");
+        await prepareClassifier();
 
-      for (const [index, canvas] of canvases.entries()) {
-        throwIfAborted(ctx.signal);
-        const canvasId = canvas?.id || `canvas-${index + 1}`;
-        const canvasLabel = getCanvasLabel(canvas, canvasId);
-        const label = `Classifying ${index + 1}/${canvases.length}`;
+        await ctx.tasks.runEach(
+          async (task, { index, total }) => {
+            throwIfAborted(ctx.signal);
+            const canvasId = task.target?.id || (task.input as { canvasId?: string } | undefined)?.canvasId || task.id;
+            const canvas = getCanvasById(ctx, canvasId);
+            const canvasLabel = getCanvasLabel(canvas, canvasId);
+            const label = `Classifying ${index + 1}/${total}`;
 
-        ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "pending");
-        ctx.setActionStatus("running", label);
-        ctx.setActionProgress({ current: index, total: canvases.length, label });
-        ctx.appendActionLog(label, "info", { canvasId, current: index + 1, total: canvases.length });
+            ctx.appendActionLog(label, "info", { canvasId, current: index + 1, total });
 
-        try {
-          const image = await getCanvasImage(ctx, canvas);
-          if (!image) {
-            result.skippedCanvases.push({
-              canvasId,
-              canvasLabel,
-              reason: "No painting image found",
-            });
-            ctx.appendActionLog("Skipped canvas classification", "warn", {
-              canvasId,
-              reason: "No painting image found",
-            });
-            ctx.setActionProgress({
-              current: index + 1,
-              total: canvases.length,
-              label: `Classified ${index + 1}/${canvases.length}`,
-            });
-            continue;
-          }
+            try {
+              const image = canvas ? await getCanvasImage(ctx, canvas) : null;
+              if (!image) {
+                const skip = {
+                  canvasId,
+                  canvasLabel,
+                  reason: "No painting image found",
+                };
+                ctx.appendActionLog("Skipped canvas classification", "warn", {
+                  canvasId,
+                  reason: skip.reason,
+                });
+                return {
+                  taskStatus: "skipped",
+                  result: {
+                    type: "skipped",
+                    skip,
+                  } satisfies OcrClassificationTaskResult,
+                };
+              }
 
-          const classification = await classifyImage(image.blob);
-          const tag = createOcrDifficultyTag(classification.prediction);
-          ctx.tags.upsertTag({ id: canvasId, type: "Canvas" }, tag);
+              const classification = await classifyImage(image.blob);
+              const tag = createOcrDifficultyTag(classification.prediction);
+              ctx.tags.upsertTag({ id: canvasId, type: "Canvas" }, tag);
 
-          result.counts[tag.id] = (result.counts[tag.id] || 0) + 1;
-          result.classifications.push({
-            canvasId,
-            canvasLabel,
-            tagId: tag.id,
-            label: tag.label,
-            score: classification.prediction.score,
-            scores: classification.scores,
-            imageUrl: image.url,
-          });
-          ctx.appendActionLog("Classified canvas", "info", {
-            canvasId,
-            label: tag.label,
-            score: classification.prediction.score,
-          });
-        } catch (error) {
-          if (ctx.signal.aborted) {
-            throw error;
-          }
+              const result = {
+                canvasId,
+                canvasLabel,
+                tagId: tag.id,
+                label: tag.label,
+                score: classification.prediction.score,
+                scores: classification.scores,
+                imageUrl: image.url,
+              };
+              ctx.appendActionLog("Classified canvas", "info", {
+                canvasId,
+                label: tag.label,
+                score: classification.prediction.score,
+              });
+              return {
+                taskStatus: "complete",
+                result: {
+                  type: "classified",
+                  classification: result,
+                } satisfies OcrClassificationTaskResult,
+              };
+            } catch (error) {
+              if (ctx.signal.aborted) {
+                throw error;
+              }
 
-          const reason = getErrorMessage(error);
-          result.skippedCanvases.push({
-            canvasId,
-            canvasLabel,
-            reason,
-          });
-          ctx.appendActionLog("Skipped canvas classification", "warn", {
-            canvasId,
-            reason,
-          });
-        } finally {
-          if (!ctx.signal.aborted) {
-            ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "done");
-          }
-        }
-
-        ctx.setActionProgress({
-          current: index + 1,
-          total: canvases.length,
-          label: `Classified ${index + 1}/${canvases.length}`,
-        });
+              const skip = {
+                canvasId,
+                canvasLabel,
+                reason: getErrorMessage(error),
+              };
+              ctx.appendActionLog("Skipped canvas classification", "warn", {
+                canvasId,
+                reason: skip.reason,
+              });
+              return {
+                taskStatus: "skipped",
+                result: {
+                  type: "skipped",
+                  skip,
+                } satisfies OcrClassificationTaskResult,
+              };
+            }
+          },
+          {
+            progressLabel: (_task, index, total) => `Classifying ${index + 1}/${total}`,
+          },
+        );
       }
 
-      result.classified = result.classifications.length;
-      result.skipped = result.skippedCanvases.length;
+      const result = aggregateClassificationResult(ctx.tasks.getAll().length ? ctx.tasks.getAll() : plan.tasks);
       ctx.setActionStatus("running", `Classified ${result.classified}/${result.total}`);
-      ctx.setActionProgress({ current: canvases.length, total: canvases.length, label: "Classification complete" });
+      ctx.setActionProgress({ current: result.total, total: result.total, label: "Classification complete" });
       ctx.appendActionLog("Classification complete", "info", {
         total: result.total,
         classified: result.classified,
@@ -175,6 +203,31 @@ export function createOcrClassificationBackgroundAction(
   };
 }
 
+function createClassificationPlan(canvases: any[]): BackgroundActionPlan {
+  return {
+    version: 1,
+    tasks: canvases.map((canvas, index) => {
+      const canvasId = canvas?.id || `canvas-${index + 1}`;
+      const canvasLabel = getCanvasLabel(canvas, canvasId);
+      return {
+        id: `canvas:${canvasId}`,
+        label: canvasLabel,
+        target: {
+          id: canvasId,
+          type: "Canvas",
+          label: canvasLabel,
+          scope: "canvas",
+        },
+        input: {
+          canvasId,
+          canvasLabel,
+        },
+        status: "queued",
+      };
+    }),
+  };
+}
+
 function createEmptyResult(total: number): OcrClassificationActionResult {
   return {
     total,
@@ -184,6 +237,37 @@ function createEmptyResult(total: number): OcrClassificationActionResult {
     classifications: [],
     skippedCanvases: [],
   };
+}
+
+function aggregateClassificationResult(tasks: BackgroundActionTask[]): OcrClassificationActionResult {
+  const result = createEmptyResult(tasks.length);
+
+  for (const task of tasks) {
+    const taskResult = task.result as OcrClassificationTaskResult | undefined;
+    if (taskResult?.type === "classified") {
+      result.classifications.push(taskResult.classification);
+      result.counts[taskResult.classification.tagId] = (result.counts[taskResult.classification.tagId] || 0) + 1;
+      continue;
+    }
+
+    if (taskResult?.type === "skipped") {
+      result.skippedCanvases.push(taskResult.skip);
+      continue;
+    }
+
+    if (task.status === "error" && task.error) {
+      const canvasId = task.target?.id || task.id;
+      result.skippedCanvases.push({
+        canvasId,
+        canvasLabel: task.label || canvasId,
+        reason: task.error.message,
+      });
+    }
+  }
+
+  result.classified = result.classifications.length;
+  result.skipped = result.skippedCanvases.length;
+  return result;
 }
 
 async function defaultPrepareClassifier() {
@@ -204,6 +288,15 @@ function throwIfAborted(signal: AbortSignal) {
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Canvas classification failed";
+}
+
+function getManifestCanvases(ctx: BackgroundActionRunContext) {
+  const manifest = ctx.vault.get(ctx.target as any) as any;
+  return manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
+}
+
+function getCanvasById(ctx: BackgroundActionRunContext, canvasId: string) {
+  return ctx.vault.get({ id: canvasId, type: "Canvas" } as any) as any;
 }
 
 function getCanvasLabel(canvas: any, fallback: string) {

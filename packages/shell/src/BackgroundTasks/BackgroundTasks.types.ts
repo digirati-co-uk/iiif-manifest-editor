@@ -10,11 +10,11 @@ import type { ManifestEditorTagsApi } from "../Tags";
 
 export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
 export type BackgroundActionLogLevel = "debug" | "info" | "warn" | "error";
+export type BackgroundActionTaskStatus = "queued" | "running" | "complete" | "skipped" | "error" | "cancelled";
 export type BackgroundActionEventType =
   | "started"
   | "label"
   | "status"
-  | "progress"
   | "log"
   | "result"
   | "results-available"
@@ -69,6 +69,72 @@ export type BackgroundActionProgressInput =
       label?: string;
     };
 
+export interface BackgroundActionTask {
+  id: string;
+  label: string;
+  target?: BackgroundActionTarget;
+  input?: unknown;
+  status?: BackgroundActionTaskStatus;
+  statusText?: string;
+  result?: unknown;
+  error?: BackgroundActionError | null;
+  createdAt?: number;
+  startedAt?: number;
+  completedAt?: number;
+}
+
+export interface BackgroundActionPlan {
+  version: 1;
+  data?: unknown;
+  tasks: BackgroundActionTask[];
+}
+
+export interface BackgroundActionPersistedState {
+  version: 1;
+  savedAt: number;
+  instances: Record<string, BackgroundActionInstance>;
+  histories: Record<string, BackgroundActionInstance[]>;
+  plans: Record<string, BackgroundActionPlan>;
+}
+
+export interface BackgroundActionPersistenceKey {
+  appId: string;
+  instanceId: string;
+  rootResource: Reference;
+}
+
+export interface BackgroundActionPersistence {
+  load(key: BackgroundActionPersistenceKey): Promise<BackgroundActionPersistedState | null | undefined>;
+  save(key: BackgroundActionPersistenceKey, state: BackgroundActionPersistedState): Promise<void>;
+  clear(key: BackgroundActionPersistenceKey): Promise<void>;
+}
+
+export type BackgroundActionTaskRunResult =
+  | {
+      taskStatus?: "complete" | "skipped";
+      result?: unknown;
+      statusText?: string;
+    }
+  | unknown;
+
+export interface BackgroundActionTaskRunOptions {
+  statuses?: BackgroundActionTaskStatus[];
+  progressLabel?: (task: BackgroundActionTask, index: number, total: number) => string;
+}
+
+export interface BackgroundActionTasksApi {
+  getAll(): BackgroundActionTask[];
+  getPending(): BackgroundActionTask[];
+  update(id: string, patch: Partial<BackgroundActionTask>, persistImmediately?: boolean): void;
+  runEach(
+    handler: (
+      task: BackgroundActionTask,
+      context: { index: number; total: number; pendingIndex: number; pendingTotal: number },
+    ) => BackgroundActionTaskRunResult | Promise<BackgroundActionTaskRunResult>,
+    options?: BackgroundActionTaskRunOptions,
+  ): Promise<BackgroundActionTask[]>;
+}
+
 export interface BackgroundActionInstance {
   id: string;
   runId: string;
@@ -120,6 +186,8 @@ export interface BackgroundActionLifecycle {
 
 export interface BackgroundActionRunContext extends BackgroundActionContext, BackgroundActionLifecycle {
   signal: AbortSignal;
+  plan?: BackgroundActionPlan;
+  tasks: BackgroundActionTasksApi;
 }
 
 export interface BackgroundActionRenderContext extends BackgroundActionSystemContext {
@@ -133,8 +201,9 @@ export interface BackgroundActionDefinition {
   section?: string;
   order?: number;
   resourceTypes?: string[];
+  resumable?: boolean;
   supports?: (ctx: BackgroundActionContext) => boolean;
-  prepare?: (ctx: BackgroundActionRunContext) => boolean | void | Promise<boolean | void>;
+  prepare?: (ctx: BackgroundActionRunContext) => BackgroundActionPlan | boolean | void | Promise<BackgroundActionPlan | boolean | void>;
   run: (ctx: BackgroundActionRunContext) => unknown | Promise<unknown>;
   render?: (ctx: BackgroundActionRenderContext) => ReactNode | null;
   onResults?: (ctx: BackgroundActionContext) => unknown | Promise<unknown>;

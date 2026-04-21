@@ -123,8 +123,48 @@ export function useAvailableBackgroundActions(): BackgroundActionGroup[] {
 }
 
 export function BackgroundActionsMount() {
+  const store = useBackgroundActionsStoreApi();
   const definitions = useBackgroundActionsStore((state) => state.definitions);
+  const instances = useBackgroundActionsStore((state) => state.instances);
+  const plans = useBackgroundActionsStore((state) => state.plans);
+  const controllers = useBackgroundActionsStore((state) => state.controllers);
+  const hasHydrated = useBackgroundActionsStore((state) => state.hasHydrated);
   const systemContext = useBackgroundActionSystemContext();
+  const resumedRuns = useRef(new Set<string>());
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    const definitionsById = new Map(definitions.map((definition) => [definition.id, definition]));
+
+    for (const [instanceKey, instance] of Object.entries(instances)) {
+      const definition = definitionsById.get(instance.actionId);
+      const runKey = `${instanceKey}:${instance.runId}`;
+
+      if (!definition?.resumable || !isBusy(instance) || !plans[instanceKey] || controllers[instanceKey]) {
+        continue;
+      }
+
+      if (resumedRuns.current.has(runKey)) {
+        continue;
+      }
+
+      resumedRuns.current.add(runKey);
+      void runBackgroundAction({
+        store,
+        resume: true,
+        context: {
+          ...systemContext,
+          definition,
+          target: instance.target,
+          instanceKey,
+          instance,
+        },
+      });
+    }
+  }, [controllers, definitions, hasHydrated, instances, plans, store, systemContext]);
 
   return (
     <>
@@ -333,7 +373,6 @@ function BackgroundActionDetailsModal({
     cancelled: "bg-zinc-100 text-zinc-500",
   };
 
-  // Only show milestone events in the overview (filter out high-frequency progress ticks)
   const milestoneEvents = instance.events.filter((e) => isMilestoneEvent(e.type));
 
   const tabs: Array<{ id: DetailsTab; label: string; count?: number }> = [
@@ -432,7 +471,7 @@ function BackgroundActionDetailsModal({
             </div>
           ) : null}
 
-          {/* Key milestones — only non-progress events */}
+          {/* Key milestones */}
           {milestoneEvents.length > 0 ? (
             <div>
               <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">Key events</h3>
@@ -447,11 +486,6 @@ function BackgroundActionDetailsModal({
                   </div>
                 ))}
               </div>
-              {instance.events.length > milestoneEvents.length ? (
-                <p className="mt-1.5 text-xs text-zinc-400">
-                  {instance.events.length - milestoneEvents.length} additional progress events not shown.
-                </p>
-              ) : null}
             </div>
           ) : null}
         </div>

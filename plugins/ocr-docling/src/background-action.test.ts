@@ -7,6 +7,7 @@ import {
   getBackgroundActionInstanceKey,
   runBackgroundAction,
   type BackgroundActionContext,
+  type BackgroundActionPersistedState,
   type BackgroundActionTarget,
   type ManifestEditorTag,
 } from "@manifest-editor/shell";
@@ -133,6 +134,8 @@ describe("Docling OCR background action", () => {
       setActionProgress: vi.fn(),
       setResult: vi.fn(),
       setResultsAvailable: vi.fn(),
+      plan: undefined,
+      tasks: {} as any,
     };
     ctx.tags.addTag({ id: "https://example.org/canvas/1", type: "Canvas" }, REVIEW_TAG);
     ctx.tags.addTag({ id: "https://example.org/canvas/2", type: "Canvas" }, FLAG_TAG);
@@ -283,6 +286,27 @@ describe("Docling OCR background action", () => {
     expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
   });
 
+  test("retains the Docling client after a successful run so the model stays warm", async () => {
+    const vault = createVault();
+    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const client = createClient(rawDocling);
+    const createClientMock = vi.fn(() => client);
+    const definition = createOcrDoclingBackgroundAction({
+      createClient: createClientMock,
+      getCanvasImage: vi.fn(async () => createImage()),
+      requestConfig: vi.fn(async () => getDefaultRunOptions()),
+    });
+    const store = createBackgroundActionsStore([definition]);
+
+    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({ store, context: createContext(vault, definition) });
+
+    expect(createClientMock).toHaveBeenCalledTimes(1);
+    expect(client.preload).toHaveBeenCalledTimes(2);
+    expect(client.convert).toHaveBeenCalledTimes(2);
+    expect(client.terminate).not.toHaveBeenCalled();
+  });
+
   test("aborts OCR and terminates the worker when cancelled", async () => {
     const vault = createVault();
     let rejectConvert: (error: Error) => void = () => {};
@@ -313,6 +337,109 @@ describe("Docling OCR background action", () => {
 
     expect(terminate).toHaveBeenCalled();
     expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
+  });
+
+  test("resumes incomplete OCR tasks with persisted options", async () => {
+    const vault = createVault([
+      createCanvas("https://example.org/canvas/1"),
+      createCanvas("https://example.org/canvas/2"),
+    ]);
+    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const convert = vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, rawDocling));
+    const requestConfig = vi.fn(async () => getDefaultRunOptions());
+    const definition = createOcrDoclingBackgroundAction({
+      createClient: () => ({
+        preload: vi.fn(async () => undefined),
+        convert,
+        onEvent: vi.fn(() => () => undefined),
+        terminate: vi.fn(),
+      }),
+      getCanvasImage: vi.fn(async () => createImage()),
+      requestConfig,
+    });
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-resume",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          data: {
+            total: 2,
+            options: {
+              ...getDefaultRunOptions(),
+              prompt: "Persisted prompt",
+              imageSize: 768,
+            },
+          },
+          tasks: [
+            {
+              id: "canvas:https://example.org/canvas/1",
+              label: "https://example.org/canvas/1",
+              target: {
+                id: "https://example.org/canvas/1",
+                type: "Canvas",
+                label: "https://example.org/canvas/1",
+                scope: "canvas",
+              },
+              status: "complete",
+              result: {
+                type: "processed",
+                canvas: {
+                  canvasId: "https://example.org/canvas/1",
+                  imageUrl: "https://example.org/image/full/1024,/0/default.jpg",
+                  annotations: 3,
+                  durationMs: 10,
+                },
+              },
+            },
+            {
+              id: "canvas:https://example.org/canvas/2",
+              label: "https://example.org/canvas/2",
+              target: {
+                id: "https://example.org/canvas/2",
+                type: "Canvas",
+                label: "https://example.org/canvas/2",
+                scope: "canvas",
+              },
+              status: "running",
+            },
+          ],
+        },
+      },
+    };
+
+    store.getState().hydrate(snapshot);
+    await runBackgroundAction({ store, context: createContext(vault, definition), resume: true });
+
+    const result = store.getState().instances[instanceKey]?.result as OcrDoclingActionResult;
+
+    expect(requestConfig).not.toHaveBeenCalled();
+    expect(convert).toHaveBeenCalledTimes(1);
+    expect(convert.mock.calls[0]?.[0].prompt).toBe("Persisted prompt");
+    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
+    expect(result.selected).toBe(2);
+    expect(result.processed).toBe(2);
+    expect(result.annotations).toBe(4);
   });
 });
 

@@ -17,9 +17,11 @@ import {
   useConfig,
 } from "../ConfigContext/ConfigContext";
 import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
+import type { BackgroundActionPersistence } from "../BackgroundTasks/BackgroundTasks.types";
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
+import { useAppInstance } from "../AppContext/AppContext";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import type {
   Preview,
@@ -77,6 +79,7 @@ export function ShellProvider({
   previews,
   resource,
   editing,
+  backgroundActionPersistence,
 }: {
   resource: Resource;
   config?: Partial<Config>;
@@ -85,7 +88,9 @@ export function ShellProvider({
   theme?: any;
   previews?: Preview[];
   editing?: { id: string; type: string };
+  backgroundActionPersistence?: BackgroundActionPersistence | false | null;
 }) {
+  const app = useAppInstance();
   const existingConfig = useConfig();
   const mergedConfig = useMemo(() => {
     const resolvedPreviews =
@@ -99,6 +104,17 @@ export function ShellProvider({
       config,
     );
   }, [existingConfig, config]);
+  const backgroundActionPersistenceKey = useMemo(
+    () => ({
+      appId: app.appId,
+      instanceId: app.instanceId,
+      rootResource: {
+        id: resource.id,
+        type: resource.type,
+      },
+    }),
+    [app.appId, app.instanceId, resource.id, resource.type],
+  );
 
   return (
     <ErrorBoundary>
@@ -110,7 +126,10 @@ export function ShellProvider({
                 <PluginConfigBridge config={mergedConfig} />
                 <EditingStack>
                   <LayoutProvider>
-                    <BackgroundActionsProvider>
+                    <BackgroundActionsProvider
+                      persistence={backgroundActionPersistence}
+                      persistenceKey={backgroundActionPersistenceKey}
+                    >
                       <ContextMenuProvider>
                         <ToastProvider>
                           {/* @todo swap these out for (config?.previews || []) */}

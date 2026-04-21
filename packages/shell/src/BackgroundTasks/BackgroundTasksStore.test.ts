@@ -4,6 +4,8 @@ import { createManifestEditorCanvasProgressApi, getCanvasProgressStatus } from "
 import type {
   BackgroundActionContext,
   BackgroundActionDefinition,
+  BackgroundActionPersistedState,
+  BackgroundActionPersistenceKey,
   BackgroundActionSystemContext,
   BackgroundActionTarget,
 } from "./BackgroundTasks.types";
@@ -65,6 +67,12 @@ function context(definition: BackgroundActionDefinition, target = manifestTarget
 }
 
 describe("BackgroundTasksStore", () => {
+  const persistenceKey: BackgroundActionPersistenceKey = {
+    appId: "manifest-editor",
+    instanceId: "test-workspace",
+    rootResource: manifestTarget,
+  };
+
   test("registers and unregisters action definitions", () => {
     const store = createBackgroundActionsStore();
     const dispose = store.getState().registerAction(action({ id: "one" }));
@@ -342,10 +350,10 @@ describe("BackgroundTasksStore", () => {
 
     store.getState().setActionProgress(instanceKey, null);
     expect(store.getState().instances[instanceKey]?.progress).toBeUndefined();
-    expect(store.getState().instances[instanceKey]?.events.filter((event) => event.type === "progress")).toHaveLength(3);
+    expect(store.getState().instances[instanceKey]?.events.map((event) => event.type)).toEqual(["started"]);
   });
 
-  test("preserves progress events in completed history", async () => {
+  test("preserves latest progress in completed history", async () => {
     const definition = action({
       run: (ctx) => {
         ctx.setActionProgress({ current: 1, total: 2, label: "Half way" });
@@ -359,7 +367,36 @@ describe("BackgroundTasksStore", () => {
     const history = store.getState().histories[instanceKey];
     expect(history).toHaveLength(1);
     expect(history?.[0]?.progress).toMatchObject({ percent: 50, label: "Half way" });
-    expect(history?.[0]?.events.some((event) => event.type === "progress")).toBe(true);
+    expect(history?.[0]?.events.map((event) => String(event.type))).not.toContain("progress");
+  });
+
+  test("keeps progress updates in memory without triggering persistence writes", async () => {
+    const definition = action({ resumable: true });
+    const saved: BackgroundActionPersistedState[] = [];
+    const store = createBackgroundActionsStore([definition]);
+    const persistence = {
+      load: vi.fn(async () => null),
+      save: vi.fn(async (_key: BackgroundActionPersistenceKey, snapshot: BackgroundActionPersistedState) => {
+        saved.push(snapshot);
+      }),
+      clear: vi.fn(async () => undefined),
+    };
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    store.getState().setPersistence(persistence, persistenceKey);
+    store.getState().hydrate(null);
+    store.getState().startAction(instanceKey, definition, manifestTarget, new AbortController());
+    await store.getState().flushPersistence();
+    saved.length = 0;
+
+    store.getState().setActionProgress(instanceKey, { current: 1, total: 4, label: "Latest only" });
+    await Promise.resolve();
+
+    expect(store.getState().instances[instanceKey]?.progress).toMatchObject({
+      percent: 25,
+      label: "Latest only",
+    });
+    expect(saved).toHaveLength(0);
   });
 
   test("preserves completed run history with distinct run ids", async () => {
@@ -383,6 +420,282 @@ describe("BackgroundTasksStore", () => {
       firstRunId,
       secondRunId,
     ]);
+  });
+
+  test("hydrates resumable active actions and requeues running tasks", () => {
+    const definition = action({ resumable: true });
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const store = createBackgroundActionsStore([definition]);
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-1",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [
+            {
+              id: "old-progress",
+              createdAt: Date.now(),
+              type: "progress",
+              message: "50%",
+            } as any,
+          ],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          tasks: [
+            { id: "one", label: "One", status: "complete" },
+            { id: "two", label: "Two", status: "running" },
+          ],
+        },
+      },
+    };
+
+    store.getState().hydrate(snapshot);
+
+    expect(store.getState().instances[instanceKey]?.status).toBe("running");
+    expect(store.getState().instances[instanceKey]?.statusText).toBe("Resuming");
+    expect(store.getState().instances[instanceKey]?.events.map((event) => String(event.type))).not.toContain(
+      "progress",
+    );
+    expect(store.getState().plans[instanceKey]?.tasks.map((task) => task.status)).toEqual(["complete", "queued"]);
+    expect(store.getState().histories[instanceKey]).toBeUndefined();
+  });
+
+  test("hydrates cancellation requests as cancelled instead of resuming", () => {
+    const definition = action({ resumable: true });
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const store = createBackgroundActionsStore([definition]);
+    const requestedAt = Date.now();
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: requestedAt,
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-cancel-requested",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Cancelling",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: requestedAt - 1000,
+          cancelRequestedAt: requestedAt,
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          tasks: [
+            { id: "one", label: "One", status: "complete" },
+            { id: "two", label: "Two", status: "running" },
+            { id: "three", label: "Three", status: "queued" },
+          ],
+        },
+      },
+    };
+
+    store.getState().hydrate(snapshot);
+
+    const instance = store.getState().instances[instanceKey];
+    expect(instance?.status).toBe("cancelled");
+    expect(instance?.statusText).toBe("Cancelled");
+    expect(instance?.cancelRequestedAt).toBe(requestedAt);
+    expect(store.getState().plans[instanceKey]?.tasks.map((task) => task.status)).toEqual([
+      "complete",
+      "cancelled",
+      "cancelled",
+    ]);
+    expect(store.getState().histories[instanceKey]).toHaveLength(1);
+  });
+
+  test("hydrates active legacy actions as cancelled after reload", () => {
+    const definition = action();
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const store = createBackgroundActionsStore([definition]);
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-legacy",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {},
+    };
+
+    store.getState().hydrate(snapshot);
+
+    const instance = store.getState().instances[instanceKey];
+    expect(instance?.status).toBe("cancelled");
+    expect(instance?.statusText).toBe("Interrupted by page reload");
+    expect(store.getState().histories[instanceKey]).toHaveLength(1);
+  });
+
+  test("persists user cancellation immediately as terminal state", async () => {
+    const saved: BackgroundActionPersistedState[] = [];
+    const definition = action({
+      resumable: true,
+      prepare: () => ({
+        version: 1,
+        tasks: [{ id: "one", label: "One", status: "queued" }],
+      }),
+      run: (ctx) =>
+        new Promise((_resolve, reject) => {
+          ctx.signal.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+        }),
+    });
+    const persistence = {
+      load: vi.fn(async () => null),
+      save: vi.fn(async (_key: BackgroundActionPersistenceKey, snapshot: BackgroundActionPersistedState) => {
+        saved.push(snapshot);
+      }),
+      clear: vi.fn(async () => undefined),
+    };
+    const store = createBackgroundActionsStore([definition]);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+
+    store.getState().setPersistence(persistence, persistenceKey);
+    store.getState().hydrate(null);
+    const promise = runBackgroundAction({ store, context: context(definition) });
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(store.getState().instances[instanceKey]?.status).toBe("running");
+
+    saved.length = 0;
+    store.getState().cancelAction(instanceKey);
+    expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
+    await store.getState().flushPersistence();
+    await promise;
+
+    const latest = saved[saved.length - 1]!;
+    expect(latest.instances[instanceKey]?.status).toBe("cancelled");
+    expect(latest.instances[instanceKey]?.cancelRequestedAt).toBeTypeOf("number");
+    expect(latest.plans[instanceKey]?.tasks.map((task) => task.status)).toEqual(["cancelled"]);
+
+    const reloaded = createBackgroundActionsStore([definition]);
+    reloaded.getState().hydrate(latest);
+    expect(reloaded.getState().instances[instanceKey]?.status).toBe("cancelled");
+  });
+
+  test("resumes a persisted plan without rerunning completed tasks", async () => {
+    const processed: string[] = [];
+    const definition = action({
+      resumable: true,
+      run: async (ctx) => {
+        await ctx.tasks.runEach((task) => {
+          processed.push(task.id);
+          return { taskStatus: "complete", result: task.id };
+        });
+        return ctx.tasks.getAll().map((task) => task.result);
+      },
+    });
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const store = createBackgroundActionsStore([definition]);
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-resume",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          tasks: [
+            { id: "done", label: "Done", status: "complete", result: "done" },
+            { id: "pending", label: "Pending", status: "running" },
+          ],
+        },
+      },
+    };
+
+    store.getState().hydrate(snapshot);
+    await runBackgroundAction({ store, context: context(definition), resume: true });
+
+    expect(processed).toEqual(["pending"]);
+    expect(store.getState().instances[instanceKey]?.status).toBe("complete");
+    expect(store.getState().instances[instanceKey]?.result).toEqual(["done", "pending"]);
+    expect(store.getState().plans[instanceKey]?.tasks.map((task) => task.status)).toEqual(["complete", "complete"]);
+  });
+
+  test("persists serializable snapshots without controllers", async () => {
+    const definition = action({ resumable: true });
+    const saved: BackgroundActionPersistedState[] = [];
+    const store = createBackgroundActionsStore([definition]);
+    const persistence = {
+      load: vi.fn(async () => null),
+      save: vi.fn(async (_key: BackgroundActionPersistenceKey, snapshot: BackgroundActionPersistedState) => {
+        saved.push(snapshot);
+      }),
+      clear: vi.fn(async () => undefined),
+    };
+
+    store.getState().setPersistence(persistence, persistenceKey);
+    store.getState().hydrate(null);
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    store.getState().startAction(instanceKey, definition, manifestTarget, new AbortController());
+    store.getState().setActionPlan(instanceKey, {
+      version: 1,
+      tasks: [{ id: "one", label: "One", status: "queued" }],
+    });
+    store.getState().setActionProgress(instanceKey, { percent: 30, label: "Latest" });
+    await store.getState().flushPersistence();
+
+    expect(saved.length).toBeGreaterThan(0);
+    const latest = saved[saved.length - 1]!;
+    expect((latest as any).controllers).toBeUndefined();
+    expect(latest.instances[instanceKey]?.status).toBe("preparing");
+    expect(latest.instances[instanceKey]?.progress).toMatchObject({ percent: 30, label: "Latest" });
+    expect(latest.instances[instanceKey]?.events.map((event) => String(event.type))).not.toContain("progress");
+    expect(latest.plans[instanceKey]?.tasks[0]?.id).toBe("one");
   });
 
   test("clears canvas progress statuses touched by an action when it finishes", async () => {

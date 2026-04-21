@@ -174,14 +174,26 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
     section: "Actions",
     order: 10,
     resourceTypes: ["Manifest"],
+    resumable: true,
     render: () => <DemoBackgroundActionMount actionId="demo-generate-canvas-labels" />,
+    prepare: () => ({
+      version: 1,
+      tasks: [
+        { id: "scan-canvases", label: "Scanning canvases", input: { delay: 700 }, status: "queued" },
+        { id: "generate-labels", label: "Generating labels", input: { delay: 900 }, status: "queued" },
+        { id: "check-suggestions", label: "Checking suggestions", input: { delay: 600 }, status: "queued" },
+      ],
+    }),
     run: async (ctx) => {
       ctx.setActionLabel("Generating canvas labels...");
-      await progress(ctx, [
-        { label: "Scanning canvases", delay: 700 },
-        { label: "Generating labels", delay: 900 },
-        { label: "Checking suggestions", delay: 600 },
-      ]);
+      await ctx.tasks.runEach(async (task) => {
+        const delayMs = Number((task.input as { delay?: number } | undefined)?.delay) || 500;
+        await delay(delayMs, ctx.signal);
+        return {
+          taskStatus: "complete",
+          result: { label: task.label },
+        };
+      });
 
       const result = {
         action: "Generate canvas labels",

@@ -1,4 +1,9 @@
-import type { BackgroundActionDefinition, BackgroundActionRunContext } from "@manifest-editor/shell";
+import type {
+  BackgroundActionDefinition,
+  BackgroundActionPlan,
+  BackgroundActionRunContext,
+  BackgroundActionTask,
+} from "@manifest-editor/shell";
 import { getCanvasImageForOcr, type CanvasImageForOcr } from "./canvas-image";
 import {
   applyOcrDoclingPluginSettings,
@@ -44,8 +49,25 @@ export type OcrDoclingActionResult = {
   skippedCanvases: OcrDoclingCanvasSkip[];
 };
 
+type OcrDoclingTaskResult =
+  | {
+      type: "processed";
+      canvas: OcrDoclingCanvasResult;
+    }
+  | {
+      type: "skipped";
+      skip: OcrDoclingCanvasSkip;
+    };
+
+type OcrDoclingPlanData = {
+  options: OcrDoclingRunOptions;
+  total: number;
+};
+
+type OcrDoclingClient = Pick<DoclingWorkerClient, "preload" | "convert" | "onEvent" | "terminate">;
+
 export type OcrDoclingActionDependencies = {
-  createClient?: () => Pick<DoclingWorkerClient, "preload" | "convert" | "onEvent" | "terminate">;
+  createClient?: () => OcrDoclingClient;
   getCanvasImage?: (
     ctx: BackgroundActionRunContext,
     canvas: any,
@@ -63,8 +85,6 @@ export type OcrDoclingActionDependencies = {
   ) => Promise<OcrDoclingRunOptions | false>;
 };
 
-const runOptions = new Map<string, OcrDoclingRunOptions>();
-
 export function createOcrDoclingBackgroundAction(
   dependencies: OcrDoclingActionDependencies = {},
 ): BackgroundActionDefinition {
@@ -72,6 +92,12 @@ export function createOcrDoclingBackgroundAction(
   const getCanvasImage = dependencies.getCanvasImage || getCanvasImageForOcr;
   const writeAnnotations = dependencies.writeAnnotations || writeDoclingRegionAnnotations;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
+  let retainedClient: OcrDoclingClient | null = null;
+
+  const getClient = () => {
+    retainedClient ||= createClient();
+    return retainedClient;
+  };
 
   return {
     id: OCR_DOCLING_ACTION_ID,
@@ -80,6 +106,7 @@ export function createOcrDoclingBackgroundAction(
     section: "OCR",
     order: 20,
     resourceTypes: ["Manifest"],
+    resumable: true,
     render: (ctx) => (
       <>
         {renderOcrDoclingConfigModal(ctx.definition.id)}
@@ -93,157 +120,212 @@ export function createOcrDoclingBackgroundAction(
     },
     prepare: async (ctx) => {
       const canvases = getManifestCanvases(ctx);
-      const options = await requestConfig(ctx, canvases, runOptions.get(ctx.instanceKey) || getDefaultRunOptions());
+      const options = await requestConfig(ctx, canvases, getDefaultRunOptions());
       if (options === false) {
         return false;
       }
 
-      runOptions.set(ctx.instanceKey, options);
-      return true;
+      const selectedCanvases = selectCanvases(ctx, canvases, options);
+      return createDoclingPlan(canvases.length, selectedCanvases, options);
     },
     run: async (ctx) => {
-      const manifestCanvases = getManifestCanvases(ctx);
-      const options = runOptions.get(ctx.instanceKey) || getDefaultRunOptions();
-      const selectedCanvases = selectCanvases(ctx, manifestCanvases, options);
-      const result = createEmptyResult(manifestCanvases.length, selectedCanvases.length);
+      const plan = ctx.plan || createDoclingPlan(0, [], getDefaultRunOptions());
+      const options = getPlanOptions(plan) || getDefaultRunOptions();
+      const tasks = ctx.tasks.getAll();
+      const pendingTasks = ctx.tasks.getPending();
+      const totalCanvases = getPlanTotal(plan);
 
       ctx.setActionLabel("Running Docling OCR");
 
-      if (!selectedCanvases.length) {
+      if (!tasks.length) {
         ctx.setActionStatus("running", "No canvases selected");
-        return result;
+        return createEmptyResult(totalCanvases, 0);
       }
 
-      ctx.canvasProgress.setStatuses(
-        selectedCanvases.map((canvas) => ({ id: canvas.id, type: "Canvas" })),
-        "queued",
-      );
-      const client = createClient();
-      const unsubscribe = client.onEvent((event) => handleDoclingEvent(ctx, event));
-      const abort = () => client.terminate();
-
-      ctx.signal.addEventListener("abort", abort, { once: true });
-
-      try {
-        throwIfAborted(ctx.signal);
-        ctx.setActionStatus("running", "Loading Docling model");
-        await client.preload();
-
-        for (const [index, canvas] of selectedCanvases.entries()) {
-          throwIfAborted(ctx.signal);
-          const canvasId = canvas?.id || `canvas-${index + 1}`;
-          const label = `OCR ${index + 1}/${selectedCanvases.length}`;
-          ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "pending");
-          ctx.setActionStatus("running", label);
-          ctx.setActionProgress({ current: index, total: selectedCanvases.length, label });
-          ctx.appendActionLog(label, "info", {
-            canvasId,
-            current: index + 1,
-            total: selectedCanvases.length,
-          });
-
-          try {
-            if (!hasCanvasDimensions(canvas)) {
-              result.skippedCanvases.push({
-                canvasId,
-                reason: "Canvas dimensions unavailable",
-              });
-              ctx.appendActionLog("Skipped canvas OCR", "warn", {
-                canvasId,
-                reason: "Canvas dimensions unavailable",
-              });
-              ctx.setActionProgress({
-                current: index + 1,
-                total: selectedCanvases.length,
-                label: `OCR ${index + 1}/${selectedCanvases.length}`,
-              });
-              continue;
-            }
-
-            const image = await getCanvasImage(ctx, canvas, options.imageSize);
-            if (!image) {
-              result.skippedCanvases.push({
-                canvasId,
-                reason: "No painting image found",
-              });
-              ctx.appendActionLog("Skipped canvas OCR", "warn", {
-                canvasId,
-                reason: "No painting image found",
-              });
-              ctx.setActionProgress({
-                current: index + 1,
-                total: selectedCanvases.length,
-                label: `OCR ${index + 1}/${selectedCanvases.length}`,
-              });
-              continue;
-            }
-
-            const startedAt = performance.now();
-            const batch = await client.convert({
-              prompt: options.prompt,
-              pages: [
-                {
-                  id: canvasId,
-                  name: getCanvasLabel(canvas),
-                  source: image.blob,
-                },
-              ],
-            });
-            const page = getBatchPage(batch, canvasId);
-            const regions = extractDoclingRegions(page?.rawDocling || "");
-            const annotations = writeAnnotations(ctx, canvas, regions);
-
-            result.canvases.push({
-              canvasId,
-              imageUrl: image.url,
-              annotations: annotations.length,
-              durationMs: performance.now() - startedAt,
-            });
-            ctx.appendActionLog("Created OCR annotations", "info", {
-              canvasId,
-              annotations: annotations.length,
-            });
-          } catch (error) {
-            if (ctx.signal.aborted) {
-              throw error;
-            }
-
-            const reason = getErrorMessage(error);
-            result.skippedCanvases.push({
-              canvasId,
-              reason,
-            });
-            ctx.appendActionLog("Skipped canvas OCR", "warn", {
-              canvasId,
-              reason,
-            });
-          } finally {
-            if (!ctx.signal.aborted) {
-              ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "done");
-            }
+      if (pendingTasks.length) {
+        ctx.canvasProgress.setStatuses(
+          pendingTasks
+            .map((task) => task.target)
+            .filter((target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas"),
+          "queued",
+        );
+        const client = getClient();
+        const unsubscribe = client.onEvent((event) => handleDoclingEvent(ctx, event));
+        let terminated = false;
+        const terminateClient = () => {
+          if (terminated) {
+            return;
           }
 
-          ctx.setActionProgress({
-            current: index + 1,
-            total: selectedCanvases.length,
-            label: `OCR ${index + 1}/${selectedCanvases.length}`,
-          });
+          terminated = true;
+          client.terminate();
+          if (retainedClient === client) {
+            retainedClient = null;
+          }
+        };
+        const abort = () => terminateClient();
+
+        ctx.signal.addEventListener("abort", abort, { once: true });
+
+        try {
+          throwIfAborted(ctx.signal);
+          ctx.setActionStatus("running", "Loading Docling model");
+          await client.preload();
+
+          await ctx.tasks.runEach(
+            async (task, { index, total }) => {
+              throwIfAborted(ctx.signal);
+              const canvasId = task.target?.id || (task.input as { canvasId?: string } | undefined)?.canvasId || task.id;
+              const canvas = getCanvasById(ctx, canvasId);
+              const label = `OCR ${index + 1}/${total}`;
+              ctx.appendActionLog(label, "info", {
+                canvasId,
+                current: index + 1,
+                total,
+              });
+
+              try {
+                if (!canvas || !hasCanvasDimensions(canvas)) {
+                  const skip = {
+                    canvasId,
+                    reason: "Canvas dimensions unavailable",
+                  };
+                  ctx.appendActionLog("Skipped canvas OCR", "warn", {
+                    canvasId,
+                    reason: skip.reason,
+                  });
+                  return {
+                    taskStatus: "skipped",
+                    result: {
+                      type: "skipped",
+                      skip,
+                    } satisfies OcrDoclingTaskResult,
+                  };
+                }
+
+                const image = await getCanvasImage(ctx, canvas, options.imageSize);
+                if (!image) {
+                  const skip = {
+                    canvasId,
+                    reason: "No painting image found",
+                  };
+                  ctx.appendActionLog("Skipped canvas OCR", "warn", {
+                    canvasId,
+                    reason: skip.reason,
+                  });
+                  return {
+                    taskStatus: "skipped",
+                    result: {
+                      type: "skipped",
+                      skip,
+                    } satisfies OcrDoclingTaskResult,
+                  };
+                }
+
+                const startedAt = performance.now();
+                const batch = await client.convert({
+                  prompt: options.prompt,
+                  pages: [
+                    {
+                      id: canvasId,
+                      name: getCanvasLabel(canvas),
+                      source: image.blob,
+                    },
+                  ],
+                });
+                const page = getBatchPage(batch, canvasId);
+                const regions = extractDoclingRegions(page?.rawDocling || "");
+                const annotations = writeAnnotations(ctx, canvas, regions);
+                const canvasResult = {
+                  canvasId,
+                  imageUrl: image.url,
+                  annotations: annotations.length,
+                  durationMs: performance.now() - startedAt,
+                };
+
+                ctx.appendActionLog("Created OCR annotations", "info", {
+                  canvasId,
+                  annotations: annotations.length,
+                });
+                return {
+                  taskStatus: "complete",
+                  result: {
+                    type: "processed",
+                    canvas: canvasResult,
+                  } satisfies OcrDoclingTaskResult,
+                };
+              } catch (error) {
+                if (ctx.signal.aborted) {
+                  throw error;
+                }
+
+                const skip = {
+                  canvasId,
+                  reason: getErrorMessage(error),
+                };
+                ctx.appendActionLog("Skipped canvas OCR", "warn", {
+                  canvasId,
+                  reason: skip.reason,
+                });
+                return {
+                  taskStatus: "skipped",
+                  result: {
+                    type: "skipped",
+                    skip,
+                  } satisfies OcrDoclingTaskResult,
+                };
+              }
+            },
+            {
+              progressLabel: (_task, index, total) => `OCR ${index + 1}/${total}`,
+            },
+          );
+        } catch (error) {
+          terminateClient();
+          throw error;
+        } finally {
+          ctx.signal.removeEventListener("abort", abort);
+          unsubscribe();
         }
-      } finally {
-        ctx.signal.removeEventListener("abort", abort);
-        unsubscribe();
-        client.terminate();
-        runOptions.delete(ctx.instanceKey);
       }
 
+      const result = aggregateDoclingResult(totalCanvases, ctx.tasks.getAll());
       result.processed = result.canvases.length;
       result.annotations = result.canvases.reduce((total, item) => total + item.annotations, 0);
       result.skipped = result.skippedCanvases.length;
       ctx.setActionStatus("running", `Created ${result.annotations} OCR annotations`);
-      ctx.setActionProgress({ current: selectedCanvases.length, total: selectedCanvases.length, label: "OCR complete" });
+      ctx.setActionProgress({ current: result.selected, total: result.selected, label: "OCR complete" });
 
       return result;
     },
+  };
+}
+
+function createDoclingPlan(total: number, selectedCanvases: any[], options: OcrDoclingRunOptions): BackgroundActionPlan {
+  return {
+    version: 1,
+    data: {
+      options,
+      total,
+    } satisfies OcrDoclingPlanData,
+    tasks: selectedCanvases.map((canvas, index) => {
+      const canvasId = canvas?.id || `canvas-${index + 1}`;
+      const label = getCanvasLabel(canvas) || canvasId;
+      return {
+        id: `canvas:${canvasId}`,
+        label,
+        target: {
+          id: canvasId,
+          type: "Canvas",
+          label,
+          scope: "canvas",
+        },
+        input: {
+          canvasId,
+        },
+        status: "queued",
+      };
+    }),
   };
 }
 
@@ -270,6 +352,10 @@ async function defaultRequestConfig(
 function getManifestCanvases(ctx: BackgroundActionRunContext) {
   const manifest = ctx.vault.get(ctx.target as any) as any;
   return manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
+}
+
+function getCanvasById(ctx: BackgroundActionRunContext, canvasId: string) {
+  return ctx.vault.get({ id: canvasId, type: "Canvas" } as any) as any;
 }
 
 function selectCanvases(ctx: BackgroundActionRunContext, canvases: any[], options: OcrDoclingRunOptions) {
@@ -299,12 +385,51 @@ function createEmptyResult(total: number, selected: number): OcrDoclingActionRes
   };
 }
 
+function aggregateDoclingResult(total: number, tasks: BackgroundActionTask[]): OcrDoclingActionResult {
+  const result = createEmptyResult(total, tasks.length);
+
+  for (const task of tasks) {
+    const taskResult = task.result as OcrDoclingTaskResult | undefined;
+    if (taskResult?.type === "processed") {
+      result.canvases.push(taskResult.canvas);
+      continue;
+    }
+
+    if (taskResult?.type === "skipped") {
+      result.skippedCanvases.push(taskResult.skip);
+      continue;
+    }
+
+    if (task.status === "error" && task.error) {
+      result.skippedCanvases.push({
+        canvasId: task.target?.id || task.id,
+        reason: task.error.message,
+      });
+    }
+  }
+
+  result.processed = result.canvases.length;
+  result.annotations = result.canvases.reduce((totalAnnotations, item) => totalAnnotations + item.annotations, 0);
+  result.skipped = result.skippedCanvases.length;
+  return result;
+}
+
+function getPlanOptions(plan: BackgroundActionPlan): OcrDoclingRunOptions | null {
+  const data = plan.data as Partial<OcrDoclingPlanData> | undefined;
+  return data?.options || null;
+}
+
+function getPlanTotal(plan: BackgroundActionPlan) {
+  const data = plan.data as Partial<OcrDoclingPlanData> | undefined;
+  return typeof data?.total === "number" ? data.total : plan.tasks.length;
+}
+
 function handleDoclingEvent(ctx: BackgroundActionRunContext, event: DoclingEvent) {
   switch (event.type) {
     case "model-progress":
       ctx.setActionStatus(
         "running",
-        `Downloading model ${Math.round(event.progress)}% (${formatBytes(event.loaded)} / ${formatBytes(event.total)})`,
+        `Loading model ${Math.round(event.progress)}% (${formatBytes(event.loaded)} / ${formatBytes(event.total)})`,
       );
       break;
     case "model-ready":
