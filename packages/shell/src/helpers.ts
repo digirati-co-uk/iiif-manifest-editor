@@ -2,6 +2,7 @@ import { toRef } from "@iiif/parser";
 import type { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import type { AppExtension, MappedApp } from "./AppContext/AppContext";
 import { mergeBackgroundActionDefinitions } from "./BackgroundTasks/BackgroundTasksStore";
+import { mergePartialConfig } from "./ConfigContext/ConfigContext";
 
 export async function getManifestNomalized(
   id: string,
@@ -90,10 +91,7 @@ export function extendApp(
   return {
     ...app,
     metadata,
-    config: {
-      ...(app.config || {}),
-      ...(extensions.config || {}),
-    },
+    config: mergePartialConfig(app.config || {}, extensions.config || {}),
     layout: {
       ...app.layout,
       leftPanels: [

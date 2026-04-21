@@ -46,7 +46,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const canvasSelector = props.resource.initialData?.selector;
   useTemporaryHighlight(canvasSelector);
 
-  const initialData = useInitialData(props.creator.id);
+  const initialData = useInitialData<Record<string, unknown>>(props.creator.id);
 
   const options: CreatorOptions = {
     targetType: props.resource.type,

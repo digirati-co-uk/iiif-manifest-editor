@@ -12,6 +12,7 @@ import type {
   LayoutPanel,
   LayoutProps,
 } from "../Layout/Layout.types";
+import { useResolvedPluginApp } from "../PluginContext/PluginContext";
 
 export type AppContext = {
   instanceId: string;
@@ -142,11 +143,12 @@ export function AppProvider({
 }) {
   const ctx = useMemo(() => ({ instanceId, appId, args }), [instanceId, appId, args]);
   const _initialState = useMemo(() => initialState || {}, [instanceId]);
+  const resolvedDefinition = useResolvedPluginApp(definition, appId);
 
   // Current App is now put in the "Prime" context.
   return (
-    <ConfigProvider config={definition.config || {}}>
-      <PrimeAppReactContext.Provider value={definition}>
+    <ConfigProvider config={resolvedDefinition.config || {}}>
+      <PrimeAppReactContext.Provider value={resolvedDefinition}>
         <AppReactContext.Provider value={ctx}>
           <AppStateProvider instanceId={ctx.instanceId} appId={ctx.appId} args={ctx.args} initialState={_initialState}>
             {children}

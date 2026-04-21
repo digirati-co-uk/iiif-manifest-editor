@@ -55,6 +55,17 @@ export interface Config {
   };
 
   uploadBackends: Array<UploadBackendConfig>;
+
+  plugins?: {
+    apps?: Record<
+      string,
+      {
+        enabled?: string[];
+        disabled?: string[];
+        settings?: Record<string, unknown>;
+      }
+    >;
+  };
 }
 
 export interface EditorConfig {
@@ -109,11 +120,101 @@ const DEFAULT_CONFIG: Config = {
     rememberLeftPanelId: false,
   },
   uploadBackends: [],
+  plugins: {
+    apps: {},
+  },
   export: {
     baseIdentifier: null,
     version: 3,
   },
 };
+
+function mergeEditorConfig(
+  base: Config["editorConfig"] | undefined,
+  override: Config["editorConfig"] | undefined,
+): Config["editorConfig"] | undefined {
+  if (!base && !override) return undefined;
+
+  const next: Config["editorConfig"] = { ...(base || {}) };
+  for (const [key, value] of Object.entries(override || {})) {
+    next[key as keyof Config["editorConfig"]] = {
+      ...((next as any)[key] || {}),
+      ...(value || {}),
+    };
+  }
+  return next;
+}
+
+function mergePluginConfig(
+  base: Config["plugins"] | undefined,
+  override: Config["plugins"] | undefined,
+): Config["plugins"] | undefined {
+  if (!base && !override) return undefined;
+
+  const apps: NonNullable<Config["plugins"]>["apps"] = {
+    ...(base?.apps || {}),
+  };
+
+  for (const [appId, appConfig] of Object.entries(override?.apps || {})) {
+    const existing = apps[appId] || {};
+    apps[appId] = {
+      ...existing,
+      ...appConfig,
+      settings: {
+        ...(existing.settings || {}),
+        ...(appConfig.settings || {}),
+      },
+    };
+  }
+
+  return { apps };
+}
+
+export function mergePartialConfig(
+  ...configs: Array<Partial<Config> | null | undefined>
+): Partial<Config> {
+  let merged: Partial<Config> = {};
+
+  for (const config of configs) {
+    if (!config) continue;
+
+    merged = {
+      ...merged,
+      ...config,
+      editorConfig: mergeEditorConfig(merged.editorConfig, config.editorConfig),
+      editorFeatureFlags:
+        merged.editorFeatureFlags || config.editorFeatureFlags
+          ? {
+              ...(merged.editorFeatureFlags || {}),
+              ...(config.editorFeatureFlags || {}),
+            }
+          : undefined,
+      i18n:
+        merged.i18n || config.i18n
+          ? {
+              ...(merged.i18n || {}),
+              ...(config.i18n || {}),
+            } as Config["i18n"]
+          : undefined,
+      export:
+        merged.export || config.export
+          ? {
+              ...(merged.export || {}),
+              ...(config.export || {}),
+            } as Config["export"]
+          : undefined,
+      plugins: mergePluginConfig(merged.plugins, config.plugins),
+    };
+  }
+
+  return merged;
+}
+
+export function mergeConfig(
+  ...configs: Array<Partial<Config> | null | undefined>
+): Config {
+  return mergePartialConfig(DEFAULT_CONFIG, ...configs) as Config;
+}
 
 export const ConfigReactContext = createContext<Config>(DEFAULT_CONFIG);
 export const SaveConfigReactContext = createContext<
@@ -141,27 +242,18 @@ export function ConfigProvider({
     null,
   );
   const resolvedConfig: Config = useMemo(
-    () => ({
-      ...DEFAULT_CONFIG,
-      ...(config || {}),
-      ...(runtimeConfig || {}),
-      editorFeatureFlags: {
-        ...DEFAULT_CONFIG.editorFeatureFlags,
-        ...(config?.editorFeatureFlags || {}),
-        ...runtimeConfig?.editorFeatureFlags,
-      },
-    }),
+    () => mergeConfig(config, runtimeConfig),
     [config, runtimeConfig],
   );
 
   const memoSaveConfig = useCallback(
     (config: Partial<Config>) => {
-      setRuntimeConfig(config);
+      setRuntimeConfig((existing) => mergePartialConfig(existing, config));
       if (saveConfig) {
         saveConfig(config);
       }
     },
-    [config],
+    [saveConfig],
   );
 
   return (

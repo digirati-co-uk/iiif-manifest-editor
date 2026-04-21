@@ -13,6 +13,7 @@ import {
 import {
   type Config,
   ConfigProvider,
+  mergeConfig,
   useConfig,
 } from "../ConfigContext/ConfigContext";
 import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
@@ -25,6 +26,7 @@ import type {
   PreviewConfiguration,
 } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
+import { PluginConfigBridge } from "../PluginContext/PluginContext";
 import { defaultTheme } from "./default-theme";
 
 const previewConfigs: PreviewConfiguration[] = [
@@ -85,11 +87,16 @@ export function ShellProvider({
 }) {
   const existingConfig = useConfig();
   const mergedConfig = useMemo(() => {
-    return {
-      ...existingConfig,
-      ...config,
-      previews: config?.previews || existingConfig.previews || previewConfigs,
-    };
+    const resolvedPreviews =
+      config?.previews ||
+      (existingConfig.previews?.length ? existingConfig.previews : previewConfigs);
+    return mergeConfig(
+      existingConfig,
+      {
+        previews: resolvedPreviews,
+      },
+      config,
+    );
   }, [existingConfig, config]);
 
   return (
@@ -99,6 +106,7 @@ export function ShellProvider({
           <PreviewVaultContext>
             <ThemeProvider theme={theme || defaultTheme}>
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
+                <PluginConfigBridge config={mergedConfig} />
                 <EditingStack>
                   <LayoutProvider>
                     <BackgroundActionsProvider>

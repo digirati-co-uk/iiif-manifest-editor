@@ -181,7 +181,7 @@ export function ModularPanel({
   }, [available]);
   const { itemProps, isOpen, setIsOpen } = useDropdownMenu(switchablePanels.length);
   const [customTitle, setCustomTitle] = useState("");
-  const setCustomTitleRef = useRef<(title: string) => void | undefined>();
+  const setCustomTitleRef = useRef<((title: string) => void) | undefined>(undefined);
 
   useEffect(() => setDidError(false), resetKeys);
 

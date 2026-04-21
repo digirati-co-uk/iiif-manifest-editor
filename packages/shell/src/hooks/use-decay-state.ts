@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 
 export function useDecayState(time: number) {
   const [active, _setActive] = useState(false);
-  const lastTimeout = useRef<any>();
+  const lastTimeout = useRef<any>(null);
   const focusCount = useRef<any>(0);
 
   function clear(existing?: boolean) {

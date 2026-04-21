@@ -27,6 +27,7 @@ import {
   type LayoutPanel,
   type MappedApp,
   mapApp,
+  mergePartialConfig,
   PreviewButton,
   type PreviewConfiguration,
   ShellProvider,
@@ -205,13 +206,8 @@ export default function BrowserEditor({
   }, [staleEtag]);
 
   const mergedConfig = useMemo(() => {
-    return {
-      ...config,
-      ...projectConfig,
-      ...customConfig,
-      ...(preset?.config || {}),
-    };
-  }, [preset, projectConfig, customConfig]);
+    return mergePartialConfig(config, projectConfig, customConfig);
+  }, [projectConfig, customConfig]);
 
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {

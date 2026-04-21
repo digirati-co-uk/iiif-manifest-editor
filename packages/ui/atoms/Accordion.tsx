@@ -228,7 +228,7 @@ export interface AccordionItemRef {
   close(): void;
   toggle(): void;
   focus(): void;
-  button?: RefObject<HTMLButtonElement>;
+  button?: RefObject<HTMLButtonElement | null>;
 }
 
 const noop = (() => void 0) as any;
@@ -239,7 +239,7 @@ function useId() {
 }
 
 export function useAccordionItems(itemsLength: number, singleMode = false) {
-  const [elRefs, setElRefs] = useState<RefObject<AccordionItemRef>[]>([]);
+  const [elRefs, setElRefs] = useState<RefObject<AccordionItemRef | null>[]>([]);
   const current = useRef(-1);
 
   const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {

@@ -164,7 +164,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     }
   }
 
-  function create(resource: CreatableResource) {
+  async function create(resource: CreatableResource) {
     actions.editingStack.create(resource, {});
     emitter.emit("layout.create", resource);
     if (available.modals?.find((e) => e.id === "@manifest-editor/creator")) {

@@ -1,6 +1,7 @@
 import { ActionButton, Form, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useDecayState } from "../hooks/use-decay-state";
+import { PluginManager } from "../PluginContext/PluginManager";
 import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 
@@ -30,6 +31,7 @@ export function ConfigEditor() {
         version: formValues.get("isVersion2") === "on" ? 2 : 3,
         baseIdentifier: (formValues.get("base") as string) || null,
       },
+      plugins: config.plugins,
       editorFeatureFlags: {
         ...(config.editorFeatureFlags || ({} as any)),
         rememberCanvasId: formValues.get("rememberCanvasId") === "on",
@@ -179,6 +181,8 @@ export function ConfigEditor() {
                 : "Go to Exhibition Editor"}
             </a>
           ) : null}
+
+          <PluginManager />
 
           <div className="mt-5">
             <ActionButton type="submit">{"Save changes"}</ActionButton>
