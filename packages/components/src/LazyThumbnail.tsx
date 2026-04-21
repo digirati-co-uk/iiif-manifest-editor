@@ -42,6 +42,17 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
   const thumbnail = useThumbnail({ height: 256, width: 256 }, true);
   let thumbnailId = thumbnail?.id;
 
+  // If the vault has a fresher URL than what we cached, invalidate the cache so
+  // the new image loads with a proper loading state instead of silently swapping.
+  useEffect(() => {
+    if (!thumbnailId || !canvas?.id) return;
+    const cached = renderCache.get(canvas.id);
+    if (cached && cached !== thumbnailId) {
+      renderCache.delete(canvas.id);
+      setIsLoading(true);
+    }
+  }, [thumbnailId, canvas?.id]);
+
   if (canvas?.id && thumbnailId) {
     renderCache.set(canvas.id, thumbnailId);
   } else if (canvas?.id && renderCache.get(canvas.id)) {

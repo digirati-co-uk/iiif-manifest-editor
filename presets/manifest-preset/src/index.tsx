@@ -1,10 +1,9 @@
-import { allCreators } from "@manifest-editor/creators";
-import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
 import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
+import { allCreators } from "@manifest-editor/creators";
+import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
 import * as ocrClassificationPlugin from "@manifest-editor/ocr-classification";
 import * as ocrDoclingPlugin from "@manifest-editor/ocr-docling";
-import * as translationPlugin from "@manifest-editor/translation";
 import {
   type BackgroundActionDefinition,
   type BackgroundPanel,
@@ -13,6 +12,8 @@ import {
   ExportPanel,
   type LayoutPanel,
 } from "@manifest-editor/shell";
+import * as translationPlugin from "@manifest-editor/translation";
+import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-builder/background-action";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
@@ -58,7 +59,7 @@ export const leftPanels: LayoutPanel[] = [
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
-export const backgroundActions: BackgroundActionDefinition[] = [];
+export const backgroundActions: BackgroundActionDefinition[] = [createBulkThumbnailBuilderBackgroundAction()];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 
