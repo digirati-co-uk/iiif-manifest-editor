@@ -10,6 +10,7 @@ import { ReactVaultContext } from "react-iiif-vault";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";
 import { useAppState } from "../AppContext/AppContext";
+import { BackgroundActionsMount } from "../BackgroundTasks/BackgroundActions";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
@@ -446,6 +447,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       <L.Footer>{props.footer || null}</L.Footer>
 
       <div className="hidden">{backgroundItems}</div>
+      <BackgroundActionsMount />
 
       <>{renderModal()}</>
     </L.OuterWrapper>

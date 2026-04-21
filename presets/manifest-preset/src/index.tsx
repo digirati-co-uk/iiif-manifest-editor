@@ -2,6 +2,7 @@ import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
 import {
   type AnnotationPanel,
+  type BackgroundActionDefinition,
   type BackgroundPanel,
   baseCreator,
   baseEditor,
@@ -9,6 +10,7 @@ import {
   type LayoutPanel,
 } from "@manifest-editor/shell";
 import { canvasAnnotations } from "./annotations/CanvasAnnotations";
+import { demoBackgroundActions } from "./background-actions";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
@@ -54,6 +56,8 @@ export const leftPanels: LayoutPanel[] = [
 export const annotations: AnnotationPanel[] = [canvasAnnotations];
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
+
+export const backgroundActions: BackgroundActionDefinition[] = demoBackgroundActions;
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 

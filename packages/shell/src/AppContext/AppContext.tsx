@@ -2,6 +2,7 @@ import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import { createContext, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
+import type { BackgroundActionDefinition } from "../BackgroundTasks/BackgroundTasks.types";
 import { type Config, ConfigProvider } from "../ConfigContext/ConfigContext";
 import type {
   AnnotationPanel,
@@ -50,6 +51,7 @@ export interface AppExtension {
   canvasEditors?: CanvasEditorDefinition[];
   annotations?: AnnotationPanel[];
   background?: BackgroundPanel[];
+  backgroundActions?: BackgroundActionDefinition[];
   // Config.
   leftPanelIds?: string[];
 

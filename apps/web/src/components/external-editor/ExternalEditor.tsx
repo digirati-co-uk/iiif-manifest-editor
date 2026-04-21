@@ -6,6 +6,7 @@ import { exhibitionEditorPreset } from "@manifest-editor/exhibition-preset";
 import * as manifestPreset from "@manifest-editor/manifest-preset";
 import {
   AppProvider,
+  BackgroundActionsMenu,
   Layout,
   type MappedApp,
   mapApp,
@@ -149,6 +150,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
       </div>
       <div className="flex items-center justify-center gap-5">
         <div className="flex items-center gap-2">
+          <BackgroundActionsMenu />
           <a
             target="_blank"
             href={`https://theseusviewer.org?iiif-content=${manifest}`}

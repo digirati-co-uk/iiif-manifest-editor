@@ -1,6 +1,7 @@
 import { toRef } from "@iiif/parser";
 import type { ManifestNormalized } from "@iiif/presentation-3-normalized";
 import type { AppExtension, MappedApp } from "./AppContext/AppContext";
+import { mergeBackgroundActionDefinitions } from "./BackgroundTasks/BackgroundTasksStore";
 
 export async function getManifestNomalized(
   id: string,
@@ -120,6 +121,10 @@ export function extendApp(
         ...(app.layout?.background || []),
         ...(extensions?.background || []),
       ],
+      backgroundActions: mergeBackgroundActionDefinitions(
+        app.layout?.backgroundActions || [],
+        extensions?.backgroundActions || [],
+      ),
       editors: [
         //
         ...(extensions?.editors || []),

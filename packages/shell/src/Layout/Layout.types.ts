@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import type { RenderingStrategy } from "react-iiif-vault";
 import type { TransitionStatus } from "react-transition-group";
 import type { AppState } from "../AppContext/AppContext";
+import type { BackgroundActionDefinition } from "../BackgroundTasks/BackgroundTasks.types";
 import type { EditorConfig } from "../ConfigContext/ConfigContext";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
 
@@ -19,6 +20,7 @@ export interface LayoutProviderProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  backgroundActions?: Array<BackgroundActionDefinition>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -260,6 +262,7 @@ export interface LayoutProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  backgroundActions?: Array<BackgroundActionDefinition>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;

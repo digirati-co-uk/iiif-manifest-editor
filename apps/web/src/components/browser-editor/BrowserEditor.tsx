@@ -22,6 +22,7 @@ import {
   ConfigEditor,
   type EditorDefinition,
   extendApp,
+  BackgroundActionsMenu,
   Layout,
   type LayoutPanel,
   type MappedApp,
@@ -247,6 +248,7 @@ export default function BrowserEditor({
           {/* <GlobalNav noMenu /> */}
           <div className="flex items-center gap-2">
             <ShareButton />
+            <BackgroundActionsMenu />
             <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
           </div>
         </div>

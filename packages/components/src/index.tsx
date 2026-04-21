@@ -5,6 +5,7 @@ import "./lib.css";
 export * from "./AccessibilityButton";
 export * from "./ActionButton";
 export * from "./AtlasBanner";
+export * from "./BackgroundActionsMenu";
 export * from "./CanvasThumbnailGridItem";
 export * from "./Card3D";
 export * from "./CollectionListItem";

@@ -7,6 +7,7 @@ import {
 } from "@manifest-editor/creators";
 import { allEditors, useInStack } from "@manifest-editor/editors";
 import {
+  type BackgroundActionDefinition,
   type Config,
   ExportPanel,
   type LayoutPanel,
@@ -63,6 +64,8 @@ export const leftPanels: LayoutPanel[] = [
   collectionItems,
 ];
 export const rightPanels: LayoutPanel[] = [baseEditor];
+
+export const backgroundActions: BackgroundActionDefinition[] = [];
 
 export const modals: LayoutPanel[] = [baseCreator];
 

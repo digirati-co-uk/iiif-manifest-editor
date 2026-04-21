@@ -15,6 +15,7 @@ import {
   ConfigProvider,
   useConfig,
 } from "../ConfigContext/ConfigContext";
+import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
@@ -100,15 +101,17 @@ export function ShellProvider({
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
                 <EditingStack>
                   <LayoutProvider>
-                    <ContextMenuProvider>
-                      {/* @todo swap these out for (config?.previews || []) */}
-                      <PreviewProvider
-                        previews={previews || []}
-                        configs={mergedConfig.previews}
-                      >
-                        <AtlasStoreProvider>{children}</AtlasStoreProvider>
-                      </PreviewProvider>
-                    </ContextMenuProvider>
+                    <BackgroundActionsProvider>
+                      <ContextMenuProvider>
+                        {/* @todo swap these out for (config?.previews || []) */}
+                        <PreviewProvider
+                          previews={previews || []}
+                          configs={mergedConfig.previews}
+                        >
+                          <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                        </PreviewProvider>
+                      </ContextMenuProvider>
+                    </BackgroundActionsProvider>
                   </LayoutProvider>
                 </EditingStack>
               </ConfigProvider>
