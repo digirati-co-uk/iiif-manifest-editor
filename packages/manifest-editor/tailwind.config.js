@@ -86,6 +86,9 @@ module.exports = {
       green: colors.green,
       red: colors.red,
       orange: colors.orange,
+      amber: colors.amber,
+      sky: colors.sky,
+      teal: colors.teal,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",

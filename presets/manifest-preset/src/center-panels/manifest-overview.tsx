@@ -10,8 +10,10 @@ import {
 } from "@manifest-editor/components";
 import { EditableCanvasLabel } from "@manifest-editor/editors";
 import {
+  getCanvasProgressStatusFromState,
   FLAG_TAG,
   getResourceTagsFromState,
+  ManifestEditorCanvasProgressOverlay,
   type LayoutPanel,
   ManifestEditorTagIcon,
   ManifestEditorTagOverlay,
@@ -56,6 +58,16 @@ export function ManifestOverviewCenterPanel() {
         tags[item.id] = getResourceTagsFromState(state, { id: item.id, type: "Canvas" });
       }
       return tags;
+    },
+    [canvasIds],
+  );
+  const canvasProgressStatuses = useVaultSelector(
+    (state) => {
+      const statuses: Record<string, ReturnType<typeof getCanvasProgressStatusFromState>> = {};
+      for (const item of canvases || []) {
+        statuses[item.id] = getCanvasProgressStatusFromState(state, { id: item.id, type: "Canvas" });
+      }
+      return statuses;
     },
     [canvasIds],
   );
@@ -116,7 +128,12 @@ export function ManifestOverviewCenterPanel() {
             <CanvasThumbnailGridItem
               id={item.id}
               key={item.id}
-              icon={<ManifestEditorTagOverlay tags={canvasTags[item.id] || []} />}
+              icon={
+                <CanvasThumbnailFeedback
+                  tags={canvasTags[item.id] || []}
+                  status={canvasProgressStatuses[item.id] || "none"}
+                />
+              }
               onClick={() => {
                 open({ id: "current-canvas" });
                 if (isEditingManifest) {
@@ -128,6 +145,21 @@ export function ManifestOverviewCenterPanel() {
           ))}
         </ThumbnailGridContainer>
       )}
+    </>
+  );
+}
+
+function CanvasThumbnailFeedback({
+  tags,
+  status,
+}: {
+  tags: ReturnType<typeof getResourceTagsFromState>;
+  status: ReturnType<typeof getCanvasProgressStatusFromState>;
+}) {
+  return (
+    <>
+      <ManifestEditorCanvasProgressOverlay status={status} />
+      <ManifestEditorTagOverlay tags={tags} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { Vault } from "@iiif/helpers/vault";
 import {
   createBackgroundActionsStore,
+  createManifestEditorCanvasProgressApi,
   createManifestEditorTagsApi,
   getBackgroundActionInstanceKey,
   getResourceTags,
@@ -56,6 +57,7 @@ function createContext(vault: Vault, definition: ReturnType<typeof createOcrClas
     currentCanvas: undefined,
     vault,
     tags: createManifestEditorTagsApi(vault),
+    canvasProgress: createManifestEditorCanvasProgressApi(vault),
     config: {} as any,
     layoutState: {} as any,
     layoutActions: {} as any,

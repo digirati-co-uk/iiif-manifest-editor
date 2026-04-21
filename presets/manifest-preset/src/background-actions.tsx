@@ -203,11 +203,13 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
     render: () => <DemoBackgroundActionMount actionId="demo-run-local-ocr" />,
     run: async (ctx) => {
       ctx.setActionLabel("Running local OCR");
+      ctx.canvasProgress.setStatus(ctx.target, "pending");
       await progress(ctx, [
         { label: "Preparing image", delay: 500 },
         { label: "Recognising text", delay: 1200 },
         { label: "Packaging annotations", delay: 500 },
       ]);
+      ctx.canvasProgress.setStatus(ctx.target, "done");
 
       return {
         action: "Run local OCR",
@@ -259,12 +261,14 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
     render: () => <DemoBackgroundActionMount actionId="demo-run-segmentation" />,
     run: async (ctx) => {
       ctx.setActionLabel("Running segmentation");
+      ctx.canvasProgress.setStatus(ctx.target, "pending");
       await progress(ctx, [
         { label: "Loading canvas pixels", delay: 700 },
         { label: "Finding regions", delay: 1100 },
         { label: "Merging candidates", delay: 700 },
         { label: "Finalising regions", delay: 500 },
       ]);
+      ctx.canvasProgress.setStatus(ctx.target, "done");
 
       return {
         action: "Run segmentation",
@@ -373,10 +377,12 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
     render: () => <DemoBackgroundActionMount actionId="demo-validation-error" />,
     run: async (ctx) => {
       ctx.setActionLabel("Validating current canvas");
+      ctx.canvasProgress.setStatus(ctx.target, "pending");
       await progress(ctx, [
         { label: "Checking dimensions", delay: 500 },
         { label: "Checking painting annotations", delay: 700 },
       ]);
+      ctx.canvasProgress.setStatus(ctx.target, "done");
 
       ctx.setActionError(new Error("Demo validation failed: canvas is missing OCR annotations"), "Validation failed");
     },

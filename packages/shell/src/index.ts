@@ -16,6 +16,7 @@ export * from "./BaseCreator/BaseCreator.hooks";
 export * from "./BaseCreator/CreatorInitialData";
 export * from "./BaseEditor";
 export * from "./BaseEditor/BaseEditor";
+export * from "./CanvasProgress";
 export * from "./ConfigContext/ConfigContext";
 export * from "./ConfigContext/ConfigEditor";
 export * from "./ContextMenu/ContextMenuContext";

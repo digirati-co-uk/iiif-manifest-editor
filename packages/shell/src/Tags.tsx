@@ -23,6 +23,24 @@ export type ManifestEditorTagResource =
   | null
   | undefined;
 
+export interface ManifestEditorTagGroupRow {
+  key: string;
+  type: string;
+  id: string;
+  tag: ManifestEditorTag;
+  canvasIds: string[];
+  canvasCount: number;
+}
+
+export interface ManifestEditorTagGroup {
+  key: string;
+  type: string;
+  rows: ManifestEditorTagGroupRow[];
+  canvasIds: string[];
+  canvasCount: number;
+  tagCount: number;
+}
+
 export const FLAG_TAG: ManifestEditorTag = {
   type: "flag",
   id: "flag",
@@ -42,6 +60,10 @@ function getTagType(tag: Pick<ManifestEditorTag, "type" | "id">) {
   return tag.type || tag.id;
 }
 
+function getTagKey(tag: Pick<ManifestEditorTag, "type" | "id">) {
+  return `${tag.type}:${tag.id}`;
+}
+
 function normaliseTags(tags: ManifestEditorTag[] | undefined | null): ManifestEditorTag[] {
   if (!Array.isArray(tags)) {
     return EMPTY_TAGS;
@@ -57,6 +79,30 @@ function normaliseTags(tags: ManifestEditorTag[] | undefined | null): ManifestEd
   }
 
   return Array.from(byType.values());
+}
+
+function getTagLabel(tag: Pick<ManifestEditorTag, "label" | "id" | "type">) {
+  return tag.label || tag.id || tag.type;
+}
+
+function isFlagTag(type: string, id?: string) {
+  return type === FLAG_TAG.type && (!id || id === FLAG_TAG.id);
+}
+
+function compareTagRows(a: ManifestEditorTagGroupRow, b: ManifestEditorTagGroupRow) {
+  if (isFlagTag(a.type, a.id)) return -1;
+  if (isFlagTag(b.type, b.id)) return 1;
+  return (
+    getTagLabel(a.tag).localeCompare(getTagLabel(b.tag)) ||
+    a.type.localeCompare(b.type) ||
+    a.id.localeCompare(b.id)
+  );
+}
+
+function compareTagGroups(a: ManifestEditorTagGroup, b: ManifestEditorTagGroup) {
+  if (isFlagTag(a.type)) return -1;
+  if (isFlagTag(b.type)) return 1;
+  return a.type.localeCompare(b.type);
 }
 
 export function getResourceTags(vault: Vault, resource: ManifestEditorTagResource): ManifestEditorTag[] {
@@ -113,12 +159,70 @@ export function removeResourceTag(
   vault: Vault,
   resource: ManifestEditorTagResource,
   tagType: string,
+  tagId?: string,
 ): ManifestEditorTag[] {
   return setResourceTags(
     vault,
     resource,
-    getResourceTags(vault, resource).filter((tag) => tag.type !== tagType),
+    getResourceTags(vault, resource).filter((tag) => tag.type !== tagType || (tagId ? tag.id !== tagId : false)),
   );
+}
+
+export function getResourceTagGroups(
+  vault: Vault,
+  resources: ManifestEditorTagResource[],
+): ManifestEditorTagGroup[] {
+  const groups = new Map<string, ManifestEditorTagGroup>();
+
+  for (const resource of resources) {
+    const resourceId = getResourceId(resource);
+    if (!resourceId) {
+      continue;
+    }
+
+    for (const tag of getResourceTags(vault, resource)) {
+      const groupKey = tag.type;
+      const rowKey = getTagKey(tag);
+      let group = groups.get(groupKey);
+
+      if (!group) {
+        group = {
+          key: groupKey,
+          type: tag.type,
+          rows: [],
+          canvasIds: [],
+          canvasCount: 0,
+          tagCount: 0,
+        };
+        groups.set(groupKey, group);
+      }
+
+      let row = group.rows.find((item) => item.key === rowKey);
+      if (!row) {
+        row = {
+          key: rowKey,
+          type: tag.type,
+          id: tag.id,
+          tag,
+          canvasIds: [],
+          canvasCount: 0,
+        };
+        group.rows.push(row);
+      }
+
+      row.canvasIds.push(resourceId);
+      row.canvasCount = row.canvasIds.length;
+      group.tagCount += 1;
+    }
+  }
+
+  for (const group of groups.values()) {
+    group.rows.sort(compareTagRows);
+    group.canvasIds = Array.from(new Set(group.rows.flatMap((row) => row.canvasIds)));
+    group.canvasCount = group.canvasIds.length;
+  }
+
+  return Array.from(groups.values()).sort(compareTagGroups);
 }
 
 export function hasResourceTag(
@@ -147,7 +251,7 @@ export interface ManifestEditorTagsApi {
   addTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
   upsertTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
   getTag(resource: ManifestEditorTagResource, tagType: string): ManifestEditorTag | undefined;
-  removeTag(resource: ManifestEditorTagResource, tagType: string): ManifestEditorTag[];
+  removeTag(resource: ManifestEditorTagResource, tagType: string, tagId?: string): ManifestEditorTag[];
   hasTag(resource: ManifestEditorTagResource, tagType: string, tagId?: string): boolean;
   toggleTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
 }
@@ -169,8 +273,8 @@ export function createManifestEditorTagsApi(vault: Vault): ManifestEditorTagsApi
     getTag(resource, tagType) {
       return getResourceTag(vault, resource, tagType);
     },
-    removeTag(resource, tagType) {
-      return removeResourceTag(vault, resource, tagType);
+    removeTag(resource, tagType, tagId) {
+      return removeResourceTag(vault, resource, tagType, tagId);
     },
     hasTag(resource, tagType, tagId) {
       return hasResourceTag(vault, resource, tagType, tagId);
@@ -208,8 +312,8 @@ export function useResourceTagActions(resource: ManifestEditorTagResource) {
       getTag(tagType: string) {
         return tagActions.getTag(resourceId, tagType);
       },
-      removeTag(tagType: string) {
-        return tagActions.removeTag(resourceId, tagType);
+      removeTag(tagType: string, tagId?: string) {
+        return tagActions.removeTag(resourceId, tagType, tagId);
       },
       toggleTag(tag: ManifestEditorTag) {
         return tagActions.toggleTag(resourceId, tag);
@@ -257,15 +361,15 @@ export function ManifestEditorTagBadge({
     <span
       className={`inline-flex max-w-full items-center gap-0.5 rounded px-1 py-0.5 font-medium shadow-sm ${className || ""}`}
       style={{
-        backgroundColor: tag.backgroundColor,
-        color: tag.textColor,
+        backgroundColor: tag.backgroundColor || "#e5e7eb",
+        color: tag.textColor || "#111827",
         fontSize: 9,
         lineHeight: "11px",
         ...style,
       }}
     >
       {showIcon && tag.icon ? <ManifestEditorTagIcon icon={tag.icon} className="h-2.5 w-2.5 flex-shrink-0" /> : null}
-      <span className="min-w-0 truncate">{tag.label}</span>
+      <span className="min-w-0 truncate">{getTagLabel(tag)}</span>
     </span>
   );
 }

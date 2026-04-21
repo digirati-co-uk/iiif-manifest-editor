@@ -21,6 +21,7 @@ import {
 import {
   FLAG_TAG,
   type LayoutPanel,
+  ManifestEditorCanvasProgressOverlay,
   ManifestEditorTagIcon,
   ManifestEditorTagOverlay,
   useCreator,
@@ -258,7 +259,14 @@ function renderCanvasTagThumbnailOverlay(ref: any) {
     return null;
   }
 
-  return <ManifestEditorTagOverlay resource={{ id: canvas.id, type: "Canvas" }} />;
+  const resource = { id: canvas.id, type: "Canvas" };
+
+  return (
+    <>
+      <ManifestEditorCanvasProgressOverlay resource={resource} />
+      <ManifestEditorTagOverlay resource={resource} />
+    </>
+  );
 }
 
 function CanvasFlagInlineAction({ canvasId }: { canvasId: string }) {

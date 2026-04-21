@@ -20,6 +20,7 @@ import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
+import { tagsPanel } from "./left-panels/tags";
 import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
 import "./index.css";
@@ -46,6 +47,7 @@ export const centerPanels: LayoutPanel[] = [
 export const leftPanels: LayoutPanel[] = [
   manifestPanel,
   canvasListing,
+  tagsPanel,
   rangesPanel,
   annotationsPanel,
   // @todo we will come back to the image grid

@@ -23,6 +23,7 @@ import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack } from "../EditingStack/EditingStack";
 import { useLayoutActions, useLayoutState } from "../Layout/Layout.context";
+import { createManifestEditorCanvasProgressApi } from "../CanvasProgress";
 import { createManifestEditorTagsApi } from "../Tags";
 import { useToasts } from "../Toast/ToastContext";
 import { getBackgroundActionToastContent, getBackgroundActionToastDedupKey } from "./BackgroundActionToasts.helpers";
@@ -78,6 +79,7 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
   const currentCanvas = useCurrentCanvasTarget();
   const vault = useVault();
   const tags = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
+  const canvasProgress = useMemo(() => createManifestEditorCanvasProgressApi(vault), [vault]);
   const config = useConfig();
   const layoutState = useLayoutState();
   const layoutActions = useLayoutActions();
@@ -88,11 +90,12 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
       currentCanvas,
       vault,
       tags,
+      canvasProgress,
       config,
       layoutState,
       layoutActions,
     }),
-    [rootResource, currentCanvas, vault, tags, config, layoutState, layoutActions],
+    [rootResource, currentCanvas, vault, tags, canvasProgress, config, layoutState, layoutActions],
   );
 }
 

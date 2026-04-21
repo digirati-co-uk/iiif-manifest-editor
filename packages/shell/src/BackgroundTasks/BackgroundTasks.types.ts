@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { Resource } from "../AppResourceProvider/AppResourceProvider";
 import type { Config } from "../ConfigContext/ConfigContext";
 import type { LayoutActions, LayoutState } from "../Layout/Layout.types";
+import type { ManifestEditorCanvasProgressApi } from "../CanvasProgress";
 import type { ManifestEditorTagsApi } from "../Tags";
 
 export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
@@ -92,6 +93,7 @@ export interface BackgroundActionSystemContext {
   currentCanvas?: BackgroundActionTarget;
   vault: Vault;
   tags: ManifestEditorTagsApi;
+  canvasProgress: ManifestEditorCanvasProgressApi;
   config: Config;
   layoutState: LayoutState;
   layoutActions: LayoutActions;

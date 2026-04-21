@@ -1,4 +1,6 @@
+import { Vault } from "@iiif/helpers/vault";
 import { describe, expect, test, vi } from "vitest";
+import { createManifestEditorCanvasProgressApi, getCanvasProgressStatus } from "../CanvasProgress";
 import type {
   BackgroundActionContext,
   BackgroundActionDefinition,
@@ -27,11 +29,14 @@ const canvasTarget: BackgroundActionTarget = {
   scope: "canvas",
 };
 
+const testVault = new Vault();
+
 const systemContext: BackgroundActionSystemContext = {
   rootResource: manifestTarget,
   currentCanvas: canvasTarget,
-  vault: {} as any,
+  vault: testVault,
   tags: {} as any,
+  canvasProgress: createManifestEditorCanvasProgressApi(testVault),
   config: {} as any,
   layoutState: {} as any,
   layoutActions: {} as any,
@@ -377,5 +382,44 @@ describe("BackgroundTasksStore", () => {
       firstRunId,
       secondRunId,
     ]);
+  });
+
+  test("clears canvas progress statuses touched by an action when it finishes", async () => {
+    const vault = new Vault();
+    vault.loadManifestSync(manifestTarget.id, {
+      "@context": "http://iiif.io/api/presentation/3/context.json",
+      id: manifestTarget.id,
+      type: "Manifest",
+      label: { en: ["Test manifest"] },
+      items: [
+        {
+          id: canvasTarget.id,
+          type: "Canvas",
+          label: { en: ["Canvas 1"] },
+          height: 100,
+          width: 100,
+          items: [],
+        },
+      ],
+    });
+    const canvasProgress = createManifestEditorCanvasProgressApi(vault);
+    const definition = action({
+      run: (ctx) => {
+        ctx.canvasProgress.setStatus(canvasTarget, "pending");
+        expect(getCanvasProgressStatus(vault, canvasTarget)).toBe("pending");
+      },
+    });
+    const store = createBackgroundActionsStore([definition]);
+
+    await runBackgroundAction({
+      store,
+      context: {
+        ...context(definition),
+        vault,
+        canvasProgress,
+      },
+    });
+
+    expect(getCanvasProgressStatus(vault, canvasTarget)).toBe("none");
   });
 });

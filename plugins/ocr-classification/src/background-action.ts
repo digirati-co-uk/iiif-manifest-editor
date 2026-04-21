@@ -68,7 +68,7 @@ export function createOcrClassificationBackgroundAction(
     },
     run: async (ctx) => {
       const manifest = ctx.vault.get(ctx.target as any) as any;
-      const canvases = manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
+      const canvases: any[] = manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
       const result = createEmptyResult(canvases.length);
 
       ctx.setActionLabel("Classifying OCR difficulty");
@@ -78,6 +78,10 @@ export function createOcrClassificationBackgroundAction(
         return result;
       }
 
+      ctx.canvasProgress.setStatuses(
+        canvases.map((canvas) => ({ id: canvas.id, type: "Canvas" })),
+        "queued",
+      );
       ctx.setActionStatus("running", "Loading OCR classifier");
       await prepareClassifier();
 
@@ -86,6 +90,7 @@ export function createOcrClassificationBackgroundAction(
         const canvasId = canvas?.id || `canvas-${index + 1}`;
         const label = `Classifying ${index + 1}/${canvases.length}`;
 
+        ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "pending");
         ctx.setActionStatus("running", label);
         ctx.setActionProgress({ current: index, total: canvases.length, label });
         ctx.appendActionLog(label, "info", { canvasId, current: index + 1, total: canvases.length });
@@ -141,6 +146,10 @@ export function createOcrClassificationBackgroundAction(
             canvasId,
             reason,
           });
+        } finally {
+          if (!ctx.signal.aborted) {
+            ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "done");
+          }
         }
 
         ctx.setActionProgress({

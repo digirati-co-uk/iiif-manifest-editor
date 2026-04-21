@@ -4,6 +4,7 @@ import {
   addResourceTag,
   createManifestEditorTagsApi,
   FLAG_TAG,
+  getResourceTagGroups,
   getResourceTags,
   getResourceTagsFromState,
   hasResourceTag,
@@ -16,6 +17,8 @@ import {
 
 const manifestRef = { id: "https://example.org/manifest", type: "Manifest" };
 const canvasRef = { id: "https://example.org/canvas/1", type: "Canvas" };
+const canvasRef2 = { id: "https://example.org/canvas/2", type: "Canvas" };
+const canvasRef3 = { id: "https://example.org/canvas/3", type: "Canvas" };
 
 const reviewTag: ManifestEditorTag = {
   type: "review",
@@ -63,6 +66,20 @@ function createVault() {
         width: 100,
         items: [],
       },
+      {
+        ...canvasRef2,
+        label: { en: ["Canvas 2"] },
+        height: 100,
+        width: 100,
+        items: [],
+      },
+      {
+        ...canvasRef3,
+        label: { en: ["Canvas 3"] },
+        height: 100,
+        width: 100,
+        items: [],
+      },
     ],
   });
   return vault;
@@ -83,6 +100,29 @@ describe("manifest editor tags", () => {
 
     expect(getResourceTags(vault, manifestRef)).toEqual([approvedTag]);
     expect(getResourceTags(vault, canvasRef)).toEqual([FLAG_TAG]);
+  });
+
+  test("removes exact tag ids while keeping other ids in the same type", () => {
+    const vault = createVault();
+
+    setResourceTags(vault, canvasRef, [handwrittenTag]);
+    setResourceTags(vault, canvasRef2, [printedTag]);
+
+    removeResourceTag(vault, canvasRef, handwrittenTag.type, printedTag.id);
+    removeResourceTag(vault, canvasRef2, printedTag.type, printedTag.id);
+
+    expect(getResourceTags(vault, canvasRef)).toEqual([handwrittenTag]);
+    expect(getResourceTags(vault, canvasRef2)).toEqual([]);
+  });
+
+  test("keeps type-only removal behaviour when tag id is omitted", () => {
+    const vault = createVault();
+
+    setResourceTags(vault, canvasRef, [handwrittenTag]);
+
+    removeResourceTag(vault, canvasRef, handwrittenTag.type);
+
+    expect(getResourceTags(vault, canvasRef)).toEqual([]);
   });
 
   test("upserts duplicate tag types", () => {
@@ -118,6 +158,19 @@ describe("manifest editor tags", () => {
     tags.removeTag(canvasRef, printedTag.type);
 
     expect(tags.getTags(canvasRef)).toEqual([]);
+  });
+
+  test("tags api can remove an exact tag id", () => {
+    const vault = createVault();
+    const tags = createManifestEditorTagsApi(vault);
+
+    tags.addTag(canvasRef, handwrittenTag);
+    tags.addTag(canvasRef2, printedTag);
+    tags.removeTag(canvasRef, handwrittenTag.type, printedTag.id);
+    tags.removeTag(canvasRef2, printedTag.type, printedTag.id);
+
+    expect(tags.getTags(canvasRef)).toEqual([handwrittenTag]);
+    expect(tags.getTags(canvasRef2)).toEqual([]);
   });
 
   test("toggles the built-in flag tag", () => {
@@ -159,5 +212,87 @@ describe("manifest editor tags", () => {
 
     expect(getResourceTagsFromState(vault.getState(), manifestRef)).toEqual([reviewTag]);
     expect(getResourceTagsFromState(vault.getState(), canvasRef)).toEqual([FLAG_TAG]);
+  });
+
+  test("groups resource tags by type and id with canvas totals", () => {
+    const vault = createVault();
+
+    setResourceTags(vault, canvasRef, [FLAG_TAG, handwrittenTag]);
+    setResourceTags(vault, canvasRef2, [printedTag]);
+    setResourceTags(vault, canvasRef3, [FLAG_TAG, printedTag]);
+
+    const groups = getResourceTagGroups(vault, [canvasRef, canvasRef2, canvasRef3]);
+
+    expect(groups).toEqual([
+      {
+        key: "flag",
+        type: "flag",
+        canvasIds: [canvasRef.id, canvasRef3.id],
+        canvasCount: 2,
+        tagCount: 2,
+        rows: [
+          {
+            key: "flag:flag",
+            type: "flag",
+            id: "flag",
+            tag: FLAG_TAG,
+            canvasIds: [canvasRef.id, canvasRef3.id],
+            canvasCount: 2,
+          },
+        ],
+      },
+      {
+        key: "text-form",
+        type: "text-form",
+        canvasIds: [canvasRef.id, canvasRef2.id, canvasRef3.id],
+        canvasCount: 3,
+        tagCount: 3,
+        rows: [
+          {
+            key: "text-form:handwritten",
+            type: "text-form",
+            id: "handwritten",
+            tag: handwrittenTag,
+            canvasIds: [canvasRef.id],
+            canvasCount: 1,
+          },
+          {
+            key: "text-form:printed",
+            type: "text-form",
+            id: "printed",
+            tag: printedTag,
+            canvasIds: [canvasRef2.id, canvasRef3.id],
+            canvasCount: 2,
+          },
+        ],
+      },
+    ]);
+  });
+
+  test("groups ignore resources without ids and handle empty lists", () => {
+    const vault = createVault();
+
+    setResourceTags(vault, canvasRef, [FLAG_TAG]);
+
+    expect(getResourceTagGroups(vault, [])).toEqual([]);
+    expect(getResourceTagGroups(vault, [null, undefined, { id: "", type: "Canvas" }, canvasRef])).toEqual([
+      {
+        key: "flag",
+        type: "flag",
+        canvasIds: [canvasRef.id],
+        canvasCount: 1,
+        tagCount: 1,
+        rows: [
+          {
+            key: "flag:flag",
+            type: "flag",
+            id: "flag",
+            tag: FLAG_TAG,
+            canvasIds: [canvasRef.id],
+            canvasCount: 1,
+          },
+        ],
+      },
+    ]);
   });
 });

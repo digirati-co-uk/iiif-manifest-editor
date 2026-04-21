@@ -111,6 +111,10 @@ export function createOcrDoclingBackgroundAction(
         return result;
       }
 
+      ctx.canvasProgress.setStatuses(
+        selectedCanvases.map((canvas) => ({ id: canvas.id, type: "Canvas" })),
+        "queued",
+      );
       const client = createClient();
       const unsubscribe = client.onEvent((event) => handleDoclingEvent(ctx, event));
       const abort = () => client.terminate();
@@ -126,6 +130,7 @@ export function createOcrDoclingBackgroundAction(
           throwIfAborted(ctx.signal);
           const canvasId = canvas?.id || `canvas-${index + 1}`;
           const label = `OCR ${index + 1}/${selectedCanvases.length}`;
+          ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "pending");
           ctx.setActionStatus("running", label);
           ctx.setActionProgress({ current: index, total: selectedCanvases.length, label });
           ctx.appendActionLog(label, "info", {
@@ -209,6 +214,10 @@ export function createOcrDoclingBackgroundAction(
               canvasId,
               reason,
             });
+          } finally {
+            if (!ctx.signal.aborted) {
+              ctx.canvasProgress.setStatus({ id: canvasId, type: "Canvas" }, "done");
+            }
           }
 
           ctx.setActionProgress({

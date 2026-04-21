@@ -1,6 +1,7 @@
 import { createContext, createElement, type ReactNode, useContext, useEffect, useMemo } from "react";
 import { createStore, type StoreApi, useStore } from "zustand";
 import { useApp } from "../AppContext/AppContext";
+import { createTrackingCanvasProgressApi, type ManifestEditorCanvasProgressApi } from "../CanvasProgress";
 import {
   type BackgroundActionDefinition,
   type BackgroundActionError,
@@ -592,12 +593,17 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
   }));
 }
 
-function createRunContext(options: RunBackgroundActionOptions, signal: AbortSignal): BackgroundActionRunContext {
+function createRunContext(
+  options: RunBackgroundActionOptions,
+  signal: AbortSignal,
+  canvasProgress: ManifestEditorCanvasProgressApi,
+): BackgroundActionRunContext {
   const { store, context } = options;
   const { instanceKey } = context;
 
   return {
     ...context,
+    canvasProgress,
     instance: store.getState().instances[instanceKey],
     signal,
     setActionLabel(label) {
@@ -635,6 +641,7 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 
   const controller = new AbortController();
   const signal = controller.signal;
+  const canvasProgress = createTrackingCanvasProgressApi(context.canvasProgress);
   const abortFromExternalSignal = () => controller.abort();
 
   if (options.signal) {
@@ -649,7 +656,7 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 
   try {
     if (definition.prepare) {
-      const prepareResult = await definition.prepare(createRunContext(options, signal));
+      const prepareResult = await definition.prepare(createRunContext(options, signal, canvasProgress));
       if (signal.aborted) {
         store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
         return store.getState().instances[instanceKey];
@@ -667,7 +674,7 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
     }
 
     store.getState().setActionStatus(instanceKey, "running", "Running");
-    const result = await definition.run(createRunContext(options, signal));
+    const result = await definition.run(createRunContext(options, signal, canvasProgress));
 
     if (signal.aborted) {
       store.getState().setActionStatus(instanceKey, "cancelled", "Cancelled");
@@ -693,6 +700,7 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
       store.getState().setActionError(instanceKey, error, "Error");
     }
   } finally {
+    canvasProgress.clearTrackedStatuses();
     options.signal?.removeEventListener("abort", abortFromExternalSignal);
   }
 
