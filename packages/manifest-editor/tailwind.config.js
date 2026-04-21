@@ -72,6 +72,10 @@ module.exports = {
     "../shell/src/**/*.{ts,tsx,css}",
 
     "../../plugins/translation/src/**/*.{ts,tsx}",
+    "../../plugins/canvas-label-generator/src/**/*.{ts,tsx}",
+    "../../plugins/ocr-classification/src/**/*.{ts,tsx}",
+    "../../plugins/ocr-docling/src/**/*.{ts,tsx}",
+    "../../plugins/annotations/src/**/*.{ts,tsx}",
 
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
     "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",

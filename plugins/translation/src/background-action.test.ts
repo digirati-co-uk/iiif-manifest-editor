@@ -1,18 +1,15 @@
 import { Vault } from "@iiif/helpers/vault";
 import {
+  type BackgroundActionContext,
+  type BackgroundActionTarget,
   createBackgroundActionsStore,
   createManifestEditorCanvasProgressApi,
   createManifestEditorTagsApi,
   getBackgroundActionInstanceKey,
   runBackgroundAction,
-  type BackgroundActionContext,
-  type BackgroundActionTarget,
 } from "@manifest-editor/shell";
 import { describe, expect, test, vi } from "vitest";
-import {
-  createTranslationBackgroundAction,
-  type TranslationActionDependencies,
-} from "./background-action";
+import { createTranslationBackgroundAction, type TranslationActionDependencies } from "./background-action";
 import type { TranslationActionResult, TranslationRunOptions } from "./types";
 
 const manifestTarget: BackgroundActionTarget = {
@@ -24,7 +21,7 @@ const manifestTarget: BackgroundActionTarget = {
 
 const options: TranslationRunOptions = {
   sourceLanguage: "en",
-  targetLanguage: "cy",
+  targetLanguage: "de",
   runtime: "wasm",
   writePolicy: "fill-missing",
   contentFilters: {
@@ -84,11 +81,7 @@ function createContext(
   };
 }
 
-function createClient(
-  dependencies: {
-    translate?: TranslationActionDependencies["createClient"];
-  } = {},
-) {
+function createClient(dependencies: { translate?: TranslationActionDependencies["createClient"] } = {}) {
   return {
     preload: vi.fn(async () => undefined),
     translate: vi.fn(async (request) => ({
@@ -120,9 +113,7 @@ describe("translation background action", () => {
     });
 
     expect(client.translate).toHaveBeenCalledTimes(1);
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
-      "Shared text [cy]",
-    ]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Shared text [cy]"]);
     expect(
       (
         vault.get({
@@ -132,9 +123,8 @@ describe("translation background action", () => {
       ).label.cy,
     ).toEqual(["Shared text [cy]"]);
 
-    const result = store.getState().instances[
-      getBackgroundActionInstanceKey(definition.id, manifestTarget)
-    ]?.result as TranslationActionResult;
+    const result = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)]
+      ?.result as TranslationActionResult;
     expect(result.translated).toBe(1);
     expect(result.applied).toBe(2);
   });
@@ -177,9 +167,7 @@ describe("translation background action", () => {
         text: "Shared text",
       }),
     );
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
-      "Shared text [cy]",
-    ]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Shared text [cy]"]);
   });
 
   test("can scope a translation run to the current canvas", async () => {
@@ -245,9 +233,7 @@ describe("translation background action", () => {
       context: createContext(vault, definition),
     });
 
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
-      "Existing manifest value",
-    ]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Existing manifest value"]);
     expect(
       (
         vault.get({
@@ -294,9 +280,8 @@ describe("translation background action", () => {
       ).label.cy,
     ).toEqual(["Shared text [cy]"]);
 
-    const result = store.getState().instances[
-      getBackgroundActionInstanceKey(definition.id, manifestTarget)
-    ]?.result as TranslationActionResult;
+    const result = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)]
+      ?.result as TranslationActionResult;
     expect(result.stale).toBe(1);
     expect(result.applied).toBe(1);
   });
@@ -327,10 +312,7 @@ describe("translation background action", () => {
       requestConfig: vi.fn(async () => options),
     });
     const store = createBackgroundActionsStore([definition]);
-    const instanceKey = getBackgroundActionInstanceKey(
-      definition.id,
-      manifestTarget,
-    );
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
 
     const promise = runBackgroundAction({
       store,
