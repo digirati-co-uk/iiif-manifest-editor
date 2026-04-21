@@ -2,8 +2,10 @@ import { Vault } from "@iiif/helpers/vault";
 import { describe, expect, test } from "vitest";
 import {
   addResourceTag,
+  createManifestEditorTagsApi,
   FLAG_TAG,
   getResourceTags,
+  getResourceTagsFromState,
   hasResourceTag,
   removeResourceTag,
   setResourceTags,
@@ -100,6 +102,24 @@ describe("manifest editor tags", () => {
     expect(getResourceTags(vault, canvasRef)).toEqual([printedTag]);
   });
 
+  test("creates a tags api bound to a vault", () => {
+    const vault = createVault();
+    const tags = createManifestEditorTagsApi(vault);
+
+    tags.addTag(canvasRef, handwrittenTag);
+
+    expect(tags.getTags(canvasRef)).toEqual([handwrittenTag]);
+    expect(tags.hasTag(canvasRef, handwrittenTag.type, handwrittenTag.id)).toBe(true);
+
+    tags.upsertTag(canvasRef, printedTag);
+
+    expect(tags.getTag(canvasRef, printedTag.type)).toEqual(printedTag);
+
+    tags.removeTag(canvasRef, printedTag.type);
+
+    expect(tags.getTags(canvasRef)).toEqual([]);
+  });
+
   test("toggles the built-in flag tag", () => {
     const vault = createVault();
 
@@ -129,5 +149,15 @@ describe("manifest editor tags", () => {
     expect(serialised).not.toContain(TAGS_META_NAMESPACE);
     expect(serialised).not.toContain(FLAG_TAG.id);
     expect(serialised).not.toContain(reviewTag.id);
+  });
+
+  test("reads tags from vault state for reactive selectors", () => {
+    const vault = createVault();
+
+    setResourceTags(vault, manifestRef, [reviewTag]);
+    setResourceTags(vault, canvasRef, [FLAG_TAG]);
+
+    expect(getResourceTagsFromState(vault.getState(), manifestRef)).toEqual([reviewTag]);
+    expect(getResourceTagsFromState(vault.getState(), canvasRef)).toEqual([FLAG_TAG]);
   });
 });

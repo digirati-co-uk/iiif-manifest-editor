@@ -1,5 +1,6 @@
 import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
+import * as ocrClassificationPlugin from "@manifest-editor/ocr-classification";
 import {
   type AnnotationPanel,
   type BackgroundActionDefinition,
@@ -71,5 +72,6 @@ export const creators = allCreators;
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
 
 export { manifestQualityChecksPlugin };
+export { ocrClassificationPlugin };
 
-export const plugins = [manifestQualityChecksPlugin];
+export const plugins = [manifestQualityChecksPlugin, ocrClassificationPlugin];

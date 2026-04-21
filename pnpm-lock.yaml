@@ -1332,6 +1332,37 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.0.10)
 
+  plugins/ocr-classification:
+    dependencies:
+      '@iiif/helpers':
+        specifier: 1.5.7
+        version: 1.5.7(@iiif/parser@2.2.8)
+      '@manifest-editor/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@manifest-editor/shell':
+        specifier: workspace:*
+        version: link:../../packages/shell
+      onnxruntime-web:
+        specifier: ^1.24.3
+        version: 1.24.3
+      react:
+        specifier: 19.2.0
+        version: 19.2.0
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal-packages/eslint-config
+      '@types/react':
+        specifier: ^19
+        version: 19.0.10
+      tsdown:
+        specifier: 0.16.4
+        version: 0.16.4(ms@2.1.3)(publint@0.2.8)(typescript@5.9.3)(unplugin-lightningcss@0.4.1)
+      vitest:
+        specifier: v3.0.9
+        version: 3.0.9(@types/debug@4.1.12)(@types/node@24.10.1)(less@4.2.0)(lightningcss@1.30.2)(sass@1.77.2)(stylus@0.62.0)(terser@5.16.9)
+
   presets/collection-preset:
     dependencies:
       '@iiif/helpers':
@@ -1516,6 +1547,9 @@ importers:
       '@manifest-editor/editors':
         specifier: workspace:*
         version: link:../../packages/editors
+      '@manifest-editor/ocr-classification':
+        specifier: workspace:*
+        version: link:../../plugins/ocr-classification
       '@manifest-editor/shell':
         specifier: workspace:*
         version: link:../../packages/shell
@@ -8716,6 +8750,9 @@ packages:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
     engines: {node: '>=16'}
 
+  flatbuffers@25.9.23:
+    resolution: {integrity: sha512-MI1qs7Lo4Syw0EOzUl0xjs2lsoeqFku44KpngfIduHBYvzm8h2+7K8YMQh1JtVVVrUvhLpNwqVi4DERegUJhPQ==}
+
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
@@ -8972,6 +9009,9 @@ packages:
   gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
+
+  guid-typescript@1.0.9:
+    resolution: {integrity: sha512-Y8T4vYhEfwJOTbouREvG+3XDsjr8E3kIr7uf+JZ0BYloFsttiHU0WfvANVsR7TxNUJa/WpCnw/Ino/p+DeBhBQ==}
 
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
@@ -10731,6 +10771,12 @@ packages:
   oniguruma-to-es@4.3.3:
     resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
 
+  onnxruntime-common@1.24.3:
+    resolution: {integrity: sha512-GeuPZO6U/LBJXvwdaqHbuUmoXiEdeCjWi/EG7Y1HNnDwJYuk6WUbNXpF6luSUY8yASul3cmUlLGrCCL1ZgVXqA==}
+
+  onnxruntime-web@1.24.3:
+    resolution: {integrity: sha512-41dDq7fxtTm0XzGE7N0d6m8FcOY8EWtUA65GkOixJPB/G7DGzBmiDAnVVXHznRw9bgUZpb+4/1lQK/PNxGpbrQ==}
+
   oo-ascii-tree@1.98.0:
     resolution: {integrity: sha512-+GE7ywhtS6MctbfcO+vZzqIxcFzucZCwmawcwCVo89DxQDakV1JFfFViTXG4A90UzTAsU4tQteGmwDtwOlOXLw==}
     engines: {node: '>= 14.17.0'}
@@ -10978,6 +11024,9 @@ packages:
 
   pkg-types@1.2.0:
     resolution: {integrity: sha512-+ifYuSSqOQ8CqP4MbZA5hDpb97n3E8SVWdJe+Wms9kj745lmd3b7EZJiqvmLwAlmRfjrI7Hi5z3kdBJ93lFNPA==}
+
+  platform@1.3.6:
+    resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
   playwright-core@1.51.1:
     resolution: {integrity: sha512-/crRMj8+j/Nq5s8QcvegseuyeZPxpQCZb6HNk3Sos3BlZyAknRjoyJPFWkpNn8v0+P3WiwqFF8P+zQo4eqiNuw==}
@@ -11420,6 +11469,7 @@ packages:
   rclone.js@0.6.6:
     resolution: {integrity: sha512-Dxh34cab/fNjFq5SSm0fYLNkGzG2cQSBy782UW9WwxJCEiVO4cGXkvaXcNlgv817dK8K8PuQ+NHUqSAMMhWujQ==}
     engines: {node: '>=12'}
+    cpu: [arm, arm64, mips, mipsel, x32, x64]
     os: [darwin, freebsd, linux, openbsd, sunos, win32]
     hasBin: true
 
@@ -23312,6 +23362,8 @@ snapshots:
       flatted: 3.3.1
       keyv: 4.5.4
 
+  flatbuffers@25.9.23: {}
+
   flatted@3.3.1: {}
 
   follow-redirects@1.15.6: {}
@@ -23592,6 +23644,8 @@ snapshots:
       kind-of: 6.0.3
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
+
+  guid-typescript@1.0.9: {}
 
   gzip-size@6.0.0:
     dependencies:
@@ -25730,6 +25784,17 @@ snapshots:
       regex: 6.0.1
       regex-recursion: 6.0.2
 
+  onnxruntime-common@1.24.3: {}
+
+  onnxruntime-web@1.24.3:
+    dependencies:
+      flatbuffers: 25.9.23
+      guid-typescript: 1.0.9
+      long: 5.2.3
+      onnxruntime-common: 1.24.3
+      platform: 1.3.6
+      protobufjs: 7.3.0
+
   oo-ascii-tree@1.98.0: {}
 
   optionator@0.9.4:
@@ -25984,6 +26049,8 @@ snapshots:
       confbox: 0.1.7
       mlly: 1.7.1
       pathe: 1.1.2
+
+  platform@1.3.6: {}
 
   playwright-core@1.51.1: {}
 
@@ -26561,7 +26628,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 24.10.1
       long: 5.2.3
 
   protocols@2.0.1: {}

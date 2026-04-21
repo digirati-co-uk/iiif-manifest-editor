@@ -31,6 +31,7 @@ const systemContext: BackgroundActionSystemContext = {
   rootResource: manifestTarget,
   currentCanvas: canvasTarget,
   vault: {} as any,
+  tags: {} as any,
   config: {} as any,
   layoutState: {} as any,
   layoutActions: {} as any,
@@ -99,6 +100,26 @@ describe("BackgroundTasksStore", () => {
     expect(groups).toHaveLength(2);
     expect(groups[0]?.actions.map((available) => available.definition.id)).toEqual(["manifest-action"]);
     expect(groups[1]?.actions.map((available) => available.definition.id)).toEqual(["canvas-action"]);
+  });
+
+  test("passes the tags api through available action contexts", () => {
+    const tags = { getTags: vi.fn() } as any;
+    const manifestAction = action({
+      id: "manifest-action",
+      supports: (ctx) => ctx.tags === tags,
+    });
+
+    const groups = getAvailableBackgroundActionGroups({
+      definitions: [manifestAction],
+      instances: {},
+      systemContext: {
+        ...systemContext,
+        tags,
+      },
+      targets: [manifestTarget],
+    });
+
+    expect(groups[0]?.actions[0]?.context.tags).toBe(tags);
   });
 
   test("does not start the same action for the same target twice while running", async () => {

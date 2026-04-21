@@ -3,6 +3,7 @@ packages:
   - "packages/*"
   - "internal-packages/*"
   - "presets/*"
+  - "plugins/*"
   - "!examples/**"
 
 catalog:

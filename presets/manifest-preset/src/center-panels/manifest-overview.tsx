@@ -11,7 +11,7 @@ import {
 import { EditableCanvasLabel } from "@manifest-editor/editors";
 import {
   FLAG_TAG,
-  getResourceTags,
+  getResourceTagsFromState,
   type LayoutPanel,
   ManifestEditorTagIcon,
   ManifestEditorTagOverlay,
@@ -50,10 +50,10 @@ export function ManifestOverviewCenterPanel() {
   const [showOnlyFlagged, setShowOnlyFlagged] = useState(false);
   const canvasIds = useMemo(() => (canvases || []).map((item) => item.id).join("|"), [canvases]);
   const canvasTags = useVaultSelector(
-    (_, vault) => {
-      const tags: Record<string, ReturnType<typeof getResourceTags>> = {};
+    (state) => {
+      const tags: Record<string, ReturnType<typeof getResourceTagsFromState>> = {};
       for (const item of canvases || []) {
-        tags[item.id] = getResourceTags(vault, { id: item.id, type: "Canvas" });
+        tags[item.id] = getResourceTagsFromState(state, { id: item.id, type: "Canvas" });
       }
       return tags;
     },

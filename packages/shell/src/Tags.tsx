@@ -44,7 +44,7 @@ function getTagType(tag: Pick<ManifestEditorTag, "type" | "id">) {
 
 function normaliseTags(tags: ManifestEditorTag[] | undefined | null): ManifestEditorTag[] {
   if (!Array.isArray(tags)) {
-    return [];
+    return EMPTY_TAGS;
   }
 
   const byType = new Map<string, ManifestEditorTag>();
@@ -67,6 +67,15 @@ export function getResourceTags(vault: Vault, resource: ManifestEditorTagResourc
 
   const meta = vault.getResourceMeta(id, TAGS_META_NAMESPACE) as { [TAGS_META_KEY]?: ManifestEditorTag[] } | undefined;
   return normaliseTags(meta?.[TAGS_META_KEY]);
+}
+
+export function getResourceTagsFromState(state: any, resource: ManifestEditorTagResource): ManifestEditorTag[] {
+  const id = getResourceId(resource);
+  if (!id) {
+    return EMPTY_TAGS;
+  }
+
+  return normaliseTags(state?.iiif?.meta?.[id]?.[TAGS_META_NAMESPACE]?.[TAGS_META_KEY]);
 }
 
 export function setResourceTags(
@@ -132,43 +141,84 @@ export function toggleResourceTag(
     : addResourceTag(vault, resource, tag);
 }
 
+export interface ManifestEditorTagsApi {
+  getTags(resource: ManifestEditorTagResource): ManifestEditorTag[];
+  setTags(resource: ManifestEditorTagResource, tags: ManifestEditorTag[]): ManifestEditorTag[];
+  addTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
+  upsertTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
+  getTag(resource: ManifestEditorTagResource, tagType: string): ManifestEditorTag | undefined;
+  removeTag(resource: ManifestEditorTagResource, tagType: string): ManifestEditorTag[];
+  hasTag(resource: ManifestEditorTagResource, tagType: string, tagId?: string): boolean;
+  toggleTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
+}
+
+export function createManifestEditorTagsApi(vault: Vault): ManifestEditorTagsApi {
+  return {
+    getTags(resource) {
+      return getResourceTags(vault, resource);
+    },
+    setTags(resource, tags) {
+      return setResourceTags(vault, resource, tags);
+    },
+    addTag(resource, tag) {
+      return addResourceTag(vault, resource, tag);
+    },
+    upsertTag(resource, tag) {
+      return addResourceTag(vault, resource, tag);
+    },
+    getTag(resource, tagType) {
+      return getResourceTag(vault, resource, tagType);
+    },
+    removeTag(resource, tagType) {
+      return removeResourceTag(vault, resource, tagType);
+    },
+    hasTag(resource, tagType, tagId) {
+      return hasResourceTag(vault, resource, tagType, tagId);
+    },
+    toggleTag(resource, tag) {
+      return toggleResourceTag(vault, resource, tag);
+    },
+  };
+}
+
 export function useResourceTags(resource: ManifestEditorTagResource): ManifestEditorTag[] {
   const resourceId = getResourceId(resource);
 
-  return useVaultSelector((_, vault) => {
+  return useVaultSelector((state) => {
     if (!resourceId) {
       return EMPTY_TAGS;
     }
-    return getResourceTags(vault, resourceId);
+    return getResourceTagsFromState(state, resourceId);
   }, [resourceId]);
 }
 
 export function useResourceTagActions(resource: ManifestEditorTagResource) {
   const vault = useVault();
   const resourceId = getResourceId(resource);
+  const tagActions = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
 
   return useMemo(
     () => ({
       setTags(tags: ManifestEditorTag[]) {
-        return setResourceTags(vault, resourceId, tags);
+        return tagActions.setTags(resourceId, tags);
       },
       addTag(tag: ManifestEditorTag) {
-        return addResourceTag(vault, resourceId, tag);
+        return tagActions.addTag(resourceId, tag);
       },
       getTag(tagType: string) {
-        return getResourceTag(vault, resourceId, tagType);
+        return tagActions.getTag(resourceId, tagType);
       },
       removeTag(tagType: string) {
-        return removeResourceTag(vault, resourceId, tagType);
+        return tagActions.removeTag(resourceId, tagType);
       },
       toggleTag(tag: ManifestEditorTag) {
-        return toggleResourceTag(vault, resourceId, tag);
+        return tagActions.toggleTag(resourceId, tag);
       },
       hasTag(tagType: string, tagId?: string) {
-        return hasResourceTag(vault, resourceId, tagType, tagId);
+        return tagActions.hasTag(resourceId, tagType, tagId);
       },
     }),
-    [vault, resourceId],
+    [tagActions, resourceId],
   );
 }
 
