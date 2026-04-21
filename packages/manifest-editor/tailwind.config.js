@@ -132,6 +132,9 @@ module.exports = {
       animation: {
         fadeIn: "fadeIn 300ms ease-in-out",
         fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
+        "toast-enter": "toast-enter 400ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards",
+        "toast-exit": "toast-exit 500ms cubic-bezier(0.06, 0.71, 0.55, 1) forwards",
+        "toast-progress": "toast-progress linear forwards",
       },
 
       // that is actual animation
@@ -144,6 +147,19 @@ module.exports = {
           "0%": { opacity: 0 },
           "85%": { opacity: 0 },
           "100%": { opacity: 1 },
+        },
+        "toast-enter": {
+          "0%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "toast-exit": {
+          "0%": { transform: "translateX(0)", opacity: "1", maxHeight: "200px", marginBottom: "0" },
+          "60%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0", maxHeight: "200px" },
+          "100%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0", maxHeight: "0", marginBottom: "-0.5rem" },
+        },
+        "toast-progress": {
+          "0%": { transform: "scaleX(1)" },
+          "100%": { transform: "scaleX(0)" },
         },
       }),
     },

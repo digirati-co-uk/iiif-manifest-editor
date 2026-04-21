@@ -9,6 +9,7 @@ import {
   useFastList,
 } from "@manifest-editor/components";
 import { manifestBrowserCreator } from "@manifest-editor/creators";
+import { toRef } from "@iiif/parser";
 import {
   CanvasGrid,
   CanvasList,
@@ -18,11 +19,16 @@ import {
   useToggleList,
 } from "@manifest-editor/editors";
 import {
+  FLAG_TAG,
   type LayoutPanel,
+  ManifestEditorTagIcon,
+  ManifestEditorTagOverlay,
   useCreator,
   useEditingStack,
   useLayoutActions,
   useManifestEditor,
+  useResourceTagActions,
+  useResourceTags,
 } from "@manifest-editor/shell";
 import { type SVGProps, useEffect, useLayoutEffect } from "react";
 import { useCollection, useManifest } from "react-iiif-vault";
@@ -186,6 +192,8 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
             canvasActions.edit(item, idx);
           }}
           createActions={createAppActions(items, onDeleteCanvas)}
+          inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
+          thumbnailIcon={renderCanvasTagThumbnailOverlay}
         />
       </ThumbnailGridContainer>
     </SidebarContent>
@@ -228,9 +236,56 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
             canvasActions.edit(item, idx);
           }}
           createActions={createAppActions(items, onDeleteCanvas)}
+          inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
         />
       </InputContainer>
     </SidebarContent>
+  );
+}
+
+function renderCanvasFlagInlineAction(ref: any) {
+  const canvas = toRef(ref);
+  if (!canvas?.id) {
+    return null;
+  }
+
+  return <CanvasFlagInlineAction canvasId={canvas.id} />;
+}
+
+function renderCanvasTagThumbnailOverlay(ref: any) {
+  const canvas = toRef(ref);
+  if (!canvas?.id) {
+    return null;
+  }
+
+  return <ManifestEditorTagOverlay resource={{ id: canvas.id, type: "Canvas" }} />;
+}
+
+function CanvasFlagInlineAction({ canvasId }: { canvasId: string }) {
+  const resource = { id: canvasId, type: "Canvas" };
+  const tags = useResourceTags(resource);
+  const { toggleTag } = useResourceTagActions(resource);
+  const flagged = tags.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id);
+
+  return (
+    <button
+      type="button"
+      aria-label={flagged ? "Remove flag" : "Flag canvas"}
+      aria-pressed={flagged}
+      title={flagged ? "Remove flag" : "Flag canvas"}
+      className={[
+        "relative flex aspect-square items-center justify-center rounded-sm p-0.5 text-xl hover:bg-me-primary-100",
+        flagged ? "bg-red-100 text-red-700" : "text-gray-500",
+      ].join(" ")}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleTag(FLAG_TAG);
+      }}
+    >
+      <ManifestEditorTagIcon icon={FLAG_TAG.icon} className="h-6 w-6" />
+    </button>
   );
 }
 

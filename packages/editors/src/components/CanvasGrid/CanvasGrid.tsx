@@ -10,7 +10,7 @@ import {
 } from "react-iiif-vault";
 import { CanvasThumbnailGridItem } from "@manifest-editor/components";
 import { createThumbnailHelper } from "@iiif/helpers";
-import { useMemo, useState, useEffect } from "react";
+import { type ReactNode, useMemo, useState, useEffect } from "react";
 
 interface CanvasGridProps {
   id?: string;
@@ -24,6 +24,8 @@ interface CanvasGridProps {
     index: number,
     item: Reference | SpecificResource,
   ) => AppDropdownItem[];
+  inlineActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
+  thumbnailIcon?: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
 }
 
 export function CanvasGrid(props: CanvasGridProps) {
@@ -36,17 +38,23 @@ export function CanvasGrid(props: CanvasGridProps) {
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
         grid
-        renderItem={(ref, index) => (
-          <CanvasContext canvas={toRef(ref)?.id as string}>
-            <CanvasThumbnailGridItem
-              key={ref.id}
-              active={props?.activeId === toRef(ref)?.id}
-              onClick={() => props.onSelect(ref, index)}
-              id={ref.id}
-            />
-          </CanvasContext>
-        )}
+        renderItem={(item, index) => {
+          const ref = toRef(item) as Reference;
+
+          return (
+            <CanvasContext canvas={ref?.id as string}>
+              <CanvasThumbnailGridItem
+                key={item.id}
+                active={props?.activeId === ref?.id}
+                onClick={() => props.onSelect(item, index)}
+                id={item.id}
+                icon={ref ? props.thumbnailIcon?.(ref, index, item) : undefined}
+              />
+            </CanvasContext>
+          );
+        }}
         createActions={props.createActions}
+        inlineActions={props.inlineActions}
       />
     );
   }
@@ -62,6 +70,7 @@ export function CanvasGrid(props: CanvasGridProps) {
               key={item.id}
               selected={props?.activeId === ref.id}
               onClick={() => props.onSelect(ref, idx)}
+              icon={props.thumbnailIcon?.(ref, idx, item)}
             />
           </CanvasContext>
         );

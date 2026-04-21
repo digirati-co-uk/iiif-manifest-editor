@@ -10,9 +10,13 @@ import {
   useAppState,
   useAtlasStore,
   useEmitter,
+  FLAG_TAG,
   useHighlightedImageResource,
   useLayoutActions,
   useLayoutState,
+  ManifestEditorTagIcon,
+  useResourceTagActions,
+  useResourceTags,
   useTaskRunner,
 } from "@manifest-editor/shell";
 import { Loading } from "@manifest-editor/ui/atoms/Loading";
@@ -27,7 +31,7 @@ import {
 import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
 import { BlockIcon } from "@manifest-editor/ui/icons/BlockIcon";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { ViewControls } from "@manifest-editor/ui/ViewControls";
+import { CanvasViewerButton, ViewControls } from "@manifest-editor/ui/ViewControls";
 import {
   Fragment,
   useCallback,
@@ -361,6 +365,7 @@ export function CanvasPanelViewer({
             toggleCreateAnnotation={
               createAnnotation ? toggleCreateAnnotation : undefined
             }
+            extraControls={<CanvasViewerFlagButton canvasId={canvasId} />}
           />
         )}
         viewControlsDeps={[
@@ -376,5 +381,26 @@ export function CanvasPanelViewer({
         <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>
       </CustomStrategyProvider>
     </ErrorBoundary>
+  );
+}
+
+function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
+  const resource = { id: canvasId, type: "Canvas" };
+  const tags = useResourceTags(resource);
+  const { toggleTag } = useResourceTagActions(resource);
+  const flagged = tags.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id);
+
+  return (
+    <CanvasViewerButton
+      type="button"
+      data-control="flag"
+      aria-label={flagged ? "Remove flag" : "Flag canvas"}
+      aria-pressed={flagged}
+      title={flagged ? "Remove flag" : "Flag canvas"}
+      $active={flagged}
+      onClick={() => toggleTag(FLAG_TAG)}
+    >
+      <ManifestEditorTagIcon icon={FLAG_TAG.icon} />
+    </CanvasViewerButton>
   );
 }

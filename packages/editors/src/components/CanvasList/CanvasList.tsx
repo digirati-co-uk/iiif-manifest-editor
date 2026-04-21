@@ -1,5 +1,6 @@
 import { isSpecificResource, toRef } from "@iiif/parser";
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { ReactNode } from "react";
 import { CanvasContext } from "react-iiif-vault";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
@@ -13,6 +14,7 @@ interface CanvasListProps {
   activeId?: string;
   onSelect: (item: Reference | SpecificResource, index: number) => void;
   createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  inlineActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
 }
 
 export function CanvasList(props: CanvasListProps) {
@@ -35,6 +37,7 @@ export function CanvasList(props: CanvasListProps) {
           </CanvasContext>
         )}
         createActions={props.createActions}
+        inlineActions={props.inlineActions}
       />
     );
   }

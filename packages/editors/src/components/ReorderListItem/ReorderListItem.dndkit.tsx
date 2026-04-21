@@ -17,6 +17,7 @@ interface ReorderListItemProps extends React.DetailedHTMLProps<React.HTMLAttribu
 
   // New?
   actions?: AppDropdownItem[];
+  inlineActions?: ReactNode;
   marginBottom?: string | number;
   grid?: boolean;
 }
@@ -28,6 +29,7 @@ export function ReorderListItem({
   reorderEnabled,
   inlineHandle,
   actions,
+  inlineActions,
   marginBottom,
   grid,
   ...props
@@ -50,6 +52,17 @@ export function ReorderListItem({
   }, [transform, transition]);
 
   const Component = as || "div";
+  const actionControls =
+    inlineActions || actions?.length ? (
+      <>
+        {inlineActions}
+        {actions?.length ? (
+          <AppDropdown aria-label="Action menu" as={HandleContainer} items={actions}>
+            <MoreMenu />
+          </AppDropdown>
+        ) : null}
+      </>
+    ) : null;
 
   if (!reorderEnabled) {
     return <Component {...props}>{children}</Component>;
@@ -59,13 +72,7 @@ export function ReorderListItem({
     <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
       <ItemWithHandle
         grid={grid}
-        actions={
-          actions?.length ? (
-            <AppDropdown aria-label="Action menu" as={HandleContainer} items={actions}>
-              <MoreMenu />
-            </AppDropdown>
-          ) : null
-        }
+        actions={actionControls}
         handle={
           inlineHandle ? null : (
             <HandleContainer aria-label="Reorder item" ref={setActivatorNodeRef} {...listeners}>

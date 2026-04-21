@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { useViewerPreset } from "react-iiif-vault";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { EditIcon } from "../../icons/EditIcon";
 import { CropIcon } from "../../icons/CropIcon";
 import { HomeIcon } from "../../icons/HomeIcon";
@@ -75,6 +75,7 @@ export function ViewControls({
   style,
   creatingAnnotation,
   toggleCreateAnnotation,
+  extraControls,
 }: {
   refresh?: () => void;
   toggleEditMode?: () => void;
@@ -87,6 +88,7 @@ export function ViewControls({
   creatingAnnotation?: boolean;
   enableNavigation?: boolean;
   style?: CSSProperties;
+  extraControls?: ReactNode;
   toggleCreateAnnotation?: () => void;
 }) {
   const preset = useViewerPreset();
@@ -113,6 +115,7 @@ export function ViewControls({
           </CanvasViewerButton>
         </>
       ) : null}
+      {extraControls}
     </CanvasViewerControls>
   );
 }

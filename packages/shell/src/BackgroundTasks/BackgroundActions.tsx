@@ -12,13 +12,15 @@ import {
   BackgroundActionMenuText,
   BackgroundActionMenuTrigger,
 } from "@manifest-editor/components";
-import { Fragment, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { useVault } from "react-iiif-vault";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack } from "../EditingStack/EditingStack";
 import { useLayoutActions, useLayoutState } from "../Layout/Layout.context";
+import { useToasts } from "../Toast/ToastContext";
+import { getBackgroundActionToastContent, getBackgroundActionToastDedupKey } from "./BackgroundActionToasts.helpers";
 import {
   getAvailableBackgroundActionGroups,
   runBackgroundAction,
@@ -28,6 +30,7 @@ import {
 import type {
   BackgroundActionGroup,
   BackgroundActionInstance,
+  BackgroundActionContext,
   BackgroundActionSystemContext,
   BackgroundActionTarget,
 } from "./BackgroundTasks.types";
@@ -120,6 +123,57 @@ export function BackgroundActionsMount() {
       })}
     </>
   );
+}
+
+export function BackgroundActionToasts() {
+  const definitions = useBackgroundActionsStore((state) => state.definitions);
+  const instances = useBackgroundActionsStore((state) => state.instances);
+  const systemContext = useBackgroundActionSystemContext();
+  const toasts = useToasts();
+  const shownToastKeys = useRef(new Set<string>());
+
+  const definitionsById = useMemo(
+    () => new Map(definitions.map((definition) => [definition.id, definition])),
+    [definitions],
+  );
+
+  useEffect(() => {
+    for (const instance of Object.values(instances)) {
+      const dedupKey = getBackgroundActionToastDedupKey(instance);
+      if (!dedupKey || shownToastKeys.current.has(dedupKey)) {
+        continue;
+      }
+
+      const definition = definitionsById.get(instance.actionId);
+      if (!definition) {
+        continue;
+      }
+
+      const context: BackgroundActionContext = {
+        ...systemContext,
+        definition,
+        target: instance.target,
+        instanceKey: instance.id,
+        instance,
+      };
+      const content = getBackgroundActionToastContent(
+        definition,
+        instance,
+        instance.resultsAvailable && definition.onResults
+          ? () => {
+              void definition.onResults?.(context);
+            }
+          : undefined,
+      );
+
+      if (content) {
+        toasts.add(content);
+        shownToastKeys.current.add(dedupKey);
+      }
+    }
+  }, [definitionsById, instances, systemContext, toasts]);
+
+  return null;
 }
 
 function isBusy(instance: BackgroundActionInstance | undefined) {

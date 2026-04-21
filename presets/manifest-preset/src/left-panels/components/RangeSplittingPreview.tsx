@@ -1,7 +1,6 @@
-import { ActionButton, SidebarContent } from "@manifest-editor/components";
+import { ActionButton, InfoIcon, SidebarContent } from "@manifest-editor/components";
 import { useRangeSplittingStore } from "../../store/range-splitting-store";
 import { SplitRangeIcon } from "../../icons";
-import { InfoIcon } from "@manifest-editor/ui/icons/InfoIcon";
 
 export function RangeSplittingPreview() {
   const { setIsSplitting } = useRangeSplittingStore();

@@ -25,6 +25,7 @@ export interface ReorderListProps<T extends { id: string; type?: string }> {
   inlineHandle?: boolean;
   reorder: (result: { startIndex: number; endIndex: number }) => void;
   createActions?: (ref: T, index: number, item: T) => AppDropdownItem[];
+  inlineActions?: (ref: T, index: number, item: T) => ReactNode;
   marginBottom?: string | number;
   grid?: boolean;
 }
@@ -36,6 +37,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
   reorder,
   inlineHandle = true,
   createActions,
+  inlineActions,
   marginBottom,
   grid,
 }: ReorderListProps<T>) {
@@ -81,6 +83,9 @@ export function ReorderList<T extends { id: string; type?: string }>({
               reorderEnabled={enabled}
               actions={
                 createActions ? createActions(item, idx, item) : undefined
+              }
+              inlineActions={
+                inlineActions ? inlineActions(item, idx, item) : undefined
               }
               marginBottom={marginBottom}
               grid={grid}

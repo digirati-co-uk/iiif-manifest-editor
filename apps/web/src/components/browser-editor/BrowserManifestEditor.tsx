@@ -5,5 +5,5 @@ import BrowserEditor from './BrowserEditor';
 const preset = mapApp(manifestPreset);
 
 export default function BrowserManifestEditor({ id }: { id: string }) {
-  return <BrowserEditor id={id} preset={preset} />
+  return <BrowserEditor id={id} preset={preset} plugins={manifestPreset.plugins} />;
 }

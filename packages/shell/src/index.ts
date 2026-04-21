@@ -53,6 +53,8 @@ export * from "./PluginContext/PluginManager";
 export * from "./ResourceEditingContext/ResourceEditingContext";
 export * from "./ResourceEditingContext/ResourceEditingContext.types";
 export * from "./ShellContext/ShellContext";
+export * from "./Tags";
 export * from "./TaskBridge/TaskBridge";
+export * from "./Toast/ToastContext";
 export * from "./Universal/UniversalCopyPaste";
 export * from "./Universal/UniversalCopyPaste.types";

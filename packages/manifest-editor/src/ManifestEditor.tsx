@@ -93,8 +93,13 @@ export function ManifestEditor(props: ManifestEditorProps) {
     return null;
   }
 
+  const plugins =
+    resource.type === "Manifest"
+      ? [...(manifestEditorPreset.plugins || []), ...(props.plugins || [])]
+      : props.plugins || [];
+
   return (
-    <PluginProvider plugins={props.plugins || []} enabled={props.enabledPlugins} disabled={props.disabledPlugins}>
+    <PluginProvider plugins={plugins} enabled={props.enabledPlugins} disabled={props.disabledPlugins}>
       <AppProvider appId={appId} definition={preset} instanceId="test-1">
         <VaultProvider vault={vault}>
           <ShellProvider resource={resource} config={props.config} saveConfig={props.saveConfig}>

@@ -27,6 +27,7 @@ import type {
 } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { PluginConfigBridge } from "../PluginContext/PluginContext";
+import { ToastProvider } from "../Toast/ToastContext";
 import { defaultTheme } from "./default-theme";
 
 const previewConfigs: PreviewConfiguration[] = [
@@ -111,13 +112,12 @@ export function ShellProvider({
                   <LayoutProvider>
                     <BackgroundActionsProvider>
                       <ContextMenuProvider>
-                        {/* @todo swap these out for (config?.previews || []) */}
-                        <PreviewProvider
-                          previews={previews || []}
-                          configs={mergedConfig.previews}
-                        >
-                          <AtlasStoreProvider>{children}</AtlasStoreProvider>
-                        </PreviewProvider>
+                        <ToastProvider>
+                          {/* @todo swap these out for (config?.previews || []) */}
+                          <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
+                            <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                          </PreviewProvider>
+                        </ToastProvider>
                       </ContextMenuProvider>
                     </BackgroundActionsProvider>
                   </LayoutProvider>

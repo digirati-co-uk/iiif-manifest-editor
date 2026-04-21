@@ -82,6 +82,7 @@ export * from "./SvgControlBar";
 export * from "./Tabs";
 export * from "./ThumbnailGridContainer";
 export * from "./Tooltip";
+export * from "./Toast";
 export * from "./ViewProvider";
 export * from "./WarningMessage";
 // Extra class names:

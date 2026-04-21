@@ -18,6 +18,7 @@ import { annotationsPanel } from "./left-panels/annotations";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
+import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
 import "./index.css";
 
@@ -68,3 +69,7 @@ export const editors = allEditors;
 export const creators = allCreators;
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
+
+export { manifestQualityChecksPlugin };
+
+export const plugins = [manifestQualityChecksPlugin];

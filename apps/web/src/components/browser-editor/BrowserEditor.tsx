@@ -26,10 +26,13 @@ import {
   Layout,
   type LayoutPanel,
   type MappedApp,
+  type MappedPlugin,
   mapApp,
   mergePartialConfig,
   PreviewButton,
   type PreviewConfiguration,
+  type PluginModule,
+  PluginProvider,
   ShellProvider,
   useAppResource,
   useEditingResource,
@@ -127,6 +130,7 @@ export interface BrowserEditorProps {
   presetPath?: string;
   presetName?: string;
   config?: Partial<Config>;
+  plugins?: Array<PluginModule | MappedPlugin>;
 }
 
 export default function BrowserEditor({
@@ -135,6 +139,7 @@ export default function BrowserEditor({
   preset,
   presetPath,
   presetName,
+  plugins = [],
 }: BrowserEditorProps) {
   const {
     staleEtag,
@@ -292,14 +297,16 @@ export default function BrowserEditor({
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
-          <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
-              <Layout header={header} />
-              <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
-            </ShellProvider>
-          </VaultProvider>
-        </AppProvider>
+        <PluginProvider plugins={plugins}>
+          <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
+            <VaultProvider vault={vault}>
+              <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
+                <Layout header={header} />
+                <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
+              </ShellProvider>
+            </VaultProvider>
+          </AppProvider>
+        </PluginProvider>
       </VaultProvider>
     </div>
   );

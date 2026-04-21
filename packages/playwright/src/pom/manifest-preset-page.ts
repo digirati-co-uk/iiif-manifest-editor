@@ -1,4 +1,4 @@
-import { expect, type Page, Locator, } from "@playwright/test";
+import { expect, type Page, Locator } from "@playwright/test";
 import { resources } from "@manifest-editor/editor-api";
 
 const meta = resources.supported.Manifest;
@@ -12,7 +12,9 @@ export class ManifestPresetPage {
   constructor(page: Page) {
     this.page = page;
     this.manifestHeading = this.page.getByRole("heading", { level: 2 });
-    this.addMetadataButton = page.getByRole("button", { name: "Add metadata item" });
+    this.addMetadataButton = page.getByRole("button", {
+      name: "Add metadata item",
+    });
     this.#identifier = null;
   }
 
@@ -28,20 +30,48 @@ export class ManifestPresetPage {
   }
 
   getMetadataFieldsetByIndex(key: number) {
-    return this.page.getByRole("group", { name: `Metadata item ${key}` });
+    return this.page.getByRole("group", { name: `Metadata item ${key + 1}` });
+  }
+
+  getMetadataEditButtonByIndex(key: number) {
+    return this.getMetadataFieldsetByIndex(key).getByRole("button", {
+      name: `Edit metadata item ${key + 1}`,
+    });
+  }
+
+  getMetadataDoneButtonByIndex(key: number) {
+    return this.getMetadataFieldsetByIndex(key).getByRole("button", {
+      name: `Done editing metadata item ${key + 1}`,
+    });
+  }
+
+  getMetadataDragHandleByIndex(key: number) {
+    return this.getMetadataFieldsetByIndex(key).getByRole("button", {
+      name: `Reorder metadata item ${key + 1}`,
+    });
+  }
+
+  getMetadataActionMenuByIndex(key: number) {
+    return this.getMetadataFieldsetByIndex(key).getByRole("button", {
+      name: `Metadata item ${key + 1} actions`,
+    });
   }
 
   async waitForIdentifier() {
-    const manifestIdentifier = await this.page.getByRole("textbox", { name: "Identifier" });
+    const manifestIdentifier = await this.page.getByRole("textbox", {
+      name: "Identifier",
+    });
     expect(manifestIdentifier).toHaveValue(/https?:\/\/.*/);
     this.#identifier = await manifestIdentifier.inputValue();
   }
 
   resolveContainer<
-    Type extends keyof typeof resources['supported'],
-    Field extends typeof resources['supported'][Type]['all'][number],
+    Type extends keyof (typeof resources)["supported"],
+    Field extends (typeof resources)["supported"][Type]["all"][number],
   >(type: Type, field: Field) {
-    return this.page.locator(`[id='container_${this.identifier}_${type}_${field}']`);
+    return this.page.locator(
+      `[id='container_${this.identifier}_${type}_${field}']`,
+    );
   }
 
   async goto() {
@@ -49,5 +79,4 @@ export class ManifestPresetPage {
 
     await expect(this.page).toHaveTitle(/Manifest Editor/);
   }
-
 }

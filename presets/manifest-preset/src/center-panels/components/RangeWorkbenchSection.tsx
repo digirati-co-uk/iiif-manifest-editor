@@ -50,7 +50,7 @@ export function RangeWorkbenchSection({
   onPreviewCanvas?: (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => void;
   onClosePreview?: () => void;
 }) {
-  const [{ size }] = useGridOptions("default-grid-size", "grid-sm");
+  const [{ size }] = useGridOptions("default-grid-size", { defaultGridSize: "grid-sm" });
 
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
