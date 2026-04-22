@@ -1,7 +1,6 @@
-import { ActionButton, AddIcon, Modal } from "@manifest-editor/components";
+import { ActionButton, AddIcon, CheckIcon, Modal } from "@manifest-editor/components";
 import { useAnnotationPageEditor, useConfig, useCreator } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
-import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { useEffect, useMemo, useState } from "react";
 import { AnnotationContext, useResourceContext, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
@@ -82,7 +81,9 @@ export function PaintingAnnotationList({ onCreate, createFilter }: { onCreate?: 
                 <AddIcon /> Add media
               </ActionButton>
               {canCombine ? (
-                <ActionButton onPress={() => setCombineModalOpen(true)}>Combine into a choice</ActionButton>
+                <ActionButton onPress={() => setCombineModalOpen(true)}>
+                  <CombineLayersIcon /> Combine into a choice
+                </ActionButton>
               ) : null}
             </div>
           ) : null}
@@ -161,34 +162,57 @@ function CombinePaintingAnnotationsModal({
         <div className="flex gap-2">
           <ActionButton onPress={onClose}>Cancel</ActionButton>
           <ActionButton primary isDisabled={selectedCount < 2} onPress={combine}>
-            Combine {selectedCount} media
+            Combine {selectedCount} item{selectedCount === 1 ? "" : "s"}
           </ActionButton>
         </div>
       }
     >
-      <div className="flex flex-col gap-2 p-4">
+      <p className="px-4 pt-3 pb-1 text-sm text-gray-500">
+        Select two or more media items to group them as viewer-selectable options.
+      </p>
+      <div className="flex flex-col gap-2 p-4 pt-2">
         {candidates.map((candidate) => {
           const checked = selectedIds.has(candidate.annotationRef.id);
           return (
             <label
               key={candidate.annotationRef.id || candidate.index}
-              className={`flex items-center gap-3 rounded border p-3 text-sm ${
-                candidate.eligible ? "border-gray-200 bg-white" : "border-gray-200 bg-gray-50 text-gray-400"
-              }`}
+              className={[
+                "flex items-center gap-3 rounded-lg border p-3 transition-colors",
+                !candidate.eligible
+                  ? "border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed"
+                  : checked
+                    ? "border-me-500 bg-me-50 cursor-pointer"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 cursor-pointer",
+              ].join(" ")}
             >
               <input
                 type="checkbox"
+                className="sr-only"
                 disabled={!candidate.eligible}
                 checked={checked}
                 onChange={() => toggle(candidate.annotationRef.id)}
               />
               <AnnotationContext annotation={candidate.annotationRef.id}>
-                <PaintingAnnotationCandidateThumbnail />
+                <PaintingAnnotationCandidateThumbnail checked={checked} eligible={candidate.eligible} />
               </AnnotationContext>
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium text-gray-900">{candidate.label}</span>
-                <span className="block truncate text-gray-500">{candidate.detail}</span>
+                <span className={`block truncate text-sm font-semibold ${candidate.eligible ? "text-gray-900" : "text-gray-400"}`}>
+                  {candidate.label}
+                </span>
+                <span className={`block truncate text-xs mt-0.5 ${candidate.eligible ? "text-gray-500" : "text-gray-400"}`}>
+                  {candidate.detail}
+                </span>
               </span>
+              {candidate.eligible ? (
+                <div
+                  className={[
+                    "w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all",
+                    checked ? "bg-me-500 border-me-500" : "border-gray-300 bg-white",
+                  ].join(" ")}
+                >
+                  {checked ? <CheckIcon className="text-white" style={{ fontSize: "11px", width: "11px", height: "11px" }} /> : null}
+                </div>
+              ) : null}
             </label>
           );
         })}
@@ -197,12 +221,38 @@ function CombinePaintingAnnotationsModal({
   );
 }
 
-function PaintingAnnotationCandidateThumbnail() {
+function PaintingAnnotationCandidateThumbnail({ checked, eligible }: { checked?: boolean; eligible?: boolean }) {
   const thumbnail = useAnnotationThumbnail();
 
   return (
-    <ThumbnailContainer $size={40}>
-      {thumbnail ? <ThumbnailImg src={thumbnail.id} alt="" /> : null}
-    </ThumbnailContainer>
+    <div
+      className={[
+        "w-12 h-12 rounded flex-shrink-0 overflow-hidden flex items-center justify-center transition-colors",
+        eligible ? (checked ? "bg-me-100" : "bg-gray-100") : "bg-gray-100",
+      ].join(" ")}
+    >
+      {thumbnail ? <ThumbnailImg src={thumbnail.id} alt="" className="object-contain w-full h-full" /> : null}
+    </div>
+  );
+}
+
+function CombineLayersIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2L2 7l10 5 10-5-10-5z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path
+        d="M2 12l10 5 10-5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

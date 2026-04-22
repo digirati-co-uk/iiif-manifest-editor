@@ -41,6 +41,12 @@ export type PaintingChoiceCandidate = {
   disabledReason?: string;
 };
 
+export type UnwrappedChoicePaintingAnnotation = {
+  annotationRefs: Array<Reference<"Annotation">>;
+  annotationPageRef: Reference<"AnnotationPage">;
+  index: number;
+};
+
 export function isChoiceBody(resource: unknown): resource is ChoiceBody {
   return !!resource && typeof resource === "object" && (resource as any).type === "Choice";
 }
@@ -73,6 +79,30 @@ export function getChoiceItems(choice: ChoiceBody | null | undefined, vault: Vau
       ref: getContentResourceRef(item, resource),
     };
   });
+}
+
+export function getChoiceThumbnailResource(choice: ChoiceBody | null | undefined, vault: Vault): any {
+  const firstItem = getChoiceItems(choice, vault)[0];
+  if (!firstItem) {
+    return choice;
+  }
+
+  const resource = firstItem.resource || firstItem.ref || firstItem.item;
+  if (isChoiceBody(resource)) {
+    return getChoiceThumbnailResource(resource, vault);
+  }
+
+  return resource;
+}
+
+export function getAnnotationThumbnailResource(annotation: AnnotationNormalized | any, vault: Vault): any {
+  const choiceInfo = getChoiceBodyInfo(annotation, vault);
+  return choiceInfo ? getChoiceThumbnailResource(choiceInfo.choice, vault) : annotation;
+}
+
+export function getContentResourceThumbnailResource(resource: unknown, vault: Vault): any {
+  const resolved = resolveContentResource(vault, resource);
+  return isChoiceBody(resolved) ? getChoiceThumbnailResource(resolved, vault) : resolved;
 }
 
 export function updateChoiceField(
@@ -326,6 +356,87 @@ export function combinePaintingAnnotationsIntoChoice(
   return annotationRef;
 }
 
+export function unwrapChoicePaintingAnnotation(
+  vault: Vault,
+  options: {
+    annotationRef: Reference<"Annotation">;
+    annotationPageRef?: Reference<"AnnotationPage">;
+  },
+): UnwrappedChoicePaintingAnnotation {
+  const annotation = vault.get(options.annotationRef as any, { skipSelfReturn: false } as any) as any;
+  const choiceInfo = annotation ? getChoiceBodyInfo(annotation, vault) : null;
+  const choiceItems = choiceInfo ? getChoiceItems(choiceInfo.choice, vault) : [];
+
+  if (!annotation || !choiceInfo) {
+    throw new Error("Annotation does not contain a Choice body.");
+  }
+
+  if (choiceItems.length < 2) {
+    throw new Error("Choice must contain at least two items to unwrap.");
+  }
+
+  if (!annotation.target) {
+    throw new Error("Choice annotation must have a target.");
+  }
+
+  const pageMatch = options.annotationPageRef
+    ? findAnnotationPageMatch(vault, options.annotationRef, options.annotationPageRef)
+    : findAnnotationPageMatch(vault, options.annotationRef);
+
+  if (!pageMatch) {
+    throw new Error("Could not find parent annotation page for Choice annotation.");
+  }
+
+  const annotationEntities: Record<string, unknown> = {};
+  const mappings: Record<string, string> = {};
+  const annotationRefs = choiceItems.map((item, index) => {
+    const annotationId = `${pageMatch.annotationPageRef.id}/annotation/${randomId()}`;
+    const annotationRef: Reference<"Annotation"> = { id: annotationId, type: "Annotation" };
+    annotationEntities[annotationId] = {
+      id: annotationId,
+      type: "Annotation",
+      motivation: "painting",
+      body: [clone(item.item)],
+      target: clone(annotation.target),
+    };
+    mappings[annotationId] = "Annotation";
+    return annotationRef;
+  });
+
+  const nextPageItems = pageMatch.items.flatMap((item, index) =>
+    index === pageMatch.index ? annotationRefs : [item],
+  );
+
+  vault.batch((batchVault) => {
+    batchVault.dispatch(
+      importEntities({
+        entities: {
+          Annotation: annotationEntities,
+        },
+      }),
+    );
+    batchVault.dispatch(
+      addMappings({
+        mapping: mappings,
+      }),
+    );
+    batchVault.dispatch(
+      modifyEntityField({
+        id: pageMatch.annotationPageRef.id,
+        type: "AnnotationPage",
+        key: "items",
+        value: nextPageItems,
+      }),
+    );
+  });
+
+  return {
+    annotationRefs,
+    annotationPageRef: pageMatch.annotationPageRef,
+    index: pageMatch.index,
+  };
+}
+
 export function resolveContentResource(vault: Vault, input: any): any {
   if (!input) {
     return null;
@@ -513,6 +624,34 @@ function replaceSelectedPageItems(
   }
 
   return nextItems;
+}
+
+function findAnnotationPageMatch(
+  vault: Vault,
+  annotationRef: Reference<"Annotation">,
+  annotationPageRef?: Reference<"AnnotationPage">,
+): { annotationPageRef: Reference<"AnnotationPage">; items: any[]; index: number } | null {
+  if (annotationPageRef) {
+    const page = vault.get(annotationPageRef as any, { skipSelfReturn: false } as any) as any;
+    const items = toArray(page?.items);
+    const index = items.findIndex((item) => item?.id === annotationRef.id);
+    return index === -1 ? null : { annotationPageRef, items, index };
+  }
+
+  const pages = (vault.getState() as any).iiif.entities.AnnotationPage || {};
+  for (const [id, page] of Object.entries<any>(pages)) {
+    const items = toArray(page?.items);
+    const index = items.findIndex((item) => item?.id === annotationRef.id);
+    if (index !== -1) {
+      return {
+        annotationPageRef: { id, type: "AnnotationPage" },
+        items,
+        index,
+      };
+    }
+  }
+
+  return null;
 }
 
 function updateEmbeddedChoice(

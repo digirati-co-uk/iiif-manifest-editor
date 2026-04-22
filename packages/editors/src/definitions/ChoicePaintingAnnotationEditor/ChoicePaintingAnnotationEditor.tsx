@@ -1,26 +1,25 @@
 import type { Reference } from "@iiif/presentation-3";
-import { ActionButton } from "@manifest-editor/components";
-import { useEditor, useLayoutActions } from "@manifest-editor/shell";
+import { ActionButton, AddIcon, DeleteIcon, EditTextIcon, IconButton } from "@manifest-editor/components";
+import { useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
-import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
-import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { useMemo } from "react";
 import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
-import { Input, InputContainer, InputLabel } from "../../components/Input";
+import { InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { ReorderList } from "../../components/ReorderList/ReorderList.dndkit";
 import { centerRectangles } from "../../helpers/center-rectangles";
 import {
+  type ChoiceBodyInfo,
+  type ChoiceItemInfo,
   ensureChoiceBodyRef,
   getChoiceBodyInfo,
   getChoiceItems,
   getInternationalStringText,
-  type ChoiceBodyInfo,
-  type ChoiceItemInfo,
+  unwrapChoicePaintingAnnotation,
   updateChoiceField,
   updateChoiceItemLabel,
   updateChoiceItems,
@@ -33,6 +32,7 @@ type SortableChoiceItem = ChoiceItemInfo & { id: string };
 export function ChoicePaintingAnnotationEditor() {
   const vault = useVault();
   const annotationEditor = useEditor();
+  const editingResource = useEditingResource();
   const annotationRef = annotationEditor.ref() as Reference<"Annotation">;
   const { create, edit } = useLayoutActions();
   const { target } = annotationEditor.annotation;
@@ -66,6 +66,10 @@ export function ChoicePaintingAnnotationEditor() {
   const choiceInfo = state.choiceInfo;
   const choiceItems = state.choiceItems;
   const firstImage = choiceItems.find((item) => item.ref || item.resource?.id);
+  const parentAnnotationPage =
+    editingResource?.parent?.type === "AnnotationPage"
+      ? (editingResource.parent as Reference<"AnnotationPage">)
+      : undefined;
 
   const moveAndResizeImage = () => {
     vault.batch(() => {
@@ -119,20 +123,46 @@ export function ChoicePaintingAnnotationEditor() {
         )}
       />
 
-      <ActionButton
-        onPress={() => {
-          const parent = ensureChoiceBodyRef(vault, annotationRef, choiceInfo);
-          create({
-            type: "ContentResource",
-            filter: "image",
-            parent,
-            property: "items",
-            isPainting: true,
-          });
-        }}
-      >
-        Add media option
-      </ActionButton>
+      <div className="flex flex-col gap-1 pt-2 mt-1 border-t border-gray-100">
+        <ActionButton
+          center
+          onPress={() => {
+            const parent = ensureChoiceBodyRef(vault, annotationRef, choiceInfo);
+            create({
+              type: "ContentResource",
+              filter: "image",
+              parent,
+              property: "items",
+              isPainting: true,
+            });
+          }}
+        >
+          <AddIcon /> Add media option
+        </ActionButton>
+        <ActionButton
+          className="justify-center text-xs text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-600"
+          onPress={() => {
+            const unwrapped = unwrapChoicePaintingAnnotation(vault, {
+              annotationRef,
+              annotationPageRef: parentAnnotationPage,
+            });
+            const firstAnnotation = unwrapped.annotationRefs[0];
+            if (firstAnnotation) {
+              edit(
+                firstAnnotation,
+                {
+                  parent: unwrapped.annotationPageRef,
+                  property: "items",
+                  index: unwrapped.index,
+                },
+                { forceOpen: true },
+              );
+            }
+          }}
+        >
+          Unwrap choice
+        </ActionButton>
+      </div>
     </div>
   );
 
@@ -164,22 +194,17 @@ export function ChoicePaintingAnnotationEditor() {
     <FlexContainerColumn>
       <FlexImage>{firstImage?.ref ? <ChoiceItemThumbnail resourceId={firstImage.ref.id} large /> : null}</FlexImage>
 
-      <InputContainer $wide>
-        <Input disabled value={annotationRef.id} />
-      </InputContainer>
+      <div className="px-2">
+        {choiceLabel}
+
+        <InputContainer $wide>
+          <InputLabel $margin>Options</InputLabel>
+          {items}
+        </InputContainer>
+      </div>
 
       <Accordion
         items={[
-          {
-            label: "Choice",
-            initialOpen: true,
-            children: choiceLabel,
-          },
-          {
-            label: "Options",
-            initialOpen: true,
-            children: items,
-          },
           {
             label: "Target",
             initialOpen: currentSelector !== null,
@@ -218,65 +243,91 @@ function ChoiceItemEditorRow({
   const vault = useVault();
   const { edit } = useLayoutActions();
   const title = getInternationalStringText(item.resource?.label, `Option ${item.index + 1}`);
+  const openMediaItem = () => {
+    if (!item.ref) {
+      return;
+    }
+
+    const parent = ensureChoiceBodyRef(vault, annotationRef, choiceInfo);
+    edit(item.ref, { parent, property: "items", index: item.index }, { forceOpen: true });
+  };
 
   return (
-    <div className="flex flex-col gap-3 rounded border border-gray-200 bg-white p-3">
-      <div className="flex items-center gap-3">
-        <ChoiceItemThumbnail resourceId={item.ref?.id} />
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+      <div className="flex items-center gap-3 p-3">
+        <div className="w-12 h-12 rounded flex-shrink-0 bg-gray-100 overflow-hidden flex items-center justify-center">
+          <ChoiceItemThumbnail resourceId={item.ref?.id} size={48} />
+        </div>
         <button
           type="button"
-          className="min-w-0 flex-1 border-none bg-transparent p-0 text-left"
-          onClick={() => {
-            if (item.ref) {
-              edit(
-                item.ref,
-                choiceInfo.ref ? { parent: choiceInfo.ref, property: "items", index: item.index } : undefined,
-                { forceOpen: true },
-              );
-            }
-          }}
+          className="min-w-0 flex-1 border-none bg-transparent p-0 text-left cursor-pointer"
+          onClick={openMediaItem}
         >
-          <span className="block truncate text-sm font-medium text-gray-900">{title}</span>
-          <span className="block truncate text-xs text-gray-500">
-            {item.resource?.format || item.resource?.type || item.ref?.id}
-          </span>
+          <span className="block truncate text-sm font-semibold text-gray-900">{title}</span>
+          {item.resource?.format || item.resource?.type ? (
+            <span className="block truncate text-xs text-gray-400 mt-0.5">
+              {item.resource?.format || item.resource?.type}
+            </span>
+          ) : null}
         </button>
-        <ActionButton
-          isDisabled={!canRemove}
-          onPress={() => {
-            const items = choiceInfo.choice.items || [];
-            updateChoiceItems(
-              vault,
-              annotationRef,
-              choiceInfo,
-              items.filter((_choiceItem, index) => index !== item.index),
-            );
-          }}
-        >
-          Remove
-        </ActionButton>
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          <IconButton
+            label="Edit media"
+            disabled={!item.ref}
+            onPress={openMediaItem}
+            className="text-base text-gray-500"
+          >
+            <EditTextIcon />
+          </IconButton>
+          <IconButton
+            label="Remove option"
+            disabled={!canRemove}
+            onPress={() => {
+              const items = choiceInfo.choice.items || [];
+              updateChoiceItems(
+                vault,
+                annotationRef,
+                choiceInfo,
+                items.filter((_choiceItem, index) => index !== item.index),
+              );
+            }}
+            className="text-base text-gray-500 hover:text-red-600 hover:bg-red-50"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </div>
       </div>
 
-      <LanguageFieldEditor
-        focusId={`${item.id}_label`}
-        label="Option label"
-        fields={item.resource?.label || {}}
-        onSave={(e: any) => updateChoiceItemLabel(vault, annotationRef, choiceInfo, item, e.toInternationalString())}
-        disableMultiline
-      />
+      <div className="border-t border-gray-100 px-3 pt-2 pb-3">
+        <LanguageFieldEditor
+          focusId={`${item.id}_label`}
+          label="Option label"
+          fields={item.resource?.label || {}}
+          onSave={(e: any) => updateChoiceItemLabel(vault, annotationRef, choiceInfo, item, e.toInternationalString())}
+          disableMultiline
+        />
+      </div>
     </div>
   );
 }
 
-function ChoiceItemThumbnail({ resourceId, large }: { resourceId?: string; large?: boolean }) {
+function ChoiceItemThumbnail({
+  resourceId,
+  large,
+  size = 40,
+}: {
+  resourceId?: string;
+  large?: boolean;
+  size?: number;
+}) {
   if (!resourceId) {
     return null;
   }
 
-  return <ChoiceItemThumbnailInner resourceId={resourceId} large={large} />;
+  return <ChoiceItemThumbnailInner resourceId={resourceId} large={large} size={size} />;
 }
 
-function ChoiceItemThumbnailInner({ resourceId, large }: { resourceId: string; large?: boolean }) {
+function ChoiceItemThumbnailInner({ resourceId, large, size }: { resourceId: string; large?: boolean; size: number }) {
   const thumbnail = useContentResourceThumbnail({ resourceId });
 
   if (!thumbnail) {
@@ -288,9 +339,7 @@ function ChoiceItemThumbnailInner({ resourceId, large }: { resourceId: string; l
   }
 
   return (
-    <ThumbnailContainer $size={40}>
-      <ThumbnailImg src={thumbnail.id} alt="" />
-    </ThumbnailContainer>
+    <img src={thumbnail.id} alt="" style={{ width: size, height: size }} className="object-contain w-full h-full" />
   );
 }
 

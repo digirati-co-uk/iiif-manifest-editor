@@ -3,9 +3,12 @@ import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 import { describe, expect, test } from "vitest";
 import {
   combinePaintingAnnotationsIntoChoice,
+  getAnnotationThumbnailResource,
   getChoiceBodyInfo,
   getChoiceItems,
+  getContentResourceThumbnailResource,
   getPaintingChoiceCandidates,
+  unwrapChoicePaintingAnnotation,
 } from "../helpers/choice-painting-annotations";
 
 const manifestRef = { id: "https://example.org/manifest", type: "Manifest" as const };
@@ -130,6 +133,46 @@ describe("painting annotation Choices", () => {
     ).toThrow(/at least two/);
   });
 
+  test("unwraps a Choice annotation back into individual painting annotations", () => {
+    const vault = createVault();
+    const choiceAnnotationRef = combinePaintingAnnotationsIntoChoice(vault, {
+      annotationPageRef: pageRef,
+      selectedAnnotationIds: ["https://example.org/annotation/1", "https://example.org/annotation/3"],
+      defaultLanguage: "en",
+    });
+    const choiceAnnotation = vault.get<any>(choiceAnnotationRef);
+    const result = unwrapChoicePaintingAnnotation(vault, {
+      annotationRef: choiceAnnotationRef,
+      annotationPageRef: pageRef,
+    });
+
+    expect(result.annotationRefs).toHaveLength(2);
+    expect(result.annotationPageRef).toEqual(pageRef);
+    expect(result.index).toBe(0);
+
+    const page = vault.get<any>(pageRef);
+    expect(page.items).toEqual([
+      result.annotationRefs[0],
+      result.annotationRefs[1],
+      { id: "https://example.org/annotation/2", type: "Annotation" },
+    ]);
+
+    const first = vault.get<any>(result.annotationRefs[0]!);
+    const second = vault.get<any>(result.annotationRefs[1]!);
+    expect(first.motivation).toBe("painting");
+    expect(first.target).toEqual(choiceAnnotation.target);
+    expect(second.target).toEqual(choiceAnnotation.target);
+    expect(first.body).toEqual([{ id: "https://example.org/image/1.jpg", type: "ContentResource" }]);
+    expect(second.body).toEqual([{ id: "https://example.org/image/3.jpg", type: "ContentResource" }]);
+
+    const exported = vault.toPresentation3<any>(manifestRef);
+    const exportedPageItems = exported.items[0].items[0].items;
+    expect(exportedPageItems).toHaveLength(3);
+    expect(exportedPageItems[0].body.type).toBe("Image");
+    expect(exportedPageItems[1].body.type).toBe("Image");
+    expect(exportedPageItems[2].id).toBe("https://example.org/annotation/2");
+  });
+
   test("detects imported embedded Choice bodies", () => {
     const vault = new Vault();
     vault.loadManifestSync(manifestRef.id, {
@@ -178,6 +221,7 @@ describe("painting annotation Choices", () => {
     const annotation = vault.get<any>({ id: "https://example.org/annotation/choice", type: "Annotation" });
     const choiceInfo = getChoiceBodyInfo(annotation, vault);
     expect(choiceInfo?.choice.type).toBe("Choice");
+    expect(getAnnotationThumbnailResource(annotation, vault).id).toBe("https://example.org/natural.jpg");
     expect(getChoiceItems(choiceInfo?.choice, vault).map((item) => item.resource.label)).toEqual([
       { en: ["Natural Light"] },
       { en: ["X-Ray"] },
@@ -244,6 +288,9 @@ describe("painting annotation Choices", () => {
     const choiceInfo = getChoiceBodyInfo(annotation, vault);
     expect(choiceInfo?.choice.label).toEqual({ en: ["Inspection mode"] });
     expect(choiceInfo?.ref).toEqual({ id: choiceId, type: "ContentResource" });
+    expect(getContentResourceThumbnailResource({ id: choiceId, type: "ContentResource" }, vault).id).toBe(
+      "https://example.org/natural.jpg",
+    );
     expect(getChoiceItems(choiceInfo?.choice, vault).map((item) => item.resource.label)).toEqual([
       { en: ["Natural Light"] },
       { en: ["X-Ray"] },
