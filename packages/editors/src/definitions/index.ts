@@ -5,6 +5,7 @@ import {
 } from "./StructuralProperties";
 import { imageEditor } from "./ImageEditor";
 import { mediaEditor } from "./MediaEditor";
+import { choicePaintingAnnotationEditor } from "./ChoicePaintingAnnotationEditor";
 import { htmlBodyEditor } from "./HTMLBodyEditor";
 import { overviewCanvasEditor } from "./OverviewCanvasEditor";
 import { combinedProperties } from "./CombinedEditor";
@@ -19,6 +20,7 @@ import { navPlaceEditor } from "./NavPlaceEditor";
 export const allEditors = [
   // First tab ones.
   imageEditor,
+  choicePaintingAnnotationEditor,
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,
@@ -40,6 +42,7 @@ export const allEditors = [
 
 export {
   imageEditor,
+  choicePaintingAnnotationEditor,
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,

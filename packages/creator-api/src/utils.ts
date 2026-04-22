@@ -35,6 +35,7 @@ export function resolveType(type: string): keyof Entities {
     case "TextualBody":
     case "Composite":
     case "List":
+    case "Choice":
     case "Independents":
     case "Audience":
       return "ContentResource";

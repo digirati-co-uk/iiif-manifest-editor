@@ -49,10 +49,12 @@ import {
   CanvasPanel,
   useAnnotation,
   useCanvas,
+  useCanvasChoices,
   useManifest,
 } from "react-iiif-vault";
 import { useStore } from "zustand";
 import { useAnnotationEditing } from "../../helpers/annotation-editing";
+import { getInternationalStringText } from "../../helpers/choice-painting-annotations";
 import { useEditingMode } from "../../helpers/editing-mode";
 import { DrawPolygon } from "../DrawPolygon/DrawPolygon";
 import * as S from "./CanvasPanelViewer.styles";
@@ -365,7 +367,12 @@ export function CanvasPanelViewer({
             toggleCreateAnnotation={
               createAnnotation ? toggleCreateAnnotation : undefined
             }
-            extraControls={<CanvasViewerFlagButton canvasId={canvasId} />}
+            extraControls={
+              <>
+                <CanvasChoiceControls canvasId={canvasId} />
+                <CanvasViewerFlagButton canvasId={canvasId} />
+              </>
+            }
           />
         )}
         viewControlsDeps={[
@@ -402,5 +409,41 @@ function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
     >
       <ManifestEditorTagIcon icon={FLAG_TAG.icon} />
     </CanvasViewerButton>
+  );
+}
+
+function CanvasChoiceControls({ canvasId }: { canvasId: string }) {
+  const { choices, actions } = useCanvasChoices({ canvasId });
+
+  if (!choices.length) {
+    return null;
+  }
+
+  return (
+    <>
+      {choices.flatMap((choiceSet, choiceSetIndex) => {
+        const complexChoice = choiceSet.choice as any;
+        const choiceGroups = complexChoice?.type === "complex-choice" ? complexChoice.items || [] : [complexChoice];
+
+        return choiceGroups.map((choice: any, choiceIndex: number) => {
+          const selected = choice.items?.find((item: any) => item.selected)?.id || choice.items?.[0]?.id || "";
+          return (
+            <select
+              key={`${choiceSet.canvasId}-${choiceSetIndex}-${choiceIndex}`}
+              aria-label="Canvas choice"
+              className="rounded border border-gray-200 bg-white px-2 py-2 text-sm shadow-sm"
+              value={selected}
+              onChange={(event) => actions.makeChoice(event.target.value, { deselectOthers: true })}
+            >
+              {(choice.items || []).map((item: any, itemIndex: number) => (
+                <option key={item.id} value={item.id}>
+                  {getInternationalStringText(item.label, `Option ${itemIndex + 1}`)}
+                </option>
+              ))}
+            </select>
+          );
+        });
+      })}
+    </>
   );
 }

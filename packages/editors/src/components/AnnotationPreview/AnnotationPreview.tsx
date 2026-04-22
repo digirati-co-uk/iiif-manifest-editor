@@ -13,9 +13,16 @@ import {
   targetIntersects,
   useAnnotation,
   useRenderingStrategy,
+  useVault,
 } from "react-iiif-vault";
+import {
+  getChoiceBodyInfo,
+  getChoiceItems,
+  getInternationalStringText,
+} from "../../helpers/choice-painting-annotations";
 import { getAnnotationType } from "../../helpers/get-annotation-type";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { useContentResourceThumbnail } from "../../hooks/useContentResourceThumbnailHelper";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -32,6 +39,24 @@ function AnnotationImageType() {
   const [, label] = getAnnotationType(strategy);
 
   return <span>{label}</span>;
+}
+
+function ChoiceImageThumbnail({ resourceId }: { resourceId?: string }) {
+  if (!resourceId) {
+    return null;
+  }
+
+  return <ChoiceImageThumbnailInner resourceId={resourceId} />;
+}
+
+function ChoiceImageThumbnailInner({ resourceId }: { resourceId: string }) {
+  const thumbnail = useContentResourceThumbnail({ resourceId });
+
+  return thumbnail ? (
+    <ThumbnailContainer $size={40}>
+      <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+    </ThumbnailContainer>
+  ) : null;
 }
 
 export function AnnotationTargetLabel({ id }: { id: string }) {
@@ -54,6 +79,7 @@ export function AnnotationPreview({
   viewport?: { width: number; height: number; x: number; y: number } | null;
 }) {
   const annotation = useAnnotation();
+  const vault = useVault();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
 
   if (!annotation) {
@@ -77,6 +103,37 @@ export function AnnotationPreview({
     annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
   const isVisible =
     viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+  const choiceInfo = getChoiceBodyInfo(annotation, vault);
+
+  if (choiceInfo) {
+    const choiceItems = getChoiceItems(choiceInfo.choice, vault);
+    const defaultChoice = choiceItems[0];
+    const title = getInternationalStringText(choiceInfo.choice.label, "Choice");
+    const defaultLabel = getInternationalStringText(defaultChoice?.resource?.label, "Default option");
+    const itemCount = choiceItems.length;
+
+    return (
+      <RichMediaLink
+        isVisible={isVisible}
+        margin={margin}
+        title={title}
+        icon={<ChoiceImageThumbnail resourceId={defaultChoice?.ref?.id} />}
+        noLink
+        link={`${itemCount} option${itemCount === 1 ? "" : "s"}`}
+        label={defaultLabel}
+        iconLabel="Choice thumbnail"
+        onClick={
+          onClick
+            ? (e) => {
+                e.preventDefault();
+                onClick(annotation);
+              }
+            : undefined
+        }
+        containerProps={highlightProps}
+      />
+    );
+  }
 
   if (
     !firstBody ||
