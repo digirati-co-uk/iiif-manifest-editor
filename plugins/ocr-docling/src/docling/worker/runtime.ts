@@ -6,6 +6,7 @@ import {
   env,
 } from '@huggingface/transformers'
 import {
+  DOCLING_MODEL_DTYPE_FP32,
   DOCLING_MODEL_ID,
   DOCLING_MODEL_OPTIONS,
 } from '../constants'
@@ -29,6 +30,18 @@ import {
 type RuntimeState = {
   processor: Awaited<ReturnType<typeof AutoProcessor.from_pretrained>>
   model: Awaited<ReturnType<typeof AutoModelForVision2Seq.from_pretrained>>
+}
+
+type GpuAdapterLike = {
+  features?: {
+    has(feature: string): boolean
+  }
+}
+
+type GpuNavigator = Navigator & {
+  gpu?: {
+    requestAdapter(): Promise<GpuAdapterLike | null>
+  }
 }
 
 type ProgressInfo = {
@@ -172,30 +185,27 @@ export class DoclingWorkerRuntime {
   private async getRuntime(
     emit: (event: DoclingEvent) => void,
   ): Promise<RuntimeState> {
-    if (!('gpu' in navigator)) {
-      throw new DoclingRuntimeError(
-        'unsupported_browser',
-        'WebGPU is not available in this browser. Use a recent Chromium-based browser with WebGPU enabled.',
-        false,
-      )
+    if (this.runtimePromise) {
+      return this.runtimePromise
     }
 
-    if (!this.runtimePromise) {
-      this.runtimePromise = this.loadRuntime(emit)
-    }
+    const adapter = await getWebGpuAdapter()
+    this.runtimePromise = this.loadRuntime(emit, adapter)
 
     return this.runtimePromise
   }
 
   private async loadRuntime(
     emit: (event: DoclingEvent) => void,
+    adapter: GpuAdapterLike,
   ): Promise<RuntimeState> {
     try {
       configureBrowserCache()
+      const dtype = getDoclingModelDtype(adapter)
       const processor = await AutoProcessor.from_pretrained(this.modelId)
       const model = await AutoModelForVision2Seq.from_pretrained(this.modelId, {
         device: DOCLING_MODEL_OPTIONS.device,
-        dtype: DOCLING_MODEL_OPTIONS.dtype,
+        dtype,
         progress_callback: (info: ProgressInfo) => {
           if (info.status !== 'progress_total') {
             return
@@ -309,6 +319,50 @@ export class DoclingWorkerRuntime {
       throw runtimeError
     }
   }
+}
+
+async function getWebGpuAdapter(): Promise<GpuAdapterLike> {
+  if (typeof navigator === 'undefined') {
+    throw new DoclingRuntimeError(
+      'unsupported_browser',
+      'WebGPU is not available in this browser. Use a recent Chromium-based browser with WebGPU enabled.',
+      false,
+    )
+  }
+
+  const gpu = (navigator as GpuNavigator).gpu
+  if (!gpu) {
+    throw new DoclingRuntimeError(
+      'unsupported_browser',
+      'WebGPU is not available in this browser. Use a recent Chromium-based browser with WebGPU enabled.',
+      false,
+    )
+  }
+
+  try {
+    const adapter = await gpu.requestAdapter()
+    if (!adapter) {
+      throw new DoclingRuntimeError(
+        'unsupported_browser',
+        'WebGPU is available, but no compatible GPU adapter was found.',
+        false,
+      )
+    }
+
+    return adapter
+  } catch (error) {
+    if (error instanceof DoclingRuntimeError) {
+      throw error
+    }
+
+    throw serializeUnknownError(error, 'unsupported_browser')
+  }
+}
+
+function getDoclingModelDtype(adapter: GpuAdapterLike) {
+  return adapter.features?.has('shader-f16')
+    ? DOCLING_MODEL_OPTIONS.dtype
+    : DOCLING_MODEL_DTYPE_FP32
 }
 
 function configureBrowserCache() {
