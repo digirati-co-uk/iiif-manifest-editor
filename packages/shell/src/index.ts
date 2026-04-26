@@ -40,6 +40,7 @@ export * from "./Layout/Layout.context";
 export * from "./Layout/Layout.helpers";
 export * from "./Layout/Layout.hooks";
 export * from "./Layout/Layout.reducer";
+export * from "./Layout/Layout.supports";
 export * from "./Layout/Layout.types";
 export * from "./PreviewButton/PreviewButton";
 export * from "./PreviewContext/PreviewContext";

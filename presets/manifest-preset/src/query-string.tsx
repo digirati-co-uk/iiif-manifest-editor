@@ -1,5 +1,11 @@
 import { useInStack } from "@manifest-editor/editors";
-import { type BackgroundPanel, useAvailableLayouts, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
+import {
+  type BackgroundPanel,
+  useAvailableLayouts,
+  useConfig,
+  useLayoutActions,
+  useLayoutState,
+} from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
 import { useManifest } from "react-iiif-vault";
 import { manifestOverview } from "./center-panels/manifest-overview";
@@ -38,14 +44,24 @@ function QueryStringBackgroundTask() {
   const manifest = useManifest();
   const canvas = useInStack("Canvas");
   const { leftPanel, rightPanel } = useLayoutState();
-  const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
+  const {
+    edit,
+    leftPanel: leftPanelActions,
+    rightPanel: rightPanelActions,
+  } = useLayoutActions();
   const { leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
-  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
+  const {
+    editorFeatureFlags: {
+      rememberCanvasId = true,
+      rememberLeftPanelId = false,
+    } = {},
+  } = useConfig();
   const lastCanvas = useRef<string | null>(null);
   const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
-  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
+  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] =
+    useState(false);
 
   useEffect(() => {
     if (isLeftPanelOpen) {
@@ -132,7 +148,11 @@ function QueryStringBackgroundTask() {
 
     const shouldOpenRightPanel = leftPanel.current !== rangesPanel.id;
 
-    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
+    if (
+      !rightPanel.open &&
+      shouldOpenRightPanel &&
+      wasLeftPanelOpenedAutomatically
+    ) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

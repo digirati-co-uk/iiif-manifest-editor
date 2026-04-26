@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import type { RenderingStrategy } from "react-iiif-vault";
 import type { TransitionStatus } from "react-transition-group";
 import type { AppState } from "../AppContext/AppContext";
+import type { MappedApp } from "../AppContext/AppContext";
+import type { Resource } from "../AppResourceProvider/AppResourceProvider";
 import type { BackgroundActionDefinition } from "../BackgroundTasks/BackgroundTasks.types";
 import type { EditorConfig } from "../ConfigContext/ConfigContext";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
@@ -170,6 +172,7 @@ export interface LayoutPanel {
   divide?: boolean;
   separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
+  supports?: (ctx: LayoutPanelSupportContext) => boolean;
   render: LayoutFunction;
   onMount?: (
     state: any,
@@ -199,6 +202,14 @@ export interface LayoutPanel {
     openPinned?: boolean;
     tabs?: boolean;
   };
+}
+
+export interface LayoutPanelSupportContext {
+  rootResource?: Resource;
+  vault?: Vault;
+  app: MappedApp;
+  layoutState: LayoutState;
+  appState: AppState;
 }
 
 export type MenuPositions = "left" | "right" | "bottom" | "top";

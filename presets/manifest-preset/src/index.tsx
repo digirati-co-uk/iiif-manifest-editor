@@ -21,11 +21,17 @@ import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
+import * as avRangesPlugin from "./plugins/av-ranges";
 import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
 import "./index.css";
 
-export default { id: "manifest-editor", title: "Manifest Editor", project: true, projectType: "Manifest" };
+export default {
+  id: "manifest-editor",
+  title: "Manifest Editor",
+  project: true,
+  projectType: "Manifest",
+};
 
 export const centerPanels: LayoutPanel[] = [
   manifestOverview,
@@ -59,7 +65,9 @@ export const leftPanels: LayoutPanel[] = [
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
-export const backgroundActions: BackgroundActionDefinition[] = [createBulkThumbnailBuilderBackgroundAction()];
+export const backgroundActions: BackgroundActionDefinition[] = [
+  createBulkThumbnailBuilderBackgroundAction(),
+];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 
@@ -69,10 +77,19 @@ export const editors = allEditors;
 
 export const creators = allCreators;
 
-export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
+export const resources = [
+  "Manifest",
+  "Canvas",
+  "ContentResource",
+  "Agent",
+  "AnnotationPage",
+  "Annotation",
+  "Range",
+];
 
 export {
   annotationsPlugin,
+  avRangesPlugin,
   canvasLabelGeneratorPlugin,
   manifestQualityChecksPlugin,
   ocrClassificationPlugin,
@@ -82,6 +99,7 @@ export {
 
 export const plugins = [
   annotationsPlugin,
+  avRangesPlugin,
   manifestQualityChecksPlugin,
   canvasLabelGeneratorPlugin,
   translationPlugin,
