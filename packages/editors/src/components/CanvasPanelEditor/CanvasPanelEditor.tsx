@@ -1,6 +1,7 @@
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { CanvasContext, useVault, useVaultSelector } from "react-iiif-vault";
+import { useEffect } from "react";
+import { CanvasContext, useManifest, useVaultSelector } from "react-iiif-vault";
 import { useInStack } from "../../helpers";
 import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 
@@ -13,8 +14,10 @@ export function CanvasPanelEditor({
   const canvas = useInStack("Canvas");
   const annotationPage = useInStack("AnnotationPage");
   const annotation = useInStack("Annotation");
+  const manifest = useManifest();
 
   const canvasId = canvas?.resource.source.id;
+  const firstCanvasId = manifest?.items?.[0]?.id;
   let createAnnotation = undefined;
   const annotationPageId =
     annotationPage &&
@@ -44,6 +47,14 @@ export function CanvasPanelEditor({
   );
 
   const annotationId = annotation?.resource?.source.id;
+
+  useEffect(() => {
+    if (!canvas && firstCanvasId) {
+      edit({ id: firstCanvasId, type: "Canvas" }, undefined, {
+        forceOpen: false,
+      });
+    }
+  }, [canvas, edit, firstCanvasId]);
 
   if (canvas) {
     return (

@@ -27,6 +27,7 @@ import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
 import { useResizeLayout } from "./components/use-resize-layouts";
+import { FocusedLayout } from "./Layout.focused";
 import { useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
 import {
@@ -37,7 +38,7 @@ import {
 import * as M from "./Layout.mobile";
 import * as L from "./Layout.styles";
 
-interface LayoutProps {
+export interface LayoutRenderProps {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   menu?: React.ReactNode;
@@ -52,9 +53,14 @@ interface LayoutProps {
   htmlId?: string;
   centerPanelMenuPosition?: "top" | "bottom";
   disableSideEffects?: string[];
+  layoutMode?: "default" | "focused";
 }
 
-export const Layout = memo(function Layout(props: LayoutProps) {
+export const Layout = memo(function Layout(props: LayoutRenderProps) {
+  if (props.layoutMode === "focused") {
+    return <FocusedLayout {...props} />;
+  }
+
   const app = useApp();
   const appState = useAppState();
   const rootResource = useAppResource();

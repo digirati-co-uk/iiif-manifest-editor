@@ -9,7 +9,6 @@ import {
   type BackgroundPanel,
   baseCreator,
   baseEditor,
-  ExportPanel,
   type LayoutPanel,
 } from "@manifest-editor/shell";
 import * as translationPlugin from "@manifest-editor/translation";
@@ -21,6 +20,7 @@ import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
+import { CanvasesListIcon } from "./icons";
 import * as avRangesPlugin from "./plugins/av-ranges";
 import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
@@ -38,16 +38,10 @@ export const centerPanels: LayoutPanel[] = [
   {
     id: "current-canvas",
     label: "Current canvas",
-    icon: "",
+    icon: <CanvasesListIcon />,
     render: (state, { actions }) => <CanvasPanelEditor />,
   },
   rangeWorkbench,
-  {
-    id: "export",
-    label: "Export",
-    icon: "",
-    render: () => <ExportPanel />,
-  },
 ];
 
 export const leftPanels: LayoutPanel[] = [

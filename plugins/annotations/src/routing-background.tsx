@@ -1,5 +1,10 @@
 import { useInStack } from "@manifest-editor/editors";
-import { type BackgroundPanel, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
+import {
+  type BackgroundPanel,
+  useLayoutActions,
+  useLayoutMode,
+  useLayoutState,
+} from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
 import { useManifest } from "react-iiif-vault";
 import { ANNOTATIONS_LEFT_PANEL_ID } from "./constants";
@@ -15,6 +20,7 @@ export const annotationRoutingBackground: BackgroundPanel = {
 function AnnotationRoutingBackground() {
   const manifest = useManifest();
   const canvas = useInStack("Canvas");
+  const layoutMode = useLayoutMode();
   const { leftPanel, rightPanel } = useLayoutState();
   const { edit, open, rightPanel: rightPanelActions } = useLayoutActions();
   const lastCanvas = useRef<string | null>(null);
@@ -35,6 +41,10 @@ function AnnotationRoutingBackground() {
         edit({ id: firstCanvas, type: "Canvas" });
       }
 
+      if (layoutMode === "focused") {
+        return;
+      }
+
       if (rightPanel.open) {
         rightPanelActions.close();
         setClosedRightPanel(true);
@@ -42,11 +52,15 @@ function AnnotationRoutingBackground() {
       return;
     }
 
-    if (closedRightPanel && !rightPanel.open && leftPanel.current !== RANGES_PANEL_ID) {
+    if (
+      closedRightPanel &&
+      !rightPanel.open &&
+      leftPanel.current !== RANGES_PANEL_ID
+    ) {
       rightPanelActions.open();
       setClosedRightPanel(false);
     }
-  }, [leftPanel.current]);
+  }, [leftPanel.current, layoutMode]);
 
   return null;
 }

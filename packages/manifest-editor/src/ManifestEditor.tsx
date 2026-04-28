@@ -29,6 +29,7 @@ interface ManifestEditorProps {
   plugins?: Array<PluginModule | MappedPlugin>;
   enabledPlugins?: string[];
   disabledPlugins?: string[];
+  layoutMode?: "default" | "focused";
 
   // // Future bits.
   // onChange?: (resource: { id: string; type: "Manifest" | "Collection" }, vault: Vault) => void;
@@ -51,7 +52,8 @@ function configInvariant(
   }
   const prefix: string = "Configuration Error";
 
-  const provided: string | undefined = typeof message === "function" ? message() : message;
+  const provided: string | undefined =
+    typeof message === "function" ? message() : message;
   const value: string = provided ? `${prefix}: ${provided}` : prefix;
   throw new Error(value);
 }
@@ -67,7 +69,10 @@ export function ManifestEditor(props: ManifestEditorProps) {
 `,
   );
 
-  const resource = typeof props.resource === "string" ? { id: props.resource, type: "Manifest" } : props.resource;
+  const resource =
+    typeof props.resource === "string"
+      ? { id: props.resource, type: "Manifest" }
+      : props.resource;
 
   if (!vault.requestStatus(resource.id)) {
     if (props.data) {
@@ -110,8 +115,12 @@ export function ManifestEditor(props: ManifestEditorProps) {
     >
       <AppProvider appId={appId} definition={preset} instanceId="test-1">
         <VaultProvider vault={vault}>
-          <ShellProvider resource={resource} config={props.config} saveConfig={props.saveConfig}>
-            <Layout />
+          <ShellProvider
+            resource={resource}
+            config={props.config}
+            saveConfig={props.saveConfig}
+          >
+            <Layout layoutMode={props.layoutMode} />
           </ShellProvider>
         </VaultProvider>
       </AppProvider>

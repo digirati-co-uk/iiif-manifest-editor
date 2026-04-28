@@ -1,8 +1,21 @@
-import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
+import {
+  createRangeHelper,
+  getValue,
+  type RangeTableOfContentsNode,
+} from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, InfoMessage, MoreMenuIcon, useGridOptions } from "@manifest-editor/components";
-import { InlineLabelEditor, InlineLocaleStringEditor, useInStack } from "@manifest-editor/editors";
+import {
+  ActionButton,
+  InfoMessage,
+  MoreMenuIcon,
+  useGridOptions,
+} from "@manifest-editor/components";
+import {
+  InlineLabelEditor,
+  InlineLocaleStringEditor,
+  useInStack,
+} from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useEditingStack,
@@ -13,8 +26,15 @@ import {
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
-import { ArrowBackwardIcon, SplitRangeIcon } from "../icons";
+import {
+  LocaleString,
+  RangeContext,
+  useManifest,
+  useVault,
+  useVaultSelector,
+} from "react-iiif-vault";
+import styled from "styled-components";
+import { ArrowBackwardIcon, RangesIcon, SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
 import { ArrowUpIcon } from "../left-panels/components/ArrowUpIcon";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
@@ -27,9 +47,41 @@ import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
-  icon: "",
+  icon: <RangesIcon />,
+  focusedMode: {
+    hide: true,
+  },
   render: () => <RangeWorkbench />,
 };
+
+const RangeWorkbenchScroll = styled.div`
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+const RangeWorkbenchHeader = styled.div`
+  padding-inline-start: calc(
+    1rem + var(--manifest-editor-layout-left-sidebar-small, 0px)
+  );
+  padding-inline-end: calc(
+    1rem + var(--manifest-editor-layout-right-sidebar-small, 0px)
+  );
+`;
+
+const RangeWorkbenchNotice = styled(InfoMessage)`
+  padding-inline-start: calc(
+    1rem + var(--manifest-editor-layout-left-sidebar-small, 0px)
+  );
+  padding-inline-end: calc(
+    1rem + var(--manifest-editor-layout-right-sidebar-small, 0px)
+  );
+`;
+
+const RangeWorkbenchInset = styled.div`
+  padding-inline-start: var(--manifest-editor-layout-left-sidebar-small, 0px);
+  padding-inline-end: var(--manifest-editor-layout-right-sidebar-small, 0px);
+`;
 
 function getNextRangeLabel(label: InternationalString | null) {
   const valueAsString = getValue(label);
@@ -65,12 +117,15 @@ function RangeWorkbench() {
     canvas: RangeTableOfContentsNode;
   } | null>(null);
 
-  const handlePreviewCanvas = useCallback((range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => {
-    if (scrollRef.current) {
-      savedScrollRef.current = scrollRef.current.scrollTop;
-    }
-    setPreview({ range, canvas });
-  }, []);
+  const handlePreviewCanvas = useCallback(
+    (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => {
+      if (scrollRef.current) {
+        savedScrollRef.current = scrollRef.current.scrollTop;
+      }
+      setPreview({ range, canvas });
+    },
+    [],
+  );
 
   const handleClosePreview = useCallback(() => {
     setPreview(null);
@@ -136,13 +191,24 @@ function RangeWorkbench() {
     });
   }, [topLevelRange?.id]);
 
-  const rangeEditor = useGenericEditor(topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined, {
-    allowNull: true,
-  });
+  const rangeEditor = useGenericEditor(
+    topLevelRange?.id ? { id: topLevelRange?.id!, type: "Range" } : undefined,
+    {
+      allowNull: true,
+    },
+  );
 
   const onMerge = useCallback(
-    (mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) => {
-      rangeEditor.structural.ranges.mergeRanges(mergeRange, toMergeRange, empty);
+    (
+      mergeRange: RangeTableOfContentsNode,
+      toMergeRange: RangeTableOfContentsNode,
+      empty?: boolean,
+    ) => {
+      rangeEditor.structural.ranges.mergeRanges(
+        mergeRange,
+        toMergeRange,
+        empty,
+      );
     },
     [rangeEditor],
   );
@@ -208,16 +274,23 @@ function RangeWorkbench() {
       setIsLastInView(false);
       return;
     }
-    const container = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+    const container = document.getElementById(
+      "range-workbench-scroll",
+    ) as HTMLElement | null;
     const lastId = rangeItems[rangeItems.length - 1]?.id;
-    const last = lastId ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null) : null;
+    const last = lastId
+      ? (document.getElementById(`workbench-${lastId}`) as HTMLElement | null)
+      : null;
     if (!container || !last) return;
 
-    const io = new IntersectionObserver(([entry]) => setIsLastInView(entry!.isIntersecting), {
-      root: container,
-      threshold: 0,
-      rootMargin: "0px 0px -1px 0px",
-    });
+    const io = new IntersectionObserver(
+      ([entry]) => setIsLastInView(entry!.isIntersecting),
+      {
+        root: container,
+        threshold: 0,
+        rootMargin: "0px 0px -1px 0px",
+      },
+    );
 
     io.observe(last);
 
@@ -230,7 +303,9 @@ function RangeWorkbench() {
   }, [rangeItemsLen, rangeItems]);
 
   useEffect(() => {
-    const el = document.getElementById("range-workbench-scroll") as HTMLElement | null;
+    const el = document.getElementById(
+      "range-workbench-scroll",
+    ) as HTMLElement | null;
     if (!el) return;
 
     const compute = () => {
@@ -275,7 +350,9 @@ function RangeWorkbench() {
     };
   }, [rangeItemsLen, isSplitting, preview]);
 
-  const hasCanvases = (topLevelRange?.items || []).filter((item) => item.type === "Canvas");
+  const hasCanvases = (topLevelRange?.items || []).filter(
+    (item) => item.type === "Canvas",
+  );
 
   const scrollToTop = useCallback(() => {
     const el = scrollRef.current;
@@ -329,7 +406,10 @@ function RangeWorkbench() {
     return map;
   }, [rootToc]);
 
-  const selectedId = toRef<any>(selectedRange?.resource)?.id ?? (selectedRange?.resource as any)?.id ?? null;
+  const selectedId =
+    toRef<any>(selectedRange?.resource)?.id ??
+    (selectedRange?.resource as any)?.id ??
+    null;
 
   const goToParent = useCallback(() => {
     if (!selectedId) {
@@ -344,13 +424,18 @@ function RangeWorkbench() {
     }
   }, [selectedId, parentIndex, edit, back]);
 
-  const hasParent = useMemo(() => !!(selectedId && parentIndex.has(selectedId)), [selectedId, parentIndex]);
+  const hasParent = useMemo(
+    () => !!(selectedId && parentIndex.has(selectedId)),
+    [selectedId, parentIndex],
+  );
 
   const previewRangeLabel = useVaultSelector(
     (_, v) => {
       if (!preview?.range?.id) return null;
       const live = v.get(preview.range.id);
-      return live?.label ? getValue(live.label as InternationalString | null) : getValue(preview.range.label);
+      return live?.label
+        ? getValue(live.label as InternationalString | null)
+        : getValue(preview.range.label);
     },
     [preview?.range?.id],
   );
@@ -360,9 +445,9 @@ function RangeWorkbench() {
   }
 
   return (
-    <div id="range-workbench-scroll" ref={scrollRef} className="flex-1 overflow-y-auto">
+    <RangeWorkbenchScroll id="range-workbench-scroll" ref={scrollRef}>
       {!preview && (
-        <div className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 px-4 z-30 border-me-400 border-b">
+        <RangeWorkbenchHeader className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 z-30 border-me-400 border-b">
           <div className="flex items-center gap-4">
             {hasParent ? (
               <ActionButton onPress={() => goToParent()}>
@@ -370,7 +455,11 @@ function RangeWorkbench() {
               </ActionButton>
             ) : null}
             {isEditingLabel && !topLevelRange.isVirtual ? (
-              <InlineLabelEditor className="" resource={topLevelRange} onSubmit={() => setIsEditingLabel(false)} />
+              <InlineLabelEditor
+                className=""
+                resource={topLevelRange}
+                onSubmit={() => setIsEditingLabel(false)}
+              />
             ) : (
               <InlineLocaleStringEditor
                 key={topLevelRange.id}
@@ -397,29 +486,33 @@ function RangeWorkbench() {
                 </Menu>
               </Popover>
             </MenuTrigger>
-            {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
-              <ActionButton onPress={() => setIsSplitting(true)}>
-                <SplitRangeIcon className="text-xl" /> Split range
-              </ActionButton>
-            )}
+            {!isSplitting &&
+              (topLevelRange?.items?.length ?? 0) > 0 &&
+              !topLevelRange.isRangeLeaf && (
+                <ActionButton onPress={() => setIsSplitting(true)}>
+                  <SplitRangeIcon className="text-xl" /> Split range
+                </ActionButton>
+              )}
 
             <RangeOnboarding />
           </div>
 
           {gridOptions}
-        </div>
+        </RangeWorkbenchHeader>
       )}
 
       {isSplitting && !preview ? (
-        <InfoMessage className="mb-4 flex gap-4 sticky top-16 rounded-none z-30">
+        <RangeWorkbenchNotice className="mb-4 flex gap-4 sticky top-16 rounded-none z-30">
           Splitting range, click to confirm the the new range item
-          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
-        </InfoMessage>
+          <ActionButton onPress={() => setIsSplitting(false)}>
+            Exit splitting mode
+          </ActionButton>
+        </RangeWorkbenchNotice>
       ) : null}
 
       {preview && (
         <div className="flex flex-col h-full">
-          <div className="flex bg-me-primary-500 sticky top-0 h-16 px-4 z-20 border-b-white border-b items-center gap-4">
+          <RangeWorkbenchHeader className="flex bg-me-primary-500 sticky top-0 h-16 z-20 border-b-white border-b items-center gap-4">
             <ActionButton onPress={handleClosePreview}>
               <ArrowBackwardIcon className="text-xl" />
             </ActionButton>
@@ -452,12 +545,14 @@ function RangeWorkbench() {
                 </MenuTrigger>
               </>
             )}
-          </div>
+          </RangeWorkbenchHeader>
           <RangeWorkbenchCanvas
             range={preview.range}
             canvas={preview.canvas}
             onBack={() => setPreview(null)}
-            setCanvas={(canvas) => setPreview((prev) => (prev ? { ...prev, canvas } : prev))}
+            setCanvas={(canvas) =>
+              setPreview((prev) => (prev ? { ...prev, canvas } : prev))
+            }
           />
         </div>
       )}
@@ -471,7 +566,8 @@ function RangeWorkbench() {
           const nextIdx = idx + 1;
 
           const nextRangeLabel =
-            nextIdx !== topLevelRange.items?.length && topLevelRange.items?.[nextIdx]?.items?.length === 0
+            nextIdx !== topLevelRange.items?.length &&
+            topLevelRange.items?.[nextIdx]?.items?.length === 0
               ? getValue(topLevelRange.items?.[nextIdx]?.label)
               : getNextRangeLabel(item.label);
 
@@ -482,16 +578,28 @@ function RangeWorkbench() {
               isSplitting={isSplitting}
               onSplit={onSplit}
               range={item}
-              onMergeUp={idx !== 0 ? (r, empty) => onMerge(item, topLevelRange.items?.[prevIdx]!, empty) : undefined}
+              onMergeUp={
+                idx !== 0
+                  ? (r, empty) =>
+                      onMerge(item, topLevelRange.items?.[prevIdx]!, empty)
+                  : undefined
+              }
               onMergeDown={
                 topLevelRange.items?.[nextIdx]
-                  ? (r, empty) => onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
+                  ? (r, empty) =>
+                      onMerge(item, topLevelRange.items?.[nextIdx]!, empty)
                   : undefined
               }
               nextRangeLabel={nextRangeLabel}
               onDelete={() => onDelete(idx)}
-              mergeUpLabel={prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""}
-              mergeDownLabel={nextIdx !== topLevelRange.items?.length ? topLevelRange.items?.[nextIdx]?.label : ""}
+              mergeUpLabel={
+                prevIdx !== -1 ? topLevelRange.items?.[prevIdx]?.label : ""
+              }
+              mergeDownLabel={
+                nextIdx !== topLevelRange.items?.length
+                  ? topLevelRange.items?.[nextIdx]?.label
+                  : ""
+              }
               onPreviewCanvas={handlePreviewCanvas}
               onClosePreview={() => setPreview(null)}
             />
@@ -504,7 +612,11 @@ function RangeWorkbench() {
         </RangeContext>
       ) : null}
 
-      {hasCanvases.length === 0 && rangeItems.length === 0 && <EmptyRangeMessage extraClasses="mx-3 my-4" />}
+      {hasCanvases.length === 0 && rangeItems.length === 0 && (
+        <RangeWorkbenchInset>
+          <EmptyRangeMessage extraClasses="my-4" />
+        </RangeWorkbenchInset>
+      )}
 
       {!preview && rangeItems.length > 0 ? (
         <div className="sticky bottom-5 float-right right-5">
@@ -520,6 +632,6 @@ function RangeWorkbench() {
         </div>
       ) : null}
       <div id="workbench-bottom" ref={bottomRef} />
-    </div>
+    </RangeWorkbenchScroll>
   );
 }

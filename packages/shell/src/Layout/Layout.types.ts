@@ -173,6 +173,11 @@ export interface LayoutPanel {
   separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
   supports?: (ctx: LayoutPanelSupportContext) => boolean;
+  focusedMode?: {
+    hide?: boolean;
+    closeOnMainPanelClick?: boolean;
+    onSelect?: (ctx: LayoutPanelFocusedModeContext) => void;
+  };
   render: LayoutFunction;
   onMount?: (
     state: any,
@@ -210,6 +215,15 @@ export interface LayoutPanelSupportContext {
   app: MappedApp;
   layoutState: LayoutState;
   appState: AppState;
+}
+
+export interface LayoutPanelFocusedModeContext {
+  rootResource?: Resource;
+  vault?: Vault;
+  app: MappedApp;
+  layoutState: LayoutState;
+  appState: AppState;
+  actions: LayoutActions;
 }
 
 export type MenuPositions = "left" | "right" | "bottom" | "top";
@@ -286,6 +300,7 @@ export interface LayoutProps {
   leftPanelMenuPosition?: MenuPositions;
   centerPanelMenuPosition?: MenuPositions;
   rightPanelMenuPosition?: MenuPositions;
+  layoutMode?: "default" | "focused";
   // Editors / creators
   editors?: EditorDefinition[];
   resources?: (string | ResourceDefinition)[];

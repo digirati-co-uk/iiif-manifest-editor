@@ -1,6 +1,10 @@
 import { useInStack } from "@manifest-editor/editors";
 import type { LayoutPanel } from "@manifest-editor/shell";
-import { AnnotationPageContext, CanvasContext, useCanvas } from "react-iiif-vault";
+import {
+  AnnotationPageContext,
+  CanvasContext,
+  useCanvas,
+} from "react-iiif-vault";
 import { ANNOTATIONS_LEFT_PANEL_ID } from "./constants";
 import { AnnotationsCreateEmptyPage } from "./components/AnnotationsCreateEmptyPage";
 import { AnnotationsListingAnnotations } from "./components/AnnotationsListingAnnotations";
@@ -10,6 +14,9 @@ export const annotationsPanel: LayoutPanel = {
   id: ANNOTATIONS_LEFT_PANEL_ID,
   label: "Annotations",
   icon: <AnnotationsIcon />,
+  focusedMode: {
+    closeOnMainPanelClick: false,
+  },
   render: () => <AnnotationsPanel />,
 };
 
@@ -24,8 +31,9 @@ function AnnotationsPanel() {
       <div className="flex flex-col gap-5 text-center p-4 items-center justify-center">
         <AnnotationsIcon className="w-32 h-32 text-gray-300" />
         <p className="text-gray-500">
-          Annotations are associated with Canvases in a IIIF Manifest. To view or add annotations, first create a
-          Canvas and then select the Annotations link
+          Annotations are associated with Canvases in a IIIF Manifest. To view
+          or add annotations, first create a Canvas and then select the
+          Annotations link
         </p>
       </div>
     );

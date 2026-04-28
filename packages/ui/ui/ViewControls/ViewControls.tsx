@@ -54,7 +54,7 @@ export const CanvasViewerControls = styled.div`
   display: flex;
   position: absolute;
   top: 1em;
-  right: 1em;
+  right: calc(var(--manifest-editor-layout-right-sidebar-large, 0px) + 1em);
   z-index: 20;
 
   & > * ~ * {
@@ -95,22 +95,40 @@ export function ViewControls({
 
   return (
     <CanvasViewerControls style={style}>
-      <CanvasViewerButton onDoubleClick={refresh} data-control="home" onClick={() => preset?.runtime.world.goHome()}>
+      <CanvasViewerButton
+        onDoubleClick={refresh}
+        data-control="home"
+        onClick={() => preset?.runtime.world.goHome()}
+      >
         <HomeIcon title={"Home"} />
       </CanvasViewerButton>
-      <CanvasViewerButton data-control="zoom-out" onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}>
+      <CanvasViewerButton
+        data-control="zoom-out"
+        onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}
+      >
         <MinusIcon title={"Zoom out"} />
       </CanvasViewerButton>
-      <CanvasViewerButton data-control="zoom-in" onClick={() => preset?.runtime.world.zoomTo(0.75)}>
+      <CanvasViewerButton
+        data-control="zoom-in"
+        onClick={() => preset?.runtime.world.zoomTo(0.75)}
+      >
         <PlusIcon title={"Zoom in"} />
       </CanvasViewerButton>
 
       {enableNavigation ? (
         <>
-          <CanvasViewerButton data-control="previous" disabled={!onPrevious} onClick={onPrevious}>
+          <CanvasViewerButton
+            data-control="previous"
+            disabled={!onPrevious}
+            onClick={onPrevious}
+          >
             <BackIcon />
           </CanvasViewerButton>
-          <CanvasViewerButton data-control="next" disabled={!onNext} onClick={onNext}>
+          <CanvasViewerButton
+            data-control="next"
+            disabled={!onNext}
+            onClick={onNext}
+          >
             <BackIcon style={{ transform: "rotate(180deg)" }} />
           </CanvasViewerButton>
         </>
