@@ -7,7 +7,7 @@ export const overviewCanvasEditor: EditorDefinition = {
   label: "Detail",
   supports: {
     edit: true,
-    properties: ["items"],
+    properties: ["label", "items", "annotations"],
     resourceTypes: ["Canvas"],
     readOnlyProperties: [],
     custom: (res, vault) => {

@@ -61,8 +61,22 @@ export function defineCreator<
     SupportsParentFields,
     CreateReturnType
   >,
-) {
-  return options;
+): SpecificCreatorDefinition<
+  Payload,
+  ID,
+  ResourceType,
+  AdditionalResourceTypes,
+  AllResourceTypes,
+  SupportsParentTypes,
+  SupportsParentFields,
+  CreateReturnType
+> {
+  return {
+    compatibility: {
+      viewers: ["theseus"],
+    },
+    ...options,
+  };
 }
 
 export function withInitialData<T extends CreatorDefinition>(

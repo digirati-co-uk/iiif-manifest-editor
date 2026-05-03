@@ -21,6 +21,9 @@ export const imageServiceCreator = defineCreator({
   },
   resourceType: "ContentResource",
   resourceFields: ["id", "type", "height", "width", "format", "service"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentFields: ["logo", "body", "thumbnail"],
   },

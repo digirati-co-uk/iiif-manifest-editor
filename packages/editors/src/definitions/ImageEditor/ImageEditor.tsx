@@ -11,7 +11,7 @@ import { useContentResourceThumbnail } from "../../hooks/useContentResourceThumb
 
 export function ImageEditor() {
   const resource = useEditingResource();
-  const { technical } = useEditor();
+  const { technical, notAllowed } = useEditor();
   const vault = useVault();
   const { id, width, height, format } = technical;
   const manifest = useManifest();
@@ -27,29 +27,43 @@ export function ImageEditor() {
         </ThumbnailContainer>
       ) : null}
       <PaddedSidebarContainer>
-        <InputContainer $wide>
-          <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
-          <Input disabled id={id.focusId()} value={id.get()} />
-        </InputContainer>
+        {!notAllowed.includes("id") ? (
+          <InputContainer $wide>
+            <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
+            <Input disabled id={id.focusId()} value={id.get()} />
+          </InputContainer>
+        ) : null}
 
-        <InputContainer $wide>
-          <DimensionsTriplet
-            width={width.get() || 0}
-            changeWidth={(v) => width.set(v)}
-            height={height.get() || 0}
-            changeHeight={(v) => height.set(v)}
-          />
-        </InputContainer>
+        {!notAllowed.includes("width") || !notAllowed.includes("height") ? (
+          <InputContainer $wide>
+            <DimensionsTriplet
+              hideWidth={notAllowed.includes("width")}
+              width={width.get() || 0}
+              changeWidth={
+                !notAllowed.includes("width") ? (v) => width.set(v) : undefined
+              }
+              hideHeight={notAllowed.includes("height")}
+              height={height.get() || 0}
+              changeHeight={
+                !notAllowed.includes("height")
+                  ? (v) => height.set(v)
+                  : undefined
+              }
+            />
+          </InputContainer>
+        ) : null}
 
-        <InputContainer $wide>
-          <InputLabel htmlFor={format.focusId()}>Format</InputLabel>
-          <Input
-            id={format.focusId()}
-            value={format.get()}
-            placeholder={"jpg, png etc."}
-            onChange={(e: any) => format.set(e.target.value)}
-          />
-        </InputContainer>
+        {!notAllowed.includes("format") ? (
+          <InputContainer $wide>
+            <InputLabel htmlFor={format.focusId()}>Format</InputLabel>
+            <Input
+              id={format.focusId()}
+              value={format.get()}
+              placeholder={"jpg, png etc."}
+              onChange={(e: any) => format.set(e.target.value)}
+            />
+          </InputContainer>
+        ) : null}
 
         {manifest && resource?.parent?.type === "Canvas" ? (
           <Button

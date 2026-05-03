@@ -16,12 +16,12 @@ import type {
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";
 import type { CreatorResource } from "./CreatorResource";
-import type { ReferencedResource } from "./ReferencedResource";
 import type {
   CreatorDefinitionFilterByParent,
   ExtractCreatorGenerics,
   IIIFManifestEditor,
 } from "./creator-register";
+import type { ReferencedResource } from "./ReferencedResource";
 
 export interface CreatorContext<T = any> {
   vault: Vault;
@@ -62,7 +62,7 @@ export interface CreatorFunctionContext {
 export type GetCreatorPayload<T extends CreatorDefinition> =
   T extends CreatorDefinition<infer Payload> ? Payload : never;
 
-interface CreatorParent {
+export interface CreatorParent {
   resource: Reference;
   property: string;
   atIndex?: number;
@@ -103,6 +103,8 @@ export type AllParentTypes = [
   "Agent",
 ];
 
+export type ViewerId = "theseus" | "universal-viewer";
+
 export interface SpecificCreatorDefinition<
   //
   Payload = any,
@@ -121,6 +123,9 @@ export interface SpecificCreatorDefinition<
   icon?: any;
   dependencies?: string[];
   tags?: string[];
+  compatibility?: {
+    viewers: ViewerId[];
+  };
 
   create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;

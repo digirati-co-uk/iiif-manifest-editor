@@ -19,6 +19,9 @@ export const youTubeBodyCreator = defineCreator({
   resourceType: "ContentResource",
   additionalTypes: ["Canvas", "Annotation"],
   resourceFields: ["id", "type", "service"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   render: (ctx) => <YouTubeForm {...ctx} />,
   supports: {
     onlyPainting: true,

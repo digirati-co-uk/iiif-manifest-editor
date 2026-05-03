@@ -1,7 +1,7 @@
 import { InternationalString } from "@iiif/presentation-3";
 import { useConfig } from "@manifest-editor/shell";
 import { produce } from "immer";
-import { useMemo, useReducer } from "react";
+import { useEffect, useMemo, useReducer, useRef } from "react";
 import { useClosestLanguage } from "react-iiif-vault";
 
 export type MetadataEditorState = {
@@ -41,6 +41,10 @@ export type MetadataDefinition = {
 
 export type MetadataEditorActions =
   | {
+      type: "RESET";
+      payload: MetadataEditorState;
+    }
+  | {
       type: "CHANGE_LANGUAGE";
       payload: {
         id: string;
@@ -75,6 +79,10 @@ export type MetadataEditorActions =
 
 export const metadataEditorReducer = produce((state: MetadataEditorState, action: MetadataEditorActions) => {
   switch (action.type) {
+    case "RESET": {
+      return action.payload;
+    }
+
     case "SELECT_ITEM": {
       // Toggle.
       state.selected = state.selected === action.payload.id ? undefined : action.payload.id;
@@ -228,6 +236,23 @@ export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseM
   const { i18n } = useConfig();
   const { availableLanguages, defaultLanguage: defaultLocale } = i18n;
   const [state, dispatch] = useReducer(metadataEditorReducer, { fields, key: metadataKey }, createInitialValues);
+  const fieldSignature = useMemo(() => JSON.stringify(Array.isArray(fields) ? fields : fields || {}), [fields]);
+  const lastHydratedSignature = useRef(fieldSignature);
+
+  useEffect(() => {
+    if (lastHydratedSignature.current === fieldSignature) {
+      return;
+    }
+
+    lastHydratedSignature.current = fieldSignature;
+    dispatch({
+      type: "RESET",
+      payload: createInitialValues({
+        key: metadataKey,
+        fields,
+      }),
+    });
+  }, [fieldSignature, fields, metadataKey]);
 
   // Computed values.
   const fieldKeys = Object.keys(state.fields);

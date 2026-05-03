@@ -29,7 +29,7 @@ export const canvasStructuralProperties: EditorDefinition = {
   label: "Structure",
   supports: {
     edit: true,
-    properties: ["items", "structures"],
+    properties: ["items", "annotations"],
     resourceTypes: ["Canvas"],
   },
   component: () => <CanvasStructuralProperties />,

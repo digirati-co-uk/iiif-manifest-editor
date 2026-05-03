@@ -8,6 +8,23 @@ import { createActionIdentity } from "../helpers";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { usePreviewVault } from "../PreviewVault/PreviewVault";
 
+export function getSupportedCreatorResource(
+  parent: any,
+  property: string,
+  type: string,
+  target?: Reference,
+  options?: { isPainting?: boolean; onlyReference?: boolean },
+) {
+  return {
+    type,
+    parent,
+    index: 0,
+    property,
+    target,
+    ...(options || {}),
+  };
+}
+
 export function useCreator(
   parent: any,
   property: string,
@@ -18,9 +35,13 @@ export function useCreator(
   const vault = useVault();
   const app = useApp();
   const { create, edit } = useLayoutActions();
+  const supportedResource = useMemo(
+    () => getSupportedCreatorResource(parent, property, type, target, options),
+    [parent, property, type, target, options?.isPainting, options?.onlyReference],
+  );
   const supported = useMemo(
-    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault }),
-    [parent, property, app.layout.creators, type, vault],
+    () => matchBasedOnResource(supportedResource, app.layout.creators || [], { vault }),
+    [supportedResource, app.layout.creators, vault],
   );
   const canCreate = parent && supported.length !== 0;
 

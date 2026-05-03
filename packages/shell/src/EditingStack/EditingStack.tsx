@@ -2,10 +2,15 @@ import { toRef } from "@iiif/parser";
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
-import { flushSync } from "react-dom";
 import { useResourceContext, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
+import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useAppInstance } from "../AppContext/AppContext";
+import {
+  applyFieldsToEditorInstance,
+  getEditorConfigForResource,
+} from "../ConfigContext/editor-config";
+import { useConfig } from "../ConfigContext/ConfigContext";
 import { editingStackReducer } from "./EditingStack.reducer";
 import type { EditableResource, EditingStackActions, EditingStackState } from "./EditingStack.types";
 
@@ -41,16 +46,25 @@ export function useCreatingResource() {
 export function useManifestEditor() {
   const { manifest } = useResourceContext();
   const vault = useVault();
+  const rootResource = useAppResource();
+  const { editorConfig } = useConfig();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(manifest, "Manifest not found");
 
   const editor = useMemo(() => {
-    return new EditorInstance({
-      reference: { id: manifest, type: "Manifest" },
-      vault,
-    });
-  }, [manifest, vault]);
+    return applyFieldsToEditorInstance(
+      new EditorInstance({
+        reference: { id: manifest, type: "Manifest" },
+        vault,
+      }),
+      getEditorConfigForResource(editorConfig, {
+        resourceId: manifest,
+        resourceType: "Manifest",
+        rootResource,
+      }),
+    );
+  }, [manifest, vault, editorConfig, rootResource]);
 
   useEffect(() => {
     return editor.observe.start(invalidate);
@@ -65,16 +79,25 @@ export function useManifestEditor() {
 export function useCollectionEditor() {
   const { collection } = useResourceContext();
   const vault = useVault();
+  const rootResource = useAppResource();
+  const { editorConfig } = useConfig();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(collection, "Collection not found");
 
   const editor = useMemo(() => {
-    return new EditorInstance({
-      reference: { id: collection, type: "Collection" },
-      vault,
-    });
-  }, [collection, vault]);
+    return applyFieldsToEditorInstance(
+      new EditorInstance({
+        reference: { id: collection, type: "Collection" },
+        vault,
+      }),
+      getEditorConfigForResource(editorConfig, {
+        resourceId: collection,
+        resourceType: "Collection",
+        rootResource,
+      }),
+    );
+  }, [collection, vault, editorConfig, rootResource]);
 
   useEffect(() => {
     return editor.observe.start(invalidate);
@@ -91,6 +114,8 @@ export function useGenericEditor(
   ctx: { parent?: Reference; parentProperty?: string; index?: number; allowNull?: boolean } = {},
 ) {
   const vault = useVault();
+  const rootResource = useAppResource();
+  const { editorConfig } = useConfig();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   !ctx.allowNull && invariant(ref, "Resource not found");
@@ -100,12 +125,26 @@ export function useGenericEditor(
       return null as any as EditorInstance<{}>;
     }
 
-    return new EditorInstance({
-      reference: toRef(ref) as any,
-      vault,
-      context: { resource: ref!, parent: ctx.parent, index: ctx.index, parentProperty: ctx.parentProperty },
-    });
-  }, [ref, vault]);
+    const normalizedRef = toRef(ref) as any;
+
+    return applyFieldsToEditorInstance(
+      new EditorInstance({
+        reference: normalizedRef,
+        vault,
+        context: {
+          resource: ref!,
+          parent: ctx.parent,
+          index: ctx.index,
+          parentProperty: ctx.parentProperty,
+        },
+      }),
+      getEditorConfigForResource(editorConfig, {
+        resourceId: normalizedRef?.id,
+        resourceType: normalizedRef?.type,
+        rootResource,
+      }),
+    );
+  }, [ref, vault, ctx.parent, ctx.parentProperty, ctx.index, ctx.allowNull, editorConfig, rootResource]);
 
   useEffect(() => {
     return editor?.observe.start(invalidate);
@@ -130,16 +169,27 @@ export function useAnnotationPageEditor() {
 export function useEditor() {
   const resource = useEditingResource();
   const vault = useVault();
+  const rootResource = useAppResource();
+  const { editorConfig } = useConfig();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(resource, "No resource selected");
 
   const editor = useMemo(() => {
-    return new EditorInstance({
-      reference: resource.resource.source || resource.resource,
-      vault,
-    });
-  }, [resource, vault]);
+    const editingResource = resource.resource.source || resource.resource;
+
+    return applyFieldsToEditorInstance(
+      new EditorInstance({
+        reference: editingResource,
+        vault,
+      }),
+      getEditorConfigForResource(editorConfig, {
+        resourceId: editingResource?.id,
+        resourceType: editingResource?.type,
+        rootResource,
+      }),
+    );
+  }, [resource, vault, editorConfig, rootResource]);
 
   useEffect(() => {
     return editor.observe.start(invalidate);
@@ -157,7 +207,6 @@ function useInternalEditingStackActions(defaultState: EditingStackState) {
 
   const dispatch = useCallback((action: any) => {
     _dispatch(action);
-    // (() => flushSync(() => _dispatch(action)))();
   }, []);
 
   useEffect(() => {

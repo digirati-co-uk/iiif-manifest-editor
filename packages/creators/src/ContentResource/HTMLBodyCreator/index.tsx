@@ -21,6 +21,9 @@ export const htmlBodyCreator = defineCreator({
   },
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   supports: {
     parentTypes: ["Annotation"],
     parentFields: ["body"],

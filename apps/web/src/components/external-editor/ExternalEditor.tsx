@@ -19,21 +19,30 @@ import { type SVGProps, useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-aria-components";
 import { useExistingVault, VaultProvider } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { useGlobalEditorConfig } from "../site/use-global-editor-config";
 
 const presets: Record<string, MappedApp> = {
   manifest: mapApp(manifestPreset),
   exhibition: exhibitionEditorPreset,
 };
 
-export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
+export default function ExternalEditor({
+  manifest,
+  preset,
+  assistantProjectId,
+}: {
+  manifest: string;
+  preset?: string;
+  assistantProjectId?: string;
+}) {
   const vault = useMemo(() => {
     return new Vault();
   }, [manifest, preset]);
+  const { globalConfig } = useGlobalEditorConfig();
 
   const mergedConfig = useMemo(() => {
-    // @todo .
-    return {};
-  }, [preset]);
+    return globalConfig;
+  }, [globalConfig]);
 
   const resolvedPreset = (preset ? presets[preset] || presets.manifest : presets.manifest) as MappedApp;
 
@@ -175,7 +184,12 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider appId="manifest-editor" definition={resolvedPreset} instanceId={manifest}>
+        <AppProvider
+          appId="manifest-editor"
+          definition={resolvedPreset}
+          instanceId={manifest}
+          args={assistantProjectId ? { assistantProjectId } : undefined}
+        >
           <VaultProvider vault={vault}>
             <ShellProvider resource={manifestData.ref} config={mergedConfig}>
               <Layout header={header} />

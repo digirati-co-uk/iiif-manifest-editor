@@ -6,7 +6,7 @@ export const imageEditor: EditorDefinition = {
   label: "Image",
   supports: {
     edit: true,
-    properties: ["label", "height", "width", "format" /*"service"*/],
+    properties: ["id", "height", "width", "format" /*"service"*/],
     resourceTypes: ["ContentResource"],
     custom: (item, vault) => vault.get(item.resource).type === "Image",
   },

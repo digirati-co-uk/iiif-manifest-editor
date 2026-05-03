@@ -21,7 +21,7 @@ export async function createRangeWithItems(
     id: rangeId,
     type: "Range",
     label: data.label || { en: ["Untitled range"] },
-    items: data.items || [],
+    items: (data.items || []).map((item) => ctx.ref(item)),
   });
 }
 

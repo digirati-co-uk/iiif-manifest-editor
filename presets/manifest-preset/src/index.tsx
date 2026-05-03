@@ -1,5 +1,6 @@
 import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
+import { openRouterFloatingPanel } from "@manifest-editor/openrouter";
 import {
   type AnnotationPanel,
   type BackgroundPanel,
@@ -54,6 +55,8 @@ export const leftPanels: LayoutPanel[] = [
 export const annotations: AnnotationPanel[] = [canvasAnnotations];
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
+
+export const floatingPanels = [openRouterFloatingPanel];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 

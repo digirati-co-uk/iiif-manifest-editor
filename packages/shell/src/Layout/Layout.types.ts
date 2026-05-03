@@ -19,6 +19,7 @@ export interface LayoutProviderProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  floatingPanels?: Array<FloatingPanel>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -162,6 +163,12 @@ export interface BackgroundPanel {
   render: () => React.ReactNode | null;
 }
 
+export interface FloatingPanel {
+  id: string;
+  label: string;
+  render: () => React.ReactNode | null;
+}
+
 export interface LayoutPanel {
   id: string;
   label: string;
@@ -260,6 +267,7 @@ export interface LayoutProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  floatingPanels?: Array<FloatingPanel>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;

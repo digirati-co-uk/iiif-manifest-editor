@@ -72,6 +72,10 @@
       "import": "./dist/shell.js",
       "require": "./dist/shell.cjs"
     },
+    "./universal-viewer-preset": {
+      "import": "./dist/universal-viewer-preset.js",
+      "require": "./dist/universal-viewer-preset.cjs"
+    },
     "./vault": {
       "import": "./dist/vault.js",
       "require": "./dist/vault.cjs"
@@ -100,6 +104,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/universal-viewer-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@mdxeditor/editor": "^3.29.0",
     "iiif-browser": "catalog:",

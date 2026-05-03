@@ -15,6 +15,9 @@ export const providerCreator = defineCreator({
   summary: "Create a new provider",
   resourceType: "Agent",
   resourceFields: ["id", "type", "label"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   supports: {
     parentTypes: ["Manifest", "Collection"],
     parentFields: ["provider"],

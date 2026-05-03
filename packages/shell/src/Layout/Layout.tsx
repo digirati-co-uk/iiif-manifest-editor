@@ -61,6 +61,11 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       return <Fragment key={key}>{bg.render()}</Fragment>;
     });
   }, [layout.background]);
+  const floatingItems = useMemo(() => {
+    return (layout.floatingPanels || []).map((panel, key) => {
+      return <Fragment key={panel.id || key}>{panel.render()}</Fragment>;
+    });
+  }, [layout.floatingPanels]);
 
   // Resizers
   const leftPanelResizer = useResizeLayout(`left-panel/${leftPanel?.id}`, {
@@ -446,6 +451,7 @@ export const Layout = memo(function Layout(props: LayoutProps) {
       <L.Footer>{props.footer || null}</L.Footer>
 
       <div className="hidden">{backgroundItems}</div>
+      <>{floatingItems}</>
 
       <>{renderModal()}</>
     </L.OuterWrapper>

@@ -1,7 +1,6 @@
 import { useInStack } from "@manifest-editor/editors";
 import { type BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { useManifest } from "react-iiif-vault";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";

@@ -17,7 +17,7 @@ export function useCreators() {}
 export function LinkingProperties() {
   const resource = useEditingResource();
   const { linking, notAllowed } = useEditor();
-  const { seeAlso, service, services, rendering, partOf, start, supplementary, homepage, logo } = linking;
+  const { seeAlso, rendering, start, supplementary, homepage, logo } = linking;
   const [toggled, toggle] = useToggleList();
   const [canCreateLogo, logoActions] = useCreator(resource?.resource, "logo", "ContentResource");
   const [canCreateStart, startActions] = useCreator(resource?.resource, "start", "Canvas", undefined, {
@@ -54,6 +54,20 @@ export function LinkingProperties() {
           createActions={createAppActions(rendering)}
           creationType="ContentResource"
           emptyLabel="No rendering"
+          parent={resource?.resource}
+        />
+      ) : null}
+
+      {!notAllowed.includes("homepage") ? (
+        <LinkingPropertyList
+          containerId={homepage.containerId()}
+          label="Homepage"
+          property="homepage"
+          items={homepage.get()}
+          reorder={(ctx) => homepage.reorder(ctx.startIndex, ctx.endIndex)}
+          createActions={createAppActions(homepage)}
+          creationType="ContentResource"
+          emptyLabel="No homepage"
           parent={resource?.resource}
         />
       ) : null}

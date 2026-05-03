@@ -4,7 +4,7 @@ import { useDecayState } from "../hooks/use-decay-state";
 import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 
-export function ConfigEditor() {
+export function ConfigEditor({ title = "Workspace configuration" }: { title?: string }) {
   const previews = usePreviewContext();
   const resource = useAppResource();
   const config = useConfig();
@@ -38,6 +38,7 @@ export function ConfigEditor() {
         manifestGridOptions: formValues.get("manifestGridOptions") === "on",
         enableMultiImageCanvases: formValues.get("enableMultiImageCanvases") === "on",
         enableMultiMediaCanvases: formValues.get("enableMultiMediaCanvases") === "on",
+        openRouterAssistant: formValues.get("openRouterAssistant") === "on",
       },
     };
 
@@ -48,7 +49,7 @@ export function ConfigEditor() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Workspace configuration" />
+      <SidebarHeader title={title} />
       {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">Changes saved</div> : null}
       <SidebarContent className="p-4">
         <Form.Form onSubmit={onSubmit} className="flex flex-col gap-3">
@@ -120,6 +121,16 @@ export function ConfigEditor() {
               defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
             />
             <Form.Label htmlFor="manifestGridOptions">Manifest Grid Options</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="openRouterAssistant"
+              id="openRouterAssistant"
+              defaultChecked={config.editorFeatureFlags?.openRouterAssistant || false}
+            />
+            <Form.Label htmlFor="openRouterAssistant">Enable AI Assistant</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">

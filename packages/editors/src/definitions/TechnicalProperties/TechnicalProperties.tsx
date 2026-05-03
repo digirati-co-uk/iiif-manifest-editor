@@ -13,23 +13,42 @@ export function TechnicalProperties() {
   return (
     <>
       <PaddedSidebarContainer>
-        <InputContainer $wide id={id.containerId()}>
-          <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
-          <Input disabled id={id.focusId()} value={id.get()} />
-        </InputContainer>
+        {!notAllowed.includes("id") ? (
+          <InputContainer $wide id={id.containerId()}>
+            <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
+            <Input disabled id={id.focusId()} value={id.get()} />
+          </InputContainer>
+        ) : null}
 
-        {!notAllowed.includes("width") && !notAllowed.includes("height") ? (
+        {!notAllowed.includes("width") ||
+        !notAllowed.includes("height") ||
+        !notAllowed.includes("duration") ? (
           <InputContainer $wide>
             <DimensionsTriplet
+              hideWidth={notAllowed.includes("width")}
               widthId={width.containerId()}
               width={width.get() || 0}
-              changeWidth={(v) => width.set(v)}
+              changeWidth={
+                !notAllowed.includes("width") ? (v) => width.set(v) : undefined
+              }
+              hideHeight={notAllowed.includes("height")}
               heightId={height.containerId()}
               height={height.get() || 0}
-              changeHeight={(v) => height.set(v)}
+              changeHeight={
+                !notAllowed.includes("height")
+                  ? (v) => height.set(v)
+                  : undefined
+              }
               durationId={duration.containerId()}
-              duration={duration.get() || 0}
-              changeDuration={(v) => duration.set(v)}
+              hideDuration={notAllowed.includes("duration")}
+              duration={
+                !notAllowed.includes("duration") ? duration.get() || 0 : undefined
+              }
+              changeDuration={
+                !notAllowed.includes("duration")
+                  ? (v) => duration.set(v)
+                  : undefined
+              }
             />
           </InputContainer>
         ) : null}

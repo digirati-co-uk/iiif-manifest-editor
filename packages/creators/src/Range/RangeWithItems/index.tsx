@@ -21,6 +21,9 @@ export const rangeWithItems = defineCreator({
   },
   resourceType: "Range",
   resourceFields: ["id", "label", "type"],
+  compatibility: {
+    viewers: ["theseus", "universal-viewer"],
+  },
   supports: {
     parentTypes: ["Range"],
     parentFields: ["items"],

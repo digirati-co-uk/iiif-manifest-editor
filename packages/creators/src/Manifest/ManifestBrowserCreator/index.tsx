@@ -24,6 +24,9 @@ export const manifestBrowserCreator = defineCreator({
   },
   resourceType: "Manifest",
   resourceFields: ["id", "label"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   additionalTypes: ["Collection"],
   supports: {
     parentTypes: ["Collection"],

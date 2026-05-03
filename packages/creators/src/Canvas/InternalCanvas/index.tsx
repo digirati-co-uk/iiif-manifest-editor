@@ -21,6 +21,9 @@ export const internalCanvas = defineCreator({
   icon: <ThumbnailStripIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   supports: {
     parentTypes: ["Manifest"],
     parentFields: ["start"],

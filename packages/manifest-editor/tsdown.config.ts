@@ -21,6 +21,7 @@ export default defineConfig((options) => ({
     creators: "./src/creators.ts",
     "creator-api": "./src/creator-api.ts",
     "manifest-preset": "./src/manifest-preset.ts",
+    "universal-viewer-preset": "./src/universal-viewer-preset.ts",
     "exhibition-preset": "./src/exhibition-preset.ts",
     shell: "./src/shell.ts",
     parser: "./src/parser.ts",

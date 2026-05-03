@@ -21,6 +21,9 @@ export const htmlAnnotation = defineCreator({
   },
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
+  compatibility: {
+    viewers: ["theseus"],
+  },
   additionalTypes: ["Canvas"],
   supports: {
     initialData: true,

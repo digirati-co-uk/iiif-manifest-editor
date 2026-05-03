@@ -6,6 +6,7 @@ import { type ReactNode, useContext, useEffect, useMemo } from "react";
 import { ResourceReactContext, useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
+import { editorMatchesConfiguredFields, getEditorConfigForResource } from "../ConfigContext/editor-config";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
@@ -71,6 +72,9 @@ export function editBasedOnResource(
       if (config.onlyTabs && !config.onlyTabs.includes(editor.id)) {
         return false;
       }
+      if (!editorMatchesConfiguredFields(editor, config)) {
+        return false;
+      }
       if (editor.supports.sortKey) {
         if (sortKeys.includes(editor.supports.sortKey)) {
           return false;
@@ -130,14 +134,12 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   const set = useSetCustomTitle();
   const { editorConfig } = useConfig();
   const resourceId = resource?.resource.source?.id;
-  let resourceType = resource?.resource.source?.type;
-  // Could use this is for later.
   const isNested = resourceId !== rootResource.id;
-  if (resourceId && isNested && rootResource.type === "Collection" && resourceType === "Collection") {
-    resourceType = "EmbeddedCollection";
-  }
-
-  const resourceConfig: EditorConfig = (resourceType ? (editorConfig as any)[resourceType] : editorConfig.All) || {};
+  const resourceConfig: EditorConfig = getEditorConfigForResource(editorConfig, {
+    resourceId,
+    resourceType: resource?.resource.source?.type,
+    rootResource,
+  });
 
   const newResourceContext = useMemo(() => {
     const newCtx = { ...currentResourceContext };
@@ -187,7 +189,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
     });
 
     return editBasedOnResource(resource, mappedResources, { edit: true, vault }, resourceConfig);
-  }, [resource, app]);
+  }, [resource, app, resourceConfig, vault]);
 
   useEffect(() => {
     set(match?.label || "");

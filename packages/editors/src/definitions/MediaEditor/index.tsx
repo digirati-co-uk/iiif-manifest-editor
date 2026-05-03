@@ -7,7 +7,18 @@ export const mediaEditor: EditorDefinition = {
   supports: {
     edit: true,
     sortKey: "annotation-target",
-    properties: ["items"],
+    properties: [
+      "target",
+      "label",
+      "summary",
+      "id",
+      "type",
+      "height",
+      "width",
+      "duration",
+      "format",
+      "service",
+    ],
     resourceTypes: ["Annotation"],
     readOnlyProperties: [],
     custom: (res, vault) => {
