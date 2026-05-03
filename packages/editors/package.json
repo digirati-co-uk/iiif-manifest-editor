@@ -55,7 +55,7 @@
     "@manifest-editor/shell": "workspace:*",
     "@react-leaflet/core": "3.0.0",
     "classnames": "^2.5.1",
-    "dompurify": "3.1.3",
+    "dompurify": "3.3.1",
     "draft-convert": "^2.1.12",
     "draft-js": "^0.11.7",
     "immer": "^10.0.4",
@@ -85,7 +85,7 @@
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
     "@repo/eslint-config": "workspace:*",
-    "@types/dompurify": "3.0.5",
+    "@types/dompurify": "3.2.0",
     "@types/draft-convert": "^2.1.4",
     "@types/draft-js": "^0.11.9",
     "@types/geojson": "^7946.0.14",
