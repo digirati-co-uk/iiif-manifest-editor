@@ -6,30 +6,45 @@ import invariant from "tiny-invariant";
 import { useApp } from "../AppContext/AppContext";
 import { useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
-import { LayoutActionsReactContext, LayoutStateReactContext } from "./Layout.context";
+import {
+  LayoutActionsReactContext,
+  LayoutStateReactContext,
+} from "./Layout.context";
 import { usePanelActions } from "./Layout.hooks";
 import { getDefaultLayoutState, layoutReducer } from "./Layout.reducer";
 import type { PinnablePanelActions } from "./Layout.types";
 import { useEmitter } from "../hooks/use-event";
 
-function parse(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): any {
+function parse(
+  args: string | { id: string; state?: any; stacked?: boolean },
+  _state?: any,
+): any {
   if (typeof args === "string") {
     return { id: args, state: _state };
   }
   return args;
 }
 
-export const LayoutProvider = memo(function LayoutProvider(props: { children: ReactNode }) {
+export const LayoutProvider = memo(function LayoutProvider(props: {
+  children: ReactNode;
+}) {
   const app = useApp();
   const emitter = useEmitter();
   const available = app.layout;
 
-  const [state, dispatch] = useReducer(layoutReducer, undefined, getDefaultLayoutState);
+  const [state, dispatch] = useReducer(
+    layoutReducer,
+    undefined,
+    getDefaultLayoutState,
+  );
   const actions = {
     centerPanel: usePanelActions("centerPanel", dispatch),
     leftPanel: usePanelActions("leftPanel", dispatch),
     rightPanel: usePanelActions("rightPanel", dispatch),
-    pinnedRightPanel: usePanelActions("pinnedRightPanel", dispatch) as PinnablePanelActions,
+    pinnedRightPanel: usePanelActions(
+      "pinnedRightPanel",
+      dispatch,
+    ) as PinnablePanelActions,
     modal: usePanelActions("modal", dispatch),
     editingStack: useEditingStack(),
   };
@@ -53,7 +68,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     invariant(false, `Was not able to find panel with id "${id}"`);
   }
 
-  function open(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): void {
+  function open(
+    args: string | { id: string; state?: any; stacked?: boolean },
+    _state?: any,
+  ): void {
     const { id, state, stacked } = parse(args, _state);
     const [found, actions, pinnable] = find(id);
 
@@ -74,7 +92,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     }
   }
 
-  function stack(args: string | { id: string; state?: any }, _state?: any): void {
+  function stack(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id, state } = parse(args, _state);
     const [found, actions] = find(id);
 
@@ -88,7 +109,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     actions.open(openData);
   }
 
-  function change(args: string | { id: string; state?: any; stacked?: boolean }, _state?: any): void {
+  function change(
+    args: string | { id: string; state?: any; stacked?: boolean },
+    _state?: any,
+  ): void {
     const { id, state, stacked } = parse(args, _state);
     const [found, actions] = find(id);
     const changeData = {
@@ -101,7 +125,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     actions.change(changeData);
   }
 
-  function close(args: string | { id: string; state?: any }, _state?: any): void {
+  function close(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id } = parse(args, _state);
     const [, actions] = find(id);
 
@@ -109,7 +136,10 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     actions.close();
   }
 
-  function toggle(args: string | { id: string; state?: any }, _state?: any): void {
+  function toggle(
+    args: string | { id: string; state?: any },
+    _state?: any,
+  ): void {
     const { id } = parse(args, _state);
     const [, actions] = find(id);
 
@@ -125,12 +155,14 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
       property,
       stacked,
       forceOpen,
+      selectedTab,
     }: {
       reset?: boolean;
       property?: string;
       stacked?: boolean | undefined;
       forceOpen?: boolean;
-    } = {}
+      selectedTab?: string;
+    } = {},
   ) {
     const toEdit: EditableResource = {
       resource: isSpecificResource(resource)
@@ -150,14 +182,14 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
         actions.rightPanel.open({
           id: "@manifest-editor/editor",
           stacked: stacked !== false,
-          state: { property },
+          state: { property, currentTab: selectedTab },
           unique: true,
         });
       } else {
         actions.rightPanel.change({
           id: "@manifest-editor/editor",
           stacked: stacked !== false,
-          state: { property },
+          state: { property, currentTab: selectedTab },
           unique: true,
         });
       }
@@ -174,7 +206,9 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
         unique: true,
         state: resource,
       });
-    } else if (available.rightPanels.find((e) => e.id === "@manifest-editor/creator")) {
+    } else if (
+      available.rightPanels.find((e) => e.id === "@manifest-editor/creator")
+    ) {
       actions.rightPanel.open({
         id: "@manifest-editor/creator",
         stacked: true,
@@ -199,7 +233,9 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
       // biome-ignore lint/correctness/useExhaustiveDependencies: actions do not change
       value={useMemo(() => ({ ...actions, ...otherActions }), [available])}
     >
-      <LayoutStateReactContext.Provider value={state}>{props.children}</LayoutStateReactContext.Provider>
+      <LayoutStateReactContext.Provider value={state}>
+        {props.children}
+      </LayoutStateReactContext.Provider>
     </LayoutActionsReactContext.Provider>
   );
 });

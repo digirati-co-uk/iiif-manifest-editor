@@ -4,6 +4,7 @@ import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
 import * as ocrClassificationPlugin from "@manifest-editor/ocr-classification";
 import * as ocrDoclingPlugin from "@manifest-editor/ocr-docling";
+
 import {
   type BackgroundActionDefinition,
   type BackgroundPanel,

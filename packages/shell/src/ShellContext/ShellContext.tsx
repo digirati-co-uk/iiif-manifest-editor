@@ -1,34 +1,20 @@
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
-import {
-  AtlasStoreProvider,
-  ImageServiceLoaderContext,
-} from "react-iiif-vault";
+import { AtlasStoreProvider, ImageServiceLoaderContext } from "react-iiif-vault";
 import { ThemeProvider } from "styled-components";
-import {
-  AppResourceProvider,
-  type Resource,
-} from "../AppResourceProvider/AppResourceProvider";
-import {
-  type Config,
-  ConfigProvider,
-  mergeConfig,
-  useConfig,
-} from "../ConfigContext/ConfigContext";
-import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
+import { useAppInstance } from "../AppContext/AppContext";
+import { AppResourceProvider, type Resource } from "../AppResourceProvider/AppResourceProvider";
 import type { BackgroundActionPersistence } from "../BackgroundTasks/BackgroundTasks.types";
+import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
+import { type Config, ConfigProvider, mergeConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
-import { useAppInstance } from "../AppContext/AppContext";
-import { PreviewProvider } from "../PreviewContext/PreviewContext";
-import type {
-  Preview,
-  PreviewConfiguration,
-} from "../PreviewContext/PreviewContext.types";
-import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { PluginConfigBridge } from "../PluginContext/PluginContext";
+import { PreviewProvider } from "../PreviewContext/PreviewContext";
+import type { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
+import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
 import { ToastProvider } from "../Toast/ToastContext";
 import { defaultTheme } from "./default-theme";
 
@@ -94,8 +80,7 @@ export function ShellProvider({
   const existingConfig = useConfig();
   const mergedConfig = useMemo(() => {
     const resolvedPreviews =
-      config?.previews ||
-      (existingConfig.previews?.length ? existingConfig.previews : previewConfigs);
+      config?.previews || (existingConfig.previews?.length ? existingConfig.previews : previewConfigs);
     return mergeConfig(
       existingConfig,
       {
