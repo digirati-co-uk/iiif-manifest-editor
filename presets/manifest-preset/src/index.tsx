@@ -17,15 +17,16 @@ import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-bui
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
+import { CanvasesListIcon } from "./icons";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
-import { CanvasesListIcon } from "./icons";
 import * as avRangesPlugin from "./plugins/av-ranges";
 import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
 import "./index.css";
+import * as remoteInference from "./plugins/remote-inference";
 
 export default {
   id: "manifest-editor",
@@ -60,9 +61,7 @@ export const leftPanels: LayoutPanel[] = [
 
 export const background: BackgroundPanel[] = [contextMenus, queryStringTask];
 
-export const backgroundActions: BackgroundActionDefinition[] = [
-  createBulkThumbnailBuilderBackgroundAction(),
-];
+export const backgroundActions: BackgroundActionDefinition[] = [createBulkThumbnailBuilderBackgroundAction()];
 
 export const rightPanels: LayoutPanel[] = [baseEditor];
 
@@ -72,15 +71,7 @@ export const editors = allEditors;
 
 export const creators = allCreators;
 
-export const resources = [
-  "Manifest",
-  "Canvas",
-  "ContentResource",
-  "Agent",
-  "AnnotationPage",
-  "Annotation",
-  "Range",
-];
+export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
 
 export {
   annotationsPlugin,
@@ -100,4 +91,5 @@ export const plugins = [
   translationPlugin,
   ocrClassificationPlugin,
   ocrDoclingPlugin,
+  remoteInference,
 ];

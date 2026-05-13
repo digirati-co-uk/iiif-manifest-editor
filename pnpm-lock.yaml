@@ -41,7 +41,7 @@ importers:
         version: 2.2.0
       '@lerna-lite/cli':
         specifier: ^4.9.3
-        version: 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
+        version: 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/list':
         specifier: ^4.9.3
         version: 4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
@@ -50,7 +50,7 @@ importers:
         version: 4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@lerna-lite/version':
         specifier: ^4.9.3
-        version: 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+        version: 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@netlify/plugin-nextjs':
         specifier: ^5.14.6
         version: 5.14.6
@@ -1729,9 +1729,6 @@ importers:
       '@manifest-editor/shell':
         specifier: workspace:*
         version: link:../../packages/shell
-      '@manifest-editor/specifications':
-        specifier: workspace:*
-        version: link:../../plugins/specifications
       '@manifest-editor/translation':
         specifier: workspace:*
         version: link:../../plugins/translation
@@ -16392,7 +16389,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@lerna-lite/cli@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)':
+  '@lerna-lite/cli@4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)':
     dependencies:
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/init': 4.9.3(@types/node@24.10.1)
@@ -16405,7 +16402,7 @@ snapshots:
     optionalDependencies:
       '@lerna-lite/list': 4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/publish': 4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
-      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -16457,7 +16454,7 @@ snapshots:
 
   '@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)':
     dependencies:
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/listable': 4.9.3(@types/node@24.10.1)
     transitivePeerDependencies:
@@ -16492,10 +16489,10 @@ snapshots:
 
   '@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
     dependencies:
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/npmlog': 4.9.3
-      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)
       '@npmcli/arborist': 9.1.7
       '@npmcli/package-json': 7.0.3
       byte-size: 9.0.1
@@ -16528,10 +16525,10 @@ snapshots:
       - conventional-commits-filter
       - supports-color
 
-  '@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
+  '@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0)':
     dependencies:
       '@conventional-changelog/git-client': 2.5.1(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.2.1)
-      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.9.3(@lerna-lite/list@4.9.3(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1))(@lerna-lite/publish@4.9.3(@lerna-lite/list@4.9.3)(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)(conventional-commits-filter@5.0.0))(@types/node@24.10.1)
+      '@lerna-lite/cli': 4.9.3(@lerna-lite/list@4.9.3)(@lerna-lite/publish@4.9.3)(@lerna-lite/version@4.9.3)(@types/node@24.10.1)
       '@lerna-lite/core': 4.9.3(@types/node@24.10.1)
       '@lerna-lite/npmlog': 4.9.3
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -21293,7 +21290,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 7.11.0(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3)
       '@typescript-eslint/parser': 7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.1(jiti@2.6.1))
-      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1)))
+      eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1)
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
@@ -22936,7 +22933,7 @@ snapshots:
       eslint: 9.39.1(jiti@2.6.1)
       eslint-plugin-turbo: 2.0.6(eslint@9.39.1(jiti@2.6.1))
 
-  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))):
+  eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.29.1):
     dependencies:
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
 
@@ -22953,7 +22950,7 @@ snapshots:
       debug: 4.4.3
       enhanced-resolve: 5.18.3
       eslint: 9.39.1(jiti@2.6.1)
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
       fast-glob: 3.3.2
       get-tsconfig: 4.13.0
@@ -22965,7 +22962,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1)):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -22992,7 +22989,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.11.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@9.39.1(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
