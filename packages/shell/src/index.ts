@@ -55,6 +55,7 @@ export * from "./PreviewVault/PreviewVault";
 export * from "./ResourceEditingContext/ResourceEditingContext";
 export * from "./ResourceEditingContext/ResourceEditingContext.types";
 export * from "./ShellContext/ShellContext";
+export * from "./SpecificationContext";
 
 export * from "./Tags";
 export * from "./TaskBridge/TaskBridge";
