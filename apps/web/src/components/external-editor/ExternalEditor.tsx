@@ -10,6 +10,7 @@ import {
   Layout,
   type MappedApp,
   mapApp,
+  PluginProvider,
   ShellProvider,
   useDecayState,
   useSaveVault,
@@ -177,13 +178,15 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   return (
     <div className="flex flex-1 h-[100vh] w-full">
       <VaultProvider vault={vault}>
-        <AppProvider appId="manifest-editor" definition={resolvedPreset} instanceId={manifest}>
-          <VaultProvider vault={vault}>
-            <ShellProvider resource={manifestData.ref} config={mergedConfig}>
-              <Layout header={header} />
-            </ShellProvider>
-          </VaultProvider>
-        </AppProvider>
+        <PluginProvider plugins={manifestPreset.plugins}>
+          <AppProvider appId="manifest-editor" definition={resolvedPreset} instanceId={manifest}>
+            <VaultProvider vault={vault}>
+              <ShellProvider resource={manifestData.ref} config={mergedConfig}>
+                <Layout header={header} />
+              </ShellProvider>
+            </VaultProvider>
+          </AppProvider>
+        </PluginProvider>
       </VaultProvider>
     </div>
   );
