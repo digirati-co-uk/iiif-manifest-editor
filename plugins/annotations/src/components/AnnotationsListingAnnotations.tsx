@@ -1,4 +1,10 @@
-import { ActionButton, Sidebar, SidebarContent, SidebarHeader, TargetIcon } from "@manifest-editor/components";
+import {
+  ActionButton,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  TargetIcon,
+} from "@manifest-editor/components";
 import { AnnotationCreationPopup } from "@manifest-editor/editors";
 import {
   AnnotationContext,
@@ -9,11 +15,13 @@ import {
 } from "react-iiif-vault";
 import { AddAnnotationIcon } from "../icons";
 import { AnnotationsSidebarListItem } from "./AnnotationsSidebarListItem";
+import { AnnotationsOcrActions } from "./AnnotationsOcrActions";
 
 export function AnnotationsListingAnnotations() {
   const canvas = useCanvas();
   const page = useAnnotationPage();
-  const { requestAnnotation, isActive, busy, cancelRequest } = useRequestAnnotation();
+  const { requestAnnotation, isActive, busy, cancelRequest } =
+    useRequestAnnotation();
   const [strategy] = useRenderingStrategy();
 
   if (strategy.type !== "images") {
@@ -27,7 +35,12 @@ export function AnnotationsListingAnnotations() {
   const createAnnotation = () =>
     requestAnnotation({
       type: "box",
-      annotationPopup: <AnnotationCreationPopup annotationPageId={page.id} canvasId={canvas!.id} />,
+      annotationPopup: (
+        <AnnotationCreationPopup
+          annotationPageId={page.id}
+          canvasId={canvas!.id}
+        />
+      ),
     });
 
   return (
@@ -68,11 +81,20 @@ export function AnnotationsListingAnnotations() {
 
         {!isActive && page.items.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-4">
-            <div className="p-4 opacity-50 text-center">This canvas does not yet have any inline annotations.</div>
+            <div className="p-4 opacity-50 text-center">
+              This canvas does not yet have any inline annotations.
+            </div>
 
-            <ActionButton large primary isDisabled={isActive} onPress={() => createAnnotation()}>
+            <ActionButton
+              large
+              primary
+              isDisabled={isActive}
+              onPress={() => createAnnotation()}
+            >
               <AddAnnotationIcon className="text-xl" /> Add annotation
             </ActionButton>
+
+            <AnnotationsOcrActions />
           </div>
         ) : null}
       </SidebarContent>

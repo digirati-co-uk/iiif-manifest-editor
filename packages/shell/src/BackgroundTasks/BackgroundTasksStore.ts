@@ -9,7 +9,10 @@ import {
 } from "react";
 import { createStore, type StoreApi, useStore } from "zustand";
 import { useApp, useAppInstance } from "../AppContext/AppContext";
-import { createTrackingCanvasProgressApi, type ManifestEditorCanvasProgressApi } from "../CanvasProgress";
+import {
+  createTrackingCanvasProgressApi,
+  type ManifestEditorCanvasProgressApi,
+} from "../CanvasProgress";
 import type {
   BackgroundActionContext,
   BackgroundActionDefinition,
@@ -45,7 +48,10 @@ export interface BackgroundActionsStore {
   controllers: Record<string, AbortController>;
   hasHydrated: boolean;
   setDefinitions(definitions: BackgroundActionDefinition[]): void;
-  setPersistence(persistence: BackgroundActionPersistence | null, key: BackgroundActionPersistenceKey | null): void;
+  setPersistence(
+    persistence: BackgroundActionPersistence | null,
+    key: BackgroundActionPersistenceKey | null,
+  ): void;
   hydrate(snapshot?: BackgroundActionPersistedState | null): void;
   persist(immediate?: boolean): void;
   flushPersistence(): Promise<void>;
@@ -61,10 +67,26 @@ export interface BackgroundActionsStore {
   resumeAction(instanceKey: string, controller: AbortController): void;
   cancelAction(instanceKey: string): void;
   setActionLabel(instanceKey: string, label: string): void;
-  setActionStatus(instanceKey: string, status: BackgroundActionStatus, statusText?: string): void;
-  setActionError(instanceKey: string, error: unknown, statusText?: string): void;
-  appendActionLog(instanceKey: string, message: string, level?: BackgroundActionLogLevel, data?: unknown): void;
-  setActionProgress(instanceKey: string, progress: BackgroundActionProgressInput | null): void;
+  setActionStatus(
+    instanceKey: string,
+    status: BackgroundActionStatus,
+    statusText?: string,
+  ): void;
+  setActionError(
+    instanceKey: string,
+    error: unknown,
+    statusText?: string,
+  ): void;
+  appendActionLog(
+    instanceKey: string,
+    message: string,
+    level?: BackgroundActionLogLevel,
+    data?: unknown,
+  ): void;
+  setActionProgress(
+    instanceKey: string,
+    progress: BackgroundActionProgressInput | null,
+  ): void;
   setResult(instanceKey: string, result: unknown): void;
   setResultsAvailable(instanceKey: string, available: boolean): void;
   setActionPlan(instanceKey: string, plan: BackgroundActionPlan): void;
@@ -81,6 +103,7 @@ export interface RunBackgroundActionOptions {
   context: BackgroundActionContext;
   signal?: AbortSignal;
   resume?: boolean;
+  prepareData?: unknown;
 }
 
 export interface GetAvailableBackgroundActionGroupsOptions {
@@ -88,10 +111,16 @@ export interface GetAvailableBackgroundActionGroupsOptions {
   instances: Record<string, BackgroundActionInstance>;
   systemContext: BackgroundActionSystemContext;
   targets: BackgroundActionTarget[];
-  onSupportsError?: (definition: BackgroundActionDefinition, error: unknown) => void;
+  onSupportsError?: (
+    definition: BackgroundActionDefinition,
+    error: unknown,
+  ) => void;
 }
 
-export function getBackgroundActionInstanceKey(actionId: string, target: BackgroundActionTarget) {
+export function getBackgroundActionInstanceKey(
+  actionId: string,
+  target: BackgroundActionTarget,
+) {
   return `${actionId}::${target.type}::${target.id}`;
 }
 
@@ -110,10 +139,15 @@ export function mergeBackgroundActionDefinitions(
     }
   }
 
-  return [...base.filter((definition) => !extensionIds.has(definition.id)), ...uniqueExtensions];
+  return [
+    ...base.filter((definition) => !extensionIds.has(definition.id)),
+    ...uniqueExtensions,
+  ];
 }
 
-export function sortBackgroundActionDefinitions(definitions: BackgroundActionDefinition[]) {
+export function sortBackgroundActionDefinitions(
+  definitions: BackgroundActionDefinition[],
+) {
   return [...definitions].sort((a, b) => {
     const section = (a.section || "").localeCompare(b.section || "");
     if (section !== 0) return section;
@@ -128,7 +162,9 @@ export function sortBackgroundActionDefinitions(definitions: BackgroundActionDef
   });
 }
 
-export function normaliseBackgroundActionError(error: unknown): BackgroundActionError {
+export function normaliseBackgroundActionError(
+  error: unknown,
+): BackgroundActionError {
   if (error instanceof Error) {
     return {
       message: error.message,
@@ -143,11 +179,20 @@ export function normaliseBackgroundActionError(error: unknown): BackgroundAction
   };
 }
 
-function normaliseStoredBackgroundActionError(error: unknown): BackgroundActionError {
-  if (error && typeof error === "object" && typeof (error as BackgroundActionError).message === "string") {
+function normaliseStoredBackgroundActionError(
+  error: unknown,
+): BackgroundActionError {
+  if (
+    error &&
+    typeof error === "object" &&
+    typeof (error as BackgroundActionError).message === "string"
+  ) {
     return {
       message: (error as BackgroundActionError).message,
-      stack: typeof (error as BackgroundActionError).stack === "string" ? (error as BackgroundActionError).stack : undefined,
+      stack:
+        typeof (error as BackgroundActionError).stack === "string"
+          ? (error as BackgroundActionError).stack
+          : undefined,
       detail: (error as BackgroundActionError).detail,
     };
   }
@@ -155,7 +200,10 @@ function normaliseStoredBackgroundActionError(error: unknown): BackgroundActionE
   return normaliseBackgroundActionError(error);
 }
 
-function supportsTarget(definition: BackgroundActionDefinition, target: BackgroundActionTarget) {
+function supportsTarget(
+  definition: BackgroundActionDefinition,
+  target: BackgroundActionTarget,
+) {
   if (!definition.resourceTypes?.length) {
     return true;
   }
@@ -252,15 +300,22 @@ function appendEvent(
 ) {
   return {
     ...instance,
-    events: [...instance.events, createBackgroundActionEvent(type, message, data, createdAt)],
+    events: [
+      ...instance.events,
+      createBackgroundActionEvent(type, message, data, createdAt),
+    ],
   };
 }
 
-function withoutProgressEvents(events: BackgroundActionEvent[]): BackgroundActionEvent[] {
+function withoutProgressEvents(
+  events: BackgroundActionEvent[],
+): BackgroundActionEvent[] {
   return events.filter((event) => String(event.type) !== "progress");
 }
 
-function cloneInstanceForHistory(instance: BackgroundActionInstance): BackgroundActionInstance {
+function cloneInstanceForHistory(
+  instance: BackgroundActionInstance,
+): BackgroundActionInstance {
   return {
     ...instance,
     logs: [...instance.logs],
@@ -280,10 +335,14 @@ function upsertHistoryInstance(
 
   const history = histories[instanceKey] || [];
   const snapshot = cloneInstanceForHistory(instance);
-  const existingIndex = history.findIndex((item) => item.runId === instance.runId);
+  const existingIndex = history.findIndex(
+    (item) => item.runId === instance.runId,
+  );
   const nextHistory =
     existingIndex >= 0
-      ? history.map((item, index) => (index === existingIndex ? snapshot : item))
+      ? history.map((item, index) =>
+          index === existingIndex ? snapshot : item,
+        )
       : [...history, snapshot];
 
   return {
@@ -325,15 +384,23 @@ function clampProgressPercent(percent: number) {
   return Math.min(100, Math.max(0, percent));
 }
 
-function normaliseProgress(progress: BackgroundActionProgressInput): BackgroundActionProgress {
+function normaliseProgress(
+  progress: BackgroundActionProgressInput,
+): BackgroundActionProgress {
   const input = progress as {
     percent?: number;
     current?: number;
     total?: number;
     label?: string;
   };
-  const current = typeof input.current === "number" && Number.isFinite(input.current) ? input.current : undefined;
-  const total = typeof input.total === "number" && Number.isFinite(input.total) ? input.total : undefined;
+  const current =
+    typeof input.current === "number" && Number.isFinite(input.current)
+      ? input.current
+      : undefined;
+  const total =
+    typeof input.total === "number" && Number.isFinite(input.total)
+      ? input.total
+      : undefined;
   const percent =
     typeof input.percent === "number" && Number.isFinite(input.percent)
       ? input.percent
@@ -373,7 +440,12 @@ function isPendingTaskStatus(status: BackgroundActionTaskStatus | undefined) {
 }
 
 function isTerminalTaskStatus(status: BackgroundActionTaskStatus | undefined) {
-  return status === "complete" || status === "skipped" || status === "error" || status === "cancelled";
+  return (
+    status === "complete" ||
+    status === "skipped" ||
+    status === "error" ||
+    status === "cancelled"
+  );
 }
 
 function toJsonValue<T>(value: T): T | undefined {
@@ -388,7 +460,9 @@ function toJsonValue<T>(value: T): T | undefined {
   }
 }
 
-function serialiseError(error: BackgroundActionError | null | undefined): BackgroundActionError | null | undefined {
+function serialiseError(
+  error: BackgroundActionError | null | undefined,
+): BackgroundActionError | null | undefined {
   if (!error) {
     return error;
   }
@@ -400,7 +474,9 @@ function serialiseError(error: BackgroundActionError | null | undefined): Backgr
   };
 }
 
-function serialiseInstance(instance: BackgroundActionInstance): BackgroundActionInstance {
+function serialiseInstance(
+  instance: BackgroundActionInstance,
+): BackgroundActionInstance {
   return {
     ...instance,
     error: serialiseError(instance.error) || null,
@@ -435,17 +511,30 @@ function serialisePlan(plan: BackgroundActionPlan): BackgroundActionPlan {
   };
 }
 
-function createPersistedState(state: BackgroundActionsStore): BackgroundActionPersistedState {
+function createPersistedState(
+  state: BackgroundActionsStore,
+): BackgroundActionPersistedState {
   return {
     version: 1,
     savedAt: Date.now(),
     instances: Object.fromEntries(
-      Object.entries(state.instances).map(([key, instance]) => [key, serialiseInstance(instance)]),
+      Object.entries(state.instances).map(([key, instance]) => [
+        key,
+        serialiseInstance(instance),
+      ]),
     ),
     histories: Object.fromEntries(
-      Object.entries(state.histories).map(([key, history]) => [key, history.map(serialiseInstance)]),
+      Object.entries(state.histories).map(([key, history]) => [
+        key,
+        history.map(serialiseInstance),
+      ]),
     ),
-    plans: Object.fromEntries(Object.entries(state.plans).map(([key, plan]) => [key, serialisePlan(plan)])),
+    plans: Object.fromEntries(
+      Object.entries(state.plans).map(([key, plan]) => [
+        key,
+        serialisePlan(plan),
+      ]),
+    ),
   };
 }
 
@@ -461,9 +550,15 @@ function normaliseTaskStatus(status: unknown): BackgroundActionTaskStatus {
   return isTaskStatus(status) ? status : "queued";
 }
 
-function normaliseTask(task: BackgroundActionTask, fallbackIndex: number): BackgroundActionTask {
+function normaliseTask(
+  task: BackgroundActionTask,
+  fallbackIndex: number,
+): BackgroundActionTask {
   const now = Date.now();
-  const id = typeof task.id === "string" && task.id ? task.id : `task-${fallbackIndex + 1}`;
+  const id =
+    typeof task.id === "string" && task.id
+      ? task.id
+      : `task-${fallbackIndex + 1}`;
   return {
     ...task,
     id,
@@ -474,7 +569,9 @@ function normaliseTask(task: BackgroundActionTask, fallbackIndex: number): Backg
   };
 }
 
-function normalisePlan(plan: BackgroundActionPlan | undefined | null): BackgroundActionPlan | null {
+function normalisePlan(
+  plan: BackgroundActionPlan | undefined | null,
+): BackgroundActionPlan | null {
   if (!plan || plan.version !== 1 || !Array.isArray(plan.tasks)) {
     return null;
   }
@@ -486,7 +583,9 @@ function normalisePlan(plan: BackgroundActionPlan | undefined | null): Backgroun
   };
 }
 
-function requeueActivePlanTasks(plan: BackgroundActionPlan): BackgroundActionPlan {
+function requeueActivePlanTasks(
+  plan: BackgroundActionPlan,
+): BackgroundActionPlan {
   return {
     ...plan,
     tasks: plan.tasks.map((task) =>
@@ -502,7 +601,10 @@ function requeueActivePlanTasks(plan: BackgroundActionPlan): BackgroundActionPla
   };
 }
 
-function cancelPendingPlanTasks(plan: BackgroundActionPlan, completedAt = Date.now()): BackgroundActionPlan {
+function cancelPendingPlanTasks(
+  plan: BackgroundActionPlan,
+  completedAt = Date.now(),
+): BackgroundActionPlan {
   return {
     ...plan,
     tasks: plan.tasks.map((task) =>
@@ -519,17 +621,25 @@ function cancelPendingPlanTasks(plan: BackgroundActionPlan, completedAt = Date.n
   };
 }
 
-function normaliseInstance(instance: BackgroundActionInstance): BackgroundActionInstance {
+function normaliseInstance(
+  instance: BackgroundActionInstance,
+): BackgroundActionInstance {
   return {
     ...instance,
-    error: instance.error ? normaliseStoredBackgroundActionError(instance.error) : null,
+    error: instance.error
+      ? normaliseStoredBackgroundActionError(instance.error)
+      : null,
     logs: Array.isArray(instance.logs) ? instance.logs : [],
-    events: withoutProgressEvents(Array.isArray(instance.events) ? instance.events : []),
+    events: withoutProgressEvents(
+      Array.isArray(instance.events) ? instance.events : [],
+    ),
     resultsAvailable: instance.resultsAvailable === true,
   };
 }
 
-function normalisePersistedState(snapshot?: BackgroundActionPersistedState | null): BackgroundActionPersistedState {
+function normalisePersistedState(
+  snapshot?: BackgroundActionPersistedState | null,
+): BackgroundActionPersistedState {
   if (!snapshot || snapshot.version !== 1) {
     return {
       version: 1,
@@ -542,20 +652,26 @@ function normalisePersistedState(snapshot?: BackgroundActionPersistedState | nul
 
   return {
     version: 1,
-    savedAt: typeof snapshot.savedAt === "number" ? snapshot.savedAt : Date.now(),
+    savedAt:
+      typeof snapshot.savedAt === "number" ? snapshot.savedAt : Date.now(),
     instances: snapshot.instances || {},
     histories: snapshot.histories || {},
     plans: snapshot.plans || {},
   };
 }
 
-function getPlanProgress(plan: BackgroundActionPlan, label?: string): BackgroundActionProgress | undefined {
+function getPlanProgress(
+  plan: BackgroundActionPlan,
+  label?: string,
+): BackgroundActionProgress | undefined {
   const total = plan.tasks.length;
   if (!total) {
     return undefined;
   }
 
-  const current = plan.tasks.filter((task) => isTerminalTaskStatus(task.status)).length;
+  const current = plan.tasks.filter((task) =>
+    isTerminalTaskStatus(task.status),
+  ).length;
   return normaliseProgress({ current, total, label });
 }
 
@@ -568,7 +684,8 @@ function getTaskRunResult(result: BackgroundActionTaskRunResult): {
     result &&
     typeof result === "object" &&
     "taskStatus" in result &&
-    ((result as any).taskStatus === "complete" || (result as any).taskStatus === "skipped")
+    ((result as any).taskStatus === "complete" ||
+      (result as any).taskStatus === "skipped")
   ) {
     return {
       taskStatus: (result as any).taskStatus,
@@ -583,7 +700,10 @@ function getTaskRunResult(result: BackgroundActionTaskRunResult): {
   };
 }
 
-function restoreCanvasProgressFromPlan(canvasProgress: ManifestEditorCanvasProgressApi, plan: BackgroundActionPlan) {
+function restoreCanvasProgressFromPlan(
+  canvasProgress: ManifestEditorCanvasProgressApi,
+  plan: BackgroundActionPlan,
+) {
   for (const task of plan.tasks) {
     if (!task.target || task.target.type !== "Canvas") {
       continue;
@@ -613,19 +733,34 @@ function createTaskApi(
     return getPlan()?.tasks || [];
   }
 
-  function getPending(statuses: BackgroundActionTaskStatus[] = ["queued", "running"]) {
+  function getPending(
+    statuses: BackgroundActionTaskStatus[] = ["queued", "running"],
+  ) {
     const allowed = new Set(statuses);
-    return getAll().filter((task) => allowed.has(normaliseTaskStatus(task.status)));
+    return getAll().filter((task) =>
+      allowed.has(normaliseTaskStatus(task.status)),
+    );
   }
 
-  function update(id: string, patch: Partial<BackgroundActionTask>, persistImmediately = false) {
-    store.getState().updateActionTask(instanceKey, id, patch, persistImmediately);
+  function update(
+    id: string,
+    patch: Partial<BackgroundActionTask>,
+    persistImmediately = false,
+  ) {
+    store
+      .getState()
+      .updateActionTask(instanceKey, id, patch, persistImmediately);
   }
 
   async function runEach(
     handler: (
       task: BackgroundActionTask,
-      context: { index: number; total: number; pendingIndex: number; pendingTotal: number },
+      context: {
+        index: number;
+        total: number;
+        pendingIndex: number;
+        pendingTotal: number;
+      },
     ) => BackgroundActionTaskRunResult | Promise<BackgroundActionTaskRunResult>,
     runOptions: BackgroundActionTaskRunOptions = {},
   ) {
@@ -633,7 +768,8 @@ function createTaskApi(
     const pending = getPending(statuses);
     const total = getAll().length;
     const pendingTotal = pending.length;
-    const yieldEveryMs = runOptions.yieldEveryMs === false ? false : (runOptions.yieldEveryMs ?? 16);
+    const yieldEveryMs =
+      runOptions.yieldEveryMs === false ? false : runOptions.yieldEveryMs ?? 16;
     let lastYieldAt = 0;
 
     for (const [pendingIndex, pendingTask] of pending.entries()) {
@@ -649,7 +785,8 @@ function createTaskApi(
         }
       }
 
-      const latestTask = getAll().find((task) => task.id === pendingTask.id) || pendingTask;
+      const latestTask =
+        getAll().find((task) => task.id === pendingTask.id) || pendingTask;
       const index = getAll().findIndex((task) => task.id === latestTask.id);
       const label =
         runOptions.progressLabel?.(latestTask, index, total) ||
@@ -659,16 +796,21 @@ function createTaskApi(
       if (latestTask.target?.type === "Canvas") {
         canvasProgress.setStatus(latestTask.target, "pending");
       }
-      update(latestTask.id, {
-        status: "running",
-        statusText: label,
-        error: null,
-        startedAt: Date.now(),
-        completedAt: undefined,
-      }, true);
+      update(
+        latestTask.id,
+        {
+          status: "running",
+          statusText: label,
+          error: null,
+          startedAt: Date.now(),
+          completedAt: undefined,
+        },
+        true,
+      );
       store.getState().setActionStatus(instanceKey, "running", label);
       store.getState().setActionProgress(instanceKey, {
-        current: getAll().filter((task) => isTerminalTaskStatus(task.status)).length,
+        current: getAll().filter((task) => isTerminalTaskStatus(task.status))
+          .length,
         total,
         label,
       });
@@ -690,7 +832,9 @@ function createTaskApi(
           latestTask.id,
           {
             status: taskResult.taskStatus,
-            statusText: taskResult.statusText || (taskResult.taskStatus === "skipped" ? "Skipped" : "Complete"),
+            statusText:
+              taskResult.statusText ||
+              (taskResult.taskStatus === "skipped" ? "Skipped" : "Complete"),
             result: taskResult.result,
             error: null,
             completedAt: Date.now(),
@@ -726,15 +870,24 @@ function createTaskApi(
           },
           true,
         );
-        store.getState().appendActionLog(instanceKey, `Task failed: ${latestTask.label}`, "warn", {
-          taskId: latestTask.id,
-          error: normalisedError.message,
-        });
+        store
+          .getState()
+          .appendActionLog(
+            instanceKey,
+            `Task failed: ${latestTask.label}`,
+            "warn",
+            {
+              taskId: latestTask.id,
+              error: normalisedError.message,
+            },
+          );
       } finally {
         const latestPlan = getPlan();
         if (latestPlan) {
           store.getState().setActionProgress(instanceKey, {
-            current: latestPlan.tasks.filter((task) => isTerminalTaskStatus(task.status)).length,
+            current: latestPlan.tasks.filter((task) =>
+              isTerminalTaskStatus(task.status),
+            ).length,
             total,
             label,
           });
@@ -753,8 +906,14 @@ function createTaskApi(
   };
 }
 
-function shouldYieldToBrowser(lastYieldAt: number, yieldEveryMs: number | false) {
-  return yieldEveryMs !== false && (!lastYieldAt || Date.now() - lastYieldAt >= yieldEveryMs);
+function shouldYieldToBrowser(
+  lastYieldAt: number,
+  yieldEveryMs: number | false,
+) {
+  return (
+    yieldEveryMs !== false &&
+    (!lastYieldAt || Date.now() - lastYieldAt >= yieldEveryMs)
+  );
 }
 
 function yieldToBrowser() {
@@ -763,7 +922,9 @@ function yieldToBrowser() {
   });
 }
 
-export function createBackgroundActionsStore(initialDefinitions: BackgroundActionDefinition[] = []) {
+export function createBackgroundActionsStore(
+  initialDefinitions: BackgroundActionDefinition[] = [],
+) {
   let persistence: BackgroundActionPersistence | null = null;
   let persistenceKey: BackgroundActionPersistenceKey | null = null;
   let persistTimer: ReturnType<typeof setTimeout> | null = null;
@@ -817,8 +978,13 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
 
       setDefinitions(definitions) {
         set((prev) => {
-          const nextDefinitions = mergeBackgroundActionDefinitions([], definitions);
-          const nextDefinitionIds = new Set(nextDefinitions.map((definition) => definition.id));
+          const nextDefinitions = mergeBackgroundActionDefinitions(
+            [],
+            definitions,
+          );
+          const nextDefinitionIds = new Set(
+            nextDefinitions.map((definition) => definition.id),
+          );
           const nextInstances: Record<string, BackgroundActionInstance> = {};
           const nextHistories: Record<string, BackgroundActionInstance[]> = {};
           const nextPlans: Record<string, BackgroundActionPlan> = {};
@@ -830,7 +996,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
 
           for (const [key, history] of Object.entries(prev.histories)) {
-            const nextHistory = history.filter((instance) => nextDefinitionIds.has(instance.actionId));
+            const nextHistory = history.filter((instance) =>
+              nextDefinitionIds.has(instance.actionId),
+            );
             if (nextHistory.length) {
               nextHistories[key] = nextHistory;
             }
@@ -849,7 +1017,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
             plans: nextPlans,
             controllers: Object.fromEntries(
               Object.entries(prev.controllers).filter(
-                ([key]) => nextInstances[key]?.status && isActiveStatus(nextInstances[key].status),
+                ([key]) =>
+                  nextInstances[key]?.status &&
+                  isActiveStatus(nextInstances[key].status),
               ),
             ),
           };
@@ -865,7 +1035,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
 
       hydrate(snapshot) {
         const persisted = normalisePersistedState(snapshot);
-        const definitionsById = new Map(get().definitions.map((definition) => [definition.id, definition]));
+        const definitionsById = new Map(
+          get().definitions.map((definition) => [definition.id, definition]),
+        );
         const nextInstances: Record<string, BackgroundActionInstance> = {};
         let nextHistories: Record<string, BackgroundActionInstance[]> = {};
         const nextPlans: Record<string, BackgroundActionPlan> = {};
@@ -939,7 +1111,11 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
 
           nextInstances[key] = nextInstance;
-          nextHistories = upsertHistoryInstance(nextHistories, key, nextInstance);
+          nextHistories = upsertHistoryInstance(
+            nextHistories,
+            key,
+            nextInstance,
+          );
 
           if (plan) {
             nextPlans[key] = plan;
@@ -964,7 +1140,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
 
       registerAction(definition) {
         set((prev) => ({
-          definitions: mergeBackgroundActionDefinitions(prev.definitions, [definition]),
+          definitions: mergeBackgroundActionDefinitions(prev.definitions, [
+            definition,
+          ]),
         }));
         queuePersist();
 
@@ -982,7 +1160,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
 
           const histories: Record<string, BackgroundActionInstance[]> = {};
           for (const [key, history] of Object.entries(prev.histories)) {
-            const nextHistory = history.filter((instance) => instance.actionId !== id);
+            const nextHistory = history.filter(
+              (instance) => instance.actionId !== id,
+            );
             if (nextHistory.length) {
               histories[key] = nextHistory;
             }
@@ -999,7 +1179,9 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           }
 
           return {
-            definitions: prev.definitions.filter((definition) => definition.id !== id),
+            definitions: prev.definitions.filter(
+              (definition) => definition.id !== id,
+            ),
             instances,
             histories,
             plans,
@@ -1045,7 +1227,14 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
                 result: undefined,
                 resultsAvailable: false,
                 logs: [],
-                events: [createBackgroundActionEvent("started", "Preparing", { status: "preparing" }, startedAt)],
+                events: [
+                  createBackgroundActionEvent(
+                    "started",
+                    "Preparing",
+                    { status: "preparing" },
+                    startedAt,
+                  ),
+                ],
                 progress: undefined,
                 startedAt,
                 completedAt: undefined,
@@ -1132,7 +1321,11 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
                   [instanceKey]: cancelPendingPlanTasks(plan, requestedAt),
                 }
               : prev.plans,
-            controllers: Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
+            controllers: Object.fromEntries(
+              Object.entries(prev.controllers).filter(
+                ([key]) => key !== instanceKey,
+              ),
+            ),
           };
         });
         queuePersist(true);
@@ -1143,7 +1336,13 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         const createdAt = Date.now();
         set((prev) => ({
           ...updateStoredInstance(prev, instanceKey, (instance) =>
-            appendEvent({ ...instance, label }, "label", label, { label }, createdAt),
+            appendEvent(
+              { ...instance, label },
+              "label",
+              label,
+              { label },
+              createdAt,
+            ),
           ),
         }));
         queuePersist();
@@ -1170,7 +1369,11 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
           ),
           controllers: isActiveStatus(status)
             ? prev.controllers
-            : Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
+            : Object.fromEntries(
+                Object.entries(prev.controllers).filter(
+                  ([key]) => key !== instanceKey,
+                ),
+              ),
         }));
         queuePersist(isCompletedStatus(status));
       },
@@ -1195,7 +1398,11 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
               createdAt,
             ),
           ),
-          controllers: Object.fromEntries(Object.entries(prev.controllers).filter(([key]) => key !== instanceKey)),
+          controllers: Object.fromEntries(
+            Object.entries(prev.controllers).filter(
+              ([key]) => key !== instanceKey,
+            ),
+          ),
         }));
         queuePersist(true);
       },
@@ -1230,12 +1437,10 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
       setActionProgress(instanceKey, progress) {
         const nextProgress = progress ? normaliseProgress(progress) : undefined;
         set((prev) => ({
-          ...updateStoredInstance(prev, instanceKey, (instance) =>
-            ({
-              ...instance,
-              progress: nextProgress,
-            }),
-          ),
+          ...updateStoredInstance(prev, instanceKey, (instance) => ({
+            ...instance,
+            progress: nextProgress,
+          })),
         }));
       },
 
@@ -1243,7 +1448,13 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         const createdAt = Date.now();
         set((prev) => ({
           ...updateStoredInstance(prev, instanceKey, (instance) =>
-            appendEvent({ ...instance, result }, "result", "Result recorded", undefined, createdAt),
+            appendEvent(
+              { ...instance, result },
+              "result",
+              "Result recorded",
+              undefined,
+              createdAt,
+            ),
           ),
         }));
         queuePersist(true);
@@ -1272,10 +1483,14 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
         }
 
         set((prev) => {
-          const nextState = updateStoredInstance(prev, instanceKey, (instance) => ({
-            ...instance,
-            progress: getPlanProgress(normalisedPlan, "Queued"),
-          }));
+          const nextState = updateStoredInstance(
+            prev,
+            instanceKey,
+            (instance) => ({
+              ...instance,
+              progress: getPlanProgress(normalisedPlan, "Queued"),
+            }),
+          );
 
           return {
             ...nextState,
@@ -1304,8 +1519,14 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
               {
                 ...task,
                 ...patch,
-                status: patch.status ? normaliseTaskStatus(patch.status) : task.status,
-                error: patch.error ? normaliseStoredBackgroundActionError(patch.error) : patch.error === null ? null : task.error,
+                status: patch.status
+                  ? normaliseTaskStatus(patch.status)
+                  : task.status,
+                error: patch.error
+                  ? normaliseStoredBackgroundActionError(patch.error)
+                  : patch.error === null
+                    ? null
+                    : task.error,
               },
               0,
             );
@@ -1314,10 +1535,17 @@ export function createBackgroundActionsStore(initialDefinitions: BackgroundActio
             ...plan,
             tasks,
           };
-          const nextState = updateStoredInstance(prev, instanceKey, (instance) => ({
-            ...instance,
-            progress: getPlanProgress(nextPlan, patch.statusText || patch.label),
-          }));
+          const nextState = updateStoredInstance(
+            prev,
+            instanceKey,
+            (instance) => ({
+              ...instance,
+              progress: getPlanProgress(
+                nextPlan,
+                patch.statusText || patch.label,
+              ),
+            }),
+          );
 
           return {
             ...nextState,
@@ -1349,6 +1577,7 @@ function createRunContext(
     plan: store.getState().plans[instanceKey],
     tasks,
     signal,
+    prepareData: options.prepareData,
     setActionLabel(label) {
       store.getState().setActionLabel(instanceKey, label);
     },
@@ -1374,7 +1603,12 @@ function createRunContext(
 }
 
 function isBackgroundActionPlan(value: unknown): value is BackgroundActionPlan {
-  return !!value && typeof value === "object" && (value as BackgroundActionPlan).version === 1 && Array.isArray((value as BackgroundActionPlan).tasks);
+  return (
+    !!value &&
+    typeof value === "object" &&
+    (value as BackgroundActionPlan).version === 1 &&
+    Array.isArray((value as BackgroundActionPlan).tasks)
+  );
 }
 
 export async function runBackgroundAction(options: RunBackgroundActionOptions) {
@@ -1391,14 +1625,18 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 
   const controller = new AbortController();
   const signal = controller.signal;
-  const canvasProgress = createTrackingCanvasProgressApi(context.canvasProgress);
+  const canvasProgress = createTrackingCanvasProgressApi(
+    context.canvasProgress,
+  );
   const abortFromExternalSignal = () => controller.abort();
 
   if (options.signal) {
     if (options.signal.aborted) {
       controller.abort();
     } else {
-      options.signal.addEventListener("abort", abortFromExternalSignal, { once: true });
+      options.signal.addEventListener("abort", abortFromExternalSignal, {
+        once: true,
+      });
     }
   }
 
@@ -1417,7 +1655,9 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 
   try {
     if (!options.resume && definition.prepare) {
-      const prepareResult = await definition.prepare(createRunContext(options, signal, canvasProgress));
+      const prepareResult = await definition.prepare(
+        createRunContext(options, signal, canvasProgress),
+      );
       if (signal.aborted) {
         markCancelledIfActive();
         return store.getState().instances[instanceKey];
@@ -1443,8 +1683,16 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
       restoreCanvasProgressFromPlan(canvasProgress, plan);
     }
 
-    store.getState().setActionStatus(instanceKey, "running", options.resume ? "Resuming" : "Running");
-    const result = await definition.run(createRunContext(options, signal, canvasProgress));
+    store
+      .getState()
+      .setActionStatus(
+        instanceKey,
+        "running",
+        options.resume ? "Resuming" : "Running",
+      );
+    const result = await definition.run(
+      createRunContext(options, signal, canvasProgress),
+    );
 
     if (signal.aborted) {
       markCancelledIfActive();
@@ -1452,7 +1700,11 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
     }
 
     let latest = store.getState().instances[instanceKey];
-    if (typeof result !== "undefined" && latest && !isCompletedStatus(latest.status)) {
+    if (
+      typeof result !== "undefined" &&
+      latest &&
+      !isCompletedStatus(latest.status)
+    ) {
       store.getState().setResult(instanceKey, result);
     }
 
@@ -1481,12 +1733,18 @@ export async function runBackgroundAction(options: RunBackgroundActionOptions) {
 function isAbortLikeError(error: unknown) {
   return (
     error instanceof Error &&
-    (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"))
+    (error.name === "AbortError" ||
+      error.message.toLowerCase().includes("aborted"))
   );
 }
 
 function createBackgroundActionStorageKey(key: BackgroundActionPersistenceKey) {
-  return JSON.stringify([key.appId, key.instanceId, key.rootResource.type, key.rootResource.id]);
+  return JSON.stringify([
+    key.appId,
+    key.instanceId,
+    key.rootResource.type,
+    key.rootResource.id,
+  ]);
 }
 
 let defaultPersistence: BackgroundActionPersistence | null | undefined;
@@ -1503,7 +1761,9 @@ export function createLocalForageBackgroundActionPersistence(): BackgroundAction
 
   return {
     async load(key) {
-      return storage.getItem<BackgroundActionPersistedState>(createBackgroundActionStorageKey(key));
+      return storage.getItem<BackgroundActionPersistedState>(
+        createBackgroundActionStorageKey(key),
+      );
     },
     async save(key, state) {
       await storage.setItem(createBackgroundActionStorageKey(key), state);
@@ -1522,7 +1782,8 @@ function getDefaultBackgroundActionPersistence() {
   return defaultPersistence;
 }
 
-export const BackgroundActionsReactContext = createContext<StoreApi<BackgroundActionsStore> | null>(null);
+export const BackgroundActionsReactContext =
+  createContext<StoreApi<BackgroundActionsStore> | null>(null);
 
 export function BackgroundActionsProvider({
   children,
@@ -1538,28 +1799,31 @@ export function BackgroundActionsProvider({
   const store = useMemo(() => createBackgroundActionsStore(), []);
   const definitions = app.layout.backgroundActions || [];
   const resolvedPersistence = useMemo(
-    () => (persistence === false ? null : persistence || getDefaultBackgroundActionPersistence()),
+    () =>
+      persistence === false
+        ? null
+        : persistence || getDefaultBackgroundActionPersistence(),
     [persistence],
   );
-  const resolvedPersistenceKey = useMemo<BackgroundActionPersistenceKey | null>(() => {
-    if (!persistenceKey) {
-      return null;
-    }
+  const resolvedPersistenceKey =
+    useMemo<BackgroundActionPersistenceKey | null>(() => {
+      if (!persistenceKey) {
+        return null;
+      }
 
-    return persistenceKey;
-  }, [persistenceKey]);
+      return persistenceKey;
+    }, [persistenceKey]);
 
   useEffect(() => {
     store.getState().setDefinitions(definitions);
   }, [store, definitions]);
 
   useEffect(() => {
-    const key =
-      resolvedPersistenceKey || {
-        appId: appInstance.appId,
-        instanceId: appInstance.instanceId,
-        rootResource: { id: "global", type: "Manifest" },
-      };
+    const key = resolvedPersistenceKey || {
+      appId: appInstance.appId,
+      instanceId: appInstance.instanceId,
+      rootResource: { id: "global", type: "Manifest" },
+    };
     let cancelled = false;
 
     store.getState().setPersistence(resolvedPersistence, key);
@@ -1577,7 +1841,10 @@ export function BackgroundActionsProvider({
         }
       })
       .catch((error) => {
-        console.warn("[manifest-editor/background-actions] Failed to load persisted actions", error);
+        console.warn(
+          "[manifest-editor/background-actions] Failed to load persisted actions",
+          error,
+        );
         if (!cancelled) {
           store.getState().hydrate(null);
         }
@@ -1607,14 +1874,20 @@ export function BackgroundActionsProvider({
     return () => window.removeEventListener("beforeunload", flush);
   }, [store]);
 
-  return createElement(BackgroundActionsReactContext.Provider, { value: store }, children);
+  return createElement(
+    BackgroundActionsReactContext.Provider,
+    { value: store },
+    children,
+  );
 }
 
 export function useBackgroundActionsStoreApi() {
   const store = useContext(BackgroundActionsReactContext);
 
   if (!store) {
-    throw new Error("useBackgroundActionsStore must be used within a BackgroundActionsProvider");
+    throw new Error(
+      "useBackgroundActionsStore must be used within a BackgroundActionsProvider",
+    );
   }
 
   return store;
@@ -1631,5 +1904,7 @@ export function useBackgroundActionInstance(instanceKey: string) {
 }
 
 export function useBackgroundActionHistory(instanceKey: string) {
-  return useBackgroundActionsStore((state) => state.histories[instanceKey] || []);
+  return useBackgroundActionsStore(
+    (state) => state.histories[instanceKey] || [],
+  );
 }

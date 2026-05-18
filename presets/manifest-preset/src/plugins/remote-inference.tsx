@@ -124,7 +124,7 @@ type RemoteInferenceRunOptions = {
   serverUrl: string;
   apiKey?: string;
   model: RemoteInferenceModel;
-  scope: "all" | "tag";
+  scope: "all" | "tag" | "selected";
   tagKey?: string;
   skipAnnotatedCanvases?: boolean;
 };
@@ -193,6 +193,10 @@ type RemoteInferenceTaskResult =
 type RemoteInferencePlanData = {
   options: RemoteInferenceRunOptions;
   total: number;
+};
+
+type RemoteInferencePrepareData = {
+  scope?: "selected";
 };
 
 type NormalisedRemoteInferenceBody = {
@@ -486,6 +490,11 @@ type RemoteInferenceConfigRequest = {
   instanceKey: string;
   totalCanvases: number;
   annotatedCanvases: number;
+  selectedCanvas?: {
+    id: string;
+    label?: string;
+    annotated: boolean;
+  };
   tags: RemoteInferenceTagOption[];
   defaults: RemoteInferenceRunOptions;
   signal?: AbortSignal;
@@ -556,13 +565,21 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
     [request?.tags, options.tagKey],
   );
   const selectedCount =
-    options.scope === "tag"
-      ? selectedTag?.canvasCount || 0
-      : request?.totalCanvases || 0;
+    options.scope === "selected"
+      ? request?.selectedCanvas
+        ? 1
+        : 0
+      : options.scope === "tag"
+        ? selectedTag?.canvasCount || 0
+        : request?.totalCanvases || 0;
   const annotatedSelectedCount =
-    options.scope === "tag"
-      ? selectedTag?.annotatedCanvasCount || 0
-      : request?.annotatedCanvases || 0;
+    options.scope === "selected"
+      ? request?.selectedCanvas?.annotated
+        ? 1
+        : 0
+      : options.scope === "tag"
+        ? selectedTag?.annotatedCanvasCount || 0
+        : request?.annotatedCanvases || 0;
   const skippedByExistingAnnotations =
     options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
   const runnableCount = Math.max(
@@ -590,6 +607,7 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
 
   const tagOptions = request.tags;
   const tagSelectionDisabled = !tagOptions.length;
+  const selectedCanvasDisabled = !request.selectedCanvas;
 
   return (
     <Modal
@@ -700,6 +718,22 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
           <label className="flex items-center gap-2">
             <input
               type="radio"
+              checked={options.scope === "selected"}
+              disabled={selectedCanvasDisabled}
+              onChange={() =>
+                setOptions((current) => ({ ...current, scope: "selected" }))
+              }
+            />
+            <span>
+              Selected canvas
+              {request.selectedCanvas?.label
+                ? ` (${request.selectedCanvas.label})`
+                : ""}
+            </span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
               checked={options.scope === "tag"}
               disabled={tagSelectionDisabled}
               onChange={() =>
@@ -784,7 +818,12 @@ function normaliseDefaults(
     serverUrl: defaults.serverUrl || DEFAULT_SERVER_URL,
     apiKey: defaults.apiKey || "",
     model: parseRemoteInferenceModel(defaults.model) || DEFAULT_MODEL,
-    scope: defaults.scope === "tag" && tags.length ? "tag" : "all",
+    scope:
+      defaults.scope === "tag" && tags.length
+        ? "tag"
+        : defaults.scope === "selected"
+          ? "selected"
+          : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
     skipAnnotatedCanvases: defaults.skipAnnotatedCanvases !== false,
   };
@@ -938,6 +977,13 @@ function selectCanvases(
   canvases: any[],
   options: RemoteInferenceRunOptions,
 ) {
+  if (options.scope === "selected") {
+    const currentCanvasId = ctx.currentCanvas?.id;
+    return currentCanvasId
+      ? canvases.filter((canvas) => canvas?.id === currentCanvasId)
+      : [];
+  }
+
   if (options.scope !== "tag" || !options.tagKey) return canvases;
   const selectedTag = parseTagKey(options.tagKey);
   if (!selectedTag) return [];
@@ -948,6 +994,23 @@ function selectCanvases(
       selectedTag.id,
     ),
   );
+}
+
+function getCurrentCanvasOption(
+  ctx: BackgroundActionRunContext,
+  canvases: any[],
+) {
+  const currentCanvasId = ctx.currentCanvas?.id;
+  if (!currentCanvasId) return undefined;
+
+  const canvas = canvases.find((item) => item?.id === currentCanvasId);
+  if (!canvas) return undefined;
+
+  return {
+    id: currentCanvasId,
+    label: getCanvasLabel(canvas),
+    annotated: canvasHasAnnotationPageAnnotations(ctx, canvas),
+  };
 }
 
 function getCanvasLabel(canvas: any): string {
@@ -1133,6 +1196,14 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
 
   prepare: async (ctx) => {
     const canvases = getManifestCanvases(ctx);
+    const prepareData = ctx.prepareData as
+      | RemoteInferencePrepareData
+      | undefined;
+    const defaults = getDefaultRunOptions();
+    const requestDefaults =
+      prepareData?.scope === "selected"
+        ? { ...defaults, scope: "selected" as const }
+        : defaults;
     const options = await requestRemoteInferenceConfig({
       actionId: ctx.definition.id,
       instanceKey: ctx.instanceKey,
@@ -1140,8 +1211,9 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
       annotatedCanvases: canvases.filter((canvas: any) =>
         canvasHasAnnotationPageAnnotations(ctx, canvas),
       ).length,
+      selectedCanvas: getCurrentCanvasOption(ctx, canvases),
       tags: getCanvasTagOptions(ctx, canvases),
-      defaults: getDefaultRunOptions(),
+      defaults: requestDefaults,
       signal: ctx.signal,
     });
 

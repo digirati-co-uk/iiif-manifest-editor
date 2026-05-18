@@ -8,9 +8,21 @@ import type { ManifestEditorCanvasProgressApi } from "../CanvasProgress";
 import type { PluginRuntimeApi } from "../PluginContext/PluginContext.types";
 import type { ManifestEditorTagsApi } from "../Tags";
 
-export type BackgroundActionStatus = "idle" | "preparing" | "running" | "complete" | "error" | "cancelled";
+export type BackgroundActionStatus =
+  | "idle"
+  | "preparing"
+  | "running"
+  | "complete"
+  | "error"
+  | "cancelled";
 export type BackgroundActionLogLevel = "debug" | "info" | "warn" | "error";
-export type BackgroundActionTaskStatus = "queued" | "running" | "complete" | "skipped" | "error" | "cancelled";
+export type BackgroundActionTaskStatus =
+  | "queued"
+  | "running"
+  | "complete"
+  | "skipped"
+  | "error"
+  | "cancelled";
 export type BackgroundActionEventType =
   | "started"
   | "label"
@@ -104,8 +116,13 @@ export interface BackgroundActionPersistenceKey {
 }
 
 export interface BackgroundActionPersistence {
-  load(key: BackgroundActionPersistenceKey): Promise<BackgroundActionPersistedState | null | undefined>;
-  save(key: BackgroundActionPersistenceKey, state: BackgroundActionPersistedState): Promise<void>;
+  load(
+    key: BackgroundActionPersistenceKey,
+  ): Promise<BackgroundActionPersistedState | null | undefined>;
+  save(
+    key: BackgroundActionPersistenceKey,
+    state: BackgroundActionPersistedState,
+  ): Promise<void>;
   clear(key: BackgroundActionPersistenceKey): Promise<void>;
 }
 
@@ -119,18 +136,31 @@ export type BackgroundActionTaskRunResult =
 
 export interface BackgroundActionTaskRunOptions {
   statuses?: BackgroundActionTaskStatus[];
-  progressLabel?: (task: BackgroundActionTask, index: number, total: number) => string;
+  progressLabel?: (
+    task: BackgroundActionTask,
+    index: number,
+    total: number,
+  ) => string;
   yieldEveryMs?: number | false;
 }
 
 export interface BackgroundActionTasksApi {
   getAll(): BackgroundActionTask[];
   getPending(): BackgroundActionTask[];
-  update(id: string, patch: Partial<BackgroundActionTask>, persistImmediately?: boolean): void;
+  update(
+    id: string,
+    patch: Partial<BackgroundActionTask>,
+    persistImmediately?: boolean,
+  ): void;
   runEach(
     handler: (
       task: BackgroundActionTask,
-      context: { index: number; total: number; pendingIndex: number; pendingTotal: number },
+      context: {
+        index: number;
+        total: number;
+        pendingIndex: number;
+        pendingTotal: number;
+      },
     ) => BackgroundActionTaskRunResult | Promise<BackgroundActionTaskRunResult>,
     options?: BackgroundActionTaskRunOptions,
   ): Promise<BackgroundActionTask[]>;
@@ -179,19 +209,27 @@ export interface BackgroundActionLifecycle {
   setActionLabel(label: string): void;
   setActionStatus(status: BackgroundActionStatus, statusText?: string): void;
   setActionError(error: unknown, statusText?: string): void;
-  appendActionLog(message: string, level?: BackgroundActionLogLevel, data?: unknown): void;
+  appendActionLog(
+    message: string,
+    level?: BackgroundActionLogLevel,
+    data?: unknown,
+  ): void;
   setActionProgress(progress: BackgroundActionProgressInput | null): void;
   setResult(result: unknown): void;
   setResultsAvailable(available: boolean): void;
 }
 
-export interface BackgroundActionRunContext extends BackgroundActionContext, BackgroundActionLifecycle {
+export interface BackgroundActionRunContext
+  extends BackgroundActionContext,
+    BackgroundActionLifecycle {
   signal: AbortSignal;
+  prepareData?: unknown;
   plan?: BackgroundActionPlan;
   tasks: BackgroundActionTasksApi;
 }
 
-export interface BackgroundActionRenderContext extends BackgroundActionSystemContext {
+export interface BackgroundActionRenderContext
+  extends BackgroundActionSystemContext {
   definition: BackgroundActionDefinition;
 }
 
@@ -204,7 +242,13 @@ export interface BackgroundActionDefinition {
   resourceTypes?: string[];
   resumable?: boolean;
   supports?: (ctx: BackgroundActionContext) => boolean;
-  prepare?: (ctx: BackgroundActionRunContext) => BackgroundActionPlan | boolean | void | Promise<BackgroundActionPlan | boolean | void>;
+  prepare?: (
+    ctx: BackgroundActionRunContext,
+  ) =>
+    | BackgroundActionPlan
+    | boolean
+    | void
+    | Promise<BackgroundActionPlan | boolean | void>;
   run: (ctx: BackgroundActionRunContext) => unknown | Promise<unknown>;
   render?: (ctx: BackgroundActionRenderContext) => ReactNode | null;
   onResults?: (ctx: BackgroundActionContext) => unknown | Promise<unknown>;
