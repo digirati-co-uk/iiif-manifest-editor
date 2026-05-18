@@ -1,8 +1,11 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider } from "@manifest-editor/shell";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+} from "@manifest-editor/shell";
 import { useCanvas } from "react-iiif-vault";
-import { getGridStats } from "../helpers";
+import { isEditableExhibitionCanvas } from "../helpers";
 
 export const exhibitionSummaryEdtior: EditorDefinition = {
   id: "@exhibition/summary-editor",
@@ -10,32 +13,31 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
     edit: true,
     properties: ["summary"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) => {
-      const full = vault.get(resource);
-      const stats = getGridStats(full.behavior);
-
-      if (full.type === "Canvas" && !stats.isInfo) {
-        return true;
-      }
-      return false;
-    },
+    custom: ({ resource }, vault) =>
+      isEditableExhibitionCanvas(resource, vault),
   },
   label: "Summary",
-  component: () => <ExhibitionRightPanel />,
+  component: () => <ExhibitionSummaryPanel />,
 };
 
-function ExhibitionRightPanel() {
+export function ExhibitionSummaryPanel() {
+  return (
+    <Sidebar>
+      <SidebarContent padding>
+        <ExhibitionSummaryContent />
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+export function ExhibitionSummaryContent() {
   const canvas = useCanvas();
   if (!canvas) return null;
 
   return (
-    <Sidebar>
-      <SidebarContent padding>
-        <ResourceEditingProvider resource={canvas}>
-          <LanguageMapEditor dispatchType="label" />
-          <LanguageMapEditor dispatchType="summary" />
-        </ResourceEditingProvider>
-      </SidebarContent>
-    </Sidebar>
+    <ResourceEditingProvider resource={canvas}>
+      <LanguageMapEditor dispatchType="label" />
+      <LanguageMapEditor dispatchType="summary" />
+    </ResourceEditingProvider>
   );
 }

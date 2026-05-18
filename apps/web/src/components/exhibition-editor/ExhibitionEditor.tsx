@@ -87,7 +87,10 @@ const config: Partial<Config> = {
   ],
 };
 
-export default function ExhibitionEditor(props: { id: string }) {
+export default function ExhibitionEditor(props: {
+  id: string;
+  layoutMode?: "default" | "focused";
+}) {
   return (
     <>
       <BrowserEditor
@@ -96,6 +99,7 @@ export default function ExhibitionEditor(props: { id: string }) {
         config={config}
         presetPath="exhibition"
         presetName="Exhibitions"
+        layoutMode={props.layoutMode}
       />
       <OnboardingTour id="exhibition-editor" steps={exhibitionOnboarding} />
     </>

@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
+import DarkIcon from "@manifest-editor/ui/icons/DarkIcon";
+import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -45,9 +47,18 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { VaultProvider } from "react-iiif-vault";
-import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
+import {
+  useBrowserGlobalPluginConfig,
+  useBrowserProject,
+} from "./browser-state";
 
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
@@ -135,6 +146,28 @@ export interface BrowserEditorProps {
   plugins?: Array<PluginModule | MappedPlugin>;
 }
 
+type ExhibitionTheme = "light" | "dark";
+
+const exhibitionThemeStorageKey = "exhibition-editor-theme";
+const exhibitionHeaderStyles = {
+  light: "bg-[#26212a]",
+  dark: "bg-[#18161d]",
+} satisfies Record<ExhibitionTheme, string>;
+
+function getInitialExhibitionTheme(): ExhibitionTheme {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  return window.localStorage.getItem(exhibitionThemeStorageKey) === "dark"
+    ? "dark"
+    : "light";
+}
+
+function getNextExhibitionTheme(theme: ExhibitionTheme): ExhibitionTheme {
+  return theme === "dark" ? "light" : "dark";
+}
+
 export default function BrowserEditor({
   id,
   config: browserConfig,
@@ -162,19 +195,41 @@ export default function BrowserEditor({
     projectConfig,
     saveProjectConfig,
   } = useBrowserProject(id);
-  const { globalPluginConfig, isGlobalPluginConfigLoading, saveGlobalPluginConfig } = useBrowserGlobalPluginConfig();
+  const {
+    globalPluginConfig,
+    isGlobalPluginConfigLoading,
+    saveGlobalPluginConfig,
+  } = useBrowserGlobalPluginConfig();
   const customConfig = browserConfig || {};
   const [allowAnyway, setAllowAnyway] = useState(false);
+  const isFocusedExhibition =
+    layoutMode === "focused" && presetPath === "exhibition";
+  const [exhibitionTheme, setExhibitionTheme] = useState<ExhibitionTheme>(
+    getInitialExhibitionTheme,
+  );
   const thumbnailHelper = useMemo(() => {
     return createThumbnailHelper(vault);
   }, [vault]);
+
+  useEffect(() => {
+    if (isFocusedExhibition) {
+      window.localStorage.setItem(exhibitionThemeStorageKey, exhibitionTheme);
+    }
+  }, [exhibitionTheme, isFocusedExhibition]);
+
+  const toggleExhibitionTheme = useCallback(() => {
+    setExhibitionTheme(getNextExhibitionTheme);
+  }, []);
 
   const searchParams = useSearchParams();
 
   const selectedCanvasId = searchParams.get("selected-canvas-id") || undefined;
   const selectedId = searchParams.get("selected-id");
   const selectedType = searchParams.get("selected-type");
-  const editing = selectedId && selectedType ? { id: selectedId, type: selectedType } : undefined;
+  const editing =
+    selectedId && selectedType
+      ? { id: selectedId, type: selectedType }
+      : undefined;
   const selectedTab = searchParams.get("selected-tab") || undefined;
 
   useLayoutEffect(() => {
@@ -190,7 +245,11 @@ export default function BrowserEditor({
     if (project) {
       const fullResource = vault.get(project.resource);
       if (!fullResource) return;
-      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(fullResource, { width: 256, height: 256 }, false);
+      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
+        fullResource,
+        { width: 256, height: 256 },
+        false,
+      );
       const resource = {
         ...project.resource,
         label: fullResource.label,
@@ -200,7 +259,12 @@ export default function BrowserEditor({
     }
   }, [project, vault]);
 
-  useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
+  useSaveVault(
+    vault,
+    saveVault,
+    5000,
+    vaultReady && !!project && (!wasAlreadyOpen || allowAnyway),
+  );
 
   useEffect(() => {
     if (wasAlreadyOpen && !allowAnyway) {
@@ -242,10 +306,26 @@ export default function BrowserEditor({
 
   const header = (
     <>
-      <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
+      <header
+        className={
+          isFocusedExhibition
+            ? `h-[64px] flex w-full gap-12 px-6 items-center border-b border-white/10 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : "h-[64px] flex w-full gap-12 px-4 items-center shadow"
+        }
+      >
         <Link href="/" className="flex justify-start items-center gap-2">
-          <ManifestEditorLogo />
-          {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
+          {isFocusedExhibition ? (
+            <span className="text-xl font-bold tracking-normal text-white">
+              Exhibition Studio
+            </span>
+          ) : (
+            <>
+              <ManifestEditorLogo />
+              {presetName ? (
+                <span className="text-lg text-gray-600">/ {presetName}</span>
+              ) : null}
+            </>
+          )}
         </Link>
         <div className="flex-1" />
         <div className="flex items-center justify-center gap-5">
@@ -254,16 +334,35 @@ export default function BrowserEditor({
           <div className="flex items-center gap-2">
             <ShareButton />
             <BackgroundActionsMenu />
-            <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
+            {isFocusedExhibition ? (
+              <button
+                type="button"
+                className="h-9 rounded-md border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+                aria-pressed={exhibitionTheme === "dark"}
+                aria-label={`Switch to ${exhibitionTheme === "dark" ? "light" : "dark"} mode`}
+                onClick={toggleExhibitionTheme}
+              >
+                {exhibitionTheme === "dark" ? <LightIcon /> : <DarkIcon />}
+              </button>
+            ) : null}
+            <PreviewButton
+              downloadEnabled
+              fileName={project?.extraData.fileName}
+            />
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt id={id} alreadyExhibition={presetPath === "exhibition"} />
+      <MaybeExhibitionPrompt
+        id={id}
+        alreadyExhibition={presetPath === "exhibition"}
+      />
     </>
   );
 
-  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>Loading...</div>;
-  if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
+  if (isProjectLoading || isGlobalPluginConfigLoading)
+    return <div>Loading...</div>;
+  if (isProjectError || !project)
+    return <div>Error: {projectError?.message}</div>;
 
   // @todo test without this option and see if its needed
   if (wasAlreadyOpen && !allowAnyway) {
@@ -299,18 +398,44 @@ export default function BrowserEditor({
   }
 
   return (
-    <div className="flex flex-1 h-[100vh] w-full">
+    <div
+      className="flex flex-1 h-[100vh] w-full"
+      data-exhibition-theme={isFocusedExhibition ? exhibitionTheme : undefined}
+    >
       <VaultProvider vault={vault}>
         <PluginProvider
           plugins={plugins}
           globalPluginConfig={globalPluginConfig}
           saveGlobalPluginConfig={saveGlobalPluginConfig}
         >
-          <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
+          <AppProvider
+            appId="manifest-editor"
+            definition={manifestEditor}
+            instanceId={id}
+          >
             <VaultProvider vault={vault}>
-              <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
-                <Layout header={header} layoutMode={layoutMode} />
-                <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
+              <ShellProvider
+                resource={project.resource}
+                config={mergedConfig}
+                saveConfig={saveProjectConfig}
+              >
+                <Layout
+                  key={
+                    isFocusedExhibition
+                      ? `focused-exhibition-${exhibitionTheme}`
+                      : "editor-layout"
+                  }
+                  header={header}
+                  layoutMode={layoutMode}
+                  className={
+                    isFocusedExhibition ? "exhibition-focused" : undefined
+                  }
+                />
+                <FromQueryString
+                  editing={editing}
+                  selectedTab={selectedTab}
+                  canvasId={selectedCanvasId}
+                />
               </ShellProvider>
             </VaultProvider>
           </AppProvider>
@@ -387,7 +512,14 @@ function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function ShareIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="#5f6368" viewBox="0 -960 960 960" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="#5f6368"
+      viewBox="0 -960 960 960"
+      {...props}
+    >
       <path
         d="M720-80q-50 0-85-35t-35-85q0-7 1-14.5t3-13.5L322-392q-17 15-38 23.5t-44 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q23 0 44 8.5t38 23.5l282-164q-2-6-3-13.5t-1-14.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-23 0-44-8.5T638-672L356-508q2 6 3 13.5t1 14.5q0 7-1 14.5t-3 13.5l282 164q17-15 38-23.5t44-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-640q17 0 28.5-11.5T760-760q0-17-11.5-28.5T720-800q-17 0-28.5 11.5T680-760q0 17 11.5 28.5T720-720ZM240-440q17 0 28.5-11.5T280-480q0-17-11.5-28.5T240-520q-17 0-28.5 11.5T200-480q0 17 11.5 28.5T240-440Zm480 280q17 0 28.5-11.5T760-200q0-17-11.5-28.5T720-240q-17 0-28.5 11.5T680-200q0 17 11.5 28.5T720-160Zm0-600ZM240-480Zm480 280Z"
         fill="currentColor"
@@ -452,7 +584,13 @@ function createShareLink({
   return baseUrl.toString();
 }
 
-function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?: string }) {
+function SharePanel({
+  projectId,
+  presetPath,
+}: {
+  projectId: string;
+  presetPath?: string;
+}) {
   const { actions } = usePreviewContext();
   const resource = useEditingResource();
   const appResource = useAppResource();
@@ -467,7 +605,10 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
   const { includeCurrentSelectedItem, includeCurrentTab } = options;
 
   const selected = resource ? resource.resource.source : undefined;
-  const currentTab = rightPanel.current === "@manifest-editor/editor" ? rightPanel.state.currentTab : undefined;
+  const currentTab =
+    rightPanel.current === "@manifest-editor/editor"
+      ? rightPanel.state.currentTab
+      : undefined;
 
   const { data } = useQuery({
     queryKey: ["share", { projectId }],
@@ -505,7 +646,12 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
     link ? (
       <div>
         <div className="flex gap-2 my-4">
-          <input className="flex-1 p-2 border-b bg-gray-50" type="text" value={link} readOnly />
+          <input
+            className="flex-1 p-2 border-b bg-gray-50"
+            type="text"
+            value={link}
+            readOnly
+          />
           <button
             className="bg-me-primary-500 text-white px-5 rounded-md"
             onClick={() => {
@@ -523,8 +669,9 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
-        Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
-        continue collaborating on this manifest
+        Share your workspace link with a colleague, enabling them to preview it,
+        make a copy, or import any changes to continue collaborating on this
+        manifest
       </p>
       {renderLink(
         data
@@ -535,7 +682,10 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
               selected: includeCurrentSelectedItem ? selected : undefined,
               tab: includeCurrentTab ? currentTab : undefined,
               presetPath,
-              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
+              canvasId:
+                canvas && selected && selected.type !== "Canvas"
+                  ? canvas.resource.source.id
+                  : undefined,
             })
           : "",
       )}

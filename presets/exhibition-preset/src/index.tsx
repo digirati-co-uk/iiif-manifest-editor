@@ -19,6 +19,7 @@ import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
+import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export const exhibitionEditorPreset = extendApp(
@@ -33,6 +34,7 @@ export const exhibitionEditorPreset = extendApp(
     config: {
       editorConfig: {
         Canvas: {
+          singleTab: "@exhibition/workbench-editor",
           hideTabs: [
             "@manifest-editor/overview",
             "@manifest-editor/technical-properties",
@@ -69,6 +71,7 @@ export const exhibitionEditorPreset = extendApp(
     ],
     editors: [
       //
+      exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,

@@ -7,10 +7,15 @@ import {
   PaintingAnnotationList,
   createAppActions,
 } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useEditingResource, useEditor } from "@manifest-editor/shell";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useEditingResource,
+  useEditor,
+} from "@manifest-editor/shell";
 import { AnnotationPageContext, useCanvas } from "react-iiif-vault";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
-import { getGridStats, isExhibitionItem } from "../helpers";
+import { isEditableExhibitionCanvas, isExhibitionItem } from "../helpers";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 
 export const exhibitionCanvasEditor: EditorDefinition = {
@@ -19,21 +24,24 @@ export const exhibitionCanvasEditor: EditorDefinition = {
     edit: true,
     properties: ["label", "summary"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) => {
-      const full = vault.get(resource);
-      const stats = getGridStats(full.behavior);
-
-      if (full.type === "Canvas" && !stats.isInfo) {
-        return true;
-      }
-      return false;
-    },
+    custom: ({ resource }, vault) =>
+      isEditableExhibitionCanvas(resource, vault),
   },
   label: "Exhibition",
-  component: () => <ExhibitionRightPanel />,
+  component: () => <ExhibitionCanvasAdvancedPanel />,
 };
 
-function ExhibitionRightPanel() {
+export function ExhibitionCanvasAdvancedPanel() {
+  return (
+    <Sidebar>
+      <SidebarContent padding>
+        <ExhibitionCanvasAdvancedContent />
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+export function ExhibitionCanvasAdvancedContent() {
   const canvas = useCanvas();
   const resource = useEditingResource();
   const { structural, descriptive } = useEditor();
@@ -44,34 +52,32 @@ function ExhibitionRightPanel() {
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
 
-  if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
+  if (!canvas || !page || !resource)
+    return <div className="p-8">Canvas, page, or resource not found</div>;
 
   return (
-    <Sidebar>
-      <SidebarContent padding>
-        <ResourceEditingProvider resource={canvas}>
-          {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
+    <ResourceEditingProvider resource={canvas}>
+      {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-          <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+      <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+      <LanguageMapEditor dispatchType="summary" />
 
-          <LinkingPropertyList
-            containerId={thumbnail.containerId()}
-            label="Thumbnail"
-            property="thumbnail"
-            items={thumbnail.get()}
-            singleMode
-            reorder={(ctx) => thumbnail.reorder(ctx.startIndex, ctx.endIndex)}
-            createActions={createAppActions(thumbnail)}
-            creationType="ContentResource"
-            emptyLabel="No thumbnail"
-            parent={resource?.resource}
-          />
+      <LinkingPropertyList
+        containerId={thumbnail.containerId()}
+        label="Thumbnail"
+        property="thumbnail"
+        items={thumbnail.get()}
+        singleMode
+        reorder={(ctx) => thumbnail.reorder(ctx.startIndex, ctx.endIndex)}
+        createActions={createAppActions(thumbnail)}
+        creationType="ContentResource"
+        emptyLabel="No thumbnail"
+        parent={resource?.resource}
+      />
 
-          <AnnotationPageContext annotationPage={page.id}>
-            <PaintingAnnotationList createFilter="image" />
-          </AnnotationPageContext>
-        </ResourceEditingProvider>
-      </SidebarContent>
-    </Sidebar>
+      <AnnotationPageContext annotationPage={page.id}>
+        <PaintingAnnotationList createFilter="image" />
+      </AnnotationPageContext>
+    </ResourceEditingProvider>
   );
 }

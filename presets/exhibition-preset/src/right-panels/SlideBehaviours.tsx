@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   BehaviorEditor,
   type BehaviorEditorProps,
@@ -9,6 +9,37 @@ import {
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
+
+type EditingMode = "simple" | "advanced";
+type LayoutPreset = "image-text" | "image-only";
+type TextPosition = "left" | "right" | "bottom";
+type DisplaySize = "compact" | "standard" | "large";
+
+const textPositions: TextPosition[] = ["left", "right", "bottom"];
+const layoutBehaviors = new Set(["left", "right", "bottom", "top", "image"]);
+const sizeBehaviorPrefixes = ["w-", "h-"];
+const layoutPresetOptions: Array<{ value: LayoutPreset; label: string }> = [
+  { value: "image-text", label: "Image with text" },
+  { value: "image-only", label: "Image only" },
+];
+const simpleLayoutColours = {
+  primary: "#b84c74",
+  fieldBorder: "#dcd5ce",
+  fieldBackground: "#f8f6f3",
+  text: "#25211f",
+  muted: "#6a625c",
+  buttonText: "#ffffff",
+  inactiveButtonText: "#332f2c",
+};
+const displaySizeOptions: Array<{
+  value: DisplaySize;
+  label: string;
+  behaviors: [string, string];
+}> = [
+  { value: "compact", label: "Compact slide", behaviors: ["w-6", "h-4"] },
+  { value: "standard", label: "Standard slide", behaviors: ["w-8", "h-6"] },
+  { value: "large", label: "Large feature slide", behaviors: ["w-12", "h-8"] },
+];
 
 export const customBehaviourEditor: EditorDefinition = {
   component: () => <SlideBehavioursPanel />,
@@ -81,7 +112,9 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
   {
     id: "size",
-    component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
+    component: (existing, setBehaviors) => (
+      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
+    ),
     label: { en: ["Size"] },
     type: "custom",
     initialOpen: true,
@@ -89,9 +122,17 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
 ];
 
-export function RoundGridIcon(props: { index: number } & React.SVGProps<SVGSVGElement>) {
+export function RoundGridIcon(
+  props: { index: number } & React.SVGProps<SVGSVGElement>,
+) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill={props.index === 0 ? "currentColor" : "none"}
@@ -136,7 +177,21 @@ function parseBehaviors(items: string[]) {
   };
 }
 
-function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
+function removeLayoutBehaviors(behavior: string[]) {
+  return behavior.filter(
+    (item) =>
+      !layoutBehaviors.has(item) &&
+      !sizeBehaviorPrefixes.some((prefix) => item.startsWith(prefix)),
+  );
+}
+
+function EditSize({
+  behaviors,
+  setBehaviors,
+}: {
+  behaviors: string[];
+  setBehaviors: (behaviors: string[]) => void;
+}) {
   const { width, height } = parseBehaviors(behaviors);
   const [hoverPosition, setHoverPosition] = useState({ x: -1, y: -1 });
 
@@ -182,53 +237,222 @@ function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehavio
   });
 
   return (
-    <div className="grid grid-cols-12 grid-rows-12 gap-1" onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}>
+    <div
+      className="grid grid-cols-12 grid-rows-12 gap-1"
+      onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}
+    >
       {cells}
     </div>
   );
 }
 
-function SlideBehavioursPanel() {
+export function SlideBehavioursPanel() {
+  return (
+    <Sidebar>
+      <SidebarContent>
+        <SlideBehavioursContent mode="advanced" />
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+export function SlideBehavioursContent({
+  mode = "advanced",
+}: {
+  mode?: EditingMode;
+}) {
   const canvas = useInStack("Canvas");
   const editor = useEditor();
   const { width, height } = editor.technical;
 
   if (!canvas || editor.technical.type !== "Canvas") {
+    return <div className="p-4">Please select canvas</div>;
+  }
+
+  if (mode === "simple") {
     return (
-      <Sidebar>
-        <SidebarHeader title="Slide behaviors" />
-        <div>Please select canvas</div>
-      </Sidebar>
+      <SimpleSlideLayoutEditor
+        behavior={editor.technical.behavior.get() || []}
+        onChange={(v) => {
+          editor.technical.behavior.set(v);
+        }}
+      />
     );
   }
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <div className="px-2">
-          <InputContainer $wide>
-            <DimensionsTriplet
-              widthId={width.containerId()}
-              width={width.get() || 0}
-              changeWidth={(v) => width.set(v)}
-              heightId={height.containerId()}
-              height={height.get() || 0}
-              changeHeight={(v) => height.set(v)}
-            />
-            <div>
-              <AspectRatioWarning />
-            </div>
-          </InputContainer>
-        </div>
+    <>
+      <div className="px-2">
+        <InputContainer $wide>
+          <DimensionsTriplet
+            widthId={width.containerId()}
+            width={width.get() || 0}
+            changeWidth={(v) => width.set(v)}
+            heightId={height.containerId()}
+            height={height.get() || 0}
+            changeHeight={(v) => height.set(v)}
+          />
+          <div>
+            <AspectRatioWarning />
+          </div>
+        </InputContainer>
+      </div>
 
-        <BehaviorEditor
-          behavior={editor.technical.behavior.get() || []}
-          onChange={(v) => {
-            editor.technical.behavior.set(v);
-          }}
-          configs={exhibitionConfigs}
-        />
-      </SidebarContent>
-    </Sidebar>
+      <BehaviorEditor
+        behavior={editor.technical.behavior.get() || []}
+        onChange={(v) => {
+          editor.technical.behavior.set(v);
+        }}
+        configs={exhibitionConfigs}
+      />
+    </>
   );
+}
+
+function SimpleSlideLayoutEditor({
+  behavior,
+  onChange,
+}: {
+  behavior: string[];
+  onChange: (newValue: string[]) => void;
+}) {
+  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("image-text");
+  const [displaySize, setDisplaySize] = useState<DisplaySize>(
+    getDisplaySize(behavior),
+  );
+  const [textPosition, setTextPosition] = useState<TextPosition>(
+    getTextPosition(behavior),
+  );
+
+  const applyLayout = () => {
+    const size = displaySizeOptions.find(
+      (option) => option.value === displaySize,
+    );
+    const next = removeLayoutBehaviors(behavior);
+
+    next.push(layoutPreset === "image-text" ? textPosition : "image");
+
+    if (size) {
+      next.push(...size.behaviors);
+    }
+
+    onChange(next);
+  };
+
+  return (
+    <div className="flex flex-col gap-8">
+      <SimpleField>
+        <SimpleFieldLabel>Layout preset</SimpleFieldLabel>
+        <select
+          className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
+          style={{
+            backgroundColor: simpleLayoutColours.fieldBackground,
+            borderColor: simpleLayoutColours.fieldBorder,
+            color: simpleLayoutColours.text,
+          }}
+          value={layoutPreset}
+          onChange={(e) =>
+            setLayoutPreset(e.currentTarget.value as LayoutPreset)
+          }
+        >
+          {layoutPresetOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </SimpleField>
+
+      <SimpleField>
+        <SimpleFieldLabel>Display size</SimpleFieldLabel>
+        <select
+          className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
+          style={{
+            backgroundColor: simpleLayoutColours.fieldBackground,
+            borderColor: simpleLayoutColours.fieldBorder,
+            color: simpleLayoutColours.text,
+          }}
+          value={displaySize}
+          onChange={(e) => setDisplaySize(e.currentTarget.value as DisplaySize)}
+        >
+          {displaySizeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </SimpleField>
+
+      {layoutPreset === "image-text" ? (
+        <SimpleField>
+          <SimpleFieldLabel>Text position</SimpleFieldLabel>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            {textPositions.map((position) => {
+              const selected = textPosition === position;
+
+              return (
+                <button
+                  key={position}
+                  type="button"
+                  className="rounded-md border px-3 py-3 text-sm font-semibold capitalize transition-colors"
+                  style={{
+                    backgroundColor: selected
+                      ? simpleLayoutColours.primary
+                      : simpleLayoutColours.buttonText,
+                    borderColor: selected
+                      ? simpleLayoutColours.primary
+                      : simpleLayoutColours.fieldBorder,
+                    color: selected
+                      ? simpleLayoutColours.buttonText
+                      : simpleLayoutColours.inactiveButtonText,
+                  }}
+                  onClick={() => setTextPosition(position)}
+                >
+                  {position}
+                </button>
+              );
+            })}
+          </div>
+        </SimpleField>
+      ) : null}
+
+      <button
+        type="button"
+        className="mt-4 w-fit rounded-md px-7 py-3 text-sm font-semibold text-white"
+        style={{ backgroundColor: simpleLayoutColours.primary }}
+        onClick={applyLayout}
+      >
+        Apply layout
+      </button>
+    </div>
+  );
+}
+
+function SimpleField({ children }: { children: React.ReactNode }) {
+  return <div>{children}</div>;
+}
+
+function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="text-sm font-semibold"
+      style={{ color: simpleLayoutColours.muted }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function getTextPosition(behavior: string[]): TextPosition {
+  if (behavior.includes("left")) return "left";
+  if (behavior.includes("bottom")) return "bottom";
+  return "right";
+}
+
+function getDisplaySize(behavior: string[]): DisplaySize {
+  const { width, height } = parseBehaviors(behavior);
+
+  if (width >= 10 || height >= 8) return "large";
+  if (width >= 8 || height >= 6) return "standard";
+  return "compact";
 }

@@ -1,4 +1,5 @@
 import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import type { Vault } from "@iiif/helpers/vault";
 
 const heightMap = {
   "h-1": "lg:min-h-[100px] row-span-1",
@@ -105,6 +106,16 @@ export function getGridStats(behavior?: string[]) {
     isInfo,
     isImage,
   };
+}
+
+export function isEditableExhibitionCanvas(
+  resource: { id: string; type: string },
+  vault: Vault,
+) {
+  const full = vault.get(resource);
+  const stats = getGridStats(full.behavior);
+
+  return full.type === "Canvas" && !stats.isInfo;
 }
 
 export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
