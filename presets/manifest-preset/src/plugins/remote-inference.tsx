@@ -36,11 +36,16 @@ export default {
 
 export const REMOTE_INFERENCE_ACTION_ID =
   "@manifest-editor/remote-inference/action";
+export const STRUCTURED_OUTPUT_ACTION_ID =
+  "@manifest-editor/remote-inference/structured-output";
 const REMOTE_INFERENCE_ID_SEGMENT = "/remote-inference/";
 const SERVER_URL_STORAGE_KEY = "@manifest-editor/remote-inference/serverUrl";
 const API_KEY_STORAGE_KEY = "@manifest-editor/remote-inference/apiKey";
 const MODEL_STORAGE_KEY = "@manifest-editor/remote-inference/model";
+const STRUCTURED_FIELDS_STORAGE_KEY =
+  "@manifest-editor/remote-inference/structuredFields";
 const DEFAULT_SERVER_URL = "http://localhost:8000";
+const STRUCTURED_OUTPUT_MODEL = "qwen-structure";
 
 const REMOTE_INFERENCE_MODELS = [
   { value: "palette", label: "Palette" },
@@ -52,6 +57,9 @@ const REMOTE_INFERENCE_MODELS = [
 ] as const;
 
 type RemoteInferenceModel = (typeof REMOTE_INFERENCE_MODELS)[number]["value"];
+type RemoteInferenceResultModel =
+  | RemoteInferenceModel
+  | typeof STRUCTURED_OUTPUT_MODEL;
 
 const DEFAULT_MODEL: RemoteInferenceModel = "glm-ocr";
 
@@ -129,6 +137,25 @@ type RemoteInferenceRunOptions = {
   skipAnnotatedCanvases?: boolean;
 };
 
+type CanvasSelectionOptions = {
+  scope: "all" | "tag" | "selected";
+  tagKey?: string;
+};
+
+type StructuredOutputField = {
+  id: string;
+  label: string;
+  description: string;
+};
+
+type StructuredOutputRunOptions = {
+  serverUrl: string;
+  apiKey?: string;
+  scope: "all" | "tag" | "selected";
+  tagKey?: string;
+  fields: StructuredOutputField[];
+};
+
 function getDefaultRunOptions(): RemoteInferenceRunOptions {
   const storedUrl =
     typeof localStorage !== "undefined"
@@ -151,6 +178,93 @@ function getDefaultRunOptions(): RemoteInferenceRunOptions {
   };
 }
 
+function getStoredServerUrl() {
+  return typeof localStorage !== "undefined"
+    ? localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL
+    : DEFAULT_SERVER_URL;
+}
+
+function getStoredApiKey() {
+  return typeof localStorage !== "undefined"
+    ? localStorage.getItem(API_KEY_STORAGE_KEY) || ""
+    : "";
+}
+
+function createStructuredField(
+  label = "",
+  description = "",
+): StructuredOutputField {
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    label,
+    description,
+  };
+}
+
+function parseStoredStructuredFields(): StructuredOutputField[] {
+  if (typeof localStorage === "undefined") return [createStructuredField()];
+
+  try {
+    const raw = localStorage.getItem(STRUCTURED_FIELDS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (!Array.isArray(parsed)) return [createStructuredField()];
+    const fields = parsed
+      .map((field: any) =>
+        createStructuredField(
+          typeof field?.label === "string" ? field.label : "",
+          typeof field?.description === "string" ? field.description : "",
+        ),
+      )
+      .filter((field) => field.label.trim() || field.description.trim());
+    return fields.length ? fields : [createStructuredField()];
+  } catch {
+    return [createStructuredField()];
+  }
+}
+
+function getDefaultStructuredOutputOptions(): StructuredOutputRunOptions {
+  return {
+    serverUrl: getStoredServerUrl(),
+    apiKey: getStoredApiKey(),
+    scope: "all",
+    fields: parseStoredStructuredFields(),
+  };
+}
+
+function serialiseStructuredFields(fields: StructuredOutputField[]) {
+  return fields
+    .map((field) => ({
+      label: field.label.trim(),
+      description: field.description.trim(),
+    }))
+    .filter((field) => field.label && field.description);
+}
+
+function structuredFieldsToConfig(fields: StructuredOutputField[]) {
+  return Object.fromEntries(
+    serialiseStructuredFields(fields).map((field) => [
+      field.label,
+      field.description,
+    ]),
+  );
+}
+
+function getStructuredFieldsResult(results: any): Record<string, string> {
+  const fields = results?.fields;
+  return fields && typeof fields === "object" && !Array.isArray(fields)
+    ? fields
+    : {};
+}
+
+function getStructuredOutputAnnotationPages(responseCanvas: any): any[] {
+  const pages: any[] = responseCanvas?.annotations || [];
+  return pages.filter((page) =>
+    typeof page?.id === "string"
+      ? page.id.includes("/annotations/qwen-structure/")
+      : false,
+  );
+}
+
 function parseRemoteInferenceModel(
   value: string | null | undefined,
 ): RemoteInferenceModel | null {
@@ -163,10 +277,11 @@ function parseRemoteInferenceModel(
 
 type RemoteInferenceCanvasResult = {
   canvasId: string;
-  model: RemoteInferenceModel;
+  model: RemoteInferenceResultModel;
   annotations: number;
   durationMs: number;
   palette?: string[];
+  fields?: Record<string, string>;
   sourceImage?: string;
   message?: string;
 };
@@ -197,6 +312,11 @@ type RemoteInferencePlanData = {
 
 type RemoteInferencePrepareData = {
   scope?: "selected";
+};
+
+type StructuredOutputPlanData = {
+  options: StructuredOutputRunOptions;
+  total: number;
 };
 
 type NormalisedRemoteInferenceBody = {
@@ -249,21 +369,24 @@ function getDefaultAnnotationPage(
 
 function getRemoteInferenceAnnotationId(
   canvasId: string,
-  model: RemoteInferenceModel,
+  model: RemoteInferenceResultModel,
   pageIndex: number,
   index: number,
+  runId?: string,
 ) {
-  return `${trimTrailingSlash(canvasId)}${REMOTE_INFERENCE_ID_SEGMENT}${model}/${pageIndex + 1}/${index + 1}/annotation`;
+  const runSegment = runId ? `/${runId}` : "";
+  return `${trimTrailingSlash(canvasId)}${REMOTE_INFERENCE_ID_SEGMENT}${model}${runSegment}/${pageIndex + 1}/${index + 1}/annotation`;
 }
 
 function getRemoteInferenceBodyId(
   canvasId: string,
-  model: RemoteInferenceModel,
+  model: RemoteInferenceResultModel,
   pageIndex: number,
   annotationIndex: number,
   bodyIndex: number,
+  runId?: string,
 ) {
-  return `${getRemoteInferenceAnnotationId(canvasId, model, pageIndex, annotationIndex)}/body/${bodyIndex + 1}`;
+  return `${getRemoteInferenceAnnotationId(canvasId, model, pageIndex, annotationIndex, runId)}/body/${bodyIndex + 1}`;
 }
 
 function getCanvasAnnotationPageRefs(
@@ -278,9 +401,10 @@ function getCanvasAnnotationPageRefs(
 function normaliseBodies(
   item: any,
   canvasId: string,
-  model: RemoteInferenceModel,
+  model: RemoteInferenceResultModel,
   pageIndex: number,
   annotationIndex: number,
+  runId?: string,
 ): NormalisedRemoteInferenceBody[] {
   const bodies = Array.isArray(item?.body)
     ? item.body
@@ -306,6 +430,7 @@ function normaliseBodies(
             pageIndex,
             annotationIndex,
             bodyIndex,
+            runId,
           );
     return {
       id,
@@ -328,8 +453,9 @@ function normaliseBodies(
 function writeRemoteInferenceAnnotations(
   ctx: BackgroundActionRunContext,
   canvasId: string,
-  model: RemoteInferenceModel,
+  model: RemoteInferenceResultModel,
   responseAnnotationPages: any[],
+  options: { mode?: "replace" | "append"; runId?: string } = {},
 ): number {
   const canvas = ctx.vault.get({ id: canvasId, type: "Canvas" } as any) as any;
   if (!canvas?.id) return 0;
@@ -346,6 +472,7 @@ function writeRemoteInferenceAnnotations(
       isLegacyRemoteInferenceId(canvasId, item?.id),
   );
   const actions: any[] = [];
+  const mode = options.mode || "replace";
 
   if (!page) {
     actions.push(
@@ -375,29 +502,11 @@ function writeRemoteInferenceAnnotations(
     );
   }
 
-  for (const item of previousRemoteItems) {
-    actions.push(
-      removeReference({
-        id: pageId,
-        type: "AnnotationPage",
-        key: "items",
-        reference: {
-          id: item.id,
-          type: "Annotation",
-        },
-      }),
-    );
-  }
-
-  for (const existingPage of existingPages) {
-    if (existingPage?.id === pageId) continue;
-    const remoteItems: any[] = (existingPage?.items || []).filter((item: any) =>
-      isRemoteInferenceId(item?.id),
-    );
-    for (const item of remoteItems) {
+  if (mode === "replace") {
+    for (const item of previousRemoteItems) {
       actions.push(
         removeReference({
-          id: existingPage.id,
+          id: pageId,
           type: "AnnotationPage",
           key: "items",
           reference: {
@@ -406,6 +515,26 @@ function writeRemoteInferenceAnnotations(
           },
         }),
       );
+    }
+
+    for (const existingPage of existingPages) {
+      if (existingPage?.id === pageId) continue;
+      const remoteItems: any[] = (existingPage?.items || []).filter(
+        (item: any) => isRemoteInferenceId(item?.id),
+      );
+      for (const item of remoteItems) {
+        actions.push(
+          removeReference({
+            id: existingPage.id,
+            type: "AnnotationPage",
+            key: "items",
+            reference: {
+              id: item.id,
+              type: "Annotation",
+            },
+          }),
+        );
+      }
     }
   }
 
@@ -430,8 +559,16 @@ function writeRemoteInferenceAnnotations(
         model,
         pageIndex,
         i,
+        options.runId,
       );
-      const bodies = normaliseBodies(item, canvasId, model, pageIndex, i);
+      const bodies = normaliseBodies(
+        item,
+        canvasId,
+        model,
+        pageIndex,
+        i,
+        options.runId,
+      );
 
       for (const body of bodies) {
         bodyEntities[body.id] = body.entity;
@@ -829,6 +966,371 @@ function normaliseDefaults(
   };
 }
 
+const STRUCTURED_CONFIG_EVENT =
+  "@manifest-editor/remote-inference:structured-config";
+
+type StructuredOutputConfigRequest = {
+  actionId: string;
+  instanceKey: string;
+  totalCanvases: number;
+  selectedCanvas?: {
+    id: string;
+    label?: string;
+    annotated: boolean;
+  };
+  tags: RemoteInferenceTagOption[];
+  defaults: StructuredOutputRunOptions;
+  signal?: AbortSignal;
+  resolve: (options: StructuredOutputRunOptions | false) => void;
+};
+
+function requestStructuredOutputConfig(
+  request: Omit<StructuredOutputConfigRequest, "resolve">,
+): Promise<StructuredOutputRunOptions | false> {
+  return new Promise((resolve) => {
+    if (request.signal?.aborted) {
+      resolve(false);
+      return;
+    }
+
+    let settled = false;
+    const settle = (options: StructuredOutputRunOptions | false) => {
+      if (settled) return;
+      settled = true;
+      request.signal?.removeEventListener("abort", handleAbort);
+      resolve(options);
+    };
+    const handleAbort = () => settle(false);
+
+    request.signal?.addEventListener("abort", handleAbort, { once: true });
+    window.dispatchEvent(
+      new CustomEvent<StructuredOutputConfigRequest>(STRUCTURED_CONFIG_EVENT, {
+        detail: { ...request, resolve: settle },
+      }),
+    );
+  });
+}
+
+function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
+  const [request, setRequest] = useState<StructuredOutputConfigRequest | null>(
+    null,
+  );
+  const [options, setOptions] = useState<StructuredOutputRunOptions>(
+    getDefaultStructuredOutputOptions(),
+  );
+
+  useEffect(() => {
+    const listener = (event: Event) => {
+      const detail = (event as CustomEvent<StructuredOutputConfigRequest>)
+        .detail;
+      if (detail?.actionId === actionId) {
+        setRequest(detail);
+        setOptions(normaliseStructuredDefaults(detail.defaults, detail.tags));
+      }
+    };
+    window.addEventListener(STRUCTURED_CONFIG_EVENT, listener);
+    return () => window.removeEventListener(STRUCTURED_CONFIG_EVENT, listener);
+  }, [actionId]);
+
+  useEffect(() => {
+    if (!request?.signal) return;
+    if (request.signal.aborted) {
+      setRequest(null);
+      return;
+    }
+    const handleAbort = () => setRequest(null);
+    request.signal.addEventListener("abort", handleAbort, { once: true });
+    return () => request.signal?.removeEventListener("abort", handleAbort);
+  }, [request]);
+
+  const selectedTag = useMemo(
+    () => request?.tags.find((tag) => tag.key === options.tagKey),
+    [request?.tags, options.tagKey],
+  );
+  const selectedCount =
+    options.scope === "selected"
+      ? request?.selectedCanvas
+        ? 1
+        : 0
+      : options.scope === "tag"
+        ? selectedTag?.canvasCount || 0
+        : request?.totalCanvases || 0;
+  const serverUrl = options.serverUrl.trim();
+  const validFields = serialiseStructuredFields(options.fields);
+  const canRun = selectedCount > 0 && !!serverUrl && validFields.length > 0;
+
+  if (!request) return null;
+
+  const tagOptions = request.tags;
+  const tagSelectionDisabled = !tagOptions.length;
+  const selectedCanvasDisabled = !request.selectedCanvas;
+
+  const updateField = (
+    fieldId: string,
+    key: "label" | "description",
+    value: string,
+  ) => {
+    setOptions((current) => ({
+      ...current,
+      fields: current.fields.map((field) =>
+        field.id === fieldId ? { ...field, [key]: value } : field,
+      ),
+    }));
+  };
+
+  const close = (value: StructuredOutputRunOptions | false) => {
+    if (value && typeof value !== "boolean") {
+      const fields = serialiseStructuredFields(value.fields);
+      try {
+        localStorage.setItem(SERVER_URL_STORAGE_KEY, value.serverUrl.trim());
+        localStorage.setItem(API_KEY_STORAGE_KEY, value.apiKey?.trim() || "");
+        localStorage.setItem(
+          STRUCTURED_FIELDS_STORAGE_KEY,
+          JSON.stringify(fields),
+        );
+      } catch {
+        // ignore
+      }
+    }
+    request.resolve(value);
+    setRequest(null);
+  };
+
+  return (
+    <Modal
+      title="Run Structured Output"
+      onClose={() => close(false)}
+      className="max-w-2xl"
+      actions={
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
+            onClick={() => close(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="rounded border border-me-primary-500 bg-me-primary-500 px-3 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!canRun}
+            onClick={() =>
+              close({
+                ...options,
+                serverUrl,
+                apiKey: options.apiKey?.trim() || "",
+                fields: options.fields.map((field) => ({
+                  ...field,
+                  label: field.label.trim(),
+                  description: field.description.trim(),
+                })),
+              })
+            }
+          >
+            Run
+          </button>
+        </div>
+      }
+    >
+      <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
+        <label className="grid gap-1">
+          <span className="font-medium text-zinc-900">Server URL</span>
+          <input
+            type="text"
+            className="rounded border border-zinc-300 p-2 text-sm"
+            value={options.serverUrl}
+            placeholder={DEFAULT_SERVER_URL}
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                serverUrl: event.target.value,
+              }))
+            }
+          />
+          <span className="text-xs text-zinc-500">
+            POST requests will be sent to{" "}
+            <code>{options.serverUrl}/enrich-canvas</code>
+          </span>
+        </label>
+
+        <label className="grid gap-1">
+          <span className="font-medium text-zinc-900">API key</span>
+          <input
+            type="password"
+            className="rounded border border-zinc-300 p-2 text-sm"
+            value={options.apiKey || ""}
+            autoComplete="off"
+            placeholder="Optional"
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                apiKey: event.target.value,
+              }))
+            }
+          />
+          <span className="text-xs text-zinc-500">
+            When provided, requests include <code>X-API-KEY</code>.
+          </span>
+        </label>
+
+        <fieldset className="grid gap-2">
+          <legend className="font-medium text-zinc-900">Canvases</legend>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              checked={options.scope === "all"}
+              onChange={() =>
+                setOptions((current) => ({ ...current, scope: "all" }))
+              }
+            />
+            <span>All canvases ({request.totalCanvases})</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              checked={options.scope === "selected"}
+              disabled={selectedCanvasDisabled}
+              onChange={() =>
+                setOptions((current) => ({ ...current, scope: "selected" }))
+              }
+            />
+            <span>
+              Selected canvas
+              {request.selectedCanvas?.label
+                ? ` (${request.selectedCanvas.label})`
+                : ""}
+            </span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              checked={options.scope === "tag"}
+              disabled={tagSelectionDisabled}
+              onChange={() =>
+                setOptions((current) => ({
+                  ...current,
+                  scope: "tag",
+                  tagKey: current.tagKey || tagOptions[0]?.key,
+                }))
+              }
+            />
+            <span>Only canvases with tag</span>
+          </label>
+          <select
+            className="rounded border border-zinc-300 bg-white p-2 disabled:bg-zinc-100"
+            disabled={options.scope !== "tag" || tagSelectionDisabled}
+            value={options.tagKey || ""}
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                tagKey: event.target.value,
+              }))
+            }
+          >
+            {tagOptions.map((tag) => (
+              <option key={tag.key} value={tag.key}>
+                {tag.label} ({tag.canvasCount})
+              </option>
+            ))}
+          </select>
+        </fieldset>
+
+        <fieldset className="grid gap-2">
+          <legend className="font-medium text-zinc-900">
+            Structured fields
+          </legend>
+          {options.fields.map((field, index) => (
+            <div
+              key={field.id}
+              className="grid gap-2 rounded border border-zinc-200 bg-white p-3"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  Field {index + 1}
+                </span>
+                <button
+                  type="button"
+                  className="text-xs text-zinc-500 disabled:opacity-50"
+                  disabled={options.fields.length === 1}
+                  onClick={() =>
+                    setOptions((current) => ({
+                      ...current,
+                      fields: current.fields.filter(
+                        (item) => item.id !== field.id,
+                      ),
+                    }))
+                  }
+                >
+                  Remove
+                </button>
+              </div>
+              <input
+                type="text"
+                className="rounded border border-zinc-300 p-2 text-sm"
+                value={field.label}
+                placeholder="Label, e.g. Title"
+                onChange={(event) =>
+                  updateField(field.id, "label", event.target.value)
+                }
+              />
+              <textarea
+                className="min-h-20 rounded border border-zinc-300 p-2 text-sm"
+                value={field.description}
+                placeholder="Description or extraction instructions"
+                onChange={(event) =>
+                  updateField(field.id, "description", event.target.value)
+                }
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
+            onClick={() =>
+              setOptions((current) => ({
+                ...current,
+                fields: [...current.fields, createStructuredField()],
+              }))
+            }
+          >
+            Add field
+          </button>
+        </fieldset>
+
+        <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
+          {selectedCount} canvas{selectedCount === 1 ? "" : "es"} will run
+          structured output. Existing annotations will be kept.
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function normaliseStructuredDefaults(
+  defaults: StructuredOutputRunOptions,
+  tags: RemoteInferenceTagOption[],
+): StructuredOutputRunOptions {
+  const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
+  const hasSelectedTag = defaults.tagKey
+    ? tags.some((tag) => tag.key === defaults.tagKey)
+    : false;
+  return {
+    ...defaults,
+    serverUrl: defaults.serverUrl || DEFAULT_SERVER_URL,
+    apiKey: defaults.apiKey || "",
+    scope:
+      defaults.scope === "tag" && tags.length
+        ? "tag"
+        : defaults.scope === "selected"
+          ? "selected"
+          : "all",
+    tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
+    fields: defaults.fields?.length
+      ? defaults.fields
+      : [createStructuredField()],
+  };
+}
+
 // ─── Results modal ────────────────────────────────────────────────────────────
 
 const RESULTS_EVENT = "@manifest-editor/remote-inference:results";
@@ -922,6 +1424,21 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
                       ))}
                     </div>
                   ) : null}
+                  {item.fields && Object.keys(item.fields).length ? (
+                    <div className="grid gap-1 rounded border border-zinc-200 bg-white p-2">
+                      {Object.entries(item.fields).map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-2 text-xs"
+                        >
+                          <span className="truncate font-medium text-zinc-700">
+                            {label}
+                          </span>
+                          <span className="text-zinc-600">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -975,7 +1492,7 @@ function getManifestCanvases(ctx: BackgroundActionRunContext) {
 function selectCanvases(
   ctx: BackgroundActionRunContext,
   canvases: any[],
-  options: RemoteInferenceRunOptions,
+  options: CanvasSelectionOptions,
 ) {
   if (options.scope === "selected") {
     const currentCanvasId = ctx.currentCanvas?.id;
@@ -1071,10 +1588,49 @@ function createRemoteInferencePlan(
   };
 }
 
+function createStructuredOutputPlan(
+  total: number,
+  selectedCanvases: any[],
+  options: StructuredOutputRunOptions,
+  ctx?: BackgroundActionRunContext,
+): BackgroundActionPlan {
+  const manifest = ctx ? (ctx.vault.get(ctx.target as any) as any) : null;
+  const manifestId: string = manifest?.id || "";
+
+  return {
+    version: 1,
+    data: { options, total } satisfies StructuredOutputPlanData,
+    tasks: selectedCanvases.map((canvas, index) => {
+      const canvasId: string = canvas?.id || `canvas-${index + 1}`;
+      const label = getCanvasLabel(canvas) || canvasId;
+
+      return {
+        id: `canvas:${canvasId}`,
+        label,
+        target: {
+          id: canvasId,
+          type: "Canvas" as const,
+          label,
+          scope: "canvas",
+        },
+        input: { canvasId, manifestId },
+        status: "queued" as const,
+      };
+    }),
+  };
+}
+
 function getPlanOptions(
   plan: BackgroundActionPlan,
 ): RemoteInferenceRunOptions | null {
   const data = plan.data as Partial<RemoteInferencePlanData> | undefined;
+  return data?.options || null;
+}
+
+function getStructuredPlanOptions(
+  plan: BackgroundActionPlan,
+): StructuredOutputRunOptions | null {
+  const data = plan.data as Partial<StructuredOutputPlanData> | undefined;
   return data?.options || null;
 }
 
@@ -1145,14 +1701,17 @@ function getResponseError(results: any) {
     : null;
 }
 
-function getModelResultMessage(model: RemoteInferenceModel, results: any) {
+function getModelResultMessage(
+  model: RemoteInferenceResultModel,
+  results: any,
+) {
   const value = results?.[model];
   return typeof value === "string" ? value : undefined;
 }
 
-function getRequestHeaders(
-  options: RemoteInferenceRunOptions,
-): Record<string, string> {
+function getRequestHeaders(options: {
+  apiKey?: string;
+}): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -1447,6 +2006,277 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   },
 };
 
+const structuredOutputBackgroundAction: BackgroundActionDefinition = {
+  id: STRUCTURED_OUTPUT_ACTION_ID,
+  label: "Run structured output",
+  summary: "Extract configured structured fields from canvas images",
+  section: "OCR",
+  order: 22,
+  resourceTypes: ["Manifest"],
+  resumable: true,
+
+  render: (ctx) => (
+    <>
+      <StructuredOutputConfigModal actionId={ctx.definition.id} />
+      <RemoteInferenceResultsModal actionId={ctx.definition.id} />
+    </>
+  ),
+
+  onResults: (ctx) =>
+    openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
+
+  supports: (ctx) => {
+    const manifest = ctx.vault.get(ctx.target as any) as any;
+    return !!manifest?.items?.length;
+  },
+
+  prepare: async (ctx) => {
+    const canvases = getManifestCanvases(ctx);
+    const prepareData = ctx.prepareData as
+      | RemoteInferencePrepareData
+      | undefined;
+    const defaults = getDefaultStructuredOutputOptions();
+    const requestDefaults =
+      prepareData?.scope === "selected"
+        ? { ...defaults, scope: "selected" as const }
+        : defaults;
+    const options = await requestStructuredOutputConfig({
+      actionId: ctx.definition.id,
+      instanceKey: ctx.instanceKey,
+      totalCanvases: canvases.length,
+      selectedCanvas: getCurrentCanvasOption(ctx, canvases),
+      tags: getCanvasTagOptions(ctx, canvases),
+      defaults: requestDefaults,
+      signal: ctx.signal,
+    });
+
+    if (options === false) return false;
+
+    const selectedCanvases = selectCanvases(ctx, canvases, options);
+    return createStructuredOutputPlan(
+      canvases.length,
+      selectedCanvases,
+      options,
+      ctx,
+    );
+  },
+
+  run: async (ctx) => {
+    const plan =
+      ctx.plan ||
+      createStructuredOutputPlan(0, [], getDefaultStructuredOutputOptions());
+    const options =
+      getStructuredPlanOptions(plan) || getDefaultStructuredOutputOptions();
+    const tasks = ctx.tasks.getAll();
+    const pendingTasks = ctx.tasks.getPending();
+    const totalCanvases = getPlanTotal(plan);
+    const serverUrl = options.serverUrl.trim() || DEFAULT_SERVER_URL;
+    const endpoint = getRemoteInferenceEndpoint(serverUrl);
+    const fields = structuredFieldsToConfig(options.fields);
+
+    ctx.setActionLabel("Running structured output");
+
+    if (!tasks.length) {
+      ctx.setActionStatus("running", "No canvases selected");
+      return createEmptyResult(totalCanvases, 0);
+    }
+
+    if (!Object.keys(fields).length) {
+      ctx.setActionStatus("error", "No structured fields configured");
+      return createEmptyResult(totalCanvases, tasks.length);
+    }
+
+    if (pendingTasks.length) {
+      ctx.canvasProgress.setStatuses(
+        pendingTasks
+          .map((task) => task.target)
+          .filter(
+            (target): target is NonNullable<BackgroundActionTask["target"]> =>
+              !!target && target.type === "Canvas",
+          ),
+        "queued",
+      );
+
+      await ctx.tasks.runEach(
+        async (task, { index, total }) => {
+          throwIfAborted(ctx.signal);
+          const input = task.input as { canvasId: string; manifestId: string };
+          const canvasId = task.target?.id || input.canvasId || task.id;
+          const manifestId = input.manifestId || "";
+
+          ctx.appendActionLog(
+            `Structured output ${index + 1}/${total}`,
+            "info",
+            {
+              canvasId,
+              current: index + 1,
+              total,
+            },
+          );
+
+          try {
+            const startedAt = performance.now();
+
+            ctx.setActionStatus(
+              "running",
+              `Sending canvas ${index + 1}/${total} to server`,
+            );
+
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: getRequestHeaders(options),
+              body: JSON.stringify({
+                manifest_url: manifestId,
+                canvas_id: canvasId,
+                config: {
+                  type: STRUCTURED_OUTPUT_MODEL,
+                  fields,
+                },
+              }),
+              signal: ctx.signal,
+            });
+
+            if (!response.ok) {
+              const text = await response
+                .text()
+                .catch(() => response.statusText);
+              const skip: RemoteInferenceCanvasSkip = {
+                canvasId,
+                reason: `Server responded with ${response.status}: ${text}`,
+              };
+              ctx.appendActionLog("Skipped canvas", "warn", {
+                canvasId,
+                reason: skip.reason,
+              });
+              return {
+                taskStatus: "skipped" as const,
+                result: {
+                  type: "skipped",
+                  skip,
+                } satisfies RemoteInferenceTaskResult,
+              };
+            }
+
+            const responseJson = await response.json();
+            const responseError = getResponseError(responseJson?.results);
+            if (responseError) {
+              const skip: RemoteInferenceCanvasSkip = {
+                canvasId,
+                reason: responseError,
+              };
+              ctx.appendActionLog("Skipped canvas", "warn", {
+                canvasId,
+                reason: skip.reason,
+              });
+              return {
+                taskStatus: "skipped" as const,
+                result: {
+                  type: "skipped",
+                  skip,
+                } satisfies RemoteInferenceTaskResult,
+              };
+            }
+
+            const responseCanvas = responseJson?.canvas;
+            const annotationPages =
+              getStructuredOutputAnnotationPages(responseCanvas);
+            if (!annotationPages.length) {
+              const skip: RemoteInferenceCanvasSkip = {
+                canvasId,
+                reason: "Server returned no structured annotation pages.",
+              };
+              ctx.appendActionLog("Skipped canvas", "warn", {
+                canvasId,
+                reason: skip.reason,
+              });
+              return {
+                taskStatus: "skipped" as const,
+                result: {
+                  type: "skipped",
+                  skip,
+                } satisfies RemoteInferenceTaskResult,
+              };
+            }
+
+            const durationMs = performance.now() - startedAt;
+            const runId = `${Date.now()}-${index + 1}`;
+            const annotationsWritten = writeRemoteInferenceAnnotations(
+              ctx,
+              canvasId,
+              STRUCTURED_OUTPUT_MODEL,
+              annotationPages,
+              { mode: "append", runId },
+            );
+            const resultFields = getStructuredFieldsResult(
+              responseJson?.results,
+            );
+
+            ctx.appendActionLog("Wrote structured annotations", "info", {
+              canvasId,
+              annotations: annotationsWritten,
+            });
+
+            return {
+              taskStatus: "complete" as const,
+              result: {
+                type: "processed",
+                canvas: {
+                  canvasId,
+                  model: STRUCTURED_OUTPUT_MODEL,
+                  annotations: annotationsWritten,
+                  durationMs,
+                  fields: resultFields,
+                  sourceImage: responseJson?.results?.source_image,
+                  message: getModelResultMessage(
+                    STRUCTURED_OUTPUT_MODEL,
+                    responseJson?.results,
+                  ),
+                },
+              } satisfies RemoteInferenceTaskResult,
+            };
+          } catch (error) {
+            if (ctx.signal.aborted) throw error;
+
+            const skip: RemoteInferenceCanvasSkip = {
+              canvasId,
+              reason: getErrorMessage(error),
+            };
+            ctx.appendActionLog("Skipped canvas", "warn", {
+              canvasId,
+              reason: skip.reason,
+            });
+            return {
+              taskStatus: "skipped" as const,
+              result: {
+                type: "skipped",
+                skip,
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+        },
+        {
+          progressLabel: (_task, index, total) =>
+            `Structured output ${index + 1}/${total}`,
+        },
+      );
+    }
+
+    const result = aggregateResult(totalCanvases, ctx.tasks.getAll());
+    ctx.setActionStatus(
+      "running",
+      `Processed ${result.processed} canvases and created ${result.annotations} annotations`,
+    );
+    ctx.setActionProgress({
+      current: result.selected,
+      total: result.selected,
+      label: "Structured output complete",
+    });
+
+    return result;
+  },
+};
+
 export const backgroundActions: BackgroundActionDefinition[] = [
   remoteInferenceBackgroundAction,
+  structuredOutputBackgroundAction,
 ];
