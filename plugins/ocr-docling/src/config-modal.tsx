@@ -13,7 +13,7 @@ export type OcrDoclingImageSize = (typeof OCR_DOCLING_IMAGE_SIZES)[number];
 export type OcrDoclingRunOptions = {
   prompt: string;
   imageSize: OcrDoclingImageSize;
-  scope: "all" | "tag";
+  scope: "all" | "tag" | "selected";
   tagKey?: string;
   skipAnnotatedCanvases?: boolean;
 };
@@ -29,6 +29,11 @@ export type OcrDoclingConfigRequest = {
   instanceKey: string;
   totalCanvases: number;
   annotatedCanvases: number;
+  selectedCanvas?: {
+    id: string;
+    label?: string;
+    annotated: boolean;
+  };
   tags: OcrDoclingTagOption[];
   defaults: OcrDoclingRunOptions;
   signal?: AbortSignal;
@@ -71,7 +76,9 @@ export function renderOcrDoclingConfigModal(actionId: string) {
 
 function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
   const [request, setRequest] = useState<OcrDoclingConfigRequest | null>(null);
-  const [options, setOptions] = useState<OcrDoclingRunOptions>(getDefaultRunOptions());
+  const [options, setOptions] = useState<OcrDoclingRunOptions>(
+    getDefaultRunOptions(),
+  );
 
   useEffect(() => {
     const listener = (event: Event) => {
@@ -105,11 +112,28 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
     () => request?.tags.find((tag) => tag.key === options.tagKey),
     [request?.tags, options.tagKey],
   );
-  const selectedCount = options.scope === "tag" ? selectedTag?.canvasCount || 0 : request?.totalCanvases || 0;
+  const selectedCount =
+    options.scope === "selected"
+      ? request?.selectedCanvas
+        ? 1
+        : 0
+      : options.scope === "tag"
+        ? selectedTag?.canvasCount || 0
+        : request?.totalCanvases || 0;
   const annotatedSelectedCount =
-    options.scope === "tag" ? selectedTag?.annotatedCanvasCount || 0 : request?.annotatedCanvases || 0;
-  const skippedByExistingAnnotations = options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
-  const runnableCount = Math.max(0, selectedCount - skippedByExistingAnnotations);
+    options.scope === "selected"
+      ? request?.selectedCanvas?.annotated
+        ? 1
+        : 0
+      : options.scope === "tag"
+        ? selectedTag?.annotatedCanvasCount || 0
+        : request?.annotatedCanvases || 0;
+  const skippedByExistingAnnotations =
+    options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
+  const runnableCount = Math.max(
+    0,
+    selectedCount - skippedByExistingAnnotations,
+  );
 
   if (!request) {
     return null;
@@ -122,6 +146,7 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
 
   const tagOptions = request.tags;
   const tagSelectionDisabled = !tagOptions.length;
+  const selectedCanvasDisabled = !request.selectedCanvas;
 
   return (
     <Modal
@@ -151,15 +176,20 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
       <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
         <div className="grid gap-1 rounded border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600">
           <div>
-            <span className="font-medium text-zinc-800">Model:</span> {DOCLING_MODEL_ID}
+            <span className="font-medium text-zinc-800">Model:</span>{" "}
+            {DOCLING_MODEL_ID}
           </div>
           <div>
             <span className="font-medium text-zinc-800">Runtime:</span>{" "}
-            {typeof navigator !== "undefined" && "gpu" in navigator ? "WebGPU available" : "WebGPU unavailable"}
+            {typeof navigator !== "undefined" && "gpu" in navigator
+              ? "WebGPU available"
+              : "WebGPU unavailable"}
           </div>
           <div>
             <span className="font-medium text-zinc-800">Cache:</span>{" "}
-            {typeof caches !== "undefined" ? "Browser Cache API available" : "Browser Cache API unavailable"}
+            {typeof caches !== "undefined"
+              ? "Browser Cache API available"
+              : "Browser Cache API unavailable"}
           </div>
         </div>
 
@@ -168,7 +198,12 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
           <textarea
             className="min-h-24 rounded border border-zinc-300 p-2 text-sm"
             value={options.prompt}
-            onChange={(event) => setOptions((current) => ({ ...current, prompt: event.target.value }))}
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                prompt: event.target.value,
+              }))
+            }
           />
         </label>
 
@@ -198,9 +233,27 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
             <input
               type="radio"
               checked={options.scope === "all"}
-              onChange={() => setOptions((current) => ({ ...current, scope: "all" }))}
+              onChange={() =>
+                setOptions((current) => ({ ...current, scope: "all" }))
+              }
             />
             <span>All canvases ({request.totalCanvases})</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              checked={options.scope === "selected"}
+              disabled={selectedCanvasDisabled}
+              onChange={() =>
+                setOptions((current) => ({ ...current, scope: "selected" }))
+              }
+            />
+            <span>
+              Selected canvas
+              {request.selectedCanvas?.label
+                ? ` (${request.selectedCanvas.label})`
+                : ""}
+            </span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -221,7 +274,12 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
             className="rounded border border-zinc-300 bg-white p-2 disabled:bg-zinc-100"
             disabled={options.scope !== "tag" || tagSelectionDisabled}
             value={options.tagKey || ""}
-            onChange={(event) => setOptions((current) => ({ ...current, tagKey: event.target.value }))}
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                tagKey: event.target.value,
+              }))
+            }
           >
             {tagOptions.map((tag) => (
               <option key={tag.key} value={tag.key}>
@@ -237,13 +295,19 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
             className="mt-1"
             checked={options.skipAnnotatedCanvases !== false}
             onChange={(event) =>
-              setOptions((current) => ({ ...current, skipAnnotatedCanvases: event.target.checked }))
+              setOptions((current) => ({
+                ...current,
+                skipAnnotatedCanvases: event.target.checked,
+              }))
             }
           />
           <span className="grid gap-1">
-            <span className="font-medium text-zinc-900">Skip canvases with existing annotations</span>
+            <span className="font-medium text-zinc-900">
+              Skip canvases with existing annotations
+            </span>
             <span className="text-xs text-zinc-500">
-              Do not run OCR on canvases where a canvas annotation page already contains an annotation.
+              Do not run OCR on canvases where a canvas annotation page already
+              contains an annotation.
             </span>
           </span>
         </label>
@@ -253,7 +317,8 @@ function OcrDoclingConfigModal({ actionId }: { actionId: string }) {
           {skippedByExistingAnnotations ? (
             <>
               {" "}
-              {skippedByExistingAnnotations} canvas{skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped
+              {skippedByExistingAnnotations} canvas
+              {skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped
               because they already have annotations.
             </>
           ) : null}
@@ -278,23 +343,39 @@ export function applyOcrDoclingPluginSettings(
 ): OcrDoclingRunOptions {
   return {
     ...defaults,
-    prompt: typeof settings.prompt === "string" && settings.prompt.trim() ? settings.prompt : defaults.prompt,
+    prompt:
+      typeof settings.prompt === "string" && settings.prompt.trim()
+        ? settings.prompt
+        : defaults.prompt,
     imageSize:
-      typeof settings.imageSize === "number" && OCR_DOCLING_IMAGE_SIZES.includes(settings.imageSize)
+      typeof settings.imageSize === "number" &&
+      OCR_DOCLING_IMAGE_SIZES.includes(settings.imageSize)
         ? settings.imageSize
         : defaults.imageSize,
   };
 }
 
-function normaliseDefaults(defaults: OcrDoclingRunOptions, tags: OcrDoclingTagOption[]): OcrDoclingRunOptions {
+function normaliseDefaults(
+  defaults: OcrDoclingRunOptions,
+  tags: OcrDoclingTagOption[],
+): OcrDoclingRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
-  const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
+  const hasSelectedTag = defaults.tagKey
+    ? tags.some((tag) => tag.key === defaults.tagKey)
+    : false;
 
   return {
     ...defaults,
     prompt: defaults.prompt || DOCLING_DEFAULT_PROMPT,
-    imageSize: OCR_DOCLING_IMAGE_SIZES.includes(defaults.imageSize) ? defaults.imageSize : 1024,
-    scope: defaults.scope === "tag" && tags.length ? "tag" : "all",
+    imageSize: OCR_DOCLING_IMAGE_SIZES.includes(defaults.imageSize)
+      ? defaults.imageSize
+      : 1024,
+    scope:
+      defaults.scope === "tag" && tags.length
+        ? "tag"
+        : defaults.scope === "selected"
+          ? "selected"
+          : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
     skipAnnotatedCanvases: defaults.skipAnnotatedCanvases !== false,
   };
