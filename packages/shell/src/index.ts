@@ -62,3 +62,8 @@ export * from "./TaskBridge/TaskBridge";
 export * from "./Toast/ToastContext";
 export * from "./Universal/UniversalCopyPaste";
 export * from "./Universal/UniversalCopyPaste.types";
+export {
+  MessagePortClientVault,
+  type RemoteVaultAction,
+  type RemoteVaultClientMessage,
+} from "@manifest-editor/client-vault";
