@@ -1,7 +1,9 @@
-import { useInStack } from "@manifest-editor/editors";
-import { useEditCanvasItems } from "@manifest-editor/manifest-preset/components";
-import { type BackgroundPanel, useConfig, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
-import { useEffect, useRef, useState } from "react";
+import {
+  type BackgroundPanel,
+  useLayoutActions,
+  useLayoutState,
+} from "@manifest-editor/shell";
+import { useEffect } from "react";
 import { useManifest } from "react-iiif-vault";
 import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
@@ -13,28 +15,17 @@ export const exhibitionBackgroundTask: BackgroundPanel = {
 };
 
 function ExhibitionBackgroundPanel() {
-  console.log("rendering?");
   const manifest = useManifest();
-  const canvas = useInStack("Canvas");
-  const { leftPanel, rightPanel } = useLayoutState();
-  const {
-    edit,
-    leftPanel: leftPanelActions,
-    rightPanel: rightPanelActions,
-    centerPanel: centerPanelActions,
-  } = useLayoutActions();
-  const { canvasActions, open } = useEditCanvasItems();
-  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
-  const isLeftPanelOpen = leftPanel.open;
+  const { leftPanel } = useLayoutState();
+  const { edit, centerPanel: centerPanelActions } = useLayoutActions();
 
   useEffect(() => {
     // When left panel is exhibition overview, set the main panel
     if (manifest && leftPanel.current === exhibitionOverviewLeftPanel.id) {
       edit(manifest);
       centerPanelActions.open({ id: exhibitionCenterPanel.id });
-      leftPanelActions.close();
     }
-  }, [leftPanel.current]);
+  }, [centerPanelActions, edit, leftPanel.current, manifest]);
 
   return null;
 }

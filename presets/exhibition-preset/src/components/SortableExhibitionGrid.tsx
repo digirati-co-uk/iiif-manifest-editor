@@ -8,10 +8,19 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import { createAppActions, useInStack } from "@manifest-editor/editors";
 import { useEditCanvasItems } from "@manifest-editor/manifest-preset/components";
-import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
+import {
+  useCreator,
+  useEditingStack,
+  useLayoutActions,
+  useManifestEditor,
+} from "@manifest-editor/shell";
 import { useCallback, useMemo } from "react";
 import { CanvasContext, useManifest } from "react-iiif-vault";
 import { ExhibitionContainer } from "./ExhibitionContainer";
@@ -35,7 +44,11 @@ export function SortableExhibitionGrid() {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const [, canvasActions] = useCreator({ id: technical.id.get(), type: "Manifest" }, "items", "Manifest");
+  const [, canvasActions] = useCreator(
+    { id: technical.id.get(), type: "Manifest" },
+    "items",
+    "Canvas",
+  );
 
   const onDragEnd = useCallback(
     (result: DragEndEvent) => {
@@ -51,8 +64,11 @@ export function SortableExhibitionGrid() {
   );
 
   const canvasId = editingCanvas?.resource.source.id;
-  const canvasIndex = canvasId ? items.findIndex((canv) => canv.id === canvasId) : -1;
-  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const canvasIndex = canvasId
+    ? items.findIndex((canv) => canv.id === canvasId)
+    : -1;
+  const prevCanvasIndex: number =
+    canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas

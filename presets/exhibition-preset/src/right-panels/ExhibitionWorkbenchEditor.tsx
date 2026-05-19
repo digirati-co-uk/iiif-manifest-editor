@@ -37,8 +37,6 @@ const toggleColours = {
 };
 const workbenchColours = {
   divider: "#e4ddd6",
-  tabText: "#8a827c",
-  label: "#6a625c",
 };
 
 export const exhibitionWorkbenchEditor: EditorDefinition = {
@@ -81,16 +79,12 @@ function ExhibitionWorkbenchRightPanel() {
               key={tab.id}
               type="button"
               className={[
+                "exhibition-workbench-tab",
                 "-mb-px border-b-[3px] border-transparent px-1 pb-3 text-center text-sm font-semibold",
                 selectedTab === tab.id
                   ? "border-me-primary-500 text-me-primary-500"
-                  : "",
+                  : "exhibition-workbench-muted",
               ].join(" ")}
-              style={
-                selectedTab === tab.id
-                  ? undefined
-                  : { color: workbenchColours.tabText }
-              }
               onClick={() => setSelectedTab(tab.id)}
             >
               {tab.label}
@@ -187,10 +181,7 @@ function SimpleSummaryPanel() {
 
 function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="text-sm font-semibold"
-      style={{ color: workbenchColours.label }}
-    >
+    <div className="exhibition-workbench-muted text-sm font-semibold">
       {children}
     </div>
   );

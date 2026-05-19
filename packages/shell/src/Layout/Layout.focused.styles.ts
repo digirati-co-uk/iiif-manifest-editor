@@ -22,8 +22,11 @@ const exhibitionColours = {
   darkHover: "#312c34",
   darkSelected: "#3a3440",
   darkText: "#f6f1f4",
-  darkMuted: "#cfc4cc",
+  darkMuted: "#c8c0c6",
+  darkSubtle: "#999088",
   darkLabel: "#d9d1da",
+  darkWarning: "#4a2636",
+  darkWarningBorder: "#7a3f59",
   darkBorder: "rgba(246, 241, 244, 0.16)",
   darkBorderSoft: "rgba(246, 241, 244, 0.14)",
 };
@@ -253,12 +256,6 @@ export const FloatingPanel = styled.aside<{
     border-color: ${exhibitionColours.lightBorder} !important;
   }
 
-  ${focusedExhibition} [data-tabs] {
-    background: ${exhibitionColours.lightPanel};
-    border-color: ${exhibitionColours.lightPanelBorder};
-    color: ${exhibitionColours.lightText};
-  }
-
   ${darkFocusedExhibition} {
     background: ${exhibitionColours.darkPanel};
     border-color: ${exhibitionColours.darkBorderSoft};
@@ -298,20 +295,42 @@ export const FloatingPanel = styled.aside<{
   }
 
   ${darkFocusedExhibition} label {
-    background-color: ${exhibitionColours.darkPanel} !important;
+    background-color: transparent !important;
     color: ${exhibitionColours.darkLabel} !important;
   }
 
-  ${darkFocusedExhibition} fieldset {
-    border-color: ${exhibitionColours.darkBorder} !important;
+  ${focusedExhibition} .exhibition-workbench-muted {
+    color: ${exhibitionColours.lightMuted} !important;
   }
 
-  ${darkFocusedExhibition} [data-tabs] {
-    background: ${exhibitionColours.darkPanel};
-    color: ${exhibitionColours.darkText};
-    box-shadow:
-      inset 0 -1px 0 0 ${exhibitionColours.darkBorder},
-      inset 0 1px 0 0 rgba(246, 241, 244, 0.12);
+  ${darkFocusedExhibition} .exhibition-workbench-muted {
+    color: ${exhibitionColours.darkMuted} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-workbench-tab[class*="text-me-primary"] {
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} fieldset {
+    background-color: ${exhibitionColours.darkPanelSoft} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} [class*="bg-me-50"],
+  ${darkFocusedExhibition} [class*="bg-me-100"],
+  ${darkFocusedExhibition} [class*="bg-me-primary-50"],
+  ${darkFocusedExhibition} [class*="bg-me-primary-100"] {
+    background-color: ${exhibitionColours.darkSelected} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} [class*="text-me-700"],
+  ${darkFocusedExhibition} [class*="text-me-500"],
+  ${darkFocusedExhibition} [class*="text-me-primary-500"],
+  ${darkFocusedExhibition} [class*="text-me-primary-600"],
+  ${darkFocusedExhibition} [class*="text-me-primary-700"] {
+    color: ${exhibitionColours.darkText} !important;
   }
 
   ${darkFocusedExhibition} [class*="bg-me-gray-100"] {
@@ -339,7 +358,7 @@ export const FloatingPanel = styled.aside<{
   ${darkFocusedExhibition} [data-active="true"],
   ${darkFocusedExhibition} [data-selected="true"],
   ${darkFocusedExhibition} [aria-selected="true"] {
-    background-color: ${exhibitionColours.darkSelected} !important;
+    background-color: ${exhibitionColours.pink} !important;
   }
 
   ${darkFocusedExhibition} [class*="bg-me-primary-500"],
@@ -362,8 +381,9 @@ export const FloatingPanel = styled.aside<{
     color: ${exhibitionColours.darkText} !important;
   }
 
-  ${darkFocusedExhibition} [class*="text-[#6a625c]"],
-  ${darkFocusedExhibition} [class*="text-[#8a827c]"] {
+  ${darkFocusedExhibition} [class*="text-black/40"],
+  ${darkFocusedExhibition} [class*="text-black/50"],
+  ${darkFocusedExhibition} [class*="text-black/60"] {
     color: ${exhibitionColours.darkMuted} !important;
   }
 
@@ -382,9 +402,51 @@ export const FloatingPanel = styled.aside<{
     color: ${exhibitionColours.darkText} !important;
   }
 
+  ${darkFocusedExhibition} input::placeholder,
+  ${darkFocusedExhibition} textarea::placeholder {
+    color: ${exhibitionColours.darkSubtle} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-tour-step-card {
+    background-color: ${exhibitionColours.darkPanelSoft} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-tour-step-body,
+  ${darkFocusedExhibition} .exhibition-tour-step-body * {
+    background-color: transparent !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
   ${darkFocusedExhibition} a,
   ${darkFocusedExhibition} button {
     color: inherit;
+  }
+
+  ${darkFocusedExhibition} .exhibition-aspect-warning {
+    background-color: ${exhibitionColours.darkWarning} !important;
+    border-color: ${exhibitionColours.darkWarningBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-aspect-warning [class*="text-me-"],
+  ${darkFocusedExhibition} .exhibition-aspect-warning [class*="text-black"] {
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} fieldset button {
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} fieldset button:hover {
+    background-color: ${exhibitionColours.darkHover} !important;
+    color: #fff !important;
+  }
+
+  ${darkFocusedExhibition} fieldset button[data-active="true"] {
+    background-color: ${exhibitionColours.pink} !important;
+    color: #fff !important;
   }
 
   ${darkFocusedExhibition} [role="menu"],

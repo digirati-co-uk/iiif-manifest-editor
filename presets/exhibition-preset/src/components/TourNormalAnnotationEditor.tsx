@@ -57,14 +57,14 @@ export function TourNormalAnnotationEditor({
   return (
     <div
       {...highlightProps}
-      className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
     >
       <div className="relative">
         {isOpen && !annotationPopups ? (
           <HTMLAnnotationEditor className="border-none" />
         ) : (
           <HTMLAnnotationBodyRender
-            className="px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
+            className="exhibition-tour-step-body px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
             locale="en"
           />
         )}

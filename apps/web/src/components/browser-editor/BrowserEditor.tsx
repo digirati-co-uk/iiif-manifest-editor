@@ -316,7 +316,7 @@ export default function BrowserEditor({
         <Link href="/" className="flex justify-start items-center gap-2">
           {isFocusedExhibition ? (
             <span className="text-xl font-bold tracking-normal text-white">
-              Exhibition Studio
+              Exhibition Editor
             </span>
           ) : (
             <>

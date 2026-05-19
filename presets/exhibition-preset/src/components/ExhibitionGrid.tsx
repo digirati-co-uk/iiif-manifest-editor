@@ -13,7 +13,7 @@ export function ExhibitionGrid() {
   const [, canvasActions] = useCreator(
     { id: technical.id.get(), type: "Manifest" },
     "items",
-    "Manifest",
+    "Canvas",
   );
   const items = structural.items.get();
 

@@ -42,8 +42,8 @@ export function InfoBlockEditor(props: { strategy: TextualContentStrategy }) {
   // creator.create(definition, payload);
 
   return (
-    <div className="overflow-y-auto bg-white shadow">
-      <div className="mb-12">
+    <div className="relative z-0 w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto bg-white shadow">
+      <div className="mb-12 min-w-0 max-w-full">
         {annotationPage.items.map((annotation, key) => {
           return (
             <AnnotationContext
@@ -93,12 +93,13 @@ function AnnotationEditor() {
   }
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full overflow-hidden">
       {bodies.map((body, n) => {
         return (
           <AnnotationBodyEditor
             key={n}
-            className="p-4 hover:bg-me-100/40 focus-within:bg-me-100/40"
+            className="min-w-0 max-w-full overflow-hidden p-4 hover:bg-me-100/40 focus-within:bg-me-100/40"
+            editorClassName="relative z-0 w-full min-w-0 max-w-full overflow-hidden"
             resourceId={body.id}
             onRemove={() => editor.annotation.body.deleteAtIndex(n)}
           />

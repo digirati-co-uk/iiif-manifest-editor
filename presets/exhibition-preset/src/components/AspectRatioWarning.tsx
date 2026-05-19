@@ -13,8 +13,8 @@ export function AspectRatioWarning() {
   if (Math.abs(ratio - target.ratio) < 0.01) return null;
 
   return (
-    <div className="p-2 rounded bg-me-100">
-      <div className="text-me-700-500">Aspect ratio warning</div>
+    <div className="exhibition-aspect-warning p-2 rounded bg-me-100">
+      <div className="font-semibold text-me-700">Aspect ratio warning</div>
       <div className="text-sm text-black/60">
         The aspect ratio of this canvas is {ratio.toFixed(2)} but the target
         aspect ratio is {target.ratio.toFixed(2)}. Some parts of this image may

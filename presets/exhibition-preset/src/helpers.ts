@@ -95,7 +95,8 @@ export function getGridStats(behavior?: string[]) {
   const isLeft = behavior?.includes("left");
   const isBottom = behavior?.includes("bottom");
   const isTop = behavior?.includes("top");
-  const isImage = behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+  const isImage =
+    behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
   const isInfo = behavior?.includes("info");
 
   return {
@@ -113,9 +114,8 @@ export function isEditableExhibitionCanvas(
   vault: Vault,
 ) {
   const full = vault.get(resource);
-  const stats = getGridStats(full.behavior);
 
-  return full.type === "Canvas" && !stats.isInfo;
+  return full.type === "Canvas";
 }
 
 export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
