@@ -41,10 +41,10 @@ const STRUCTURED_OUTPUT_MODEL = "qwen-structure";
 const REMOTE_INFERENCE_MODELS = [
   // { value: "palette", label: "Palette" },
   // { value: "ocr", label: "OCR" },
-  { value: "glm-ocr", label: "Small OCR (1B)" },
+  { value: "glm-ocr", label: "GLM: Small OCR (1B)" },
   // { value: "surya-ocr", label: "surya" },
-  { value: "deepseek-ocr", label: "Medium OCR (3B)" },
-  { value: "qwen-ocr", label: "vLLM (9B)" },
+  { value: "deepseek-ocr", label: "DeepSeek: Medium OCR (3B)" },
+  { value: "qwen-ocr", label: "Qwen: vLLM (9B)" },
 ] as const;
 
 type RemoteInferenceModel = (typeof REMOTE_INFERENCE_MODELS)[number]["value"];
