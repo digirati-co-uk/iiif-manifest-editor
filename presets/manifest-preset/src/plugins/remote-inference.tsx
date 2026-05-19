@@ -1,9 +1,4 @@
-import {
-  addReference,
-  batchActions,
-  importEntities,
-  removeReference,
-} from "@iiif/helpers/vault/actions";
+import { addReference, batchActions, importEntities, removeReference } from "@iiif/helpers/vault/actions";
 import { Modal } from "@manifest-editor/components";
 import {
   type BackgroundActionDefinition,
@@ -21,8 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 export default {
   id: "@manifest-editor/remote-inference",
   label: "Remote Inference",
-  description:
-    "Run remote OCR/HTR inference jobs against a configurable server",
+  description: "Run remote OCR/HTR inference jobs against a configurable server",
   author: "Digirati",
   official: true,
   defaultEnabled: true,
@@ -34,16 +28,13 @@ export default {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-export const REMOTE_INFERENCE_ACTION_ID =
-  "@manifest-editor/remote-inference/action";
-export const STRUCTURED_OUTPUT_ACTION_ID =
-  "@manifest-editor/remote-inference/structured-output";
+export const REMOTE_INFERENCE_ACTION_ID = "@manifest-editor/remote-inference/action";
+export const STRUCTURED_OUTPUT_ACTION_ID = "@manifest-editor/remote-inference/structured-output";
 const REMOTE_INFERENCE_ID_SEGMENT = "/remote-inference/";
 const SERVER_URL_STORAGE_KEY = "@manifest-editor/remote-inference/serverUrl";
 const API_KEY_STORAGE_KEY = "@manifest-editor/remote-inference/apiKey";
 const MODEL_STORAGE_KEY = "@manifest-editor/remote-inference/model";
-const STRUCTURED_FIELDS_STORAGE_KEY =
-  "@manifest-editor/remote-inference/structuredFields";
+const STRUCTURED_FIELDS_STORAGE_KEY = "@manifest-editor/remote-inference/structuredFields";
 const DEFAULT_SERVER_URL = "http://localhost:8000";
 const STRUCTURED_OUTPUT_MODEL = "qwen-structure";
 
@@ -57,9 +48,7 @@ const REMOTE_INFERENCE_MODELS = [
 ] as const;
 
 type RemoteInferenceModel = (typeof REMOTE_INFERENCE_MODELS)[number]["value"];
-type RemoteInferenceResultModel =
-  | RemoteInferenceModel
-  | typeof STRUCTURED_OUTPUT_MODEL;
+type RemoteInferenceResultModel = RemoteInferenceModel | typeof STRUCTURED_OUTPUT_MODEL;
 
 const DEFAULT_MODEL: RemoteInferenceModel = "glm-ocr";
 
@@ -81,10 +70,7 @@ function parseTagKey(key: string): { type: string; id: string } | null {
   return { type: key.slice(0, separator), id: key.slice(separator + 1) };
 }
 
-function getCanvasTagOptions(
-  ctx: BackgroundActionRunContext,
-  canvases: any[],
-): RemoteInferenceTagOption[] {
+function getCanvasTagOptions(ctx: BackgroundActionRunContext, canvases: any[]): RemoteInferenceTagOption[] {
   const tags = new Map<string, RemoteInferenceTagOption>();
 
   tags.set(getTagKey(FLAG_TAG), {
@@ -118,12 +104,16 @@ function getCanvasTagOptions(
   return Array.from(tags.values()).sort((a, b) => {
     if (a.type === FLAG_TAG.type && a.id === FLAG_TAG.id) return -1;
     if (b.type === FLAG_TAG.type && b.id === FLAG_TAG.id) return 1;
-    return (
-      a.label.localeCompare(b.label) ||
-      a.type.localeCompare(b.type) ||
-      a.id.localeCompare(b.id)
-    );
+    return a.label.localeCompare(b.label) || a.type.localeCompare(b.type) || a.id.localeCompare(b.id);
   });
+}
+
+function canvasWithoutAnnotationPages(canvas: any): any {
+  const returnCanvas = { ...canvas };
+
+  returnCanvas.annotations = [];
+
+  return returnCanvas;
 }
 
 // ─── Run options ──────────────────────────────────────────────────────────────
@@ -159,16 +149,11 @@ type StructuredOutputRunOptions = {
 function getDefaultRunOptions(): RemoteInferenceRunOptions {
   const storedUrl =
     typeof localStorage !== "undefined"
-      ? localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL
+      ? (localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL)
       : DEFAULT_SERVER_URL;
-  const storedApiKey =
-    typeof localStorage !== "undefined"
-      ? localStorage.getItem(API_KEY_STORAGE_KEY) || ""
-      : "";
+  const storedApiKey = typeof localStorage !== "undefined" ? localStorage.getItem(API_KEY_STORAGE_KEY) || "" : "";
   const storedModel =
-    typeof localStorage !== "undefined"
-      ? parseRemoteInferenceModel(localStorage.getItem(MODEL_STORAGE_KEY))
-      : null;
+    typeof localStorage !== "undefined" ? parseRemoteInferenceModel(localStorage.getItem(MODEL_STORAGE_KEY)) : null;
   return {
     serverUrl: storedUrl,
     apiKey: storedApiKey,
@@ -180,20 +165,15 @@ function getDefaultRunOptions(): RemoteInferenceRunOptions {
 
 function getStoredServerUrl() {
   return typeof localStorage !== "undefined"
-    ? localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL
+    ? (localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL)
     : DEFAULT_SERVER_URL;
 }
 
 function getStoredApiKey() {
-  return typeof localStorage !== "undefined"
-    ? localStorage.getItem(API_KEY_STORAGE_KEY) || ""
-    : "";
+  return typeof localStorage !== "undefined" ? localStorage.getItem(API_KEY_STORAGE_KEY) || "" : "";
 }
 
-function createStructuredField(
-  label = "",
-  description = "",
-): StructuredOutputField {
+function createStructuredField(label = "", description = ""): StructuredOutputField {
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     label,
@@ -241,36 +221,23 @@ function serialiseStructuredFields(fields: StructuredOutputField[]) {
 }
 
 function structuredFieldsToConfig(fields: StructuredOutputField[]) {
-  return Object.fromEntries(
-    serialiseStructuredFields(fields).map((field) => [
-      field.label,
-      field.description,
-    ]),
-  );
+  return Object.fromEntries(serialiseStructuredFields(fields).map((field) => [field.label, field.description]));
 }
 
 function getStructuredFieldsResult(results: any): Record<string, string> {
   const fields = results?.fields;
-  return fields && typeof fields === "object" && !Array.isArray(fields)
-    ? fields
-    : {};
+  return fields && typeof fields === "object" && !Array.isArray(fields) ? fields : {};
 }
 
 function getStructuredOutputAnnotationPages(responseCanvas: any): any[] {
   const pages: any[] = responseCanvas?.annotations || [];
   return pages.filter((page) =>
-    typeof page?.id === "string"
-      ? page.id.includes("/annotations/qwen-structure/")
-      : false,
+    typeof page?.id === "string" ? page.id.includes("/annotations/qwen-structure/") : false,
   );
 }
 
-function parseRemoteInferenceModel(
-  value: string | null | undefined,
-): RemoteInferenceModel | null {
-  return REMOTE_INFERENCE_MODELS.some((model) => model.value === value)
-    ? (value as RemoteInferenceModel)
-    : null;
+function parseRemoteInferenceModel(value: string | null | undefined): RemoteInferenceModel | null {
+  return REMOTE_INFERENCE_MODELS.some((model) => model.value === value) ? (value as RemoteInferenceModel) : null;
 }
 
 // ─── Result types ─────────────────────────────────────────────────────────────
@@ -327,13 +294,8 @@ type NormalisedRemoteInferenceBody = {
 
 // ─── Annotation helpers ───────────────────────────────────────────────────────
 
-function canvasHasAnnotationPageAnnotations(
-  ctx: BackgroundActionRunContext,
-  canvas: any,
-) {
-  const pages: any[] = canvas?.annotations
-    ? (ctx.vault.get(canvas.annotations) as any) || []
-    : [];
+function canvasHasAnnotationPageAnnotations(ctx: BackgroundActionRunContext, canvas: any) {
+  const pages: any[] = canvas?.annotations ? (ctx.vault.get(canvas.annotations) as any) || [] : [];
   for (const page of pages) {
     if (page?.items?.length) return true;
   }
@@ -349,20 +311,13 @@ function isRemoteInferenceId(id: string | undefined) {
 }
 
 function isLegacyRemoteInferenceId(canvasId: string, id: string | undefined) {
-  if (
-    !id?.startsWith(
-      `${trimTrailingSlash(canvasId)}${REMOTE_INFERENCE_ID_SEGMENT}`,
-    )
-  ) {
+  if (!id?.startsWith(`${trimTrailingSlash(canvasId)}${REMOTE_INFERENCE_ID_SEGMENT}`)) {
     return false;
   }
   return /\/remote-inference\/\d+\/annotation$/.test(id);
 }
 
-function getDefaultAnnotationPage(
-  ctx: BackgroundActionRunContext,
-  canvas: any,
-) {
+function getDefaultAnnotationPage(ctx: BackgroundActionRunContext, canvas: any) {
   const firstPage = canvas?.annotations?.[0];
   return firstPage ? (ctx.vault.get(firstPage) as any) : null;
 }
@@ -389,13 +344,8 @@ function getRemoteInferenceBodyId(
   return `${getRemoteInferenceAnnotationId(canvasId, model, pageIndex, annotationIndex, runId)}/body/${bodyIndex + 1}`;
 }
 
-function getCanvasAnnotationPageRefs(
-  ctx: BackgroundActionRunContext,
-  canvas: any,
-): any[] {
-  return canvas?.annotations
-    ? (ctx.vault.get(canvas.annotations) as any) || []
-    : [];
+function getCanvasAnnotationPageRefs(ctx: BackgroundActionRunContext, canvas: any): any[] {
+  return canvas?.annotations ? (ctx.vault.get(canvas.annotations) as any) || [] : [];
 }
 
 function normaliseBodies(
@@ -406,11 +356,7 @@ function normaliseBodies(
   annotationIndex: number,
   runId?: string,
 ): NormalisedRemoteInferenceBody[] {
-  const bodies = Array.isArray(item?.body)
-    ? item.body
-    : item?.body
-      ? [item.body]
-      : [];
+  const bodies = Array.isArray(item?.body) ? item.body : item?.body ? [item.body] : [];
 
   if (!bodies.length && typeof item?.bodyValue === "string") {
     bodies.push({
@@ -424,14 +370,7 @@ function normaliseBodies(
     const id =
       body?.id && typeof body.id === "string"
         ? body.id
-        : getRemoteInferenceBodyId(
-            canvasId,
-            model,
-            pageIndex,
-            annotationIndex,
-            bodyIndex,
-            runId,
-          );
+        : getRemoteInferenceBodyId(canvasId, model, pageIndex, annotationIndex, bodyIndex, runId);
     return {
       id,
       entity: {
@@ -467,9 +406,7 @@ function writeRemoteInferenceAnnotations(
   const pageId = page?.id || `${trimTrailingSlash(canvasId)}/annotations`;
   const previousItems: any[] = page?.items || [];
   const previousRemoteItems = previousItems.filter(
-    (item: any) =>
-      isRemoteInferenceId(item?.id) ||
-      isLegacyRemoteInferenceId(canvasId, item?.id),
+    (item: any) => isRemoteInferenceId(item?.id) || isLegacyRemoteInferenceId(canvasId, item?.id),
   );
   const actions: any[] = [];
   const mode = options.mode || "replace";
@@ -519,9 +456,7 @@ function writeRemoteInferenceAnnotations(
 
     for (const existingPage of existingPages) {
       if (existingPage?.id === pageId) continue;
-      const remoteItems: any[] = (existingPage?.items || []).filter(
-        (item: any) => isRemoteInferenceId(item?.id),
-      );
+      const remoteItems: any[] = (existingPage?.items || []).filter((item: any) => isRemoteInferenceId(item?.id));
       for (const item of remoteItems) {
         actions.push(
           removeReference({
@@ -542,11 +477,7 @@ function writeRemoteInferenceAnnotations(
   const bodyEntities: Record<string, any> = {};
   const annotationIds: string[] = [];
 
-  for (
-    let pageIndex = 0;
-    pageIndex < responseAnnotationPages.length;
-    pageIndex++
-  ) {
+  for (let pageIndex = 0; pageIndex < responseAnnotationPages.length; pageIndex++) {
     const responsePage = responseAnnotationPages[pageIndex];
     if (!responsePage?.items?.length) continue;
 
@@ -554,21 +485,8 @@ function writeRemoteInferenceAnnotations(
       const item = responsePage.items[i];
       if (!item) continue;
 
-      const annotationId = getRemoteInferenceAnnotationId(
-        canvasId,
-        model,
-        pageIndex,
-        i,
-        options.runId,
-      );
-      const bodies = normaliseBodies(
-        item,
-        canvasId,
-        model,
-        pageIndex,
-        i,
-        options.runId,
-      );
+      const annotationId = getRemoteInferenceAnnotationId(canvasId, model, pageIndex, i, options.runId);
+      const bodies = normaliseBodies(item, canvasId, model, pageIndex, i, options.runId);
 
       for (const body of bodies) {
         bodyEntities[body.id] = body.entity;
@@ -666,17 +584,12 @@ function requestRemoteInferenceConfig(
 }
 
 function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
-  const [request, setRequest] = useState<RemoteInferenceConfigRequest | null>(
-    null,
-  );
-  const [options, setOptions] = useState<RemoteInferenceRunOptions>(
-    getDefaultRunOptions(),
-  );
+  const [request, setRequest] = useState<RemoteInferenceConfigRequest | null>(null);
+  const [options, setOptions] = useState<RemoteInferenceRunOptions>(getDefaultRunOptions());
 
   useEffect(() => {
     const listener = (event: Event) => {
-      const detail = (event as CustomEvent<RemoteInferenceConfigRequest>)
-        .detail;
+      const detail = (event as CustomEvent<RemoteInferenceConfigRequest>).detail;
       if (detail?.actionId === actionId) {
         setRequest(detail);
         setOptions(normaliseDefaults(detail.defaults, detail.tags));
@@ -717,12 +630,8 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
       : options.scope === "tag"
         ? selectedTag?.annotatedCanvasCount || 0
         : request?.annotatedCanvases || 0;
-  const skippedByExistingAnnotations =
-    options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
-  const runnableCount = Math.max(
-    0,
-    selectedCount - skippedByExistingAnnotations,
-  );
+  const skippedByExistingAnnotations = options.skipAnnotatedCanvases !== false ? annotatedSelectedCount : 0;
+  const runnableCount = Math.max(0, selectedCount - skippedByExistingAnnotations);
   const serverUrl = options.serverUrl.trim();
   const canRun = runnableCount > 0 && !!serverUrl && !!options.model;
 
@@ -793,8 +702,7 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             }
           />
           <span className="text-xs text-zinc-500">
-            POST requests will be sent to{" "}
-            <code>{options.serverUrl}/enrich-canvas</code>
+            POST requests will be sent to <code>{options.serverUrl}/enrich-canvas</code>
           </span>
         </label>
 
@@ -826,9 +734,7 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             onChange={(event) =>
               setOptions((current) => ({
                 ...current,
-                model:
-                  parseRemoteInferenceModel(event.target.value) ||
-                  DEFAULT_MODEL,
+                model: parseRemoteInferenceModel(event.target.value) || DEFAULT_MODEL,
               }))
             }
           >
@@ -846,9 +752,7 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             <input
               type="radio"
               checked={options.scope === "all"}
-              onChange={() =>
-                setOptions((current) => ({ ...current, scope: "all" }))
-              }
+              onChange={() => setOptions((current) => ({ ...current, scope: "all" }))}
             />
             <span>All canvases ({request.totalCanvases})</span>
           </label>
@@ -857,15 +761,11 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
               type="radio"
               checked={options.scope === "selected"}
               disabled={selectedCanvasDisabled}
-              onChange={() =>
-                setOptions((current) => ({ ...current, scope: "selected" }))
-              }
+              onChange={() => setOptions((current) => ({ ...current, scope: "selected" }))}
             />
             <span>
               Selected canvas
-              {request.selectedCanvas?.label
-                ? ` (${request.selectedCanvas.label})`
-                : ""}
+              {request.selectedCanvas?.label ? ` (${request.selectedCanvas.label})` : ""}
             </span>
           </label>
           <label className="flex items-center gap-2">
@@ -915,25 +815,20 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             }
           />
           <span className="grid gap-1">
-            <span className="font-medium text-zinc-900">
-              Skip canvases with existing annotations
-            </span>
+            <span className="font-medium text-zinc-900">Skip canvases with existing annotations</span>
             <span className="text-xs text-zinc-500">
-              Do not run inference on canvases where a canvas annotation page
-              already contains an annotation.
+              Do not run inference on canvases where a canvas annotation page already contains an annotation.
             </span>
           </span>
         </label>
 
         <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
-          {runnableCount} canvas{runnableCount === 1 ? "" : "es"} will run
-          remote inference.
+          {runnableCount} canvas{runnableCount === 1 ? "" : "es"} will run remote inference.
           {skippedByExistingAnnotations ? (
             <>
               {" "}
               {skippedByExistingAnnotations} canvas
-              {skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped
-              because they already have annotations.
+              {skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped because they already have annotations.
             </>
           ) : null}
         </div>
@@ -947,27 +842,19 @@ function normaliseDefaults(
   tags: RemoteInferenceTagOption[],
 ): RemoteInferenceRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
-  const hasSelectedTag = defaults.tagKey
-    ? tags.some((tag) => tag.key === defaults.tagKey)
-    : false;
+  const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
   return {
     ...defaults,
     serverUrl: defaults.serverUrl || DEFAULT_SERVER_URL,
     apiKey: defaults.apiKey || "",
     model: parseRemoteInferenceModel(defaults.model) || DEFAULT_MODEL,
-    scope:
-      defaults.scope === "tag" && tags.length
-        ? "tag"
-        : defaults.scope === "selected"
-          ? "selected"
-          : "all",
+    scope: defaults.scope === "tag" && tags.length ? "tag" : defaults.scope === "selected" ? "selected" : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
     skipAnnotatedCanvases: defaults.skipAnnotatedCanvases !== false,
   };
 }
 
-const STRUCTURED_CONFIG_EVENT =
-  "@manifest-editor/remote-inference:structured-config";
+const STRUCTURED_CONFIG_EVENT = "@manifest-editor/remote-inference:structured-config";
 
 type StructuredOutputConfigRequest = {
   actionId: string;
@@ -1012,17 +899,12 @@ function requestStructuredOutputConfig(
 }
 
 function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
-  const [request, setRequest] = useState<StructuredOutputConfigRequest | null>(
-    null,
-  );
-  const [options, setOptions] = useState<StructuredOutputRunOptions>(
-    getDefaultStructuredOutputOptions(),
-  );
+  const [request, setRequest] = useState<StructuredOutputConfigRequest | null>(null);
+  const [options, setOptions] = useState<StructuredOutputRunOptions>(getDefaultStructuredOutputOptions());
 
   useEffect(() => {
     const listener = (event: Event) => {
-      const detail = (event as CustomEvent<StructuredOutputConfigRequest>)
-        .detail;
+      const detail = (event as CustomEvent<StructuredOutputConfigRequest>).detail;
       if (detail?.actionId === actionId) {
         setRequest(detail);
         setOptions(normaliseStructuredDefaults(detail.defaults, detail.tags));
@@ -1065,16 +947,10 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
   const tagSelectionDisabled = !tagOptions.length;
   const selectedCanvasDisabled = !request.selectedCanvas;
 
-  const updateField = (
-    fieldId: string,
-    key: "label" | "description",
-    value: string,
-  ) => {
+  const updateField = (fieldId: string, key: "label" | "description", value: string) => {
     setOptions((current) => ({
       ...current,
-      fields: current.fields.map((field) =>
-        field.id === fieldId ? { ...field, [key]: value } : field,
-      ),
+      fields: current.fields.map((field) => (field.id === fieldId ? { ...field, [key]: value } : field)),
     }));
   };
 
@@ -1084,10 +960,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
       try {
         localStorage.setItem(SERVER_URL_STORAGE_KEY, value.serverUrl.trim());
         localStorage.setItem(API_KEY_STORAGE_KEY, value.apiKey?.trim() || "");
-        localStorage.setItem(
-          STRUCTURED_FIELDS_STORAGE_KEY,
-          JSON.stringify(fields),
-        );
+        localStorage.setItem(STRUCTURED_FIELDS_STORAGE_KEY, JSON.stringify(fields));
       } catch {
         // ignore
       }
@@ -1148,8 +1021,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
             }
           />
           <span className="text-xs text-zinc-500">
-            POST requests will be sent to{" "}
-            <code>{options.serverUrl}/enrich-canvas</code>
+            POST requests will be sent to <code>{options.serverUrl}/enrich-canvas</code>
           </span>
         </label>
 
@@ -1179,9 +1051,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
             <input
               type="radio"
               checked={options.scope === "all"}
-              onChange={() =>
-                setOptions((current) => ({ ...current, scope: "all" }))
-              }
+              onChange={() => setOptions((current) => ({ ...current, scope: "all" }))}
             />
             <span>All canvases ({request.totalCanvases})</span>
           </label>
@@ -1190,15 +1060,11 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
               type="radio"
               checked={options.scope === "selected"}
               disabled={selectedCanvasDisabled}
-              onChange={() =>
-                setOptions((current) => ({ ...current, scope: "selected" }))
-              }
+              onChange={() => setOptions((current) => ({ ...current, scope: "selected" }))}
             />
             <span>
               Selected canvas
-              {request.selectedCanvas?.label
-                ? ` (${request.selectedCanvas.label})`
-                : ""}
+              {request.selectedCanvas?.label ? ` (${request.selectedCanvas.label})` : ""}
             </span>
           </label>
           <label className="flex items-center gap-2">
@@ -1236,18 +1102,11 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
         </fieldset>
 
         <fieldset className="grid gap-2">
-          <legend className="font-medium text-zinc-900">
-            Structured fields
-          </legend>
+          <legend className="font-medium text-zinc-900">Structured fields</legend>
           {options.fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="grid gap-2 rounded border border-zinc-200 bg-white p-3"
-            >
+            <div key={field.id} className="grid gap-2 rounded border border-zinc-200 bg-white p-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-                  Field {index + 1}
-                </span>
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Field {index + 1}</span>
                 <button
                   type="button"
                   className="text-xs text-zinc-500 disabled:opacity-50"
@@ -1255,9 +1114,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
                   onClick={() =>
                     setOptions((current) => ({
                       ...current,
-                      fields: current.fields.filter(
-                        (item) => item.id !== field.id,
-                      ),
+                      fields: current.fields.filter((item) => item.id !== field.id),
                     }))
                   }
                 >
@@ -1269,17 +1126,13 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
                 className="rounded border border-zinc-300 p-2 text-sm"
                 value={field.label}
                 placeholder="Label, e.g. Title"
-                onChange={(event) =>
-                  updateField(field.id, "label", event.target.value)
-                }
+                onChange={(event) => updateField(field.id, "label", event.target.value)}
               />
               <textarea
                 className="min-h-20 rounded border border-zinc-300 p-2 text-sm"
                 value={field.description}
                 placeholder="Description or extraction instructions"
-                onChange={(event) =>
-                  updateField(field.id, "description", event.target.value)
-                }
+                onChange={(event) => updateField(field.id, "description", event.target.value)}
               />
             </div>
           ))}
@@ -1298,8 +1151,8 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
         </fieldset>
 
         <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
-          {selectedCount} canvas{selectedCount === 1 ? "" : "es"} will run
-          structured output. Existing annotations will be kept.
+          {selectedCount} canvas{selectedCount === 1 ? "" : "es"} will run structured output. Existing annotations will
+          be kept.
         </div>
       </div>
     </Modal>
@@ -1311,23 +1164,14 @@ function normaliseStructuredDefaults(
   tags: RemoteInferenceTagOption[],
 ): StructuredOutputRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
-  const hasSelectedTag = defaults.tagKey
-    ? tags.some((tag) => tag.key === defaults.tagKey)
-    : false;
+  const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
   return {
     ...defaults,
     serverUrl: defaults.serverUrl || DEFAULT_SERVER_URL,
     apiKey: defaults.apiKey || "",
-    scope:
-      defaults.scope === "tag" && tags.length
-        ? "tag"
-        : defaults.scope === "selected"
-          ? "selected"
-          : "all",
+    scope: defaults.scope === "tag" && tags.length ? "tag" : defaults.scope === "selected" ? "selected" : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
-    fields: defaults.fields?.length
-      ? defaults.fields
-      : [createStructuredField()],
+    fields: defaults.fields?.length ? defaults.fields : [createStructuredField()],
   };
 }
 
@@ -1352,8 +1196,7 @@ function openRemoteInferenceResults(actionId: string, result: unknown) {
 }
 
 function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
-  const [activeResult, setActiveResult] =
-    useState<RemoteInferenceActionResult | null>(null);
+  const [activeResult, setActiveResult] = useState<RemoteInferenceActionResult | null>(null);
 
   useEffect(() => {
     const listener = (event: Event) => {
@@ -1369,11 +1212,7 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
   if (!activeResult) return null;
 
   return (
-    <Modal
-      title="Remote inference results"
-      onClose={() => setActiveResult(null)}
-      className="max-w-3xl"
-    >
+    <Modal title="Remote inference results" onClose={() => setActiveResult(null)} className="max-w-3xl">
       <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
         <div className="grid grid-cols-4 gap-2">
           <ResultStat label="Selected" value={activeResult.selected} />
@@ -1383,9 +1222,7 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
         </div>
         {activeResult.canvases.length ? (
           <div className="rounded border border-zinc-200">
-            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">
-              Processed canvases
-            </div>
+            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">Processed canvases</div>
             <div className="max-h-72 overflow-auto">
               {activeResult.canvases.map((item) => (
                 <div
@@ -1393,21 +1230,11 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
                   className="grid gap-2 border-b border-zinc-100 px-3 py-2 last:border-0"
                 >
                   <div className="flex min-w-0 items-center justify-between gap-3">
-                    <div className="truncate font-medium text-zinc-900">
-                      {item.canvasId}
-                    </div>
-                    <div className="shrink-0 text-xs text-zinc-500">
-                      {item.model}
-                    </div>
+                    <div className="truncate font-medium text-zinc-900">{item.canvasId}</div>
+                    <div className="shrink-0 text-xs text-zinc-500">{item.model}</div>
                   </div>
-                  {item.message ? (
-                    <div className="text-zinc-500">{item.message}</div>
-                  ) : null}
-                  {item.sourceImage ? (
-                    <div className="truncate text-xs text-zinc-500">
-                      {item.sourceImage}
-                    </div>
-                  ) : null}
+                  {item.message ? <div className="text-zinc-500">{item.message}</div> : null}
+                  {item.sourceImage ? <div className="truncate text-xs text-zinc-500">{item.sourceImage}</div> : null}
                   {item.palette?.length ? (
                     <div className="flex flex-wrap gap-2">
                       {item.palette.map((color) => (
@@ -1415,10 +1242,7 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
                           key={color}
                           className="inline-flex items-center gap-1 rounded border border-zinc-200 bg-white px-2 py-1 text-xs text-zinc-700"
                         >
-                          <span
-                            className="h-4 w-4 rounded border border-zinc-200"
-                            style={{ backgroundColor: color }}
-                          />
+                          <span className="h-4 w-4 rounded border border-zinc-200" style={{ backgroundColor: color }} />
                           {color}
                         </span>
                       ))}
@@ -1427,13 +1251,8 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
                   {item.fields && Object.keys(item.fields).length ? (
                     <div className="grid gap-1 rounded border border-zinc-200 bg-white p-2">
                       {Object.entries(item.fields).map(([label, value]) => (
-                        <div
-                          key={label}
-                          className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-2 text-xs"
-                        >
-                          <span className="truncate font-medium text-zinc-700">
-                            {label}
-                          </span>
+                        <div key={label} className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-2 text-xs">
+                          <span className="truncate font-medium text-zinc-700">{label}</span>
                           <span className="text-zinc-600">{value}</span>
                         </div>
                       ))}
@@ -1446,18 +1265,11 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
         ) : null}
         {activeResult.skippedCanvases.length ? (
           <div className="rounded border border-zinc-200">
-            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">
-              Skipped canvases
-            </div>
+            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">Skipped canvases</div>
             <div className="max-h-64 overflow-auto">
               {activeResult.skippedCanvases.map((item) => (
-                <div
-                  key={item.canvasId}
-                  className="grid gap-1 border-b border-zinc-100 px-3 py-2 last:border-0"
-                >
-                  <div className="truncate font-medium text-zinc-900">
-                    {item.canvasId}
-                  </div>
+                <div key={item.canvasId} className="grid gap-1 border-b border-zinc-100 px-3 py-2 last:border-0">
+                  <div className="truncate font-medium text-zinc-900">{item.canvasId}</div>
                   <div className="text-zinc-500">{item.reason}</div>
                 </div>
               ))}
@@ -1473,9 +1285,7 @@ function ResultStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded border border-zinc-200 bg-zinc-50 p-3">
       <div className="text-xl font-semibold text-zinc-900">{value}</div>
-      <div className="text-xs uppercase tracking-wide text-zinc-500">
-        {label}
-      </div>
+      <div className="text-xs uppercase tracking-wide text-zinc-500">{label}</div>
     </div>
   );
 }
@@ -1484,39 +1294,24 @@ function ResultStat({ label, value }: { label: string; value: number }) {
 
 function getManifestCanvases(ctx: BackgroundActionRunContext) {
   const manifest = ctx.vault.get(ctx.target as any) as any;
-  return manifest?.items
-    ? ((ctx.vault.get(manifest.items) as any) || []).filter(Boolean)
-    : [];
+  return manifest?.items ? ((ctx.vault.get(manifest.items) as any) || []).filter(Boolean) : [];
 }
 
-function selectCanvases(
-  ctx: BackgroundActionRunContext,
-  canvases: any[],
-  options: CanvasSelectionOptions,
-) {
+function selectCanvases(ctx: BackgroundActionRunContext, canvases: any[], options: CanvasSelectionOptions) {
   if (options.scope === "selected") {
     const currentCanvasId = ctx.currentCanvas?.id;
-    return currentCanvasId
-      ? canvases.filter((canvas) => canvas?.id === currentCanvasId)
-      : [];
+    return currentCanvasId ? canvases.filter((canvas) => canvas?.id === currentCanvasId) : [];
   }
 
   if (options.scope !== "tag" || !options.tagKey) return canvases;
   const selectedTag = parseTagKey(options.tagKey);
   if (!selectedTag) return [];
   return canvases.filter((canvas) =>
-    ctx.tags.hasTag(
-      { id: canvas.id, type: "Canvas" },
-      selectedTag.type,
-      selectedTag.id,
-    ),
+    ctx.tags.hasTag({ id: canvas.id, type: "Canvas" }, selectedTag.type, selectedTag.id),
   );
 }
 
-function getCurrentCanvasOption(
-  ctx: BackgroundActionRunContext,
-  canvases: any[],
-) {
+function getCurrentCanvasOption(ctx: BackgroundActionRunContext, canvases: any[]) {
   const currentCanvasId = ctx.currentCanvas?.id;
   if (!currentCanvasId) return undefined;
 
@@ -1555,9 +1350,7 @@ function createRemoteInferencePlan(
       const canvasId: string = canvas?.id || `canvas-${index + 1}`;
       const label = getCanvasLabel(canvas) || canvasId;
       const skipExistingAnnotations =
-        options.skipAnnotatedCanvases !== false && ctx
-          ? canvasHasAnnotationPageAnnotations(ctx, canvas)
-          : false;
+        options.skipAnnotatedCanvases !== false && ctx ? canvasHasAnnotationPageAnnotations(ctx, canvas) : false;
       const skip = skipExistingAnnotations
         ? ({
             canvasId,
@@ -1576,12 +1369,8 @@ function createRemoteInferencePlan(
         },
         input: { canvasId, manifestId },
         status: skip ? ("skipped" as const) : ("queued" as const),
-        statusText: skip
-          ? "Skipped: canvas already has annotations"
-          : undefined,
-        result: skip
-          ? ({ type: "skipped", skip } satisfies RemoteInferenceTaskResult)
-          : undefined,
+        statusText: skip ? "Skipped: canvas already has annotations" : undefined,
+        result: skip ? ({ type: "skipped", skip } satisfies RemoteInferenceTaskResult) : undefined,
         completedAt: skip ? Date.now() : undefined,
       };
     }),
@@ -1620,16 +1409,12 @@ function createStructuredOutputPlan(
   };
 }
 
-function getPlanOptions(
-  plan: BackgroundActionPlan,
-): RemoteInferenceRunOptions | null {
+function getPlanOptions(plan: BackgroundActionPlan): RemoteInferenceRunOptions | null {
   const data = plan.data as Partial<RemoteInferencePlanData> | undefined;
   return data?.options || null;
 }
 
-function getStructuredPlanOptions(
-  plan: BackgroundActionPlan,
-): StructuredOutputRunOptions | null {
+function getStructuredPlanOptions(plan: BackgroundActionPlan): StructuredOutputRunOptions | null {
   const data = plan.data as Partial<StructuredOutputPlanData> | undefined;
   return data?.options || null;
 }
@@ -1639,10 +1424,7 @@ function getPlanTotal(plan: BackgroundActionPlan) {
   return typeof data?.total === "number" ? data.total : plan.tasks.length;
 }
 
-function createEmptyResult(
-  total: number,
-  selected: number,
-): RemoteInferenceActionResult {
+function createEmptyResult(total: number, selected: number): RemoteInferenceActionResult {
   return {
     total,
     selected,
@@ -1654,10 +1436,7 @@ function createEmptyResult(
   };
 }
 
-function aggregateResult(
-  total: number,
-  tasks: BackgroundActionTask[],
-): RemoteInferenceActionResult {
+function aggregateResult(total: number, tasks: BackgroundActionTask[]): RemoteInferenceActionResult {
   const result = createEmptyResult(total, tasks.length);
 
   for (const task of tasks) {
@@ -1679,10 +1458,7 @@ function aggregateResult(
   }
 
   result.processed = result.canvases.length;
-  result.annotations = result.canvases.reduce(
-    (sum, c) => sum + c.annotations,
-    0,
-  );
+  result.annotations = result.canvases.reduce((sum, c) => sum + c.annotations, 0);
   result.skipped = result.skippedCanvases.length;
   return result;
 }
@@ -1696,22 +1472,15 @@ function getRemoteInferenceEndpoint(serverUrl: string) {
 }
 
 function getResponseError(results: any) {
-  return typeof results?.error === "string" && results.error.trim()
-    ? results.error
-    : null;
+  return typeof results?.error === "string" && results.error.trim() ? results.error : null;
 }
 
-function getModelResultMessage(
-  model: RemoteInferenceResultModel,
-  results: any,
-) {
+function getModelResultMessage(model: RemoteInferenceResultModel, results: any) {
   const value = results?.[model];
   return typeof value === "string" ? value : undefined;
 }
 
-function getRequestHeaders(options: {
-  apiKey?: string;
-}): Record<string, string> {
+function getRequestHeaders(options: { apiKey?: string }): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -1745,8 +1514,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
     </>
   ),
 
-  onResults: (ctx) =>
-    openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
+  onResults: (ctx) => openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
 
   supports: (ctx) => {
     const manifest = ctx.vault.get(ctx.target as any) as any;
@@ -1755,21 +1523,14 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
 
   prepare: async (ctx) => {
     const canvases = getManifestCanvases(ctx);
-    const prepareData = ctx.prepareData as
-      | RemoteInferencePrepareData
-      | undefined;
+    const prepareData = ctx.prepareData as RemoteInferencePrepareData | undefined;
     const defaults = getDefaultRunOptions();
-    const requestDefaults =
-      prepareData?.scope === "selected"
-        ? { ...defaults, scope: "selected" as const }
-        : defaults;
+    const requestDefaults = prepareData?.scope === "selected" ? { ...defaults, scope: "selected" as const } : defaults;
     const options = await requestRemoteInferenceConfig({
       actionId: ctx.definition.id,
       instanceKey: ctx.instanceKey,
       totalCanvases: canvases.length,
-      annotatedCanvases: canvases.filter((canvas: any) =>
-        canvasHasAnnotationPageAnnotations(ctx, canvas),
-      ).length,
+      annotatedCanvases: canvases.filter((canvas: any) => canvasHasAnnotationPageAnnotations(ctx, canvas)).length,
       selectedCanvas: getCurrentCanvasOption(ctx, canvases),
       tags: getCanvasTagOptions(ctx, canvases),
       defaults: requestDefaults,
@@ -1779,17 +1540,11 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
     if (options === false) return false;
 
     const selectedCanvases = selectCanvases(ctx, canvases, options);
-    return createRemoteInferencePlan(
-      canvases.length,
-      selectedCanvases,
-      options,
-      ctx,
-    );
+    return createRemoteInferencePlan(canvases.length, selectedCanvases, options, ctx);
   },
 
   run: async (ctx) => {
-    const plan =
-      ctx.plan || createRemoteInferencePlan(0, [], getDefaultRunOptions());
+    const plan = ctx.plan || createRemoteInferencePlan(0, [], getDefaultRunOptions());
     const options = getPlanOptions(plan) || getDefaultRunOptions();
     const tasks = ctx.tasks.getAll();
     const pendingTasks = ctx.tasks.getPending();
@@ -1810,8 +1565,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
         pendingTasks
           .map((task) => task.target)
           .filter(
-            (target): target is NonNullable<BackgroundActionTask["target"]> =>
-              !!target && target.type === "Canvas",
+            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas",
           ),
         "queued",
       );
@@ -1832,26 +1586,32 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
           try {
             const startedAt = performance.now();
 
-            ctx.setActionStatus(
-              "running",
-              `Sending canvas ${index + 1}/${total} to server`,
-            );
+            ctx.setActionStatus("running", `Sending canvas ${index + 1}/${total} to server`);
+
+            const canvas = ctx.vault.toPresentation3({ id: canvasId, type: "Canvas" });
+
+            let body: any = {
+              canvas: canvasWithoutAnnotationPages(canvas),
+              config: { type: model },
+            };
+
+            if (!canvas) {
+              body = {
+                manifest_url: manifestId,
+                canvas_id: canvasId,
+                config: { type: model },
+              };
+            }
 
             const response = await fetch(endpoint, {
               method: "POST",
               headers: getRequestHeaders(options),
-              body: JSON.stringify({
-                manifest_url: manifestId,
-                canvas_id: canvasId,
-                config: { type: model },
-              }),
+              body: JSON.stringify(body),
               signal: ctx.signal,
             });
 
             if (!response.ok) {
-              const text = await response
-                .text()
-                .catch(() => response.statusText);
+              const text = await response.text().catch(() => response.statusText);
               const skip: RemoteInferenceCanvasSkip = {
                 canvasId,
                 reason: `Server responded with ${response.status}: ${text}`,
@@ -1892,9 +1652,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
             const durationMs = performance.now() - startedAt;
 
             if (model === "palette") {
-              const palette = Array.isArray(responseJson?.results?.palette)
-                ? responseJson.results.palette
-                : [];
+              const palette = Array.isArray(responseJson?.results?.palette) ? responseJson.results.palette : [];
               ctx.appendActionLog("Read palette", "info", {
                 canvasId,
                 colours: palette.length,
@@ -1910,9 +1668,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
                     durationMs,
                     palette,
                     sourceImage: responseJson?.results?.source_image,
-                    message: palette.length
-                      ? `Found ${palette.length} colours`
-                      : "No palette colours returned",
+                    message: palette.length ? `Found ${palette.length} colours` : "No palette colours returned",
                   },
                 } satisfies RemoteInferenceTaskResult,
               };
@@ -1938,12 +1694,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
               };
             }
 
-            const annotationsWritten = writeRemoteInferenceAnnotations(
-              ctx,
-              canvasId,
-              model,
-              annotationPages,
-            );
+            const annotationsWritten = writeRemoteInferenceAnnotations(ctx, canvasId, model, annotationPages);
 
             ctx.appendActionLog("Wrote annotations", "info", {
               canvasId,
@@ -1985,8 +1736,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
           }
         },
         {
-          progressLabel: (_task, index, total) =>
-            `Inference ${index + 1}/${total}`,
+          progressLabel: (_task, index, total) => `Inference ${index + 1}/${total}`,
         },
       );
     }
@@ -2022,8 +1772,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
     </>
   ),
 
-  onResults: (ctx) =>
-    openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
+  onResults: (ctx) => openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
 
   supports: (ctx) => {
     const manifest = ctx.vault.get(ctx.target as any) as any;
@@ -2032,14 +1781,9 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
 
   prepare: async (ctx) => {
     const canvases = getManifestCanvases(ctx);
-    const prepareData = ctx.prepareData as
-      | RemoteInferencePrepareData
-      | undefined;
+    const prepareData = ctx.prepareData as RemoteInferencePrepareData | undefined;
     const defaults = getDefaultStructuredOutputOptions();
-    const requestDefaults =
-      prepareData?.scope === "selected"
-        ? { ...defaults, scope: "selected" as const }
-        : defaults;
+    const requestDefaults = prepareData?.scope === "selected" ? { ...defaults, scope: "selected" as const } : defaults;
     const options = await requestStructuredOutputConfig({
       actionId: ctx.definition.id,
       instanceKey: ctx.instanceKey,
@@ -2053,20 +1797,12 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
     if (options === false) return false;
 
     const selectedCanvases = selectCanvases(ctx, canvases, options);
-    return createStructuredOutputPlan(
-      canvases.length,
-      selectedCanvases,
-      options,
-      ctx,
-    );
+    return createStructuredOutputPlan(canvases.length, selectedCanvases, options, ctx);
   },
 
   run: async (ctx) => {
-    const plan =
-      ctx.plan ||
-      createStructuredOutputPlan(0, [], getDefaultStructuredOutputOptions());
-    const options =
-      getStructuredPlanOptions(plan) || getDefaultStructuredOutputOptions();
+    const plan = ctx.plan || createStructuredOutputPlan(0, [], getDefaultStructuredOutputOptions());
+    const options = getStructuredPlanOptions(plan) || getDefaultStructuredOutputOptions();
     const tasks = ctx.tasks.getAll();
     const pendingTasks = ctx.tasks.getPending();
     const totalCanvases = getPlanTotal(plan);
@@ -2091,8 +1827,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
         pendingTasks
           .map((task) => task.target)
           .filter(
-            (target): target is NonNullable<BackgroundActionTask["target"]> =>
-              !!target && target.type === "Canvas",
+            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas",
           ),
         "queued",
       );
@@ -2104,23 +1839,16 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
           const canvasId = task.target?.id || input.canvasId || task.id;
           const manifestId = input.manifestId || "";
 
-          ctx.appendActionLog(
-            `Structured output ${index + 1}/${total}`,
-            "info",
-            {
-              canvasId,
-              current: index + 1,
-              total,
-            },
-          );
+          ctx.appendActionLog(`Structured output ${index + 1}/${total}`, "info", {
+            canvasId,
+            current: index + 1,
+            total,
+          });
 
           try {
             const startedAt = performance.now();
 
-            ctx.setActionStatus(
-              "running",
-              `Sending canvas ${index + 1}/${total} to server`,
-            );
+            ctx.setActionStatus("running", `Sending canvas ${index + 1}/${total} to server`);
 
             const response = await fetch(endpoint, {
               method: "POST",
@@ -2137,9 +1865,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
             });
 
             if (!response.ok) {
-              const text = await response
-                .text()
-                .catch(() => response.statusText);
+              const text = await response.text().catch(() => response.statusText);
               const skip: RemoteInferenceCanvasSkip = {
                 canvasId,
                 reason: `Server responded with ${response.status}: ${text}`,
@@ -2178,8 +1904,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
             }
 
             const responseCanvas = responseJson?.canvas;
-            const annotationPages =
-              getStructuredOutputAnnotationPages(responseCanvas);
+            const annotationPages = getStructuredOutputAnnotationPages(responseCanvas);
             if (!annotationPages.length) {
               const skip: RemoteInferenceCanvasSkip = {
                 canvasId,
@@ -2207,9 +1932,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
               annotationPages,
               { mode: "append", runId },
             );
-            const resultFields = getStructuredFieldsResult(
-              responseJson?.results,
-            );
+            const resultFields = getStructuredFieldsResult(responseJson?.results);
 
             ctx.appendActionLog("Wrote structured annotations", "info", {
               canvasId,
@@ -2227,10 +1950,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
                   durationMs,
                   fields: resultFields,
                   sourceImage: responseJson?.results?.source_image,
-                  message: getModelResultMessage(
-                    STRUCTURED_OUTPUT_MODEL,
-                    responseJson?.results,
-                  ),
+                  message: getModelResultMessage(STRUCTURED_OUTPUT_MODEL, responseJson?.results),
                 },
               } satisfies RemoteInferenceTaskResult,
             };
@@ -2255,8 +1975,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
           }
         },
         {
-          progressLabel: (_task, index, total) =>
-            `Structured output ${index + 1}/${total}`,
+          progressLabel: (_task, index, total) => `Structured output ${index + 1}/${total}`,
         },
       );
     }
