@@ -22,6 +22,9 @@ import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
+export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
+export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
+
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),
   {
