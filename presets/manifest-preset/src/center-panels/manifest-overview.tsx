@@ -135,12 +135,21 @@ export function ManifestOverviewCenterPanel() {
     return [flaggedCanvases, flaggedCanvases.length] as const;
   }, [canvases, canvasTags, showOnlyFlagged]);
 
-  const createCanvas =
-    metadata.id === "exhibition-editor"
-      ? (index: any, data: any) => {
-          return canvasActions.createFiltered("exhibition-slide", index, data);
-        }
-      : canvasActions.create;
+  const exhibitionCreatorFilter =
+    metadata.id === "exhibition-slideshow-editor"
+      ? "exhibition-slideshow-slide"
+      : metadata.id === "exhibition-editor"
+        ? "exhibition-slide"
+        : null;
+  const createCanvas = exhibitionCreatorFilter
+    ? (index: any, data: any) => {
+        return canvasActions.createFiltered(
+          exhibitionCreatorFilter,
+          index,
+          data,
+        );
+      }
+    : canvasActions.create;
 
   if (!canvases || canvases.length === 0) {
     return (
