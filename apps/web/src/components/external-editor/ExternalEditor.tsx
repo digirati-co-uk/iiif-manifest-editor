@@ -2,7 +2,10 @@
 
 import { Vault } from "@iiif/helpers";
 import { ActionButton, ManifestEditorLogo } from "@manifest-editor/components";
-import { exhibitionEditorPreset } from "@manifest-editor/exhibition-preset";
+import {
+  exhibitionEditorPreset,
+  exhibitionEditorSlideshowPreset,
+} from "@manifest-editor/exhibition-preset";
 import * as manifestPreset from "@manifest-editor/manifest-preset";
 import {
   AppProvider,
@@ -25,6 +28,8 @@ import { twMerge } from "tailwind-merge";
 const presets: Record<string, MappedApp> = {
   manifest: mapApp(manifestPreset),
   exhibition: exhibitionEditorPreset,
+  "exhibition/slideshow": exhibitionEditorSlideshowPreset,
+  "exhibition-slideshow": exhibitionEditorSlideshowPreset,
 };
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {

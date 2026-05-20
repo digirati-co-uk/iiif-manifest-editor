@@ -14,6 +14,7 @@ import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { SlideBehavioursContent } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
+type WorkbenchPreset = "default" | "slideshow";
 type RightPanelTab = "layout" | "summary" | "tour";
 
 const tabs: Array<{ id: RightPanelTab; label: string }> = [
@@ -52,7 +53,17 @@ export const exhibitionWorkbenchEditor: EditorDefinition = {
   component: () => <ExhibitionWorkbenchRightPanel />,
 };
 
-function ExhibitionWorkbenchRightPanel() {
+export const slideshowWorkbenchEditor: EditorDefinition = {
+  ...exhibitionWorkbenchEditor,
+  id: "@exhibition/slideshow-workbench-editor",
+  component: () => <ExhibitionWorkbenchRightPanel preset="slideshow" />,
+};
+
+function ExhibitionWorkbenchRightPanel({
+  preset = "default",
+}: {
+  preset?: WorkbenchPreset;
+}) {
   const [mode, setMode] = useLocalStorage<EditingMode>(
     workbenchStorageKey,
     "simple",
@@ -94,7 +105,10 @@ function ExhibitionWorkbenchRightPanel() {
 
         <div className="mt-8 px-4">
           {selectedTab === "layout" ? (
-            <SlideBehavioursContent mode={mode} />
+            <SlideBehavioursContent
+              mode={mode}
+              layoutContext={preset === "slideshow" ? "slideshow" : "default"}
+            />
           ) : null}
           {selectedTab === "summary" ? (
             mode === "simple" ? (

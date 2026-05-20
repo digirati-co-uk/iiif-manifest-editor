@@ -1,6 +1,10 @@
 "use client";
-import { exhibitionEditorPreset } from "@manifest-editor/exhibition-preset";
+import {
+  exhibitionEditorPreset,
+  exhibitionEditorSlideshowPreset,
+} from "@manifest-editor/exhibition-preset";
 import type { Config } from "@manifest-editor/shell";
+import type { MappedApp } from "@manifest-editor/shell";
 import type { Step } from "react-joyride";
 import BrowserEditor from "../browser-editor/BrowserEditor";
 import { OnboardingTour } from "../OnboardingTour";
@@ -18,7 +22,9 @@ const exhibitionOnboarding: Step[] = [
   // },
 ];
 
-const config: Partial<Config> = {
+type ExhibitionLayoutPreset = "full-page" | "slideshow";
+
+const defaultConfig: Partial<Config> = {
   previews: [
     {
       id: "scroll-theme",
@@ -87,18 +93,81 @@ const config: Partial<Config> = {
   ],
 };
 
+const slideshowConfig: Partial<Config> = {
+  previews: [
+    {
+      id: "delft-slideshow",
+      type: "external-manifest-preview",
+      label: "Delft slideshow",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}",
+      },
+    },
+    {
+      id: "minimal-slideshow",
+      type: "external-manifest-preview",
+      label: "Light slideshow",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true",
+      },
+    },
+    {
+      id: "iiif-preview",
+      type: "iiif-preview-service",
+      label: "IIIF Preview",
+      config: {
+        url: "/api/iiif/store",
+      },
+    },
+    {
+      id: "raw-manifest",
+      type: "external-manifest-preview",
+      label: "Raw Manifest",
+      config: {
+        url: "{manifestId}",
+      },
+    },
+  ],
+};
+
+const layoutPresets: Record<
+  ExhibitionLayoutPreset,
+  {
+    preset: MappedApp;
+    config: Partial<Config>;
+    presetPath: string;
+    presetName: string;
+  }
+> = {
+  "full-page": {
+    preset: exhibitionEditorPreset,
+    config: defaultConfig,
+    presetPath: "exhibition",
+    presetName: "Exhibitions",
+  },
+  slideshow: {
+    preset: exhibitionEditorSlideshowPreset,
+    config: slideshowConfig,
+    presetPath: "exhibition/slideshow",
+    presetName: "Exhibitions / Slideshow",
+  },
+};
+
 export default function ExhibitionEditor(props: {
   id: string;
   layoutMode?: "default" | "focused";
+  preset?: ExhibitionLayoutPreset;
 }) {
+  const selectedPreset = layoutPresets[props.preset || "full-page"];
+
   return (
     <>
       <BrowserEditor
         id={props.id}
-        preset={exhibitionEditorPreset}
-        config={config}
-        presetPath="exhibition"
-        presetName="Exhibitions"
+        preset={selectedPreset.preset}
+        config={selectedPreset.config}
+        presetPath={selectedPreset.presetPath}
+        presetName={selectedPreset.presetName}
         layoutMode={props.layoutMode}
       />
       <OnboardingTour id="exhibition-editor" steps={exhibitionOnboarding} />

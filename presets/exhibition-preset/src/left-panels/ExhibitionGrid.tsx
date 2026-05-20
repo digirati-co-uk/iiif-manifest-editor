@@ -16,18 +16,36 @@ import {
 import { ExhibitionGrid } from "../components/ExhibitionGrid";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";
 
-export const exhibitionGridLeftPanel: LayoutPanel = {
-  id: "canvas-listing", // We are overriding the default canvas listing panel
+export const exhibitionGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Exhibition grid",
-  icon: <ExhibitionGridIcon />,
-  render: () => <ExhibitionGridLeftPanel />,
-  options: {
-    minWidth: 350,
-    maxWidth: 350,
-  },
-};
+  creatorFilter: "exhibition-slide",
+});
 
-function ExhibitionGridLeftPanel() {
+export const slideshowGridLeftPanel = createExhibitionGridLeftPanel({
+  label: "Slideshow",
+  creatorFilter: "exhibition-slideshow-slide",
+});
+
+function createExhibitionGridLeftPanel({
+  label,
+  creatorFilter,
+}: {
+  label: string;
+  creatorFilter: string;
+}): LayoutPanel {
+  return {
+    id: "canvas-listing", // We are overriding the default canvas listing panel
+    label,
+    icon: <ExhibitionGridIcon />,
+    render: () => <ExhibitionGridLeftPanel creatorFilter={creatorFilter} />,
+    options: {
+      minWidth: 350,
+      maxWidth: 350,
+    },
+  };
+}
+
+function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
   const { technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
@@ -64,7 +82,7 @@ function ExhibitionGridLeftPanel() {
             icon: <NewSlideIcon />,
             title: "Add new slide",
             disabled: !canCreateCanvas,
-            onClick: () => canvasActions.createFiltered("exhibition-slide"),
+            onClick: () => canvasActions.createFiltered(creatorFilter),
           },
         ]}
       />

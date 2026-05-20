@@ -10,6 +10,8 @@ declare module "@manifest-editor/creator-api" {
       "@exhibitions/image-slide-creator-bottom": typeof imageSlideBottomCreator;
       "@exhibitions/image-slide-creator-left": typeof imageSlideLeftCreator;
       "@exhibitions/image-slide-creator-right": typeof imageSlideRightCreator;
+      "@exhibitions/slideshow-image-only-creator": typeof slideshowImageOnlyCreator;
+      "@exhibitions/slideshow-image-text-creator": typeof slideshowImageTextCreator;
     }
   }
 }
@@ -56,6 +58,44 @@ export const imageSlideBottomCreator = defineCreator({
   create: (payload, ctx) => createImageSlide({ ...payload, type: "bottom" }, ctx),
 });
 
+export const slideshowImageOnlyCreator = defineCreator({
+  ...imageSlideCreator,
+  id: "@exhibitions/slideshow-image-only-creator",
+  label: "Image only",
+  summary: "A slideshow slide focused on an image.",
+  tags: ["exhibition-slideshow-slide"],
+  create: (payload, ctx) =>
+    createImageSlide(
+      {
+        ...payload,
+        behavior: ["w-12", "h-8", "image"],
+        height: payload.height || 1080,
+        width: payload.width || 1920,
+        type: "default",
+      },
+      ctx,
+    ),
+});
+
+export const slideshowImageTextCreator = defineCreator({
+  ...imageSlideCreator,
+  id: "@exhibitions/slideshow-image-text-creator",
+  label: "Image with text",
+  summary: "A slideshow slide with image and text.",
+  tags: ["exhibition-slideshow-slide"],
+  create: (payload, ctx) =>
+    createImageSlide(
+      {
+        ...payload,
+        behavior: ["w-12", "h-8", "right"],
+        height: payload.height || 1080,
+        width: payload.width || 1920,
+        type: "right",
+      },
+      ctx,
+    ),
+});
+
 interface InfoBoxPayload {
   canvasId?: string;
   label?: InternationalString;
@@ -63,6 +103,7 @@ interface InfoBoxPayload {
   width?: number;
   duration?: number;
   type: "default" | "left" | "right" | "bottom";
+  behavior?: string[];
   items?: CreatorResource[];
 }
 
@@ -80,7 +121,9 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const behavior = [];
   let width = 6000;
 
-  if (payload.width && payload.height) {
+  if (payload.behavior) {
+    behavior.push(...payload.behavior);
+  } else if (payload.width && payload.height) {
     // Let's figure out the right behaviours.
     if (payload.width > payload.height) {
       // The orientation is landscape.
@@ -100,18 +143,20 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     behavior.push("w-12", "h-4");
   }
 
-  switch (payload.type) {
-    case "left":
-      behavior.push("left");
-      width *= 2 / 3;
-      break;
-    case "right":
-      behavior.push("right");
-      width *= 2 / 3;
-      break;
-    case "bottom":
-      behavior.push("bottom");
-      break;
+  if (!payload.behavior) {
+    switch (payload.type) {
+      case "left":
+        behavior.push("left");
+        width *= 2 / 3;
+        break;
+      case "right":
+        behavior.push("right");
+        width *= 2 / 3;
+        break;
+      case "bottom":
+        behavior.push("bottom");
+        break;
+    }
   }
 
   if (!payload.items?.length) {

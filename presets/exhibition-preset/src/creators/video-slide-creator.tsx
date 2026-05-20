@@ -7,6 +7,7 @@ declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
     interface CreatorDefinitions {
       "@exhibitions/video-creator": typeof videoSlideCreator;
+      "@exhibitions/slideshow-video-creator": typeof slideshowVideoCreator;
     }
   }
 }
@@ -26,7 +27,32 @@ export const videoSlideCreator = defineCreator({
   },
 });
 
-async function createVideo(data: CreateVideoAnnotationPayload, ctx: CreatorFunctionContext): any {
+export const slideshowVideoCreator = defineCreator({
+  ...videoSlideCreator,
+  id: "@exhibitions/slideshow-video-creator",
+  label: "Video",
+  summary: "A video slide for a slideshow exhibition.",
+  tags: ["exhibition-slideshow-slide"],
+  create: (payload, ctx) =>
+    createVideo(
+      {
+        ...payload,
+        behavior: ["w-12", "h-8", "image"],
+        height: payload.height || 1080,
+        slideType: "default",
+        width: payload.width || 1920,
+      },
+      ctx,
+    ),
+});
+
+async function createVideo(
+  data: CreateVideoAnnotationPayload & {
+    behavior?: string[];
+    slideType?: "default" | "left" | "right" | "bottom";
+  },
+  ctx: CreatorFunctionContext,
+): Promise<any> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
@@ -58,10 +84,11 @@ async function createVideo(data: CreateVideoAnnotationPayload, ctx: CreatorFunct
   // 2. Pass that to an empty slide.
   return await createSlide({
     canvasId,
+    behavior: data.behavior,
     height: data.height || 1080,
     width: data.width || 1920,
     duration: data.duration,
-    type: "bottom", // default / left / right / bottom
+    type: data.slideType || "bottom", // default / left / right / bottom
     items: [annotation as any],
   });
 }

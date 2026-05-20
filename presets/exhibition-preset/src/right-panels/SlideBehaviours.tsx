@@ -11,6 +11,7 @@ import { useState } from "react";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
 
 type EditingMode = "simple" | "advanced";
+type LayoutEditingContext = "default" | "slideshow";
 type LayoutPreset = "image-text" | "image-only";
 type TextPosition = "left" | "right" | "bottom";
 type DisplaySize = "compact" | "standard" | "large";
@@ -258,8 +259,10 @@ export function SlideBehavioursPanel() {
 
 export function SlideBehavioursContent({
   mode = "advanced",
+  layoutContext = "default",
 }: {
   mode?: EditingMode;
+  layoutContext?: LayoutEditingContext;
 }) {
   const canvas = useInStack("Canvas");
   const editor = useEditor();
@@ -273,6 +276,7 @@ export function SlideBehavioursContent({
     return (
       <SimpleSlideLayoutEditor
         behavior={editor.technical.behavior.get() || []}
+        layoutContext={layoutContext}
         onChange={(v) => {
           editor.technical.behavior.set(v);
         }}
@@ -311,9 +315,11 @@ export function SlideBehavioursContent({
 
 function SimpleSlideLayoutEditor({
   behavior,
+  layoutContext,
   onChange,
 }: {
   behavior: string[];
+  layoutContext: LayoutEditingContext;
   onChange: (newValue: string[]) => void;
 }) {
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("image-text");
@@ -325,9 +331,10 @@ function SimpleSlideLayoutEditor({
   );
 
   const applyLayout = () => {
-    const size = displaySizeOptions.find(
-      (option) => option.value === displaySize,
-    );
+    const size =
+      layoutContext === "slideshow"
+        ? displaySizeOptions.find((option) => option.value === "large")
+        : displaySizeOptions.find((option) => option.value === displaySize);
     const next = removeLayoutBehaviors(behavior);
 
     next.push(layoutPreset === "image-text" ? textPosition : "image");
@@ -363,25 +370,29 @@ function SimpleSlideLayoutEditor({
         </select>
       </SimpleField>
 
-      <SimpleField>
-        <SimpleFieldLabel>Display size</SimpleFieldLabel>
-        <select
-          className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
-          style={{
-            backgroundColor: simpleLayoutColours.fieldBackground,
-            borderColor: simpleLayoutColours.fieldBorder,
-            color: simpleLayoutColours.text,
-          }}
-          value={displaySize}
-          onChange={(e) => setDisplaySize(e.currentTarget.value as DisplaySize)}
-        >
-          {displaySizeOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </SimpleField>
+      {layoutContext === "default" ? (
+        <SimpleField>
+          <SimpleFieldLabel>Display size</SimpleFieldLabel>
+          <select
+            className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
+            style={{
+              backgroundColor: simpleLayoutColours.fieldBackground,
+              borderColor: simpleLayoutColours.fieldBorder,
+              color: simpleLayoutColours.text,
+            }}
+            value={displaySize}
+            onChange={(e) =>
+              setDisplaySize(e.currentTarget.value as DisplaySize)
+            }
+          >
+            {displaySizeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </SimpleField>
+      ) : null}
 
       {layoutPreset === "image-text" ? (
         <SimpleField>
@@ -422,7 +433,7 @@ function SimpleSlideLayoutEditor({
         style={{ backgroundColor: simpleLayoutColours.primary }}
         onClick={applyLayout}
       >
-        Apply layout
+        Apply slide layout
       </button>
     </div>
   );

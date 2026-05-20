@@ -24,6 +24,7 @@ import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
+export { default as PresetIcon } from "./icons/PresetIcon";
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),

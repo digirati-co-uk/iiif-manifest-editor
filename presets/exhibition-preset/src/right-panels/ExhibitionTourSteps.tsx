@@ -8,7 +8,6 @@ import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
-  useGenericEditor,
   useInlineCreator,
 } from "@manifest-editor/shell";
 import { useState } from "react";
@@ -109,7 +108,6 @@ export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations[0];
   const itemsAnnotationPage = canvas?.items[0];
-  const editor = useGenericEditor(firstAnnotationPage);
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
 
@@ -157,7 +155,7 @@ export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
 
   if (!canvas) return null;
   if (!firstAnnotationPage) {
-    return <div>No annotation page - create one?</div>;
+    return <PromptCreationOfTourSteps />;
   }
 
   const showPaintingAnnotations =
@@ -206,7 +204,7 @@ export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
               </h3>
               <PromptToAddPaintingAnnotations
                 painting={itemsAnnotationPage}
-                page={editor.ref()}
+                page={firstAnnotationPage}
                 canvasId={canvas.id}
               />
             </>
