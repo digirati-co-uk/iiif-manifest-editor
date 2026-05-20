@@ -47,6 +47,8 @@ const REMOTE_INFERENCE_MODELS = [
   { value: "qwen-ocr", label: "Qwen: vLLM (9B)" },
 ] as const;
 
+export const REMOTE_INFERENCE_IMAGE_SIZES = [768, 1024, 1536, 2048] as const;
+
 type RemoteInferenceModel = (typeof REMOTE_INFERENCE_MODELS)[number]["value"];
 type RemoteInferenceResultModel = RemoteInferenceModel | typeof STRUCTURED_OUTPUT_MODEL;
 
@@ -125,6 +127,7 @@ type RemoteInferenceRunOptions = {
   scope: "all" | "tag" | "selected";
   tagKey?: string;
   skipAnnotatedCanvases?: boolean;
+  resolution?: number;
 };
 
 type CanvasSelectionOptions = {
@@ -160,6 +163,7 @@ function getDefaultRunOptions(): RemoteInferenceRunOptions {
     model: storedModel || DEFAULT_MODEL,
     scope: "all",
     skipAnnotatedCanvases: true,
+    resolution: 1024,
   };
 }
 
@@ -741,6 +745,26 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             {REMOTE_INFERENCE_MODELS.map((model) => (
               <option key={model.value} value={model.value}>
                 {model.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="grid gap-1">
+          <span className="font-medium text-zinc-900">Image size</span>
+          <select
+            className="rounded border border-zinc-300 bg-white p-2"
+            value={options.resolution}
+            onChange={(event) =>
+              setOptions((current) => ({
+                ...current,
+                resolution: Number(event.target.value) as number,
+              }))
+            }
+          >
+            {REMOTE_INFERENCE_IMAGE_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size}px long edge
               </option>
             ))}
           </select>
@@ -1590,16 +1614,18 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
 
             const canvas = ctx.vault.toPresentation3({ id: canvasId, type: "Canvas" });
 
+            const resolution = options.resolution || 1024;
+
             let body: any = {
               canvas: canvasWithoutAnnotationPages(canvas),
-              config: { type: model },
+              config: { type: model, resolution },
             };
 
             if (!canvas) {
               body = {
                 manifest_url: manifestId,
                 canvas_id: canvasId,
-                config: { type: model },
+                config: { type: model, resolution },
               };
             }
 
