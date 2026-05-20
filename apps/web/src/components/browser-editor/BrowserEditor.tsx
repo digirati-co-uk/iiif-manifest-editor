@@ -612,9 +612,9 @@ function ExhibitionPresetConfigEditor({
               selected={layoutPreset === "exhibition/slideshow"}
             />
             <PresetLayoutLink
+              href={`${editorBasePath}/scroll`}
               label="Scrolling exhibition"
               selected={layoutPreset === "exhibition/scroll"}
-              disabled
             />
           </div>
         </div>

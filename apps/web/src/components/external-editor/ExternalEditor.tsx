@@ -5,6 +5,7 @@ import { ActionButton, ManifestEditorLogo } from "@manifest-editor/components";
 import {
   exhibitionEditorPreset,
   exhibitionEditorSlideshowPreset,
+  exhibitionEditorScrollingPreset,
 } from "@manifest-editor/exhibition-preset";
 import * as manifestPreset from "@manifest-editor/manifest-preset";
 import {
@@ -30,6 +31,8 @@ const presets: Record<string, MappedApp> = {
   exhibition: exhibitionEditorPreset,
   "exhibition/slideshow": exhibitionEditorSlideshowPreset,
   "exhibition-slideshow": exhibitionEditorSlideshowPreset,
+  "exhibition/scroll": exhibitionEditorScrollingPreset,
+  "exhibition-scroll": exhibitionEditorScrollingPreset,
 };
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {

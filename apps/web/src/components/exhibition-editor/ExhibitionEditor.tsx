@@ -2,6 +2,7 @@
 import {
   exhibitionEditorPreset,
   exhibitionEditorSlideshowPreset,
+  exhibitionEditorScrollingPreset,
 } from "@manifest-editor/exhibition-preset";
 import type { Config } from "@manifest-editor/shell";
 import type { MappedApp } from "@manifest-editor/shell";
@@ -22,7 +23,7 @@ const exhibitionOnboarding: Step[] = [
   // },
 ];
 
-type ExhibitionLayoutPreset = "full-page" | "slideshow";
+type ExhibitionLayoutPreset = "full-page" | "scroll" | "slideshow";
 
 const defaultConfig: Partial<Config> = {
   previews: [
@@ -130,6 +131,43 @@ const slideshowConfig: Partial<Config> = {
   ],
 };
 
+const scrollConfig: Partial<Config> = {
+  previews: [
+    {
+      id: "scroll-theme",
+      type: "external-manifest-preview",
+      label: "Scrolling exhibition",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/scroll?manifest={manifestId}",
+      },
+    },
+    {
+      id: "minimal-theme",
+      type: "external-manifest-preview",
+      label: "Light exhibition",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/minimal?manifest={manifestId}",
+      },
+    },
+    {
+      id: "iiif-preview",
+      type: "iiif-preview-service",
+      label: "IIIF Preview",
+      config: {
+        url: "/api/iiif/store",
+      },
+    },
+    {
+      id: "raw-manifest",
+      type: "external-manifest-preview",
+      label: "Raw Manifest",
+      config: {
+        url: "{manifestId}",
+      },
+    },
+  ],
+};
+
 const layoutPresets: Record<
   ExhibitionLayoutPreset,
   {
@@ -150,6 +188,12 @@ const layoutPresets: Record<
     config: slideshowConfig,
     presetPath: "exhibition/slideshow",
     presetName: "Exhibitions / Slideshow",
+  },
+  scroll: {
+    preset: exhibitionEditorScrollingPreset,
+    config: scrollConfig,
+    presetPath: "exhibition/scroll",
+    presetName: "Exhibitions / Scroll",
   },
 };
 
