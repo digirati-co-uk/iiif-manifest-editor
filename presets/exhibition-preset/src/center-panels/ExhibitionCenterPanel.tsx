@@ -64,6 +64,25 @@ function ExhibitionCenterPanel() {
     } satisfies EditorHooks;
   }, []);
 
+  useEffect(() => {
+    for (const canvasRef of manifest?.items || []) {
+      const canvas = vault.get(canvasRef as any) as any;
+      if (canvas && !Array.isArray(canvas.items)) {
+        vault.modifyEntityField(canvas, "items", []);
+      }
+
+      for (const pageRef of [
+        ...(canvas?.items || []),
+        ...(canvas?.annotations || []),
+      ]) {
+        const page = vault.get(pageRef as any) as any;
+        if (page && !Array.isArray(page.items)) {
+          vault.modifyEntityField(page, "items", []);
+        }
+      }
+    }
+  }, [manifest, vault]);
+
   useLayoutEffect(() => {
     if (wrapperRef.current) {
       const wrapperWidth = wrapperRef.current.offsetWidth;

@@ -5,20 +5,29 @@ import {
   ResourceEditingProvider,
   useLocalStorage,
 } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas } from "react-iiif-vault";
 import { isEditableExhibitionCanvas } from "../helpers";
+import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import { ExhibitionCanvasAdvancedContent } from "./ExhibitionCanvasEditor";
+import { SlideshowContentPanel } from "./SlideshowContentPanel";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { SlideBehavioursContent } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
-type RightPanelTab = "layout" | "summary" | "tour";
+type RightPanelTab = "layout" | "content" | "summary" | "tour";
 
-const tabs: Array<{ id: RightPanelTab; label: string }> = [
+const defaultTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
+  { id: "summary", label: "Summary" },
+  { id: "tour", label: "Tour steps" },
+];
+
+const slideshowTabs: Array<{ id: RightPanelTab; label: string }> = [
+  { id: "layout", label: "Layout" },
+  { id: "content", label: "Content" },
   { id: "summary", label: "Summary" },
   { id: "tour", label: "Tour steps" },
 ];
@@ -36,10 +45,6 @@ const toggleColours = {
   activeText: "#ffffff",
   activeShadow: "0 1px 3px rgba(15, 23, 42, 0.18)",
 };
-const workbenchColours = {
-  divider: "#e4ddd6",
-};
-
 export const exhibitionWorkbenchEditor: EditorDefinition = {
   id: "@exhibition/workbench-editor",
   supports: {
@@ -69,6 +74,15 @@ function ExhibitionWorkbenchRightPanel({
     "simple",
   );
   const [selectedTab, setSelectedTab] = useState<RightPanelTab>("layout");
+  const tabs = preset === "slideshow" ? slideshowTabs : defaultTabs;
+  const setActiveSlideshowTab = useSlideshowWorkbenchState(
+    (state) => state.setActiveTab,
+  );
+
+  useEffect(() => {
+    setActiveSlideshowTab(preset === "slideshow" ? selectedTab : null);
+    return () => setActiveSlideshowTab(null);
+  }, [preset, selectedTab, setActiveSlideshowTab]);
 
   return (
     <Sidebar>
@@ -82,8 +96,10 @@ function ExhibitionWorkbenchRightPanel({
         </div>
 
         <div
-          className="mt-5 grid grid-cols-3 border-b"
-          style={{ borderColor: workbenchColours.divider }}
+          className={[
+            "mt-5 grid border-b border-[#e4ddd6]",
+            preset === "slideshow" ? "grid-cols-4" : "grid-cols-3",
+          ].join(" ")}
         >
           {tabs.map((tab) => (
             <button
@@ -110,6 +126,7 @@ function ExhibitionWorkbenchRightPanel({
               layoutContext={preset === "slideshow" ? "slideshow" : "default"}
             />
           ) : null}
+          {selectedTab === "content" ? <SlideshowContentPanel /> : null}
           {selectedTab === "summary" ? (
             mode === "simple" ? (
               <SimpleSummaryPanel />
@@ -118,7 +135,10 @@ function ExhibitionWorkbenchRightPanel({
             )
           ) : null}
           {selectedTab === "tour" ? (
-            <ExhibitionTourStepsContent mode={mode} />
+            <ExhibitionTourStepsContent
+              mode={mode}
+              useSlideshowTargets={preset === "slideshow"}
+            />
           ) : null}
         </div>
       </SidebarContent>
@@ -193,7 +213,7 @@ function SimpleSummaryPanel() {
   );
 }
 
-function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
+function SimpleFieldLabel({ children }: { children: ReactNode }) {
   return (
     <div className="exhibition-workbench-muted text-sm font-semibold">
       {children}

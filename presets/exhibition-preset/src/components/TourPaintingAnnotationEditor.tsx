@@ -10,6 +10,8 @@ import {
   LocaleString,
   useAnnotation,
   useAnnotationPage,
+  useCanvas,
+  useVault,
 } from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
 
@@ -23,8 +25,17 @@ export function TourPaintingAnnotationEditor({
   const page = useAnnotationPage();
   const pageEditor = useGenericEditor(page);
   const annotation = useAnnotation();
+  const canvas = useCanvas();
+  const vault = useVault();
   const { edit } = useLayoutActions();
   const [isOpen, setIsOpen] = useState(false);
+  const paintingPage = canvas?.items?.[0];
+  const annotationIndex =
+    paintingPage?.id && annotation?.id
+      ? (vault.get(paintingPage as any)?.items || []).findIndex(
+          (item: any) => item.id === annotation.id,
+        )
+      : -1;
 
   const deleteAnnotation = () => {
     if (
@@ -87,7 +98,22 @@ export function TourPaintingAnnotationEditor({
           </ActionButton>
         )}
 
-        <ActionButton onPress={() => edit(annotation!)}>
+        <ActionButton
+          onPress={() =>
+            annotation &&
+            edit(
+              { id: annotation.id, type: "Annotation" },
+              paintingPage
+                ? {
+                    parent: paintingPage,
+                    property: "items",
+                    index: annotationIndex,
+                  }
+                : undefined,
+              { forceOpen: true },
+            )
+          }
+        >
           Edit annotation
         </ActionButton>
 

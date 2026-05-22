@@ -146,6 +146,9 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
 
       const imagesToRender: { image: FixedSizeImage; target: BoxSelector | TemporalBoxSelector }[] = [];
       for (const image of strategy.images) {
+        const target = image.target || {
+          spatial: { x: 0, y: 0, width: canvas.width, height: canvas.height },
+        };
         const resource = image.annotation.body[0] ? vault.get(image.annotation.body[0]) : image.annotation;
         await helper
           .getBestThumbnailAtSize(resource, {
@@ -167,27 +170,33 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
                     ...thumbnail.best,
                     id: thumbnail.best.id.replace("/full/full/", "/full/256,/"),
                   },
-                  target: image.target,
+                  target,
                 });
                 return;
               }
 
               imagesToRender.push({
                 image: thumbnail.best,
-                target: image.target,
+                target,
               });
             }
-          });
+          })
+          .catch(() => undefined);
 
         if (abort.signal.aborted) return;
+      }
 
+      setState({
+        canvasId: canvas.id,
+        imagesToRender,
+      });
+    })().catch((err) => {
+      if (!abort.signal.aborted && canvas?.id) {
         setState({
           canvasId: canvas.id,
-          imagesToRender,
+          imagesToRender: [],
         });
       }
-    })().catch((err) => {
-      // ignore.
     });
 
     return () => {
@@ -216,22 +225,26 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
           aspectRatio: `${canvas.width / canvas.height}`,
         }}
       >
-        {state.imagesToRender.map((image) => {
-          return (
-            <div
-              className="absolute"
-              key={image.image.id}
-              style={{
-                width: `${(image.target.spatial.width / canvas.width) * 100}%`,
-                height: `${(image.target.spatial.height / canvas.height) * 100}%`,
-                top: `${(image.target.spatial.y / canvas.height) * 100}%`,
-                left: `${(image.target.spatial.x / canvas.width) * 100}%`,
-              }}
-            >
-              <img className="w-full h-full object-cover select-none" src={image.image.id} />
-            </div>
-          );
-        })}
+        {state.imagesToRender.length ? (
+          state.imagesToRender.map((image) => {
+            return (
+              <div
+                className="absolute"
+                key={image.image.id}
+                style={{
+                  width: `${(image.target.spatial.width / canvas.width) * 100}%`,
+                  height: `${(image.target.spatial.height / canvas.height) * 100}%`,
+                  top: `${(image.target.spatial.y / canvas.height) * 100}%`,
+                  left: `${(image.target.spatial.x / canvas.width) * 100}%`,
+                }}
+              >
+                <img className="w-full h-full object-cover select-none" src={image.image.id} />
+              </div>
+            );
+          })
+        ) : (
+          <ThumbnailFallback />
+        )}
       </div>
     </div>
   );

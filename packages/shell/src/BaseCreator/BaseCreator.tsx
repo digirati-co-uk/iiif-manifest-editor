@@ -74,6 +74,12 @@ export const RenderCreator = memo(function RenderCreator(props: {
         })
         .then(async (ref) => {
           props.onCreate?.();
+          if (props.resource.initialData?.skipEditingOnCreate) {
+            setIsCreating(false);
+            modal.popStack();
+            modal.close();
+            return;
+          }
           if (props.skipEditingOnCreate) return;
           if (!ref) return;
           const singleRef = Array.isArray(ref) ? ref[0] : ref;

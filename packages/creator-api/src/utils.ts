@@ -125,10 +125,11 @@ export function matchBasedOnResource(
         }
       }
 
-      if (
-        !def.supports.initialData &&
-        Object.keys(resource.initialData || {}).length !== 0
-      ) {
+      const initialDataKeys = Object.keys(resource.initialData || {}).filter(
+        (key) => key !== "skipEditingOnCreate",
+      );
+
+      if (!def.supports.initialData && initialDataKeys.length !== 0) {
         continue;
       }
 

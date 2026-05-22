@@ -104,13 +104,18 @@ function PromptCreationOfTourSteps() {
   );
 }
 
-export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
+export function ExhibitionTourStepsContent({
+  mode,
+  useSlideshowTargets = false,
+}: {
+  mode: EditingMode;
+  useSlideshowTargets?: boolean;
+}) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations[0];
   const itemsAnnotationPage = canvas?.items[0];
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
-
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       const bodyValue = resp.metadata.bodyValue || "";
@@ -160,6 +165,32 @@ export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
 
   const showPaintingAnnotations =
     mode === "advanced" && Boolean(itemsAnnotationPage);
+  const createSlideshowStep = () =>
+    creator.create(
+      "@manifest-editor/html-annotation",
+      {
+        label: { en: ["Tour step"] },
+        body: { en: ["<h2>New step</h2><p>Description</p>"] },
+        motivation: "tagging",
+      },
+      {
+        target: { id: canvas.id, type: "Canvas" },
+        targetType: "Annotation",
+        parent: {
+          property: "items",
+          resource: {
+            id: firstAnnotationPage.id,
+            type: "AnnotationPage",
+          },
+        },
+        initialData: {
+          getSerialisedSelector: () => ({
+            type: "FragmentSelector",
+            value: `xywh=${Math.round((canvas.width || 1920) * 0.1)},${Math.round((canvas.height || 1080) * 0.1)},${Math.round((canvas.width || 1920) * 0.3)},${Math.round((canvas.height || 1080) * 0.3)}`,
+          }),
+        },
+      },
+    );
 
   return (
     <>
@@ -179,7 +210,14 @@ export function ExhibitionTourStepsContent({ mode }: { mode: EditingMode }) {
               reorderable={mode === "advanced" ? reorderable : false}
             />
 
-            {!busy ? (
+            {useSlideshowTargets ? (
+              <Button
+                onPress={createSlideshowStep}
+                className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+              >
+                + Add new step
+              </Button>
+            ) : !busy ? (
               isPending ? (
                 <PendingTourStepAnnotation />
               ) : (

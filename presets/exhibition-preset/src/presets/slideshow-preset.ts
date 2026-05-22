@@ -2,10 +2,8 @@ import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp } from "@manifest-editor/shell";
 import { tourStepAnnotations } from "../annotations/TourStepAnnotations";
 import { exhibitionBackgroundTask } from "../background-panel";
-import { imageBlockEditor } from "../canvas-editors/image-block-editor";
-import { infoBlockEditor } from "../canvas-editors/info-block-editor";
-import { youtubeMainEdtior } from "../canvas-editors/youtube-editor";
-import { exhibitionCenterPanel } from "../center-panels/ExhibitionCenterPanel";
+import { slideshowCanvasEditor } from "../canvas-editors/slideshow-canvas-editor";
+import { slideshowCenterPanel } from "../center-panels/SlideshowCenterPanel";
 import {
   slideshowImageOnlyCreator,
   slideshowImageTextCreator,
@@ -54,7 +52,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     ],
     centerPanels: [
       //
-      exhibitionCenterPanel,
+      slideshowCenterPanel,
     ],
     annotations: [
       //
@@ -67,9 +65,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     ],
     canvasEditors: [
       //
-      imageBlockEditor,
-      youtubeMainEdtior,
-      infoBlockEditor,
+      slideshowCanvasEditor,
     ],
     editors: [
       //

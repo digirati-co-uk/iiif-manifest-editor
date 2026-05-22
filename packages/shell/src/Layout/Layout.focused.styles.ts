@@ -111,7 +111,7 @@ export const LoadingCenter = styled.div`
 
 export const PanelSwitcher = styled.div<{ $side: "left" | "right" }>`
   position: absolute;
-  top: 1rem;
+  top: 3rem;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -219,7 +219,7 @@ export const FloatingPanel = styled.aside<{
   $open: boolean;
 }>`
   position: absolute;
-  top: 1rem;
+  top: 3rem;
   bottom: 1rem;
   z-index: 35;
   display: flex;
