@@ -3,11 +3,7 @@ import {
   LazyThumbnail,
   SidebarContent,
 } from "@manifest-editor/components";
-import {
-  CanvasPanelEditor,
-  useAnnotationEditing,
-  useInStack,
-} from "@manifest-editor/editors";
+import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useCreator,
@@ -236,11 +232,8 @@ function SlideNavigation({
 
 function SelectedSlidePreview({ onPress }: { onPress: () => void }) {
   const request = useCurrentAnnotationRequest();
-  const editingAnnotationId = useAnnotationEditing(
-    (state) => state.annotationId,
-  );
 
-  if (request || editingAnnotationId) {
+  if (request) {
     return (
       <div className="h-[min(68vh,760px)] min-h-[420px] w-full overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10">
         <CanvasPanelEditor asFallback />

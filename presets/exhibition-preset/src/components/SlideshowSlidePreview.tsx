@@ -270,7 +270,7 @@ function RenderSlideLayer({
     );
   }
 
-  if (layer.html) {
+  if (layer.html !== null) {
     return (
       <div
         className="h-full w-full overflow-hidden p-4 text-slate-900"
