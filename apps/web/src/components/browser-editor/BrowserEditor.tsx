@@ -18,8 +18,6 @@ import {
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { PresetIcon } from "@manifest-editor/exhibition-preset";
-import DarkIcon from "@manifest-editor/ui/icons/DarkIcon";
-import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -49,22 +47,15 @@ import {
   usePreviewContext,
   useSaveVault,
 } from "@manifest-editor/shell";
+import DarkIcon from "@manifest-editor/ui/icons/DarkIcon";
+import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { VaultProvider } from "react-iiif-vault";
-import {
-  useBrowserGlobalPluginConfig,
-  useBrowserProject,
-} from "./browser-state";
+import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
@@ -172,8 +163,7 @@ const exhibitionHeaderStyles = {
 } satisfies Record<ExhibitionTheme, string>;
 
 function getExhibitionViewerSettings(config?: Partial<Config> | null): Required<ExhibitionPresetViewerSettings> {
-  const rawSettings =
-    config?.plugins?.apps?.[exhibitionViewerPluginId]?.settings?.[exhibitionViewerSettingsKey] || {};
+  const rawSettings = config?.plugins?.apps?.[exhibitionViewerPluginId]?.settings?.[exhibitionViewerSettingsKey] || {};
 
   return {
     ...defaultExhibitionViewerSettings,
@@ -228,9 +218,7 @@ function getInitialExhibitionTheme(): ExhibitionTheme {
     return "light";
   }
 
-  return window.localStorage.getItem(exhibitionThemeStorageKey) === "dark"
-    ? "dark"
-    : "light";
+  return window.localStorage.getItem(exhibitionThemeStorageKey) === "dark" ? "dark" : "light";
 }
 
 function getNextExhibitionTheme(theme: ExhibitionTheme): ExhibitionTheme {
@@ -264,11 +252,7 @@ export default function BrowserEditor({
     projectConfig,
     saveProjectConfig,
   } = useBrowserProject(id);
-  const {
-    globalPluginConfig,
-    isGlobalPluginConfigLoading,
-    saveGlobalPluginConfig,
-  } = useBrowserGlobalPluginConfig();
+  const { globalPluginConfig, isGlobalPluginConfigLoading, saveGlobalPluginConfig } = useBrowserGlobalPluginConfig();
   const [allowAnyway, setAllowAnyway] = useState(false);
   const isExhibitionPreset = presetPath?.startsWith("exhibition") || false;
   const isFocusedExhibition = layoutMode === "focused" && isExhibitionPreset;
@@ -278,9 +262,7 @@ export default function BrowserEditor({
   const customConfig = useMemo(() => {
     return applyExhibitionViewerSettings(browserConfig || {}, presetPath, exhibitionViewerSettings);
   }, [browserConfig, exhibitionViewerSettings, presetPath]);
-  const [exhibitionTheme, setExhibitionTheme] = useState<ExhibitionTheme>(
-    getInitialExhibitionTheme,
-  );
+  const [exhibitionTheme, setExhibitionTheme] = useState<ExhibitionTheme>(getInitialExhibitionTheme);
   const thumbnailHelper = useMemo(() => {
     return createThumbnailHelper(vault);
   }, [vault]);
@@ -300,10 +282,7 @@ export default function BrowserEditor({
   const selectedCanvasId = searchParams.get("selected-canvas-id") || undefined;
   const selectedId = searchParams.get("selected-id");
   const selectedType = searchParams.get("selected-type");
-  const editing =
-    selectedId && selectedType
-      ? { id: selectedId, type: selectedType }
-      : undefined;
+  const editing = selectedId && selectedType ? { id: selectedId, type: selectedType } : undefined;
   const selectedTab = searchParams.get("selected-tab") || undefined;
 
   useLayoutEffect(() => {
@@ -319,11 +298,7 @@ export default function BrowserEditor({
     if (project) {
       const fullResource = vault.get(project.resource);
       if (!fullResource) return;
-      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
-        fullResource,
-        { width: 256, height: 256 },
-        false,
-      );
+      const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(fullResource, { width: 256, height: 256 }, false);
       const resource = {
         ...project.resource,
         label: fullResource.label,
@@ -333,12 +308,7 @@ export default function BrowserEditor({
     }
   }, [project, vault]);
 
-  useSaveVault(
-    vault,
-    saveVault,
-    5000,
-    vaultReady && !!project && (!wasAlreadyOpen || allowAnyway),
-  );
+  useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
 
   useEffect(() => {
     if (wasAlreadyOpen && !allowAnyway) {
@@ -359,13 +329,6 @@ export default function BrowserEditor({
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {
       leftPanels: [
-        {
-          divide: true,
-          id: "config",
-          label: "Config",
-          icon: <SettingsIcon />,
-          render: () => <ConfigEditor />,
-        },
         ...(isExhibitionPreset
           ? [
               {
@@ -385,6 +348,13 @@ export default function BrowserEditor({
               } satisfies LayoutPanel,
             ]
           : []),
+        {
+          divide: !isExhibitionPreset,
+          id: "config",
+          label: "Config",
+          icon: <SettingsIcon />,
+          render: () => <ConfigEditor />,
+        },
       ],
       modalPanels: [
         {
@@ -408,15 +378,11 @@ export default function BrowserEditor({
       >
         <Link href="/" className="flex justify-start items-center gap-2">
           {isFocusedExhibition ? (
-            <span className="text-xl font-bold tracking-normal text-white">
-              Exhibition Editor
-            </span>
+            <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
           ) : (
             <>
               <ManifestEditorLogo />
-              {presetName ? (
-                <span className="text-lg text-gray-600">/ {presetName}</span>
-              ) : null}
+              {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
             </>
           )}
         </Link>
@@ -438,24 +404,16 @@ export default function BrowserEditor({
                 {exhibitionTheme === "dark" ? <LightIcon /> : <DarkIcon />}
               </button>
             ) : null}
-            <PreviewButton
-              downloadEnabled
-              fileName={project?.extraData.fileName}
-            />
+            <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt
-        id={id}
-        alreadyExhibition={isExhibitionPreset}
-      />
+      <MaybeExhibitionPrompt id={id} alreadyExhibition={isExhibitionPreset} />
     </>
   );
 
-  if (isProjectLoading || isGlobalPluginConfigLoading)
-    return <div>Loading...</div>;
-  if (isProjectError || !project)
-    return <div>Error: {projectError?.message}</div>;
+  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>Loading...</div>;
+  if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
 
   // @todo test without this option and see if its needed
   if (wasAlreadyOpen && !allowAnyway) {
@@ -501,34 +459,16 @@ export default function BrowserEditor({
           globalPluginConfig={globalPluginConfig}
           saveGlobalPluginConfig={saveGlobalPluginConfig}
         >
-          <AppProvider
-            appId="manifest-editor"
-            definition={manifestEditor}
-            instanceId={id}
-          >
+          <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
             <VaultProvider vault={vault}>
-              <ShellProvider
-                resource={project.resource}
-                config={mergedConfig}
-                saveConfig={saveProjectConfig}
-              >
+              <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
                 <Layout
-                  key={
-                    isFocusedExhibition
-                      ? `focused-exhibition-${exhibitionTheme}`
-                      : "editor-layout"
-                  }
+                  key={isFocusedExhibition ? `focused-exhibition-${exhibitionTheme}` : "editor-layout"}
                   header={header}
                   layoutMode={layoutMode}
-                  className={
-                    isFocusedExhibition ? "exhibition-focused" : undefined
-                  }
+                  className={isFocusedExhibition ? "exhibition-focused" : undefined}
                 />
-                <FromQueryString
-                  editing={editing}
-                  selectedTab={selectedTab}
-                  canvasId={selectedCanvasId}
-                />
+                <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
               </ShellProvider>
             </VaultProvider>
           </AppProvider>
@@ -554,9 +494,7 @@ function ExhibitionPresetConfigEditor({
   const [isSaving, setIsSaving] = useState(false);
   const isSlideshow = layoutPreset === "exhibition/slideshow";
   const editorBasePath =
-    layoutMode === "focused"
-      ? `/editor-focused/${projectId}/exhibition`
-      : `/editor/${projectId}/exhibition`;
+    layoutMode === "focused" ? `/editor-focused/${projectId}/exhibition` : `/editor/${projectId}/exhibition`;
 
   const saveSettings = useCallback(
     async (nextSettings: Required<ExhibitionPresetViewerSettings>) => {
@@ -597,9 +535,7 @@ function ExhibitionPresetConfigEditor({
       <SidebarHeader title="Preset configuration" />
       <SidebarContent className="p-4">
         <div className="mb-6">
-          <div className="mb-3 text-sm font-semibold text-gray-700">
-            Layout preset
-          </div>
+          <div className="mb-3 text-sm font-semibold text-gray-700">Layout preset</div>
           <div className="flex flex-col gap-2">
             <PresetLayoutLink
               href={editorBasePath}
@@ -701,18 +637,14 @@ function PresetLayoutLink({
 }) {
   const className = [
     "flex items-center justify-between rounded-md border px-3 py-2 text-sm font-medium",
-    selected
-      ? "border-me-primary-500 bg-me-50 text-me-primary-700"
-      : "border-gray-200 bg-white text-gray-700",
+    selected ? "border-me-primary-500 bg-me-50 text-me-primary-700" : "border-gray-200 bg-white text-gray-700",
     disabled ? "cursor-not-allowed opacity-50" : "hover:border-me-primary-300",
   ].join(" ");
 
   const content = (
     <>
       <span>{label}</span>
-      <span className="text-xs font-semibold">
-        {selected ? "Current" : disabled ? "Coming soon" : "Open"}
-      </span>
+      <span className="text-xs font-semibold">{selected ? "Current" : disabled ? "Coming soon" : "Open"}</span>
     </>
   );
 
@@ -794,14 +726,7 @@ function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function ShareIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      fill="#5f6368"
-      viewBox="0 -960 960 960"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="#5f6368" viewBox="0 -960 960 960" {...props}>
       <path
         d="M720-80q-50 0-85-35t-35-85q0-7 1-14.5t3-13.5L322-392q-17 15-38 23.5t-44 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q23 0 44 8.5t38 23.5l282-164q-2-6-3-13.5t-1-14.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-23 0-44-8.5T638-672L356-508q2 6 3 13.5t1 14.5q0 7-1 14.5t-3 13.5l282 164q17-15 38-23.5t44-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-640q17 0 28.5-11.5T760-760q0-17-11.5-28.5T720-800q-17 0-28.5 11.5T680-760q0 17 11.5 28.5T720-720ZM240-440q17 0 28.5-11.5T280-480q0-17-11.5-28.5T240-520q-17 0-28.5 11.5T200-480q0 17 11.5 28.5T240-440Zm480 280q17 0 28.5-11.5T760-200q0-17-11.5-28.5T720-240q-17 0-28.5 11.5T680-200q0 17 11.5 28.5T720-160Zm0-600ZM240-480Zm480 280Z"
         fill="currentColor"
@@ -866,13 +791,7 @@ function createShareLink({
   return baseUrl.toString();
 }
 
-function SharePanel({
-  projectId,
-  presetPath,
-}: {
-  projectId: string;
-  presetPath?: string;
-}) {
+function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?: string }) {
   const { actions } = usePreviewContext();
   const resource = useEditingResource();
   const appResource = useAppResource();
@@ -887,10 +806,7 @@ function SharePanel({
   const { includeCurrentSelectedItem, includeCurrentTab } = options;
 
   const selected = resource ? resource.resource.source : undefined;
-  const currentTab =
-    rightPanel.current === "@manifest-editor/editor"
-      ? rightPanel.state.currentTab
-      : undefined;
+  const currentTab = rightPanel.current === "@manifest-editor/editor" ? rightPanel.state.currentTab : undefined;
 
   const { data } = useQuery({
     queryKey: ["share", { projectId }],
@@ -928,12 +844,7 @@ function SharePanel({
     link ? (
       <div>
         <div className="flex gap-2 my-4">
-          <input
-            className="flex-1 p-2 border-b bg-gray-50"
-            type="text"
-            value={link}
-            readOnly
-          />
+          <input className="flex-1 p-2 border-b bg-gray-50" type="text" value={link} readOnly />
           <button
             className="bg-me-primary-500 text-white px-5 rounded-md"
             onClick={() => {
@@ -951,9 +862,8 @@ function SharePanel({
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
-        Share your workspace link with a colleague, enabling them to preview it,
-        make a copy, or import any changes to continue collaborating on this
-        manifest
+        Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
+        continue collaborating on this manifest
       </p>
       {renderLink(
         data
@@ -964,10 +874,7 @@ function SharePanel({
               selected: includeCurrentSelectedItem ? selected : undefined,
               tab: includeCurrentTab ? currentTab : undefined,
               presetPath,
-              canvasId:
-                canvas && selected && selected.type !== "Canvas"
-                  ? canvas.resource.source.id
-                  : undefined,
+              canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
             })
           : "",
       )}
