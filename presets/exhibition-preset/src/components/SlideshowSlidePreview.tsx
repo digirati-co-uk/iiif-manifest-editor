@@ -23,25 +23,35 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-import { useLayoutState } from "@manifest-editor/shell";
 
 export function SlideshowSlidePreview({
   className,
   editable = false,
+  mode = "edit",
+  showTourSteps = false,
 }: {
   className?: string;
   editable?: boolean;
+  mode?: "edit" | "preview";
+  showTourSteps?: boolean;
 }) {
   const canvas = useCanvas();
   const vault = useVault();
-  const { rightPanel } = useLayoutState();
   const editingAnnotation = useInStack("Annotation");
   const stageRef = useRef<HTMLDivElement | null>(null);
-  const activeWorkbenchTab = useSlideshowWorkbenchState(
-    (state) => state.activeTab,
+  const requestWorkbenchTab = useSlideshowWorkbenchState(
+    (state) => state.requestTab,
   );
-  const { selectedAnnotationId, repositioningAnnotationId, selectAnnotation } =
-    useSlideshowContentPositioning();
+  const {
+    selectedAnnotationId,
+    repositioningAnnotationId,
+    selectedTourStepId,
+    repositioningTourStepId,
+    selectAnnotation,
+    startRepositioning,
+    selectTourStep,
+    startTourStepRepositioning,
+  } = useSlideshowContentPositioning();
 
   useEffect(() => {
     repairSlideContentTargets(vault, canvas);
@@ -65,20 +75,23 @@ export function SlideshowSlidePreview({
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const layout = getSlideLayoutRegions(canvas);
+  const behavior = Array.isArray(canvas.behavior) ? canvas.behavior : [];
   const editingAnnotationId = editingAnnotation?.resource.source.id;
-  const tourTabActive =
-    activeWorkbenchTab === "tour" ||
-    (rightPanel.current === "@manifest-editor/editor" &&
-      rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps"));
+  const tourTabActive = mode === "edit" && showTourSteps;
+  const contentEditingActive = mode === "edit" && !showTourSteps;
 
   return (
     <div
       ref={stageRef}
       className={twMerge(
-        "relative h-full w-full overflow-hidden bg-white",
+        "relative h-full w-full overflow-hidden",
+        mode === "edit" && "bg-white",
         className,
       )}
-      style={{ aspectRatio: `${canvasWidth} / ${canvasHeight}` }}
+      style={{
+        aspectRatio: `${canvasWidth} / ${canvasHeight}`,
+        backgroundColor: mode === "preview" ? "#373737" : undefined,
+      }}
     >
       {layers.length ? (
         layers.map((layer) => {
@@ -93,8 +106,11 @@ export function SlideshowSlidePreview({
               key={layer.annotation.id}
               className={twMerge(
                 "absolute overflow-hidden",
-                selected && "ring-2 ring-me-primary-500 ring-offset-2",
+                contentEditingActive &&
+                  selected &&
+                  "ring-4 ring-me-primary-500 ring-offset-2 ring-offset-white",
                 (repositioning || editingLayer) &&
+                  contentEditingActive &&
                   "cursor-move select-none touch-none",
               )}
               style={{
@@ -104,7 +120,7 @@ export function SlideshowSlidePreview({
                 height: `${(layer.box.height / canvasHeight) * 100}%`,
               }}
               onPointerDown={
-                repositioning || editingLayer
+                contentEditingActive && (repositioning || editingLayer)
                   ? (event) =>
                       startSlideLayerDrag({
                         event,
@@ -115,13 +131,26 @@ export function SlideshowSlidePreview({
                         startBox: layer.box,
                         stage: stageRef.current,
                       })
-                  : editable
-                    ? () => selectAnnotation(layer.annotation.id)
+                  : contentEditingActive && editable
+                    ? (event) => {
+                        selectAnnotation(layer.annotation.id);
+                        startRepositioning(layer.annotation.id);
+                        requestWorkbenchTab("content");
+                        startSlideLayerDrag({
+                          event,
+                          mode: "move",
+                          canvas,
+                          annotation: layer.annotation,
+                          vault,
+                          startBox: layer.box,
+                          stage: stageRef.current,
+                        });
+                      }
                     : undefined
               }
             >
-              <RenderSlideLayer layer={layer} />
-              {repositioning || editingLayer ? (
+              <RenderSlideLayer layer={layer} mode={mode} />
+              {contentEditingActive && (repositioning || editingLayer) ? (
                 <div
                   className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
                   onPointerDown={(event) => {
@@ -142,12 +171,25 @@ export function SlideshowSlidePreview({
           );
         })
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-slate-400">
-          Empty slide
+        <div
+          className={twMerge(
+            "flex h-full w-full items-center justify-center text-sm font-semibold",
+            mode === "preview"
+              ? "bg-[#373737] text-white/60"
+              : "bg-white text-slate-400",
+          )}
+        >
+          {mode === "preview" ? "This slide has no content yet" : "Empty slide"}
         </div>
       )}
       {layout.text ? (
-        <SlideTextPanel canvas={canvas} box={layout.text} />
+        <SlideTextPanel canvas={canvas} box={layout.text} mode={mode} />
+      ) : behavior.includes("info") ? (
+        <SlideTextPanel
+          canvas={canvas}
+          box={{ x: 0, y: 0, width: canvasWidth, height: canvasHeight }}
+          mode={mode}
+        />
       ) : null}
       {tourTabActive
         ? tourSteps.map((annotation: any, index: number) => (
@@ -158,6 +200,14 @@ export function SlideshowSlidePreview({
               stage={stageRef}
               vault={vault}
               index={index}
+              selected={selectedTourStepId === annotation.id}
+              repositioning={repositioningTourStepId === annotation.id}
+              onSelect={() => {
+                selectTourStep(annotation.id);
+              }}
+              onStartReposition={() => {
+                startTourStepRepositioning(annotation.id);
+              }}
             />
           ))
         : null}
@@ -171,27 +221,50 @@ function TourStepTarget({
   stage,
   vault,
   index,
+  selected,
+  repositioning,
+  onSelect,
+  onStartReposition,
 }: {
   annotation: any;
   canvas: any;
   stage: RefObject<HTMLDivElement | null>;
   vault: any;
   index: number;
+  selected: boolean;
+  repositioning: boolean;
+  onSelect: () => void;
+  onStartReposition: () => void;
 }) {
   const box = getAnnotationTargetBox(annotation, canvas);
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
+  const selectedColour = "#6d5aa8";
 
   return (
     <div
-      className="absolute z-30 cursor-move select-none border-2 border-me-primary-500 bg-me-primary-500/10 ring-2 ring-white touch-none"
+      className={twMerge(
+        "absolute z-30 select-none border-2 border-me-primary-500 bg-me-primary-500/10 touch-none",
+        repositioning ? "cursor-move" : "cursor-pointer",
+        selected ? "border-4" : "ring-2 ring-white",
+      )}
       style={{
         left: `${(box.x / canvasWidth) * 100}%`,
         top: `${(box.y / canvasHeight) * 100}%`,
         width: `${(box.width / canvasWidth) * 100}%`,
         height: `${(box.height / canvasHeight) * 100}%`,
+        ...(selected
+          ? {
+              backgroundColor: "rgba(109, 90, 168, 0.2)",
+              borderColor: selectedColour,
+              boxShadow:
+                "0 0 0 4px rgba(109, 90, 168, 0.22), 0 0 0 8px rgba(109, 90, 168, 0.14)",
+            }
+          : {}),
       }}
-      onPointerDown={(event) =>
+      onPointerDown={(event) => {
+        onSelect();
+        onStartReposition();
         startSlideLayerDrag({
           event,
           mode: "move",
@@ -200,27 +273,35 @@ function TourStepTarget({
           vault,
           startBox: box,
           stage: stage.current,
-        })
-      }
+        });
+      }}
     >
-      <span className="absolute left-1 top-1 rounded bg-me-primary-500 px-1.5 py-0.5 text-xs font-semibold text-white">
+      <span
+        className={twMerge(
+          "absolute left-1 top-1 rounded px-1.5 py-0.5 text-xs font-semibold text-white",
+          !selected && "bg-me-primary-500",
+        )}
+        style={selected ? { backgroundColor: selectedColour } : undefined}
+      >
         Step {index + 1}
       </span>
-      <div
-        className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          startSlideLayerDrag({
-            event,
-            mode: "resize",
-            canvas,
-            annotation,
-            vault,
-            startBox: box,
-            stage: stage.current,
-          });
-        }}
-      />
+      {repositioning ? (
+        <div
+          className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            startSlideLayerDrag({
+              event,
+              mode: "resize",
+              canvas,
+              annotation,
+              vault,
+              startBox: box,
+              stage: stage.current,
+            });
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -228,37 +309,92 @@ function TourStepTarget({
 function SlideTextPanel({
   canvas,
   box,
+  mode,
 }: {
   canvas: any;
   box: SlideContentBox;
+  mode: "edit" | "preview";
 }) {
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
+  const vault = useVault();
 
   return (
     <div
-      className="absolute overflow-hidden bg-black p-[3%] text-white"
+      className={twMerge(
+        "absolute flex flex-col overflow-hidden bg-black text-white",
+        mode === "preview" ? "font-mono" : "p-[3%]",
+      )}
       style={{
         left: `${(box.x / canvasWidth) * 100}%`,
         top: `${(box.y / canvasHeight) * 100}%`,
         width: `${(box.width / canvasWidth) * 100}%`,
         height: `${(box.height / canvasHeight) * 100}%`,
+        ...(mode === "preview"
+          ? {
+              containerType: "inline-size",
+              padding: "3% 4%",
+            }
+          : {}),
       }}
     >
-      <LocaleString className="block text-xl font-semibold leading-tight">
-        {canvas.label}
-      </LocaleString>
-      <LocaleString className="mt-4 block text-sm leading-relaxed opacity-90">
-        {canvas.summary}
-      </LocaleString>
+      {mode === "edit" ? (
+        <>
+          <div
+            className="block cursor-text text-xl font-semibold uppercase leading-tight outline-none focus:ring-2 focus:ring-white/70"
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(event) =>
+              vault.modifyEntityField(canvas, "label", {
+                en: [event.currentTarget.textContent || ""],
+              })
+            }
+          >
+            {getLanguageMapText(canvas.label) || "Untitled"}
+          </div>
+          <div
+            className="mt-4 block min-h-0 cursor-text overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed opacity-90 outline-none focus:ring-2 focus:ring-white/70"
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(event) =>
+              vault.modifyEntityField(canvas, "summary", {
+                en: [event.currentTarget.textContent || ""],
+              })
+            }
+          >
+            {getLanguageMapText(canvas.summary) || "Add editorial text"}
+          </div>
+        </>
+      ) : (
+        <>
+          <LocaleString
+            className="block font-semibold uppercase leading-tight"
+            style={{ fontSize: "clamp(13px, 5cqw, 26px)" }}
+          >
+            {canvas.label}
+          </LocaleString>
+          <LocaleString
+            className="block min-h-0 overflow-y-auto whitespace-pre-wrap opacity-90 leading-[1.45]"
+            style={{
+              fontSize: "clamp(11px, 3.5cqw, 18px)",
+              marginTop: "5%",
+              paddingRight: "2%",
+            }}
+          >
+            {canvas.summary}
+          </LocaleString>
+        </>
+      )}
     </div>
   );
 }
 
 function RenderSlideLayer({
   layer,
+  mode,
 }: {
   layer: ReturnType<typeof getSlideContentLayers>[number];
+  mode: "edit" | "preview";
 }) {
   if (layer.imageUrl) {
     return (
@@ -271,9 +407,23 @@ function RenderSlideLayer({
   }
 
   if (layer.html !== null) {
+    if (!layer.html) {
+      if (mode === "preview") {
+        return null;
+      }
+
+      return (
+        <div className="h-full w-full overflow-hidden bg-white p-4 text-slate-900">
+          <div className="flex h-full items-center justify-center rounded border border-dashed border-slate-300 text-sm font-semibold text-slate-400">
+            Empty text
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
-        className="h-full w-full overflow-hidden p-4 text-slate-900"
+        className="h-full w-full overflow-hidden bg-white p-4 text-slate-900"
         dangerouslySetInnerHTML={{ __html: layer.html }}
       />
     );
@@ -362,4 +512,17 @@ function startSlideLayerDrag({
   window.addEventListener("pointermove", onMove);
   window.addEventListener("pointerup", onEnd);
   window.addEventListener("pointercancel", onEnd);
+}
+
+function getLanguageMapText(value: any): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.filter(Boolean).join(" ");
+
+  const firstValue = Object.values(value)[0];
+  return Array.isArray(firstValue)
+    ? firstValue.filter(Boolean).join(" ")
+    : typeof firstValue === "string"
+      ? firstValue
+      : "";
 }

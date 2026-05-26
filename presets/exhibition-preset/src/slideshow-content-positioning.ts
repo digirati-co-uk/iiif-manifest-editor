@@ -19,9 +19,14 @@ export interface SlideContentLayer {
 interface SlideshowContentPositioningState {
   selectedAnnotationId: string | null;
   repositioningAnnotationId: string | null;
+  selectedTourStepId: string | null;
+  repositioningTourStepId: string | null;
   selectAnnotation: (id: string | null) => void;
   startRepositioning: (id: string) => void;
   stopRepositioning: () => void;
+  selectTourStep: (id: string | null) => void;
+  startTourStepRepositioning: (id: string) => void;
+  stopTourStepRepositioning: () => void;
   clear: () => void;
 }
 
@@ -29,24 +34,42 @@ export const useSlideshowContentPositioning =
   create<SlideshowContentPositioningState>((set) => ({
     selectedAnnotationId: null,
     repositioningAnnotationId: null,
+    selectedTourStepId: null,
+    repositioningTourStepId: null,
     selectAnnotation: (id) =>
       set({ selectedAnnotationId: id, repositioningAnnotationId: null }),
     startRepositioning: (id) =>
       set({ selectedAnnotationId: id, repositioningAnnotationId: id }),
     stopRepositioning: () => set({ repositioningAnnotationId: null }),
+    selectTourStep: (id) =>
+      set({ selectedTourStepId: id, repositioningTourStepId: null }),
+    startTourStepRepositioning: (id) =>
+      set({ selectedTourStepId: id, repositioningTourStepId: id }),
+    stopTourStepRepositioning: () => set({ repositioningTourStepId: null }),
     clear: () =>
-      set({ selectedAnnotationId: null, repositioningAnnotationId: null }),
+      set({
+        selectedAnnotationId: null,
+        repositioningAnnotationId: null,
+        selectedTourStepId: null,
+        repositioningTourStepId: null,
+      }),
   }));
 
 interface SlideshowWorkbenchState {
-  activeTab: string | null;
-  setActiveTab: (tab: string | null) => void;
+  requestedTab: string | null;
+  showTourSteps: boolean;
+  requestTab: (tab: string) => void;
+  clearRequestedTab: () => void;
+  setShowTourSteps: (show: boolean) => void;
 }
 
 export const useSlideshowWorkbenchState = create<SlideshowWorkbenchState>(
   (set) => ({
-    activeTab: null,
-    setActiveTab: (tab) => set({ activeTab: tab }),
+    requestedTab: null,
+    showTourSteps: false,
+    requestTab: (tab) => set({ requestedTab: tab }),
+    clearRequestedTab: () => set({ requestedTab: null }),
+    setShowTourSteps: (show) => set({ showTourSteps: show }),
   }),
 );
 
@@ -137,7 +160,7 @@ export function getSlideContentLayers(
       annotation,
       box: getAnnotationTargetBox(annotation, canvas),
       html: getHtmlValue(body),
-      imageUrl: getImageUrl(body),
+      imageUrl: getImageUrl(vault, body),
       videoUrl: getVideoUrl(body),
       youtubeId: getYouTubeId(body),
     };
@@ -250,6 +273,25 @@ export function getSlideLayoutRegions(canvas: any): {
     };
   }
 
+  if (behavior.includes("top")) {
+    return {
+      content: {
+        x: 0,
+        y: Math.round(height / 3),
+        width,
+        height: Math.round((height * 2) / 3),
+      },
+      text: { x: 0, y: 0, width, height: Math.round(height / 3) },
+    };
+  }
+
+  if (behavior.includes("image")) {
+    return {
+      content: { x: 0, y: 0, width, height },
+      text: null,
+    };
+  }
+
   return { content: null, text: null };
 }
 
@@ -296,8 +338,40 @@ function parseXywh(value?: string): SlideContentBox | null {
   return null;
 }
 
-function getImageUrl(body: any) {
-  const source = body?.type === "SpecificResource" ? body.source : body;
+function getImageUrl(vault: any, body: any): string | null {
+  const source = getDisplayResource(vault, body);
+
+  if (source?.type === "Choice") {
+    const items = Array.isArray(source.items) ? source.items : [];
+    for (const item of items) {
+      const url = getImageUrl(vault, item);
+      if (url) return url;
+    }
+  }
+
+  if (source?.type === "Canvas") {
+    const canvas =
+      vault.get(
+        { id: source.id, type: "Canvas" },
+        { skipSelfReturn: false } as any,
+      ) || source;
+    const thumbnail = Array.isArray(canvas.thumbnail)
+      ? canvas.thumbnail[0]
+      : canvas.thumbnail;
+
+    if (thumbnail?.id) {
+      return thumbnail.id;
+    }
+
+    for (const annotation of getPaintingAnnotations(vault, canvas)) {
+      const url = getImageUrl(
+        vault,
+        getResolvedAnnotationBody(vault, annotation),
+      );
+      if (url) return url;
+    }
+  }
+
   const service = Array.isArray(source?.service)
     ? source.service[0]
     : source?.service;
@@ -318,6 +392,7 @@ function getHtmlValue(body: any) {
   const source = body?.type === "SpecificResource" ? body.source : body;
 
   if (
+    source?.type === "Text" ||
     source?.type === "TextualBody" ||
     source?.format === "text/html" ||
     source?.format === "text/plain"
@@ -326,6 +401,37 @@ function getHtmlValue(body: any) {
   }
 
   return null;
+}
+
+function getDisplayResource(vault: any, resource: any): any {
+  if (resource?.type === "SpecificResource") {
+    return getDisplayResource(vault, resource.source);
+  }
+
+  if (resource?.id && resource?.type === "ContentResource") {
+    return (
+      vault.get(
+        { id: resource.id, type: "ContentResource" },
+        { skipSelfReturn: false } as any,
+      ) || resource
+    );
+  }
+
+  if (
+    resource?.id &&
+    !resource.items &&
+    !resource.value &&
+    !resource.service &&
+    !resource.format &&
+    !resource.width &&
+    !resource.height
+  ) {
+    return (
+      vault.get(resource as any, { skipSelfReturn: false } as any) || resource
+    );
+  }
+
+  return resource;
 }
 
 function getVideoUrl(body: any) {

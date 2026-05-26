@@ -75,14 +75,21 @@ function ExhibitionWorkbenchRightPanel({
   );
   const [selectedTab, setSelectedTab] = useState<RightPanelTab>("layout");
   const tabs = preset === "slideshow" ? slideshowTabs : defaultTabs;
-  const setActiveSlideshowTab = useSlideshowWorkbenchState(
-    (state) => state.setActiveTab,
+  const requestedTab = useSlideshowWorkbenchState((state) => state.requestedTab);
+  const clearRequestedTab = useSlideshowWorkbenchState(
+    (state) => state.clearRequestedTab,
   );
 
   useEffect(() => {
-    setActiveSlideshowTab(preset === "slideshow" ? selectedTab : null);
-    return () => setActiveSlideshowTab(null);
-  }, [preset, selectedTab, setActiveSlideshowTab]);
+    if (
+      preset === "slideshow" &&
+      requestedTab &&
+      tabs.some((tab) => tab.id === requestedTab)
+    ) {
+      setSelectedTab(requestedTab as RightPanelTab);
+      clearRequestedTab();
+    }
+  }, [clearRequestedTab, preset, requestedTab, tabs]);
 
   return (
     <Sidebar>

@@ -8,6 +8,7 @@ import {
 } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
+import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
 
 export interface ExhibitionItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -31,9 +32,18 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
     );
 
     const isSelected = currentCanvas?.resource.source?.id === canvas?.id;
+    const isSlideshowItem =
+      behavior.includes("w-12") && behavior.includes("h-8");
 
     let children = null;
-    if (isInfo) {
+    if (isSlideshowItem) {
+      children = (
+        <SlideshowSlidePreview
+          className="pointer-events-none h-full w-full"
+          mode="preview"
+        />
+      );
+    } else if (isInfo) {
       children = (
         <div className="bg-black w-full h-full text-white max-h-40">
           <div className="p-1.5 text-[4px]">
