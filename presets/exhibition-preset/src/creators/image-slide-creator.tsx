@@ -12,6 +12,7 @@ declare module "@manifest-editor/creator-api" {
       "@exhibitions/image-slide-creator-right": typeof imageSlideRightCreator;
       "@exhibitions/slideshow-image-only-creator": typeof slideshowImageOnlyCreator;
       "@exhibitions/slideshow-image-text-creator": typeof slideshowImageTextCreator;
+      "@exhibitions/scroll-compact-deck-creator": typeof scrollCompactDeckCreator;
     }
   }
 }
@@ -91,6 +92,25 @@ export const slideshowImageTextCreator = defineCreator({
         height: payload.height || 1080,
         width: payload.width || 1920,
         type: "right",
+      },
+      ctx,
+    ),
+});
+
+export const scrollCompactDeckCreator = defineCreator({
+  ...imageSlideCreator,
+  id: "@exhibitions/scroll-compact-deck-creator",
+  label: "Compact image deck",
+  summary: "A scrolling section with compact annotation-led image slides.",
+  tags: ["exhibition-scroll-section", "exhibition-slide"],
+  create: (payload, ctx) =>
+    createImageSlide(
+      {
+        ...payload,
+        behavior: ["w-12", "h-8", "compact-deck"],
+        height: payload.height || 1080,
+        width: payload.width || 1920,
+        type: "default",
       },
       ctx,
     ),
