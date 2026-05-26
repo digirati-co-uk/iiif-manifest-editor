@@ -38,8 +38,10 @@ import {
   createDefaultSlideContentTarget,
   getAnnotationTargetBox,
   getPaintingAnnotations,
+  getSlideLayoutRegions,
   getTourStepAnnotations,
   setAnnotationTargetBox,
+  setSlideTextRegionBox,
   type SlideContentBox,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
@@ -291,11 +293,15 @@ function SelectedSlidePreview() {
   const {
     selectedAnnotationId,
     repositioningAnnotationId,
+    selectedTextRegion,
+    repositioningTextRegion,
     selectedTourStepId,
     repositioningTourStepId,
     selectAnnotation,
     startRepositioning,
     stopRepositioning,
+    startTextRepositioning,
+    stopTextRepositioning,
     selectTourStep,
     startTourStepRepositioning,
     stopTourStepRepositioning,
@@ -317,6 +323,10 @@ function SelectedSlidePreview() {
   const selectedAnnotation = annotations.find(
     (annotation: any) => annotation.id === selectedAnnotationId,
   );
+  const selectedTextRegionBox =
+    selectedTextRegion === "editorial-text"
+      ? getSlideLayoutRegions(canvas).text
+      : null;
   const tourSteps = useVaultSelector(
     (_, vaultInstance) =>
       canvas ? getTourStepAnnotations(vaultInstance, canvas) : [],
@@ -363,11 +373,17 @@ function SelectedSlidePreview() {
     ) {
       startTourStepRepositioning(newestTourStep.id);
       stopRepositioning();
+      stopTextRepositioning();
       setShowTourSteps(true);
     }
 
     previousTourStepCount.current = tourSteps.length;
-  }, [startTourStepRepositioning, stopRepositioning, tourSteps]);
+  }, [
+    startTourStepRepositioning,
+    stopRepositioning,
+    stopTextRepositioning,
+    tourSteps,
+  ]);
 
   const deleteTourStep = (annotation: any) => {
     const firstAnnotationPage = canvas?.annotations?.[0];
@@ -443,6 +459,7 @@ function SelectedSlidePreview() {
     );
     setShowTourSteps(true);
     stopRepositioning();
+    stopTextRepositioning();
   };
   const toggleTourSteps = () => {
     const nextShowTourSteps = !showTourSteps;
@@ -450,6 +467,7 @@ function SelectedSlidePreview() {
 
     if (nextShowTourSteps) {
       stopRepositioning();
+      stopTextRepositioning();
       if (selectedTourStep?.id) {
         startTourStepRepositioning(selectedTourStep.id);
       }
@@ -556,6 +574,21 @@ function SelectedSlidePreview() {
           />
         ) : null}
         {mode === "edit" &&
+        !showTourSteps &&
+        selectedTextRegionBox &&
+        canvas ? (
+          <CentrePositionControls
+            canvas={canvas}
+            currentBox={selectedTextRegionBox}
+            isRepositioning={repositioningTextRegion === selectedTextRegion}
+            label="Editorial text"
+            onStartReposition={() => startTextRepositioning("editorial-text")}
+            onStopReposition={stopTextRepositioning}
+            setBox={(box) => setSlideTextRegionBox(vault, canvas, box)}
+            vault={vault}
+          />
+        ) : null}
+        {mode === "edit" &&
         showTourSteps &&
         selectedTourStep &&
         canvas ? (
@@ -586,26 +619,32 @@ function CentrePositionControls({
   annotation,
   canvas,
   children,
+  currentBox,
   isRepositioning,
   label = "Selected content",
   onStartReposition,
   onStopReposition,
+  setBox: setBoxOverride,
   vault,
 }: {
-  annotation: any;
+  annotation?: any;
   canvas: any;
   children?: ReactNode;
+  currentBox?: SlideContentBox;
   isRepositioning: boolean;
   label?: string;
   onStartReposition: () => void;
   onStopReposition: () => void;
+  setBox?: (box: SlideContentBox) => void;
   vault: any;
 }) {
   const canvasWidth = Number(canvas?.width) || 1920;
   const canvasHeight = Number(canvas?.height) || 1080;
-  const currentBox = getAnnotationTargetBox(annotation, canvas);
-  const setBox = (next: SlideContentBox) =>
-    setAnnotationTargetBox(vault, canvas, annotation.id, next);
+  const box = currentBox || getAnnotationTargetBox(annotation, canvas);
+  const setBox =
+    setBoxOverride ||
+    ((next: SlideContentBox) =>
+      setAnnotationTargetBox(vault, canvas, annotation.id, next));
   const halfWidth = Math.round(canvasWidth / 2);
   const halfHeight = Math.round(canvasHeight / 2);
 
@@ -616,7 +655,7 @@ function CentrePositionControls({
           <div className="mb-2 flex items-center justify-between gap-3">
             <span className="font-semibold text-slate-700">{label}</span>
             <span className="text-slate-400">
-              {Math.round(currentBox.width)} x {Math.round(currentBox.height)}
+              {Math.round(box.width)} x {Math.round(box.height)}
             </span>
           </div>
 

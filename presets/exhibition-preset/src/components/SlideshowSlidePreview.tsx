@@ -20,9 +20,12 @@ import {
   getTourStepAnnotations,
   repairSlideContentTargets,
   setAnnotationTargetBox,
+  setSlideTextRegionBox,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
+
+const editorialTextRegionId = "editorial-text";
 
 export function SlideshowSlidePreview({
   className,
@@ -45,10 +48,13 @@ export function SlideshowSlidePreview({
   const {
     selectedAnnotationId,
     repositioningAnnotationId,
+    selectedTextRegion,
+    repositioningTextRegion,
     selectedTourStepId,
     repositioningTourStepId,
     selectAnnotation,
     startRepositioning,
+    selectTextRegion,
     selectTourStep,
     startTourStepRepositioning,
   } = useSlideshowContentPositioning();
@@ -183,12 +189,18 @@ export function SlideshowSlidePreview({
         </div>
       )}
       {layout.text ? (
-        <SlideTextPanel canvas={canvas} box={layout.text} mode={mode} />
-      ) : behavior.includes("info") ? (
         <SlideTextPanel
           canvas={canvas}
-          box={{ x: 0, y: 0, width: canvasWidth, height: canvasHeight }}
+          box={layout.text}
+          editable={editable && contentEditingActive}
           mode={mode}
+          repositioning={repositioningTextRegion === editorialTextRegionId}
+          selected={selectedTextRegion === editorialTextRegionId}
+          stage={stageRef}
+          onSelect={() => {
+            selectTextRegion(editorialTextRegionId);
+            requestWorkbenchTab("content");
+          }}
         />
       ) : null}
       {tourTabActive
@@ -309,11 +321,21 @@ function TourStepTarget({
 function SlideTextPanel({
   canvas,
   box,
+  editable,
   mode,
+  onSelect,
+  repositioning,
+  selected,
+  stage,
 }: {
   canvas: any;
   box: SlideContentBox;
+  editable: boolean;
   mode: "edit" | "preview";
+  onSelect: () => void;
+  repositioning: boolean;
+  selected: boolean;
+  stage: RefObject<HTMLDivElement | null>;
 }) {
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
@@ -324,6 +346,8 @@ function SlideTextPanel({
       className={twMerge(
         "absolute flex flex-col overflow-hidden bg-black text-white",
         mode === "preview" ? "font-mono" : "p-[3%]",
+        editable && selected && "ring-4 ring-me-primary-500 ring-offset-2",
+        editable && repositioning && "cursor-move select-none touch-none",
       )}
       style={{
         left: `${(box.x / canvasWidth) * 100}%`,
@@ -337,6 +361,23 @@ function SlideTextPanel({
             }
           : {}),
       }}
+      onPointerDown={
+        editable
+          ? (event) => {
+              onSelect();
+              if (repositioning) {
+                startSlideTextDrag({
+                  event,
+                  mode: "move",
+                  canvas,
+                  vault,
+                  startBox: box,
+                  stage: stage.current,
+                });
+              }
+            }
+          : undefined
+      }
     >
       {mode === "edit" ? (
         <>
@@ -385,6 +426,22 @@ function SlideTextPanel({
           </LocaleString>
         </>
       )}
+      {editable && repositioning ? (
+        <div
+          className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            startSlideTextDrag({
+              event,
+              mode: "resize",
+              canvas,
+              vault,
+              startBox: box,
+              stage: stage.current,
+            });
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -501,6 +558,64 @@ function startSlideLayerDrag({
           };
 
     setAnnotationTargetBox(vault, canvas, annotation.id, nextBox);
+  };
+
+  const onEnd = () => {
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onEnd);
+    window.removeEventListener("pointercancel", onEnd);
+  };
+
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onEnd);
+  window.addEventListener("pointercancel", onEnd);
+}
+
+function startSlideTextDrag({
+  event,
+  mode,
+  canvas,
+  vault,
+  startBox,
+  stage,
+}: {
+  event: ReactPointerEvent;
+  mode: "move" | "resize";
+  canvas: any;
+  vault: any;
+  startBox: SlideContentBox;
+  stage: HTMLDivElement | null;
+}) {
+  if (!stage) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const rect = stage.getBoundingClientRect();
+  const scaleX = (Number(canvas?.width) || 1920) / rect.width;
+  const scaleY = (Number(canvas?.height) || 1080) / rect.height;
+  const startX = event.clientX;
+  const startY = event.clientY;
+
+  const onMove = (moveEvent: globalThis.PointerEvent) => {
+    const dx = (moveEvent.clientX - startX) * scaleX;
+    const dy = (moveEvent.clientY - startY) * scaleY;
+    const nextBox =
+      mode === "move"
+        ? {
+            ...startBox,
+            x: startBox.x + dx,
+            y: startBox.y + dy,
+          }
+        : {
+            ...startBox,
+            width: startBox.width + dx,
+            height: startBox.height + dy,
+          };
+
+    setSlideTextRegionBox(vault, canvas, nextBox);
   };
 
   const onEnd = () => {

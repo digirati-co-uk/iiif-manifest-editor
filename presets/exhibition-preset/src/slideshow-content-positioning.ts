@@ -19,11 +19,16 @@ export interface SlideContentLayer {
 interface SlideshowContentPositioningState {
   selectedAnnotationId: string | null;
   repositioningAnnotationId: string | null;
+  selectedTextRegion: string | null;
+  repositioningTextRegion: string | null;
   selectedTourStepId: string | null;
   repositioningTourStepId: string | null;
   selectAnnotation: (id: string | null) => void;
   startRepositioning: (id: string) => void;
   stopRepositioning: () => void;
+  selectTextRegion: (id: string | null) => void;
+  startTextRepositioning: (id: string) => void;
+  stopTextRepositioning: () => void;
   selectTourStep: (id: string | null) => void;
   startTourStepRepositioning: (id: string) => void;
   stopTourStepRepositioning: () => void;
@@ -34,13 +39,40 @@ export const useSlideshowContentPositioning =
   create<SlideshowContentPositioningState>((set) => ({
     selectedAnnotationId: null,
     repositioningAnnotationId: null,
+    selectedTextRegion: null,
+    repositioningTextRegion: null,
     selectedTourStepId: null,
     repositioningTourStepId: null,
     selectAnnotation: (id) =>
-      set({ selectedAnnotationId: id, repositioningAnnotationId: null }),
+      set({
+        selectedAnnotationId: id,
+        repositioningAnnotationId: null,
+        selectedTextRegion: null,
+        repositioningTextRegion: null,
+      }),
     startRepositioning: (id) =>
-      set({ selectedAnnotationId: id, repositioningAnnotationId: id }),
+      set({
+        selectedAnnotationId: id,
+        repositioningAnnotationId: id,
+        selectedTextRegion: null,
+        repositioningTextRegion: null,
+      }),
     stopRepositioning: () => set({ repositioningAnnotationId: null }),
+    selectTextRegion: (id) =>
+      set({
+        selectedAnnotationId: null,
+        repositioningAnnotationId: null,
+        selectedTextRegion: id,
+        repositioningTextRegion: null,
+      }),
+    startTextRepositioning: (id) =>
+      set({
+        selectedAnnotationId: null,
+        repositioningAnnotationId: null,
+        selectedTextRegion: id,
+        repositioningTextRegion: id,
+      }),
+    stopTextRepositioning: () => set({ repositioningTextRegion: null }),
     selectTourStep: (id) =>
       set({ selectedTourStepId: id, repositioningTourStepId: null }),
     startTourStepRepositioning: (id) =>
@@ -50,6 +82,8 @@ export const useSlideshowContentPositioning =
       set({
         selectedAnnotationId: null,
         repositioningAnnotationId: null,
+        selectedTextRegion: null,
+        repositioningTextRegion: null,
         selectedTourStepId: null,
         repositioningTourStepId: null,
       }),
@@ -206,6 +240,27 @@ export function setAnnotationTargetBox(
   );
 }
 
+export function setSlideTextRegionBox(
+  vault: any,
+  canvas: any,
+  box: SlideContentBox,
+) {
+  const nextBox = constrainSlideContentBox(canvas, box);
+  const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+
+  vault.modifyEntityField(
+    canvas,
+    "behavior",
+    behavior
+      .filter((item: string) => !item.startsWith("text-xywh="))
+      .concat(
+        `text-xywh=${Math.round(nextBox.x)},${Math.round(
+          nextBox.y,
+        )},${Math.round(nextBox.width)},${Math.round(nextBox.height)}`,
+      ),
+  );
+}
+
 export function repairSlideContentTargets(vault: any, canvas: any) {
   if (!canvas) return;
 
@@ -235,12 +290,13 @@ export function getSlideLayoutRegions(canvas: any): {
 } {
   const width = Number(canvas?.width) || 1920;
   const height = Number(canvas?.height) || 1080;
-  const behavior = canvas?.behavior || [];
+  const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+  const customTextRegion = getCustomTextRegion(behavior);
 
   if (behavior.includes("right")) {
     return {
       content: { x: 0, y: 0, width: Math.round((width * 2) / 3), height },
-      text: {
+      text: customTextRegion || {
         x: Math.round((width * 2) / 3),
         y: 0,
         width: Math.round(width / 3),
@@ -257,14 +313,19 @@ export function getSlideLayoutRegions(canvas: any): {
         width: Math.round((width * 2) / 3),
         height,
       },
-      text: { x: 0, y: 0, width: Math.round(width / 3), height },
+      text: customTextRegion || {
+        x: 0,
+        y: 0,
+        width: Math.round(width / 3),
+        height,
+      },
     };
   }
 
   if (behavior.includes("bottom")) {
     return {
       content: { x: 0, y: 0, width, height: Math.round((height * 2) / 3) },
-      text: {
+      text: customTextRegion || {
         x: 0,
         y: Math.round((height * 2) / 3),
         width,
@@ -281,18 +342,30 @@ export function getSlideLayoutRegions(canvas: any): {
         width,
         height: Math.round((height * 2) / 3),
       },
-      text: { x: 0, y: 0, width, height: Math.round(height / 3) },
+      text: customTextRegion || {
+        x: 0,
+        y: 0,
+        width,
+        height: Math.round(height / 3),
+      },
+    };
+  }
+
+  if (behavior.includes("info")) {
+    return {
+      content: null,
+      text: customTextRegion || { x: 0, y: 0, width, height },
     };
   }
 
   if (behavior.includes("image")) {
     return {
       content: { x: 0, y: 0, width, height },
-      text: null,
+      text: customTextRegion,
     };
   }
 
-  return { content: null, text: null };
+  return { content: null, text: customTextRegion };
 }
 
 export function constrainSlideContentBox(
@@ -336,6 +409,14 @@ function parseXywh(value?: string): SlideContentBox | null {
   }
 
   return null;
+}
+
+function getCustomTextRegion(behavior: string[]): SlideContentBox | null {
+  const value = behavior
+    .find((item) => item.startsWith("text-xywh="))
+    ?.replace("text-xywh=", "");
+
+  return parseXywh(value);
 }
 
 function getImageUrl(vault: any, body: any): string | null {

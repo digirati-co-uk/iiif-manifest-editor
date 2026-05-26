@@ -8,10 +8,14 @@ import { type ReactNode } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import {
+  type SlideContentBox,
+  getSlideLayoutRegions,
   getSlideContentLayers,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
+
+const editorialTextRegionId = "editorial-text";
 
 export function SlideshowContentPanel() {
   const canvas = useCanvas();
@@ -28,9 +32,14 @@ export function SlideshowContentPanel() {
   const {
     selectedAnnotationId,
     repositioningAnnotationId,
+    selectedTextRegion,
+    repositioningTextRegion,
     selectAnnotation,
     startRepositioning,
     stopRepositioning,
+    selectTextRegion,
+    startTextRepositioning,
+    stopTextRepositioning,
   } = useSlideshowContentPositioning();
   const setShowTourSteps = useSlideshowWorkbenchState(
     (state) => state.setShowTourSteps,
@@ -40,6 +49,8 @@ export function SlideshowContentPanel() {
       canvas ? getSlideContentLayers(vaultInstance, canvas) : [],
     [canvas?.id, pageRef?.id],
   );
+  const editorialTextBox = getSlideLayoutRegions(canvas).text;
+  const hasContent = layers.length || editorialTextBox;
 
   if (!canvas || !pageRef) {
     return (
@@ -62,12 +73,28 @@ export function SlideshowContentPanel() {
         </p>
       </div>
 
-      {!layers.length ? (
+      {!hasContent ? (
         <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
           No painting annotations on this slide yet.
         </div>
       ) : (
         <div className="flex flex-col gap-2">
+          {editorialTextBox ? (
+            <EditorialContentItem
+              box={editorialTextBox}
+              selected={selectedTextRegion === editorialTextRegionId}
+              repositioning={repositioningTextRegion === editorialTextRegionId}
+              onSelect={() => {
+                setShowTourSteps(false);
+                selectTextRegion(editorialTextRegionId);
+              }}
+              onReposition={() => {
+                setShowTourSteps(false);
+                startTextRepositioning(editorialTextRegionId);
+              }}
+              onStopReposition={stopTextRepositioning}
+            />
+          ) : null}
           {layers.map((layer, index) => (
             <ContentInventoryItem
               key={layer.annotation.id}
@@ -175,6 +202,67 @@ function ContentInventoryItem({
             Advanced edit
           </Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function EditorialContentItem({
+  box,
+  selected,
+  repositioning,
+  onSelect,
+  onReposition,
+  onStopReposition,
+}: {
+  box: SlideContentBox;
+  selected: boolean;
+  repositioning: boolean;
+  onSelect: () => void;
+  onReposition: () => void;
+  onStopReposition: () => void;
+}) {
+  return (
+    <div
+      className={[
+        "rounded-lg border bg-white p-3 transition",
+        selected
+          ? "border-me-primary-500 bg-me-primary-50 ring-2 ring-me-primary-100"
+          : "border-slate-200",
+      ].join(" ")}
+    >
+      <Button
+        className="flex w-full items-center gap-3 border-none bg-transparent p-0 text-left"
+        onPress={onSelect}
+      >
+        <ContentThumbnail type="Text" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-[11px] font-semibold uppercase tracking-wide text-me-primary-500">
+            Editorial text
+          </span>
+          <span className="mt-0.5 block truncate text-sm font-semibold text-slate-900">
+            Slide label and summary
+          </span>
+          <span className="mt-0.5 block truncate text-xs text-slate-500">
+            Position {Math.round(box.x)}, {Math.round(box.y)} ·{" "}
+            {Math.round(box.width)} x {Math.round(box.height)}
+          </span>
+        </span>
+      </Button>
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <span className="text-xs text-slate-500">
+          {repositioning
+            ? "Drag or resize in the workbench"
+            : selected
+              ? "Selected in workbench"
+              : "Click to select on slide"}
+        </span>
+        <Button
+          className="rounded-md border border-me-primary-200 bg-me-primary-50 px-3 py-1.5 text-xs font-semibold text-me-primary-600 transition hover:bg-me-primary-100"
+          onPress={repositioning ? onStopReposition : onReposition}
+        >
+          {repositioning ? "Done moving" : "Reposition"}
+        </Button>
       </div>
     </div>
   );
