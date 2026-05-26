@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { ActionButton, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import {
   createManifestEditorTagsApi,
@@ -13,13 +14,31 @@ import { useEffect, useMemo, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
 
 type CanvasTagResource = { id: string; type: "Canvas" };
+type ManifestRootResource = { id: string; type?: string } | null | undefined;
 
 export const tagsPanel: LayoutPanel = {
   id: "@manifest-editor/tags",
   label: "Tags",
   icon: <TagsIcon />,
+  supports: ({ vault, rootResource }) => manifestHasCanvasTags(vault, rootResource),
   render: () => <TagsSidebar />,
 };
+
+export function manifestHasCanvasTags(vault: Vault | undefined, rootResource: ManifestRootResource): boolean {
+  if (!vault || rootResource?.type !== "Manifest" || !rootResource.id) {
+    return false;
+  }
+
+  const manifest = vault.get(rootResource as any, { skipSelfReturn: false } as any) as
+    | { items?: Array<{ id?: string; type?: string }> }
+    | undefined;
+  const canvasResources = (manifest?.items || [])
+    .map((canvas) => canvas?.id)
+    .filter((id): id is string => !!id)
+    .map((id) => ({ id, type: "Canvas" }) satisfies CanvasTagResource);
+
+  return getResourceTagGroups(vault, canvasResources).length > 0;
+}
 
 function TagsSidebar() {
   const vault = useVault();

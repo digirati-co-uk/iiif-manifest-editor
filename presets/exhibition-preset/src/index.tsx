@@ -22,9 +22,9 @@ import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
+export { default as PresetIcon } from "./icons/PresetIcon";
 export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
-export { default as PresetIcon } from "./icons/PresetIcon";
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset),
@@ -38,7 +38,6 @@ export const exhibitionEditorPreset = extendApp(
     config: {
       editorConfig: {
         Canvas: {
-          singleTab: "@exhibition/workbench-editor",
           hideTabs: [
             "@manifest-editor/overview",
             "@manifest-editor/technical-properties",
@@ -75,7 +74,6 @@ export const exhibitionEditorPreset = extendApp(
     ],
     editors: [
       //
-      exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,
