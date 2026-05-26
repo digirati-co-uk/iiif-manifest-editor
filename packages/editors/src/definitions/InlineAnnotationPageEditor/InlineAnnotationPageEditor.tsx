@@ -97,10 +97,12 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
 }
 
 export function PromptToAddPaintingAnnotations({
+  title,
   painting,
   page,
   canvasId,
 }: {
+  title?: React.ReactNode;
   painting: Reference;
   page: Reference;
   canvasId?: string;
@@ -129,6 +131,7 @@ export function PromptToAddPaintingAnnotations({
 
   return (
     <div key={paintingAnnotations?.items.length}>
+      {title && <div>{title}</div>}
       <FlexContainer style={{ alignItems: "center", gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           {validToAdd.map((item, idx) => {
