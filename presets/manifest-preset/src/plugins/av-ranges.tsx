@@ -16,7 +16,7 @@ export default {
   description: "Create and edit temporal ranges for audio and video canvases.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["audio", "video", "ranges", "chaptering"],
   supports: {
     projectTypes: ["Manifest"],

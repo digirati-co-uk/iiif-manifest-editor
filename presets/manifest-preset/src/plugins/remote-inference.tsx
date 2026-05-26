@@ -19,7 +19,7 @@ export default {
   description: "Run remote OCR/HTR inference jobs against a configurable server",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["ocr"],
   supports: {
     projectTypes: ["Manifest"],

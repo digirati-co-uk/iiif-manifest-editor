@@ -16,7 +16,7 @@ export default {
   description: "Review manifest strings and fill missing translations with M2M100.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["translation", "i18n", "automation"],
   supports: {
     apps: ["manifest-editor"],

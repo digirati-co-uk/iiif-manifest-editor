@@ -23,7 +23,7 @@ export default {
   description: "Review project specifications and required Manifest work.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["specifications", "guidance", "validation"],
   supports: {
     projectTypes: ["Manifest"],

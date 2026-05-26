@@ -12,7 +12,7 @@ export default {
   description: "Run Granite Docling OCR on manifest canvases and write text annotations.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["ocr", "docling", "automation"],
   supports: {
     apps: ["manifest-editor"],

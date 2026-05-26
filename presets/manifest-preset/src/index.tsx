@@ -23,7 +23,6 @@ import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
 import * as avRangesPlugin from "./plugins/av-ranges";
-import * as manifestQualityChecksPlugin from "./plugins/manifest-quality-checks";
 import { queryStringTask } from "./query-string";
 import "./index.css";
 import * as remoteInference from "./plugins/remote-inference";
@@ -77,7 +76,6 @@ export {
   annotationsPlugin,
   avRangesPlugin,
   canvasLabelGeneratorPlugin,
-  manifestQualityChecksPlugin,
   ocrClassificationPlugin,
   ocrDoclingPlugin,
   translationPlugin,
@@ -86,7 +84,6 @@ export {
 export const plugins = [
   annotationsPlugin,
   avRangesPlugin,
-  manifestQualityChecksPlugin,
   canvasLabelGeneratorPlugin,
   translationPlugin,
   ocrClassificationPlugin,

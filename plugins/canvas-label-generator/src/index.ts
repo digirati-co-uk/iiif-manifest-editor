@@ -15,7 +15,7 @@ export default {
   description: "Generate or normalise canvas labels from patterns, filenames, existing labels, and ranges.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["labels", "canvases", "automation"],
   supports: {
     apps: ["manifest-editor"],

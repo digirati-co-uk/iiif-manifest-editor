@@ -48,7 +48,7 @@ const collectionApp: MappedApp = {
 };
 
 describe("A/V ranges plugin", () => {
-  test("is default-enabled for manifest apps", () => {
+  test("is disabled by default for manifest apps", () => {
     const mapped = mapPlugin({
       default: pluginMetadata,
       leftPanels,
@@ -65,7 +65,7 @@ describe("A/V ranges plugin", () => {
 
     expect(
       getEnabledPluginsForApp(state, manifestApp, "manifest-editor"),
-    ).toEqual([mapped]);
+    ).toEqual([]);
     expect(
       getEnabledPluginsForApp(state, collectionApp, "collection-editor"),
     ).toEqual([]);

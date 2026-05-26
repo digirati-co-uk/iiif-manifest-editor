@@ -26,7 +26,7 @@ export default {
   description: "Review common IIIF completeness and presentation issues before publishing.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["quality", "validation", "publishing"],
   supports: {
     projectTypes: ["Manifest"],

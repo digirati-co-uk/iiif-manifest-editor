@@ -7,7 +7,7 @@ export default {
   description: "Classify canvases by OCR difficulty and apply canvas tags.",
   author: "Digirati",
   official: true,
-  defaultEnabled: true,
+  defaultEnabled: false,
   tags: ["ocr", "classification", "automation"],
   supports: {
     apps: ["manifest-editor"],
