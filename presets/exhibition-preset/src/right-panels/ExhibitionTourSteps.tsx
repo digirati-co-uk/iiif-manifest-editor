@@ -1,22 +1,10 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import {
-  ActionButton,
-  Sidebar,
-  SidebarContent,
-} from "@manifest-editor/components";
+import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  ResourceEditingProvider,
-  useInlineCreator,
-} from "@manifest-editor/shell";
+import { type EditorDefinition, ResourceEditingProvider, useInlineCreator } from "@manifest-editor/shell";
 import { useState } from "react";
 import { Button } from "react-aria-components";
-import {
-  AnnotationPageContext,
-  useCanvas,
-  useRequestAnnotation,
-} from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
@@ -30,18 +18,13 @@ export const exhibitionTourSteps: EditorDefinition = {
     edit: true,
     properties: ["annotations"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) =>
-      isEditableExhibitionCanvas(resource, vault),
+    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource, vault),
   },
   label: "Tour steps",
   component: () => <ExhibitionTourStepsPanel />,
 };
 
-export function ExhibitionTourStepsPanel({
-  mode = "advanced",
-}: {
-  mode?: EditingMode;
-}) {
+export function ExhibitionTourStepsPanel({ mode = "advanced" }: { mode?: EditingMode }) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations[0];
   const itemsAnnotationPage = canvas?.items[0];
@@ -90,9 +73,7 @@ function PromptCreationOfTourSteps() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="p-4 opacity-50 text-center">
-        This image does not yet have a tour.
-      </div>
+      <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
 
       <Button
         className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
@@ -163,8 +144,7 @@ export function ExhibitionTourStepsContent({
     return <PromptCreationOfTourSteps />;
   }
 
-  const showPaintingAnnotations =
-    mode === "advanced" && Boolean(itemsAnnotationPage);
+  const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
   const createSlideshowStep = () =>
     creator.create(
       "@manifest-editor/html-annotation",
@@ -197,18 +177,14 @@ export function ExhibitionTourStepsContent({
       <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
         <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
         {mode === "advanced" ? (
-          <ActionButton onPress={() => setReorderable((r) => !r)}>
-            {reorderable ? "Done" : "Reorder"}
-          </ActionButton>
+          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
         ) : null}
       </div>
 
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
           <div className="flex flex-col gap-4">
-            <TourAnnotationPageEditor
-              reorderable={mode === "advanced" ? reorderable : false}
-            />
+            <TourAnnotationPageEditor reorderable={mode === "advanced" ? reorderable : false} />
 
             {useSlideshowTargets ? (
               <Button
@@ -237,10 +213,8 @@ export function ExhibitionTourStepsContent({
           </div>
           {showPaintingAnnotations && itemsAnnotationPage ? (
             <>
-              <h3 className="text-md border-b pt-4 pb-2 mb-2">
-                Available tour steps from images
-              </h3>
               <PromptToAddPaintingAnnotations
+                title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
                 painting={itemsAnnotationPage}
                 page={firstAnnotationPage}
                 canvasId={canvas.id}
