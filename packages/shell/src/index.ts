@@ -51,6 +51,7 @@ export * from "./PreviewButton/PreviewButton";
 export * from "./PreviewContext/PreviewContext";
 export * from "./PreviewContext/PreviewContext.types";
 export * from "./PreviewVault/create-preview-vault";
+export * from "./PreviewVault/vault-message-bridge";
 export * from "./PreviewVault/PreviewVault";
 export * from "./ResourceEditingContext/ResourceEditingContext";
 export * from "./ResourceEditingContext/ResourceEditingContext.types";
