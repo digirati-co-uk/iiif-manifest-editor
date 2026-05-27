@@ -9,9 +9,21 @@ import {
 } from "@manifest-editor/shell";
 import { DelftExhibition } from "exhibition-viewer";
 import { type EditorHooks, EditorHooksProvider } from "exhibition-viewer/library";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "react-aria-components";
 import { CanvasContext, useManifest, useVault } from "react-iiif-vault";
+import {
+  getThemeConfigFromServices,
+  getThemeCssVariables,
+  resolveThemeConfig,
+} from "../theme/theme-service";
 
 export const exhibitionCenterPanel: LayoutPanel = {
   id: "@exhibitions/center-panel", // We are overriding the default canvas listing panel
@@ -30,6 +42,17 @@ function ExhibitionCenterPanel() {
   const [scale, setScale] = useState(0.8);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { edit, leftPanel } = useLayoutActions();
+  const resolvedTheme = useMemo(() => {
+    if (!manifest) {
+      return null;
+    }
+
+    return resolveThemeConfig(
+      getThemeConfigFromServices(
+        (manifest as any).service || (manifest as any).services,
+      ),
+    );
+  }, [manifest]);
 
   const hooks = useMemo(() => {
     return {
@@ -51,8 +74,8 @@ function ExhibitionCenterPanel() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                edit(props.resource);
-                leftPanel.open({ id: "canvas-listing", open: true });
+                edit((props as any).resource);
+                leftPanel.open({ id: "canvas-listing" });
               }}
               className="absolute top-5 right-5 bg-white text-black p-2 rounded z-40"
             >
@@ -94,7 +117,15 @@ function ExhibitionCenterPanel() {
   if (!manifest) return null;
 
   return (
-    <div ref={wrapperRef} className="overflow-y-auto delft-exhibition">
+    <div
+      ref={wrapperRef}
+      className="overflow-y-auto delft-exhibition exhibition-viewer"
+      style={
+        resolvedTheme
+          ? (getThemeCssVariables(resolvedTheme) as CSSProperties)
+          : undefined
+      }
+    >
       <EditorHooksProvider hooks={hooks}>
         <DelftExhibition
           key={scale}
@@ -102,10 +133,10 @@ function ExhibitionCenterPanel() {
           customVault={vault}
           manifest={manifest.id}
           options={{
+            ...(resolvedTheme?.delft.exhibition || {}),
             disablePresentation: true,
             hideTableOfContents: true,
             hideTitle: true,
-            alternativeImageMode: true,
           }}
         />
       </EditorHooksProvider>

@@ -3,7 +3,7 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@manifest-editor/components";
-import { useToggleList } from "@manifest-editor/editors";
+import { useInStack, useToggleList } from "@manifest-editor/editors";
 import {
   CanvasListView,
   CanvasListingIcon,
@@ -46,9 +46,14 @@ function createExhibitionGridLeftPanel({
 }
 
 function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
-  const { technical } = useManifestEditor();
+  const { structural, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
+  const items = structural.items.get();
+  const editingCanvas = useInStack("Canvas");
+  const selectedCanvasId = editingCanvas?.resource.source.id;
+  const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
+  const insertIndex = selectedIndex >= 0 ? selectedIndex + 1 : undefined;
   const [canCreateCanvas, canvasActions] = useCreator(
     manifest,
     "items",
@@ -82,7 +87,7 @@ function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
             icon: <NewSlideIcon />,
             title: "Add new slide",
             disabled: !canCreateCanvas,
-            onClick: () => canvasActions.createFiltered(creatorFilter),
+            onClick: () => canvasActions.createFiltered(creatorFilter, insertIndex),
           },
         ]}
       />

@@ -21,7 +21,7 @@ overrides:
   tsdown: 0.16.4
   react-aria-components: ^1.12
   '@atlas-viewer/atlas': 3.1.1
-  exhibition-viewer: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
+  exhibition-viewer: ^1.0.14
   react-reconciler: 0.33.0
   iiif-browser: 2.0.5-next.95a29ac
   react: 19.2.0
@@ -233,8 +233,8 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
       exhibition-viewer:
-        specifier: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
-        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3)
+        specifier: ^1.0.14
+        version: 1.0.14(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3)
       idb-keyval:
         specifier: ^6.2.1
         version: 6.2.1
@@ -1666,8 +1666,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shell
       exhibition-viewer:
-        specifier: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz
-        version: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3)
+        specifier: ^1.0.14
+        version: 1.0.14(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3)
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -8991,9 +8991,8 @@ packages:
     resolution: {integrity: sha512-jpWzZ1ZhwUmeWRhS7Qv3mhpOhLfwI+uAX4e5fOcXqwMR7EcJ0pj2kV1CVzHVMX/LphnKWD3LObjZCoJ71lKpHw==}
     engines: {node: ^18.19.0 || >=20.5.0}
 
-  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz:
-    resolution: {tarball: https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz}
-    version: 1.0.10
+  exhibition-viewer@1.0.14:
+    resolution: {integrity: sha512-FX23IQAlBvpWK20XwjvSDf0oakbT0w5K50Xw/gVP/0EGrFTicD9ktYli7ld2Xv4yr7pAf+DypNUKijpqAW1NSg==}
     peerDependencies:
       typescript: ^5.0.0
 
@@ -11905,7 +11904,6 @@ packages:
   rclone.js@0.6.6:
     resolution: {integrity: sha512-Dxh34cab/fNjFq5SSm0fYLNkGzG2cQSBy782UW9WwxJCEiVO4cGXkvaXcNlgv817dK8K8PuQ+NHUqSAMMhWujQ==}
     engines: {node: '>=12'}
-    cpu: [arm, arm64, mips, mipsel, x32, x64]
     os: [darwin, freebsd, linux, openbsd, sunos, win32]
     hasBin: true
 
@@ -23763,7 +23761,7 @@ snapshots:
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.2
 
-  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3):
+  exhibition-viewer@1.0.14(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.7.3):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)
@@ -23794,7 +23792,7 @@ snapshots:
       - immer
       - react-native
 
-  exhibition-viewer@https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3):
+  exhibition-viewer@1.0.14(@atlas-viewer/atlas@3.1.1(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0))(immer@10.1.1)(typescript@5.9.3):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.7(@iiif/parser@2.2.8)

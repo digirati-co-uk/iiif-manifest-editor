@@ -27,8 +27,8 @@ export const infoBoxWorkbenchEditor: EditorDefinition = {
     properties: ["label", "behavior"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
-      return isInfoBoxCanvas(resource, vault);
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      return isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Text box",

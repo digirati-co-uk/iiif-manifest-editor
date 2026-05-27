@@ -59,10 +59,10 @@ export const customBehaviourEditor: EditorDefinition = {
     resourceTypes: ["Canvas"],
     properties: ["behavior"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // The standalone layout panel is not shown for textual-content (info box) canvases;
       // they get their own layout section inside the workbench editor.
-      return !isInfoBoxCanvas(resource, vault);
+      return !isInfoBoxCanvas(resource as any, vault);
     },
   },
   id: "slide-behaviors",

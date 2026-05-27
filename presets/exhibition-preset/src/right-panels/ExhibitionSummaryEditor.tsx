@@ -11,9 +11,9 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
     properties: ["summary"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // Hide the standalone Summary tab for textual-content (info box) canvases.
-      return !isInfoBoxCanvas(resource, vault);
+      return !isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Summary",

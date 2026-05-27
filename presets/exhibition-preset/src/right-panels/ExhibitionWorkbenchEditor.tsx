@@ -50,10 +50,10 @@ export const exhibitionWorkbenchEditor: EditorDefinition = {
     properties: ["label", "summary", "behavior", "annotations"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // In standalone-tab mode (non-slideshow presets) the workbench only shows
       // for info-box canvases; image canvases use the individual tabs instead.
-      return isInfoBoxCanvas(resource, vault);
+      return isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Canvas",
@@ -66,7 +66,8 @@ export const slideshowWorkbenchEditor: EditorDefinition = {
   supports: {
     ...exhibitionWorkbenchEditor.supports,
     // In slideshow mode (singleTab) the workbench handles ALL canvas types.
-    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource, vault),
+    custom: ({ resource }, vault) =>
+      isEditableExhibitionCanvas(resource as any, vault),
   },
   component: () => <ExhibitionWorkbenchRightPanel preset="slideshow" />,
 };

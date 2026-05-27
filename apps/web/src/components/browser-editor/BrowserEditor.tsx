@@ -54,8 +54,8 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { VaultProvider } from "react-iiif-vault";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useManifest, VaultProvider } from "react-iiif-vault";
 import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
@@ -472,6 +472,9 @@ export default function BrowserEditor({
                   layoutMode={layoutMode}
                   className={isFocusedExhibition ? "exhibition-focused" : undefined}
                 />
+                <SelectInitialExhibitionCanvas
+                  enabled={isExhibitionPreset && !selectedCanvasId && !editing}
+                />
                 <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
               </ShellProvider>
             </VaultProvider>
@@ -480,6 +483,37 @@ export default function BrowserEditor({
       </VaultProvider>
     </div>
   );
+}
+
+function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {
+  const manifest = useManifest();
+  const selected = useEditingResource();
+  const { edit } = useLayoutActions();
+  const hasSelectedInitialCanvas = useRef(false);
+
+  useEffect(() => {
+    if (!enabled || hasSelectedInitialCanvas.current || selected || !manifest?.items?.length) {
+      return;
+    }
+
+    const firstCanvas = manifest.items[0];
+    if (!firstCanvas?.id) {
+      return;
+    }
+
+    hasSelectedInitialCanvas.current = true;
+    edit(
+      { id: firstCanvas.id, type: "Canvas" },
+      {
+        parent: { id: manifest.id, type: "Manifest" },
+        property: "items",
+        index: 0,
+      },
+      { forceOpen: false },
+    );
+  }, [edit, enabled, manifest, selected]);
+
+  return null;
 }
 
 function ExhibitionPresetConfigEditor({

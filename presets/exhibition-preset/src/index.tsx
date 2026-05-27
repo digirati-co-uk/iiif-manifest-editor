@@ -1,5 +1,6 @@
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp } from "@manifest-editor/shell";
+// import "exhibition-viewer/dist/index.css";
 import "./index.css";
 import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
 import { exhibitionBackgroundTask } from "./background-panel";
@@ -7,6 +8,7 @@ import { imageBlockEditor } from "./canvas-editors/image-block-editor";
 import { infoBlockEditor } from "./canvas-editors/info-block-editor";
 import { youtubeMainEdtior } from "./canvas-editors/youtube-editor";
 import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
+import { exhibitionRemotePreviewPanel } from "./center-panels/ExhibitionRemotePreviewPanel";
 import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
 import { imageSlideCreator } from "./creators/image-slide-creator";
@@ -16,6 +18,7 @@ import { videoSlideCreator } from "./creators/video-slide-creator";
 import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
+import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
@@ -56,10 +59,12 @@ export const exhibitionEditorPreset = extendApp(
       //
       exhibitionGridLeftPanel,
       exhibitionOverviewLeftPanel,
+      exhibitionThemeLeftPanel,
     ],
     centerPanels: [
       //
       exhibitionCenterPanel,
+      exhibitionRemotePreviewPanel,
     ],
     annotations: [
       //

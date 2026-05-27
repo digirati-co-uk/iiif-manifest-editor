@@ -30,9 +30,9 @@ export const exhibitionCanvasEditor: EditorDefinition = {
     properties: ["label", "summary"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // Hide the Exhibition tab for textual-content (info box) canvases.
-      return !isInfoBoxCanvas(resource, vault);
+      return !isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Exhibition",

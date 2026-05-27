@@ -20,9 +20,9 @@ export const exhibitionTourSteps: EditorDefinition = {
     properties: ["annotations"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // Tour steps are not supported for textual-content (info box) canvases.
-      return !isInfoBoxCanvas(resource, vault);
+      return !isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Tour steps",

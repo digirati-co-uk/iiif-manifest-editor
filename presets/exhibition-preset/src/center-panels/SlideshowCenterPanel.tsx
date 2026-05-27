@@ -78,7 +78,7 @@ function SlideshowCenterPanel() {
   }, [items, vault]);
 
   const addNewSlide = () => {
-    canvasActions.createFiltered("exhibition-slideshow-slide");
+    canvasActions.createFiltered("exhibition-slideshow-slide", items.length ? selectedSlideIndex + 1 : undefined);
   };
 
   const openSlide = (item: { id: string; type?: string }, index: number, forceOpen = false) => {

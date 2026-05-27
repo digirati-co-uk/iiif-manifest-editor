@@ -11,13 +11,18 @@ import {
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
   presetOptions?: Partial<PresetUrlSearchParamsOptions>;
+  focusSelectedCanvas?: boolean;
 }
 
 const PREVIEW_CONNECT = "manifest-editor:iframe-preview:connect";
 const PREVIEW_READY = "manifest-editor:iframe-preview:ready";
 const PREVIEW_SELECTION = "manifest-editor:iframe-preview:selection";
 
-export function ExhibitionPreviewPanel({ preset, presetOptions }: ExhibitionPreviewPanelProps) {
+export function ExhibitionPreviewPanel({
+  preset,
+  presetOptions,
+  focusSelectedCanvas = true,
+}: ExhibitionPreviewPanelProps) {
   const vault = useVault();
   const rootResource = useAppResource();
   const manifest = useManifest();
@@ -27,7 +32,9 @@ export function ExhibitionPreviewPanel({ preset, presetOptions }: ExhibitionPrev
   const resourceRef = useRef(rootResource);
   const canvasIdRef = useRef<string | null>(null);
   const [status, setStatus] = useState<"waiting" | "connected" | "error">("waiting");
-  const currentCanvasId = canvas?.resource.source.id || manifest?.items?.[0]?.id || null;
+  const currentCanvasId = focusSelectedCanvas
+    ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null
+    : null;
   const src = useMemo(() => createScrollingPreviewUrl(preset, presetOptions).toString(), [preset, presetOptions]);
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
 
