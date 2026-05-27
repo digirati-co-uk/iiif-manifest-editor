@@ -1,5 +1,10 @@
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
+import {
+  defaultExhibitionPreviewPreset,
+  exhibitionRemotePreviewPanelId,
+  useExhibitionPreviewPreset,
+} from "../helpers/exhibition-preview-state";
 import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
 import { PreviewIcon } from "../icons/PreviewIcon";
 
@@ -8,22 +13,34 @@ export type ExhibitionRemotePreviewPanelState = {
 };
 
 export const defaultExhibitionRemotePreviewPreset: PresetUrlSearchParamsPreset =
-  "exhibition";
+  defaultExhibitionPreviewPreset;
 
 export const exhibitionRemotePreviewPanel: LayoutPanel = {
-  id: "@exhibitions/remote-preview-panel",
+  id: exhibitionRemotePreviewPanelId,
   label: "Exhibition preview",
   icon: <PreviewIcon />,
-  defaultState: {
-    preset: defaultExhibitionRemotePreviewPreset,
-  } satisfies ExhibitionRemotePreviewPanelState,
+  defaultState: {} satisfies ExhibitionRemotePreviewPanelState,
   render: (state: ExhibitionRemotePreviewPanelState) => (
-    <ExhibitionPreviewPanel
-      preset={state.preset || defaultExhibitionRemotePreviewPreset}
-      focusSelectedCanvas={false}
-    />
+    <ExhibitionRemotePreviewPanel state={state} />
   ),
   options: {
     minWidth: 350,
   },
 };
+
+function ExhibitionRemotePreviewPanel({
+  state,
+}: {
+  state: ExhibitionRemotePreviewPanelState;
+}) {
+  const [storedPreset] = useExhibitionPreviewPreset();
+
+  return (
+    <ExhibitionPreviewPanel
+      preset={
+        state.preset || storedPreset || defaultExhibitionRemotePreviewPreset
+      }
+      focusSelectedCanvas={false}
+    />
+  );
+}

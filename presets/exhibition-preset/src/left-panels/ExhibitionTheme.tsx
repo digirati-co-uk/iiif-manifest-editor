@@ -13,6 +13,10 @@ import {
   exhibitionRemotePreviewPanel,
   type ExhibitionRemotePreviewPanelState,
 } from "../center-panels/ExhibitionRemotePreviewPanel";
+import {
+  exhibitionPreviewPresetOptions,
+  useExhibitionPreviewPreset,
+} from "../helpers/exhibition-preview-state";
 import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
 import type {
   ExhibitionThemeConfig,
@@ -42,15 +46,6 @@ export const exhibitionThemeLeftPanel: LayoutPanel = {
 type ServiceDetails = {
   service: any;
 } | null;
-
-const previewPresetOptions: Array<{
-  label: string;
-  value: PresetUrlSearchParamsPreset;
-}> = [
-  { label: "Exhibition", value: "exhibition" },
-  { label: "Slideshow", value: "slideshow" },
-  { label: "Scroll", value: "scroll" },
-];
 
 function ThemeSection({
   title,
@@ -222,6 +217,8 @@ function ExhibitionThemePanel() {
   const vault = useVault();
   const { centerPanel } = useLayoutState();
   const { centerPanel: centerPanelActions } = useLayoutActions();
+  const [storedPreviewPreset, setStoredPreviewPreset] =
+    useExhibitionPreviewPreset();
   const serviceList = ((manifest as any)?.service || []) as Array<any>;
   const servicesList = ((manifest as any)?.services || []) as Array<any>;
   const previewPanelState =
@@ -229,7 +226,9 @@ function ExhibitionThemePanel() {
       ? (centerPanel.state as ExhibitionRemotePreviewPanelState | null)
       : null;
   const previewPreset =
-    previewPanelState?.preset || defaultExhibitionRemotePreviewPreset;
+    previewPanelState?.preset ||
+    storedPreviewPreset ||
+    defaultExhibitionRemotePreviewPreset;
 
   const serviceDetails = useMemo<ServiceDetails>(() => {
     const directDetails = getThemeServiceDetails(serviceList);
@@ -303,6 +302,7 @@ function ExhibitionThemePanel() {
   };
 
   const setPreviewPreset = (preset: PresetUrlSearchParamsPreset) => {
+    setStoredPreviewPreset(preset);
     centerPanelActions.open({
       id: exhibitionRemotePreviewPanel.id,
       state: { preset } satisfies ExhibitionRemotePreviewPanelState,
@@ -320,7 +320,7 @@ function ExhibitionThemePanel() {
             label="Preview preset"
             value={previewPreset}
             onChange={setPreviewPreset}
-            options={previewPresetOptions}
+            options={exhibitionPreviewPresetOptions}
           />
         </ThemeSection>
 
