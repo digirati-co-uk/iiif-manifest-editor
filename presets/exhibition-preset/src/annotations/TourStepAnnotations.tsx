@@ -9,6 +9,14 @@ export const tourStepAnnotations: AnnotationPanel = {
   render: () => <TourStepAnnotations />,
 };
 
+const tourStepStyle = {
+  border: "2px solid rgba(255, 255, 255, 0.3)",
+  ":hover": {
+    borderColor: "#4B67E1",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+};
+
 function TourStepAnnotations() {
   const canvas = useCanvas();
   const store = useAtlasStore();
@@ -25,7 +33,7 @@ function TourStepAnnotations() {
   return (
     <>
       <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
-        <ViewerAnnotationPage />
+        <ViewerAnnotationPage showAnnotationNumber style={tourStepStyle} />
       </AnnotationPageContext>
     </>
   );
