@@ -65,7 +65,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
         >
           <div className="flex-1 overflow-hidden relative justify-self-stretch">
             <div className="absolute inset-0 w-full h-full">
-              <LazyThumbnail cover fade={false} />
+              <LazyThumbnail cover={behavior.includes("cover")} fade={false} />
             </div>
           </div>
           {isImage ? null : (

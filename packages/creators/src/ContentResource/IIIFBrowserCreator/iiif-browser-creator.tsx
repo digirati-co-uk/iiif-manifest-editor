@@ -72,7 +72,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             fullCanvas.label = { en: ["Untitled canvas"] };
           }
 
-          console.log("loading full canvas", fullCanvas);
+          // @todo add partof manifest
+
           // Load before embedding.
           ctx.vault.loadSync(fullCanvas.id, fullCanvas);
           // Then embed.
@@ -195,6 +196,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             );
             continue;
           }
+
+          // @todo check return types (At the moment only annotation is supported.)
 
           returnResources.push(
             ctx.embed({

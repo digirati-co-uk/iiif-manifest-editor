@@ -14,6 +14,7 @@ import { ExhibitionCanvasAdvancedContent } from "./ExhibitionCanvasEditor";
 import { SlideshowContentPanel } from "./SlideshowContentPanel";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { SlideBehavioursContent } from "./SlideBehaviours";
+import { ExhibitionSummaryContent } from "./ExhibitionSummaryEditor";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
@@ -82,14 +83,13 @@ function ExhibitionWorkbenchRightPanel({
 
   useEffect(() => {
     if (
-      preset === "slideshow" &&
       requestedTab &&
       tabs.some((tab) => tab.id === requestedTab)
     ) {
       setSelectedTab(requestedTab as RightPanelTab);
       clearRequestedTab();
     }
-  }, [clearRequestedTab, preset, requestedTab, tabs]);
+  }, [clearRequestedTab, requestedTab, tabs]);
 
   return (
     <Sidebar>
@@ -138,7 +138,7 @@ function ExhibitionWorkbenchRightPanel({
             mode === "simple" ? (
               <SimpleSummaryPanel />
             ) : (
-              <ExhibitionCanvasAdvancedContent />
+              <ExhibitionSummaryContent />
             )
           ) : null}
           {selectedTab === "tour" ? (

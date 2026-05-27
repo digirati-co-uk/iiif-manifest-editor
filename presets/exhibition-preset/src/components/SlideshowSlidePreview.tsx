@@ -155,7 +155,11 @@ export function SlideshowSlidePreview({
                     : undefined
               }
             >
-              <RenderSlideLayer layer={layer} mode={mode} />
+              <RenderSlideLayer
+                layer={layer}
+                mode={mode}
+                cover={behavior.includes("cover")}
+              />
               {contentEditingActive && (repositioning || editingLayer) ? (
                 <div
                   className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
@@ -449,16 +453,21 @@ function SlideTextPanel({
 function RenderSlideLayer({
   layer,
   mode,
+  cover,
 }: {
   layer: ReturnType<typeof getSlideContentLayers>[number];
   mode: "edit" | "preview";
+  cover: boolean;
 }) {
   if (layer.imageUrl) {
     return (
       <img
         src={layer.imageUrl}
         alt=""
-        className="h-full w-full object-contain"
+        className={twMerge(
+          "h-full w-full",
+          cover ? "object-cover" : "object-contain",
+        )}
       />
     );
   }

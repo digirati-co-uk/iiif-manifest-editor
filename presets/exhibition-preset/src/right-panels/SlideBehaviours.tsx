@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent } from "@manifest-editor/components";
+import { LazyThumbnail, Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   BehaviorEditor,
   type BehaviorEditorProps,
@@ -6,22 +6,27 @@ import {
   InputContainer,
   useInStack,
 } from "@manifest-editor/editors";
-import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
+import { type EditorDefinition, useEditor, useLocalStorage } from "@manifest-editor/shell";
 import { useState } from "react";
+import { Button } from "react-aria-components";
+import { twMerge } from "tailwind-merge";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
+import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
 type LayoutEditingContext = "default" | "slideshow";
-type LayoutPreset = "image-text" | "image-only";
-type TextPosition = "left" | "right" | "bottom";
-type DisplaySize = "compact" | "standard" | "large";
+export type LayoutPreset = "image" | "right" | "left" | "bottom";
+type DisplayWidth = 12 | 8 | 6 | 4;
 
-const textPositions: TextPosition[] = ["left", "right", "bottom"];
 const layoutBehaviors = new Set(["left", "right", "bottom", "top", "image"]);
-const sizeBehaviorPrefixes = ["w-", "h-"];
-const layoutPresetOptions: Array<{ value: LayoutPreset; label: string }> = [
-  { value: "image-text", label: "Image with text" },
-  { value: "image-only", label: "Image only" },
+export const layoutPresetOptions: Array<{
+  value: LayoutPreset;
+  label: string;
+}> = [
+  { value: "image", label: "Image only" },
+  { value: "right", label: "Image + text right" },
+  { value: "left", label: "Image + text left" },
+  { value: "bottom", label: "Image + text bottom" },
 ];
 const simpleLayoutColours = {
   primary: "var(--exhibition-primary, #b84c74)",
@@ -33,15 +38,17 @@ const simpleLayoutColours = {
   buttonText: "var(--exhibition-button-text, #ffffff)",
   inactiveButtonText: "var(--exhibition-inactive-button-text, #332f2c)",
 };
-const displaySizeOptions: Array<{
-  value: DisplaySize;
+const displayWidthOptions: Array<{
+  value: DisplayWidth;
   label: string;
-  behaviors: [string, string];
 }> = [
-  { value: "compact", label: "Compact slide", behaviors: ["w-6", "h-4"] },
-  { value: "standard", label: "Standard slide", behaviors: ["w-8", "h-6"] },
-  { value: "large", label: "Large feature slide", behaviors: ["w-12", "h-8"] },
+  { value: 12, label: "Full width" },
+  { value: 8, label: "2/3 width" },
+  { value: 6, label: "Half width" },
+  { value: 4, label: "1/3 width" },
 ];
+const floatingBehaviors = new Set(["float-top-left", "float-top-right", "float-bottom-left", "float-bottom-right"]);
+const layoutPanelModeStorageKey = "exhibition-layout-panel-mode";
 
 export const customBehaviourEditor: EditorDefinition = {
   component: () => <SlideBehavioursPanel />,
@@ -114,9 +121,7 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
   {
     id: "size",
-    component: (existing, setBehaviors) => (
-      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
-    ),
+    component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
     label: { en: ["Size"] },
     type: "custom",
     initialOpen: true,
@@ -124,17 +129,9 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
 ];
 
-export function RoundGridIcon(
-  props: { index: number } & React.SVGProps<SVGSVGElement>,
-) {
+export function RoundGridIcon(props: { index: number } & React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill={props.index === 0 ? "currentColor" : "none"}
@@ -183,17 +180,14 @@ function removeLayoutBehaviors(behavior: string[]) {
   return behavior.filter(
     (item) =>
       !layoutBehaviors.has(item) &&
-      !sizeBehaviorPrefixes.some((prefix) => item.startsWith(prefix)),
+      !item.startsWith("w-") &&
+      !item.startsWith("h-") &&
+      !floatingBehaviors.has(item) &&
+      item !== "cover",
   );
 }
 
-function EditSize({
-  behaviors,
-  setBehaviors,
-}: {
-  behaviors: string[];
-  setBehaviors: (behaviors: string[]) => void;
-}) {
+function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
   const { width, height } = parseBehaviors(behaviors);
   const [hoverPosition, setHoverPosition] = useState({ x: -1, y: -1 });
 
@@ -239,20 +233,22 @@ function EditSize({
   });
 
   return (
-    <div
-      className="grid grid-cols-12 grid-rows-12 gap-1"
-      onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}
-    >
+    <div className="grid grid-cols-12 grid-rows-12 gap-1" onMouseLeave={() => setHoverPosition({ x: -1, y: -1 })}>
       {cells}
     </div>
   );
 }
 
 export function SlideBehavioursPanel() {
+  const [mode, setMode] = useLocalStorage<EditingMode>(layoutPanelModeStorageKey, "simple");
+
   return (
     <Sidebar>
-      <SidebarContent>
-        <SlideBehavioursContent mode="advanced" />
+      <SidebarContent className="bg-white px-6 pt-5 pb-20">
+        <div className="mb-6 flex justify-center">
+          <SimpleAdvancedToggle value={mode} onChange={setMode} />
+        </div>
+        <SlideBehavioursContent mode={mode} />
       </SidebarContent>
     </Sidebar>
   );
@@ -278,6 +274,8 @@ export function SlideBehavioursContent({
       <SimpleSlideLayoutEditor
         behavior={editor.technical.behavior.get() || []}
         layoutContext={layoutContext}
+        canvasWidth={width.get() || 0}
+        canvasHeight={height.get() || 0}
         onChange={(v) => {
           editor.technical.behavior.set(v);
         }}
@@ -317,125 +315,337 @@ export function SlideBehavioursContent({
 function SimpleSlideLayoutEditor({
   behavior,
   layoutContext,
+  canvasWidth,
+  canvasHeight,
   onChange,
 }: {
   behavior: string[];
   layoutContext: LayoutEditingContext;
+  canvasWidth: number;
+  canvasHeight: number;
   onChange: (newValue: string[]) => void;
 }) {
-  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("image-text");
-  const [displaySize, setDisplaySize] = useState<DisplaySize>(
-    getDisplaySize(behavior),
+  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>(getLayoutPreset(behavior));
+  const [displayWidth, setDisplayWidth] = useState<DisplayWidth>(
+    layoutContext === "slideshow" ? 12 : getDisplayWidth(behavior),
   );
-  const [textPosition, setTextPosition] = useState<TextPosition>(
-    getTextPosition(behavior),
-  );
+  const [floating, setFloating] = useState(hasFloatingBehavior(behavior));
+  const [cover, setCover] = useState(behavior.includes("cover"));
+  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
+  const selectedWidth = layoutContext === "slideshow" ? 12 : displayWidth;
+  const previewHeight = getDerivedHeight({
+    canvasWidth,
+    canvasHeight,
+    layoutPreset,
+    displayWidth: selectedWidth,
+  });
 
-  const applyLayout = () => {
-    const size =
-      layoutContext === "slideshow"
-        ? displaySizeOptions.find((option) => option.value === "large")
-        : displaySizeOptions.find((option) => option.value === displaySize);
-    const next = removeLayoutBehaviors(behavior);
+  const applySettings = (next: {
+    layoutPreset?: LayoutPreset;
+    displayWidth?: DisplayWidth;
+    floating?: boolean;
+    cover?: boolean;
+  }) => {
+    const nextLayoutPreset = next.layoutPreset ?? layoutPreset;
+    const nextDisplayWidth = layoutContext === "slideshow" ? 12 : (next.displayWidth ?? displayWidth);
+    const nextFloating = next.floating ?? floating;
+    const nextCover = next.cover ?? cover;
 
-    next.push(layoutPreset === "image-text" ? textPosition : "image");
-
-    if (size) {
-      next.push(...size.behaviors);
-    }
-
-    onChange(next);
+    onChange(
+      buildSimpleLayoutBehaviors({
+        behavior,
+        layoutPreset: nextLayoutPreset,
+        displayWidth: nextDisplayWidth,
+        canvasWidth,
+        canvasHeight,
+        floating: nextFloating,
+        cover: nextCover,
+      }),
+    );
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-7">
+      <SimpleLayoutPreview
+        layoutPreset={layoutPreset}
+        cover={cover}
+        floating={floating}
+        width={selectedWidth}
+        height={previewHeight}
+        onTextClick={() => requestWorkbenchTab("summary")}
+      />
+
       <SimpleField>
         <SimpleFieldLabel>Layout preset</SimpleFieldLabel>
-        <select
-          className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
-          style={{
-            backgroundColor: simpleLayoutColours.fieldBackground,
-            borderColor: simpleLayoutColours.fieldBorder,
-            color: simpleLayoutColours.text,
-          }}
-          value={layoutPreset}
-          onChange={(e) =>
-            setLayoutPreset(e.currentTarget.value as LayoutPreset)
-          }
-        >
+        <div className="mt-3 grid grid-cols-2 gap-3">
           {layoutPresetOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
+            <LayoutPresetCard
+              key={option.value}
+              preset={option.value}
+              label={option.label}
+              selected={layoutPreset === option.value}
+              onClick={() => {
+                setLayoutPreset(option.value);
+                applySettings({ layoutPreset: option.value });
+              }}
+            />
           ))}
-        </select>
+        </div>
       </SimpleField>
 
       {layoutContext === "default" ? (
         <SimpleField>
-          <SimpleFieldLabel>Display size</SimpleFieldLabel>
-          <select
-            className="mt-2 w-full rounded-md border px-4 py-3 text-sm"
-            style={{
-              backgroundColor: simpleLayoutColours.fieldBackground,
-              borderColor: simpleLayoutColours.fieldBorder,
-              color: simpleLayoutColours.text,
-            }}
-            value={displaySize}
-            onChange={(e) =>
-              setDisplaySize(e.currentTarget.value as DisplaySize)
-            }
-          >
-            {displaySizeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
+          <SimpleFieldLabel>Width</SimpleFieldLabel>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            {displayWidthOptions.map((option) => (
+              <SimpleOptionButton
+                key={option.value}
+                selected={displayWidth === option.value}
+                onClick={() => {
+                  setDisplayWidth(option.value);
+                  applySettings({ displayWidth: option.value });
+                }}
+              >
                 {option.label}
-              </option>
+              </SimpleOptionButton>
             ))}
-          </select>
-        </SimpleField>
-      ) : null}
-
-      {layoutPreset === "image-text" ? (
-        <SimpleField>
-          <SimpleFieldLabel>Text position</SimpleFieldLabel>
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            {textPositions.map((position) => {
-              const selected = textPosition === position;
-
-              return (
-                <button
-                  key={position}
-                  type="button"
-                  className="rounded-md border px-3 py-3 text-sm font-semibold capitalize transition-colors"
-                  style={{
-                    backgroundColor: selected
-                      ? simpleLayoutColours.primary
-                      : simpleLayoutColours.buttonBackground,
-                    borderColor: selected
-                      ? simpleLayoutColours.primary
-                      : simpleLayoutColours.fieldBorder,
-                    color: selected
-                      ? simpleLayoutColours.buttonText
-                      : simpleLayoutColours.inactiveButtonText,
-                  }}
-                  onClick={() => setTextPosition(position)}
-                >
-                  {position}
-                </button>
-              );
-            })}
           </div>
         </SimpleField>
       ) : null}
 
-      <button
-        type="button"
-        className="mt-4 w-fit rounded-md px-7 py-3 text-sm font-semibold text-white"
-        style={{ backgroundColor: simpleLayoutColours.primary }}
-        onClick={applyLayout}
+      <div className="flex flex-col gap-3">
+        <SimpleCheckbox
+          checked={floating}
+          label="Floating"
+          onChange={(checked) => {
+            setFloating(checked);
+            applySettings({ floating: checked });
+          }}
+        />
+        <SimpleCheckbox
+          checked={cover}
+          label="Image cover"
+          onChange={(checked) => {
+            setCover(checked);
+            applySettings({ cover: checked });
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SimpleLayoutPreview({
+  layoutPreset,
+  cover,
+  floating,
+  width,
+  height,
+  onTextClick,
+}: {
+  layoutPreset: LayoutPreset;
+  cover: boolean;
+  floating: boolean;
+  width: DisplayWidth;
+  height: number;
+  onTextClick: () => void;
+}) {
+  const isBottom = layoutPreset === "bottom";
+  const isImage = layoutPreset === "image";
+  const isLeft = layoutPreset === "left";
+
+  return (
+    <div>
+      <div
+        className="relative mx-auto overflow-hidden rounded-md border bg-[#f8f6f3] shadow-sm"
+        style={{
+          width: `${Math.max(33, Math.round((width / 12) * 100))}%`,
+          aspectRatio: `${width} / ${height}`,
+          borderColor: simpleLayoutColours.fieldBorder,
+        }}
       >
-        Apply slide layout
-      </button>
+        <div
+          className={twMerge(
+            "flex h-full w-full min-h-0",
+            isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
+          )}
+        >
+          <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
+            <div className="absolute inset-0">
+              <LazyThumbnail cover={cover} fade={false} />
+            </div>
+          </div>
+          {isImage ? null : (
+            <button
+              type="button"
+              className={twMerge(
+                "flex-shrink-0 border-0 bg-[#25211f] p-3 text-left text-white transition-colors hover:bg-[#332f2c] focus:outline-none focus:ring-2 focus:ring-me-primary-500 focus:ring-offset-2",
+                isBottom ? "h-1/3 w-full" : "h-full w-1/3",
+              )}
+              onClick={onTextClick}
+            >
+              <TextLines tone="light" />
+            </button>
+          )}
+        </div>
+        {floating ? (
+          <div className="absolute right-2 top-2 h-7 w-10 rounded bg-white/90 shadow ring-1 ring-black/10" />
+        ) : null}
+      </div>
+      <div className="mt-2 text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
+        w-{width} h-{height}
+      </div>
+    </div>
+  );
+}
+
+export function LayoutPresetCard({
+  preset,
+  label,
+  selected,
+  onClick,
+}: {
+  preset: LayoutPreset;
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex min-h-[112px] flex-col items-center justify-center gap-3 rounded-md border px-3 py-4 text-center text-sm font-semibold transition-colors"
+      style={{
+        backgroundColor: selected ? simpleLayoutColours.primary : simpleLayoutColours.buttonText,
+        borderColor: selected ? simpleLayoutColours.primary : simpleLayoutColours.fieldBorder,
+        color: selected ? simpleLayoutColours.buttonText : simpleLayoutColours.inactiveButtonText,
+      }}
+      onClick={onClick}
+    >
+      <LayoutPresetIcon preset={preset} selected={selected} />
+      <span className="leading-tight">{label}</span>
+    </button>
+  );
+}
+
+function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected: boolean }) {
+  const isImage = preset === "image";
+  const isBottom = preset === "bottom";
+  const isLeft = preset === "left";
+  const textClass = selected ? "bg-white/80" : "bg-[#25211f]";
+  const imageClass = selected ? "bg-white/25 ring-white/70" : "bg-[#f8f6f3] ring-[#dcd5ce]";
+
+  return (
+    <span
+      className={twMerge(
+        "flex h-12 w-16 gap-1 overflow-hidden rounded border p-1",
+        selected ? "border-white/70 bg-white/15" : "border-[#dcd5ce] bg-white",
+        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
+      )}
+      aria-hidden="true"
+    >
+      <span className={twMerge("flex-1 rounded-sm ring-1", imageClass)} />
+      {isImage ? null : (
+        <span
+          className={twMerge(
+            "flex flex-shrink-0 flex-col justify-center gap-0.5 rounded-sm px-0.5",
+            textClass,
+            isBottom ? "h-3 w-full" : "h-full w-4",
+          )}
+        >
+          <TextLines compact tone={selected ? "dark" : "light"} />
+        </span>
+      )}
+    </span>
+  );
+}
+
+function TextLines({ compact = false, tone = "light" }: { compact?: boolean; tone?: "light" | "dark" }) {
+  const lineClass = tone === "light" ? "bg-white/70" : "bg-[#8b3f61]/70";
+
+  return (
+    <span className={twMerge("block space-y-1.5", compact ? "space-y-0.5" : "mt-1")} aria-hidden="true">
+      <span className={twMerge("block rounded", lineClass, compact ? "h-0.5 w-full" : "h-1.5 w-3/4")} />
+      <span className={twMerge("block rounded", lineClass, compact ? "h-0.5 w-4/5" : "h-1.5 w-full")} />
+      <span className={twMerge("block rounded", lineClass, compact ? "h-0.5 w-2/3" : "h-1.5 w-2/3")} />
+    </span>
+  );
+}
+
+function SimpleOptionButton({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className="min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition-colors"
+      style={{
+        backgroundColor: selected ? simpleLayoutColours.primary : simpleLayoutColours.buttonText,
+        borderColor: selected ? simpleLayoutColours.primary : simpleLayoutColours.fieldBorder,
+        color: selected ? simpleLayoutColours.buttonText : simpleLayoutColours.inactiveButtonText,
+      }}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SimpleCheckbox({
+  checked,
+  label,
+  onChange,
+}: {
+  checked: boolean;
+  label: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label
+      className="flex items-center justify-between rounded-md border px-4 py-3 text-sm font-semibold"
+      style={{
+        backgroundColor: simpleLayoutColours.fieldBackground,
+        borderColor: simpleLayoutColours.fieldBorder,
+        color: simpleLayoutColours.text,
+      }}
+    >
+      {label}
+      <input
+        type="checkbox"
+        className="h-4 w-4 accent-me-primary-500"
+        checked={checked}
+        onChange={(e) => onChange(e.currentTarget.checked)}
+      />
+    </label>
+  );
+}
+
+function SimpleAdvancedToggle({ value, onChange }: { value: EditingMode; onChange: (value: EditingMode) => void }) {
+  return (
+    <div className="grid w-full max-w-[240px] grid-cols-2 rounded-full bg-[#f5eaf0] p-1">
+      {(["simple", "advanced"] as EditingMode[]).map((option) => {
+        const selected = value === option;
+
+        return (
+          <Button
+            key={option}
+            className="border-none rounded-full bg-transparent px-4 py-2 text-sm font-semibold capitalize transition-colors"
+            style={{
+              backgroundColor: selected ? simpleLayoutColours.primary : "transparent",
+              color: selected ? "#ffffff" : "#8b3f61",
+              boxShadow: selected ? "0 1px 3px rgba(15, 23, 42, 0.18)" : "none",
+            }}
+            onPress={() => onChange(option)}
+          >
+            {option}
+          </Button>
+        );
+      })}
     </div>
   );
 }
@@ -446,25 +656,90 @@ function SimpleField({ children }: { children: React.ReactNode }) {
 
 function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="text-sm font-semibold"
-      style={{ color: simpleLayoutColours.muted }}
-    >
+    <div className="text-sm font-semibold" style={{ color: simpleLayoutColours.muted }}>
       {children}
     </div>
   );
 }
 
-function getTextPosition(behavior: string[]): TextPosition {
+export function getLayoutPreset(behavior: string[]): LayoutPreset {
+  if (behavior.includes("image")) return "image";
   if (behavior.includes("left")) return "left";
   if (behavior.includes("bottom")) return "bottom";
   return "right";
 }
 
-function getDisplaySize(behavior: string[]): DisplaySize {
-  const { width, height } = parseBehaviors(behavior);
+export function buildLayoutPresetBehaviors(behavior: string[], layoutPreset: LayoutPreset) {
+  return [...behavior.filter((item) => !layoutBehaviors.has(item)), layoutPreset];
+}
 
-  if (width >= 10 || height >= 8) return "large";
-  if (width >= 8 || height >= 6) return "standard";
-  return "compact";
+function getDisplayWidth(behavior: string[]): DisplayWidth {
+  const { width } = parseBehaviors(behavior);
+
+  if (!width) return 12;
+  if (width <= 4) return 4;
+  if (width <= 6) return 6;
+  if (width <= 8) return 8;
+  return 12;
+}
+
+function hasFloatingBehavior(behavior: string[]) {
+  return behavior.some((item) => floatingBehaviors.has(item));
+}
+
+function buildSimpleLayoutBehaviors({
+  behavior,
+  layoutPreset,
+  displayWidth,
+  canvasWidth,
+  canvasHeight,
+  floating,
+  cover,
+}: {
+  behavior: string[];
+  layoutPreset: LayoutPreset;
+  displayWidth: DisplayWidth;
+  canvasWidth: number;
+  canvasHeight: number;
+  floating: boolean;
+  cover: boolean;
+}) {
+  const next = removeLayoutBehaviors(behavior);
+  const height = getDerivedHeight({
+    canvasWidth,
+    canvasHeight,
+    layoutPreset,
+    displayWidth,
+  });
+
+  next.push(layoutPreset, `w-${displayWidth}`, `h-${height}`);
+
+  if (floating) {
+    next.push("float-top-right");
+  }
+
+  if (cover) {
+    next.push("cover");
+  }
+
+  return next;
+}
+
+function getDerivedHeight({
+  canvasWidth,
+  canvasHeight,
+  layoutPreset,
+  displayWidth,
+}: {
+  canvasWidth: number;
+  canvasHeight: number;
+  layoutPreset: LayoutPreset;
+  displayWidth: DisplayWidth;
+}) {
+  const ratio = canvasWidth && canvasHeight ? canvasWidth / canvasHeight : 1.5;
+  const effectiveWidth = layoutPreset === "left" || layoutPreset === "right" ? displayWidth * (2 / 3) : displayWidth;
+  const textHeightMultiplier = layoutPreset === "bottom" ? 3 / 2 : 1;
+  const height = Math.round((effectiveWidth / ratio) * textHeightMultiplier);
+
+  return Math.max(1, Math.min(12, height));
 }

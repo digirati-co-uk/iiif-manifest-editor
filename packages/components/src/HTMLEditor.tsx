@@ -1,10 +1,10 @@
 import type { MDXEditorMethods } from "@mdxeditor/editor";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Converter } from "showdown";
+import { twMerge } from "tailwind-merge";
 import { useDebounce } from "tiny-use-debounce";
 import TurndownService from "turndown";
 import { MDXEditor } from "./MDXEditor";
-import { twMerge } from "tailwind-merge";
 
 const converter = new Converter();
 converter.setFlavor("github");
@@ -23,10 +23,20 @@ export function HTMLEditor({
   onChange: (text: string) => void;
 }) {
   const editorRef = useRef<MDXEditorMethods>(null);
-  const [_value, _setValue] = useState<any>(undefined);
+  const lastEmittedHtml = useRef(value);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
   const internalOnChange = useCallback(() => {
     if (editorRef.current) {
-      onChange(converter.makeHtml(editorRef.current.getMarkdown()));
+      const nextHtml = converter.makeHtml(editorRef.current.getMarkdown());
+      if (nextHtml !== lastEmittedHtml.current) {
+        lastEmittedHtml.current = nextHtml;
+        onChangeRef.current(nextHtml);
+      }
     }
   }, []);
   const debounceSave = useDebounce(internalOnChange, 400);
@@ -36,12 +46,23 @@ export function HTMLEditor({
 
   useEffect(() => {
     const ref = editorRef.current;
-    return () => {
-      if (ref) {
-        onChange(converter.makeHtml(ref.getMarkdown()));
+    const saveCurrentValue = () => {
+      if (!ref) {
+        return;
+      }
+
+      const nextHtml = converter.makeHtml(ref.getMarkdown());
+      if (nextHtml !== lastEmittedHtml.current) {
+        lastEmittedHtml.current = nextHtml;
+        onChangeRef.current(nextHtml);
       }
     };
-  }, []);
+
+    return () => {
+      debounceSave.cancel();
+      saveCurrentValue();
+    };
+  }, [debounceSave]);
 
   return (
     <MDXEditor
@@ -61,8 +82,7 @@ export function HTMLEditor({
       onError={(err) => {
         console.log("err", err);
       }}
-      onChange={(value) => {
-        _setValue(value);
+      onChange={() => {
         debounceSave();
       }}
     />

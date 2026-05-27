@@ -26,5 +26,7 @@ export * from "./LinkingPropertyList/LinkingPropertyList";
 export * from "./PaintingAnnotationList/PaintingAnnotationList";
 export * from "./ReorderList/ReorderList.dndkit";
 export * from "./RichTextLanguageField/RichTextLanguageField";
+export * from "./TiptapLanguageFieldEditor/TiptapLanguageFieldEditor";
+export * from "./TiptapLanguageFieldEditor/TiptapRichTextLanguageField";
 export * from "./ViewerAnnotation";
 export * from "./ViewerAnnotationPage";

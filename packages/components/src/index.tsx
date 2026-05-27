@@ -29,6 +29,7 @@ export * from "./icons/AddIcon";
 export * from "./icons/AddImageIcon";
 export * from "./icons/AnnotationPopInIcon";
 export * from "./icons/AnnotationPopOutIcon";
+export * from "./icons/ArrowRightIcon";
 export * from "./icons/AudioIcon";
 export * from "./icons/BackIcon";
 export * from "./icons/CheckIcon";
