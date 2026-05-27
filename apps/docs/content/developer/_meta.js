@@ -5,4 +5,5 @@ export default {
   configuration: { title: "Configuration" },
   previews: { title: "Previews" },
   creators: { title: "Resource creators" },
+  "background-tasks": { title: "Background tasks" },
 };

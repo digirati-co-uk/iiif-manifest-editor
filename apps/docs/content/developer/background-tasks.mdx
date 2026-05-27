@@ -1,0 +1,734 @@
+@ -0,0 +1,733 @@
+# Background Tasks Developer Guide
+
+This repo has a background task system for long-running plugin actions such as OCR, translation, tagging, bulk updates, and imports.
+
+This guide explains:
+
+- what a background task is
+- how to register one in a plugin
+- what `prepare`, `run`, `render`, and `onResults` are for
+- how task plans, progress, logs, cancellation, and resume work
+- patterns used by the existing plugins
+- a few new example patterns you can copy
+
+The implementation lives in:
+
+- `packages/shell/src/BackgroundTasks/BackgroundTasks.types.ts`
+- `packages/shell/src/BackgroundTasks/BackgroundTasksStore.ts`
+- `packages/shell/src/BackgroundTasks/BackgroundActions.tsx`
+
+Representative plugins and presets:
+
+- `plugins/canvas-label-generator/src/background-action.tsx`
+- `plugins/translation/src/background-action.tsx`
+- `plugins/translation/src/language-tags-background-action.ts`
+- `plugins/ocr-docling/src/background-action.tsx`
+- `plugins/ocr-classification/src/background-action.ts`
+- `plugins/annotations/src/importer/background-action.tsx`
+- `presets/manifest-preset/src/bulk-thumbnail-builder/background-action.tsx`
+- `presets/manifest-preset/src/background-actions.tsx`
+
+## Mental model
+
+A background action is a plugin-defined command that appears in the UI for a specific target:
+
+- the root resource, usually the current `Manifest`
+- the current `Canvas`
+
+Each action definition declares:
+
+- where it is available
+- whether it supports the current resource
+- optional preparation work
+- the actual long-running work
+- optional mounted UI for config/results
+- optional results handling
+
+At runtime the shell gives you a `BackgroundActionRunContext` with:
+
+- `vault` for reading and writing IIIF resources
+- `tags`
+- `canvasProgress`
+- `plugins`
+- `config`
+- `layoutState` and `layoutActions`
+- lifecycle helpers like `setActionStatus()` and `appendActionLog()`
+- a cancellable `signal`
+- a `tasks` helper for plan-based work
+
+## Quick start
+
+The smallest useful action looks like this:
+
+```ts
+import type { BackgroundActionDefinition } from "@manifest-editor/shell";
+
+export const myAction: BackgroundActionDefinition = {
+  id: "@my-plugin/do-something",
+  label: "Do something",
+  summary: "Runs some work on the current manifest",
+  section: "My plugin",
+  order: 10,
+  resourceTypes: ["Manifest"],
+  run: async (ctx) => {
+    ctx.setActionLabel("Doing something");
+    ctx.setActionStatus("running", "Working");
+    ctx.appendActionLog("Started");
+
+    const manifest = ctx.vault.get(ctx.target as any);
+    // ...do work...
+
+    return {
+      ok: true,
+      manifestId: manifest?.id,
+    };
+  },
+};
+```
+
+Register it from your plugin:
+
+```ts
+import type { BackgroundActionDefinition, PluginMetadata } from "@manifest-editor/shell";
+
+export default {
+  id: "@my-plugin/example",
+  label: "Example plugin",
+  supports: {
+    apps: ["manifest-editor"],
+    projectTypes: ["Manifest"],
+  },
+} satisfies PluginMetadata;
+
+export const backgroundActions: BackgroundActionDefinition[] = [myAction];
+```
+
+That is enough for the shell to:
+
+- show the action in the background actions menu
+- run it once per target
+- show completion/error toast state
+- persist the action instance
+
+## Action lifecycle
+
+## 1. Availability
+
+The shell evaluates actions against the current root target and current canvas target.
+
+Use these fields to control availability:
+
+- `resourceTypes`: coarse filter, for example `["Manifest"]` or `["Canvas"]`
+- `supports(ctx)`: fine-grained runtime check
+
+Example:
+
+```ts
+supports: (ctx) => {
+  const manifest = ctx.vault.get(ctx.target as any) as any;
+  return !!manifest?.items?.length;
+}
+```
+
+If `supports()` throws, the action is silently skipped and the shell logs a console error.
+
+## 2. Prepare
+
+`prepare(ctx)` is optional. Use it when you need to:
+
+- open a config modal
+- inspect the manifest first
+- build a list of tasks
+- precompute preview data
+
+It can return:
+
+- `false`: cancel startup and reset the action to `idle`
+- `void` or `true`: continue directly to `run`
+- a `BackgroundActionPlan`: continue to `run` with a persisted task plan
+
+In practice:
+
+- `canvas-label-generator`, `translation`, `ocr-docling`, `ocr-classification`, `bulk-thumbnail-builder`, and `language-tags` all build plans
+- `annotations` importer uses `prepare` to gather options, but does not create a persisted plan
+
+## 3. Run
+
+`run(ctx)` performs the actual work.
+
+If it returns a value, the store records it as the instance result and marks `resultsAvailable = true` unless the action already ended in a final state.
+
+If it throws:
+
+- abort-like errors become `cancelled`
+- other errors become `error`
+
+## 4. Completion
+
+When the action finishes successfully, the shell marks it `complete`.
+
+If there is a result, or you explicitly call `ctx.setResultsAvailable(true)`, the user gets a "Results" affordance in the toast/menu and `onResults(ctx)` can open your results UI.
+
+## The definition shape
+
+The main type is:
+
+```ts
+interface BackgroundActionDefinition {
+  id: string;
+  label: string;
+  summary?: string;
+  section?: string;
+  order?: number;
+  resourceTypes?: string[];
+  resumable?: boolean;
+  supports?: (ctx) => boolean;
+  prepare?: (ctx) => BackgroundActionPlan | boolean | void | Promise<...>;
+  run: (ctx) => unknown | Promise<unknown>;
+  render?: (ctx) => ReactNode | null;
+  onResults?: (ctx) => unknown | Promise<unknown>;
+}
+```
+
+What the main fields mean:
+
+- `id`: unique action id. Treat this as stable persisted state identity.
+- `label`: base label shown in the UI.
+- `summary`: short explanation in menus.
+- `section` and `order`: menu grouping/sorting.
+- `resumable`: opt in to resuming after reload.
+- `render`: mount config/results UI once, outside the menu.
+- `onResults`: open a modal/panel/results view from the toast or menu.
+
+## Context and lifecycle helpers
+
+Inside `run()` and `prepare()` you receive:
+
+```ts
+ctx.setActionLabel(label);
+ctx.setActionStatus(status, statusText?);
+ctx.setActionError(error, statusText?);
+ctx.appendActionLog(message, level?, data?);
+ctx.setActionProgress(progressOrNull);
+ctx.setResult(result);
+ctx.setResultsAvailable(boolean);
+```
+
+Useful notes:
+
+- `setActionProgress()` updates in-memory progress only. Progress events are intentionally not persisted.
+- `appendActionLog()` is persisted and visible in the action history.
+- `setActionStatus("cancelled", ...)` or another final state prevents the shell from overwriting that with `complete`.
+
+## Plans and tasks
+
+For anything multi-step or per-canvas, use a `BackgroundActionPlan`.
+
+```ts
+type BackgroundActionPlan = {
+  version: 1;
+  data?: unknown;
+  tasks: BackgroundActionTask[];
+};
+```
+
+Each task can hold:
+
+- `id`
+- `label`
+- `target`
+- `input`
+- `status`
+- `statusText`
+- `result`
+- `error`
+
+Typical task plan:
+
+```ts
+const plan: BackgroundActionPlan = {
+  version: 1,
+  data: {
+    targetLanguage: "nl",
+  },
+  tasks: canvases.map((canvas) => ({
+    id: `canvas:${canvas.id}`,
+    label: getCanvasLabel(canvas),
+    target: {
+      id: canvas.id,
+      type: "Canvas",
+      label: getCanvasLabel(canvas),
+      scope: "canvas",
+    },
+    input: {
+      canvasId: canvas.id,
+    },
+    status: "queued",
+  })),
+};
+```
+
+### Why plans matter
+
+Plans give you:
+
+- built-in queued/running/complete/skipped/error/cancelled task states
+- automatic aggregate progress
+- persisted task inputs/results/errors
+- resumable multi-step work after reload
+- per-canvas progress integration
+
+### `plan.data` vs external maps
+
+Prefer `plan.data` for anything that should survive reload and be available when resuming.
+
+Use an external `Map<instanceKey, ...>` only for temporary UI handoff or non-resumable setup. The bulk annotation importer does this because it gathers options in `prepare()` and immediately uses them in `run()`, but the action is not resumable.
+
+If you want resume to work well, put the important data in `plan.data`.
+
+## Running task plans
+
+The main helper is:
+
+```ts
+await ctx.tasks.runEach(async (task, meta) => {
+  // meta: { index, total, pendingIndex, pendingTotal }
+  return {
+    taskStatus: "complete",
+    result: { ... },
+    statusText: "Done",
+  };
+});
+```
+
+What `runEach()` does for you:
+
+- iterates only pending tasks, by default `queued` and `running`
+- marks the current task as `running`
+- updates task status/result/error
+- updates the action progress
+- persists task state as it changes
+- marks canvas targets as pending/done in `canvasProgress`
+
+Important behaviour:
+
+- if your handler throws a normal error, that task becomes `error` and iteration continues
+- if the signal is aborted, the current task becomes `cancelled` and the action aborts
+- if you return any plain value, it is treated as `{ taskStatus: "complete", result: value }`
+- if you want to skip without error, return `{ taskStatus: "skipped", ... }`
+
+You can also customise progress labelling:
+
+```ts
+await ctx.tasks.runEach(handler, {
+  progressLabel: (_task, index, total) => `Processing ${index + 1}/${total}`,
+});
+```
+
+## Progress, logs, and cancellation
+
+### Progress
+
+You can set progress either by percent:
+
+```ts
+ctx.setActionProgress({ percent: 35, label: "Uploading" });
+```
+
+or by units:
+
+```ts
+ctx.setActionProgress({ current: 7, total: 20, label: "Processing canvases" });
+```
+
+Units are usually better because the store can derive percent consistently.
+
+### Logs
+
+Use logs for traceability, not for user-facing copy only.
+
+```ts
+ctx.appendActionLog("Translated string", "info", {
+  key: target.key,
+  sourceLanguage: target.sourceLanguage,
+  targetLanguage: target.targetLanguage,
+});
+```
+
+Log levels are:
+
+- `debug`
+- `info`
+- `warn`
+- `error`
+
+### Cancellation
+
+Long-running actions should regularly respect `ctx.signal`.
+
+Patterns used in the repo:
+
+- pass `ctx.signal` into `fetch()`
+- check `ctx.signal.aborted` before expensive work
+- attach an abort handler to terminate workers
+- throw when aborted so the action exits quickly
+
+Example:
+
+```ts
+if (ctx.signal.aborted) {
+  throw new Error("Background action cancelled.");
+}
+
+const response = await fetch(url, { signal: ctx.signal });
+```
+
+## Resume and persistence
+
+Background action instances are persisted through the shell provider using localForage by default.
+
+The persistence key is tied to:
+
+- app id
+- instance id
+- root resource id/type
+
+### What actually resumes
+
+`resumable: true` is necessary but not sufficient.
+
+For automatic resume after reload, the action also needs persisted plan data. The shell resumes active actions only when:
+
+- the definition still exists
+- `resumable` is true
+- the instance was previously busy
+- a plan exists for that instance
+
+This means resumable actions should usually return a real `BackgroundActionPlan` from `prepare()`.
+
+### What happens on reload
+
+On hydration:
+
+- active resumable actions with a plan are restored to `running` with status text `Resuming`
+- tasks that were `running` are requeued as `queued`
+- active non-resumable actions are marked `cancelled`
+- cancellation requests are restored as `cancelled`, not resumed
+
+## Render and results UI
+
+`render(ctx)` is not the menu item body. It is an always-mounted React subtree for the action definition.
+
+Use it for:
+
+- config modals
+- results modals
+- hidden event bridges
+- side panels that react to background task state
+
+The common pattern in this repo is:
+
+- `render()` mounts a config modal and a results modal
+- `prepare()` asks the modal for config
+- `onResults()` opens the results modal
+
+Examples:
+
+- `canvas-label-generator`
+- `translation`
+- `ocr-docling`
+- `bulk-thumbnail-builder`
+- demo actions in `presets/manifest-preset/src/background-actions.tsx`
+
+## Patterns from the existing plugins
+
+## 1. Manifest-wide preview, then per-canvas apply
+
+Used by:
+
+- `canvas-label-generator`
+- `bulk-thumbnail-builder`
+
+Pattern:
+
+1. inspect the manifest in `prepare()`
+2. build preview data and options
+3. create a task per canvas or target
+4. in `run()`, re-check that the target is still valid before writing
+5. skip stale items instead of blindly writing
+
+This is the safest pattern for bulk mutations.
+
+## 2. Resumable worker-backed batch processing
+
+Used by:
+
+- `translation`
+- `ocr-docling`
+- `ocr-classification`
+
+Pattern:
+
+1. build a task per unit of work
+2. mark the action `resumable`
+3. load a worker/model at the start of `run()`
+4. subscribe to worker events and convert them into logs/progress
+5. attach an abort handler to terminate the worker
+6. aggregate final results from task outputs
+
+This is the best fit for ML/OCR/translation jobs.
+
+## 3. Tagging tasks that write directly to shell APIs
+
+Used by:
+
+- `translation` language tagging
+- `ocr-classification`
+
+Pattern:
+
+- each task resolves a canvas
+- compute a classification or detected language
+- call `ctx.tags.upsertTag()` or `ctx.tags.removeTag()`
+- return structured task results for later aggregation
+
+This keeps the mutation small and the result reporting rich.
+
+## 4. Non-resumable two-phase work
+
+Used by:
+
+- `annotations` importer
+
+Pattern:
+
+- `prepare()` gathers config and selection
+- temporary data is stored in a `Map` keyed by `ctx.instanceKey`
+- `run()` loads remote data, then writes results
+- `finally` cleans up the map
+
+Use this only when resume is not important.
+
+## 5. Demo and prototyping actions
+
+Used by:
+
+- `presets/manifest-preset/src/background-actions.tsx`
+- `presets/manifest-preset/src/plugins/remote-inference.tsx`
+
+These are good reference points for:
+
+- a very small `prepare()` returning a plan
+- modal-based prepare/results flow
+- status/progress/log updates without a complex dependency chain
+
+## Novel example: tag canvases missing thumbnails
+
+This example shows a simple per-canvas tagging action.
+
+```ts
+import type {
+  BackgroundActionDefinition,
+  BackgroundActionPlan,
+  BackgroundActionRunContext,
+} from "@manifest-editor/shell";
+
+const MISSING_THUMBNAIL_TAG = {
+  type: "quality",
+  id: "missing-thumbnail",
+  label: "missing-thumbnail",
+  backgroundColor: "#991b1b",
+  textColor: "#ffffff",
+};
+
+function createPlan(ctx: BackgroundActionRunContext): BackgroundActionPlan {
+  const manifest = ctx.vault.get(ctx.target as any) as any;
+  const canvases = manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
+
+  return {
+    version: 1,
+    tasks: canvases.map((canvas: any, index: number) => ({
+      id: `canvas:${canvas.id || index}`,
+      label: canvas.id || `Canvas ${index + 1}`,
+      target: {
+        id: canvas.id,
+        type: "Canvas",
+        label: canvas.id || `Canvas ${index + 1}`,
+        scope: "canvas",
+      },
+      input: {
+        canvasId: canvas.id,
+      },
+      status: "queued",
+    })),
+  };
+}
+
+export const tagMissingThumbnailsAction: BackgroundActionDefinition = {
+  id: "@my-plugin/tag-missing-thumbnails",
+  label: "Tag canvases missing thumbnails",
+  section: "Quality",
+  order: 10,
+  resourceTypes: ["Manifest"],
+  resumable: true,
+  supports: (ctx) => {
+    const manifest = ctx.vault.get(ctx.target as any) as any;
+    return !!manifest?.items?.length;
+  },
+  prepare: (ctx) => createPlan(ctx),
+  run: async (ctx) => {
+    ctx.setActionLabel("Tagging missing thumbnails");
+
+    await ctx.tasks.runEach(async (task, { index, total }) => {
+      const canvas = task.target ? (ctx.vault.get(task.target as any) as any) : null;
+      if (!canvas) {
+        return {
+          taskStatus: "skipped",
+          statusText: "Canvas missing",
+          result: { reason: "Canvas missing" },
+        };
+      }
+
+      const hasThumbnail = Array.isArray(canvas.thumbnail)
+        ? canvas.thumbnail.length > 0
+        : !!canvas.thumbnail;
+
+      if (hasThumbnail) {
+        ctx.tags.removeTag({ id: canvas.id, type: "Canvas" }, "quality");
+        return {
+          taskStatus: "skipped",
+          statusText: "Already has thumbnail",
+        };
+      }
+
+      ctx.tags.upsertTag({ id: canvas.id, type: "Canvas" }, MISSING_THUMBNAIL_TAG);
+      ctx.appendActionLog(`Tagged ${index + 1}/${total}`, "info", { canvasId: canvas.id });
+
+      return {
+        taskStatus: "complete",
+        statusText: "Tagged",
+        result: { canvasId: canvas.id },
+      };
+    });
+
+    return {
+      ok: true,
+      processed: ctx.tasks.getAll().length,
+    };
+  },
+};
+```
+
+## Novel example: fetch remote metadata for each canvas
+
+This shows a resumable remote action with per-task network work.
+
+```ts
+export const enrichCanvasMetadataAction: BackgroundActionDefinition = {
+  id: "@my-plugin/enrich-canvas-metadata",
+  label: "Enrich canvas metadata",
+  summary: "Fetch remote metadata and attach it to canvases",
+  section: "Metadata",
+  order: 20,
+  resourceTypes: ["Manifest"],
+  resumable: true,
+  prepare: (ctx) => {
+    const manifest = ctx.vault.get(ctx.target as any) as any;
+    const canvases = manifest?.items ? (ctx.vault.get(manifest.items) || []).filter(Boolean) : [];
+
+    return {
+      version: 1,
+      data: {
+        endpoint: "https://example.org/metadata",
+      },
+      tasks: canvases.map((canvas: any) => ({
+        id: canvas.id,
+        label: canvas.label?.none?.[0] || canvas.id,
+        target: {
+          id: canvas.id,
+          type: "Canvas",
+          label: canvas.label?.none?.[0] || canvas.id,
+          scope: "canvas",
+        },
+        input: { canvasId: canvas.id },
+        status: "queued",
+      })),
+    };
+  },
+  run: async (ctx) => {
+    const endpoint = (ctx.plan?.data as { endpoint?: string } | undefined)?.endpoint;
+    if (!endpoint) {
+      throw new Error("Missing endpoint");
+    }
+
+    await ctx.tasks.runEach(async (task) => {
+      const canvasId = task.target?.id;
+      const response = await fetch(`${endpoint}?canvas=${encodeURIComponent(canvasId || "")}`, {
+        signal: ctx.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to load metadata for ${canvasId}`);
+      }
+
+      const metadata = await response.json();
+      ctx.vault.modifyEntityField({ id: canvasId!, type: "Canvas" } as any, "metadata", metadata);
+
+      return {
+        taskStatus: "complete",
+        statusText: "Metadata attached",
+        result: metadata,
+      };
+    });
+
+    return {
+      ok: true,
+      updated: ctx.tasks.getAll().filter((task) => task.status === "complete").length,
+    };
+  },
+};
+```
+
+## Recommended patterns
+
+- Prefer one task per canvas or per remote unit of work.
+- Put resumable state in `plan.data`, not only in local variables.
+- Re-resolve vault resources inside `run()` instead of trusting preview-time references.
+- Return `skipped` for expected non-fatal conditions such as missing images or already-updated data.
+- Use structured task `result` objects so you can aggregate clean summaries later.
+- Use `ctx.canvasProgress.setStatuses()` for bulk canvas actions so the rest of the UI can reflect state.
+- Keep `prepare()` focused on selection, preview, and user choice. Keep real mutations in `run()`.
+- Clean up worker subscriptions and abort handlers in `finally` or abort callbacks.
+
+## Common mistakes
+
+- Relying on `resumable: true` without returning a plan. The shell cannot properly resume planless work after reload.
+- Storing essential state only in a module-level map. That works for one-page sessions, not for reload/resume.
+- Holding onto stale canvas objects from `prepare()`. Always re-fetch before mutating.
+- Throwing for normal skips. Use `taskStatus: "skipped"` instead.
+- Forgetting to pass `ctx.signal` into network requests or worker teardown.
+- Using `render()` for expensive always-on work unrelated to config/results UI.
+
+## Which existing example should I copy?
+
+- Start with `presets/manifest-preset/src/background-actions.tsx` if you want the smallest end-to-end example.
+- Copy `plugins/canvas-label-generator/src/background-action.tsx` if you need preview then bulk apply.
+- Copy `plugins/translation/src/background-action.tsx` if you need resumable worker-backed processing.
+- Copy `plugins/ocr-docling/src/background-action.tsx` if you need model loading plus per-canvas annotation writes.
+- Copy `plugins/annotations/src/importer/background-action.tsx` if you need a simple non-resumable fetch-and-write flow.
+
+## Minimal checklist
+
+Before shipping a new background action, check:
+
+- action id is stable and unique
+- `resourceTypes` and `supports()` are both correct
+- cancellation reaches every expensive async boundary
+- resumable actions return a real plan
+- task inputs/results are serialisable
+- expected skips do not throw
+- results UI is mounted through `render()` if needed
+- `onResults()` opens something useful when results are available
+
+That is the core model used by the current background task API in this repo.
