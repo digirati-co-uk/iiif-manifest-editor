@@ -1,11 +1,8 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  ResourceEditingProvider,
-} from "@manifest-editor/shell";
+import { type EditorDefinition, ResourceEditingProvider } from "@manifest-editor/shell";
 import { useCanvas } from "react-iiif-vault";
-import { isEditableExhibitionCanvas } from "../helpers";
+import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 
 export const exhibitionSummaryEdtior: EditorDefinition = {
   id: "@exhibition/summary-editor",
@@ -13,8 +10,11 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
     edit: true,
     properties: ["summary"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) =>
-      isEditableExhibitionCanvas(resource, vault),
+    custom: ({ resource }, vault) => {
+      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      // Hide the standalone Summary tab for textual-content (info box) canvases.
+      return !isInfoBoxCanvas(resource, vault);
+    },
   },
   label: "Summary",
   component: () => <ExhibitionSummaryPanel />,

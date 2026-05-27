@@ -9,14 +9,16 @@ import {
 import { type EditorDefinition, useEditor, useLocalStorage } from "@manifest-editor/shell";
 import { useState } from "react";
 import { Button } from "react-aria-components";
+import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
+import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
 type LayoutEditingContext = "default" | "slideshow";
 export type LayoutPreset = "image" | "right" | "left" | "bottom";
-type DisplayWidth = 12 | 8 | 6 | 4;
+export type DisplayWidth = 12 | 8 | 6 | 4;
 
 const layoutBehaviors = new Set(["left", "right", "bottom", "top", "image"]);
 export const layoutPresetOptions: Array<{
@@ -28,7 +30,7 @@ export const layoutPresetOptions: Array<{
   { value: "left", label: "Image + text left" },
   { value: "bottom", label: "Image + text bottom" },
 ];
-const simpleLayoutColours = {
+export const simpleLayoutColours = {
   primary: "var(--exhibition-primary, #b84c74)",
   fieldBorder: "var(--exhibition-field-border, #dcd5ce)",
   fieldBackground: "var(--exhibition-field-bg, #f8f6f3)",
@@ -56,6 +58,12 @@ export const customBehaviourEditor: EditorDefinition = {
     edit: true,
     resourceTypes: ["Canvas"],
     properties: ["behavior"],
+    custom: ({ resource }, vault) => {
+      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      // The standalone layout panel is not shown for textual-content (info box) canvases;
+      // they get their own layout section inside the workbench editor.
+      return !isInfoBoxCanvas(resource, vault);
+    },
   },
   id: "slide-behaviors",
   label: "Layout",
@@ -187,7 +195,13 @@ function removeLayoutBehaviors(behavior: string[]) {
   );
 }
 
-function EditSize({ behaviors, setBehaviors }: { behaviors: string[]; setBehaviors: (behaviors: string[]) => void }) {
+export function EditSize({
+  behaviors,
+  setBehaviors,
+}: {
+  behaviors: string[];
+  setBehaviors: (behaviors: string[]) => void;
+}) {
   const { width, height } = parseBehaviors(behaviors);
   const [hoverPosition, setHoverPosition] = useState({ x: -1, y: -1 });
 
@@ -332,6 +346,9 @@ function SimpleSlideLayoutEditor({
   const [floating, setFloating] = useState(hasFloatingBehavior(behavior));
   const [cover, setCover] = useState(behavior.includes("cover"));
   const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
+  const canvas = useCanvas();
+  const vault = useVault();
+  const manifest = useManifest();
   const selectedWidth = layoutContext === "slideshow" ? 12 : displayWidth;
   const previewHeight = getDerivedHeight({
     canvasWidth,
@@ -339,6 +356,11 @@ function SimpleSlideLayoutEditor({
     layoutPreset,
     displayWidth: selectedWidth,
   });
+
+  const fitSuggestion =
+    layoutContext === "default" && manifest?.items && canvas
+      ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault)
+      : null;
 
   const applySettings = (next: {
     layoutPreset?: LayoutPreset;
@@ -409,6 +431,23 @@ function SimpleSlideLayoutEditor({
                 {option.label}
               </SimpleOptionButton>
             ))}
+          </div>
+        </SimpleField>
+      ) : null}
+
+      {fitSuggestion ? (
+        <SimpleField>
+          <SimpleFieldLabel>Fit alongside {fitSuggestion.neighbour} slide</SimpleFieldLabel>
+          <div className="mt-3">
+            <SimpleOptionButton
+              selected={displayWidth === fitSuggestion.width}
+              onClick={() => {
+                setDisplayWidth(fitSuggestion.width as DisplayWidth);
+                applySettings({ displayWidth: fitSuggestion.width as DisplayWidth });
+              }}
+            >
+              w-{fitSuggestion.width} — fills remaining space
+            </SimpleOptionButton>
           </div>
         </SimpleField>
       ) : null}
@@ -571,7 +610,7 @@ function TextLines({ compact = false, tone = "light" }: { compact?: boolean; ton
   );
 }
 
-function SimpleOptionButton({
+export function SimpleOptionButton({
   selected,
   onClick,
   children,
@@ -625,7 +664,13 @@ function SimpleCheckbox({
   );
 }
 
-function SimpleAdvancedToggle({ value, onChange }: { value: EditingMode; onChange: (value: EditingMode) => void }) {
+export function SimpleAdvancedToggle({
+  value,
+  onChange,
+}: {
+  value: EditingMode;
+  onChange: (value: EditingMode) => void;
+}) {
   return (
     <div className="grid w-full max-w-[240px] grid-cols-2 rounded-full bg-[#f5eaf0] p-1">
       {(["simple", "advanced"] as EditingMode[]).map((option) => {
@@ -650,11 +695,11 @@ function SimpleAdvancedToggle({ value, onChange }: { value: EditingMode; onChang
   );
 }
 
-function SimpleField({ children }: { children: React.ReactNode }) {
+export function SimpleField({ children }: { children: React.ReactNode }) {
   return <div>{children}</div>;
 }
 
-function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
+export function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="text-sm font-semibold" style={{ color: simpleLayoutColours.muted }}>
       {children}
@@ -743,4 +788,171 @@ function getDerivedHeight({
   const height = Math.round((effectiveWidth / ratio) * textHeightMultiplier);
 
   return Math.max(1, Math.min(12, height));
+}
+
+// ─── Textual-content (info-box) layout editor ───────────────────────────────
+
+export const textualWidthOptions: Array<{ value: DisplayWidth; label: string }> = [
+  { value: 4, label: "1/3 width" },
+  { value: 6, label: "Half width" },
+  { value: 8, label: "2/3 width" },
+  { value: 12, label: "Full width" },
+];
+
+/** Returns the w-* value (1-12) parsed from a behavior array, or 0 if absent. */
+export function getBehaviorWidth(behavior: string[]): number {
+  const { width } = parseBehaviors(behavior);
+  return width;
+}
+
+/**
+ * When there is a gap in the 12-column grid caused by the surrounding canvases,
+ * return a suggested width that fills the gap. Returns null if no gap exists or
+ * the canvas has no immediate neighbours with known widths.
+ *
+ * A "gap" means that a single neighbouring canvas (prev or next) uses less than
+ * the full 12 columns, so this canvas could sit beside it. We only offer the fit
+ * value when the gap is non-trivial (i.e. the neighbour width is between 4 and 8
+ * and is one of the standard snap values).
+ */
+export function computeFitWidth(
+  currentCanvasId: string,
+  manifestItems: Array<{ id: string }>,
+  vault: ReturnType<typeof useVault>,
+): { width: number; neighbour: "previous" | "next" } | null {
+  const idx = manifestItems.findIndex((c) => c.id === currentCanvasId);
+  if (idx === -1) return null;
+
+  const getWidth = (canvasRef: { id: string } | undefined): number => {
+    if (!canvasRef) return 0;
+    try {
+      const c = vault.get(canvasRef as any) as any;
+      return getBehaviorWidth(c?.behavior || []);
+    } catch {
+      return 0;
+    }
+  };
+
+  const prevWidth = getWidth(manifestItems[idx - 1]);
+  const nextWidth = getWidth(manifestItems[idx + 1]);
+
+  // Check if the previous canvas leaves a gap (and next slot isn't already filled)
+  if (prevWidth > 0 && prevWidth < 12) {
+    const gap = 12 - prevWidth;
+    if (gap >= 4) {
+      return { width: gap as DisplayWidth, neighbour: "previous" };
+    }
+  }
+
+  // Check if the next canvas leaves a gap
+  if (nextWidth > 0 && nextWidth < 12) {
+    const gap = 12 - nextWidth;
+    if (gap >= 4) {
+      return { width: gap as DisplayWidth, neighbour: "next" };
+    }
+  }
+
+  return null;
+}
+
+export function TextualContentLayoutEditor() {
+  const [mode, setMode] = useLocalStorage<EditingMode>(layoutPanelModeStorageKey, "simple");
+  const canvas = useCanvas();
+  const vault = useVault();
+  const manifest = useManifest();
+  const editor = useEditor();
+
+  if (!canvas || editor.technical.type !== "Canvas") {
+    return <div className="p-4">Please select canvas</div>;
+  }
+
+  const behavior = editor.technical.behavior.get() || [];
+  const currentWidth = (getBehaviorWidth(behavior) as DisplayWidth) || 12;
+
+  const setWidth = (w: DisplayWidth) => {
+    const next = behavior.filter((b) => !b.startsWith("w-") && !b.startsWith("h-"));
+    // Keep h- if present, otherwise default to h-4 for text boxes
+    const existingH = behavior.find((b) => b.startsWith("h-"));
+    next.push(`w-${w}`);
+    if (!existingH) next.push("h-4");
+    editor.technical.behavior.set(next);
+  };
+
+  const fitSuggestion =
+    manifest?.items && canvas ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault) : null;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-center">
+        <SimpleAdvancedToggle value={mode} onChange={setMode} />
+      </div>
+
+      {mode === "simple" ? (
+        <>
+          <SimpleField>
+            <SimpleFieldLabel>Width</SimpleFieldLabel>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {textualWidthOptions.map((option) => (
+                <SimpleOptionButton
+                  key={option.value}
+                  selected={currentWidth === option.value}
+                  onClick={() => setWidth(option.value)}
+                >
+                  {option.label}
+                </SimpleOptionButton>
+              ))}
+            </div>
+          </SimpleField>
+
+          {fitSuggestion ? (
+            <SimpleField>
+              <SimpleFieldLabel>Fit alongside {fitSuggestion.neighbour} slide</SimpleFieldLabel>
+              <div className="mt-3">
+                <SimpleOptionButton
+                  selected={currentWidth === fitSuggestion.width}
+                  onClick={() => setWidth(fitSuggestion.width as DisplayWidth)}
+                >
+                  w-{fitSuggestion.width} — fills remaining space
+                </SimpleOptionButton>
+              </div>
+            </SimpleField>
+          ) : null}
+
+          <div className="mt-1 text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
+            w-{currentWidth}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="px-2">
+            <InputContainer $wide>
+              <DimensionsTriplet
+                widthId={editor.technical.width.containerId()}
+                width={editor.technical.width.get() || 0}
+                changeWidth={(v) => editor.technical.width.set(v)}
+                heightId={editor.technical.height.containerId()}
+                height={editor.technical.height.get() || 0}
+                changeHeight={(v) => editor.technical.height.set(v)}
+              />
+            </InputContainer>
+          </div>
+
+          <BehaviorEditor
+            behavior={behavior}
+            onChange={(v) => editor.technical.behavior.set(v)}
+            configs={[
+              {
+                id: "size",
+                component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
+                label: { en: ["Size"] },
+                type: "custom",
+                initialOpen: true,
+                supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
+              },
+            ]}
+          />
+        </>
+      )}
+    </div>
+  );
 }

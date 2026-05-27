@@ -1,5 +1,5 @@
-import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 import type { Vault } from "@iiif/helpers/vault";
+import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 
 const heightMap = {
   "h-1": "lg:min-h-[100px] row-span-1",
@@ -95,8 +95,7 @@ export function getGridStats(behavior?: string[]) {
   const isLeft = behavior?.includes("left");
   const isBottom = behavior?.includes("bottom");
   const isTop = behavior?.includes("top");
-  const isImage =
-    behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
+  const isImage = behavior?.includes("image") || (!isLeft && !isRight && !isBottom && !isTop);
   const isInfo = behavior?.includes("info");
 
   return {
@@ -109,13 +108,27 @@ export function getGridStats(behavior?: string[]) {
   };
 }
 
-export function isEditableExhibitionCanvas(
-  resource: { id: string; type: string },
-  vault: Vault,
-) {
+export function isEditableExhibitionCanvas(resource: { id: string; type: string }, vault: Vault) {
   const full = vault.get(resource);
 
   return full.type === "Canvas";
+}
+
+/**
+ * Returns true if the canvas is a textual-content (info-box) canvas.
+ * Safe to call from EditorDefinition.supports.custom — won't throw.
+ */
+export function isInfoBoxCanvas(resource: { source?: { id?: string; type?: string } }, vault: Vault): boolean {
+  const sourceId = resource.source?.id;
+  const sourceType = resource.source?.type;
+  if (!sourceId || !sourceType) return false;
+  try {
+    const canvas = vault.get({ id: sourceId, type: sourceType }) as any;
+    const behavior: string[] = canvas?.behavior || [];
+    return behavior.includes("info");
+  } catch {
+    return false;
+  }
 }
 
 export function isExhibitionItem(canvas: CanvasNormalized | undefined) {

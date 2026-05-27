@@ -17,6 +17,7 @@ import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
 import { slideshowWorkbenchEditor } from "../right-panels/ExhibitionWorkbenchEditor";
+import { infoBoxWorkbenchEditor } from "../right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "../right-panels/SlideBehaviours";
 
 export const exhibitionEditorSlideshowPreset = extendApp(
@@ -70,6 +71,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     editors: [
       //
       slideshowWorkbenchEditor,
+      infoBoxWorkbenchEditor,
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,

@@ -20,6 +20,7 @@ import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
+import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
@@ -74,6 +75,8 @@ export const exhibitionEditorPreset = extendApp(
     ],
     editors: [
       //
+      infoBoxWorkbenchEditor,
+      exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,

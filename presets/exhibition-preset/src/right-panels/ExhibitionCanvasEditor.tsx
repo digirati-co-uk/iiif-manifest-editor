@@ -19,7 +19,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnnotationPageContext, useCanvas, useVault } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
-import { isEditableExhibitionCanvas, isExhibitionItem } from "../helpers";
+import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
 import { getPaintingAnnotations, getResolvedAnnotationBody } from "../slideshow-content-positioning";
 import { buildLayoutPresetBehaviors, getLayoutPreset, LayoutPresetCard, layoutPresetOptions } from "./SlideBehaviours";
 
@@ -29,7 +29,11 @@ export const exhibitionCanvasEditor: EditorDefinition = {
     edit: true,
     properties: ["label", "summary"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource, vault),
+    custom: ({ resource }, vault) => {
+      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      // Hide the Exhibition tab for textual-content (info box) canvases.
+      return !isInfoBoxCanvas(resource, vault);
+    },
   },
   label: "Exhibition",
   component: () => <ExhibitionCanvasAdvancedPanel />,

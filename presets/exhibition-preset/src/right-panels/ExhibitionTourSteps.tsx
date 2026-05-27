@@ -8,11 +8,8 @@ import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-ii
 import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
-import { isEditableExhibitionCanvas } from "../helpers";
-import {
-  useSlideshowContentPositioning,
-  useSlideshowWorkbenchState,
-} from "../slideshow-content-positioning";
+import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
 
@@ -22,7 +19,11 @@ export const exhibitionTourSteps: EditorDefinition = {
     edit: true,
     properties: ["annotations"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource, vault),
+    custom: ({ resource }, vault) => {
+      if (!isEditableExhibitionCanvas(resource, vault)) return false;
+      // Tour steps are not supported for textual-content (info box) canvases.
+      return !isInfoBoxCanvas(resource, vault);
+    },
   },
   label: "Tour steps",
   component: () => <ExhibitionTourStepsPanel />,
@@ -101,15 +102,9 @@ export function ExhibitionTourStepsContent({
   const itemsAnnotationPage = canvas?.items?.[0];
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
-  const setShowTourSteps = useSlideshowWorkbenchState(
-    (state) => state.setShowTourSteps,
-  );
-  const stopContentRepositioning = useSlideshowContentPositioning(
-    (state) => state.stopRepositioning,
-  );
-  const stopTextRepositioning = useSlideshowContentPositioning(
-    (state) => state.stopTextRepositioning,
-  );
+  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
+  const stopContentRepositioning = useSlideshowContentPositioning((state) => state.stopRepositioning);
+  const stopTextRepositioning = useSlideshowContentPositioning((state) => state.stopTextRepositioning);
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       const bodyValue = resp.metadata.bodyValue || "";
