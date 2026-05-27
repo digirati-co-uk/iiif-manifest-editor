@@ -5,7 +5,11 @@ import { AnnotationContext } from "react-iiif-vault";
 import { TourNormalAnnotationEditor } from "./TourNormalAnnotationEditor";
 import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 
-export function TourAnnotationEditor() {
+export function TourAnnotationEditor({
+  useSlideshowWorkbench = false,
+}: {
+  useSlideshowWorkbench?: boolean;
+}) {
   const [annotation, { annotationTarget, highlightProps }] =
     useAnnotationInfo();
 
@@ -23,6 +27,7 @@ export function TourAnnotationEditor() {
           <TourPaintingAnnotationEditor
             originalAnnotationId={annotation?.id}
             highlightProps={highlightProps}
+            useSlideshowWorkbench={useSlideshowWorkbench}
           />
         </AnnotationContext>
       </ResourceEditingProvider>
@@ -31,7 +36,10 @@ export function TourAnnotationEditor() {
 
   return (
     <ResourceEditingProvider resource={resource}>
-      <TourNormalAnnotationEditor highlightProps={highlightProps} />
+      <TourNormalAnnotationEditor
+        highlightProps={highlightProps}
+        useSlideshowWorkbench={useSlideshowWorkbench}
+      />
     </ResourceEditingProvider>
   );
 }

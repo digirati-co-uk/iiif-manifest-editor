@@ -14,13 +14,19 @@ import {
   useVault,
 } from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 
 export function TourPaintingAnnotationEditor({
   originalAnnotationId,
   highlightProps,
+  useSlideshowWorkbench = false,
 }: {
   originalAnnotationId?: string;
   highlightProps: any;
+  useSlideshowWorkbench?: boolean;
 }) {
   const page = useAnnotationPage();
   const pageEditor = useGenericEditor(page);
@@ -29,6 +35,15 @@ export function TourPaintingAnnotationEditor({
   const vault = useVault();
   const { edit } = useLayoutActions();
   const [isOpen, setIsOpen] = useState(false);
+  const startTourStepRepositioning = useSlideshowContentPositioning(
+    (state) => state.startTourStepRepositioning,
+  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState(
+    (state) => state.requestTab,
+  );
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
   const paintingPage = canvas?.items?.[0];
   const annotationIndex =
     paintingPage?.id && annotation?.id
@@ -49,11 +64,22 @@ export function TourPaintingAnnotationEditor({
       pageEditor.structural.items.deleteAtIndex(index);
     }
   };
+  const showInSlideshowWorkbench = () => {
+    if (!useSlideshowWorkbench || !originalAnnotationId) {
+      return false;
+    }
+
+    setShowTourSteps(true);
+    startTourStepRepositioning(originalAnnotationId);
+    requestWorkbenchTab("tour");
+    return true;
+  };
 
   return (
     <div
       {...highlightProps}
       className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      onClick={showInSlideshowWorkbench}
     >
       <div className="flex gap-2 mb-2 p-3">
         <div className="flex-1 min-w-0">
@@ -99,8 +125,15 @@ export function TourPaintingAnnotationEditor({
         )}
 
         <ActionButton
-          onPress={() =>
-            annotation &&
+          onPress={() => {
+            if (showInSlideshowWorkbench()) {
+              return;
+            }
+
+            if (!annotation) {
+              return;
+            }
+
             edit(
               { id: annotation.id, type: "Annotation" },
               paintingPage
@@ -111,8 +144,8 @@ export function TourPaintingAnnotationEditor({
                   }
                 : undefined,
               { forceOpen: true },
-            )
-          }
+            );
+          }}
         >
           Edit annotation
         </ActionButton>

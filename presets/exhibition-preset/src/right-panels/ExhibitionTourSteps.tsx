@@ -9,6 +9,10 @@ import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { isEditableExhibitionCanvas } from "../helpers";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
 
@@ -87,14 +91,25 @@ function PromptCreationOfTourSteps() {
 
 export function ExhibitionTourStepsContent({
   mode,
+  useSlideshowWorkbench = false,
 }: {
   mode: EditingMode;
+  useSlideshowWorkbench?: boolean;
 }) {
   const canvas = useCanvas();
-  const firstAnnotationPage = canvas?.annotations[0];
-  const itemsAnnotationPage = canvas?.items[0];
+  const firstAnnotationPage = canvas?.annotations?.[0];
+  const itemsAnnotationPage = canvas?.items?.[0];
   const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
+  const stopContentRepositioning = useSlideshowContentPositioning(
+    (state) => state.stopRepositioning,
+  );
+  const stopTextRepositioning = useSlideshowContentPositioning(
+    (state) => state.stopTextRepositioning,
+  );
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       const bodyValue = resp.metadata.bodyValue || "";
@@ -143,6 +158,41 @@ export function ExhibitionTourStepsContent({
   }
 
   const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
+  const createSlideshowWorkbenchStep = () => {
+    const annotationWidth = Math.round((canvas.width || 1920) * 0.3);
+    const annotationHeight = Math.round((canvas.height || 1080) * 0.3);
+    const annotationX = Math.round((canvas.width || 1920) * 0.1);
+    const annotationY = Math.round((canvas.height || 1080) * 0.1);
+
+    creator.create(
+      "@manifest-editor/html-annotation",
+      {
+        label: { en: ["Tour step"] },
+        body: { en: ["<h2>New step</h2><p>Description</p>"] },
+        motivation: "tagging",
+      },
+      {
+        target: { id: canvas.id, type: "Canvas" },
+        targetType: "Annotation",
+        parent: {
+          property: "items",
+          resource: {
+            id: firstAnnotationPage.id,
+            type: "AnnotationPage",
+          },
+        },
+        initialData: {
+          getSerialisedSelector: () => ({
+            type: "FragmentSelector",
+            value: `xywh=${annotationX},${annotationY},${annotationWidth},${annotationHeight}`,
+          }),
+        },
+      },
+    );
+    setShowTourSteps(true);
+    stopContentRepositioning();
+    stopTextRepositioning();
+  };
 
   return (
     <>
@@ -156,9 +206,19 @@ export function ExhibitionTourStepsContent({
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
           <div className="flex flex-col gap-4">
-            <TourAnnotationPageEditor reorderable={mode === "advanced" ? reorderable : false} />
+            <TourAnnotationPageEditor
+              reorderable={mode === "advanced" ? reorderable : false}
+              useSlideshowWorkbench={useSlideshowWorkbench}
+            />
 
-            {!busy ? (
+            {useSlideshowWorkbench ? (
+              <Button
+                onPress={createSlideshowWorkbenchStep}
+                className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+              >
+                + Add new step
+              </Button>
+            ) : !busy ? (
               isPending ? (
                 <PendingTourStepAnnotation />
               ) : (

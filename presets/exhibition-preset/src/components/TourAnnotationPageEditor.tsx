@@ -5,7 +5,11 @@ import { TourAnnotationEditor } from "./TourAnnotationEditor";
 
 export function TourAnnotationPageEditor({
   reorderable = false,
-}: { reorderable?: boolean }) {
+  useSlideshowWorkbench = false,
+}: {
+  reorderable?: boolean;
+  useSlideshowWorkbench?: boolean;
+}) {
   const page = useAnnotationPage();
   const editor = useGenericEditor(page);
 
@@ -18,7 +22,9 @@ export function TourAnnotationPageEditor({
       <>
         {page.items.map((annotation) => (
           <AnnotationContext annotation={annotation.id} key={annotation.id}>
-            <TourAnnotationEditor />
+            <TourAnnotationEditor
+              useSlideshowWorkbench={useSlideshowWorkbench}
+            />
           </AnnotationContext>
         ))}
       </>
@@ -37,7 +43,9 @@ export function TourAnnotationPageEditor({
         }
         renderItem={(ref, index) => (
           <AnnotationContext annotation={ref.id as string}>
-            <TourAnnotationEditor />
+            <TourAnnotationEditor
+              useSlideshowWorkbench={useSlideshowWorkbench}
+            />
           </AnnotationContext>
         )}
       />
