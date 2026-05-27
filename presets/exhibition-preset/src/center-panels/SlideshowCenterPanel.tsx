@@ -18,6 +18,7 @@ import {
 } from "@manifest-editor/shell";
 import {
   type ChangeEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   useEffect,
   useRef,
@@ -40,6 +41,7 @@ import {
   getPaintingAnnotations,
   getSlideLayoutRegions,
   getTourStepAnnotations,
+  repairSlideContentTargets,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
   type SlideContentBox,
@@ -47,6 +49,7 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import SlideshowIcon from "@manifest-editor/ui/icons/SlideshowIcon";
+import MoveIcon from "@manifest-editor/ui/icons/MoveIcon";
 
 const contentCreatorOptions = {
   skipEditingOnCreate: true,
@@ -63,6 +66,7 @@ function SlideshowCenterPanel() {
   const { structural, technical } = useManifestEditor();
   const items = structural.items.get();
   const manifest = { id: technical.id.get(), type: "Manifest" };
+  const vault = useVault();
   const [, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, {
     isPainting: true,
   });
@@ -79,6 +83,12 @@ function SlideshowCenterPanel() {
   const selectedSlideIndex = selectedIndex >= 0 ? selectedIndex : 0;
   const selectedItem =
     selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
+
+  useEffect(() => {
+    for (const item of items) {
+      repairSlideContentTargets(vault, vault.get(item as any));
+    }
+  }, [items, vault]);
 
   const addNewSlide = () => {
     canvasActions.createFiltered("exhibition-slideshow-slide");
@@ -166,8 +176,17 @@ function SlideshowCenterPanel() {
               Slideshow workbench
             </p>
             <h2 className="truncate text-2xl font-bold text-slate-900">
-              {selectedIndex >= 0 ? `Slide ${selectedIndex + 1}` : "Slides"}
+              {selectedItem ? (
+                <CanvasContext canvas={selectedItem.id}>
+                  <SelectedSlideTitle />
+                </CanvasContext>
+              ) : (
+                "Slides"
+              )}
             </h2>
+            <p className="mt-1 text-sm font-semibold text-slate-500">
+              Slide {selectedSlideIndex + 1} of {items.length}
+            </p>
           </div>
           <SlideNavigation
             current={selectedSlideIndex + 1}
@@ -238,6 +257,13 @@ function SlideshowWorkbenchShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SelectedSlideTitle() {
+  const canvas = useCanvas();
+  const title = getLanguageMapValue(canvas?.label, "Untitled slide");
+
+  return <>{title || "Untitled slide"}</>;
+}
+
 function SlideNavigation({
   current,
   total,
@@ -267,6 +293,40 @@ function SlideNavigation({
         onPress={onNext}
       >
         Next
+      </Button>
+    </div>
+  );
+}
+
+function TourStepNavigation({
+  current,
+  total,
+  onPrevious,
+  onNext,
+}: {
+  current: number;
+  total: number;
+  onPrevious?: () => void;
+  onNext?: () => void;
+}) {
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-md border border-slate-200 bg-white text-xs text-slate-800 shadow-sm">
+      <Button
+        className="border-none bg-white px-3 py-2 font-semibold transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+        isDisabled={!onPrevious}
+        onPress={onPrevious}
+      >
+        Previous step
+      </Button>
+      <span className="flex min-w-[84px] items-center justify-center border-x border-slate-200 bg-slate-50 px-3 font-bold text-slate-900">
+        {total ? `${current} of ${total}` : "0 of 0"}
+      </span>
+      <Button
+        className="border-none bg-white px-3 py-2 font-semibold transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+        isDisabled={!onNext}
+        onPress={onNext}
+      >
+        Next step
       </Button>
     </div>
   );
@@ -335,6 +395,21 @@ function SelectedSlidePreview() {
   const selectedTourStep =
     tourSteps.find((annotation: any) => annotation.id === selectedTourStepId) ||
     tourSteps[0];
+  const selectedTourStepIndex = selectedTourStep
+    ? Math.max(
+        0,
+        tourSteps.findIndex(
+          (annotation: any) => annotation.id === selectedTourStep.id,
+        ),
+      )
+    : -1;
+  const selectTourStepAtIndex = (index: number) => {
+    const tourStep = tourSteps[index];
+
+    if (tourStep?.id) {
+      startTourStepRepositioning(tourStep.id);
+    }
+  };
 
   useEffect(() => {
     previousAnnotationCount.current = null;
@@ -514,13 +589,30 @@ function SelectedSlidePreview() {
                 {showTourSteps ? "Hide tour steps" : "Show tour steps"}
               </Button>
               {showTourSteps ? (
-                <Button
-                  className="rounded-md bg-me-primary-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-me-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
-                  isDisabled={!canvas?.annotations?.[0]}
-                  onPress={createTourStep}
-                >
-                  Add tour step
-                </Button>
+                <>
+                  <TourStepNavigation
+                    current={selectedTourStepIndex + 1}
+                    total={tourSteps.length}
+                    onPrevious={
+                      selectedTourStepIndex > 0
+                        ? () => selectTourStepAtIndex(selectedTourStepIndex - 1)
+                        : undefined
+                    }
+                    onNext={
+                      selectedTourStepIndex >= 0 &&
+                      selectedTourStepIndex < tourSteps.length - 1
+                        ? () => selectTourStepAtIndex(selectedTourStepIndex + 1)
+                        : undefined
+                    }
+                  />
+                  <Button
+                    className="rounded-md bg-me-primary-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-me-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    isDisabled={!canvas?.annotations?.[0]}
+                    onPress={createTourStep}
+                  >
+                    Add tour step
+                  </Button>
+                </>
               ) : (
                 <Button
                   className="rounded-md bg-me-primary-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-me-primary-600"
@@ -638,6 +730,20 @@ function CentrePositionControls({
   setBox?: (box: SlideContentBox) => void;
   vault: any;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    panelX: number;
+    panelY: number;
+    maxX: number;
+    maxY: number;
+  } | null>(null);
+  const [panelOffset, setPanelOffset] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const canvasWidth = Number(canvas?.width) || 1920;
   const canvasHeight = Number(canvas?.height) || 1080;
   const box = currentBox || getAnnotationTargetBox(annotation, canvas);
@@ -647,16 +753,86 @@ function CentrePositionControls({
       setAnnotationTargetBox(vault, canvas, annotation.id, next));
   const halfWidth = Math.round(canvasWidth / 2);
   const halfHeight = Math.round(canvasHeight / 2);
+  const startPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const panel = panelRef.current;
+    const boundary = panel?.offsetParent as HTMLElement | null;
+    const panelRect = panel?.getBoundingClientRect();
+    const boundaryRect = boundary?.getBoundingClientRect();
+
+    if (!panel || !panelRect || !boundaryRect) {
+      return;
+    }
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      panelX: panelRect.left - boundaryRect.left,
+      panelY: panelRect.top - boundaryRect.top,
+      maxX: Math.max(16, boundaryRect.width - panelRect.width - 16),
+      maxY: Math.max(16, boundaryRect.height - panelRect.height - 16),
+    };
+  };
+  const dragPanel = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    setPanelOffset({
+      x: Math.min(
+        drag.maxX,
+        Math.max(16, drag.panelX + event.clientX - drag.startX),
+      ),
+      y: Math.min(
+        drag.maxY,
+        Math.max(16, drag.panelY + event.clientY - drag.startY),
+      ),
+    });
+  };
+  const stopPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (dragRef.current?.pointerId === event.pointerId) {
+      dragRef.current = null;
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    }
+  };
 
   return (
-    <div className="absolute bottom-4 left-4 z-40 max-w-[calc(100%-8rem)] rounded-lg bg-white/95 p-3 text-xs shadow-lg ring-1 ring-black/10">
+    <div
+      ref={panelRef}
+      className={twMerge(
+        "absolute z-40 max-w-[min(56rem,calc(100%-2rem))] rounded-lg bg-white/95 p-3 text-xs shadow-lg ring-1 ring-black/10",
+        panelOffset ? null : "bottom-4 left-4",
+      )}
+      style={
+        panelOffset
+          ? { left: panelOffset.x, top: panelOffset.y }
+          : undefined
+      }
+    >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-[280px]">
           <div className="mb-2 flex items-center justify-between gap-3">
             <span className="font-semibold text-slate-700">{label}</span>
-            <span className="text-slate-400">
-              {Math.round(box.width)} x {Math.round(box.height)}
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                className="cursor-move rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-me-primary-300 hover:text-me-primary-600"
+                type="button"
+                onPointerDown={startPanelDrag}
+                onPointerMove={dragPanel}
+                onPointerUp={stopPanelDrag}
+                onPointerCancel={stopPanelDrag}
+              >
+               <MoveIcon />
+              </button>
+              <span className="text-slate-400">
+                {Math.round(box.width)} x {Math.round(box.height)}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -746,6 +922,7 @@ function CentrePositionControls({
     </div>
   );
 }
+
 function TourStepMetadataControls({
   annotation,
   vault,
@@ -777,6 +954,18 @@ function TourStepMetadataControls({
     setSaved(false);
     setDescription(event.target.value);
   };
+  const clearDefaultLabel = () => {
+    if (stepLabel.trim() === "Tour step" || stepLabel.trim() === "New step") {
+      setSaved(false);
+      setStepLabel("");
+    }
+  };
+  const clearDefaultDescription = () => {
+    if (description.trim() === "Description") {
+      setSaved(false);
+      setDescription("");
+    }
+  };
   const hasChanges =
     stepLabel !== initialLabel || description !== initialDescription;
   const saveTourStep = () => {
@@ -794,6 +983,8 @@ function TourStepMetadataControls({
           className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm outline-none transition focus:border-me-primary-400 focus:ring-2 focus:ring-me-primary-100"
           value={stepLabel}
           onChange={onLabelChange}
+          onFocus={clearDefaultLabel}
+          placeholder="Step label"
         />
       </div>
 
@@ -805,6 +996,8 @@ function TourStepMetadataControls({
           className="min-h-20 w-full resize-y rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm outline-none transition focus:border-me-primary-400 focus:ring-2 focus:ring-me-primary-100"
           value={description}
           onChange={onDescriptionChange}
+          onFocus={clearDefaultDescription}
+          placeholder="Description"
         />
       </div>
 

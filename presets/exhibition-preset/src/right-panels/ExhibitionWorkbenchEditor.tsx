@@ -142,10 +142,7 @@ function ExhibitionWorkbenchRightPanel({
             )
           ) : null}
           {selectedTab === "tour" ? (
-            <ExhibitionTourStepsContent
-              mode={mode}
-              useSlideshowTargets={preset === "slideshow"}
-            />
+            <ExhibitionTourStepsContent mode={mode} />
           ) : null}
         </div>
       </SidebarContent>
