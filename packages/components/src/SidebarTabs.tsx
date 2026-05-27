@@ -1,5 +1,5 @@
 import { createHideableComponent } from "@react-aria/collections";
-import { type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { memo, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { createPortal } from "react-dom";
 import { cn } from "./utils";
@@ -82,22 +82,9 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
             {menu.map((item, idx) => {
               const isHidden = hidden >= menu.length - idx;
               return (
-                <Tab
-                  ref={(el) => (itemsRef.current[idx] = el as any)}
-                  id={item.id}
-                  key={item.id}
-                  className={(state) =>
-                    cn(
-                      //
-                      "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
-                      state.isSelected && "border-me-primary-500 text-black",
-                      state.isFocusVisible && "ring-0 bg-me-gray-100",
-                      isHidden && "hidden",
-                    )
-                  }
-                >
+                <SidebarTab key={item.id} id={item.id} idx={idx} isHidden={isHidden} itemsRef={itemsRef}>
                   {item.label}
-                </Tab>
+                </SidebarTab>
               );
             })}
           </TabList>
@@ -105,7 +92,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
         </div>
         {menu.map((item) => (
           <TabPanel key={item.id} id={item.id} className="flex-1 overflow-y-auto h-full">
-            {item.renderComponent}
+            {selectedKey === item.id ? item.renderComponent() : null}
           </TabPanel>
         ))}
       </Tabs>
@@ -126,6 +113,41 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
     </>
   );
 }
+
+/** Memoized Tab item — prevents new inline function props from re-triggering React Aria's
+ * collection `setProps`/`queueUpdate` cycle on every parent render. */
+const SidebarTab = memo(function SidebarTab({
+  id,
+  idx,
+  isHidden,
+  itemsRef,
+  children,
+}: {
+  id: string;
+  idx: number;
+  isHidden: boolean;
+  itemsRef: React.MutableRefObject<Array<HTMLDivElement | null>>;
+  children: React.ReactNode;
+}) {
+  return (
+    <Tab
+      ref={(el) => {
+        itemsRef.current[idx] = el as any;
+      }}
+      id={id}
+      className={({ isSelected, isFocusVisible }) =>
+        cn(
+          "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
+          isSelected && "border-me-primary-500 text-black",
+          isFocusVisible && "ring-0 bg-me-gray-100",
+          isHidden && "hidden",
+        )
+      }
+    >
+      {children}
+    </Tab>
+  );
+});
 
 const MoreMenu = createHideableComponent<
   {},

@@ -68,10 +68,12 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const [showImageForm, setShowImageForm] = useState(false);
   const textRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
   const latestValueRef = useRef(props.disallowHTML ? stripHtml(initialValue) : initialHtml);
+  const onUpdateRef = useRef(props.onUpdate);
+  onUpdateRef.current = props.onUpdate;
 
   const saveChanges = useCallback(() => {
-    props.onUpdate(latestValueRef.current);
-  }, [props.onUpdate]);
+    onUpdateRef.current(latestValueRef.current);
+  }, []);
 
   const debounceSave = useDebounce(saveChanges, 100);
 

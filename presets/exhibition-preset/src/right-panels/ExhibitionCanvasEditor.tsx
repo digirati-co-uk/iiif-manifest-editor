@@ -1,12 +1,6 @@
-import type { ImageService } from "@iiif/presentation-3";
 import { createImageServiceRequest, imageServiceRequestToString } from "@iiif/parser/image-3";
-import {
-  ActionButton,
-  AddIcon,
-  ArrowRightIcon,
-  Sidebar,
-  SidebarContent,
-} from "@manifest-editor/components";
+import type { ImageService } from "@iiif/presentation-3";
+import { ActionButton, AddIcon, ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   createAppActions,
   InputContainer,
@@ -55,27 +49,31 @@ export function ExhibitionCanvasAdvancedContent() {
   const canvas = useCanvas();
   const resource = useEditingResource();
   const thumbnailCreator = useInlineCreator();
-  const [canCreateThumbnail, thumbnailActions] = useCreator(
-    resource?.resource.source,
-    "thumbnail",
-    "ContentResource",
-  );
+  const [canCreateThumbnail, thumbnailActions] = useCreator(resource?.resource.source, "thumbnail", "ContentResource");
   const { structural, descriptive, technical } = useEditor();
   const { items } = structural;
   const { thumbnail } = descriptive;
   const behavior = technical.behavior.get() || [];
   const thumbnails = thumbnail.get() || [];
   const vault = useVault();
-  const thumbnailCandidates = useMemo(
-    () => (canvas ? getThumbnailCandidates(vault, canvas) : []),
-    [canvas, vault],
-  );
+  const thumbnailCandidates = useMemo(() => (canvas ? getThumbnailCandidates(vault, canvas) : []), [canvas, vault]);
   const pages = items.get();
   const page = pages[0];
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
+  const isTextOnly = behavior.includes("info");
 
   if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
+
+  if (isTextOnly) {
+    return (
+      <ResourceEditingProvider resource={canvas}>
+        {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
+        <ReadonlyExhibitionSummary canvas={canvas} />
+        <TourStepsSummary canvas={canvas} />
+      </ResourceEditingProvider>
+    );
+  }
 
   return (
     <ResourceEditingProvider resource={canvas}>
@@ -271,9 +269,7 @@ function QuickThumbnailFromCanvasImages({
   const selectedSize = sizes.find((size) => sizeToValue(size) === selectedSizeValue) || defaultSize;
   const previewUrl = selectedService && selectedSize ? serviceImageAtSize(selectedService, selectedSize) : null;
   const isFetchingSizes =
-    selectedCandidate &&
-    !selectedCandidate.service.sizes?.length &&
-    !(selectedCandidate.id in serviceInfo);
+    selectedCandidate && !selectedCandidate.service.sizes?.length && !(selectedCandidate.id in serviceInfo);
 
   useEffect(() => {
     if (!selectedCandidateId && candidates[0]) {
@@ -315,9 +311,7 @@ function QuickThumbnailFromCanvasImages({
     <InputContainer $wide>
       <div className="rounded-md border border-[#dcd5ce] bg-[#f8f6f3] p-4">
         <div className="text-sm font-semibold text-[#25211f]">Thumbnail</div>
-        <div className="mt-1 text-sm text-[#6a625c]">
-          Use an image service from this canvas to add a thumbnail.
-        </div>
+        <div className="mt-1 text-sm text-[#6a625c]">Use an image service from this canvas to add a thumbnail.</div>
 
         {candidates.length > 1 ? (
           <div className="mt-3">
@@ -397,9 +391,7 @@ function QuickThumbnailFromCanvasImages({
         ) : isFetchingSizes ? (
           <div className="mt-3 text-sm text-[#6a625c]">Finding available sizes...</div>
         ) : (
-          <div className="mt-3 text-sm text-[#6a625c]">
-            No fixed thumbnail sizes were found for this image service.
-          </div>
+          <div className="mt-3 text-sm text-[#6a625c]">No fixed thumbnail sizes were found for this image service.</div>
         )}
         {canCreateThumbnail ? (
           <div className="mt-4 border-t border-[#dcd5ce] pt-3">
@@ -471,9 +463,7 @@ function getThumbnailCandidates(vault: any, canvas: any): ThumbnailCandidate[] {
       candidates.push({
         id: `${annotation.id || index}-${image.id || serviceId}-${imageIndex}`,
         label:
-          getLanguageMapText(image.label) ||
-          getLanguageMapText(annotation.label) ||
-          `Image ${candidates.length + 1}`,
+          getLanguageMapText(image.label) || getLanguageMapText(annotation.label) || `Image ${candidates.length + 1}`,
         imageId: image.id,
         service,
       });
@@ -516,21 +506,13 @@ function resolveResource(vault: any, resource: any): any {
 }
 
 function getImageService(resource: any): ImageService | null {
-  const services = Array.isArray(resource?.service)
-    ? resource.service
-    : resource?.service
-      ? [resource.service]
-      : [];
+  const services = Array.isArray(resource?.service) ? resource.service : resource?.service ? [resource.service] : [];
 
   return (
     services.find((service: any) => {
       const profile = Array.isArray(service.profile) ? service.profile.join(" ") : service.profile || "";
       const type = service.type || service["@type"] || "";
-      return (
-        type.includes("ImageService") ||
-        profile.includes("level") ||
-        profile.includes("iiif.io/api/image")
-      );
+      return type.includes("ImageService") || profile.includes("level") || profile.includes("iiif.io/api/image");
     }) || null
   );
 }
@@ -577,18 +559,12 @@ function sizeToValue(size: { width: number; height?: number }) {
   return `${size.width},${size.height || ""}`;
 }
 
-function getClosestThumbnailSize(
-  sizes: Array<{ width: number; height: number }>,
-  target: number,
-) {
+function getClosestThumbnailSize(sizes: Array<{ width: number; height: number }>, target: number) {
   return sizes.reduce<(typeof sizes)[number] | undefined>((closest, size) => {
     if (!closest) return size;
 
     const currentDistance = Math.hypot(size.width - target, size.height - target);
-    const closestDistance = Math.hypot(
-      closest.width - target,
-      closest.height - target,
-    );
+    const closestDistance = Math.hypot(closest.width - target, closest.height - target);
 
     return currentDistance < closestDistance ? size : closest;
   }, undefined);

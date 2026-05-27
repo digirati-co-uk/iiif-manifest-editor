@@ -1,7 +1,7 @@
 import { ActionButton } from "@manifest-editor/components";
 import { TiptapRichTextLanguageField } from "@manifest-editor/editors";
 import { type CanvasEditorDefinition, useConfig, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   AnnotationContext,
   LocaleString,
@@ -213,17 +213,21 @@ function AnnotationEditor({
 
   const visibleBodies = getVisibleBodyRefs(bodies, vault);
 
-  const pruneEmptySiblings = (currentBodyId: string) => {
-    const nextBodies = filterEmptyRefs(bodies, vault, currentBodyId);
-    if (nextBodies.length !== bodies.length) {
-      vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", nextBodies);
-    }
+  const pruneEmptySiblings = useCallback(
+    (currentBodyId: string) => {
+      const nextBodies = filterEmptyRefs(bodies, vault, currentBodyId);
+      if (nextBodies.length !== bodies.length) {
+        vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", nextBodies);
+      }
 
-    const nextPageItems = filterEmptyAnnotations(pageItems, vault, annotation.id);
-    if (nextPageItems.length !== pageItems.length) {
-      vault.modifyEntityField(pageRef, "items", nextPageItems);
-    }
-  };
+      const nextPageItems = filterEmptyAnnotations(pageItems, vault, annotation.id);
+      if (nextPageItems.length !== pageItems.length) {
+        vault.modifyEntityField(pageRef, "items", nextPageItems);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [annotation.id, pageRef.id, pageItems, vault],
+  );
 
   return (
     <div className="min-w-0 max-w-full overflow-hidden">

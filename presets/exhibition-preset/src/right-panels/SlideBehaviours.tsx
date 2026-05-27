@@ -666,7 +666,8 @@ export function getLayoutPreset(behavior: string[]): LayoutPreset {
   if (behavior.includes("image")) return "image";
   if (behavior.includes("left")) return "left";
   if (behavior.includes("bottom")) return "bottom";
-  return "right";
+  if (behavior.includes("right")) return "right";
+  return "image";
 }
 
 export function buildLayoutPresetBehaviors(behavior: string[], layoutPreset: LayoutPreset) {
