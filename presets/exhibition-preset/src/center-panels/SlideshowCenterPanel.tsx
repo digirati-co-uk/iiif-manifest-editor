@@ -1,13 +1,5 @@
-import {
-  ActionButton,
-  DeleteIcon,
-  SidebarContent,
-} from "@manifest-editor/components";
-import {
-  addMappings,
-  entityActions,
-  importEntities,
-} from "@iiif/helpers/vault/actions";
+import { addMappings, entityActions, importEntities } from "@iiif/helpers/vault/actions";
+import { ActionButton, DeleteIcon, SidebarContent } from "@manifest-editor/components";
 import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
@@ -16,10 +8,12 @@ import {
   useLayoutActions,
   useManifestEditor,
 } from "@manifest-editor/shell";
+import MoveIcon from "@manifest-editor/ui/icons/MoveIcon";
+import SlideshowIcon from "@manifest-editor/ui/icons/SlideshowIcon";
 import {
   type ChangeEvent,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type PointerEvent as ReactPointerEvent,
   useEffect,
   useRef,
   useState,
@@ -42,14 +36,12 @@ import {
   getSlideLayoutRegions,
   getTourStepAnnotations,
   repairSlideContentTargets,
+  type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
-  type SlideContentBox,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-import SlideshowIcon from "@manifest-editor/ui/icons/SlideshowIcon";
-import MoveIcon from "@manifest-editor/ui/icons/MoveIcon";
 
 const contentCreatorOptions = {
   skipEditingOnCreate: true,
@@ -72,17 +64,12 @@ function SlideshowCenterPanel() {
   });
   const editingCanvas = useInStack("Canvas");
   const { edit } = useLayoutActions();
-  const clearContentPositioning = useSlideshowContentPositioning(
-    (state) => state.clear,
-  );
+  const clearContentPositioning = useSlideshowContentPositioning((state) => state.clear);
 
   const selectedCanvasId = editingCanvas?.resource.source.id || items[0]?.id;
-  const selectedIndex = selectedCanvasId
-    ? items.findIndex((item) => item.id === selectedCanvasId)
-    : -1;
+  const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const selectedSlideIndex = selectedIndex >= 0 ? selectedIndex : 0;
-  const selectedItem =
-    selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
+  const selectedItem = selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
 
   useEffect(() => {
     for (const item of items) {
@@ -94,16 +81,8 @@ function SlideshowCenterPanel() {
     canvasActions.createFiltered("exhibition-slideshow-slide");
   };
 
-  const openSlide = (
-    item: { id: string; type?: string },
-    index: number,
-    forceOpen = false,
-  ) => {
-    edit(
-      { id: item.id, type: "Canvas" },
-      { parent: manifest, property: "items", index },
-      { forceOpen },
-    );
+  const openSlide = (item: { id: string; type?: string }, index: number, forceOpen = false) => {
+    edit({ id: item.id, type: "Canvas" }, { parent: manifest, property: "items", index }, { forceOpen });
   };
   const selectSlide = (item: { id: string; type?: string }, index: number) => {
     clearContentPositioning();
@@ -125,28 +104,19 @@ function SlideshowCenterPanel() {
       openSlide(nextItem, Math.max(0, nextIndex));
     }
   };
-  const previousSlide =
-    selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
-  const nextSlide =
-    selectedSlideIndex < items.length - 1
-      ? items[selectedSlideIndex + 1]
-      : undefined;
+  const previousSlide = selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
+  const nextSlide = selectedSlideIndex < items.length - 1 ? items[selectedSlideIndex + 1] : undefined;
 
   if (!items.length) {
     return (
       <SlideshowWorkbenchShell>
         <div className="flex min-h-full items-center justify-center px-24 py-12">
           <div className="w-full max-w-4xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">
-              Slideshow exhibition
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              Create your first slideshow slide
-            </h2>
+            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">Slideshow exhibition</p>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">Create your first slideshow slide</h2>
             <p className="mt-3 max-w-2xl text-sm text-slate-600">
-              Add a new slide and choose one of the supported slideshow slide
-              types. You can add images, text, media, and tour steps after the
-              slide is created.
+              Add a new slide and choose one of the supported slideshow slide types. You can add images, text, media,
+              and tour steps after the slide is created.
             </p>
             <div className="mt-8">
               <ActionButton primary large onPress={addNewSlide}>
@@ -165,16 +135,12 @@ function SlideshowCenterPanel() {
         <div
           className="flex flex-wrap items-center gap-3 px-8"
           style={{
-            paddingInlineStart:
-              "calc(2rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
-            paddingInlineEnd:
-              "calc(2rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
+            paddingInlineStart: "calc(2rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
+            paddingInlineEnd: "calc(2rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
           }}
         >
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">
-              Slideshow workbench
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">Slideshow workbench</p>
             <h2 className="exhibition-slideshow-heading truncate text-2xl font-bold text-slate-900">
               {selectedItem ? (
                 <CanvasContext canvas={selectedItem.id}>
@@ -191,16 +157,8 @@ function SlideshowCenterPanel() {
           <SlideNavigation
             current={selectedSlideIndex + 1}
             total={items.length}
-            onPrevious={
-              previousSlide
-                ? () => selectSlide(previousSlide, selectedSlideIndex - 1)
-                : undefined
-            }
-            onNext={
-              nextSlide
-                ? () => selectSlide(nextSlide, selectedSlideIndex + 1)
-                : undefined
-            }
+            onPrevious={previousSlide ? () => selectSlide(previousSlide, selectedSlideIndex - 1) : undefined}
+            onNext={nextSlide ? () => selectSlide(nextSlide, selectedSlideIndex + 1) : undefined}
           />
           <div>
             <ActionButton primary onPress={addNewSlide}>
@@ -212,10 +170,8 @@ function SlideshowCenterPanel() {
         <div
           className="flex flex-1 flex-col gap-5 px-8"
           style={{
-            paddingInlineStart:
-              "calc(1.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
-            paddingInlineEnd:
-              "calc(1.5rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
+            paddingInlineStart: "calc(1.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
+            paddingInlineEnd: "calc(1.5rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
           }}
         >
           <div className="exhibition-slideshow-preview-frame flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
@@ -227,9 +183,7 @@ function SlideshowCenterPanel() {
           </div>
 
           <aside className="exhibition-slideshow-slide-strip overflow-hidden rounded-lg border border-slate-200 bg-white p-4">
-            <div className="exhibition-slideshow-heading mb-3 text-sm font-semibold text-slate-700">
-              Slides
-            </div>
+            <div className="exhibition-slideshow-heading mb-3 text-sm font-semibold text-slate-700">Slides</div>
             <div className="flex gap-3 overflow-x-auto pb-2">
               {items.map((item, index) => (
                 <CanvasContext key={item.id} canvas={item.id}>
@@ -340,9 +294,7 @@ function SelectedSlidePreview() {
   const [mode, setMode] = useState<"edit" | "preview">("edit");
   const previousAnnotationCount = useRef<number | null>(null);
   const previousTourStepCount = useRef<number | null>(null);
-  const pageRef = canvas?.items?.[0]
-    ? { id: canvas.items[0].id, type: "AnnotationPage" }
-    : undefined;
+  const pageRef = canvas?.items?.[0] ? { id: canvas.items[0].id, type: "AnnotationPage" } : undefined;
   const [, contentActions] = useCreator(
     pageRef,
     "items",
@@ -366,41 +318,24 @@ function SelectedSlidePreview() {
     startTourStepRepositioning,
     stopTourStepRepositioning,
   } = useSlideshowContentPositioning();
-  const requestWorkbenchTab = useSlideshowWorkbenchState(
-    (state) => state.requestTab,
-  );
-  const showTourSteps = useSlideshowWorkbenchState(
-    (state) => state.showTourSteps,
-  );
-  const setShowTourSteps = useSlideshowWorkbenchState(
-    (state) => state.setShowTourSteps,
-  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
+  const showTourSteps = useSlideshowWorkbenchState((state) => state.showTourSteps);
+  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const annotations = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getPaintingAnnotations(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getPaintingAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, pageRef?.id],
   );
-  const selectedAnnotation = annotations.find(
-    (annotation: any) => annotation.id === selectedAnnotationId,
-  );
-  const selectedTextRegionBox =
-    selectedTextRegion === "editorial-text"
-      ? getSlideLayoutRegions(canvas).text
-      : null;
+  const selectedAnnotation = annotations.find((annotation: any) => annotation.id === selectedAnnotationId);
+  const selectedTextRegionBox = selectedTextRegion === "editorial-text" ? getSlideLayoutRegions(canvas).text : null;
   const tourSteps = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getTourStepAnnotations(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, canvas?.annotations?.[0]?.id],
   );
-  const selectedTourStep =
-    tourSteps.find((annotation: any) => annotation.id === selectedTourStepId) ||
-    tourSteps[0];
+  const selectedTourStep = tourSteps.find((annotation: any) => annotation.id === selectedTourStepId) || tourSteps[0];
   const selectedTourStepIndex = selectedTourStep
     ? Math.max(
         0,
-        tourSteps.findIndex(
-          (annotation: any) => annotation.id === selectedTourStep.id,
-        ),
+        tourSteps.findIndex((annotation: any) => annotation.id === selectedTourStep.id),
       )
     : -1;
   const selectTourStepAtIndex = (index: number) => {
@@ -423,10 +358,7 @@ function SelectedSlidePreview() {
     }
 
     const newestAnnotation = annotations[annotations.length - 1];
-    if (
-      annotations.length > previousAnnotationCount.current &&
-      newestAnnotation?.id
-    ) {
+    if (annotations.length > previousAnnotationCount.current && newestAnnotation?.id) {
       selectAnnotation(newestAnnotation.id);
       requestWorkbenchTab("content");
       setShowTourSteps(false);
@@ -442,10 +374,7 @@ function SelectedSlidePreview() {
     }
 
     const newestTourStep = tourSteps[tourSteps.length - 1];
-    if (
-      tourSteps.length > previousTourStepCount.current &&
-      newestTourStep?.id
-    ) {
+    if (tourSteps.length > previousTourStepCount.current && newestTourStep?.id) {
       startTourStepRepositioning(newestTourStep.id);
       stopRepositioning();
       stopTextRepositioning();
@@ -453,12 +382,7 @@ function SelectedSlidePreview() {
     }
 
     previousTourStepCount.current = tourSteps.length;
-  }, [
-    startTourStepRepositioning,
-    stopRepositioning,
-    stopTextRepositioning,
-    tourSteps,
-  ]);
+  }, [startTourStepRepositioning, stopRepositioning, stopTextRepositioning, tourSteps]);
 
   const deleteTourStep = (annotation: any) => {
     const firstAnnotationPage = canvas?.annotations?.[0];
@@ -471,11 +395,8 @@ function SelectedSlidePreview() {
       return;
     }
 
-    const currentIndex = tourSteps.findIndex(
-      (step: any) => step.id === annotation.id,
-    );
-    const nextTourStep =
-      tourSteps[currentIndex + 1] || tourSteps[currentIndex - 1];
+    const currentIndex = tourSteps.findIndex((step: any) => step.id === annotation.id);
+    const nextTourStep = tourSteps[currentIndex + 1] || tourSteps[currentIndex - 1];
 
     stopTourStepRepositioning();
 
@@ -570,9 +491,7 @@ function SelectedSlidePreview() {
     >
       <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
         <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
-          {mode === "edit"
-            ? "Click content to edit or reposition it"
-            : "Slideshow layout preview (approximate)"}
+          {mode === "edit" ? "Click content to edit or reposition it" : "Slideshow layout preview (approximate)"}
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
@@ -594,13 +513,10 @@ function SelectedSlidePreview() {
                     current={selectedTourStepIndex + 1}
                     total={tourSteps.length}
                     onPrevious={
-                      selectedTourStepIndex > 0
-                        ? () => selectTourStepAtIndex(selectedTourStepIndex - 1)
-                        : undefined
+                      selectedTourStepIndex > 0 ? () => selectTourStepAtIndex(selectedTourStepIndex - 1) : undefined
                     }
                     onNext={
-                      selectedTourStepIndex >= 0 &&
-                      selectedTourStepIndex < tourSteps.length - 1
+                      selectedTourStepIndex >= 0 && selectedTourStepIndex < tourSteps.length - 1
                         ? () => selectTourStepAtIndex(selectedTourStepIndex + 1)
                         : undefined
                     }
@@ -625,50 +541,31 @@ function SelectedSlidePreview() {
                   Add content
                 </Button>
               )}
-
             </>
           ) : null}
           <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
-            <PreviewModeButton
-              selected={mode === "edit"}
-              onPress={() => setMode("edit")}
-            >
+            <PreviewModeButton selected={mode === "edit"} onPress={() => setMode("edit")}>
               Edit
             </PreviewModeButton>
-            <PreviewModeButton
-              selected={mode === "preview"}
-              onPress={() => setMode("preview")}
-            >
+            <PreviewModeButton selected={mode === "preview"} onPress={() => setMode("preview")}>
               Preview
             </PreviewModeButton>
           </div>
         </div>
       </div>
       <div className="relative min-h-0 flex-1 bg-black">
-        <SlideshowSlidePreview
-          editable={mode === "edit"}
-          mode={mode}
-          showTourSteps={showTourSteps}
-        />
-        {mode === "edit" &&
-        !showTourSteps &&
-        selectedAnnotation &&
-        canvas ? (
+        <SlideshowSlidePreview editable={mode === "edit"} mode={mode} showTourSteps={showTourSteps} />
+        {mode === "edit" && !showTourSteps && selectedAnnotation && canvas ? (
           <CentrePositionControls
             annotation={selectedAnnotation}
             canvas={canvas}
-            isRepositioning={
-              repositioningAnnotationId === selectedAnnotation.id
-            }
+            isRepositioning={repositioningAnnotationId === selectedAnnotation.id}
             onStartReposition={() => startRepositioning(selectedAnnotation.id)}
             onStopReposition={stopRepositioning}
             vault={vault}
           />
         ) : null}
-        {mode === "edit" &&
-        !showTourSteps &&
-        selectedTextRegionBox &&
-        canvas ? (
+        {mode === "edit" && !showTourSteps && selectedTextRegionBox && canvas ? (
           <CentrePositionControls
             canvas={canvas}
             currentBox={selectedTextRegionBox}
@@ -680,18 +577,13 @@ function SelectedSlidePreview() {
             vault={vault}
           />
         ) : null}
-        {mode === "edit" &&
-        showTourSteps &&
-        selectedTourStep &&
-        canvas ? (
+        {mode === "edit" && showTourSteps && selectedTourStep && canvas ? (
           <CentrePositionControls
             annotation={selectedTourStep}
             canvas={canvas}
             isRepositioning={repositioningTourStepId === selectedTourStep.id}
             label="Selected tour step"
-            onStartReposition={() =>
-              startTourStepRepositioning(selectedTourStep.id)
-            }
+            onStartReposition={() => startTourStepRepositioning(selectedTourStep.id)}
             onStopReposition={stopTourStepRepositioning}
             vault={vault}
           >
@@ -748,9 +640,7 @@ function CentrePositionControls({
   const canvasHeight = Number(canvas?.height) || 1080;
   const box = currentBox || getAnnotationTargetBox(annotation, canvas);
   const setBox =
-    setBoxOverride ||
-    ((next: SlideContentBox) =>
-      setAnnotationTargetBox(vault, canvas, annotation.id, next));
+    setBoxOverride || ((next: SlideContentBox) => setAnnotationTargetBox(vault, canvas, annotation.id, next));
   const halfWidth = Math.round(canvasWidth / 2);
   const halfHeight = Math.round(canvasHeight / 2);
   const startPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -782,14 +672,8 @@ function CentrePositionControls({
     }
 
     setPanelOffset({
-      x: Math.min(
-        drag.maxX,
-        Math.max(16, drag.panelX + event.clientX - drag.startX),
-      ),
-      y: Math.min(
-        drag.maxY,
-        Math.max(16, drag.panelY + event.clientY - drag.startY),
-      ),
+      x: Math.min(drag.maxX, Math.max(16, drag.panelX + event.clientX - drag.startX)),
+      y: Math.min(drag.maxY, Math.max(16, drag.panelY + event.clientY - drag.startY)),
     });
   };
   const stopPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -808,11 +692,7 @@ function CentrePositionControls({
         "absolute z-40 max-w-[min(56rem,calc(100%-2rem))] rounded-lg bg-white/95 p-3 text-xs shadow-lg ring-1 ring-black/10",
         panelOffset ? null : "bottom-4 left-4",
       )}
-      style={
-        panelOffset
-          ? { left: panelOffset.x, top: panelOffset.y }
-          : undefined
-      }
+      style={panelOffset ? { left: panelOffset.x, top: panelOffset.y } : undefined}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-[280px]">
@@ -827,7 +707,7 @@ function CentrePositionControls({
                 onPointerUp={stopPanelDrag}
                 onPointerCancel={stopPanelDrag}
               >
-               <MoveIcon />
+                <MoveIcon />
               </button>
               <span className="text-slate-400">
                 {Math.round(box.width)} x {Math.round(box.height)}
@@ -836,18 +716,9 @@ function CentrePositionControls({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <PositionButton
-              onPress={onStartReposition}
-              label="Reposition"
-              primary
-            />
+            <PositionButton onPress={onStartReposition} label="Reposition" primary />
 
-            {isRepositioning ? (
-              <PositionButton
-                onPress={onStopReposition}
-                label="Stop moving"
-              />
-            ) : null}
+            {isRepositioning ? <PositionButton onPress={onStopReposition} label="Stop moving" /> : null}
 
             <PositionButton
               onPress={() =>
@@ -874,9 +745,7 @@ function CentrePositionControls({
             />
 
             <PositionButton
-              onPress={() =>
-                setBox({ x: 0, y: 0, width: halfWidth, height: canvasHeight })
-              }
+              onPress={() => setBox({ x: 0, y: 0, width: halfWidth, height: canvasHeight })}
               label="Left"
             />
 
@@ -893,9 +762,7 @@ function CentrePositionControls({
             />
 
             <PositionButton
-              onPress={() =>
-                setBox({ x: 0, y: 0, width: canvasWidth, height: halfHeight })
-              }
+              onPress={() => setBox({ x: 0, y: 0, width: canvasWidth, height: halfHeight })}
               label="Top"
             />
 
@@ -966,8 +833,7 @@ function TourStepMetadataControls({
       setDescription("");
     }
   };
-  const hasChanges =
-    stepLabel !== initialLabel || description !== initialDescription;
+  const hasChanges = stepLabel !== initialLabel || description !== initialDescription;
   const saveTourStep = () => {
     updateTourStepMetadata(vault, annotation, stepLabel, description);
     setSaved(true);
@@ -976,9 +842,7 @@ function TourStepMetadataControls({
   return (
     <div className="space-y-3">
       <div>
-        <label className="mb-1 block font-semibold text-slate-700">
-          Step label
-        </label>
+        <label className="mb-1 block font-semibold text-slate-700">Step label</label>
         <input
           className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm outline-none transition focus:border-me-primary-400 focus:ring-2 focus:ring-me-primary-100"
           value={stepLabel}
@@ -989,9 +853,7 @@ function TourStepMetadataControls({
       </div>
 
       <div>
-        <label className="mb-1 block font-semibold text-slate-700">
-          Description
-        </label>
+        <label className="mb-1 block font-semibold text-slate-700">Description</label>
         <textarea
           className="min-h-20 w-full resize-y rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm outline-none transition focus:border-me-primary-400 focus:ring-2 focus:ring-me-primary-100"
           value={description}
@@ -1009,9 +871,7 @@ function TourStepMetadataControls({
         >
           Save step
         </Button>
-        {saved && !hasChanges ? (
-          <span className="text-xs font-semibold text-emerald-600">Saved</span>
-        ) : null}
+        {saved && !hasChanges ? <span className="text-xs font-semibold text-emerald-600">Saved</span> : null}
         <Button
           className="flex items-center gap-1 rounded-md border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
           onPress={onDelete}
@@ -1023,12 +883,7 @@ function TourStepMetadataControls({
   );
 }
 
-function updateTourStepMetadata(
-  vault: any,
-  annotation: any,
-  label: string,
-  description: string,
-) {
+function updateTourStepMetadata(vault: any, annotation: any, label: string, description: string) {
   const trimmedLabel = label.trim() || "Tour step";
   const html = makeTourStepHtml(trimmedLabel, description.trim());
   const bodyResource = getTourStepBodyResource(annotation, vault);
@@ -1037,11 +892,7 @@ function updateTourStepMetadata(
     vault.modifyEntityField(annotation, "label", { en: [trimmedLabel] });
 
     if (bodyResource?.id && bodyResource.id !== "...") {
-      vault.modifyEntityField(
-        { id: bodyResource.id, type: "ContentResource" },
-        "value",
-        html,
-      );
+      vault.modifyEntityField({ id: bodyResource.id, type: "ContentResource" }, "value", html);
       return;
     }
 
@@ -1068,9 +919,7 @@ function updateTourStepMetadata(
         },
       }),
     );
-    vault.modifyEntityField(annotation, "body", [
-      { id: bodyId, type: "ContentResource" },
-    ]);
+    vault.modifyEntityField(annotation, "body", [{ id: bodyId, type: "ContentResource" }]);
   };
 
   if (vault.batch) {
@@ -1106,9 +955,7 @@ function getTourStepDescription(annotation: any, vault: any) {
     return stripHtml(paragraphMatch[1]);
   }
 
-  return stripHtml(
-    bodyHtml.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/i, ""),
-  );
+  return stripHtml(bodyHtml.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/i, ""));
 }
 
 function getTourStepBodyHtml(annotation: any, vault: any) {
@@ -1178,15 +1025,7 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
-function PositionButton({
-  label,
-  onPress,
-  primary,
-}: {
-  label: string;
-  onPress: () => void;
-  primary?: boolean;
-}) {
+function PositionButton({ label, onPress, primary }: { label: string; onPress: () => void; primary?: boolean }) {
   return (
     <Button
       className={twMerge(
@@ -1215,9 +1054,7 @@ function PreviewModeButton({
     <Button
       className={twMerge(
         "border-none px-3 py-2 transition",
-        selected
-          ? "bg-me-primary-500 text-white"
-          : "bg-transparent text-slate-600 hover:bg-white",
+        selected ? "bg-me-primary-500 text-white" : "bg-transparent text-slate-600 hover:bg-white",
       )}
       onPress={onPress}
     >
@@ -1243,28 +1080,18 @@ function SlideStripItem({
     <div
       className={twMerge(
         "exhibition-slideshow-slide-card relative w-44 shrink-0 rounded-md border bg-white p-2 text-left transition",
-        selected
-          ? "border-me-primary-500 ring-2 ring-me-primary-200"
-          : "border-slate-200 hover:border-me-primary-300",
+        selected ? "border-me-primary-500 ring-2 ring-me-primary-200" : "border-slate-200 hover:border-me-primary-300",
       )}
     >
-      <Button
-        className="block w-full border-none bg-transparent p-0 text-left"
-        onPress={onPress}
-      >
-        <div className="aspect-video overflow-hidden rounded bg-slate-900">
-          <SlideshowSlidePreview
-            className="pointer-events-none h-full w-full"
-            mode="preview"
-          />
+      <Button className="block w-full border-none bg-transparent p-0 text-left" onPress={onPress}>
+        <div className="aspect-video overflow-hidden rounded" style={{ backgroundColor: "#0e0d12" }}>
+          <SlideshowSlidePreview className="pointer-events-none h-full w-full" mode="preview" />
         </div>
         <div className="mt-2 flex items-center gap-2 pr-7">
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-100 text-xs font-semibold text-slate-600">
             {index + 1}
           </span>
-          <LocaleString className="min-w-0 truncate text-sm font-medium text-slate-800">
-            {canvas?.label}
-          </LocaleString>
+          <LocaleString className="min-w-0 truncate text-sm font-medium text-slate-800">{canvas?.label}</LocaleString>
         </div>
       </Button>
       <Button

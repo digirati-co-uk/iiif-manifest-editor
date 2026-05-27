@@ -1,6 +1,7 @@
 import { type BoxSelector, createThumbnailHelper, type FixedSizeImage, type TemporalBoxSelector } from "@iiif/helpers";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useCanvas, useRenderingStrategy, useStrategy, useThumbnail, useVault } from "react-iiif-vault";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { useCanvas, useRenderingStrategy, useThumbnail, useVault } from "react-iiif-vault";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { twMerge } from "tailwind-merge";
 import { TextIcon } from "./icons/TextIcon";
@@ -9,7 +10,9 @@ import { Spinner } from "./Spinner";
 export function LazyThumbnail({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   return (
     <LazyLoadComponent>
-      <LazyThumbnailOuter cover={cover} fade={fade} />
+      <ErrorBoundary fallback={<div />}>
+        <LazyThumbnailOuter cover={cover} fade={fade} />
+      </ErrorBoundary>
     </LazyLoadComponent>
   );
 }
@@ -220,7 +223,7 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div
-        className="relative overflow-hidden margin-auto h-full w-full basis-[content] bg-white"
+        className="relative overflow-hidden margin-auto h-full w-full basis-[content]"
         style={{
           aspectRatio: `${canvas.width / canvas.height}`,
         }}

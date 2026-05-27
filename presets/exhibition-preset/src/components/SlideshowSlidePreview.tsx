@@ -1,24 +1,14 @@
-import {
-  useEffect,
-  useRef,
-  type PointerEvent as ReactPointerEvent,
-  type RefObject,
-} from "react";
-import {
-  LocaleString,
-  useCanvas,
-  useVault,
-  useVaultSelector,
-} from "react-iiif-vault";
 import { useInStack } from "@manifest-editor/editors";
+import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef } from "react";
+import { LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import {
-  type SlideContentBox,
   getAnnotationTargetBox,
   getSlideContentLayers,
   getSlideLayoutRegions,
   getTourStepAnnotations,
   repairSlideContentTargets,
+  type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
   useSlideshowContentPositioning,
@@ -42,9 +32,7 @@ export function SlideshowSlidePreview({
   const vault = useVault();
   const editingAnnotation = useInStack("Annotation");
   const stageRef = useRef<HTMLDivElement | null>(null);
-  const requestWorkbenchTab = useSlideshowWorkbenchState(
-    (state) => state.requestTab,
-  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const {
     selectedAnnotationId,
     repositioningAnnotationId,
@@ -64,13 +52,11 @@ export function SlideshowSlidePreview({
   }, [canvas?.id, vault]);
 
   const layers = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getSlideContentLayers(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getSlideContentLayers(vaultInstance, canvas) : []),
     [canvas?.id, canvas?.items?.[0]?.id],
   );
   const tourSteps = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getTourStepAnnotations(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, canvas?.annotations?.[0]?.id],
   );
 
@@ -89,35 +75,24 @@ export function SlideshowSlidePreview({
   return (
     <div
       ref={stageRef}
-      className={twMerge(
-        "relative h-full w-full overflow-hidden",
-        mode === "edit" && "bg-white",
-        className,
-      )}
+      className={twMerge("relative h-full w-full overflow-hidden", mode === "edit" && "bg-white", className)}
       style={{
         aspectRatio: `${canvasWidth} / ${canvasHeight}`,
-        backgroundColor: mode === "preview" ? "#373737" : undefined,
       }}
     >
       {layers.length ? (
         layers.map((layer) => {
           const editingLayer = editingAnnotationId === layer.annotation.id;
-          const selected =
-            editingLayer || selectedAnnotationId === layer.annotation.id;
-          const repositioning =
-            repositioningAnnotationId === layer.annotation.id;
+          const selected = editingLayer || selectedAnnotationId === layer.annotation.id;
+          const repositioning = repositioningAnnotationId === layer.annotation.id;
 
           return (
             <div
               key={layer.annotation.id}
               className={twMerge(
                 "absolute overflow-hidden",
-                contentEditingActive &&
-                  selected &&
-                  "ring-4 ring-me-primary-500 ring-offset-2 ring-offset-white",
-                (repositioning || editingLayer) &&
-                  contentEditingActive &&
-                  "cursor-move select-none touch-none",
+                contentEditingActive && selected && "ring-4 ring-me-primary-500 ring-offset-2 ring-offset-white",
+                (repositioning || editingLayer) && contentEditingActive && "cursor-move select-none touch-none",
               )}
               style={{
                 left: `${(layer.box.x / canvasWidth) * 100}%`,
@@ -155,11 +130,7 @@ export function SlideshowSlidePreview({
                     : undefined
               }
             >
-              <RenderSlideLayer
-                layer={layer}
-                mode={mode}
-                cover={behavior.includes("cover")}
-              />
+              <RenderSlideLayer layer={layer} mode={mode} cover={behavior.includes("cover")} />
               {contentEditingActive && (repositioning || editingLayer) ? (
                 <div
                   className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
@@ -184,9 +155,7 @@ export function SlideshowSlidePreview({
         <div
           className={twMerge(
             "flex h-full w-full items-center justify-center text-sm font-semibold",
-            mode === "preview"
-              ? "bg-[#373737] text-white/60"
-              : "bg-white text-slate-400",
+            mode === "preview" ? "text-white/40" : "bg-white text-slate-400",
           )}
         >
           {mode === "preview" ? "This slide has no content yet" : "Empty slide"}
@@ -273,8 +242,7 @@ function TourStepTarget({
           ? {
               backgroundColor: "rgba(109, 90, 168, 0.2)",
               borderColor: selectedColour,
-              boxShadow:
-                "0 0 0 4px rgba(109, 90, 168, 0.22), 0 0 0 8px rgba(109, 90, 168, 0.14)",
+              boxShadow: "0 0 0 4px rgba(109, 90, 168, 0.22), 0 0 0 8px rgba(109, 90, 168, 0.14)",
             }
           : {}),
       }}
@@ -464,10 +432,7 @@ function RenderSlideLayer({
       <img
         src={layer.imageUrl}
         alt=""
-        className={twMerge(
-          "h-full w-full",
-          cover ? "object-cover" : "object-contain",
-        )}
+        className={twMerge("h-full w-full", cover ? "object-cover" : "object-contain")}
       />
     );
   }

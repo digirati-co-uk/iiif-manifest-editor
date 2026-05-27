@@ -40,21 +40,20 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
     canvas?.annotations[0] ? vault.get(canvas?.annotations[0]!) : null,
   );
 
+  // For narrow columns (w <= 6), cap the editor width so it doesn't sprawl
+  const editorMaxWidth = compact ? "28rem" : undefined;
+
   return (
-    <div
-      className={twMerge(
-        "relative z-0 w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto bg-white shadow",
-        compact ? "text-sm" : "",
-      )}
-    >
+    <div className="relative z-0 w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto bg-white">
       <SummarySection
         annotationPage={annotationPage}
         compact={compact}
+        editorMaxWidth={editorMaxWidth}
         fallbackText={strategy.items[0]?.text}
         heading="Short summary"
         panelClassName={twMerge(
-          hasDimension && "border-b border-gray-200",
-          compact ? "p-2" : "p-4",
+          "border-b border-gray-100",
+          compact ? "p-3" : "p-5",
           hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
           hasDimension && isBottom ? "max-w-4xl" : "",
         )}
@@ -65,7 +64,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
         annotationPage={longSummaries}
         compact={compact}
         heading="Long summary"
-        panelClassName={twMerge(compact ? "p-2" : "p-4")}
+        panelClassName={twMerge(compact ? "p-3" : "p-5")}
         parentProperty="annotations"
       />
     </div>
@@ -75,6 +74,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
 function SummarySection({
   annotationPage,
   compact,
+  editorMaxWidth,
   fallbackText,
   heading,
   panelClassName,
@@ -82,6 +82,7 @@ function SummarySection({
 }: {
   annotationPage: any;
   compact?: boolean;
+  editorMaxWidth?: string;
   fallbackText?: any;
   heading: string;
   panelClassName?: string;
@@ -142,46 +143,50 @@ function SummarySection({
 
   return (
     <section className={twMerge("min-w-0 max-w-full", panelClassName)}>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className={twMerge("font-semibold text-gray-900", compact ? "text-sm" : "text-base")}>{heading}</h2>
-        <ActionButton primary onPress={createSummaryAnnotation}>
-          {page ? "Add text" : "Create"}
-        </ActionButton>
+      <div className={twMerge("flex items-center justify-between gap-3", visibleItems.length ? "mb-3" : "mb-0")}>
+        <h2
+          className={twMerge(
+            "font-semibold tracking-tight text-gray-700",
+            compact ? "text-xs uppercase" : "text-sm uppercase tracking-wide",
+          )}
+        >
+          {heading}
+        </h2>
+        {!visibleItems.length && (
+          <ActionButton primary onPress={createSummaryAnnotation}>
+            {page ? "Add text" : "Add"}
+          </ActionButton>
+        )}
       </div>
 
       {!page && fallbackText ? (
-        <div className="mb-3 rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
-          <div className="prose prose-sm max-w-none">
-            <LocaleString enableDangerouslySetInnerHTML>{fallbackText}</LocaleString>
-          </div>
+        <div className="mt-2 text-sm text-gray-600">
+          <LocaleString enableDangerouslySetInnerHTML>{fallbackText}</LocaleString>
         </div>
       ) : null}
 
       {visibleItems.length ? (
-        <div className={twMerge("flex min-w-0 max-w-full flex-col", compact ? "gap-2" : "gap-4")}>
+        <div className="min-w-0 max-w-full">
           {visibleItems.map(({ item: annotation, index }) => (
-            <div key={annotation.id + index} className="min-w-0 max-w-full rounded border border-gray-200 bg-white">
-              <AnnotationContext annotation={annotation.id}>
-                <AnnotationEditor
-                  compact={compact}
-                  pageItems={items}
-                  pageRef={{ id: page.id, type: "AnnotationPage" }}
-                  onRemoveAnnotation={() => {
-                    vault.modifyEntityField(
-                      { id: page.id, type: "AnnotationPage" },
-                      "items",
-                      items.filter((_item: any, itemIndex: number) => itemIndex !== index),
-                    );
-                  }}
-                />
-              </AnnotationContext>
-            </div>
+            <AnnotationContext key={annotation.id + index} annotation={annotation.id}>
+              <AnnotationEditor
+                compact={compact}
+                editorMaxWidth={editorMaxWidth}
+                pageItems={items}
+                pageRef={{ id: page.id, type: "AnnotationPage" }}
+                onRemoveAnnotation={() => {
+                  vault.modifyEntityField(
+                    { id: page.id, type: "AnnotationPage" },
+                    "items",
+                    items.filter((_item: any, itemIndex: number) => itemIndex !== index),
+                  );
+                }}
+              />
+            </AnnotationContext>
           ))}
         </div>
       ) : page ? (
-        <div className="rounded border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">
-          No text has been added yet.
-        </div>
+        <div className={twMerge("mt-2 text-sm text-gray-400 italic", compact ? "" : "")}>No text added yet.</div>
       ) : null}
     </section>
   );
@@ -189,23 +194,21 @@ function SummarySection({
 
 function AnnotationEditor({
   compact,
-  onRemoveAnnotation,
+  editorMaxWidth,
+  onRemoveAnnotation: _onRemoveAnnotation,
   pageItems,
   pageRef,
 }: {
   compact?: boolean;
+  editorMaxWidth?: string;
   onRemoveAnnotation: () => void;
   pageItems: any[];
   pageRef: { id: string; type: "AnnotationPage" };
 }) {
   const annotation = useAnnotation();
   const vault = useVault();
-  const creator = useInlineCreator();
   const bodies = annotation?.body || [];
   const editor = useGenericEditor(annotation);
-  const {
-    i18n: { defaultLanguage },
-  } = useConfig();
 
   if (!annotation) {
     return null;
@@ -231,62 +234,29 @@ function AnnotationEditor({
 
   return (
     <div className="min-w-0 max-w-full overflow-hidden">
-      {visibleBodies.map(({ item: body, index }) => {
-        return (
-          <TiptapAnnotationBodyEditor
-            key={body.id || index}
-            resourceId={body.id}
-            onRemove={() => editor.annotation.body.deleteAtIndex(index)}
-            onUpdate={() => pruneEmptySiblings(body.id)}
-            compact={compact}
-          />
-        );
-      })}
-
-      <div className={twMerge("flex gap-2", compact ? "p-2" : "p-4")}>
-        <ActionButton
-          primary
-          onPress={() => {
-            creator.create(
-              "@manifest-editor/html-body-creator",
-              { language: defaultLanguage || "en", body: "" },
-              {
-                targetType: "ContentResource",
-                parent: {
-                  property: "body",
-                  resource: {
-                    id: annotation.id,
-                    type: "Annotation",
-                  },
-                },
-                initialData: {},
-              },
-            );
-          }}
-        >
-          Add translation
-        </ActionButton>
-        <ActionButton
-          onPress={() => {
-            if (confirm("Do you want to remove this text?")) {
-              onRemoveAnnotation();
-            }
-          }}
-        >
-          Remove text
-        </ActionButton>
-      </div>
+      {visibleBodies.map(({ item: body, index }) => (
+        <TiptapAnnotationBodyEditor
+          key={body.id || index}
+          resourceId={body.id}
+          onRemove={() => editor.annotation.body.deleteAtIndex(index)}
+          onUpdate={() => pruneEmptySiblings(body.id)}
+          compact={compact}
+          editorMaxWidth={editorMaxWidth}
+        />
+      ))}
     </div>
   );
 }
 
 function TiptapAnnotationBodyEditor({
   compact,
+  editorMaxWidth,
   resourceId,
   onRemove,
   onUpdate,
 }: {
   compact?: boolean;
+  editorMaxWidth?: string;
   resourceId: string;
   onRemove: () => void;
   onUpdate: () => void;
@@ -312,10 +282,8 @@ function TiptapAnnotationBodyEditor({
 
   return (
     <div
-      className={twMerge(
-        "min-w-0 max-w-full overflow-hidden hover:bg-me-100/40 focus-within:bg-me-100/40",
-        compact ? "p-2" : "p-4",
-      )}
+      className="min-w-0 max-w-full overflow-hidden"
+      style={editorMaxWidth ? { maxWidth: editorMaxWidth } : undefined}
     >
       <TiptapRichTextLanguageField
         language={currentLanguage}

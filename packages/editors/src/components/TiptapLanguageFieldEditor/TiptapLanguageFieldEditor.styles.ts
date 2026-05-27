@@ -77,28 +77,32 @@ export const FieldShell = styled.fieldset<{ $focus?: boolean; $disabled?: boolea
   display: flex;
   font-size: 1em;
   width: 100%;
-  background: #fff;
-  border: none;
-  padding: 0;
-  margin: 0;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   text-align: left;
   align-items: stretch;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  padding: 0;
+  margin: 0;
 
   ${(props) =>
     props.$focus &&
     css`
       background: #fff;
       border-color: ${props.theme.color.main || "#b84c74"};
-      box-shadow: 0 0 0 1px ${props.theme.color.main || "#b84c74"};
+      box-shadow: 0 0 0 3px
+        ${props.theme.color.main
+        ? props.theme.color.main + "22"
+        : "rgba(184,76,116,0.13)"
+      };
     `}
 
   ${(props) =>
     props.$disabled &&
     css`
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.65;
     `}
 `;
 
@@ -144,69 +148,101 @@ export const EditorWrap = styled.div`
   position: relative;
 
   .tiptap {
-    color: rgba(0, 0, 0, 0.87);
-    background: #fff;
-    padding: 0.9em 1em;
-    min-height: 3.4em;
+    color: #1a1a2e;
+    background: transparent;
+    padding: 1em 1.1em;
+    min-height: 7em;
     font-size: 1rem;
-    line-height: 1.55;
+    line-height: 1.75;
     outline: none;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+    font-family: inherit;
   }
 
   .tiptap.prose {
     max-width: none;
   }
 
+  /* Paragraphs: a comfortable full line-height of space between them */
   .tiptap p {
-    margin: 0 0 0.65em;
+    margin-top: 0;
+    margin-bottom: 1em;
+    line-height: 1.75;
   }
 
-  .tiptap p:last-child,
-  .tiptap ul:last-child,
-  .tiptap ol:last-child,
-  .tiptap blockquote:last-child {
+  .tiptap p:last-child {
     margin-bottom: 0;
   }
 
+  /* Headings: breathe above, sit close to what they introduce below */
   .tiptap h1,
   .tiptap h2,
-  .tiptap h3 {
-    color: #111827;
-    font-weight: 650;
-    line-height: 1.2;
-    margin: 0.9em 0 0.4em;
+  .tiptap h3,
+  .tiptap h4 {
+    margin-top: 1.6em;
+    margin-bottom: 0.4em;
+    line-height: 1.25;
   }
 
+  /* First heading needs no top breathing room */
   .tiptap h1:first-child,
   .tiptap h2:first-child,
-  .tiptap h3:first-child {
+  .tiptap h3:first-child,
+  .tiptap h4:first-child {
     margin-top: 0;
   }
 
+  /* Heading immediately after another heading — less gap */
+  .tiptap h1 + h2,
+  .tiptap h2 + h3,
+  .tiptap h3 + h4 {
+    margin-top: 0.75em;
+  }
+
   .tiptap h1 {
-    font-size: 1.45em;
+    font-size: 1.65em;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.02em;
   }
 
   .tiptap h2 {
-    font-size: 1.28em;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.015em;
   }
 
   .tiptap h3 {
-    font-size: 1.12em;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: -0.01em;
   }
 
   .tiptap a {
-    color: #3498db;
+    color: #b84c74;
     text-decoration: underline;
-    text-underline-offset: 0.12em;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
   }
 
+  .tiptap a:hover {
+    color: #892c4e;
+  }
+
+  /* Lists: margin from surrounding text, sensible indent, item breathing room */
   .tiptap ul,
   .tiptap ol {
-    margin: 0.45em 0 0.7em 1.45em;
-    padding: 0 0 0 0.2em;
+    margin-top: 0.25em;
+    margin-bottom: 1em;
+    padding-left: 1.6em;
+  }
+
+  .tiptap ul:last-child,
+  .tiptap ol:last-child {
+    margin-bottom: 0;
   }
 
   .tiptap ul {
@@ -218,35 +254,96 @@ export const EditorWrap = styled.div`
   }
 
   .tiptap li {
-    margin: 0.2em 0;
-    padding-left: 0.1em;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    line-height: 1.7;
+  }
+
+  .tiptap li:first-child {
+    margin-top: 0;
+  }
+
+  .tiptap li:last-child {
+    margin-bottom: 0;
   }
 
   .tiptap li p {
-    margin: 0.1em 0;
+    margin: 0;
   }
 
+  /* Nested lists */
+  .tiptap li > ul,
+  .tiptap li > ol {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+
+  /* Blockquote: generous side breathing, italic voice */
   .tiptap blockquote {
-    margin: 0.7em 0;
-    padding: 0.1em 0 0.1em 0.9em;
+    margin: 1.25em 0;
+    padding: 0.1em 0 0.1em 1.1em;
     border-left: 3px solid #b84c74;
-    color: #4f5963;
+    color: #6b7280;
     font-style: italic;
+    line-height: 1.75;
+  }
+
+  .tiptap blockquote:first-child {
+    margin-top: 0;
+  }
+
+  .tiptap blockquote:last-child {
+    margin-bottom: 0;
+  }
+
+  .tiptap blockquote p {
+    margin: 0;
   }
 
   .tiptap code {
-    border-radius: 3px;
-    background: rgba(5, 42, 68, 0.08);
-    padding: 0.1em 0.25em;
-    font-size: 0.9em;
+    border-radius: 4px;
+    background: #fdf2f6;
+    color: #b84c74;
+    padding: 0.15em 0.35em;
+    font-size: 0.88em;
+    font-family: ui-monospace, monospace;
+  }
+
+  .tiptap pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 0.85em 1em;
+    margin-bottom: 1em;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+
+  .tiptap pre:last-child {
+    margin-bottom: 0;
+  }
+
+  .tiptap pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: 1em;
   }
 
   .tiptap img {
     display: block;
     max-width: 100%;
     height: auto;
-    margin: 0.8em 0;
+    margin: 1em 0;
     border-radius: 6px;
+  }
+
+  .tiptap img:first-child {
+    margin-top: 0;
+  }
+
+  .tiptap img:last-child {
+    margin-bottom: 0;
   }
 
   .tiptap img.ProseMirror-selectednode {
@@ -255,11 +352,21 @@ export const EditorWrap = styled.div`
   }
 
   .tiptap p.is-editor-empty:first-child::before {
-    color: #8b949e;
+    color: #9ca3af;
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
+    font-style: italic;
+  }
+
+  .tiptap strong {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .tiptap em {
+    font-style: italic;
   }
 `;
 
@@ -376,15 +483,16 @@ export const FormattingToggle = styled(LanguageDisplay)`
 export const ContextMenu = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.15em;
-  max-width: min(92vw, 34rem);
-  padding: 0.25em;
-  border: 1px solid rgba(17, 24, 39, 0.14);
-  border-radius: 6px;
+  gap: 0.1em;
+  max-width: min(92vw, 36rem);
+  padding: 0.2em;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 8px;
   background: #fff;
   box-shadow:
-    0 12px 28px rgba(15, 23, 42, 0.14),
-    0 2px 6px rgba(15, 23, 42, 0.08);
+    0 4px 6px -1px rgba(0, 0, 0, 0.07),
+    0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.04);
   color: #1f2937;
   font-size: 0.82rem;
   line-height: 1;
@@ -400,13 +508,14 @@ export const MenuButton = styled.button<{ $active?: boolean }>`
   gap: 0.25em;
   padding: 0 0.55em;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   background: transparent;
-  color: #26313d;
+  color: #374151;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
 
   svg {
     width: 1em;
@@ -415,6 +524,7 @@ export const MenuButton = styled.button<{ $active?: boolean }>`
 
   &:hover {
     background: #f3f4f6;
+    color: #111827;
   }
 
   &:focus-visible {

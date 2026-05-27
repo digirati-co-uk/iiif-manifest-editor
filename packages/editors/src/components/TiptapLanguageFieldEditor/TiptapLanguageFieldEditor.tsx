@@ -1,8 +1,5 @@
-import { ControlButton, OpaqueControls } from "@manifest-editor/components";
-import { useConfig, useDecayState } from "@manifest-editor/shell";
-import { SmallButton } from "@manifest-editor/ui/atoms/Button";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { useMemo, useState } from "react";
+import { useConfig } from "@manifest-editor/shell";
+import { useMemo } from "react";
 import { flushSync } from "react-dom";
 import { useDebounce } from "tiny-use-debounce";
 import { type UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
@@ -25,16 +22,13 @@ export interface TiptapLanguageFieldEditorProps extends UseMetadataEditor {
 }
 
 export function TiptapLanguageFieldEditor(props: TiptapLanguageFieldEditorProps) {
-  const { firstItem, createNewItem, fieldKeys, changeValue, getFieldByKey, changeLanguage, saveChanges, removeItem } =
+  const { firstItem, createNewItem, fieldKeys, changeValue, getFieldByKey, changeLanguage, saveChanges } =
     useMetadataEditor(props);
   const debounceSave = useDebounce(saveChanges, 200);
-  const [active, activeState] = useDecayState(2000);
-  const [isReorderMode, setIsReorderMode] = useState(false);
   const {
-    i18n: { advancedLanguageMode, availableLanguages },
+    i18n: { availableLanguages },
   } = useConfig();
 
-  const isFullMode = advancedLanguageMode || fieldKeys.length > 1;
   const id = useMemo(() => `k-${Date.now()}`, []);
   const focusId = props.focusId ? props.focusId : id + props.metadataKey;
 
@@ -64,12 +58,7 @@ export function TiptapLanguageFieldEditor(props: TiptapLanguageFieldEditorProps)
             }
 
             return (
-              <InputGroup
-                key={key}
-                $active={fieldKeys.length > 1}
-                onMouseEnter={() => activeState.set()}
-                onMouseLeave={() => activeState.clear(true)}
-              >
+              <InputGroup key={key} $active={fieldKeys.length > 1}>
                 <TiptapRichTextLanguageField
                   autoFocus={n === 0 ? props.autoFocus : undefined}
                   disableMultiline={props.disableMultiline}
@@ -78,11 +67,7 @@ export function TiptapLanguageFieldEditor(props: TiptapLanguageFieldEditorProps)
                   language={field.language}
                   value={field.value}
                   languages={languages}
-                  onFocus={() => {
-                    activeState.set();
-                  }}
                   onBlur={() => {
-                    activeState.clear();
                     saveChanges(props.index, props.property);
                   }}
                   onUpdateLanguage={(lang) => {
@@ -93,37 +78,11 @@ export function TiptapLanguageFieldEditor(props: TiptapLanguageFieldEditorProps)
                     debounceSave(props.index, props.property);
                   }}
                 />
-                {isReorderMode && fieldKeys.length > 0 ? (
-                  <SmallButton
-                    style={{ visibility: active ? "visible" : "hidden" }}
-                    className="remove"
-                    aria-label="remove"
-                    onClick={() => {
-                      removeItem(key);
-                      saveChanges(props.index, props.property);
-                    }}
-                    title="delete"
-                  >
-                    <CloseIcon />
-                  </SmallButton>
-                ) : null}
               </InputGroup>
             );
           })}
         </div>
       )}
-
-      {isFullMode && (!props.singleValue || fieldKeys.length > 1) ? (
-        <OpaqueControls active={active}>
-          <ControlButton aria-label="create new" onClick={() => createNewItem(true)}>
-            Add another
-          </ControlButton>
-
-          <ControlButton aria-label="remove" onClick={() => setIsReorderMode((o) => !o)}>
-            Remove
-          </ControlButton>
-        </OpaqueControls>
-      ) : null}
     </>
   ) : null;
 
