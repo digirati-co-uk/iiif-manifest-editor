@@ -24,13 +24,14 @@ const layoutPresetOptions: Array<{ value: LayoutPreset; label: string }> = [
   { value: "image-only", label: "Image only" },
 ];
 const simpleLayoutColours = {
-  primary: "#b84c74",
-  fieldBorder: "#dcd5ce",
-  fieldBackground: "#f8f6f3",
-  text: "#25211f",
-  muted: "#6a625c",
-  buttonText: "#ffffff",
-  inactiveButtonText: "#332f2c",
+  primary: "var(--exhibition-primary, #b84c74)",
+  fieldBorder: "var(--exhibition-field-border, #dcd5ce)",
+  fieldBackground: "var(--exhibition-field-bg, #f8f6f3)",
+  text: "var(--exhibition-text, #25211f)",
+  muted: "var(--exhibition-muted, #6a625c)",
+  buttonBackground: "var(--exhibition-button-bg, #ffffff)",
+  buttonText: "var(--exhibition-button-text, #ffffff)",
+  inactiveButtonText: "var(--exhibition-inactive-button-text, #332f2c)",
 };
 const displaySizeOptions: Array<{
   value: DisplaySize;
@@ -409,7 +410,7 @@ function SimpleSlideLayoutEditor({
                   style={{
                     backgroundColor: selected
                       ? simpleLayoutColours.primary
-                      : simpleLayoutColours.buttonText,
+                      : simpleLayoutColours.buttonBackground,
                     borderColor: selected
                       ? simpleLayoutColours.primary
                       : simpleLayoutColours.fieldBorder,

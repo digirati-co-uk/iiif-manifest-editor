@@ -161,7 +161,7 @@ function SlideshowCenterPanel() {
 
   return (
     <SlideshowWorkbenchShell>
-      <div className="flex min-h-full flex-col gap-6 pb-12 pt-16">
+      <div className="exhibition-slideshow-main flex min-h-full flex-col gap-6 pb-12 pt-16">
         <div
           className="flex flex-wrap items-center gap-3 px-8"
           style={{
@@ -175,7 +175,7 @@ function SlideshowCenterPanel() {
             <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">
               Slideshow workbench
             </p>
-            <h2 className="truncate text-2xl font-bold text-slate-900">
+            <h2 className="exhibition-slideshow-heading truncate text-2xl font-bold text-slate-900">
               {selectedItem ? (
                 <CanvasContext canvas={selectedItem.id}>
                   <SelectedSlideTitle />
@@ -184,7 +184,7 @@ function SlideshowCenterPanel() {
                 "Slides"
               )}
             </h2>
-            <p className="mt-1 text-sm font-semibold text-slate-500">
+            <p className="exhibition-slideshow-muted mt-1 text-sm font-semibold text-slate-500">
               Slide {selectedSlideIndex + 1} of {items.length}
             </p>
           </div>
@@ -218,7 +218,7 @@ function SlideshowCenterPanel() {
               "calc(1.5rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
           }}
         >
-          <div className="flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
+          <div className="exhibition-slideshow-preview-frame flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
             {selectedItem ? (
               <CanvasContext canvas={selectedItem.id}>
                 <SelectedSlidePreview />
@@ -226,8 +226,8 @@ function SlideshowCenterPanel() {
             ) : null}
           </div>
 
-          <aside className="overflow-hidden rounded-lg border border-slate-200 bg-white p-4">
-            <div className="mb-3 text-sm font-semibold text-slate-700">
+          <aside className="exhibition-slideshow-slide-strip overflow-hidden rounded-lg border border-slate-200 bg-white p-4">
+            <div className="exhibition-slideshow-heading mb-3 text-sm font-semibold text-slate-700">
               Slides
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2">
@@ -251,7 +251,7 @@ function SlideshowCenterPanel() {
 
 function SlideshowWorkbenchShell({ children }: { children: ReactNode }) {
   return (
-    <SidebarContent className="h-full overflow-x-hidden overflow-y-auto bg-[#f8f6f3]">
+    <SidebarContent className="exhibition-slideshow-workbench h-full overflow-x-hidden overflow-y-auto bg-[#f8f6f3]">
       {children}
     </SidebarContent>
   );
@@ -276,7 +276,7 @@ function SlideNavigation({
   onNext?: () => void;
 }) {
   return (
-    <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 bg-white text-sm text-slate-800 shadow-sm">
+    <div className="exhibition-slideshow-navigation flex items-stretch overflow-hidden rounded-lg border border-slate-200 bg-white text-sm text-slate-800 shadow-sm">
       <Button
         className="border-none bg-white px-5 py-3 font-semibold transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
         isDisabled={!onPrevious}
@@ -284,7 +284,7 @@ function SlideNavigation({
       >
         Previous
       </Button>
-      <span className="flex min-w-[96px] items-center justify-center border-x border-slate-200 bg-slate-50 px-4 font-bold text-slate-900">
+      <span className="exhibition-slideshow-navigation-current flex min-w-[96px] items-center justify-center border-x border-slate-200 bg-slate-50 px-4 font-bold text-slate-900">
         {current} of {total}
       </span>
       <Button
@@ -310,7 +310,7 @@ function TourStepNavigation({
   onNext?: () => void;
 }) {
   return (
-    <div className="flex items-stretch overflow-hidden rounded-md border border-slate-200 bg-white text-xs text-slate-800 shadow-sm">
+    <div className="exhibition-slideshow-navigation flex items-stretch overflow-hidden rounded-md border border-slate-200 bg-white text-xs text-slate-800 shadow-sm">
       <Button
         className="border-none bg-white px-3 py-2 font-semibold transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
         isDisabled={!onPrevious}
@@ -318,7 +318,7 @@ function TourStepNavigation({
       >
         Previous step
       </Button>
-      <span className="flex min-w-[84px] items-center justify-center border-x border-slate-200 bg-slate-50 px-3 font-bold text-slate-900">
+      <span className="exhibition-slideshow-navigation-current flex min-w-[84px] items-center justify-center border-x border-slate-200 bg-slate-50 px-3 font-bold text-slate-900">
         {total ? `${current} of ${total}` : "0 of 0"}
       </span>
       <Button
@@ -561,15 +561,15 @@ function SelectedSlidePreview() {
 
   return (
     <div
-      className="group relative flex max-h-full flex-col overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
+      className="exhibition-slideshow-preview-card group relative flex max-h-full flex-col overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
       style={{
         width: "100%",
         height: "min(68vh, 760px)",
         minHeight: 420,
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
-        <span className="text-xs font-semibold text-slate-500">
+      <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
+        <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
           {mode === "edit"
             ? "Click content to edit or reposition it"
             : "Slideshow layout preview (approximate)"}
@@ -1242,7 +1242,7 @@ function SlideStripItem({
   return (
     <div
       className={twMerge(
-        "relative w-44 shrink-0 rounded-md border bg-white p-2 text-left transition",
+        "exhibition-slideshow-slide-card relative w-44 shrink-0 rounded-md border bg-white p-2 text-left transition",
         selected
           ? "border-me-primary-500 ring-2 ring-me-primary-200"
           : "border-slate-200 hover:border-me-primary-300",

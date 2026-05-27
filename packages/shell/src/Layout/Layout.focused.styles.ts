@@ -1,4 +1,8 @@
 import styled, { css } from "styled-components";
+import {
+  ModularPanelHeader,
+  ModulePanelButton,
+} from "./components/ModularPanel";
 
 const focusedExhibition = ".manifest-editor.exhibition-focused &";
 const darkFocusedExhibition = `[data-exhibition-theme="dark"] ${focusedExhibition}`;
@@ -99,6 +103,69 @@ export const CenterPanel = styled.div`
   ${darkFocusedExhibition} [class*="CanvasContainer"],
   ${darkFocusedExhibition} [class*="ViewerContainer"] {
     background: ${exhibitionColours.darkStage} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-workbench,
+  ${darkFocusedExhibition} .exhibition-slideshow-current-canvas {
+    background: ${exhibitionColours.darkApp} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-current-viewport,
+  ${darkFocusedExhibition} .exhibition-slideshow-preview-frame {
+    background: ${exhibitionColours.darkStage} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-heading {
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-muted {
+    color: ${exhibitionColours.darkMuted} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-preview-card,
+  ${darkFocusedExhibition} .exhibition-slideshow-slide-strip,
+  ${darkFocusedExhibition} .exhibition-slideshow-slide-card,
+  ${darkFocusedExhibition} .exhibition-slideshow-content-item,
+  ${darkFocusedExhibition} .exhibition-slideshow-content-empty,
+  ${darkFocusedExhibition} .exhibition-slideshow-navigation,
+  ${darkFocusedExhibition} .exhibition-slideshow-current-preview {
+    background: ${exhibitionColours.darkPanel} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-content-item-selected {
+    background: ${exhibitionColours.darkSelected} !important;
+    border-color: ${exhibitionColours.pink} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-toolbar,
+  ${darkFocusedExhibition} .exhibition-slideshow-current-toolbar {
+    background: ${exhibitionColours.darkPanelHeader} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-navigation button,
+  ${darkFocusedExhibition} .exhibition-slideshow-navigation-current,
+  ${darkFocusedExhibition} .exhibition-slideshow-toolbar button,
+  ${darkFocusedExhibition} .exhibition-slideshow-slide-card button,
+  ${darkFocusedExhibition} .exhibition-slideshow-content-item button,
+  ${darkFocusedExhibition} .exhibition-slideshow-current-control {
+    background: ${exhibitionColours.darkPanelSoft} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} .exhibition-slideshow-navigation button:not(:disabled):hover,
+  ${darkFocusedExhibition} .exhibition-slideshow-toolbar button:not(:disabled):hover,
+  ${darkFocusedExhibition} .exhibition-slideshow-slide-card button:not(:disabled):hover,
+  ${darkFocusedExhibition} .exhibition-slideshow-content-item button:not(:disabled):hover,
+  ${darkFocusedExhibition} .exhibition-slideshow-current-control:not(:disabled):hover {
+    background: ${exhibitionColours.darkHover} !important;
+    color: #fff !important;
   }
 `;
 
@@ -257,10 +324,37 @@ export const FloatingPanel = styled.aside<{
   }
 
   ${darkFocusedExhibition} {
+    --exhibition-primary: ${exhibitionColours.pink};
+    --exhibition-field-bg: ${exhibitionColours.darkPanelSoft};
+    --exhibition-field-border: ${exhibitionColours.darkBorder};
+    --exhibition-text: ${exhibitionColours.darkText};
+    --exhibition-muted: ${exhibitionColours.darkMuted};
+    --exhibition-button-bg: ${exhibitionColours.darkPanelSoft};
+    --exhibition-button-text: #fff;
+    --exhibition-inactive-button-text: ${exhibitionColours.darkText};
+
     background: ${exhibitionColours.darkPanel};
     border-color: ${exhibitionColours.darkBorderSoft};
     color: ${exhibitionColours.darkText};
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
+  }
+
+  ${darkFocusedExhibition} ${ModularPanelHeader} {
+    background: ${exhibitionColours.darkPanelHeader} !important;
+    border-color: ${exhibitionColours.darkBorder} !important;
+    color: ${exhibitionColours.darkText} !important;
+    box-shadow:
+      inset 0 -1px 0 0 ${exhibitionColours.darkBorder},
+      inset 0 1px 0 0 ${exhibitionColours.darkBorder} !important;
+  }
+
+  ${darkFocusedExhibition} ${ModulePanelButton} {
+    color: ${exhibitionColours.darkText} !important;
+  }
+
+  ${darkFocusedExhibition} ${ModulePanelButton}:hover {
+    background: ${exhibitionColours.darkHover} !important;
+    color: #fff !important;
   }
 
   ${darkFocusedExhibition} [class~="bg-white"],

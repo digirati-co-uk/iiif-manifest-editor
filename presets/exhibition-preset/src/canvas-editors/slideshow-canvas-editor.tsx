@@ -72,8 +72,8 @@ function SlideshowCanvasEditor() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-slate-100">
-      <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+    <div className="exhibition-slideshow-current-canvas flex h-full min-h-0 flex-col bg-slate-100">
+      <div className="exhibition-slideshow-current-toolbar flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="min-w-0 flex-1">
           <LocaleString className="block truncate text-sm font-semibold text-slate-800">
             {canvas.label}
@@ -115,9 +115,9 @@ function SlideshowCanvasEditor() {
           </ControlButton>
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto p-8">
+      <div className="exhibition-slideshow-current-viewport min-h-0 flex-1 overflow-auto p-8">
         <div
-          className="mx-auto origin-top overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
+          className="exhibition-slideshow-current-preview mx-auto origin-top overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
           style={{
             width: "min(100%, 1200px)",
             aspectRatio: `${canvas.width || 1920} / ${canvas.height || 1080}`,
@@ -145,7 +145,7 @@ function ControlButton({
 }) {
   return (
     <Button
-      className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+      className="exhibition-slideshow-current-control rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
       isDisabled={isDisabled}
       onPress={onPress}
     >

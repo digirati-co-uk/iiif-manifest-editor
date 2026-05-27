@@ -56,7 +56,7 @@ export function SlideshowContentPanel() {
     return (
       <div>
         <FieldLabel>Content on this slide</FieldLabel>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+        <p className="exhibition-workbench-muted mt-2 text-sm leading-relaxed">
           This slide does not have a content layer yet.
         </p>
       </div>
@@ -67,14 +67,14 @@ export function SlideshowContentPanel() {
     <div className="flex flex-col gap-5">
       <div>
         <FieldLabel>Content on this slide</FieldLabel>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+        <p className="exhibition-workbench-muted mt-2 text-sm leading-relaxed">
           Select a painting annotation to highlight it in the workbench. Use the
           centre panel to add, position, and edit slide content.
         </p>
       </div>
 
       {!hasContent ? (
-        <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+        <div className="exhibition-slideshow-content-empty rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm">
           No painting annotations on this slide yet.
         </div>
       ) : (
@@ -157,9 +157,9 @@ function ContentInventoryItem({
   return (
     <div
       className={[
-        "rounded-lg border bg-white p-3 transition",
+        "exhibition-slideshow-content-item rounded-lg border bg-white p-3 transition",
         selected
-          ? "border-me-primary-500 bg-me-primary-50 ring-2 ring-me-primary-100"
+          ? "exhibition-slideshow-content-item-selected border-me-primary-500 bg-me-primary-50 ring-2 ring-me-primary-100"
           : "border-slate-200",
       ].join(" ")}
     >
@@ -172,16 +172,16 @@ function ContentInventoryItem({
           <span className="block text-[11px] font-semibold uppercase tracking-wide text-me-primary-500">
             {type}
           </span>
-          <span className="mt-0.5 block truncate text-sm font-semibold text-slate-900">
+          <span className="mt-0.5 block truncate text-sm font-semibold">
             {label}
           </span>
-          <span className="mt-0.5 block truncate text-xs text-slate-500">
+          <span className="exhibition-workbench-muted mt-0.5 block truncate text-xs">
             {detail}
           </span>
         </span>
       </Button>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="text-xs text-slate-500">
+        <span className="exhibition-workbench-muted text-xs">
           {repositioning
             ? "Drag or resize in the workbench"
             : selected
@@ -225,9 +225,9 @@ function EditorialContentItem({
   return (
     <div
       className={[
-        "rounded-lg border bg-white p-3 transition",
+        "exhibition-slideshow-content-item rounded-lg border bg-white p-3 transition",
         selected
-          ? "border-me-primary-500 bg-me-primary-50 ring-2 ring-me-primary-100"
+          ? "exhibition-slideshow-content-item-selected border-me-primary-500 bg-me-primary-50 ring-2 ring-me-primary-100"
           : "border-slate-200",
       ].join(" ")}
     >
@@ -240,17 +240,17 @@ function EditorialContentItem({
           <span className="block text-[11px] font-semibold uppercase tracking-wide text-me-primary-500">
             Editorial text
           </span>
-          <span className="mt-0.5 block truncate text-sm font-semibold text-slate-900">
+          <span className="mt-0.5 block truncate text-sm font-semibold">
             Slide label and summary
           </span>
-          <span className="mt-0.5 block truncate text-xs text-slate-500">
+          <span className="exhibition-workbench-muted mt-0.5 block truncate text-xs">
             Position {Math.round(box.x)}, {Math.round(box.y)} ·{" "}
             {Math.round(box.width)} x {Math.round(box.height)}
           </span>
         </span>
       </Button>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="text-xs text-slate-500">
+        <span className="exhibition-workbench-muted text-xs">
           {repositioning
             ? "Drag or resize in the workbench"
             : selected
@@ -276,7 +276,7 @@ function ContentThumbnail({
   type: string;
 }) {
   return (
-    <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-slate-100 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">
+    <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-[#f8f6f3] text-xs font-semibold text-black/60 ring-1 ring-slate-200">
       {thumbnailUrl ? (
         <img
           alt=""

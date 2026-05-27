@@ -463,7 +463,7 @@ export default function BrowserEditor({
             <VaultProvider vault={vault}>
               <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
                 <Layout
-                  key={isFocusedExhibition ? `focused-exhibition-${exhibitionTheme}` : "editor-layout"}
+                  key={isFocusedExhibition ? "focused-exhibition" : "editor-layout"}
                   header={header}
                   layoutMode={layoutMode}
                   className={isFocusedExhibition ? "exhibition-focused" : undefined}
