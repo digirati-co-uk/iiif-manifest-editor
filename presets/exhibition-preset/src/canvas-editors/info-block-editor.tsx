@@ -5,7 +5,6 @@ import {
   useConfig,
   useGenericEditor,
   useInlineCreator,
-  useLayoutActions,
   useLocalStorage,
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -16,7 +15,6 @@ import {
   type TextualContentStrategy,
   useAnnotation,
   useCanvas,
-  useManifest,
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
@@ -209,9 +207,7 @@ function collectLanguagesFromPage(page: any, vault: any): string[] {
 
 function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const canvas = useCanvas();
-  const manifest = useManifest();
   const vault = useVault();
-  const { edit } = useLayoutActions();
   const behavior = canvas?.behavior || [];
   const dims = getHeightWidthRatio(behavior);
   const hasDimension = Boolean(dims.h && dims.w);
@@ -256,15 +252,6 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
     setSelectedLanguage(lang);
   };
 
-  const items = manifest?.items || [];
-  const currentIndex = canvas ? items.findIndex((item) => item.id === canvas.id) : -1;
-  const previousCanvas = currentIndex > 0 ? items[currentIndex - 1] : undefined;
-  const nextCanvas = currentIndex >= 0 && currentIndex < items.length - 1 ? items[currentIndex + 1] : undefined;
-
-  const navigateTo = (item: { id: string }) => {
-    edit({ id: item.id, type: "Canvas" }, undefined, { forceOpen: false });
-  };
-
   // For narrow columns (w <= 6), cap the editor width so it doesn't sprawl
   const editorMaxWidth = compact ? "28rem" : undefined;
 
@@ -275,14 +262,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
         <div className="min-w-0 flex-1">
           <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas?.label}</LocaleString>
         </div>
-        {/* Previous / Next and Edit / Preview toggle — top-right, matching image viewer */}
         <div className="flex items-center gap-2">
-          <NavButton isDisabled={!previousCanvas} onPress={() => previousCanvas && navigateTo(previousCanvas)}>
-            Previous
-          </NavButton>
-          <NavButton isDisabled={!nextCanvas} onPress={() => nextCanvas && navigateTo(nextCanvas)}>
-            Next
-          </NavButton>
           {mode === "edit" && (
             <LanguageSelector
               selectedLanguage={effectiveLanguage}
@@ -363,18 +343,6 @@ function ModeButton({ children, selected, onPress }: { children: string; selecte
         "px-3 py-2 text-xs font-semibold transition",
         selected ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700",
       )}
-      onPress={onPress}
-    >
-      {children}
-    </Button>
-  );
-}
-
-function NavButton({ children, isDisabled, onPress }: { children: string; isDisabled?: boolean; onPress: () => void }) {
-  return (
-    <Button
-      className="exhibition-slideshow-current-control rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-      isDisabled={isDisabled}
       onPress={onPress}
     >
       {children}

@@ -59,7 +59,7 @@ export const exhibitionViewerTailwindColors = {
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./content/**/*.{md,mdx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./content/**/*.{md,mdx}", "../../packages/shell/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     colors: {
       //

@@ -42,6 +42,7 @@ export * from "./Layout/Layout.hooks";
 export * from "./Layout/Layout.reducer";
 export * from "./Layout/Layout.supports";
 export * from "./Layout/Layout.types";
+export * from "./ManifestPaginationNavigation";
 export * from "./PluginContext/PluginContext";
 export * from "./PluginContext/PluginContext.helpers";
 export * from "./PluginContext/PluginContext.store";

@@ -30,6 +30,7 @@ import {
   type EditorDefinition,
   extendApp,
   Layout,
+  ManifestPaginationNavigation,
   type LayoutPanel,
   type MappedApp,
   type MappedPlugin,
@@ -372,11 +373,11 @@ export default function BrowserEditor({
       <header
         className={
           isFocusedExhibition
-            ? `h-[64px] flex w-full gap-12 px-6 items-center border-b border-white/10 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
-            : "h-[64px] flex w-full gap-12 px-4 items-center shadow"
+            ? `h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-6 items-center border-b border-white/10 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : "h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-4 items-center shadow"
         }
       >
-        <Link href="/" className="flex justify-start items-center gap-2">
+        <Link href="/" className="flex min-w-0 items-center justify-start gap-2">
           {isFocusedExhibition ? (
             <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
           ) : (
@@ -386,8 +387,11 @@ export default function BrowserEditor({
             </>
           )}
         </Link>
-        <div className="flex-1" />
-        <div className="flex items-center justify-center gap-5">
+        <ManifestPaginationNavigation
+          className="justify-self-center"
+          variant={isFocusedExhibition ? "dark" : "light"}
+        />
+        <div className="flex min-w-0 items-center justify-end gap-5">
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
           <div className="flex items-center gap-2">
