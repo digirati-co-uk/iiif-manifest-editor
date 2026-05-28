@@ -1,11 +1,10 @@
 "use client";
 import {
   exhibitionEditorPreset,
-  exhibitionEditorSlideshowPreset,
   exhibitionEditorScrollingPreset,
+  exhibitionEditorSlideshowPreset,
 } from "@manifest-editor/exhibition-preset";
-import type { Config } from "@manifest-editor/shell";
-import type { MappedApp } from "@manifest-editor/shell";
+import type { Config, MappedApp } from "@manifest-editor/shell";
 import type { Step } from "react-joyride";
 import BrowserEditor from "../browser-editor/BrowserEditor";
 import { OnboardingTour } from "../OnboardingTour";
@@ -28,6 +27,14 @@ type ExhibitionLayoutPreset = "full-page" | "scroll" | "slideshow";
 const defaultConfig: Partial<Config> = {
   previews: [
     {
+      id: "delft-theme",
+      type: "external-manifest-preview",
+      label: "Page Exhibition",
+      config: {
+        url: "https://preview.exhibitionviewer.org/preview/delft?manifest={manifestId}",
+      },
+    },
+    {
       id: "scroll-theme",
       type: "external-manifest-preview",
       label: "Scrolling exhibition",
@@ -36,43 +43,43 @@ const defaultConfig: Partial<Config> = {
       },
     },
     {
-      id: "delft-theme",
-      type: "external-manifest-preview",
-      label: "Delft exhibition",
-      config: {
-        url: "https://preview.exhibitionviewer.org/preview/delft?manifest={manifestId}",
-      },
-    },
-    {
       id: "delft-slideshow",
       type: "external-manifest-preview",
-      label: "Delft slideshow",
+      label: "Slideshow Exhibition",
       config: {
         url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}",
       },
     },
+    // {
+    //   id: "minimal-theme",
+    //   type: "external-manifest-preview",
+    //   label: "Light exhibition",
+    //   config: {
+    //     url: "https://preview.exhibitionviewer.org/preview/minimal?manifest={manifestId}",
+    //   },
+    // },
+    // {
+    //   id: "minimal-slideshow",
+    //   type: "external-manifest-preview",
+    //   label: "Light slideshow",
+    //   config: {
+    //     url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true",
+    //   },
+    // },
+    // {
+    //   id: "minimal-floating-tour",
+    //   type: "external-manifest-preview",
+    //   label: "Floating tour",
+    //   config: {
+    //     url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true&floating=true",
+    //   },
+    // },
     {
-      id: "minimal-theme",
+      id: "theseus-viewer",
       type: "external-manifest-preview",
-      label: "Light exhibition",
+      label: "Theseus Viewer",
       config: {
-        url: "https://preview.exhibitionviewer.org/preview/minimal?manifest={manifestId}",
-      },
-    },
-    {
-      id: "minimal-slideshow",
-      type: "external-manifest-preview",
-      label: "Light slideshow",
-      config: {
-        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true",
-      },
-    },
-    {
-      id: "minimal-floating-tour",
-      type: "external-manifest-preview",
-      label: "Floating tour",
-      config: {
-        url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true&floating=true",
+        url: "https://theseusviewer.org?iiif-content={manifestId}",
       },
     },
     {
