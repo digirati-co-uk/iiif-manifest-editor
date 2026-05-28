@@ -1,17 +1,25 @@
 import "@mdxeditor/editor/style.css";
 import {
   MDXEditor as BaseMDXEditor,
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CreateLink,
+  InsertImage,
+  ListsToggle,
   type MDXEditorMethods,
   type MDXEditorProps,
+  UndoRedo,
   codeBlockPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
   headingsPlugin,
   imagePlugin,
+  linkDialogPlugin,
   linkPlugin,
   listsPlugin,
   quotePlugin,
   thematicBreakPlugin,
+  toolbarPlugin,
 } from "@mdxeditor/editor";
 import { type ForwardedRef, useMemo } from "react";
 
@@ -31,7 +39,20 @@ export function MDXEditor({
           quotePlugin(),
           thematicBreakPlugin(),
           imagePlugin(),
+          linkDialogPlugin(),
           diffSourcePlugin(),
+          toolbarPlugin({
+            toolbarContents: () => (
+              <>
+                <UndoRedo />
+                <BoldItalicUnderlineToggles />
+                <BlockTypeSelect />
+                <ListsToggle options={["bullet", "number"]} />
+                <CreateLink />
+                <InsertImage />
+              </>
+            ),
+          }),
         ],
         [],
       )}

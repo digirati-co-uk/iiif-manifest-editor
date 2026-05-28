@@ -22,6 +22,7 @@ import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
 import { getPaintingAnnotations, getResolvedAnnotationBody } from "../slideshow-content-positioning";
 import { buildLayoutPresetBehaviors, getLayoutPreset, LayoutPresetCard, layoutPresetOptions } from "./SlideBehaviours";
+import { getLanguageMapHtml } from "./summary-html";
 
 export const exhibitionCanvasEditor: EditorDefinition = {
   id: "@exhibition/right-panel-editor",
@@ -148,7 +149,7 @@ function ReadonlyExhibitionSummary({ canvas }: { canvas: any }) {
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
   const label = getLanguageMapText(canvas.label) || "Untitled";
-  const summary = getLanguageMapText(canvas.summary);
+  const summary = getLanguageMapHtml(canvas.summary);
 
   useEffect(() => {
     const element = summaryRef.current;
@@ -198,7 +199,14 @@ function ReadonlyExhibitionSummary({ canvas }: { canvas: any }) {
               expanded ? "" : "max-h-32 overflow-hidden",
             ].join(" ")}
           >
-            {summary || <span className="text-[#6a625c]">No summary added.</span>}
+            {summary ? (
+              <div
+                className="prose prose-sm max-w-none prose-p:my-2 prose-headings:my-2 prose-ul:my-2 prose-ol:my-2"
+                dangerouslySetInnerHTML={{ __html: summary }}
+              />
+            ) : (
+              <span className="text-[#6a625c]">No summary added.</span>
+            )}
           </div>
           {canExpand || expanded ? (
             <button

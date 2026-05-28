@@ -111,7 +111,7 @@ export function getGridStats(behavior?: string[]) {
 export function isEditableExhibitionCanvas(resource: { id: string; type: string }, vault: Vault) {
   const full = vault.get(resource);
 
-  return full.type === "Canvas";
+  return full?.type === "Canvas";
 }
 
 /**

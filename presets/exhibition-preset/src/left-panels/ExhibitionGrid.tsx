@@ -49,7 +49,7 @@ function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
   const { structural, technical } = useManifestEditor();
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const items = structural.items.get();
+  const items = structural.items.get() || [];
   const editingCanvas = useInStack("Canvas");
   const selectedCanvasId = editingCanvas?.resource.source.id;
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
