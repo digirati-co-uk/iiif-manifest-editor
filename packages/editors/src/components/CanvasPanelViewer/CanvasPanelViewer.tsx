@@ -75,14 +75,46 @@ export interface CanvasPanelViewerProps {
   onEditAnnotation?: (id: string) => void;
   highlightAnnotation?: string;
   createAnnotation?: (data: any) => void;
+
+  /**
+   * Optional controlled create mode for consumers that embed the Atlas viewer
+   * outside the standard CanvasPanelEditor shell.
+   */
+  createMode?: boolean;
+  onCreateModeChange?: (createMode: boolean) => void;
+
+  /**
+   * Optional controlled edit mode for consumers that need the annotation tools
+   * without the normal ViewControls wrapper.
+   */
+  controlledEditMode?: boolean;
+  onControlledEditModeChange?: (editMode: boolean) => void;
+
+  /**
+   * When provided with controlledEditMode, this annotation is pushed into the
+   * annotation editing store so the SVG tools can edit its target.
+   */
+  editingAnnotationId?: string | null;
+
+  /**
+   * Forces the Atlas annotation toolbar to be visible even if the request store
+   * has not explicitly enabled it yet. Useful in embedded workbench modes.
+   */
+  forceAnnotationTools?: boolean;
 }
 
 export function CanvasPanelViewer({
-  asFallback,
-  onEditAnnotation,
-  highlightAnnotation,
-  createAnnotation,
-}: CanvasPanelViewerProps) {
+                                    asFallback,
+                                    onEditAnnotation,
+                                    highlightAnnotation,
+                                    createAnnotation,
+                                    createMode: controlledCreateMode,
+                                    onCreateModeChange,
+                                    controlledEditMode,
+                                    onControlledEditModeChange,
+                                    editingAnnotationId,
+                                    forceAnnotationTools = false,
+                                  }: CanvasPanelViewerProps) {
   const app = useApp();
   const { state } = useAppState();
   const runtime = useRef<Runtime>();
@@ -132,11 +164,47 @@ export function CanvasPanelViewer({
   }, []);
 
   const { rightPanel } = useLayoutState();
-  const { editMode, toggleEditMode } = useEditingMode();
-  const [createMode, toggleCreateAnnotation] = useReducer(
+  const { editMode: internalEditMode, toggleEditMode: toggleInternalEditMode } = useEditingMode();
+  const [internalCreateMode, setInternalCreateMode] = useReducer(
     (a: boolean, action?: boolean) =>
       typeof action === "undefined" ? !a : action,
     false,
+  );
+
+  const editMode = typeof controlledEditMode === "boolean" ? controlledEditMode : internalEditMode;
+  const createMode = typeof controlledCreateMode === "boolean" ? controlledCreateMode : internalCreateMode;
+
+  const toggleEditMode = useCallback(
+    (next?: boolean) => {
+      const nextValue = typeof next === "undefined" ? !editMode : next;
+
+      if (typeof controlledEditMode === "boolean") {
+        onControlledEditModeChange?.(nextValue);
+        return;
+      }
+
+      if (typeof next === "boolean") {
+        (toggleInternalEditMode as any)(next);
+        return;
+      }
+
+      toggleInternalEditMode();
+    },
+    [controlledEditMode, editMode, onControlledEditModeChange, toggleInternalEditMode],
+  );
+
+  const toggleCreateAnnotation = useCallback(
+    (next?: boolean) => {
+      const nextValue = typeof next === "undefined" ? !createMode : next;
+
+      if (typeof controlledCreateMode === "boolean") {
+        onCreateModeChange?.(nextValue);
+        return;
+      }
+
+      setInternalCreateMode(nextValue);
+    },
+    [controlledCreateMode, createMode, onCreateModeChange],
   );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
@@ -155,6 +223,14 @@ export function CanvasPanelViewer({
   const { resources, regions } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } =
     useAnnotationEditing();
+
+  useEffect(() => {
+    if (!editingAnnotationId || !editMode) {
+      return;
+    }
+
+    setAnnotation(editingAnnotationId);
+  }, [editingAnnotationId, editMode, setAnnotation]);
   const [complete] = useTaskRunner("refresh-canvas", () => {
     refresh();
     complete();
@@ -293,8 +369,8 @@ export function CanvasPanelViewer({
 
                       {!currentlyEditingAnnotation && resources.length
                         ? resources.map((resource) => (
-                            <Highlight key={resource} id={resource} />
-                          ))
+                          <Highlight key={resource} id={resource} />
+                        ))
                         : null}
 
                       {Object.keys(regions).map((key) => {
@@ -331,7 +407,7 @@ export function CanvasPanelViewer({
                 </AdditionalContextBridgeInner>
               </CanvasPanel.Viewer>
             </AuthProvider>
-            <AnnotationEditingTools />
+            <AnnotationEditingTools forceVisible={forceAnnotationTools || editMode || createMode || Boolean(editingAnnotationId)} />
           </S.ViewerContainer>
         </S.Container>
         <div id="floating-ui" />

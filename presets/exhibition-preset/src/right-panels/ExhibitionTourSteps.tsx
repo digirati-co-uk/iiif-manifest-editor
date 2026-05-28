@@ -100,16 +100,82 @@ export function ExhibitionTourStepsContent({
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const itemsAnnotationPage = canvas?.items?.[0];
-  const creator = useInlineCreator();
   const [reorderable, setReorderable] = useState(false);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const stopContentRepositioning = useSlideshowContentPositioning((state) => state.stopRepositioning);
   const stopTextRepositioning = useSlideshowContentPositioning((state) => state.stopTextRepositioning);
+  const { requestTourStep, isPending, busy } = useTourStepAnnotationRequest({
+    onBeforeRequest: useSlideshowWorkbench
+      ? () => {
+          setShowTourSteps(true);
+          stopContentRepositioning();
+          stopTextRepositioning();
+        }
+      : undefined,
+  });
+
+  if (!canvas) return null;
+  if (!firstAnnotationPage) {
+    return <PromptCreationOfTourSteps />;
+  }
+
+  const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
+
+  return (
+    <>
+      <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
+        <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
+        {mode === "advanced" ? (
+          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
+        ) : null}
+      </div>
+
+      <ResourceEditingProvider resource={canvas}>
+        <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
+          <div className="flex flex-col gap-4">
+            <TourAnnotationPageEditor
+              reorderable={mode === "advanced" ? reorderable : false}
+              useSlideshowWorkbench={useSlideshowWorkbench}
+            />
+
+            {!busy ? (
+              isPending ? (
+                <PendingTourStepAnnotation />
+              ) : (
+                <Button
+                  onPress={requestTourStep}
+                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+                >
+                  + Add new step
+                </Button>
+              )
+            ) : null}
+          </div>
+          {showPaintingAnnotations && itemsAnnotationPage ? (
+            <>
+              <PromptToAddPaintingAnnotations
+                title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
+                painting={itemsAnnotationPage}
+                page={firstAnnotationPage}
+                canvasId={canvas.id}
+              />
+            </>
+          ) : null}
+        </AnnotationPageContext>
+      </ResourceEditingProvider>
+    </>
+  );
+}
+
+export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequest?: () => void } = {}) {
+  const canvas = useCanvas();
+  const firstAnnotationPage = canvas?.annotations?.[0];
+  const creator = useInlineCreator();
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       const bodyValue = resp.metadata.bodyValue || "";
 
-      if (!resp.cancelled && resp.target && firstAnnotationPage) {
+      if (!resp.cancelled && resp.target && canvas && firstAnnotationPage) {
         creator.create(
           "@manifest-editor/html-annotation",
           {
@@ -147,102 +213,18 @@ export function ExhibitionTourStepsContent({
     },
   });
 
-  if (!canvas) return null;
-  if (!firstAnnotationPage) {
-    return <PromptCreationOfTourSteps />;
-  }
-
-  const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
-  const createSlideshowWorkbenchStep = () => {
-    const annotationWidth = Math.round((canvas.width || 1920) * 0.3);
-    const annotationHeight = Math.round((canvas.height || 1080) * 0.3);
-    const annotationX = Math.round((canvas.width || 1920) * 0.1);
-    const annotationY = Math.round((canvas.height || 1080) * 0.1);
-
-    creator.create(
-      "@manifest-editor/html-annotation",
-      {
-        label: { en: ["Tour step"] },
-        body: { en: ["<h2>New step</h2><p>Description</p>"] },
-        motivation: "tagging",
-      },
-      {
-        target: { id: canvas.id, type: "Canvas" },
-        targetType: "Annotation",
-        parent: {
-          property: "items",
-          resource: {
-            id: firstAnnotationPage.id,
-            type: "AnnotationPage",
-          },
-        },
-        initialData: {
-          getSerialisedSelector: () => ({
-            type: "FragmentSelector",
-            value: `xywh=${annotationX},${annotationY},${annotationWidth},${annotationHeight}`,
-          }),
-        },
-      },
-    );
-    setShowTourSteps(true);
-    stopContentRepositioning();
-    stopTextRepositioning();
+  const requestTourStep = () => {
+    onBeforeRequest?.();
+    requestAnnotation({
+      type: "box",
+      annotationPopup: <ExhibitionTourStepPopup />,
+    });
   };
 
-  return (
-    <>
-      <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
-        <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
-        {mode === "advanced" ? (
-          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
-        ) : null}
-      </div>
-
-      <ResourceEditingProvider resource={canvas}>
-        <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
-          <div className="flex flex-col gap-4">
-            <TourAnnotationPageEditor
-              reorderable={mode === "advanced" ? reorderable : false}
-              useSlideshowWorkbench={useSlideshowWorkbench}
-            />
-
-            {useSlideshowWorkbench ? (
-              <Button
-                onPress={createSlideshowWorkbenchStep}
-                className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
-              >
-                + Add new step
-              </Button>
-            ) : !busy ? (
-              isPending ? (
-                <PendingTourStepAnnotation />
-              ) : (
-                <Button
-                  onPress={() =>
-                    requestAnnotation({
-                      type: "box",
-                      annotationPopup: <ExhibitionTourStepPopup />,
-                    })
-                  }
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
-                >
-                  + Add new step
-                </Button>
-              )
-            ) : null}
-          </div>
-          {showPaintingAnnotations && itemsAnnotationPage ? (
-            <>
-              <PromptToAddPaintingAnnotations
-                title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
-                painting={itemsAnnotationPage}
-                page={firstAnnotationPage}
-                canvasId={canvas.id}
-              />
-            </>
-          ) : null}
-        </AnnotationPageContext>
-      </ResourceEditingProvider>
-    </>
-  );
+  return {
+    requestTourStep,
+    isPending,
+    busy,
+    canRequestTourStep: Boolean(canvas && firstAnnotationPage),
+  };
 }

@@ -113,8 +113,10 @@ export function TourNormalAnnotationEditor({
           <ActionButton
             isDisabled={busy}
             onPress={() => {
-              if (showInSlideshowWorkbench()) {
-                return;
+              if (useSlideshowWorkbench && annotation?.id) {
+                setShowTourSteps(true);
+                startTourStepRepositioning(annotation.id);
+                requestWorkbenchTab("tour");
               }
 
               setIsOpen(true);

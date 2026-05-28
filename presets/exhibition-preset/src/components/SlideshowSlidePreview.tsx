@@ -44,7 +44,6 @@ export function SlideshowSlidePreview({
     startRepositioning,
     selectTextRegion,
     selectTourStep,
-    startTourStepRepositioning,
   } = useSlideshowContentPositioning();
 
   useEffect(() => {
@@ -182,16 +181,11 @@ export function SlideshowSlidePreview({
               key={annotation.id}
               annotation={annotation}
               canvas={canvas}
-              stage={stageRef}
-              vault={vault}
               index={index}
               selected={selectedTourStepId === annotation.id}
               repositioning={repositioningTourStepId === annotation.id}
               onSelect={() => {
                 selectTourStep(annotation.id);
-              }}
-              onStartReposition={() => {
-                startTourStepRepositioning(annotation.id);
               }}
             />
           ))
@@ -203,23 +197,17 @@ export function SlideshowSlidePreview({
 function TourStepTarget({
   annotation,
   canvas,
-  stage,
-  vault,
   index,
   selected,
   repositioning,
   onSelect,
-  onStartReposition,
 }: {
   annotation: any;
   canvas: any;
-  stage: RefObject<HTMLDivElement | null>;
-  vault: any;
   index: number;
   selected: boolean;
   repositioning: boolean;
   onSelect: () => void;
-  onStartReposition: () => void;
 }) {
   const box = getAnnotationTargetBox(annotation, canvas);
   const canvasWidth = Number(canvas.width) || 1920;
@@ -229,8 +217,9 @@ function TourStepTarget({
   return (
     <div
       className={twMerge(
-        "absolute z-30 select-none border-2 border-me-primary-500 bg-me-primary-500/10 touch-none",
-        repositioning ? "cursor-move" : "cursor-pointer",
+        "absolute select-none border-2 border-me-primary-500 bg-me-primary-500/10 touch-none",
+        selected ? "z-40" : "z-30",
+        repositioning ? "cursor-pointer" : "cursor-pointer",
         selected ? "border-4" : "ring-2 ring-white",
       )}
       style={{
@@ -247,17 +236,8 @@ function TourStepTarget({
           : {}),
       }}
       onPointerDown={(event) => {
+        event.stopPropagation();
         onSelect();
-        onStartReposition();
-        startSlideLayerDrag({
-          event,
-          mode: "move",
-          canvas,
-          annotation,
-          vault,
-          startBox: box,
-          stage: stage.current,
-        });
       }}
     >
       <span
@@ -269,23 +249,6 @@ function TourStepTarget({
       >
         Step {index + 1}
       </span>
-      {repositioning ? (
-        <div
-          className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
-          onPointerDown={(event) => {
-            event.stopPropagation();
-            startSlideLayerDrag({
-              event,
-              mode: "resize",
-              canvas,
-              annotation,
-              vault,
-              startBox: box,
-              stage: stage.current,
-            });
-          }}
-        />
-      ) : null}
     </div>
   );
 }

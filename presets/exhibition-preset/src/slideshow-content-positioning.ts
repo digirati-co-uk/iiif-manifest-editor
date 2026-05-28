@@ -215,6 +215,34 @@ export function getAnnotationTargetBox(
   }
 
   const selector = target?.selector;
+  const spatialSelector = Array.isArray(selector)
+    ? selector.find((item: any) => item?.spatial || item?.points)
+    : selector;
+
+  if (spatialSelector?.spatial) {
+    return spatialSelector.spatial;
+  }
+
+  if (Array.isArray(spatialSelector?.points)) {
+    const points = spatialSelector.points.filter(
+      (point: any) => Array.isArray(point) && Number.isFinite(point[0]) && Number.isFinite(point[1]),
+    );
+
+    if (points.length) {
+      const xs = points.map((point: any) => point[0]);
+      const ys = points.map((point: any) => point[1]);
+      const minX = Math.min(...xs);
+      const minY = Math.min(...ys);
+
+      return {
+        x: minX,
+        y: minY,
+        width: Math.max(1, Math.max(...xs) - minX),
+        height: Math.max(1, Math.max(...ys) - minY),
+      };
+    }
+  }
+
   const value = Array.isArray(selector)
     ? selector.find((item: any) => item?.value?.startsWith?.("xywh="))?.value
     : selector?.value;

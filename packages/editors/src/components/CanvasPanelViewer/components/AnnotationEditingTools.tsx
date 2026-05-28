@@ -15,7 +15,7 @@ import {
   TriangleIcon,
 } from "./SVGIcons";
 
-export function AnnotationEditingTools() {
+export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?: boolean }) {
   const store = useAtlasStore();
   const tool = useStore(store, (s) => s.tool);
   const mode = useStore(store, (s) => s.mode);
@@ -24,12 +24,12 @@ export function AnnotationEditingTools() {
   const toolType = useStore(store, (s) => (s.tool.requestId ? s.requests[s.tool.requestId]?.type : undefined));
   const { remove, draw, hexagon, line, lineBox, polygon, square, triangle, circle } = tools;
 
-  if (!tool.enabled) {
+  if (!tool.enabled && !forceVisible) {
     return null;
   }
 
   return (
-    <div className="animate-fadeIn absolute bottom-3 left-0 right-0 z-30 w-full items-center justify-center flex gap-5 pointer-events-none">
+    <div className="animate-fadeIn absolute bottom-3 left-0 right-0 z-30 flex w-full items-center justify-center gap-5 pointer-events-none">
       <div className="rounded-lg bg-white flex p-1.5 shadow gap-1.5 pointer-events-auto">
         <IconButton onPress={() => changeMode("explore")} active={mode === "explore"} label="Pan and zoom">
           <PanIcon />
