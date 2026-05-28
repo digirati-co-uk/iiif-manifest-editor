@@ -1,11 +1,11 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
 import { type EditorDefinition, ResourceEditingProvider, useLocalStorage } from "@manifest-editor/shell";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
-import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import { supportsTourSteps, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import { ExhibitionSummaryContent } from "./ExhibitionSummaryEditor";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { InfoBoxPanel } from "./InfoBoxPanel";
@@ -75,19 +75,38 @@ export const slideshowWorkbenchEditor: EditorDefinition = {
 function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: WorkbenchPreset }) {
   const [mode, setMode] = useLocalStorage<EditingMode>(workbenchStorageKey, "simple");
   const canvas = useCanvas();
+  const vault = useVault();
   const isInfoBox = Boolean(canvas?.behavior?.includes("info"));
+  const tourSupported = supportsTourSteps(vault, canvas);
 
-  const tabs = preset === "slideshow" ? slideshowTabs : defaultTabs;
+  const tabs = useMemo(
+    () => (preset === "slideshow" ? slideshowTabs : defaultTabs).filter((tab) => tab.id !== "tour" || tourSupported),
+    [preset, tourSupported],
+  );
   const [selectedTab, setSelectedTab] = useState<RightPanelTab>("layout");
   const requestedTab = useSlideshowWorkbenchState((state) => state.requestedTab);
   const clearRequestedTab = useSlideshowWorkbenchState((state) => state.clearRequestedTab);
+  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
 
   useEffect(() => {
     if (requestedTab && tabs.some((tab) => tab.id === requestedTab)) {
       setSelectedTab(requestedTab as RightPanelTab);
+      setShowTourSteps(requestedTab === "tour");
       clearRequestedTab();
     }
-  }, [clearRequestedTab, requestedTab, tabs]);
+  }, [clearRequestedTab, requestedTab, setShowTourSteps, tabs]);
+
+  useEffect(() => {
+    if (selectedTab === "tour" && !tourSupported) {
+      setSelectedTab("layout");
+      setShowTourSteps(false);
+    }
+  }, [selectedTab, setShowTourSteps, tourSupported]);
+
+  const selectTab = (tab: RightPanelTab) => {
+    setSelectedTab(tab);
+    setShowTourSteps(tab === "tour");
+  };
 
   // For info-box canvases inside the slideshow singleTab context, render the
   // dedicated InfoBoxPanel directly — no nested tabs, no double toggle.
@@ -116,7 +135,7 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
                 "-mb-px border-b-[3px] border-transparent px-1 pb-3 text-center text-sm font-semibold",
                 selectedTab === tab.id ? "border-me-primary-500 text-me-primary-500" : "exhibition-workbench-muted",
               ].join(" ")}
-              onClick={() => setSelectedTab(tab.id)}
+              onClick={() => selectTab(tab.id)}
             >
               {tab.label}
             </button>

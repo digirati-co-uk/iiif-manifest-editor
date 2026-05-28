@@ -8,7 +8,7 @@ import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-ii
 import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
-import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
@@ -21,8 +21,8 @@ export const exhibitionTourSteps: EditorDefinition = {
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
-      // Tour steps are not supported for textual-content (info box) canvases.
-      return !isInfoBoxCanvas(resource as any, vault);
+      // Tour steps are supported for image canvases only.
+      return !isInfoBoxCanvas(resource as any, vault) && !isVideoCanvas(resource as any, vault);
     },
   },
   label: "Tour steps",

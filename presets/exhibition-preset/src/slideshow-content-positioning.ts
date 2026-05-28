@@ -155,6 +155,18 @@ export function getTourStepAnnotations(vault: any, canvas: any) {
   return getPageAnnotations(vault, canvas?.annotations || []);
 }
 
+export function supportsTourSteps(vault: any, canvas: any): boolean {
+  if (!canvas) return false;
+
+  const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+  if (behavior.includes("info")) return false;
+
+  return !getPaintingAnnotations(vault, canvas).some((annotation: any) => {
+    const body = getResolvedAnnotationBody(vault, annotation);
+    return Boolean(getVideoUrl(body) || getYouTubeId(body));
+  });
+}
+
 function getPageAnnotations(vault: any, pageRefs: any[]) {
   const annotations = [];
 

@@ -37,6 +37,7 @@ import {
   getSlideLayoutRegions,
   getTourStepAnnotations,
   repairSlideContentTargets,
+  supportsTourSteps,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -410,6 +411,8 @@ function SelectedSlidePreview() {
       ),
     )
     : -1;
+  const tourSupported = supportsTourSteps(vault, canvas);
+  const tourAuthoringActive = showTourSteps && tourSupported;
 
   const selectTourStepAtIndex = (index: number) => {
     const tourStep = tourSteps[index];
@@ -425,6 +428,20 @@ function SelectedSlidePreview() {
     setTargetDrawingMode(null);
     setTargetDrawingTool("box");
   }, [canvas?.id]);
+
+  useEffect(() => {
+    if (!tourSupported && showTourSteps) {
+      setShowTourSteps(false);
+      stopTourStepRepositioning();
+      setTargetDrawingMode(null);
+    }
+  }, [setShowTourSteps, showTourSteps, stopTourStepRepositioning, tourSupported]);
+
+  useEffect(() => {
+    if (tourAuthoringActive) {
+      setMode("edit");
+    }
+  }, [tourAuthoringActive]);
 
   useEffect(() => {
     if (previousAnnotationCount.current === null) {
@@ -552,18 +569,20 @@ function SelectedSlidePreview() {
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
             <>
-              <Button
-                className={twMerge(
-                  "rounded-md border px-3 py-2 text-xs font-semibold shadow-sm transition",
-                  showTourSteps
-                    ? "border-me-primary-500 bg-me-primary-50 text-me-primary-600"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-me-primary-300",
-                )}
-                onPress={toggleTourSteps}
-              >
-                {showTourSteps ? "Hide tour steps" : "Show tour steps"}
-              </Button>
-              {showTourSteps ? (
+              {tourSupported ? (
+                <Button
+                  className={twMerge(
+                    "rounded-md border px-3 py-2 text-xs font-semibold shadow-sm transition",
+                    tourAuthoringActive
+                      ? "border-me-primary-500 bg-me-primary-50 text-me-primary-600"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-me-primary-300",
+                  )}
+                  onPress={toggleTourSteps}
+                >
+                  {tourAuthoringActive ? "Hide tour steps" : "Show tour steps"}
+                </Button>
+              ) : null}
+              {tourAuthoringActive ? (
                 <>
                   <TourStepNavigation
                     current={selectedTourStepIndex + 1}
@@ -630,7 +649,7 @@ function SelectedSlidePreview() {
         <SlideshowSlidePreview
           editable={mode === "edit"}
           mode={mode}
-          showTourSteps={showTourSteps}
+          showTourSteps={tourAuthoringActive}
         />
 
         {targetDrawingMode && canvas && annotationPageId ? (
@@ -655,7 +674,7 @@ function SelectedSlidePreview() {
 
         {!targetDrawingMode &&
         mode === "edit" &&
-        !showTourSteps &&
+        !tourAuthoringActive &&
         selectedAnnotation &&
         canvas ? (
           <CentrePositionControls
@@ -672,7 +691,7 @@ function SelectedSlidePreview() {
 
         {!targetDrawingMode &&
         mode === "edit" &&
-        !showTourSteps &&
+        !tourAuthoringActive &&
         selectedTextRegionBox &&
         canvas ? (
           <CentrePositionControls
@@ -687,7 +706,7 @@ function SelectedSlidePreview() {
           />
         ) : null}
 
-        {!targetDrawingMode && mode === "edit" && showTourSteps && canvas ? (
+        {!targetDrawingMode && mode === "edit" && tourAuthoringActive && canvas ? (
           selectedTourStep ? (
             <CentrePositionControls
               annotation={selectedTourStep}

@@ -14,6 +14,7 @@ import { twMerge } from "tailwind-merge";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import { ExhibitionThumbnailEditor } from "./ExhibitionThumbnailEditor";
 
 type EditingMode = "simple" | "advanced";
 type LayoutEditingContext = "default" | "slideshow";
@@ -322,6 +323,8 @@ export function SlideBehavioursContent({
         }}
         configs={exhibitionConfigs}
       />
+
+      <ExhibitionThumbnailEditor />
     </>
   );
 }
