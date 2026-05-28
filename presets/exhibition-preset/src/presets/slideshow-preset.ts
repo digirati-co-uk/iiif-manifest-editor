@@ -49,7 +49,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     leftPanels: [
       //
       slideshowGridLeftPanel,
-      exhibitionOverviewLeftPanel,
+      // exhibitionOverviewLeftPanel,
     ],
     centerPanels: [
       //

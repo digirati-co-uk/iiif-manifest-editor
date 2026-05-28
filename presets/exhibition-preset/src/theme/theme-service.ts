@@ -171,7 +171,7 @@ const DEFAULT_SCROLL_TOKENS: ScrollThemeTokens = {
 
 const DEFAULT_EXHIBITION_OPTIONS: DelftExhibitionThemeOptions = {
   cutCorners: true,
-  fullTitleBar: false,
+  fullTitleBar: true,
   fullWidthGrid: false,
   hideTableOfContents: false,
   disablePresentation: false,

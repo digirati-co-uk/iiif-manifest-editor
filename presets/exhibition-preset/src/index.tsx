@@ -58,7 +58,7 @@ export const exhibitionEditorPreset = extendApp(
     leftPanels: [
       //
       exhibitionGridLeftPanel,
-      exhibitionOverviewLeftPanel,
+      // exhibitionOverviewLeftPanel,
       exhibitionThemeLeftPanel,
     ],
     centerPanels: [
