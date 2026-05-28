@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
 import type { Reference } from "@iiif/presentation-3";
-import { BackIcon, ArrowRightIcon } from "@manifest-editor/components";
+import { ArrowRightIcon, BackIcon } from "@manifest-editor/components";
 import type { ReactNode, SVGProps } from "react";
 import { useMemo } from "react";
 import { useManifest, useVault } from "react-iiif-vault";
@@ -18,10 +18,7 @@ type CanvasOption = {
   labelText: string;
 };
 
-export function ManifestPaginationNavigation({
-  className,
-  variant = "light",
-}: ManifestPaginationNavigationProps) {
+export function ManifestPaginationNavigation({ className, variant = "light" }: ManifestPaginationNavigationProps) {
   const manifest = useManifest();
   const vault = useVault();
   const { edit } = useLayoutActions();
@@ -29,18 +26,11 @@ export function ManifestPaginationNavigation({
   const editingStack = useEditingResourceStack();
 
   const items = manifest?.items || [];
-  const isRev =
-    manifest?.viewingDirection === "right-to-left" ||
-    manifest?.viewingDirection === "bottom-to-top";
-  const isVert =
-    manifest?.viewingDirection === "top-to-bottom" ||
-    manifest?.viewingDirection === "bottom-to-top";
+  const isRev = manifest?.viewingDirection === "right-to-left" || manifest?.viewingDirection === "bottom-to-top";
+  const isVert = manifest?.viewingDirection === "top-to-bottom" || manifest?.viewingDirection === "bottom-to-top";
 
   const currentCanvasId =
-    findCanvasId(currentEditingResource) ||
-    editingStack.map(findCanvasId).find(Boolean) ||
-    items[0]?.id ||
-    "";
+    findCanvasId(currentEditingResource) || editingStack.map(findCanvasId).find(Boolean) || items[0]?.id || "";
   const currentIndex = Math.max(
     0,
     items.findIndex((item) => item.id === currentCanvasId),
@@ -79,7 +69,7 @@ export function ManifestPaginationNavigation({
   };
 
   if (!manifest || items.length < 2) {
-    return null;
+    return <div />;
   }
 
   const previousCanvas = items[currentIndex - 1];
@@ -93,9 +83,7 @@ export function ManifestPaginationNavigation({
         "inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-1",
         "focus-within:ring-2 focus-within:ring-me-primary-500/40",
         isRev && "flex-row-reverse",
-        dark
-          ? "border-white/20 bg-white/10 text-white"
-          : "border-me-gray-300 bg-white text-me-gray-900",
+        dark ? "border-white/20 bg-white/10 text-white" : "border-me-gray-300 bg-white text-me-gray-900",
         className,
       )}
     >
@@ -123,9 +111,7 @@ export function ManifestPaginationNavigation({
         <span>
           {currentPage} / {items.length}
         </span>
-        <ArrowDownIcon
-          className={cx("shrink-0 text-base", dark ? "text-white/60" : "text-me-gray-500")}
-        />
+        <ArrowDownIcon className={cx("shrink-0 text-base", dark ? "text-white/60" : "text-me-gray-500")} />
         <select
           id="manifest-pagination-page-select"
           aria-label="Jump to canvas"
@@ -200,33 +186,15 @@ function NavigationButton({
   );
 }
 
-function DirectionIcon({
-  reverse,
-  vertical,
-}: {
-  reverse: boolean;
-  vertical: boolean;
-}) {
+function DirectionIcon({ reverse, vertical }: { reverse: boolean; vertical: boolean }) {
   const Icon = reverse ? ArrowRightIcon : BackIcon;
 
-  return (
-    <Icon
-      aria-hidden
-      className={cx("block", vertical && "rotate-90")}
-    />
-  );
+  return <Icon aria-hidden className={cx("block", vertical && "rotate-90")} />;
 }
 
 function ArrowDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      aria-hidden
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden {...props}>
       <path fill="currentColor" d="m7 10l5 5l5-5z" />
     </svg>
   );
