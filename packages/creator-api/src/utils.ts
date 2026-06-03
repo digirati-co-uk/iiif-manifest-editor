@@ -35,6 +35,7 @@ export function resolveType(type: string): keyof Entities {
     case "TextualBody":
     case "Composite":
     case "List":
+    case "Choice":
     case "Independents":
     case "Audience":
       return "ContentResource";
@@ -124,10 +125,11 @@ export function matchBasedOnResource(
         }
       }
 
-      if (
-        !def.supports.initialData &&
-        Object.keys(resource.initialData || {}).length !== 0
-      ) {
+      const initialDataKeys = Object.keys(resource.initialData || {}).filter(
+        (key) => key !== "skipEditingOnCreate",
+      );
+
+      if (!def.supports.initialData && initialDataKeys.length !== 0) {
         continue;
       }
 

@@ -26,7 +26,7 @@ export function DescriptiveProperties() {
   const { descriptive, notAllowed } = useEditor();
   const { edit } = useLayoutActions();
 
-  const [canCreateProvider, providerActions] = useCreator(resource?.resource, "provider", "Agent");
+  const [_canCreateProvider, providerActions] = useCreator(resource?.resource, "provider", "Agent");
 
   const {
     label,
@@ -66,7 +66,7 @@ export function DescriptiveProperties() {
       {!notAllowed.includes("thumbnail") ? (
         <LinkingPropertyList
           containerId={thumbnail.containerId()}
-          label="Thumbnail"
+          label={"Thumbnail"}
           property="thumbnail"
           items={thumbnail.get()}
           singleMode
@@ -124,13 +124,13 @@ export function DescriptiveProperties() {
             <InputFieldset id={requiredStatement.focusId()}>
               <LanguageFieldEditor
                 focusId={`${requiredStatement.focusId()}_label`}
-                label={"Label"}
+                label="Label"
                 fields={requiredStatement.get()?.label || { none: [] }}
                 onSave={(e: any) => requiredStatement.updateLabel(e.toInternationalString())}
               />
               <LanguageFieldEditor
                 focusId={`${requiredStatement.focusId()}_value`}
-                label={"Value"}
+                label="Value"
                 fields={requiredStatement.get()?.value || { none: [] }}
                 onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
               />
@@ -172,7 +172,7 @@ export function DescriptiveProperties() {
                       className="pl-3"
                       onPress={() => {
                         if (window.confirm("Are you sure you want to delete this provider?")) {
-                          provider.deleteAtIndex(i);
+                          (provider as any).deleteAtIndex(i);
                         }
                       }}
                     >

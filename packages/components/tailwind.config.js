@@ -15,6 +15,10 @@ module.exports = {
       black: "#000",
       white: "#fff",
       gray: colors.gray,
+      zinc: colors.zinc,
+      slate: colors.slate,
+      blue: colors.blue,
+      green: colors.green,
       red: colors.red,
       orange: colors.orange,
       // Blue theme

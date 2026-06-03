@@ -2,8 +2,6 @@ import { toRef } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
-import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { useManifest, useVault } from "react-iiif-vault";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
@@ -22,9 +20,21 @@ export function ImageEditor() {
   return (
     <>
       {thumbnail ? (
-        <ThumbnailContainer $size={200}>
-          <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
-        </ThumbnailContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "#f0f0f0",
+            padding: "0.5rem",
+          }}
+        >
+          <img
+            src={thumbnail.id}
+            alt=""
+            style={{ maxWidth: 200, maxHeight: 200, width: "auto", height: "auto", objectFit: "contain", display: "block" }}
+          />
+        </div>
       ) : null}
       <PaddedSidebarContainer>
         <InputContainer $wide>

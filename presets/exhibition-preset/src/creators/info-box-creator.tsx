@@ -6,6 +6,7 @@ declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
     interface CreatorDefinitions {
       "@exhibitions/info-box-creator": typeof infoBoxCreator;
+      "@exhibitions/slideshow-long-editorial-creator": typeof slideshowLongEditorialCreator;
     }
   }
 }
@@ -33,10 +34,29 @@ export const infoBoxCreator = defineCreator({
   },
 });
 
+export const slideshowLongEditorialCreator = defineCreator({
+  ...infoBoxCreator,
+  id: "@exhibitions/slideshow-long-editorial-creator",
+  label: "Long editorial",
+  summary: "A text-led slideshow slide.",
+  tags: ["exhibition-slideshow-slide"],
+  create: (payload, ctx) =>
+    createInfoBox(
+      {
+        ...payload,
+        behavior: ["w-12", "h-8", "info"],
+        height: payload.height || 1080,
+        width: payload.width || 1920,
+      },
+      ctx,
+    ),
+});
+
 interface InfoBoxPayload {
   label?: InternationalString;
   height?: number;
   width?: number;
+  behavior?: string[];
 }
 
 async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) {
@@ -121,7 +141,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
     ...emptyCanvas, // bug with placeholder canvas.
     id: canvasId,
     type: "Canvas",
-    behavior: ["w-4", "h-4", "info"],
+    behavior: data.behavior || ["w-4", "h-4", "info"],
     label: data.label || undefined,
     height: data.height || 1000,
     width: data.width || 1000,

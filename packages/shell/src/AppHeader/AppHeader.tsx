@@ -1,5 +1,6 @@
 import { Logo, Container, Header } from "./AppHeader.styles";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
+import { BackgroundActionsMenu } from "../BackgroundTasks/BackgroundActions";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 
 import { memo } from "react";
@@ -20,6 +21,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
         </Logo>
 
         <PreviewButton />
+        <BackgroundActionsMenu />
 
         {/*<IconButton>•</IconButton>*/}
       </Container>

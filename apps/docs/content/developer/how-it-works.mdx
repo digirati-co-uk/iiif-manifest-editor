@@ -307,6 +307,52 @@ explorer panel that allows you to select images from the CMS to add to the manif
 All panels inside have access to the Shell API, which allows you to navigate to different
 panels but also to edit and save resources.
 
+### Plugins
+
+Plugins are preset-shaped extension modules that can be registered once and enabled per application or workspace.
+They are useful when you want the host application to offer optional panels, editors, creators, background actions,
+or config without creating a completely separate preset.
+
+```tsx
+import { AppProvider, Layout, PluginProvider, ShellProvider, mapApp } from "@manifest-editor/shell";
+import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
+import * as ocrPlugin from "./plugins/ocr";
+
+const manifestEditor = mapApp(manifestEditorPreset);
+
+export function Editor({ resource, workspaceConfig, saveConfig }) {
+  return (
+    <PluginProvider plugins={[ocrPlugin]} enabled={["@manifest-editor/ocr"]}>
+      <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={resource.id}>
+        <ShellProvider resource={resource} config={workspaceConfig} saveConfig={saveConfig}>
+          <Layout />
+        </ShellProvider>
+      </AppProvider>
+    </PluginProvider>
+  );
+}
+```
+
+A plugin uses the same export shape as a preset, with metadata as the default export:
+
+```ts
+import type { PluginMetadata } from "@manifest-editor/shell";
+
+export default {
+  id: "@manifest-editor/ocr",
+  label: "OCR Transcription",
+  description: "Import and edit OCR text annotations for canvases.",
+  author: "Digirati",
+  official: true,
+  defaultEnabled: false,
+  supports: { apps: ["manifest-editor"], projectTypes: ["Manifest"] },
+} satisfies PluginMetadata;
+
+export const leftPanels = [ocrCanvasStatusPanel];
+export const editors = [ocrCanvasEditor];
+export const creators = [altoXmlAnnotationCreator];
+```
+
 ### Shell options
 
 The shell provides a lot of the editing functionality of the application. It has a number of options:

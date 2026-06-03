@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo build",
     "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
-    "dev": "turbo dev --filter=web... --concurrency 16",
+    "dev": "turbo dev --filter=web... --concurrency 30",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "mismatch": "syncpack list-mismatches",
@@ -30,7 +30,7 @@
       "tsdown": "0.16.4",
       "react-aria-components": "^1.12",
       "@atlas-viewer/atlas": "catalog:",
-      "exhibition-viewer": "https://stephenwf.github.io/exhibition-viewer-1.0.10.tgz",
+      "exhibition-viewer": "^1.0.14",
       "react-reconciler": "0.33.0",
       "iiif-browser": "catalog:",
       "react": "catalog:",

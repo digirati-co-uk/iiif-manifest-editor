@@ -1,5 +1,5 @@
 import { AppMenu, DraftTitleEditor } from "@manifest-editor/projects";
-import { useApps, PreviewButton } from "@manifest-editor/shell";
+import { BackgroundActionsMenu, useApps, PreviewButton } from "@manifest-editor/shell";
 import {
   ManifestEditorLogo,
   useLocalStorage,
@@ -28,9 +28,8 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
 
         <div className="flex-1" />
 
-        {app && app.metadata.drafts === false ? null : (
-          <PreviewButton downloadEnabled />
-        )}
+        <BackgroundActionsMenu />
+        {app && app.metadata.drafts === false ? null : <PreviewButton downloadEnabled />}
 
         {/*<IconButton>•</IconButton>*/}
       </Container>

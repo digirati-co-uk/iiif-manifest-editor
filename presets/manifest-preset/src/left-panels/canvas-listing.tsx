@@ -9,6 +9,7 @@ import {
   useFastList,
 } from "@manifest-editor/components";
 import { manifestBrowserCreator } from "@manifest-editor/creators";
+import { toRef } from "@iiif/parser";
 import {
   CanvasGrid,
   CanvasList,
@@ -18,11 +19,18 @@ import {
   useToggleList,
 } from "@manifest-editor/editors";
 import {
+  FLAG_TAG,
   type LayoutPanel,
+  ManifestEditorCanvasProgressOverlay,
+  ManifestEditorTagIcon,
+  ManifestEditorTagOverlay,
   useCreator,
   useEditingStack,
   useLayoutActions,
+  useLayoutMode,
   useManifestEditor,
+  useResourceTagActions,
+  useResourceTags,
 } from "@manifest-editor/shell";
 import { type SVGProps, useEffect, useLayoutEffect } from "react";
 import { useCollection, useManifest } from "react-iiif-vault";
@@ -60,9 +68,15 @@ export const canvasListing: LayoutPanel = {
   render: (state, ctx, app) => {
     return (
       <CanvasListing
-        gridView={state.gridView || localStorage.getItem("canvas-listing-view-mode") === "grid"}
+        gridView={
+          state.gridView ||
+          localStorage.getItem("canvas-listing-view-mode") === "grid"
+        }
         onChangeGridView={(gridView) => {
-          localStorage.setItem("canvas-listing-view-mode", gridView ? "grid" : "list");
+          localStorage.setItem(
+            "canvas-listing-view-mode",
+            gridView ? "grid" : "list",
+          );
           ctx.actions.change("canvas-listing", { gridView });
         }}
       />
@@ -82,7 +96,13 @@ export function CanvasListing({
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
+  const [canCreateCanvas, canvasActions] = useCreator(
+    manifest,
+    "items",
+    "Canvas",
+    undefined,
+    { isPainting: true },
+  );
   const canvases = useFastList(items.get(), 24);
 
   useLayoutEffect(() => {
@@ -98,7 +118,15 @@ export function CanvasListing({
         title="Canvases"
         actions={[
           {
-            icon: <>{gridView ? <CanvasListingIcon width={24} height={24} /> : <CanvasThumbnailsIcon />}</>,
+            icon: (
+              <>
+                {gridView ? (
+                  <CanvasListingIcon width={24} height={24} />
+                ) : (
+                  <CanvasThumbnailsIcon />
+                )}
+              </>
+            ),
             title: gridView ? "List view" : "Grid view",
             onClick: () => {
               onChangeGridView(!gridView);
@@ -113,7 +141,8 @@ export function CanvasListing({
           {
             icon: <IIIFBrowserIcon className="text-2xl" />,
             title: "IIIF Browser",
-            onClick: () => canvasActions.creator("@manifest-editor/iiif-browser-creator"),
+            onClick: () =>
+              canvasActions.creator("@manifest-editor/iiif-browser-creator"),
             disabled: !canCreateCanvas,
           },
           {
@@ -124,20 +153,37 @@ export function CanvasListing({
           },
         ]}
       />
-      {gridView ? <CanvasGridView isEditing={toggled.items} /> : <CanvasListView isEditing={toggled.items} />}
+      {gridView ? (
+        <CanvasGridView isEditing={toggled.items} />
+      ) : (
+        <CanvasListView isEditing={toggled.items} />
+      )}
     </Sidebar>
   );
 }
 
 export function useEditCanvasItems() {
-  const { edit, open } = useLayoutActions();
+  const { edit, open, leftPanel } = useLayoutActions();
+  const layoutMode = useLayoutMode();
   const canvas = useInStack("Canvas");
   const { technical, structural } = useManifestEditor();
   const { items } = structural;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const canvases = useFastList(items.get(), 24);
-  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
+  const [canCreateCanvas, canvasActions] = useCreator(
+    manifest,
+    "items",
+    "Canvas",
+    undefined,
+    { isPainting: true },
+  );
+
+  const closeAfterCanvasSelect = () => {
+    if (layoutMode === "focused") {
+      leftPanel.close();
+    }
+  };
 
   return {
     canvas,
@@ -146,12 +192,14 @@ export function useEditCanvasItems() {
     canvasActions,
     open,
     edit,
+    closeAfterCanvasSelect,
     canCreateCanvas,
   };
 }
 
 export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
-  const { canvas, items, canvasActions, open } = useEditCanvasItems();
+  const { canvas, items, canvasActions, open, closeAfterCanvasSelect } =
+    useEditCanvasItems();
   const manifest = useManifest();
   const editingStack = useEditingStack();
   const canvases = items.get();
@@ -159,7 +207,8 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
 
   // Find current canvas to get its index before deleting it
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
-  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const prevCanvasIndex: number =
+    canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas
@@ -180,12 +229,19 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
           list={items.get() || []}
           inlineHandle={false}
           activeId={canvas?.resource.source.id}
-          reorder={isEditing ? (t: any) => items.reorder(t.startIndex, t.endIndex) : undefined}
+          reorder={
+            isEditing
+              ? (t: any) => items.reorder(t.startIndex, t.endIndex)
+              : undefined
+          }
           onSelect={(item: any, idx: number) => {
             open({ id: "current-canvas" });
             canvasActions.edit(item, idx);
+            closeAfterCanvasSelect();
           }}
           createActions={createAppActions(items, onDeleteCanvas)}
+          inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
+          thumbnailIcon={renderCanvasTagThumbnailOverlay}
         />
       </ThumbnailGridContainer>
     </SidebarContent>
@@ -193,7 +249,8 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
 }
 
 export function CanvasListView({ isEditing }: { isEditing: boolean }) {
-  const { canvas, items, canvasActions, open } = useEditCanvasItems();
+  const { canvas, items, canvasActions, open, closeAfterCanvasSelect } =
+    useEditCanvasItems();
   const manifest = useManifest();
   const editingStack = useEditingStack();
   const canvases = items.get() || [];
@@ -201,7 +258,8 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
 
   // Find current canvas to get its index before deleting it
   const canvasIndex = canvases.findIndex((canv) => canv.id === canvasId);
-  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  const prevCanvasIndex: number =
+    canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
 
   function onDeleteCanvas() {
     editingStack.close(); // close the deleted canvas
@@ -222,21 +280,89 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
           list={items.get() || []}
           inlineHandle={false}
           activeId={canvas?.resource.source.id}
-          reorder={isEditing ? (t) => items.reorder(t.startIndex, t.endIndex) : undefined}
+          reorder={
+            isEditing
+              ? (t) => items.reorder(t.startIndex, t.endIndex)
+              : undefined
+          }
           onSelect={(item, idx) => {
             open({ id: "current-canvas" });
             canvasActions.edit(item, idx);
+            closeAfterCanvasSelect();
           }}
           createActions={createAppActions(items, onDeleteCanvas)}
+          inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
         />
       </InputContainer>
     </SidebarContent>
   );
 }
 
+function renderCanvasFlagInlineAction(ref: any) {
+  const canvas = toRef(ref);
+  if (!canvas?.id) {
+    return null;
+  }
+
+  return <CanvasFlagInlineAction canvasId={canvas.id} />;
+}
+
+function renderCanvasTagThumbnailOverlay(ref: any) {
+  const canvas = toRef(ref);
+  if (!canvas?.id) {
+    return null;
+  }
+
+  const resource = { id: canvas.id, type: "Canvas" };
+
+  return (
+    <>
+      <ManifestEditorCanvasProgressOverlay resource={resource} />
+      <ManifestEditorTagOverlay resource={resource} />
+    </>
+  );
+}
+
+function CanvasFlagInlineAction({ canvasId }: { canvasId: string }) {
+  const resource = { id: canvasId, type: "Canvas" };
+  const tags = useResourceTags(resource);
+  const { toggleTag } = useResourceTagActions(resource);
+  const flagged = tags.some(
+    (tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id,
+  );
+
+  return (
+    <button
+      type="button"
+      aria-label={flagged ? "Remove flag" : "Flag canvas"}
+      aria-pressed={flagged}
+      title={flagged ? "Remove flag" : "Flag canvas"}
+      className={[
+        "relative flex aspect-square items-center justify-center rounded-sm p-0.5 text-xl hover:bg-me-primary-100",
+        flagged ? "bg-red-100 text-red-700" : "text-gray-500",
+      ].join(" ")}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleTag(FLAG_TAG);
+      }}
+    >
+      <ManifestEditorTagIcon icon={FLAG_TAG.icon} className="h-6 w-6" />
+    </button>
+  );
+}
+
 export function ListEditIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <svg
+      className="text-xl"
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path
         d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"
@@ -248,7 +374,12 @@ export function ListEditIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function CanvasThumbnailsIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path
         d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"

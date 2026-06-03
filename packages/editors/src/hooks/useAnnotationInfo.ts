@@ -1,5 +1,6 @@
 import { isSpecificResource } from "@iiif/parser";
 import { useHoverHighlightImageResource } from "@manifest-editor/shell";
+import { useMemo } from "react";
 import { useAnnotation } from "react-iiif-vault";
 
 export function useAnnotationInfo() {
@@ -26,6 +27,12 @@ export function useAnnotationInfo() {
   const isValid: boolean = !!(item && (item.type === "Image" || item.type === "Sound" || item.type === "Video"));
   const annotationTarget: string | null =
     (annotation as any)?.target.source?.type === "Annotation" ? (annotation as any)?.target.source?.id : null;
+  const annotationTargetResource = useMemo(() => {
+    if (annotationTarget) {
+      return { id: annotationTarget, type: "Annotation" };
+    }
+    return { id: annotation?.id as string, type: "Annotation" };
+  }, [annotation?.id, annotationTarget]);
 
   return [
     annotation,
@@ -33,6 +40,7 @@ export function useAnnotationInfo() {
       highlightProps,
       isValid,
       annotationTarget,
+      annotationTargetResource,
       firstBody,
       item,
     },

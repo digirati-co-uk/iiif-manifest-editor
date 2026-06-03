@@ -8,6 +8,7 @@ declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
     interface CreatorDefinitions {
       "@exhibitions/youtube-creator": typeof youtubeSlideCreator;
+      "@exhibitions/slideshow-youtube-creator": typeof slideshowYoutubeCreator;
     }
   }
 }
@@ -19,6 +20,14 @@ export const youtubeSlideCreator = defineCreator({
   tags: ["video", "exhibition-slide"],
   label: "YouTube",
   summary: "A YouTube for an exhibition",
+});
+
+export const slideshowYoutubeCreator = defineCreator({
+  ...youtubeSlideCreator,
+  id: "@exhibitions/slideshow-youtube-creator",
+  label: "YouTube",
+  summary: "A YouTube slide for a slideshow exhibition.",
+  tags: ["exhibition-slideshow-slide"],
 });
 
 interface YouTubeCreatePayload {

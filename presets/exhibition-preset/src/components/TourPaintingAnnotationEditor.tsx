@@ -1,25 +1,62 @@
-import { ActionButton, DeleteIcon, EditTextIcon } from "@manifest-editor/components";
+import {
+  ActionButton,
+  DeleteIcon,
+  EditTextIcon,
+} from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useState } from "react";
-import { LocaleString, useAnnotation, useAnnotationPage } from "react-iiif-vault";
+import {
+  LocaleString,
+  useAnnotation,
+  useAnnotationPage,
+  useCanvas,
+  useVault,
+} from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 
 export function TourPaintingAnnotationEditor({
   originalAnnotationId,
   highlightProps,
+  useSlideshowWorkbench = false,
 }: {
   originalAnnotationId?: string;
   highlightProps: any;
+  useSlideshowWorkbench?: boolean;
 }) {
   const page = useAnnotationPage();
   const pageEditor = useGenericEditor(page);
   const annotation = useAnnotation();
+  const canvas = useCanvas();
+  const vault = useVault();
   const { edit } = useLayoutActions();
   const [isOpen, setIsOpen] = useState(false);
+  const startTourStepRepositioning = useSlideshowContentPositioning(
+    (state) => state.startTourStepRepositioning,
+  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState(
+    (state) => state.requestTab,
+  );
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
+  const paintingPage = canvas?.items?.[0];
+  const annotationIndex =
+    paintingPage?.id && annotation?.id
+      ? (vault.get(paintingPage as any)?.items || []).findIndex(
+          (item: any) => item.id === annotation.id,
+        )
+      : -1;
 
   const deleteAnnotation = () => {
-    if (originalAnnotationId && confirm("Are you sure you want to delete this annotation?")) {
+    if (
+      originalAnnotationId &&
+      confirm("Are you sure you want to delete this annotation?")
+    ) {
       // Delete the original annotation.
       const index = pageEditor.structural.items
         .getWithoutTracking()
@@ -27,14 +64,30 @@ export function TourPaintingAnnotationEditor({
       pageEditor.structural.items.deleteAtIndex(index);
     }
   };
+  const showInSlideshowWorkbench = () => {
+    if (!useSlideshowWorkbench || !originalAnnotationId) {
+      return false;
+    }
+
+    setShowTourSteps(true);
+    startTourStepRepositioning(originalAnnotationId);
+    requestWorkbenchTab("tour");
+    return true;
+  };
 
   return (
-    <div {...highlightProps} className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative">
+    <div
+      {...highlightProps}
+      className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      onClick={showInSlideshowWorkbench}
+    >
       <div className="flex gap-2 mb-2 p-3">
         <div className="flex-1 min-w-0">
           {isOpen ? (
             <>
-              <h3 className="text-lg font-semibold border-b pt-1 pb-2 mb-2">Edit step</h3>
+              <h3 className="text-lg font-semibold border-b pt-1 pb-2 mb-2">
+                Edit step
+              </h3>
               <LanguageMapEditor dispatchType="label" />
               <LanguageMapEditor dispatchType="summary" />
             </>
@@ -42,12 +95,17 @@ export function TourPaintingAnnotationEditor({
             <>
               <LocaleString
                 as="div"
-                defaultText={(<span className="opacity-50">Untitled</span>) as any}
+                defaultText={
+                  (<span className="opacity-50">Untitled</span>) as any
+                }
                 className="whitespace-nowrap overflow-ellipsis w-full overflow-x-hidden"
               >
                 {annotation?.label}
               </LocaleString>
-              <LocaleString className="text-gray-500 text-sm bg-white line-clamp-2" as="div">
+              <LocaleString
+                className="exhibition-tour-step-body text-gray-500 text-sm bg-white line-clamp-2"
+                as="div"
+              >
                 {annotation?.summary}
               </LocaleString>
             </>
@@ -66,7 +124,31 @@ export function TourPaintingAnnotationEditor({
           </ActionButton>
         )}
 
-        <ActionButton onPress={() => edit(annotation!)}>Edit annotation</ActionButton>
+        <ActionButton
+          onPress={() => {
+            if (showInSlideshowWorkbench()) {
+              return;
+            }
+
+            if (!annotation) {
+              return;
+            }
+
+            edit(
+              { id: annotation.id, type: "Annotation" },
+              paintingPage
+                ? {
+                    parent: paintingPage,
+                    property: "items",
+                    index: annotationIndex,
+                  }
+                : undefined,
+              { forceOpen: true },
+            );
+          }}
+        >
+          Edit annotation
+        </ActionButton>
 
         <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>
           <DeleteIcon /> Delete

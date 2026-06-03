@@ -5,6 +5,9 @@ import type { ReactNode } from "react";
 import type { RenderingStrategy } from "react-iiif-vault";
 import type { TransitionStatus } from "react-transition-group";
 import type { AppState } from "../AppContext/AppContext";
+import type { MappedApp } from "../AppContext/AppContext";
+import type { Resource } from "../AppResourceProvider/AppResourceProvider";
+import type { BackgroundActionDefinition } from "../BackgroundTasks/BackgroundTasks.types";
 import type { EditorConfig } from "../ConfigContext/ConfigContext";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
 
@@ -19,6 +22,7 @@ export interface LayoutProviderProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  backgroundActions?: Array<BackgroundActionDefinition>;
 }
 
 export interface LayoutContext extends LayoutProviderProps {
@@ -166,7 +170,14 @@ export interface LayoutPanel {
   id: string;
   label: string;
   divide?: boolean;
+  separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
+  supports?: (ctx: LayoutPanelSupportContext) => boolean;
+  focusedMode?: {
+    hide?: boolean;
+    closeOnMainPanelClick?: boolean;
+    onSelect?: (ctx: LayoutPanelFocusedModeContext) => void;
+  };
   render: LayoutFunction;
   onMount?: (
     state: any,
@@ -196,6 +207,23 @@ export interface LayoutPanel {
     openPinned?: boolean;
     tabs?: boolean;
   };
+}
+
+export interface LayoutPanelSupportContext {
+  rootResource?: Resource;
+  vault?: Vault;
+  app: MappedApp;
+  layoutState: LayoutState;
+  appState: AppState;
+}
+
+export interface LayoutPanelFocusedModeContext {
+  rootResource?: Resource;
+  vault?: Vault;
+  app: MappedApp;
+  layoutState: LayoutState;
+  appState: AppState;
+  actions: LayoutActions;
 }
 
 export type MenuPositions = "left" | "right" | "bottom" | "top";
@@ -260,6 +288,7 @@ export interface LayoutProps {
   modals?: Array<LayoutPanel>;
   annotations?: Array<AnnotationPanel>;
   background?: Array<BackgroundPanel>;
+  backgroundActions?: Array<BackgroundActionDefinition>;
   footer?: ReactNode;
   menu?: ReactNode;
   header?: ReactNode;
@@ -271,6 +300,7 @@ export interface LayoutProps {
   leftPanelMenuPosition?: MenuPositions;
   centerPanelMenuPosition?: MenuPositions;
   rightPanelMenuPosition?: MenuPositions;
+  layoutMode?: "default" | "focused";
   // Editors / creators
   editors?: EditorDefinition[];
   resources?: (string | ResourceDefinition)[];

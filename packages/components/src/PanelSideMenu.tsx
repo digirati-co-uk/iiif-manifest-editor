@@ -7,6 +7,7 @@ interface PanelSideMenuProps {
     icon: React.ReactNode;
     label: string;
     divide?: boolean;
+    separator?: boolean;
     onClick: () => void;
   }>;
   open: boolean;
@@ -21,6 +22,7 @@ export function PanelSideMenu(props: PanelSideMenuProps) {
     >
       {props.items.map((panel) => (
         <Fragment key={panel.id}>
+          {panel.separator ? <div className="mx-2 my-1 border-t border-me-gray-200" /> : null}
           {panel.divide ? <div className="flex-1 block w-2 min-h-1" /> : null}
           <PanelSideMenuItem
             key={panel.id}

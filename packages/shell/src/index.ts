@@ -7,12 +7,16 @@ export * from "./AppResourceProvider/AppResourceProvider";
 export * from "./AtlasStore/AtlasStoreProvider";
 export * from "./AtlasStore/polygon-to-bounding-box";
 export * from "./analysis";
+export * from "./BackgroundTasks/BackgroundActions";
+export * from "./BackgroundTasks/BackgroundTasks.types";
+export * from "./BackgroundTasks/BackgroundTasksStore";
 export * from "./BaseCreator";
 export * from "./BaseCreator/BaseAnnotationCreator";
 export * from "./BaseCreator/BaseCreator.hooks";
 export * from "./BaseCreator/CreatorInitialData";
 export * from "./BaseEditor";
 export * from "./BaseEditor/BaseEditor";
+export * from "./CanvasProgress";
 export * from "./ConfigContext/ConfigContext";
 export * from "./ConfigContext/ConfigEditor";
 export * from "./ContextMenu/ContextMenuContext";
@@ -36,15 +40,32 @@ export * from "./Layout/Layout.context";
 export * from "./Layout/Layout.helpers";
 export * from "./Layout/Layout.hooks";
 export * from "./Layout/Layout.reducer";
+export * from "./Layout/Layout.supports";
 export * from "./Layout/Layout.types";
+export * from "./ManifestPaginationNavigation";
+export * from "./PluginContext/PluginContext";
+export * from "./PluginContext/PluginContext.helpers";
+export * from "./PluginContext/PluginContext.store";
+export * from "./PluginContext/PluginContext.types";
+export * from "./PluginContext/PluginManager";
 export * from "./PreviewButton/PreviewButton";
 export * from "./PreviewContext/PreviewContext";
 export * from "./PreviewContext/PreviewContext.types";
 export * from "./PreviewVault/create-preview-vault";
+export * from "./PreviewVault/vault-message-bridge";
 export * from "./PreviewVault/PreviewVault";
 export * from "./ResourceEditingContext/ResourceEditingContext";
 export * from "./ResourceEditingContext/ResourceEditingContext.types";
 export * from "./ShellContext/ShellContext";
+export * from "./SpecificationContext";
+
+export * from "./Tags";
 export * from "./TaskBridge/TaskBridge";
+export * from "./Toast/ToastContext";
 export * from "./Universal/UniversalCopyPaste";
 export * from "./Universal/UniversalCopyPaste.types";
+export {
+  MessagePortClientVault,
+  type RemoteVaultAction,
+  type RemoteVaultClientMessage,
+} from "@manifest-editor/client-vault";

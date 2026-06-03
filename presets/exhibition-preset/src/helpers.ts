@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
 
 const heightMap = {
@@ -105,6 +106,61 @@ export function getGridStats(behavior?: string[]) {
     isInfo,
     isImage,
   };
+}
+
+export function isEditableExhibitionCanvas(resource: { id: string; type: string }, vault: Vault) {
+  const full = vault.get(resource);
+
+  return full?.type === "Canvas";
+}
+
+/**
+ * Returns true if the canvas is a textual-content (info-box) canvas.
+ * Safe to call from EditorDefinition.supports.custom — won't throw.
+ */
+export function isInfoBoxCanvas(resource: { source?: { id?: string; type?: string } }, vault: Vault): boolean {
+  const sourceId = resource.source?.id;
+  const sourceType = resource.source?.type;
+  if (!sourceId || !sourceType) return false;
+  try {
+    const canvas = vault.get({ id: sourceId, type: sourceType }) as any;
+    const behavior: string[] = canvas?.behavior || [];
+    return behavior.includes("info");
+  } catch {
+    return false;
+  }
+}
+
+export function isVideoCanvas(resource: { source?: { id?: string; type?: string } }, vault: Vault): boolean {
+  const sourceId = resource.source?.id;
+  const sourceType = resource.source?.type;
+  if (!sourceId || !sourceType) return false;
+
+  try {
+    const canvas = vault.get({ id: sourceId, type: sourceType }) as any;
+    const pageRefs = Array.isArray(canvas?.items) ? canvas.items : [];
+
+    for (const pageRef of pageRefs) {
+      const page = vault.get(pageRef as any, { skipSelfReturn: false } as any) as any;
+      const annotations = Array.isArray(page?.items) ? page.items : [];
+
+      for (const annotationRef of annotations) {
+        const annotation = vault.get(annotationRef as any, { skipSelfReturn: false } as any) as any;
+        const body = Array.isArray(annotation?.body) ? annotation.body[0] : annotation?.body;
+        const resource = body?.id ? vault.get(body as any, { skipSelfReturn: false } as any) || body : body;
+        const source = resource?.type === "SpecificResource" ? resource.source : resource;
+        const services = Array.isArray(source?.service) ? source.service : source?.service ? [source.service] : [];
+
+        if (source?.type === "Video" || services.some((service: any) => service?.profile === "https://www.youtube.com")) {
+          return true;
+        }
+      }
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
 }
 
 export function isExhibitionItem(canvas: CanvasNormalized | undefined) {

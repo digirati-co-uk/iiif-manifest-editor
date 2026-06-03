@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAnnotation } from "react-iiif-vault";
+import { useAnnotation, useVault } from "react-iiif-vault";
 
 export function HTMLAnnotationBodyRender({
   className,
@@ -9,14 +9,16 @@ export function HTMLAnnotationBodyRender({
   locale?: string;
 }) {
   const annotation = useAnnotation();
+  const vault = useVault();
 
   const htmlValues = useMemo(() => {
     if (!annotation?.body) return [];
 
+    const textualBodies = flattenTextualBodies(annotation.body, vault);
     let bodiesToRender: any[] = [];
 
     if (locale && annotation) {
-      const filteredBodies = annotation.body.filter((body: any) => {
+      const filteredBodies = textualBodies.filter((body: any) => {
         const language = Array.isArray(body.language)
           ? body.language[0]
           : body.language;
@@ -26,17 +28,17 @@ export function HTMLAnnotationBodyRender({
       if (filteredBodies.length) {
         bodiesToRender = filteredBodies;
       } else {
-        bodiesToRender = [annotation.body[0]];
+        bodiesToRender = textualBodies.length ? [textualBodies[0]] : [];
       }
     } else {
-      bodiesToRender = annotation.body;
+      bodiesToRender = textualBodies;
     }
 
     return bodiesToRender
       .filter((body) => body)
       .map((body: any) => body.value)
       .filter(Boolean);
-  }, [locale, annotation]);
+  }, [locale, annotation, vault]);
 
   return (
     <div className={className}>
@@ -52,4 +54,41 @@ export function HTMLAnnotationBodyRender({
       })}
     </div>
   );
+}
+
+function flattenTextualBodies(bodies: any[], vault: any): any[] {
+  return bodies.flatMap((body) => flattenTextualBody(body, vault));
+}
+
+function flattenTextualBody(body: any, vault: any): any[] {
+  const resource = resolveResource(body, vault);
+  if (!resource) {
+    return [];
+  }
+
+  if (resource.type === "Choice") {
+    return toArray(resource.items).flatMap((item) =>
+      flattenTextualBody(item, vault),
+    );
+  }
+
+  return resource.type === "TextualBody" || resource.type === "Text"
+    ? [resource]
+    : [];
+}
+
+function resolveResource(resource: any, vault: any) {
+  if (!resource?.id || resource.value || resource.items) {
+    return resource;
+  }
+
+  return (
+    vault.get(resource as any, { skipSelfReturn: false } as any) || resource
+  );
+}
+
+function toArray<T>(value: T | T[] | null | undefined): T[] {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "undefined" || value === null) return [];
+  return [value];
 }

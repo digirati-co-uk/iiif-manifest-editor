@@ -86,6 +86,7 @@ export const MenuContainer = styled.div<{ $open: boolean }>`
     0 0px 0px 1px rgba(0, 0, 0, 0.15),
     inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   background: #fff;
+  color: #25211f;
   overflow: hidden;
 
   ${(props) =>
@@ -99,6 +100,7 @@ export const MenuContainer = styled.div<{ $open: boolean }>`
 export const MenuItem = styled.div`
   display: flex;
   background: #fff;
+  color: #25211f;
   padding: 0.4em;
   align-items: center;
 
@@ -124,6 +126,7 @@ export const MenuItemStatus = styled.div<{ $status: "available" | "configured" |
 export const MenuItemLabel = styled.div`
   flex: 1;
   font-size: 0.925em;
+  color: #25211f;
   padding: 0.2em;
   text-overflow: ellipsis;
   cursor: pointer;

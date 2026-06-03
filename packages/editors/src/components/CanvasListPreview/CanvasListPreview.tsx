@@ -24,7 +24,8 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
         ),
       )}
       aria-selected={props.active}
-      onClick={props.onClick}
+      onClick={props.editing ? undefined : props.onClick}
+      onClickCapture={props.editing ? props.onClick : undefined}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

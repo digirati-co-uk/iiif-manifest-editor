@@ -1,13 +1,9 @@
-import styled, { css } from "styled-components";
+import type { CSSProperties, ReactNode } from "react";
 import { useViewerPreset } from "react-iiif-vault";
-import type { CSSProperties } from "react";
-import { EditIcon } from "../../icons/EditIcon";
-import { CropIcon } from "../../icons/CropIcon";
+import styled, { css } from "styled-components";
 import { HomeIcon } from "../../icons/HomeIcon";
 import { MinusIcon } from "../../icons/MinusIcon";
 import { PlusIcon } from "../../icons/PlusIcon";
-import { RefreshIcon } from "../../icons/RefreshIcon";
-import { BackIcon } from "../../icons/BackIcon";
 
 export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
   padding: 0.8em;
@@ -30,13 +26,6 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
     }
   }
 
-  &[data-control="previous"] {
-    view-transition-name: "previous-canvas";
-  }
-  &[data-control="next"] {
-    view-transition-name: "next-canvas";
-  }
-
   ${(props) =>
     props.$active &&
     css`
@@ -54,7 +43,7 @@ export const CanvasViewerControls = styled.div`
   display: flex;
   position: absolute;
   top: 1em;
-  right: 1em;
+  right: calc(var(--manifest-editor-layout-right-sidebar-large, 0px) + 1em);
   z-index: 20;
 
   & > * ~ * {
@@ -75,6 +64,7 @@ export function ViewControls({
   style,
   creatingAnnotation,
   toggleCreateAnnotation,
+  extraControls,
 }: {
   refresh?: () => void;
   toggleEditMode?: () => void;
@@ -87,6 +77,7 @@ export function ViewControls({
   creatingAnnotation?: boolean;
   enableNavigation?: boolean;
   style?: CSSProperties;
+  extraControls?: ReactNode;
   toggleCreateAnnotation?: () => void;
 }) {
   const preset = useViewerPreset();
@@ -103,16 +94,7 @@ export function ViewControls({
         <PlusIcon title={"Zoom in"} />
       </CanvasViewerButton>
 
-      {enableNavigation ? (
-        <>
-          <CanvasViewerButton data-control="previous" disabled={!onPrevious} onClick={onPrevious}>
-            <BackIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton data-control="next" disabled={!onNext} onClick={onNext}>
-            <BackIcon style={{ transform: "rotate(180deg)" }} />
-          </CanvasViewerButton>
-        </>
-      ) : null}
+      {extraControls}
     </CanvasViewerControls>
   );
 }

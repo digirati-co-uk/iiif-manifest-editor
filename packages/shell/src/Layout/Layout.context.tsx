@@ -1,9 +1,18 @@
 import { createContext, useContext, useMemo } from "react";
-import { LayoutActions, LayoutProviderProps, LayoutState } from "./Layout.types";
+import {
+  LayoutActions,
+  LayoutProviderProps,
+  LayoutState,
+} from "./Layout.types";
 import { useApp } from "../AppContext/AppContext";
 
-export const LayoutActionsReactContext = createContext<LayoutActions>(null as any);
+export const LayoutActionsReactContext = createContext<LayoutActions>(
+  null as any,
+);
 export const LayoutStateReactContext = createContext<LayoutState>(null as any);
+export const LayoutModeReactContext = createContext<"default" | "focused">(
+  "default",
+);
 
 export function useLayoutState() {
   return useContext(LayoutStateReactContext);
@@ -11,6 +20,10 @@ export function useLayoutState() {
 
 export function useLayoutActions() {
   return useContext(LayoutActionsReactContext);
+}
+
+export function useLayoutMode() {
+  return useContext(LayoutModeReactContext);
 }
 
 export function useAvailableLayouts() {

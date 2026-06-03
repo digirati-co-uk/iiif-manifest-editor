@@ -4,8 +4,6 @@ import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CreateLink,
-  DiffSourceToggleWrapper,
-  InsertCodeBlock,
   InsertImage,
   ListsToggle,
   type MDXEditorMethods,
@@ -40,14 +38,12 @@ export function MDXEditor({
           linkPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
-          linkDialogPlugin(),
           imagePlugin(),
+          linkDialogPlugin(),
           diffSourcePlugin(),
           toolbarPlugin({
-            toolbarClassName: "mdx-toolbar",
             toolbarContents: () => (
               <>
-                {" "}
                 <UndoRedo />
                 <BoldItalicUnderlineToggles />
                 <BlockTypeSelect />

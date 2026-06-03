@@ -71,6 +71,13 @@ module.exports = {
     "../creators/src/**/*.{ts,tsx,css}",
     "../shell/src/**/*.{ts,tsx,css}",
 
+    "../../plugins/translation/src/**/*.{ts,tsx}",
+    "../../plugins/canvas-label-generator/src/**/*.{ts,tsx}",
+    "../../plugins/ocr-classification/src/**/*.{ts,tsx}",
+    "../../plugins/ocr-docling/src/**/*.{ts,tsx}",
+    "../../plugins/annotations/src/**/*.{ts,tsx}",
+    "../../plugins/specifications/src/**/*.{ts,tsx}",
+
     "./node_modules/exhibition-viewer/**/*.{js,css,cjs,mjs}",
     "./node_modules/iiif-browser/**/*.{js,css,cjs,mjs}",
   ],
@@ -80,8 +87,15 @@ module.exports = {
       black: "#000",
       white: "#fff",
       gray: colors.gray,
+      zinc: colors.zinc,
+      slate: colors.slate,
+      blue: colors.blue,
+      green: colors.green,
       red: colors.red,
       orange: colors.orange,
+      amber: colors.amber,
+      sky: colors.sky,
+      teal: colors.teal,
       // Blue theme
       // "me-primary-50": "#E3F2FD",
       // "me-primary-100": "#BBDEFB",
@@ -128,6 +142,9 @@ module.exports = {
       animation: {
         fadeIn: "fadeIn 300ms ease-in-out",
         fadeInDelayed: "fadeInDelayed 2000ms ease-in-out",
+        "toast-enter": "toast-enter 400ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards",
+        "toast-exit": "toast-exit 500ms cubic-bezier(0.06, 0.71, 0.55, 1) forwards",
+        "toast-progress": "toast-progress linear forwards",
       },
 
       // that is actual animation
@@ -140,6 +157,19 @@ module.exports = {
           "0%": { opacity: 0 },
           "85%": { opacity: 0 },
           "100%": { opacity: 1 },
+        },
+        "toast-enter": {
+          "0%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "toast-exit": {
+          "0%": { transform: "translateX(0)", opacity: "1", maxHeight: "200px", marginBottom: "0" },
+          "60%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0", maxHeight: "200px" },
+          "100%": { transform: "translateX(calc(100% + 1.5rem))", opacity: "0", maxHeight: "0", marginBottom: "-0.5rem" },
+        },
+        "toast-progress": {
+          "0%": { transform: "scaleX(1)" },
+          "100%": { transform: "scaleX(0)" },
         },
       }),
     },

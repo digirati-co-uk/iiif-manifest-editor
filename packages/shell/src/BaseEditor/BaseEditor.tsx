@@ -9,9 +9,9 @@ import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack, useEditingStack } from "../EditingStack/EditingStack";
 import type { EditableResource } from "../EditingStack/EditingStack.types";
+import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useLayoutActions } from "../Layout/Layout.context";
 import type { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
-import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
   const stack = useEditingResourceStack();
@@ -201,6 +201,20 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
     }
   }, [match?.editors, currentTab, change]);
 
+  // Memoize the tab menu to prevent React Aria's collection items from receiving new
+  // inline function props on every parent re-render, which causes an infinite
+  // setProps → queueUpdate → re-render loop in Next.js SSR collection mode.
+  const sidebarMenu = useMemo(
+    () =>
+      (match?.editors || []).map((editor) => ({
+        id: editor.id,
+        label: editor.label,
+        renderComponent: () => editor.component(resourceConfig),
+      })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [match?.editors, resourceConfig],
+  );
+
   // Problems to solve:
   //  - Subscribing to updates to the reference
   //    - Keeping track of changes to the item, by checking it's index
@@ -227,13 +241,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       rootResource={rootResource}
       key={resource.resource.source?.id}
       menuId={resource.resource.source.id}
-      menu={(match?.editors || []).map((editor, key) => {
-        return {
-          id: editor.id,
-          label: editor.label,
-          renderComponent: () => editor.component(resourceConfig),
-        };
-      })}
+      menu={sidebarMenu}
       selectedKey={currentTab}
       onSelectionChange={(p: any) => {
         change("@manifest-editor/editor", { currentTab: p });

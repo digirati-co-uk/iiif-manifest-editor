@@ -1,11 +1,20 @@
-import { ActionButton } from "@manifest-editor/components";
-import { CanvasPanelEditor, useInStack, useToggleList } from "@manifest-editor/editors";
-import type { CanvasEditorDefinition, LayoutPanel } from "@manifest-editor/shell";
+import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
+import type { CanvasEditorDefinition } from "@manifest-editor/shell";
 import { useLocalStorage } from "@manifest-editor/shell";
-import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
+import { Button } from "react-aria-components";
+import {
+  CanvasContext,
+  LocaleString,
+  type RenderingStrategy,
+  useCanvas,
+} from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { getClassName, getGridStats } from "../helpers";
-import { useLayoutEffect, useRef, useState } from "react";
+import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
+import {
+  exhibitionPreviewPresetOptions,
+  useExhibitionPreviewPreset,
+} from "../helpers/exhibition-preview-state";
+import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
 
 export const imageBlockEditor: CanvasEditorDefinition = {
   id: "image-block-editor",
@@ -26,7 +35,11 @@ export const imageBlockEditor: CanvasEditorDefinition = {
 
       let isImage = false;
       for (const behaviour of behaviors) {
-        if (behaviour.startsWith("w-") || behaviour.startsWith("h-") || behaviour === "image") {
+        if (
+          behaviour.startsWith("w-") ||
+          behaviour.startsWith("h-") ||
+          behaviour === "image"
+        ) {
           isImage = true;
         }
       }
@@ -36,8 +49,13 @@ export const imageBlockEditor: CanvasEditorDefinition = {
   },
 };
 
-export function ImageBlockEditor({ strategy }: { strategy: RenderingStrategy }) {
+export function ImageBlockEditor({
+  strategy: _strategy,
+}: {
+  strategy: RenderingStrategy;
+}) {
   const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
+  const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
   if (!canvas) {
     return null;
@@ -45,66 +63,101 @@ export function ImageBlockEditor({ strategy }: { strategy: RenderingStrategy }) 
 
   return (
     <CanvasContext canvas={canvas.resource.source?.id}>
-      <div className="flex gap-4 bg-me-500 py-2 px-4 text-white shadow-md z-40 ring-1 ring-me-500 items-center">
-        Switch view
-        <ActionButton onPress={() => setIsPreview(!isPreview)}>
-          {isPreview ? "Full canvas" : "Layout preview"}
-        </ActionButton>
-      </div>
-      {isPreview ? (
-        <ImageBlockRenderer />
-      ) : (
-        <div className="h-full flex flex-1 min-h-0">
-          <CanvasPanelEditor asFallback />
-        </div>
-      )}
+      <ImageBlockEditorContent
+        isPreview={!!isPreview}
+        previewPreset={previewPreset}
+        onModeChange={setIsPreview}
+        onPreviewPresetChange={setPreviewPreset}
+      />
     </CanvasContext>
   );
 }
 
-function ImageBlockRenderer() {
-  const ref = useRef<HTMLDivElement>(null);
+function ImageBlockEditorContent({
+  isPreview,
+  previewPreset,
+  onModeChange,
+  onPreviewPresetChange,
+}: {
+  isPreview: boolean;
+  previewPreset: PresetUrlSearchParamsPreset;
+  onModeChange: (isPreview: boolean) => void;
+  onPreviewPresetChange: (preset: PresetUrlSearchParamsPreset) => void;
+}) {
   const canvas = useCanvas();
-  const behavior = canvas?.behavior || [];
-  const className = getClassName(behavior, false, false);
-  const { isBottom, isImage, isInfo, isLeft } = getGridStats(canvas?.behavior);
-
-  const [scale, setScale] = useState(1);
-
-  useLayoutEffect(() => {
-    // 1200 is what it looks like on the site.
-    const container = ref.current;
-    if (!container) return;
-    const containerWidth = container.offsetWidth;
-    const imageWidth = 1200;
-    setScale(containerWidth / imageWidth);
-  }, [canvas]);
 
   return (
-    <div className="overflow-hidden h-full w-full" ref={ref}>
-      <div className="grid grid-cols-12 grid-rows-12 h-full bg-white">
-        <div
-          className={twMerge(
-            className,
-            "flex h-full max-h-full min-h-0 ring-4 ring-black",
-            isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row"
-          )}
-        >
-          <div className="flex-1 h-full flex min-w-0">
-            <CanvasPanelEditor asFallback />
-          </div>
-          {!isImage ? (
-            <div
-              className={`${isBottom ? "min-h-3 w-full" : "w-1/3"} flex-shrink-0 self-stretch text-white bg-black rounded p-8 relative h-full`}
+    <div className="relative z-0 flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden bg-white">
+      <div className="exhibition-slideshow-current-toolbar flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <div className="min-w-0 flex-1">
+          <LocaleString className="block truncate text-sm font-semibold text-slate-800">
+            {canvas?.label}
+          </LocaleString>
+        </div>
+        <div className="flex items-center gap-2">
+          {isPreview ? (
+            <select
+              className="rounded-md border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm"
+              value={previewPreset}
+              onChange={(event) =>
+                onPreviewPresetChange(
+                  event.target.value as PresetUrlSearchParamsPreset,
+                )
+              }
             >
-              <div style={{ fontSize: `${scale * 16}px` }}>
-                <LocaleString className="block mb-4">{canvas?.label}</LocaleString>
-                <LocaleString>{canvas?.summary}</LocaleString>
-              </div>
-            </div>
+              {exhibitionPreviewPresetOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           ) : null}
+          <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
+            <ModeButton
+              selected={!isPreview}
+              onPress={() => onModeChange(false)}
+            >
+              Edit
+            </ModeButton>
+            <ModeButton selected={isPreview} onPress={() => onModeChange(true)}>
+              Preview
+            </ModeButton>
+          </div>
         </div>
       </div>
+      {isPreview ? (
+        <div className="min-h-0 flex-1">
+          <ExhibitionPreviewPanel preset={previewPreset} />
+        </div>
+      ) : (
+        <div className="flex min-h-0 flex-1">
+          <CanvasPanelEditor asFallback />
+        </div>
+      )}
     </div>
+  );
+}
+
+function ModeButton({
+  children,
+  selected,
+  onPress,
+}: {
+  children: string;
+  selected: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Button
+      className={twMerge(
+        "px-3 py-2 text-xs font-semibold transition",
+        selected
+          ? "bg-white text-slate-900 shadow-sm"
+          : "text-slate-500 hover:text-slate-700",
+      )}
+      onPress={onPress}
+    >
+      {children}
+    </Button>
   );
 }

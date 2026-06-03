@@ -52,7 +52,7 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "exhibition-viewer": "^1.0.10",
+    "exhibition-viewer": "^1.0.14",
     "react": "catalog:",
     "react-aria-components": "^1.12",
     "react-dom": "catalog:",

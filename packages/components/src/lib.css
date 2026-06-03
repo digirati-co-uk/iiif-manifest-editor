@@ -20,6 +20,11 @@
   --total-gap-width: 1.5rem;
 }
 
+.grid-focused-margin {
+  padding-inline-start: var(--manifest-editor-layout-left-sidebar-small, 0px);
+  padding-inline-end: var(--manifest-editor-layout-right-sidebar-small, 0px);
+}
+
 .field-sizing-content {
   field-sizing: content;
 }

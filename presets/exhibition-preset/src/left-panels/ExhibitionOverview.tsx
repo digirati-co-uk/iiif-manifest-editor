@@ -1,11 +1,11 @@
-import { InfoIcon } from "@manifest-editor/components";
 import type { LayoutPanel } from "@manifest-editor/shell";
 import { useManifest } from "react-iiif-vault";
+import { PreviewIcon } from "../icons/PreviewIcon";
 
 export const exhibitionOverviewLeftPanel: LayoutPanel = {
   id: "@exhibitions/overview-panel", // We are overriding the default canvas listing panel
-  label: "",
-  icon: <div className="hidden hover:block">👀</div>,
+  label: "Preview",
+  icon: <PreviewIcon />,
   render: () => <ExhibitionOverviewPanel />,
 };
 

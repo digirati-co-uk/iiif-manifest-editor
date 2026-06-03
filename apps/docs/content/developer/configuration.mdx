@@ -35,6 +35,17 @@ export interface Config {
     baseIdentifier: string | null;
     version: 3 | 2;
   };
+
+  plugins?: {
+    apps?: Record<
+      string,
+      {
+        enabled?: string[];
+        disabled?: string[];
+        settings?: Record<string, Record<string, unknown>>;
+      }
+    >;
+  };
 }
 
 export interface EditorConfig {
@@ -81,6 +92,9 @@ const DEFAULT_CONFIG: Config = {
     enableMultiMediaCanvases: true,
   },
   uploadBackends: [],
+  plugins: {
+    apps: {},
+  },
   export: {
     baseIdentifier: null,
     version: 3,

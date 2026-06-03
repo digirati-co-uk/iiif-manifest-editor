@@ -16,13 +16,26 @@ export const imageUrlCreator = defineCreator({
   label: "Image",
   summary: "Image from a URL",
   icon: <AddImageIcon />,
+  tags: ["image"],
   render(ctx) {
     return <CreateImageUrlForm {...ctx} />;
   },
   resourceType: "ContentResource",
   resourceFields: ["format"],
   supports: {
-    parentFields: ["logo", "body", "thumbnail"],
+    parentFields: ["logo", "body", "thumbnail", "items"],
+    custom(parent, vault) {
+      if (parent.property !== "items") {
+        return true;
+      }
+
+      if (parent.resource.type === "ContentResource") {
+        const resource = vault.get(parent.resource as any, { skipSelfReturn: false } as any) as any;
+        return resource?.type === "Choice";
+      }
+
+      return false;
+    },
   },
   staticFields: {
     type: "Image",

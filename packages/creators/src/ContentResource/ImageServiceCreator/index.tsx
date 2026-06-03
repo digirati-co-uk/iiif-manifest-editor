@@ -16,12 +16,25 @@ export const imageServiceCreator = defineCreator({
   label: "Image Service",
   summary: "Add an image from Image Service",
   icon: <IIIFLogo style={{ padding: 10 }} />,
+  tags: ["image", "image-service"],
   render(ctx) {
     return <CreateImageServerForm {...ctx} />;
   },
   resourceType: "ContentResource",
   resourceFields: ["id", "type", "height", "width", "format", "service"],
   supports: {
-    parentFields: ["logo", "body", "thumbnail"],
+    parentFields: ["logo", "body", "thumbnail", "items"],
+    custom(parent, vault) {
+      if (parent.property !== "items") {
+        return true;
+      }
+
+      if (parent.resource.type === "ContentResource") {
+        const resource = vault.get(parent.resource as any, { skipSelfReturn: false } as any) as any;
+        return resource?.type === "Choice";
+      }
+
+      return false;
+    },
   },
 });

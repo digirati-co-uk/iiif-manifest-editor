@@ -1,0 +1,19 @@
+import * as React from "react";
+import { SVGProps } from "react";
+
+const SlideshowIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="M20 22H4q-.825 0-1.413-.588T2 20V8q0-.825.588-1.413T4 6h5.975v2H4v12h16v-3.975h2V20q0 .825-.588 1.413T20 22ZM4 20V8v8.025-.675V20Zm13-5.975-1.55-3.475L11.975 9l3.475-1.55L17 4l1.55 3.45L22 9l-3.45 1.55L17 14.025Z"
+    />
+  </svg>
+);
+
+export default SlideshowIcon;

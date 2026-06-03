@@ -1,6 +1,7 @@
 import { type BoxSelector, createThumbnailHelper, type FixedSizeImage, type TemporalBoxSelector } from "@iiif/helpers";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useCanvas, useRenderingStrategy, useStrategy, useThumbnail, useVault } from "react-iiif-vault";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { useCanvas, useRenderingStrategy, useThumbnail, useVault } from "react-iiif-vault";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { twMerge } from "tailwind-merge";
 import { TextIcon } from "./icons/TextIcon";
@@ -9,7 +10,9 @@ import { Spinner } from "./Spinner";
 export function LazyThumbnail({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   return (
     <LazyLoadComponent>
-      <LazyThumbnailOuter cover={cover} fade={fade} />
+      <ErrorBoundary fallback={<div />}>
+        <LazyThumbnailOuter cover={cover} fade={fade} />
+      </ErrorBoundary>
     </LazyLoadComponent>
   );
 }
@@ -41,6 +44,17 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
   const [isLoading, setIsLoading] = useState(!isCached);
   const thumbnail = useThumbnail({ height: 256, width: 256 }, true);
   let thumbnailId = thumbnail?.id;
+
+  // If the vault has a fresher URL than what we cached, invalidate the cache so
+  // the new image loads with a proper loading state instead of silently swapping.
+  useEffect(() => {
+    if (!thumbnailId || !canvas?.id) return;
+    const cached = renderCache.get(canvas.id);
+    if (cached && cached !== thumbnailId) {
+      renderCache.delete(canvas.id);
+      setIsLoading(true);
+    }
+  }, [thumbnailId, canvas?.id]);
 
   if (canvas?.id && thumbnailId) {
     renderCache.set(canvas.id, thumbnailId);
@@ -135,6 +149,9 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
 
       const imagesToRender: { image: FixedSizeImage; target: BoxSelector | TemporalBoxSelector }[] = [];
       for (const image of strategy.images) {
+        const target = image.target || {
+          spatial: { x: 0, y: 0, width: canvas.width, height: canvas.height },
+        };
         const resource = image.annotation.body[0] ? vault.get(image.annotation.body[0]) : image.annotation;
         await helper
           .getBestThumbnailAtSize(resource, {
@@ -156,27 +173,33 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
                     ...thumbnail.best,
                     id: thumbnail.best.id.replace("/full/full/", "/full/256,/"),
                   },
-                  target: image.target,
+                  target,
                 });
                 return;
               }
 
               imagesToRender.push({
                 image: thumbnail.best,
-                target: image.target,
+                target,
               });
             }
-          });
+          })
+          .catch(() => undefined);
 
         if (abort.signal.aborted) return;
+      }
 
+      setState({
+        canvasId: canvas.id,
+        imagesToRender,
+      });
+    })().catch((err) => {
+      if (!abort.signal.aborted && canvas?.id) {
         setState({
           canvasId: canvas.id,
-          imagesToRender,
+          imagesToRender: [],
         });
       }
-    })().catch((err) => {
-      // ignore.
     });
 
     return () => {
@@ -200,27 +223,31 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div
-        className="relative overflow-hidden margin-auto h-full w-full basis-[content] bg-white"
+        className="relative overflow-hidden margin-auto h-full w-full basis-[content]"
         style={{
           aspectRatio: `${canvas.width / canvas.height}`,
         }}
       >
-        {state.imagesToRender.map((image) => {
-          return (
-            <div
-              className="absolute"
-              key={image.image.id}
-              style={{
-                width: `${(image.target.spatial.width / canvas.width) * 100}%`,
-                height: `${(image.target.spatial.height / canvas.height) * 100}%`,
-                top: `${(image.target.spatial.y / canvas.height) * 100}%`,
-                left: `${(image.target.spatial.x / canvas.width) * 100}%`,
-              }}
-            >
-              <img className="w-full h-full object-cover select-none" src={image.image.id} />
-            </div>
-          );
-        })}
+        {state.imagesToRender.length ? (
+          state.imagesToRender.map((image) => {
+            return (
+              <div
+                className="absolute"
+                key={image.image.id}
+                style={{
+                  width: `${(image.target.spatial.width / canvas.width) * 100}%`,
+                  height: `${(image.target.spatial.height / canvas.height) * 100}%`,
+                  top: `${(image.target.spatial.y / canvas.height) * 100}%`,
+                  left: `${(image.target.spatial.x / canvas.width) * 100}%`,
+                }}
+              >
+                <img className="w-full h-full object-cover select-none" src={image.image.id} />
+              </div>
+            );
+          })
+        ) : (
+          <ThumbnailFallback />
+        )}
       </div>
     </div>
   );

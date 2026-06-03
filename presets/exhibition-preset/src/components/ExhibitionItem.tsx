@@ -8,6 +8,7 @@ import {
 } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
+import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
 
 export interface ExhibitionItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -31,9 +32,18 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
     );
 
     const isSelected = currentCanvas?.resource.source?.id === canvas?.id;
+    const isSlideshowItem =
+      behavior.includes("w-12") && behavior.includes("h-8");
 
     let children = null;
-    if (isInfo) {
+    if (isSlideshowItem) {
+      children = (
+        <SlideshowSlidePreview
+          className="pointer-events-none h-full w-full"
+          mode="preview"
+        />
+      );
+    } else if (isInfo) {
       children = (
         <div className="bg-black w-full h-full text-white max-h-40">
           <div className="p-1.5 text-[4px]">
@@ -55,7 +65,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
         >
           <div className="flex-1 overflow-hidden relative justify-self-stretch">
             <div className="absolute inset-0 w-full h-full">
-              <LazyThumbnail cover fade={false} />
+              <LazyThumbnail cover={behavior.includes("cover")} fade={false} />
             </div>
           </div>
           {isImage ? null : (

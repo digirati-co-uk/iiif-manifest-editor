@@ -2,6 +2,7 @@ import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import { createContext, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
 import invariant from "tiny-invariant";
+import type { BackgroundActionDefinition } from "../BackgroundTasks/BackgroundTasks.types";
 import { type Config, ConfigProvider } from "../ConfigContext/ConfigContext";
 import type {
   AnnotationPanel,
@@ -11,6 +12,7 @@ import type {
   LayoutPanel,
   LayoutProps,
 } from "../Layout/Layout.types";
+import { useResolvedPluginApp } from "../PluginContext/PluginContext";
 
 export type AppContext = {
   instanceId: string;
@@ -50,6 +52,7 @@ export interface AppExtension {
   canvasEditors?: CanvasEditorDefinition[];
   annotations?: AnnotationPanel[];
   background?: BackgroundPanel[];
+  backgroundActions?: BackgroundActionDefinition[];
   // Config.
   leftPanelIds?: string[];
 
@@ -140,11 +143,12 @@ export function AppProvider({
 }) {
   const ctx = useMemo(() => ({ instanceId, appId, args }), [instanceId, appId, args]);
   const _initialState = useMemo(() => initialState || {}, [instanceId]);
+  const resolvedDefinition = useResolvedPluginApp(definition, appId);
 
   // Current App is now put in the "Prime" context.
   return (
-    <ConfigProvider config={definition.config || {}}>
-      <PrimeAppReactContext.Provider value={definition}>
+    <ConfigProvider config={resolvedDefinition.config || {}}>
+      <PrimeAppReactContext.Provider value={resolvedDefinition}>
         <AppReactContext.Provider value={ctx}>
           <AppStateProvider instanceId={ctx.instanceId} appId={ctx.appId} args={ctx.args} initialState={_initialState}>
             {children}

@@ -13,9 +13,16 @@ import {
   targetIntersects,
   useAnnotation,
   useRenderingStrategy,
+  useVault,
 } from "react-iiif-vault";
+import {
+  getChoiceBodyInfo,
+  getChoiceItems,
+  getInternationalStringText,
+} from "../../helpers/choice-painting-annotations";
 import { getAnnotationType } from "../../helpers/get-annotation-type";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
+import { useContentResourceThumbnail } from "../../hooks/useContentResourceThumbnailHelper";
 
 function AnnotationImageThumbnail() {
   const thumbnail = useAnnotationThumbnail();
@@ -32,6 +39,24 @@ function AnnotationImageType() {
   const [, label] = getAnnotationType(strategy);
 
   return <span>{label}</span>;
+}
+
+function ChoiceImageThumbnail({ resourceId }: { resourceId?: string }) {
+  if (!resourceId) {
+    return null;
+  }
+
+  return <ChoiceImageThumbnailInner resourceId={resourceId} />;
+}
+
+function ChoiceImageThumbnailInner({ resourceId }: { resourceId: string }) {
+  const thumbnail = useContentResourceThumbnail({ resourceId });
+
+  return thumbnail ? (
+    <ThumbnailContainer $size={40}>
+      <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+    </ThumbnailContainer>
+  ) : null;
 }
 
 export function AnnotationTargetLabel({ id }: { id: string }) {
@@ -54,6 +79,7 @@ export function AnnotationPreview({
   viewport?: { width: number; height: number; x: number; y: number } | null;
 }) {
   const annotation = useAnnotation();
+  const vault = useVault();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
 
   if (!annotation) {
@@ -64,15 +90,56 @@ export function AnnotationPreview({
   const firstBody = (body || [])[0] as any;
   const item = isSpecificResource(firstBody) ? firstBody.source : firstBody;
 
-  const isValid = item && (item.type === "Image" || item.type === "Sound" || item.type === "Video");
+  const isValid =
+    item &&
+    (item.type === "Image" || item.type === "Sound" || item.type === "Video");
   const annotationTarget =
-    (annotation as any)?.target.source?.type === "Annotation" ? (annotation as any)?.target.source?.id : null;
+    (annotation as any)?.target.source?.type === "Annotation"
+      ? (annotation as any)?.target.source?.id
+      : null;
 
   const annoSelector = (annotation.target as any)?.selector;
-  const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
-  const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+  const boxSelector =
+    annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
+  const isVisible =
+    viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+  const choiceInfo = getChoiceBodyInfo(annotation, vault);
 
-  if (!firstBody || firstBody.type === "TextualBody") {
+  if (choiceInfo) {
+    const choiceItems = getChoiceItems(choiceInfo.choice, vault);
+    const defaultChoice = choiceItems[0];
+    const title = getInternationalStringText(choiceInfo.choice.label, "Choice");
+    const defaultLabel = getInternationalStringText(defaultChoice?.resource?.label, "Default option");
+    const itemCount = choiceItems.length;
+
+    return (
+      <RichMediaLink
+        isVisible={isVisible}
+        margin={margin}
+        title={title}
+        icon={<ChoiceImageThumbnail resourceId={defaultChoice?.ref?.id} />}
+        noLink
+        link={`${itemCount} option${itemCount === 1 ? "" : "s"}`}
+        label={defaultLabel}
+        iconLabel="Choice thumbnail"
+        onClick={
+          onClick
+            ? (e) => {
+                e.preventDefault();
+                onClick(annotation);
+              }
+            : undefined
+        }
+        containerProps={highlightProps}
+      />
+    );
+  }
+
+  if (
+    !firstBody ||
+    firstBody.type === "TextualBody" ||
+    firstBody.type === "Choice"
+  ) {
     return (
       <Button
         className="border border-gray-300 text-left hover:border-me-500 w-full shadow-sm rounded bg-white relative mb-2"
@@ -85,7 +152,10 @@ export function AnnotationPreview({
         }
       >
         {firstBody ? (
-          <HTMLAnnotationBodyRender className="px-3 pt-3 prose-p:text-slate-600" locale="en" />
+          <HTMLAnnotationBodyRender
+            className="px-3 pt-3 prose-p:text-slate-600"
+            locale="en"
+          />
         ) : (
           <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
             This annotation has no body.
@@ -121,8 +191,15 @@ export function AnnotationPreview({
           ) : null
         }
         noLink
-        link={annotationTarget ? "Targets painting annotation" : item?.id || annotation.id}
-        label={item?.format || (annotation?.motivation ? annotation.motivation : item?.type)}
+        link={
+          annotationTarget
+            ? "Targets painting annotation"
+            : item?.id || annotation.id
+        }
+        label={
+          item?.format ||
+          (annotation?.motivation ? annotation.motivation : item?.type)
+        }
         iconLabel="Icon label"
         onClick={
           onClick

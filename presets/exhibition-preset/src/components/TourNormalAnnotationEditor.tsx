@@ -18,16 +18,31 @@ import {
   useCurrentAnnotationActions,
 } from "react-iiif-vault";
 import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 
 export function TourNormalAnnotationEditor({
   highlightProps,
+  useSlideshowWorkbench = false,
 }: {
   highlightProps: any;
+  useSlideshowWorkbench?: boolean;
 }) {
   const value = useContext(ResourceEditingReactContext);
   const annotation = useAnnotation();
   const { editorFeatureFlags } = useConfig();
   const { annotationPopups } = editorFeatureFlags;
+  const startTourStepRepositioning = useSlideshowContentPositioning(
+    (state) => state.startTourStepRepositioning,
+  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState(
+    (state) => state.requestTab,
+  );
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
 
   const {
     isPending,
@@ -46,6 +61,16 @@ export function TourNormalAnnotationEditor({
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  const showInSlideshowWorkbench = () => {
+    if (!useSlideshowWorkbench || !annotation?.id) {
+      return false;
+    }
+
+    setShowTourSteps(true);
+    startTourStepRepositioning(annotation.id);
+    requestWorkbenchTab("tour");
+    return true;
+  };
 
   useEffect(() => {
     if (isOpen && !isPending) {
@@ -57,14 +82,15 @@ export function TourNormalAnnotationEditor({
   return (
     <div
       {...highlightProps}
-      className="border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      onClick={showInSlideshowWorkbench}
     >
       <div className="relative">
         {isOpen && !annotationPopups ? (
           <HTMLAnnotationEditor className="border-none" />
         ) : (
           <HTMLAnnotationBodyRender
-            className="px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
+            className="exhibition-tour-step-body px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
             locale="en"
           />
         )}
@@ -87,6 +113,12 @@ export function TourNormalAnnotationEditor({
           <ActionButton
             isDisabled={busy}
             onPress={() => {
+              if (useSlideshowWorkbench && annotation?.id) {
+                setShowTourSteps(true);
+                startTourStepRepositioning(annotation.id);
+                requestWorkbenchTab("tour");
+              }
+
               setIsOpen(true);
               requestAnnotationFromTarget().then(() => {
                 setIsOpen(false);

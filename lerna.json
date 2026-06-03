@@ -5,6 +5,7 @@
   "packages": [
     "packages/*",
     "presets/*",
+    "plugins/*",
     "apps/*"
   ],
   "includeMergedTags": true

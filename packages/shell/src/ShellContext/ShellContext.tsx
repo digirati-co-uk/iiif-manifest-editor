@@ -1,29 +1,21 @@
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
-import {
-  AtlasStoreProvider,
-  ImageServiceLoaderContext,
-} from "react-iiif-vault";
+import { AtlasStoreProvider, ImageServiceLoaderContext } from "react-iiif-vault";
 import { ThemeProvider } from "styled-components";
-import {
-  AppResourceProvider,
-  type Resource,
-} from "../AppResourceProvider/AppResourceProvider";
-import {
-  type Config,
-  ConfigProvider,
-  useConfig,
-} from "../ConfigContext/ConfigContext";
+import { useAppInstance } from "../AppContext/AppContext";
+import { AppResourceProvider, type Resource } from "../AppResourceProvider/AppResourceProvider";
+import type { BackgroundActionPersistence } from "../BackgroundTasks/BackgroundTasks.types";
+import { BackgroundActionsProvider } from "../BackgroundTasks/BackgroundTasksStore";
+import { type Config, ConfigProvider, mergeConfig, useConfig } from "../ConfigContext/ConfigContext";
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
+import { PluginConfigBridge } from "../PluginContext/PluginContext";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
-import type {
-  Preview,
-  PreviewConfiguration,
-} from "../PreviewContext/PreviewContext.types";
+import type { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
+import { ToastProvider } from "../Toast/ToastContext";
 import { defaultTheme } from "./default-theme";
 
 const previewConfigs: PreviewConfiguration[] = [
@@ -73,6 +65,7 @@ export function ShellProvider({
   previews,
   resource,
   editing,
+  backgroundActionPersistence,
 }: {
   resource: Resource;
   config?: Partial<Config>;
@@ -81,15 +74,32 @@ export function ShellProvider({
   theme?: any;
   previews?: Preview[];
   editing?: { id: string; type: string };
+  backgroundActionPersistence?: BackgroundActionPersistence | false | null;
 }) {
+  const app = useAppInstance();
   const existingConfig = useConfig();
   const mergedConfig = useMemo(() => {
-    return {
-      ...existingConfig,
-      ...config,
-      previews: config?.previews || existingConfig.previews || previewConfigs,
-    };
+    const resolvedPreviews =
+      config?.previews || (existingConfig.previews?.length ? existingConfig.previews : previewConfigs);
+    return mergeConfig(
+      existingConfig,
+      {
+        previews: resolvedPreviews,
+      },
+      config,
+    );
   }, [existingConfig, config]);
+  const backgroundActionPersistenceKey = useMemo(
+    () => ({
+      appId: app.appId,
+      instanceId: app.instanceId,
+      rootResource: {
+        id: resource.id,
+        type: resource.type,
+      },
+    }),
+    [app.appId, app.instanceId, resource.id, resource.type],
+  );
 
   return (
     <ErrorBoundary>
@@ -98,17 +108,22 @@ export function ShellProvider({
           <PreviewVaultContext>
             <ThemeProvider theme={theme || defaultTheme}>
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
+                <PluginConfigBridge config={mergedConfig} />
                 <EditingStack>
                   <LayoutProvider>
-                    <ContextMenuProvider>
-                      {/* @todo swap these out for (config?.previews || []) */}
-                      <PreviewProvider
-                        previews={previews || []}
-                        configs={mergedConfig.previews}
-                      >
-                        <AtlasStoreProvider>{children}</AtlasStoreProvider>
-                      </PreviewProvider>
-                    </ContextMenuProvider>
+                    <BackgroundActionsProvider
+                      persistence={backgroundActionPersistence}
+                      persistenceKey={backgroundActionPersistenceKey}
+                    >
+                      <ContextMenuProvider>
+                        <ToastProvider>
+                          {/* @todo swap these out for (config?.previews || []) */}
+                          <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
+                            <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                          </PreviewProvider>
+                        </ToastProvider>
+                      </ContextMenuProvider>
+                    </BackgroundActionsProvider>
                   </LayoutProvider>
                 </EditingStack>
               </ConfigProvider>

@@ -2,8 +2,13 @@
 
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
+  ActionButton,
   DefaultTooltipContent,
+  Form,
   ManifestEditorLogo,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
   Tab,
   TabList,
   TabPanel,
@@ -12,11 +17,13 @@ import {
   TooltipTrigger,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
+import { PresetIcon } from "@manifest-editor/exhibition-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
   type AnnotationPanel,
   AppProvider,
+  BackgroundActionsMenu,
   type CanvasEditorDefinition,
   type Config,
   ConfigEditor,
@@ -24,8 +31,13 @@ import {
   extendApp,
   Layout,
   type LayoutPanel,
+  ManifestPaginationNavigation,
   type MappedApp,
+  type MappedPlugin,
   mapApp,
+  mergePartialConfig,
+  type PluginModule,
+  PluginProvider,
   PreviewButton,
   type PreviewConfiguration,
   ShellProvider,
@@ -36,13 +48,16 @@ import {
   usePreviewContext,
   useSaveVault,
 } from "@manifest-editor/shell";
+import DarkIcon from "@manifest-editor/ui/icons/DarkIcon";
+import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { VaultProvider } from "react-iiif-vault";
-import { useBrowserProject } from "./browser-state";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useManifest, VaultProvider } from "react-iiif-vault";
+import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
+
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
 const previews: PreviewConfiguration[] = [
@@ -87,6 +102,30 @@ const previews: PreviewConfiguration[] = [
     },
   },
   {
+    id: "tify",
+    type: "external-manifest-preview",
+    label: "TIFY",
+    config: {
+      url: "https://tify-iiif-viewer.github.io/tify/?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "triiiceratops",
+    type: "external-manifest-preview",
+    label: "Triiiceratops",
+    config: {
+      url: "https://d-flood.github.io/triiiceratops/viewer/?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "glycerine",
+    type: "external-manifest-preview",
+    label: "Glycerine Viewer",
+    config: {
+      url: "https://demo.viewer.glycerine.io/viewer?iiif-content={manifestId}",
+    },
+  },
+  {
     id: "iiif-preview",
     type: "iiif-preview-service",
     label: "IIIF Preview",
@@ -124,7 +163,91 @@ export interface BrowserEditorProps {
   preset: MappedApp;
   presetPath?: string;
   presetName?: string;
+  layoutMode?: "default" | "focused";
   config?: Partial<Config>;
+  plugins?: Array<PluginModule | MappedPlugin>;
+}
+
+type ExhibitionTheme = "light" | "dark";
+type ExhibitionPresetViewerSettings = {
+  defaultPreview?: "delft-slideshow" | "minimal-slideshow" | "minimal-floating-tour";
+  floatingPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+};
+
+const exhibitionThemeStorageKey = "exhibition-editor-theme";
+const exhibitionViewerPluginId = "exhibition-viewer";
+const exhibitionViewerSettingsKey = "preset";
+const defaultExhibitionViewerSettings: Required<ExhibitionPresetViewerSettings> = {
+  defaultPreview: "delft-slideshow",
+  floatingPosition: "top-right",
+};
+
+const exhibitionHeaderStyles = {
+  light: "bg-[#26212a]",
+  dark: "bg-[#18161d]",
+} satisfies Record<ExhibitionTheme, string>;
+
+function getExhibitionViewerSettings(config?: Partial<Config> | null): Required<ExhibitionPresetViewerSettings> {
+  const rawSettings = config?.plugins?.apps?.[exhibitionViewerPluginId]?.settings?.[exhibitionViewerSettingsKey] || {};
+
+  return {
+    ...defaultExhibitionViewerSettings,
+    ...(rawSettings as ExhibitionPresetViewerSettings),
+  };
+}
+
+function createFloatingTourUrl(floatingPosition: ExhibitionPresetViewerSettings["floatingPosition"]) {
+  const url = new URL("https://preview.exhibitionviewer.org/preview/slideshow");
+  url.searchParams.set("manifest", "{manifestId}");
+  url.searchParams.set("minimal", "true");
+  url.searchParams.set("floating", "true");
+  url.searchParams.set("floating-position", floatingPosition || defaultExhibitionViewerSettings.floatingPosition);
+  return url.toString().replace("%7BmanifestId%7D", "{manifestId}");
+}
+
+function applyExhibitionViewerSettings(
+  baseConfig: Partial<Config>,
+  presetPath: string | undefined,
+  settings: Required<ExhibitionPresetViewerSettings>,
+): Partial<Config> {
+  if (presetPath !== "exhibition/slideshow") {
+    return baseConfig;
+  }
+
+  const floatingTourPreview: PreviewConfiguration = {
+    id: "minimal-floating-tour",
+    type: "external-manifest-preview",
+    label: "Floating tour",
+    config: {
+      url: createFloatingTourUrl(settings.floatingPosition),
+    },
+  };
+  const previews = baseConfig.previews || [];
+  const hasFloatingTourPreview = previews.some((preview) => preview.id === floatingTourPreview.id);
+
+  return {
+    ...baseConfig,
+    defaultPreview: settings.defaultPreview,
+    previews: (hasFloatingTourPreview ? previews : [...previews, floatingTourPreview]).map((preview) => {
+      if (preview.id !== floatingTourPreview.id) {
+        return preview;
+      }
+
+      return floatingTourPreview;
+    }),
+  };
+}
+
+function getInitialExhibitionTheme(): ExhibitionTheme {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  return window.localStorage.getItem(exhibitionThemeStorageKey) === "dark" ? "dark" : "light";
+}
+
+function getNextExhibitionTheme(theme: ExhibitionTheme): ExhibitionTheme {
+  return theme === "dark" ? "light" : "dark";
 }
 
 export default function BrowserEditor({
@@ -133,6 +256,8 @@ export default function BrowserEditor({
   preset,
   presetPath,
   presetName,
+  layoutMode,
+  plugins = [],
 }: BrowserEditorProps) {
   const {
     staleEtag,
@@ -152,11 +277,30 @@ export default function BrowserEditor({
     projectConfig,
     saveProjectConfig,
   } = useBrowserProject(id);
-  const customConfig = browserConfig || {};
+  const { globalPluginConfig, isGlobalPluginConfigLoading, saveGlobalPluginConfig } = useBrowserGlobalPluginConfig();
   const [allowAnyway, setAllowAnyway] = useState(false);
+  const isExhibitionPreset = presetPath?.startsWith("exhibition") || false;
+  const isFocusedExhibition = layoutMode === "focused" && isExhibitionPreset;
+  const exhibitionViewerSettings = useMemo(() => {
+    return getExhibitionViewerSettings(projectConfig);
+  }, [projectConfig]);
+  const customConfig = useMemo(() => {
+    return applyExhibitionViewerSettings(browserConfig || {}, presetPath, exhibitionViewerSettings);
+  }, [browserConfig, exhibitionViewerSettings, presetPath]);
+  const [exhibitionTheme, setExhibitionTheme] = useState<ExhibitionTheme>(getInitialExhibitionTheme);
   const thumbnailHelper = useMemo(() => {
     return createThumbnailHelper(vault);
   }, [vault]);
+
+  useEffect(() => {
+    if (isFocusedExhibition) {
+      window.localStorage.setItem(exhibitionThemeStorageKey, exhibitionTheme);
+    }
+  }, [exhibitionTheme, isFocusedExhibition]);
+
+  const toggleExhibitionTheme = useCallback(() => {
+    setExhibitionTheme(getNextExhibitionTheme);
+  }, []);
 
   const searchParams = useSearchParams();
 
@@ -204,19 +348,33 @@ export default function BrowserEditor({
   }, [staleEtag]);
 
   const mergedConfig = useMemo(() => {
-    return {
-      ...config,
-      ...projectConfig,
-      ...customConfig,
-      ...(preset?.config || {}),
-    };
-  }, [preset, projectConfig, customConfig]);
+    return mergePartialConfig(config, projectConfig, customConfig);
+  }, [projectConfig, customConfig]);
 
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {
       leftPanels: [
+        ...(isExhibitionPreset
+          ? [
+              {
+                divide: true,
+                id: "exhibition-preset-config",
+                label: "Preset",
+                icon: <PresetIcon />,
+                render: () => (
+                  <ExhibitionPresetConfigEditor
+                    projectId={id}
+                    layoutMode={layoutMode}
+                    layoutPreset={presetPath}
+                    settings={exhibitionViewerSettings}
+                    saveConfig={saveProjectConfig}
+                  />
+                ),
+              } satisfies LayoutPanel,
+            ]
+          : []),
         {
-          divide: true,
+          divide: !isExhibitionPreset,
           id: "config",
           label: "Config",
           icon: <SettingsIcon />,
@@ -232,30 +390,57 @@ export default function BrowserEditor({
         },
       ],
     });
-  }, [project]);
+  }, [exhibitionViewerSettings, isExhibitionPreset, presetPath, project, saveProjectConfig]);
 
   const header = (
     <>
-      <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
-        <Link href="/" className="flex justify-start items-center gap-2">
-          <ManifestEditorLogo />
-          {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
+      <header
+        className={
+          isFocusedExhibition
+            ? `h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-6 items-center border-b border-white/10 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : "h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-4 items-center shadow"
+        }
+      >
+        <Link href="/" className="flex min-w-0 items-center justify-start gap-2">
+          {isFocusedExhibition ? (
+            <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
+          ) : (
+            <>
+              <ManifestEditorLogo />
+              {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
+            </>
+          )}
         </Link>
-        <div className="flex-1" />
-        <div className="flex items-center justify-center gap-5">
+        <ManifestPaginationNavigation
+          className="justify-self-center"
+          variant={isFocusedExhibition ? "dark" : "light"}
+        />
+        <div className="flex min-w-0 items-center justify-end gap-5">
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
           <div className="flex items-center gap-2">
             <ShareButton />
+            <BackgroundActionsMenu />
+            {isFocusedExhibition ? (
+              <button
+                type="button"
+                className="h-9 rounded-md border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+                aria-pressed={exhibitionTheme === "dark"}
+                aria-label={`Switch to ${exhibitionTheme === "dark" ? "light" : "dark"} mode`}
+                onClick={toggleExhibitionTheme}
+              >
+                {exhibitionTheme === "dark" ? <LightIcon /> : <DarkIcon />}
+              </button>
+            ) : null}
             <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt id={id} alreadyExhibition={presetPath === "exhibition"} />
+      <MaybeExhibitionPrompt id={id} alreadyExhibition={isExhibitionPreset} />
     </>
   );
 
-  if (isProjectLoading) return <div>Loading...</div>;
+  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>Loading...</div>;
   if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
 
   // @todo test without this option and see if its needed
@@ -292,18 +477,245 @@ export default function BrowserEditor({
   }
 
   return (
-    <div className="flex flex-1 h-[100vh] w-full">
+    <div
+      className="flex flex-1 h-[100vh] w-full"
+      data-exhibition-theme={isFocusedExhibition ? exhibitionTheme : undefined}
+    >
       <VaultProvider vault={vault}>
-        <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
-          <VaultProvider vault={vault}>
-            <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
-              <Layout header={header} />
-              <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
-            </ShellProvider>
-          </VaultProvider>
-        </AppProvider>
+        <PluginProvider
+          plugins={plugins}
+          globalPluginConfig={globalPluginConfig}
+          saveGlobalPluginConfig={saveGlobalPluginConfig}
+        >
+          <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
+            <VaultProvider vault={vault}>
+              <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
+                <Layout
+                  key={isFocusedExhibition ? "focused-exhibition" : "editor-layout"}
+                  header={header}
+                  layoutMode={layoutMode}
+                  className={isFocusedExhibition ? "exhibition-focused" : undefined}
+                />
+                <SelectInitialExhibitionCanvas enabled={isExhibitionPreset && !selectedCanvasId && !editing} />
+                <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
+              </ShellProvider>
+            </VaultProvider>
+          </AppProvider>
+        </PluginProvider>
       </VaultProvider>
     </div>
+  );
+}
+
+function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {
+  const manifest = useManifest();
+  const selected = useEditingResource();
+  const { edit } = useLayoutActions();
+  const hasSelectedInitialCanvas = useRef(false);
+
+  useEffect(() => {
+    if (!enabled || hasSelectedInitialCanvas.current || selected || !manifest?.items?.length) {
+      return;
+    }
+
+    const firstCanvas = manifest.items[0];
+    if (!firstCanvas?.id) {
+      return;
+    }
+
+    hasSelectedInitialCanvas.current = true;
+    edit(
+      { id: firstCanvas.id, type: "Canvas" },
+      {
+        parent: { id: manifest.id, type: "Manifest" },
+        property: "items",
+        index: 0,
+      },
+      { forceOpen: false },
+    );
+  }, [edit, enabled, manifest, selected]);
+
+  return null;
+}
+
+function ExhibitionPresetConfigEditor({
+  projectId,
+  layoutMode,
+  layoutPreset,
+  settings,
+  saveConfig,
+}: {
+  projectId: string;
+  layoutMode?: "default" | "focused";
+  layoutPreset?: string;
+  settings: Required<ExhibitionPresetViewerSettings>;
+  saveConfig: (config: Partial<Config>) => void | Promise<void>;
+}) {
+  const [isSaving, setIsSaving] = useState(false);
+  const isSlideshow = layoutPreset === "exhibition/slideshow";
+  const editorBasePath =
+    layoutMode === "focused" ? `/editor-focused/${projectId}/exhibition` : `/editor/${projectId}/exhibition`;
+
+  const saveSettings = useCallback(
+    async (nextSettings: Required<ExhibitionPresetViewerSettings>) => {
+      setIsSaving(true);
+      try {
+        await saveConfig({
+          defaultPreview: nextSettings.defaultPreview,
+          plugins: {
+            apps: {
+              [exhibitionViewerPluginId]: {
+                settings: {
+                  [exhibitionViewerSettingsKey]: nextSettings,
+                },
+              },
+            },
+          },
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [saveConfig],
+  );
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formValues = new FormData(e.currentTarget);
+    saveSettings({
+      defaultPreview: (formValues.get("defaultPreview") ||
+        defaultExhibitionViewerSettings.defaultPreview) as Required<ExhibitionPresetViewerSettings>["defaultPreview"],
+      floatingPosition: (formValues.get("floatingPosition") ||
+        defaultExhibitionViewerSettings.floatingPosition) as Required<ExhibitionPresetViewerSettings>["floatingPosition"],
+    });
+  }
+
+  return (
+    <Sidebar>
+      <SidebarHeader title="Preset configuration" />
+      <SidebarContent className="p-4">
+        <div className="mb-6">
+          <div className="mb-3 text-sm font-semibold text-gray-700">Layout preset</div>
+          <div className="flex flex-col gap-2">
+            <PresetLayoutLink
+              href={editorBasePath}
+              label="Full page exhibition"
+              selected={layoutPreset === "exhibition"}
+            />
+            <PresetLayoutLink
+              href={`${editorBasePath}/slideshow`}
+              label="Slideshow exhibition"
+              selected={layoutPreset === "exhibition/slideshow"}
+            />
+            <PresetLayoutLink
+              href={`${editorBasePath}/scroll`}
+              label="Scrolling exhibition"
+              selected={layoutPreset === "exhibition/scroll"}
+            />
+          </div>
+        </div>
+
+        {isSlideshow ? (
+          <Form.Form onSubmit={onSubmit} className="flex flex-col gap-5">
+            <Form.InputContainer>
+              <Form.Label htmlFor="delft-slideshow">Default preview</Form.Label>
+              <div className="flex flex-col gap-3">
+                <Form.InputContainer horizontal>
+                  <Form.Input
+                    type="radio"
+                    id="delft-slideshow"
+                    name="defaultPreview"
+                    value="delft-slideshow"
+                    defaultChecked={settings.defaultPreview === "delft-slideshow"}
+                  />
+                  <label htmlFor="delft-slideshow">Delft slideshow</label>
+                </Form.InputContainer>
+                <Form.InputContainer horizontal>
+                  <Form.Input
+                    type="radio"
+                    id="minimal-slideshow"
+                    name="defaultPreview"
+                    value="minimal-slideshow"
+                    defaultChecked={settings.defaultPreview === "minimal-slideshow"}
+                  />
+                  <label htmlFor="minimal-slideshow">Light slideshow</label>
+                </Form.InputContainer>
+                <Form.InputContainer horizontal>
+                  <Form.Input
+                    type="radio"
+                    id="minimal-floating-tour"
+                    name="defaultPreview"
+                    value="minimal-floating-tour"
+                    defaultChecked={settings.defaultPreview === "minimal-floating-tour"}
+                  />
+                  <label htmlFor="minimal-floating-tour">Floating tour</label>
+                </Form.InputContainer>
+              </div>
+            </Form.InputContainer>
+
+            <Form.InputContainer>
+              <Form.Label htmlFor="floatingPosition">Floating tour position</Form.Label>
+              <select
+                id="floatingPosition"
+                name="floatingPosition"
+                defaultValue={settings.floatingPosition}
+                className="border border-gray-300 rounded-md px-3 py-2"
+              >
+                <option value="top-left">Top left</option>
+                <option value="top-right">Top right</option>
+                <option value="bottom-left">Bottom left</option>
+                <option value="bottom-right">Bottom right</option>
+              </select>
+            </Form.InputContainer>
+
+            <div>
+              <ActionButton type="submit" isDisabled={isSaving}>
+                {isSaving ? "Saving..." : "Save preset"}
+              </ActionButton>
+            </div>
+          </Form.Form>
+        ) : (
+          <div className="text-sm text-gray-600">
+            There are no additional supported preset options for this layout yet.
+          </div>
+        )}
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+function PresetLayoutLink({
+  href,
+  label,
+  selected,
+  disabled,
+}: {
+  href?: string;
+  label: string;
+  selected: boolean;
+  disabled?: boolean;
+}) {
+  const className = [
+    "flex items-center justify-between rounded-md border px-3 py-2 text-sm font-medium",
+    selected ? "border-me-primary-500 bg-me-50 text-me-primary-700" : "border-gray-200 bg-white text-gray-700",
+    disabled ? "cursor-not-allowed opacity-50" : "hover:border-me-primary-300",
+  ].join(" ");
+
+  const content = (
+    <>
+      <span>{label}</span>
+      <span className="text-xs font-semibold">{selected ? "Current" : disabled ? "Coming soon" : "Open"}</span>
+    </>
+  );
+
+  if (disabled || !href) {
+    return <div className={className}>{content}</div>;
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
   );
 }
 
