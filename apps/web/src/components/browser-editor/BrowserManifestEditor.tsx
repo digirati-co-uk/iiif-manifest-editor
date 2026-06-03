@@ -1,7 +1,7 @@
 import * as manifestPreset from "@manifest-editor/manifest-preset";
 import { mapApp } from "@manifest-editor/shell";
 import BrowserEditor from "./BrowserEditor";
-import * as iframePreviewPlugin from "../iframe-preview-plugin";
+// import * as iframePreviewPlugin from "../iframe-preview-plugin";
 
 const preset = mapApp(manifestPreset);
 
@@ -16,7 +16,7 @@ export default function BrowserManifestEditor({
     <BrowserEditor
       id={id}
       preset={preset}
-      plugins={[...(manifestPreset.plugins || []), iframePreviewPlugin]}
+      plugins={manifestPreset.plugins || []}
       layoutMode={layoutMode}
     />
   );
