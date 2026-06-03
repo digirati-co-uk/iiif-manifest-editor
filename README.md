@@ -18,7 +18,7 @@ See the [Range Editor guide](https://manifest-editor-docs.netlify.app/docs/creat
 
 The Exhibition Editor, developed in collaboration with TU Delft earlier in 2025 has been updated to address user feedback captured in user testing and recent workshops. We’ve enabled a more realistic preview of your exhibition, provided more intuitive tour step creation and editing and added some further Exhibition Viewer modes.
 
-See the section [Creating exhibitions using IIIF Manifests](https://manifest-editor-docs.netlify.app/docs/creating-annotations) for further information.
+See the section [Creating exhibitions using IIIF Manifests](https://manifest-editor-docs.netlify.app/docs/exhibition-building) for further information.
 
 ![Exhibition Editor screenshot](./apps/docs/public/exhibition-editor-overview-gen-ai-example1.png)
 

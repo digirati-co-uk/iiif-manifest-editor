@@ -102,7 +102,7 @@ export async function analyse(url: string, ...expectedTypes: string[]) {
   let response = null;
   try {
     // Try head request, if that works...
-    await fetch(url, { method: "HEAD" });
+    // await fetch(url, { method: "HEAD" });
 
     // then fetch the full resource.
     response = await fetch(url);
@@ -164,13 +164,13 @@ export async function analyseJson(data: any, url: string) {
   if (!vaultData) {
     return;
   }
-  // @ts-ignore
+  // @ts-expect-error
   if ((vaultData && vaultData?.type === "Manifest") || vaultData?.type === "Collection") {
     return {
       id: url,
-      // @ts-ignore
+      // @ts-expect-error
       type: vaultData.type,
-      // @ts-ignore
+      // @ts-expect-error
       label: getValue(vaultData.label),
     };
   }
@@ -217,7 +217,7 @@ async function handleNonFetchableUrl(url: string, capturedContentType?: string) 
       format: await getFormat(url, capturedContentType),
     };
     return data;
-  } catch {}
+  } catch { }
 
   return null;
 }
