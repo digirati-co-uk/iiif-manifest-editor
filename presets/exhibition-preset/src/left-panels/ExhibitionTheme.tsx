@@ -5,7 +5,7 @@ import {
   useLayoutActions,
   useLayoutState,
 } from "@manifest-editor/shell";
-import { type ChangeEvent, type ReactNode, useMemo } from "react";
+import { type ChangeEvent, type ReactNode, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { useManifest, useVault } from "react-iiif-vault";
 import {
@@ -47,6 +47,8 @@ type ServiceDetails = {
   service: any;
 } | null;
 
+type ThemePanelMode = "simple" | "advanced";
+
 function ThemeSection({
   title,
   description,
@@ -66,6 +68,44 @@ function ThemeSection({
       </div>
       {children ? <div className="space-y-3">{children}</div> : null}
     </section>
+  );
+}
+
+function ThemeInlineSelect<T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: T;
+  onChange: (value: T) => void;
+  options: Array<{ label: string; value: T }>;
+}) {
+  return (
+    <div>
+      <div className="mb-2 text-xs font-medium text-slate-500">{label}</div>
+      <div className="flex flex-wrap gap-1 rounded-md border border-slate-200 bg-slate-100 p-1">
+        {options.map((option) => {
+          const isActive = option.value === value;
+          return (
+            <Button
+              key={option.value}
+              className={[
+                "rounded px-2 py-1.5 text-sm transition-colors",
+                isActive
+                  ? "bg-white font-semibold text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:bg-white/70 hover:text-slate-900",
+              ].join(" ")}
+              aria-pressed={isActive}
+              onPress={() => onChange(option.value)}
+            >
+              {option.label}
+            </Button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -212,9 +252,31 @@ function setThemeValue(
   return next as ExhibitionThemeConfig;
 }
 
+function setThemeValues(
+  theme: ExhibitionThemeConfig,
+  updates: Array<{ path: string[]; value: unknown }>,
+) {
+  const next = cloneTheme(theme) as Record<string, any>;
+
+  for (const update of updates) {
+    let current = next;
+    for (const segment of update.path.slice(0, -1)) {
+      current[segment] ||= {};
+      current = current[segment];
+    }
+    const finalSegment = update.path[update.path.length - 1];
+    if (finalSegment) {
+      current[finalSegment] = update.value;
+    }
+  }
+
+  return next as ExhibitionThemeConfig;
+}
+
 function ExhibitionThemePanel() {
   const manifest = useManifest();
   const vault = useVault();
+  const [themeMode, setThemeMode] = useState<ThemePanelMode>("simple");
   const { centerPanel } = useLayoutState();
   const { centerPanel: centerPanelActions } = useLayoutActions();
   const [storedPreviewPreset, setStoredPreviewPreset] =
@@ -285,6 +347,39 @@ function ExhibitionThemePanel() {
     upsertTheme(setThemeValue(resolvedTheme, path, value));
   };
 
+  const updatePaths = (updates: Array<{ path: string[]; value: unknown }>) => {
+    upsertTheme(setThemeValues(resolvedTheme, updates));
+  };
+
+  const setSimpleBaseColor = (value: string) => {
+    updatePaths([
+      { path: ["delft", "tokens", "backgroundPrimary"], value },
+      { path: ["delft", "tokens", "backgroundSecondary"], value },
+      { path: ["delft", "tokens", "controlBar"], value },
+      { path: ["delft", "tokens", "closeBackground"], value },
+      { path: ["delft", "tokens", "titleCard"], value },
+      { path: ["delft", "tokens", "infoBlock"], value },
+      { path: ["delft", "tokens", "viewerBackground"], value },
+      { path: ["scroll", "tokens", "titleBackground"], value },
+      { path: ["scroll", "tokens", "annotationBackground"], value },
+      { path: ["scroll", "tokens", "infoBlockBackground"], value },
+    ]);
+  };
+
+  const setSimpleTextColor = (value: string) => {
+    updatePaths([
+      { path: ["delft", "tokens", "textPrimary"], value },
+      { path: ["delft", "tokens", "textSecondary"], value },
+      { path: ["delft", "tokens", "imageCaption"], value },
+      { path: ["delft", "tokens", "closeText"], value },
+      { path: ["delft", "tokens", "titleCardText"], value },
+      { path: ["delft", "tokens", "infoBlockText"], value },
+      { path: ["scroll", "tokens", "titleColor"], value },
+      { path: ["scroll", "tokens", "annotationColor"], value },
+      { path: ["scroll", "tokens", "infoBlockColor"], value },
+    ]);
+  };
+
   const enableTheme = (enabled: boolean) => {
     if (!enabled) {
       upsertTheme(null);
@@ -316,7 +411,7 @@ function ExhibitionThemePanel() {
           title="Preview"
           description="Switch the live preview route without changing the saved manifest theme."
         >
-          <ThemeSelectField<PresetUrlSearchParamsPreset>
+          <ThemeInlineSelect<PresetUrlSearchParamsPreset>
             label="Preview preset"
             value={previewPreset}
             onChange={setPreviewPreset}
@@ -351,7 +446,7 @@ function ExhibitionThemePanel() {
             </Button>
           </div>
 
-          <ThemeSelectField<ExhibitionThemePreset>
+          <ThemeInlineSelect<ExhibitionThemePreset>
             label="Preset"
             value={resolvedTheme.preset}
             onChange={setPreset}
@@ -363,302 +458,355 @@ function ExhibitionThemePanel() {
           />
         </ThemeSection>
 
-        <ThemeSection title="Typography">
-          <ThemeTextField
-            label="Sans font stack"
-            value={resolvedTheme.shared.fontSans}
-            onChange={(value) => updatePath(["shared", "fontSans"], value)}
-          />
-          <ThemeTextField
-            label="Mono font stack"
-            value={resolvedTheme.shared.fontMono}
-            onChange={(value) => updatePath(["shared", "fontMono"], value)}
-          />
-          <ThemeSelectField<TitleTransform>
-            label="Title transform"
-            value={resolvedTheme.shared.titleTransform}
-            onChange={(value) =>
-              updatePath(["shared", "titleTransform"], value)
-            }
+        <ThemeSection title="Theme Options">
+          <ThemeInlineSelect<ThemePanelMode>
+            label="Editing mode"
+            value={themeMode}
+            onChange={setThemeMode}
             options={[
-              { label: "Uppercase", value: "uppercase" },
-              { label: "None", value: "none" },
-              { label: "Capitalize", value: "capitalize" },
+              { label: "Simple", value: "simple" },
+              { label: "Advanced", value: "advanced" },
             ]}
           />
         </ThemeSection>
 
-        <ThemeSection title="Delft Colors">
-          <ThemeColorField
-            label="Background"
-            value={resolvedTheme.delft.tokens.backgroundPrimary}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "backgroundPrimary"], value)
-            }
-          />
-          <ThemeColorField
-            label="Secondary background"
-            value={resolvedTheme.delft.tokens.backgroundSecondary}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "backgroundSecondary"], value)
-            }
-          />
-          <ThemeColorField
-            label="Primary text"
-            value={resolvedTheme.delft.tokens.textPrimary}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "textPrimary"], value)
-            }
-          />
-          <ThemeColorField
-            label="Secondary text"
-            value={resolvedTheme.delft.tokens.textSecondary}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "textSecondary"], value)
-            }
-          />
-          <ThemeColorField
-            label="Title card"
-            value={resolvedTheme.delft.tokens.titleCard}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "titleCard"], value)
-            }
-          />
-          <ThemeColorField
-            label="Title card text"
-            value={resolvedTheme.delft.tokens.titleCardText}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "titleCardText"], value)
-            }
-          />
-          <ThemeColorField
-            label="Info block"
-            value={resolvedTheme.delft.tokens.infoBlock}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "infoBlock"], value)
-            }
-          />
-          <ThemeColorField
-            label="Info block text"
-            value={resolvedTheme.delft.tokens.infoBlockText}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "infoBlockText"], value)
-            }
-          />
-          <ThemeColorField
-            label="Control bar"
-            value={resolvedTheme.delft.tokens.controlBar}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "controlBar"], value)
-            }
-          />
-          <ThemeColorField
-            label="Viewer background"
-            value={resolvedTheme.delft.tokens.viewerBackground}
-            onChange={(value) =>
-              updatePath(["delft", "tokens", "viewerBackground"], value)
-            }
-          />
-        </ThemeSection>
+        {themeMode === "simple" ? (
+          <ThemeSection
+            title="Simple Colors"
+            description="Apply broad colours across the exhibition, scrolling, presentation, and slideshow views."
+          >
+            <ThemeColorField
+              label="Base colour"
+              value={resolvedTheme.delft.tokens.backgroundSecondary}
+              onChange={setSimpleBaseColor}
+            />
+            <ThemeColorField
+              label="Text colour"
+              value={resolvedTheme.delft.tokens.textSecondary}
+              onChange={setSimpleTextColor}
+            />
+          </ThemeSection>
+        ) : (
+          <>
+            <ThemeSection title="Typography">
+              <ThemeTextField
+                label="Sans font stack"
+                value={resolvedTheme.shared.fontSans}
+                onChange={(value) => updatePath(["shared", "fontSans"], value)}
+              />
+              <ThemeTextField
+                label="Mono font stack"
+                value={resolvedTheme.shared.fontMono}
+                onChange={(value) => updatePath(["shared", "fontMono"], value)}
+              />
+              <ThemeSelectField<TitleTransform>
+                label="Title transform"
+                value={resolvedTheme.shared.titleTransform}
+                onChange={(value) =>
+                  updatePath(["shared", "titleTransform"], value)
+                }
+                options={[
+                  { label: "Uppercase", value: "uppercase" },
+                  { label: "None", value: "none" },
+                  { label: "Capitalize", value: "capitalize" },
+                ]}
+              />
+            </ThemeSection>
 
-        <ThemeSection title="Scroll Colors">
-          <ThemeColorField
-            label="Title background"
-            value={resolvedTheme.scroll.tokens.titleBackground}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "titleBackground"], value)
-            }
-          />
-          <ThemeColorField
-            label="Title text"
-            value={resolvedTheme.scroll.tokens.titleColor}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "titleColor"], value)
-            }
-          />
-          <ThemeColorField
-            label="Annotation background"
-            value={resolvedTheme.scroll.tokens.annotationBackground}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "annotationBackground"], value)
-            }
-          />
-          <ThemeColorField
-            label="Annotation text"
-            value={resolvedTheme.scroll.tokens.annotationColor}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "annotationColor"], value)
-            }
-          />
-          <ThemeColorField
-            label="Info block background"
-            value={resolvedTheme.scroll.tokens.infoBlockBackground}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "infoBlockBackground"], value)
-            }
-          />
-          <ThemeColorField
-            label="Info block text"
-            value={resolvedTheme.scroll.tokens.infoBlockColor}
-            onChange={(value) =>
-              updatePath(["scroll", "tokens", "infoBlockColor"], value)
-            }
-          />
-        </ThemeSection>
+            <ThemeSection title="Delft Colors">
+              <ThemeColorField
+                label="Background"
+                value={resolvedTheme.delft.tokens.backgroundPrimary}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "backgroundPrimary"], value)
+                }
+              />
+              <ThemeColorField
+                label="Secondary background"
+                value={resolvedTheme.delft.tokens.backgroundSecondary}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "backgroundSecondary"], value)
+                }
+              />
+              <ThemeColorField
+                label="Primary text"
+                value={resolvedTheme.delft.tokens.textPrimary}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "textPrimary"], value)
+                }
+              />
+              <ThemeColorField
+                label="Secondary text"
+                value={resolvedTheme.delft.tokens.textSecondary}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "textSecondary"], value)
+                }
+              />
+              <ThemeColorField
+                label="Title card"
+                value={resolvedTheme.delft.tokens.titleCard}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "titleCard"], value)
+                }
+              />
+              <ThemeColorField
+                label="Title card text"
+                value={resolvedTheme.delft.tokens.titleCardText}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "titleCardText"], value)
+                }
+              />
+              <ThemeColorField
+                label="Info block"
+                value={resolvedTheme.delft.tokens.infoBlock}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "infoBlock"], value)
+                }
+              />
+              <ThemeColorField
+                label="Info block text"
+                value={resolvedTheme.delft.tokens.infoBlockText}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "infoBlockText"], value)
+                }
+              />
+              <ThemeColorField
+                label="Control bar"
+                value={resolvedTheme.delft.tokens.controlBar}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "controlBar"], value)
+                }
+              />
+              <ThemeColorField
+                label="Viewer background"
+                value={resolvedTheme.delft.tokens.viewerBackground}
+                onChange={(value) =>
+                  updatePath(["delft", "tokens", "viewerBackground"], value)
+                }
+              />
+            </ThemeSection>
 
-        <ThemeSection title="Exhibition Defaults">
-          <ThemeToggle
-            label="Cut corners"
-            checked={resolvedTheme.delft.exhibition.cutCorners}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "cutCorners"], value)
-            }
-          />
-          <ThemeToggle
-            label="Full title bar"
-            checked={resolvedTheme.delft.exhibition.fullTitleBar}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "fullTitleBar"], value)
-            }
-          />
-          <ThemeToggle
-            label="Full width grid"
-            checked={resolvedTheme.delft.exhibition.fullWidthGrid}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "fullWidthGrid"], value)
-            }
-          />
-          <ThemeToggle
-            label="Hide table of contents"
-            checked={resolvedTheme.delft.exhibition.hideTableOfContents}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "hideTableOfContents"], value)
-            }
-          />
-          <ThemeToggle
-            label="Disable presentation mode"
-            checked={resolvedTheme.delft.exhibition.disablePresentation}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "disablePresentation"], value)
-            }
-          />
-          <ThemeToggle
-            label="Hide title card"
-            checked={resolvedTheme.delft.exhibition.hideTitleCard}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "hideTitleCard"], value)
-            }
-          />
-          <ThemeToggle
-            label="Alternative image mode"
-            checked={resolvedTheme.delft.exhibition.alternativeImageMode}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "alternativeImageMode"], value)
-            }
-          />
-          <ThemeToggle
-            label="Transition scale"
-            checked={resolvedTheme.delft.exhibition.transitionScale}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "transitionScale"], value)
-            }
-          />
-          <ThemeToggle
-            label="Image info icon"
-            checked={resolvedTheme.delft.exhibition.imageInfoIcon}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "imageInfoIcon"], value)
-            }
-          />
-          <ThemeToggle
-            label="Cover images"
-            checked={resolvedTheme.delft.exhibition.coverImages}
-            onChange={(value) =>
-              updatePath(["delft", "exhibition", "coverImages"], value)
-            }
-          />
-        </ThemeSection>
+            <ThemeSection title="Scroll Colors">
+              <ThemeColorField
+                label="Title background"
+                value={resolvedTheme.scroll.tokens.titleBackground}
+                onChange={(value) =>
+                  updatePath(["scroll", "tokens", "titleBackground"], value)
+                }
+              />
+              <ThemeColorField
+                label="Title text"
+                value={resolvedTheme.scroll.tokens.titleColor}
+                onChange={(value) =>
+                  updatePath(["scroll", "tokens", "titleColor"], value)
+                }
+              />
+              <ThemeColorField
+                label="Annotation background"
+                value={resolvedTheme.scroll.tokens.annotationBackground}
+                onChange={(value) =>
+                  updatePath(
+                    ["scroll", "tokens", "annotationBackground"],
+                    value,
+                  )
+                }
+              />
+              <ThemeColorField
+                label="Annotation text"
+                value={resolvedTheme.scroll.tokens.annotationColor}
+                onChange={(value) =>
+                  updatePath(["scroll", "tokens", "annotationColor"], value)
+                }
+              />
+              <ThemeColorField
+                label="Info block background"
+                value={resolvedTheme.scroll.tokens.infoBlockBackground}
+                onChange={(value) =>
+                  updatePath(["scroll", "tokens", "infoBlockBackground"], value)
+                }
+              />
+              <ThemeColorField
+                label="Info block text"
+                value={resolvedTheme.scroll.tokens.infoBlockColor}
+                onChange={(value) =>
+                  updatePath(["scroll", "tokens", "infoBlockColor"], value)
+                }
+              />
+            </ThemeSection>
 
-        <ThemeSection title="Presentation Defaults">
-          <ThemeToggle
-            label="Cut corners"
-            checked={resolvedTheme.delft.presentation.cutCorners}
-            onChange={(value) =>
-              updatePath(["delft", "presentation", "cutCorners"], value)
-            }
-          />
-          <ThemeToggle
-            label="Floating caption panels"
-            checked={resolvedTheme.delft.presentation.isFloating}
-            onChange={(value) =>
-              updatePath(["delft", "presentation", "isFloating"], value)
-            }
-          />
-          <ThemeSelectField<FloatingPosition>
-            label="Floating position"
-            value={resolvedTheme.delft.presentation.floatingPosition}
-            onChange={(value) =>
-              updatePath(["delft", "presentation", "floatingPosition"], value)
-            }
-            options={[
-              { label: "Top left", value: "top-left" },
-              { label: "Top right", value: "top-right" },
-              { label: "Bottom left", value: "bottom-left" },
-              { label: "Bottom right", value: "bottom-right" },
-            ]}
-          />
-        </ThemeSection>
+            <ThemeSection title="Exhibition Defaults">
+              <ThemeToggle
+                label="Cut corners"
+                checked={resolvedTheme.delft.exhibition.cutCorners}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "cutCorners"], value)
+                }
+              />
+              <ThemeToggle
+                label="Full title bar"
+                checked={resolvedTheme.delft.exhibition.fullTitleBar}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "fullTitleBar"], value)
+                }
+              />
+              <ThemeToggle
+                label="Full width grid"
+                checked={resolvedTheme.delft.exhibition.fullWidthGrid}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "fullWidthGrid"], value)
+                }
+              />
+              <ThemeToggle
+                label="Hide table of contents"
+                checked={resolvedTheme.delft.exhibition.hideTableOfContents}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "exhibition", "hideTableOfContents"],
+                    value,
+                  )
+                }
+              />
+              <ThemeToggle
+                label="Disable presentation mode"
+                checked={resolvedTheme.delft.exhibition.disablePresentation}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "exhibition", "disablePresentation"],
+                    value,
+                  )
+                }
+              />
+              <ThemeToggle
+                label="Hide title card"
+                checked={resolvedTheme.delft.exhibition.hideTitleCard}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "hideTitleCard"], value)
+                }
+              />
+              <ThemeToggle
+                label="Alternative image mode"
+                checked={resolvedTheme.delft.exhibition.alternativeImageMode}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "exhibition", "alternativeImageMode"],
+                    value,
+                  )
+                }
+              />
+              <ThemeToggle
+                label="Transition scale"
+                checked={resolvedTheme.delft.exhibition.transitionScale}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "transitionScale"], value)
+                }
+              />
+              <ThemeToggle
+                label="Image info icon"
+                checked={resolvedTheme.delft.exhibition.imageInfoIcon}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "imageInfoIcon"], value)
+                }
+              />
+              <ThemeToggle
+                label="Cover images"
+                checked={resolvedTheme.delft.exhibition.coverImages}
+                onChange={(value) =>
+                  updatePath(["delft", "exhibition", "coverImages"], value)
+                }
+              />
+            </ThemeSection>
 
-        <ThemeSection title="Slideshow Defaults">
-          <ThemeToggle
-            label="Alternative image mode"
-            checked={resolvedTheme.delft.slideshow.alternativeImageMode}
-            onChange={(value) =>
-              updatePath(["delft", "slideshow", "alternativeImageMode"], value)
-            }
-          />
-          <ThemeToggle
-            label="Transition scale"
-            checked={resolvedTheme.delft.slideshow.transitionScale}
-            onChange={(value) =>
-              updatePath(["delft", "slideshow", "transitionScale"], value)
-            }
-          />
-          <ThemeToggle
-            label="Image info icon"
-            checked={resolvedTheme.delft.slideshow.imageInfoIcon}
-            onChange={(value) =>
-              updatePath(["delft", "slideshow", "imageInfoIcon"], value)
-            }
-          />
-          <ThemeToggle
-            label="Cover images"
-            checked={resolvedTheme.delft.slideshow.coverImages}
-            onChange={(value) =>
-              updatePath(["delft", "slideshow", "coverImages"], value)
-            }
-          />
-        </ThemeSection>
+            <ThemeSection title="Presentation Defaults">
+              <ThemeToggle
+                label="Cut corners"
+                checked={resolvedTheme.delft.presentation.cutCorners}
+                onChange={(value) =>
+                  updatePath(["delft", "presentation", "cutCorners"], value)
+                }
+              />
+              <ThemeToggle
+                label="Floating caption panels"
+                checked={resolvedTheme.delft.presentation.isFloating}
+                onChange={(value) =>
+                  updatePath(["delft", "presentation", "isFloating"], value)
+                }
+              />
+              <ThemeSelectField<FloatingPosition>
+                label="Floating position"
+                value={resolvedTheme.delft.presentation.floatingPosition}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "presentation", "floatingPosition"],
+                    value,
+                  )
+                }
+                options={[
+                  { label: "Top left", value: "top-left" },
+                  { label: "Top right", value: "top-right" },
+                  { label: "Bottom left", value: "bottom-left" },
+                  { label: "Bottom right", value: "bottom-right" },
+                ]}
+              />
+            </ThemeSection>
 
-        <ThemeSection title="Scroll Defaults">
-          <ThemeToggle
-            label="Show table of contents"
-            checked={resolvedTheme.scroll.options.showTableOfContents}
-            onChange={(value) =>
-              updatePath(["scroll", "options", "showTableOfContents"], value)
-            }
-          />
-          <ThemeToggle
-            label="Full-height title block"
-            checked={resolvedTheme.scroll.options.titleBlock.fullHeight}
-            onChange={(value) =>
-              updatePath(
-                ["scroll", "options", "titleBlock", "fullHeight"],
-                value,
-              )
-            }
-          />
-        </ThemeSection>
+            <ThemeSection title="Slideshow Defaults">
+              <ThemeToggle
+                label="Alternative image mode"
+                checked={resolvedTheme.delft.slideshow.alternativeImageMode}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "slideshow", "alternativeImageMode"],
+                    value,
+                  )
+                }
+              />
+              <ThemeToggle
+                label="Transition scale"
+                checked={resolvedTheme.delft.slideshow.transitionScale}
+                onChange={(value) =>
+                  updatePath(["delft", "slideshow", "transitionScale"], value)
+                }
+              />
+              <ThemeToggle
+                label="Image info icon"
+                checked={resolvedTheme.delft.slideshow.imageInfoIcon}
+                onChange={(value) =>
+                  updatePath(["delft", "slideshow", "imageInfoIcon"], value)
+                }
+              />
+              <ThemeToggle
+                label="Cover images"
+                checked={resolvedTheme.delft.slideshow.coverImages}
+                onChange={(value) =>
+                  updatePath(["delft", "slideshow", "coverImages"], value)
+                }
+              />
+            </ThemeSection>
+
+            <ThemeSection title="Scroll Defaults">
+              <ThemeToggle
+                label="Show table of contents"
+                checked={resolvedTheme.scroll.options.showTableOfContents}
+                onChange={(value) =>
+                  updatePath(
+                    ["scroll", "options", "showTableOfContents"],
+                    value,
+                  )
+                }
+              />
+              <ThemeToggle
+                label="Full-height title block"
+                checked={resolvedTheme.scroll.options.titleBlock.fullHeight}
+                onChange={(value) =>
+                  updatePath(
+                    ["scroll", "options", "titleBlock", "fullHeight"],
+                    value,
+                  )
+                }
+              />
+            </ThemeSection>
+          </>
+        )}
       </SidebarContent>
     </Sidebar>
   );

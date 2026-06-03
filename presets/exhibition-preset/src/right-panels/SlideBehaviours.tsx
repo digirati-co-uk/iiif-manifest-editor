@@ -718,8 +718,36 @@ export function getLayoutPreset(behavior: string[]): LayoutPreset {
   return "image";
 }
 
-export function buildLayoutPresetBehaviors(behavior: string[], layoutPreset: LayoutPreset) {
-  return [...behavior.filter((item) => !layoutBehaviors.has(item)), layoutPreset];
+export function buildLayoutPresetBehaviors(
+  behavior: string[],
+  layoutPreset: LayoutPreset,
+  canvasDimensions?: { width: number; height: number },
+) {
+  const next = behavior.filter((item) => !layoutBehaviors.has(item));
+  if (canvasDimensions?.width && canvasDimensions?.height) {
+    const { width: parsedWidth } = parseBehaviors(behavior);
+    const displayWidth: DisplayWidth = parsedWidth
+      ? parsedWidth <= 4
+        ? 4
+        : parsedWidth <= 6
+          ? 6
+          : parsedWidth <= 8
+            ? 8
+            : 12
+      : 12;
+    const newHeight = getDerivedHeight({
+      canvasWidth: canvasDimensions.width,
+      canvasHeight: canvasDimensions.height,
+      layoutPreset,
+      displayWidth,
+    });
+    // Replace existing h- behavior with recalculated one
+    const withoutH = next.filter((item) => !item.startsWith("h-"));
+    withoutH.push(`h-${newHeight}`);
+    withoutH.push(layoutPreset);
+    return withoutH;
+  }
+  return [...next, layoutPreset];
 }
 
 function getDisplayWidth(behavior: string[]): DisplayWidth {
@@ -774,7 +802,7 @@ function buildSimpleLayoutBehaviors({
   return next;
 }
 
-function getDerivedHeight({
+export function getDerivedHeight({
   canvasWidth,
   canvasHeight,
   layoutPreset,

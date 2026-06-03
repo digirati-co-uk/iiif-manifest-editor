@@ -144,21 +144,21 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
   if (payload.behavior) {
     behavior.push(...payload.behavior);
   } else if (payload.width && payload.height) {
-    // Let's figure out the right behaviours.
-    if (payload.width > payload.height) {
-      // The orientation is landscape.
-      // Let's shrink the height.
-      const gridSize = payload.width / 12;
-      const heightColumns = Math.floor(payload.height / gridSize);
-      const hClass = `h-${heightColumns}`;
-      behavior.push("w-12", hClass);
-    } else {
-      // The orientation is portrait.
-      const gridSize = payload.height / 12;
-      const widthColumns = Math.floor(payload.width / gridSize);
-      const wClass = `w-${widthColumns}`;
-      behavior.push(wClass, "h-12");
-    }
+    // Determine layout type to apply effective-width modifier for text panels
+    const layoutType = payload.type ?? "default";
+    const isLeftRight = layoutType === "left" || layoutType === "right";
+    const isBottom = layoutType === "bottom";
+
+    // Always start full-width (w-12); height is derived from aspect ratio
+    const displayWidth = 12;
+    const ratio = payload.width / payload.height;
+    // Effective image width after text-panel area is subtracted
+    const effectiveWidth = isLeftRight ? displayWidth * (2 / 3) : displayWidth;
+    // For bottom layout the text panel adds ~half height again
+    const textHeightMultiplier = isBottom ? 3 / 2 : 1;
+    const derivedHeight = Math.max(1, Math.min(12, Math.round((effectiveWidth / ratio) * textHeightMultiplier)));
+
+    behavior.push(`w-${displayWidth}`, `h-${derivedHeight}`);
   } else {
     behavior.push("w-12", "h-4");
   }

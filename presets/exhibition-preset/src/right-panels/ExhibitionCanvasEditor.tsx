@@ -84,7 +84,13 @@ export function ExhibitionCanvasAdvancedContent() {
                 label={option.label}
                 selected={getLayoutPreset(behavior) === option.value}
                 onClick={() => {
-                  technical.behavior.set(buildLayoutPresetBehaviors(behavior, option.value));
+                  technical.behavior.set(
+                    buildLayoutPresetBehaviors(
+                      behavior,
+                      option.value,
+                      canvas ? { width: canvas.width, height: canvas.height } : undefined,
+                    ),
+                  );
                 }}
               />
             ))}
