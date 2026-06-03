@@ -3,6 +3,7 @@ import {
   BehaviorEditor,
   type BehaviorEditorProps,
   DimensionsTriplet,
+  getInternationalStringText,
   InputContainer,
   useInStack,
 } from "@manifest-editor/editors";
@@ -387,6 +388,10 @@ function SimpleSlideLayoutEditor({
         cover: nextCover,
       }),
     );
+
+    if (canvas) {
+      injectTextPlaceholders(vault, canvas, nextLayoutPreset);
+    }
   };
 
   return (
