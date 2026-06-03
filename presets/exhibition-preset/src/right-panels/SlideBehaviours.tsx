@@ -992,3 +992,24 @@ export function TextualContentLayoutEditor() {
     </div>
   );
 }
+
+const TEXT_LAYOUTS = new Set<LayoutPreset>(["left", "right", "bottom"]);
+
+/**
+ * When switching to a layout that shows an editorial text panel, ensure the
+ * canvas has at least a placeholder label and summary so the panel is visible
+ * and editable rather than an invisible black rectangle.
+ */
+export function injectTextPlaceholders(vault: ReturnType<typeof useVault>, canvas: any, preset: LayoutPreset) {
+  if (!TEXT_LAYOUTS.has(preset)) return;
+
+  const existingLabel = getInternationalStringText(canvas.label);
+  if (!existingLabel) {
+    vault.modifyEntityField(canvas, "label", { en: ["Untitled"] });
+  }
+
+  const existingSummary = getInternationalStringText(canvas.summary);
+  if (!existingSummary) {
+    vault.modifyEntityField(canvas, "summary", { en: ["Add a description for this slide."] });
+  }
+}
