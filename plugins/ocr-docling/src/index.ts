@@ -1,15 +1,11 @@
 import type { BackgroundActionDefinition, PluginMetadata, PluginSettingsDefinition } from "@manifest-editor/shell";
 import { createOcrDoclingBackgroundAction, OCR_DOCLING_PLUGIN_ID } from "./background-action";
-import {
-  getDefaultRunOptions,
-  OCR_DOCLING_IMAGE_SIZES,
-  type OcrDoclingPluginSettings,
-} from "./config-modal";
+import { getDefaultRunOptions, OCR_DOCLING_IMAGE_SIZES, type OcrDoclingPluginSettings } from "./config-modal";
 
 export default {
   id: OCR_DOCLING_PLUGIN_ID,
-  label: "Docling OCR",
-  description: "Run Granite Docling OCR on manifest canvases and write text annotations.",
+  label: "Local OCR",
+  description: "Run Granite Docling OCR on manifest canvases and write text annotations. (500MB download)",
   author: "Digirati",
   official: true,
   defaultEnabled: false,
@@ -49,6 +45,6 @@ export const settings: PluginSettingsDefinition<OcrDoclingPluginSettings> = {
 
 export const backgroundActions: BackgroundActionDefinition[] = [createOcrDoclingBackgroundAction()];
 
+export * from "./annotations";
 export * from "./background-action";
 export * from "./config-modal";
-export * from "./annotations";

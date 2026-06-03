@@ -1,17 +1,17 @@
 import { ActionButton } from "@manifest-editor/components";
 import {
+  type AvailableBackgroundAction,
   runBackgroundAction,
-  useCanvasProgressStatus,
   useAvailableBackgroundActions,
   useBackgroundActionsStoreApi,
-  type AvailableBackgroundAction,
+  useCanvasProgressStatus,
 } from "@manifest-editor/shell";
 import { useCanvas } from "react-iiif-vault";
 
 const OCR_ACTIONS = [
   {
     id: "@manifest-editor/ocr-docling/run-ocr",
-    label: "Run Docling OCR",
+    label: "Run Local OCR",
     preparingLabel: "Preparing OCR",
     queuedLabel: "OCR queued",
     pendingLabel: "OCR in progress",
@@ -19,7 +19,7 @@ const OCR_ACTIONS = [
   {
     id: "@manifest-editor/remote-inference/action",
     label: "Run remote OCR",
-    preparingLabel: "Preparing OCR",
+    preparingLabel: "Preparing local OCR",
     queuedLabel: "OCR queued",
     pendingLabel: "OCR in progress",
   },
@@ -63,10 +63,7 @@ export function AnnotationsOcrActions() {
     const isBusy = status === "preparing" || status === "running";
     if (!isBusy) return false;
 
-    if (
-      canvasProgressStatus === "queued" ||
-      canvasProgressStatus === "pending"
-    ) {
+    if (canvasProgressStatus === "queued" || canvasProgressStatus === "pending") {
       return true;
     }
 
@@ -95,9 +92,7 @@ export function AnnotationsOcrActions() {
       {activeAction
         ? null
         : availableActions.map(({ id, label, action }) => {
-            const busy =
-              action.instance?.status === "preparing" ||
-              action.instance?.status === "running";
+            const busy = action.instance?.status === "preparing" || action.instance?.status === "running";
             return (
               <ActionButton
                 key={id}
