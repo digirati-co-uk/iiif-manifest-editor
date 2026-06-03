@@ -2,7 +2,7 @@ import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import { type EditorDefinition, ResourceEditingProvider, useInlineCreator } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
@@ -104,6 +104,12 @@ export function ExhibitionTourStepsContent({
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const stopContentRepositioning = useSlideshowContentPositioning((state) => state.stopRepositioning);
   const stopTextRepositioning = useSlideshowContentPositioning((state) => state.stopTextRepositioning);
+
+  useEffect(() => {
+    setShowTourSteps(true);
+    stopContentRepositioning();
+    stopTextRepositioning();
+  }, [setShowTourSteps, stopContentRepositioning, stopTextRepositioning]);
   const { requestTourStep, isPending, busy } = useTourStepAnnotationRequest({
     onBeforeRequest: useSlideshowWorkbench
       ? () => {
