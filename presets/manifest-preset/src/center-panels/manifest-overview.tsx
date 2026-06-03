@@ -9,13 +9,13 @@ import {
   useFastList,
   useGridOptions,
 } from "@manifest-editor/components";
-import { EditableCanvasLabel } from "@manifest-editor/editors";
+import { EditableCanvasLabel, useInStack } from "@manifest-editor/editors";
 import {
-  getCanvasProgressStatusFromState,
   FLAG_TAG,
+  getCanvasProgressStatusFromState,
   getResourceTagsFromState,
-  ManifestEditorCanvasProgressOverlay,
   type LayoutPanel,
+  ManifestEditorCanvasProgressOverlay,
   ManifestEditorTagIcon,
   ManifestEditorTagOverlay,
   useApp,
@@ -72,30 +72,20 @@ export function ManifestOverviewCenterPanel() {
     editorFeatureFlags: { manifestGridOptions = false },
   } = useConfig();
   const manifestId = technical.id.get();
+  const canvas = useInStack("Canvas");
+  const currentCanvasId = canvas?.resource.source.id;
   const manifest = { id: manifestId, type: "Manifest" };
-  const [canCreateCanvas, canvasActions] = useCreator(
-    manifest,
-    "items",
-    "Canvas",
-    undefined,
-    { isPainting: true },
-  );
+  const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
   const canvases = useFastList(items.get(), 24);
   const layoutMode = useLayoutMode();
   const { leftPanel } = useLayoutState();
   const isEditingManifest = leftPanel.current === "left-panel-manifest";
   const [{ size }, gridOptions] = useGridOptions("manifest-grid-size");
   const [showOnlyFlagged, setShowOnlyFlagged] = useState(false);
-  const canvasIds = useMemo(
-    () => (canvases || []).map((item) => item.id).join("|"),
-    [canvases],
-  );
+  const canvasIds = useMemo(() => (canvases || []).map((item) => item.id).join("|"), [canvases]);
   const canvasTags = useVaultSelector(
     (state) => {
-      const tags: Record<
-        string,
-        ReturnType<typeof getResourceTagsFromState>
-      > = {};
+      const tags: Record<string, ReturnType<typeof getResourceTagsFromState>> = {};
       for (const item of canvases || []) {
         tags[item.id] = getResourceTagsFromState(state, {
           id: item.id,
@@ -108,10 +98,7 @@ export function ManifestOverviewCenterPanel() {
   );
   const canvasProgressStatuses = useVaultSelector(
     (state) => {
-      const statuses: Record<
-        string,
-        ReturnType<typeof getCanvasProgressStatusFromState>
-      > = {};
+      const statuses: Record<string, ReturnType<typeof getCanvasProgressStatusFromState>> = {};
       for (const item of canvases || []) {
         statuses[item.id] = getCanvasProgressStatusFromState(state, {
           id: item.id,
@@ -124,9 +111,7 @@ export function ManifestOverviewCenterPanel() {
   );
   const [visibleCanvases, numberOfFlaggedCanvases] = useMemo(() => {
     const flaggedCanvases = (canvases || []).filter((item) =>
-      canvasTags[item.id]?.some(
-        (tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id,
-      ),
+      canvasTags[item.id]?.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id),
     );
 
     if (!showOnlyFlagged) {
@@ -143,21 +128,14 @@ export function ManifestOverviewCenterPanel() {
         : null;
   const createCanvas = exhibitionCreatorFilter
     ? (index: any, data: any) => {
-        return canvasActions.createFiltered(
-          exhibitionCreatorFilter,
-          index,
-          data,
-        );
+        return canvasActions.createFiltered(exhibitionCreatorFilter, index, data);
       }
     : canvasActions.create;
 
   if (!canvases || canvases.length === 0) {
     return (
       <div>
-        <ManifestOverviewEmptyState
-          onCreate={createCanvas}
-          canCreate={canCreateCanvas}
-        />
+        <ManifestOverviewEmptyState onCreate={createCanvas} canCreate={canCreateCanvas} />
       </div>
     );
   }
@@ -173,24 +151,13 @@ export function ManifestOverviewCenterPanel() {
                 aria-pressed={showOnlyFlagged}
                 onPress={() => setShowOnlyFlagged((showing) => !showing)}
               >
-                <ManifestEditorTagIcon
-                  icon={FLAG_TAG.icon}
-                  className="text-xl"
-                />{" "}
-                Show only flagged
+                <ManifestEditorTagIcon icon={FLAG_TAG.icon} className="text-xl" /> Show only flagged
               </ActionButton>
             )}
-            <ActionButton
-              isDisabled={!canCreateCanvas}
-              onPress={() => createCanvas()}
-            >
+            <ActionButton isDisabled={!canCreateCanvas} onPress={() => createCanvas()}>
               <AddIcon className="text-xl" /> Add new canvas
             </ActionButton>
-            <ActionButton
-              onPress={() =>
-                canvasActions.creator("@manifest-editor/iiif-browser-creator")
-              }
-            >
+            <ActionButton onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}>
               <IIIFBrowserIcon className="text-xl" />
             </ActionButton>
           </div>
@@ -205,6 +172,8 @@ export function ManifestOverviewCenterPanel() {
               <CanvasThumbnailGridItem
                 id={item.id}
                 key={item.id}
+                selected={item.id === currentCanvasId}
+                active={item.id === currentCanvasId}
                 icon={
                   <CanvasThumbnailFeedback
                     tags={canvasTags[item.id] || []}
