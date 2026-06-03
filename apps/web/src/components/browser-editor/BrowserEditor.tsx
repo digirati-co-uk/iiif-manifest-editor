@@ -30,8 +30,8 @@ import {
   type EditorDefinition,
   extendApp,
   Layout,
-  ManifestPaginationNavigation,
   type LayoutPanel,
+  ManifestPaginationNavigation,
   type MappedApp,
   type MappedPlugin,
   mapApp,
@@ -99,6 +99,30 @@ const previews: PreviewConfiguration[] = [
     label: "Clover",
     config: {
       url: "https://samvera-labs.github.io/clover-iiif/docs/viewer/demo?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "tify",
+    type: "external-manifest-preview",
+    label: "TIFY",
+    config: {
+      url: "https://tify-iiif-viewer.github.io/tify/?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "triiiceratops",
+    type: "external-manifest-preview",
+    label: "Triiiceratops",
+    config: {
+      url: "https://d-flood.github.io/triiiceratops/viewer/?iiif-content={manifestId}",
+    },
+  },
+  {
+    id: "glycerine",
+    type: "external-manifest-preview",
+    label: "Glycerine Viewer",
+    config: {
+      url: "https://demo.viewer.glycerine.io/viewer?iiif-content={manifestId}",
     },
   },
   {
@@ -472,9 +496,7 @@ export default function BrowserEditor({
                   layoutMode={layoutMode}
                   className={isFocusedExhibition ? "exhibition-focused" : undefined}
                 />
-                <SelectInitialExhibitionCanvas
-                  enabled={isExhibitionPreset && !selectedCanvasId && !editing}
-                />
+                <SelectInitialExhibitionCanvas enabled={isExhibitionPreset && !selectedCanvasId && !editing} />
                 <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
               </ShellProvider>
             </VaultProvider>
