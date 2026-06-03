@@ -88,5 +88,5 @@ export const plugins = [
   translationPlugin,
   ocrClassificationPlugin,
   ocrDoclingPlugin,
-  remoteInference,
+  // remoteInference,
 ];
