@@ -1,5 +1,5 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { getInternationalStringText, InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
+import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
@@ -16,7 +16,6 @@ import {
   buildLayoutPresetBehaviors,
   getLayoutPreset,
   injectTextPlaceholders,
-  type LayoutPreset,
   LayoutPresetCard,
   layoutPresetOptions,
 } from "./SlideBehaviours";
