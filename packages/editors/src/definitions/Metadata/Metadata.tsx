@@ -244,7 +244,6 @@ function MetadataRow({
             onSave={(label: any) => onSaveLabel(label.toInternationalString())}
           />
           <LanguageFieldEditor
-            disallowHTML
             fields={item.value || emptyLanguageMap}
             focusId={`${item.id}_value`}
             label="Value"
