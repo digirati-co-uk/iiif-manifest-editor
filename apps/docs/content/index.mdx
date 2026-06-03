@@ -11,6 +11,129 @@ An open-source, IIIF editing tool, the Manifest Editor is designed to provide a 
 
 - [Access the latest version](https://manifest-editor.digirati.services/)
 
+## **Manifest Editor – June 2026 \- New Features & Improvements**
+
+The latest Manifest Editor release introduces significant enhancements to manifest editing workflows, expanded viewer support, and a new plugin system that enables advanced extensibility for including or excluding additional editing features.
+
+---
+
+### **Manifest Editing Tools**
+
+#### **Canvas Flags**
+
+You can now apply **flags to individual canvases** to support review and editorial workflows. Flags help users identify canvases that require attention, enabling structured review and quality control. From the grid view you can use the filter to view all or only the flagged canvases within your manifest.
+
+![](/flagging-grid-view.png)
+
+#### **IIIF Choice Support (Create & Edit)**
+
+Improved support for **IIIF `Choice` resources** allows you to easily create and manage canvases with multiple representations (e.g. visible light, infrared).
+
+This simplifies editorial workflows for:
+
+* Multi-spectral imaging
+* Alternate renderings
+* Comparative viewing scenarios
+
+![](/combining-images-into-a-choice.png)
+
+#### **Metadata Editing Improvements**
+
+The metadata editor has been redesigned to provide clearer and more efficient editing of labels and values for metadata properties. This update improves usability for both bulk editing and detailed metadata work.
+
+**Global Canvas Navigation**
+
+A new **global navigation component** enables improved movement between canvases within the editorial workflow.
+
+#### **Expanded Viewer Preview Options**
+
+Additional IIIF viewer integrations are now available for previewing content, these include:
+
+* **TIFY**
+* **Triiiceratops**
+* **Glycerine**
+
+This provides greater flexibility when validating how manifests render across different viewers.
+
+---
+
+### **Workflow & Extensibility**
+
+#### **Plugin System (New)**
+
+A new **plugin system** has been introduced to support extensibility and custom workflows.
+
+This enables the ability to tailor functionality for specific use cases, and supports new custom plugin creation.
+
+Many new capabilities are now available as **beta features**, disabled by default and configurable as needed. New “background actions API” provides the support to support scheduling and running longer running tasks.
+
+### **Beta Features (Optional Plugins)**
+
+![](/configuring-optional-plugins.png)
+
+#### **A/V Ranges**
+
+Create and manage **temporal ranges for audio-visual content**, supporting time-based navigation and segmentation.
+
+#### **Canvas Label Generator**
+
+Bulk create or update canvas labels using configurable rules, which can:
+
+* Apply to all canvases
+* Or only canvases without existing labels
+
+This can be used to support manifest preparation including normalisation or clean up of labels.
+
+#### **Translations**
+
+Automatically generate translations of labels within a manifest.
+
+* Select target language(s)
+* Apply translations to selected labels
+
+This feature uses the **M2M100 translation model**.
+
+#### **OCR Classification (Beta)**
+
+Run an **in-browser classification model** to assess OCR complexity for each canvas.
+
+Canvases are tagged as:
+
+* Easy
+* Medium
+* Difficult
+
+This supports:
+
+* OCR strategy planning
+* Selection of appropriate transcription models
+
+Works in conjunction with upcoming **Remote Inference capabilities**.
+
+#### **Local OCR**
+
+Generate OCR directly in the browser using a lightweight local model.
+
+* Produces transcriptions for manifest content
+* Applies results as annotations on canvases
+* Currently uses: `onnx-community/granite-docling-258M-ONNX`
+
+---
+
+### **Remote Inference (Trial)**
+
+We are currently running a **trial with partner institutions** to validate our beta Remote Inference pipeline.
+
+This enables:
+
+* Routing content to appropriate OCR/HTR models
+* Based on classification (e.g. Easy / Medium / Difficult)
+* Using remote (non-browser) processing
+
+If you are interested in participating, please get in touch via the trial sign-up form ([https://forms.office.com/e/QpbkVzk1tV](https://forms.office.com/e/QpbkVzk1tV))  and we will be in touch to set you up with the appropriate access, technical support and guidance.
+
+Your feedback will help shape this feature and ensure it supports a broad range of use cases.
+
 ## November 2025 - Latest release notes
 
 ### Creating and managing IIIF ranges (table of contents)
