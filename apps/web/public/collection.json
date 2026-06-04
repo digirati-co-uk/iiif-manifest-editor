@@ -10,6 +10,11 @@
   },
   "items": [
     {
+      "id": "https://iiif-test.onb.ac.at/presentation/collection/esperanto_excerpts",
+      "label": { "none": ["Esperanto excerpts"] },
+      "thumbnail": [{"id": "https://iiif.onb.ac.at/images/REPO/9330525/00000064.jp2/152,1048,1621,2013/full/0/default.jpg", "type": "Image", "format": "image/jpeg"}]
+    },
+    {
       "id": "https://gallica.bnf.fr/iiif/ark:/12148/btv1b8626777x/manifest.json",
       "type": "Manifest",
       "label": {
