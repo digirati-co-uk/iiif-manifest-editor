@@ -1,0 +1,325 @@
+# Plugins
+
+Plugins let a host application add optional panels, editors, creators, background actions, tags, and configuration to the Manifest Editor without creating a separate preset. They are registered with the editor and then enabled per application, workspace, or host configuration.
+
+The packaged React component uses the app id `manifest-editor`. Use that id when passing plugin configuration through the `config` prop.
+
+## Configuring plugins in a host app
+
+Plugin configuration lives under `config.plugins.apps[appId]`.
+
+```tsx
+import "manifest-editor/reset.css";
+import "manifest-editor/dist/index.css";
+import { ManifestEditor, type Config } from "manifest-editor";
+
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@example/plugin"],
+        disabled: ["@example/disabled-plugin"],
+        settings: {
+          "@example/plugin": {
+            mode: "automatic",
+          },
+        },
+      },
+    },
+  },
+};
+
+export function App() {
+  return (
+    <ManifestEditor
+      resource="https://example.org/manifest.json"
+      config={config}
+    />
+  );
+}
+```
+
+The `enabled` and `disabled` arrays select plugins by metadata id. `settings` is keyed by the same plugin id and is merged with plugin defaults. Workspace settings override global settings, and global settings override plugin defaults.
+
+If a plugin is not part of the built-in manifest preset, pass it with the `plugins` prop:
+
+```tsx
+import customPlugin from "./plugins/custom-plugin";
+
+<ManifestEditor
+  resource="https://example.org/manifest.json"
+  plugins={[customPlugin]}
+  config={config}
+/>;
+```
+
+## Worker-backed plugins in Vite
+
+Some optional plugins use web workers or model assets. In a Vite app, import the worker entry as a URL and pass it as plugin settings.
+
+```tsx
+import { ManifestEditor, type Config } from "manifest-editor";
+import ocrDoclingPlugin from "@manifest-editor/ocr-docling/lazy";
+import doclingWorkerUrl from "@manifest-editor/ocr-docling/docling-worker?worker&url";
+
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@manifest-editor/ocr-docling"],
+        settings: {
+          "@manifest-editor/ocr-docling": {
+            imageSize: 1024,
+            workerUrl: doclingWorkerUrl,
+          },
+        },
+      },
+    },
+  },
+};
+
+export function App() {
+  return (
+    <ManifestEditor
+      resource="https://example.org/manifest.json"
+      plugins={[ocrDoclingPlugin]}
+      config={config}
+    />
+  );
+}
+```
+
+You can also host the worker yourself and pass a public URL:
+
+```ts
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@manifest-editor/ocr-docling"],
+        settings: {
+          "@manifest-editor/ocr-docling": {
+            workerUrl: "/assets/docling-worker.js",
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+The same pattern applies to the translation plugin:
+
+```tsx
+import translationPlugin from "@manifest-editor/translation/lazy";
+import translationWorkerUrl from "@manifest-editor/translation/translation-worker?worker&url";
+
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@manifest-editor/translation"],
+        settings: {
+          "@manifest-editor/translation": {
+            runtimePreference: "auto",
+            workerUrl: translationWorkerUrl,
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+## Lazy plugins
+
+Normal plugin modules are synchronous. If they are imported by a preset or host app, Vite includes them in the module graph even when `defaultEnabled` is `false`.
+
+Lazy plugins solve this by separating lightweight metadata from the implementation. The plugin manager can list and configure the plugin from metadata, while the implementation is loaded only when the plugin is selected.
+
+```ts
+import type { LazyPluginModule } from "@manifest-editor/shell";
+import metadata, { settings } from "./plugin";
+
+export default {
+  default: metadata,
+  settings,
+  load: () => import("./index"),
+} satisfies LazyPluginModule;
+```
+
+A lazy plugin can be passed anywhere a normal plugin can be passed:
+
+```tsx
+import ocrDoclingPlugin from "@manifest-editor/ocr-docling/lazy";
+
+<ManifestEditor
+  resource="https://example.org/manifest.json"
+  plugins={[ocrDoclingPlugin]}
+  config={{
+    plugins: {
+      apps: {
+        "manifest-editor": {
+          enabled: ["@manifest-editor/ocr-docling"],
+        },
+      },
+    },
+  }}
+/>;
+```
+
+When the plugin is enabled, the shell sets it to a loading state, calls `load()`, and then applies the loaded plugin contributions. If loading fails, the plugin remains visible in the manager with the error message and can be disabled.
+
+## Creating a plugin
+
+A plugin uses the same extension shape as a preset. The default export is metadata, and named exports contribute layout or runtime features.
+
+```ts
+import type {
+  BackgroundActionDefinition,
+  LayoutPanel,
+  PluginMetadata,
+  PluginSettingsDefinition,
+} from "@manifest-editor/shell";
+
+export type ExamplePluginSettings = {
+  mode?: "manual" | "automatic";
+};
+
+export default {
+  id: "@example/plugin",
+  label: "Example plugin",
+  description: "Adds example tools to the manifest editor.",
+  author: "Example",
+  defaultEnabled: false,
+  supports: {
+    apps: ["manifest-editor"],
+    projectTypes: ["Manifest"],
+  },
+} satisfies PluginMetadata;
+
+export const settings: PluginSettingsDefinition<ExamplePluginSettings> = {
+  defaults: {
+    mode: "manual",
+  },
+  fields: [
+    {
+      id: "mode",
+      label: "Mode",
+      type: "select",
+      options: [
+        { label: "Manual", value: "manual" },
+        { label: "Automatic", value: "automatic" },
+      ],
+    },
+  ],
+};
+
+export const leftPanels: LayoutPanel[] = [examplePanel];
+
+export const backgroundActions: BackgroundActionDefinition[] = [
+  createExampleBackgroundAction(),
+];
+```
+
+Plugin settings are read at runtime through the plugin runtime API:
+
+```ts
+import { usePluginSettings } from "@manifest-editor/shell";
+
+const settings = usePluginSettings<ExamplePluginSettings>("@example/plugin");
+```
+
+Background actions receive the same settings through their run context:
+
+```ts
+const settings = ctx.plugins.getSettings<ExamplePluginSettings>("@example/plugin");
+```
+
+## Creating a lazy plugin package
+
+For larger plugins, split metadata from implementation.
+
+```ts filename="plugin.ts"
+import type { PluginMetadata, PluginSettingsDefinition } from "@manifest-editor/shell";
+import type { ExamplePluginSettings } from "./types";
+
+export default {
+  id: "@example/plugin",
+  label: "Example plugin",
+  defaultEnabled: false,
+  supports: {
+    apps: ["manifest-editor"],
+    projectTypes: ["Manifest"],
+  },
+} satisfies PluginMetadata;
+
+export const settings: PluginSettingsDefinition<ExamplePluginSettings> = {
+  defaults: {
+    mode: "manual",
+  },
+};
+```
+
+```ts filename="index.ts"
+import type { BackgroundActionDefinition } from "@manifest-editor/shell";
+import { createExampleBackgroundAction } from "./background-action";
+
+export { default, settings } from "./plugin";
+
+export const backgroundActions: BackgroundActionDefinition[] = [
+  createExampleBackgroundAction(),
+];
+
+export * from "./background-action";
+export * from "./types";
+```
+
+```ts filename="lazy.ts"
+import type { LazyPluginModule } from "@manifest-editor/shell";
+import metadata, { settings } from "./plugin";
+
+export default {
+  default: metadata,
+  settings,
+  load: () => import("./index"),
+} satisfies LazyPluginModule;
+```
+
+Publish the lazy entrypoint as a subpath:
+
+```json filename="package.json"
+{
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./lazy": {
+      "import": "./dist/lazy.js",
+      "require": "./dist/lazy.cjs"
+    }
+  }
+}
+```
+
+If the plugin has a worker entry, publish that as a subpath too:
+
+```json filename="package.json"
+{
+  "exports": {
+    "./worker": {
+      "import": "./dist/worker.js",
+      "require": "./dist/worker.cjs"
+    }
+  }
+}
+```
+
+Host applications can then import the worker URL with Vite:
+
+```ts
+import workerUrl from "@example/plugin/worker?worker&url";
+```
+
+Use lazy plugins for large default-disabled features, model-backed features, worker-backed features, or plugins that depend on optional third-party libraries.

@@ -125,3 +125,26 @@ const compatConfig: Partial<Config> = {
   },
 };
 ```
+
+### Plugin configuration
+
+Plugin configuration is stored under `config.plugins.apps[appId]`. For the packaged React component, the app id is `manifest-editor`.
+
+```ts
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@example/plugin"],
+        settings: {
+          "@example/plugin": {
+            mode: "automatic",
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+See [Plugins](./plugins) for plugin settings, lazy plugins, worker-backed plugins, and plugin creation.

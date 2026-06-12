@@ -6,9 +6,8 @@ import {
   AppProvider,
   type Config,
   Layout,
-  type MappedPlugin,
   mapApp,
-  type PluginModule,
+  type PluginInput,
   PluginProvider,
   ShellProvider,
 } from "@manifest-editor/shell";
@@ -18,7 +17,7 @@ import invariant from "tiny-invariant";
 
 const manifestEditor = mapApp(manifestEditorPreset);
 
-interface ManifestEditorProps {
+export interface ManifestEditorProps {
   resource: string | { id: string; type: "Manifest" | "Collection" };
   data?: Manifest | Collection;
   vault?: Vault;
@@ -26,7 +25,7 @@ interface ManifestEditorProps {
   saveConfig?: (config: Partial<Config>) => void;
   globalPluginConfig?: Config["plugins"];
   saveGlobalPluginConfig?: (config: Config["plugins"]) => void | Promise<void>;
-  plugins?: Array<PluginModule | MappedPlugin>;
+  plugins?: PluginInput[];
   enabledPlugins?: string[];
   disabledPlugins?: string[];
   layoutMode?: "default" | "focused";

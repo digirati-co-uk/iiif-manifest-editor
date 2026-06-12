@@ -2,7 +2,8 @@ import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import { allCreators } from "@manifest-editor/creators";
 import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
-import * as ocrClassificationPlugin from "@manifest-editor/ocr-classification";
+import ocrClassificationPlugin from "@manifest-editor/ocr-classification/lazy";
+import ocrDoclingPlugin from "@manifest-editor/ocr-docling/lazy";
 
 import {
   type BackgroundActionDefinition,
@@ -10,8 +11,9 @@ import {
   baseCreator,
   baseEditor,
   type LayoutPanel,
+  type PluginInput,
 } from "@manifest-editor/shell";
-import * as translationPlugin from "@manifest-editor/translation";
+import translationPlugin from "@manifest-editor/translation/lazy";
 import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-builder/background-action";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
@@ -76,14 +78,16 @@ export {
   avRangesPlugin,
   canvasLabelGeneratorPlugin,
   ocrClassificationPlugin,
+  ocrDoclingPlugin,
   translationPlugin,
 };
 
-export const plugins = [
+export const plugins: PluginInput[] = [
   annotationsPlugin,
   avRangesPlugin,
   canvasLabelGeneratorPlugin,
   translationPlugin,
   ocrClassificationPlugin,
+  ocrDoclingPlugin,
   // remoteInference,
 ];

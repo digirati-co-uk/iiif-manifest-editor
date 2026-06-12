@@ -28,6 +28,14 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./lazy": {
+      "import": "./dist/lazy.js",
+      "require": "./dist/lazy.cjs"
+    },
+    "./docling-worker": {
+      "import": "./dist/docling-worker.js",
+      "require": "./dist/docling-worker.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

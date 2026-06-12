@@ -27,6 +27,14 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./lazy": {
+      "import": "./dist/lazy.js",
+      "require": "./dist/lazy.cjs"
+    },
+    "./translation-worker": {
+      "import": "./dist/translation-worker.js",
+      "require": "./dist/translation-worker.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

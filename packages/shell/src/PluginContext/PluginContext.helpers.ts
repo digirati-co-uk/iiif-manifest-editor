@@ -7,6 +7,8 @@ import type {
   PluginAppConfig,
   PluginConfigScope,
   PluginHostApp,
+  PluginInput,
+  LazyPluginModule,
   PluginModule,
   PluginRuntimeApi,
   PluginSettingsValue,
@@ -130,16 +132,66 @@ export function mapPlugin(input: PluginModule, map?: (plugin: MappedPlugin) => M
   return map ? map(plugin) : plugin;
 }
 
-export function isMappedPlugin(input: PluginModule | MappedPlugin): input is MappedPlugin {
+export function mapLazyPlugin(input: LazyPluginModule): MappedPlugin {
+  return {
+    metadata: input.default,
+    extension: {},
+    settings: input.settings,
+    load: input.load,
+    loadStatus: "idle",
+  };
+}
+
+export function isMappedPlugin(input: PluginInput): input is MappedPlugin {
   return !!input && "metadata" in input && "extension" in input;
 }
 
-export function normalisePlugin(input: PluginModule | MappedPlugin): MappedPlugin {
-  return isMappedPlugin(input) ? input : mapPlugin(input);
+export function isLazyPlugin(input: PluginInput): input is LazyPluginModule {
+  return !!input && "load" in input && "default" in input;
 }
 
-export function normalisePlugins(plugins: Array<PluginModule | MappedPlugin> = []): MappedPlugin[] {
+export function normalisePlugin(input: PluginInput): MappedPlugin {
+  if (isMappedPlugin(input)) return input;
+  if (isLazyPlugin(input)) return mapLazyPlugin(input);
+  return mapPlugin(input);
+}
+
+export function normalisePlugins(plugins: PluginInput[] = []): MappedPlugin[] {
   return plugins.map(normalisePlugin);
+}
+
+export function mergeProviderPlugins(previous: MappedPlugin[], next: MappedPlugin[]) {
+  const previousById = new Map(previous.map((plugin) => [plugin.metadata.id, plugin]));
+
+  return next.map((plugin) => {
+    const previousPlugin = previousById.get(plugin.metadata.id);
+    if (!previousPlugin) return plugin;
+
+    if (previousPlugin.loadStatus === "loaded" && plugin.load) {
+      return {
+        ...previousPlugin,
+        metadata: plugin.metadata,
+        load: plugin.load,
+      };
+    }
+
+    if (previousPlugin.loadStatus === "loading" && plugin.load) {
+      return {
+        ...plugin,
+        loadStatus: "loading" as const,
+      };
+    }
+
+    if (previousPlugin.loadStatus === "error" && plugin.load) {
+      return {
+        ...plugin,
+        loadStatus: "error" as const,
+        loadError: previousPlugin.loadError,
+      };
+    }
+
+    return plugin;
+  });
 }
 
 export function isPluginCompatible(plugin: MappedPlugin, app?: PluginHostApp | null, appId?: string | null) {

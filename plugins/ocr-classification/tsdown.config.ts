@@ -9,6 +9,7 @@ export default defineConfig((options) => ({
   platform: "browser",
   entry: {
     index: "src/index.ts",
+    lazy: "src/lazy.ts",
   },
   copy: [{ from: "src/assets", to: "dist/assets" }],
 }));

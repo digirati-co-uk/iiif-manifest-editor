@@ -249,8 +249,10 @@ export function PluginManager() {
         {filteredPlugins.map((plugin) => {
           const selected = isPluginSelected(plugin, pluginState, appId);
           const active = activePluginIds.has(plugin.metadata.id);
+          const loading = selected && plugin.loadStatus === "loading";
+          const loadError = selected && plugin.loadStatus === "error" ? plugin.loadError : null;
           const image = getImage(plugin.metadata.image);
-          const blocked = selected && !active;
+          const blocked = selected && !active && !loading && !loadError;
           const compatible = isPluginCompatible(plugin, app, appId);
           const compatibilityReason = getPluginCompatibilityReason(plugin, app, appId);
           const entryPoint = getPluginEntryPoint(plugin);
@@ -338,6 +340,8 @@ export function PluginManager() {
                   <p className="text-xs text-gray-500 leading-relaxed">{plugin.metadata.description}</p>
                 ) : null}
 
+                {loading ? <span className="text-xs text-gray-500">Loading plugin…</span> : null}
+                {loadError ? <span className="text-xs text-red-600">{loadError}</span> : null}
                 {blocked ? <span className="text-xs text-amber-600">Waiting for required dependencies</span> : null}
                 {!compatible && compatibilityReason ? (
                   <span className="text-xs text-gray-400">{compatibilityReason}</span>

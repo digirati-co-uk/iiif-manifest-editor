@@ -9,13 +9,15 @@ import {
   getEffectivePluginSettings,
   getPluginSettingsFromConfig,
   isPluginSelected,
+  mergeProviderPlugins,
   mapPlugin,
+  normalisePlugin,
   resetPluginInConfig,
   resetPluginSettingsInConfig,
   setPluginSettingsInConfig,
 } from "../PluginContext/PluginContext.helpers";
 import { createPluginStore } from "../PluginContext/PluginContext.store";
-import type { MappedPlugin, PluginModule, PluginStoreSnapshot } from "../PluginContext/PluginContext.types";
+import type { LazyPluginModule, MappedPlugin, PluginModule, PluginStoreSnapshot } from "../PluginContext/PluginContext.types";
 
 const panel = (id: string) =>
   ({
@@ -82,6 +84,28 @@ describe("plugin mapping", () => {
     expect(mapped.extension.leftPanels?.[0]?.id).toBe("ocr-panel");
     expect(mapped.extension.config?.editorFeatureFlags?.annotationPopups).toBe(true);
     expect(mapped.settings?.defaults).toEqual({ mode: "default" });
+  });
+
+  test("maps lazy plugin modules into metadata-only plugins", () => {
+    const lazy: LazyPluginModule = {
+      default: {
+        id: "@example/lazy",
+        label: "Lazy",
+      },
+      settings: {
+        defaults: {
+          mode: "lazy",
+        },
+      },
+      load: vi.fn(),
+    };
+    const mapped = normalisePlugin(lazy);
+
+    expect(mapped.metadata.id).toBe("@example/lazy");
+    expect(mapped.settings?.defaults).toEqual({ mode: "lazy" });
+    expect(mapped.extension).toEqual({});
+    expect(mapped.loadStatus).toBe("idle");
+    expect(mapped.load).toBe(lazy.load);
   });
 });
 
@@ -259,6 +283,60 @@ describe("plugin store", () => {
 
     expect(next.blocked).toEqual([]);
     expect(next.config.enabled).toEqual(["@example/base", "@example/dependent"]);
+  });
+
+  test("transitions lazy plugins from loading to loaded", () => {
+    const lazy = normalisePlugin({
+      default: {
+        id: "@example/lazy",
+        label: "Lazy",
+      },
+      load: vi.fn(),
+    });
+    const loaded = plugin("@example/lazy", {
+      leftPanels: [panel("lazy-panel")],
+    });
+    const store = createPluginStore({
+      plugins: [lazy],
+    });
+
+    store.getState().setPluginLoading("@example/lazy");
+    expect(store.getState().plugins[0].loadStatus).toBe("loading");
+
+    store.getState().setPluginLoaded("@example/lazy", loaded);
+    expect(store.getState().plugins[0].loadStatus).toBe("loaded");
+    expect(store.getState().plugins[0].extension.leftPanels?.[0]?.id).toBe("lazy-panel");
+    expect(store.getState().plugins[0].load).toBe(lazy.load);
+  });
+
+  test("preserves loaded lazy plugins when provider inputs refresh", () => {
+    const lazy = normalisePlugin({
+      default: {
+        id: "@example/lazy",
+        label: "Lazy",
+      },
+      load: vi.fn(),
+    });
+    const loaded = {
+      ...plugin("@example/lazy", {
+        leftPanels: [panel("lazy-panel")],
+      }),
+      load: lazy.load,
+      loadStatus: "loaded" as const,
+    };
+    const refreshed = normalisePlugin({
+      default: {
+        id: "@example/lazy",
+        label: "Lazy refreshed",
+      },
+      load: vi.fn(),
+    });
+
+    const merged = mergeProviderPlugins([loaded], [refreshed]);
+
+    expect(merged[0].metadata.label).toBe("Lazy refreshed");
+    expect(merged[0].loadStatus).toBe("loaded");
+    expect(merged[0].extension.leftPanels?.[0]?.id).toBe("lazy-panel");
   });
 });
 

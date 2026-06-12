@@ -23,6 +23,7 @@ import {
   getEffectivePluginSettings,
   getPluginDefaultSettings,
   getPluginSettingsFromConfig,
+  normalisePlugin,
   normalisePlugins,
   resetPluginSettingsInConfig,
   setPluginSettingsInConfig,
@@ -33,10 +34,10 @@ import type {
   PluginAppConfig,
   PluginConfigScope,
   PluginRuntimeApi,
-  PluginModule,
   PluginSettingsValue,
   PluginStore,
   PluginStoreSnapshot,
+  PluginInput,
 } from "./PluginContext.types";
 
 export const PluginReactContext = createContext<StoreApi<PluginStore> | null>(null);
@@ -53,7 +54,7 @@ export function PluginProvider({
   saveGlobalPluginConfig,
   children,
 }: {
-  plugins: Array<PluginModule | MappedPlugin>;
+  plugins: PluginInput[];
   enabled?: string[];
   disabled?: string[];
   globalPluginConfig?: Config["plugins"];
@@ -303,15 +304,56 @@ export function usePluginConfigApi<T extends PluginSettingsValue = PluginSetting
 
 export function useResolvedPluginApp(definition: MappedApp, appId: string): MappedApp {
   const state = usePlugins();
+  const store = useOptionalPluginStoreApi();
   const enabledPlugins = useMemo(
     () => getEnabledPluginsForApp(state, definition, appId),
     [state, definition, appId],
   );
 
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    for (const plugin of enabledPlugins) {
+      if (
+        !plugin.load ||
+        plugin.loadStatus === "loading" ||
+        plugin.loadStatus === "loaded" ||
+        plugin.loadStatus === "error"
+      ) {
+        continue;
+      }
+
+      store.getState().setPluginLoading(plugin.metadata.id);
+      plugin
+        .load()
+        .then((loadedPlugin) => {
+          store.getState().setPluginLoaded(plugin.metadata.id, normalisePlugin(loadedPlugin));
+        })
+        .catch((error) => {
+          store
+            .getState()
+            .setPluginLoadError(plugin.metadata.id, getPluginLoadErrorMessage(error));
+        });
+    }
+  }, [store, enabledPlugins]);
+
   return useMemo(
-    () => applyPlugins(definition, enabledPlugins, appId),
+    () =>
+      applyPlugins(
+        definition,
+        enabledPlugins.filter((plugin) => !plugin.load || plugin.loadStatus === "loaded"),
+        appId,
+      ),
     [definition, enabledPlugins, appId],
   );
+}
+
+function getPluginLoadErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Plugin failed to load.";
 }
 
 export function PluginConfigBridge({ config }: { config?: Partial<Config> }) {
