@@ -20,6 +20,7 @@ export type TranslationPluginSettings = {
   defaultSourceLanguage?: string;
   defaultTargetLanguage?: string;
   runtimePreference?: TranslationRuntimePreference;
+  workerUrl?: string;
 };
 
 export type TranslationRunOptions = {

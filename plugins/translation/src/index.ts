@@ -54,6 +54,13 @@ export const settings: PluginSettingsDefinition<TranslationPluginSettings> = {
         { label: "WASM", value: "wasm" },
       ],
     },
+    {
+      id: "workerUrl",
+      label: "Worker URL",
+      type: "text",
+      description: "Optional public URL for the translation worker when the package is consumed through another bundled package.",
+      placeholder: "/assets/translation-worker.js",
+    },
   ],
 };
 

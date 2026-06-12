@@ -48,7 +48,7 @@ export type TranslationPlanData = {
 };
 
 export type TranslationActionDependencies = {
-  createClient?: () => TranslationWorkerClient;
+  createClient?: (settings?: TranslationPluginSettings) => TranslationWorkerClient;
   collectTargets?: typeof collectTranslationTargets;
   requestConfig?: (
     ctx: BackgroundActionRunContext,
@@ -71,7 +71,14 @@ export function createTranslationBackgroundAction(
   dependencies: TranslationActionDependencies = {},
 ): BackgroundActionDefinition {
   const createClient =
-    dependencies.createClient || createTranslationWorkerClient;
+    dependencies.createClient ||
+    ((settings?: TranslationPluginSettings) =>
+      createTranslationWorkerClient({
+        workerUrl:
+          typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+            ? settings.workerUrl
+            : undefined,
+      }));
   const collectTargets =
     dependencies.collectTargets || collectTranslationTargets;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
@@ -79,8 +86,8 @@ export function createTranslationBackgroundAction(
     dependencies.translateHtml || translatePreservingSimpleHtml;
   let retainedClient: TranslationWorkerClient | null = null;
 
-  const getClient = () => {
-    retainedClient ||= createClient();
+  const getClient = (settings?: TranslationPluginSettings) => {
+    retainedClient ||= createClient(settings);
     return retainedClient;
   };
 
@@ -154,7 +161,10 @@ export function createTranslationBackgroundAction(
       }
 
       if (pendingTasks.length) {
-        const client = getClient();
+        const settings = ctx.plugins.getSettings<TranslationPluginSettings>(
+          TRANSLATION_PLUGIN_ID,
+        );
+        const client = getClient(settings);
         const unsubscribe = client.onEvent((event) =>
           handleTranslationEvent(ctx, event),
         );

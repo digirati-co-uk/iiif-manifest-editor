@@ -40,6 +40,13 @@ export const settings: PluginSettingsDefinition<OcrDoclingPluginSettings> = {
         value: size,
       })),
     },
+    {
+      id: "workerUrl",
+      label: "Worker URL",
+      type: "text",
+      description: "Optional public URL for the Docling OCR worker when the package is consumed through another bundled package.",
+      placeholder: "/assets/docling-worker.js",
+    },
   ],
 };
 

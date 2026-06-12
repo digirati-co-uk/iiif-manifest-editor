@@ -843,9 +843,6 @@ importers:
       react-leaflet:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react-leaflet-draw:
-        specifier: ^0.21.0
-        version: 0.21.0(leaflet-draw@1.0.4)(leaflet@1.9.4)(prop-types@15.8.1)(react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
       react-select-search:
         specifier: ^4.1.2
         version: 4.1.7(prop-types@15.8.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -11904,6 +11901,7 @@ packages:
   rclone.js@0.6.6:
     resolution: {integrity: sha512-Dxh34cab/fNjFq5SSm0fYLNkGzG2cQSBy782UW9WwxJCEiVO4cGXkvaXcNlgv817dK8K8PuQ+NHUqSAMMhWujQ==}
     engines: {node: '>=12'}
+    cpu: [arm, arm64, mips, mipsel, x32, x64]
     os: [darwin, freebsd, linux, openbsd, sunos, win32]
     hasBin: true
 
@@ -12101,15 +12099,6 @@ packages:
     resolution: {integrity: sha512-kdQYUDbuISF3T9El0sBLNoWrmPohqlytcG4ognLtHYjY8bZAsJ0/Ez+VaV+0QlVyUY3K6dDXkuQAz3GpvdjBkw==}
     peerDependencies:
       react: 19.2.0
-
-  react-leaflet-draw@0.21.0:
-    resolution: {integrity: sha512-MhfGKxh+qT4ngkb616AH6393SPc9zKo3uaVupg6mrZgXM+D8eqadpf5AKTaVseeOnGx7ZmV0j9ZFbvOlIEIojQ==}
-    peerDependencies:
-      leaflet: ^1.8.0
-      leaflet-draw: ^1.0.4
-      prop-types: ^15.5.2
-      react: 19.2.0
-      react-leaflet: ^5.0.0
 
   react-leaflet@5.0.0:
     resolution: {integrity: sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==}
@@ -27831,16 +27820,6 @@ snapshots:
       lodash.debounce: 4.0.8
       lodash.throttle: 4.1.1
       react: 19.2.0
-
-  react-leaflet-draw@0.21.0(leaflet-draw@1.0.4)(leaflet@1.9.4)(prop-types@15.8.1)(react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0):
-    dependencies:
-      fast-deep-equal: 3.1.3
-      leaflet: 1.9.4
-      leaflet-draw: 1.0.4
-      lodash-es: 4.17.21
-      prop-types: 15.8.1
-      react: 19.2.0
-      react-leaflet: 5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
 
   react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:

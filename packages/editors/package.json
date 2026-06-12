@@ -84,7 +84,6 @@
     "react-i18next": "14.1.0",
     "react-iiif-vault": "catalog:",
     "react-leaflet": "^5.0.0",
-    "react-leaflet-draw": "^0.21.0",
     "react-select-search": "^4.1.2",
     "react-textarea-autosize": "^8.5.9",
     "styled-components": "catalog:",

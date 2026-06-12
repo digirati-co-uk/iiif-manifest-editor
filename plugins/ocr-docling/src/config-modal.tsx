@@ -22,6 +22,7 @@ export type OcrDoclingPluginSettings = {
   [key: string]: unknown;
   prompt?: string;
   imageSize?: OcrDoclingImageSize;
+  workerUrl?: string;
 };
 
 export type OcrDoclingConfigRequest = {
