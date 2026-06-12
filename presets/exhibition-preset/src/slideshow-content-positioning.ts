@@ -92,18 +92,22 @@ export const useSlideshowContentPositioning =
 interface SlideshowWorkbenchState {
   requestedTab: string | null;
   showTourSteps: boolean;
+  centerPanelMode: "edit" | "preview";
   requestTab: (tab: string) => void;
   clearRequestedTab: () => void;
   setShowTourSteps: (show: boolean) => void;
+  setCenterPanelMode: (mode: "edit" | "preview") => void;
 }
 
 export const useSlideshowWorkbenchState = create<SlideshowWorkbenchState>(
   (set) => ({
     requestedTab: null,
     showTourSteps: false,
+    centerPanelMode: "preview",
     requestTab: (tab) => set({ requestedTab: tab }),
     clearRequestedTab: () => set({ requestedTab: null }),
     setShowTourSteps: (show) => set({ showTourSteps: show }),
+    setCenterPanelMode: (mode) => set({ centerPanelMode: mode }),
   }),
 );
 
@@ -318,7 +322,7 @@ export function repairSlideContentTargets(vault: any, canvas: any) {
         canvas,
         annotation.id,
         getSlideLayoutRegions(canvas).content ||
-          createDefaultSlideContentBox(canvas),
+        createDefaultSlideContentBox(canvas),
       );
     }
   }
