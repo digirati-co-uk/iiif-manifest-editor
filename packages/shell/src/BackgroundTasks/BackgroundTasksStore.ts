@@ -538,6 +538,38 @@ function createPersistedState(
   };
 }
 
+function createEmptyPersistedState(): BackgroundActionPersistedState {
+  return {
+    version: 1,
+    savedAt: Date.now(),
+    instances: {},
+    histories: {},
+    plans: {},
+  };
+}
+
+function mergePersistedStates(
+  deferred: BackgroundActionPersistedState,
+  current: BackgroundActionPersistedState,
+): BackgroundActionPersistedState {
+  return {
+    version: 1,
+    savedAt: current.savedAt,
+    instances: {
+      ...deferred.instances,
+      ...current.instances,
+    },
+    histories: {
+      ...deferred.histories,
+      ...current.histories,
+    },
+    plans: {
+      ...deferred.plans,
+      ...current.plans,
+    },
+  };
+}
+
 function persistedStateIsEmpty(state: BackgroundActionPersistedState) {
   return (
     !Object.keys(state.instances).length &&
@@ -641,13 +673,7 @@ function normalisePersistedState(
   snapshot?: BackgroundActionPersistedState | null,
 ): BackgroundActionPersistedState {
   if (!snapshot || snapshot.version !== 1) {
-    return {
-      version: 1,
-      savedAt: Date.now(),
-      instances: {},
-      histories: {},
-      plans: {},
-    };
+    return createEmptyPersistedState();
   }
 
   return {
@@ -658,6 +684,134 @@ function normalisePersistedState(
     histories: snapshot.histories || {},
     plans: snapshot.plans || {},
   };
+}
+
+function restorePersistedInstance(
+  instance: BackgroundActionInstance,
+  plan: BackgroundActionPlan | null,
+  definition: BackgroundActionDefinition,
+): {
+  instance: BackgroundActionInstance;
+  plan: BackgroundActionPlan | null;
+} {
+  let nextInstance = instance;
+  let nextPlan = plan;
+
+  if (isActiveStatus(instance.status)) {
+    if (instance.cancelRequestedAt) {
+      const cancelledAt = Date.now();
+      nextPlan = nextPlan
+        ? cancelPendingPlanTasks(nextPlan, cancelledAt)
+        : nextPlan;
+      nextInstance = appendEvent(
+        {
+          ...instance,
+          status: "cancelled",
+          statusText: "Cancelled",
+          completedAt: cancelledAt,
+          cancelledAt,
+        },
+        "status",
+        "Cancelled",
+        { status: "cancelled" },
+        cancelledAt,
+      );
+    } else if (definition.resumable && nextPlan) {
+      nextPlan = requeueActivePlanTasks(nextPlan);
+      nextInstance = appendEvent(
+        {
+          ...instance,
+          status: "running",
+          statusText: "Resuming",
+          completedAt: undefined,
+          cancelledAt: undefined,
+        },
+        "status",
+        "Resuming",
+        { status: "running" },
+      );
+    } else {
+      const cancelledAt = Date.now();
+      nextInstance = appendEvent(
+        {
+          ...instance,
+          status: "cancelled",
+          statusText: "Interrupted by page reload",
+          completedAt: cancelledAt,
+          cancelledAt,
+        },
+        "status",
+        "Interrupted by page reload",
+        { status: "cancelled" },
+        cancelledAt,
+      );
+    }
+  }
+
+  return { instance: nextInstance, plan: nextPlan };
+}
+
+function restorePersistedState(
+  snapshot: BackgroundActionPersistedState,
+  definitions: BackgroundActionDefinition[],
+): {
+  instances: Record<string, BackgroundActionInstance>;
+  histories: Record<string, BackgroundActionInstance[]>;
+  plans: Record<string, BackgroundActionPlan>;
+  deferred: BackgroundActionPersistedState;
+} {
+  const persisted = normalisePersistedState(snapshot);
+  const definitionsById = new Map(
+    definitions.map((definition) => [definition.id, definition]),
+  );
+  const instances: Record<string, BackgroundActionInstance> = {};
+  let histories: Record<string, BackgroundActionInstance[]> = {};
+  const plans: Record<string, BackgroundActionPlan> = {};
+  const deferred = createEmptyPersistedState();
+
+  for (const [key, history] of Object.entries(persisted.histories)) {
+    const nextHistory = (Array.isArray(history) ? history : []).map(
+      normaliseInstance,
+    );
+    const knownHistory = nextHistory.filter((instance) =>
+      definitionsById.has(instance.actionId),
+    );
+    const deferredHistory = nextHistory.filter(
+      (instance) => !definitionsById.has(instance.actionId),
+    );
+
+    if (knownHistory.length) {
+      histories[key] = knownHistory;
+    }
+
+    if (deferredHistory.length) {
+      deferred.histories[key] = deferredHistory;
+    }
+  }
+
+  for (const [key, rawInstance] of Object.entries(persisted.instances)) {
+    const instance = normaliseInstance(rawInstance);
+    const plan = normalisePlan(persisted.plans[key]);
+    const definition = definitionsById.get(instance.actionId);
+
+    if (!definition) {
+      deferred.instances[key] = serialiseInstance(instance);
+      if (plan) {
+        deferred.plans[key] = serialisePlan(plan);
+      }
+      continue;
+    }
+
+    const restored = restorePersistedInstance(instance, plan, definition);
+    instances[key] = restored.instance;
+    histories = upsertHistoryInstance(histories, key, restored.instance);
+
+    if (restored.plan) {
+      plans[key] = restored.plan;
+    }
+  }
+
+  return { instances, histories, plans, deferred };
 }
 
 function getPlanProgress(
@@ -928,8 +1082,45 @@ export function createBackgroundActionsStore(
   let persistence: BackgroundActionPersistence | null = null;
   let persistenceKey: BackgroundActionPersistenceKey | null = null;
   let persistTimer: ReturnType<typeof setTimeout> | null = null;
+  let deferredPersistedState = createEmptyPersistedState();
 
   return createStore<BackgroundActionsStore>((set, get) => {
+    function applyDefinitions(
+      prev: BackgroundActionsStore,
+      definitions: BackgroundActionDefinition[],
+    ) {
+      const nextDefinitions = mergeBackgroundActionDefinitions([], definitions);
+      const restored = restorePersistedState(
+        deferredPersistedState,
+        nextDefinitions,
+      );
+      deferredPersistedState = restored.deferred;
+
+      return {
+        definitions: nextDefinitions,
+        instances: {
+          ...prev.instances,
+          ...restored.instances,
+        },
+        histories: {
+          ...prev.histories,
+          ...restored.histories,
+        },
+        plans: {
+          ...prev.plans,
+          ...restored.plans,
+        },
+        controllers: Object.fromEntries(
+          Object.entries(prev.controllers).filter(
+            ([key, controller]) =>
+              controller &&
+              prev.instances[key]?.status &&
+              isActiveStatus(prev.instances[key].status),
+          ),
+        ),
+      };
+    }
+
     async function flushPersistence() {
       if (persistTimer) {
         clearTimeout(persistTimer);
@@ -940,7 +1131,10 @@ export function createBackgroundActionsStore(
         return;
       }
 
-      const snapshot = createPersistedState(get());
+      const snapshot = mergePersistedStates(
+        deferredPersistedState,
+        createPersistedState(get()),
+      );
       if (persistedStateIsEmpty(snapshot)) {
         await persistence.clear(persistenceKey);
         return;
@@ -977,53 +1171,7 @@ export function createBackgroundActionsStore(
       hasHydrated: true,
 
       setDefinitions(definitions) {
-        set((prev) => {
-          const nextDefinitions = mergeBackgroundActionDefinitions(
-            [],
-            definitions,
-          );
-          const nextDefinitionIds = new Set(
-            nextDefinitions.map((definition) => definition.id),
-          );
-          const nextInstances: Record<string, BackgroundActionInstance> = {};
-          const nextHistories: Record<string, BackgroundActionInstance[]> = {};
-          const nextPlans: Record<string, BackgroundActionPlan> = {};
-
-          for (const [key, instance] of Object.entries(prev.instances)) {
-            if (nextDefinitionIds.has(instance.actionId)) {
-              nextInstances[key] = instance;
-            }
-          }
-
-          for (const [key, history] of Object.entries(prev.histories)) {
-            const nextHistory = history.filter((instance) =>
-              nextDefinitionIds.has(instance.actionId),
-            );
-            if (nextHistory.length) {
-              nextHistories[key] = nextHistory;
-            }
-          }
-
-          for (const [key, plan] of Object.entries(prev.plans)) {
-            if (nextInstances[key]) {
-              nextPlans[key] = plan;
-            }
-          }
-
-          return {
-            definitions: nextDefinitions,
-            instances: nextInstances,
-            histories: nextHistories,
-            plans: nextPlans,
-            controllers: Object.fromEntries(
-              Object.entries(prev.controllers).filter(
-                ([key]) =>
-                  nextInstances[key]?.status &&
-                  isActiveStatus(nextInstances[key].status),
-              ),
-            ),
-          };
-        });
+        set((prev) => applyDefinitions(prev, definitions));
         queuePersist();
       },
 
@@ -1034,98 +1182,16 @@ export function createBackgroundActionsStore(
       },
 
       hydrate(snapshot) {
-        const persisted = normalisePersistedState(snapshot);
-        const definitionsById = new Map(
-          get().definitions.map((definition) => [definition.id, definition]),
+        const restored = restorePersistedState(
+          normalisePersistedState(snapshot),
+          get().definitions,
         );
-        const nextInstances: Record<string, BackgroundActionInstance> = {};
-        let nextHistories: Record<string, BackgroundActionInstance[]> = {};
-        const nextPlans: Record<string, BackgroundActionPlan> = {};
-
-        for (const [key, history] of Object.entries(persisted.histories)) {
-          const filtered = (Array.isArray(history) ? history : [])
-            .map(normaliseInstance)
-            .filter((instance) => definitionsById.has(instance.actionId));
-          if (filtered.length) {
-            nextHistories[key] = filtered;
-          }
-        }
-
-        for (const [key, rawInstance] of Object.entries(persisted.instances)) {
-          const instance = normaliseInstance(rawInstance);
-          const definition = definitionsById.get(instance.actionId);
-          if (!definition) {
-            continue;
-          }
-
-          let nextInstance = instance;
-          let plan = normalisePlan(persisted.plans[key]);
-
-          if (isActiveStatus(instance.status)) {
-            if (instance.cancelRequestedAt) {
-              const cancelledAt = Date.now();
-              plan = plan ? cancelPendingPlanTasks(plan, cancelledAt) : plan;
-              nextInstance = appendEvent(
-                {
-                  ...instance,
-                  status: "cancelled",
-                  statusText: "Cancelled",
-                  completedAt: cancelledAt,
-                  cancelledAt,
-                },
-                "status",
-                "Cancelled",
-                { status: "cancelled" },
-                cancelledAt,
-              );
-            } else if (definition.resumable && plan) {
-              plan = requeueActivePlanTasks(plan);
-              nextInstance = appendEvent(
-                {
-                  ...instance,
-                  status: "running",
-                  statusText: "Resuming",
-                  completedAt: undefined,
-                  cancelledAt: undefined,
-                },
-                "status",
-                "Resuming",
-                { status: "running" },
-              );
-            } else {
-              const cancelledAt = Date.now();
-              nextInstance = appendEvent(
-                {
-                  ...instance,
-                  status: "cancelled",
-                  statusText: "Interrupted by page reload",
-                  completedAt: cancelledAt,
-                  cancelledAt,
-                },
-                "status",
-                "Interrupted by page reload",
-                { status: "cancelled" },
-                cancelledAt,
-              );
-            }
-          }
-
-          nextInstances[key] = nextInstance;
-          nextHistories = upsertHistoryInstance(
-            nextHistories,
-            key,
-            nextInstance,
-          );
-
-          if (plan) {
-            nextPlans[key] = plan;
-          }
-        }
+        deferredPersistedState = restored.deferred;
 
         set({
-          instances: nextInstances,
-          histories: nextHistories,
-          plans: nextPlans,
+          instances: restored.instances,
+          histories: restored.histories,
+          plans: restored.plans,
           controllers: {},
           hasHydrated: true,
         });
@@ -1139,11 +1205,12 @@ export function createBackgroundActionsStore(
       flushPersistence,
 
       registerAction(definition) {
-        set((prev) => ({
-          definitions: mergeBackgroundActionDefinitions(prev.definitions, [
-            definition,
-          ]),
-        }));
+        set((prev) =>
+          applyDefinitions(
+            prev,
+            mergeBackgroundActionDefinitions(prev.definitions, [definition]),
+          ),
+        );
         queuePersist();
 
         return () => get().unregisterAction(definition.id);
