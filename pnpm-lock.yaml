@@ -60,6 +60,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:internal-packages/typescript-config
+      pkg-pr-new:
+        specifier: ^0.0.75
+        version: 0.0.75
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
@@ -1708,6 +1711,9 @@ importers:
       tsdown:
         specifier: 0.16.4
         version: 0.16.4(ms@2.1.3)(publint@0.2.8)(typescript@5.9.3)(unplugin-lightningcss@0.4.1)
+      vitest:
+        specifier: v3.0.9
+        version: 3.0.9(@types/debug@4.1.12)(@types/node@24.10.1)(less@4.2.0)(lightningcss@1.30.2)(sass@1.77.2)(stylus@0.62.0)(terser@5.16.9)
 
   presets/manifest-preset:
     dependencies:
@@ -11417,6 +11423,10 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  pkg-pr-new@0.0.75:
+    resolution: {integrity: sha512-u9mdErTewKSMsr+ceCt8VcNuNP0ro5AXiPXhUVApuEyqr2Zlvt+DdCFBcm+yGWN8mhOdZJ27meIDbnoZgfzpOw==}
+    hasBin: true
 
   pkg-types@1.2.0:
     resolution: {integrity: sha512-+ifYuSSqOQ8CqP4MbZA5hDpb97n3E8SVWdJe+Wms9kj745lmd3b7EZJiqvmLwAlmRfjrI7Hi5z3kdBJ93lFNPA==}
@@ -26697,6 +26707,8 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  pkg-pr-new@0.0.75: {}
 
   pkg-types@1.2.0:
     dependencies:

@@ -113,9 +113,39 @@ export function createOcrDoclingBackgroundAction(
     dependencies.writeAnnotations || writeDoclingRegionAnnotations;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
   let retainedClient: OcrDoclingClient | null = null;
+  let retainedWorkerUrl: string | undefined;
+
+  const getEffectiveWorkerUrl = (settings?: OcrDoclingPluginSettings) =>
+    typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+      ? settings.workerUrl.trim()
+      : undefined;
+
+  const terminateRetainedClient = (
+    client: OcrDoclingClient | null = retainedClient,
+  ) => {
+    if (!client) {
+      return;
+    }
+
+    client.terminate();
+    if (retainedClient === client) {
+      retainedClient = null;
+      retainedWorkerUrl = undefined;
+    }
+  };
 
   const getClient = (settings?: OcrDoclingPluginSettings) => {
-    retainedClient ||= createClient(settings);
+    const workerUrl = getEffectiveWorkerUrl(settings);
+
+    if (retainedClient && retainedWorkerUrl !== workerUrl) {
+      terminateRetainedClient(retainedClient);
+    }
+
+    if (!retainedClient) {
+      retainedClient = createClient(settings);
+      retainedWorkerUrl = workerUrl;
+    }
+
     return retainedClient;
   };
 
@@ -191,10 +221,7 @@ export function createOcrDoclingBackgroundAction(
           }
 
           terminated = true;
-          client.terminate();
-          if (retainedClient === client) {
-            retainedClient = null;
-          }
+          terminateRetainedClient(client);
         };
         const abort = () => terminateClient();
 

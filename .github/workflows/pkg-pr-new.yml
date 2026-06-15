@@ -1,0 +1,70 @@
+name: pkg.pr.new
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "packages/**"
+      - "plugins/**"
+      - "presets/**"
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  publish-preview:
+    runs-on: ubuntu-latest
+    name: Publish package previews
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+          run_install: false
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build-packages
+
+      - name: Publish pkg.pr.new previews
+        run: >
+          pnpm exec pkg-pr-new publish
+          --pnpm
+          --packageManager=pnpm
+          './packages/client-vault'
+          './packages/components'
+          './packages/creator-api'
+          './packages/creators'
+          './packages/editor-api'
+          './packages/editors'
+          './packages/iiif-preview-server'
+          './packages/manifest-editor'
+          './packages/projects'
+          './packages/server-vault'
+          './packages/shell'
+          './plugins/annotations'
+          './plugins/canvas-label-generator'
+          './plugins/ocr-classification'
+          './plugins/ocr-docling'
+          './plugins/specifications'
+          './plugins/translation'
+          './presets/collection-preset'
+          './presets/exhibition-preset'
+          './presets/manifest-preset'

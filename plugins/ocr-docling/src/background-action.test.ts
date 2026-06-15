@@ -12,8 +12,14 @@ import {
   type ManifestEditorTag,
 } from "@manifest-editor/shell";
 import { describe, expect, test, vi } from "vitest";
-import { createOcrDoclingBackgroundAction, type OcrDoclingActionResult } from "./background-action";
-import { getDefaultRunOptions } from "./config-modal";
+import {
+  createOcrDoclingBackgroundAction,
+  type OcrDoclingActionResult,
+} from "./background-action";
+import {
+  getDefaultRunOptions,
+  type OcrDoclingPluginSettings,
+} from "./config-modal";
 import type { DoclingBatchResult, DoclingWorkerClient } from "./docling";
 import { getCanvasTagOptions, getTagKey } from "./tags";
 
@@ -32,7 +38,9 @@ const REVIEW_TAG: ManifestEditorTag = {
   textColor: "#ffffff",
 };
 
-function createVault(canvases = [createCanvas("https://example.org/canvas/1")]) {
+function createVault(
+  canvases = [createCanvas("https://example.org/canvas/1")],
+) {
   const vault = new Vault();
   vault.loadManifestSync(manifestTarget.id, {
     "@context": "http://iiif.io/api/presentation/3/context.json",
@@ -60,6 +68,7 @@ function createCanvas(id: string, overrides: Record<string, unknown> = {}) {
 function createContext(
   vault: Vault,
   definition: ReturnType<typeof createOcrDoclingBackgroundAction>,
+  pluginSettings: OcrDoclingPluginSettings = {},
 ): BackgroundActionContext {
   return {
     rootResource: manifestTarget,
@@ -67,7 +76,9 @@ function createContext(
     vault,
     tags: createManifestEditorTagsApi(vault),
     canvasProgress: createManifestEditorCanvasProgressApi(vault),
-    plugins: { getSettings: <T extends Record<string, unknown>>() => ({}) as T },
+    plugins: {
+      getSettings: <T extends Record<string, unknown>>() => pluginSettings as T,
+    },
     config: {} as any,
     layoutState: {} as any,
     layoutActions: {} as any,
@@ -77,7 +88,10 @@ function createContext(
   };
 }
 
-function createDoclingBatch(canvasId: string, rawDocling: string): DoclingBatchResult {
+function createDoclingBatch(
+  canvasId: string,
+  rawDocling: string,
+): DoclingBatchResult {
   return {
     document: {
       docling: rawDocling,
@@ -101,10 +115,14 @@ function createDoclingBatch(canvasId: string, rawDocling: string): DoclingBatchR
   };
 }
 
-function createClient(rawDocling: string): Pick<DoclingWorkerClient, "preload" | "convert" | "onEvent" | "terminate"> {
+function createClient(
+  rawDocling: string,
+): Pick<DoclingWorkerClient, "preload" | "convert" | "onEvent" | "terminate"> {
   return {
     preload: vi.fn(async () => undefined),
-    convert: vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, rawDocling)),
+    convert: vi.fn(async (request) =>
+      createDoclingBatch(request.pages[0]!.id, rawDocling),
+    ),
     onEvent: vi.fn(() => () => undefined),
     terminate: vi.fn(),
   };
@@ -153,22 +171,37 @@ describe("Docling OCR background action", () => {
       plan: undefined,
       tasks: {} as any,
     };
-    ctx.tags.addTag({ id: "https://example.org/canvas/1", type: "Canvas" }, REVIEW_TAG);
-    ctx.tags.addTag({ id: "https://example.org/canvas/2", type: "Canvas" }, FLAG_TAG);
+    ctx.tags.addTag(
+      { id: "https://example.org/canvas/1", type: "Canvas" },
+      REVIEW_TAG,
+    );
+    ctx.tags.addTag(
+      { id: "https://example.org/canvas/2", type: "Canvas" },
+      FLAG_TAG,
+    );
 
     const options = getCanvasTagOptions(ctx, [
       vault.get({ id: "https://example.org/canvas/1", type: "Canvas" }),
       vault.get({ id: "https://example.org/canvas/2", type: "Canvas" }),
     ]);
 
-    expect(options.map((option) => option.key)).toEqual([getTagKey(FLAG_TAG), getTagKey(REVIEW_TAG)]);
-    expect(options.find((option) => option.key === getTagKey(FLAG_TAG))?.canvasCount).toBe(1);
-    expect(options.find((option) => option.key === getTagKey(FLAG_TAG))?.annotatedCanvasCount).toBe(1);
+    expect(options.map((option) => option.key)).toEqual([
+      getTagKey(FLAG_TAG),
+      getTagKey(REVIEW_TAG),
+    ]);
+    expect(
+      options.find((option) => option.key === getTagKey(FLAG_TAG))?.canvasCount,
+    ).toBe(1);
+    expect(
+      options.find((option) => option.key === getTagKey(FLAG_TAG))
+        ?.annotatedCanvasCount,
+    ).toBe(1);
   });
 
   test("creates a default annotation page and writes scaled region annotations", async () => {
     const vault = createVault();
-    const rawDocling = "<doctag><paragraph><loc_125><loc_250><loc_250><loc_500>Hello world</paragraph></doctag>";
+    const rawDocling =
+      "<doctag><paragraph><loc_125><loc_250><loc_250><loc_500>Hello world</paragraph></doctag>";
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => createClient(rawDocling),
       getCanvasImage: vi.fn(async () => createImage()),
@@ -176,15 +209,23 @@ describe("Docling OCR background action", () => {
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
-    const canvas = vault.get({ id: "https://example.org/canvas/1", type: "Canvas" }) as any;
+    const canvas = vault.get({
+      id: "https://example.org/canvas/1",
+      type: "Canvas",
+    }) as any;
     const page = vault.get(canvas.annotations[0]) as any;
     const annotation = vault.get(page.items[0]) as any;
     const body = vault.get(annotation.body[0]) as any;
 
     expect(page.type).toBe("AnnotationPage");
-    expect(annotation.target).toBe("https://example.org/canvas/1#xywh=250,1000,250,1000");
+    expect(annotation.target).toBe(
+      "https://example.org/canvas/1#xywh=250,1000,250,1000",
+    );
     expect(annotation.motivation).toBe("supplementing");
     expect(body).toMatchObject({
       type: "TextualBody",
@@ -220,22 +261,35 @@ describe("Docling OCR background action", () => {
         ],
       }),
     ]);
-    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>New text</paragraph></doctag>";
+    const rawDocling =
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>New text</paragraph></doctag>";
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => createClient(rawDocling),
       getCanvasImage: vi.fn(async () => createImage()),
-      requestConfig: vi.fn(async () => ({ ...getDefaultRunOptions(), skipAnnotatedCanvases: false })),
+      requestConfig: vi.fn(async () => ({
+        ...getDefaultRunOptions(),
+        skipAnnotatedCanvases: false,
+      })),
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
-    const page = vault.get({ id: "https://example.org/canvas/1/annotations", type: "AnnotationPage" }) as any;
+    const page = vault.get({
+      id: "https://example.org/canvas/1/annotations",
+      type: "AnnotationPage",
+    }) as any;
     expect(page.items.map((item: any) => item.id)).toEqual([
       "https://example.org/user-annotation",
       "https://example.org/canvas/1/ocr-docling/1/annotation",
     ]);
-    const annotation = vault.get({ id: "https://example.org/canvas/1/ocr-docling/1/annotation", type: "Annotation" }) as any;
+    const annotation = vault.get({
+      id: "https://example.org/canvas/1/ocr-docling/1/annotation",
+      type: "Annotation",
+    }) as any;
     const body = vault.get(annotation.body[0]) as any;
     expect(body.value).toBe("New text");
   });
@@ -261,8 +315,11 @@ describe("Docling OCR background action", () => {
       }),
       createCanvas("https://example.org/canvas/2"),
     ]);
-    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
-    const convert = vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, rawDocling));
+    const rawDocling =
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const convert = vi.fn(async (request) =>
+      createDoclingBatch(request.pages[0]!.id, rawDocling),
+    );
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => ({
         preload: vi.fn(async () => undefined),
@@ -275,13 +332,21 @@ describe("Docling OCR background action", () => {
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
-    const instance = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)];
+    const instance =
+      store.getState().instances[
+        getBackgroundActionInstanceKey(definition.id, manifestTarget)
+      ];
     const result = instance?.result as OcrDoclingActionResult;
 
     expect(convert).toHaveBeenCalledTimes(1);
-    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
+    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe(
+      "https://example.org/canvas/2",
+    );
     expect(result.selected).toBe(2);
     expect(result.processed).toBe(1);
     expect(result.skipped).toBe(1);
@@ -299,17 +364,26 @@ describe("Docling OCR background action", () => {
       createCanvas("https://example.org/canvas/2", { width: undefined }),
       createCanvas("https://example.org/canvas/3"),
     ]);
-    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const rawDocling =
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => createClient(rawDocling),
-      getCanvasImage: vi.fn(async (_ctx, canvas) => (canvas.id.endsWith("/3") ? null : createImage())),
+      getCanvasImage: vi.fn(async (_ctx, canvas) =>
+        canvas.id.endsWith("/3") ? null : createImage(),
+      ),
       requestConfig: vi.fn(async () => getDefaultRunOptions()),
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
-    const instance = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)];
+    const instance =
+      store.getState().instances[
+        getBackgroundActionInstanceKey(definition.id, manifestTarget)
+      ];
     const result = instance?.result as OcrDoclingActionResult;
 
     expect(result.processed).toBe(1);
@@ -332,8 +406,13 @@ describe("Docling OCR background action", () => {
       createCanvas("https://example.org/canvas/2"),
     ]);
     const tags = createManifestEditorTagsApi(vault);
-    tags.addTag({ id: "https://example.org/canvas/2", type: "Canvas" }, REVIEW_TAG);
-    const convert = vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, "<doctag></doctag>"));
+    tags.addTag(
+      { id: "https://example.org/canvas/2", type: "Canvas" },
+      REVIEW_TAG,
+    );
+    const convert = vi.fn(async (request) =>
+      createDoclingBatch(request.pages[0]!.id, "<doctag></doctag>"),
+    );
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => ({
         preload: vi.fn(async () => undefined),
@@ -350,31 +429,85 @@ describe("Docling OCR background action", () => {
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
     expect(convert).toHaveBeenCalledTimes(1);
-    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
+    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe(
+      "https://example.org/canvas/2",
+    );
   });
 
   test("retains the Docling client after a successful run so the model stays warm", async () => {
     const vault = createVault();
-    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const rawDocling =
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
     const client = createClient(rawDocling);
     const createClientMock = vi.fn(() => client);
     const definition = createOcrDoclingBackgroundAction({
       createClient: createClientMock,
       getCanvasImage: vi.fn(async () => createImage()),
-      requestConfig: vi.fn(async () => ({ ...getDefaultRunOptions(), skipAnnotatedCanvases: false })),
+      requestConfig: vi.fn(async () => ({
+        ...getDefaultRunOptions(),
+        skipAnnotatedCanvases: false,
+      })),
     });
     const store = createBackgroundActionsStore([definition]);
 
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
-    await runBackgroundAction({ store, context: createContext(vault, definition) });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
 
     expect(createClientMock).toHaveBeenCalledTimes(1);
     expect(client.preload).toHaveBeenCalledTimes(2);
     expect(client.convert).toHaveBeenCalledTimes(2);
     expect(client.terminate).not.toHaveBeenCalled();
+  });
+
+  test("recreates the retained Docling client when the worker URL setting changes", async () => {
+    const firstClient = createClient(
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>First</paragraph></doctag>",
+    );
+    const secondClient = createClient(
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Second</paragraph></doctag>",
+    );
+    const createClientMock = vi.fn((settings?: OcrDoclingPluginSettings) =>
+      settings?.workerUrl === "/workers/docling-b.js"
+        ? secondClient
+        : firstClient,
+    );
+    const definition = createOcrDoclingBackgroundAction({
+      createClient: createClientMock,
+      getCanvasImage: vi.fn(async () => createImage()),
+      requestConfig: vi.fn(async () => ({
+        ...getDefaultRunOptions(),
+        skipAnnotatedCanvases: false,
+      })),
+    });
+
+    await runBackgroundAction({
+      store: createBackgroundActionsStore([definition]),
+      context: createContext(createVault(), definition, {
+        workerUrl: "/workers/docling-a.js",
+      }),
+    });
+    await runBackgroundAction({
+      store: createBackgroundActionsStore([definition]),
+      context: createContext(createVault(), definition, {
+        workerUrl: "/workers/docling-b.js",
+      }),
+    });
+
+    expect(createClientMock).toHaveBeenCalledTimes(2);
+    expect(firstClient.terminate).toHaveBeenCalledTimes(1);
+    expect(secondClient.convert).toHaveBeenCalledTimes(1);
   });
 
   test("aborts OCR and terminates the worker when cancelled", async () => {
@@ -398,9 +531,15 @@ describe("Docling OCR background action", () => {
       requestConfig: vi.fn(async () => getDefaultRunOptions()),
     });
     const store = createBackgroundActionsStore([definition]);
-    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const instanceKey = getBackgroundActionInstanceKey(
+      definition.id,
+      manifestTarget,
+    );
 
-    const promise = runBackgroundAction({ store, context: createContext(vault, definition) });
+    const promise = runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+    });
     await waitUntil(() => convert.mock.calls.length === 1);
     store.getState().cancelAction(instanceKey);
     await promise;
@@ -414,8 +553,11 @@ describe("Docling OCR background action", () => {
       createCanvas("https://example.org/canvas/1"),
       createCanvas("https://example.org/canvas/2"),
     ]);
-    const rawDocling = "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
-    const convert = vi.fn(async (request) => createDoclingBatch(request.pages[0]!.id, rawDocling));
+    const rawDocling =
+      "<doctag><paragraph><loc_0><loc_0><loc_100><loc_100>Text</paragraph></doctag>";
+    const convert = vi.fn(async (request) =>
+      createDoclingBatch(request.pages[0]!.id, rawDocling),
+    );
     const requestConfig = vi.fn(async () => getDefaultRunOptions());
     const definition = createOcrDoclingBackgroundAction({
       createClient: () => ({
@@ -428,7 +570,10 @@ describe("Docling OCR background action", () => {
       requestConfig,
     });
     const store = createBackgroundActionsStore([definition]);
-    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const instanceKey = getBackgroundActionInstanceKey(
+      definition.id,
+      manifestTarget,
+    );
     const snapshot: BackgroundActionPersistedState = {
       version: 1,
       savedAt: Date.now(),
@@ -476,7 +621,8 @@ describe("Docling OCR background action", () => {
                 type: "processed",
                 canvas: {
                   canvasId: "https://example.org/canvas/1",
-                  imageUrl: "https://example.org/image/full/1024,/0/default.jpg",
+                  imageUrl:
+                    "https://example.org/image/full/1024,/0/default.jpg",
                   annotations: 3,
                   durationMs: 10,
                 },
@@ -499,14 +645,21 @@ describe("Docling OCR background action", () => {
     };
 
     store.getState().hydrate(snapshot);
-    await runBackgroundAction({ store, context: createContext(vault, definition), resume: true });
+    await runBackgroundAction({
+      store,
+      context: createContext(vault, definition),
+      resume: true,
+    });
 
-    const result = store.getState().instances[instanceKey]?.result as OcrDoclingActionResult;
+    const result = store.getState().instances[instanceKey]
+      ?.result as OcrDoclingActionResult;
 
     expect(requestConfig).not.toHaveBeenCalled();
     expect(convert).toHaveBeenCalledTimes(1);
     expect(convert.mock.calls[0]?.[0].prompt).toBe("Persisted prompt");
-    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe("https://example.org/canvas/2");
+    expect(convert.mock.calls[0]?.[0].pages[0]?.id).toBe(
+      "https://example.org/canvas/2",
+    );
     expect(result.selected).toBe(2);
     expect(result.processed).toBe(2);
     expect(result.annotations).toBe(4);
