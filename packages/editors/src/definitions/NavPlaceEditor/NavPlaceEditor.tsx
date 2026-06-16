@@ -1,13 +1,13 @@
 import * as L from "leaflet";
 import React, { useEffect, useRef, useState } from "react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
-import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
 import type { GeoJSON } from "geojson";
 import { InputLabel } from "../../components/Input";
+import { EditControl } from "./EditControl";
 
 export function NavPlaceEditor() {
   const { extensions, notAllowed } = useEditor();

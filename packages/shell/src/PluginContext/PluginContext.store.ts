@@ -2,6 +2,7 @@ import { createStore } from "zustand";
 import {
   disablePluginInConfig,
   enablePluginInConfig,
+  mergeProviderPlugins,
   normalisePluginAppConfig,
   normalisePluginAppsConfig,
   pluginAppConfigEquals,
@@ -37,10 +38,53 @@ export function createPluginStore({
     setProviderState(state) {
       set((prev) => ({
         ...prev,
-        plugins: state.plugins || [],
+        plugins: mergeProviderPlugins(prev.plugins, state.plugins || []),
         enabled: unique(state.enabled || []),
         disabled: unique(state.disabled || []),
         globalApps: normalisePluginAppsConfig(state.globalPluginConfig),
+      }));
+    },
+
+    setPluginLoading(id) {
+      set((prev) => ({
+        ...prev,
+        plugins: prev.plugins.map((plugin) =>
+          plugin.metadata.id === id
+            ? { ...plugin, loadStatus: "loading", loadError: undefined }
+            : plugin,
+        ),
+      }));
+    },
+
+    setPluginLoaded(id, plugin) {
+      set((prev) => ({
+        ...prev,
+        plugins: prev.plugins.map((existing) =>
+          existing.metadata.id === id
+            ? {
+                ...plugin,
+                metadata: {
+                  ...existing.metadata,
+                  ...plugin.metadata,
+                },
+                settings: plugin.settings || existing.settings,
+                load: existing.load,
+                loadStatus: "loaded",
+                loadError: undefined,
+              }
+            : existing,
+        ),
+      }));
+    },
+
+    setPluginLoadError(id, error) {
+      set((prev) => ({
+        ...prev,
+        plugins: prev.plugins.map((plugin) =>
+          plugin.metadata.id === id
+            ? { ...plugin, loadStatus: "error", loadError: error }
+            : plugin,
+        ),
       }));
     },
 
@@ -88,6 +132,11 @@ export function createPluginStore({
     enable(appId, id, scope: PluginConfigScope = "workspace") {
       set((prev) => ({
         ...prev,
+        plugins: prev.plugins.map((plugin) =>
+          plugin.metadata.id === id && plugin.loadStatus === "error"
+            ? { ...plugin, loadStatus: "idle", loadError: undefined }
+            : plugin,
+        ),
         ...(scope === "global"
           ? {
               globalApps: {

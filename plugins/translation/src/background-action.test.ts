@@ -9,8 +9,15 @@ import {
   runBackgroundAction,
 } from "@manifest-editor/shell";
 import { describe, expect, test, vi } from "vitest";
-import { createTranslationBackgroundAction, type TranslationActionDependencies } from "./background-action";
-import type { TranslationActionResult, TranslationRunOptions } from "./types";
+import {
+  createTranslationBackgroundAction,
+  type TranslationActionDependencies,
+} from "./background-action";
+import type {
+  TranslationActionResult,
+  TranslationPluginSettings,
+  TranslationRunOptions,
+} from "./types";
 
 const manifestTarget: BackgroundActionTarget = {
   id: "https://example.org/manifest",
@@ -21,7 +28,7 @@ const manifestTarget: BackgroundActionTarget = {
 
 const options: TranslationRunOptions = {
   sourceLanguage: "en",
-  targetLanguage: "de",
+  targetLanguage: "cy",
   runtime: "wasm",
   writePolicy: "fill-missing",
   contentFilters: {
@@ -56,6 +63,7 @@ function createContext(
   vault: Vault,
   definition: ReturnType<typeof createTranslationBackgroundAction>,
   currentCanvas?: BackgroundActionTarget,
+  pluginSettings: TranslationPluginSettings = {},
 ): BackgroundActionContext {
   return {
     rootResource: manifestTarget,
@@ -64,7 +72,7 @@ function createContext(
     tags: createManifestEditorTagsApi(vault),
     canvasProgress: createManifestEditorCanvasProgressApi(vault),
     plugins: {
-      getSettings: <T extends Record<string, unknown>>() => ({}) as T,
+      getSettings: <T extends Record<string, unknown>>() => pluginSettings as T,
     },
     config: {
       i18n: {
@@ -81,7 +89,11 @@ function createContext(
   };
 }
 
-function createClient(dependencies: { translate?: TranslationActionDependencies["createClient"] } = {}) {
+function createClient(
+  dependencies: {
+    translate?: TranslationActionDependencies["createClient"];
+  } = {},
+) {
   return {
     preload: vi.fn(async () => undefined),
     translate: vi.fn(async (request) => ({
@@ -113,7 +125,9 @@ describe("translation background action", () => {
     });
 
     expect(client.translate).toHaveBeenCalledTimes(1);
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Shared text [cy]"]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
+      "Shared text [cy]",
+    ]);
     expect(
       (
         vault.get({
@@ -123,8 +137,9 @@ describe("translation background action", () => {
       ).label.cy,
     ).toEqual(["Shared text [cy]"]);
 
-    const result = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)]
-      ?.result as TranslationActionResult;
+    const result = store.getState().instances[
+      getBackgroundActionInstanceKey(definition.id, manifestTarget)
+    ]?.result as TranslationActionResult;
     expect(result.translated).toBe(1);
     expect(result.applied).toBe(2);
   });
@@ -167,7 +182,9 @@ describe("translation background action", () => {
         text: "Shared text",
       }),
     );
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Shared text [cy]"]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
+      "Shared text [cy]",
+    ]);
   });
 
   test("can scope a translation run to the current canvas", async () => {
@@ -233,7 +250,9 @@ describe("translation background action", () => {
       context: createContext(vault, definition),
     });
 
-    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual(["Existing manifest value"]);
+    expect((vault.get(manifestTarget as any) as any).label.cy).toEqual([
+      "Existing manifest value",
+    ]);
     expect(
       (
         vault.get({
@@ -280,8 +299,9 @@ describe("translation background action", () => {
       ).label.cy,
     ).toEqual(["Shared text [cy]"]);
 
-    const result = store.getState().instances[getBackgroundActionInstanceKey(definition.id, manifestTarget)]
-      ?.result as TranslationActionResult;
+    const result = store.getState().instances[
+      getBackgroundActionInstanceKey(definition.id, manifestTarget)
+    ]?.result as TranslationActionResult;
     expect(result.stale).toBe(1);
     expect(result.applied).toBe(1);
   });
@@ -312,7 +332,10 @@ describe("translation background action", () => {
       requestConfig: vi.fn(async () => options),
     });
     const store = createBackgroundActionsStore([definition]);
-    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const instanceKey = getBackgroundActionInstanceKey(
+      definition.id,
+      manifestTarget,
+    );
 
     const promise = runBackgroundAction({
       store,
@@ -324,6 +347,37 @@ describe("translation background action", () => {
 
     expect(client.terminate).toHaveBeenCalled();
     expect(store.getState().instances[instanceKey]?.status).toBe("cancelled");
+  });
+
+  test("recreates the retained worker client when the worker URL setting changes", async () => {
+    const firstClient = createClient();
+    const secondClient = createClient();
+    const createClientMock = vi.fn((settings?: TranslationPluginSettings) =>
+      settings?.workerUrl === "/workers/translation-b.js"
+        ? secondClient
+        : firstClient,
+    );
+    const definition = createTranslationBackgroundAction({
+      createClient: createClientMock,
+      requestConfig: vi.fn(async () => options),
+    });
+
+    await runBackgroundAction({
+      store: createBackgroundActionsStore([definition]),
+      context: createContext(createVault(), definition, undefined, {
+        workerUrl: "/workers/translation-a.js",
+      }),
+    });
+    await runBackgroundAction({
+      store: createBackgroundActionsStore([definition]),
+      context: createContext(createVault(), definition, undefined, {
+        workerUrl: "/workers/translation-b.js",
+      }),
+    });
+
+    expect(createClientMock).toHaveBeenCalledTimes(2);
+    expect(firstClient.terminate).toHaveBeenCalledTimes(1);
+    expect(secondClient.translate).toHaveBeenCalledTimes(1);
   });
 });
 

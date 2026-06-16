@@ -280,4 +280,101 @@ describe("OCR classification background action", () => {
       "https://example.org/canvas/2",
     ]);
   });
+
+  test("resumes after persisted state hydrates before the lazy plugin registers", async () => {
+    const vault = createVault();
+    const prepareClassifier = vi.fn();
+    const classifyImage = vi.fn().mockResolvedValue(createRun([0.1, 0.2, 0.9]));
+    const definition = createOcrClassificationBackgroundAction({
+      prepareClassifier,
+      getCanvasImage: vi.fn(async (_ctx, canvas) => ({
+        url: `${canvas.id}/image.jpg`,
+        blob: new Blob(["image"], { type: "image/jpeg" }),
+      })),
+      classifyImage,
+    });
+    const store = createBackgroundActionsStore();
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-lazy-ocr-classification",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          tasks: [
+            {
+              id: "canvas:https://example.org/canvas/1",
+              label: "https://example.org/canvas/1",
+              target: {
+                id: "https://example.org/canvas/1",
+                type: "Canvas",
+                label: "https://example.org/canvas/1",
+                scope: "canvas",
+              },
+              status: "complete",
+              result: {
+                type: "classified",
+                classification: {
+                  canvasId: "https://example.org/canvas/1",
+                  canvasLabel: "https://example.org/canvas/1",
+                  tagId: "medium",
+                  label: "OCR Medium",
+                  score: 0.8,
+                  scores: [0.1, 0.8, 0.3],
+                  imageUrl: "https://example.org/canvas/1/image.jpg",
+                },
+              },
+            },
+            {
+              id: "canvas:https://example.org/canvas/2",
+              label: "https://example.org/canvas/2",
+              target: {
+                id: "https://example.org/canvas/2",
+                type: "Canvas",
+                label: "https://example.org/canvas/2",
+                scope: "canvas",
+              },
+              status: "running",
+            },
+          ],
+        },
+      },
+    };
+
+    store.getState().hydrate(snapshot);
+    expect(store.getState().instances[instanceKey]).toBeUndefined();
+
+    store.getState().setDefinitions([definition]);
+    await runBackgroundAction({ store, context: createContext(vault, definition), resume: true });
+
+    const instance = store.getState().instances[instanceKey];
+    const result = instance?.result as OcrClassificationActionResult;
+
+    expect(prepareClassifier).toHaveBeenCalledTimes(1);
+    expect(classifyImage).toHaveBeenCalledTimes(1);
+    expect(instance?.status).toBe("complete");
+    expect(result.classified).toBe(2);
+    expect(result.classifications.map((item) => item.canvasId)).toEqual([
+      "https://example.org/canvas/1",
+      "https://example.org/canvas/2",
+    ]);
+  });
 });

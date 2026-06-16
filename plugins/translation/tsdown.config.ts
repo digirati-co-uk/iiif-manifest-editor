@@ -9,6 +9,7 @@ export default defineConfig((options) => ({
   platform: "browser",
   entry: {
     index: "src/index.ts",
+    lazy: "src/lazy.ts",
     "translation-worker": "src/runtime/worker/entry.ts",
   },
 }));

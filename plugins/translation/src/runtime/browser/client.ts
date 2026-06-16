@@ -21,6 +21,7 @@ type PendingRequest = {
 
 export interface CreateTranslationWorkerClientOptions {
   worker?: Worker;
+  workerUrl?: string | URL;
 }
 
 function randomRequestId(): string {
@@ -34,11 +35,7 @@ function randomRequestId(): string {
 export function createTranslationWorkerClient(
   options: CreateTranslationWorkerClientOptions = {},
 ): TranslationWorkerClient {
-  const worker =
-    options.worker ??
-    new Worker(new URL("./translation-worker.js", import.meta.url), {
-      type: "module",
-    });
+  const worker = options.worker ?? createTranslationWorker(options.workerUrl);
   const listeners = new Set<(event: TranslationEvent) => void>();
   const pendingRequests = new Map<string, PendingRequest>();
   let terminated = false;
@@ -140,4 +137,33 @@ export function createTranslationWorkerClient(
       failAllPending(new Error("The translation worker client has been terminated."));
     },
   };
+}
+
+function createTranslationWorker(workerUrl?: string | URL) {
+  try {
+    return new Worker(resolveTranslationWorkerUrl(workerUrl), {
+      type: "module",
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Unable to start the translation worker. If you are using @manifest-editor/translation from a bundled package, provide a public workerUrl or pass a Worker instance. ${message}`,
+    );
+  }
+}
+
+function resolveTranslationWorkerUrl(workerUrl?: string | URL) {
+  if (workerUrl instanceof URL) {
+    return workerUrl;
+  }
+
+  if (workerUrl) {
+    return new URL(workerUrl, globalThis.location?.href || import.meta.url);
+  }
+
+  return new URL(getDefaultTranslationWorkerPath(), import.meta.url);
+}
+
+function getDefaultTranslationWorkerPath() {
+  return "./translation-worker.js";
 }

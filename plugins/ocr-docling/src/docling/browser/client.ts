@@ -20,6 +20,7 @@ type PendingRequest = {
 
 export interface CreateDoclingWorkerClientOptions {
   worker?: Worker
+  workerUrl?: string | URL
 }
 
 function randomRequestId(): string {
@@ -33,11 +34,7 @@ function randomRequestId(): string {
 export function createDoclingWorkerClient(
   options: CreateDoclingWorkerClientOptions = {},
 ): DoclingWorkerClient {
-  const worker =
-    options.worker ??
-    new Worker(new URL('./docling-worker.js', import.meta.url), {
-      type: 'module',
-    })
+  const worker = options.worker ?? createDoclingWorker(options.workerUrl)
 
   const listeners = new Set<(event: DoclingEvent) => void>()
   const pendingRequests = new Map<string, PendingRequest>()
@@ -145,4 +142,33 @@ export function createDoclingWorkerClient(
       failAllPending(new Error('The Docling worker client has been terminated.'))
     },
   }
+}
+
+function createDoclingWorker(workerUrl?: string | URL) {
+  try {
+    return new Worker(resolveDoclingWorkerUrl(workerUrl), {
+      type: 'module',
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(
+      `Unable to start the Docling OCR worker. If you are using @manifest-editor/ocr-docling from a bundled package, provide a public workerUrl or pass a Worker instance. ${message}`,
+    )
+  }
+}
+
+function resolveDoclingWorkerUrl(workerUrl?: string | URL) {
+  if (workerUrl instanceof URL) {
+    return workerUrl
+  }
+
+  if (workerUrl) {
+    return new URL(workerUrl, globalThis.location?.href || import.meta.url)
+  }
+
+  return new URL(getDefaultDoclingWorkerPath(), import.meta.url)
+}
+
+function getDefaultDoclingWorkerPath() {
+  return './docling-worker.js'
 }

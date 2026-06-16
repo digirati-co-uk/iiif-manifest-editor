@@ -48,7 +48,9 @@ export type TranslationPlanData = {
 };
 
 export type TranslationActionDependencies = {
-  createClient?: () => TranslationWorkerClient;
+  createClient?: (
+    settings?: TranslationPluginSettings,
+  ) => TranslationWorkerClient;
   collectTargets?: typeof collectTranslationTargets;
   requestConfig?: (
     ctx: BackgroundActionRunContext,
@@ -71,18 +73,26 @@ export function createTranslationBackgroundAction(
   dependencies: TranslationActionDependencies = {},
 ): BackgroundActionDefinition {
   const createClient =
-    dependencies.createClient || createTranslationWorkerClient;
+    dependencies.createClient ||
+    ((settings?: TranslationPluginSettings) =>
+      createTranslationWorkerClient({
+        workerUrl:
+          typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+            ? settings.workerUrl
+            : undefined,
+      }));
   const collectTargets =
     dependencies.collectTargets || collectTranslationTargets;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
   const translateHtml =
     dependencies.translateHtml || translatePreservingSimpleHtml;
   let retainedClient: TranslationWorkerClient | null = null;
+  let retainedWorkerUrl: string | undefined;
 
-  const getClient = () => {
-    retainedClient ||= createClient();
-    return retainedClient;
-  };
+  const getEffectiveWorkerUrl = (settings?: TranslationPluginSettings) =>
+    typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+      ? settings.workerUrl.trim()
+      : undefined;
 
   const terminateClient = (
     client: TranslationWorkerClient | null = retainedClient,
@@ -94,7 +104,23 @@ export function createTranslationBackgroundAction(
     client.terminate();
     if (retainedClient === client) {
       retainedClient = null;
+      retainedWorkerUrl = undefined;
     }
+  };
+
+  const getClient = (settings?: TranslationPluginSettings) => {
+    const workerUrl = getEffectiveWorkerUrl(settings);
+
+    if (retainedClient && retainedWorkerUrl !== workerUrl) {
+      terminateClient(retainedClient);
+    }
+
+    if (!retainedClient) {
+      retainedClient = createClient(settings);
+      retainedWorkerUrl = workerUrl;
+    }
+
+    return retainedClient;
   };
 
   return {
@@ -122,7 +148,11 @@ export function createTranslationBackgroundAction(
         TRANSLATION_PLUGIN_ID,
       );
       const defaults = getDefaultRunOptions(ctx.config, settings);
-      const previewTargets = collectTargets(ctx.vault, getTranslationScope(ctx, defaults), defaults);
+      const previewTargets = collectTargets(
+        ctx.vault,
+        getTranslationScope(ctx, defaults),
+        defaults,
+      );
       const options =
         queuedOptions.get(ctx.instanceKey) ||
         (await requestConfig(ctx, previewTargets, defaults));
@@ -133,7 +163,11 @@ export function createTranslationBackgroundAction(
       }
 
       const normalisedOptions = normaliseRunOptions(options);
-      const targets = collectTargets(ctx.vault, getTranslationScope(ctx, normalisedOptions), normalisedOptions);
+      const targets = collectTargets(
+        ctx.vault,
+        getTranslationScope(ctx, normalisedOptions),
+        normalisedOptions,
+      );
       return createTranslationPlan(targets, normalisedOptions);
     },
     run: async (ctx) => {
@@ -154,7 +188,10 @@ export function createTranslationBackgroundAction(
       }
 
       if (pendingTasks.length) {
-        const client = getClient();
+        const settings = ctx.plugins.getSettings<TranslationPluginSettings>(
+          TRANSLATION_PLUGIN_ID,
+        );
+        const client = getClient(settings);
         const unsubscribe = client.onEvent((event) =>
           handleTranslationEvent(ctx, event),
         );
@@ -348,7 +385,10 @@ export function createTranslationPlan(
   };
 }
 
-function getTranslationScope(ctx: BackgroundActionRunContext, options: TranslationRunOptions): TranslationResourceRef {
+function getTranslationScope(
+  ctx: BackgroundActionRunContext,
+  options: TranslationRunOptions,
+): TranslationResourceRef {
   if (options.currentResourceOnly && ctx.currentCanvas) {
     return {
       id: ctx.currentCanvas.id,

@@ -28,6 +28,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./lazy": {
+      "import": "./dist/lazy.js",
+      "require": "./dist/lazy.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

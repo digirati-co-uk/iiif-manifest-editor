@@ -666,6 +666,84 @@ describe("BackgroundTasksStore", () => {
     expect(store.getState().plans[instanceKey]?.tasks.map((task) => task.status)).toEqual(["complete", "complete"]);
   });
 
+  test("defers persisted active actions until lazy definitions are registered", async () => {
+    const processed: string[] = [];
+    const definition = action({
+      id: "lazy-action",
+      resumable: true,
+      run: async (ctx) => {
+        await ctx.tasks.runEach((task) => {
+          processed.push(task.id);
+          return { taskStatus: "complete", result: task.id };
+        });
+        return ctx.tasks.getAll().map((task) => task.result);
+      },
+    });
+    const instanceKey = getBackgroundActionInstanceKey(definition.id, manifestTarget);
+    const saved: BackgroundActionPersistedState[] = [];
+    const persistence = {
+      load: vi.fn(async () => null),
+      save: vi.fn(async (_key: BackgroundActionPersistenceKey, snapshot: BackgroundActionPersistedState) => {
+        saved.push(snapshot);
+      }),
+      clear: vi.fn(async () => undefined),
+    };
+    const snapshot: BackgroundActionPersistedState = {
+      version: 1,
+      savedAt: Date.now(),
+      instances: {
+        [instanceKey]: {
+          id: instanceKey,
+          runId: "run-lazy-resume",
+          actionId: definition.id,
+          target: manifestTarget,
+          label: definition.label,
+          status: "running",
+          statusText: "Running",
+          error: null,
+          result: undefined,
+          resultsAvailable: false,
+          logs: [],
+          events: [],
+          startedAt: Date.now(),
+        },
+      },
+      histories: {},
+      plans: {
+        [instanceKey]: {
+          version: 1,
+          tasks: [
+            { id: "done", label: "Done", status: "complete", result: "done" },
+            { id: "pending", label: "Pending", status: "running" },
+          ],
+        },
+      },
+    };
+    const store = createBackgroundActionsStore();
+
+    store.getState().setPersistence(persistence, persistenceKey);
+    store.getState().hydrate(snapshot);
+
+    expect(store.getState().instances[instanceKey]).toBeUndefined();
+    await store.getState().flushPersistence();
+    expect(saved.at(-1)?.instances[instanceKey]?.status).toBe("running");
+
+    store.getState().setDefinitions([definition]);
+
+    expect(store.getState().instances[instanceKey]?.status).toBe("running");
+    expect(store.getState().instances[instanceKey]?.statusText).toBe("Resuming");
+    expect(store.getState().plans[instanceKey]?.tasks.map((task) => task.status)).toEqual([
+      "complete",
+      "queued",
+    ]);
+
+    await runBackgroundAction({ store, context: context(definition), resume: true });
+
+    expect(processed).toEqual(["pending"]);
+    expect(store.getState().instances[instanceKey]?.status).toBe("complete");
+    expect(store.getState().instances[instanceKey]?.result).toEqual(["done", "pending"]);
+  });
+
   test("persists serializable snapshots without controllers", async () => {
     const definition = action({ resumable: true });
     const saved: BackgroundActionPersistedState[] = [];

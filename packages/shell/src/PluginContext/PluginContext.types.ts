@@ -26,11 +26,22 @@ export type PluginModule = {
   settings?: PluginSettingsDefinition;
 } & AppExtension;
 
+export type LazyPluginModule = {
+  default: PluginMetadata;
+  settings?: PluginSettingsDefinition;
+  load: () => Promise<PluginModule | MappedPlugin>;
+};
+
 export type MappedPlugin = {
   metadata: PluginMetadata;
   extension: AppExtension;
   settings?: PluginSettingsDefinition;
+  load?: () => Promise<PluginModule | MappedPlugin>;
+  loadStatus?: "idle" | "loading" | "loaded" | "error";
+  loadError?: string;
 };
+
+export type PluginInput = PluginModule | MappedPlugin | LazyPluginModule;
 
 export type PluginSettingsValue = Record<string, unknown>;
 
@@ -90,6 +101,9 @@ export type PluginStore = PluginStoreSnapshot & {
     disabled?: string[];
     globalPluginConfig?: Config["plugins"];
   }): void;
+  setPluginLoading(id: string): void;
+  setPluginLoaded(id: string, plugin: MappedPlugin): void;
+  setPluginLoadError(id: string, error: string): void;
   setAppConfig(appId: string, config: PluginAppConfig): void;
   setGlobalConfig(config?: Config["plugins"]): void;
   setGlobalAppConfig(appId: string, config: PluginAppConfig): void;

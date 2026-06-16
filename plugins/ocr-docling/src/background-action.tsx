@@ -78,7 +78,7 @@ type OcrDoclingClient = Pick<
 >;
 
 export type OcrDoclingActionDependencies = {
-  createClient?: () => OcrDoclingClient;
+  createClient?: (settings?: OcrDoclingPluginSettings) => OcrDoclingClient;
   getCanvasImage?: (
     ctx: BackgroundActionRunContext,
     canvas: any,
@@ -99,15 +99,53 @@ export type OcrDoclingActionDependencies = {
 export function createOcrDoclingBackgroundAction(
   dependencies: OcrDoclingActionDependencies = {},
 ): BackgroundActionDefinition {
-  const createClient = dependencies.createClient || createDoclingWorkerClient;
+  const createClient =
+    dependencies.createClient ||
+    ((settings?: OcrDoclingPluginSettings) =>
+      createDoclingWorkerClient({
+        workerUrl:
+          typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+            ? settings.workerUrl
+            : undefined,
+      }));
   const getCanvasImage = dependencies.getCanvasImage || getCanvasImageForOcr;
   const writeAnnotations =
     dependencies.writeAnnotations || writeDoclingRegionAnnotations;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
   let retainedClient: OcrDoclingClient | null = null;
+  let retainedWorkerUrl: string | undefined;
 
-  const getClient = () => {
-    retainedClient ||= createClient();
+  const getEffectiveWorkerUrl = (settings?: OcrDoclingPluginSettings) =>
+    typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
+      ? settings.workerUrl.trim()
+      : undefined;
+
+  const terminateRetainedClient = (
+    client: OcrDoclingClient | null = retainedClient,
+  ) => {
+    if (!client) {
+      return;
+    }
+
+    client.terminate();
+    if (retainedClient === client) {
+      retainedClient = null;
+      retainedWorkerUrl = undefined;
+    }
+  };
+
+  const getClient = (settings?: OcrDoclingPluginSettings) => {
+    const workerUrl = getEffectiveWorkerUrl(settings);
+
+    if (retainedClient && retainedWorkerUrl !== workerUrl) {
+      terminateRetainedClient(retainedClient);
+    }
+
+    if (!retainedClient) {
+      retainedClient = createClient(settings);
+      retainedWorkerUrl = workerUrl;
+    }
+
     return retainedClient;
   };
 
@@ -169,7 +207,10 @@ export function createOcrDoclingBackgroundAction(
             ),
           "queued",
         );
-        const client = getClient();
+        const settings = ctx.plugins.getSettings<OcrDoclingPluginSettings>(
+          OCR_DOCLING_PLUGIN_ID,
+        );
+        const client = getClient(settings);
         const unsubscribe = client.onEvent((event) =>
           handleDoclingEvent(ctx, event),
         );
@@ -180,10 +221,7 @@ export function createOcrDoclingBackgroundAction(
           }
 
           terminated = true;
-          client.terminate();
-          if (retainedClient === client) {
-            retainedClient = null;
-          }
+          terminateRetainedClient(client);
         };
         const abort = () => terminateClient();
 

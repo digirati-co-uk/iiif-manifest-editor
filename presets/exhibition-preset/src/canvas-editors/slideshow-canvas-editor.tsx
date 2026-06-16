@@ -1,12 +1,6 @@
-import type {
-  CanvasEditorDefinition,
-  EditableResource,
-} from "@manifest-editor/shell";
+import { CanvasPanelEditor, useAnnotationEditing } from "@manifest-editor/editors";
+import type { CanvasEditorDefinition, EditableResource } from "@manifest-editor/shell";
 import { useLayoutActions, useLayoutState } from "@manifest-editor/shell";
-import {
-  CanvasPanelEditor,
-  useAnnotationEditing,
-} from "@manifest-editor/editors";
 import { useState } from "react";
 import { Button } from "react-aria-components";
 import {
@@ -19,17 +13,14 @@ import {
 } from "react-iiif-vault";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { isExhibitionItem } from "../helpers";
+import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const slideshowCanvasEditor: CanvasEditorDefinition = {
   id: "slideshow-canvas-editor",
   label: "Slideshow canvas editor",
   component: () => <SlideshowCanvasEditor />,
   supports: {
-    strategy: (
-      _strategy: RenderingStrategy,
-      resource: EditableResource,
-      vault,
-    ) => {
+    strategy: (_strategy: RenderingStrategy, resource: EditableResource, vault) => {
       const canvas = vault.get(resource.resource);
       return canvas?.type === "Canvas" && isExhibitionItem(canvas as any);
     },
@@ -41,22 +32,13 @@ function SlideshowCanvasEditor() {
   const manifest = useManifest();
   const { edit } = useLayoutActions();
   const { rightPanel } = useLayoutState();
+  const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
   const request = useCurrentAnnotationRequest();
-  const editingAnnotationId = useAnnotationEditing(
-    (state) => state.annotationId,
-  );
+  const editingAnnotationId = useAnnotationEditing((state) => state.annotationId);
   const [zoom, setZoom] = useState(1);
-  const currentCanvasIndex = manifest?.items?.findIndex(
-    (item) => item.id === canvas?.id,
-  );
-  const previousCanvas =
-    typeof currentCanvasIndex === "number"
-      ? manifest?.items?.[currentCanvasIndex - 1]
-      : undefined;
-  const nextCanvas =
-    typeof currentCanvasIndex === "number"
-      ? manifest?.items?.[currentCanvasIndex + 1]
-      : undefined;
+  const currentCanvasIndex = manifest?.items?.findIndex((item) => item.id === canvas?.id);
+  const previousCanvas = typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex - 1] : undefined;
+  const nextCanvas = typeof currentCanvasIndex === "number" ? manifest?.items?.[currentCanvasIndex + 1] : undefined;
 
   if (!canvas) {
     return null;
@@ -65,6 +47,7 @@ function SlideshowCanvasEditor() {
   if (
     request ||
     editingAnnotationId ||
+    centerPanelMode === "edit" ||
     (rightPanel.current === "@manifest-editor/editor" &&
       rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps"))
   ) {
@@ -75,22 +58,12 @@ function SlideshowCanvasEditor() {
     <div className="exhibition-slideshow-current-canvas flex h-full min-h-0 flex-col bg-slate-100">
       <div className="exhibition-slideshow-current-toolbar flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="min-w-0 flex-1">
-          <LocaleString className="block truncate text-sm font-semibold text-slate-800">
-            {canvas.label}
-          </LocaleString>
+          <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas.label}</LocaleString>
         </div>
         <div className="flex items-center gap-2">
           <ControlButton onPress={() => setZoom(1)}>Home</ControlButton>
-          <ControlButton
-            onPress={() => setZoom((value) => Math.max(0.25, value - 0.25))}
-          >
-            -
-          </ControlButton>
-          <ControlButton
-            onPress={() => setZoom((value) => Math.min(3, value + 0.25))}
-          >
-            +
-          </ControlButton>
+          <ControlButton onPress={() => setZoom((value) => Math.max(0.25, value - 0.25))}>-</ControlButton>
+          <ControlButton onPress={() => setZoom((value) => Math.min(3, value + 0.25))}>+</ControlButton>
           <ControlButton
             isDisabled={!previousCanvas}
             onPress={() =>

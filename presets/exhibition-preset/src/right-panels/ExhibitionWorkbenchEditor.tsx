@@ -66,8 +66,7 @@ export const slideshowWorkbenchEditor: EditorDefinition = {
   supports: {
     ...exhibitionWorkbenchEditor.supports,
     // In slideshow mode (singleTab) the workbench handles ALL canvas types.
-    custom: ({ resource }, vault) =>
-      isEditableExhibitionCanvas(resource as any, vault),
+    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource as any, vault),
   },
   component: () => <ExhibitionWorkbenchRightPanel preset="slideshow" />,
 };
@@ -87,14 +86,32 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
   const requestedTab = useSlideshowWorkbenchState((state) => state.requestedTab);
   const clearRequestedTab = useSlideshowWorkbenchState((state) => state.clearRequestedTab);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
+
+  useEffect(() => {
+    // Sync center panel mode with the initially selected tab on mount
+    if (selectedTab === "tour") {
+      setCenterPanelMode("edit");
+    } else if (selectedTab === "layout") {
+      setCenterPanelMode("preview");
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (requestedTab && tabs.some((tab) => tab.id === requestedTab)) {
-      setSelectedTab(requestedTab as RightPanelTab);
-      setShowTourSteps(requestedTab === "tour");
+      const tab = requestedTab as RightPanelTab;
+      setSelectedTab(tab);
+      setShowTourSteps(tab === "tour");
+      if (tab === "tour") {
+        setCenterPanelMode("edit");
+      } else if (tab === "layout") {
+        setCenterPanelMode("preview");
+      }
       clearRequestedTab();
     }
-  }, [clearRequestedTab, requestedTab, setShowTourSteps, tabs]);
+  }, [clearRequestedTab, requestedTab, setCenterPanelMode, setShowTourSteps, tabs]);
 
   useEffect(() => {
     if (selectedTab === "tour" && !tourSupported) {
@@ -106,6 +123,11 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
   const selectTab = (tab: RightPanelTab) => {
     setSelectedTab(tab);
     setShowTourSteps(tab === "tour");
+    if (tab === "tour") {
+      setCenterPanelMode("edit");
+    } else if (tab === "layout") {
+      setCenterPanelMode("preview");
+    }
   };
 
   // For info-box canvases inside the slideshow singleTab context, render the
