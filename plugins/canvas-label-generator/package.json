@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/canvas-label-generator",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -45,8 +45,8 @@
     "react": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
     "@repo/eslint-config": "workspace:*",
+    "@types/react": "^18.3.3",
     "tsdown": "0.16.4",
     "vitest": "v3.0.9"
   },
