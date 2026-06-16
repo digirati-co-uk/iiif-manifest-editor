@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -29,9 +29,9 @@
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/exhibition-preset": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
-    "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/ocr-classification": "workspace:*",
     "@manifest-editor/ocr-docling": "workspace:*",
+    "@manifest-editor/projects": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@manifest-editor/translation": "workspace:*",
     "@tanstack/react-query": "^5.56.2",
