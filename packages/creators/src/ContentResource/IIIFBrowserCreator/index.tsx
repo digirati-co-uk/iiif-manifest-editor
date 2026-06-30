@@ -3,6 +3,7 @@ import { defineCreator } from "@manifest-editor/creator-api";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
+import { updateCanvasThumbnailFromCrop } from "../../side-effects/update-canvas-thumbnail-from-crop";
 import {
   IIIFBrowserCreatorForm,
   createFromIIIFBrowserOutput,
@@ -41,6 +42,7 @@ export const iiifBrowserCreator = defineCreator({
     },
   },
   sideEffects: [
+    updateCanvasThumbnailFromCrop,
     resizeToFitService,
     resizeResourceToEmptyCanvas,
     repositionMultipleImages,

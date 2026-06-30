@@ -5,7 +5,7 @@ import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 
-function croppedRegion(
+export function croppedRegion(
   imageServiceId: string,
   region: {
     x: number;
