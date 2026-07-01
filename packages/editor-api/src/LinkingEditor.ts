@@ -11,7 +11,11 @@ export class LinkingEditor<T extends Partial<LinkingProperties>> extends BaseEdi
   rendering: BaseReferenceListEditor<T, Reference<"ContentResource">>;
   partOf: BaseReferenceListEditor<
     T,
-    Reference<"ContentResource"> | Reference<"Canvas"> | Reference<"AnnotationCollection">
+    | Reference<"ContentResource">
+    | Reference<"Canvas">
+    | Reference<"Manifest">
+    | Reference<"Collection">
+    | Reference<"AnnotationCollection">
   >;
   start: BasePropertyEditor<T, Reference<"Canvas"> | null>;
   supplementary: BaseReferenceListEditor<T, Reference<"ContentResource">>;
