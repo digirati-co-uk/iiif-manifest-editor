@@ -1,38 +1,19 @@
-import {
-  DefaultTooltipContent,
-  Modal,
-  Tooltip,
-  TooltipTrigger,
-} from "@manifest-editor/components";
+import { DefaultTooltipContent, Modal, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
-import {
-  type CSSProperties,
-  Fragment,
-  memo,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-} from "react";
+import { type CSSProperties, Fragment, memo, useContext, useLayoutEffect, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext, useVaultSelector } from "react-iiif-vault";
 import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
-import {
-  BackgroundActionsMount,
-  BackgroundActionToasts,
-} from "../BackgroundTasks/BackgroundActions";
+import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
 import { useEvent } from "../hooks/use-event";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
 import { LayoutModeReactContext, useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
-import {
-  filterSupportedPanels,
-  getSupportedPanelFallback,
-  panelIds,
-} from "./Layout.supports";
+import { filterSupportedPanels, getSupportedPanelFallback, panelIds } from "./Layout.supports";
 import type { LayoutPanel } from "./Layout.types";
 import type { LayoutRenderProps } from "./Layout";
 import * as F from "./Layout.focused.styles";
@@ -43,9 +24,7 @@ function getEditedResourceType(data: unknown) {
   return resource?.source?.type || resource?.type || null;
 }
 
-export const FocusedLayout = memo(function FocusedLayout(
-  props: LayoutRenderProps,
-) {
+export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProps) {
   const app = useApp();
   const appState = useAppState();
   const rootResource = useAppResource();
@@ -77,72 +56,35 @@ export const FocusedLayout = memo(function FocusedLayout(
 
   const leftPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredLeftPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ).filter((panel) => !panel.focusedMode?.hide),
+      filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }).filter((panel) => !panel.focusedMode?.hide),
     [configuredLeftPanels, supportContext],
   );
   const centerPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredCenterPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ),
+      filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredCenterPanels, supportContext],
   );
   const rightPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredRightPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ).filter((panel) => !panel.focusedMode?.hide),
+      filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }).filter((panel) => !panel.focusedMode?.hide),
     [configuredRightPanels, supportContext],
   );
   const modals = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredModals,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-    ),
+      filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredModals, supportContext],
   );
-  const modalLeftPanels = useMemo(
-    () => leftPanels.filter((panel) => panel.modal),
-    [leftPanels],
-  );
-  const dockedLeftPanels = useMemo(
-    () => leftPanels.filter((panel) => !panel.modal),
-    [leftPanels],
-  );
-  const modalPanels = useMemo(
-    () => [...modals, ...modalLeftPanels],
-    [modals, modalLeftPanels],
-  );
+  const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
+  const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
+  const modalPanels = useMemo(() => [...modals, ...modalLeftPanels], [modals, modalLeftPanels]);
 
   const supportedLayout = useMemo(
     () => ({
@@ -155,21 +97,12 @@ export const FocusedLayout = memo(function FocusedLayout(
     [layout, leftPanels, centerPanels, rightPanels, modalPanels],
   );
 
-  const leftPanel = dockedLeftPanels.find(
-    (panel) => panel.id === state.leftPanel.current,
-  );
-  const rightPanel = rightPanels.find(
-    (panel) => panel.id === state.rightPanel.current,
-  );
-  const centerPanel = centerPanels.find(
-    (panel) => panel.id === state.centerPanel.current,
-  );
-  const modalToRender = modalPanels.find(
-    (panel) => panel.id === state.modal.current,
-  );
+  const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
+  const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
+  const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
+  const modalToRender = modalPanels.find((panel) => panel.id === state.modal.current);
   const activeLeftPanelId =
-    state.modal.open &&
-    modalLeftPanels.some((panel) => panel.id === state.modal.current)
+    state.modal.open && modalLeftPanels.some((panel) => panel.id === state.modal.current)
       ? state.modal.current
       : state.leftPanel.current;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
@@ -177,8 +110,7 @@ export const FocusedLayout = memo(function FocusedLayout(
     : undefined;
   const showRightPanel =
     rightPanel &&
-    (pinnedRightPanel?.id !== rightPanel.id ||
-      !equal(state.pinnedRightPanel.state, state.rightPanel.state));
+    (pinnedRightPanel?.id !== rightPanel.id || !equal(state.pinnedRightPanel.state, state.rightPanel.state));
   const focusedPanelContext = useMemo(
     () => ({
       rootResource,
@@ -193,8 +125,7 @@ export const FocusedLayout = memo(function FocusedLayout(
   const handleFocusedPanelSelect = (panel: LayoutPanel) => {
     panel.focusedMode?.onSelect?.(focusedPanelContext);
   };
-  const closeLeftPanelOnMainPanelClick =
-    !leftPanel || leftPanel.focusedMode?.closeOnMainPanelClick !== false;
+  const closeLeftPanelOnMainPanelClick = !leftPanel || leftPanel.focusedMode?.closeOnMainPanelClick !== false;
 
   const backgroundItems = useMemo(() => {
     return (layout.background || []).map((bg, key) => {
@@ -204,10 +135,8 @@ export const FocusedLayout = memo(function FocusedLayout(
 
   useLayoutEffect(() => {
     rightPanels.length && actions.rightPanel.change({ id: rightPanels[0]!.id });
-    dockedLeftPanels.length &&
-      actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
-    centerPanels.length &&
-      actions.centerPanel.change({ id: centerPanels[0]!.id });
+    dockedLeftPanels.length && actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
+    centerPanels.length && actions.centerPanel.change({ id: centerPanels[0]!.id });
     actions.leftPanel.close();
     actions.rightPanel.close();
 
@@ -234,9 +163,7 @@ export const FocusedLayout = memo(function FocusedLayout(
       return;
     }
 
-    const selectedLeftPanel = leftPanels.find(
-      (panel) => panel.id === state.leftPanel.current,
-    );
+    const selectedLeftPanel = leftPanels.find((panel) => panel.id === state.leftPanel.current);
     if (selectedLeftPanel?.focusedMode?.onSelect) {
       handleFocusedPanelSelect(selectedLeftPanel);
     }
@@ -244,10 +171,7 @@ export const FocusedLayout = memo(function FocusedLayout(
 
   useLayoutEffect(() => {
     if (state.leftPanel.current && !leftPanel) {
-      const fallback = getSupportedPanelFallback(
-        dockedLeftPanels,
-        state.leftPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(dockedLeftPanels, state.leftPanel.current);
       if (fallback) {
         actions.leftPanel.change({ id: fallback });
       } else {
@@ -256,10 +180,7 @@ export const FocusedLayout = memo(function FocusedLayout(
     }
 
     if (state.centerPanel.current && !centerPanel) {
-      const fallback = getSupportedPanelFallback(
-        centerPanels,
-        state.centerPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(centerPanels, state.centerPanel.current);
       if (fallback) {
         actions.centerPanel.change({ id: fallback });
       } else {
@@ -268,10 +189,7 @@ export const FocusedLayout = memo(function FocusedLayout(
     }
 
     if (state.rightPanel.current && !rightPanel) {
-      const fallback = getSupportedPanelFallback(
-        rightPanels,
-        state.rightPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(rightPanels, state.rightPanel.current);
       if (fallback) {
         actions.rightPanel.change({ id: fallback });
       } else {
@@ -347,9 +265,10 @@ export const FocusedLayout = memo(function FocusedLayout(
     }
 
     const root = document.documentElement;
-    const previousValues: Array<[string, string]> = Object.keys(
-      layoutVariables,
-    ).map((key) => [key, root.style.getPropertyValue(key)]);
+    const previousValues: Array<[string, string]> = Object.keys(layoutVariables).map((key) => [
+      key,
+      root.style.getPropertyValue(key),
+    ]);
 
     for (const [key, value] of Object.entries(layoutVariables)) {
       root.style.setProperty(key, value);
@@ -364,36 +283,23 @@ export const FocusedLayout = memo(function FocusedLayout(
         }
       }
     };
-  }, [
-    leftPanelWidth,
-    rightPanelWidth,
-    state.leftPanel.open,
-    state.rightPanel.open,
-  ]);
+  }, [leftPanelWidth, rightPanelWidth, state.leftPanel.open, state.rightPanel.open]);
 
   if (loading) {
     return null;
   }
 
-  const renderSidePanelSwitcher = (
-    side: "left" | "right",
-    panels: LayoutPanel[],
-    current: string | null,
-  ) => {
+  const renderSidePanelSwitcher = (side: "left" | "right", panels: LayoutPanel[], current: string | null) => {
     if (!panels.length) {
       return null;
     }
 
-    const panelActions =
-      side === "left" ? actions.leftPanel : actions.rightPanel;
+    const panelActions = side === "left" ? actions.leftPanel : actions.rightPanel;
 
     return (
       <F.PanelSwitcher $side={side} aria-label={`${side} panels`}>
         {panels.map((panel) => (
-          <Tooltip
-            placement={side === "left" ? "right" : "left"}
-            key={panel.id}
-          >
+          <Tooltip placement={side === "left" ? "right" : "left"} key={panel.id}>
             <TooltipTrigger asChild>
               <F.PanelSwitchButton
                 type="button"
@@ -450,9 +356,7 @@ export const FocusedLayout = memo(function FocusedLayout(
               ))}
           </F.PanelSwitchGroup>
         ) : null}
-        {centerPanels.length && leftPanels.length ? (
-          <F.PanelSwitchDivider />
-        ) : null}
+        {centerPanels.length && leftPanels.length ? <F.PanelSwitchDivider /> : null}
         {leftPanels.length ? (
           <F.PanelSwitchGroup aria-label="Left panels">
             {leftPanels.map((panel) => (
@@ -461,8 +365,17 @@ export const FocusedLayout = memo(function FocusedLayout(
                   <F.PanelSwitchButton
                     type="button"
                     aria-label={panel.label}
-                    data-selected={state.leftPanel.current === panel.id}
+                    data-selected={activeLeftPanelId === panel.id}
                     onClick={() => {
+                      if (panel.modal) {
+                        if (state.modal.open && state.modal.current === panel.id) {
+                          actions.modal.close();
+                        } else {
+                          actions.modal.open({ id: panel.id, state: panel.defaultState });
+                          handleFocusedPanelSelect(panel);
+                        }
+                        return;
+                      }
                       if (state.leftPanel.current === panel.id) {
                         actions.leftPanel.toggle();
                       } else {
@@ -489,12 +402,18 @@ export const FocusedLayout = memo(function FocusedLayout(
 
     return (
       <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
-        {renderHelper(
-          modalToRender.render(
-            state.modal.state || modalToRender.defaultState || {},
-            { ...supportedLayout, current: actions.modal, vault: vault },
-            appState,
-          ),
+        {modalToRender.modal ? (
+          <div className="h-[70vh] min-h-[60vh] max-h-full flex">
+            <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
+          </div>
+        ) : (
+          renderHelper(
+            modalToRender.render(
+              state.modal.state || modalToRender.defaultState || {},
+              { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
+              appState,
+            ),
+          )
         )}
       </Modal>
     );
@@ -503,18 +422,12 @@ export const FocusedLayout = memo(function FocusedLayout(
   const renderCenterPanel = () => (
     <L.PanelContainer $menu={props.centerPanelMenuPosition || "top"}>
       {props.centerPanelMenu ? (
-        <L.PanelMenu
-          $open={state.centerPanel.open}
-          $position={props.centerPanelMenuPosition || "top"}
-        >
+        <L.PanelMenu $open={state.centerPanel.open} $position={props.centerPanelMenuPosition || "top"}>
           {props.centerPanelMenu}
         </L.PanelMenu>
       ) : null}
       <L.PanelContent>
-        <ErrorBoundary
-          resetKeys={[centerPanel?.id]}
-          FallbackComponent={PanelError}
-        >
+        <ErrorBoundary resetKeys={[centerPanel?.id]} FallbackComponent={PanelError}>
           {isLoading ? (
             <F.LoadingCenter>
               <Spinner stroke="rgba(0,0,0,.3)" fontSize={"2em"} />
@@ -548,21 +461,13 @@ export const FocusedLayout = memo(function FocusedLayout(
       ) : (
         <>
           {props.leftPanelMenu ? (
-            <L.PanelMenu
-              $open={state.leftPanel.open}
-              $position={props.leftPanelMenuPosition || "bottom"}
-            >
+            <L.PanelMenu $open={state.leftPanel.open} $position={props.leftPanelMenuPosition || "bottom"}>
               {props.leftPanelMenu}
             </L.PanelMenu>
           ) : null}
           <L.PanelContent>
             {leftPanel ? (
-              <ModularPanel
-                isLeft
-                panel={leftPanel}
-                state={state.leftPanel}
-                actions={actions.leftPanel}
-              />
+              <ModularPanel isLeft panel={leftPanel} state={state.leftPanel} actions={actions.leftPanel} />
             ) : null}
           </L.PanelContent>
         </>
@@ -579,10 +484,7 @@ export const FocusedLayout = memo(function FocusedLayout(
       ) : (
         <>
           {props.rightPanelMenu ? (
-            <L.PanelMenu
-              $open={state.rightPanel.open}
-              $position={props.rightPanelMenuPosition || "bottom"}
-            >
+            <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
               {props.rightPanelMenu}
             </L.PanelMenu>
           ) : null}
@@ -637,13 +539,9 @@ export const FocusedLayout = memo(function FocusedLayout(
           </F.CenterPanel>
 
           {renderFocusedLeftSwitcher()}
-          {renderSidePanelSwitcher(
-            "right",
-            rightPanels,
-            state.rightPanel.current,
-          )}
+          {renderSidePanelSwitcher("right", rightPanels, state.rightPanel.current)}
 
-          {leftPanels.length > 0 ? (
+          {dockedLeftPanels.length > 0 ? (
             <F.FloatingPanel
               $side="left"
               $open={state.leftPanel.open}

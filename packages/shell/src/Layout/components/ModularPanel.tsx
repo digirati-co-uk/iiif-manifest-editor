@@ -20,7 +20,7 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { useAppState } from "../../AppContext/AppContext";
 
-const OverrideScrollbar = 'OverrideScrollbar';
+const OverrideScrollbar = "OverrideScrollbar";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -219,7 +219,7 @@ export function ModularPanel({
         originalCallback && originalCallback();
       }
     },
-    [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length]
+    [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length],
   );
 
   const menuHandler = (newPanel: LayoutPanel) => {
@@ -307,8 +307,8 @@ export function ModularPanel({
               panel.render(
                 state.state || panel.defaultState || {},
                 { ...layout, current: actions, vault: vault as any, transition, isModal },
-                appState
-              )
+                appState,
+              ),
             )}
           </ErrorBoundary>
         </ModularPanelContent>

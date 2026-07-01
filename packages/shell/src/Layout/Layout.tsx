@@ -4,24 +4,14 @@ import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
-import {
-  Fragment,
-  memo,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
+import { Fragment, memo, useContext, useLayoutEffect, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext, useVaultSelector } from "react-iiif-vault";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
-import {
-  BackgroundActionsMount,
-  BackgroundActionToasts,
-} from "../BackgroundTasks/BackgroundActions";
+import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
@@ -30,11 +20,7 @@ import { useResizeLayout } from "./components/use-resize-layouts";
 import { FocusedLayout } from "./Layout.focused";
 import { useLayoutProvider } from "./Layout.context";
 import { panelSizing, renderHelper } from "./Layout.helpers";
-import {
-  filterSupportedPanels,
-  getSupportedPanelFallback,
-  panelIds,
-} from "./Layout.supports";
+import { filterSupportedPanels, getSupportedPanelFallback, panelIds } from "./Layout.supports";
 import * as M from "./Layout.mobile";
 import * as L from "./Layout.styles";
 
@@ -91,72 +77,35 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   );
   const leftPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredLeftPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ),
+      filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredLeftPanels, supportContext],
   );
   const centerPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredCenterPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ),
+      filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredCenterPanels, supportContext],
   );
   const rightPanels = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredRightPanels,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ),
+      filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredRightPanels, supportContext],
   );
   const modals = useMemo(
     () =>
-      filterSupportedPanels(
-        configuredModals,
-        supportContext,
-        (panel, error) => {
-          console.error(
-            `Layout panel "${panel.id}" failed support check`,
-            error,
-          );
-        },
-      ),
+      filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
+        console.error(`Layout panel "${panel.id}" failed support check`, error);
+      }),
     [configuredModals, supportContext],
   );
-  const modalLeftPanels = useMemo(
-    () => leftPanels.filter((panel) => panel.modal),
-    [leftPanels],
-  );
-  const dockedLeftPanels = useMemo(
-    () => leftPanels.filter((panel) => !panel.modal),
-    [leftPanels],
-  );
-  const modalPanels = useMemo(
-    () => [...modals, ...modalLeftPanels],
-    [modals, modalLeftPanels],
-  );
+  const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
+  const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
+  const modalPanels = useMemo(() => [...modals, ...modalLeftPanels], [modals, modalLeftPanels]);
   const supportedLayout = useMemo(
     () => ({
       ...layout,
@@ -167,18 +116,10 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     }),
     [layout, leftPanels, centerPanels, rightPanels, modalPanels],
   );
-  const leftPanel = dockedLeftPanels.find(
-    (panel) => panel.id === state.leftPanel.current,
-  );
-  const rightPanel = rightPanels.find(
-    (panel) => panel.id === state.rightPanel.current,
-  );
-  const centerPanel = centerPanels.find(
-    (panel) => panel.id === state.centerPanel.current,
-  );
-  const modalToRender = modalPanels.find(
-    (panel) => panel.id === state.modal.current,
-  );
+  const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
+  const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
+  const centerPanel = centerPanels.find((panel) => panel.id === state.centerPanel.current);
+  const modalToRender = modalPanels.find((panel) => panel.id === state.modal.current);
   const activeLeftPanelId =
     state.modal.open && modalLeftPanels.some((panel) => panel.id === state.modal.current)
       ? state.modal.current
@@ -214,8 +155,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   // Pinned state
   const showRightPanel =
     rightPanel &&
-    (pinnedRightPanel?.id !== rightPanel.id ||
-      !equal(state.pinnedRightPanel.state, state.rightPanel.state));
+    (pinnedRightPanel?.id !== rightPanel.id || !equal(state.pinnedRightPanel.state, state.rightPanel.state));
   const resetLeftPanel =
     leftPanelResizer.widthB !== "auto"
       ? () =>
@@ -274,10 +214,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
 
   useLayoutEffect(() => {
     if (state.leftPanel.current && !leftPanel) {
-      const fallback = getSupportedPanelFallback(
-        dockedLeftPanels,
-        state.leftPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(dockedLeftPanels, state.leftPanel.current);
       if (fallback) {
         actions.leftPanel.change({ id: fallback });
       } else {
@@ -286,10 +223,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     }
 
     if (state.centerPanel.current && !centerPanel) {
-      const fallback = getSupportedPanelFallback(
-        centerPanels,
-        state.centerPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(centerPanels, state.centerPanel.current);
       if (fallback) {
         actions.centerPanel.change({ id: fallback });
       } else {
@@ -298,10 +232,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     }
 
     if (state.rightPanel.current && !rightPanel) {
-      const fallback = getSupportedPanelFallback(
-        rightPanels,
-        state.rightPanel.current,
-      );
+      const fallback = getSupportedPanelFallback(rightPanels, state.rightPanel.current);
       if (fallback) {
         actions.rightPanel.change({ id: fallback });
       } else {
@@ -310,7 +241,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     }
 
     if (state.modal.current && !modalToRender) {
-      const fallback = getSupportedPanelFallback(modals, state.modal.current);
+      const fallback = getSupportedPanelFallback(modalPanels, state.modal.current);
       if (fallback) {
         actions.modal.change({ id: fallback });
       } else {
@@ -336,10 +267,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     // @todo to enable dynamic layouts, we need this effect to run IF the props change.
     // actions.setAvailable(props);
     rightPanels.length && actions.rightPanel.change({ id: rightPanels[0]!.id });
-    dockedLeftPanels.length &&
-      actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
-    centerPanels.length &&
-      actions.centerPanel.change({ id: centerPanels[0]!.id });
+    dockedLeftPanels.length && actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
+    centerPanels.length && actions.centerPanel.change({ id: centerPanels[0]!.id });
 
     // actions are stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -357,15 +286,9 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     <L.PanelContainer
       $menu={props.leftPanelMenuPosition || "bottom"}
       ref={leftPanelResizer.refs.resizableDiv}
-      className={[
-        "manifest-editor",
-        transition && enableMotion ? `transition transition-${transition}` : "",
-      ].join(" ")}
+      className={["manifest-editor", transition && enableMotion ? `transition transition-${transition}` : ""].join(" ")}
       style={{
-        width:
-          state.leftPanel.open || transition !== "exited"
-            ? leftPanelResizer.widthB
-            : undefined,
+        width: state.leftPanel.open || transition !== "exited" ? leftPanelResizer.widthB : undefined,
         minWidth: leftPanel?.options?.minWidth,
       }}
     >
@@ -413,14 +336,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
         {modalToRender.modal ? (
           <div className="h-[70vh] min-h-[60vh] max-h-full flex">
-            <ModularPanel
-              isLeft
-              isModal
-              noHeader
-              panel={modalToRender}
-              state={state.modal}
-              actions={actions.modal}
-            />
+            <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
           </div>
         ) : (
           renderHelper(
@@ -438,18 +354,12 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   const renderCenterPanel = () => (
     <L.PanelContainer $menu={props.centerPanelMenuPosition || "top"}>
       {props.centerPanelMenu ? (
-        <L.PanelMenu
-          $open={state.centerPanel.open}
-          $position={props.centerPanelMenuPosition || "top"}
-        >
+        <L.PanelMenu $open={state.centerPanel.open} $position={props.centerPanelMenuPosition || "top"}>
           {props.centerPanelMenu}
         </L.PanelMenu>
       ) : null}
       <L.PanelContent>
-        <ErrorBoundary
-          resetKeys={[centerPanel?.id]}
-          FallbackComponent={PanelError}
-        >
+        <ErrorBoundary resetKeys={[centerPanel?.id]} FallbackComponent={PanelError}>
           {isLoading ? (
             <div
               style={{
@@ -485,14 +395,9 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     <L.PanelContainer
       $menu={props.rightPanelMenuPosition || "bottom"}
       ref={rightPanelResizer.refs.resizableDiv}
-      className={
-        transition && enableMotion ? `transition transition-${transition}` : ""
-      }
+      className={transition && enableMotion ? `transition transition-${transition}` : ""}
       style={{
-        width:
-          state.rightPanel.open || transition !== "exited"
-            ? rightPanelResizer.widthB
-            : undefined,
+        width: state.rightPanel.open || transition !== "exited" ? rightPanelResizer.widthB : undefined,
         minWidth: rightPanel?.options?.minWidth,
       }}
     >
@@ -503,10 +408,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       ) : (
         <>
           {props.rightPanelMenu ? (
-            <L.PanelMenu
-              $open={state.rightPanel.open}
-              $position={props.rightPanelMenuPosition || "bottom"}
-            >
+            <L.PanelMenu $open={state.rightPanel.open} $position={props.rightPanelMenuPosition || "bottom"}>
               {props.rightPanelMenu}
             </L.PanelMenu>
           ) : null}
@@ -552,10 +454,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
           <M.Container>
             <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>
             <M.MobileBar>
-              {leftPanels.length > 0 ? (
-              <M.LeftBarButton onClick={actions.leftPanel.toggle}>
-                {leftPanel?.label}
-              </M.LeftBarButton>
+              {dockedLeftPanels.length > 0 ? (
+                <M.LeftBarButton onClick={actions.leftPanel.toggle}>{leftPanel?.label}</M.LeftBarButton>
               ) : null}
               {rightPanels.length > 0 ? (
                 <M.DrawerContainer>
@@ -568,14 +468,10 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
               <M.PreviewBarButton>Preview</M.PreviewBarButton>
             </M.MobileBar>
             {rightPanels.length > 0 ? (
-              <M.DrawerBody $open={state.rightPanel.open}>
-                {renderRightPanel()}
-              </M.DrawerBody>
+              <M.DrawerBody $open={state.rightPanel.open}>{renderRightPanel()}</M.DrawerBody>
             ) : null}
             {dockedLeftPanels.length > 0 ? (
-              <M.LeftPanel $open={state.leftPanel.open}>
-                {renderLeftPanel()}
-              </M.LeftPanel>
+              <M.LeftPanel $open={state.leftPanel.open}>{renderLeftPanel()}</M.LeftPanel>
             ) : null}
             {leftPanels.length > 0 || rightPanels.length > 0 ? (
               <M.Lightbox
