@@ -4,9 +4,9 @@ import { useState } from "react";
 import { InputContainer, InputLabel, InputLabelEdit } from "../Input";
 import { useCreator } from "@manifest-editor/shell";
 import { ContentResourceList } from "../ContentResourceList/ContentResourceList";
+import { CollectionItemList } from "../CollectionItemList/CollectionItemList";
 import { RangeList } from "../RangeList";
 import { AnnotationPageList } from "../AnnotationPageLIst/AnnotationPageList";
-import { Button } from "@manifest-editor/ui/atoms/Button";
 import { ActionButton, EmptyState, AddIcon } from "@manifest-editor/components";
 
 interface LinkingPropertyListProps {
@@ -16,19 +16,34 @@ interface LinkingPropertyListProps {
   label: string;
   emptyLabel: string;
   creationType: string;
+  initialData?: any;
   singleMode?: boolean;
   reorder?: (ctx: { startIndex: number; endIndex: number }) => void;
   items?: Reference[];
-  createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
+  createActions?: (
+    ref: Reference,
+    index: number,
+    item: Reference | SpecificResource,
+  ) => AppDropdownItem[];
 }
 
 export function LinkingPropertyList(props: LinkingPropertyListProps) {
-  const [canCreate_, actions] = useCreator(props.parent?.source, props.property, props.creationType);
+  const [canCreate_, actions] = useCreator(
+    props.parent?.source,
+    props.property,
+    props.creationType,
+  );
   const [isOpen, setIsOpen] = useState(false);
-  const canCreate = props.singleMode ? (props.items || []).length === 0 : canCreate_;
+  const canCreate = props.singleMode
+    ? (props.items || []).length === 0
+    : canCreate_;
 
   let ListComponent: typeof ContentResourceList = ContentResourceList;
   switch (props.creationType) {
+    case "Collection":
+    case "Manifest":
+      ListComponent = CollectionItemList as any;
+      break;
     case "Range":
       ListComponent = RangeList as any;
       break;
@@ -50,7 +65,10 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
         ) : (
           <InputLabel>
             {props.label}
-            <InputLabelEdit data-active={isOpen} onClick={() => setIsOpen((o) => !o)} />
+            <InputLabelEdit
+              data-active={isOpen}
+              onClick={() => setIsOpen((o) => !o)}
+            />
           </InputLabel>
         )}
         <ListComponent
@@ -64,7 +82,9 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
         />
       </div>
       {canCreate ? (
-        <ActionButton onPress={() => actions.create()}>
+        <ActionButton
+          onPress={() => actions.create(undefined, props.initialData)}
+        >
           <AddIcon /> Add {props.label}
         </ActionButton>
       ) : null}

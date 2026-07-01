@@ -17,7 +17,8 @@ export function useCreators() {}
 export function LinkingProperties() {
   const resource = useEditingResource();
   const { linking, notAllowed } = useEditor();
-  const { seeAlso, rendering, start, supplementary, homepage, logo } = linking;
+  const { seeAlso, rendering, partOf, start, supplementary, homepage, logo } = linking;
+  const resourceType = resource?.resource.source.type;
   const [toggled, toggle] = useToggleList();
   const [canCreateLogo, logoActions] = useCreator(resource?.resource, "logo", "ContentResource");
   const [canCreateStart, startActions] = useCreator(resource?.resource, "start", "Canvas", undefined, {
@@ -25,7 +26,6 @@ export function LinkingProperties() {
   });
 
   // @todo "service" + "services"
-  // @todo "partOf" using explorer + way to render the properties out.
   // @todo "seeAlso" may include manifest types (external)
 
   return (
@@ -69,6 +69,31 @@ export function LinkingProperties() {
           creationType="ContentResource"
           emptyLabel="No homepage"
           parent={resource?.resource}
+        />
+      ) : null}
+
+      {!notAllowed.includes("partOf") &&
+      (resourceType === "Collection" ||
+        resourceType === "Manifest" ||
+        resourceType === "Canvas") ? (
+        <LinkingPropertyList
+          containerId={partOf.containerId()}
+          label="Part of"
+          property="partOf"
+          items={partOf.get()}
+          reorder={(ctx) => partOf.reorder(ctx.startIndex, ctx.endIndex)}
+          createActions={createAppActions(partOf)}
+          creationType={resourceType === "Canvas" ? "Manifest" : "Collection"}
+          emptyLabel="No part of"
+          parent={resource?.resource}
+          initialData={{
+            iiifBrowserOptions: {
+              navigation: {
+                canSelectManifest: resourceType === "Canvas",
+                canSelectCollection: resourceType !== "Canvas",
+              },
+            },
+          }}
         />
       ) : null}
 
