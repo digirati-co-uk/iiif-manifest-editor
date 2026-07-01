@@ -14,6 +14,7 @@ import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
 import type {
+  CreatorConfig,
   CreatorDefinition,
   CreatorFunctionContext,
   CreatorOptions,
@@ -25,6 +26,8 @@ export class CreatorInstance implements CreatorFunctionContext {
   previewVault: Vault;
   configs: CreatorDefinition[];
   options: CreatorOptions;
+  config: Record<string, unknown>;
+  creatorConfig: CreatorConfig;
 
   target: CreatorOptions["target"];
   selector: SupportedSelector | undefined | null;
@@ -35,11 +38,15 @@ export class CreatorInstance implements CreatorFunctionContext {
     options: CreatorOptions,
     createConfigs: CreatorDefinition[],
     previewVault: Vault,
+    definitionId: string,
+    creatorConfig: CreatorConfig = {},
   ) {
     this.vault = vault;
     this.previewVault = previewVault;
     this.options = options;
     this.configs = createConfigs;
+    this.creatorConfig = creatorConfig;
+    this.config = creatorConfig[definitionId] || {};
     this.target = this.options.target || this.options.parent?.resource;
     const response: AnnotationResponse = this.options.initialData?.selector;
     this.selector = response ? annotationResponseToSelector(response) : null;
@@ -157,6 +164,7 @@ export class CreatorInstance implements CreatorFunctionContext {
       this.configs,
       this.previewVault,
       options,
+      this.creatorConfig,
     );
 
     return (await runtime.run()) as any;

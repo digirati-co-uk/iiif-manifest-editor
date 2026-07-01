@@ -3,6 +3,7 @@
 import { Form } from "@manifest-editor/components";
 import {
   type Config,
+  CreatorSettings,
   PluginManager,
   useAppResource,
   useConfig,
@@ -11,13 +12,14 @@ import {
 } from "@manifest-editor/shell";
 import { useState } from "react";
 
-type SettingsSection = "general" | "preview" | "editor" | "export" | "plugins";
+type SettingsSection = "general" | "preview" | "editor" | "export" | "creators" | "plugins";
 
 const sections: Array<{ id: SettingsSection; label: string }> = [
   { id: "general", label: "General" },
   { id: "preview", label: "Preview" },
   { id: "editor", label: "Editor" },
   { id: "export", label: "Export" },
+  { id: "creators", label: "Creator settings" },
   { id: "plugins", label: "Plugins" },
 ];
 
@@ -93,6 +95,10 @@ export function BrowserSettingsPanel() {
         {section === "plugins" ? (
           <SettingsSection title="Plugins">
             <PluginManager />
+          </SettingsSection>
+        ) : section === "creators" ? (
+          <SettingsSection title="Creator settings">
+            <CreatorSettings />
           </SettingsSection>
         ) : (
           <Form.Form

@@ -23,6 +23,17 @@ export const iiifBrowserCreator = defineCreator({
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
   icon: <IIIFBrowserIcon />,
+  configuration: {
+    fields: [
+      {
+        id: "addManifestMetadataToCanvas",
+        type: "checkbox",
+        label: "Add manifest metadata to imported canvases",
+        summary: "Copies metadata from the source Manifest when the IIIF Browser creates a Canvas.",
+        defaultValue: true,
+      },
+    ],
+  },
   render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },

@@ -60,15 +60,18 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
         invariant(manifest, "Manifest not found");
 
+        const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
         const addManifestTracking = (resource: any): any => {
           if (resource.type === "SpecificResource" && resource.source) {
             return { ...resource, source: addManifestTracking(resource.source) };
           }
+          const metadata =
+            resource.type === "Canvas" && !addManifestMetadataToCanvas ? {} : { metadata: manifest.metadata || [] };
 
           return {
             requiredStatement: manifest.requiredStatement,
             rights: manifest.rights,
-            metadata: manifest.metadata || [],
+            ...metadata,
             ...resource,
             partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
           };
