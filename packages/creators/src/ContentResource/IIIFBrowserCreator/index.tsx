@@ -4,10 +4,7 @@ import { repositionMultipleImages } from "../../side-effects/reposition-multiple
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
 import { updateCanvasThumbnailFromCrop } from "../../side-effects/update-canvas-thumbnail-from-crop";
-import {
-  IIIFBrowserCreatorForm,
-  createFromIIIFBrowserOutput,
-} from "./iiif-browser-creator";
+import { IIIFBrowserCreatorForm, createFromIIIFBrowserOutput } from "./iiif-browser-creator";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -43,6 +40,7 @@ export const iiifBrowserCreator = defineCreator({
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: ["Annotation", "Canvas"],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
     parentFields: ["body", "items"],
