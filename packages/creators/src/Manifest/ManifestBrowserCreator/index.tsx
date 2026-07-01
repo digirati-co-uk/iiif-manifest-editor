@@ -26,9 +26,11 @@ export const manifestBrowserCreator = defineCreator({
   resourceFields: ["id", "label"],
   additionalTypes: ["Collection"],
   supports: {
-    parentTypes: ["Collection"],
+    parentTypes: ["Collection", "Manifest", "Canvas"],
     parentFieldMap: {
       Collection: ["items"],
+      Manifest: ["partOf"],
+      Canvas: ["partOf"],
     },
   },
   sideEffects: [],

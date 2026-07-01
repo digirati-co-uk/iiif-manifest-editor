@@ -20,6 +20,7 @@ import { Button } from "@manifest-editor/ui/atoms/Button";
 import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
+import { useConfig } from "../ConfigContext/ConfigContext";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useLayoutActions } from "../Layout/Layout.context";
@@ -41,6 +42,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const creator = useInlineCreator();
+  const config = useConfig();
   const isCreatingRef = useRef(false);
 
   const canvasSelector = props.resource.initialData?.selector;
@@ -153,6 +155,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
           runCreate,
           validate,
           options,
+          config: config.creators?.[props.creator.id] || {},
         })}
       </Suspense>
     </>

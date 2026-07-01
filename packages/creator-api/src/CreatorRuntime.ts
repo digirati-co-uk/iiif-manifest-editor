@@ -7,7 +7,7 @@ import {
 import type { Reference } from "@iiif/presentation-3";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
-import type { CreatorDefinition, CreatorOptions } from "./types";
+import type { CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
 import { resolveType } from "./utils";
 
 export class CreatorRuntime {
@@ -19,6 +19,7 @@ export class CreatorRuntime {
   definition: CreatorDefinition;
   options: CreatorOptions;
   configs: CreatorDefinition[];
+  creatorConfig: CreatorConfig;
 
   constructor(
     vault: Vault,
@@ -27,12 +28,14 @@ export class CreatorRuntime {
     createConfigs: CreatorDefinition[],
     previewVault: Vault,
     options?: Partial<CreatorOptions>,
+    creatorConfig?: CreatorConfig,
   ) {
     this.vault = vault;
     this.previewVault = previewVault;
     this.definition = definition;
     this.payload = payload;
     this.configs = this.filterCreateConfigs(createConfigs);
+    this.creatorConfig = creatorConfig || {};
     this.options = {
       targetType: options?.targetType || definition.resourceType,
       ...(options || {}),
@@ -53,6 +56,8 @@ export class CreatorRuntime {
       this.options,
       this.configs,
       this.previewVault,
+      this.definition.id,
+      this.creatorConfig,
     );
     const result = await this.definition.create(this.payload, instance);
 

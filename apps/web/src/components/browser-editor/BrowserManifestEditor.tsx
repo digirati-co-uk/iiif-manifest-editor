@@ -4,8 +4,10 @@ import ocrDoclingPlugin from "@manifest-editor/ocr-docling/lazy";
 import { mapApp } from "@manifest-editor/shell";
 import translationPlugin from "@manifest-editor/translation/lazy";
 import BrowserEditor from "./BrowserEditor";
+import { browserWebPageCreator } from "./browser-web-page-creator";
+import { replaceCreator } from "./replace-creator";
 
-const preset = mapApp(manifestPreset);
+const preset = mapApp(manifestPreset, (app) => replaceCreator(app, browserWebPageCreator));
 
 const plugins = [...(manifestPreset.plugins || []), ocrDoclingPlugin, translationPlugin, ocrClassificationPlugin];
 

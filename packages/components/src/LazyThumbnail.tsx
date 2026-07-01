@@ -19,6 +19,32 @@ export function LazyThumbnail({ cover, fade = true }: { cover?: boolean; fade?: 
 
 const renderCache = new Map<string, string>();
 
+function getImageApiRegion(resource: any) {
+  const selector = resource?.selector;
+  if (
+    selector &&
+    (selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") &&
+    typeof selector.region === "string"
+  ) {
+    return selector.region;
+  }
+  return null;
+}
+
+function imageUrlWithRegion(id: string, region: string | null) {
+  const parts = id.split("/");
+  if (parts.length < 4) return id;
+
+  if (region) {
+    parts[parts.length - 4] = region;
+  }
+  if (parts[parts.length - 3] === "full") {
+    parts[parts.length - 3] = "256,";
+  }
+
+  return parts.join("/");
+}
+
 function LazyThumbnailOuter({ cover, fade = true }: { cover?: boolean; fade?: boolean }) {
   const [strategy] = useRenderingStrategy();
 
@@ -152,7 +178,9 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
         const target = image.target || {
           spatial: { x: 0, y: 0, width: canvas.width, height: canvas.height },
         };
-        const resource = image.annotation.body[0] ? vault.get(image.annotation.body[0]) : image.annotation;
+        const bodyRef = image.annotation.body[0];
+        const region = getImageApiRegion(bodyRef);
+        const resource = bodyRef ? vault.get(bodyRef) : image.annotation;
         await helper
           .getBestThumbnailAtSize(resource, {
             width: 256,
@@ -166,20 +194,11 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
           .then((thumbnail) => {
             if (abort.signal.aborted) return;
             if (thumbnail.best?.type === "fixed") {
-              // @todo this is broken.
-              if (thumbnail.best.id.includes("/full/full/")) {
-                imagesToRender.push({
-                  image: {
-                    ...thumbnail.best,
-                    id: thumbnail.best.id.replace("/full/full/", "/full/256,/"),
-                  },
-                  target,
-                });
-                return;
-              }
-
               imagesToRender.push({
-                image: thumbnail.best,
+                image: {
+                  ...thumbnail.best,
+                  id: imageUrlWithRegion(thumbnail.best.id, region),
+                },
                 target,
               });
             }
@@ -223,9 +242,11 @@ function ComplexCanvasThumbnail({ cover, fade = true }: { cover?: boolean; fade?
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div
-        className="relative overflow-hidden margin-auto h-full w-full basis-[content]"
+        className="relative overflow-hidden max-h-full max-w-full"
         style={{
           aspectRatio: `${canvas.width / canvas.height}`,
+          width: canvas.width >= canvas.height ? "100%" : "auto",
+          height: canvas.width >= canvas.height ? "auto" : "100%",
         }}
       >
         {state.imagesToRender.length ? (

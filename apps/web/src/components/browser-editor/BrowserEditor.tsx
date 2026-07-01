@@ -26,7 +26,6 @@ import {
   BackgroundActionsMenu,
   type CanvasEditorDefinition,
   type Config,
-  ConfigEditor,
   type EditorDefinition,
   extendApp,
   Layout,
@@ -58,6 +57,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useManifest, VaultProvider } from "react-iiif-vault";
 import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
+import { BrowserSettingsPanel } from "./BrowserSettingsPanel";
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
 const previews: PreviewConfiguration[] = [
@@ -376,9 +376,10 @@ export default function BrowserEditor({
         {
           divide: !isExhibitionPreset,
           id: "config",
-          label: "Config",
+          label: "Settings",
           icon: <SettingsIcon />,
-          render: () => <ConfigEditor />,
+          render: () => <BrowserSettingsPanel />,
+          modal: true,
         },
       ],
       modalPanels: [

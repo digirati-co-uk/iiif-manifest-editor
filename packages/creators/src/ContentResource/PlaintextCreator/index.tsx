@@ -22,7 +22,7 @@ export const plaintextCreator = defineCreator({
   resourceType: "ContentResource",
   resourceFields: ["label", "format"],
   supports: {
-    parentFields: ["seeAlso", "rendering", "homepage"],
+    parentFields: ["seeAlso", "rendering"],
   },
   staticFields: {
     format: "text/plain",

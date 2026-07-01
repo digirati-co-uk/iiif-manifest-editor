@@ -4,6 +4,7 @@ import { Creator, matchBasedOnResource } from "@manifest-editor/creator-api";
 import { useCallback, useMemo } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
+import { useConfig } from "../ConfigContext/ConfigContext";
 import { createActionIdentity } from "../helpers";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { usePreviewVault } from "../PreviewVault/PreviewVault";
@@ -105,7 +106,8 @@ export function useInlineCreator() {
   const vault = useVault();
   const previewVault = usePreviewVault();
   const app = useApp();
+  const config = useConfig();
   return useMemo(() => {
-    return new Creator(vault, app.layout.creators || [], previewVault);
-  }, [app.layout.creators, vault]);
+    return new Creator(vault, app.layout.creators || [], previewVault, config.creators);
+  }, [app.layout.creators, config.creators, previewVault, vault]);
 }

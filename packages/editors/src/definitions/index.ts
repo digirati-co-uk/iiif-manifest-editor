@@ -16,6 +16,7 @@ import { inlineAnnotationPageEditor } from "./InlineAnnotationPageEditor";
 import { descriptiveProperties } from "./DescriptiveProperties";
 import { fallbackAnnotationEditor } from "./FallbackAnnotationEditor";
 import { navPlaceEditor } from "./NavPlaceEditor";
+import { partOfReferenceEditor } from "./PartOfReferenceEditor";
 
 export const allEditors = [
   // First tab ones.
@@ -26,6 +27,7 @@ export const allEditors = [
   overviewCanvasEditor,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
+  partOfReferenceEditor,
   combinedProperties,
   // This isn't working for annotations without bodies.
   // fallbackAnnotationEditor,
@@ -56,5 +58,6 @@ export {
   manifestStructuralProperties,
   canvasStructuralProperties,
   navPlaceEditor,
+  partOfReferenceEditor,
   fallbackAnnotationEditor,
 };

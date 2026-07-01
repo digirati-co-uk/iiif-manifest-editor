@@ -46,6 +46,7 @@ import { Annotations } from "./components/Annotations";
 import { Highlight } from "./components/Highlight";
 import { InternalRenderCanvas } from "./components/InternalRenderCanvas";
 import { NonAtlasStrategyRenderer } from "./components/NonAtlasStrategyRenderer";
+import { ResizeCanvasOnCanvas } from "./components/ResizeCanvasOnCanvas";
 import { CustomStrategyProvider } from "./components/StrategyContext";
 
 export interface CanvasPanelViewerProps {
@@ -179,8 +180,9 @@ export function CanvasPanelViewer({
         "default-preset",
         {
           runtimeOptions: {
-            visibilityRatio: 0.45,
+            visibilityRatio: 0.65,
             maxOverZoom: 5,
+            maxUnderZoom: 0.7,
           },
         } as DefaultPresetOptions,
       ] as any,
@@ -231,6 +233,10 @@ export function CanvasPanelViewer({
   // }, [annotation?.id]);
 
   const canvasId = canvas?.id;
+
+  const homePosition = useMemo(() => {
+    return { x: 0, y: 0, width: canvas?.width ?? 0, height: canvas?.height ?? 0 };
+  }, [canvas?.width, canvas?.height]);
 
   const onClickPaintingAnnotation = useCallback((id: string) => {
     if (!editModeRef.current) {
@@ -310,6 +316,7 @@ export function CanvasPanelViewer({
                 mode={chosenMode}
                 runtimeOptions={config[1].runtimeOptions}
                 updateViewportTimeout={500}
+                homePosition={homePosition}
               >
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
@@ -340,6 +347,7 @@ export function CanvasPanelViewer({
                         ) : null;
                       })}
                     </InternalRenderCanvas>
+                    {/*<ResizeCanvasOnCanvas />*/}
                   </CanvasContext>
                   {rightPanel.current === "canvas-properties" && rightPanel.state.current === 5 && (
                     <Annotations canvasId={canvasId} />
