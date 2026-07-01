@@ -11,13 +11,13 @@ import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTas
 import { useEvent } from "../hooks/use-event";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
+import type { LayoutRenderProps } from "./Layout";
 import { LayoutModeReactContext, useLayoutProvider } from "./Layout.context";
+import * as F from "./Layout.focused.styles";
 import { panelSizing, renderHelper } from "./Layout.helpers";
+import * as L from "./Layout.styles";
 import { filterSupportedPanels, getSupportedPanelFallback, panelIds } from "./Layout.supports";
 import type { LayoutPanel } from "./Layout.types";
-import type { LayoutRenderProps } from "./Layout";
-import * as F from "./Layout.focused.styles";
-import * as L from "./Layout.styles";
 
 function getEditedResourceType(data: unknown) {
   const resource = (data as any)?.resource;
@@ -403,7 +403,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
     return (
       <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
         {modalToRender.modal ? (
-          <div className="h-[70vh] min-h-[60vh] max-h-full flex">
+          <div className="h-[70vh] min-h-[60vh] max-h-full flex w-full">
             <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
           </div>
         ) : (

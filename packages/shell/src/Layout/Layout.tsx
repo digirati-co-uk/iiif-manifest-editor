@@ -17,12 +17,12 @@ import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
 import { useResizeLayout } from "./components/use-resize-layouts";
-import { FocusedLayout } from "./Layout.focused";
 import { useLayoutProvider } from "./Layout.context";
+import { FocusedLayout } from "./Layout.focused";
 import { panelSizing, renderHelper } from "./Layout.helpers";
-import { filterSupportedPanels, getSupportedPanelFallback, panelIds } from "./Layout.supports";
 import * as M from "./Layout.mobile";
 import * as L from "./Layout.styles";
+import { filterSupportedPanels, getSupportedPanelFallback, panelIds } from "./Layout.supports";
 
 export interface LayoutRenderProps {
   header?: React.ReactNode;
@@ -335,7 +335,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     return (
       <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
         {modalToRender.modal ? (
-          <div className="h-[70vh] min-h-[60vh] max-h-full flex">
+          <div className="h-[70vh] min-h-[60vh] max-h-full flex w-full">
             <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
           </div>
         ) : (

@@ -1,24 +1,24 @@
-import { TransitionStatus } from "react-transition-group";
-import { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePanelState } from "../Layout.types";
-import styled, { css } from "styled-components";
-import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
-import { useLayoutProvider } from "../Layout.context";
-import { ErrorBoundary } from "react-error-boundary";
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { PanelError } from "./PanelError";
-import { renderHelper } from "../Layout.helpers";
-import { ReactVaultContext } from "react-iiif-vault";
 import {
+  Dropdown,
   DropdownDivider,
+  DropdownItem,
   DropdownLabel,
   DropdownMenu,
-  Dropdown,
-  DropdownItem,
 } from "@manifest-editor/ui/atoms/Dropdown";
+import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
+import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import { ErrorBoundary } from "react-error-boundary";
+import { ReactVaultContext } from "react-iiif-vault";
+import type { TransitionStatus } from "react-transition-group";
+import styled, { css } from "styled-components";
 import { useAppState } from "../../AppContext/AppContext";
+import { useLayoutProvider } from "../Layout.context";
+import { renderHelper } from "../Layout.helpers";
+import type { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePanelState } from "../Layout.types";
+import { PanelError } from "./PanelError";
 
 const OverrideScrollbar = "OverrideScrollbar";
 
@@ -52,6 +52,10 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
 
   &[data-header="false"] {
     border-top: 1px solid #e4e7f0;
+  }
+
+  &[data-modal="true"] {
+    width: 100%;
   }
 
   &[data-floating="true"] {
@@ -249,7 +253,13 @@ export function ModularPanel({
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} data-header={!noHeader}>
+      <ModularPanelWrapper
+        data-modal={isModal}
+        data-state={transition}
+        data-flipped={isLeft}
+        style={style}
+        data-header={!noHeader}
+      >
         {noHeader ? null : (
           <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
             <Dropdown style={{ display: "flex", height: "100%" }}>
