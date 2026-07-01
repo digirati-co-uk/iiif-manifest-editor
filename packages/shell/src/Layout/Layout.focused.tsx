@@ -128,8 +128,20 @@ export const FocusedLayout = memo(function FocusedLayout(
             error,
           );
         },
-      ),
+    ),
     [configuredModals, supportContext],
+  );
+  const modalLeftPanels = useMemo(
+    () => leftPanels.filter((panel) => panel.modal),
+    [leftPanels],
+  );
+  const dockedLeftPanels = useMemo(
+    () => leftPanels.filter((panel) => !panel.modal),
+    [leftPanels],
+  );
+  const modalPanels = useMemo(
+    () => [...modals, ...modalLeftPanels],
+    [modals, modalLeftPanels],
   );
 
   const supportedLayout = useMemo(
@@ -138,12 +150,12 @@ export const FocusedLayout = memo(function FocusedLayout(
       leftPanels,
       centerPanels,
       rightPanels,
-      modals,
+      modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modals],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
   );
 
-  const leftPanel = leftPanels.find(
+  const leftPanel = dockedLeftPanels.find(
     (panel) => panel.id === state.leftPanel.current,
   );
   const rightPanel = rightPanels.find(
@@ -152,9 +164,14 @@ export const FocusedLayout = memo(function FocusedLayout(
   const centerPanel = centerPanels.find(
     (panel) => panel.id === state.centerPanel.current,
   );
-  const modalToRender = modals.find(
+  const modalToRender = modalPanels.find(
     (panel) => panel.id === state.modal.current,
   );
+  const activeLeftPanelId =
+    state.modal.open &&
+    modalLeftPanels.some((panel) => panel.id === state.modal.current)
+      ? state.modal.current
+      : state.leftPanel.current;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
     : undefined;
@@ -187,7 +204,8 @@ export const FocusedLayout = memo(function FocusedLayout(
 
   useLayoutEffect(() => {
     rightPanels.length && actions.rightPanel.change({ id: rightPanels[0]!.id });
-    leftPanels.length && actions.leftPanel.change({ id: leftPanels[0]!.id });
+    dockedLeftPanels.length &&
+      actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
     centerPanels.length &&
       actions.centerPanel.change({ id: centerPanels[0]!.id });
     actions.leftPanel.close();
@@ -227,7 +245,7 @@ export const FocusedLayout = memo(function FocusedLayout(
   useLayoutEffect(() => {
     if (state.leftPanel.current && !leftPanel) {
       const fallback = getSupportedPanelFallback(
-        leftPanels,
+        dockedLeftPanels,
         state.leftPanel.current,
       );
       if (fallback) {
@@ -262,7 +280,7 @@ export const FocusedLayout = memo(function FocusedLayout(
     }
 
     if (state.modal.current && !modalToRender) {
-      const fallback = getSupportedPanelFallback(modals, state.modal.current);
+      const fallback = getSupportedPanelFallback(modalPanels, state.modal.current);
       if (fallback) {
         actions.modal.change({ id: fallback });
       } else {
@@ -278,10 +296,10 @@ export const FocusedLayout = memo(function FocusedLayout(
     centerPanel?.id,
     rightPanel?.id,
     modalToRender?.id,
-    panelIds(leftPanels),
+    panelIds(dockedLeftPanels),
     panelIds(centerPanels),
     panelIds(rightPanels),
-    panelIds(modals),
+    panelIds(modalPanels),
   ]);
 
   useEvent<{ "layout.edit": unknown }, "layout.edit">(
