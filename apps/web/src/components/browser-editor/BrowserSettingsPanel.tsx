@@ -1,12 +1,11 @@
 "use client";
 
-import { ActionButton, Form } from "@manifest-editor/components";
+import { Form } from "@manifest-editor/components";
 import {
   type Config,
   PluginManager,
   useAppResource,
   useConfig,
-  useDecayState,
   usePreviewContext,
   useSaveConfig,
 } from "@manifest-editor/shell";
@@ -28,11 +27,9 @@ export function BrowserSettingsPanel() {
   const config = useConfig();
   const setConfig = useSaveConfig();
   const [section, setSection] = useState<SettingsSection>("general");
-  const [isSaved, saveState] = useDecayState(2000);
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formValues = new FormData(e.target as HTMLFormElement);
+  function saveSection(form: HTMLFormElement) {
+    const formValues = new FormData(form);
     const nextConfig: Partial<Config> = { plugins: config.plugins };
 
     if (section === "general") {
@@ -69,8 +66,6 @@ export function BrowserSettingsPanel() {
     }
 
     setConfig(nextConfig);
-    saveState.set();
-    saveState.clear();
   }
 
   return (
@@ -100,11 +95,10 @@ export function BrowserSettingsPanel() {
             <PluginManager />
           </SettingsSection>
         ) : (
-          <Form.Form onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-6">
-            {isSaved ? (
-              <div className="rounded-md bg-me-primary-500 px-3 py-2 text-sm text-white">Changes saved</div>
-            ) : null}
-
+          <Form.Form
+            onChange={(e: React.FormEvent<HTMLFormElement>) => saveSection(e.currentTarget)}
+            className="flex max-w-3xl flex-col gap-6"
+          >
             {section === "general" ? (
               <SettingsSection title="General">
                 <Form.InputContainer>
@@ -210,10 +204,6 @@ export function BrowserSettingsPanel() {
                 ) : null}
               </SettingsSection>
             ) : null}
-
-            <div className="border-t border-gray-100 pt-4">
-              <ActionButton type="submit">Save changes</ActionButton>
-            </div>
           </Form.Form>
         )}
       </main>
