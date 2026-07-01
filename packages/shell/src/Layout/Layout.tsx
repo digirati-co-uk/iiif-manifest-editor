@@ -145,17 +145,29 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       ),
     [configuredModals, supportContext],
   );
+  const modalLeftPanels = useMemo(
+    () => leftPanels.filter((panel) => panel.modal),
+    [leftPanels],
+  );
+  const dockedLeftPanels = useMemo(
+    () => leftPanels.filter((panel) => !panel.modal),
+    [leftPanels],
+  );
+  const modalPanels = useMemo(
+    () => [...modals, ...modalLeftPanels],
+    [modals, modalLeftPanels],
+  );
   const supportedLayout = useMemo(
     () => ({
       ...layout,
       leftPanels,
       centerPanels,
       rightPanels,
-      modals,
+      modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modals],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
   );
-  const leftPanel = leftPanels.find(
+  const leftPanel = dockedLeftPanels.find(
     (panel) => panel.id === state.leftPanel.current,
   );
   const rightPanel = rightPanels.find(
@@ -164,9 +176,13 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   const centerPanel = centerPanels.find(
     (panel) => panel.id === state.centerPanel.current,
   );
-  const modalToRender = modals.find(
+  const modalToRender = modalPanels.find(
     (panel) => panel.id === state.modal.current,
   );
+  const activeLeftPanelId =
+    state.modal.open && modalLeftPanels.some((panel) => panel.id === state.modal.current)
+      ? state.modal.current
+      : state.leftPanel.current;
   const enableMotion = true;
   const pinnedRightPanel = state.pinnedRightPanel.pinned
     ? rightPanels.find((panel) => panel.id === state.pinnedRightPanel.current)
@@ -259,7 +275,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   useLayoutEffect(() => {
     if (state.leftPanel.current && !leftPanel) {
       const fallback = getSupportedPanelFallback(
-        leftPanels,
+        dockedLeftPanels,
         state.leftPanel.current,
       );
       if (fallback) {
@@ -310,17 +326,18 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     centerPanel?.id,
     rightPanel?.id,
     modalToRender?.id,
-    panelIds(leftPanels),
+    panelIds(dockedLeftPanels),
     panelIds(centerPanels),
     panelIds(rightPanels),
-    panelIds(modals),
+    panelIds(modalPanels),
   ]);
 
   useLayoutEffect(() => {
     // @todo to enable dynamic layouts, we need this effect to run IF the props change.
     // actions.setAvailable(props);
     rightPanels.length && actions.rightPanel.change({ id: rightPanels[0]!.id });
-    leftPanels.length && actions.leftPanel.change({ id: leftPanels[0]!.id });
+    dockedLeftPanels.length &&
+      actions.leftPanel.change({ id: dockedLeftPanels[0]!.id });
     centerPanels.length &&
       actions.centerPanel.change({ id: centerPanels[0]!.id });
 
@@ -394,12 +411,25 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
 
     return (
       <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
-        {renderHelper(
-          modalToRender.render(
-            state.modal.state || modalToRender.defaultState || {},
-            { ...supportedLayout, current: actions.modal, vault: vault },
-            appState,
-          ),
+        {modalToRender.modal ? (
+          <div className="h-[70vh] min-h-[60vh] max-h-full flex">
+            <ModularPanel
+              isLeft
+              isModal
+              noHeader
+              panel={modalToRender}
+              state={state.modal}
+              actions={actions.modal}
+            />
+          </div>
+        ) : (
+          renderHelper(
+            modalToRender.render(
+              state.modal.state || modalToRender.defaultState || {},
+              { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
+              appState,
+            ),
+          )
         )}
       </Modal>
     );
@@ -523,9 +553,9 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>
             <M.MobileBar>
               {leftPanels.length > 0 ? (
-                <M.LeftBarButton onClick={actions.leftPanel.toggle}>
-                  {leftPanel?.label}
-                </M.LeftBarButton>
+              <M.LeftBarButton onClick={actions.leftPanel.toggle}>
+                {leftPanel?.label}
+              </M.LeftBarButton>
               ) : null}
               {rightPanels.length > 0 ? (
                 <M.DrawerContainer>
@@ -542,7 +572,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                 {renderRightPanel()}
               </M.DrawerBody>
             ) : null}
-            {leftPanels.length > 0 ? (
+            {dockedLeftPanels.length > 0 ? (
               <M.LeftPanel $open={state.leftPanel.open}>
                 {renderLeftPanel()}
               </M.LeftPanel>
@@ -582,7 +612,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       >
         {leftPanels.length > 0 ? (
           <PanelSideMenu
-            current={state.leftPanel.current}
+            current={activeLeftPanelId}
             items={leftPanels.map((panel) => ({
               id: panel.id,
               label: panel.label,
@@ -590,6 +620,14 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
               divide: panel.divide,
               separator: panel.separator,
               onClick: () => {
+                if (panel.modal) {
+                  if (state.modal.open && state.modal.current === panel.id) {
+                    actions.modal.close();
+                  } else {
+                    actions.modal.open({ id: panel.id, state: panel.defaultState });
+                  }
+                  return;
+                }
                 if (state.leftPanel.current === panel.id) {
                   actions.leftPanel.toggle();
                 } else {
@@ -601,7 +639,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
           />
         ) : null}
 
-        {leftPanels.length > 0 ? (
+        {dockedLeftPanels.length > 0 ? (
           <Transition
             nodeRef={leftPanelRef}
             in={state.leftPanel.open}

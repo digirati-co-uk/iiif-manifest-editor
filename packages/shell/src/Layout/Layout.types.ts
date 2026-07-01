@@ -150,6 +150,7 @@ export type LayoutFunction = (
     current: PanelActions;
     vault?: Vault;
     transition?: TransitionStatus;
+    isModal?: boolean;
   } & LayoutContext,
   app: AppState,
 ) => ReactNode;
@@ -173,6 +174,7 @@ export interface LayoutPanel {
   separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
   supports?: (ctx: LayoutPanelSupportContext) => boolean;
+  modal?: boolean;
   focusedMode?: {
     hide?: boolean;
     closeOnMainPanelClick?: boolean;

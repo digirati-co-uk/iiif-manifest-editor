@@ -30,6 +30,7 @@ interface ModularPanelProps {
   pinActions?: PinnablePanelActions;
   transition?: TransitionStatus;
   noHeader?: boolean;
+  isModal?: boolean;
   close?: () => void;
   available?: LayoutPanel[];
   style?: any;
@@ -169,6 +170,7 @@ export function ModularPanel({
   available = [],
   style,
   noHeader,
+  isModal,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
@@ -304,7 +306,7 @@ export function ModularPanel({
             {renderHelper(
               panel.render(
                 state.state || panel.defaultState || {},
-                { ...layout, current: actions, vault: vault as any, transition },
+                { ...layout, current: actions, vault: vault as any, transition, isModal },
                 appState
               )
             )}

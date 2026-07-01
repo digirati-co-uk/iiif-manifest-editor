@@ -379,6 +379,7 @@ export default function BrowserEditor({
           label: "Config",
           icon: <SettingsIcon />,
           render: () => <ConfigEditor />,
+          modal: true,
         },
       ],
       modalPanels: [

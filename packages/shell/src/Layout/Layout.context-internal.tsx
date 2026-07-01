@@ -62,6 +62,9 @@ export const LayoutProvider = memo(function LayoutProvider(props: {
 
     const left = available.leftPanels.find((r) => r.id === id);
     if (left) {
+      if (left.modal) {
+        return [left, actions.modal] as const;
+      }
       return [left, actions.leftPanel] as const;
     }
 
