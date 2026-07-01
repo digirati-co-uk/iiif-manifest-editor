@@ -22,6 +22,7 @@ import { tagsPanel } from "./left-panels/tags";
 import * as avRangesPlugin from "./plugins/av-ranges";
 import { queryStringTask } from "./query-string";
 import "./index.css";
+import * as remoteInference from "./plugins/remote-inference";
 
 export default {
   id: "manifest-editor",
@@ -70,4 +71,10 @@ export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "Ann
 
 export { annotationsPlugin, avRangesPlugin, canvasLabelGeneratorPlugin };
 
-export const plugins: PluginInput[] = [annotationsPlugin, avRangesPlugin, canvasLabelGeneratorPlugin];
+export const plugins: PluginInput[] = [
+  //
+  annotationsPlugin,
+  avRangesPlugin,
+  canvasLabelGeneratorPlugin,
+  remoteInference,
+];
