@@ -15,5 +15,5 @@ catalog:
   "@iiif/parser": 2.2.11
   "@iiif/helpers": 1.5.9
   "iiif-browser": https://pkg.pr.new/iiif-browser@de66897
-  "@atlas-viewer/atlas": 3.2.2
+  "@atlas-viewer/atlas": https://pkg.pr.new/@atlas-viewer/atlas@a3c12f1
   "react-aria-components": ^1.12

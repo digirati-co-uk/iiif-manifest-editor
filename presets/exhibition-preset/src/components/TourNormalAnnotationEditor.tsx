@@ -3,24 +3,14 @@ import {
   DeleteIcon,
   EditTextIcon,
 } from "@manifest-editor/components";
-import {
-  AnnotationPopUpSwitcherButton,
-  useAnnotationEditor,
-} from "@manifest-editor/editors";
-import { ResourceEditingReactContext, useConfig } from "@manifest-editor/shell";
-import { useContext, useEffect, useRef, useState } from "react";
-import {
-  AnnotationContext,
-  useAnnotation,
-  useCurrentAnnotationActions,
-  useVault,
-} from "react-iiif-vault";
+import { useAnnotationEditor } from "@manifest-editor/editors";
+import { useEffect, useRef, useState } from "react";
+import { useAnnotation, useVault } from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
 import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
 import { TourStepHtmlForm, TourStepHtmlPreview } from "./TourStepHtmlForm";
 import { TourStepBorderPicker } from "./TourStepBorderPicker";
 
@@ -31,11 +21,8 @@ export function TourNormalAnnotationEditor({
   highlightProps: any;
   useSlideshowWorkbench?: boolean;
 }) {
-  const value = useContext(ResourceEditingReactContext);
   const annotation = useAnnotation();
   const vault = useVault();
-  const { editorFeatureFlags } = useConfig();
-  const { annotationPopups } = editorFeatureFlags;
   const body = getFirstTextualBody(annotation?.body || [], vault);
   const bodyValueRef = useRef(body?.resource?.value || "");
   const startTourStepRepositioning = useSlideshowContentPositioning(
@@ -54,15 +41,7 @@ export function TourNormalAnnotationEditor({
     busy,
     requestAnnotationFromTarget,
     deleteAnnotation,
-  } = useAnnotationEditor({
-    annotationPopup: (
-      <AnnotationContext annotation={annotation!.id}>
-        <ResourceEditingReactContext.Provider value={value}>
-          <TourAnnotationPopupEditor />
-        </ResourceEditingReactContext.Provider>
-      </AnnotationContext>
-    ),
-  });
+  } = useAnnotationEditor();
 
   const [isOpen, setIsOpen] = useState(false);
   const showInSlideshowWorkbench = () => {
@@ -96,7 +75,7 @@ export function TourNormalAnnotationEditor({
       onClick={showInSlideshowWorkbench}
     >
       <div className="relative">
-        {isOpen && !annotationPopups ? (
+        {isOpen ? (
           <div className="p-3">
             <TourStepHtmlForm
               value={body?.resource?.value || ""}
@@ -122,7 +101,6 @@ export function TourNormalAnnotationEditor({
             >
               <CheckIcon /> Finish editing
             </ActionButton>
-            <AnnotationPopUpSwitcherButton />
           </>
         ) : (
           <ActionButton
@@ -151,51 +129,6 @@ export function TourNormalAnnotationEditor({
         </div>
       </div>
       <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
-    </div>
-  );
-}
-
-function TourAnnotationPopupEditor() {
-  const { editorFeatureFlags } = useConfig();
-  const { annotationPopups } = editorFeatureFlags;
-  const { saveAnnotation } = useCurrentAnnotationActions();
-  const annotation = useAnnotation();
-  const vault = useVault();
-  const body = getFirstTextualBody(annotation?.body || [], vault);
-  const bodyValueRef = useRef(body?.resource?.value || "");
-
-  if (!annotationPopups) {
-    return (
-      <div className="flex gap-2">
-        <ActionButton primary onPress={() => saveAnnotation()}>
-          <CheckIcon /> Finish editing
-        </ActionButton>
-        <AnnotationPopUpSwitcherButton />
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white shadow-md rounded-lg relative max-h-[50vh] overflow-y-auto">
-      <div className="prose-headings:mt-1 rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500 p-3">
-        <TourStepHtmlForm
-          value={body?.resource?.value || ""}
-          onChange={(nextValue) => (bodyValueRef.current = nextValue)}
-        />
-      </div>
-
-      <div className="flex gap-2 p-2 sticky bottom-0 z-50 bg-white">
-        <ActionButton
-          primary
-          onPress={() => {
-            saveTourStepBody(vault, annotation, body, bodyValueRef.current);
-            saveAnnotation();
-          }}
-        >
-          <CheckIcon /> Finish editing
-        </ActionButton>
-        <ActionButtonPopupSwitcher />
-      </div>
     </div>
   );
 }

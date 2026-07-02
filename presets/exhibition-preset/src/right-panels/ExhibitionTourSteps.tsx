@@ -1,15 +1,33 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
+import {
+  ActionButton,
+  Sidebar,
+  SidebarContent,
+} from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useInlineCreator } from "@manifest-editor/shell";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useInlineCreator,
+} from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
-import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
-import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
+import {
+  AnnotationPageContext,
+  useCanvas,
+  useRequestAnnotation,
+} from "react-iiif-vault";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
-import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
-import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import {
+  isEditableExhibitionCanvas,
+  isInfoBoxCanvas,
+  isVideoCanvas,
+} from "../helpers";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 
 type EditingMode = "simple" | "advanced";
 
@@ -22,14 +40,21 @@ export const exhibitionTourSteps: EditorDefinition = {
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
       // Tour steps are supported for image canvases only.
-      return !isInfoBoxCanvas(resource as any, vault) && !isVideoCanvas(resource as any, vault);
+      return (
+        !isInfoBoxCanvas(resource as any, vault) &&
+        !isVideoCanvas(resource as any, vault)
+      );
     },
   },
   label: "Tour steps",
   component: () => <ExhibitionTourStepsPanel />,
 };
 
-export function ExhibitionTourStepsPanel({ mode = "advanced" }: { mode?: EditingMode }) {
+export function ExhibitionTourStepsPanel({
+  mode = "advanced",
+}: {
+  mode?: EditingMode;
+}) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations[0];
   const itemsAnnotationPage = canvas?.items[0];
@@ -78,7 +103,9 @@ function PromptCreationOfTourSteps() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
+      <div className="p-4 opacity-50 text-center">
+        This image does not yet have a tour.
+      </div>
 
       <Button
         className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
@@ -101,9 +128,15 @@ export function ExhibitionTourStepsContent({
   const firstAnnotationPage = canvas?.annotations?.[0];
   const itemsAnnotationPage = canvas?.items?.[0];
   const [reorderable, setReorderable] = useState(false);
-  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
-  const stopContentRepositioning = useSlideshowContentPositioning((state) => state.stopRepositioning);
-  const stopTextRepositioning = useSlideshowContentPositioning((state) => state.stopTextRepositioning);
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
+  const stopContentRepositioning = useSlideshowContentPositioning(
+    (state) => state.stopRepositioning,
+  );
+  const stopTextRepositioning = useSlideshowContentPositioning(
+    (state) => state.stopTextRepositioning,
+  );
 
   useEffect(() => {
     setShowTourSteps(true);
@@ -125,14 +158,17 @@ export function ExhibitionTourStepsContent({
     return <PromptCreationOfTourSteps />;
   }
 
-  const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
+  const showPaintingAnnotations =
+    mode === "advanced" && Boolean(itemsAnnotationPage);
 
   return (
     <>
       <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
         <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
         {mode === "advanced" ? (
-          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
+          <ActionButton onPress={() => setReorderable((r) => !r)}>
+            {reorderable ? "Done" : "Reorder"}
+          </ActionButton>
         ) : null}
       </div>
 
@@ -160,7 +196,11 @@ export function ExhibitionTourStepsContent({
           {showPaintingAnnotations && itemsAnnotationPage ? (
             <>
               <PromptToAddPaintingAnnotations
-                title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
+                title={
+                  <h3 className="text-md border-b pt-4 pb-2 mb-2">
+                    Available tour steps from images
+                  </h3>
+                }
                 painting={itemsAnnotationPage}
                 page={firstAnnotationPage}
                 canvasId={canvas.id}
@@ -173,7 +213,9 @@ export function ExhibitionTourStepsContent({
   );
 }
 
-export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequest?: () => void } = {}) {
+export function useTourStepAnnotationRequest({
+  onBeforeRequest,
+}: { onBeforeRequest?: () => void } = {}) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const creator = useInlineCreator();
@@ -223,7 +265,6 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
     onBeforeRequest?.();
     requestAnnotation({
       type: "box",
-      annotationPopup: <ExhibitionTourStepPopup />,
     });
   };
 
