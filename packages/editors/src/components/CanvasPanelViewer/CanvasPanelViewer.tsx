@@ -317,6 +317,7 @@ export function CanvasPanelViewer({
                 runtimeOptions={config[1].runtimeOptions}
                 updateViewportTimeout={500}
                 homePosition={homePosition}
+                readyResetKey={canvasId}
               >
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
