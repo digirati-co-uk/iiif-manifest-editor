@@ -15,6 +15,7 @@ import {
 } from "../slideshow-content-positioning";
 import {
   ExhibitionHtmlSummaryEditor,
+  ExhibitionRequiredStatementEditor,
   ExhibitionSummaryContent,
 } from "./ExhibitionSummaryEditor";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
@@ -28,14 +29,14 @@ type RightPanelTab = "layout" | "content" | "summary" | "tour";
 
 const defaultTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
-  { id: "summary", label: "Summary" },
+  { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
 ];
 
 const slideshowTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
   { id: "content", label: "Content" },
-  { id: "summary", label: "Summary" },
+  { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
 ];
 
@@ -57,7 +58,7 @@ export const exhibitionWorkbenchEditor: EditorDefinition = {
   id: "@exhibition/workbench-editor",
   supports: {
     edit: true,
-    properties: ["label", "summary", "behavior", "annotations"],
+    properties: ["label", "summary", "requiredStatement", "behavior", "annotations"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
@@ -292,6 +293,7 @@ function SimpleSummaryPanel() {
             <ExhibitionHtmlSummaryEditor resource={canvas} />
           </div>
         </div>
+        <ExhibitionRequiredStatementEditor />
       </div>
     </ResourceEditingProvider>
   );

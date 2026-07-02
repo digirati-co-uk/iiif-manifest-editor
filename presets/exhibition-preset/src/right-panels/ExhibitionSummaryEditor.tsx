@@ -2,12 +2,17 @@ import type { InternationalString } from "@iiif/presentation-3";
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   LanguageMapEditor,
+  LanguageFieldEditor,
+  InputContainer,
+  InputFieldset,
+  InputLabel,
   TiptapLanguageFieldEditor,
   type MetadataSave,
 } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
+  useEditor,
 } from "@manifest-editor/shell";
 import { useMemo } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
@@ -21,15 +26,15 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
   id: "@exhibition/summary-editor",
   supports: {
     edit: true,
-    properties: ["summary"],
+    properties: ["summary", "requiredStatement"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
-      // Hide the standalone Summary tab for textual-content (info box) canvases.
+      // Hide the standalone Text content tab for textual-content (info box) canvases.
       return !isInfoBoxCanvas(resource as any, vault);
     },
   },
-  label: "Summary",
+  label: "Text content",
   component: () => <ExhibitionSummaryPanel />,
 };
 
@@ -51,7 +56,34 @@ export function ExhibitionSummaryContent() {
     <ResourceEditingProvider resource={canvas}>
       <LanguageMapEditor dispatchType="label" />
       <ExhibitionHtmlSummaryEditor resource={canvas} />
+      <ExhibitionRequiredStatementEditor />
     </ResourceEditingProvider>
+  );
+}
+
+export function ExhibitionRequiredStatementEditor() {
+  const { descriptive } = useEditor();
+  const { requiredStatement } = descriptive;
+  const statement = requiredStatement.get();
+
+  return (
+    <InputContainer $wide id={requiredStatement.containerId()}>
+      <InputLabel htmlFor={requiredStatement.focusId()}>Required statement</InputLabel>
+      <InputFieldset id={requiredStatement.focusId()}>
+        <LanguageFieldEditor
+          focusId={`${requiredStatement.focusId()}_label`}
+          label="Label"
+          fields={statement?.label || { none: [] }}
+          onSave={(e: any) => requiredStatement.updateLabel(e.toInternationalString())}
+        />
+        <LanguageFieldEditor
+          focusId={`${requiredStatement.focusId()}_value`}
+          label="Value"
+          fields={statement?.value || { none: [] }}
+          onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
+        />
+      </InputFieldset>
+    </InputContainer>
   );
 }
 
