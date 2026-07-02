@@ -1,27 +1,12 @@
-import {
-  ActionButton,
-  DeleteIcon,
-  EditTextIcon,
-  HTMLAnnotationBodyRender,
-} from "@manifest-editor/components";
-import {
-  AnnotationPopUpSwitcherButton,
-  HTMLAnnotationEditor,
-  useAnnotationEditor,
-} from "@manifest-editor/editors";
-import { useContext, useEffect, useState } from "react";
-import { CheckIcon } from "../icons/CheckIcon";
+import { ActionButton, DeleteIcon, EditTextIcon, HTMLAnnotationBodyRender } from "@manifest-editor/components";
+import { AnnotationPopUpSwitcherButton, HTMLAnnotationEditor, useAnnotationEditor } from "@manifest-editor/editors";
 import { ResourceEditingReactContext, useConfig } from "@manifest-editor/shell";
-import {
-  AnnotationContext,
-  useAnnotation,
-  useCurrentAnnotationActions,
-} from "react-iiif-vault";
+import { useContext, useEffect, useState } from "react";
+import { AnnotationContext, useAnnotation, useCurrentAnnotationActions } from "react-iiif-vault";
+import { CheckIcon } from "../icons/CheckIcon";
+import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
-import {
-  useSlideshowContentPositioning,
-  useSlideshowWorkbenchState,
-} from "../slideshow-content-positioning";
+import { TourStepBorderPicker } from "./TourStepBorderPicker";
 
 export function TourNormalAnnotationEditor({
   highlightProps,
@@ -34,23 +19,11 @@ export function TourNormalAnnotationEditor({
   const annotation = useAnnotation();
   const { editorFeatureFlags } = useConfig();
   const { annotationPopups } = editorFeatureFlags;
-  const startTourStepRepositioning = useSlideshowContentPositioning(
-    (state) => state.startTourStepRepositioning,
-  );
-  const requestWorkbenchTab = useSlideshowWorkbenchState(
-    (state) => state.requestTab,
-  );
-  const setShowTourSteps = useSlideshowWorkbenchState(
-    (state) => state.setShowTourSteps,
-  );
+  const startTourStepRepositioning = useSlideshowContentPositioning((state) => state.startTourStepRepositioning);
+  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
+  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
 
-  const {
-    isPending,
-    cancelRequest,
-    busy,
-    requestAnnotationFromTarget,
-    deleteAnnotation,
-  } = useAnnotationEditor({
+  const { isPending, cancelRequest, busy, requestAnnotationFromTarget, deleteAnnotation } = useAnnotationEditor({
     annotationPopup: (
       <AnnotationContext annotation={annotation!.id}>
         <ResourceEditingReactContext.Provider value={value}>
@@ -131,6 +104,9 @@ export function TourNormalAnnotationEditor({
         <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>
           <DeleteIcon /> Delete
         </ActionButton>
+        <div className="ml-auto flex items-center">
+          <TourStepBorderPicker />
+        </div>
       </div>
       <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
     </div>

@@ -2,6 +2,7 @@ export * from "./BasePropertyEditor";
 export * from "./BaseReferenceListEditor";
 export * from "./Editor";
 export * from "./EditorInstance";
+export * from "./helpers/box-style";
 export * from "./InternationalStringEditor";
 export * from "./MetadataEditor";
 export * from "./meta/behavior";
