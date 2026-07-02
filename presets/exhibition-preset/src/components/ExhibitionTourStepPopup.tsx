@@ -1,4 +1,4 @@
-import { ActionButton, HTMLEditor } from "@manifest-editor/components";
+import { ActionButton } from "@manifest-editor/components";
 import {
   useCurrentAnnotationActions,
   useCurrentAnnotationMetadata,
@@ -6,8 +6,8 @@ import {
 import { CheckIcon } from "../icons/CheckIcon";
 import { useConfig } from "@manifest-editor/shell";
 import { AnnotationPopUpSwitcherButton } from "@manifest-editor/editors";
-
-export const DEFAULT_TOUR_STEP_HTML = "<h2>New step</h2><p>Description</p>";
+import { TourStepHtmlForm } from "./TourStepHtmlForm";
+import { DEFAULT_TOUR_STEP_HTML } from "./tour-step-html";
 
 export function ExhibitionTourStepPopup() {
   const { saveAnnotation } = useCurrentAnnotationActions();
@@ -29,10 +29,9 @@ export function ExhibitionTourStepPopup() {
   return (
     <div className="bg-white shadow-md rounded-lg">
       <div className="prose-headings:mt-1 overflow-y-auto rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
-        <HTMLEditor
-          className="border-none"
+        <TourStepHtmlForm
           value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
-          onChange={(newValue) => setMetadata({ bodyValue: newValue })}
+          onChange={(bodyValue) => setMetadata({ bodyValue })}
         />
       </div>
 

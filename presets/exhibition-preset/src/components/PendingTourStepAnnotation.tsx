@@ -1,6 +1,5 @@
 import {
   ActionButton,
-  HTMLEditor,
   DeleteIcon,
   TargetIcon,
 } from "@manifest-editor/components";
@@ -11,8 +10,9 @@ import {
 } from "react-iiif-vault";
 import { useStore } from "zustand";
 import { CheckIcon } from "../icons/CheckIcon";
-import { DEFAULT_TOUR_STEP_HTML } from "./ExhibitionTourStepPopup";
 import { AnnotationPopUpSwitcherButton } from "@manifest-editor/editors";
+import { TourStepHtmlForm, TourStepHtmlPreview } from "./TourStepHtmlForm";
+import { DEFAULT_TOUR_STEP_HTML } from "./tour-step-html";
 
 export function PendingTourStepAnnotation() {
   const store = useAtlasStore();
@@ -30,20 +30,17 @@ export function PendingTourStepAnnotation() {
       </div>
       {annotationPopups ? (
         <div className="relative p-3 line-clamp-3 prose-p:text-slate-600">
-          <div className="prose-headings:mt-1 prose-headings:mb-1 prose-sm">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: metadata.bodyValue || DEFAULT_TOUR_STEP_HTML,
-              }}
-            />
-          </div>
+          <TourStepHtmlPreview
+            value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
+          />
         </div>
       ) : (
-        <HTMLEditor
-          className="border-none"
-          value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
-          onChange={(newValue) => setMetadata({ bodyValue: newValue })}
-        />
+        <div className="p-3">
+          <TourStepHtmlForm
+            value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
+            onChange={(bodyValue) => setMetadata({ bodyValue })}
+          />
+        </div>
       )}
       <div className="flex gap-2 p-3">
         <ActionButton

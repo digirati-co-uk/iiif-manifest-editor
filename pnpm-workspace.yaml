@@ -12,7 +12,7 @@ catalog:
   react-dom: 19.2.0
   styled-components: 6.1.8
   zustand: 4.5.2
-  "@iiif/parser": 2.2.10
+  "@iiif/parser": 2.2.11
   "@iiif/helpers": 1.5.9
   "iiif-browser": https://pkg.pr.new/iiif-browser@de66897
   "@atlas-viewer/atlas": 3.2.2

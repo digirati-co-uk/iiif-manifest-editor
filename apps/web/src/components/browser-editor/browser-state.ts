@@ -12,17 +12,17 @@ import { queryClient } from "../site/Provider";
 const localStore =
   typeof window !== "undefined"
     ? createStore(
-        "manifest-editor-projects-v2",
-        "manifest-editor-project-store",
-      )
+      "manifest-editor-projects-v2",
+      "manifest-editor-project-store",
+    )
     : undefined;
 
 const globalPluginConfigStore =
   typeof window !== "undefined"
     ? createStore(
-        "manifest-editor-global-plugin-config-v1",
-        "manifest-editor-global-plugin-config-store",
-      )
+      "manifest-editor-global-plugin-config-v1",
+      "manifest-editor-global-plugin-config-store",
+    )
     : undefined;
 
 const globalPluginConfigKey = "global-plugin-config";
@@ -389,7 +389,7 @@ export function useBrowserProject(id: string) {
     mutationFn: async () => {
       try {
         await saveVaultData.mutateAsync({ force: false });
-      } catch (e) {}
+      } catch (e) { }
       await closeBrowserProject(id);
     },
     onSuccess: async () => {

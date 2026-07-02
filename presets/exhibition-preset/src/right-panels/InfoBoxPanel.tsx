@@ -1,8 +1,19 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
-import { BehaviorEditor, DimensionsTriplet, InputContainer, LanguageMapEditor } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useEditor, useLocalStorage } from "@manifest-editor/shell";
+import {
+  BehaviorEditor,
+  DimensionsTriplet,
+  InputContainer,
+  LanguageMapEditor,
+} from "@manifest-editor/editors";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useEditor,
+  useLocalStorage,
+} from "@manifest-editor/shell";
 import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { ExhibitionHtmlSummaryEditor } from "./ExhibitionSummaryEditor";
 import {
   computeFitWidth,
   type DisplayWidth,
@@ -48,7 +59,9 @@ export function InfoBoxPanel() {
   const currentWidth = (getBehaviorWidth(behavior) as DisplayWidth) || 12;
 
   const setWidth = (w: DisplayWidth) => {
-    const next = behavior.filter((b) => !b.startsWith("w-") && !b.startsWith("h-"));
+    const next = behavior.filter(
+      (b) => !b.startsWith("w-") && !b.startsWith("h-"),
+    );
     const existingH = behavior.find((b) => b.startsWith("h-"));
     next.push(`w-${w}`);
     if (!existingH) next.push("h-4");
@@ -56,7 +69,13 @@ export function InfoBoxPanel() {
   };
 
   const fitSuggestion =
-    manifest?.items && canvas ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault) : null;
+    manifest?.items && canvas
+      ? computeFitWidth(
+          canvas.id,
+          manifest.items as Array<{ id: string }>,
+          vault,
+        )
+      : null;
 
   return (
     <Sidebar>
@@ -72,15 +91,23 @@ export function InfoBoxPanel() {
               <SimpleField>
                 <SimpleFieldLabel>Title</SimpleFieldLabel>
                 <div className="mt-2">
-                  <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+                  <LanguageMapEditor
+                    dispatchType="label"
+                    disableMultiline
+                    disallowHTML
+                  />
                 </div>
               </SimpleField>
             ) : (
               <SimpleField>
                 <SimpleFieldLabel>Label &amp; summary</SimpleFieldLabel>
                 <div className="mt-2 flex flex-col gap-3">
-                  <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
-                  <LanguageMapEditor dispatchType="summary" />
+                  <LanguageMapEditor
+                    dispatchType="label"
+                    disableMultiline
+                    disallowHTML
+                  />
+                  <ExhibitionHtmlSummaryEditor resource={canvas} />
                 </div>
               </SimpleField>
             )}
@@ -106,11 +133,15 @@ export function InfoBoxPanel() {
 
               {fitSuggestion ? (
                 <SimpleField>
-                  <SimpleFieldLabel>Fit alongside {fitSuggestion.neighbour} slide</SimpleFieldLabel>
+                  <SimpleFieldLabel>
+                    Fit alongside {fitSuggestion.neighbour} slide
+                  </SimpleFieldLabel>
                   <div className="mt-3">
                     <SimpleOptionButton
                       selected={currentWidth === fitSuggestion.width}
-                      onClick={() => setWidth(fitSuggestion.width as DisplayWidth)}
+                      onClick={() =>
+                        setWidth(fitSuggestion.width as DisplayWidth)
+                      }
                     >
                       w-{fitSuggestion.width} — fills remaining space
                     </SimpleOptionButton>
@@ -118,7 +149,10 @@ export function InfoBoxPanel() {
                 </SimpleField>
               ) : null}
 
-              <div className="text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
+              <div
+                className="text-center text-xs"
+                style={{ color: simpleLayoutColours.muted }}
+              >
                 w-{currentWidth}
               </div>
             </>
@@ -143,7 +177,10 @@ export function InfoBoxPanel() {
                   {
                     id: "size",
                     component: (existing, setBehaviors) => (
-                      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
+                      <EditSize
+                        behaviors={existing}
+                        setBehaviors={setBehaviors}
+                      />
                     ),
                     label: { en: ["Size"] },
                     type: "custom",

@@ -1,11 +1,27 @@
-import { ActionButton, DeleteIcon, EditTextIcon, HTMLAnnotationBodyRender } from "@manifest-editor/components";
-import { AnnotationPopUpSwitcherButton, HTMLAnnotationEditor, useAnnotationEditor } from "@manifest-editor/editors";
+import {
+  ActionButton,
+  DeleteIcon,
+  EditTextIcon,
+} from "@manifest-editor/components";
+import {
+  AnnotationPopUpSwitcherButton,
+  useAnnotationEditor,
+} from "@manifest-editor/editors";
 import { ResourceEditingReactContext, useConfig } from "@manifest-editor/shell";
-import { useContext, useEffect, useState } from "react";
-import { AnnotationContext, useAnnotation, useCurrentAnnotationActions } from "react-iiif-vault";
+import { useContext, useEffect, useRef, useState } from "react";
+import {
+  AnnotationContext,
+  useAnnotation,
+  useCurrentAnnotationActions,
+  useVault,
+} from "react-iiif-vault";
 import { CheckIcon } from "../icons/CheckIcon";
-import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import {
+  useSlideshowContentPositioning,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 import { ActionButtonPopupSwitcher } from "./ActionButtonPopupSwitcher";
+import { TourStepHtmlForm, TourStepHtmlPreview } from "./TourStepHtmlForm";
 import { TourStepBorderPicker } from "./TourStepBorderPicker";
 
 export function TourNormalAnnotationEditor({
@@ -17,13 +33,28 @@ export function TourNormalAnnotationEditor({
 }) {
   const value = useContext(ResourceEditingReactContext);
   const annotation = useAnnotation();
+  const vault = useVault();
   const { editorFeatureFlags } = useConfig();
   const { annotationPopups } = editorFeatureFlags;
-  const startTourStepRepositioning = useSlideshowContentPositioning((state) => state.startTourStepRepositioning);
-  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
-  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
+  const body = getFirstTextualBody(annotation?.body || [], vault);
+  const bodyValueRef = useRef(body?.resource?.value || "");
+  const startTourStepRepositioning = useSlideshowContentPositioning(
+    (state) => state.startTourStepRepositioning,
+  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState(
+    (state) => state.requestTab,
+  );
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
 
-  const { isPending, cancelRequest, busy, requestAnnotationFromTarget, deleteAnnotation } = useAnnotationEditor({
+  const {
+    isPending,
+    cancelRequest,
+    busy,
+    requestAnnotationFromTarget,
+    deleteAnnotation,
+  } = useAnnotationEditor({
     annotationPopup: (
       <AnnotationContext annotation={annotation!.id}>
         <ResourceEditingReactContext.Provider value={value}>
@@ -46,12 +77,18 @@ export function TourNormalAnnotationEditor({
   };
 
   useEffect(() => {
+    if (!isOpen) {
+      bodyValueRef.current = body?.resource?.value || "";
+    }
+  }, [body?.resource?.value, isOpen]);
+
+  useEffect(() => {
     if (isOpen && !isPending) {
       setIsOpen(true);
     }
   }, [isPending, isOpen]);
 
-  // This is an annotatino within a page.
+  // This is an annotation within a page.
   return (
     <div
       {...highlightProps}
@@ -60,20 +97,25 @@ export function TourNormalAnnotationEditor({
     >
       <div className="relative">
         {isOpen && !annotationPopups ? (
-          <HTMLAnnotationEditor className="border-none" />
+          <div className="p-3">
+            <TourStepHtmlForm
+              value={body?.resource?.value || ""}
+              onChange={(nextValue) => (bodyValueRef.current = nextValue)}
+            />
+          </div>
         ) : (
-          <HTMLAnnotationBodyRender
-            className="exhibition-tour-step-body px-3 pt-3 line-clamp-3 prose-p:text-slate-600"
-            locale="en"
-          />
+          <div className="px-3 pt-3">
+            <TourStepHtmlPreview value={body?.resource?.value || ""} />
+          </div>
         )}
       </div>
-      <div className="flex gap-2 p-2">
+      <div className="flex gap-2 p-2" onClick={(e) => e.stopPropagation()}>
         {isOpen && isPending ? (
           <>
             <ActionButton
               primary
               onPress={() => {
+                saveTourStepBody(vault, annotation, body, bodyValueRef.current);
                 setIsOpen(false);
                 cancelRequest();
               }}
@@ -117,6 +159,10 @@ function TourAnnotationPopupEditor() {
   const { editorFeatureFlags } = useConfig();
   const { annotationPopups } = editorFeatureFlags;
   const { saveAnnotation } = useCurrentAnnotationActions();
+  const annotation = useAnnotation();
+  const vault = useVault();
+  const body = getFirstTextualBody(annotation?.body || [], vault);
+  const bodyValueRef = useRef(body?.resource?.value || "");
 
   if (!annotationPopups) {
     return (
@@ -131,14 +177,18 @@ function TourAnnotationPopupEditor() {
 
   return (
     <div className="bg-white shadow-md rounded-lg relative max-h-[50vh] overflow-y-auto">
-      <div className="prose-headings:mt-1 rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500">
-        <HTMLAnnotationEditor className="border-none" />
+      <div className="prose-headings:mt-1 rounded prose-headings:mb-1 prose-sm focus-within:ring-1 focus-within:ring-me-primary-500 p-3">
+        <TourStepHtmlForm
+          value={body?.resource?.value || ""}
+          onChange={(nextValue) => (bodyValueRef.current = nextValue)}
+        />
       </div>
 
       <div className="flex gap-2 p-2 sticky bottom-0 z-50 bg-white">
         <ActionButton
           primary
           onPress={() => {
+            saveTourStepBody(vault, annotation, body, bodyValueRef.current);
             saveAnnotation();
           }}
         >
@@ -148,4 +198,52 @@ function TourAnnotationPopupEditor() {
       </div>
     </div>
   );
+}
+
+function getFirstTextualBody(
+  bodies: any[],
+  vault: any,
+): { ref: any; resource: any; bodyIndex: number } | null {
+  for (let bodyIndex = 0; bodyIndex < bodies.length; bodyIndex++) {
+    const body = bodies[bodyIndex];
+    const resource = resolveBody(body, vault);
+    if (
+      resource?.type === "TextualBody" ||
+      resource?.type === "Text" ||
+      resource?.format === "text/html"
+    ) {
+      return {
+        ref: body?.id ? { id: body.id, type: "ContentResource" } : null,
+        resource,
+        bodyIndex,
+      };
+    }
+  }
+  return null;
+}
+
+function resolveBody(body: any, vault: any) {
+  if (!body?.id || body.value) return body;
+  return vault.get(body as any, { skipSelfReturn: false } as any) || body;
+}
+
+function saveTourStepBody(
+  vault: any,
+  annotation: any,
+  body: ReturnType<typeof getFirstTextualBody>,
+  value: string,
+) {
+  if (!annotation || !body) return;
+
+  if (body.ref?.id) {
+    vault.modifyEntityField(body.ref, "value", value);
+    return;
+  }
+
+  const bodies = Array.isArray(annotation.body) ? annotation.body : [];
+  vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", [
+    ...bodies.slice(0, body.bodyIndex),
+    { ...body.resource, value },
+    ...bodies.slice(body.bodyIndex + 1),
+  ]);
 }
