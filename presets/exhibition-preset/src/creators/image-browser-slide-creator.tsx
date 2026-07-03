@@ -18,6 +18,7 @@ export const imageBrowserSlideCreator = defineCreator({
   ...iiifBrowserCreator,
   id: "@exhibitions/browser-creator",
   create: createBrowser,
+  sideEffects: [],
   tags: ["image", "exhibition-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
