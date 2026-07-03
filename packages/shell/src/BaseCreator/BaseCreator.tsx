@@ -218,7 +218,7 @@ export function BaseCreator(props: BaseCreatorProps) {
     setProbeMatches(null);
 
     const helpers = createProbeHelpers();
-    const results = await Promise.all(
+    const results: ProbeResult[] = await Promise.all(
       supported.map(async (creator) => {
         if (!creator.supportsResource) return null;
         try {
@@ -233,8 +233,8 @@ export function BaseCreator(props: BaseCreatorProps) {
         }
       }),
     );
-    const matches = results.filter((result): result is ProbeMatch => !!result && !("error" in result));
-    const errors = results.filter((result): result is ProbeError => !!result && "error" in result);
+    const matches = results.filter(isProbeMatch);
+    const errors = results.filter(isProbeError);
 
     setIsProbing(false);
 
@@ -341,6 +341,15 @@ export function BaseCreator(props: BaseCreatorProps) {
 
 type ProbeMatch = { creator: CreatorDefinition; initialData?: Record<string, any> };
 type ProbeError = { creator: CreatorDefinition; error: string };
+type ProbeResult = ProbeMatch | ProbeError | null;
+
+function isProbeMatch(result: ProbeResult): result is ProbeMatch {
+  return !!result && !("error" in result);
+}
+
+function isProbeError(result: ProbeResult): result is ProbeError {
+  return !!result && "error" in result;
+}
 
 function normaliseProbeResult(value: string, result: CreatorResourceProbeResult): Exclude<CreatorResourceProbeResult, boolean> {
   return typeof result === "object" ? result : { initialData: getDefaultProbeInitialData(value) };

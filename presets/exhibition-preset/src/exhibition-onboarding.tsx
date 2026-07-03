@@ -211,6 +211,15 @@ function ExhibitionPresetPreviewButton({
               style={{ position: "relative", top: "auto", left: "auto", marginTop: 0, width: "15em" }}
             >
               <MenuItem
+                className="flex cursor-pointer items-center border-b border-gray-100 p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                onAction={openOnboarding}
+              >
+                <span className="mx-2 flex h-4 w-8 shrink-0 items-center justify-center">
+                  <TablerSwitch3 className="h-4 w-4 text-gray-500" />
+                </span>
+                <MenuItemLabel>Change preset</MenuItemLabel>
+              </MenuItem>
+              <MenuItem
                 className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                 onAction={() => openPreview(current.id)}
               >
@@ -235,15 +244,6 @@ function ExhibitionPresetPreviewButton({
                   <MenuItemLabel>{json.label}</MenuItemLabel>
                 </MenuItem>
               ) : null}
-              <MenuItem
-                className="flex cursor-pointer items-center border-t border-gray-100 p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
-                onAction={openOnboarding}
-              >
-                <span className="mx-2 flex h-4 w-6 shrink-0 items-center justify-center">
-                  <TablerSwitch3 className="h-4 w-4 text-gray-500" />
-                </span>
-                <MenuItemLabel>Change preset</MenuItemLabel>
-              </MenuItem>
             </MenuContainer>
           </Popover>
         </MenuTrigger>

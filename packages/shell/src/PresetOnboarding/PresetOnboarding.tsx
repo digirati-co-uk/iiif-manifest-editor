@@ -123,12 +123,12 @@ export function PresetOnboarding() {
       open={open}
       onClose={dismiss}
       actions={
-        <>
+        <div className="flex gap-2">
           <ActionButton onPress={dismiss}>{onboarding.dismissLabel || "Dismiss"}</ActionButton>
           <ActionButton primary onPress={dismiss}>
             {onboarding.primaryLabel || "Continue"}
           </ActionButton>
-        </>
+        </div>
       }
     >
       <div className="flex flex-col gap-4 p-6">
