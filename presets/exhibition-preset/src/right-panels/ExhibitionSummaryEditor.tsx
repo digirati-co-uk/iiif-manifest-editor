@@ -14,9 +14,10 @@ import {
   ResourceEditingProvider,
   useEditor,
 } from "@manifest-editor/shell";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import {
   normalizeSummaryForHtmlEditor,
   normalizeSummaryForSave,
@@ -49,7 +50,13 @@ export function ExhibitionSummaryPanel() {
 }
 
 export function ExhibitionSummaryContent() {
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
+
+  useEffect(() => {
+    setCenterPanelMode("preview");
+  }, [setCenterPanelMode]);
+
   if (!canvas) return null;
 
   return (

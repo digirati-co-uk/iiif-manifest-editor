@@ -123,7 +123,7 @@ function ExhibitionWorkbenchRightPanel({
     // Sync center panel mode with the initially selected tab on mount
     if (selectedTab === "tour") {
       setCenterPanelMode("edit");
-    } else if (selectedTab === "layout") {
+    } else if (selectedTab === "layout" || selectedTab === "summary") {
       setCenterPanelMode("preview");
     }
     // Only run on mount
@@ -137,7 +137,7 @@ function ExhibitionWorkbenchRightPanel({
       setShowTourSteps(tab === "tour");
       if (tab === "tour") {
         setCenterPanelMode("edit");
-      } else if (tab === "layout") {
+      } else if (tab === "layout" || tab === "summary") {
         setCenterPanelMode("preview");
       }
       clearRequestedTab();
@@ -162,7 +162,7 @@ function ExhibitionWorkbenchRightPanel({
     setShowTourSteps(tab === "tour");
     if (tab === "tour") {
       setCenterPanelMode("edit");
-    } else if (tab === "layout") {
+    } else if (tab === "layout" || tab === "summary") {
       setCenterPanelMode("preview");
     }
   };

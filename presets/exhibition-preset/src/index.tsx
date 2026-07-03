@@ -11,12 +11,25 @@ import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
 import { exhibitionRemotePreviewPanel } from "./center-panels/ExhibitionRemotePreviewPanel";
 import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
-import { imageSlideCreator } from "./creators/image-slide-creator";
+import {
+  imageSlideCreator,
+  slideshowImageOnlyCreator,
+  slideshowImageTextCreator,
+} from "./creators/image-slide-creator";
 import { imageUrlSlideCreator } from "./creators/image-url-slide";
 import { exhibitionPresetConfig } from "./exhibition-onboarding";
-import { infoBoxCreator } from "./creators/info-box-creator";
-import { videoSlideCreator } from "./creators/video-slide-creator";
-import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
+import {
+  infoBoxCreator,
+  slideshowLongEditorialCreator,
+} from "./creators/info-box-creator";
+import {
+  slideshowVideoCreator,
+  videoSlideCreator,
+} from "./creators/video-slide-creator";
+import {
+  slideshowYoutubeCreator,
+  youtubeSlideCreator,
+} from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
@@ -97,6 +110,11 @@ export const exhibitionEditorPreset = extendApp(
       imageSlideCreator,
       imageUrlSlideCreator,
       videoSlideCreator,
+      slideshowImageOnlyCreator,
+      slideshowImageTextCreator,
+      slideshowVideoCreator,
+      slideshowYoutubeCreator,
+      slideshowLongEditorialCreator,
     ],
   },
 );

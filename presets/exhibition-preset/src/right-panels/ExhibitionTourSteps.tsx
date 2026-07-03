@@ -131,6 +131,9 @@ export function ExhibitionTourStepsContent({
   const setShowTourSteps = useSlideshowWorkbenchState(
     (state) => state.setShowTourSteps,
   );
+  const setCenterPanelMode = useSlideshowWorkbenchState(
+    (state) => state.setCenterPanelMode,
+  );
   const stopContentRepositioning = useSlideshowContentPositioning(
     (state) => state.stopRepositioning,
   );
@@ -140,13 +143,15 @@ export function ExhibitionTourStepsContent({
 
   useEffect(() => {
     setShowTourSteps(true);
+    setCenterPanelMode("edit");
     stopContentRepositioning();
     stopTextRepositioning();
-  }, [setShowTourSteps, stopContentRepositioning, stopTextRepositioning]);
+  }, [setCenterPanelMode, setShowTourSteps, stopContentRepositioning, stopTextRepositioning]);
   const { requestTourStep, isPending, busy } = useTourStepAnnotationRequest({
     onBeforeRequest: useSlideshowWorkbench
       ? () => {
           setShowTourSteps(true);
+          setCenterPanelMode("edit");
           stopContentRepositioning();
           stopTextRepositioning();
         }

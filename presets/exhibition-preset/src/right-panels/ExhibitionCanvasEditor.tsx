@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnnotationPageContext, useCanvas, useVault } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
-import { supportsTourSteps } from "../slideshow-content-positioning";
+import { supportsTourSteps, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import {
   buildLayoutPresetBehaviors,
   getLayoutPreset,
@@ -48,6 +48,7 @@ export function ExhibitionCanvasAdvancedPanel() {
 }
 
 export function ExhibitionCanvasAdvancedContent() {
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
   const vault = useVault();
   const resource = useEditingResource();
@@ -60,6 +61,10 @@ export function ExhibitionCanvasAdvancedContent() {
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
   const tourSupported = supportsTourSteps(vault, canvas);
+
+  useEffect(() => {
+    setCenterPanelMode("preview");
+  }, [setCenterPanelMode]);
 
   if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
 

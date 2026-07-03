@@ -254,6 +254,10 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
     "edit",
   );
   const previewPreset = useConfiguredExhibitionPreviewPreset();
+  const isFullPagePreset = previewPreset === "exhibition";
+  const showShortSummary = isFullPagePreset;
+  const shortSummaryHeading = "Short text in info box";
+  const longSummaryHeading = isFullPagePreset ? "Read more text in modal" : "Summary";
 
   // Collect all languages present in the canvas
   const presentLanguages = useMemo(() => {
@@ -325,26 +329,28 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
         </div>
       ) : (
         <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-          <SummarySection
-            annotationPage={annotationPage}
-            compact={compact}
-            editorMaxWidth={editorMaxWidth}
-            fallbackText={strategy.items[0]?.text}
-            heading="Short summary"
-            panelClassName={twMerge(
-              "border-b border-gray-100",
-              compact ? "p-3" : "p-5",
-              hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
-              hasDimension && isBottom ? "max-w-4xl" : "",
-            )}
-            parentProperty="items"
-            selectedLanguage={effectiveLanguage}
-            onLanguageAdded={handleAddLanguage}
-          />
+          {showShortSummary ? (
+            <SummarySection
+              annotationPage={annotationPage}
+              compact={compact}
+              editorMaxWidth={editorMaxWidth}
+              fallbackText={strategy.items[0]?.text}
+              heading={shortSummaryHeading}
+              panelClassName={twMerge(
+                "border-b border-gray-100",
+                compact ? "p-3" : "p-5",
+                hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
+                hasDimension && isBottom ? "max-w-4xl" : "",
+              )}
+              parentProperty="items"
+              selectedLanguage={effectiveLanguage}
+              onLanguageAdded={handleAddLanguage}
+            />
+          ) : null}
           <SummarySection
             annotationPage={longSummaries}
             compact={compact}
-            heading="Long summary"
+            heading={longSummaryHeading}
             panelClassName={twMerge(compact ? "p-3" : "p-5")}
             parentProperty="annotations"
             selectedLanguage={effectiveLanguage}

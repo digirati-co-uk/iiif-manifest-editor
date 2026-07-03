@@ -8,7 +8,7 @@ import {
   useInStack,
 } from "@manifest-editor/editors";
 import { type EditorDefinition, useEditor, useLocalStorage } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
@@ -257,6 +257,11 @@ export function EditSize({
 
 export function SlideBehavioursPanel() {
   const [mode, setMode] = useLocalStorage<EditingMode>(layoutPanelModeStorageKey, "simple");
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
+
+  useEffect(() => {
+    setCenterPanelMode("preview");
+  }, [setCenterPanelMode]);
 
   return (
     <Sidebar>

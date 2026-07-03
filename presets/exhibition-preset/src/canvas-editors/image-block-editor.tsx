@@ -1,11 +1,13 @@
 import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition } from "@manifest-editor/shell";
 import { useLocalStorage } from "@manifest-editor/shell";
+import { useEffect } from "react";
 import { Button } from "react-aria-components";
 import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
+import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const imageBlockEditor: CanvasEditorDefinition = {
   id: "image-block-editor",
@@ -38,8 +40,19 @@ export const imageBlockEditor: CanvasEditorDefinition = {
 
 export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingStrategy }) {
   const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
+  const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const previewPreset = useConfiguredExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
+
+  useEffect(() => {
+    if (centerPanelMode === "edit" && isPreview) {
+      setIsPreview(false);
+    } else if (centerPanelMode === "preview" && !isPreview) {
+      setIsPreview(true);
+    }
+  }, [centerPanelMode, isPreview, setIsPreview]);
+
   if (!canvas) {
     return null;
   }
@@ -49,7 +62,10 @@ export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingS
       <ImageBlockEditorContent
         isPreview={!!isPreview}
         previewPreset={previewPreset}
-        onModeChange={setIsPreview}
+        onModeChange={(nextIsPreview) => {
+          setCenterPanelMode(nextIsPreview ? "preview" : "edit");
+          setIsPreview(nextIsPreview);
+        }}
       />
     </CanvasContext>
   );
