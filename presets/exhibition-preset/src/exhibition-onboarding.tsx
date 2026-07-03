@@ -1,13 +1,13 @@
 import { DownloadButton } from "@manifest-editor/components";
 import {
-  type PresetDefinition,
-  type PresetTemplateDefinition,
   ButtonChange,
   ButtonContainer,
   ButtonMain,
   MenuContainer,
   MenuItemLabel,
   MenuItemStatus,
+  type PresetDefinition,
+  type PresetTemplateDefinition,
   useAppResource,
   useConfig,
   useLayoutActions,
@@ -152,6 +152,7 @@ function ExhibitionPresetPreviewButton({
     previewConfigs.find((item) => !item.id.includes("theseus") && item.id !== "raw-manifest") ||
     previewConfigs[0];
   const theseus = previewConfigs.find((item) => item.id === "theseus" || item.id === "theseus-viewer");
+  const json = previewConfigs.find((item) => item.id === "raw-manifest");
 
   function openPreview(id: string) {
     if (active.includes(id)) {
@@ -214,6 +215,15 @@ function ExhibitionPresetPreviewButton({
                 >
                   <MenuItemStatus $status={active.includes(theseus.id) ? "configured" : "available"} />
                   <MenuItemLabel>{theseus.label}</MenuItemLabel>
+                </MenuItem>
+              ) : null}
+              {json && json.id !== current.id ? (
+                <MenuItem
+                  className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                  onAction={() => openPreview(json.id)}
+                >
+                  <MenuItemStatus $status={active.includes(json.id) ? "configured" : "available"} />
+                  <MenuItemLabel>{json.label}</MenuItemLabel>
                 </MenuItem>
               ) : null}
               <MenuItem

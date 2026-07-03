@@ -30,6 +30,7 @@ export interface IIIFBrowserCreatorPayload {
     selector: BoxSelector | undefined;
   }>;
   trackSize?: (dimensions: { width: number; height: number }) => void;
+  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
 }
 
 export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
@@ -61,6 +62,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         invariant(manifest, "Manifest not found");
 
         const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
+        data.trackManifest?.({
+          requiredStatement: manifest.requiredStatement,
+          rights: manifest.rights,
+          ...(addManifestMetadataToCanvas ? { metadata: manifest.metadata || [] } : {}),
+          partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+        });
         const addManifestTracking = (resource: any): any => {
           if (resource.type === "SpecificResource" && resource.source) {
             return { ...resource, source: addManifestTracking(resource.source) };

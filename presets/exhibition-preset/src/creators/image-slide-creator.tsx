@@ -119,6 +119,10 @@ export const scrollCompactDeckCreator = defineCreator({
 interface InfoBoxPayload {
   canvasId?: string;
   label?: InternationalString;
+  metadata?: any[];
+  requiredStatement?: any;
+  rights?: string;
+  partOf?: any[];
   height?: number;
   width?: number;
   duration?: number;
@@ -183,11 +187,19 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     behavior.push("multi-image");
   }
 
+  const manifestTracking = {
+    ...(payload.metadata ? { metadata: payload.metadata } : {}),
+    ...(payload.requiredStatement ? { requiredStatement: payload.requiredStatement } : {}),
+    ...(payload.rights ? { rights: payload.rights } : {}),
+    ...(payload.partOf ? { partOf: payload.partOf } : {}),
+  };
+
   return ctx.embed({
     ...emptyCanvas,
     id: canvasId,
     behavior,
     label: payload.label || { en: ["Untitled"] },
+    ...manifestTracking,
     height: payload.height || 4000,
     duration: payload.duration,
     width: payload.width || width,

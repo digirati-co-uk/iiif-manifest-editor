@@ -42,6 +42,7 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
   });
 
   const dimensions = { width: 0, height: 0 };
+  let manifestTracking: Parameters<NonNullable<IIIFBrowserCreatorPayload["trackManifest"]>>[0] | undefined;
 
   const createBrowserAnnotation = creatorHelper(
     ctx,
@@ -56,6 +57,9 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
       trackSize({ width, height }) {
         dimensions.height = height;
         dimensions.width = width;
+      },
+      trackManifest(manifest) {
+        manifestTracking = manifest;
       },
     },
     {
@@ -76,5 +80,6 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     height: dimensions.height,
     type: "default", // default / left / right / bottom
     items: annotation,
+    ...manifestTracking,
   });
 }
