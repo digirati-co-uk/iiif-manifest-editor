@@ -13,6 +13,7 @@ import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator
 import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
 import { imageSlideCreator } from "./creators/image-slide-creator";
 import { imageUrlSlideCreator } from "./creators/image-url-slide";
+import { exhibitionPresetConfig } from "./exhibition-onboarding";
 import { infoBoxCreator } from "./creators/info-box-creator";
 import { videoSlideCreator } from "./creators/video-slide-creator";
 import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
@@ -39,6 +40,7 @@ export const exhibitionEditorPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {
         Canvas: {

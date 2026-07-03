@@ -9,6 +9,7 @@ import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
 import { useEvent } from "../hooks/use-event";
+import { PresetOnboarding } from "../PresetOnboarding/PresetOnboarding";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
 import type { LayoutRenderProps } from "./Layout";
@@ -576,6 +577,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
         <BackgroundActionToasts />
 
         <>{renderModal()}</>
+        <PresetOnboarding />
       </L.OuterWrapper>
     </LayoutModeReactContext.Provider>
   );

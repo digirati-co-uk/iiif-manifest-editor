@@ -39,10 +39,57 @@ export type MappedApp = {
   metadata: LoadedApp["default"];
   layout: LayoutProps;
   config?: Partial<Config>;
+  preset?: PresetDefinition;
+};
+
+export type PresetTemplateConfigurationField = {
+  id: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "boolean" | "select";
+  defaultValue?: string | number | boolean;
+  options?: Array<{ label: string; value: string | number | boolean }>;
+};
+
+export type PresetTemplateDefinition = {
+  id: string;
+  label: string;
+  summary: string;
+  type: "slideshow" | "fullpage" | "scroll";
+  previewUrl: string;
+  thumbnailUrl: string;
+  configuration?: PresetTemplateConfigurationField[];
+};
+
+export type PresetOnboardingRenderContext = {
+  templates: PresetTemplateDefinition[];
+  dismiss: () => void;
+};
+
+export type PresetPreviewButtonRenderContext = {
+  downloadEnabled?: boolean;
+  fileName?: string;
+};
+
+export type PresetOnboardingDefinition = {
+  id: string;
+  mode: "global" | "per-resource";
+  title: string;
+  summary?: string;
+  openLabel?: string;
+  dismissLabel?: string;
+  primaryLabel?: string;
+  renderBody: (ctx: PresetOnboardingRenderContext) => ReactNode;
+  renderPreviewButton?: (ctx: PresetPreviewButtonRenderContext) => ReactNode;
+};
+
+export type PresetDefinition = {
+  onboarding?: PresetOnboardingDefinition;
+  templates?: PresetTemplateDefinition[];
 };
 
 export interface AppExtension {
   config?: Partial<Config>;
+  preset?: PresetDefinition;
   leftPanels?: LayoutPanel[];
   centerPanels?: LayoutPanel[];
   rightPanels?: LayoutPanel[];

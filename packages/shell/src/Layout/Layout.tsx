@@ -13,6 +13,7 @@ import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
 import { useMatchMedia } from "../hooks/use-match-media";
+import { PresetOnboarding } from "../PresetOnboarding/PresetOnboarding";
 import { HandleControls } from "./components/HandleControls";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
@@ -484,6 +485,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             ) : null}
           </M.Container>
         </L.Main>
+        <PresetOnboarding />
       </L.OuterWrapper>
     );
   }
@@ -601,6 +603,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       <BackgroundActionToasts />
 
       <>{renderModal()}</>
+      <PresetOnboarding />
     </L.OuterWrapper>
   );
 });

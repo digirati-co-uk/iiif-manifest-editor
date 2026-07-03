@@ -492,6 +492,7 @@ function sanitisePluginExtension(app: MappedApp, plugin: MappedPlugin): AppExten
   const extension = plugin.extension;
   const next: AppExtension = {
     config: extension.config,
+    preset: extension.preset,
     disableSideEffects: extension.disableSideEffects,
   };
 

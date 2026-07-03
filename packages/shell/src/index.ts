@@ -50,6 +50,8 @@ export * from "./PluginContext/PluginContext.store";
 export * from "./PluginContext/PluginContext.types";
 export * from "./PluginContext/PluginManager";
 export * from "./PreviewButton/PreviewButton";
+export * from "./PreviewButton/PreviewButton.styles";
+export * from "./PresetOnboarding/PresetOnboarding";
 export * from "./PreviewContext/PreviewContext";
 export * from "./PreviewContext/PreviewContext.types";
 export * from "./PreviewVault/create-preview-vault";
