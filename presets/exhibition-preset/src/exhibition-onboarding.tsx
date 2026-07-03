@@ -1,4 +1,4 @@
-import { DownloadButton } from "@manifest-editor/components";
+import { DownloadButton, OnboardingTour } from "@manifest-editor/components";
 import {
   ButtonChange,
   ButtonContainer,
@@ -136,9 +136,13 @@ export const exhibitionPresetConfig: PresetDefinition = {
 function ExhibitionPresetPreviewButton({
   downloadEnabled,
   fileName,
+  showOnboardingPreviewHint,
+  onOnboardingPreviewHintClose,
 }: {
   downloadEnabled?: boolean;
   fileName?: string;
+  showOnboardingPreviewHint?: boolean;
+  onOnboardingPreviewHintClose?: () => void;
 }) {
   const { active, actions, configs } = usePreviewContext();
   const vault = useVault();
@@ -191,7 +195,12 @@ function ExhibitionPresetPreviewButton({
           Preview
         </ButtonMain>
         <MenuTrigger>
-          <ButtonChange as={Button} $open={false} aria-label="Choose preview">
+          <ButtonChange
+            as={Button}
+            $open={false}
+            aria-label="Choose preview"
+            className="exhibition-preview-preset-menu"
+          >
             <DownIcon />
           </ButtonChange>
           <Popover placement="bottom right" className="z-50">
@@ -239,6 +248,20 @@ function ExhibitionPresetPreviewButton({
           </Popover>
         </MenuTrigger>
       </ButtonContainer>
+      <OnboardingTour
+        id="exhibition-preview-preset-menu"
+        forceStart={showOnboardingPreviewHint}
+        onClose={onOnboardingPreviewHintClose}
+        lastButtonLabel="Dismiss"
+        steps={[
+          {
+            target: ".exhibition-preview-preset-menu",
+            placement: "bottom",
+            disableBeacon: true,
+            content: "You can change the exhibition format again from this preview menu.",
+          },
+        ]}
+      />
     </>
   );
 }

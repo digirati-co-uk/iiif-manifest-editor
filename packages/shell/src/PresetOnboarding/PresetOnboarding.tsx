@@ -1,6 +1,6 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { useEffect, useMemo, useState } from "react";
-import { useApp, usePresetTemplateSelection } from "../AppContext/AppContext";
+import { useApp, useAppState, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
 
@@ -52,10 +52,23 @@ export function PresetOnboardingButton({ className }: { className?: string }) {
 
 export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName?: string }) {
   const app = useApp();
+  const resource = useAppResource();
+  const { state, setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
+  const onboarding = app.preset?.onboarding;
   const custom = app.preset?.onboarding?.renderPreviewButton;
+  const dismissalKey = onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null;
+  const showOnboardingPreviewHint = !!dismissalKey && state?.presetOnboardingPreviewHintKey === dismissalKey;
 
   if (custom) {
-    return custom(props);
+    return custom({
+      ...props,
+      showOnboardingPreviewHint,
+      onOnboardingPreviewHintClose: () => {
+        if (showOnboardingPreviewHint) {
+          setState({ presetOnboardingPreviewHintKey: null });
+        }
+      },
+    });
   }
 
   return <PreviewButton {...props} />;
@@ -66,22 +79,27 @@ export function PresetOnboarding() {
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
   const templates = app.preset?.templates || [];
+  const { setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
   const templateSelection = usePresetTemplateSelection();
   const dismissalKey = useMemo(
     () => (onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null),
     [onboarding, resource],
   );
   const [open, setOpen] = useState(false);
+  const [autoOpened, setAutoOpened] = useState(false);
 
   useEffect(() => {
     if (!dismissalKey) return;
-    setOpen(!isDismissed(dismissalKey));
+    const shouldOpen = !isDismissed(dismissalKey);
+    setOpen(shouldOpen);
+    setAutoOpened(shouldOpen);
   }, [dismissalKey]);
 
   useEffect(() => {
     const reopen = (event: Event) => {
       if ((event as CustomEvent<string | null>).detail === dismissalKey) {
         setOpen(!!onboarding);
+        setAutoOpened(false);
       }
     };
     window.addEventListener(reopenEvent, reopen);
@@ -92,7 +110,11 @@ export function PresetOnboarding() {
 
   const dismiss = () => {
     setDismissed(dismissalKey);
+    if (autoOpened) {
+      setState({ presetOnboardingPreviewHintKey: dismissalKey });
+    }
     setOpen(false);
+    setAutoOpened(false);
   };
 
   return (

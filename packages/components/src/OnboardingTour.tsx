@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import Joyride, { type CallBackProps, type Step } from "react-joyride";
+import Joyride, { type CallBackProps, STATUS, type Step } from "react-joyride";
 import { useLocalStorage } from "./hooks/use-local-storage";
 
 interface OnboardingTourProps {
@@ -8,9 +8,10 @@ interface OnboardingTourProps {
   steps: Step[];
   forceStart?: boolean;
   onClose?: () => void;
+  lastButtonLabel?: string;
 }
 
-export function OnboardingTour({ id, steps, forceStart, onClose }: OnboardingTourProps) {
+export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel }: OnboardingTourProps) {
   const [isEnabled, setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: like setState in React.
@@ -26,7 +27,14 @@ export function OnboardingTour({ id, steps, forceStart, onClose }: OnboardingTou
   }, [id]);
 
   const lifecycle = (e: CallBackProps) => {
-    if (e.action === "close" || e.action === "skip" || e.action === "stop" || e.action === "reset") {
+    if (
+      e.action === "close" ||
+      e.action === "skip" ||
+      e.action === "stop" ||
+      e.action === "reset" ||
+      e.status === STATUS.FINISHED ||
+      e.status === STATUS.SKIPPED
+    ) {
       setIsEnabled(false);
       onClose?.();
     }
@@ -45,6 +53,7 @@ export function OnboardingTour({ id, steps, forceStart, onClose }: OnboardingTou
       steps={steps}
       run={isEnabled || forceStart}
       callback={lifecycle}
+      locale={lastButtonLabel ? { last: lastButtonLabel } : undefined}
       styles={{
         options: {
           primaryColor: "#b84c74",

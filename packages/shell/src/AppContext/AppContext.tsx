@@ -71,6 +71,8 @@ export type PresetOnboardingRenderContext = {
 export type PresetPreviewButtonRenderContext = {
   downloadEnabled?: boolean;
   fileName?: string;
+  showOnboardingPreviewHint?: boolean;
+  onOnboardingPreviewHintClose?: () => void;
 };
 
 export type PresetOnboardingDefinition = {
