@@ -7,7 +7,7 @@ import {
   InputContainer,
   useInStack,
 } from "@manifest-editor/editors";
-import { type EditorDefinition, useEditor, useLocalStorage } from "@manifest-editor/shell";
+import { type EditorDefinition, useApp, useEditor, useLocalStorage, usePresetTemplateSelection } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useManifest, useVault } from "react-iiif-vault";
@@ -19,6 +19,7 @@ import { ExhibitionThumbnailEditor } from "./ExhibitionThumbnailEditor";
 
 type EditingMode = "simple" | "advanced";
 type LayoutEditingContext = "default" | "slideshow";
+export type ExhibitionTemplateType = "fullpage" | "slideshow" | "scroll";
 export type LayoutPreset = "image" | "right" | "left" | "bottom";
 export type DisplayWidth = 12 | 8 | 6 | 4;
 
@@ -53,6 +54,39 @@ const displayWidthOptions: Array<{
 ];
 const floatingBehaviors = new Set(["float-top-left", "float-top-right", "float-bottom-left", "float-bottom-right"]);
 const layoutPanelModeStorageKey = "exhibition-layout-panel-mode";
+
+export function resolveExhibitionTemplateType(templateType?: string, appId?: string): ExhibitionTemplateType {
+  if (templateType === "slideshow" || templateType === "scroll" || templateType === "fullpage") {
+    return templateType;
+  }
+  if (appId === "exhibition-slideshow-editor") return "slideshow";
+  if (appId === "exhibition-scrolling-editor") return "scroll";
+  return "fullpage";
+}
+
+export function getExhibitionTemplateControls(templateType: ExhibitionTemplateType) {
+  const showGridSizing = templateType === "fullpage";
+  const showFloating = templateType === "slideshow" || templateType === "scroll";
+
+  return {
+    showGridSizing,
+    showFloating,
+    showImageCover: templateType === "fullpage",
+    layoutOptions:
+      templateType === "scroll"
+        ? [
+            { value: "right" as const, label: "Text panel right" },
+            { value: "left" as const, label: "Text panel left" },
+          ]
+        : layoutPresetOptions,
+  };
+}
+
+export function useExhibitionTemplateControls() {
+  const app = useApp();
+  const { selectedTemplate } = usePresetTemplateSelection();
+  return getExhibitionTemplateControls(resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id));
+}
 
 export const customBehaviourEditor: EditorDefinition = {
   component: () => <SlideBehavioursPanel />,
@@ -139,6 +173,28 @@ const exhibitionConfigs: BehaviorEditorProps["configs"] = [
   },
 ];
 
+export function getAdvancedExhibitionConfigs(templateType: ExhibitionTemplateType): BehaviorEditorProps["configs"] {
+  const controls = getExhibitionTemplateControls(templateType);
+  const configs: BehaviorEditorProps["configs"] = [
+    {
+      ...exhibitionConfigs[0]!,
+      items: controls.layoutOptions.map((option) => ({
+        label: { en: [option.label] },
+        value: option.value,
+      })),
+    },
+  ];
+
+  if (controls.showFloating) {
+    configs.push(exhibitionConfigs[1]!);
+  }
+  if (controls.showGridSizing) {
+    configs.push(exhibitionConfigs[2]!);
+  }
+
+  return configs;
+}
+
 export function RoundGridIcon(props: { index: number } & React.SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
@@ -184,17 +240,6 @@ function parseBehaviors(items: string[]) {
     width,
     height,
   };
-}
-
-function removeLayoutBehaviors(behavior: string[]) {
-  return behavior.filter(
-    (item) =>
-      !layoutBehaviors.has(item) &&
-      !item.startsWith("w-") &&
-      !item.startsWith("h-") &&
-      !floatingBehaviors.has(item) &&
-      item !== "cover",
-  );
 }
 
 export function EditSize({
@@ -284,6 +329,13 @@ export function SlideBehavioursContent({
 }) {
   const canvas = useInStack("Canvas");
   const editor = useEditor();
+  const app = useApp();
+  const { selectedTemplate } = usePresetTemplateSelection();
+  const templateType = resolveExhibitionTemplateType(
+    selectedTemplate?.type,
+    layoutContext === "slideshow" ? "exhibition-slideshow-editor" : app.metadata.id,
+  );
+  const controls = getExhibitionTemplateControls(templateType);
   const { width, height } = editor.technical;
 
   if (!canvas || editor.technical.type !== "Canvas") {
@@ -294,7 +346,7 @@ export function SlideBehavioursContent({
     return (
       <SimpleSlideLayoutEditor
         behavior={editor.technical.behavior.get() || []}
-        layoutContext={layoutContext}
+        controls={controls}
         canvasWidth={width.get() || 0}
         canvasHeight={height.get() || 0}
         onChange={(v) => {
@@ -327,7 +379,7 @@ export function SlideBehavioursContent({
         onChange={(v) => {
           editor.technical.behavior.set(v);
         }}
-        configs={exhibitionConfigs}
+        configs={getAdvancedExhibitionConfigs(templateType)}
       />
 
       <ExhibitionThumbnailEditor />
@@ -337,20 +389,20 @@ export function SlideBehavioursContent({
 
 function SimpleSlideLayoutEditor({
   behavior,
-  layoutContext,
+  controls,
   canvasWidth,
   canvasHeight,
   onChange,
 }: {
   behavior: string[];
-  layoutContext: LayoutEditingContext;
+  controls: ReturnType<typeof getExhibitionTemplateControls>;
   canvasWidth: number;
   canvasHeight: number;
   onChange: (newValue: string[]) => void;
 }) {
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>(getLayoutPreset(behavior));
   const [displayWidth, setDisplayWidth] = useState<DisplayWidth>(
-    layoutContext === "slideshow" ? 12 : getDisplayWidth(behavior),
+    controls.showGridSizing ? getDisplayWidth(behavior) : 12,
   );
   const [floating, setFloating] = useState(hasFloatingBehavior(behavior));
   const [cover, setCover] = useState(behavior.includes("cover"));
@@ -358,7 +410,7 @@ function SimpleSlideLayoutEditor({
   const canvas = useCanvas();
   const vault = useVault();
   const manifest = useManifest();
-  const selectedWidth = layoutContext === "slideshow" ? 12 : displayWidth;
+  const selectedWidth = controls.showGridSizing ? displayWidth : 12;
   const previewHeight = getDerivedHeight({
     canvasWidth,
     canvasHeight,
@@ -367,7 +419,7 @@ function SimpleSlideLayoutEditor({
   });
 
   const fitSuggestion =
-    layoutContext === "default" && manifest?.items && canvas
+    controls.showGridSizing && manifest?.items && canvas
       ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault)
       : null;
 
@@ -378,7 +430,7 @@ function SimpleSlideLayoutEditor({
     cover?: boolean;
   }) => {
     const nextLayoutPreset = next.layoutPreset ?? layoutPreset;
-    const nextDisplayWidth = layoutContext === "slideshow" ? 12 : (next.displayWidth ?? displayWidth);
+    const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
     const nextFloating = next.floating ?? floating;
     const nextCover = next.cover ?? cover;
 
@@ -391,6 +443,9 @@ function SimpleSlideLayoutEditor({
         canvasHeight,
         floating: nextFloating,
         cover: nextCover,
+        showGridSizing: controls.showGridSizing,
+        showFloating: controls.showFloating,
+        showImageCover: controls.showImageCover,
       }),
     );
 
@@ -407,13 +462,14 @@ function SimpleSlideLayoutEditor({
         floating={floating}
         width={selectedWidth}
         height={previewHeight}
+        showGridSizing={controls.showGridSizing}
         onTextClick={() => requestWorkbenchTab("summary")}
       />
 
       <SimpleField>
         <SimpleFieldLabel>Layout preset</SimpleFieldLabel>
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {layoutPresetOptions.map((option) => (
+          {controls.layoutOptions.map((option) => (
             <LayoutPresetCard
               key={option.value}
               preset={option.value}
@@ -428,7 +484,7 @@ function SimpleSlideLayoutEditor({
         </div>
       </SimpleField>
 
-      {layoutContext === "default" ? (
+      {controls.showGridSizing ? (
         <SimpleField>
           <SimpleFieldLabel>Width</SimpleFieldLabel>
           <div className="mt-3 grid grid-cols-2 gap-3">
@@ -466,22 +522,26 @@ function SimpleSlideLayoutEditor({
       ) : null}
 
       <div className="flex flex-col gap-3">
-        <SimpleCheckbox
-          checked={floating}
-          label="Floating"
-          onChange={(checked) => {
-            setFloating(checked);
-            applySettings({ floating: checked });
-          }}
-        />
-        <SimpleCheckbox
-          checked={cover}
-          label="Image cover"
-          onChange={(checked) => {
-            setCover(checked);
-            applySettings({ cover: checked });
-          }}
-        />
+        {controls.showFloating ? (
+          <SimpleCheckbox
+            checked={floating}
+            label="Floating"
+            onChange={(checked) => {
+              setFloating(checked);
+              applySettings({ floating: checked });
+            }}
+          />
+        ) : null}
+        {controls.showImageCover ? (
+          <SimpleCheckbox
+            checked={cover}
+            label="Image cover"
+            onChange={(checked) => {
+              setCover(checked);
+              applySettings({ cover: checked });
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );
@@ -493,6 +553,7 @@ function SimpleLayoutPreview({
   floating,
   width,
   height,
+  showGridSizing,
   onTextClick,
 }: {
   layoutPreset: LayoutPreset;
@@ -500,6 +561,7 @@ function SimpleLayoutPreview({
   floating: boolean;
   width: DisplayWidth;
   height: number;
+  showGridSizing: boolean;
   onTextClick: () => void;
 }) {
   const isBottom = layoutPreset === "bottom";
@@ -544,9 +606,11 @@ function SimpleLayoutPreview({
           <div className="absolute right-2 top-2 h-7 w-10 rounded bg-white/90 shadow ring-1 ring-black/10" />
         ) : null}
       </div>
-      <div className="mt-2 text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
-        w-{width} h-{height}
-      </div>
+      {showGridSizing ? (
+        <div className="mt-2 text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
+          w-{width} h-{height}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -771,7 +835,7 @@ function getDisplayWidth(behavior: string[]): DisplayWidth {
 }
 
 function hasFloatingBehavior(behavior: string[]) {
-  return behavior.some((item) => floatingBehaviors.has(item));
+  return behavior.includes("floating") || behavior.some((item) => floatingBehaviors.has(item));
 }
 
 function buildSimpleLayoutBehaviors({
@@ -782,6 +846,9 @@ function buildSimpleLayoutBehaviors({
   canvasHeight,
   floating,
   cover,
+  showGridSizing,
+  showFloating,
+  showImageCover,
 }: {
   behavior: string[];
   layoutPreset: LayoutPreset;
@@ -790,22 +857,35 @@ function buildSimpleLayoutBehaviors({
   canvasHeight: number;
   floating: boolean;
   cover: boolean;
+  showGridSizing: boolean;
+  showFloating: boolean;
+  showImageCover: boolean;
 }) {
-  const next = removeLayoutBehaviors(behavior);
-  const height = getDerivedHeight({
-    canvasWidth,
-    canvasHeight,
-    layoutPreset,
-    displayWidth,
+  const next = behavior.filter((item) => {
+    if (layoutBehaviors.has(item)) return false;
+    if (showGridSizing && (item.startsWith("w-") || item.startsWith("h-"))) return false;
+    if (showFloating && (item === "floating" || floatingBehaviors.has(item))) return false;
+    if (showImageCover && item === "cover") return false;
+    return true;
   });
 
-  next.push(layoutPreset, `w-${displayWidth}`, `h-${height}`);
+  next.push(layoutPreset);
 
-  if (floating) {
-    next.push("float-top-right");
+  if (showGridSizing) {
+    const height = getDerivedHeight({
+      canvasWidth,
+      canvasHeight,
+      layoutPreset,
+      displayWidth,
+    });
+    next.push(`w-${displayWidth}`, `h-${height}`);
   }
 
-  if (cover) {
+  if (showFloating && floating) {
+    next.push(behavior.find((item) => floatingBehaviors.has(item)) || "float-top-right");
+  }
+
+  if (showImageCover && cover) {
     next.push("cover");
   }
 
@@ -902,6 +982,7 @@ export function TextualContentLayoutEditor() {
   const vault = useVault();
   const manifest = useManifest();
   const editor = useEditor();
+  const controls = useExhibitionTemplateControls();
 
   if (!canvas || editor.technical.type !== "Canvas") {
     return <div className="p-4">Please select canvas</div>;
@@ -920,7 +1001,9 @@ export function TextualContentLayoutEditor() {
   };
 
   const fitSuggestion =
-    manifest?.items && canvas ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault) : null;
+    controls.showGridSizing && manifest?.items && canvas
+      ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault)
+      : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -928,7 +1011,7 @@ export function TextualContentLayoutEditor() {
         <SimpleAdvancedToggle value={mode} onChange={setMode} />
       </div>
 
-      {mode === "simple" ? (
+      {mode === "simple" && controls.showGridSizing ? (
         <>
           <SimpleField>
             <SimpleFieldLabel>Width</SimpleFieldLabel>
@@ -963,7 +1046,7 @@ export function TextualContentLayoutEditor() {
             w-{currentWidth}
           </div>
         </>
-      ) : (
+      ) : mode === "advanced" ? (
         <>
           <div className="px-2">
             <InputContainer $wide>
@@ -978,22 +1061,24 @@ export function TextualContentLayoutEditor() {
             </InputContainer>
           </div>
 
-          <BehaviorEditor
-            behavior={behavior}
-            onChange={(v) => editor.technical.behavior.set(v)}
-            configs={[
-              {
-                id: "size",
-                component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
-                label: { en: ["Size"] },
-                type: "custom",
-                initialOpen: true,
-                supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
-              },
-            ]}
-          />
+          {controls.showGridSizing ? (
+            <BehaviorEditor
+              behavior={behavior}
+              onChange={(v) => editor.technical.behavior.set(v)}
+              configs={[
+                {
+                  id: "size",
+                  component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
+                  label: { en: ["Size"] },
+                  type: "custom",
+                  initialOpen: true,
+                  supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
+                },
+              ]}
+            />
+          ) : null}
         </>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -17,7 +17,7 @@ import {
   getLayoutPreset,
   injectTextPlaceholders,
   LayoutPresetCard,
-  layoutPresetOptions,
+  useExhibitionTemplateControls,
 } from "./SlideBehaviours";
 import { getLanguageMapHtml } from "./summary-html";
 
@@ -55,6 +55,7 @@ export function ExhibitionCanvasAdvancedContent() {
   const { structural, technical } = useEditor();
   const { items } = structural;
   const behavior = technical.behavior.get() || [];
+  const controls = useExhibitionTemplateControls();
   const pages = items.get();
   const page = pages[0];
 
@@ -88,7 +89,7 @@ export function ExhibitionCanvasAdvancedContent() {
         <div>
           <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">Layout preset</div>
           <div className="grid grid-cols-2 gap-3">
-            {layoutPresetOptions.map((option) => (
+            {controls.layoutOptions.map((option) => (
               <LayoutPresetCard
                 key={option.value}
                 preset={option.value}
