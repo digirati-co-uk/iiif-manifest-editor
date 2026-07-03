@@ -1,10 +1,20 @@
 import { CloseIcon, useLocalStorage } from "@manifest-editor/components";
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
 import { useManifest, useVaultSelector } from "react-iiif-vault";
 
-export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; alreadyExhibition: boolean }) {
+export function MaybeExhibitionPrompt({
+  id,
+  alreadyExhibition,
+  onOpenExhibition,
+}: {
+  id: string;
+  alreadyExhibition: boolean;
+  onOpenExhibition?: () => Promise<void>;
+}) {
+  const router = useRouter();
   const manifest = useManifest();
   const [isDismissed, setDismissed] = useLocalStorage(`exhibition-popup/${id}`);
 
@@ -37,6 +47,8 @@ export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; a
   }
 
   if (isExhibition) {
+    const exhibitionHref = `/editor/${id}/exhibition`;
+
     return (
       <div className="flex gap-2 justify-between items-center text-sm bg-me-50 rounded p-1.5">
         <div />
@@ -44,7 +56,15 @@ export function MaybeExhibitionPrompt({ id, alreadyExhibition }: { id: string; a
           This Manifest appears to be an Exhibition Manifest.{" "}
           <a
             className="text-me-primary-500 underline hover:underline hover:text-me-primary-600 inline-flex items-center gap-2"
-            href={`/editor/${id}/exhibition`}
+            href={exhibitionHref}
+            onClick={async (e) => {
+              e.preventDefault();
+              try {
+                await onOpenExhibition?.();
+              } finally {
+                router.push(exhibitionHref);
+              }
+            }}
           >
             Open in Exhibition Editor
           </a>

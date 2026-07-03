@@ -353,6 +353,11 @@ export default function BrowserEditor({
     }
   }, [project, vault]);
 
+  const saveExhibitionPreset = useCallback(async () => {
+    if (!project) return;
+    await saveResource.mutateAsync({ ...project.resource, preset: "exhibition" });
+  }, [project, saveResource]);
+
   useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
 
   useEffect(() => {
@@ -457,7 +462,11 @@ export default function BrowserEditor({
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt id={id} alreadyExhibition={isExhibitionPreset} />
+      <MaybeExhibitionPrompt
+        id={id}
+        alreadyExhibition={isExhibitionPreset}
+        onOpenExhibition={saveExhibitionPreset}
+      />
     </>
   );
 
