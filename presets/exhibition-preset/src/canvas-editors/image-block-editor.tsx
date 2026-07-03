@@ -5,8 +5,7 @@ import { Button } from "react-aria-components";
 import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
-import { exhibitionPreviewPresetOptions, useExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
-import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
+import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
 
 export const imageBlockEditor: CanvasEditorDefinition = {
   id: "image-block-editor",
@@ -39,7 +38,7 @@ export const imageBlockEditor: CanvasEditorDefinition = {
 
 export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingStrategy }) {
   const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
-  const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
+  const previewPreset = useConfiguredExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
   if (!canvas) {
     return null;
@@ -51,7 +50,6 @@ export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingS
         isPreview={!!isPreview}
         previewPreset={previewPreset}
         onModeChange={setIsPreview}
-        onPreviewPresetChange={setPreviewPreset}
       />
     </CanvasContext>
   );
@@ -61,12 +59,10 @@ function ImageBlockEditorContent({
   isPreview,
   previewPreset,
   onModeChange,
-  onPreviewPresetChange,
 }: {
   isPreview: boolean;
-  previewPreset: PresetUrlSearchParamsPreset;
+  previewPreset: ReturnType<typeof useConfiguredExhibitionPreviewPreset>;
   onModeChange: (isPreview: boolean) => void;
-  onPreviewPresetChange: (preset: PresetUrlSearchParamsPreset) => void;
 }) {
   const canvas = useCanvas();
 
@@ -77,19 +73,6 @@ function ImageBlockEditorContent({
           <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas?.label}</LocaleString>
         </div>
         <div className="flex items-center gap-2">
-          {isPreview ? (
-            <select
-              className="rounded-md border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm"
-              value={previewPreset}
-              onChange={(event) => onPreviewPresetChange(event.target.value as PresetUrlSearchParamsPreset)}
-            >
-              {exhibitionPreviewPresetOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          ) : null}
           <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
             <ModeButton selected={!isPreview} onPress={() => onModeChange(false)}>
               Edit

@@ -1,23 +1,9 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
-import {
-  type LayoutPanel,
-  useLayoutActions,
-  useLayoutState,
-} from "@manifest-editor/shell";
+import { type LayoutPanel } from "@manifest-editor/shell";
 import { type ChangeEvent, type ReactNode, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { useManifest, useVault } from "react-iiif-vault";
-import {
-  defaultExhibitionRemotePreviewPreset,
-  exhibitionRemotePreviewPanel,
-  type ExhibitionRemotePreviewPanelState,
-} from "../center-panels/ExhibitionRemotePreviewPanel";
-import {
-  exhibitionPreviewPresetOptions,
-  useExhibitionPreviewPreset,
-} from "../helpers/exhibition-preview-state";
-import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
 import type {
   ExhibitionThemeConfig,
   ExhibitionThemePreset,
@@ -277,20 +263,8 @@ function ExhibitionThemePanel() {
   const manifest = useManifest();
   const vault = useVault();
   const [themeMode, setThemeMode] = useState<ThemePanelMode>("simple");
-  const { centerPanel } = useLayoutState();
-  const { centerPanel: centerPanelActions } = useLayoutActions();
-  const [storedPreviewPreset, setStoredPreviewPreset] =
-    useExhibitionPreviewPreset();
   const serviceList = ((manifest as any)?.service || []) as Array<any>;
   const servicesList = ((manifest as any)?.services || []) as Array<any>;
-  const previewPanelState =
-    centerPanel.current === exhibitionRemotePreviewPanel.id
-      ? (centerPanel.state as ExhibitionRemotePreviewPanelState | null)
-      : null;
-  const previewPreset =
-    previewPanelState?.preset ||
-    storedPreviewPreset ||
-    defaultExhibitionRemotePreviewPreset;
 
   const serviceDetails = useMemo<ServiceDetails>(() => {
     const directDetails = getThemeServiceDetails(serviceList);
@@ -396,29 +370,9 @@ function ExhibitionThemePanel() {
     upsertTheme(getThemePreset(resolvedTheme.preset));
   };
 
-  const setPreviewPreset = (preset: PresetUrlSearchParamsPreset) => {
-    setStoredPreviewPreset(preset);
-    centerPanelActions.open({
-      id: exhibitionRemotePreviewPanel.id,
-      state: { preset } satisfies ExhibitionRemotePreviewPanelState,
-    });
-  };
-
   return (
     <Sidebar>
       <SidebarContent padding>
-        <ThemeSection
-          title="Preview"
-          description="Switch the live preview route without changing the saved manifest theme."
-        >
-          <ThemeInlineSelect<PresetUrlSearchParamsPreset>
-            label="Preview preset"
-            value={previewPreset}
-            onChange={setPreviewPreset}
-            options={exhibitionPreviewPresetOptions}
-          />
-        </ThemeSection>
-
         <ThemeSection
           title="Manifest Theme"
           description="Store exhibition styling and viewer defaults in a custom IIIF service on the Manifest."

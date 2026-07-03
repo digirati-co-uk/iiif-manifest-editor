@@ -3,6 +3,7 @@ import {
   useLayoutActions,
   useLayoutState,
   useLocalStorage,
+  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import type { PresetUrlSearchParamsPreset } from "./exhibition-preview-url-helper";
 
@@ -49,4 +50,18 @@ export function useExhibitionPreviewPreset() {
   );
 
   return [previewPreset, setPreviewPreset] as const;
+}
+
+export function useConfiguredExhibitionPreviewPreset() {
+  const { selectedTemplate } = usePresetTemplateSelection();
+
+  switch (selectedTemplate?.type) {
+    case "slideshow":
+      return "slideshow" satisfies PresetUrlSearchParamsPreset;
+    case "scroll":
+      return "scroll" satisfies PresetUrlSearchParamsPreset;
+    case "fullpage":
+    default:
+      return defaultExhibitionPreviewPreset;
+  }
 }
