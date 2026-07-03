@@ -1,6 +1,6 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { useEffect, useMemo, useState } from "react";
-import { useApp } from "../AppContext/AppContext";
+import { useApp, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
 
@@ -66,6 +66,7 @@ export function PresetOnboarding() {
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
   const templates = app.preset?.templates || [];
+  const templateSelection = usePresetTemplateSelection();
   const dismissalKey = useMemo(
     () => (onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null),
     [onboarding, resource],
@@ -87,7 +88,7 @@ export function PresetOnboarding() {
     return () => window.removeEventListener(reopenEvent, reopen);
   }, [dismissalKey, onboarding]);
 
-  if (!onboarding || !dismissalKey || !open) return null;
+  if (!onboarding || !dismissalKey) return null;
 
   const dismiss = () => {
     setDismissed(dismissalKey);
@@ -97,6 +98,7 @@ export function PresetOnboarding() {
   return (
     <Modal
       title={onboarding.title}
+      open={open}
       onClose={dismiss}
       actions={
         <>
@@ -109,7 +111,7 @@ export function PresetOnboarding() {
     >
       <div className="flex flex-col gap-4 p-6">
         {onboarding.summary ? <p className="text-sm text-gray-600">{onboarding.summary}</p> : null}
-        {onboarding.renderBody({ templates, dismiss })}
+        {onboarding.renderBody({ templates, dismiss, ...templateSelection })}
       </div>
     </Modal>
   );

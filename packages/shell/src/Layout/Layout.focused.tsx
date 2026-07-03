@@ -397,12 +397,12 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
   };
 
   const renderModal = () => {
-    if (!modalToRender || state.modal.open === false) {
+    if (!modalToRender) {
       return null;
     }
 
     return (
-      <Modal title={modalToRender.label} onClose={() => actions.modal.close()}>
+      <Modal title={modalToRender.label} open={state.modal.open} onClose={() => actions.modal.close()}>
         {modalToRender.modal ? (
           <div className="h-[70vh] min-h-[60vh] max-h-full flex w-full">
             <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />

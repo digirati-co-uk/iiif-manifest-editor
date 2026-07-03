@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { MappedApp, PresetOnboardingDefinition, PresetTemplateDefinition } from "../AppContext/AppContext";
+import { getSelectedPresetTemplate } from "../AppContext/AppContext";
 import { extendApp, mapApp } from "../helpers";
 import { getPresetOnboardingDismissalKey } from "../PresetOnboarding/PresetOnboarding";
 
@@ -92,5 +93,17 @@ describe("preset onboarding dismissal keys", () => {
         type: "Manifest",
       }),
     ).toBe("preset-onboarding/intro/Manifest/https://example.org/manifest");
+  });
+});
+
+describe("preset template selection", () => {
+  const templates = [template("one"), template("two")];
+
+  test("resolves selected template id", () => {
+    expect(getSelectedPresetTemplate(templates, "two")?.id).toBe("two");
+  });
+
+  test("returns null for missing selected template id", () => {
+    expect(getSelectedPresetTemplate(templates, "missing")).toBeNull();
   });
 });

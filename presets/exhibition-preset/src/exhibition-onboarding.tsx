@@ -80,33 +80,54 @@ export const exhibitionPresetConfig: PresetDefinition = {
     id: "exhibition-template-selection",
     mode: "per-resource",
     title: "Choose exhibition format",
-    summary: "Pick a starting point for this exhibition. This placeholder does not save the choice yet.",
+    summary: "Pick a starting point for this exhibition.",
     openLabel: "Exhibition formats",
     dismissLabel: "Skip for now",
     primaryLabel: "Start building",
     renderPreviewButton: (props) => <ExhibitionPresetPreviewButton {...props} />,
-    renderBody: ({ templates }) => (
+    renderBody: ({ templates, selectedTemplateId, setSelectedTemplateId }) => (
       <div className="grid gap-3 sm:grid-cols-3">
-        {templates.map((template) => (
-          <article key={template.id} className="overflow-hidden rounded border border-gray-200 bg-white">
-            <img src={template.thumbnailUrl} alt="" className="aspect-video w-full bg-gray-100 object-cover" />
-            <div className="flex flex-col gap-2 p-3">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">{template.label}</h3>
-                <p className="mt-1 text-xs uppercase tracking-normal text-gray-500">{template.type}</p>
+        {templates.map((template) => {
+          const selected = selectedTemplateId === template.id;
+          return (
+            <article
+              key={template.id}
+              className={[
+                "cursor-pointer overflow-hidden rounded border bg-white outline-none",
+                selected ? "border-me-primary-500 ring-2 ring-me-primary-100" : "border-gray-200",
+              ].join(" ")}
+              role="button"
+              tabIndex={0}
+              aria-pressed={selected}
+              onClick={() => setSelectedTemplateId(template.id)}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedTemplateId(template.id);
+                }
+              }}
+            >
+              <img src={template.thumbnailUrl} alt="" className="aspect-video w-full bg-gray-100 object-cover" />
+              <div className="flex flex-col gap-2 p-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900">{template.label}</h3>
+                  <p className="mt-1 text-xs uppercase tracking-normal text-gray-500">{template.type}</p>
+                </div>
+                <p className="text-sm text-gray-600">{template.summary}</p>
+                <a
+                  href={template.previewUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-medium text-me-700 hover:text-me-900"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  Preview
+                </a>
               </div>
-              <p className="text-sm text-gray-600">{template.summary}</p>
-              <a
-                href={template.previewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm font-medium text-me-700 hover:text-me-900"
-              >
-                Preview
-              </a>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     ),
   },

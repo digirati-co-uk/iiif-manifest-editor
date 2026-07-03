@@ -62,6 +62,9 @@ export type PresetTemplateDefinition = {
 
 export type PresetOnboardingRenderContext = {
   templates: PresetTemplateDefinition[];
+  selectedTemplateId: string | null;
+  selectedTemplate: PresetTemplateDefinition | null;
+  setSelectedTemplateId: (id: string | null) => void;
   dismiss: () => void;
 };
 
@@ -138,6 +141,30 @@ export function useApp() {
 
 export function useAppState<S = any>() {
   return useContext(AppStateReactContext);
+}
+
+export function getSelectedPresetTemplate(
+  templates: PresetTemplateDefinition[],
+  selectedTemplateId?: string | null,
+) {
+  return templates.find((template) => template.id === selectedTemplateId) || null;
+}
+
+export function usePresetTemplateSelection() {
+  const app = useApp();
+  const { state, setState } = useAppState<{ presetTemplateId?: string | null }>();
+  const templates = app.preset?.templates || [];
+  const selectedTemplateId = typeof state?.presetTemplateId === "string" ? state.presetTemplateId : null;
+  const selectedTemplate = useMemo(
+    () => getSelectedPresetTemplate(templates, selectedTemplateId),
+    [selectedTemplateId, templates],
+  );
+  const setSelectedTemplateId = useCallback(
+    (presetTemplateId: string | null) => setState({ presetTemplateId }),
+    [setState],
+  );
+
+  return { selectedTemplateId, selectedTemplate, setSelectedTemplateId };
 }
 
 function AppStateProvider(props: {

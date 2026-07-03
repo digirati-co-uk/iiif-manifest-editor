@@ -26,6 +26,7 @@ import {
   simpleLayoutColours,
   textualWidthOptions,
 } from "./SlideBehaviours";
+import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 
@@ -85,6 +86,8 @@ export function InfoBoxPanel() {
         </div>
 
         <div className="mt-8 flex flex-col gap-7">
+          <SlideshowDurationField />
+
           {/* Text content */}
           <ResourceEditingProvider resource={canvas}>
             {mode === "simple" ? (

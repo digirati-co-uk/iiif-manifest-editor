@@ -22,6 +22,7 @@ import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { InfoBoxPanel } from "./InfoBoxPanel";
 import { SlideBehavioursContent } from "./SlideBehaviours";
 import { SlideshowContentPanel } from "./SlideshowContentPanel";
+import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
@@ -209,10 +210,13 @@ function ExhibitionWorkbenchRightPanel({
 
         <div className="mt-8 px-4">
           {selectedTab === "layout" ? (
-            <SlideBehavioursContent
-              mode={mode}
-              layoutContext={preset === "slideshow" ? "slideshow" : "default"}
-            />
+            <>
+              <SlideshowDurationField />
+              <SlideBehavioursContent
+                mode={mode}
+                layoutContext={preset === "slideshow" ? "slideshow" : "default"}
+              />
+            </>
           ) : null}
           {selectedTab === "content" ? <SlideshowContentPanel /> : null}
           {selectedTab === "summary" ? (
