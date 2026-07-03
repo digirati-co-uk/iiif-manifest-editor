@@ -16,7 +16,7 @@ import {
 } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import type { SVGProps } from "react";
-import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { useVault } from "react-iiif-vault";
 
 export const exhibitionTemplates: PresetTemplateDefinition[] = [
@@ -165,11 +165,11 @@ function ExhibitionPresetPreviewButton({
         </div>
       ) : null}
       <ButtonContainer>
-        <ButtonMain onClick={openThemePanel}>
+        <ButtonMain as={Button} onPress={openThemePanel}>
           Preview
         </ButtonMain>
         <MenuTrigger>
-          <ButtonChange $open={false} aria-label="Choose preview">
+          <ButtonChange as={Button} $open={false} aria-label="Choose preview">
             <DownIcon />
           </ButtonChange>
           <Popover placement="bottom right" className="z-50">
@@ -180,7 +180,7 @@ function ExhibitionPresetPreviewButton({
               style={{ position: "relative", top: "auto", left: "auto", marginTop: 0, width: "15em" }}
             >
               <MenuItem
-                className="flex cursor-pointer items-center outline-none hover:bg-gray-50 focus:bg-gray-50"
+                className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                 onAction={() => openPreview(current.id)}
               >
                 <MenuItemStatus $status={active.includes(current.id) ? "configured" : "available"} />
@@ -188,7 +188,7 @@ function ExhibitionPresetPreviewButton({
               </MenuItem>
               {theseus && theseus.id !== current.id ? (
                 <MenuItem
-                  className="flex cursor-pointer items-center outline-none hover:bg-gray-50 focus:bg-gray-50"
+                  className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                   onAction={() => openPreview(theseus.id)}
                 >
                   <MenuItemStatus $status={active.includes(theseus.id) ? "configured" : "available"} />
@@ -196,10 +196,10 @@ function ExhibitionPresetPreviewButton({
                 </MenuItem>
               ) : null}
               <MenuItem
-                className="flex cursor-pointer items-center border-t border-gray-100 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                className="flex cursor-pointer items-center border-t border-gray-100 p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                 onAction={openOnboarding}
               >
-                <span className="mx-2 flex h-4 w-4 items-center justify-center">
+                <span className="mx-2 flex h-4 w-6 shrink-0 items-center justify-center">
                   <TablerSwitch3 className="h-4 w-4 text-gray-500" />
                 </span>
                 <MenuItemLabel>Change preset</MenuItemLabel>
