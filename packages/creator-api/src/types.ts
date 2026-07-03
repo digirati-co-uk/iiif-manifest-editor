@@ -91,6 +91,20 @@ export interface CreatorConfiguration {
   fields: CreatorConfigField[];
 }
 
+export interface CreatorResourceProbeHelpers {
+  json(url: string): Promise<any>;
+  text(url: string): Promise<string>;
+  head(url: string): Promise<Response>;
+  contentType(url: string): Promise<string>;
+}
+
+export type CreatorResourceProbeResult =
+  | boolean
+  | {
+      initialData?: Record<string, any>;
+      label?: string;
+    };
+
 export type AllAvailableParentTypes = keyof typeof resources.supported;
 
 type ManifestFields = typeof resources.supported.Manifest.all;
@@ -141,6 +155,11 @@ export interface SpecificCreatorDefinition<
 
   create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
+  supportsResource?: (
+    value: string,
+    helpers: CreatorResourceProbeHelpers,
+    ctx: { vault: Vault; resource: CreatableResource },
+  ) => CreatorResourceProbeResult | Promise<CreatorResourceProbeResult>;
 
   render?: (ctx: CreatorContext<Payload>) => ReactNode;
   renderCanvas?: (ctx: CreatorContext<Payload>) => ReactNode | null;

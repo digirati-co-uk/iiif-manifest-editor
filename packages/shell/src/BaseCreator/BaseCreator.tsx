@@ -14,10 +14,12 @@ import {
   type CreatableResource,
   type CreatorDefinition,
   type CreatorOptions,
+  type CreatorResourceProbeHelpers,
+  type CreatorResourceProbeResult,
   matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { type FormEvent, memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useConfig } from "../ConfigContext/ConfigContext";
@@ -36,6 +38,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   creator: CreatorDefinition;
   onCreate?: () => void;
   skipEditingOnCreate?: boolean;
+  initialData?: Record<string, any>;
 }) {
   const vault = useVault();
   const { edit, modal } = useLayoutActions();
@@ -60,7 +63,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
         }
       : undefined,
     target: props.resource.target,
-    initialData: { ...initialData, ...(props.resource.initialData || {}) },
+    initialData: { ...initialData, ...(props.resource.initialData || {}), ...(props.initialData || {}) },
   };
 
   const runCreate = (payload: any) => {
@@ -166,6 +169,11 @@ export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
   const vault = useVault();
   const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
+  const [currentInitialData, setCurrentInitialData] = useState<Record<string, any> | undefined>();
+  const [resourceValue, setResourceValue] = useState("");
+  const [isProbing, setIsProbing] = useState(false);
+  const [probeError, setProbeError] = useState("");
+  const [probeMatches, setProbeMatches] = useState<ProbeMatch[] | null>(null);
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -174,9 +182,14 @@ export function BaseCreator(props: BaseCreatorProps) {
       }),
     [props.resource, app.layout.creators, vault],
   );
-  if (supported.length === 1 && !currentId) {
-    setCurrentId(supported[0]!.id);
-  }
+
+  const canProbe = supported.some((creator) => creator.supportsResource);
+
+  useEffect(() => {
+    if (supported.length === 1 && !currentId && !canProbe) {
+      setCurrentId(supported[0]!.id);
+    }
+  }, [canProbe, currentId, supported]);
 
   const current = supported.find((t) => t.id === currentId);
 
@@ -190,6 +203,55 @@ export function BaseCreator(props: BaseCreatorProps) {
     return <EmptyState>Not currently supported</EmptyState>;
   }
 
+  const selectCreator = (creator: CreatorDefinition, initialData?: Record<string, any>) => {
+    setCurrentInitialData(initialData || getDefaultProbeInitialData(resourceValue));
+    setCurrentId(creator.id);
+  };
+
+  const runResourceProbe = async (e: FormEvent) => {
+    e.preventDefault();
+    const value = resourceValue.trim();
+    if (!value || isProbing) return;
+
+    setIsProbing(true);
+    setProbeError("");
+    setProbeMatches(null);
+
+    const helpers = createProbeHelpers();
+    const results = await Promise.all(
+      supported.map(async (creator) => {
+        if (!creator.supportsResource) return null;
+        try {
+          const result = await creator.supportsResource(value, helpers, { vault, resource: props.resource });
+          if (!result) return null;
+          return {
+            creator,
+            initialData: normaliseProbeResult(value, result).initialData,
+          };
+        } catch (err: any) {
+          return { creator, error: err?.message || "Could not check this link" };
+        }
+      }),
+    );
+    const matches = results.filter((result): result is ProbeMatch => !!result && !("error" in result));
+    const errors = results.filter((result): result is ProbeError => !!result && "error" in result);
+
+    setIsProbing(false);
+
+    if (matches.length === 1) {
+      selectCreator(matches[0]!.creator, matches[0]!.initialData);
+      return;
+    }
+
+    if (matches.length > 1) {
+      setProbeMatches(matches);
+      setProbeError("Multiple creators can use this link. Choose one below.");
+      return;
+    }
+
+    setProbeError(errors[0]?.error || "No creator recognised this link. Choose one below.");
+  };
+
   const backButton = (
     <ModalBackSlot>
       <IconButton
@@ -197,7 +259,10 @@ export function BaseCreator(props: BaseCreatorProps) {
         label="Back to Add content options"
         className="group"
         placement="right"
-        onPress={() => setCurrentId("")}
+        onPress={() => {
+          setCurrentId("");
+          setCurrentInitialData(undefined);
+        }}
       >
         <GridIcon className="text-2xl opacity-50 group-hover:opacity-70" />
       </IconButton>
@@ -211,7 +276,7 @@ export function BaseCreator(props: BaseCreatorProps) {
       return (
         <>
           {backButton}
-          <RenderCreator creator={current} resource={props.resource} />
+          <RenderCreator creator={current} resource={props.resource} initialData={currentInitialData} />
         </>
       );
     }
@@ -220,22 +285,114 @@ export function BaseCreator(props: BaseCreatorProps) {
       <div>
         {backButton}
         <div className={"p-2 py-6"}>
-          <RenderCreator creator={current} resource={props.resource} />
+          <RenderCreator creator={current} resource={props.resource} initialData={currentInitialData} />
         </div>
       </div>
     );
   }
 
+  const gridItems = probeMatches?.length ? probeMatches.map((match) => match.creator) : supported;
+  const initialDataByCreator = new Map(probeMatches?.map((match) => [match.creator.id, match.initialData]));
+
   return (
-    <CreatorGrid
-      label="Select a type"
-      items={supported.map((item) => ({
-        id: item.id,
-        title: item.label,
-        description: item.summary || "",
-        icon: item.icon,
-        onClick: () => setCurrentId(item.id),
-      }))}
-    />
+    <>
+      {canProbe ? (
+        <form className="p-4 pb-0" onSubmit={runResourceProbe}>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="creator-resource-link">
+            Paste a link
+          </label>
+          <div className="mt-1 flex gap-2">
+            <input
+              id="creator-resource-link"
+              className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+              value={resourceValue}
+              onChange={(e) => {
+                setResourceValue(e.currentTarget.value);
+                setProbeError("");
+                setProbeMatches(null);
+              }}
+              placeholder="https://example.org/resource"
+              type="url"
+            />
+            <ActionButton primary type="submit" isDisabled={!resourceValue.trim() || isProbing}>
+              {isProbing ? "Checking" : "Use link"}
+            </ActionButton>
+          </div>
+          {probeError ? (
+            <div className="mt-2 text-sm text-gray-600" role="status">
+              {probeError}
+            </div>
+          ) : null}
+        </form>
+      ) : null}
+      <CreatorGrid
+        label="Select a type"
+        items={gridItems.map((item) => ({
+          id: item.id,
+          title: item.label,
+          description: item.summary || "",
+          icon: item.icon,
+          onClick: () => selectCreator(item, initialDataByCreator.get(item.id)),
+        }))}
+      />
+    </>
   );
+}
+
+type ProbeMatch = { creator: CreatorDefinition; initialData?: Record<string, any> };
+type ProbeError = { creator: CreatorDefinition; error: string };
+
+function normaliseProbeResult(value: string, result: CreatorResourceProbeResult): Exclude<CreatorResourceProbeResult, boolean> {
+  return typeof result === "object" ? result : { initialData: getDefaultProbeInitialData(value) };
+}
+
+function getDefaultProbeInitialData(value: string) {
+  const trimmed = value.trim();
+  return trimmed ? { url: trimmed, youtubeUrl: trimmed } : undefined;
+}
+
+function createProbeHelpers(): CreatorResourceProbeHelpers {
+  const textCache = new Map<string, Promise<string>>();
+  const jsonCache = new Map<string, Promise<any>>();
+  const headCache = new Map<string, Promise<Response>>();
+
+  const text = (url: string) => {
+    if (!textCache.has(url)) {
+      textCache.set(
+        url,
+        fetch(url).then((response) => {
+          if (!response.ok) throw new Error(`Could not load ${url}`);
+          return response.text();
+        }),
+      );
+    }
+    return textCache.get(url)!;
+  };
+
+  const head = (url: string) => {
+    if (!headCache.has(url)) {
+      headCache.set(
+        url,
+        fetch(url, { method: "HEAD" }).then((response) => {
+          if (!response.ok) throw new Error(`Could not check ${url}`);
+          return response;
+        }),
+      );
+    }
+    return headCache.get(url)!;
+  };
+
+  return {
+    text,
+    head,
+    json(url) {
+      if (!jsonCache.has(url)) {
+        jsonCache.set(url, text(url).then((body) => JSON.parse(body)));
+      }
+      return jsonCache.get(url)!;
+    },
+    async contentType(url) {
+      return (await head(url)).headers.get("content-type") || "";
+    },
+  };
 }

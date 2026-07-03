@@ -24,6 +24,7 @@ export const imageServiceSlideCreator = defineCreator({
   summary: "IIIF Image service",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },

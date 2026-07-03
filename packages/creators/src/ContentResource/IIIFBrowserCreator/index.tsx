@@ -1,5 +1,6 @@
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
+import { getIIIFType, getJsonResource } from "../../resource-probes";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
@@ -36,6 +37,14 @@ export const iiifBrowserCreator = defineCreator({
   },
   hiddenModal: true,
   tags: ["image", "image-service"],
+  async supportsResource(value, helpers) {
+    const resource = await getJsonResource(value, helpers);
+    const type = getIIIFType(resource);
+    if (type === "Manifest" || type === "Collection") {
+      return { initialData: { url: value } };
+    }
+    return false;
+  },
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: ["Annotation", "Canvas"],

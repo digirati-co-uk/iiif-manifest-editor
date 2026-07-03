@@ -4,6 +4,7 @@ import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useMemo } from "react";
 
 export interface ManifestBrowserCreatorInitialData {
+  url?: string;
   iiifBrowserOptions?: Partial<IIIFBrowserProps>;
 }
 
@@ -61,7 +62,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
-      homeLink: `${window.location.origin}/collection.json`,
+      homeLink: initialData.url || `${window.location.origin}/collection.json`,
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
   }, [initialData.iiifBrowserOptions?.ui]);

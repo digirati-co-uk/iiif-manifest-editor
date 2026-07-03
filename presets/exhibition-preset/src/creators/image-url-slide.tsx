@@ -23,6 +23,7 @@ export const imageUrlSlideCreator = defineCreator({
   summary: "Image from URL",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },

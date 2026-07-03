@@ -26,6 +26,7 @@ export const imageBrowserSlideCreator = defineCreator({
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: [],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],

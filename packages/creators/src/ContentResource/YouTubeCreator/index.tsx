@@ -1,6 +1,6 @@
 import { YouTubeIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { YouTubeForm, createYoutubeBody } from "./create-youtube-body";
+import { YouTubeForm, createYoutubeBody, getYouTubeId } from "./create-youtube-body";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -19,8 +19,12 @@ export const youTubeBodyCreator = defineCreator({
   resourceType: "ContentResource",
   additionalTypes: ["Canvas", "Annotation"],
   resourceFields: ["id", "type", "service"],
+  supportsResource(value) {
+    return getYouTubeId(value) ? { initialData: { youtubeUrl: value } } : false;
+  },
   render: (ctx) => <YouTubeForm {...ctx} />,
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
     parentFieldMap: {
