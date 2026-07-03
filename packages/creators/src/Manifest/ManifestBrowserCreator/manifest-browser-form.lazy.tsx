@@ -65,7 +65,23 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       homeLink: initialData.url || `${window.location.origin}/collection.json`,
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
-  }, [initialData.iiifBrowserOptions?.ui]);
+  }, [initialData]);
+  const historyOptions = useMemo(() => {
+    const history = initialData.iiifBrowserOptions?.history || {};
+    if (!initialData.url) return history;
+    return {
+      ...history,
+      restoreFromLocalStorage: false,
+      saveToLocalStorage: false,
+      initialHistory: [
+        {
+          url: initialData.url,
+          resource: null,
+          route: `/loading?id=${encodeURIComponent(initialData.url)}`,
+        },
+      ],
+    } as IIIFBrowserProps["history"];
+  }, [initialData]);
 
   return (
     <PreviewVaultBoundary>
@@ -76,7 +92,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
         output={output}
         navigation={navigationOptions}
         customPages={(initialData.iiifBrowserOptions?.customPages || {})}
-        history={initialData.iiifBrowserOptions?.history || {}}
+        history={historyOptions}
       />
     </PreviewVaultBoundary>
   );

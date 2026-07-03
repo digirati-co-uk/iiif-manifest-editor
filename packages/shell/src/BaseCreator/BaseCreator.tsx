@@ -174,6 +174,7 @@ export function BaseCreator(props: BaseCreatorProps) {
   const [isProbing, setIsProbing] = useState(false);
   const [probeError, setProbeError] = useState("");
   const [probeMatches, setProbeMatches] = useState<ProbeMatch[] | null>(null);
+  const resourceInputRef = useRef<HTMLInputElement>(null);
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
@@ -190,6 +191,12 @@ export function BaseCreator(props: BaseCreatorProps) {
       setCurrentId(supported[0]!.id);
     }
   }, [canProbe, currentId, supported]);
+
+  useEffect(() => {
+    if (canProbe && !currentId) {
+      resourceInputRef.current?.focus();
+    }
+  }, [canProbe, currentId]);
 
   const current = supported.find((t) => t.id === currentId);
 
@@ -303,6 +310,7 @@ export function BaseCreator(props: BaseCreatorProps) {
           </label>
           <div className="mt-1 flex gap-2">
             <input
+              ref={resourceInputRef}
               id="creator-resource-link"
               className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
               value={resourceValue}

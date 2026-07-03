@@ -1,4 +1,5 @@
 import type { CreatorResourceProbeHelpers } from "@manifest-editor/creator-api";
+import { isSupportedDigitalCollectionPage } from "iiif-browser/digital-collections";
 
 export function isHttpUrl(value: string) {
   try {
@@ -32,6 +33,10 @@ export function isImageService(resource: any) {
     type === "ImageService" ||
     (typeof type === "string" && type.startsWith("ImageService"))
   );
+}
+
+export async function isDigitalCollectionPage(value: string) {
+  return isHttpUrl(value) && (await isSupportedDigitalCollectionPage(value));
 }
 
 export async function getContentType(value: string, helpers: CreatorResourceProbeHelpers) {

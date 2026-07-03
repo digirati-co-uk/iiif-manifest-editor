@@ -1,6 +1,6 @@
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { getIIIFType, getJsonResource } from "../../resource-probes";
+import { getIIIFType, getJsonResource, isDigitalCollectionPage } from "../../resource-probes";
 import { createFromManifestBrowserOutput } from "./manifest-browser-creator";
 import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
 
@@ -27,6 +27,9 @@ export const manifestBrowserCreator = defineCreator({
     const resource = await getJsonResource(value, helpers);
     const type = getIIIFType(resource);
     if (type === "Manifest" || type === "Collection") {
+      return { initialData: { url: value } };
+    }
+    if (await isDigitalCollectionPage(value)) {
       return { initialData: { url: value } };
     }
     return false;
