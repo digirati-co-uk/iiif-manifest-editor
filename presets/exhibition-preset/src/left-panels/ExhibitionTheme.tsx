@@ -454,6 +454,9 @@ function ExhibitionThemePanel() {
               { label: "Delft", value: "delft" },
               { label: "Gallery", value: "gallery" },
               { label: "Minimal", value: "minimal" },
+              { label: "Leeds full page", value: "leeds-full-page" },
+              { label: "Leeds scrolling", value: "leeds-scroll" },
+              { label: "Leeds slideshow", value: "leeds-slideshow" },
             ]}
           />
         </ThemeSection>
@@ -513,7 +516,7 @@ function ExhibitionThemePanel() {
               />
             </ThemeSection>
 
-            <ThemeSection title="Delft Colors">
+            <ThemeSection title="Theme colours">
               <ThemeColorField
                 label="Background"
                 value={resolvedTheme.delft.tokens.backgroundPrimary}
