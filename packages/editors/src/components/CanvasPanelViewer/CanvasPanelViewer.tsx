@@ -233,6 +233,7 @@ export function CanvasPanelViewer({
   // }, [annotation?.id]);
 
   const canvasId = canvas?.id;
+  const canvasBackgroundColor = getCanvasBackgroundColor((canvas as any)?.backgroundColor);
 
   const homePosition = useMemo(() => {
     return { x: 0, y: 0, width: canvas?.width ?? 0, height: canvas?.height ?? 0 };
@@ -297,10 +298,9 @@ export function CanvasPanelViewer({
         min-width: 0;
         min-height: 0;
         --atlas-container-flex: 1 1 0px;
-        --atlas-background:  #E5E7F0;
       }
     `}</style>
-          <S.ViewerContainer>
+          <S.ViewerContainer style={{ "--atlas-background": canvasBackgroundColor } as any}>
             {(createMode && createAnnotation && !editMode) ||
             ((currentlyEditingAnnotation || annotation) && editMode) ? (
               <AtlasBanner controlsId="atlas-controls">Draw a box or select a shape</AtlasBanner>
@@ -322,7 +322,7 @@ export function CanvasPanelViewer({
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
                     <InternalRenderCanvas
-                      backgroundStyle={{ background: "#fff" }}
+                      backgroundStyle={{ background: canvasBackgroundColor }}
                       alwaysShowBackground
                       onClickPaintingAnnotation={annotation ? () => void 0 : onClickPaintingAnnotation}
                     >
@@ -419,6 +419,12 @@ export function CanvasPanelViewer({
       </CustomStrategyProvider>
     </ErrorBoundary>
   );
+}
+
+function getCanvasBackgroundColor(value: unknown) {
+  return typeof value === "string" && /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(value.trim())
+    ? value.trim()
+    : "#fff";
 }
 
 function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {

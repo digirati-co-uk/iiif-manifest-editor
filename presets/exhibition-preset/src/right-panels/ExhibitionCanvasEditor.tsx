@@ -1,5 +1,5 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
+import { Input, InputContainer, InputLabel, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
@@ -55,6 +55,7 @@ export function ExhibitionCanvasAdvancedContent() {
   const { structural, technical } = useEditor();
   const { items } = structural;
   const behavior = technical.behavior.get() || [];
+  const backgroundColor = technical.backgroundColor.get() || "#ffffff";
   const controls = useExhibitionTemplateControls();
   const pages = items.get();
   const page = pages[0];
@@ -84,6 +85,20 @@ export function ExhibitionCanvasAdvancedContent() {
       {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
       <ReadonlyExhibitionSummary canvas={canvas} />
+
+      <InputContainer $wide id={technical.backgroundColor.containerId()}>
+        <InputLabel htmlFor={technical.backgroundColor.focusId()}>Canvas background colour</InputLabel>
+        <div className="flex min-w-0 items-center gap-2">
+          <input
+            id={technical.backgroundColor.focusId()}
+            className="h-9 w-12 shrink-0 cursor-pointer rounded border border-[#dcd5ce] bg-white p-1"
+            type="color"
+            value={toHexColor(backgroundColor)}
+            onChange={(event) => technical.backgroundColor.set(event.target.value)}
+          />
+          <Input value={backgroundColor} onChange={(event) => technical.backgroundColor.set(event.target.value)} />
+        </div>
+      </InputContainer>
 
       <InputContainer $wide>
         <div>
@@ -255,4 +270,14 @@ function getLanguageMapText(value: any): string {
   }
 
   return "";
+}
+
+function toHexColor(value: string) {
+  const trimmed = value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
+  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+    const [r, g, b] = trimmed.slice(1);
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return "#ffffff";
 }
