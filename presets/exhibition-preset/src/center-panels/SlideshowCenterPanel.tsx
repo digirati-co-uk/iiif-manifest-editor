@@ -553,7 +553,7 @@ function SelectedSlidePreview() {
     setShowTourSteps(true);
     stopRepositioning();
     stopTextRepositioning();
-    setTargetDrawingTool("box");
+    setTargetDrawingTool(getTourStepTargetDrawingTool(selectedTourStep));
     setTargetDrawingMode({
       type: "edit",
       annotationId: selectedTourStep.id,
@@ -1577,6 +1577,24 @@ function makeSvgSelectorValue(shape: Exclude<TourStepShape, { type: "box" }>) {
   return `<svg xmlns="http://www.w3.org/2000/svg"><polygon points="${shape.points
     .map((point) => `${Math.round(point.x)},${Math.round(point.y)}`)
     .join(" ")}" /></svg>`;
+}
+
+function getTourStepTargetDrawingTool(
+  annotation: any,
+): "box" | "circle" | "line" | "polygon" {
+  const selector = Array.isArray(annotation?.target?.selector)
+    ? annotation.target.selector.find(
+        (item: any) => item?.type === "SvgSelector",
+      )
+    : annotation?.target?.selector;
+
+  if (selector?.type !== "SvgSelector") return "box";
+  if (Array.isArray(selector.points) && selector.svgShape !== "polyline") {
+    return "polygon";
+  }
+  return typeof selector.value === "string" && /<polygon\b/i.test(selector.value)
+    ? "polygon"
+    : "box";
 }
 
 function clamp(value: number, min: number, max: number) {
