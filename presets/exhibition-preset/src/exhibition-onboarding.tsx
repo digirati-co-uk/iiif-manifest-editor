@@ -13,6 +13,7 @@ import {
   useLayoutActions,
   useOpenPresetOnboarding,
   usePreviewContext,
+  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import type { SVGProps } from "react";
@@ -133,6 +134,12 @@ export const exhibitionPresetConfig: PresetDefinition = {
   },
 };
 
+function getTemplatePreviewUrl(previewUrl: string, manifestId: string) {
+  const url = new URL(previewUrl);
+  url.searchParams.set("manifest", manifestId);
+  return url.toString();
+}
+
 function ExhibitionPresetPreviewButton({
   downloadEnabled,
   fileName,
@@ -144,33 +151,29 @@ function ExhibitionPresetPreviewButton({
   showOnboardingPreviewHint?: boolean;
   onOnboardingPreviewHintClose?: () => void;
 }) {
-  const { active, actions, configs } = usePreviewContext();
+  const { actions } = usePreviewContext();
   const vault = useVault();
   const config = useConfig();
   const resource = useAppResource();
   const layoutActions = useLayoutActions();
   const openOnboarding = useOpenPresetOnboarding();
-  const previewConfigs = configs.filter((item) => item.type === "external-manifest-preview");
-  const current =
-    previewConfigs.find((item) => item.id === config.defaultPreview) ||
-    previewConfigs.find((item) => !item.id.includes("theseus") && item.id !== "raw-manifest") ||
-    previewConfigs[0];
-  const theseus = previewConfigs.find((item) => item.id === "theseus" || item.id === "theseus-viewer");
-  const json = previewConfigs.find((item) => item.id === "raw-manifest");
+  const { selectedTemplate } = usePresetTemplateSelection();
+  const templatePreviews = selectedTemplate
+    ? exhibitionTemplates.filter((template) => template.type === selectedTemplate.type)
+    : exhibitionTemplates;
 
-  function openPreview(id: string) {
-    if (active.includes(id)) {
-      actions.focusPreview(id);
-      return;
+  async function openPreview(template: PresetTemplateDefinition) {
+    const manifestId = await actions.getPreviewLink();
+    if (manifestId) {
+      window.open(getTemplatePreviewUrl(template.previewUrl, manifestId), template.id);
     }
-    actions.selectPreview(id);
   }
 
   function openThemePanel() {
     layoutActions.leftPanel.open({ id: "@exhibitions/theme-panel" });
   }
 
-  if (!current) {
+  if (!templatePreviews.length) {
     return null;
   }
 
@@ -219,31 +222,16 @@ function ExhibitionPresetPreviewButton({
                 </span>
                 <MenuItemLabel>Change preset</MenuItemLabel>
               </MenuItem>
-              <MenuItem
-                className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
-                onAction={() => openPreview(current.id)}
-              >
-                <MenuItemStatus $status={active.includes(current.id) ? "configured" : "available"} />
-                <MenuItemLabel>{current.label}</MenuItemLabel>
-              </MenuItem>
-              {theseus && theseus.id !== current.id ? (
+              {templatePreviews.map((template) => (
                 <MenuItem
+                  key={template.id}
                   className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
-                  onAction={() => openPreview(theseus.id)}
+                  onAction={() => openPreview(template)}
                 >
-                  <MenuItemStatus $status={active.includes(theseus.id) ? "configured" : "available"} />
-                  <MenuItemLabel>{theseus.label}</MenuItemLabel>
+                  <MenuItemStatus $status="available" />
+                  <MenuItemLabel>{template.label}</MenuItemLabel>
                 </MenuItem>
-              ) : null}
-              {json && json.id !== current.id ? (
-                <MenuItem
-                  className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
-                  onAction={() => openPreview(json.id)}
-                >
-                  <MenuItemStatus $status={active.includes(json.id) ? "configured" : "available"} />
-                  <MenuItemLabel>{json.label}</MenuItemLabel>
-                </MenuItem>
-              ) : null}
+              ))}
             </MenuContainer>
           </Popover>
         </MenuTrigger>
