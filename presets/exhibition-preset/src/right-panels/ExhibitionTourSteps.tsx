@@ -8,7 +8,9 @@ import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
+  useApp,
   useInlineCreator,
+  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
@@ -28,6 +30,7 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
+import { hasFloatingBehavior, resolveExhibitionTemplateType } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
 
@@ -128,6 +131,12 @@ export function ExhibitionTourStepsContent({
   const firstAnnotationPage = canvas?.annotations?.[0];
   const itemsAnnotationPage = canvas?.items?.[0];
   const [reorderable, setReorderable] = useState(false);
+  const [editAlignment, setEditAlignment] = useState(false);
+  const app = useApp();
+  const { selectedTemplate } = usePresetTemplateSelection();
+  const templateType = resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id);
+  const canvasBehavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+  const canEditAlignment = templateType === "scroll" || hasFloatingBehavior(canvasBehavior);
   const setShowTourSteps = useSlideshowWorkbenchState(
     (state) => state.setShowTourSteps,
   );
@@ -157,6 +166,13 @@ export function ExhibitionTourStepsContent({
         }
       : undefined,
   });
+  const toggleEditAlignment = () => {
+    setEditAlignment((value) => {
+      const nextValue = !value;
+      setCenterPanelMode(nextValue ? "preview" : "edit");
+      return nextValue;
+    });
+  };
 
   if (!canvas) return null;
   if (!firstAnnotationPage) {
@@ -175,12 +191,18 @@ export function ExhibitionTourStepsContent({
             {reorderable ? "Done" : "Reorder"}
           </ActionButton>
         ) : null}
+        {mode === "advanced" && canEditAlignment ? (
+          <ActionButton onPress={toggleEditAlignment}>
+            {editAlignment ? "Done" : "Edit alignment"}
+          </ActionButton>
+        ) : null}
       </div>
 
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
           <div className="flex flex-col gap-4">
             <TourAnnotationPageEditor
+              editAlignment={canEditAlignment && editAlignment}
               reorderable={mode === "advanced" ? reorderable : false}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />

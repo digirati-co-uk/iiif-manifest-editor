@@ -36,7 +36,7 @@ export function LazyThumbnail({
 
 const renderCache = new Map<string, string>();
 
-function getImageApiRegion(resource: any) {
+export function getImageApiRegion(resource: any) {
   const selector = resource?.selector;
   if (
     selector &&
@@ -48,7 +48,7 @@ function getImageApiRegion(resource: any) {
   return null;
 }
 
-function imageUrlWithRegion(id: string, region: string | null) {
+export function imageUrlWithRegion(id: string, region: string | null) {
   const parts = id.split("/");
   if (parts.length < 4) return id;
 
@@ -194,6 +194,10 @@ function thumbnailRegionKey(region?: ThumbnailRegion) {
   return region ? `${region.x},${region.y},${region.width},${region.height}` : "";
 }
 
+function firstBody(body: any) {
+  return Array.isArray(body) ? body[0] : body;
+}
+
 function ComplexCanvasThumbnail({
   cover,
   fade = true,
@@ -246,14 +250,14 @@ function ComplexCanvasThumbnail({
       const entriesToRender = region
         ? singleImage
           ? (matchingEntries.length ? matchingEntries : imageEntries).slice(0, 1)
-          : imageEntries
+          : matchingEntries
         : imageEntries;
       const imagesToRender: { image: FixedSizeImage; target: BoxSelector | TemporalBoxSelector }[] = [];
 
       for (const { image, target } of entriesToRender) {
-        const bodyRef = image.annotation.body[0];
-        const imageApiRegion = getImageApiRegion(bodyRef);
-        const resource = bodyRef ? vault.get(bodyRef) : image.annotation;
+        const bodyRef = firstBody(image.annotation.body);
+        const resource = bodyRef ? vault.get(bodyRef, { skipSelfReturn: false } as any) || bodyRef : image.annotation;
+        const imageApiRegion = getImageApiRegion(resource) || getImageApiRegion(bodyRef);
         await helper
           .getBestThumbnailAtSize(resource, {
             width: 256,

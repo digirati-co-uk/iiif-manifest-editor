@@ -6,12 +6,15 @@ import { CheckIcon } from "../icons/CheckIcon";
 import { normalizeSummaryForSave } from "../right-panels/summary-html";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import { TourStepLabelSummaryForm, TourStepLabelSummaryPreview } from "./TourStepHtmlForm";
+import { TourStepSideControl } from "./TourStepSideControl";
 
 export function TourPaintingAnnotationEditor({
+  editAlignment = false,
   originalAnnotationId,
   highlightProps,
   useSlideshowWorkbench = false,
 }: {
+  editAlignment?: boolean;
   originalAnnotationId?: string;
   highlightProps: any;
   useSlideshowWorkbench?: boolean;
@@ -25,6 +28,7 @@ export function TourPaintingAnnotationEditor({
   const [isOpen, setIsOpen] = useState(false);
   const labelRef = useRef(getLanguageMapText(annotation?.label));
   const summaryRef = useRef(getLanguageMapText(annotation?.summary));
+  const selectTourStep = useSlideshowContentPositioning((state) => state.selectTourStep);
   const startTourStepRepositioning = useSlideshowContentPositioning((state) => state.startTourStepRepositioning);
   const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
@@ -44,6 +48,10 @@ export function TourPaintingAnnotationEditor({
     }
   };
   const showInSlideshowWorkbench = () => {
+    if (originalAnnotationId) {
+      selectTourStep(originalAnnotationId);
+    }
+
     if (!useSlideshowWorkbench || !originalAnnotationId) {
       return false;
     }
@@ -139,6 +147,12 @@ export function TourPaintingAnnotationEditor({
         >
           Edit annotation
         </ActionButton>
+
+        {editAlignment ? (
+          <div className="ml-auto flex items-center">
+            <TourStepSideControl annotation={annotation} />
+          </div>
+        ) : null}
       </div>
       <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
     </div>

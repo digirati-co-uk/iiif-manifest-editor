@@ -8,6 +8,7 @@ import {
   type PresetUrlSearchParamsOptions,
   type PresetUrlSearchParamsPreset,
 } from "../helpers/exhibition-preview-url-helper";
+import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
 
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
@@ -36,10 +37,12 @@ export function ExhibitionPreviewPanel({
   const cleanupRef = useRef<(() => void) | null>(null);
   const resourceRef = useRef(rootResource);
   const canvasIdRef = useRef<string | null>(null);
+  const annotationIdRef = useRef<string | null>(null);
   const [status, setStatus] = useState<"waiting" | "connected" | "error">("waiting");
   const [viewportWidth, setViewportWidth] = useState(0);
   const [useScaledPreview, setUseScaledPreview] = useState(false);
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
+  const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
   const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
   const src = useMemo(() => createScrollingPreviewUrl(preset, presetOptions).toString(), [preset, presetOptions]);
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
@@ -53,6 +56,7 @@ export function ExhibitionPreviewPanel({
 
   resourceRef.current = rootResource;
   canvasIdRef.current = currentCanvasId;
+  annotationIdRef.current = selectedTourStepId;
 
   const connectPreview = useCallback(() => {
     const iframe = iframeRef.current;
@@ -70,6 +74,7 @@ export function ExhibitionPreviewPanel({
           _type: PREVIEW_CONNECT,
           resource: resourceRef.current,
           canvasId: canvasIdRef.current,
+          annotationId: annotationIdRef.current || undefined,
         },
         targetOrigin,
         [channel.port2],
@@ -106,10 +111,11 @@ export function ExhibitionPreviewPanel({
         _type: PREVIEW_SELECTION,
         resource: rootResource,
         canvasId: currentCanvasId,
+        annotationId: selectedTourStepId || undefined,
       },
       targetOrigin,
     );
-  }, [status, rootResource.id, rootResource.type, currentCanvasId, targetOrigin]);
+  }, [status, rootResource.id, rootResource.type, currentCanvasId, selectedTourStepId, targetOrigin]);
 
   useEffect(() => {
     const viewport = viewportRef.current;

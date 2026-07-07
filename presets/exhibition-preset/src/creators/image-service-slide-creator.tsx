@@ -77,5 +77,6 @@ async function createImageService(
     height,
     type: "default", // default / left / right / bottom
     items: [annotation],
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
   });
 }

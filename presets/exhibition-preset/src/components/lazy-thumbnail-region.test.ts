@@ -1,4 +1,4 @@
-import { getRegionIntersection } from "@manifest-editor/components";
+import { getImageApiRegion, getRegionIntersection, imageUrlWithRegion } from "@manifest-editor/components";
 import { describe, expect, test } from "vitest";
 
 describe("getRegionIntersection", () => {
@@ -18,5 +18,21 @@ describe("getRegionIntersection", () => {
         { x: 10, y: 0, width: 10, height: 10 },
       ),
     ).toBeNull();
+  });
+});
+
+describe("imageUrlWithRegion", () => {
+  test("applies an Image API selector region to a thumbnail URL", () => {
+    const body = {
+      selector: {
+        type: "ImageApiSelector",
+        region: "10,20,300,400",
+      },
+    };
+
+    expect(getImageApiRegion(body)).toBe("10,20,300,400");
+    expect(
+      imageUrlWithRegion("https://example.org/iiif/image/full/256,/0/default.jpg", getImageApiRegion(body)),
+    ).toBe("https://example.org/iiif/image/10,20,300,400/256,/0/default.jpg");
   });
 });

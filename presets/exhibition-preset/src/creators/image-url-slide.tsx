@@ -74,5 +74,6 @@ async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionC
     height,
     type: "default", // default / left / right / bottom
     items: [annotation],
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
   });
 }

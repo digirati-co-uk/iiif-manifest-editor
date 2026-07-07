@@ -6,8 +6,10 @@ import { TourNormalAnnotationEditor } from "./TourNormalAnnotationEditor";
 import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 
 export function TourAnnotationEditor({
+  editAlignment = false,
   useSlideshowWorkbench = false,
 }: {
+  editAlignment?: boolean;
   useSlideshowWorkbench?: boolean;
 }) {
   const [annotation, { annotationTarget, highlightProps }] =
@@ -25,6 +27,7 @@ export function TourAnnotationEditor({
       <ResourceEditingProvider resource={resource}>
         <AnnotationContext annotation={annotationTarget}>
           <TourPaintingAnnotationEditor
+            editAlignment={editAlignment}
             originalAnnotationId={annotation?.id}
             highlightProps={highlightProps}
             useSlideshowWorkbench={useSlideshowWorkbench}
@@ -37,6 +40,7 @@ export function TourAnnotationEditor({
   return (
     <ResourceEditingProvider resource={resource}>
       <TourNormalAnnotationEditor
+        editAlignment={editAlignment}
         highlightProps={highlightProps}
         useSlideshowWorkbench={useSlideshowWorkbench}
       />

@@ -27,6 +27,7 @@ export const imageSlideCreator = defineCreator({
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
@@ -128,6 +129,7 @@ interface InfoBoxPayload {
   duration?: number;
   type: "default" | "left" | "right" | "bottom";
   behavior?: string[];
+  imageSlideBehavior?: string[];
   items?: CreatorResource[];
 }
 
@@ -145,8 +147,12 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const behavior = [];
   let width = 6000;
 
+  const imageSlideBehavior = payload.imageSlideBehavior || ctx.options.initialData?.imageSlideBehavior;
+
   if (payload.behavior) {
     behavior.push(...payload.behavior);
+  } else if (imageSlideBehavior) {
+    behavior.push(...imageSlideBehavior);
   } else if (payload.width && payload.height) {
     // Determine layout type to apply effective-width modifier for text panels
     const layoutType = payload.type ?? "default";

@@ -12,8 +12,8 @@ import {
   useConfig,
   useLayoutActions,
   useOpenPresetOnboarding,
-  usePreviewContext,
   usePresetTemplateSelection,
+  usePreviewContext,
 } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import type { SVGProps } from "react";
@@ -151,22 +151,37 @@ function ExhibitionPresetPreviewButton({
   showOnboardingPreviewHint?: boolean;
   onOnboardingPreviewHintClose?: () => void;
 }) {
-  const { actions } = usePreviewContext();
+  const { actions, configs, active } = usePreviewContext();
   const vault = useVault();
   const config = useConfig();
   const resource = useAppResource();
   const layoutActions = useLayoutActions();
   const openOnboarding = useOpenPresetOnboarding();
   const { selectedTemplate } = usePresetTemplateSelection();
+  const previewConfigs = configs.filter((item) => item.type === "external-manifest-preview");
   const templatePreviews = selectedTemplate
     ? exhibitionTemplates.filter((template) => template.type === selectedTemplate.type)
     : exhibitionTemplates;
+  const current =
+    previewConfigs.find((item) => item.id === config.defaultPreview) ||
+    previewConfigs.find((item) => !item.id.includes("theseus") && item.id !== "raw-manifest") ||
+    previewConfigs[0];
+  const theseus = previewConfigs.find((item) => item.id === "theseus" || item.id === "theseus-viewer");
+  const json = previewConfigs.find((item) => item.id === "raw-manifest");
 
   async function openPreview(template: PresetTemplateDefinition) {
     const manifestId = await actions.getPreviewLink();
     if (manifestId) {
       window.open(getTemplatePreviewUrl(template.previewUrl, manifestId), template.id);
     }
+  }
+
+  function openPreviewFixed(id: string) {
+    // if (active.includes(id)) {
+    //   actions.focusPreview(id);
+    //   return;
+    // }
+    actions.selectPreview(id);
   }
 
   function openThemePanel() {
@@ -232,6 +247,24 @@ function ExhibitionPresetPreviewButton({
                   <MenuItemLabel>{template.label}</MenuItemLabel>
                 </MenuItem>
               ))}
+              {theseus && theseus.id !== current?.id ? (
+                <MenuItem
+                  className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                  onAction={() => openPreviewFixed(theseus.id)}
+                >
+                  <MenuItemStatus $status={active.includes(theseus.id) ? "configured" : "available"} />
+                  <MenuItemLabel>{theseus.label}</MenuItemLabel>
+                </MenuItem>
+              ) : null}
+              {json && json.id !== current?.id ? (
+                <MenuItem
+                  className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                  onAction={() => openPreviewFixed(json.id)}
+                >
+                  <MenuItemStatus $status={active.includes(json.id) ? "configured" : "available"} />
+                  <MenuItemLabel>{json.label}</MenuItemLabel>
+                </MenuItem>
+              ) : null}
             </MenuContainer>
           </Popover>
         </MenuTrigger>

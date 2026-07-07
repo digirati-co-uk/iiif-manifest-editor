@@ -82,6 +82,7 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     height: dimensions.height,
     type: "default", // default / left / right / bottom
     items: annotation,
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
     ...manifestTracking,
   });
 }

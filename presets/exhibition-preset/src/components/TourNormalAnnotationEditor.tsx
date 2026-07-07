@@ -13,11 +13,14 @@ import {
 } from "../slideshow-content-positioning";
 import { TourStepHtmlForm, TourStepHtmlPreview } from "./TourStepHtmlForm";
 import { TourStepBorderPicker } from "./TourStepBorderPicker";
+import { TourStepSideControl } from "./TourStepSideControl";
 
 export function TourNormalAnnotationEditor({
+  editAlignment = false,
   highlightProps,
   useSlideshowWorkbench = false,
 }: {
+  editAlignment?: boolean;
   highlightProps: any;
   useSlideshowWorkbench?: boolean;
 }) {
@@ -27,6 +30,9 @@ export function TourNormalAnnotationEditor({
   const bodyValueRef = useRef(body?.resource?.value || "");
   const startTourStepRepositioning = useSlideshowContentPositioning(
     (state) => state.startTourStepRepositioning,
+  );
+  const selectTourStep = useSlideshowContentPositioning(
+    (state) => state.selectTourStep,
   );
   const requestWorkbenchTab = useSlideshowWorkbenchState(
     (state) => state.requestTab,
@@ -45,6 +51,10 @@ export function TourNormalAnnotationEditor({
 
   const [isOpen, setIsOpen] = useState(false);
   const showInSlideshowWorkbench = () => {
+    if (annotation?.id) {
+      selectTourStep(annotation.id);
+    }
+
     if (!useSlideshowWorkbench || !annotation?.id) {
       return false;
     }
@@ -124,7 +134,8 @@ export function TourNormalAnnotationEditor({
         <ActionButton className="gap-2 flex" onPress={() => deleteAnnotation()}>
           <DeleteIcon /> Delete
         </ActionButton>
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto flex items-center gap-2">
+          {editAlignment ? <TourStepSideControl annotation={annotation} /> : null}
           <TourStepBorderPicker />
         </div>
       </div>

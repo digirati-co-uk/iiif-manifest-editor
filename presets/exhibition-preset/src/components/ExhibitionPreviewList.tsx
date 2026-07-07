@@ -7,11 +7,14 @@ import { twMerge } from "tailwind-merge";
 import { getGridStats } from "../helpers";
 import {
   getAnnotationTargetBox,
+  getPaintingAnnotations,
   getTourStepAnnotations,
+  getResolvedAnnotationBody,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
+import { splitTourStepHtml } from "./tour-step-html";
 
 type PreviewMode = "slideshow" | "scroll";
 
@@ -51,11 +54,16 @@ export function ExhibitionPreviewList({ mode }: { mode: PreviewMode }) {
 
 function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; onClick: () => void }) {
   const canvas = useCanvas();
+  const manifest = useManifest();
   const currentCanvas = useInStack("Canvas");
   const selected = currentCanvas?.resource.source?.id === canvas?.id;
   const [showSteps, setShowSteps] = useState(false);
   const isInfoBox = (canvas?.behavior || []).includes("info");
   const isScrollInfoBox = mode === "scroll" && isInfoBox;
+  const isCoverCanvas = useVaultSelector(
+    (_, vaultInstance) => Boolean(manifest?.items?.[0]?.id === canvas?.id && canvas && isImageCanvas(vaultInstance, canvas)),
+    [manifest?.items?.[0]?.id, canvas?.id, canvas?.items?.[0]?.id],
+  );
   const tourSteps = useVaultSelector(
     (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, canvas?.annotations?.[0]?.id],
@@ -74,7 +82,9 @@ function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; onClick: 
         <div className="border-b border-slate-100 px-2 py-1.5 text-xs font-semibold text-slate-700">
           <LocaleString>{canvas.label}</LocaleString>
         </div>
-        {mode === "slideshow" ? (
+        {isCoverCanvas && canvas.behavior?.includes("splash") ? (
+          <ManifestSplashPreview height={mode === "slideshow" ? slideshowPreviewHeight : 180} />
+        ) : mode === "slideshow" ? (
           isInfoBox ? (
             <InfoBoxPreview height={slideshowPreviewHeight} />
           ) : (
@@ -131,8 +141,46 @@ function ScrollPreview() {
     <div className="min-h-0" style={{ height, backgroundColor: "#303030" }}>
       <div className="relative h-full min-h-0 overflow-hidden" style={{ backgroundColor: "#303030" }}>
         <div className="absolute inset-0">
-          <LazyThumbnail cover={behavior.includes("cover")} fade={false} />
+          <LazyThumbnail cover={behavior.includes("cover") || behavior.includes("image-cover")} fade={false} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ManifestSplashPreview({ height = 180 }: { height?: number }) {
+  const manifest = useManifest();
+  const canvas = useCanvas();
+  const summary = getInternationalStringText(manifest?.summary, "");
+  const requiredStatementLabel = getInternationalStringText(manifest?.requiredStatement?.label, "");
+  const requiredStatementValue = getInternationalStringText(manifest?.requiredStatement?.value, "");
+  const behavior = canvas?.behavior || [];
+  const invert = behavior.includes("invert");
+  const overlay = typeof (canvas as any)?.backgroundColor === "string" ? (canvas as any).backgroundColor : null;
+
+  return (
+    <div
+      className={twMerge("relative overflow-hidden bg-black p-4", invert ? "text-white" : "text-black")}
+      style={{ height }}
+    >
+      <div className="absolute inset-0">
+        <LazyThumbnail cover fade={false} />
+      </div>
+      <div className="absolute inset-0 z-10 opacity-35" style={{ background: overlay || "transparent" }} />
+      <div
+        className={twMerge(
+          "relative z-20 flex h-full flex-col justify-end p-3",
+          overlay ? "" : invert ? "bg-black/25 backdrop-blur-sm" : "bg-white/25 backdrop-blur-sm",
+        )}
+      >
+        <LocaleString className="block text-base font-semibold leading-tight">{manifest?.label}</LocaleString>
+        {summary ? <div className="mt-2 line-clamp-3 text-xs leading-relaxed opacity-75">{summary}</div> : null}
+        {requiredStatementValue ? (
+          <div className="mt-3 border-t border-current/20 pt-2 text-[11px] leading-snug opacity-75">
+            {requiredStatementLabel ? <div className="font-semibold opacity-85">{requiredStatementLabel}</div> : null}
+            <div>{requiredStatementValue}</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -160,6 +208,17 @@ function InfoBoxPreview({ height }: { height?: number }) {
   );
 }
 
+function isImageCanvas(vault: any, canvas: any) {
+  if (!canvas || canvas.behavior?.includes("info")) return false;
+
+  return getPaintingAnnotations(vault, canvas).some((annotation: any) => {
+    const body = getResolvedAnnotationBody(vault, annotation);
+    const source = body?.type === "SpecificResource" ? body.source : body;
+    const services = Array.isArray(source?.service) ? source.service : source?.service ? [source.service] : [];
+    return source?.type === "Image" || services.length > 0;
+  });
+}
+
 function TourStepPreview({ annotation, canvas, onClick }: { annotation: any; canvas: any; onClick: () => void }) {
   const { edit } = useLayoutActions();
   const selectTourStep = useSlideshowContentPositioning((state) => state.selectTourStep);
@@ -171,6 +230,10 @@ function TourStepPreview({ annotation, canvas, onClick }: { annotation: any; can
   const target = useVaultSelector(
     (_, vaultInstance) => getTourStepThumbnailTarget(vaultInstance, annotation, canvas),
     [annotation?.id, annotation?.target, canvas?.id],
+  );
+  const text = useVaultSelector(
+    (_, vaultInstance) => getTourStepPreviewText(vaultInstance, annotation),
+    [annotation?.id, annotation?.body, annotation?.label, annotation?.summary],
   );
 
   return (
@@ -195,18 +258,33 @@ function TourStepPreview({ annotation, canvas, onClick }: { annotation: any; can
         <LazyThumbnail cover fade={false} region={target.region} singleImage={target.singleImage} />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-xs font-semibold text-slate-800">
-          {getInternationalStringText(annotation.label, "Step")}
-        </div>
+        <div className="truncate text-xs font-semibold text-slate-800">{text.label}</div>
         <div
-          className="line-clamp-2 text-xs text-slate-500"
+          className="line-clamp-1 text-xs text-slate-500 [&_*]:m-0 [&_*]:inline"
           dangerouslySetInnerHTML={{
-            __html: getInternationalStringText(annotation.summary, ""),
+            __html: text.summary,
           }}
         />
       </div>
     </button>
   );
+}
+
+function getTourStepPreviewText(vault: any, annotation: any) {
+  const body = getResolvedAnnotationBody(vault, annotation);
+
+  if (typeof body?.value === "string") {
+    const { label, summary } = splitTourStepHtml(body.value);
+    return {
+      label: label || getInternationalStringText(annotation.label, "Step"),
+      summary,
+    };
+  }
+
+  return {
+    label: getInternationalStringText(annotation.label, "Step"),
+    summary: getInternationalStringText(annotation.summary, ""),
+  };
 }
 
 function getTourStepThumbnailTarget(vault: any, annotation: any, canvas: any) {
