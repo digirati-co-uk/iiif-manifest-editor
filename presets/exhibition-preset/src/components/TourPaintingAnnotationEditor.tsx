@@ -22,10 +22,14 @@ import {
 export function TourPaintingAnnotationEditor({
   originalAnnotationId,
   highlightProps,
+  index = 0,
+  tourStyle = "linear",
   useSlideshowWorkbench = false,
 }: {
   originalAnnotationId?: string;
   highlightProps: any;
+  index?: number;
+  tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
   const page = useAnnotationPage();
@@ -78,9 +82,14 @@ export function TourPaintingAnnotationEditor({
   return (
     <div
       {...highlightProps}
-      className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      className={`exhibition-tour-step-card border shadow-sm rounded bg-white relative ${
+        tourStyle === "non-linear" ? "border-gray-900 hover:border-black" : "border-gray-300 hover:border-me-500"
+      }`}
       onClick={showInSlideshowWorkbench}
     >
+      <div className="absolute right-3 top-3 z-10 rounded-full bg-black px-2 py-1 text-xs font-semibold text-white">
+        {tourStyle === "non-linear" ? `Point ${index + 1}` : `Step ${index + 1}`}
+      </div>
       <div className="flex gap-2 mb-2 p-3">
         <div className="flex-1 min-w-0">
           {isOpen ? (
@@ -154,7 +163,7 @@ export function TourPaintingAnnotationEditor({
           <DeleteIcon /> Delete
         </ActionButton>
       </div>
-      <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
+      {tourStyle === "linear" ? <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" /> : null}
     </div>
   );
 }

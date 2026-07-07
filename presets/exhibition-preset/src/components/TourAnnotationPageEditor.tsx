@@ -5,9 +5,11 @@ import { TourAnnotationEditor } from "./TourAnnotationEditor";
 
 export function TourAnnotationPageEditor({
   reorderable = false,
+  tourStyle = "linear",
   useSlideshowWorkbench = false,
 }: {
   reorderable?: boolean;
+  tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
   const page = useAnnotationPage();
@@ -20,9 +22,11 @@ export function TourAnnotationPageEditor({
   if (!reorderable) {
     return (
       <>
-        {page.items.map((annotation) => (
+        {page.items.map((annotation, index) => (
           <AnnotationContext annotation={annotation.id} key={annotation.id}>
             <TourAnnotationEditor
+              index={index}
+              tourStyle={tourStyle}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
           </AnnotationContext>
@@ -44,6 +48,8 @@ export function TourAnnotationPageEditor({
         renderItem={(ref, index) => (
           <AnnotationContext annotation={ref.id as string}>
             <TourAnnotationEditor
+              index={index}
+              tourStyle={tourStyle}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
           </AnnotationContext>

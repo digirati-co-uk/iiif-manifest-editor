@@ -25,9 +25,13 @@ import {
 
 export function TourNormalAnnotationEditor({
   highlightProps,
+  index = 0,
+  tourStyle = "linear",
   useSlideshowWorkbench = false,
 }: {
   highlightProps: any;
+  index?: number;
+  tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
   const value = useContext(ResourceEditingReactContext);
@@ -82,9 +86,14 @@ export function TourNormalAnnotationEditor({
   return (
     <div
       {...highlightProps}
-      className="exhibition-tour-step-card border border-gray-300 hover:border-me-500 shadow-sm rounded bg-white relative"
+      className={`exhibition-tour-step-card border shadow-sm rounded bg-white relative ${
+        tourStyle === "non-linear" ? "border-gray-900 hover:border-black" : "border-gray-300 hover:border-me-500"
+      }`}
       onClick={showInSlideshowWorkbench}
     >
+      <div className="absolute right-3 top-3 z-10 rounded-full bg-black px-2 py-1 text-xs font-semibold text-white">
+        {tourStyle === "non-linear" ? `Point ${index + 1}` : `Step ${index + 1}`}
+      </div>
       <div className="relative">
         {isOpen && !annotationPopups ? (
           <HTMLAnnotationEditor className="border-none" />
@@ -132,7 +141,7 @@ export function TourNormalAnnotationEditor({
           <DeleteIcon /> Delete
         </ActionButton>
       </div>
-      <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
+      {tourStyle === "linear" ? <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" /> : null}
     </div>
   );
 }

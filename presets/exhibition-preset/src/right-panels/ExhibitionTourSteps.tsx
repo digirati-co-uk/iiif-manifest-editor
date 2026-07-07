@@ -1,7 +1,7 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useInlineCreator } from "@manifest-editor/shell";
+import { type EditorDefinition, ResourceEditingProvider, useEditor, useInlineCreator } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
@@ -10,6 +10,8 @@ import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotati
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import { nonLinearTourBehavior } from "../tour-behaviors";
+import { SimpleCheckbox } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
 
@@ -17,7 +19,7 @@ export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
   supports: {
     edit: true,
-    properties: ["annotations"],
+    properties: ["annotations", "behavior"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
@@ -98,6 +100,7 @@ export function ExhibitionTourStepsContent({
   useSlideshowWorkbench?: boolean;
 }) {
   const canvas = useCanvas();
+  const editor = useEditor();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const itemsAnnotationPage = canvas?.items?.[0];
   const [reorderable, setReorderable] = useState(false);
@@ -126,21 +129,40 @@ export function ExhibitionTourStepsContent({
   }
 
   const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
+  const behavior = editor.technical.type === "Canvas" ? editor.technical.behavior.get() || [] : [];
+  const nonLinear = behavior.includes(nonLinearTourBehavior);
+  const tourStyle = nonLinear ? "non-linear" : "linear";
+  const setNonLinearTour = (nextNonLinear: boolean) => {
+    if (editor.technical.type !== "Canvas") return;
+    const next = behavior.filter((item) => item !== nonLinearTourBehavior);
+    editor.technical.behavior.set(nextNonLinear ? [...next, nonLinearTourBehavior] : next);
+  };
 
   return (
     <>
       <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
         <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
-        {mode === "advanced" ? (
+        {mode === "advanced" && !nonLinear ? (
           <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
         ) : null}
+      </div>
+
+      <div className="mb-4 rounded border border-gray-200 bg-white p-3">
+        <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
+        <SimpleCheckbox checked={nonLinear} label="Use non-linear map" onChange={setNonLinearTour} />
+        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+          Shows all tour steps as pins on the canvas. Visitors can open points in any order instead of moving through a
+          fixed step sequence.
+        </p>
       </div>
 
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
           <div className="flex flex-col gap-4">
+            <div className="text-sm font-semibold text-gray-700">{nonLinear ? "Map points" : "Linear step list"}</div>
             <TourAnnotationPageEditor
-              reorderable={mode === "advanced" ? reorderable : false}
+              reorderable={mode === "advanced" && !nonLinear ? reorderable : false}
+              tourStyle={tourStyle}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
 
@@ -152,7 +174,7 @@ export function ExhibitionTourStepsContent({
                   onPress={requestTourStep}
                   className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
                 >
-                  + Add new step
+                  {nonLinear ? "+ Add map point" : "+ Add new step"}
                 </Button>
               )
             ) : null}
