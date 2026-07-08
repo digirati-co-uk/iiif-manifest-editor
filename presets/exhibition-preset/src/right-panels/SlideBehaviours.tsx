@@ -60,9 +60,9 @@ export const layoutPresetOptions: Array<{
   label: string;
 }> = [
   { value: "image", label: "Image only" },
-  { value: "right", label: "Image + text right" },
-  { value: "left", label: "Image + text left" },
   { value: "bottom", label: "Image + text bottom" },
+  { value: "left", label: "Image + text left" },
+  { value: "right", label: "Image + text right" },
 ];
 export const simpleLayoutColours = {
   primary: "var(--exhibition-primary, #b84c74)",
@@ -200,8 +200,8 @@ export function getExhibitionTemplateControls(
     layoutOptions: scrollContext
       ? hasTourSteps
         ? [
-            { value: "right" as const, label: "Align annotations right" },
             { value: "left" as const, label: "Align annotations left" },
+            { value: "right" as const, label: "Align annotations right" },
           ]
         : []
       : layoutPresetOptions,

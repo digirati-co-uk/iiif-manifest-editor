@@ -44,8 +44,8 @@ describe("exhibition slide behaviours", () => {
 
   test("scroll layouts keep left/right alignment labels", () => {
     expect(getExhibitionTemplateControls("scroll").layoutOptions).toEqual([
-      { value: "right", label: "Align annotations right" },
       { value: "left", label: "Align annotations left" },
+      { value: "right", label: "Align annotations right" },
     ]);
     expect(getExhibitionTemplateControls("scroll", false, false).layoutOptions).toEqual([]);
   });
