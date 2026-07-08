@@ -87,7 +87,10 @@ export function TourPaintingAnnotationEditor({
       }`}
       onClick={showInSlideshowWorkbench}
     >
-      <div className="absolute right-3 top-3 z-10 rounded-full bg-black px-2 py-1 text-xs font-semibold text-white">
+      <div
+        className="absolute right-3 top-3 z-10 rounded-full px-2 py-1 text-xs font-semibold"
+        style={{ backgroundColor: "#f5f5f5", color: "#b84c74" }}
+      >
         {tourStyle === "non-linear" ? `Point ${index + 1}` : `Step ${index + 1}`}
       </div>
       <div className="flex gap-2 mb-2 p-3">
