@@ -1086,7 +1086,7 @@ export function SimpleOptionButton({
   );
 }
 
-function SimpleCheckbox({
+export function SimpleCheckbox({
   checked,
   label,
   onChange,

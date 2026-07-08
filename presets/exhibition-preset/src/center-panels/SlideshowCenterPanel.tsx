@@ -24,10 +24,12 @@ import {
   CanvasContext,
   LocaleString,
   useCanvas,
+  useManifest,
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
@@ -335,6 +337,7 @@ function TourStepNavigation({
 
 function SelectedSlidePreview() {
   const canvas = useCanvas();
+  const manifest = useManifest();
   const vault = useVault();
   const inlineCreator = useInlineCreator();
   const centerPanelMode = useSlideshowWorkbenchState(
@@ -571,9 +574,13 @@ function SelectedSlidePreview() {
     >
       <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
         <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
+<<<<<<< feature/LPII-149/non-linier-tour
+          {mode === "edit" ? "Click content to edit or reposition it" : "Live slideshow preview"}
+=======
           {mode === "edit"
             ? "Click content to edit or reposition it"
             : "Slideshow layout preview (approximate)"}
+>>>>>>> feature/Q3-2026
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
@@ -655,13 +662,28 @@ function SelectedSlidePreview() {
         </div>
       </div>
       <div className="relative min-h-0 flex-1 bg-black">
+<<<<<<< feature/LPII-149/non-linier-tour
+        {mode === "preview" ? (
+          <ExhibitionPreviewPanel
+            preset="slideshow"
+            presetOptions={{
+              manifest: manifest?.id || "",
+              canvas: canvas?.id,
+              minimal: true,
+            }}
+          />
+        ) : (
+          <SlideshowSlidePreview editable mode={mode} showTourSteps={tourAuthoringActive} />
+        )}
+=======
         <SlideshowSlidePreview
           editable={mode === "edit"}
           mode={mode}
           showTourSteps={tourAuthoringActive}
         />
+>>>>>>> feature/Q3-2026
 
-        {targetDrawingMode && canvas && annotationPageId ? (
+        {mode === "edit" && targetDrawingMode && canvas && annotationPageId ? (
           <TourStepTargetDrawingOverlay
             annotationPageId={annotationPageId}
             canvas={canvas}

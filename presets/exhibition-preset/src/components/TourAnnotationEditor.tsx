@@ -6,6 +6,12 @@ import { TourNormalAnnotationEditor } from "./TourNormalAnnotationEditor";
 import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 
 export function TourAnnotationEditor({
+  index = 0,
+  tourStyle = "linear",
+  useSlideshowWorkbench = false,
+}: {
+  index?: number;
+  tourStyle?: "linear" | "non-linear";
   editAlignment = false,
   useSlideshowWorkbench = false,
 }: {
@@ -30,6 +36,8 @@ export function TourAnnotationEditor({
             editAlignment={editAlignment}
             originalAnnotationId={annotation?.id}
             highlightProps={highlightProps}
+            index={index}
+            tourStyle={tourStyle}
             useSlideshowWorkbench={useSlideshowWorkbench}
           />
         </AnnotationContext>
@@ -42,6 +50,8 @@ export function TourAnnotationEditor({
       <TourNormalAnnotationEditor
         editAlignment={editAlignment}
         highlightProps={highlightProps}
+        index={index}
+        tourStyle={tourStyle}
         useSlideshowWorkbench={useSlideshowWorkbench}
       />
     </ResourceEditingProvider>
