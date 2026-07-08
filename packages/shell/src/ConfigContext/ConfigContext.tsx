@@ -1,4 +1,5 @@
 import type { Collection } from "@iiif/presentation-3";
+import type { CreatorConfig } from "@manifest-editor/creator-api";
 import {
   createContext,
   type ReactNode,
@@ -53,6 +54,8 @@ export interface Config {
     baseIdentifier: string | null;
     version: 3 | 2;
   };
+
+  creators: CreatorConfig;
 
   uploadBackends: Array<UploadBackendConfig>;
 
@@ -127,6 +130,7 @@ const DEFAULT_CONFIG: Config = {
     baseIdentifier: null,
     version: 3,
   },
+  creators: {},
 };
 
 function mergeEditorConfig(
@@ -170,6 +174,23 @@ function mergePluginConfig(
   return { apps };
 }
 
+function mergeCreatorConfig(
+  base: Config["creators"] | undefined,
+  override: Config["creators"] | undefined,
+): Config["creators"] | undefined {
+  if (!base && !override) return undefined;
+
+  const next: Config["creators"] = { ...(base || {}) };
+  for (const [creatorId, settings] of Object.entries(override || {})) {
+    next[creatorId] = {
+      ...(next[creatorId] || {}),
+      ...(settings || {}),
+    };
+  }
+
+  return next;
+}
+
 export function mergePartialConfig(
   ...configs: Array<Partial<Config> | null | undefined>
 ): Partial<Config> {
@@ -203,6 +224,7 @@ export function mergePartialConfig(
               ...(config.export || {}),
             } as Config["export"]
           : undefined,
+      creators: mergeCreatorConfig(merged.creators, config.creators),
       plugins: mergePluginConfig(merged.plugins, config.plugins),
     };
   }

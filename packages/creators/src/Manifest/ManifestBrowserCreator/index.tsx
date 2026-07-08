@@ -1,5 +1,6 @@
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
+import { getIIIFType, getJsonResource, isDigitalCollectionPage } from "../../resource-probes";
 import { createFromManifestBrowserOutput } from "./manifest-browser-creator";
 import ManifestBrowserCreatorForm from "./manifest-browser-form.lazy";
 
@@ -22,13 +23,27 @@ export const manifestBrowserCreator = defineCreator({
   render(ctx: any) {
     return <ManifestBrowserCreatorForm {...ctx} />;
   },
+  async supportsResource(value, helpers) {
+    const resource = await getJsonResource(value, helpers);
+    const type = getIIIFType(resource);
+    if (type === "Manifest" || type === "Collection") {
+      return { initialData: { url: value } };
+    }
+    if (await isDigitalCollectionPage(value)) {
+      return { initialData: { url: value } };
+    }
+    return false;
+  },
   resourceType: "Manifest",
   resourceFields: ["id", "label"],
   additionalTypes: ["Collection"],
   supports: {
-    parentTypes: ["Collection"],
+    initialData: true,
+    parentTypes: ["Collection", "Manifest", "Canvas"],
     parentFieldMap: {
       Collection: ["items"],
+      Manifest: ["partOf"],
+      Canvas: ["partOf"],
     },
   },
   sideEffects: [],

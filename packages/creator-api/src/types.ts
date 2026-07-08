@@ -26,6 +26,7 @@ import type {
 export interface CreatorContext<T = any> {
   vault: Vault;
   options: CreatorOptions;
+  config?: Record<string, unknown>;
   validate: (payload: T) => Promise<boolean> | boolean;
   runCreate: (payload: T) => void;
 }
@@ -38,6 +39,7 @@ export type ResolvedCreatorReturn<T extends CreatorDefinition> =
 export interface CreatorFunctionContext {
   vault: Vault;
   options: CreatorOptions;
+  config: Record<string, unknown>;
   ref(idOrRef: string | Reference): ReferencedResource;
   embed(data: any): CreatorResource;
 
@@ -74,6 +76,34 @@ export interface CreatorOptions {
   initialData?: any;
   rootId?: string;
 }
+
+export type CreatorConfig = Record<string, Record<string, unknown>>;
+
+export type CreatorConfigField = {
+  id: string;
+  type: "checkbox";
+  label: string;
+  summary?: string;
+  defaultValue?: boolean;
+};
+
+export interface CreatorConfiguration {
+  fields: CreatorConfigField[];
+}
+
+export interface CreatorResourceProbeHelpers {
+  json(url: string): Promise<any>;
+  text(url: string): Promise<string>;
+  head(url: string): Promise<Response>;
+  contentType(url: string): Promise<string>;
+}
+
+export type CreatorResourceProbeResult =
+  | boolean
+  | {
+      initialData?: Record<string, any>;
+      label?: string;
+    };
 
 export type AllAvailableParentTypes = keyof typeof resources.supported;
 
@@ -121,9 +151,15 @@ export interface SpecificCreatorDefinition<
   icon?: any;
   dependencies?: string[];
   tags?: string[];
+  configuration?: CreatorConfiguration;
 
   create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
+  supportsResource?: (
+    value: string,
+    helpers: CreatorResourceProbeHelpers,
+    ctx: { vault: Vault; resource: CreatableResource },
+  ) => CreatorResourceProbeResult | Promise<CreatorResourceProbeResult>;
 
   render?: (ctx: CreatorContext<Payload>) => ReactNode;
   renderCanvas?: (ctx: CreatorContext<Payload>) => ReactNode | null;

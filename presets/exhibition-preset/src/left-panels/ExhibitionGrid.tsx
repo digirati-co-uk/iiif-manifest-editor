@@ -12,32 +12,48 @@ import {
   type LayoutPanel,
   useCreator,
   useManifestEditor,
+  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
+import { useVault } from "react-iiif-vault";
 import { ExhibitionGrid } from "../components/ExhibitionGrid";
+import { ExhibitionPreviewList } from "../components/ExhibitionPreviewList";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";
 
 export const exhibitionGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Exhibition grid",
   creatorFilter: "exhibition-slide",
+  previewMode: "configured",
 });
 
 export const slideshowGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Slideshow",
   creatorFilter: "exhibition-slideshow-slide",
+  previewMode: "slideshow",
 });
+
+export const scrollGridLeftPanel = createExhibitionGridLeftPanel({
+  label: "Scroll",
+  creatorFilter: "exhibition-slide",
+  previewMode: "scroll",
+});
+
+type PreviewMode = "configured" | "grid" | "slideshow" | "scroll";
+type ResolvedPreviewMode = Exclude<PreviewMode, "configured">;
 
 function createExhibitionGridLeftPanel({
   label,
   creatorFilter,
+  previewMode,
 }: {
   label: string;
   creatorFilter: string;
+  previewMode: PreviewMode;
 }): LayoutPanel {
   return {
     id: "canvas-listing", // We are overriding the default canvas listing panel
     label,
     icon: <ExhibitionGridIcon />,
-    render: () => <ExhibitionGridLeftPanel creatorFilter={creatorFilter} />,
+    render: () => <ExhibitionGridLeftPanel creatorFilter={creatorFilter} previewMode={previewMode} />,
     options: {
       minWidth: 350,
       maxWidth: 350,
@@ -45,8 +61,12 @@ function createExhibitionGridLeftPanel({
   };
 }
 
-function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
+function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter: string; previewMode: PreviewMode }) {
   const { structural, technical } = useManifestEditor();
+  const { selectedTemplate } = usePresetTemplateSelection();
+  const vault = useVault();
+  const resolvedPreviewMode = resolvePreviewMode(previewMode, selectedTemplate?.type);
+  const resolvedCreatorFilter = resolvedPreviewMode === "slideshow" ? "exhibition-slideshow-slide" : creatorFilter;
   const manifestId = technical.id.get();
   const manifest = { id: manifestId, type: "Manifest" };
   const items = structural.items.get() || [];
@@ -54,6 +74,8 @@ function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
   const selectedCanvasId = editingCanvas?.resource.source.id;
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const insertIndex = selectedIndex >= 0 ? selectedIndex + 1 : undefined;
+  const scrollInitialData =
+    resolvedPreviewMode === "scroll" && !hasSplashCanvas(items, vault) ? { imageSlideBehavior: ["splash"] } : undefined;
   const [canCreateCanvas, canvasActions] = useCreator(
     manifest,
     "items",
@@ -77,31 +99,50 @@ function ExhibitionGridLeftPanel({ creatorFilter }: { creatorFilter: string }) {
             title: toggled.list ? "List view" : "Grid view",
             onClick: () => toggle("list"),
           },
-          {
-            icon: <ListEditIcon />,
-            title: "Edit slides",
-            toggled: toggled.editing,
-            onClick: () => toggle("editing"),
-          },
+          ...(resolvedPreviewMode === "grid"
+            ? [
+                {
+                  icon: <ListEditIcon />,
+                  title: "Edit slides",
+                  toggled: toggled.editing,
+                  onClick: () => toggle("editing"),
+                },
+              ]
+            : []),
           {
             icon: <NewSlideIcon />,
             title: "Add new slide",
             disabled: !canCreateCanvas,
-            onClick: () => canvasActions.createFiltered(creatorFilter, insertIndex),
+            onClick: () => canvasActions.createFiltered(resolvedCreatorFilter, insertIndex, scrollInitialData),
           },
         ]}
       />
       <SidebarContent>
         {toggled.list ? (
           <CanvasListView isEditing={toggled.editing} />
-        ) : toggled.editing ? (
+        ) : resolvedPreviewMode === "grid" && toggled.editing ? (
           <SortableExhibitionGrid />
+        ) : resolvedPreviewMode === "slideshow" || resolvedPreviewMode === "scroll" ? (
+          <ExhibitionPreviewList mode={resolvedPreviewMode} />
         ) : (
           <ExhibitionGrid />
         )}
       </SidebarContent>
     </Sidebar>
   );
+}
+
+function resolvePreviewMode(previewMode: PreviewMode, templateType?: string): ResolvedPreviewMode {
+  if (previewMode !== "configured") return previewMode;
+  if (templateType === "slideshow" || templateType === "scroll") return templateType;
+  return "grid";
+}
+
+function hasSplashCanvas(items: Array<{ id: string }>, vault: ReturnType<typeof useVault>) {
+  return items.some((item) => {
+    const canvas = vault.get(item as any) as any;
+    return Array.isArray(canvas?.behavior) && canvas.behavior.includes("splash");
+  });
 }
 
 function ExhibitionGridIcon() {

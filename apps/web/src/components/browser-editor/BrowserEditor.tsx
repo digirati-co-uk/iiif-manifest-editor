@@ -26,7 +26,6 @@ import {
   BackgroundActionsMenu,
   type CanvasEditorDefinition,
   type Config,
-  ConfigEditor,
   type EditorDefinition,
   extendApp,
   Layout,
@@ -38,7 +37,7 @@ import {
   mergePartialConfig,
   type PluginModule,
   PluginProvider,
-  PreviewButton,
+  PresetPreviewButton,
   type PreviewConfiguration,
   ShellProvider,
   useAppResource,
@@ -58,6 +57,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useManifest, VaultProvider } from "react-iiif-vault";
 import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
+import { BrowserSettingsPanel } from "./BrowserSettingsPanel";
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
 const previews: PreviewConfiguration[] = [
@@ -210,10 +210,18 @@ function applyExhibitionViewerSettings(
   presetPath: string | undefined,
   settings: Required<ExhibitionPresetViewerSettings>,
 ): Partial<Config> {
-  if (presetPath !== "exhibition/slideshow") {
+  if (!presetPath?.startsWith("exhibition")) {
     return baseConfig;
   }
 
+  const theseusPreview: PreviewConfiguration = {
+    id: "theseus",
+    type: "external-manifest-preview",
+    label: "Theseus",
+    config: {
+      url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
+    },
+  };
   const floatingTourPreview: PreviewConfiguration = {
     id: "minimal-floating-tour",
     type: "external-manifest-preview",
@@ -223,12 +231,24 @@ function applyExhibitionViewerSettings(
     },
   };
   const previews = baseConfig.previews || [];
+  const hasTheseusPreview = previews.some((preview) => preview.id === "theseus" || preview.id === "theseus-viewer");
   const hasFloatingTourPreview = previews.some((preview) => preview.id === floatingTourPreview.id);
+  const defaultPreview =
+    presetPath === "exhibition/slideshow"
+      ? settings.defaultPreview
+      : presetPath === "exhibition/scroll"
+        ? "scroll-theme"
+        : "delft-theme";
+  const configuredPreviews = hasTheseusPreview ? previews : [...previews, theseusPreview];
+  const nextPreviews =
+    presetPath === "exhibition/slideshow" && !hasFloatingTourPreview
+      ? [...configuredPreviews, floatingTourPreview]
+      : configuredPreviews;
 
   return {
     ...baseConfig,
-    defaultPreview: settings.defaultPreview,
-    previews: (hasFloatingTourPreview ? previews : [...previews, floatingTourPreview]).map((preview) => {
+    defaultPreview,
+    previews: nextPreviews.map((preview) => {
       if (preview.id !== floatingTourPreview.id) {
         return preview;
       }
@@ -333,6 +353,11 @@ export default function BrowserEditor({
     }
   }, [project, vault]);
 
+  const saveExhibitionPreset = useCallback(async () => {
+    if (!project) return;
+    await saveResource.mutateAsync({ ...project.resource, preset: "exhibition" });
+  }, [project, saveResource]);
+
   useSaveVault(vault, saveVault, 5000, vaultReady && !!project && (!wasAlreadyOpen || allowAnyway));
 
   useEffect(() => {
@@ -376,9 +401,10 @@ export default function BrowserEditor({
         {
           divide: !isExhibitionPreset,
           id: "config",
-          label: "Config",
+          label: "Settings",
           icon: <SettingsIcon />,
-          render: () => <ConfigEditor />,
+          render: () => <BrowserSettingsPanel />,
+          modal: true,
         },
       ],
       modalPanels: [
@@ -432,11 +458,15 @@ export default function BrowserEditor({
                 {exhibitionTheme === "dark" ? <LightIcon /> : <DarkIcon />}
               </button>
             ) : null}
-            <PreviewButton downloadEnabled fileName={project?.extraData.fileName} />
+            <PresetPreviewButton downloadEnabled fileName={project?.extraData.fileName} />
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt id={id} alreadyExhibition={isExhibitionPreset} />
+      <MaybeExhibitionPrompt
+        id={id}
+        alreadyExhibition={isExhibitionPreset}
+        onOpenExhibition={saveExhibitionPreset}
+      />
     </>
   );
 

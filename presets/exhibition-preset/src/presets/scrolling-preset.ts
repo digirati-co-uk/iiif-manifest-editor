@@ -6,7 +6,9 @@ import { imageSlideCreator } from "../creators/image-slide-creator";
 import { imageUrlSlideCreator } from "../creators/image-url-slide";
 import { infoBoxCreator } from "../creators/info-box-creator";
 import { videoSlideCreator } from "../creators/video-slide-creator";
+import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { youtubeSlideCreator } from "../creators/youtube-slide-creator";
+import { scrollGridLeftPanel } from "../left-panels/ExhibitionGrid";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
@@ -23,12 +25,15 @@ export const exhibitionEditorScrollingPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {},
     },
     leftPanels: [
       //
+      scrollGridLeftPanel,
     ],
+    leftPanelIds: ["left-panel-manifest"],
     centerPanels: [
       //
     ],

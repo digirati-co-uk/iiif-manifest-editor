@@ -1,9 +1,9 @@
-import { SpecificationTimeMode, TechnicalProperties, ViewingDirection } from "@iiif/presentation-3";
+import type { SpecificationTimeMode, TechnicalProperties, ViewingDirection } from "@iiif/presentation-3";
 import { BaseEditor } from "./BaseEditor";
-import { EditorConfig } from "./types";
 import { BasePropertyEditor } from "./BasePropertyEditor";
-import { ReadonlyProperty } from "./ReadonlyProperty";
 import { BehaviorEditor } from "./BehaviorEditor";
+import { ReadonlyProperty } from "./ReadonlyProperty";
+import type { EditorConfig } from "./types";
 
 export class TechnicalEditor<T extends Partial<TechnicalProperties>> extends BaseEditor<T> {
   id: ReadonlyProperty<T, string>;
@@ -18,6 +18,7 @@ export class TechnicalEditor<T extends Partial<TechnicalProperties>> extends Bas
   behavior: BehaviorEditor<T>;
   timeMode: BasePropertyEditor<T, SpecificationTimeMode | string | null>;
   motivation: BasePropertyEditor<T, string | null>;
+  backgroundColor: BasePropertyEditor<T, string | null>;
 
   constructor(config: EditorConfig) {
     super(config);
@@ -35,5 +36,6 @@ export class TechnicalEditor<T extends Partial<TechnicalProperties>> extends Bas
     this.behavior = new BehaviorEditor(config);
     this.timeMode = new BasePropertyEditor(config, "timeMode");
     this.motivation = new BasePropertyEditor(config, "motivation");
+    this.backgroundColor = new BasePropertyEditor(config, "backgroundColor");
   }
 }

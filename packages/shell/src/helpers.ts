@@ -68,7 +68,7 @@ export function mapApp(
   input: any,
   map?: (app: MappedApp) => MappedApp,
 ): MappedApp {
-  const { default: metadata, config, ...props } = input;
+  const { default: metadata, config, preset, ...props } = input;
   const app = {
     metadata: metadata as any,
     layout: {
@@ -78,9 +78,26 @@ export function mapApp(
       ...(props as any),
     },
     config,
+    preset,
   };
 
   return map ? map(app) : app;
+}
+
+export function mergePresetConfig(
+  base: MappedApp["preset"] | undefined,
+  override: MappedApp["preset"] | undefined,
+): MappedApp["preset"] | undefined {
+  if (!base && !override) return undefined;
+
+  return {
+    ...(base || {}),
+    ...(override || {}),
+    templates: [
+      ...(base?.templates || []),
+      ...(override?.templates || []),
+    ],
+  };
 }
 
 export function extendApp(
@@ -92,6 +109,7 @@ export function extendApp(
     ...app,
     metadata,
     config: mergePartialConfig(app.config || {}, extensions.config || {}),
+    preset: mergePresetConfig(app.preset, extensions.preset),
     layout: {
       ...app.layout,
       leftPanels: [

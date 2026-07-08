@@ -1,5 +1,5 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
+import { Input, InputContainer, InputLabel, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
@@ -8,16 +8,24 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { AnnotationPageContext, useCanvas, useVault } from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
-import { supportsTourSteps } from "../slideshow-content-positioning";
+import {
+  getTourStepAnnotations,
+  supportsTourSteps,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 import {
   buildLayoutPresetBehaviors,
+  buildSimpleLayoutBehaviors,
+  FloatingPositionPicker,
+  getFloatingBehavior,
   getLayoutPreset,
+  hasFloatingBehavior,
   injectTextPlaceholders,
   LayoutPresetCard,
-  layoutPresetOptions,
+  useExhibitionTemplateControls,
 } from "./SlideBehaviours";
 import { getLanguageMapHtml } from "./summary-html";
 
@@ -48,18 +56,29 @@ export function ExhibitionCanvasAdvancedPanel() {
 }
 
 export function ExhibitionCanvasAdvancedContent() {
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
   const vault = useVault();
   const resource = useEditingResource();
   const { structural, technical } = useEditor();
   const { items } = structural;
   const behavior = technical.behavior.get() || [];
+  const backgroundColor = technical.backgroundColor.get() || "#ffffff";
   const pages = items.get();
   const page = pages[0];
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
   const tourSupported = supportsTourSteps(vault, canvas);
+  const hasTourSteps = useVaultSelector(
+    (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
+    [canvas?.id, canvas?.annotations?.[0]?.id],
+  );
+  const controls = useExhibitionTemplateControls(behavior, hasTourSteps);
+
+  useEffect(() => {
+    setCenterPanelMode("preview");
+  }, [setCenterPanelMode]);
 
   if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
 
@@ -79,34 +98,84 @@ export function ExhibitionCanvasAdvancedContent() {
 
       <ReadonlyExhibitionSummary canvas={canvas} />
 
-      <InputContainer $wide>
-        <div>
-          <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">Layout preset</div>
-          <div className="grid grid-cols-2 gap-3">
-            {layoutPresetOptions.map((option) => (
-              <LayoutPresetCard
-                key={option.value}
-                preset={option.value}
-                label={option.label}
-                selected={getLayoutPreset(behavior) === option.value}
-                onClick={() => {
-                  technical.behavior.set(
-                    buildLayoutPresetBehaviors(
-                      behavior,
-                      option.value,
-                      canvas ? { width: canvas.width, height: canvas.height } : undefined,
-                    ),
-                  );
-                  if (canvas) {
-                    injectTextPlaceholders(vault, canvas, option.value);
-                  }
-                }}
-              />
-            ))}
-          </div>
-          <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="Edit layout options" />
+      <InputContainer $wide id={technical.backgroundColor.containerId()}>
+        <InputLabel htmlFor={technical.backgroundColor.focusId()}>Canvas background colour</InputLabel>
+        <div className="flex min-w-0 items-center gap-2">
+          <input
+            id={technical.backgroundColor.focusId()}
+            className="h-9 w-12 shrink-0 cursor-pointer rounded border border-[#dcd5ce] bg-white p-1"
+            type="color"
+            value={toHexColor(backgroundColor)}
+            onChange={(event) => technical.backgroundColor.set(event.target.value)}
+          />
+          <Input value={backgroundColor} onChange={(event) => technical.backgroundColor.set(event.target.value)} />
         </div>
       </InputContainer>
+
+      {controls.layoutOptions.length || (controls.isSlideshow && hasFloatingBehavior(behavior)) ? (
+        <InputContainer $wide>
+          <div>
+            <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">
+              {controls.isSlideshow && hasFloatingBehavior(behavior) ? "Floating position" : "Layout preset"}
+            </div>
+            {controls.isSlideshow && hasFloatingBehavior(behavior) ? (
+              <FloatingPositionPicker
+                value={getFloatingBehavior(behavior)}
+                clearLabel="Off"
+                onChange={(next) =>
+                  technical.behavior.set(
+                    buildSimpleLayoutBehaviors({
+                      behavior,
+                      layoutPreset: getLayoutPreset(behavior),
+                      displayWidth: 12,
+                      canvasWidth: canvas.width || 0,
+                      canvasHeight: canvas.height || 0,
+                      floating: Boolean(next),
+                      floatingBehavior: next || undefined,
+                      cover: behavior.includes("cover") || behavior.includes("image-cover"),
+                      scrollEnabled: false,
+                      splash: false,
+                      fixed: false,
+                      invert: false,
+                      backdrop: "",
+                      showGridSizing: false,
+                      showFloating: true,
+                      showImageCover: false,
+                      showScrollToggle: false,
+                      showScrollDisplay: false,
+                      scrollContext: false,
+                    }),
+                  )
+                }
+              />
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {controls.layoutOptions.map((option) => (
+                  <LayoutPresetCard
+                    key={option.value}
+                    preset={option.value}
+                    label={option.label}
+                    selected={getLayoutPreset(behavior) === option.value}
+                    onClick={() => {
+                      technical.behavior.set(
+                        buildLayoutPresetBehaviors(
+                          behavior,
+                          option.value,
+                          canvas ? { width: canvas.width, height: canvas.height } : undefined,
+                        ),
+                      );
+                      if (canvas) {
+                        injectTextPlaceholders(vault, canvas, option.value);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="Edit layout options" />
+          </div>
+        </InputContainer>
+      ) : null}
 
       {tourSupported ? <TourStepsSummary canvas={canvas} /> : null}
 
@@ -249,4 +318,14 @@ function getLanguageMapText(value: any): string {
   }
 
   return "";
+}
+
+function toHexColor(value: string) {
+  const trimmed = value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
+  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+    const [r, g, b] = trimmed.slice(1);
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return "#ffffff";
 }

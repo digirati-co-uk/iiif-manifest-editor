@@ -3,9 +3,11 @@
 import { collectionPreset } from "@manifest-editor/collection-preset";
 import { extendApp } from "@manifest-editor/shell";
 import BrowserEditor from "./BrowserEditor";
+import { browserWebPageCreator } from "./browser-web-page-creator";
+import { replaceCreator } from "./replace-creator";
 
 const collectionWithPreviews = extendApp(
-  collectionPreset,
+  replaceCreator(collectionPreset, browserWebPageCreator),
   collectionPreset.metadata,
   {
     config: {
@@ -62,12 +64,5 @@ export default function BrowserCollectionEditor({
   id: string;
   layoutMode?: "default" | "focused";
 }) {
-  return (
-    <BrowserEditor
-      id={id}
-      preset={collectionWithPreviews}
-      presetName="Collections"
-      layoutMode={layoutMode}
-    />
-  );
+  return <BrowserEditor id={id} preset={collectionWithPreviews} presetName="Collections" layoutMode={layoutMode} />;
 }

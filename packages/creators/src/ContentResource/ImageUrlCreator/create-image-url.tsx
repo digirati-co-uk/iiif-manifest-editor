@@ -36,6 +36,7 @@ export async function createImageUrl(
 }
 
 export function CreateImageUrlForm(props: CreatorContext) {
+  const initialData = props.options.initialData as Partial<CreateImageUrlPayload>;
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -51,7 +52,7 @@ export function CreateImageUrlForm(props: CreatorContext) {
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
           <InputLabel htmlFor="id">Link to Image</InputLabel>
-          <Input id="url" name="url" defaultValue="" />
+          <Input id="url" name="url" defaultValue={initialData.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

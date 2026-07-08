@@ -5,7 +5,7 @@ import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
 
-function croppedRegion(
+export function croppedRegion(
   imageServiceId: string,
   region: {
     x: number;
@@ -30,6 +30,7 @@ export interface IIIFBrowserCreatorPayload {
     selector: BoxSelector | undefined;
   }>;
   trackSize?: (dimensions: { width: number; height: number }) => void;
+  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
 }
 
 export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
@@ -60,6 +61,29 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
         invariant(manifest, "Manifest not found");
 
+        const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
+        data.trackManifest?.({
+          requiredStatement: manifest.requiredStatement,
+          rights: manifest.rights,
+          ...(addManifestMetadataToCanvas ? { metadata: manifest.metadata || [] } : {}),
+          partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+        });
+        const addManifestTracking = (resource: any): any => {
+          if (resource.type === "SpecificResource" && resource.source) {
+            return { ...resource, source: addManifestTracking(resource.source) };
+          }
+          const metadata =
+            resource.type === "Canvas" && !addManifestMetadataToCanvas ? {} : { metadata: manifest.metadata || [] };
+
+          return {
+            requiredStatement: manifest.requiredStatement,
+            rights: manifest.rights,
+            ...metadata,
+            ...resource,
+            partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+          };
+        };
+
         const canvasRef = manifest.items.find((item) => item.id === canvasId);
 
         invariant(canvasRef, "Canvas not found");
@@ -72,10 +96,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             fullCanvas.label = { en: ["Untitled canvas"] };
           }
 
-          // @todo add partof manifest
-
           // Load before embedding.
-          ctx.vault.loadSync(fullCanvas.id, fullCanvas);
+          ctx.vault.loadSync(fullCanvas.id, addManifestTracking(fullCanvas));
           // Then embed.
           returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
           continue;
@@ -148,7 +170,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             }
 
             if (targetType === "ContentResource") {
-              returnResources.push(fullAnnotation.body);
+              returnResources.push(addManifestTracking(fullAnnotation.body));
               continue;
             }
 
@@ -165,34 +187,38 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
               });
 
               returnResources.push(
-                ctx.embed({
-                  id: canvasId,
-                  type: "Canvas",
-                  label: { en: ["Untitled canvas"] },
-                  width: ~~selector.spatial.width,
-                  height: ~~selector.spatial.height,
-                  thumbnail: thumbnailId
-                    ? [
-                        ctx.embed({
-                          id: thumbnailId,
-                          type: "Image",
-                          format: "image/jpeg",
-                          width: 512,
-                          height: Math.round((selector.spatial.height / selector.spatial.width) * 512),
-                        }),
-                      ]
-                    : undefined,
-                  items: [annotationPage],
-                }),
+                ctx.embed(
+                  addManifestTracking({
+                    id: canvasId,
+                    type: "Canvas",
+                    label: { en: ["Untitled canvas"] },
+                    width: ~~selector.spatial.width,
+                    height: ~~selector.spatial.height,
+                    thumbnail: thumbnailId
+                      ? [
+                          ctx.embed({
+                            id: thumbnailId,
+                            type: "Image",
+                            format: "image/jpeg",
+                            width: 512,
+                            height: Math.round((selector.spatial.height / selector.spatial.width) * 512),
+                          }),
+                        ]
+                      : undefined,
+                    items: [annotationPage],
+                  }),
+                ),
               );
               continue;
             }
 
             returnResources.push(
-              ctx.embed({
-                ...fullAnnotation,
-                target: ctx.getTarget(),
-              }),
+              ctx.embed(
+                addManifestTracking({
+                  ...fullAnnotation,
+                  target: ctx.getTarget(),
+                }),
+              ),
             );
             continue;
           }
@@ -200,10 +226,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           // @todo check return types (At the moment only annotation is supported.)
 
           returnResources.push(
-            ctx.embed({
-              ...fullAnnotation,
-              target: ctx.getTarget(),
-            }),
+            ctx.embed(
+              addManifestTracking({
+                ...fullAnnotation,
+                target: ctx.getTarget(),
+              }),
+            ),
           );
         }
       }

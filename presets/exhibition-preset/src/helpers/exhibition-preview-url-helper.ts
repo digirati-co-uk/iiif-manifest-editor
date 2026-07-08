@@ -115,7 +115,7 @@ export function createScrollingPreviewUrl(
     window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
   const defaultBase =
     window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? "http://localhost:5173"
+      ? "http://localhost:5174"
       : "https://preview.exhibitionviewer.org";
 
   const url = new URL(configuredBase || defaultBase, window.location.origin);
@@ -132,6 +132,7 @@ export function createScrollingPreviewUrl(
   searchParams.forEach((value, key) => {
     url.searchParams.set(key, value);
   });
+
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);
 

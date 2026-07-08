@@ -21,11 +21,7 @@ import {
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { getGridStats, getHeightWidthRatio } from "../helpers";
-import {
-  exhibitionPreviewPresetOptions,
-  useExhibitionPreviewPreset,
-} from "../helpers/exhibition-preview-state";
-import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
+import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
 
 export const infoBlockEditor: CanvasEditorDefinition = {
   id: "info-block-editor",
@@ -257,7 +253,11 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
     "exhibition-info-block-mode",
     "edit",
   );
-  const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
+  const previewPreset = useConfiguredExhibitionPreviewPreset();
+  const isFullPagePreset = previewPreset === "exhibition";
+  const showShortSummary = isFullPagePreset;
+  const shortSummaryHeading = "Short text in info box";
+  const longSummaryHeading = isFullPagePreset ? "Read more text in modal" : "Summary";
 
   // Collect all languages present in the canvas
   const presentLanguages = useMemo(() => {
@@ -305,21 +305,6 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
               onAddLanguage={handleAddLanguage}
             />
           )}
-          {mode === "preview" ? (
-            <select
-              className="rounded-md border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm"
-              value={previewPreset}
-              onChange={(e) =>
-                setPreviewPreset(e.target.value as PresetUrlSearchParamsPreset)
-              }
-            >
-              {exhibitionPreviewPresetOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          ) : null}
           <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
             <ModeButton
               selected={mode === "edit"}
@@ -344,26 +329,28 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
         </div>
       ) : (
         <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-          <SummarySection
-            annotationPage={annotationPage}
-            compact={compact}
-            editorMaxWidth={editorMaxWidth}
-            fallbackText={strategy.items[0]?.text}
-            heading="Short summary"
-            panelClassName={twMerge(
-              "border-b border-gray-100",
-              compact ? "p-3" : "p-5",
-              hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
-              hasDimension && isBottom ? "max-w-4xl" : "",
-            )}
-            parentProperty="items"
-            selectedLanguage={effectiveLanguage}
-            onLanguageAdded={handleAddLanguage}
-          />
+          {showShortSummary ? (
+            <SummarySection
+              annotationPage={annotationPage}
+              compact={compact}
+              editorMaxWidth={editorMaxWidth}
+              fallbackText={strategy.items[0]?.text}
+              heading={shortSummaryHeading}
+              panelClassName={twMerge(
+                "border-b border-gray-100",
+                compact ? "p-3" : "p-5",
+                hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
+                hasDimension && isBottom ? "max-w-4xl" : "",
+              )}
+              parentProperty="items"
+              selectedLanguage={effectiveLanguage}
+              onLanguageAdded={handleAddLanguage}
+            />
+          ) : null}
           <SummarySection
             annotationPage={longSummaries}
             compact={compact}
-            heading="Long summary"
+            heading={longSummaryHeading}
             panelClassName={twMerge(compact ? "p-3" : "p-5")}
             parentProperty="annotations"
             selectedLanguage={effectiveLanguage}
