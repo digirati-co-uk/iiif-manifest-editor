@@ -55,9 +55,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "catalog",
+    "@atlas-viewer/atlas": "catalog:",
     "@floating-ui/react": "^0.26.13",
     "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "classnames": "^2.5.1",
     "mitt": "^3.0.1",
     "react": "catalog:",

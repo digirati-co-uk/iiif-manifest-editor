@@ -88,6 +88,7 @@
     "prepack": "tsdown"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@iiif/helpers": "catalog:",
     "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",

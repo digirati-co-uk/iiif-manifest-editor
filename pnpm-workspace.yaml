@@ -12,8 +12,8 @@ catalog:
   react-dom: 19.2.0
   styled-components: 6.1.8
   zustand: 4.5.2
-  "@iiif/parser": 2.2.12
+  "@iiif/parser": https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@7f4f2bc
   "@iiif/helpers": 1.5.9
-  "iiif-browser": https://pkg.pr.new/iiif-browser@de66897
+  "iiif-browser": 2.2.1
   "@atlas-viewer/atlas": https://pkg.pr.new/@atlas-viewer/atlas@a3c12f1
   "react-aria-components": ^1.12
