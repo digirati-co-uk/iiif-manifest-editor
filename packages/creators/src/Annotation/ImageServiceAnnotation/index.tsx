@@ -7,6 +7,7 @@ import {
   CreateImageServiceAnnotationForm,
   createImageServiceAnnotation,
 } from "./create-service-annotation";
+import { imageServiceCreator } from "../../ContentResource/ImageServiceCreator";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -31,7 +32,9 @@ export const imageServiceAnnotation = defineCreator({
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
   additionalTypes: ["Canvas"],
+  supportsResource: imageServiceCreator.supportsResource,
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],

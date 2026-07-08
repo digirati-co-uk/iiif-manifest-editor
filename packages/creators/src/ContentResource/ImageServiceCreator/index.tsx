@@ -1,6 +1,7 @@
 import { IIIFLogo } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import { CreateImageServerForm, createImageServer } from "./create-image-service";
+import { getJsonResource, isHttpUrl, isImageService } from "../../resource-probes";
+import { CreateImageServerForm, createImageServer, getCanonicalUrl } from "./create-image-service";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -17,12 +18,21 @@ export const imageServiceCreator = defineCreator({
   summary: "Add an image from Image Service",
   icon: <IIIFLogo style={{ padding: 10 }} />,
   tags: ["image", "image-service"],
+  async supportsResource(value, helpers) {
+    if (!isHttpUrl(value)) return false;
+    const serviceUrl = getCanonicalUrl(value);
+    if (!serviceUrl) return false;
+    const service = await getJsonResource(serviceUrl, helpers);
+    if (!isImageService(service)) return false;
+    return { initialData: { url: value, service } };
+  },
   render(ctx) {
     return <CreateImageServerForm {...ctx} />;
   },
   resourceType: "ContentResource",
   resourceFields: ["id", "type", "height", "width", "format", "service"],
   supports: {
+    initialData: true,
     parentFields: ["logo", "body", "thumbnail", "items"],
     custom(parent, vault) {
       if (parent.property !== "items") {

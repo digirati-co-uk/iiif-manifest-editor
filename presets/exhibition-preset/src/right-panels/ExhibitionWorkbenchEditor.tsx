@@ -1,16 +1,28 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useLocalStorage } from "@manifest-editor/shell";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useLocalStorage,
+} from "@manifest-editor/shell";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
-import { supportsTourSteps, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
-import { ExhibitionSummaryContent } from "./ExhibitionSummaryEditor";
+import {
+  supportsTourSteps,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
+import {
+  ExhibitionHtmlSummaryEditor,
+  ExhibitionRequiredStatementEditor,
+  ExhibitionSummaryContent,
+} from "./ExhibitionSummaryEditor";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { InfoBoxPanel } from "./InfoBoxPanel";
 import { SlideBehavioursContent } from "./SlideBehaviours";
 import { SlideshowContentPanel } from "./SlideshowContentPanel";
+import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
@@ -18,14 +30,14 @@ type RightPanelTab = "layout" | "content" | "summary" | "tour";
 
 const defaultTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
-  { id: "summary", label: "Summary" },
+  { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
 ];
 
 const slideshowTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
   { id: "content", label: "Content" },
-  { id: "summary", label: "Summary" },
+  { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
 ];
 
@@ -47,7 +59,7 @@ export const exhibitionWorkbenchEditor: EditorDefinition = {
   id: "@exhibition/workbench-editor",
   supports: {
     edit: true,
-    properties: ["label", "summary", "behavior", "annotations"],
+    properties: ["label", "summary", "requiredStatement", "behavior", "annotations"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
@@ -66,33 +78,52 @@ export const slideshowWorkbenchEditor: EditorDefinition = {
   supports: {
     ...exhibitionWorkbenchEditor.supports,
     // In slideshow mode (singleTab) the workbench handles ALL canvas types.
-    custom: ({ resource }, vault) => isEditableExhibitionCanvas(resource as any, vault),
+    custom: ({ resource }, vault) =>
+      isEditableExhibitionCanvas(resource as any, vault),
   },
   component: () => <ExhibitionWorkbenchRightPanel preset="slideshow" />,
 };
 
-function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: WorkbenchPreset }) {
-  const [mode, setMode] = useLocalStorage<EditingMode>(workbenchStorageKey, "simple");
+function ExhibitionWorkbenchRightPanel({
+  preset = "default",
+}: {
+  preset?: WorkbenchPreset;
+}) {
+  const [mode, setMode] = useLocalStorage<EditingMode>(
+    workbenchStorageKey,
+    "simple",
+  );
   const canvas = useCanvas();
   const vault = useVault();
   const isInfoBox = Boolean(canvas?.behavior?.includes("info"));
   const tourSupported = supportsTourSteps(vault, canvas);
 
   const tabs = useMemo(
-    () => (preset === "slideshow" ? slideshowTabs : defaultTabs).filter((tab) => tab.id !== "tour" || tourSupported),
+    () =>
+      (preset === "slideshow" ? slideshowTabs : defaultTabs).filter(
+        (tab) => tab.id !== "tour" || tourSupported,
+      ),
     [preset, tourSupported],
   );
   const [selectedTab, setSelectedTab] = useState<RightPanelTab>("layout");
-  const requestedTab = useSlideshowWorkbenchState((state) => state.requestedTab);
-  const clearRequestedTab = useSlideshowWorkbenchState((state) => state.clearRequestedTab);
-  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
-  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
+  const requestedTab = useSlideshowWorkbenchState(
+    (state) => state.requestedTab,
+  );
+  const clearRequestedTab = useSlideshowWorkbenchState(
+    (state) => state.clearRequestedTab,
+  );
+  const setShowTourSteps = useSlideshowWorkbenchState(
+    (state) => state.setShowTourSteps,
+  );
+  const setCenterPanelMode = useSlideshowWorkbenchState(
+    (state) => state.setCenterPanelMode,
+  );
 
   useEffect(() => {
     // Sync center panel mode with the initially selected tab on mount
     if (selectedTab === "tour") {
       setCenterPanelMode("edit");
-    } else if (selectedTab === "layout") {
+    } else if (selectedTab === "layout" || selectedTab === "summary") {
       setCenterPanelMode("preview");
     }
     // Only run on mount
@@ -106,12 +137,18 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
       setShowTourSteps(tab === "tour");
       if (tab === "tour") {
         setCenterPanelMode("edit");
-      } else if (tab === "layout") {
+      } else if (tab === "layout" || tab === "summary") {
         setCenterPanelMode("preview");
       }
       clearRequestedTab();
     }
-  }, [clearRequestedTab, requestedTab, setCenterPanelMode, setShowTourSteps, tabs]);
+  }, [
+    clearRequestedTab,
+    requestedTab,
+    setCenterPanelMode,
+    setShowTourSteps,
+    tabs,
+  ]);
 
   useEffect(() => {
     if (selectedTab === "tour" && !tourSupported) {
@@ -125,7 +162,7 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
     setShowTourSteps(tab === "tour");
     if (tab === "tour") {
       setCenterPanelMode("edit");
-    } else if (tab === "layout") {
+    } else if (tab === "layout" || tab === "summary") {
       setCenterPanelMode("preview");
     }
   };
@@ -140,13 +177,18 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
     <Sidebar>
       <SidebarContent className="bg-white px-6 pt-5 pb-20">
         <div className="flex justify-center">
-          <SegmentedToggle value={mode} options={modeOptions} onChange={setMode} />
+          <SegmentedToggle
+            value={mode}
+            options={modeOptions}
+            onChange={setMode}
+          />
         </div>
 
         <div
-          className={["mt-5 grid border-b border-[#e4ddd6]", tabs.length === 4 ? "grid-cols-4" : "grid-cols-3"].join(
-            " ",
-          )}
+          className={[
+            "mt-5 grid border-b border-[#e4ddd6]",
+            tabs.length === 4 ? "grid-cols-4" : "grid-cols-3",
+          ].join(" ")}
         >
           {tabs.map((tab) => (
             <button
@@ -155,7 +197,9 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
               className={[
                 "exhibition-workbench-tab",
                 "-mb-px border-b-[3px] border-transparent px-1 pb-3 text-center text-sm font-semibold",
-                selectedTab === tab.id ? "border-me-primary-500 text-me-primary-500" : "exhibition-workbench-muted",
+                selectedTab === tab.id
+                  ? "border-me-primary-500 text-me-primary-500"
+                  : "exhibition-workbench-muted",
               ].join(" ")}
               onClick={() => selectTab(tab.id)}
             >
@@ -166,12 +210,27 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
 
         <div className="mt-8 px-4">
           {selectedTab === "layout" ? (
-            <SlideBehavioursContent mode={mode} layoutContext={preset === "slideshow" ? "slideshow" : "default"} />
+            <>
+              <SlideshowDurationField />
+              <SlideBehavioursContent
+                mode={mode}
+                layoutContext={preset === "slideshow" ? "slideshow" : "default"}
+              />
+            </>
           ) : null}
           {selectedTab === "content" ? <SlideshowContentPanel /> : null}
-          {selectedTab === "summary" ? mode === "simple" ? <SimpleSummaryPanel /> : <ExhibitionSummaryContent /> : null}
+          {selectedTab === "summary" ? (
+            mode === "simple" ? (
+              <SimpleSummaryPanel />
+            ) : (
+              <ExhibitionSummaryContent />
+            )
+          ) : null}
           {selectedTab === "tour" ? (
-            <ExhibitionTourStepsContent mode={mode} useSlideshowWorkbench={preset === "slideshow"} />
+            <ExhibitionTourStepsContent
+              mode={mode}
+              useSlideshowWorkbench={preset === "slideshow"}
+            />
           ) : null}
         </div>
       </SidebarContent>
@@ -201,7 +260,9 @@ function SegmentedToggle<T extends string>({
             className="border-none rounded-full bg-transparent px-4 py-2 text-sm font-semibold transition-colors"
             style={{
               backgroundColor: selected ? toggleColours.active : "transparent",
-              color: selected ? toggleColours.activeText : toggleColours.inactiveText,
+              color: selected
+                ? toggleColours.activeText
+                : toggleColours.inactiveText,
               boxShadow: selected ? toggleColours.activeShadow : "none",
             }}
             onPress={() => onChange(option.value)}
@@ -223,20 +284,29 @@ function SimpleSummaryPanel() {
         <div>
           <SimpleFieldLabel>Slide title</SimpleFieldLabel>
           <div className="mt-2">
-            <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+            <LanguageMapEditor
+              dispatchType="label"
+              disableMultiline
+              disallowHTML
+            />
           </div>
         </div>
         <div>
           <SimpleFieldLabel>Slide summary</SimpleFieldLabel>
           <div className="mt-2">
-            <LanguageMapEditor dispatchType="summary" />
+            <ExhibitionHtmlSummaryEditor resource={canvas} />
           </div>
         </div>
+        <ExhibitionRequiredStatementEditor />
       </div>
     </ResourceEditingProvider>
   );
 }
 
 function SimpleFieldLabel({ children }: { children: ReactNode }) {
-  return <div className="exhibition-workbench-muted text-sm font-semibold">{children}</div>;
+  return (
+    <div className="exhibition-workbench-muted text-sm font-semibold">
+      {children}
+    </div>
+  );
 }

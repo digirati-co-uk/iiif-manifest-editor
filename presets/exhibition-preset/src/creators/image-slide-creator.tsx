@@ -27,6 +27,7 @@ export const imageSlideCreator = defineCreator({
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
@@ -119,11 +120,16 @@ export const scrollCompactDeckCreator = defineCreator({
 interface InfoBoxPayload {
   canvasId?: string;
   label?: InternationalString;
+  metadata?: any[];
+  requiredStatement?: any;
+  rights?: string;
+  partOf?: any[];
   height?: number;
   width?: number;
   duration?: number;
   type: "default" | "left" | "right" | "bottom";
   behavior?: string[];
+  imageSlideBehavior?: string[];
   items?: CreatorResource[];
 }
 
@@ -141,8 +147,12 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const behavior = [];
   let width = 6000;
 
+  const imageSlideBehavior = payload.imageSlideBehavior || ctx.options.initialData?.imageSlideBehavior;
+
   if (payload.behavior) {
     behavior.push(...payload.behavior);
+  } else if (imageSlideBehavior) {
+    behavior.push(...imageSlideBehavior);
   } else if (payload.width && payload.height) {
     // Determine layout type to apply effective-width modifier for text panels
     const layoutType = payload.type ?? "default";
@@ -183,11 +193,19 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     behavior.push("multi-image");
   }
 
+  const manifestTracking = {
+    ...(payload.metadata ? { metadata: payload.metadata } : {}),
+    ...(payload.requiredStatement ? { requiredStatement: payload.requiredStatement } : {}),
+    ...(payload.rights ? { rights: payload.rights } : {}),
+    ...(payload.partOf ? { partOf: payload.partOf } : {}),
+  };
+
   return ctx.embed({
     ...emptyCanvas,
     id: canvasId,
     behavior,
     label: payload.label || { en: ["Untitled"] },
+    ...manifestTracking,
     height: payload.height || 4000,
     duration: payload.duration,
     width: payload.width || width,

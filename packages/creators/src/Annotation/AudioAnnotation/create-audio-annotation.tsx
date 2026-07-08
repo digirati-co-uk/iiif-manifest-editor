@@ -73,7 +73,8 @@ export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, 
 }
 
 export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnotationPayload>) {
-  const [url, setUrl] = useState("");
+  const initialData = props.options.initialData as Partial<CreateAudioAnnotationPayload>;
+  const [url, setUrl] = useState(initialData.url || "");
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState("");
   const [label, setLabel] = useState({ en: [""] } as InternationalString);

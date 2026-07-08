@@ -23,6 +23,7 @@ export const imageUrlSlideCreator = defineCreator({
   summary: "Image from URL",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
@@ -73,5 +74,6 @@ async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionC
     height,
     type: "default", // default / left / right / bottom
     items: [annotation],
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
   });
 }

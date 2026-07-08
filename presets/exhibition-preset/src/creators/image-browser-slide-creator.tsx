@@ -18,6 +18,7 @@ export const imageBrowserSlideCreator = defineCreator({
   ...iiifBrowserCreator,
   id: "@exhibitions/browser-creator",
   create: createBrowser,
+  sideEffects: [],
   tags: ["image", "exhibition-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
@@ -25,6 +26,7 @@ export const imageBrowserSlideCreator = defineCreator({
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: [],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
@@ -42,6 +44,7 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
   });
 
   const dimensions = { width: 0, height: 0 };
+  let manifestTracking: Parameters<NonNullable<IIIFBrowserCreatorPayload["trackManifest"]>>[0] | undefined;
 
   const createBrowserAnnotation = creatorHelper(
     ctx,
@@ -56,6 +59,9 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
       trackSize({ width, height }) {
         dimensions.height = height;
         dimensions.width = width;
+      },
+      trackManifest(manifest) {
+        manifestTracking = manifest;
       },
     },
     {
@@ -76,5 +82,7 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     height: dimensions.height,
     type: "default", // default / left / right / bottom
     items: annotation,
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
+    ...manifestTracking,
   });
 }

@@ -63,8 +63,12 @@ export function editBasedOnResource(
     // Check for a match in order.
     const sortKeys: string[] = [];
     const sortKeyFallbacks: Record<string, EditorDefinition> = {};
+    const partOfOverride = resource.property === "partOf";
     // 1. Filter out the
     const editors = (item.editors || []).filter((editor) => {
+      if (partOfOverride && editor.id !== "@manifest-editor/part-of-reference") {
+        return false;
+      }
       if (config.hideTabs && config.hideTabs.includes(editor.id)) {
         return false;
       }

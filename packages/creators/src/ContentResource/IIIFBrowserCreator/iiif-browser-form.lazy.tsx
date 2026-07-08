@@ -4,6 +4,7 @@ import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useMemo } from "react";
 
 export interface IIIFBrowserCreatorInitialData {
+  url?: string;
   iiifBrowserOptions?: Partial<IIIFBrowserProps>;
 }
 
@@ -54,10 +55,26 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
-      homeLink: `${window.location.origin}/collection.json`,
+      homeLink: initialData.url || `${window.location.origin}/collection.json`,
       // /collection.json
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
+  }, [initialData]);
+  const historyOptions = useMemo(() => {
+    const history = initialData.iiifBrowserOptions?.history || {};
+    if (!initialData.url) return history;
+    return {
+      ...history,
+      restoreFromLocalStorage: false,
+      saveToLocalStorage: false,
+      initialHistory: [
+        {
+          url: initialData.url,
+          resource: null,
+          route: `/loading?id=${encodeURIComponent(initialData.url)}`,
+        },
+      ],
+    } as IIIFBrowserProps["history"];
   }, [initialData]);
 
   return (
@@ -69,7 +86,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
         output={output}
         navigation={navigationOptions}
         customPages={initialData.iiifBrowserOptions?.customPages || {}}
-        history={initialData.iiifBrowserOptions?.history || {}}
+        history={historyOptions}
       />
     </PreviewVaultBoundary>
   );

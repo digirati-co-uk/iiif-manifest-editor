@@ -7,6 +7,7 @@ import {
   CreateImageUrlAnnotationForm,
   createImageUrlAnnotation,
 } from "./create-image-url-annotation";
+import { imageUrlCreator } from "../../ContentResource/ImageUrlCreator";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -30,7 +31,9 @@ export const imageUrlAnnotation = defineCreator({
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "body", "target"],
   additionalTypes: ["Canvas"],
+  supportsResource: imageUrlCreator.supportsResource,
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],

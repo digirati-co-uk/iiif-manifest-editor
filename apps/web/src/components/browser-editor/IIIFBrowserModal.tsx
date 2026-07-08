@@ -60,7 +60,7 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
           className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
           navigation={navigationOptions}
           output={output}
-          ui={{ homeLink: `${window.location.origin}/collection.json` }}
+          ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
         />
       </VaultProvider>
     </Modal>

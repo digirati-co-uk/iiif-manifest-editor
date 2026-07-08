@@ -1,25 +1,22 @@
 import {
   ActionButton,
-  HTMLEditor,
   DeleteIcon,
   TargetIcon,
 } from "@manifest-editor/components";
-import { useAtlasStore, useConfig } from "@manifest-editor/shell";
+import { useAtlasStore } from "@manifest-editor/shell";
 import {
   useCurrentAnnotationActions,
   useCurrentAnnotationMetadata,
 } from "react-iiif-vault";
 import { useStore } from "zustand";
 import { CheckIcon } from "../icons/CheckIcon";
-import { DEFAULT_TOUR_STEP_HTML } from "./ExhibitionTourStepPopup";
-import { AnnotationPopUpSwitcherButton } from "@manifest-editor/editors";
+import { TourStepHtmlForm } from "./TourStepHtmlForm";
+import { DEFAULT_TOUR_STEP_HTML } from "./tour-step-html";
 
 export function PendingTourStepAnnotation() {
   const store = useAtlasStore();
   const polygon = useStore(store, (s) => s.polygon);
   const [metadata, setMetadata] = useCurrentAnnotationMetadata();
-  const { editorFeatureFlags } = useConfig();
-  const { annotationPopups } = editorFeatureFlags;
   const { cancelRequest, saveAnnotation } = useCurrentAnnotationActions();
 
   return (
@@ -28,23 +25,12 @@ export function PendingTourStepAnnotation() {
         <TargetIcon />
         Draw a box on the canvas
       </div>
-      {annotationPopups ? (
-        <div className="relative p-3 line-clamp-3 prose-p:text-slate-600">
-          <div className="prose-headings:mt-1 prose-headings:mb-1 prose-sm">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: metadata.bodyValue || DEFAULT_TOUR_STEP_HTML,
-              }}
-            />
-          </div>
-        </div>
-      ) : (
-        <HTMLEditor
-          className="border-none"
+      <div className="p-3">
+        <TourStepHtmlForm
           value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
-          onChange={(newValue) => setMetadata({ bodyValue: newValue })}
+          onChange={(bodyValue) => setMetadata({ bodyValue })}
         />
-      )}
+      </div>
       <div className="flex gap-2 p-3">
         <ActionButton
           isDisabled={polygon?.points.length === 0}
@@ -56,8 +42,6 @@ export function PendingTourStepAnnotation() {
         <ActionButton className="gap-2 flex" onPress={() => cancelRequest()}>
           <DeleteIcon /> Delete
         </ActionButton>
-
-        <AnnotationPopUpSwitcherButton />
       </div>
     </div>
   );

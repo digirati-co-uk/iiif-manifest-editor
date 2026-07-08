@@ -132,6 +132,16 @@ export function createScrollingPreviewUrl(
   searchParams.forEach((value, key) => {
     url.searchParams.set(key, value);
   });
+  const base = `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`;
+  // const base =
+  //   window.localStorage.getItem("exhibition-viewer-preview-url") ||
+  //   process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL ||
+  //   (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  //     ? `http://localhost:5174/preview/${preset}?${searchParams?.toString()}`
+  //     : `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`);
+
+  const url = new URL(base);
+
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);
 

@@ -30,13 +30,15 @@ export function RenderImageOverlayControls() {
           />
         );
       })}
-      {canvas ? <world-object
-        width={canvas.width}
-        height={canvas.height}
-        onClick={() => {
-          setSelected(null);
-        }}
-      /> : null}
+      {canvas ? (
+        <world-object
+          width={canvas.width}
+          height={canvas.height}
+          onClick={() => {
+            setSelected(null);
+          }}
+        />
+      ) : null}
     </>
   );
 }
@@ -72,20 +74,23 @@ function SingleImageOverlay(props: {
             style={{
               flex: 1,
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "flex-end",
               alignItems: "center",
-              transform: "translateY(-2em)",
+              padding: "0.2em",
               gap: "0.35em",
             }}
           >
-            <ActionButton isDisabled={isSelected} onPress={() => edit({ id: props.id, type: "Annotation" }, undefined, { forceOpen: true })}>
+            <ActionButton
+              isDisabled={isSelected}
+              onPress={() => edit({ id: props.id, type: "Annotation" }, undefined, { forceOpen: true })}
+            >
               Edit
             </ActionButton>
             <ActionButton
               onPress={(e) => {
                 store.toggle({
                   x: target.x + props.target.width / 2,
-                  y: target.y + 1,
+                  y: target.y + 10,
                 });
               }}
             >

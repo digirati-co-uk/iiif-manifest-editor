@@ -11,7 +11,10 @@ export function filteredBehaviors(
       if (config.type === "custom" && config.supports(behavior)) {
         return supported;
       }
-      if (config.type === "choice" && config.items.find((i) => i.value === behavior)) {
+      if (
+        config.type === "choice" &&
+        (config.groupBehavior === behavior || config.items.find((i) => i.value === behavior))
+      ) {
         return supported;
       }
       if (config.type === "template" && behavior.match(config.regex)) {

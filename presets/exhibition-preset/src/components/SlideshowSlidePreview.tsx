@@ -16,6 +16,7 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { nonLinearTourBehavior } from "../tour-behaviors";
+import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 
 const editorialTextRegionId = "editorial-text";
 
@@ -144,7 +145,11 @@ export function SlideshowSlidePreview({
                     : undefined
               }
             >
-              <RenderSlideLayer layer={layer} mode={mode} cover={behavior.includes("cover")} />
+              <RenderSlideLayer
+                layer={layer}
+                mode={mode}
+                cover={behavior.includes("cover") || behavior.includes("image-cover")}
+              />
               {contentEditingActive && (repositioning || editingLayer) ? (
                 <div
                   className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize rounded-tl bg-me-primary-500"
@@ -237,6 +242,9 @@ function TourStepTarget({
   onSelect: () => void;
 }) {
   const box = getAnnotationTargetBox(annotation, canvas);
+  const canvasBehavior = Array.isArray(canvas.behavior) ? canvas.behavior : [];
+  const annotationBehavior = Array.isArray(annotation.behavior) ? annotation.behavior : [];
+  const floating = hasFloatingBehavior(canvasBehavior) ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior) : null;
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const selectedColour = "#6d5aa8";
@@ -294,6 +302,16 @@ function TourStepTarget({
     >
       <span className="absolute left-1 top-1">
         <TourStepPin index={index + 1} />
+        </span>
+      <span
+        className={twMerge(
+          "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
+          getTourStepBadgePosition(floating),
+          !selected && "bg-me-primary-500",
+        )}
+        style={selected ? { backgroundColor: selectedColour } : undefined}
+      >
+        Step {index + 1}
       </span>
     </div>
   );
@@ -337,6 +355,25 @@ function TourStepPin({ index }: { index?: number }) {
       {index ? <span className="sr-only">Tour step {index}</span> : null}
     </span>
   );
+function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
+  switch (floating) {
+    case "float-top":
+      return "left-1/2 top-1 -translate-x-1/2";
+    case "float-top-right":
+      return "right-1 top-1";
+    case "float-left":
+      return "left-1 top-1/2 -translate-y-1/2";
+    case "float-right":
+      return "right-1 top-1/2 -translate-y-1/2";
+    case "float-bottom-left":
+      return "bottom-1 left-1";
+    case "float-bottom":
+      return "bottom-1 left-1/2 -translate-x-1/2";
+    case "float-bottom-right":
+      return "bottom-1 right-1";
+    default:
+      return "left-1 top-1";
+  }
 }
 
 function SlideTextPanel({

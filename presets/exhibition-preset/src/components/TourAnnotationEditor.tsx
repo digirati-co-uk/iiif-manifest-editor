@@ -12,6 +12,10 @@ export function TourAnnotationEditor({
 }: {
   index?: number;
   tourStyle?: "linear" | "non-linear";
+  editAlignment = false,
+  useSlideshowWorkbench = false,
+}: {
+  editAlignment?: boolean;
   useSlideshowWorkbench?: boolean;
 }) {
   const [annotation, { annotationTarget, highlightProps }] =
@@ -29,6 +33,7 @@ export function TourAnnotationEditor({
       <ResourceEditingProvider resource={resource}>
         <AnnotationContext annotation={annotationTarget}>
           <TourPaintingAnnotationEditor
+            editAlignment={editAlignment}
             originalAnnotationId={annotation?.id}
             highlightProps={highlightProps}
             index={index}
@@ -43,6 +48,7 @@ export function TourAnnotationEditor({
   return (
     <ResourceEditingProvider resource={resource}>
       <TourNormalAnnotationEditor
+        editAlignment={editAlignment}
         highlightProps={highlightProps}
         index={index}
         tourStyle={tourStyle}

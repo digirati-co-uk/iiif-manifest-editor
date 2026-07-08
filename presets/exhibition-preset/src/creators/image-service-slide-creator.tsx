@@ -24,6 +24,7 @@ export const imageServiceSlideCreator = defineCreator({
   summary: "IIIF Image service",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
@@ -76,5 +77,6 @@ async function createImageService(
     height,
     type: "default", // default / left / right / bottom
     items: [annotation],
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
   });
 }

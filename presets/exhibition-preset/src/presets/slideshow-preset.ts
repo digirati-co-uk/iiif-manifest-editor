@@ -11,6 +11,7 @@ import {
 import { slideshowLongEditorialCreator } from "../creators/info-box-creator";
 import { slideshowVideoCreator } from "../creators/video-slide-creator";
 import { slideshowYoutubeCreator } from "../creators/youtube-slide-creator";
+import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { slideshowGridLeftPanel } from "../left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "../left-panels/ExhibitionOverview";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
@@ -29,6 +30,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {
         Canvas: {
