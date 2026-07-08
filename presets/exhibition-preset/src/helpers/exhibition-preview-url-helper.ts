@@ -115,7 +115,7 @@ export function createScrollingPreviewUrl(
     window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
   const defaultBase =
     window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? "http://localhost:5174"
+      ? "http://localhost:5173"
       : "https://preview.exhibitionviewer.org";
 
   const url = new URL(configuredBase || defaultBase, window.location.origin);
