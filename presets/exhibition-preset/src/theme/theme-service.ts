@@ -11,6 +11,7 @@ export type FloatingPosition =
   | "bottom-left"
   | "bottom-right";
 export type TitleTransform = "uppercase" | "none" | "capitalize";
+export type TableOfContentsPlacement = "header" | "footer";
 
 export interface SharedThemeConfig {
   fontSans: string;
@@ -56,6 +57,7 @@ export interface DelftExhibitionThemeOptions {
   fullTitleBar: boolean;
   fullWidthGrid: boolean;
   hideTableOfContents: boolean;
+  tableOfContentsPlacement: TableOfContentsPlacement;
   disablePresentation: boolean;
   hideTitle: boolean;
   hideTitleCard: boolean;
@@ -174,6 +176,7 @@ const DEFAULT_EXHIBITION_OPTIONS: DelftExhibitionThemeOptions = {
   fullTitleBar: true,
   fullWidthGrid: false,
   hideTableOfContents: false,
+  tableOfContentsPlacement: "footer",
   disablePresentation: false,
   hideTitle: false,
   hideTitleCard: false,

@@ -8,6 +8,7 @@ import type {
   ExhibitionThemeConfig,
   ExhibitionThemePreset,
   FloatingPosition,
+  TableOfContentsPlacement,
   TitleTransform,
 } from "../theme/theme-service";
 import {
@@ -619,6 +620,20 @@ function ExhibitionThemePanel() {
                     value,
                   )
                 }
+              />
+              <ThemeSelectField<TableOfContentsPlacement>
+                label="Table of contents placement"
+                value={resolvedTheme.delft.exhibition.tableOfContentsPlacement}
+                onChange={(value) =>
+                  updatePath(
+                    ["delft", "exhibition", "tableOfContentsPlacement"],
+                    value,
+                  )
+                }
+                options={[
+                  { label: "Header", value: "header" },
+                  { label: "Footer", value: "footer" },
+                ]}
               />
               <ThemeToggle
                 label="Disable presentation mode"
