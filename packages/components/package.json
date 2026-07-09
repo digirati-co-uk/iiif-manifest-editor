@@ -43,10 +43,12 @@
     "prepack": "tsdown"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@floating-ui/react": "^0.26.13",
     "@floating-ui/react-dom": "^2.0.9",
     "@headlessui/react": "^2.0.3",
     "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@mdxeditor/editor": "^3.29.0",
     "@react-aria/collections": "3.0.0-alpha.4",
