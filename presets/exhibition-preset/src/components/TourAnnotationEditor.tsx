@@ -8,10 +8,12 @@ import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 export function TourAnnotationEditor({
   index = 0,
   tourStyle = "linear",
+  editAlignment = false,
   useSlideshowWorkbench = false,
 }: {
   index?: number;
   tourStyle?: "linear" | "non-linear";
+  editAlignment?: boolean;
   useSlideshowWorkbench?: boolean;
 }) {
   const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();
