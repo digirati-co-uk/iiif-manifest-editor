@@ -594,11 +594,11 @@ function ExhibitionThemeOptions() {
         </ThemeSection>
 
         <ThemeSection
-          title="Manifest Theme"
-          description="Store exhibition styling and viewer defaults in a custom IIIF service on the Manifest."
+          title="Saved Theme"
+          description="Save custom exhibition styling and viewer defaults on the Manifest."
         >
           <ThemeToggle
-            label="Enable manifest theme"
+            label="Save custom theme"
             checked={!!serviceDetails}
             onChange={enableTheme}
           />
@@ -609,14 +609,14 @@ function ExhibitionThemeOptions() {
               onPress={resetToPreset}
               isDisabled={!serviceDetails}
             >
-              Reset to preset
+              Reset selected theme
             </Button>
             <Button
               className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
               onPress={() => upsertTheme(null)}
               isDisabled={!serviceDetails}
             >
-              Remove theme service
+              Clear saved settings
             </Button>
           </div>
 
