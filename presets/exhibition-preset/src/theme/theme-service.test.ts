@@ -18,46 +18,52 @@ describe("Leeds exhibition theme presets", () => {
 
     expect(theme.shared.fontDisplay).toContain("UoL Sans");
     expect(theme.shared.fontSans).toContain("UoL Sans");
+    expect(theme.shared.fontMono).toContain("UoL Inter");
     expect(cssVariables["--f-display-font"]).toContain("UoL Sans");
     expect(cssVariables["--f-font"]).toContain("UoL Sans");
+    expect(cssVariables["--f-mono-font"]).toContain("UoL Inter");
   });
 
   test("uses Leeds portal colours", () => {
     const theme = getThemePreset("leeds-full-page");
 
-    expect(theme.delft.tokens.backgroundPrimary).toBe("#000000");
+    expect(theme.delft.tokens.backgroundPrimary).toBe("#ffffff");
     expect(theme.delft.tokens.backgroundSecondary).toBe("#000000");
-    expect(theme.delft.tokens.titleCard).toBe("#af1b00");
-    expect(theme.delft.tokens.titleCardText).toBe("#ffffff");
+    expect(theme.delft.tokens.titleCard).toBe("#55ff55");
+    expect(theme.delft.tokens.titleCardText).toBe("#000000");
     expect(theme.delft.tokens.infoBlock).toBe("#000000");
     expect(theme.delft.tokens.infoBlockText).toBe("#ffffff");
     expect(theme.delft.tokens.controlBar).toBe("#000000");
-    expect(theme.delft.tokens.progressBar).toBe("#af1b00");
-    expect(theme.scroll.tokens.titleBackground).toBe("#000000");
+    expect(theme.delft.tokens.progressBar).toBe("#55ff55");
+    expect(theme.scroll.tokens.titleBackground).toBe("#ffffff");
   });
 
-  test("keeps Leeds display templates black-led", () => {
+  test("uses Leeds colour-combination exemplars", () => {
     const scroll = getThemePreset("leeds-scroll");
     const slideshow = getThemePreset("leeds-slideshow");
 
-    expect(scroll.delft.tokens.backgroundPrimary).toBe("#000000");
-    expect(scroll.delft.tokens.viewerBackground).toBe("#000000");
-    expect(scroll.delft.tokens.titleCard).toBe("#ffa8ff");
+    expect(scroll.delft.tokens.backgroundPrimary).toBe("#fff1df");
+    expect(scroll.delft.tokens.viewerBackground).toBe("#fff1df");
+    expect(scroll.delft.tokens.titleCard).toBe("#fff1df");
     expect(scroll.delft.tokens.titleCardText).toBe("#000000");
-    expect(scroll.delft.tokens.progressBar).toBe("#af1b00");
-    expect(scroll.scroll.tokens.titleBackground).toBe("#ffa8ff");
+    expect(scroll.delft.tokens.infoBlock).toBe("#4a2f29");
+    expect(scroll.delft.tokens.infoBlockText).toBe("#ffffff");
+    expect(scroll.delft.tokens.progressBar).toBe("#f28df7");
+    expect(scroll.scroll.tokens.titleBackground).toBe("#fff1df");
     expect(scroll.scroll.tokens.titleColor).toBe("#000000");
-    expect(scroll.scroll.tokens.infoBlockBackground).toBe("#ffa8ff");
-    expect(scroll.scroll.tokens.infoBlockColor).toBe("#000000");
-    expect(slideshow.delft.tokens.backgroundPrimary).toBe("#000000");
-    expect(slideshow.delft.tokens.backgroundSecondary).toBe("#000000");
-    expect(slideshow.delft.tokens.titleCard).toBe("#88ffb8");
+    expect(scroll.scroll.tokens.annotationBackground).toBe("#f28df7");
+    expect(scroll.scroll.tokens.annotationColor).toBe("#000000");
+    expect(scroll.scroll.tokens.infoBlockBackground).toBe("#4a2f29");
+    expect(scroll.scroll.tokens.infoBlockColor).toBe("#ffffff");
+    expect(slideshow.delft.tokens.backgroundPrimary).toBe("#ffffff");
+    expect(slideshow.delft.tokens.backgroundSecondary).toBe("#8de3ef");
+    expect(slideshow.delft.tokens.titleCard).toBe("#8de3ef");
     expect(slideshow.delft.tokens.titleCardText).toBe("#000000");
-    expect(slideshow.delft.tokens.infoBlock).toBe("#88ffb8");
-    expect(slideshow.delft.tokens.infoBlockText).toBe("#000000");
+    expect(slideshow.delft.tokens.infoBlock).toBe("#9c381c");
+    expect(slideshow.delft.tokens.infoBlockText).toBe("#ffffff");
     expect(slideshow.delft.tokens.controlBar).toBe("#000000");
-    expect(slideshow.delft.tokens.controlBarBorder).toBe("#af1b00");
-    expect(slideshow.delft.tokens.progressBar).toBe("#af1b00");
+    expect(slideshow.delft.tokens.controlBarBorder).toBe("#000000");
+    expect(slideshow.delft.tokens.progressBar).toBe("#9c381c");
   });
 
   test("keeps text-bearing colour pairs accessible", () => {
@@ -74,6 +80,50 @@ describe("Leeds exhibition theme presets", () => {
           `${preset}: ${pair.name}`,
         ).toBeGreaterThanOrEqual(4.5);
       }
+    }
+  });
+
+  test("uses black or white for Leeds text colours", () => {
+    for (const preset of [
+      "leeds-full-page",
+      "leeds-scroll",
+      "leeds-slideshow",
+    ] as const) {
+      const theme = getThemePreset(preset);
+
+      for (const colour of [
+        theme.delft.tokens.textPrimary,
+        theme.delft.tokens.textSecondary,
+        theme.delft.tokens.imageCaption,
+        theme.delft.tokens.closeText,
+        theme.delft.tokens.titleCardText,
+        theme.delft.tokens.infoBlockText,
+        theme.scroll.tokens.titleColor,
+        theme.scroll.tokens.annotationColor,
+        theme.scroll.tokens.infoBlockColor,
+      ]) {
+        expect(["#000000", "#ffffff"]).toContain(colour);
+      }
+    }
+  });
+
+  test("keeps Leeds presets compatible with the theme settings panel", () => {
+    for (const preset of [
+      "leeds-full-page",
+      "leeds-scroll",
+      "leeds-slideshow",
+    ] as const) {
+      const theme = getThemePreset(preset);
+
+      expect(theme.scroll.options.showTitleBlock).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.showTableOfContents).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.tableOfContentsPlacement).toMatch(/^(header|footer)$/);
+      expect(theme.scroll.options.showProgressBar).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.showProgressTableOfContents).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.showScrollToTop).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.showNavigationControls).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.ignoreCanvasBackgrounds).toEqual(expect.any(Boolean));
+      expect(theme.scroll.options.titleBlock.fullHeight).toEqual(expect.any(Boolean));
     }
   });
 });

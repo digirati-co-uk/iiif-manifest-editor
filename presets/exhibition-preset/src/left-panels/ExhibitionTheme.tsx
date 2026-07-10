@@ -1,10 +1,6 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
-import {
-  type LayoutPanel,
-  type PresetTemplateConfigurationField,
-  useOpenPresetOnboarding,
-} from "@manifest-editor/shell";
+import { type LayoutPanel, usePresetTemplateSelection } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { type ChangeEvent, type ReactNode, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
@@ -19,150 +15,24 @@ import type {
   TitleTransform,
 } from "../theme/theme-service";
 import {
-  EXHIBITION_THEME_SERVICE_LABEL,
-  EXHIBITION_THEME_SERVICE_PROFILE,
   createThemeService,
   getThemePreset,
   getThemeServiceDetails,
   replaceThemeService,
   resolveThemeConfig,
 } from "../theme/theme-service";
-import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { PreviewIcon } from "../icons/PreviewIcon";
-import { getTemplateConfigurationValue, setTemplateConfigurationValue } from "../exhibition-templates";
 
 export const exhibitionThemeLeftPanel: LayoutPanel = {
   id: "@exhibitions/theme-panel",
-  label: "Preview",
+  label: "Theme",
   icon: <PreviewIcon />,
-  render: () => <ExhibitionPreviewPanel />,
+  render: () => <ExhibitionThemeOptions />,
   options: {
     minWidth: 360,
     maxWidth: 440,
   },
 };
-
-function ExhibitionPreviewPanel() {
-  const manifest = useManifest();
-  const vault = useVault();
-  const template = useExhibitionTemplate();
-  const openOnboarding = useOpenPresetOnboarding();
-  const serviceList = ((manifest as any)?.service || []) as Array<any>;
-  const servicesList = ((manifest as any)?.services || []) as Array<any>;
-  const details = getThemeServiceDetails(serviceList) || getThemeServiceDetails(servicesList);
-  const configuration = template?.configuration || [];
-  const values = (details?.service?.theme || {}) as Record<string, any>;
-  const configuredValues = configuration.reduce(
-    (result, field) =>
-      setTemplateConfigurationValue(
-        result,
-        field.id,
-        getTemplateConfigurationValue(values, field.id) ?? field.defaultValue ?? defaultFieldValue(field),
-      ),
-    {} as Record<string, any>,
-  );
-
-  if (!manifest || !template) return null;
-
-  const setService = (nextValues: Record<string, any> | null) => {
-    const nextService = nextValues
-      ? {
-          id: `${manifest.id}#exhibition-viewer-theme`,
-          type: "Service",
-          profile: EXHIBITION_THEME_SERVICE_PROFILE,
-          label: EXHIBITION_THEME_SERVICE_LABEL,
-          theme: nextValues,
-        }
-      : null;
-    const manifestRef = { id: manifest.id, type: "Manifest" } as const;
-    vault.batch((batch) => {
-      batch.modifyEntityField(manifestRef as any, "service", replaceThemeService(serviceList, nextService as any));
-      if ((manifest as any).services || getThemeServiceDetails(servicesList)) {
-        batch.modifyEntityField(manifestRef as any, "services", replaceThemeService(servicesList, null));
-      }
-    });
-  };
-
-  const enableService = () =>
-    setService(configuredValues);
-
-  return (
-    <Sidebar>
-      <SidebarContent padding>
-        <ThemeSection title={template.label} description={template.summary}>
-          <img src={template.thumbnailUrl} alt="" className="aspect-video w-full rounded border border-slate-200 object-cover" />
-          <Button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50" onPress={openOnboarding}>
-            Change template
-          </Button>
-        </ThemeSection>
-
-        <ThemeSection
-          title="Preview configuration"
-          description="These settings are defined by the selected template and stored as a service on the Manifest."
-        >
-          {configuration.map((field) => (
-            <TemplateConfigurationField
-              key={field.id}
-              field={field}
-              value={getTemplateConfigurationValue(values, field.id) ?? field.defaultValue ?? defaultFieldValue(field)}
-              onChange={(value) => setService(setTemplateConfigurationValue(configuredValues, field.id, value))}
-            />
-          ))}
-          {!configuration.length ? <p className="text-sm text-slate-500">This template has no configurable settings.</p> : null}
-          {details ? (
-            <Button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50" onPress={() => setService(null)}>
-              Remove preview service
-            </Button>
-          ) : (
-            <Button className="rounded bg-me-primary-600 px-3 py-2 text-sm text-white hover:bg-me-primary-700" onPress={enableService}>
-              Add preview service
-            </Button>
-          )}
-        </ThemeSection>
-      </SidebarContent>
-    </Sidebar>
-  );
-}
-
-function defaultFieldValue(field: PresetTemplateConfigurationField) {
-  if (field.type === "boolean") return false;
-  if (field.type === "number") return 0;
-  return "";
-}
-
-function TemplateConfigurationField({
-  field,
-  value,
-  onChange,
-}: {
-  field: PresetTemplateConfigurationField;
-  value: string | number | boolean;
-  onChange: (value: string | number | boolean) => void;
-}) {
-  if (field.type === "boolean") {
-    return <ThemeToggle label={field.label} checked={Boolean(value)} onChange={onChange} />;
-  }
-  if (field.type === "select") {
-    return (
-      <ThemeSelectField
-        label={field.label}
-        value={String(value)}
-        onChange={onChange}
-        options={(field.options || []).map((option) => ({ label: option.label, value: String(option.value) }))}
-      />
-    );
-  }
-  return (
-    <InputContainer $wide>
-      <InputLabel>{field.label}</InputLabel>
-      {field.type === "textarea" ? (
-        <textarea className="w-full rounded border border-slate-300 bg-slate-50 px-3 py-2 text-sm" value={String(value)} onChange={(event) => onChange(event.target.value)} />
-      ) : (
-        <Input type={field.type === "number" ? "number" : "text"} value={String(value)} onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(field.type === "number" ? event.target.valueAsNumber : event.target.value)} />
-      )}
-    </InputContainer>
-  );
-}
 
 type ServiceDetails = {
   service: any;
@@ -187,6 +57,42 @@ const targetPreviewPresets: Record<ThemeTarget, PresetUrlSearchParamsPreset> = {
   scroll: "scroll",
   slideshow: "slideshow",
 };
+
+const themePresetPreviewPresets: Record<ExhibitionThemePreset, PresetUrlSearchParamsPreset> = {
+  delft: "exhibition",
+  gallery: "exhibition",
+  minimal: "exhibition",
+  "leeds-full-page": "exhibition",
+  "leeds-scroll": "scroll",
+  "leeds-slideshow": "slideshow",
+};
+
+const themePresetTemplateIds: Record<ExhibitionThemePreset, string> = {
+  delft: "exhibition-fullpage",
+  gallery: "exhibition-fullpage",
+  minimal: "exhibition-fullpage",
+  "leeds-full-page": "exhibition-fullpage",
+  "leeds-scroll": "exhibition-scroll",
+  "leeds-slideshow": "exhibition-slideshow",
+};
+
+const themePresetTemplateTypes: Record<ExhibitionThemePreset, string> = {
+  delft: "fullpage",
+  gallery: "fullpage",
+  minimal: "fullpage",
+  "leeds-full-page": "fullpage",
+  "leeds-scroll": "scroll",
+  "leeds-slideshow": "slideshow",
+};
+
+const exhibitionTemplateBehaviors = new Set([
+  "fullpage",
+  "scroll",
+  "slideshow",
+  "template-exhibition-fullpage",
+  "template-exhibition-scroll",
+  "template-exhibition-slideshow",
+]);
 
 function ThemeSection({
   title,
@@ -467,6 +373,7 @@ function ExhibitionThemeOptions() {
   const manifest = useManifest();
   const vault = useVault();
   const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
+  const { setSelectedTemplateId } = usePresetTemplateSelection();
   const [themeMode, setThemeMode] = useState<ThemePanelMode>("simple");
   const themeTarget = previewPresetTargets[previewPreset] || "presentation";
   const serviceList = ((manifest as any)?.service || []) as Array<any>;
@@ -658,6 +565,13 @@ function ExhibitionThemeOptions() {
 
   const setPreset = (preset: ExhibitionThemePreset) => {
     upsertTheme(getThemePreset(preset));
+    setPreviewPreset(themePresetPreviewPresets[preset]);
+    setSelectedTemplateId(themePresetTemplateIds[preset]);
+    vault.modifyEntityField({ id: manifest.id, type: "Manifest" } as const, "behavior", [
+      ...(((manifest as any).behavior || []) as string[]).filter((item) => !exhibitionTemplateBehaviors.has(item)),
+      themePresetTemplateTypes[preset],
+      `template-${themePresetTemplateIds[preset]}`,
+    ]);
   };
 
   const resetToPreset = () => {
@@ -707,7 +621,7 @@ function ExhibitionThemeOptions() {
           </div>
 
           <ThemeInlineSelect<ExhibitionThemePreset>
-            label="Preset"
+            label="Theme"
             value={resolvedTheme.preset}
             onChange={setPreset}
             options={[

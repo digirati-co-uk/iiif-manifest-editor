@@ -354,45 +354,45 @@ const GALLERY_THEME: ExhibitionThemeConfig = {
 };
 
 const LEEDS_BLACK = "#000000";
-const LEEDS_CHARCOAL = "#212C40";
-const LEEDS_DARK_BLUE = "#132034";
-const LEEDS_ORANGE = "#ff620a";
-const LEEDS_PINK = "#ffa8ff";
-const LEEDS_RED = "#af1b00";
-const LEEDS_MINT = "#88ffb8";
+const LEEDS_BRICK = "#9c381c";
+const LEEDS_CREAM = "#fff1df";
+const LEEDS_DARK_BROWN = "#4a2f29";
+const LEEDS_PALE_BLUE = "#8de3ef";
+const LEEDS_PINK = "#f28df7";
+const LEEDS_VIVID_GREEN = "#55ff55";
 const LEEDS_WHITE = "#ffffff";
 const LEEDS_SHARED: SharedThemeConfig = {
-  fontSans: '"UoL Sans", "freight-sans-pro", Arial, sans-serif',
-  fontMono: '"Fira Mono", monospace',
-  fontDisplay: '"UoL Sans", "freight-text-pro", Georgia, serif',
+  fontSans: '"UoL Sans", Arial, sans-serif',
+  fontMono: '"UoL Inter", Arial, sans-serif',
+  fontDisplay: '"UoL Sans", Arial, sans-serif',
   titleTransform: "none",
 };
 const LEEDS_BASE_DELFT_TOKENS: DelftThemeTokens = {
   ...DEFAULT_DELFT_TOKENS,
-  backgroundPrimary: LEEDS_BLACK,
+  backgroundPrimary: LEEDS_WHITE,
   backgroundSecondary: LEEDS_BLACK,
   backgroundOverlay: "rgba(0, 0, 0, 0.56)",
-  textPrimary: LEEDS_WHITE,
-  textSecondary: LEEDS_WHITE,
+  textPrimary: LEEDS_BLACK,
+  textSecondary: LEEDS_BLACK,
   imageCaption: LEEDS_WHITE,
-  annotationSelected: LEEDS_ORANGE,
+  annotationSelected: LEEDS_VIVID_GREEN,
   controlBar: LEEDS_BLACK,
   controlBarBorder: LEEDS_BLACK,
-  controlHover: "rgba(175, 27, 0, 0.24)",
-  progressBar: LEEDS_RED,
+  controlHover: "rgba(255, 255, 255, 0.16)",
+  progressBar: LEEDS_VIVID_GREEN,
   closeBackground: LEEDS_BLACK,
-  closeBackgroundHover: LEEDS_DARK_BLUE,
+  closeBackgroundHover: LEEDS_DARK_BROWN,
   closeText: LEEDS_WHITE,
-  titleCard: LEEDS_RED,
-  titleCardText: LEEDS_WHITE,
+  titleCard: LEEDS_VIVID_GREEN,
+  titleCardText: LEEDS_BLACK,
   infoBlock: LEEDS_BLACK,
   infoBlockText: LEEDS_WHITE,
-  viewerBackground: LEEDS_BLACK,
+  viewerBackground: LEEDS_WHITE,
 };
 const LEEDS_BASE_SCROLL_TOKENS: ScrollThemeTokens = {
   ...DEFAULT_SCROLL_TOKENS,
-  titleBackground: LEEDS_BLACK,
-  titleColor: LEEDS_WHITE,
+  titleBackground: LEEDS_WHITE,
+  titleColor: LEEDS_BLACK,
   annotationBackground: LEEDS_BLACK,
   annotationColor: LEEDS_WHITE,
   annotationRadius: "0px",
@@ -438,17 +438,17 @@ const LEEDS_SCROLL_THEME: ExhibitionThemeConfig = {
     ...LEEDS_FULL_PAGE_THEME.delft,
     tokens: {
       ...LEEDS_BASE_DELFT_TOKENS,
-      backgroundPrimary: LEEDS_BLACK,
-      backgroundSecondary: LEEDS_BLACK,
-      textPrimary: LEEDS_WHITE,
-      textSecondary: LEEDS_WHITE,
-      titleCard: LEEDS_PINK,
+      backgroundPrimary: LEEDS_CREAM,
+      backgroundSecondary: LEEDS_DARK_BROWN,
+      textPrimary: LEEDS_BLACK,
+      textSecondary: LEEDS_BLACK,
+      titleCard: LEEDS_CREAM,
       titleCardText: LEEDS_BLACK,
-      infoBlock: LEEDS_PINK,
-      infoBlockText: LEEDS_BLACK,
+      infoBlock: LEEDS_DARK_BROWN,
+      infoBlockText: LEEDS_WHITE,
       controlBar: LEEDS_BLACK,
-      progressBar: LEEDS_RED,
-      viewerBackground: LEEDS_BLACK,
+      progressBar: LEEDS_PINK,
+      viewerBackground: LEEDS_CREAM,
     },
     exhibition: {
       ...LEEDS_FULL_PAGE_THEME.delft.exhibition,
@@ -459,14 +459,15 @@ const LEEDS_SCROLL_THEME: ExhibitionThemeConfig = {
   scroll: {
     tokens: {
       ...LEEDS_BASE_SCROLL_TOKENS,
-      titleBackground: LEEDS_PINK,
+      titleBackground: LEEDS_CREAM,
       titleColor: LEEDS_BLACK,
       annotationBackground: LEEDS_PINK,
       annotationColor: LEEDS_BLACK,
-      infoBlockBackground: LEEDS_PINK,
-      infoBlockColor: LEEDS_BLACK,
+      infoBlockBackground: LEEDS_DARK_BROWN,
+      infoBlockColor: LEEDS_WHITE,
     },
     options: {
+      ...DEFAULT_SCROLL_OPTIONS,
       showTableOfContents: true,
       titleBlock: {
         fullHeight: false,
@@ -482,18 +483,18 @@ const LEEDS_SLIDESHOW_THEME: ExhibitionThemeConfig = {
     ...LEEDS_FULL_PAGE_THEME.delft,
     tokens: {
       ...LEEDS_BASE_DELFT_TOKENS,
-      backgroundPrimary: LEEDS_BLACK,
-      backgroundSecondary: LEEDS_BLACK,
-      textPrimary: LEEDS_WHITE,
-      textSecondary: LEEDS_WHITE,
-      titleCard: LEEDS_MINT,
+      backgroundPrimary: LEEDS_WHITE,
+      backgroundSecondary: LEEDS_PALE_BLUE,
+      textPrimary: LEEDS_BLACK,
+      textSecondary: LEEDS_BLACK,
+      titleCard: LEEDS_PALE_BLUE,
       titleCardText: LEEDS_BLACK,
-      infoBlock: LEEDS_MINT,
-      infoBlockText: LEEDS_BLACK,
+      infoBlock: LEEDS_BRICK,
+      infoBlockText: LEEDS_WHITE,
       controlBar: LEEDS_BLACK,
-      controlBarBorder: LEEDS_RED,
-      progressBar: LEEDS_RED,
-      viewerBackground: LEEDS_BLACK,
+      controlBarBorder: LEEDS_BLACK,
+      progressBar: LEEDS_BRICK,
+      viewerBackground: LEEDS_WHITE,
     },
     exhibition: {
       ...LEEDS_FULL_PAGE_THEME.delft.exhibition,
