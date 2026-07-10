@@ -12,7 +12,6 @@ import {
   useApp,
   useEditor,
   useLocalStorage,
-  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
@@ -20,6 +19,7 @@ import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-v
 import { twMerge } from "tailwind-merge";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import {
   getPaintingAnnotations,
   getResolvedAnnotationBody,
@@ -210,7 +210,7 @@ export function getExhibitionTemplateControls(
 
 export function useExhibitionTemplateControls(behavior: string[] = [], hasTourSteps = true) {
   const app = useApp();
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const selectedTemplate = useExhibitionTemplate();
   return getExhibitionTemplateControls(
     resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id),
     hasScrollBehavior(behavior),
@@ -570,7 +570,7 @@ export function SlideBehavioursContent({
   const app = useApp();
   const vault = useVault();
   const manifest = useManifest();
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const selectedTemplate = useExhibitionTemplate();
   const templateType = resolveExhibitionTemplateType(
     selectedTemplate?.type,
     layoutContext === "slideshow" ? "exhibition-slideshow-editor" : app.metadata.id,

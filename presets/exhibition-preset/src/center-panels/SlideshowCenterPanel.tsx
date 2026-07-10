@@ -11,13 +11,7 @@ import {
 } from "@manifest-editor/shell";
 import MoveIcon from "@manifest-editor/ui/icons/MoveIcon";
 import SlideshowIcon from "@manifest-editor/ui/icons/SlideshowIcon";
-import {
-  type ReactNode,
-  type PointerEvent as ReactPointerEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
 import { Button } from "react-aria-components";
 import {
   AnnotationPageContext,
@@ -31,8 +25,8 @@ import {
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
-import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
+import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
 import {
   createDefaultSlideContentTarget,
   getAnnotationTargetBox,
@@ -69,17 +63,12 @@ function SlideshowCenterPanel() {
   });
   const editingCanvas = useInStack("Canvas");
   const { edit } = useLayoutActions();
-  const clearContentPositioning = useSlideshowContentPositioning(
-    (state) => state.clear,
-  );
+  const clearContentPositioning = useSlideshowContentPositioning((state) => state.clear);
 
   const selectedCanvasId = editingCanvas?.resource.source.id || items[0]?.id;
-  const selectedIndex = selectedCanvasId
-    ? items.findIndex((item) => item.id === selectedCanvasId)
-    : -1;
+  const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const selectedSlideIndex = selectedIndex >= 0 ? selectedIndex : 0;
-  const selectedItem =
-    selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
+  const selectedItem = selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
 
   useEffect(() => {
     for (const item of items) {
@@ -88,22 +77,11 @@ function SlideshowCenterPanel() {
   }, [items, vault]);
 
   const addNewSlide = () => {
-    canvasActions.createFiltered(
-      "exhibition-slideshow-slide",
-      items.length ? selectedSlideIndex + 1 : undefined,
-    );
+    canvasActions.createFiltered("exhibition-slideshow-slide", items.length ? selectedSlideIndex + 1 : undefined);
   };
 
-  const openSlide = (
-    item: { id: string; type?: string },
-    index: number,
-    forceOpen = false,
-  ) => {
-    edit(
-      { id: item.id, type: "Canvas" },
-      { parent: manifest, property: "items", index },
-      { forceOpen },
-    );
+  const openSlide = (item: { id: string; type?: string }, index: number, forceOpen = false) => {
+    edit({ id: item.id, type: "Canvas" }, { parent: manifest, property: "items", index }, { forceOpen });
   };
 
   const selectSlide = (item: { id: string; type?: string }, index: number) => {
@@ -128,28 +106,19 @@ function SlideshowCenterPanel() {
     }
   };
 
-  const previousSlide =
-    selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
-  const nextSlide =
-    selectedSlideIndex < items.length - 1
-      ? items[selectedSlideIndex + 1]
-      : undefined;
+  const previousSlide = selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
+  const nextSlide = selectedSlideIndex < items.length - 1 ? items[selectedSlideIndex + 1] : undefined;
 
   if (!items.length) {
     return (
       <SlideshowWorkbenchShell>
         <div className="flex min-h-full items-center justify-center px-24 py-12">
           <div className="w-full max-w-4xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">
-              Slideshow exhibition
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              Create your first slideshow slide
-            </h2>
+            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">Slideshow exhibition</p>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">Create your first slideshow slide</h2>
             <p className="mt-3 max-w-2xl text-sm text-slate-600">
-              Add a new slide and choose one of the supported slideshow slide
-              types. You can add images, text, media, and tour steps after the
-              slide is created.
+              Add a new slide and choose one of the supported slideshow slide types. You can add images, text, media,
+              and tour steps after the slide is created.
             </p>
             <div className="mt-8">
               <ActionButton primary large onPress={addNewSlide}>
@@ -168,16 +137,12 @@ function SlideshowCenterPanel() {
         <div
           className="flex flex-wrap items-center gap-3 px-8"
           style={{
-            paddingInlineStart:
-              "calc(2rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
-            paddingInlineEnd:
-              "calc(2rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
+            paddingInlineStart: "calc(2rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
+            paddingInlineEnd: "calc(2rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
           }}
         >
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">
-              Slideshow workbench
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-me-primary-500">Slideshow workbench</p>
             <h2 className="exhibition-slideshow-heading truncate text-2xl font-bold text-slate-900">
               {selectedItem ? (
                 <CanvasContext canvas={selectedItem.id}>
@@ -194,16 +159,8 @@ function SlideshowCenterPanel() {
           <SlideNavigation
             current={selectedSlideIndex + 1}
             total={items.length}
-            onPrevious={
-              previousSlide
-                ? () => selectSlide(previousSlide, selectedSlideIndex - 1)
-                : undefined
-            }
-            onNext={
-              nextSlide
-                ? () => selectSlide(nextSlide, selectedSlideIndex + 1)
-                : undefined
-            }
+            onPrevious={previousSlide ? () => selectSlide(previousSlide, selectedSlideIndex - 1) : undefined}
+            onNext={nextSlide ? () => selectSlide(nextSlide, selectedSlideIndex + 1) : undefined}
           />
           <div>
             <ActionButton primary onPress={addNewSlide}>
@@ -215,10 +172,8 @@ function SlideshowCenterPanel() {
         <div
           className="flex flex-1 flex-col gap-5 px-8"
           style={{
-            paddingInlineStart:
-              "calc(1.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
-            paddingInlineEnd:
-              "calc(1.5rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
+            paddingInlineStart: "calc(1.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
+            paddingInlineEnd: "calc(1.5rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
           }}
         >
           <div className="exhibition-slideshow-preview-frame flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
@@ -230,9 +185,7 @@ function SlideshowCenterPanel() {
           </div>
 
           <aside className="exhibition-slideshow-slide-strip overflow-hidden rounded-lg border border-slate-200 bg-white p-4">
-            <div className="exhibition-slideshow-heading mb-3 text-sm font-semibold text-slate-700">
-              Slides
-            </div>
+            <div className="exhibition-slideshow-heading mb-3 text-sm font-semibold text-slate-700">Slides</div>
             <div className="flex gap-3 overflow-x-auto pb-2">
               {items.map((item, index) => (
                 <CanvasContext key={item.id} canvas={item.id}>
@@ -340,26 +293,18 @@ function SelectedSlidePreview() {
   const manifest = useManifest();
   const vault = useVault();
   const inlineCreator = useInlineCreator();
-  const centerPanelMode = useSlideshowWorkbenchState(
-    (state) => state.centerPanelMode,
-  );
-  const setCenterPanelMode = useSlideshowWorkbenchState(
-    (state) => state.setCenterPanelMode,
-  );
+  const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const mode = centerPanelMode;
   const setMode = setCenterPanelMode;
   const [targetDrawingMode, setTargetDrawingMode] = useState<
     { type: "add" } | { type: "edit"; annotationId: string } | null
   >(null);
-  const [targetDrawingTool, setTargetDrawingTool] = useState<
-    "box" | "circle" | "line" | "polygon"
-  >("box");
+  const [targetDrawingTool, setTargetDrawingTool] = useState<"box" | "circle" | "line" | "polygon">("box");
   const previousAnnotationCount = useRef<number | null>(null);
   const previousTourStepCount = useRef<number | null>(null);
   const annotationPageId = canvas?.annotations?.[0]?.id;
-  const pageRef = canvas?.items?.[0]
-    ? { id: canvas.items[0].id, type: "AnnotationPage" }
-    : undefined;
+  const pageRef = canvas?.items?.[0] ? { id: canvas.items[0].id, type: "AnnotationPage" } : undefined;
   const [, contentActions] = useCreator(
     pageRef,
     "items",
@@ -381,41 +326,24 @@ function SelectedSlidePreview() {
     selectTourStep,
     stopTourStepRepositioning,
   } = useSlideshowContentPositioning();
-  const requestWorkbenchTab = useSlideshowWorkbenchState(
-    (state) => state.requestTab,
-  );
-  const showTourSteps = useSlideshowWorkbenchState(
-    (state) => state.showTourSteps,
-  );
-  const setShowTourSteps = useSlideshowWorkbenchState(
-    (state) => state.setShowTourSteps,
-  );
+  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
+  const showTourSteps = useSlideshowWorkbenchState((state) => state.showTourSteps);
+  const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const annotations = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getPaintingAnnotations(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getPaintingAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, pageRef?.id],
   );
-  const selectedAnnotation = annotations.find(
-    (annotation: any) => annotation.id === selectedAnnotationId,
-  );
-  const selectedTextRegionBox =
-    selectedTextRegion === "editorial-text"
-      ? getSlideLayoutRegions(canvas).text
-      : null;
+  const selectedAnnotation = annotations.find((annotation: any) => annotation.id === selectedAnnotationId);
+  const selectedTextRegionBox = selectedTextRegion === "editorial-text" ? getSlideLayoutRegions(canvas).text : null;
   const tourSteps = useVaultSelector(
-    (_, vaultInstance) =>
-      canvas ? getTourStepAnnotations(vaultInstance, canvas) : [],
+    (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas) : []),
     [canvas?.id, annotationPageId],
   );
-  const selectedTourStep =
-    tourSteps.find((annotation: any) => annotation.id === selectedTourStepId) ||
-    tourSteps[0];
+  const selectedTourStep = tourSteps.find((annotation: any) => annotation.id === selectedTourStepId) || tourSteps[0];
   const selectedTourStepIndex = selectedTourStep
     ? Math.max(
         0,
-        tourSteps.findIndex(
-          (annotation: any) => annotation.id === selectedTourStep.id,
-        ),
+        tourSteps.findIndex((annotation: any) => annotation.id === selectedTourStep.id),
       )
     : -1;
   const tourSupported = supportsTourSteps(vault, canvas);
@@ -442,12 +370,7 @@ function SelectedSlidePreview() {
       stopTourStepRepositioning();
       setTargetDrawingMode(null);
     }
-  }, [
-    setShowTourSteps,
-    showTourSteps,
-    stopTourStepRepositioning,
-    tourSupported,
-  ]);
+  }, [setShowTourSteps, showTourSteps, stopTourStepRepositioning, tourSupported]);
 
   useEffect(() => {
     if (tourAuthoringActive) {
@@ -462,10 +385,7 @@ function SelectedSlidePreview() {
     }
 
     const newestAnnotation = annotations[annotations.length - 1];
-    if (
-      annotations.length > previousAnnotationCount.current &&
-      newestAnnotation?.id
-    ) {
+    if (annotations.length > previousAnnotationCount.current && newestAnnotation?.id) {
       selectAnnotation(newestAnnotation.id);
       requestWorkbenchTab("content");
       setShowTourSteps(false);
@@ -481,10 +401,7 @@ function SelectedSlidePreview() {
     }
 
     const newestTourStep = tourSteps[tourSteps.length - 1];
-    if (
-      tourSteps.length > previousTourStepCount.current &&
-      newestTourStep?.id
-    ) {
+    if (tourSteps.length > previousTourStepCount.current && newestTourStep?.id) {
       selectTourStep(newestTourStep.id);
       stopRepositioning();
       stopTextRepositioning();
@@ -492,13 +409,7 @@ function SelectedSlidePreview() {
     }
 
     previousTourStepCount.current = tourSteps.length;
-  }, [
-    selectTourStep,
-    setShowTourSteps,
-    stopRepositioning,
-    stopTextRepositioning,
-    tourSteps,
-  ]);
+  }, [selectTourStep, setShowTourSteps, stopRepositioning, stopTextRepositioning, tourSteps]);
 
   const toggleTourSteps = () => {
     const nextShowTourSteps = !showTourSteps;
@@ -574,13 +485,7 @@ function SelectedSlidePreview() {
     >
       <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
         <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
-<<<<<<< feature/LPII-149/non-linier-tour
           {mode === "edit" ? "Click content to edit or reposition it" : "Live slideshow preview"}
-=======
-          {mode === "edit"
-            ? "Click content to edit or reposition it"
-            : "Slideshow layout preview (approximate)"}
->>>>>>> feature/Q3-2026
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
@@ -662,7 +567,6 @@ function SelectedSlidePreview() {
         </div>
       </div>
       <div className="relative min-h-0 flex-1 bg-black">
-<<<<<<< feature/LPII-149/non-linier-tour
         {mode === "preview" ? (
           <ExhibitionPreviewPanel
             preset="slideshow"
@@ -675,13 +579,6 @@ function SelectedSlidePreview() {
         ) : (
           <SlideshowSlidePreview editable mode={mode} showTourSteps={tourAuthoringActive} />
         )}
-=======
-        <SlideshowSlidePreview
-          editable={mode === "edit"}
-          mode={mode}
-          showTourSteps={tourAuthoringActive}
-        />
->>>>>>> feature/Q3-2026
 
         {mode === "edit" && targetDrawingMode && canvas && annotationPageId ? (
           <TourStepTargetDrawingOverlay
@@ -803,25 +700,15 @@ function TourStepsWorkbenchPanel({
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-sm font-semibold text-slate-800">Tour steps</h3>
             <div className="flex flex-wrap gap-2">
-              {selectedTourStepId ? (
-                <PositionButton label="Edit target" onPress={onEditTarget} />
-              ) : null}
-              <PositionButton
-                primary
-                label="Add step"
-                onPress={onAddTourStep}
-              />
+              {selectedTourStepId ? <PositionButton label="Edit target" onPress={onEditTarget} /> : null}
+              <PositionButton primary label="Add step" onPress={onAddTourStep} />
             </div>
           </div>
           <p className="text-xs text-slate-500">
-            Select a step below. Use the quick box controls here, or edit the
-            target with the Atlas drawing tools.
+            Select a step below. Use the quick box controls here, or edit the target with the Atlas drawing tools.
           </p>
           <div className="max-h-72 overflow-y-auto pr-1">
-            <TourAnnotationPageEditor
-              reorderable={false}
-              useSlideshowWorkbench
-            />
+            <TourAnnotationPageEditor reorderable={false} useSlideshowWorkbench />
           </div>
         </div>
       </AnnotationPageContext>
@@ -832,21 +719,13 @@ function TourStepsWorkbenchPanel({
 function CreateTourPanel({ onCreate }: { onCreate: () => void }) {
   return (
     <div className="space-y-3 text-slate-800">
-      <p className="text-xs text-slate-600">
-        This slide does not have a tour annotation page yet.
-      </p>
+      <p className="text-xs text-slate-600">This slide does not have a tour annotation page yet.</p>
       <PositionButton primary label="Create tour" onPress={onCreate} />
     </div>
   );
 }
 
-function FloatingWorkbenchPanel({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label: string;
-}) {
+function FloatingWorkbenchPanel({ children, label }: { children: ReactNode; label: string }) {
   return (
     <div className="absolute bottom-4 left-4 z-40 max-w-[min(34rem,calc(100%-2rem))] rounded-lg bg-white/95 p-3 text-xs shadow-lg ring-1 ring-black/10">
       <div className="mb-2 font-semibold text-slate-700">{label}</div>
@@ -902,9 +781,7 @@ function CentrePositionControls({
   const canvasHeight = Number(canvas?.height) || 1080;
   const box = currentBox || getAnnotationTargetBox(annotation, canvas);
   const setBox =
-    setBoxOverride ||
-    ((next: SlideContentBox) =>
-      setAnnotationTargetBox(vault, canvas, annotation.id, next));
+    setBoxOverride || ((next: SlideContentBox) => setAnnotationTargetBox(vault, canvas, annotation.id, next));
   const halfWidth = Math.round(canvasWidth / 2);
   const halfHeight = Math.round(canvasHeight / 2);
   const startPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -936,14 +813,8 @@ function CentrePositionControls({
     }
 
     setPanelOffset({
-      x: Math.min(
-        drag.maxX,
-        Math.max(16, drag.panelX + event.clientX - drag.startX),
-      ),
-      y: Math.min(
-        drag.maxY,
-        Math.max(16, drag.panelY + event.clientY - drag.startY),
-      ),
+      x: Math.min(drag.maxX, Math.max(16, drag.panelX + event.clientX - drag.startX)),
+      y: Math.min(drag.maxY, Math.max(16, drag.panelY + event.clientY - drag.startY)),
     });
   };
   const stopPanelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -962,9 +833,7 @@ function CentrePositionControls({
         "absolute z-40 w-[min(30rem,calc(100%-2rem))] rounded-lg bg-white/95 p-3 text-xs shadow-lg ring-1 ring-black/10",
         panelOffset ? null : "bottom-4 left-4",
       )}
-      style={
-        panelOffset ? { left: panelOffset.x, top: panelOffset.y } : undefined
-      }
+      style={panelOffset ? { left: panelOffset.x, top: panelOffset.y } : undefined}
     >
       <div className="flex flex-col gap-3">
         <div className="min-w-[280px]">
@@ -991,18 +860,11 @@ function CentrePositionControls({
             <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 {showRepositionButton && onStartReposition ? (
-                  <PositionButton
-                    onPress={onStartReposition}
-                    label="Reposition"
-                    primary
-                  />
+                  <PositionButton onPress={onStartReposition} label="Reposition" primary />
                 ) : null}
 
                 {isRepositioning && onStopReposition ? (
-                  <PositionButton
-                    onPress={onStopReposition}
-                    label="Stop moving"
-                  />
+                  <PositionButton onPress={onStopReposition} label="Stop moving" />
                 ) : null}
 
                 <PositionButton
@@ -1078,30 +940,18 @@ function CentrePositionControls({
                 />
               </div>
 
-              {showBoxFields ? (
-                <TargetBoxFields box={box} onChange={setBox} />
-              ) : null}
+              {showBoxFields ? <TargetBoxFields box={box} onChange={setBox} /> : null}
             </div>
           )}
         </div>
 
-        {children ? (
-          <div className="w-full border-t border-slate-200 pt-3">
-            {children}
-          </div>
-        ) : null}
+        {children ? <div className="w-full border-t border-slate-200 pt-3">{children}</div> : null}
       </div>
     </div>
   );
 }
 
-function TargetBoxFields({
-  box,
-  onChange,
-}: {
-  box: SlideContentBox;
-  onChange: (box: SlideContentBox) => void;
-}) {
+function TargetBoxFields({ box, onChange }: { box: SlideContentBox; onChange: (box: SlideContentBox) => void }) {
   const updateBoxField = (field: keyof SlideContentBox, value: string) => {
     const numericValue = Number(value);
 
@@ -1117,39 +967,15 @@ function TargetBoxFields({
 
   return (
     <div className="grid grid-cols-4 gap-2 pt-1">
-      <NumberField
-        label="X"
-        value={box.x}
-        onChange={(value) => updateBoxField("x", value)}
-      />
-      <NumberField
-        label="Y"
-        value={box.y}
-        onChange={(value) => updateBoxField("y", value)}
-      />
-      <NumberField
-        label="W"
-        value={box.width}
-        onChange={(value) => updateBoxField("width", value)}
-      />
-      <NumberField
-        label="H"
-        value={box.height}
-        onChange={(value) => updateBoxField("height", value)}
-      />
+      <NumberField label="X" value={box.x} onChange={(value) => updateBoxField("x", value)} />
+      <NumberField label="Y" value={box.y} onChange={(value) => updateBoxField("y", value)} />
+      <NumberField label="W" value={box.width} onChange={(value) => updateBoxField("width", value)} />
+      <NumberField label="H" value={box.height} onChange={(value) => updateBoxField("height", value)} />
     </div>
   );
 }
 
-function NumberField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  onChange: (value: string) => void;
-}) {
+function NumberField({ label, value, onChange }: { label: string; value: number; onChange: (value: string) => void }) {
   return (
     <label className="block text-[11px] font-semibold text-slate-500">
       {label}
@@ -1163,21 +989,13 @@ function NumberField({
   );
 }
 
-function createTourStepAnnotation(
-  vault: any,
-  canvas: any,
-  annotationPageId: string,
-  target: any,
-) {
+function createTourStepAnnotation(vault: any, canvas: any, annotationPageId: string, target: any) {
   const timestamp = Date.now();
   const random = Math.random().toString(36).slice(2, 8);
   const annotationId = `${annotationPageId}/tour-step/${timestamp}-${random}`;
   const bodyId = `${annotationId}/body/en`;
-  const annotationPage =
-    vault.get?.({ id: annotationPageId, type: "AnnotationPage" }) || {};
-  const existingItems = Array.isArray(annotationPage?.items)
-    ? annotationPage.items
-    : [];
+  const annotationPage = vault.get?.({ id: annotationPageId, type: "AnnotationPage" }) || {};
+  const existingItems = Array.isArray(annotationPage?.items) ? annotationPage.items : [];
 
   const updateVault = () => {
     vault.dispatch(
@@ -1215,11 +1033,10 @@ function createTourStepAnnotation(
       }),
     );
 
-    vault.modifyEntityField(
-      { id: annotationPageId, type: "AnnotationPage" },
-      "items",
-      [...existingItems, { id: annotationId, type: "Annotation" }],
-    );
+    vault.modifyEntityField({ id: annotationPageId, type: "AnnotationPage" }, "items", [
+      ...existingItems,
+      { id: annotationId, type: "Annotation" },
+    ]);
   };
 
   if (vault.batch) {
@@ -1277,13 +1094,9 @@ function TourStepTargetDrawingOverlay({
   onComplete: (annotationId?: string) => void;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(
-    null,
-  );
+  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [draftShape, setDraftShape] = useState<TourStepShape | null>(null);
-  const [polygonPoints, setPolygonPoints] = useState<
-    Array<{ x: number; y: number }>
-  >([]);
+  const [polygonPoints, setPolygonPoints] = useState<Array<{ x: number; y: number }>>([]);
 
   const canvasWidth = Number(canvas?.width) || 1920;
   const canvasHeight = Number(canvas?.height) || 1080;
@@ -1343,11 +1156,7 @@ function TourStepTargetDrawingOverlay({
         type: "circle",
         cx: startPoint.x,
         cy: startPoint.y,
-        r: Math.round(
-          Math.sqrt(
-            (point.x - startPoint.x) ** 2 + (point.y - startPoint.y) ** 2,
-          ),
-        ),
+        r: Math.round(Math.sqrt((point.x - startPoint.x) ** 2 + (point.y - startPoint.y) ** 2)),
       });
     }
 
@@ -1388,22 +1197,13 @@ function TourStepTargetDrawingOverlay({
     const target = makeTourStepTarget(canvas.id, activeShape);
 
     if (mode.type === "edit") {
-      vault.modifyEntityField(
-        { id: mode.annotationId, type: "Annotation" },
-        "target",
-        target,
-      );
+      vault.modifyEntityField({ id: mode.annotationId, type: "Annotation" }, "target", target);
 
       onComplete(mode.annotationId);
       return;
     }
 
-    const annotationId = createTourStepAnnotation(
-      vault,
-      canvas,
-      annotationPageId,
-      target,
-    );
+    const annotationId = createTourStepAnnotation(vault, canvas, annotationPageId, target);
 
     onComplete(annotationId);
   };
@@ -1420,13 +1220,7 @@ function TourStepTargetDrawingOverlay({
         onPointerUp={stopDrawing}
         onPointerCancel={stopDrawing}
       >
-        <rect
-          x={0}
-          y={0}
-          width={canvasWidth}
-          height={canvasHeight}
-          fill="transparent"
-        />
+        <rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill="transparent" />
 
         {activeShape ? <TourStepShapePreview shape={activeShape} /> : null}
 
@@ -1484,11 +1278,7 @@ function TourStepTargetDrawingOverlay({
           }}
         />
 
-        <PositionButton
-          primary
-          label={mode.type === "add" ? "Create step" : "Save target"}
-          onPress={saveTarget}
-        />
+        <PositionButton primary label={mode.type === "add" ? "Create step" : "Save target"} onPress={saveTarget} />
 
         <PositionButton label="Clear" onPress={clearDraft} />
         <PositionButton label="Cancel" onPress={onCancel} />
@@ -1497,15 +1287,7 @@ function TourStepTargetDrawingOverlay({
   );
 }
 
-function DrawingToolButton({
-  active,
-  label,
-  onPress,
-}: {
-  active: boolean;
-  label: string;
-  onPress: () => void;
-}) {
+function DrawingToolButton({ active, label, onPress }: { active: boolean; label: string; onPress: () => void }) {
   return (
     <Button
       className={twMerge(
@@ -1530,15 +1312,7 @@ function TourStepShapePreview({ shape }: { shape: TourStepShape }) {
   };
 
   if (shape.type === "box") {
-    return (
-      <rect
-        {...commonProps}
-        x={shape.x}
-        y={shape.y}
-        width={shape.width}
-        height={shape.height}
-      />
-    );
+    return <rect {...commonProps} x={shape.x} y={shape.y} width={shape.width} height={shape.height} />;
   }
 
   if (shape.type === "circle") {
@@ -1559,12 +1333,7 @@ function TourStepShapePreview({ shape }: { shape: TourStepShape }) {
     );
   }
 
-  return (
-    <polygon
-      {...commonProps}
-      points={shape.points.map((point) => `${point.x},${point.y}`).join(" ")}
-    />
-  );
+  return <polygon {...commonProps} points={shape.points.map((point) => `${point.x},${point.y}`).join(" ")} />;
 }
 
 function makeTourStepTarget(canvasId: string, shape: TourStepShape) {
@@ -1601,22 +1370,16 @@ function makeSvgSelectorValue(shape: Exclude<TourStepShape, { type: "box" }>) {
     .join(" ")}" /></svg>`;
 }
 
-function getTourStepTargetDrawingTool(
-  annotation: any,
-): "box" | "circle" | "line" | "polygon" {
+function getTourStepTargetDrawingTool(annotation: any): "box" | "circle" | "line" | "polygon" {
   const selector = Array.isArray(annotation?.target?.selector)
-    ? annotation.target.selector.find(
-        (item: any) => item?.type === "SvgSelector",
-      )
+    ? annotation.target.selector.find((item: any) => item?.type === "SvgSelector")
     : annotation?.target?.selector;
 
   if (selector?.type !== "SvgSelector") return "box";
   if (Array.isArray(selector.points) && selector.svgShape !== "polyline") {
     return "polygon";
   }
-  return typeof selector.value === "string" && /<polygon\b/i.test(selector.value)
-    ? "polygon"
-    : "box";
+  return typeof selector.value === "string" && /<polygon\b/i.test(selector.value) ? "polygon" : "box";
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -1636,15 +1399,7 @@ function getLanguageMapValue(value: any, fallback = "") {
   return fallback;
 }
 
-function PositionButton({
-  label,
-  onPress,
-  primary,
-}: {
-  label: string;
-  onPress: () => void;
-  primary?: boolean;
-}) {
+function PositionButton({ label, onPress, primary }: { label: string; onPress: () => void; primary?: boolean }) {
   return (
     <Button
       className={twMerge(
@@ -1673,9 +1428,7 @@ function PreviewModeButton({
     <Button
       className={twMerge(
         "border-none px-3 py-2 transition",
-        selected
-          ? "bg-me-primary-500 text-white"
-          : "bg-transparent text-slate-600 hover:bg-white",
+        selected ? "bg-me-primary-500 text-white" : "bg-transparent text-slate-600 hover:bg-white",
       )}
       onPress={onPress}
     >
@@ -1701,31 +1454,18 @@ function SlideStripItem({
     <div
       className={twMerge(
         "exhibition-slideshow-slide-card relative w-44 shrink-0 rounded-md border bg-white p-2 text-left transition",
-        selected
-          ? "border-me-primary-500 ring-2 ring-me-primary-200"
-          : "border-slate-200 hover:border-me-primary-300",
+        selected ? "border-me-primary-500 ring-2 ring-me-primary-200" : "border-slate-200 hover:border-me-primary-300",
       )}
     >
-      <Button
-        className="block w-full border-none bg-transparent p-0 text-left"
-        onPress={onPress}
-      >
-        <div
-          className="aspect-video overflow-hidden rounded"
-          style={{ backgroundColor: "#0e0d12" }}
-        >
-          <SlideshowSlidePreview
-            className="pointer-events-none h-full w-full"
-            mode="preview"
-          />
+      <Button className="block w-full border-none bg-transparent p-0 text-left" onPress={onPress}>
+        <div className="aspect-video overflow-hidden rounded" style={{ backgroundColor: "#0e0d12" }}>
+          <SlideshowSlidePreview className="pointer-events-none h-full w-full" mode="preview" />
         </div>
         <div className="mt-2 flex items-center gap-2 pr-7">
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-100 text-xs font-semibold text-slate-600">
             {index + 1}
           </span>
-          <LocaleString className="min-w-0 truncate text-sm font-medium text-slate-800">
-            {canvas?.label}
-          </LocaleString>
+          <LocaleString className="min-w-0 truncate text-sm font-medium text-slate-800">{canvas?.label}</LocaleString>
         </div>
       </Button>
       <Button

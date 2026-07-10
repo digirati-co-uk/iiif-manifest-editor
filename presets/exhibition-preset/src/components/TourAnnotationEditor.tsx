@@ -12,14 +12,9 @@ export function TourAnnotationEditor({
 }: {
   index?: number;
   tourStyle?: "linear" | "non-linear";
-  editAlignment = false,
-  useSlideshowWorkbench = false,
-}: {
-  editAlignment?: boolean;
   useSlideshowWorkbench?: boolean;
 }) {
-  const [annotation, { annotationTarget, highlightProps }] =
-    useAnnotationInfo();
+  const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();
 
   const resource = useMemo(() => {
     if (annotationTarget) {
