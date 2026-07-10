@@ -9,7 +9,6 @@ import {
   getSlideContentLayers,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -49,10 +48,6 @@ export function SlideshowSlidePreview({
     selectTextRegion,
     selectTourStep,
   } = useSlideshowContentPositioning();
-
-  useEffect(() => {
-    repairSlideContentTargets(vault, canvas);
-  }, [canvas?.id, vault]);
 
   const layers = useVaultSelector(
     (_, vaultInstance) => (canvas ? getSlideContentLayers(vaultInstance, canvas) : []),

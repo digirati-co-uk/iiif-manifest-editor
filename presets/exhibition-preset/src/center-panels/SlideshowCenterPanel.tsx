@@ -33,7 +33,6 @@ import {
   getPaintingAnnotations,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -69,12 +68,6 @@ function SlideshowCenterPanel() {
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const selectedSlideIndex = selectedIndex >= 0 ? selectedIndex : 0;
   const selectedItem = selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
-
-  useEffect(() => {
-    for (const item of items) {
-      repairSlideContentTargets(vault, vault.get(item as any));
-    }
-  }, [items, vault]);
 
   const addNewSlide = () => {
     canvasActions.createFiltered("exhibition-slideshow-slide", items.length ? selectedSlideIndex + 1 : undefined);
