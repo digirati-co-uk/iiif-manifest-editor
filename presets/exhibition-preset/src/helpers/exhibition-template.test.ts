@@ -13,6 +13,10 @@ describe("getExhibitionTemplate", () => {
     );
     expect(getExhibitionTemplate(exhibitionTemplates, ["scroll"])?.id).toBe("exhibition-scroll");
   });
+
+  test("returns null when no behavior declares a template", () => {
+    expect(getExhibitionTemplate(exhibitionTemplates, [])).toBe(null);
+  });
 });
 
 test("template configuration paths create the nested viewer theme shape", () => {

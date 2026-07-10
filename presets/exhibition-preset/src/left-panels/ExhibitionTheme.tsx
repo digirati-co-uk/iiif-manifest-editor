@@ -119,6 +119,7 @@ function ExhibitionPreviewPanel() {
             </Button>
           )}
         </ThemeSection>
+        <ExhibitionThemeOptions />
       </SidebarContent>
     </Sidebar>
   );
@@ -665,8 +666,7 @@ function ExhibitionThemeOptions() {
   };
 
   return (
-    <Sidebar>
-      <SidebarContent padding>
+    <>
         <ThemeSection
           title="Preview"
           description="Switch the live preview route without changing the saved manifest theme."
@@ -1412,8 +1412,7 @@ function ExhibitionThemeOptions() {
             ) : null}
           </>
         )}
-      </SidebarContent>
-    </Sidebar>
+    </>
   );
 }
 

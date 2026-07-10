@@ -14,6 +14,7 @@ import { slideshowYoutubeCreator } from "../creators/youtube-slide-creator";
 import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { slideshowGridLeftPanel } from "../left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "../left-panels/ExhibitionOverview";
+import { exhibitionThemeLeftPanel } from "../left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
@@ -51,6 +52,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     leftPanels: [
       //
       slideshowGridLeftPanel,
+      exhibitionThemeLeftPanel,
       // exhibitionOverviewLeftPanel,
     ],
     centerPanels: [
