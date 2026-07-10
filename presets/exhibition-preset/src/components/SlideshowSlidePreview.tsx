@@ -14,7 +14,12 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
+<<<<<<< HEAD
 import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
+=======
+import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
+import { nonLinearTourBehavior } from "../tour-behaviors";
+>>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
 
 const editorialTextRegionId = "editorial-text";
 
@@ -273,6 +278,12 @@ function TourStepTarget({
         onSelect();
       }}
     >
+<<<<<<< HEAD
+=======
+      <span className="absolute left-1 top-1">
+        <TourStepPin index={index + 1} />
+      </span>
+>>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
       <span
         className={twMerge(
           "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
@@ -287,7 +298,14 @@ function TourStepTarget({
   );
 }
 
+<<<<<<< HEAD
 function TourStepMarker({ index, style }: { index: number; style: "circle" | "pin" }) {
+=======
+function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExit: () => void }) {
+  const label = getLanguageMapText(annotation.label);
+  const summary = getLanguageMapText(annotation.summary);
+
+>>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
   return (
     <span
       className={twMerge(
@@ -300,7 +318,10 @@ function TourStepMarker({ index, style }: { index: number; style: "circle" | "pi
     </span>
   );
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
 function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
   switch (floating) {
     case "float-top":

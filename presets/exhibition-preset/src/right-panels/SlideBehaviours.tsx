@@ -276,6 +276,13 @@ export function getAdvancedExhibitionConfigs(
   if (layoutConfig?.type === "choice" && controls.layoutOptions.length && !(controls.isSlideshow && hasFloatingBehavior(behavior))) {
     configs.push({
       ...layoutConfig,
+<<<<<<< HEAD
+=======
+      id: "layout",
+      type: "choice",
+      label: { en: [controls.scrollContext ? "Annotation placement" : "Text placement"] },
+      initialOpen: true,
+>>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
       items: controls.layoutOptions.map((option) => ({
         label: { en: [option.label] },
         value: option.value,
