@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/exhibition",
+    "output": "../../apps/docs/public/exhibition-fullpage.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/slideshow",
+    "output": "../../apps/docs/public/exhibition-slideshow.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/scroll",
+    "output": "../../apps/docs/public/exhibition-scroll.png"
+  }
+]

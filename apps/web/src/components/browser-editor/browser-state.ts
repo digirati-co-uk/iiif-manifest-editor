@@ -253,9 +253,11 @@ export function useBrowserGlobalPluginConfig() {
 
 export function useBrowserProject(id: string) {
   const etag = useRef<string | null>(null);
-  const vault = useMemo(() => {
-    return new Vault();
-  }, [id]);
+  const vaultRef = useRef<{ id: string; vault: Vault } | null>(null);
+  if (vaultRef.current?.id !== id) {
+    vaultRef.current = { id, vault: new Vault() };
+  }
+  const vault = vaultRef.current.vault;
   useEffect(() => {
     setVaultReady(false);
   }, [vault]);

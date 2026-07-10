@@ -31,8 +31,13 @@ export const exhibitionTourSteps: EditorDefinition = {
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      const canvas = vault.get(resource as any) as any;
       // Tour steps are supported for image canvases only.
-      return !isInfoBoxCanvas(resource as any, vault) && !isVideoCanvas(resource as any, vault);
+      return (
+        !canvas?.behavior?.includes("splash") &&
+        !isInfoBoxCanvas(resource as any, vault) &&
+        !isVideoCanvas(resource as any, vault)
+      );
     },
   },
   label: "Tour steps",
@@ -116,6 +121,7 @@ export function ExhibitionTourStepsContent({
   const app = useApp();
   const selectedTemplate = useExhibitionTemplate();
   const templateType = resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id);
+  const canUseNonLinearTour = templateType === "slideshow";
   const canvasBehavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
   const canEditAlignment = templateType === "scroll" || hasFloatingBehavior(canvasBehavior);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
@@ -206,6 +212,15 @@ export function ExhibitionTourStepsContent({
           </div>
         ) : null}
       </div>
+      {canUseNonLinearTour ? (
+        <div className="mb-4 rounded border border-gray-200 bg-white p-3">
+          <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
+          <SimpleCheckbox checked={nonLinear} label="Let visitors choose map points" onChange={setNonLinearTour} />
+          <p className="mt-2 text-xs leading-relaxed text-gray-500">
+            Shows all tour steps as pins that visitors can open in any order.
+          </p>
+        </div>
+      ) : null}
 
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>

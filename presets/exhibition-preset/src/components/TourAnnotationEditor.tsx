@@ -9,11 +9,13 @@ export function TourAnnotationEditor({
   editAlignment = false,
   index = 0,
   tourStyle = "linear",
+  editAlignment = false,
   useSlideshowWorkbench = false,
 }: {
   editAlignment?: boolean;
   index?: number;
   tourStyle?: "linear" | "non-linear";
+  editAlignment?: boolean;
   useSlideshowWorkbench?: boolean;
 }) {
   const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();

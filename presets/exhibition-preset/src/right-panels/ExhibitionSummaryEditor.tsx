@@ -31,8 +31,9 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      const canvas = vault.get(resource as any) as any;
       // Hide the standalone Text content tab for textual-content (info box) canvases.
-      return !isInfoBoxCanvas(resource as any, vault);
+      return !canvas?.behavior?.includes("splash") && !isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Text content",

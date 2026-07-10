@@ -97,7 +97,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
     dismissLabel: "Skip for now",
     primaryLabel: "Start building",
     renderPreviewButton: (props) => <ExhibitionPresetPreviewButton {...props} />,
-    renderBody: ({ templates, selectedTemplateId, setSelectedTemplateId }) => (
+    renderBody: ({ templates, selectedTemplateId, setSelectedTemplateId, dismiss }) => (
       <div className="grid gap-3 sm:grid-cols-3">
         {templates.map((template) => {
           const selected = selectedTemplateId === template.id;
@@ -111,7 +111,10 @@ export const exhibitionPresetConfig: PresetDefinition = {
               role="button"
               tabIndex={0}
               aria-pressed={selected}
-              onClick={() => setSelectedTemplateId(template.id)}
+              onClick={() => {
+                setSelectedTemplateId(template.id);
+                dismiss();
+              }}
               onKeyDown={(event) => {
                 if (event.target !== event.currentTarget) return;
                 if (event.key === "Enter" || event.key === " ") {

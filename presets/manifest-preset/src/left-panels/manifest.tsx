@@ -90,25 +90,25 @@ export function ManifestPanel() {
         ]}
       />
       <SidebarContent className="p-4">
-        {label ? (
-          <InlineLocaleStringEditor
-            as="h2"
-            className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
-            editor={descriptive.label}
-          >
-            {label}
-          </InlineLocaleStringEditor>
-        ) : null}
+        <InlineLocaleStringEditor
+          as="h2"
+          placeholder="Add an exhibition title"
+          className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
+          editor={descriptive.label}
+        >
+          {label}
+        </InlineLocaleStringEditor>
 
-        {summary ? (
-          <LocaleString
-            enableDangerouslySetInnerHTML
-            as="p"
-            className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
-          >
-            {summary}
-          </LocaleString>
-        ) : null}
+        <InlineLocaleStringEditor
+          multiline
+          enableDangerouslySetInnerHTML
+          as="p"
+          placeholder="Add an exhibition summary"
+          className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
+          editor={descriptive.summary}
+        >
+          {summary}
+        </InlineLocaleStringEditor>
 
         <hr />
         {requiredStatement ? (

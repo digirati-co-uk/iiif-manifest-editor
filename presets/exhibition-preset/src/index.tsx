@@ -45,7 +45,16 @@ export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
 
 export const exhibitionEditorPreset = extendApp(
-  mapApp(ManifestPreset),
+  mapApp(ManifestPreset, (app) => ({
+    ...app,
+    layout: {
+      ...app.layout,
+      leftPanels: [
+        exhibitionGridLeftPanel,
+        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest"),
+      ],
+    },
+  })),
   {
     id: "exhibition-editor",
     title: "Exhibition Editor",
@@ -72,7 +81,6 @@ export const exhibitionEditorPreset = extendApp(
     },
     leftPanels: [
       //
-      exhibitionGridLeftPanel,
       // exhibitionOverviewLeftPanel,
       exhibitionThemeLeftPanel,
     ],
@@ -85,7 +93,7 @@ export const exhibitionEditorPreset = extendApp(
       //
       tourStepAnnotations,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["canvas-listing", "left-panel-manifest"],
     background: [exhibitionBackgroundTask],
     canvasEditors: [
       //
