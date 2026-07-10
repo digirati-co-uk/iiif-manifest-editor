@@ -146,20 +146,29 @@ export function createScrollingPreviewUrl(
       ? "http://localhost:5173"
       : "https://preview.exhibitionviewer.org";
 
-  const url = new URL(configuredBase || defaultBase, window.location.origin);
+  // const url = new URL(configuredBase || defaultBase, window.location.origin);
 
-  const pathParts = url.pathname.split("/").filter(Boolean);
-  const previewIndex = pathParts.indexOf("preview");
+  // const pathParts = url.pathname.split("/").filter(Boolean);
+  // const previewIndex = pathParts.indexOf("preview");
 
-  if (previewIndex === -1) {
-    url.pathname = `${url.pathname.replace(/\/$/, "")}/preview/${preset}`;
-  } else if (!pathParts[previewIndex + 1]) {
-    url.pathname = `/${[...pathParts, preset].join("/")}`;
-  }
+  // if (previewIndex === -1) {
+  //   url.pathname = `${url.pathname.replace(/\/$/, "")}/preview/${preset}`;
+  // } else if (!pathParts[previewIndex + 1]) {
+  //   url.pathname = `/${[...pathParts, preset].join("/")}`;
+  // }
 
-  searchParams.forEach((value, key) => {
-    url.searchParams.set(key, value);
-  });
+  // searchParams.forEach((value, key) => {
+  //   url.searchParams.set(key, value);
+  // });
+  // const base = `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`;
+  const base =
+    window.localStorage.getItem("exhibition-viewer-preview-url") ||
+    process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL ||
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? `http://localhost:5174/preview/${preset}?${searchParams?.toString()}`
+      : `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`);
+
+  const url = new URL(base);
 
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);

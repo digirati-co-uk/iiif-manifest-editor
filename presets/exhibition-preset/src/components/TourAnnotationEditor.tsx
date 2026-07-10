@@ -6,9 +6,9 @@ import { TourNormalAnnotationEditor } from "./TourNormalAnnotationEditor";
 import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 
 export function TourAnnotationEditor({
-  editAlignment = false,
   index = 0,
   tourStyle = "linear",
+  editAlignment = false,
   useSlideshowWorkbench = false,
 }: {
   editAlignment?: boolean;
@@ -16,8 +16,7 @@ export function TourAnnotationEditor({
   tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
-  const [annotation, { annotationTarget, highlightProps }] =
-    useAnnotationInfo();
+  const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();
 
   const resource = useMemo(() => {
     if (annotationTarget) {

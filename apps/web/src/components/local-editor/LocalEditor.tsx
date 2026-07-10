@@ -7,13 +7,13 @@ import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-a
 import { ManifestEditor } from "manifest-editor";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { GlobalNav } from "../site/GlobalNav";
 
 export default function LocalEditor() {
   const [file, setFile] = useState<FileWithHandle | null>(null);
   const [manifest, setManifest] = useState<any | null>(null);
-  const vault = useMemo(() => new Vault(), []);
+  const [vault] = useState(() => new Vault());
   const [lastModified, setLastModified] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 

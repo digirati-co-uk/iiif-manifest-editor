@@ -3,12 +3,12 @@ import { useInStack } from "@manifest-editor/editors";
 import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef, useState } from "react";
 import { AnnotationContext, LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 import {
   getAnnotationTargetBox,
   getSlideContentLayers,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -16,7 +16,6 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { nonLinearTourBehavior } from "../tour-behaviors";
-import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 
 const editorialTextRegionId = "editorial-text";
 
@@ -49,10 +48,6 @@ export function SlideshowSlidePreview({
     selectTextRegion,
     selectTourStep,
   } = useSlideshowContentPositioning();
-
-  useEffect(() => {
-    repairSlideContentTargets(vault, canvas);
-  }, [canvas?.id, vault]);
 
   const layers = useVaultSelector(
     (_, vaultInstance) => (canvas ? getSlideContentLayers(vaultInstance, canvas) : []),
@@ -244,7 +239,9 @@ function TourStepTarget({
   const box = getAnnotationTargetBox(annotation, canvas);
   const canvasBehavior = Array.isArray(canvas.behavior) ? canvas.behavior : [];
   const annotationBehavior = Array.isArray(annotation.behavior) ? annotation.behavior : [];
-  const floating = hasFloatingBehavior(canvasBehavior) ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior) : null;
+  const floating = hasFloatingBehavior(canvasBehavior)
+    ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior)
+    : null;
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const selectedColour = "#6d5aa8";
@@ -302,7 +299,7 @@ function TourStepTarget({
     >
       <span className="absolute left-1 top-1">
         <TourStepPin index={index + 1} />
-        </span>
+      </span>
       <span
         className={twMerge(
           "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
@@ -356,7 +353,6 @@ function TourStepPin({ index }: { index?: number }) {
     </span>
   );
 }
-
 function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
   switch (floating) {
     case "float-top":

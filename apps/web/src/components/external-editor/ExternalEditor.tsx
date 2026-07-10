@@ -41,9 +41,12 @@ const presets: Record<string, MappedApp> = {
 const externalDefaultEnabledPlugins = ["@manifest-editor/av-ranges"];
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
-  const vault = useMemo(() => {
-    return new Vault();
-  }, [manifest, preset]);
+  const vaultRef = useRef<{ key: string; vault: Vault } | null>(null);
+  const vaultKey = `${manifest}\0${preset || ""}`;
+  if (vaultRef.current?.key !== vaultKey) {
+    vaultRef.current = { key: vaultKey, vault: new Vault() };
+  }
+  const vault = vaultRef.current.vault;
 
   const mergedConfig = useMemo(() => {
     // @todo .
