@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { exhibitionTemplates } from "../exhibition-onboarding";
+import {
+  exhibitionTemplates,
+  getTemplateConfigurationValue,
+  setTemplateConfigurationValue,
+} from "../exhibition-templates";
 import { getExhibitionTemplate } from "./exhibition-template";
 
 describe("getExhibitionTemplate", () => {
@@ -9,4 +13,10 @@ describe("getExhibitionTemplate", () => {
     );
     expect(getExhibitionTemplate(exhibitionTemplates, ["scroll"])?.id).toBe("exhibition-scroll");
   });
+});
+
+test("template configuration paths create the nested viewer theme shape", () => {
+  const values = setTemplateConfigurationValue({}, "scroll.options.titleBlock.fullHeight", false);
+  expect(values).toEqual({ scroll: { options: { titleBlock: { fullHeight: false } } } });
+  expect(getTemplateConfigurationValue(values, "scroll.options.titleBlock.fullHeight")).toBe(false);
 });

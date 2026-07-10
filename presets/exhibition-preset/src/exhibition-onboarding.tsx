@@ -20,61 +20,9 @@ import { type SVGProps, useEffect } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { useManifest, useVault } from "react-iiif-vault";
 import { useExhibitionTemplate } from "./helpers/exhibition-template";
+import { exhibitionTemplates } from "./exhibition-templates";
 
-export const exhibitionTemplates: PresetTemplateDefinition[] = [
-  {
-    id: "exhibition-fullpage",
-    label: "Full page exhibition",
-    summary: "A guided exhibition layout with full-page scenes and focused narrative steps.",
-    type: "fullpage",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/exhibition",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-fullpage.png",
-    configuration: [
-      {
-        id: "fullTitleBar",
-        label: "Show full title bar",
-        type: "boolean",
-        defaultValue: true,
-      },
-    ],
-  },
-  {
-    id: "exhibition-slideshow",
-    label: "Slideshow",
-    summary: "A slide-based exhibition for linear presentations and teaching material.",
-    type: "slideshow",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/slideshow",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-slideshow.png",
-    configuration: [
-      {
-        id: "floating",
-        label: "Floating controls",
-        type: "boolean",
-        defaultValue: false,
-      },
-    ],
-  },
-  {
-    id: "exhibition-scroll",
-    label: "Scrolling story",
-    summary: "A vertical reading experience for essays, object stories, and long-form interpretation.",
-    type: "scroll",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/scroll",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-scroll.png",
-    configuration: [
-      {
-        id: "theme",
-        label: "Theme",
-        type: "select",
-        defaultValue: "light",
-        options: [
-          { label: "Light", value: "light" },
-          { label: "Dark", value: "dark" },
-        ],
-      },
-    ],
-  },
-];
+export { exhibitionTemplates } from "./exhibition-templates";
 
 const exhibitionTemplateBehaviors = exhibitionTemplates.flatMap((template) => [
   template.type,

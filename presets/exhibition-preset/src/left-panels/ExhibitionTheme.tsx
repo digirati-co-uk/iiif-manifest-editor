@@ -25,6 +25,7 @@ import {
 } from "../theme/theme-service";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { PreviewIcon } from "../icons/PreviewIcon";
+import { getTemplateConfigurationValue, setTemplateConfigurationValue } from "../exhibition-templates";
 
 export const exhibitionThemeLeftPanel: LayoutPanel = {
   id: "@exhibitions/theme-panel",
@@ -46,14 +47,20 @@ function ExhibitionPreviewPanel() {
   const servicesList = ((manifest as any)?.services || []) as Array<any>;
   const details = getThemeServiceDetails(serviceList) || getThemeServiceDetails(servicesList);
   const configuration = template?.configuration || [];
-  const values = (details?.service?.theme || {}) as Record<string, string | number | boolean>;
-  const configuredValues = Object.fromEntries(
-    configuration.map((field) => [field.id, values[field.id] ?? field.defaultValue ?? defaultFieldValue(field)]),
+  const values = (details?.service?.theme || {}) as Record<string, any>;
+  const configuredValues = configuration.reduce(
+    (result, field) =>
+      setTemplateConfigurationValue(
+        result,
+        field.id,
+        getTemplateConfigurationValue(values, field.id) ?? field.defaultValue ?? defaultFieldValue(field),
+      ),
+    {} as Record<string, any>,
   );
 
   if (!manifest || !template) return null;
 
-  const setService = (nextValues: Record<string, string | number | boolean> | null) => {
+  const setService = (nextValues: Record<string, any> | null) => {
     const nextService = nextValues
       ? {
           id: `${manifest.id}#exhibition-viewer-theme`,
@@ -73,9 +80,7 @@ function ExhibitionPreviewPanel() {
   };
 
   const enableService = () =>
-    setService(
-      Object.fromEntries(configuration.map((field) => [field.id, field.defaultValue ?? defaultFieldValue(field)])),
-    );
+    setService(configuredValues);
 
   return (
     <Sidebar>
@@ -91,21 +96,19 @@ function ExhibitionPreviewPanel() {
           title="Preview configuration"
           description="These settings are defined by the selected template and stored as a service on the Manifest."
         >
+          {configuration.map((field) => (
+            <TemplateConfigurationField
+              key={field.id}
+              field={field}
+              value={getTemplateConfigurationValue(values, field.id) ?? field.defaultValue ?? defaultFieldValue(field)}
+              onChange={(value) => setService(setTemplateConfigurationValue(configuredValues, field.id, value))}
+            />
+          ))}
+          {!configuration.length ? <p className="text-sm text-slate-500">This template has no configurable settings.</p> : null}
           {details ? (
-            <>
-              {configuration.map((field) => (
-                <TemplateConfigurationField
-                  key={field.id}
-                  field={field}
-                  value={values[field.id] ?? field.defaultValue ?? defaultFieldValue(field)}
-                  onChange={(value) => setService({ ...configuredValues, [field.id]: value })}
-                />
-              ))}
-              {!configuration.length ? <p className="text-sm text-slate-500">This template has no configurable settings.</p> : null}
-              <Button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50" onPress={() => setService(null)}>
-                Remove preview service
-              </Button>
-            </>
+            <Button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50" onPress={() => setService(null)}>
+              Remove preview service
+            </Button>
           ) : (
             <Button className="rounded bg-me-primary-600 px-3 py-2 text-sm text-white hover:bg-me-primary-700" onPress={enableService}>
               Add preview service
