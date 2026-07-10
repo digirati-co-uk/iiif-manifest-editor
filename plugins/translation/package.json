@@ -45,8 +45,10 @@
     "prepack": "tsdown --clean"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@huggingface/transformers": "^4.1.0",
     "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/shell": "workspace:*",

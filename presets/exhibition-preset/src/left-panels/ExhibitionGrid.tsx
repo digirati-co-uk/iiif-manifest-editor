@@ -12,12 +12,12 @@ import {
   type LayoutPanel,
   useCreator,
   useManifestEditor,
-  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import { useVault } from "react-iiif-vault";
 import { ExhibitionGrid } from "../components/ExhibitionGrid";
 import { ExhibitionPreviewList } from "../components/ExhibitionPreviewList";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
 
 export const exhibitionGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Exhibition grid",
@@ -63,7 +63,7 @@ function createExhibitionGridLeftPanel({
 
 function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter: string; previewMode: PreviewMode }) {
   const { structural, technical } = useManifestEditor();
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const selectedTemplate = useExhibitionTemplate();
   const vault = useVault();
   const resolvedPreviewMode = resolvePreviewMode(previewMode, selectedTemplate?.type);
   const resolvedCreatorFilter = resolvedPreviewMode === "slideshow" ? "exhibition-slideshow-slide" : creatorFilter;

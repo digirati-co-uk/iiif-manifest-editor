@@ -5,6 +5,7 @@ import {
   getExhibitionTemplateControls,
   hasCoverBehavior,
   hasScrollBehavior,
+  updateFloatingBehavior,
 } from "./SlideBehaviours";
 
 const base = {
@@ -29,6 +30,14 @@ const base = {
 };
 
 describe("exhibition slide behaviours", () => {
+  test("changing a floating position preserves image-only layout and unrelated behaviours", () => {
+    expect(updateFloatingBehavior(["image", "cover", "float-top-left"], "float-bottom-right")).toEqual([
+      "image",
+      "cover",
+      "float-bottom-right",
+    ]);
+    expect(updateFloatingBehavior(["image", "floating", "float-top-left"], "")).toEqual(["image"]);
+  });
   test("full-page scroll toggle adds scroll and removes grid sizing", () => {
     expect(
       buildSimpleLayoutBehaviors({
@@ -44,8 +53,8 @@ describe("exhibition slide behaviours", () => {
 
   test("scroll layouts keep left/right alignment labels", () => {
     expect(getExhibitionTemplateControls("scroll").layoutOptions).toEqual([
-      { value: "left", label: "Align annotations left" },
-      { value: "right", label: "Align annotations right" },
+      { value: "left", label: "Annotations on left" },
+      { value: "right", label: "Annotations on right" },
     ]);
     expect(getExhibitionTemplateControls("scroll", false, false).layoutOptions).toEqual([]);
   });
@@ -74,13 +83,37 @@ describe("exhibition slide behaviours", () => {
       "layout",
       "scroll",
       "display",
-      "cover",
       "floating",
     ]);
   });
 
   test("cover controls only show for a cover canvas", () => {
     expect(getAdvancedExhibitionConfigs("scroll", ["splash"], false).map((config) => config.id)).toEqual(["layout", "display", "floating"]);
+  });
+
+  test("opening cover options match the viewer for each template", () => {
+    expect(getAdvancedExhibitionConfigs("fullpage", [], true).map((config) => config.id)).toEqual([
+      "layout",
+      "scroll",
+      "display",
+      "size",
+    ]);
+    expect(getAdvancedExhibitionConfigs("slideshow", [], true).map((config) => config.id)).toEqual([
+      "layout",
+      "cover",
+      "floating",
+    ]);
+  });
+
+  test("an active opening cover hides normal canvas layout controls", () => {
+    const controls = getExhibitionTemplateControls("slideshow", false, true, true);
+    expect(controls.layoutOptions).toEqual([]);
+    expect(controls.showFloating).toBe(false);
+    expect(controls.showImageCover).toBe(false);
+    expect(controls.showGridSizing).toBe(false);
+    expect(getAdvancedExhibitionConfigs("slideshow", ["splash"], true).map((config) => config.id)).toEqual([
+      "cover",
+    ]);
   });
 
   test("scroll alignment controls hide when there are no tour steps", () => {

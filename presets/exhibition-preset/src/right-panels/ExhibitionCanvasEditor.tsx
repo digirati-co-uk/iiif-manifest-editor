@@ -1,5 +1,5 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { Input, InputContainer, InputLabel, PaintingAnnotationList } from "@manifest-editor/editors";
+import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
@@ -10,6 +10,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
+import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
 import {
   getTourStepAnnotations,
@@ -18,13 +19,13 @@ import {
 } from "../slideshow-content-positioning";
 import {
   buildLayoutPresetBehaviors,
-  buildSimpleLayoutBehaviors,
   FloatingPositionPicker,
   getFloatingBehavior,
   getLayoutPreset,
   hasFloatingBehavior,
   injectTextPlaceholders,
   LayoutPresetCard,
+  updateFloatingBehavior,
   useExhibitionTemplateControls,
 } from "./SlideBehaviours";
 import { getLanguageMapHtml } from "./summary-html";
@@ -63,12 +64,12 @@ export function ExhibitionCanvasAdvancedContent() {
   const { structural, technical } = useEditor();
   const { items } = structural;
   const behavior = technical.behavior.get() || [];
-  const backgroundColor = technical.backgroundColor.get() || "#ffffff";
   const pages = items.get();
   const page = pages[0];
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
+  const isOpeningCover = behavior.includes("splash");
   const tourSupported = supportsTourSteps(vault, canvas);
   const hasTourSteps = useVaultSelector(
     (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
@@ -96,57 +97,22 @@ export function ExhibitionCanvasAdvancedContent() {
     <ResourceEditingProvider resource={canvas}>
       {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-      <ReadonlyExhibitionSummary canvas={canvas} />
+      {!isOpeningCover ? (
+        <ReadonlyExhibitionSummary canvas={canvas} />
+      ) : null}
 
-      <InputContainer $wide id={technical.backgroundColor.containerId()}>
-        <InputLabel htmlFor={technical.backgroundColor.focusId()}>Canvas background colour</InputLabel>
-        <div className="flex min-w-0 items-center gap-2">
-          <input
-            id={technical.backgroundColor.focusId()}
-            className="h-9 w-12 shrink-0 cursor-pointer rounded border border-[#dcd5ce] bg-white p-1"
-            type="color"
-            value={toHexColor(backgroundColor)}
-            onChange={(event) => technical.backgroundColor.set(event.target.value)}
-          />
-          <Input value={backgroundColor} onChange={(event) => technical.backgroundColor.set(event.target.value)} />
-        </div>
-      </InputContainer>
+      <CanvasBackgroundColorField editor={technical.backgroundColor} />
 
       {controls.layoutOptions.length || (controls.isSlideshow && hasFloatingBehavior(behavior)) ? (
         <InputContainer $wide>
           <div>
             <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">
-              {controls.isSlideshow && hasFloatingBehavior(behavior) ? "Floating position" : "Layout preset"}
+              {controls.isSlideshow && hasFloatingBehavior(behavior) ? "Text overlay position" : "Text placement"}
             </div>
             {controls.isSlideshow && hasFloatingBehavior(behavior) ? (
               <FloatingPositionPicker
                 value={getFloatingBehavior(behavior)}
-                clearLabel="Off"
-                onChange={(next) =>
-                  technical.behavior.set(
-                    buildSimpleLayoutBehaviors({
-                      behavior,
-                      layoutPreset: getLayoutPreset(behavior),
-                      displayWidth: 12,
-                      canvasWidth: canvas.width || 0,
-                      canvasHeight: canvas.height || 0,
-                      floating: Boolean(next),
-                      floatingBehavior: next || undefined,
-                      cover: behavior.includes("cover") || behavior.includes("image-cover"),
-                      scrollEnabled: false,
-                      splash: false,
-                      fixed: false,
-                      invert: false,
-                      backdrop: "",
-                      showGridSizing: false,
-                      showFloating: true,
-                      showImageCover: false,
-                      showScrollToggle: false,
-                      showScrollDisplay: false,
-                      scrollContext: false,
-                    }),
-                  )
-                }
+                onChange={(next) => technical.behavior.set(updateFloatingBehavior(behavior, next))}
               />
             ) : (
               <div className="grid grid-cols-2 gap-3">
@@ -172,12 +138,12 @@ export function ExhibitionCanvasAdvancedContent() {
                 ))}
               </div>
             )}
-            <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="Edit layout options" />
+            <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="More display options" />
           </div>
         </InputContainer>
       ) : null}
 
-      {tourSupported ? <TourStepsSummary canvas={canvas} /> : null}
+      {tourSupported && !isOpeningCover ? <TourStepsSummary canvas={canvas} /> : null}
 
       <AnnotationPageContext annotationPage={page.id}>
         <PaintingAnnotationList createFilter="image" />
@@ -318,14 +284,4 @@ function getLanguageMapText(value: any): string {
   }
 
   return "";
-}
-
-function toHexColor(value: string) {
-  const trimmed = value.trim();
-  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
-  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
-    const [r, g, b] = trimmed.slice(1);
-    return `#${r}${r}${g}${g}${b}${b}`;
-  }
-  return "#ffffff";
 }

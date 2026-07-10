@@ -1,20 +1,20 @@
 import { useInStack } from "@manifest-editor/editors";
-import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef } from "react";
+import { type PointerEvent as ReactPointerEvent, type RefObject, useRef } from "react";
 import { LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 import {
   getAnnotationTargetBox,
   getSlideContentLayers,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
+import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
 
 const editorialTextRegionId = "editorial-text";
 
@@ -40,16 +40,11 @@ export function SlideshowSlidePreview({
     selectedTextRegion,
     repositioningTextRegion,
     selectedTourStepId,
-    repositioningTourStepId,
     selectAnnotation,
     startRepositioning,
     selectTextRegion,
     selectTourStep,
   } = useSlideshowContentPositioning();
-
-  useEffect(() => {
-    repairSlideContentTargets(vault, canvas);
-  }, [canvas?.id, vault]);
 
   const layers = useVaultSelector(
     (_, vaultInstance) => (canvas ? getSlideContentLayers(vaultInstance, canvas) : []),
@@ -62,6 +57,8 @@ export function SlideshowSlidePreview({
   const editingAnnotationId = editingAnnotation?.resource.source.id;
   const tourTabActive = mode === "edit" && showTourSteps;
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+  const nonLinearTour = behavior.includes(nonLinearTourBehavior);
+  const tourMarkerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
   const contentEditingActive = mode === "edit" && !showTourSteps;
 
   if (!canvas) {
@@ -187,8 +184,9 @@ export function SlideshowSlidePreview({
               annotation={annotation}
               canvas={canvas}
               index={index}
+              markerStyle={tourMarkerStyle}
+              nonLinear={nonLinearTour}
               selected={selectedTourStepId === annotation.id}
-              repositioning={repositioningTourStepId === annotation.id}
               onSelect={() => {
                 selectTourStep(annotation.id);
               }}
@@ -203,24 +201,51 @@ function TourStepTarget({
   annotation,
   canvas,
   index,
+  markerStyle,
+  nonLinear,
   selected,
-  repositioning,
   onSelect,
 }: {
   annotation: any;
   canvas: any;
   index: number;
+  markerStyle: "circle" | "pin";
+  nonLinear: boolean;
   selected: boolean;
-  repositioning: boolean;
   onSelect: () => void;
 }) {
   const box = getAnnotationTargetBox(annotation, canvas);
   const canvasBehavior = Array.isArray(canvas.behavior) ? canvas.behavior : [];
   const annotationBehavior = Array.isArray(annotation.behavior) ? annotation.behavior : [];
-  const floating = hasFloatingBehavior(canvasBehavior) ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior) : null;
+  const floating = hasFloatingBehavior(canvasBehavior)
+    ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior)
+    : null;
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const selectedColour = "#6d5aa8";
+
+  if (nonLinear) {
+    return (
+      <button
+        type="button"
+        className={twMerge(
+          "absolute z-30 border-none bg-transparent p-0 transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white/80",
+          selected && "z-40 scale-110",
+        )}
+        style={{
+          left: `${((box.x + box.width / 2) / canvasWidth) * 100}%`,
+          top: `${((box.y + box.height / 2) / canvasHeight) * 100}%`,
+          transform: "translate(-50%, -50%)",
+        }}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          onSelect();
+        }}
+      >
+        <TourStepMarker index={index + 1} style={markerStyle} />
+      </button>
+    );
+  }
 
   return (
     <div
@@ -259,6 +284,20 @@ function TourStepTarget({
         Step {index + 1}
       </span>
     </div>
+  );
+}
+
+function TourStepMarker({ index, style }: { index: number; style: "circle" | "pin" }) {
+  return (
+    <span
+      className={twMerge(
+        "inline-flex items-center justify-center border-2 border-white bg-black text-white shadow-lg ring-1 ring-black/40",
+        style === "pin" ? "h-10 w-10 rounded-full" : "h-8 min-w-8 rounded px-2 text-xs font-semibold",
+      )}
+    >
+      {style === "pin" ? <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" /> : index}
+      <span className="sr-only">Tour step {index}</span>
+    </span>
   );
 }
 
