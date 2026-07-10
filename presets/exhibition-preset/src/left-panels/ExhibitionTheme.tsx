@@ -669,10 +669,10 @@ function ExhibitionThemeOptions() {
       <SidebarContent padding>
         <ThemeSection
           title="Preview"
-          description="Switch the live preview route without changing the saved manifest theme."
+          description="Choose which exhibition format to preview while editing this theme."
         >
           <ThemeInlineSelect<ThemeTarget>
-            label="Preview preset"
+            label="Preview format"
             value={themeTarget}
             onChange={selectThemeTarget}
             options={themeTargetOptions}
@@ -680,11 +680,11 @@ function ExhibitionThemeOptions() {
         </ThemeSection>
 
         <ThemeSection
-          title="Manifest Theme"
-          description="Store exhibition styling and viewer defaults in a custom IIIF service on the Manifest."
+          title="Saved Theme"
+          description="Save custom exhibition styling and viewer defaults on the Manifest."
         >
           <ThemeToggle
-            label="Enable manifest theme"
+            label="Save custom theme"
             checked={!!serviceDetails}
             onChange={enableTheme}
           />
@@ -695,14 +695,14 @@ function ExhibitionThemeOptions() {
               onPress={resetToPreset}
               isDisabled={!serviceDetails}
             >
-              Reset to preset
+              Reset selected theme
             </Button>
             <Button
               className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
               onPress={() => upsertTheme(null)}
               isDisabled={!serviceDetails}
             >
-              Remove theme service
+              Clear saved settings
             </Button>
           </div>
 
@@ -720,7 +720,7 @@ function ExhibitionThemeOptions() {
 
         <ThemeSection
           title="Theme Options"
-          description="Reveal more controls for the selected preview preset when needed."
+          description="Choose a shorter or more detailed set of theme controls."
         >
           <ThemeInlineSelect<ThemePanelMode>
             label="Editing mode"
@@ -735,15 +735,15 @@ function ExhibitionThemeOptions() {
 
         {themeMode === "simple" ? (
           <ThemeSection
-            title="Simple Settings"
+            title="Key Settings"
             description={
               themeTarget === "scroll"
-                ? "Base colour updates the main Scroll surfaces, including the opening title, annotation cards, info blocks, and shared viewer background."
-                : "The small set of controls most users need for this preset."
+                ? "Main background updates the opening title, annotation cards, info blocks, and viewer background."
+                : "The main controls most people need for this theme."
             }
           >
             <ThemeColorField
-              label="Base colour"
+              label="Main background"
               value={
                 themeTarget === "scroll"
                   ? resolvedTheme.scroll.tokens.titleBackground
@@ -761,12 +761,12 @@ function ExhibitionThemeOptions() {
               onChange={setSimpleTextColor}
             />
             <ThemeTextField
-              label="Main font"
+              label="Heading font"
               value={resolvedTheme.shared.fontSans}
               onChange={(value) => updatePath(["shared", "fontSans"], value)}
             />
             <ThemeTextField
-              label="Secondary font"
+              label="Body font"
               value={resolvedTheme.shared.fontMono}
               onChange={(value) => updatePath(["shared", "fontMono"], value)}
             />
@@ -792,7 +792,7 @@ function ExhibitionThemeOptions() {
                   onChange={setShowContentsNavigation}
                 />
                 <ThemeToggle
-                  label="Wide title bar"
+                  label="Full-width title bar"
                   checked={resolvedTheme.delft.exhibition.fullTitleBar}
                   onChange={(value) =>
                     updatePath(["delft", "exhibition", "fullTitleBar"], value)
@@ -803,8 +803,8 @@ function ExhibitionThemeOptions() {
                   value={imageDisplayStyle}
                   onChange={setImageDisplayStyle}
                   options={[
-                    { label: "Default", value: "default" },
-                    { label: "Alternative", value: "alternative" },
+                    { label: "Standard", value: "default" },
+                    { label: "Feature image", value: "alternative" },
                   ]}
                 />
                 <ThemeToggle
@@ -821,8 +821,8 @@ function ExhibitionThemeOptions() {
                   value={imageDisplayStyle}
                   onChange={setImageDisplayStyle}
                   options={[
-                    { label: "Default", value: "default" },
-                    { label: "Alternative", value: "alternative" },
+                    { label: "Standard", value: "default" },
+                    { label: "Feature image", value: "alternative" },
                   ]}
                 />
                 <ThemeToggle
@@ -934,7 +934,7 @@ function ExhibitionThemeOptions() {
               title="Page & Viewer"
               description={
                 themeTarget === "scroll"
-                  ? "Shared viewer surfaces used around the Scroll view. Opening title, annotation, and info block colours are controlled below."
+                  ? "Shared backgrounds around the Scroll view. Opening title, annotation, and info block colours are controlled below."
                   : undefined
               }
               collapsible
@@ -969,7 +969,7 @@ function ExhibitionThemeOptions() {
               />
               {themeTarget === "scroll" ? (
                 <ThemeToggle
-                  label="Ignore canvas backgrounds"
+                  label="Use theme background instead of canvas colours"
                   checked={resolvedTheme.scroll.options.ignoreCanvasBackgrounds}
                   onChange={(value) =>
                     updatePath(
@@ -984,7 +984,7 @@ function ExhibitionThemeOptions() {
             {themeTarget !== "scroll" ? (
               <ThemeSection
                 title="Text Colours"
-                description="Broad fallback text colours. Captions, info blocks, and controls have their own options below."
+                description="General fallback text colours. Captions, info blocks, and controls have their own options below."
                 collapsible
               >
                 <ThemeColorField
@@ -1067,8 +1067,8 @@ function ExhibitionThemeOptions() {
                     value={imageDisplayStyle}
                     onChange={setImageDisplayStyle}
                     options={[
-                      { label: "Default", value: "default" },
-                      { label: "Alternative", value: "alternative" },
+                      { label: "Standard", value: "default" },
+                      { label: "Feature image", value: "alternative" },
                     ]}
                   />
                   <ThemeToggle
@@ -1093,7 +1093,7 @@ function ExhibitionThemeOptions() {
                     onChange={setCoverImages}
                   />
                   <ThemeToggle
-                    label="Ignore canvas backgrounds"
+                    label="Use theme background instead of canvas colours"
                     checked={
                       themeTarget === "slideshow"
                         ? resolvedTheme.delft.slideshow.ignoreCanvasBackgrounds
@@ -1156,7 +1156,7 @@ function ExhibitionThemeOptions() {
                 themeTarget === "scroll"
                   ? "Scroll contents navigation, placement, dropdown text, and progress colours."
                   : themeTarget === "slideshow"
-                    ? "Slideshow controls, progress, and overlay buttons. Contents options only apply to Full page and Scroll."
+                    ? "Slideshow controls, progress, and overlay buttons. Contents controls only apply to Full page and Scroll."
                     : "Contents, viewer controls, progress, and overlay buttons."
               }
               collapsible
@@ -1177,7 +1177,7 @@ function ExhibitionThemeOptions() {
               ) : null}
               {themeTarget === "presentation" || themeTarget === "scroll" ? (
                 <ThemeToggle
-                  label="Side controls"
+                  label="Previous/next side controls"
                   checked={
                     themeTarget === "scroll"
                       ? resolvedTheme.scroll.options.showNavigationControls
@@ -1287,21 +1287,21 @@ function ExhibitionThemeOptions() {
                     }
                   />
                   <ThemeToggle
-                    label="Wide title bar"
+                    label="Full-width title bar"
                     checked={resolvedTheme.delft.exhibition.fullTitleBar}
                     onChange={(value) =>
                       updatePath(["delft", "exhibition", "fullTitleBar"], value)
                     }
                   />
                   <ThemeToggle
-                    label="Wide item grid"
+                    label="Full-width item grid"
                     checked={resolvedTheme.delft.exhibition.fullWidthGrid}
                     onChange={(value) =>
                       updatePath(["delft", "exhibition", "fullWidthGrid"], value)
                     }
                   />
                   <ThemeToggle
-                    label="Ignore canvas backgrounds"
+                    label="Use theme background instead of canvas colours"
                     checked={resolvedTheme.delft.exhibition.ignoreCanvasBackgrounds}
                     onChange={(value) =>
                       updatePath(
@@ -1379,14 +1379,14 @@ function ExhibitionThemeOptions() {
                     />
                   ) : null}
                   <ThemeToggle
-                    label="Panel corners"
+                    label="Angled panel corners"
                     checked={resolvedTheme.delft.presentation.cutCorners}
                     onChange={(value) =>
                       updatePath(["delft", "presentation", "cutCorners"], value)
                     }
                   />
                   <ThemeToggle
-                    label="Ignore canvas backgrounds"
+                    label="Use theme background instead of canvas colours"
                     checked={resolvedTheme.delft.presentation.ignoreCanvasBackgrounds}
                     onChange={(value) =>
                       updatePath(
