@@ -7,7 +7,6 @@ import {
   useApp,
   useEditor,
   useInlineCreator,
-  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
 import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "react-aria-components";
@@ -20,10 +19,6 @@ import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../s
 import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
 import { hasFloatingBehavior, resolveExhibitionTemplateType, SimpleCheckbox } from "./SlideBehaviours";
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
 type EditingMode = "simple" | "advanced";
 
 export const exhibitionTourSteps: EditorDefinition = {
@@ -163,11 +158,7 @@ export function ExhibitionTourStepsContent({
 
   const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
   const behavior = editor.technical.type === "Canvas" ? editor.technical.behavior.get() || [] : [];
-<<<<<<< HEAD
   const nonLinear = canUseNonLinearTour && behavior.includes(nonLinearTourBehavior);
-=======
-  const nonLinear = behavior.includes(nonLinearTourBehavior);
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
   const markerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
   const tourStyle = nonLinear ? "non-linear" : "linear";
   const setNonLinearTour = (nextNonLinear: boolean) => {
@@ -193,35 +184,6 @@ export function ExhibitionTourStepsContent({
         ) : null}
       </div>
 
-<<<<<<< HEAD
-=======
-      <div className="mb-4 rounded border border-gray-200 bg-white p-3">
-        <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
-        <SimpleCheckbox checked={nonLinear} label="Use non-linear map" onChange={setNonLinearTour} />
-        <p className="mt-2 text-xs leading-relaxed text-gray-500">
-          Shows all tour steps as markers on the canvas. Visitors can open points in any order instead of moving through
-          a fixed step sequence.
-        </p>
-        {nonLinear ? (
-          <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm font-semibold text-gray-700">Marker</div>
-              <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5">
-                <MarkerStyleButton selected={markerStyle === "circle"} onPress={() => setMarkerStyle("circle")}>
-                  Circle
-                </MarkerStyleButton>
-                <MarkerStyleButton selected={markerStyle === "pin"} onPress={() => setMarkerStyle("pin")}>
-                  Pin
-                </MarkerStyleButton>
-              </div>
-            </div>
-            <p className="text-xs leading-relaxed text-gray-500">
-              Marker colour follows the exhibition theme annotation text colour.
-            </p>
-          </div>
-        ) : null}
-      </div>
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
       {canUseNonLinearTour ? (
         <div className="mb-4 rounded border border-gray-200 bg-white p-3">
           <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
@@ -311,13 +273,7 @@ function MarkerStyleButton({
   );
 }
 
-<<<<<<< HEAD
 export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequest?: () => void } = {}) {
-=======
-export function useTourStepAnnotationRequest({
-  onBeforeRequest,
-}: { onBeforeRequest?: () => void } = {}) {
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const creator = useInlineCreator();

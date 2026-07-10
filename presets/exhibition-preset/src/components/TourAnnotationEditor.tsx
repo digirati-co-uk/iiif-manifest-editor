@@ -14,10 +14,6 @@ export function TourAnnotationEditor({
   editAlignment?: boolean;
   index?: number;
   tourStyle?: "linear" | "non-linear";
-<<<<<<< HEAD
-=======
-  editAlignment?: boolean;
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
   useSlideshowWorkbench?: boolean;
 }) {
   const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();

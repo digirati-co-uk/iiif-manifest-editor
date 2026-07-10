@@ -1,6 +1,7 @@
+import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
-import { type PointerEvent as ReactPointerEvent, type RefObject, useRef } from "react";
-import { LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef, useState } from "react";
+import { AnnotationContext, LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 import {
@@ -14,12 +15,7 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-<<<<<<< HEAD
 import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
-=======
-import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
-import { nonLinearTourBehavior } from "../tour-behaviors";
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
 
 const editorialTextRegionId = "editorial-text";
 
@@ -38,6 +34,7 @@ export function SlideshowSlidePreview({
   const vault = useVault();
   const editingAnnotation = useInStack("Annotation");
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const [activeTourStepId, setActiveTourStepId] = useState<string | null>(null);
   const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const {
     selectedAnnotationId,
@@ -65,6 +62,17 @@ export function SlideshowSlidePreview({
   const nonLinearTour = behavior.includes(nonLinearTourBehavior);
   const tourMarkerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
   const contentEditingActive = mode === "edit" && !showTourSteps;
+  const activeTourStep = tourSteps.find((annotation: any) => annotation.id === activeTourStepId);
+
+  useEffect(() => {
+    setActiveTourStepId(null);
+  }, [canvas?.id, showTourSteps]);
+
+  useEffect(() => {
+    if (nonLinearTour && tourTabActive && selectedTourStepId) {
+      setActiveTourStepId(selectedTourStepId);
+    }
+  }, [nonLinearTour, selectedTourStepId, tourTabActive]);
 
   if (!canvas) {
     return null;
@@ -189,20 +197,28 @@ export function SlideshowSlidePreview({
               annotation={annotation}
               canvas={canvas}
               index={index}
+              active={activeTourStepId === annotation.id}
               markerStyle={tourMarkerStyle}
               nonLinear={nonLinearTour}
               selected={selectedTourStepId === annotation.id}
               onSelect={() => {
                 selectTourStep(annotation.id);
+                if (nonLinearTour) {
+                  setActiveTourStepId(annotation.id);
+                }
               }}
             />
           ))
         : null}
+      {tourTabActive && nonLinearTour && activeTourStep ? (
+        <NonLinearTourStepPanel annotation={activeTourStep} onExit={() => setActiveTourStepId(null)} />
+      ) : null}
     </div>
   );
 }
 
 function TourStepTarget({
+  active,
   annotation,
   canvas,
   index,
@@ -211,6 +227,7 @@ function TourStepTarget({
   selected,
   onSelect,
 }: {
+  active?: boolean;
   annotation: any;
   canvas: any;
   index: number;
@@ -235,7 +252,7 @@ function TourStepTarget({
         type="button"
         className={twMerge(
           "absolute z-30 border-none bg-transparent p-0 transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white/80",
-          selected && "z-40 scale-110",
+          active && "z-40 scale-110",
         )}
         style={{
           left: `${((box.x + box.width / 2) / canvasWidth) * 100}%`,
@@ -278,12 +295,9 @@ function TourStepTarget({
         onSelect();
       }}
     >
-<<<<<<< HEAD
-=======
       <span className="absolute left-1 top-1">
         <TourStepPin index={index + 1} />
       </span>
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
       <span
         className={twMerge(
           "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
@@ -298,14 +312,7 @@ function TourStepTarget({
   );
 }
 
-<<<<<<< HEAD
 function TourStepMarker({ index, style }: { index: number; style: "circle" | "pin" }) {
-=======
-function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExit: () => void }) {
-  const label = getLanguageMapText(annotation.label);
-  const summary = getLanguageMapText(annotation.summary);
-
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
   return (
     <span
       className={twMerge(
@@ -318,10 +325,47 @@ function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExi
     </span>
   );
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> ab967474de9355cda14a3edd2fc5f6d3386b168d
+function TourStepPin({ index }: { index?: number }) {
+  return (
+    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black shadow-lg ring-1 ring-black/40">
+      <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" />
+      {index ? <span className="sr-only">Tour step {index}</span> : null}
+    </span>
+  );
+}
+
+function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExit: () => void }) {
+  const label = getLanguageMapText(annotation.label);
+  const summary = getLanguageMapText(annotation.summary);
+
+  return (
+    <>
+      <div className="absolute right-4 top-4 z-50">
+        <button
+          type="button"
+          className="rounded bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow ring-1 ring-black/10"
+          onClick={onExit}
+        >
+          Exit
+        </button>
+      </div>
+      <div className="absolute left-4 top-4 z-50 max-h-[calc(100%-2rem)] w-[min(26rem,calc(100%-2rem))] overflow-y-auto rounded bg-white p-5 text-slate-900 shadow-2xl ring-1 ring-black/10">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <h3 className="text-xl font-bold leading-tight">{label || "Tour step"}</h3>
+          <button type="button" className="text-2xl leading-none text-slate-900" aria-label="Close" onClick={onExit}>
+            x
+          </button>
+        </div>
+        {summary ? <p className="mb-4 text-sm leading-relaxed text-slate-700">{summary}</p> : null}
+        <AnnotationContext annotation={annotation.id}>
+          <HTMLAnnotationBodyRender className="prose prose-sm max-w-none text-slate-800" locale="en" />
+        </AnnotationContext>
+      </div>
+    </>
+  );
+}
+
 function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
   switch (floating) {
     case "float-top":
