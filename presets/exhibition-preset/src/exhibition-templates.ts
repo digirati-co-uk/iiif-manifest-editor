@@ -14,7 +14,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A guided exhibition layout with full-page scenes and focused narrative steps.",
     type: "fullpage",
     previewUrl: "https://preview.exhibitionviewer.org/preview/exhibition",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-fullpage.png",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage.png",
     configuration: [
       boolean("delft.exhibition.cutCorners", "Cut corners", true),
       boolean("delft.exhibition.fullTitleBar", "Show full title bar", false),
@@ -37,7 +37,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A slide-based exhibition for linear presentations and teaching material.",
     type: "slideshow",
     previewUrl: "https://preview.exhibitionviewer.org/preview/slideshow",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-slideshow.png",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-slideshow.png",
     configuration: [
       boolean("delft.presentation.cutCorners", "Cut corners", false),
       boolean("delft.presentation.isFloating", "Floating controls", false),
@@ -63,7 +63,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A vertical reading experience for essays, object stories, and long-form interpretation.",
     type: "scroll",
     previewUrl: "https://preview.exhibitionviewer.org/preview/scroll",
-    thumbnailUrl: "https://digirati-co-uk.github.io/iiif-manifest-editor/exhibition-scroll.png",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-scroll.png",
     configuration: [
       boolean("scroll.options.showTitleBlock", "Show title block", true),
       boolean("scroll.options.titleBlock.fullHeight", "Full-height title block", true),
