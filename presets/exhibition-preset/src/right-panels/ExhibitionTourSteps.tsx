@@ -171,7 +171,9 @@ export function ExhibitionTourStepsContent({
       <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
         <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
         {mode === "advanced" && !nonLinear ? (
-          <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
+          <ActionButton onPress={() => setReorderable((r) => !r)}>
+            {reorderable ? "Done" : "Reorder"}
+          </ActionButton>
         ) : null}
         {mode === "advanced" && canEditAlignment ? (
           <ActionButton onPress={toggleEditAlignment}>{editAlignment ? "Done" : "Edit alignment"}</ActionButton>

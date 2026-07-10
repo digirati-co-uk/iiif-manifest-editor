@@ -272,7 +272,8 @@ export function getAdvancedExhibitionConfigs(
   const showCoverDisplay = controls.showScrollDisplay && isCoverCanvas;
   const configs: BehaviorEditorProps["configs"] = [];
 
-  if (controls.layoutOptions.length && !(controls.isSlideshow && hasFloatingBehavior(behavior))) {
+  const layoutConfig = exhibitionConfigs[0];
+  if (layoutConfig?.type === "choice" && controls.layoutOptions.length && !(controls.isSlideshow && hasFloatingBehavior(behavior))) {
     configs.push({
       id: "layout",
       type: "choice",

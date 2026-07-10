@@ -1,6 +1,8 @@
 import type { DelftExhibitionProps, DelftPresentationProps } from "exhibition-viewer/library";
 
 export type PresetUrlSearchParamsPreset = "delft" | "exhibition" | "minimal" | "presentation" | "scroll" | "slideshow";
+type TableOfContentsPlacement = "header" | "footer";
+type FloatingPosition = "top-left" | "top-right" | "bottom-left" | "bottom-right" | "top" | "bottom" | "left" | "right";
 
 export type PresetUrlSearchParamsByPreset = {
   delft: DelftPresetUrlSearchParamsOptions;
@@ -20,25 +22,38 @@ type SharedPresetUrlSearchParamsOptions = {
 };
 
 export type DelftPresetUrlSearchParamsOptions = SharedPresetUrlSearchParamsOptions &
-  Pick<NonNullable<DelftExhibitionProps["options"]>, "cutCorners" | "fullTitleBar">;
+  Pick<NonNullable<DelftExhibitionProps["options"]>, "cutCorners" | "fullTitleBar"> & {
+    hideTableOfContents?: boolean;
+    ignoreCanvasBackgrounds?: boolean;
+    showNavigationControls?: boolean;
+    showProgressBar?: boolean;
+    tableOfContentsPlacement?: TableOfContentsPlacement;
+  };
 
 export type MinimalPresetUrlSearchParamsOptions = DelftPresetUrlSearchParamsOptions;
 
 export type PresentationPresetUrlSearchParamsOptions = SharedPresetUrlSearchParamsOptions &
-  Pick<NonNullable<DelftPresentationProps["options"]>, "cutCorners" | "floatingPosition" | "isFloating"> & {
+  Pick<NonNullable<DelftPresentationProps["options"]>, "cutCorners" | "isFloating"> & {
     floating?: NonNullable<DelftPresentationProps["options"]>["isFloating"];
+    floatingPosition?: FloatingPosition;
+    ignoreCanvasBackgrounds?: boolean;
+    labelOnlyFloating?: boolean;
   };
 
 export type SlideshowPresetUrlSearchParamsOptions = SharedPresetUrlSearchParamsOptions & {
   minimal?: boolean;
   floating?: NonNullable<DelftPresentationProps["options"]>["isFloating"];
-  floatingPosition?: NonNullable<DelftPresentationProps["options"]>["floatingPosition"];
+  floatingPosition?: FloatingPosition;
+  ignoreCanvasBackgrounds?: boolean;
+  labelOnlyFloating?: boolean;
 };
 
 export type ScrollPresetUrlSearchParamsOptions = SharedPresetUrlSearchParamsOptions & {
   minimal?: boolean;
   manifestEditorPreview?: boolean;
   manifestEditorPreviewOrigin?: string;
+  ignoreCanvasBackgrounds?: boolean;
+  tableOfContentsPlacement?: TableOfContentsPlacement;
 };
 
 export function createPresetUrlSearchParams<T extends PresetUrlSearchParamsPreset>(
@@ -60,6 +75,11 @@ export function createPresetUrlSearchParams(
       const presetOptions = options as DelftPresetUrlSearchParamsOptions;
       setBoolean(params, "cut-corners", presetOptions.cutCorners);
       setBoolean(params, "full-title-bar", presetOptions.fullTitleBar);
+      setBoolean(params, "hide-toc", presetOptions.hideTableOfContents);
+      setBoolean(params, "show-navigation-controls", presetOptions.showNavigationControls);
+      setBoolean(params, "show-progress-bar", presetOptions.showProgressBar);
+      setString(params, "toc-placement", presetOptions.tableOfContentsPlacement);
+      setBoolean(params, "ignore-canvas-backgrounds", presetOptions.ignoreCanvasBackgrounds);
       break;
     }
 
@@ -68,6 +88,8 @@ export function createPresetUrlSearchParams(
       params.set("minimal", "true");
       setBoolean(params, "cut-corners", presetOptions.cutCorners);
       setBoolean(params, "full-title-bar", presetOptions.fullTitleBar);
+      setString(params, "toc-placement", presetOptions.tableOfContentsPlacement);
+      setBoolean(params, "ignore-canvas-backgrounds", presetOptions.ignoreCanvasBackgrounds);
       break;
     }
 
@@ -77,6 +99,8 @@ export function createPresetUrlSearchParams(
       setBoolean(params, "cut-corners", presetOptions.cutCorners);
       setBoolean(params, "floating", presetOptions.floating ?? presetOptions.isFloating);
       setString(params, "floating-position", presetOptions.floatingPosition);
+      setBoolean(params, "label-only-floating", presetOptions.labelOnlyFloating);
+      setBoolean(params, "ignore-canvas-backgrounds", presetOptions.ignoreCanvasBackgrounds);
       break;
     }
 
@@ -84,6 +108,8 @@ export function createPresetUrlSearchParams(
       const presetOptions = options as ScrollPresetUrlSearchParamsOptions;
       params.set("type", "scroll");
       setFlag(params, "minimal", presetOptions.minimal);
+      setString(params, "toc-placement", presetOptions.tableOfContentsPlacement);
+      setBoolean(params, "ignore-canvas-backgrounds", presetOptions.ignoreCanvasBackgrounds);
       setFlag(params, "manifest-editor-preview", presetOptions.manifestEditorPreview);
       setString(params, "manifest-editor-preview-origin", presetOptions.manifestEditorPreviewOrigin);
       break;
@@ -95,6 +121,8 @@ export function createPresetUrlSearchParams(
       setFlag(params, "minimal", presetOptions.minimal);
       setBoolean(params, "floating", presetOptions.floating);
       setString(params, "floating-position", presetOptions.floatingPosition);
+      setBoolean(params, "label-only-floating", presetOptions.labelOnlyFloating);
+      setBoolean(params, "ignore-canvas-backgrounds", presetOptions.ignoreCanvasBackgrounds);
       break;
     }
   }
@@ -111,12 +139,12 @@ export function createScrollingPreviewUrl(
   options?: Partial<PresetUrlSearchParamsOptions>,
 ): URL {
   const searchParams = createPresetUrlSearchParams(preset, (options || {}) as any);
-  // const configuredBase =
-  //   window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
-  // const defaultBase =
-  //   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  //     ? "http://localhost:5174"
-  //     : "https://preview.exhibitionviewer.org";
+  const configuredBase =
+    window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
+  const defaultBase =
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:5173"
+      : "https://preview.exhibitionviewer.org";
 
   // const url = new URL(configuredBase || defaultBase, window.location.origin);
 
