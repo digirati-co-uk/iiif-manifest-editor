@@ -16,8 +16,7 @@ export function TourAnnotationEditor({
   tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
-  const [annotation, { annotationTarget, highlightProps }] =
-    useAnnotationInfo();
+  const [annotation, { annotationTarget, highlightProps }] = useAnnotationInfo();
 
   const resource = useMemo(() => {
     if (annotationTarget) {

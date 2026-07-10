@@ -16,9 +16,10 @@ import {
   usePreviewContext,
 } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
-import type { SVGProps } from "react";
+import { type SVGProps, useEffect } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault";
+import { useExhibitionTemplate } from "./helpers/exhibition-template";
 
 export const exhibitionTemplates: PresetTemplateDefinition[] = [
   {
@@ -74,6 +75,16 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     ],
   },
 ];
+
+const exhibitionTemplateBehaviors = exhibitionTemplates.flatMap((template) => [
+  template.type,
+  `template-${template.id}`,
+]);
+const exhibitionTemplateShortLabels = {
+  fullpage: "Full page",
+  slideshow: "Slideshow",
+  scroll: "Scroll",
+};
 
 export const exhibitionPresetConfig: PresetDefinition = {
   templates: exhibitionTemplates,
@@ -153,11 +164,13 @@ function ExhibitionPresetPreviewButton({
 }) {
   const { actions, configs, active } = usePreviewContext();
   const vault = useVault();
+  const manifest = useManifest();
   const config = useConfig();
   const resource = useAppResource();
   const layoutActions = useLayoutActions();
   const openOnboarding = useOpenPresetOnboarding();
   const { selectedTemplate } = usePresetTemplateSelection();
+  const configuredTemplate = useExhibitionTemplate();
   const previewConfigs = configs.filter((item) => item.type === "external-manifest-preview");
   const templatePreviews = selectedTemplate
     ? exhibitionTemplates.filter((template) => template.type === selectedTemplate.type)
@@ -168,6 +181,24 @@ function ExhibitionPresetPreviewButton({
     previewConfigs[0];
   const theseus = previewConfigs.find((item) => item.id === "theseus" || item.id === "theseus-viewer");
   const json = previewConfigs.find((item) => item.id === "raw-manifest");
+
+  useEffect(() => {
+    if (!manifest || !selectedTemplate) return;
+
+    const currentBehavior = (manifest.behavior as string[]) || [];
+    const behavior = [
+      ...currentBehavior.filter((item) => !exhibitionTemplateBehaviors.includes(item)),
+      selectedTemplate.type,
+      `template-${selectedTemplate.id}`,
+    ];
+    if (
+      behavior.length === currentBehavior.length &&
+      behavior.every((item, index) => item === currentBehavior[index])
+    ) {
+      return;
+    }
+    vault.modifyEntityField(manifest, "behavior", behavior);
+  }, [manifest, selectedTemplate, vault]);
 
   async function openPreview(template: PresetTemplateDefinition) {
     const manifestId = await actions.getPreviewLink();
@@ -208,9 +239,14 @@ function ExhibitionPresetPreviewButton({
           />
         </div>
       ) : null}
-      <ButtonContainer>
+      <ButtonContainer style={{ width: "auto", minWidth: "10em" }}>
         <ButtonMain as={Button} onPress={openThemePanel}>
           Preview
+          {configuredTemplate ? (
+            <span className="ml-1 whitespace-nowrap opacity-75">
+              · {exhibitionTemplateShortLabels[configuredTemplate.type]}
+            </span>
+          ) : null}
         </ButtonMain>
         <MenuTrigger>
           <ButtonChange

@@ -3,8 +3,8 @@ import {
   useLayoutActions,
   useLayoutState,
   useLocalStorage,
-  usePresetTemplateSelection,
 } from "@manifest-editor/shell";
+import { useExhibitionTemplate } from "./exhibition-template";
 import type { PresetUrlSearchParamsPreset } from "./exhibition-preview-url-helper";
 
 export const exhibitionRemotePreviewPanelId =
@@ -53,7 +53,7 @@ export function useExhibitionPreviewPreset() {
 }
 
 export function useConfiguredExhibitionPreviewPreset() {
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const selectedTemplate = useExhibitionTemplate();
 
   switch (selectedTemplate?.type) {
     case "slideshow":

@@ -1,8 +1,9 @@
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
-import { useEditor, usePresetTemplateSelection } from "@manifest-editor/shell";
+import { useEditor } from "@manifest-editor/shell";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
 
 export function SlideshowDurationField() {
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const selectedTemplate = useExhibitionTemplate();
   const editor = useEditor();
   const duration = editor.technical.duration;
 

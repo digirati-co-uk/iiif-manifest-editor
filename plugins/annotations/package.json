@@ -37,6 +37,7 @@
     "prepack": "tsdown --clean"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@iiif/helpers": "catalog:",
     "@iiif/parser": "catalog:",
     "@manifest-editor/components": "workspace:*",

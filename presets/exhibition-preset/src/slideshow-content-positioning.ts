@@ -305,29 +305,6 @@ export function setSlideTextRegionBox(
   );
 }
 
-export function repairSlideContentTargets(vault: any, canvas: any) {
-  if (!canvas) return;
-
-  for (const annotation of getPaintingAnnotations(vault, canvas)) {
-    const target = annotation?.target;
-    if (
-      (target?.type === "SpecificResource" &&
-        target?.source?.type === "Canvas" &&
-        !target.selector) ||
-      target?.type === "Canvas" ||
-      target === canvas.id
-    ) {
-      setAnnotationTargetBox(
-        vault,
-        canvas,
-        annotation.id,
-        getSlideLayoutRegions(canvas).content ||
-        createDefaultSlideContentBox(canvas),
-      );
-    }
-  }
-}
-
 export function getSlideLayoutRegions(canvas: any): {
   content: SlideContentBox | null;
   text: SlideContentBox | null;

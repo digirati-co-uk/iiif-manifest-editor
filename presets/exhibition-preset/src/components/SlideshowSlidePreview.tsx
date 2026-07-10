@@ -2,12 +2,12 @@ import { useInStack } from "@manifest-editor/editors";
 import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef } from "react";
 import { LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 import {
   getAnnotationTargetBox,
   getSlideContentLayers,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -15,6 +15,7 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
+import { nonLinearTourBehavior } from "../tour-behaviors";
 
 const editorialTextRegionId = "editorial-text";
 
@@ -46,10 +47,6 @@ export function SlideshowSlidePreview({
     selectTextRegion,
     selectTourStep,
   } = useSlideshowContentPositioning();
-
-  useEffect(() => {
-    repairSlideContentTargets(vault, canvas);
-  }, [canvas?.id, vault]);
 
   const layers = useVaultSelector(
     (_, vaultInstance) => (canvas ? getSlideContentLayers(vaultInstance, canvas) : []),
@@ -217,7 +214,9 @@ function TourStepTarget({
   const box = getAnnotationTargetBox(annotation, canvas);
   const canvasBehavior = Array.isArray(canvas.behavior) ? canvas.behavior : [];
   const annotationBehavior = Array.isArray(annotation.behavior) ? annotation.behavior : [];
-  const floating = hasFloatingBehavior(canvasBehavior) ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior) : null;
+  const floating = hasFloatingBehavior(canvasBehavior)
+    ? getFloatingBehavior(annotationBehavior.length ? annotationBehavior : canvasBehavior)
+    : null;
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const selectedColour = "#6d5aa8";
@@ -248,6 +247,9 @@ function TourStepTarget({
         onSelect();
       }}
     >
+      <span className="absolute left-1 top-1">
+        <TourStepPin index={index + 1} />
+      </span>
       <span
         className={twMerge(
           "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
@@ -262,6 +264,45 @@ function TourStepTarget({
   );
 }
 
+function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExit: () => void }) {
+  const label = getLanguageMapText(annotation.label);
+  const summary = getLanguageMapText(annotation.summary);
+
+  return (
+    <>
+      <div className="absolute right-4 top-4 z-50">
+        <button
+          type="button"
+          className="rounded bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow ring-1 ring-black/10"
+          onClick={onExit}
+        >
+          Exit
+        </button>
+      </div>
+      <div className="absolute left-4 top-4 z-50 max-h-[calc(100%-2rem)] w-[min(26rem,calc(100%-2rem))] overflow-y-auto rounded bg-white p-5 text-slate-900 shadow-2xl ring-1 ring-black/10">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <h3 className="text-xl font-bold leading-tight">{label || "Tour step"}</h3>
+          <button type="button" className="text-2xl leading-none text-slate-900" aria-label="Close" onClick={onExit}>
+            x
+          </button>
+        </div>
+        {summary ? <p className="mb-4 text-sm leading-relaxed text-slate-700">{summary}</p> : null}
+        <AnnotationContext annotation={annotation.id}>
+          <HTMLAnnotationBodyRender className="prose prose-sm max-w-none text-slate-800" locale="en" />
+        </AnnotationContext>
+      </div>
+    </>
+  );
+}
+
+function TourStepPin({ index }: { index?: number }) {
+  return (
+    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black shadow-lg ring-1 ring-black/40">
+      <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" />
+      {index ? <span className="sr-only">Tour step {index}</span> : null}
+    </span>
+  );
+}
 function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
   switch (floating) {
     case "float-top":
