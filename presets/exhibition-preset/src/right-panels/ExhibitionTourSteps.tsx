@@ -13,7 +13,7 @@ import {
   useInlineCreator,
   usePresetTemplateSelection,
 } from "@manifest-editor/shell";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import {
   AnnotationPageContext,
@@ -24,8 +24,9 @@ import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotati
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
-import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
-import { hasFloatingBehavior, resolveExhibitionTemplateType, SimpleCheckbox } from "./SlideBehaviours";
+import { nonLinearTourBehavior } from "../tour-behaviors";
+import { SimpleCheckbox } from "./SlideBehaviours";
+import { hasFloatingBehavior, resolveExhibitionTemplateType } from "./SlideBehaviours";
 
 
 type EditingMode = "simple" | "advanced";
@@ -177,19 +178,13 @@ export function ExhibitionTourStepsContent({
   }
 
   const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
-  const behavior = editor.technical.type === "Canvas" ? editor.technical.behavior.get() || [] : [];
+  const behavior: string[] = editor.technical.type === "Canvas" ? editor.technical.behavior.get() || [] : [];
   const nonLinear = behavior.includes(nonLinearTourBehavior);
-  const markerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
   const tourStyle = nonLinear ? "non-linear" : "linear";
   const setNonLinearTour = (nextNonLinear: boolean) => {
     if (editor.technical.type !== "Canvas") return;
     const next = behavior.filter((item) => item !== nonLinearTourBehavior);
     editor.technical.behavior.set(nextNonLinear ? [...next, nonLinearTourBehavior] : next);
-  };
-  const setMarkerStyle = (nextMarkerStyle: "circle" | "pin") => {
-    if (editor.technical.type !== "Canvas") return;
-    const next = behavior.filter((item) => item !== tourMarkerPinBehavior);
-    editor.technical.behavior.set(nextMarkerStyle === "pin" ? [...next, tourMarkerPinBehavior] : next);
   };
 
   return (
@@ -212,27 +207,9 @@ export function ExhibitionTourStepsContent({
         <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
         <SimpleCheckbox checked={nonLinear} label="Use non-linear map" onChange={setNonLinearTour} />
         <p className="mt-2 text-xs leading-relaxed text-gray-500">
-          Shows all tour steps as markers on the canvas. Visitors can open points in any order instead of moving through
-          a fixed step sequence.
+          Shows all tour steps as pins on the canvas. Visitors can open points in any order instead of moving through a
+          fixed step sequence.
         </p>
-        {nonLinear ? (
-          <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm font-semibold text-gray-700">Marker</div>
-              <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5">
-                <MarkerStyleButton selected={markerStyle === "circle"} onPress={() => setMarkerStyle("circle")}>
-                  Circle
-                </MarkerStyleButton>
-                <MarkerStyleButton selected={markerStyle === "pin"} onPress={() => setMarkerStyle("pin")}>
-                  Pin
-                </MarkerStyleButton>
-              </div>
-            </div>
-            <p className="text-xs leading-relaxed text-gray-500">
-              Marker colour follows the exhibition theme annotation text colour.
-            </p>
-          </div>
-        ) : null}
       </div>
 
       <ResourceEditingProvider resource={canvas}>
@@ -276,27 +253,6 @@ export function ExhibitionTourStepsContent({
         </AnnotationPageContext>
       </ResourceEditingProvider>
     </>
-  );
-}
-
-function MarkerStyleButton({
-  children,
-  selected,
-  onPress,
-}: {
-  children: ReactNode;
-  selected: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Button
-      className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
-        selected ? "bg-white text-me-primary-600 shadow-sm" : "text-gray-500 hover:text-gray-800"
-      }`}
-      onPress={onPress}
-    >
-      {children}
-    </Button>
   );
 }
 

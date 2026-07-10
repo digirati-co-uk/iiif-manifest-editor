@@ -148,7 +148,7 @@ export function TourNormalAnnotationEditor({
         </ActionButton>
         <div className="ml-auto flex items-center gap-2">
           {editAlignment ? <TourStepSideControl annotation={annotation} /> : null}
-          {tourStyle === "linear" ? <TourStepBorderPicker /> : null}
+          <TourStepBorderPicker />
         </div>
       </div>
       {tourStyle === "linear" ? <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" /> : null}

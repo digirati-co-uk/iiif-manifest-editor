@@ -574,7 +574,9 @@ function SelectedSlidePreview() {
     >
       <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
         <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
-          {mode === "edit" ? "Click content to edit or reposition it" : "Live slideshow preview"}
+          {mode === "edit"
+            ? "Click content to edit or reposition it"
+            : "Slideshow layout preview (approximate)"}
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
@@ -656,18 +658,11 @@ function SelectedSlidePreview() {
         </div>
       </div>
       <div className="relative min-h-0 flex-1 bg-black">
-        {mode === "preview" ? (
-          <ExhibitionPreviewPanel
-            preset="slideshow"
-            presetOptions={{
-              manifest: manifest?.id || "",
-              canvas: canvas?.id,
-              minimal: true,
-            }}
-          />
-        ) : (
-          <SlideshowSlidePreview editable mode={mode} showTourSteps={tourAuthoringActive} />
-        )}
+        <SlideshowSlidePreview
+          editable={mode === "edit"}
+          mode={mode}
+          showTourSteps={tourAuthoringActive}
+        />
 
         {mode === "edit" && targetDrawingMode && canvas && annotationPageId ? (
           <TourStepTargetDrawingOverlay

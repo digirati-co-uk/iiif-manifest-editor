@@ -9,7 +9,11 @@ export type FloatingPosition =
   | "top-left"
   | "top-right"
   | "bottom-left"
-  | "bottom-right";
+  | "bottom-right"
+  | "top"
+  | "bottom"
+  | "left"
+  | "right";
 export type TitleTransform = "uppercase" | "none" | "capitalize";
 export type TableOfContentsPlacement = "header" | "footer";
 
@@ -58,6 +62,9 @@ export interface DelftExhibitionThemeOptions {
   fullWidthGrid: boolean;
   hideTableOfContents: boolean;
   tableOfContentsPlacement: TableOfContentsPlacement;
+  showProgressBar: boolean;
+  showProgressTableOfContents: boolean;
+  showNavigationControls: boolean;
   disablePresentation: boolean;
   hideTitle: boolean;
   hideTitleCard: boolean;
@@ -65,12 +72,15 @@ export interface DelftExhibitionThemeOptions {
   transitionScale: boolean;
   imageInfoIcon: boolean;
   coverImages: boolean;
+  ignoreCanvasBackgrounds: boolean;
 }
 
 export interface DelftPresentationThemeOptions {
   cutCorners: boolean;
   isFloating: boolean;
   floatingPosition: FloatingPosition;
+  labelOnlyFloating: boolean;
+  ignoreCanvasBackgrounds: boolean;
 }
 
 export interface DelftSlideshowThemeOptions {
@@ -78,10 +88,18 @@ export interface DelftSlideshowThemeOptions {
   transitionScale: boolean;
   imageInfoIcon: boolean;
   coverImages: boolean;
+  ignoreCanvasBackgrounds: boolean;
 }
 
 export interface ScrollThemeConfigOptions {
+  showTitleBlock: boolean;
   showTableOfContents: boolean;
+  tableOfContentsPlacement: TableOfContentsPlacement;
+  showProgressBar: boolean;
+  showProgressTableOfContents: boolean;
+  showScrollToTop: boolean;
+  showNavigationControls: boolean;
+  ignoreCanvasBackgrounds: boolean;
   titleBlock: {
     fullHeight: boolean;
   };
@@ -177,6 +195,9 @@ const DEFAULT_EXHIBITION_OPTIONS: DelftExhibitionThemeOptions = {
   fullWidthGrid: false,
   hideTableOfContents: false,
   tableOfContentsPlacement: "footer",
+  showProgressBar: true,
+  showProgressTableOfContents: true,
+  showNavigationControls: true,
   disablePresentation: false,
   hideTitle: false,
   hideTitleCard: false,
@@ -184,12 +205,15 @@ const DEFAULT_EXHIBITION_OPTIONS: DelftExhibitionThemeOptions = {
   transitionScale: false,
   imageInfoIcon: false,
   coverImages: false,
+  ignoreCanvasBackgrounds: false,
 };
 
 const DEFAULT_PRESENTATION_OPTIONS: DelftPresentationThemeOptions = {
   cutCorners: false,
   isFloating: false,
   floatingPosition: "bottom-left",
+  labelOnlyFloating: true,
+  ignoreCanvasBackgrounds: false,
 };
 
 const DEFAULT_SLIDESHOW_OPTIONS: DelftSlideshowThemeOptions = {
@@ -197,10 +221,18 @@ const DEFAULT_SLIDESHOW_OPTIONS: DelftSlideshowThemeOptions = {
   transitionScale: false,
   imageInfoIcon: false,
   coverImages: false,
+  ignoreCanvasBackgrounds: false,
 };
 
 const DEFAULT_SCROLL_OPTIONS: ScrollThemeConfigOptions = {
+  showTitleBlock: true,
   showTableOfContents: false,
+  tableOfContentsPlacement: "header",
+  showProgressBar: true,
+  showProgressTableOfContents: true,
+  showScrollToTop: true,
+  showNavigationControls: true,
+  ignoreCanvasBackgrounds: false,
   titleBlock: {
     fullHeight: true,
   },
@@ -302,7 +334,9 @@ const GALLERY_THEME: ExhibitionThemeConfig = {
       infoBlockColor: "#2a2119",
     },
     options: {
+      ...DEFAULT_SCROLL_OPTIONS,
       showTableOfContents: true,
+      tableOfContentsPlacement: "header",
       titleBlock: {
         fullHeight: false,
       },
