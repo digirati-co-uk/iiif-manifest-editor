@@ -159,7 +159,7 @@ export function createScrollingPreviewUrl(
     window.localStorage.getItem("exhibition-viewer-preview-url") ||
     process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL ||
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? `http://localhost:5174/preview/${preset}?${searchParams?.toString()}`
+      ? `http://localhost:5173/preview/${preset}?${searchParams?.toString()}`
       : `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`);
 
   const url = new URL(base);

@@ -119,6 +119,7 @@ function ExhibitionPreviewPanel() {
             </Button>
           )}
         </ThemeSection>
+        <ExhibitionThemeOptions />
       </SidebarContent>
     </Sidebar>
   );
@@ -665,8 +666,7 @@ function ExhibitionThemeOptions() {
   };
 
   return (
-    <Sidebar>
-      <SidebarContent padding>
+    <>
         <ThemeSection
           title="Preview"
           description="Choose which exhibition format to preview while editing this theme."
@@ -1412,8 +1412,7 @@ function ExhibitionThemeOptions() {
             ) : null}
           </>
         )}
-      </SidebarContent>
-    </Sidebar>
+    </>
   );
 }
 
