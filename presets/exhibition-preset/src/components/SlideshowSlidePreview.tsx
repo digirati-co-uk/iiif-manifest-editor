@@ -15,7 +15,7 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
-import { nonLinearTourBehavior } from "../tour-behaviors";
+import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
 
 const editorialTextRegionId = "editorial-text";
 
@@ -42,7 +42,6 @@ export function SlideshowSlidePreview({
     selectedTextRegion,
     repositioningTextRegion,
     selectedTourStepId,
-    repositioningTourStepId,
     selectAnnotation,
     startRepositioning,
     selectTextRegion,
@@ -60,7 +59,8 @@ export function SlideshowSlidePreview({
   const editingAnnotationId = editingAnnotation?.resource.source.id;
   const tourTabActive = mode === "edit" && showTourSteps;
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
-  const isNonLinearTour = behavior.includes(nonLinearTourBehavior);
+  const nonLinearTour = behavior.includes(nonLinearTourBehavior);
+  const tourMarkerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
   const contentEditingActive = mode === "edit" && !showTourSteps;
   const activeTourStep = tourSteps.find((annotation: any) => annotation.id === activeTourStepId);
 
@@ -69,10 +69,10 @@ export function SlideshowSlidePreview({
   }, [canvas?.id, showTourSteps]);
 
   useEffect(() => {
-    if (isNonLinearTour && tourTabActive && selectedTourStepId) {
+    if (nonLinearTour && tourTabActive && selectedTourStepId) {
       setActiveTourStepId(selectedTourStepId);
     }
-  }, [isNonLinearTour, selectedTourStepId, tourTabActive]);
+  }, [nonLinearTour, selectedTourStepId, tourTabActive]);
 
   if (!canvas) {
     return null;
@@ -198,19 +198,19 @@ export function SlideshowSlidePreview({
               canvas={canvas}
               index={index}
               active={activeTourStepId === annotation.id}
-              nonLinear={isNonLinearTour}
+              markerStyle={tourMarkerStyle}
+              nonLinear={nonLinearTour}
               selected={selectedTourStepId === annotation.id}
-              repositioning={repositioningTourStepId === annotation.id}
               onSelect={() => {
                 selectTourStep(annotation.id);
-                if (isNonLinearTour) {
+                if (nonLinearTour) {
                   setActiveTourStepId(annotation.id);
                 }
               }}
             />
           ))
         : null}
-      {tourTabActive && isNonLinearTour && activeTourStep ? (
+      {tourTabActive && nonLinearTour && activeTourStep ? (
         <NonLinearTourStepPanel annotation={activeTourStep} onExit={() => setActiveTourStepId(null)} />
       ) : null}
     </div>
@@ -222,18 +222,18 @@ function TourStepTarget({
   annotation,
   canvas,
   index,
+  markerStyle,
   nonLinear,
   selected,
-  repositioning,
   onSelect,
 }: {
   active?: boolean;
   annotation: any;
   canvas: any;
   index: number;
-  nonLinear?: boolean;
+  markerStyle: "circle" | "pin";
+  nonLinear: boolean;
   selected: boolean;
-  repositioning: boolean;
   onSelect: () => void;
 }) {
   const box = getAnnotationTargetBox(annotation, canvas);
@@ -245,8 +245,6 @@ function TourStepTarget({
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const selectedColour = "#6d5aa8";
-  const left = nonLinear ? box.x + box.width / 2 : box.x;
-  const top = nonLinear ? box.y + box.height / 2 : box.y;
 
   if (nonLinear) {
     return (
@@ -257,8 +255,8 @@ function TourStepTarget({
           active && "z-40 scale-110",
         )}
         style={{
-          left: `${(left / canvasWidth) * 100}%`,
-          top: `${(top / canvasHeight) * 100}%`,
+          left: `${((box.x + box.width / 2) / canvasWidth) * 100}%`,
+          top: `${((box.y + box.height / 2) / canvasHeight) * 100}%`,
           transform: "translate(-50%, -50%)",
         }}
         onPointerDown={(event) => {
@@ -266,7 +264,7 @@ function TourStepTarget({
           onSelect();
         }}
       >
-        <TourStepPin index={index + 1} />
+        <TourStepMarker index={index + 1} style={markerStyle} />
       </button>
     );
   }
@@ -276,7 +274,7 @@ function TourStepTarget({
       className={twMerge(
         "absolute select-none border-2 border-me-primary-500 bg-me-primary-500/10 touch-none",
         selected ? "z-40" : "z-30",
-        repositioning ? "cursor-pointer" : "cursor-pointer",
+        "cursor-pointer",
         selected ? "border-4" : "ring-2 ring-white",
       )}
       style={{
@@ -314,6 +312,29 @@ function TourStepTarget({
   );
 }
 
+function TourStepMarker({ index, style }: { index: number; style: "circle" | "pin" }) {
+  return (
+    <span
+      className={twMerge(
+        "inline-flex items-center justify-center border-2 border-white bg-black text-white shadow-lg ring-1 ring-black/40",
+        style === "pin" ? "h-10 w-10 rounded-full" : "h-8 min-w-8 rounded px-2 text-xs font-semibold",
+      )}
+    >
+      {style === "pin" ? <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" /> : index}
+      <span className="sr-only">Tour step {index}</span>
+    </span>
+  );
+}
+
+function TourStepPin({ index }: { index?: number }) {
+  return (
+    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black shadow-lg ring-1 ring-black/40">
+      <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" />
+      {index ? <span className="sr-only">Tour step {index}</span> : null}
+    </span>
+  );
+}
+
 function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExit: () => void }) {
   const label = getLanguageMapText(annotation.label);
   const summary = getLanguageMapText(annotation.summary);
@@ -345,14 +366,6 @@ function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExi
   );
 }
 
-function TourStepPin({ index }: { index?: number }) {
-  return (
-    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black shadow-lg ring-1 ring-black/40">
-      <span className="h-2.5 w-2.5 rounded-full bg-white" aria-hidden="true" />
-      {index ? <span className="sr-only">Tour step {index}</span> : null}
-    </span>
-  );
-}
 function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
   switch (floating) {
     case "float-top":
