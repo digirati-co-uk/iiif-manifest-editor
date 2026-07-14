@@ -85,6 +85,24 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/full-page",
     thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage-leeds.png",
     configuration: [],
+  },
+  {
+    id: "leeds-exhibition-slideshow",
+    label: "Leeds exhibition slideshow",
+    summary: "A slideshow exhibition template for the Leeds University Library.",
+    type: "slideshow",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/slideshow",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-slideshow-leeds.png",
+    configuration: [],
+  },
+  {
+    id: "leeds-exhibition-scroll",
+    label: "Leeds exhibition scroll",
+    summary: "A scroll exhibition template for the Leeds University Library.",
+    type: "scroll",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/scroll",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-scroll-leeds.png",
+    configuration: [],
   }
 ];
 

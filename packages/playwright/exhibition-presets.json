@@ -16,11 +16,11 @@
     "output": "../../apps/docs/public/exhibition-fullpage-leeds.png"
   },
   {
-    "url": "https://preview.exhibitionviewer.org/preview/leeds/slideshow",
-    "output": "../../apps/docs/public/exhibition-slideshow-leeds.png"
-  },
-  {
     "url": "https://preview.exhibitionviewer.org/preview/leeds/scroll",
     "output": "../../apps/docs/public/exhibition-scroll-leeds.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/leeds/slideshow",
+    "output": "../../apps/docs/public/exhibition-slideshow-leeds.png"
   }
 ]
