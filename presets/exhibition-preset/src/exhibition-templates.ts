@@ -10,25 +10,27 @@ const boolean = (id: string, label: string, defaultValue: boolean) => ({
 export const exhibitionTemplates: PresetTemplateDefinition[] = [
   {
     id: "exhibition-fullpage",
-    label: "Full page exhibition",
+    label: "Delft exhibition",
     summary: "A guided exhibition layout with full-page scenes and focused narrative steps.",
     type: "fullpage",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/exhibition",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/delft/full-page",
     thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage.png",
     configuration: [
       boolean("delft.exhibition.cutCorners", "Cut corners", true),
-      boolean("delft.exhibition.fullTitleBar", "Show full title bar", false),
-      boolean("delft.exhibition.fullWidthGrid", "Full-width grid", false),
+      // boolean("delft.exhibition.fullTitleBar", "Show full title bar", false),
+      // boolean("delft.exhibition.fullWidthGrid", "Full-width grid", false),
       boolean("delft.exhibition.hideTableOfContents", "Hide table of contents", false),
-      boolean("delft.exhibition.showNavigationControls", "Show navigation controls", true),
-      boolean("delft.exhibition.disablePresentation", "Disable presentation mode", false),
+      boolean("delft.exhibition.showNavigationControls", "Show navigation controls", false),
       boolean("delft.exhibition.hideTitle", "Hide title", false),
-      boolean("delft.exhibition.hideTitleCard", "Hide title card", false),
-      boolean("delft.exhibition.alternativeImageMode", "Alternative image mode", true),
-      boolean("delft.exhibition.transitionScale", "Scale transitions", false),
-      boolean("delft.exhibition.imageInfoIcon", "Show image information icon", false),
-      boolean("delft.exhibition.coverImages", "Cover images", false),
+      // boolean("delft.exhibition.hideTitleCard", "Hide title card", false),
+      // boolean("delft.exhibition.alternativeImageMode", "Alternative image mode", true),
+      // boolean("delft.exhibition.transitionScale", "Scale transitions", false),
       // boolean("delft.exhibition.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
+
+      // @todo why these don't work..
+      // boolean("delft.exhibition.disablePresentation", "Disable presentation mode", false),
+      // boolean("delft.exhibition.imageInfoIcon", "Show image information icon", false),
+      // boolean("delft.exhibition.coverImages", "Cover images", false),
     ],
   },
   {
@@ -36,7 +38,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     label: "Slideshow",
     summary: "A slide-based exhibition for linear presentations and teaching material.",
     type: "slideshow",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/slideshow",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/delft/slideshow",
     thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-slideshow.png",
     configuration: [
       boolean("delft.presentation.cutCorners", "Cut corners", false),
@@ -62,7 +64,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     label: "Scrolling story",
     summary: "A vertical reading experience for essays, object stories, and long-form interpretation.",
     type: "scroll",
-    previewUrl: "https://preview.exhibitionviewer.org/preview/scroll",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/delft/scroll",
     thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-scroll.png",
     configuration: [
       boolean("scroll.options.showTitleBlock", "Show title block", true),
@@ -75,6 +77,15 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
       // boolean("scroll.options.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
     ],
   },
+  {
+    id: "leeds-exhibition",
+    label: "Leeds exhibition",
+    summary: "A full-page exhibition template for the Leeds University Library.",
+    type: "fullpage",
+    previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/full-page",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/leeds-exhibition.png",
+    configuration: [],
+  }
 ];
 
 export function getTemplateConfigurationValue(values: Record<string, any>, path: string): any {

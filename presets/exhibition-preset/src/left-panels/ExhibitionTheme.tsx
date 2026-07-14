@@ -9,8 +9,7 @@ import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { type ChangeEvent, type ReactNode, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { useManifest, useVault } from "react-iiif-vault";
-import { useExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
-import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
+import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
 import type {
   ExhibitionThemeConfig,
   ExhibitionThemePreset,
@@ -171,23 +170,6 @@ type ServiceDetails = {
 
 type ThemePanelMode = "simple" | "advanced";
 type ThemeTarget = "presentation" | "slideshow" | "scroll";
-
-const themeTargetOptions: Array<{ label: string; value: ThemeTarget }> = [
-  { label: "Scroll", value: "scroll" },
-  { label: "Slideshow", value: "slideshow" },
-  { label: "Full page", value: "presentation" },
-];
-
-const previewPresetTargets: Partial<Record<PresetUrlSearchParamsPreset, ThemeTarget>> = {
-  scroll: "scroll",
-  slideshow: "slideshow",
-};
-
-const targetPreviewPresets: Record<ThemeTarget, PresetUrlSearchParamsPreset> = {
-  presentation: "exhibition",
-  scroll: "scroll",
-  slideshow: "slideshow",
-};
 
 function ThemeSection({
   title,
@@ -467,9 +449,14 @@ function setThemeValues(
 function ExhibitionThemeOptions() {
   const manifest = useManifest();
   const vault = useVault();
-  const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
+  const previewPreset = useConfiguredExhibitionPreviewPreset();
   const [themeMode, setThemeMode] = useState<ThemePanelMode>("simple");
-  const themeTarget = previewPresetTargets[previewPreset] || "presentation";
+  const themeTarget: ThemeTarget =
+    previewPreset === "scroll"
+      ? "scroll"
+      : previewPreset === "slideshow"
+        ? "slideshow"
+        : "presentation";
   const serviceList = ((manifest as any)?.service || []) as Array<any>;
   const servicesList = ((manifest as any)?.services || []) as Array<any>;
 
@@ -645,10 +632,6 @@ function ExhibitionThemeOptions() {
       ? resolvedTheme.scroll.options.showProgressBar
       : resolvedTheme.delft.exhibition.showProgressBar;
 
-  const selectThemeTarget = (target: ThemeTarget) => {
-    setPreviewPreset(targetPreviewPresets[target]);
-  };
-
   const enableTheme = (enabled: boolean) => {
     if (!enabled) {
       upsertTheme(null);
@@ -667,18 +650,6 @@ function ExhibitionThemeOptions() {
 
   return (
     <>
-        <ThemeSection
-          title="Preview"
-          description="Choose which exhibition format to preview while editing this theme."
-        >
-          <ThemeInlineSelect<ThemeTarget>
-            label="Preview format"
-            value={themeTarget}
-            onChange={selectThemeTarget}
-            options={themeTargetOptions}
-          />
-        </ThemeSection>
-
         <ThemeSection
           title="Saved Theme"
           description="Save custom exhibition styling and viewer defaults on the Manifest."

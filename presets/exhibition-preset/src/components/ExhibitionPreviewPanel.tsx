@@ -8,6 +8,7 @@ import {
   type PresetUrlSearchParamsOptions,
   type PresetUrlSearchParamsPreset,
 } from "../helpers/exhibition-preview-url-helper";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
 
 export interface ExhibitionPreviewPanelProps {
@@ -31,6 +32,7 @@ export function ExhibitionPreviewPanel({
   const vault = useVault();
   const rootResource = useAppResource();
   const manifest = useManifest();
+  const template = useExhibitionTemplate();
   const canvas = useInStack("Canvas");
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -44,7 +46,10 @@ export function ExhibitionPreviewPanel({
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
   const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
   const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
-  const src = useMemo(() => createScrollingPreviewUrl(preset, presetOptions).toString(), [preset, presetOptions]);
+  const src = useMemo(
+    () => createScrollingPreviewUrl(preset, presetOptions, template?.previewUrl).toString(),
+    [preset, presetOptions, template?.previewUrl],
+  );
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
   const previewScale = useScaledPreview ? SCALED_PREVIEW_SIZE : 1;
   const iframeViewportWidth = useMobileWidthPreview

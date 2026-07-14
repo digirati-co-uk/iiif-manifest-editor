@@ -133,36 +133,24 @@ export function createPresetUrlSearchParams(
 export function createScrollingPreviewUrl<T extends PresetUrlSearchParamsPreset>(
   preset: T,
   options?: Partial<PresetUrlSearchParamsOptions<T>>,
+  previewUrl?: string,
 ): URL;
 export function createScrollingPreviewUrl(
   preset: PresetUrlSearchParamsPreset,
   options?: Partial<PresetUrlSearchParamsOptions>,
+  previewUrl?: string,
 ): URL {
   const searchParams = createPresetUrlSearchParams(preset, (options || {}) as any);
+  const configuredBase =
+    window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
+  const url = new URL(configuredBase || previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
 
-  // const url = new URL(configuredBase || defaultBase, window.location.origin);
+  if (!configuredBase && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+    url.protocol = "http:";
+    url.host = "localhost:5174";
+  }
 
-  // const pathParts = url.pathname.split("/").filter(Boolean);
-  // const previewIndex = pathParts.indexOf("preview");
-
-  // if (previewIndex === -1) {
-  //   url.pathname = `${url.pathname.replace(/\/$/, "")}/preview/${preset}`;
-  // } else if (!pathParts[previewIndex + 1]) {
-  //   url.pathname = `/${[...pathParts, preset].join("/")}`;
-  // }
-
-  // searchParams.forEach((value, key) => {
-  //   url.searchParams.set(key, value);
-  // });
-  // const base = `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`;
-  const base =
-    window.localStorage.getItem("exhibition-viewer-preview-url") ||
-    process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL ||
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? `http://localhost:5173/preview/${preset}?${searchParams?.toString()}`
-      : `https://preview.exhibitionviewer.org/preview/${preset}?${searchParams?.toString()}`);
-
-  const url = new URL(base);
+  searchParams.forEach((value, key) => url.searchParams.set(key, value));
 
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);
