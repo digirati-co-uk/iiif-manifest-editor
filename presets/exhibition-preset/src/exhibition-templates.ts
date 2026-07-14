@@ -83,7 +83,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A full-page exhibition template for the Leeds University Library.",
     type: "fullpage",
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/full-page",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/leeds-exhibition.png",
+    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage-leeds.png",
     configuration: [],
   }
 ];
