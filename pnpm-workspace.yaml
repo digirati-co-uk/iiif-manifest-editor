@@ -7,13 +7,16 @@ packages:
   - "!examples/**"
 
 catalog:
-  react-iiif-vault: https://pkg.pr.new/digirati-co-uk/react-iiif-vault@009adb3
+  react-iiif-vault: 2.0.17
   react: 19.2.0
   react-dom: 19.2.0
   styled-components: 6.1.8
   zustand: 4.5.2
-  "@iiif/parser": https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@7f4f2bc
+  "@iiif/parser": 2.2.14
   "@iiif/helpers": 1.5.9
-  "iiif-browser": 2.2.1
-  "@atlas-viewer/atlas": https://pkg.pr.new/@atlas-viewer/atlas@a3c12f1
+  "iiif-browser": https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
+  "@atlas-viewer/atlas": 3.2.3
   "react-aria-components": ^1.12
+overrides:
+  "@atlas-viewer/atlas": 3.2.3
+  react-iiif-vault: 2.0.17

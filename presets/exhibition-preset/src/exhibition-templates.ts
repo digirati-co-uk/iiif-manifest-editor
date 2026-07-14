@@ -28,7 +28,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
       boolean("delft.exhibition.transitionScale", "Scale transitions", false),
       boolean("delft.exhibition.imageInfoIcon", "Show image information icon", false),
       boolean("delft.exhibition.coverImages", "Cover images", false),
-      boolean("delft.exhibition.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
+      // boolean("delft.exhibition.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
     ],
   },
   {
@@ -54,7 +54,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
         ],
       },
       boolean("delft.presentation.labelOnlyFloating", "Only float labels", true),
-      boolean("delft.presentation.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
+      // boolean("delft.presentation.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
     ],
   },
   {
@@ -72,7 +72,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
       boolean("scroll.options.showProgressTableOfContents", "Show contents in progress bar", true),
       boolean("scroll.options.showScrollToTop", "Show scroll-to-top button", true),
       boolean("scroll.options.showNavigationControls", "Show navigation controls", true),
-      boolean("scroll.options.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
+      // boolean("scroll.options.ignoreCanvasBackgrounds", "Ignore canvas backgrounds", false),
     ],
   },
 ];

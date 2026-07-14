@@ -1,4 +1,5 @@
 import {
+  ActionButton,
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -84,6 +85,8 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
     { isPainting: true },
   );
   const [toggled, toggle] = useToggleList();
+  const createCanvas = () => canvasActions.createFiltered(resolvedCreatorFilter, insertIndex, scrollInitialData);
+  const canvasName = resolvedPreviewMode === "scroll" ? "section" : "slide";
 
   return (
     <Sidebar>
@@ -111,9 +114,9 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
             : []),
           {
             icon: <NewSlideIcon />,
-            title: "Add new slide",
+            title: `Add new ${canvasName}`,
             disabled: !canCreateCanvas,
-            onClick: () => canvasActions.createFiltered(resolvedCreatorFilter, insertIndex, scrollInitialData),
+            onClick: createCanvas,
           },
         ]}
       />
@@ -127,6 +130,11 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
         ) : (
           <ExhibitionGrid />
         )}
+        <div className="flex justify-center p-4">
+          <ActionButton primary large isDisabled={!canCreateCanvas} onPress={createCanvas}>
+            Create new {canvasName}
+          </ActionButton>
+        </div>
       </SidebarContent>
     </Sidebar>
   );
