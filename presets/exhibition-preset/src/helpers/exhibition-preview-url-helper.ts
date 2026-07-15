@@ -145,12 +145,12 @@ export function createScrollingPreviewUrl(
     window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
   const url = new URL(configuredBase || previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
 
-  if (!configuredBase && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+  if (!configuredBase && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port === "3000") {
     url.protocol = "http:";
     url.host = "localhost:5174";
   }
 
-  searchParams.forEach((value, key) => url.searchParams.set(key, value));
+  searchParams.forEach((value, key) => { url.searchParams.set(key, value) });
 
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);
