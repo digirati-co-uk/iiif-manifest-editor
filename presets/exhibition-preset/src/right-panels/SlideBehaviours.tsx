@@ -7,12 +7,7 @@ import {
   InputContainer,
   useInStack,
 } from "@manifest-editor/editors";
-import {
-  type EditorDefinition,
-  useApp,
-  useEditor,
-  useLocalStorage,
-} from "@manifest-editor/shell";
+import { type EditorDefinition, useApp, useEditor, useLocalStorage } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
@@ -32,17 +27,24 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { ExhibitionThumbnailEditor } from "./ExhibitionThumbnailEditor";
+import {
+  coverBehaviors,
+  layoutBehaviors,
+  type LayoutPreset,
+  replaceLayoutBehavior,
+  toggleBehaviorGroup,
+} from "./slide-behavior-transforms";
+
+export { replaceLayoutBehavior, toggleCoverBehavior, toggleImageBehavior } from "./slide-behavior-transforms";
 
 type EditingMode = "simple" | "advanced";
 type LayoutEditingContext = "default" | "slideshow";
 export type ExhibitionTemplateType = "fullpage" | "slideshow" | "scroll";
-export type LayoutPreset = "image" | "right" | "left" | "bottom";
+export type { LayoutPreset } from "./slide-behavior-transforms";
 export type DisplayWidth = 12 | 8 | 6 | 4;
 export type BackdropBehavior = "" | "backdrop-light" | "backdrop-dark";
 
-const layoutBehaviors = new Set(["left", "right", "bottom", "top", "image"]);
 const scrollBehaviors = new Set(["scroll", "page-scroll"]);
-const coverBehaviors = new Set(["cover", "image-cover"]);
 const scrollDisplayBehaviors = new Set([
   "splash",
   "fixed",
@@ -111,16 +113,18 @@ export function getExhibitionTemplateControls(
   scrollEnabled = false,
   hasTourSteps = true,
   isOpeningCover = false,
+  isImageSlide = true,
 ) {
   const scrollContext = templateType === "scroll" || scrollEnabled;
   const showGridSizing = templateType === "fullpage" && !scrollEnabled;
   const showFloating = templateType === "slideshow" || templateType === "scroll";
+  const viewerSupportsImageCover = (templateType === "fullpage" && !scrollEnabled) || (scrollContext && hasTourSteps);
 
   return {
     showGridSizing: showGridSizing && !isOpeningCover,
     isSlideshow: templateType === "slideshow",
     showFloating: !isOpeningCover && (showFloating || scrollEnabled),
-    showImageCover: !isOpeningCover && (templateType === "fullpage" || scrollContext),
+    showImageCover: isImageSlide && !isOpeningCover && viewerSupportsImageCover,
     showScrollToggle: !isOpeningCover && templateType === "fullpage",
     showScrollDisplay: templateType === "slideshow" || templateType === "scroll",
     showFixedCover: templateType === "scroll",
@@ -129,13 +133,13 @@ export function getExhibitionTemplateControls(
     layoutOptions: isOpeningCover
       ? []
       : scrollContext
-      ? hasTourSteps
-        ? [
-            { value: "left" as const, label: "Annotations on left" },
-            { value: "right" as const, label: "Annotations on right" },
-          ]
-        : []
-      : layoutPresetOptions,
+        ? hasTourSteps
+          ? [
+              { value: "left" as const, label: "Annotations on left" },
+              { value: "right" as const, label: "Annotations on right" },
+            ]
+          : []
+        : layoutPresetOptions,
   };
 }
 
@@ -170,56 +174,27 @@ export const customBehaviourEditor: EditorDefinition = {
   },
 };
 
-const exhibitionConfigs: BehaviorEditorProps["configs"] = [
-  {
-    id: "layout",
-    type: "choice",
-    label: { en: ["Layout"] },
-    initialOpen: true,
-    items: [
-      {
-        label: { en: ["Text on left"] },
-        value: "left",
-      },
-      {
-        label: { en: ["Text on right"] },
-        value: "right",
-      },
-      {
-        label: { en: ["Text on bottom"] },
-        value: "bottom",
-      },
-      {
-        label: { en: ["Text on top"] },
-        value: "top",
-      },
-      {
-        label: { en: ["Only image"] },
-        value: "image",
-      },
-    ],
-  },
-  {
-    id: "floating",
-    type: "choice",
-    label: { en: ["Floating"] },
-    initialOpen: false,
-    addNone: true,
-    groupBehavior: "floating",
-    items: floatingBehaviorOptions.map((option) => ({
-      label: { en: [`Float ${option.label.toLowerCase()}`] },
-      value: option.value,
-    })),
-  },
-  {
-    id: "size",
-    component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
-    label: { en: ["Size"] },
-    type: "custom",
-    initialOpen: true,
-    supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
-  },
-];
+const floatingConfig: BehaviorEditorProps["configs"][number] = {
+  id: "floating",
+  type: "choice",
+  label: { en: ["Floating"] },
+  initialOpen: false,
+  addNone: true,
+  groupBehavior: "floating",
+  items: floatingBehaviorOptions.map((option) => ({
+    label: { en: [`Float ${option.label.toLowerCase()}`] },
+    value: option.value,
+  })),
+};
+
+const sizeConfig: BehaviorEditorProps["configs"][number] = {
+  id: "size",
+  component: (existing, setBehaviors) => <EditSize behaviors={existing} setBehaviors={setBehaviors} />,
+  label: { en: ["Size"] },
+  type: "custom",
+  initialOpen: true,
+  supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
+};
 
 function BehaviorFlagCheckboxes({
   behaviors,
@@ -238,8 +213,7 @@ function BehaviorFlagCheckboxes({
 }) {
   const setFlag = (flag: (typeof flags)[number], checked: boolean) => {
     const blocked = new Set([flag.value, ...(flag.aliases || []), ...(flag.group || [])]);
-    const next = behaviors.filter((item) => !blocked.has(item));
-    if (checked) next.push(flag.value);
+    const next = toggleBehaviorGroup(behaviors, blocked, flag.value, checked);
     setBehaviors(flag.clean ? flag.clean(next, checked) : next);
   };
 
@@ -257,29 +231,59 @@ function BehaviorFlagCheckboxes({
   );
 }
 
+function LayoutBehaviorChoices({
+  behaviors,
+  setBehaviors,
+  options,
+}: {
+  behaviors: string[];
+  setBehaviors: (behaviors: string[]) => void;
+  options: Array<{ value: LayoutPreset; label: string }>;
+}) {
+  const current = getLayoutPreset(behaviors);
+
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {options.map((option) => (
+        <SimpleOptionButton
+          key={option.value}
+          selected={current === option.value && (option.value === "image" || behaviors.includes(option.value))}
+          onClick={() => setBehaviors(replaceLayoutBehavior(behaviors, option.value))}
+        >
+          {option.label}
+        </SimpleOptionButton>
+      ))}
+    </div>
+  );
+}
+
 export function getAdvancedExhibitionConfigs(
   templateType: ExhibitionTemplateType,
   behavior: string[] = [],
   isCoverCanvas = true,
   hasTourSteps = true,
+  isImageSlide = true,
 ): BehaviorEditorProps["configs"] {
   const controls = getExhibitionTemplateControls(
     templateType,
     hasScrollBehavior(behavior),
     hasTourSteps,
-    behavior.includes("splash"),
+    behavior.includes("splash") && isCoverCanvas,
+    isImageSlide,
   );
   const showCoverDisplay = controls.showScrollDisplay && isCoverCanvas;
   const configs: BehaviorEditorProps["configs"] = [];
 
-  const layoutConfig = exhibitionConfigs[0];
-  if (layoutConfig?.type === "choice" && controls.layoutOptions.length && !(controls.isSlideshow && hasFloatingBehavior(behavior))) {
+  if (controls.layoutOptions.length && !(controls.isSlideshow && hasFloatingBehavior(behavior))) {
     configs.push({
-      ...layoutConfig,
-      items: controls.layoutOptions.map((option) => ({
-        label: { en: [option.label] },
-        value: option.value,
-      })),
+      id: "layout",
+      type: "custom",
+      label: { en: ["Layout"] },
+      initialOpen: true,
+      supports: (item) => layoutBehaviors.has(item),
+      component: (existing, setBehaviors) => (
+        <LayoutBehaviorChoices behaviors={existing} setBehaviors={setBehaviors} options={controls.layoutOptions} />
+      ),
     });
   }
 
@@ -318,7 +322,13 @@ export function getAdvancedExhibitionConfigs(
         <BehaviorFlagCheckboxes
           behaviors={existing}
           setBehaviors={setBehaviors}
-          flags={[{ value: "cover", label: "Crop image to fill its frame", aliases: ["image-cover"] }]}
+          flags={[
+            {
+              value: "cover",
+              label: "Crop image to fill its frame",
+              aliases: ["image-cover"],
+            },
+          ]}
         />
       ),
     });
@@ -346,10 +356,10 @@ export function getAdvancedExhibitionConfigs(
   }
 
   if (controls.showFloating) {
-    configs.push(exhibitionConfigs[1]!);
+    configs.push(floatingConfig);
   }
   if (controls.showGridSizing) {
-    configs.push(exhibitionConfigs[2]!);
+    configs.push(sizeConfig);
   }
 
   return configs;
@@ -504,14 +514,14 @@ export function SlideBehavioursContent({
     (_, vaultInstance) => (currentCanvas ? getTourStepAnnotations(vaultInstance, currentCanvas).length > 0 : false),
     [currentCanvas?.id, currentCanvas?.annotations?.[0]?.id],
   );
+  const isImageSlide = Boolean(currentCanvas && isImageCanvas(vault, currentCanvas));
+  const isCoverCanvas = Boolean(currentCanvas && manifestFirstCanvasId(manifest) === currentCanvas.id && isImageSlide);
   const controls = getExhibitionTemplateControls(
     templateType,
     hasScrollBehavior(behavior),
     hasTourSteps,
-    behavior.includes("splash"),
-  );
-  const isCoverCanvas = Boolean(
-    currentCanvas && manifestFirstCanvasId(manifest) === currentCanvas.id && isImageCanvas(vault, currentCanvas),
+    behavior.includes("splash") && isCoverCanvas,
+    isImageSlide,
   );
 
   if (!canvas || editor.technical.type !== "Canvas") {
@@ -555,7 +565,7 @@ export function SlideBehavioursContent({
         onChange={(v) => {
           editor.technical.behavior.set(v);
         }}
-        configs={getAdvancedExhibitionConfigs(templateType, behavior, isCoverCanvas, hasTourSteps)}
+        configs={getAdvancedExhibitionConfigs(templateType, behavior, isCoverCanvas, hasTourSteps, isImageSlide)}
       />
 
       <ExhibitionThumbnailEditor />
@@ -576,20 +586,20 @@ function SimpleSlideLayoutEditor({
   canvasHeight: number;
   onChange: (newValue: string[]) => void;
 }) {
-  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>(getLayoutPreset(behavior));
-  const [displayWidth, setDisplayWidth] = useState<DisplayWidth>(
-    controls.showGridSizing ? getDisplayWidth(behavior) : 12,
-  );
-  const [floating, setFloating] = useState(hasFloatingBehavior(behavior));
-  const [floatingBehavior, setFloatingBehavior] = useState<FloatingBehavior>(getFloatingBehavior(behavior));
-  const [cover, setCover] = useState(hasCoverBehavior(behavior));
-  const [scrollEnabled, setScrollEnabled] = useState(hasScrollBehavior(behavior));
-  const [splash, setSplash] = useState(behavior.includes("splash"));
-  const [fixed, setFixed] = useState(behavior.includes("fixed"));
-  const [invert, setInvert] = useState(behavior.includes("invert"));
-  const [backdrop, setBackdrop] = useState<BackdropBehavior>(
-    behavior.includes("backdrop-dark") ? "backdrop-dark" : behavior.includes("backdrop-light") ? "backdrop-light" : "",
-  );
+  const layoutPreset = getLayoutPreset(behavior);
+  const displayWidth = controls.showGridSizing ? getDisplayWidth(behavior) : 12;
+  const floating = hasFloatingBehavior(behavior);
+  const floatingBehavior = getFloatingBehavior(behavior);
+  const cover = hasCoverBehavior(behavior);
+  const scrollEnabled = hasScrollBehavior(behavior);
+  const splash = behavior.includes("splash");
+  const fixed = behavior.includes("fixed");
+  const invert = behavior.includes("invert");
+  const backdrop: BackdropBehavior = behavior.includes("backdrop-dark")
+    ? "backdrop-dark"
+    : behavior.includes("backdrop-light")
+      ? "backdrop-light"
+      : "";
   const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const canvas = useCanvas();
   const vault = useVault();
@@ -622,7 +632,7 @@ function SimpleSlideLayoutEditor({
     invert?: boolean;
     backdrop?: BackdropBehavior;
   }) => {
-    const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : "image";
+    const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : undefined;
     const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
     const nextFloating = next.floating ?? floating;
     const nextFloatingBehavior = next.floatingBehavior ?? floatingBehavior;
@@ -632,8 +642,6 @@ function SimpleSlideLayoutEditor({
     const nextFixed = next.fixed ?? fixed;
     const nextInvert = next.invert ?? invert;
     const nextBackdrop = next.backdrop ?? backdrop;
-    const nextScrollContext = controls.scrollContext || nextScrollEnabled;
-
     onChange(
       buildSimpleLayoutBehaviors({
         behavior,
@@ -654,11 +662,10 @@ function SimpleSlideLayoutEditor({
         showImageCover: controls.showImageCover,
         showScrollToggle: controls.showScrollToggle,
         showScrollDisplay: controls.showScrollDisplay && isCoverCanvas,
-        scrollContext: nextScrollContext,
       }),
     );
 
-    if (canvas) {
+    if (canvas && nextLayoutPreset) {
       injectTextPlaceholders(vault, canvas, nextLayoutPreset);
     }
   };
@@ -685,10 +692,7 @@ function SimpleSlideLayoutEditor({
                 preset={option.value}
                 label={option.label}
                 selected={layoutPreset === option.value}
-                onClick={() => {
-                  setLayoutPreset(option.value);
-                  applySettings({ layoutPreset: option.value });
-                }}
+                onClick={() => applySettings({ layoutPreset: option.value })}
               />
             ))}
           </div>
@@ -703,10 +707,7 @@ function SimpleSlideLayoutEditor({
               <SimpleOptionButton
                 key={option.value}
                 selected={displayWidth === option.value}
-                onClick={() => {
-                  setDisplayWidth(option.value);
-                  applySettings({ displayWidth: option.value });
-                }}
+                onClick={() => applySettings({ displayWidth: option.value })}
               >
                 {option.label}
               </SimpleOptionButton>
@@ -721,10 +722,11 @@ function SimpleSlideLayoutEditor({
           <div className="mt-3">
             <SimpleOptionButton
               selected={displayWidth === fitSuggestion.width}
-              onClick={() => {
-                setDisplayWidth(fitSuggestion.width as DisplayWidth);
-                applySettings({ displayWidth: fitSuggestion.width as DisplayWidth });
-              }}
+              onClick={() =>
+                applySettings({
+                  displayWidth: fitSuggestion.width as DisplayWidth,
+                })
+              }
             >
               w-{fitSuggestion.width} — fills remaining space
             </SimpleOptionButton>
@@ -737,20 +739,14 @@ function SimpleSlideLayoutEditor({
           <SimpleCheckbox
             checked={scrollEnabled}
             label="Show as a scrolling section"
-            onChange={(checked) => {
-              setScrollEnabled(checked);
-              applySettings({ scrollEnabled: checked });
-            }}
+            onChange={(checked) => applySettings({ scrollEnabled: checked })}
           />
         ) : null}
         {controls.showFloating ? (
           <SimpleCheckbox
             checked={floating}
             label="Overlay text on the image"
-            onChange={(checked) => {
-              setFloating(checked);
-              applySettings({ floating: checked });
-            }}
+            onChange={(checked) => applySettings({ floating: checked })}
           />
         ) : null}
         {controls.isSlideshow && floating ? (
@@ -761,10 +757,8 @@ function SimpleSlideLayoutEditor({
                 value={floatingBehavior}
                 onChange={(next) => {
                   if (next) {
-                    setFloatingBehavior(next);
                     applySettings({ floatingBehavior: next });
                   } else {
-                    setFloating(false);
                     applySettings({ floating: false });
                   }
                 }}
@@ -776,10 +770,7 @@ function SimpleSlideLayoutEditor({
           <SimpleCheckbox
             checked={cover}
             label="Crop image to fill its frame"
-            onChange={(checked) => {
-              setCover(checked);
-              applySettings({ cover: checked });
-            }}
+            onChange={(checked) => applySettings({ cover: checked })}
           />
         ) : null}
         {controls.showScrollDisplay && isCoverCanvas ? (
@@ -789,28 +780,19 @@ function SimpleSlideLayoutEditor({
               <SimpleCheckbox
                 checked={splash}
                 label="Use as opening cover"
-                onChange={(checked) => {
-                  setSplash(checked);
-                  applySettings({ splash: checked });
-                }}
+                onChange={(checked) => applySettings({ splash: checked })}
               />
               {controls.showFixedCover ? (
                 <SimpleCheckbox
                   checked={fixed}
                   label="Keep image fixed while scrolling"
-                  onChange={(checked) => {
-                    setFixed(checked);
-                    applySettings({ fixed: checked });
-                  }}
+                  onChange={(checked) => applySettings({ fixed: checked })}
                 />
               ) : null}
               <SimpleCheckbox
                 checked={invert}
                 label="Use light text"
-                onChange={(checked) => {
-                  setInvert(checked);
-                  applySettings({ invert: checked });
-                }}
+                onChange={(checked) => applySettings({ invert: checked })}
               />
               {controls.showCoverBackdrop ? (
                 <SimpleField>
@@ -824,10 +806,7 @@ function SimpleSlideLayoutEditor({
                       <SimpleOptionButton
                         key={option.value || "default"}
                         selected={backdrop === option.value}
-                        onClick={() => {
-                          setBackdrop(option.value);
-                          applySettings({ backdrop: option.value });
-                        }}
+                        onClick={() => applySettings({ backdrop: option.value })}
                       >
                         {option.label}
                       </SimpleOptionButton>
@@ -1086,10 +1065,10 @@ export function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 export function getLayoutPreset(behavior: string[]): LayoutPreset {
-  if (behavior.includes("image")) return "image";
   if (behavior.includes("left")) return "left";
   if (behavior.includes("bottom")) return "bottom";
   if (behavior.includes("right")) return "right";
+  if (behavior.includes("image")) return "image";
   return "image";
 }
 
@@ -1098,7 +1077,7 @@ export function buildLayoutPresetBehaviors(
   layoutPreset: LayoutPreset,
   canvasDimensions?: { width: number; height: number },
 ) {
-  const next = behavior.filter((item) => !layoutBehaviors.has(item));
+  const next = replaceLayoutBehavior(behavior, layoutPreset);
   if (canvasDimensions?.width && canvasDimensions?.height) {
     const { width: parsedWidth } = parseBehaviors(behavior);
     const displayWidth: DisplayWidth = parsedWidth
@@ -1119,10 +1098,9 @@ export function buildLayoutPresetBehaviors(
     // Replace existing h- behavior with recalculated one
     const withoutH = next.filter((item) => !item.startsWith("h-"));
     withoutH.push(`h-${newHeight}`);
-    withoutH.push(layoutPreset);
     return withoutH;
   }
-  return [...next, layoutPreset];
+  return next;
 }
 
 function getDisplayWidth(behavior: string[]): DisplayWidth {
@@ -1170,10 +1148,9 @@ export function buildSimpleLayoutBehaviors({
   showImageCover,
   showScrollToggle,
   showScrollDisplay,
-  scrollContext,
 }: {
   behavior: string[];
-  layoutPreset: LayoutPreset;
+  layoutPreset?: LayoutPreset;
   displayWidth: DisplayWidth;
   canvasWidth: number;
   canvasHeight: number;
@@ -1190,10 +1167,8 @@ export function buildSimpleLayoutBehaviors({
   showImageCover: boolean;
   showScrollToggle: boolean;
   showScrollDisplay: boolean;
-  scrollContext: boolean;
 }) {
-  const next = behavior.filter((item) => {
-    if (layoutBehaviors.has(item)) return false;
+  let next = behavior.filter((item) => {
     if ((showGridSizing || scrollEnabled) && isGridBehavior(item)) return false;
     if (showFloating && (item === "floating" || floatingBehaviors.has(item as FloatingBehavior))) return false;
     if (showImageCover && coverBehaviors.has(item)) return false;
@@ -1202,19 +1177,19 @@ export function buildSimpleLayoutBehaviors({
     return true;
   });
 
-  if (showScrollToggle && scrollEnabled) {
-    next.push("scroll");
+  if (layoutPreset) {
+    next = replaceLayoutBehavior(next, layoutPreset);
   }
 
-  if (!scrollContext || layoutPreset !== "image") {
-    next.push(layoutPreset);
+  if (showScrollToggle && scrollEnabled) {
+    next.push("scroll");
   }
 
   if (showGridSizing) {
     const height = getDerivedHeight({
       canvasWidth,
       canvasHeight,
-      layoutPreset,
+      layoutPreset: layoutPreset || "image",
       displayWidth,
     });
     next.push(`w-${displayWidth}`, `h-${height}`);

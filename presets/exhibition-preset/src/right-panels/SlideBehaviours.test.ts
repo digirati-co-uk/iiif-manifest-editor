@@ -26,7 +26,6 @@ const base = {
   showImageCover: false,
   showScrollToggle: false,
   showScrollDisplay: false,
-  scrollContext: false,
 };
 
 describe("exhibition slide behaviours", () => {
@@ -46,9 +45,8 @@ describe("exhibition slide behaviours", () => {
         scrollEnabled: true,
         showScrollToggle: true,
         showScrollDisplay: true,
-        scrollContext: true,
       }),
-    ).toEqual(["scroll"]);
+    ).toEqual(["image", "scroll"]);
   });
 
   test("scroll layouts keep left/right alignment labels", () => {
@@ -71,24 +69,41 @@ describe("exhibition slide behaviours", () => {
         backdrop: "backdrop-dark",
         showImageCover: true,
         showScrollDisplay: true,
-        scrollContext: true,
       }),
     ).toEqual(["right", "cover", "splash", "fixed", "invert", "backdrop-dark"]);
+  });
+
+  test("an image-oriented scroll tour does not need a position behaviour", () => {
+    expect(
+      buildSimpleLayoutBehaviors({
+        ...base,
+        behavior: ["image", "non-linear-tour", "custom"],
+        layoutPreset: undefined,
+        showImageCover: true,
+      }),
+    ).toEqual(["image", "non-linear-tour", "custom"]);
   });
 
   test("legacy scroll and cover values are recognised by advanced controls", () => {
     expect(hasScrollBehavior(["page-scroll"])).toBe(true);
     expect(hasCoverBehavior(["image-cover"])).toBe(true);
-    expect(getAdvancedExhibitionConfigs("fullpage", ["page-scroll", "image-cover"]).map((config) => config.id)).toEqual([
+    expect(getAdvancedExhibitionConfigs("fullpage", ["page-scroll", "image-cover"]).map((config) => config.id)).toEqual(
+      ["layout", "scroll", "display", "floating"],
+    );
+  });
+
+  test("image cover is capability-driven for non-splash slides", () => {
+    expect(getExhibitionTemplateControls("fullpage").showImageCover).toBe(true);
+    expect(getExhibitionTemplateControls("scroll", false, true).showImageCover).toBe(true);
+    expect(getExhibitionTemplateControls("scroll", false, false).showImageCover).toBe(false);
+    expect(getExhibitionTemplateControls("slideshow").showImageCover).toBe(false);
+    expect(getExhibitionTemplateControls("fullpage", false, true, false, false).showImageCover).toBe(false);
+
+    expect(getAdvancedExhibitionConfigs("scroll", [], false, true).map((config) => config.id)).toEqual([
       "layout",
-      "scroll",
       "display",
       "floating",
     ]);
-  });
-
-  test("cover controls only show for a cover canvas", () => {
-    expect(getAdvancedExhibitionConfigs("scroll", ["splash"], false).map((config) => config.id)).toEqual(["layout", "display", "floating"]);
   });
 
   test("opening cover options match the viewer for each template", () => {
@@ -111,14 +126,17 @@ describe("exhibition slide behaviours", () => {
     expect(controls.showFloating).toBe(false);
     expect(controls.showImageCover).toBe(false);
     expect(controls.showGridSizing).toBe(false);
-    expect(getAdvancedExhibitionConfigs("slideshow", ["splash"], true).map((config) => config.id)).toEqual([
-      "cover",
+    expect(getAdvancedExhibitionConfigs("slideshow", ["splash"], true).map((config) => config.id)).toEqual(["cover"]);
+    expect(getAdvancedExhibitionConfigs("fullpage", ["splash"], false).map((config) => config.id)).toEqual([
+      "layout",
+      "scroll",
+      "display",
+      "size",
     ]);
   });
 
   test("scroll alignment controls hide when there are no tour steps", () => {
     expect(getAdvancedExhibitionConfigs("scroll", [], true, false).map((config) => config.id)).toEqual([
-      "display",
       "cover",
       "floating",
     ]);
