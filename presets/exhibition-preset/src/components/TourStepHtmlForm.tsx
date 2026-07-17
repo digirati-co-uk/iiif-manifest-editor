@@ -1,5 +1,6 @@
 import { HTMLEditor } from "@manifest-editor/components";
 import { useRef, useState } from "react";
+import { sanitizeSummaryHtml } from "../right-panels/summary-html";
 import { joinTourStepHtml, splitTourStepHtml } from "./tour-step-html";
 
 export function TourStepHtmlForm({
@@ -92,7 +93,7 @@ export function TourStepLabelSummaryPreview({
       </div>
       <div
         className="exhibition-tour-step-body text-gray-500 text-sm bg-white line-clamp-2 prose-headings:mt-1 prose-headings:mb-1 prose-sm"
-        dangerouslySetInnerHTML={{ __html: summary }}
+        dangerouslySetInnerHTML={{ __html: sanitizeSummaryHtml(summary) }}
       />
     </>
   );

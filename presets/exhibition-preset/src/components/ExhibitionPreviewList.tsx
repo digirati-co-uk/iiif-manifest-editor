@@ -13,6 +13,7 @@ import {
   useSlideshowContentPositioning,
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
+import { sanitizeSummaryHtml } from "../right-panels/summary-html";
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
 import { splitTourStepHtml } from "./tour-step-html";
 
@@ -299,7 +300,7 @@ function getTourStepPreviewText(vault: any, annotation: any) {
 
   return {
     label: getInternationalStringText(annotation.label, "Step"),
-    summary: getInternationalStringText(annotation.summary, ""),
+    summary: sanitizeSummaryHtml(getInternationalStringText(annotation.summary, "")),
   };
 }
 

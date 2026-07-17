@@ -14,9 +14,11 @@ describe("tour step HTML", () => {
   });
 
   test("joins a plain label and HTML summary", () => {
-    expect(joinTourStepHtml("A < B", "<p>Summary</p>")).toBe(
+    const html = joinTourStepHtml("A < B", "<p>Summary</p>");
+    expect(html).toBe(
       "<h2>A &lt; B</h2><p>Summary</p>",
     );
+    expect(splitTourStepHtml(html).label).toBe("A < B");
   });
 
   test("preserves heading-free and explicitly empty headings", () => {
@@ -37,6 +39,24 @@ describe("tour step HTML", () => {
     expect(splitTourStepHtml(value)).toEqual({
       label: undefined,
       summary: value,
+    });
+  });
+
+  test("ignores comments before the first meaningful heading", () => {
+    expect(splitTourStepHtml("<!-- note --><h2>Step one</h2><p>Summary</p>")).toEqual({
+      label: "Step one",
+      summary: "<p>Summary</p>",
+    });
+  });
+
+  test("sanitizes imported summary HTML before previewing it", () => {
+    expect(
+      splitTourStepHtml(
+        '<h2>Step</h2><img src="javascript:alert(1)" onerror="alert(1)" alt="Unsafe">',
+      ),
+    ).toEqual({
+      label: "Step",
+      summary: '<img alt="Unsafe">',
     });
   });
 

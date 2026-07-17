@@ -21,18 +21,25 @@ export function splitTourStepHtml(value: string | null | undefined) {
     ) {
       const label = firstNode.textContent?.trim() || "";
       firstNode.remove();
-      return { label, summary: template.innerHTML.trim() };
+      return {
+        label,
+        summary: sanitizeSummaryHtml(template.innerHTML.trim()),
+      };
     }
 
-    return { label: undefined, summary: html };
+    return { label: undefined, summary: sanitizeSummaryHtml(html) };
   }
 
-  const match = html.match(/^\s*<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>\s*/i);
-  if (!match) return { label: undefined, summary: html };
+  const match = html.match(
+    /^(?:\s|<!--[\s\S]*?-->)*<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>\s*/i,
+  );
+  if (!match) {
+    return { label: undefined, summary: sanitizeSummaryHtml(html) };
+  }
 
   return {
-    label: stripHtml(match[1] || "").trim(),
-    summary: html.slice(match[0].length).trim(),
+    label: decodeHtmlText(stripHtml(match[1] || "")).trim(),
+    summary: sanitizeSummaryHtml(html.slice(match[0].length).trim()),
   };
 }
 
@@ -45,6 +52,29 @@ export function joinTourStepHtml(label: string | undefined, summary: string) {
 
 function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, "");
+}
+
+function decodeHtmlText(value: string) {
+  const namedEntities: Record<string, string> = {
+    amp: "&",
+    apos: "'",
+    gt: ">",
+    lt: "<",
+    nbsp: "\u00a0",
+    quot: '"',
+  };
+
+  return value.replace(
+    /&(?:#(\d+)|#x([\da-f]+)|([a-z]+));/gi,
+    (entity, decimal: string | undefined, hex: string | undefined, named: string | undefined) => {
+      if (named) return namedEntities[named.toLowerCase()] ?? entity;
+
+      const codePoint = Number.parseInt(decimal || hex || "", decimal ? 10 : 16);
+      return codePoint > 0 && codePoint <= 0x10ffff && !(codePoint >= 0xd800 && codePoint <= 0xdfff)
+        ? String.fromCodePoint(codePoint)
+        : entity;
+    },
+  );
 }
 
 function escapeHtml(value: string) {

@@ -104,7 +104,10 @@ function sanitizeNode(node: Node) {
         }
       }
 
-      if (tagName === "a" && element.getAttribute("target") === "_blank") {
+      if (
+        tagName === "a" &&
+        element.getAttribute("target")?.toLowerCase() === "_blank"
+      ) {
         element.setAttribute("rel", "noopener noreferrer");
       }
     }
@@ -181,7 +184,10 @@ function sanitizeSummaryHtmlFallback(value: string) {
           }
         }
 
-        if (tagName === "a" && attributes.get("target") === "_blank") {
+        if (
+          tagName === "a" &&
+          attributes.get("target")?.toLowerCase() === "_blank"
+        ) {
           attributes.set("rel", "noopener noreferrer");
         }
 
@@ -205,6 +211,13 @@ function isAllowedAttribute(tagName: string, name: string, value: string) {
 }
 
 function hasUnsafeUrl(value: string) {
+  const firstPathCharacter = value.search(/[/?#]/);
+  const possibleScheme = value.slice(
+    0,
+    firstPathCharacter === -1 ? undefined : firstPathCharacter,
+  );
+  if (possibleScheme.includes("&")) return true;
+
   const colonIndex = value.indexOf(":");
   if (colonIndex === -1) return false;
 
