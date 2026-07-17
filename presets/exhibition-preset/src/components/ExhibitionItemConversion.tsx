@@ -1,6 +1,9 @@
-import { getValue } from "@iiif/helpers";
 import { ActionButton } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
+import {
+  needsExhibitionSummary,
+  withExhibitionDefaults,
+} from "./exhibition-item-defaults";
 
 export function ExhibitionItemConversion() {
   const editor = useEditor();
@@ -11,26 +14,34 @@ export function ExhibitionItemConversion() {
     const summary = editor.descriptive.summary;
     const behaviors = editor.technical.behavior;
 
-    const behaviorsToAdd = behaviors.get();
-    behaviorsToAdd.push("w-12");
+    const currentBehaviors = behaviors.get();
+    const defaultBehaviors = withExhibitionDefaults(
+      currentBehaviors,
+      canvasWidth,
+      canvasHeight,
+    );
 
-    const height = Math.max(1, Math.min(12, Math.round((canvasWidth / canvasHeight) * 12)));
-    behaviorsToAdd.push(`h-${height}`);
-    // Implementation of applying default settings
-    // 1. Add behavior of "w-12"
-    // 2. Add behavior of "h-1" to "h-12" based on canvas height
-    // 3. Add an empty summary
-    if (!getValue(summary.get())) {
+    if (needsExhibitionSummary(summary.get())) {
       summary.set({ en: ["Summary of image"] });
     }
 
-    editor.technical.behavior.set(behaviorsToAdd);
+    if (
+      defaultBehaviors.length !== currentBehaviors.length ||
+      defaultBehaviors.some(
+        (behavior, index) => behavior !== currentBehaviors[index],
+      )
+    ) {
+      behaviors.set(defaultBehaviors);
+    }
   };
 
   return (
     <div className="flex flex-col items-center gap-4 border-me-100 border-2 p-4 rounded">
-      This canvas was not created in the exhibition editor. Do you want to apply default settings?
-      <ActionButton onPress={() => applyDefaultSettings()}>Apply defaults</ActionButton>
+      This canvas was not created in the exhibition editor. Do you want to apply
+      default settings?
+      <ActionButton onPress={() => applyDefaultSettings()}>
+        Apply defaults
+      </ActionButton>
     </div>
   );
 }

@@ -167,7 +167,11 @@ export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
   if (!canvas) return false;
 
   const behaviors = canvas.behavior || [];
-  if (behaviors.includes("image") || behaviors.includes("info")) {
+  if (
+    behaviors.includes("image") ||
+    behaviors.includes("info") ||
+    behaviors.includes("splash")
+  ) {
     return true;
   }
 
