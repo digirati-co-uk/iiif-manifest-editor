@@ -1,11 +1,7 @@
 import { sanitizeSummaryHtml } from "../right-panels/summary-html";
 
-export const DEFAULT_TOUR_STEP_LABEL = "New step";
 export const DEFAULT_TOUR_STEP_SUMMARY = "<p>Description</p>";
-export const DEFAULT_TOUR_STEP_HTML = joinTourStepHtml(
-  DEFAULT_TOUR_STEP_LABEL,
-  DEFAULT_TOUR_STEP_SUMMARY,
-);
+export const DEFAULT_TOUR_STEP_HTML = DEFAULT_TOUR_STEP_SUMMARY;
 
 export function splitTourStepHtml(value: string | null | undefined) {
   const html = value || "";
@@ -13,19 +9,26 @@ export function splitTourStepHtml(value: string | null | undefined) {
   if (typeof document !== "undefined") {
     const template = document.createElement("template");
     template.innerHTML = html;
-    const firstElement = Array.from(template.content.childNodes).find(
-      (node): node is HTMLElement => node.nodeType === Node.ELEMENT_NODE,
+    const firstNode = Array.from(template.content.childNodes).find(
+      (node) =>
+        node.nodeType === Node.ELEMENT_NODE ||
+        (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()),
     );
 
-    if (firstElement && /^h[1-6]$/i.test(firstElement.tagName)) {
-      const label = firstElement.textContent?.trim() || "";
-      firstElement.remove();
+    if (
+      firstNode?.nodeType === Node.ELEMENT_NODE &&
+      /^h[1-6]$/i.test((firstNode as HTMLElement).tagName)
+    ) {
+      const label = firstNode.textContent?.trim() || "";
+      firstNode.remove();
       return { label, summary: template.innerHTML.trim() };
     }
+
+    return { label: undefined, summary: html };
   }
 
   const match = html.match(/^\s*<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>\s*/i);
-  if (!match) return { label: "", summary: html };
+  if (!match) return { label: undefined, summary: html };
 
   return {
     label: stripHtml(match[1] || "").trim(),
@@ -33,11 +36,11 @@ export function splitTourStepHtml(value: string | null | undefined) {
   };
 }
 
-export function joinTourStepHtml(label: string, summary: string) {
-  const cleanLabel = escapeHtml(label.trim() || DEFAULT_TOUR_STEP_LABEL);
+export function joinTourStepHtml(label: string | undefined, summary: string) {
+  const cleanLabel = label?.trim() ? `<h2>${escapeHtml(label.trim())}</h2>` : "";
   const cleanSummary = sanitizeSummaryHtml(summary || "");
 
-  return `<h2>${cleanLabel}</h2>${cleanSummary}`;
+  return `${cleanLabel}${cleanSummary}`;
 }
 
 function stripHtml(value: string) {

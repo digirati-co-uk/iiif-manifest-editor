@@ -1,10 +1,6 @@
 import { HTMLEditor } from "@manifest-editor/components";
 import { useRef, useState } from "react";
-import {
-  DEFAULT_TOUR_STEP_SUMMARY,
-  joinTourStepHtml,
-  splitTourStepHtml,
-} from "./tour-step-html";
+import { joinTourStepHtml, splitTourStepHtml } from "./tour-step-html";
 
 export function TourStepHtmlForm({
   value,
@@ -18,8 +14,8 @@ export function TourStepHtmlForm({
 
   return (
     <TourStepLabelSummaryForm
-      label={initial.label}
-      summary={initial.summary || DEFAULT_TOUR_STEP_SUMMARY}
+      label={initial.label ?? ""}
+      summary={initial.summary}
       onChange={({ label, summary }) => {
         valueRef.current = joinTourStepHtml(label, summary);
         onChange(valueRef.current);
@@ -79,7 +75,7 @@ export function TourStepLabelSummaryForm({
 export function TourStepHtmlPreview({ value }: { value: string }) {
   const { label, summary } = splitTourStepHtml(value);
 
-  return <TourStepLabelSummaryPreview label={label} summary={summary} />;
+  return <TourStepLabelSummaryPreview label={label ?? ""} summary={summary} />;
 }
 
 export function TourStepLabelSummaryPreview({

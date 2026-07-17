@@ -13,6 +13,7 @@ import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
+import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
@@ -279,7 +280,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
   const creator = useInlineCreator();
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
-      const bodyValue = resp.metadata.bodyValue || "";
+      const bodyValue = resp.metadata.bodyValue ?? DEFAULT_TOUR_STEP_HTML;
 
       if (!resp.cancelled && resp.target && canvas && firstAnnotationPage) {
         creator.create(
@@ -287,7 +288,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
           {
             label: { en: ["Tour step"] },
             body: {
-              en: [bodyValue || "<h2>New step</h2><p>Description</p>"],
+              en: [bodyValue],
             },
             motivation: "tagging",
           } as {

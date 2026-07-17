@@ -999,7 +999,6 @@ function createTourStepAnnotation(vault: any, canvas: any, annotationPageId: str
               id: annotationId,
               type: "Annotation",
               motivation: "tagging",
-              label: { en: ["New step"] },
               body: [{ id: bodyId, type: "ContentResource" }],
               target,
             },

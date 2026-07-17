@@ -27,7 +27,7 @@ export function PendingTourStepAnnotation() {
       </div>
       <div className="p-3">
         <TourStepHtmlForm
-          value={metadata.bodyValue || DEFAULT_TOUR_STEP_HTML}
+          value={metadata.bodyValue ?? DEFAULT_TOUR_STEP_HTML}
           onChange={(bodyValue) => setMetadata({ bodyValue })}
         />
       </div>
