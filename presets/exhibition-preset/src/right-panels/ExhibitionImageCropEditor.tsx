@@ -7,6 +7,7 @@ import {
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  AtlasStoreProvider,
   ImageService,
   RenderAnnotationEditing,
   useCanvas,
@@ -170,33 +171,35 @@ function ImageCropModal({
           <CropError message={error} />
         ) : dimensions && initialRegion && serviceId ? (
           <div className="relative min-h-[20rem] flex-1 overflow-hidden rounded border border-gray-200 bg-gray-950 sm:min-h-[28rem]">
-            <ImageService
-              src={serviceId}
-              interactive
-              fluid
-              errorFallback={CropViewerError}
-              homePosition={
-                {
-                  x: 0,
-                  y: 0,
-                  width: dimensions.width,
-                  height: dimensions.height,
-                } as any
-              }
-              containerProps={{ className: "absolute inset-0" } as any}
-            >
-              <CropRegionRequest
-                bounds={{
-                  x: 0,
-                  y: 0,
-                  width: dimensions.width,
-                  height: dimensions.height,
-                }}
-                initialRegion={initialRegion}
-                onResolve={resolveRequest}
-                onError={showRequestError}
-              />
-            </ImageService>
+            <AtlasStoreProvider name={`image-crop-${crop.bodyRef.id}`}>
+              <ImageService
+                src={serviceId}
+                interactive
+                fluid
+                errorFallback={CropViewerError}
+                homePosition={
+                  {
+                    x: 0,
+                    y: 0,
+                    width: dimensions.width,
+                    height: dimensions.height,
+                  } as any
+                }
+                containerProps={{ className: "absolute inset-0" } as any}
+              >
+                <CropRegionRequest
+                  bounds={{
+                    x: 0,
+                    y: 0,
+                    width: dimensions.width,
+                    height: dimensions.height,
+                  }}
+                  initialRegion={initialRegion}
+                  onResolve={resolveRequest}
+                  onError={showRequestError}
+                />
+              </ImageService>
+            </AtlasStoreProvider>
             {saving ? (
               <div className="absolute inset-0 z-20 grid place-items-center bg-black/40 text-sm font-semibold text-white">
                 Saving crop…
