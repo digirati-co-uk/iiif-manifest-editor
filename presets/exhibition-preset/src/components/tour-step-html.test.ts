@@ -35,7 +35,7 @@ describe("tour step HTML", () => {
   });
 
   test("does not promote a heading after other content", () => {
-    const value = "<p>Introduction</p><h2>Later heading</h2>";
+    const value = "<p>Introduction</p><h4>Later heading</h4>";
     expect(splitTourStepHtml(value)).toEqual({
       label: undefined,
       summary: value,
