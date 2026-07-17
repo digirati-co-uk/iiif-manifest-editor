@@ -1,3 +1,4 @@
+import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 import {
   canonicalServiceUrl,
   createImageServiceRequest,
@@ -5,7 +6,6 @@ import {
   isImageService,
   parseImageServiceRequest,
 } from "@iiif/parser/image-3";
-import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 
 export interface CropRegion {
   x: number;
@@ -29,24 +29,29 @@ export function getEditableImageCrop(
   annotation: any,
   resolve: Resolver = (resource) => resource,
 ): EditableImageCrop | null {
+  const crop = getImageCropContext(annotation, resolve);
+  return crop && parseCropRegion(crop.selector.region) ? crop : null;
+}
+
+export function getImageCropContext(
+  annotation: any,
+  resolve: Resolver = (resource) => resource,
+): EditableImageCrop | null {
   const motivations = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
   const bodyRefs = Array.isArray(annotation?.body) ? annotation.body : annotation?.body ? [annotation.body] : [];
   if (!motivations.includes("painting") || bodyRefs.length !== 1) return null;
 
   const bodyRef = bodyRefs[0];
-  const body = bodyRef;
-  if (!annotation?.id || body?.type !== "SpecificResource" || body?.source?.type === "Choice") return null;
+  if (!annotation?.id || bodyRef?.type === "Choice" || bodyRef?.source?.type === "Choice") return null;
 
-  const selector = body.selector;
-  if (
-    !selector ||
-    !["ImageApiSelector", "iiif:ImageApiSelector"].includes(selector.type) ||
-    !parseCropRegion(selector.region)
-  ) {
+  const isSpecificResource = bodyRef?.type === "SpecificResource";
+  const existingSelector = isSpecificResource ? bodyRef.selector : undefined;
+  if (existingSelector && !["ImageApiSelector", "iiif:ImageApiSelector"].includes(existingSelector.type)) {
     return null;
   }
 
-  const source = resolve(body.source) || body.source;
+  const sourceRef = isSpecificResource ? bodyRef.source : bodyRef;
+  const source = resolve(sourceRef) || sourceRef;
   if (source?.type !== "Image") return null;
 
   const services = Array.isArray(source.service) ? source.service : source.service ? [source.service] : [];
@@ -58,8 +63,8 @@ export function getEditableImageCrop(
   return {
     annotation,
     annotationRef: { id: annotation.id, type: "Annotation" },
-    body,
-    selector,
+    body: isSpecificResource ? bodyRef : { type: "SpecificResource", source: sourceRef },
+    selector: existingSelector || { type: "ImageApiSelector" },
     source,
     service,
   };

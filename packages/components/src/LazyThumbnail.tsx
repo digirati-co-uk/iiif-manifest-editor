@@ -105,9 +105,7 @@ export function imageUrlWithTransform(id: string, region: string | null, rotatio
   if (region) {
     parts[parts.length - 4] = region;
   }
-  if (parts[parts.length - 3] === "full") {
-    parts[parts.length - 3] = "256,";
-  }
+  parts[parts.length - 3] = "256,";
   if (rotation) {
     parts[parts.length - 2] = rotation;
   }

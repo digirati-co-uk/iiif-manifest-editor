@@ -1,4 +1,5 @@
-import { ActionButton, Modal, Sidebar, SidebarContent } from "@manifest-editor/components";
+import { ActionButton, Modal } from "@manifest-editor/components";
+import { MediaEditor } from "@manifest-editor/editors";
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -14,7 +15,7 @@ import {
   applyImageCropResponse,
   type CropRegion,
   type EditableImageCrop,
-  getEditableImageCrop,
+  getImageCropContext,
   getServiceDimensions,
   parseCropRegion,
   resolveImageService,
@@ -22,7 +23,7 @@ import {
 
 export const exhibitionImageCropEditor: EditorDefinition = {
   id: "@exhibition/image-crop-editor",
-  label: "Image crop",
+  label: "Media",
   supports: {
     edit: true,
     sortKey: "annotation-target",
@@ -30,7 +31,7 @@ export const exhibitionImageCropEditor: EditorDefinition = {
     resourceTypes: ["Annotation"],
     custom: ({ resource }, vault) => {
       const annotation = vault.get(resource, { skipSelfReturn: false } as any);
-      return Boolean(annotation && getEditableImageCrop(annotation, (item) => resolveFromVault(vault, item)));
+      return Boolean(annotation && getImageCropContext(annotation, (item) => resolveFromVault(vault, item)));
     },
   },
   component: () => <ExhibitionImageCropPanel />,
@@ -39,38 +40,63 @@ export const exhibitionImageCropEditor: EditorDefinition = {
 function ExhibitionImageCropPanel() {
   const vault = useVault();
   const editor = useEditor();
-  const canvas = useCanvas();
+  const canvas = useCanvas({ id: editor.annotation.target.getSourceId() });
   const annotation = vault.get(editor.ref(), { skipSelfReturn: false } as any);
-  const crop = annotation ? getEditableImageCrop(annotation, (item) => resolveFromVault(vault, item)) : null;
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const crop = annotation ? getImageCropContext(annotation, (item) => resolveFromVault(vault, item)) : null;
+  const region = parseCropRegion(crop?.selector.region);
+  const triggerRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
 
   const close = () => {
     setOpen(false);
-    requestAnimationFrame(() => triggerRef.current?.focus());
+    requestAnimationFrame(() => triggerRef.current?.querySelector("button")?.focus());
   };
 
   if (!crop || !canvas) return null;
 
+  const cropSection = (
+    <div className="flex flex-col gap-3">
+      {region ? (
+        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded border border-gray-200 bg-gray-50 p-3 text-sm">
+          <dt className="font-semibold text-gray-700">Position</dt>
+          <dd className="text-gray-600">
+            {region.x}, {region.y}
+          </dd>
+          <dt className="font-semibold text-gray-700">Size</dt>
+          <dd className="text-gray-600">
+            {region.width} × {region.height}
+          </dd>
+          {crop.selector.rotation ? (
+            <>
+              <dt className="font-semibold text-gray-700">Rotation</dt>
+              <dd className="text-gray-600">{crop.selector.rotation}°</dd>
+            </>
+          ) : null}
+        </dl>
+      ) : (
+        <p className="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+          This image currently uses the full image. Create a crop to select a smaller visible region.
+        </p>
+      )}
+      <span ref={triggerRef}>
+        <ActionButton onPress={() => setOpen(true)}>{region ? "Edit crop" : "Create crop"}</ActionButton>
+      </span>
+    </div>
+  );
+
   return (
-    <Sidebar>
-      <SidebarContent padding>
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-gray-600">
-            Change the visible region while retaining this image's service, rotation, and other metadata.
-          </p>
-          <button
-            ref={triggerRef}
-            type="button"
-            className="self-start rounded bg-me-500 px-3 py-2 text-sm font-semibold text-white hover:bg-me-600"
-            onClick={() => setOpen(true)}
-          >
-            Edit crop
-          </button>
-        </div>
-        {open ? <ImageCropModal crop={crop} canvas={canvas} onClose={close} vault={vault} /> : null}
-      </SidebarContent>
-    </Sidebar>
+    <>
+      <MediaEditor
+        additionalSections={[
+          {
+            label: "Image crop",
+            initialOpen: Boolean(region),
+            children: cropSection,
+          },
+        ]}
+      />
+      {open ? <ImageCropModal crop={crop} canvas={canvas} onClose={close} vault={vault} /> : null}
+    </>
   );
 }
 
@@ -104,7 +130,9 @@ function ImageCropModal({
   }, [crop.service]);
 
   const dimensions = getServiceDimensions(service);
-  const initialRegion = parseCropRegion(crop.selector.region);
+  const initialRegion =
+    parseCropRegion(crop.selector.region) ||
+    (dimensions ? { x: 0, y: 0, width: dimensions.width, height: dimensions.height } : null);
   const serviceId = service?.id || service?.["@id"];
 
   const resolveRequest = useCallback(
@@ -128,7 +156,11 @@ function ImageCropModal({
   const showRequestError = useCallback((message: string) => setError(message), []);
 
   return (
-    <Modal title="Edit image crop" onClose={onClose} className="max-w-5xl">
+    <Modal
+      title={parseCropRegion(crop.selector.region) ? "Edit image crop" : "Create image crop"}
+      onClose={onClose}
+      className="max-w-5xl"
+    >
       <div className="flex min-h-[24rem] flex-col p-4 sm:min-h-[32rem]">
         {error ? (
           <CropError message={error} />

@@ -6,6 +6,7 @@ import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
+import type { ReactNode } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
@@ -51,7 +52,13 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
   );
 }
 
-export function MediaEditor() {
+export interface MediaEditorSection {
+  label: string;
+  initialOpen?: boolean;
+  children: ReactNode;
+}
+
+export function MediaEditor({ additionalSections = [] }: { additionalSections?: MediaEditorSection[] } = {}) {
   // This is for an annotation
   const vault = useVault();
   const annotationEditor = useEditor();
@@ -296,6 +303,7 @@ export function MediaEditor() {
             initialOpen: currentSelector !== null,
             children: targetElements,
           },
+          ...additionalSections,
         ]}
       />
 

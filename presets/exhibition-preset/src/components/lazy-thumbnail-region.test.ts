@@ -1,12 +1,12 @@
+import { describe, expect, test } from "vitest";
 import {
   getImageApiRegion,
   getImageApiRotation,
   getRegionIntersection,
-  imageUrlWithTransform,
   imageUrlWithRegion,
+  imageUrlWithTransform,
   shouldUseComplexCanvasThumbnail,
 } from "../../../../packages/components/src/LazyThumbnail";
-import { describe, expect, test } from "vitest";
 
 describe("getRegionIntersection", () => {
   test("returns the overlapping canvas region", () => {
@@ -53,6 +53,12 @@ describe("imageUrlWithRegion", () => {
         getImageApiRotation(body),
       ),
     ).toBe("https://example.org/iiif/image/10,20,300,400/256,/90/default.jpg");
+  });
+
+  test("bounds a cropped thumbnail request instead of retaining max", () => {
+    expect(imageUrlWithTransform("https://example.org/iiif/image/full/max/0/default.jpg", "10,20,300,400", null)).toBe(
+      "https://example.org/iiif/image/10,20,300,400/256,/0/default.jpg",
+    );
   });
 });
 

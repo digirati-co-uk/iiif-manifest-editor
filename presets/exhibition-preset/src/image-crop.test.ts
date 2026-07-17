@@ -4,6 +4,7 @@ import {
   applyImageCrop,
   applyImageCropResponse,
   getEditableImageCrop,
+  getImageCropContext,
   parseCropRegion,
   resolveImageService,
   rotatedImageDimensions,
@@ -59,6 +60,20 @@ describe("existing image crop eligibility", () => {
       id: "annotation-1",
       type: "Annotation",
     });
+  });
+
+  test("offers crop creation for an uncropped IIIF image", () => {
+    const image = fixture().body[0].source;
+    const crop = getImageCropContext(fixture({ body: [image] }));
+
+    expect(crop).toMatchObject({
+      selector: { type: "ImageApiSelector" },
+      body: {
+        type: "SpecificResource",
+        source: image,
+      },
+    });
+    expect(getEditableImageCrop(fixture({ body: [image] }))).toBeNull();
   });
 
   test.each([
