@@ -49,7 +49,7 @@ function QueryStringBackgroundTask() {
     leftPanel: leftPanelActions,
     rightPanel: rightPanelActions,
   } = useLayoutActions();
-  const { leftPanels } = useAvailableLayouts();
+  const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
   const {
     editorFeatureFlags: {
@@ -114,7 +114,9 @@ function QueryStringBackgroundTask() {
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);
       manifest && edit(manifest);
-      open({ id: manifestOverview.id });
+      if (centerPanels.some((panel) => panel.id === manifestOverview.id)) {
+        open({ id: manifestOverview.id });
+      }
     }
 
     if (leftPanel.current === rangesPanel.id) {

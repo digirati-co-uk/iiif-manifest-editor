@@ -1,6 +1,9 @@
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp } from "@manifest-editor/shell";
-import { imageBrowserSlideCreator } from "../creators/image-browser-slide-creator";
+import {
+  imageBrowserSlideCreator,
+  keepIIIFBrowserNested,
+} from "../creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "../creators/image-service-slide-creator";
 import { imageSlideCreator } from "../creators/image-slide-creator";
 import { imageUrlSlideCreator } from "../creators/image-url-slide";
@@ -18,7 +21,17 @@ import { infoBoxWorkbenchEditor } from "../right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "../right-panels/SlideBehaviours";
 
 export const exhibitionEditorScrollingPreset = extendApp(
-  mapApp(ManifestPreset),
+  mapApp(ManifestPreset, (app) => ({
+    ...app,
+    layout: {
+      ...app.layout,
+      creators: app.layout.creators?.map((creator) =>
+        creator.id === "@manifest-editor/iiif-browser-creator"
+          ? keepIIIFBrowserNested(creator)
+          : creator,
+      ),
+    },
+  })),
   {
     id: "exhibition-scrolling-editor",
     title: "Exhibition Editor (scrolling)",

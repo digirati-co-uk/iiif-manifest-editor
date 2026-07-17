@@ -24,8 +24,8 @@ vi.mock("@manifest-editor/creators", () => ({
 
 const service = {
   id: "https://images.example.org/iiif/3/example",
-  type: "ImageService3",
-  profile: "level1",
+  type: "ImageService3" as const,
+  profile: "level1" as const,
   width: 1200,
   height: 800,
 };
