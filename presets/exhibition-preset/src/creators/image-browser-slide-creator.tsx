@@ -17,6 +17,7 @@ declare module "@manifest-editor/creator-api" {
 export const imageBrowserSlideCreator = defineCreator({
   ...iiifBrowserCreator,
   id: "@exhibitions/browser-creator",
+  configKey: iiifBrowserCreator.id,
   create: createBrowser,
   sideEffects: [],
   tags: ["image", "exhibition-slide"],
