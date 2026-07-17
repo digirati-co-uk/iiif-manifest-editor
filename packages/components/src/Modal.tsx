@@ -15,6 +15,7 @@ export interface ModalProps {
   open?: boolean;
   width?: number | string;
   height?: number | string;
+  disableAnimation?: boolean;
   children: React.ReactNode;
   actions?: React.ReactNode;
 }
@@ -27,7 +28,18 @@ export function ModalBackSlot({ children }: { children: React.ReactNode }) {
   return createPortal(children, element);
 }
 
-export function Modal({ id, className, title, open = true, onClose, actions, children, width, height }: ModalProps) {
+export function Modal({
+  id,
+  className,
+  title,
+  open = true,
+  onClose,
+  actions,
+  children,
+  width,
+  height,
+  disableAnimation,
+}: ModalProps) {
   return (
     <ModalOverlay
       isDismissable
@@ -39,7 +51,7 @@ export function Modal({ id, className, title, open = true, onClose, actions, chi
     >
       <AriaModal
         className={twMerge("manifest-editor-modal relative w-full max-w-4xl max-h-full", className)}
-        style={{ width, height }}
+        style={{ width, height, animation: disableAnimation ? "none" : undefined }}
       >
         <Dialog
           id={id}

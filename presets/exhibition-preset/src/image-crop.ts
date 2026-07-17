@@ -124,9 +124,20 @@ export function applyImageCropResponse(
   return applyImageCrop(vault, crop, canvas, response.boundingBox);
 }
 
-export function shouldResizeCanvasForCrop(canvas: any, paintingAnnotationCount: number) {
+export function shouldResizeCanvasForCrop(canvas: any, annotation: any, paintingAnnotationCount: number) {
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : canvas?.behavior ? [canvas.behavior] : [];
-  return paintingAnnotationCount === 1 && !behavior.includes("multi-image");
+  const targets = Array.isArray(annotation?.target)
+    ? annotation.target
+    : annotation?.target
+      ? [annotation.target]
+      : [];
+  const targetsWholeCanvas = targets.some((target: any) => {
+    if (typeof target === "string") return target === canvas.id;
+    if (target?.selector) return false;
+    const source = target?.type === "SpecificResource" ? target.source : target;
+    return (typeof source === "string" ? source : source?.id) === canvas.id;
+  });
+  return targetsWholeCanvas && paintingAnnotationCount === 1 && !behavior.includes("multi-image");
 }
 
 export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any, editedRegion: CropRegion) {
@@ -179,7 +190,7 @@ export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any,
       { id: transformed.thumbnailId, type: "ContentResource" },
     ]);
 
-    if (shouldResizeCanvasForCrop(canvas, paintingAnnotationCount)) {
+    if (shouldResizeCanvasForCrop(canvas, crop.annotation, paintingAnnotationCount)) {
       vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", transformed.region.width);
       vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", transformed.region.height);
     }

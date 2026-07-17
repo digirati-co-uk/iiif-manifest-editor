@@ -26,6 +26,7 @@ function fixture(overrides: any = {}) {
     id: "annotation-1",
     type: "Annotation",
     motivation: "painting",
+    target: "canvas-1",
     body: [
       {
         type: "SpecificResource",
@@ -257,9 +258,79 @@ describe("crop transaction side effects", () => {
   });
 
   test("retains composition dimensions for multiple paintings and multi-image canvases", () => {
-    expect(shouldResizeCanvasForCrop({ behavior: [] }, 2)).toBe(false);
-    expect(shouldResizeCanvasForCrop({ behavior: ["multi-image"] }, 1)).toBe(false);
-    expect(shouldResizeCanvasForCrop({ behavior: [] }, 1)).toBe(true);
+    const canvas = { id: "canvas-1", behavior: [] };
+    const wholeCanvas = { target: "canvas-1" };
+    expect(shouldResizeCanvasForCrop(canvas, wholeCanvas, 2)).toBe(false);
+    expect(shouldResizeCanvasForCrop({ ...canvas, behavior: ["multi-image"] }, wholeCanvas, 1)).toBe(false);
+    expect(shouldResizeCanvasForCrop(canvas, wholeCanvas, 1)).toBe(true);
+  });
+
+  test("only resizes for a selector-free whole-canvas target", () => {
+    const canvas = { id: "canvas-1", behavior: [] };
+    expect(shouldResizeCanvasForCrop(canvas, { target: "canvas-1#xywh=0,0,1000,1000" }, 1)).toBe(false);
+    expect(
+      shouldResizeCanvasForCrop(
+        canvas,
+        {
+          target: {
+            type: "SpecificResource",
+            source: { id: "canvas-1", type: "Canvas" },
+            selector: { type: "FragmentSelector", value: "xywh=0,0,1000,1000" },
+          },
+        },
+        1,
+      ),
+    ).toBe(false);
+    expect(
+      shouldResizeCanvasForCrop(
+        canvas,
+        { target: { type: "SpecificResource", source: { id: "canvas-1", type: "Canvas" } } },
+        1,
+      ),
+    ).toBe(true);
+  });
+
+  test("does not resize the canvas when the painting targets a selected region", () => {
+    const annotation = fixture({ target: "canvas-1#xywh=10,20,300,400" });
+    const canvas = {
+      id: "canvas-1",
+      type: "Canvas",
+      width: 1000,
+      height: 1000,
+      items: [{ id: "page-1", type: "AnnotationPage" }],
+    };
+    const entities: any = {
+      "page-1": {
+        id: "page-1",
+        type: "AnnotationPage",
+        items: [{ id: annotation.id, type: "Annotation" }],
+      },
+      [annotation.id]: annotation,
+    };
+    const vault = {
+      batch: vi.fn((callback) => callback()),
+      dispatch: vi.fn(),
+      modifyEntityField: vi.fn(),
+      get: vi.fn((ref) => entities[ref.id]),
+    };
+
+    applyImageCrop(vault, getEditableImageCrop(annotation)!, canvas, {
+      x: 1,
+      y: 2,
+      width: 320,
+      height: 180,
+    });
+
+    expect(vault.modifyEntityField).not.toHaveBeenCalledWith(
+      { id: "canvas-1", type: "Canvas" },
+      "width",
+      expect.anything(),
+    );
+    expect(vault.modifyEntityField).not.toHaveBeenCalledWith(
+      { id: "canvas-1", type: "Canvas" },
+      "height",
+      expect.anything(),
+    );
   });
 
   test("updates and exports an inline normalized SpecificResource", () => {

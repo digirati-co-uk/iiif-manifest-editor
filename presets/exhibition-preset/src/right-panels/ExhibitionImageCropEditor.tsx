@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AtlasStoreReactContext,
   CanvasPanel,
-  RenderAnnotationEditing,
   useCanvas,
   useCurrentAnnotationActions,
   useRequestAnnotation,
@@ -162,6 +161,7 @@ function ImageCropModal({
       onClose={onClose}
       className="max-w-5xl"
       height="80vh"
+      disableAnimation
     >
       <div className="flex min-h-0 flex-1 flex-col p-4">
         {error ? (
@@ -256,8 +256,9 @@ function VirtualCropCanvas({
           manifest={virtualManifest.id}
           startCanvas={virtualManifest.items[0]!.id}
           pagingEnabled={false}
+          padding={0}
           components={{ ViewerControls: viewerControls }}
-          annotations={editing ? <RenderAnnotationEditing /> : <CropRegionPreview region={initialRegion} />}
+          annotations={editing ? null : <CropRegionPreview region={initialRegion} />}
         />
       </AtlasStoreReactContext.Provider>
     </VaultProvider>
