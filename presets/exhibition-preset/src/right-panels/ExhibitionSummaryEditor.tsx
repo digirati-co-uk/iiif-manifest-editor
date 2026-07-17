@@ -22,6 +22,7 @@ import {
   normalizeSummaryForHtmlEditor,
   normalizeSummaryForSave,
 } from "./summary-html";
+import { isOpeningSplashResource } from "./opening-splash";
 
 export const exhibitionSummaryEdtior: EditorDefinition = {
   id: "@exhibition/summary-editor",
@@ -29,11 +30,11 @@ export const exhibitionSummaryEdtior: EditorDefinition = {
     edit: true,
     properties: ["summary", "requiredStatement"],
     resourceTypes: ["Canvas"],
-    custom: ({ resource }, vault) => {
+    custom: (editingResource, vault) => {
+      const { resource } = editingResource;
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
-      const canvas = vault.get(resource as any) as any;
-      // Hide the standalone Text content tab for textual-content (info box) canvases.
-      return !canvas?.behavior?.includes("splash") && !isInfoBoxCanvas(resource as any, vault);
+      // These surfaces edit their copy in their main exhibition panels.
+      return !isOpeningSplashResource(editingResource, vault) && !isInfoBoxCanvas(resource as any, vault);
     },
   },
   label: "Text content",

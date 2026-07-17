@@ -32,7 +32,13 @@ export function ExhibitionPreviewList({ mode }: { mode: PreviewMode }) {
     <div className="flex flex-col gap-3 p-2">
       <button
         type="button"
-        onClick={() => manifest && edit(manifest)}
+        onClick={() =>
+          manifest &&
+          edit(manifest, undefined, {
+            forceOpen: true,
+            selectedTab: "@manifest-editor/descriptive-properties",
+          })
+        }
         className="w-full rounded border border-slate-200 bg-white p-2 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50"
       >
         <LocaleString>{manifest?.label}</LocaleString>

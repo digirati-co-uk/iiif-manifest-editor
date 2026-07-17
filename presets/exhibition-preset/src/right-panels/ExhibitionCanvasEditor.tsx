@@ -1,5 +1,5 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
+import { InputContainer, LanguageMapEditor, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
@@ -7,6 +7,7 @@ import {
   useCreator,
   useEditor,
   useLayoutActions,
+  useManifestEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
 import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
@@ -30,6 +31,8 @@ import {
   useExhibitionTemplateControls,
 } from "./SlideBehaviours";
 import { getLanguageMapHtml } from "./summary-html";
+import { ExhibitionHtmlSummaryEditor } from "./ExhibitionSummaryEditor";
+import { isOpeningSplashCanvas } from "./opening-splash";
 
 export const exhibitionCanvasEditor: EditorDefinition = {
   id: "@exhibition/right-panel-editor",
@@ -61,6 +64,7 @@ export function ExhibitionCanvasAdvancedContent() {
   const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
   const vault = useVault();
+  const manifestEditor = useManifestEditor();
   const resource = useEditingResource();
   const { structural, technical } = useEditor();
   const { items } = structural;
@@ -77,7 +81,7 @@ export function ExhibitionCanvasAdvancedContent() {
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
-  const isOpeningCover = behavior.includes("splash");
+  const isOpeningCover = isOpeningSplashCanvas(canvas, manifestEditor.structural.items.get());
   const tourSupported = supportsTourSteps(vault, canvas);
   const hasTourSteps = useVaultSelector(
     (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
@@ -105,9 +109,11 @@ export function ExhibitionCanvasAdvancedContent() {
     <ResourceEditingProvider resource={canvas}>
       {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-      {!isOpeningCover ? (
+      {isOpeningCover ? (
+        <ManifestSplashFields manifestEditor={manifestEditor} />
+      ) : (
         <ReadonlyExhibitionSummary canvas={canvas} />
-      ) : null}
+      )}
 
       <CanvasBackgroundColorField editor={technical.backgroundColor} />
 
@@ -161,6 +167,20 @@ export function ExhibitionCanvasAdvancedContent() {
           }}
         />
       </AnnotationPageContext>
+    </ResourceEditingProvider>
+  );
+}
+
+function ManifestSplashFields({ manifestEditor }: { manifestEditor: ReturnType<typeof useManifestEditor> }) {
+  const manifest = {
+    ...manifestEditor.ref(),
+    summary: manifestEditor.descriptive.summary.get(),
+  };
+
+  return (
+    <ResourceEditingProvider resource={manifest}>
+      <LanguageMapEditor dispatchType="label" />
+      <ExhibitionHtmlSummaryEditor resource={manifest} />
     </ResourceEditingProvider>
   );
 }

@@ -57,6 +57,7 @@ export const exhibitionEditorPreset = extendApp(
         exhibitionGridLeftPanel,
         ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest"),
       ],
+      centerPanels: app.layout.centerPanels.filter((panel) => panel.id !== "overview"),
     },
   })),
   {
