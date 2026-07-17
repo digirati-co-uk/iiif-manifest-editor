@@ -34,6 +34,14 @@ describe("tour step HTML", () => {
     expect(joinTourStepHtml(undefined, "")).toBe("");
   });
 
+  test("keeps a cleared label empty after save and rehydration", () => {
+    const saved = joinTourStepHtml("", "<p>Summary</p>");
+    const rehydrated = splitTourStepHtml(saved);
+
+    expect(rehydrated.label ?? "").toBe("");
+    expect(rehydrated.summary).toBe("<p>Summary</p>");
+  });
+
   test("does not promote a heading after other content", () => {
     const value = "<p>Introduction</p><h4>Later heading</h4>";
     expect(splitTourStepHtml(value)).toEqual({
