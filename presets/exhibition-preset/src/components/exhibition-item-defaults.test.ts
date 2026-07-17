@@ -32,4 +32,8 @@ describe("exhibition item defaults", () => {
       }),
     ).toBe(false);
   });
+
+  test("uses a valid fallback when an imported canvas has no dimensions", () => {
+    expect(withExhibitionDefaults([], 0, 0)).toEqual(["w-12", "h-4"]);
+  });
 });

@@ -11,10 +11,10 @@ export function withExhibitionDefaults(
   width: number,
   height: number,
 ) {
-  const defaultHeight = Math.max(
-    1,
-    Math.min(12, Math.round((width / height) * 12)),
-  );
+  const defaultHeight =
+    width > 0 && height > 0
+      ? Math.max(1, Math.min(12, Math.round((width / height) * 12)))
+      : 4;
 
   return [
     ...behavior.filter(
