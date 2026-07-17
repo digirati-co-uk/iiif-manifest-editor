@@ -248,7 +248,13 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-export function CanvasListView({ isEditing }: { isEditing: boolean }) {
+export function CanvasListView({
+  isEditing,
+  onDelete,
+}: {
+  isEditing: boolean;
+  onDelete?: (deletedId: string) => void;
+}) {
   const { canvas, items, canvasActions, open, closeAfterCanvasSelect } =
     useEditCanvasItems();
   const manifest = useManifest();
@@ -290,7 +296,11 @@ export function CanvasListView({ isEditing }: { isEditing: boolean }) {
             canvasActions.edit(item, idx);
             closeAfterCanvasSelect();
           }}
-          createActions={createAppActions(items, onDeleteCanvas)}
+          createActions={(ref, index, item) =>
+            createAppActions(items, () =>
+              onDelete ? onDelete(ref.id) : onDeleteCanvas(),
+            )(ref, index, item)
+          }
           inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
         />
       </InputContainer>

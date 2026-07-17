@@ -12,6 +12,7 @@ import {
 import {
   type LayoutPanel,
   useCreator,
+  useEditingStack,
   useManifestEditor,
 } from "@manifest-editor/shell";
 import { useVault } from "react-iiif-vault";
@@ -19,6 +20,7 @@ import { ExhibitionGrid } from "../components/ExhibitionGrid";
 import { ExhibitionPreviewList } from "../components/ExhibitionPreviewList";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
+import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 
 export const exhibitionGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Exhibition grid",
@@ -72,6 +74,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
   const manifest = { id: manifestId, type: "Manifest" };
   const items = structural.items.get() || [];
   const editingCanvas = useInStack("Canvas");
+  const editingStack = useEditingStack();
   const selectedCanvasId = editingCanvas?.resource.source.id;
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const insertIndex = selectedIndex >= 0 ? selectedIndex + 1 : undefined;
@@ -87,6 +90,23 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
   const [toggled, toggle] = useToggleList();
   const createCanvas = () => canvasActions.createFiltered(resolvedCreatorFilter, insertIndex, scrollInitialData);
   const canvasName = resolvedPreviewMode === "scroll" ? "section" : "slide";
+  const onDeleteCanvas = (deletedId: string) => {
+    if (selectedCanvasId !== deletedId) return;
+
+    const nextCanvasId = getSlideSelectionAfterDeletion(
+      items,
+      selectedCanvasId,
+      deletedId,
+    );
+    editingStack.close();
+
+    if (nextCanvasId) {
+      const newItems = structural.items.getWithoutTracking();
+      const nextIndex = newItems.findIndex((item) => item.id === nextCanvasId);
+      const nextItem = newItems[nextIndex];
+      if (nextItem) canvasActions.edit(nextItem, nextIndex);
+    }
+  };
 
   return (
     <Sidebar>
@@ -120,7 +140,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
         {toggled.editing ? (
           <SortableExhibitionGrid mode={resolvedPreviewMode} />
         ) : toggled.list ? (
-          <CanvasListView isEditing={toggled.editing} />
+          <CanvasListView isEditing={toggled.editing} onDelete={onDeleteCanvas} />
         ) : resolvedPreviewMode === "slideshow" || resolvedPreviewMode === "scroll" ? (
           <ExhibitionPreviewList mode={resolvedPreviewMode} />
         ) : (
