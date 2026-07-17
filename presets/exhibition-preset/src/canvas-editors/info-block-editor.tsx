@@ -1,5 +1,4 @@
-import { ActionButton } from "@manifest-editor/components";
-import { TiptapRichTextLanguageField } from "@manifest-editor/editors";
+import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import {
   type CanvasEditorDefinition,
   useConfig,
@@ -257,7 +256,9 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const isFullPagePreset = previewPreset === "exhibition";
   const showShortSummary = isFullPagePreset;
   const shortSummaryHeading = "Short text in info box";
-  const longSummaryHeading = isFullPagePreset ? "Read more text in modal" : "Summary";
+  const longSummaryHeading = isFullPagePreset
+    ? "Read more text in modal"
+    : "Summary";
 
   // Collect all languages present in the canvas
   const presentLanguages = useMemo(() => {
@@ -574,7 +575,6 @@ function SummarySection({
               annotation={annotation.id}
             >
               <AnnotationEditor
-                compact={compact}
                 editorMaxWidth={editorMaxWidth}
                 pageItems={items}
                 pageRef={{ id: page.id, type: "AnnotationPage" }}
@@ -607,14 +607,12 @@ function SummarySection({
 }
 
 function AnnotationEditor({
-  compact,
   editorMaxWidth,
   onRemoveAnnotation: _onRemoveAnnotation,
   pageItems,
   pageRef,
   selectedLanguage,
 }: {
-  compact?: boolean;
   editorMaxWidth?: string;
   onRemoveAnnotation: () => void;
   pageItems: any[];
@@ -675,12 +673,11 @@ function AnnotationEditor({
     <div className="min-w-0 max-w-full overflow-hidden">
       {visibleBodies.map(
         ({ item: body, index }: { item: any; index: number }) => (
-          <TiptapAnnotationBodyEditor
+          <HTMLAnnotationBodyEditor
             key={body.id || index}
             resourceId={body.id}
             onRemove={() => editor.annotation.body.deleteAtIndex(index)}
             onUpdate={() => pruneEmptySiblings(body.id)}
-            compact={compact}
             editorMaxWidth={editorMaxWidth}
           />
         ),
@@ -689,14 +686,12 @@ function AnnotationEditor({
   );
 }
 
-function TiptapAnnotationBodyEditor({
-  compact,
+function HTMLAnnotationBodyEditor({
   editorMaxWidth,
   resourceId,
   onRemove,
   onUpdate,
 }: {
-  compact?: boolean;
   editorMaxWidth?: string;
   resourceId: string;
   onRemove: () => void;
@@ -731,20 +726,36 @@ function TiptapAnnotationBodyEditor({
       className="min-w-0 max-w-full overflow-hidden"
       style={editorMaxWidth ? { maxWidth: editorMaxWidth } : undefined}
     >
-      <TiptapRichTextLanguageField
-        language={currentLanguage}
-        languages={availableLanguages}
+      {advancedLanguageMode ? (
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <select
+            aria-label="Language"
+            className="rounded border border-slate-200 bg-white px-2 py-1 text-sm"
+            value={currentLanguage}
+            onChange={(event) => language.set(event.currentTarget.value as any)}
+          >
+            {availableLanguages.map((availableLanguage) => (
+              <option key={availableLanguage} value={availableLanguage}>
+                {availableLanguage}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="text-sm text-slate-600 hover:text-slate-900"
+            onClick={onRemove}
+          >
+            Remove
+          </button>
+        </div>
+      ) : null}
+      <HTMLEditor
+        key={`${resourceId}:${currentLanguage}`}
         value={value.get() || ""}
-        onUpdate={(newValue) => {
+        onChange={(newValue) => {
           value.set(newValue);
           onUpdate();
         }}
-        onUpdateLanguage={
-          advancedLanguageMode
-            ? (newLanguage) => language.set(newLanguage as any)
-            : undefined
-        }
-        onRemove={advancedLanguageMode ? onRemove : undefined}
       />
     </div>
   );

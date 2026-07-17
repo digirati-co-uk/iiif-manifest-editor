@@ -1,15 +1,9 @@
 import type { MDXEditorMethods } from "@mdxeditor/editor";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Converter } from "showdown";
 import { twMerge } from "tailwind-merge";
 import { useDebounce } from "tiny-use-debounce";
-import TurndownService from "turndown";
+import { htmlToMarkdown, markdownToHtml } from "./html-editor-conversion";
 import { MDXEditor } from "./MDXEditor";
-
-const converter = new Converter();
-converter.setFlavor("github");
-
-const turndownService = new TurndownService();
 
 export function HTMLEditor({
   className,
@@ -32,7 +26,7 @@ export function HTMLEditor({
 
   const internalOnChange = useCallback(() => {
     if (editorRef.current) {
-      const nextHtml = converter.makeHtml(editorRef.current.getMarkdown());
+      const nextHtml = markdownToHtml(editorRef.current.getMarkdown());
       if (nextHtml !== lastEmittedHtml.current) {
         lastEmittedHtml.current = nextHtml;
         onChangeRef.current(nextHtml);
@@ -41,7 +35,7 @@ export function HTMLEditor({
   }, []);
   const debounceSave = useDebounce(internalOnChange, 400);
   const memoState = useMemo(() => {
-    return turndownService.turndown(value);
+    return htmlToMarkdown(value);
   }, []);
 
   useEffect(() => {
@@ -51,7 +45,7 @@ export function HTMLEditor({
         return;
       }
 
-      const nextHtml = converter.makeHtml(ref.getMarkdown());
+      const nextHtml = markdownToHtml(ref.getMarkdown());
       if (nextHtml !== lastEmittedHtml.current) {
         lastEmittedHtml.current = nextHtml;
         onChangeRef.current(nextHtml);
@@ -75,10 +69,9 @@ export function HTMLEditor({
           "prose-ol:list-decimal",
           "focus-within:outline-none focus-within:border-me-primary-500 z-50 relative",
         ].join(" "),
-        className
+        className,
       )}
       markdown={memoState}
-      suppressHtmlProcessing
       onError={(err) => {
         console.log("err", err);
       }}

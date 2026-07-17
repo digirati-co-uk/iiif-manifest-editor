@@ -1,4 +1,4 @@
-import { TiptapRichTextLanguageField } from "@manifest-editor/editors";
+import { HTMLEditor } from "@manifest-editor/components";
 import { useRef, useState } from "react";
 import {
   DEFAULT_TOUR_STEP_SUMMARY,
@@ -63,10 +63,9 @@ export function TourStepLabelSummaryForm({
       <div className="block text-sm font-medium text-slate-700">
         Summary
         <div className="mt-1">
-          <TiptapRichTextLanguageField
-            language="en"
+          <HTMLEditor
             value={summaryRef.current}
-            onUpdate={(nextSummary) => {
+            onChange={(nextSummary) => {
               summaryRef.current = nextSummary;
               update(labelRef.current, nextSummary);
             }}
