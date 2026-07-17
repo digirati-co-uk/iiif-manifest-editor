@@ -48,50 +48,55 @@ export const exhibitionPresetConfig: PresetDefinition = {
     renderPreviewButton: (props) => <ExhibitionPresetPreviewButton {...props} />,
     renderBody: ({ templates, selectedTemplateId, setSelectedTemplateId, dismiss }) => (
       <div className="grid gap-3 sm:grid-cols-3">
-        {templates.map((template) => {
-          const selected = selectedTemplateId === template.id;
-          return (
-            <article
-              key={template.id}
-              className={[
-                "cursor-pointer overflow-hidden rounded border bg-white outline-none",
-                selected ? "border-me-primary-500 ring-2 ring-me-primary-100" : "border-gray-200",
-              ].join(" ")}
-              role="button"
-              tabIndex={0}
-              aria-pressed={selected}
-              onClick={() => {
-                setSelectedTemplateId(template.id);
-                dismiss();
-              }}
-              onKeyDown={(event) => {
-                if (event.target !== event.currentTarget) return;
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelectedTemplateId(template.id);
-                }
-              }}
-            >
-              <img src={template.thumbnailUrl} alt="" className="aspect-video w-full bg-gray-100 object-cover" />
-              <div className="flex flex-col gap-2 p-3">
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900">{template.label}</h3>
-                  <p className="mt-1 text-xs uppercase tracking-normal text-gray-500">{template.type}</p>
+        {templates.length ? (
+          templates.map((template) => {
+            const selected = selectedTemplateId === template.id;
+            const select = () => {
+              setSelectedTemplateId(template.id);
+              dismiss();
+            };
+            return (
+              <article
+                key={template.id}
+                className={[
+                  "cursor-pointer overflow-hidden rounded border bg-white outline-none",
+                  selected ? "border-me-primary-500 ring-2 ring-me-primary-100" : "border-gray-200",
+                ].join(" ")}
+                role="button"
+                tabIndex={0}
+                aria-pressed={selected}
+                onClick={select}
+                onKeyDown={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    select();
+                  }
+                }}
+              >
+                <img src={template.thumbnailUrl} alt="" className="aspect-video w-full bg-gray-100 object-cover" />
+                <div className="flex flex-col gap-2 p-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">{template.label}</h3>
+                    <p className="mt-1 text-xs uppercase tracking-normal text-gray-500">{template.type}</p>
+                  </div>
+                  <p className="text-sm text-gray-600">{template.summary}</p>
+                  <a
+                    href={template.previewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-me-700 hover:text-me-900"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    Preview
+                  </a>
                 </div>
-                <p className="text-sm text-gray-600">{template.summary}</p>
-                <a
-                  href={template.previewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm font-medium text-me-700 hover:text-me-900"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  Preview
-                </a>
-              </div>
-            </article>
-          );
-        })}
+              </article>
+            );
+          })
+        ) : (
+          <p className="text-sm text-gray-600">No exhibition formats are available for this editor.</p>
+        )}
       </div>
     ),
   },

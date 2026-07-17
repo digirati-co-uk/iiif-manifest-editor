@@ -10,6 +10,7 @@ import {
 } from "../helpers/exhibition-preview-url-helper";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
+import { getPreviewStructureKey } from "./preview-structure";
 
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
@@ -46,6 +47,8 @@ export function ExhibitionPreviewPanel({
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
   const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
   const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
+  const structureKey = getPreviewStructureKey(rootResource, manifest?.items);
+  const previousStructureKeyRef = useRef(structureKey);
   const src = useMemo(
     () => createScrollingPreviewUrl(preset, presetOptions, template?.previewUrl).toString(),
     [preset, presetOptions, template?.previewUrl],
@@ -121,6 +124,15 @@ export function ExhibitionPreviewPanel({
       targetOrigin,
     );
   }, [status, rootResource.id, rootResource.type, currentCanvasId, selectedTourStepId, targetOrigin]);
+
+  useEffect(() => {
+    const structureChanged = previousStructureKeyRef.current !== structureKey;
+    previousStructureKeyRef.current = structureKey;
+
+    if (structureChanged && status === "connected") {
+      connectPreview();
+    }
+  }, [connectPreview, status, structureKey]);
 
   useEffect(() => {
     const viewport = viewportRef.current;

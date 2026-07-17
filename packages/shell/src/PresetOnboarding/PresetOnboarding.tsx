@@ -1,8 +1,10 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useManifest } from "react-iiif-vault";
 import { useApp, useAppState, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
+import { resolvePresetTemplateSelection } from "./preset-template-selection";
 
 const reopenEvent = "manifest-editor:preset-onboarding:open";
 
@@ -81,6 +83,14 @@ export function PresetOnboarding() {
   const onboarding = app.preset?.onboarding;
   const { setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
   const templateSelection = usePresetTemplateSelection();
+  const manifest = useManifest();
+  const resolvedTemplate = resolvePresetTemplateSelection(
+    templateSelection.templates,
+    templateSelection.selectedTemplateId,
+    (manifest?.behavior as string[]) || [],
+  );
+  const selectedTemplateIdRef = useRef<string | null>(resolvedTemplate?.id || null);
+  selectedTemplateIdRef.current = resolvedTemplate?.id || null;
   const dismissalKey = useMemo(
     () => (onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null),
     [onboarding, resource],
@@ -109,12 +119,20 @@ export function PresetOnboarding() {
   if (!onboarding || !dismissalKey) return null;
 
   const dismiss = () => {
+    templateSelection.setSelectedTemplateId(
+      resolvePresetTemplateSelection(templateSelection.templates, selectedTemplateIdRef.current)?.id || null,
+    );
     setDismissed(dismissalKey);
     if (autoOpened) {
       setState({ presetOnboardingPreviewHintKey: dismissalKey });
     }
     setOpen(false);
     setAutoOpened(false);
+  };
+
+  const setSelectedTemplateId = (id: string | null) => {
+    selectedTemplateIdRef.current = id;
+    templateSelection.setSelectedTemplateId(id);
   };
 
   return (
@@ -125,15 +143,23 @@ export function PresetOnboarding() {
       actions={
         <div className="flex gap-2">
           <ActionButton onPress={dismiss}>{onboarding.dismissLabel || "Dismiss"}</ActionButton>
-          <ActionButton primary onPress={dismiss}>
-            {onboarding.primaryLabel || "Continue"}
-          </ActionButton>
+          {resolvedTemplate ? (
+            <ActionButton primary onPress={dismiss}>
+              {onboarding.primaryLabel || "Continue"}
+            </ActionButton>
+          ) : null}
         </div>
       }
     >
       <div className="flex flex-col gap-4 p-6">
         {onboarding.summary ? <p className="text-sm text-gray-600">{onboarding.summary}</p> : null}
-        {onboarding.renderBody({ dismiss, ...templateSelection })}
+        {onboarding.renderBody({
+          ...templateSelection,
+          selectedTemplateId: resolvedTemplate?.id || null,
+          selectedTemplate: resolvedTemplate,
+          setSelectedTemplateId,
+          dismiss,
+        })}
       </div>
     </Modal>
   );
