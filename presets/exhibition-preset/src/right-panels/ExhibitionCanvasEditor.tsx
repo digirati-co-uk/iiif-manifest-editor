@@ -4,6 +4,7 @@ import {
   type EditorDefinition,
   ResourceEditingProvider,
   useEditingResource,
+  useCreator,
   useEditor,
   useLayoutActions,
 } from "@manifest-editor/shell";
@@ -66,6 +67,13 @@ export function ExhibitionCanvasAdvancedContent() {
   const behavior = technical.behavior.get() || [];
   const pages = items.get();
   const page = pages[0];
+  const [, annotationActions] = useCreator(
+    page ? { id: page.id, type: "AnnotationPage" } : undefined,
+    "items",
+    "Annotation",
+    canvas ? { id: canvas.id, type: "Canvas" } : undefined,
+    { isPainting: true },
+  );
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
@@ -146,7 +154,12 @@ export function ExhibitionCanvasAdvancedContent() {
       {tourSupported && !isOpeningCover ? <TourStepsSummary canvas={canvas} /> : null}
 
       <AnnotationPageContext annotationPage={page.id}>
-        <PaintingAnnotationList createFilter="image" />
+        <PaintingAnnotationList
+          onCreate={() => {
+            setCenterPanelMode("edit");
+            annotationActions.createFiltered("image", undefined, { skipEditingOnCreate: true });
+          }}
+        />
       </AnnotationPageContext>
     </ResourceEditingProvider>
   );

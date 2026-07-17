@@ -294,7 +294,6 @@ function SelectedSlidePreview() {
     { type: "add" } | { type: "edit"; annotationId: string } | null
   >(null);
   const [targetDrawingTool, setTargetDrawingTool] = useState<"box" | "circle" | "line" | "polygon">("box");
-  const previousAnnotationCount = useRef<number | null>(null);
   const previousTourStepCount = useRef<number | null>(null);
   const annotationPageId = canvas?.annotations?.[0]?.id;
   const pageRef = canvas?.items?.[0] ? { id: canvas.items[0].id, type: "AnnotationPage" } : undefined;
@@ -319,7 +318,6 @@ function SelectedSlidePreview() {
     selectTourStep,
     stopTourStepRepositioning,
   } = useSlideshowContentPositioning();
-  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const showTourSteps = useSlideshowWorkbenchState((state) => state.showTourSteps);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const annotations = useVaultSelector(
@@ -351,7 +349,6 @@ function SelectedSlidePreview() {
   };
 
   useEffect(() => {
-    previousAnnotationCount.current = null;
     previousTourStepCount.current = null;
     setTargetDrawingMode(null);
     setTargetDrawingTool("box");
@@ -370,22 +367,6 @@ function SelectedSlidePreview() {
       setMode("edit");
     }
   }, [tourAuthoringActive]);
-
-  useEffect(() => {
-    if (previousAnnotationCount.current === null) {
-      previousAnnotationCount.current = annotations.length;
-      return;
-    }
-
-    const newestAnnotation = annotations[annotations.length - 1];
-    if (annotations.length > previousAnnotationCount.current && newestAnnotation?.id) {
-      selectAnnotation(newestAnnotation.id);
-      requestWorkbenchTab("content");
-      setShowTourSteps(false);
-    }
-
-    previousAnnotationCount.current = annotations.length;
-  }, [annotations, requestWorkbenchTab, selectAnnotation, setShowTourSteps]);
 
   useEffect(() => {
     if (previousTourStepCount.current === null) {
@@ -533,6 +514,8 @@ function SelectedSlidePreview() {
                 <Button
                   className="rounded-md bg-me-primary-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-me-primary-600"
                   onPress={() => {
+                    setMode("edit");
+                    selectAnnotation(null);
                     setShowTourSteps(false);
                     stopTourStepRepositioning();
                     contentActions.create(undefined, contentCreatorOptions);
