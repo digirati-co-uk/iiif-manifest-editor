@@ -25,7 +25,7 @@ const allowedTags = new Set([
 
 const allowedAttributes: Record<string, Set<string>> = {
   a: new Set(["href", "rel", "target", "title"]),
-  img: new Set(["alt", "loading", "src", "title"]),
+  img: new Set(["alt", "data-iiif-image", "loading", "src", "title"]),
 };
 
 export function normalizeSummaryForHtmlEditor(value: unknown): InternationalString {
@@ -98,11 +98,7 @@ function sanitizeNode(node: Node) {
 
       for (const attribute of Array.from(element.attributes)) {
         const name = attribute.name.toLowerCase();
-        const allowed = allowedAttributes[tagName]?.has(name) || false;
-        const unsafeUrl =
-          (name === "href" || name === "src") && /^(javascript|data):/i.test(attribute.value.trim());
-
-        if (!allowed || unsafeUrl) {
+        if (!isAllowedAttribute(tagName, name, attribute.value)) {
           element.removeAttribute(attribute.name);
         }
       }
@@ -162,6 +158,58 @@ function sanitizeSummaryHtmlFallback(value: string) {
   return (value || "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/\s+(href|src)\s*=\s*(["'])\s*(?:javascript|data):[^"']*\2/gi, "");
+    .replace(
+      /<\s*(\/?)\s*([a-z0-9]+)([^>]*)>/gi,
+      (_tag, closing: string, rawTagName: string, rawAttributes: string) => {
+        const tagName = rawTagName.toLowerCase();
+        if (!allowedTags.has(tagName)) return "";
+        if (closing) return `</${tagName}>`;
+
+        const attributes = new Map<string, string>();
+        const attributePattern =
+          /([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+
+        for (const match of rawAttributes.matchAll(attributePattern)) {
+          const name = match[1]!.toLowerCase();
+          const attributeValue = match[2] ?? match[3] ?? match[4];
+          if (
+            attributeValue !== undefined &&
+            isAllowedAttribute(tagName, name, attributeValue)
+          ) {
+            attributes.set(name, attributeValue);
+          }
+        }
+
+        if (tagName === "a" && attributes.get("target") === "_blank") {
+          attributes.set("rel", "noopener noreferrer");
+        }
+
+        const serializedAttributes = Array.from(
+          attributes,
+          ([name, attributeValue]) =>
+            ` ${name}="${escapeHtmlAttribute(attributeValue)}"`,
+        ).join("");
+        const selfClosing = /\/\s*$/.test(rawAttributes);
+
+        return `<${tagName}${serializedAttributes}${selfClosing ? " /" : ""}>`;
+      },
+    );
+}
+
+function isAllowedAttribute(tagName: string, name: string, value: string) {
+  if (!allowedAttributes[tagName]?.has(name)) return false;
+  if (name === "data-iiif-image") return value === "true";
+
+  return !(
+    (name === "href" || name === "src") &&
+    /^(javascript|data):/i.test(value.trim())
+  );
+}
+
+function escapeHtmlAttribute(value: string) {
+  return value
+    .replace(/&(?!(?:#\d+|#x[\da-f]+|[a-z][\w-]*);)/gi, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
