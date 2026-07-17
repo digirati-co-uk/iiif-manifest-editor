@@ -14,7 +14,7 @@ catalog:
   zustand: 4.5.2
   "@iiif/parser": 2.2.14
   "@iiif/helpers": 1.5.9
-  "iiif-browser": https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
+  "iiif-browser": https://pkg.pr.new/iiif-browser@c69b412
   "@atlas-viewer/atlas": 3.2.3
   "react-aria-components": ^1.12
 overrides:

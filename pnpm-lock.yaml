@@ -23,7 +23,7 @@ overrides:
   '@atlas-viewer/atlas': 3.2.3
   exhibition-viewer: ^1.0.14
   react-reconciler: 0.33.0
-  iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
+  iiif-browser: https://pkg.pr.new/iiif-browser@c69b412
   react: 19.2.0
   react-dom: 19.2.0
   '@types/react': ^19
@@ -254,8 +254,8 @@ importers:
         specifier: ^6.2.1
         version: 6.2.1
       iiif-browser:
-        specifier: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
+        specifier: https://pkg.pr.new/iiif-browser@c69b412
+        version: https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
       manifest-editor:
         specifier: workspace:*
         version: link:../../packages/manifest-editor
@@ -474,8 +474,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       iiif-browser:
-        specifier: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
+        specifier: https://pkg.pr.new/iiif-browser@c69b412
+        version: https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
       lexical:
         specifier: ^0.28.0
         version: 0.28.0
@@ -656,8 +656,8 @@ importers:
         specifier: workspace:*
         version: link:../shell
       iiif-browser:
-        specifier: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
+        specifier: https://pkg.pr.new/iiif-browser@c69b412
+        version: https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1036,8 +1036,8 @@ importers:
         specifier: ^3.29.0
         version: 3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23)
       iiif-browser:
-        specifier: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
+        specifier: https://pkg.pr.new/iiif-browser@c69b412
+        version: https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1626,8 +1626,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shell
       iiif-browser:
-        specifier: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
+        specifier: https://pkg.pr.new/iiif-browser@c69b412
+        version: https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0))
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -9650,10 +9650,15 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  iiif-browser@https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e:
-    resolution: {tarball: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e}
+  iiif-browser@https://pkg.pr.new/iiif-browser@c69b412:
+    resolution: {tarball: https://pkg.pr.new/iiif-browser@c69b412}
     version: 2.2.1
     engines: {node: '>=18.14.1'}
+    peerDependencies:
+      '@mdxeditor/editor': ^4.0.4
+    peerDependenciesMeta:
+      '@mdxeditor/editor':
+        optional: true
 
   image-size@0.5.5:
     resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
@@ -24600,7 +24605,7 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  iiif-browser@https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@6665b7e(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0)):
+  iiif-browser@https://pkg.pr.new/iiif-browser@c69b412(@mdxeditor/editor@3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23))(@types/react@19.0.10)(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.0)):
     dependencies:
       '@atlas-viewer/atlas': 3.2.3(@iiif/helpers@1.5.9(@iiif/parser@2.2.14))(react-dom@19.2.0(react@19.2.0))(react-reconciler@0.33.0(react@19.2.0))(react@19.2.0)
       '@iiif/helpers': 1.5.9(@iiif/parser@2.2.14)
@@ -24621,6 +24626,8 @@ snapshots:
       react-timeago: 8.3.0(react@19.2.0)
       tailwind-merge: 3.3.1
       zustand: 4.5.7(@types/react@19.0.10)(immer@10.1.1)(react@19.2.0)
+    optionalDependencies:
+      '@mdxeditor/editor': 3.29.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(yjs@13.6.23)
     transitivePeerDependencies:
       - '@types/react'
       - immer
