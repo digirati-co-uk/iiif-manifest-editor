@@ -7,6 +7,7 @@ import {
   MenuItemLabel,
   MenuItemStatus,
   type PresetDefinition,
+  type PresetPreviewButtonRenderContext,
   type PresetTemplateDefinition,
   useAppResource,
   useConfig,
@@ -19,7 +20,7 @@ import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { type SVGProps, useEffect } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { useManifest, useVault } from "react-iiif-vault";
-import { useExhibitionTemplate } from "./helpers/exhibition-template";
+import { getExhibitionTemplatePreviews, useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionTemplates } from "./exhibition-templates";
 
 export { exhibitionTemplates } from "./exhibition-templates";
@@ -105,14 +106,10 @@ function getTemplatePreviewUrl(previewUrl: string, manifestId: string) {
 function ExhibitionPresetPreviewButton({
   downloadEnabled,
   fileName,
+  preview,
   showOnboardingPreviewHint,
   onOnboardingPreviewHintClose,
-}: {
-  downloadEnabled?: boolean;
-  fileName?: string;
-  showOnboardingPreviewHint?: boolean;
-  onOnboardingPreviewHintClose?: () => void;
-}) {
+}: PresetPreviewButtonRenderContext) {
   const { actions, configs, active } = usePreviewContext();
   const vault = useVault();
   const manifest = useManifest();
@@ -120,13 +117,11 @@ function ExhibitionPresetPreviewButton({
   const resource = useAppResource();
   const layoutActions = useLayoutActions();
   const openOnboarding = useOpenPresetOnboarding();
-  const { selectedTemplate } = usePresetTemplateSelection();
+  const { selectedTemplate, templates } = usePresetTemplateSelection();
   const configuredTemplate = useExhibitionTemplate();
   const previewConfigs = configs.filter((item) => item.type === "external-manifest-preview");
-  const templatePreviews = selectedTemplate
-    ? exhibitionTemplates.filter((template) => template.type === selectedTemplate.type)
-    : exhibitionTemplates;
-  const current =
+  const templatePreviews = getExhibitionTemplatePreviews(templates, selectedTemplate, configuredTemplate);
+  const currentPreviewConfig =
     previewConfigs.find((item) => item.id === config.defaultPreview) ||
     previewConfigs.find((item) => !item.id.includes("theseus") && item.id !== "raw-manifest") ||
     previewConfigs[0];
@@ -137,8 +132,11 @@ function ExhibitionPresetPreviewButton({
     if (!manifest || !selectedTemplate) return;
 
     const currentBehavior = (manifest.behavior as string[]) || [];
+    const resolvedTemplateBehaviors = templates.flatMap((template) => [template.type, `template-${template.id}`]);
     const behavior = [
-      ...currentBehavior.filter((item) => !exhibitionTemplateBehaviors.includes(item)),
+      ...currentBehavior.filter(
+        (item) => !exhibitionTemplateBehaviors.includes(item) && !resolvedTemplateBehaviors.includes(item),
+      ),
       selectedTemplate.type,
       `template-${selectedTemplate.id}`,
     ];
@@ -149,7 +147,7 @@ function ExhibitionPresetPreviewButton({
       return;
     }
     vault.modifyEntityField(manifest, "behavior", behavior);
-  }, [manifest, selectedTemplate, vault]);
+  }, [manifest, selectedTemplate, templates, vault]);
 
   async function openPreview(template: PresetTemplateDefinition) {
     const manifestId = await actions.getPreviewLink();
@@ -170,7 +168,7 @@ function ExhibitionPresetPreviewButton({
     layoutActions.leftPanel.open({ id: "@exhibitions/theme-panel" });
   }
 
-  if (!templatePreviews.length) {
+  if (!templatePreviews.length && !preview?.mainAction && !preview?.actions?.length) {
     return null;
   }
 
@@ -191,8 +189,13 @@ function ExhibitionPresetPreviewButton({
         </div>
       ) : null}
       <ButtonContainer style={{ width: "auto", minWidth: "10em" }}>
-        <ButtonMain as={Button} onPress={openThemePanel}>
-          Preview
+        <ButtonMain
+          as={Button}
+          data-preview-action={preview?.mainAction?.id}
+          isDisabled={preview?.mainAction?.disabled}
+          onPress={preview?.mainAction?.onClick || openThemePanel}
+        >
+          {preview?.mainAction?.label || "Preview"}
           {configuredTemplate ? (
             <span className="ml-1 whitespace-nowrap opacity-75">
               · {exhibitionTemplateShortLabels[configuredTemplate.type]}
@@ -222,19 +225,37 @@ function ExhibitionPresetPreviewButton({
                 <span className="mx-2 flex h-4 w-8 shrink-0 items-center justify-center">
                   <TablerSwitch3 className="h-4 w-4 text-gray-500" />
                 </span>
-                <MenuItemLabel>Change preset</MenuItemLabel>
+                <MenuItemLabel>Change exhibition format</MenuItemLabel>
               </MenuItem>
-              {templatePreviews.map((template) => (
+              {templatePreviews.map((template) => {
+                const isCurrent = configuredTemplate?.id === template.id;
+                return (
+                  <MenuItem
+                    key={template.id}
+                    aria-current={isCurrent ? "true" : undefined}
+                    className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
+                    onAction={() => openPreview(template)}
+                  >
+                    <MenuItemStatus $status={isCurrent ? "active" : "available"} />
+                    <MenuItemLabel>
+                      {template.label}
+                      {isCurrent ? " (current)" : ""}
+                    </MenuItemLabel>
+                  </MenuItem>
+                );
+              })}
+              {preview?.actions?.map((action) => (
                 <MenuItem
-                  key={template.id}
+                  key={action.id}
                   className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
-                  onAction={() => openPreview(template)}
+                  isDisabled={action.disabled}
+                  onAction={action.onClick}
                 >
-                  <MenuItemStatus $status="available" />
-                  <MenuItemLabel>{template.label}</MenuItemLabel>
+                  <MenuItemStatus $status={action.status || "available"} />
+                  <MenuItemLabel>{action.label}</MenuItemLabel>
                 </MenuItem>
               ))}
-              {theseus && theseus.id !== current?.id ? (
+              {theseus && theseus.id !== currentPreviewConfig?.id ? (
                 <MenuItem
                   className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                   onAction={() => openPreviewFixed(theseus.id)}
@@ -243,7 +264,7 @@ function ExhibitionPresetPreviewButton({
                   <MenuItemLabel>{theseus.label}</MenuItemLabel>
                 </MenuItem>
               ) : null}
-              {json && json.id !== current?.id ? (
+              {json && json.id !== currentPreviewConfig?.id ? (
                 <MenuItem
                   className="flex cursor-pointer items-center p-1 outline-none hover:bg-gray-50 focus:bg-gray-50"
                   onAction={() => openPreviewFixed(json.id)}

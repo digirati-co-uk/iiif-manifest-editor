@@ -16,6 +16,15 @@ export function getExhibitionTemplate(templates: PresetTemplateDefinition[], beh
   );
 }
 
+export function getExhibitionTemplatePreviews(
+  templates: PresetTemplateDefinition[],
+  selected: PresetTemplateDefinition | null,
+  current: PresetTemplateDefinition | null,
+) {
+  if (!selected) return templates;
+  return templates.filter((template) => template.type === selected.type || template.id === current?.id);
+}
+
 export function useExhibitionTemplate() {
   const app = useApp();
   const templates = app.preset?.templates || [];

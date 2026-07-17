@@ -4,7 +4,7 @@ import {
   getTemplateConfigurationValue,
   setTemplateConfigurationValue,
 } from "../exhibition-templates";
-import { getExhibitionTemplate } from "./exhibition-template";
+import { getExhibitionTemplate, getExhibitionTemplatePreviews } from "./exhibition-template";
 
 describe("getExhibitionTemplate", () => {
   test("prefers the saved template id and falls back to its type", () => {
@@ -17,6 +17,16 @@ describe("getExhibitionTemplate", () => {
   test("returns null when no behavior declares a template", () => {
     expect(getExhibitionTemplate(exhibitionTemplates, [])).toBe(null);
   });
+});
+
+test("template previews retain the current format when another type is selected", () => {
+  const selected = exhibitionTemplates.find((template) => template.id === "exhibition-scroll")!;
+  const current = exhibitionTemplates.find((template) => template.id === "exhibition-slideshow")!;
+  expect(getExhibitionTemplatePreviews(exhibitionTemplates, selected, current).map((template) => template.id)).toEqual([
+    "exhibition-slideshow",
+    "exhibition-scroll",
+    "leeds-exhibition-scroll",
+  ]);
 });
 
 test("template configuration paths create the nested viewer theme shape", () => {
