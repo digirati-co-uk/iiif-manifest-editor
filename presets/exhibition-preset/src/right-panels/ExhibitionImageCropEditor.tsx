@@ -1,20 +1,23 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { MediaEditor } from "@manifest-editor/editors";
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
+import { Vault } from "@iiif/helpers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  AtlasStoreProvider,
-  ImageService,
+  AtlasStoreReactContext,
+  CanvasPanel,
   RenderAnnotationEditing,
   useCanvas,
   useCurrentAnnotationActions,
   useRequestAnnotation,
   useVault,
+  VaultProvider,
 } from "react-iiif-vault";
 import {
   applyImageCropResponse,
   type CropRegion,
   type EditableImageCrop,
+  fullImageRequest,
   getImageCropContext,
   getServiceDimensions,
   parseCropRegion,
@@ -113,6 +116,7 @@ function ImageCropModal({
 }) {
   const [service, setService] = useState<any>(() => (getServiceDimensions(crop.service) ? crop.service : null));
   const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -137,10 +141,7 @@ function ImageCropModal({
 
   const resolveRequest = useCallback(
     async (response: { cancelled?: boolean; boundingBox?: CropRegion | null }) => {
-      if (response.cancelled || !response.boundingBox) {
-        onClose();
-        return;
-      }
+      if (response.cancelled || !response.boundingBox) return setEditing(false);
       setSaving(true);
       setError(null);
       try {
@@ -160,41 +161,23 @@ function ImageCropModal({
       title={parseCropRegion(crop.selector.region) ? "Edit image crop" : "Create image crop"}
       onClose={onClose}
       className="max-w-5xl"
+      height="80vh"
     >
-      <div className="flex min-h-[24rem] flex-col p-4 sm:min-h-[32rem]">
+      <div className="flex min-h-0 flex-1 flex-col p-4">
         {error ? (
           <CropError message={error} />
         ) : dimensions && initialRegion && serviceId ? (
-          <div className="relative min-h-[20rem] flex-1 overflow-hidden rounded border border-gray-200 bg-gray-950 sm:min-h-[28rem]">
-            <AtlasStoreProvider name={`image-crop-${crop.annotationRef.id}`}>
-              <ImageService
-                src={serviceId}
-                interactive
-                fluid
-                errorFallback={CropViewerError}
-                homePosition={
-                  {
-                    x: 0,
-                    y: 0,
-                    width: dimensions.width,
-                    height: dimensions.height,
-                  } as any
-                }
-                containerProps={{ className: "absolute inset-0" } as any}
-              >
-                <CropRegionRequest
-                  bounds={{
-                    x: 0,
-                    y: 0,
-                    width: dimensions.width,
-                    height: dimensions.height,
-                  }}
-                  initialRegion={initialRegion}
-                  onResolve={resolveRequest}
-                  onError={showRequestError}
-                />
-              </ImageService>
-            </AtlasStoreProvider>
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded border border-gray-200 bg-gray-950">
+            <VirtualCropCanvas
+              crop={crop}
+              service={service}
+              dimensions={dimensions}
+              initialRegion={initialRegion}
+              editing={editing}
+              onEditingChange={setEditing}
+              onResolve={resolveRequest}
+              onError={showRequestError}
+            />
             {saving ? (
               <div className="absolute inset-0 z-20 grid place-items-center bg-black/40 text-sm font-semibold text-white">
                 Saving crop…
@@ -212,65 +195,184 @@ function ImageCropModal({
   );
 }
 
-function CropRegionRequest({
+function VirtualCropCanvas({
+  crop,
+  service,
+  dimensions,
+  initialRegion,
+  editing,
+  onEditingChange,
+  onResolve,
+  onError,
+}: {
+  crop: EditableImageCrop;
+  service: any;
+  dimensions: { width: number; height: number };
+  initialRegion: CropRegion;
+  editing: boolean;
+  onEditingChange: (editing: boolean) => void;
+  onResolve: (response: { cancelled?: boolean; boundingBox?: CropRegion | null }) => Promise<void>;
+  onError: (message: string) => void;
+}) {
+  const virtualManifest = useMemo(
+    () => createVirtualCropManifest(crop, service, dimensions),
+    [crop.annotationRef.id, dimensions.height, dimensions.width, service],
+  );
+  const temporaryVault = useMemo(() => {
+    const nextVault = new Vault();
+    nextVault.loadManifestSync(virtualManifest.id, virtualManifest);
+    return nextVault;
+  }, [virtualManifest]);
+  const viewerControls = useMemo(
+    () =>
+      function ViewerControls() {
+        return (
+          <CropViewerControls
+            bounds={{ x: 0, y: 0, width: dimensions.width, height: dimensions.height }}
+            initialRegion={initialRegion}
+            onEditingChange={onEditingChange}
+            onResolve={onResolve}
+            onError={onError}
+          />
+        );
+      },
+    [
+      dimensions.height,
+      dimensions.width,
+      initialRegion.height,
+      initialRegion.width,
+      initialRegion.x,
+      initialRegion.y,
+      onEditingChange,
+      onError,
+      onResolve,
+    ],
+  );
+
+  return (
+    <VaultProvider vault={temporaryVault}>
+      <AtlasStoreReactContext.Provider value={null}>
+        <CanvasPanel
+          manifest={virtualManifest.id}
+          startCanvas={virtualManifest.items[0]!.id}
+          pagingEnabled={false}
+          components={{ ViewerControls: viewerControls }}
+          annotations={editing ? <RenderAnnotationEditing /> : <CropRegionPreview region={initialRegion} />}
+        />
+      </AtlasStoreReactContext.Provider>
+    </VaultProvider>
+  );
+}
+
+function createVirtualCropManifest(
+  crop: EditableImageCrop,
+  service: any,
+  dimensions: { width: number; height: number },
+) {
+  const manifestId = `${crop.annotationRef.id}/crop-editor/manifest`;
+  const canvasId = `${manifestId}/canvas`;
+  const pageId = `${canvasId}/painting-page`;
+
+  return {
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    id: manifestId,
+    type: "Manifest",
+    label: { en: ["Image crop editor"] },
+    items: [
+      {
+        id: canvasId,
+        type: "Canvas",
+        width: dimensions.width,
+        height: dimensions.height,
+        items: [
+          {
+            id: pageId,
+            type: "AnnotationPage",
+            items: [
+              {
+                id: `${pageId}/painting`,
+                type: "Annotation",
+                motivation: "painting",
+                target: canvasId,
+                body: {
+                  id: fullImageRequest(service),
+                  type: "Image",
+                  format: "image/jpeg",
+                  width: dimensions.width,
+                  height: dimensions.height,
+                  service: [service],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function CropViewerControls({
   bounds,
   initialRegion,
+  onEditingChange,
   onResolve,
   onError,
 }: {
   bounds: CropRegion;
   initialRegion: CropRegion;
+  onEditingChange: (editing: boolean) => void;
   onResolve: (response: { cancelled?: boolean; boundingBox?: CropRegion | null }) => Promise<void>;
   onError: (message: string) => void;
 }) {
   const popup = useMemo(() => <CropRequestActions />, []);
-  const { requestAnnotation, cancelRequest, requestId } = useRequestAnnotation();
-  const requestRef = useRef(requestAnnotation);
+  const { requestAnnotation, cancelRequest, requestId, isActive, busy } = useRequestAnnotation();
   const cancelRef = useRef(cancelRequest);
-  const resolveRef = useRef(onResolve);
-  const errorRef = useRef(onError);
-  requestRef.current = requestAnnotation;
   cancelRef.current = cancelRequest;
-  resolveRef.current = onResolve;
-  errorRef.current = onError;
 
-  useEffect(() => {
-    if (!requestId) return;
-    let active = true;
-    requestRef
-      .current({
-        type: "box",
-        bounds,
-        selector: initialRegion,
-        annotationPopup: popup,
-      })
+  useEffect(() => () => cancelRef.current(), []);
+
+  const changeCrop = () => {
+    onEditingChange(true);
+    requestAnnotation({
+      type: "box",
+      bounds,
+      selector: initialRegion,
+      annotationPopup: popup,
+    })
       .then((response) => {
-        if (active && response) {
-          return resolveRef.current(response);
-        }
+        if (response) return onResolve(response);
+        onEditingChange(false);
       })
       .catch((reason) => {
-        if (active) errorRef.current(reason instanceof Error ? reason.message : "The crop editor could not be opened");
+        onEditingChange(false);
+        onError(reason instanceof Error ? reason.message : "The crop editor could not be opened");
       });
+  };
 
-    return () => {
-      active = false;
-      cancelRef.current();
-    };
-  }, [
-    bounds.x,
-    bounds.y,
-    bounds.height,
-    bounds.width,
-    initialRegion.height,
-    initialRegion.width,
-    initialRegion.x,
-    initialRegion.y,
-    popup,
-    requestId,
-  ]);
+  return isActive ? null : (
+    <div className="absolute bottom-3 right-3 z-20 rounded bg-white p-2 shadow-lg">
+      <ActionButton primary isDisabled={!requestId || busy} onPress={changeCrop}>
+        Change crop
+      </ActionButton>
+    </div>
+  );
+}
 
-  return <RenderAnnotationEditing />;
+function CropRegionPreview({ region }: { region: CropRegion }) {
+  const Box = "box" as any;
+  return (
+    <Box
+      html
+      relativeStyle
+      interactive={false}
+      target={region}
+      style={{
+        backgroundColor: "rgba(14, 165, 233, 0.12)",
+        borderColor: "#0ea5e9",
+        borderWidth: 4,
+      }}
+    />
+  );
 }
 
 function CropRequestActions() {
@@ -297,10 +399,6 @@ function CropError({ message }: { message: string }) {
       </div>
     </div>
   );
-}
-
-function CropViewerError() {
-  return <CropError message="The image service could not render the full image." />;
 }
 
 function resolveFromVault(vault: any, resource: any) {

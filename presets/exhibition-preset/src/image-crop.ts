@@ -220,6 +220,19 @@ export async function resolveImageService(service: any, fetcher: typeof fetch = 
   return resolved;
 }
 
+export function fullImageRequest(service: any) {
+  const request = createImageServiceRequest(normaliseService(service));
+  return imageServiceRequestToString({
+    ...request,
+    type: "image",
+    region: { full: true },
+    size: { max: true, confined: false, upscaled: false },
+    rotation: { angle: 0 },
+    quality: "default",
+    format: "jpg",
+  } as any);
+}
+
 function serialiseCropRegion(region: CropRegion) {
   return `${region.x},${region.y},${region.width},${region.height}`;
 }

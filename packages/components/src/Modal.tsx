@@ -27,7 +27,7 @@ export function ModalBackSlot({ children }: { children: React.ReactNode }) {
   return createPortal(children, element);
 }
 
-export function Modal({ id, className, title, open = true, onClose, actions, children }: ModalProps) {
+export function Modal({ id, className, title, open = true, onClose, actions, children, width, height }: ModalProps) {
   return (
     <ModalOverlay
       isDismissable
@@ -37,8 +37,14 @@ export function Modal({ id, className, title, open = true, onClose, actions, chi
       }}
       className="manifest-editor-modal-overlay manifest-editor"
     >
-      <AriaModal className={twMerge("manifest-editor-modal relative w-full max-w-4xl max-h-full", className)}>
-        <Dialog id={id} className="relative bg-white rounded-lg overflow-hidden shadow-2xl max-h-[80vh] flex flex-col outline-none">
+      <AriaModal
+        className={twMerge("manifest-editor-modal relative w-full max-w-4xl max-h-full", className)}
+        style={{ width, height }}
+      >
+        <Dialog
+          id={id}
+          className="relative h-full bg-white rounded-lg overflow-hidden shadow-2xl max-h-[80vh] flex flex-col outline-none"
+        >
           <div className="flex items-center justify-between gap-3 p-4 rounded-t-lg sticky top-0 bg-white">
             <div id="modal-back-slot" />
             <Heading slot="title" level={2} className="text-xl font-semibold text-gray-900 grow">

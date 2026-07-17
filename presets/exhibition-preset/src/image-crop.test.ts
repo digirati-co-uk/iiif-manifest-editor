@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from "vitest";
 import {
   applyImageCrop,
   applyImageCropResponse,
+  fullImageRequest,
   getEditableImageCrop,
   getImageCropContext,
   parseCropRegion,
@@ -99,6 +100,10 @@ describe("existing image crop eligibility", () => {
 });
 
 describe("image service resolution", () => {
+  test("creates an uncropped full-image request for a virtual canvas", () => {
+    expect(fullImageRequest(service)).toBe("https://images.example.org/iiif/book-1/full/max/0/default.jpg");
+  });
+
   test("uses embedded full dimensions without a request", async () => {
     const fetcher = vi.fn();
     await expect(resolveImageService(service, fetcher as any)).resolves.toBe(service);
