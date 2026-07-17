@@ -45,20 +45,28 @@ Use both sample manifests and inspect exported manifest JSON after each group.
 4. Verify keyboard access for changed menus, reorder controls, image form, and behaviour controls.
 5. Review all new user-facing strings for obvious inconsistency while leaving the full terminology pass deferred.
 
+## Review evidence
+
+- The Delft disposable project passed layout, cover, crop editing, cropped thumbnail, and cleared tour-step persistence checks.
+- The Leeds disposable project passed direct Canvas and checkbox Browser selection after the Browser update.
+- The annotation Media tab exposes 0°, 90°, 180°, and 270° rotation controls. Zero starts collapsed; a non-zero saved value is selected after reload.
+- Preview → Raw Manifest confirmed a 90° full-image edit as a `SpecificResource` with an `ImageApiSelector`, `/90/` source and thumbnail requests, and 4000 × 6000 derived canvas dimensions.
+- A clean reload produced no new ETag error. The earlier reproduction exposed overlapping saves, which are now serialized.
+- The embedded viewer expected at `localhost:5174` was unavailable and was not started. Port 3000 editor Preview and Raw Manifest paths were used for acceptance.
+
 ## Deferred handoff
 
-For D1 and D4, confirm each brief still states its remaining release or product-decision gate. D2 and D3 were promoted into tasks 3.5 and 2.4 after their questions were answered.
+D1 is resolved by the updated Browser package and selection-matrix rerun. D4 remains gated on a product terminology decision. D2 and D3 were promoted into tasks 3.5 and 2.4 after their questions were answered.
 
 ## Final decision
 
 - [x] All Phase 3 task commits are focused and reviewed.
 - [x] Targeted automated checks pass, or pre-existing failures are evidenced.
-- [ ] Both sample manifests pass the browser and JSON checks.
-- [ ] The whole-program smoke review passes.
+- [x] Both sample manifests pass the browser and JSON checks.
+- [x] The whole-program smoke review passes, with the unavailable external viewer boundary recorded above.
 - [x] Integration changes are committed after confidence is established.
 - [x] Deferred items have named next evidence/owners for triage.
 
-The accepted commit is the program handoff point. Record checks, known limitations, and the two remaining deferred handoffs in its PR or release notes.
+The accepted commit is the program handoff point. Record checks, known limitations, and the remaining D4 handoff in its PR or release notes.
 
-See [RESULT.md](./RESULT.md) for the completed automated review, integration
-findings, and the reason browser acceptance remains unchecked.
+See [RESULT.md](./RESULT.md) for the completed automated and browser review.

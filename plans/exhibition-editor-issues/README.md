@@ -21,7 +21,7 @@ Do not start, stop, kill, or rebuild the development server. It is already runni
 | [1 — Foundations](./phase-1-foundations/README.md)           | 4                    | Stable host extension APIs, the requested IIIF Browser version, shared creator settings, and explicit post-create selection behavior |
 | [2 — Authoring](./phase-2-authoring/README.md)               | 4                    | Consistent slide lifecycle, creator parity, manifest/splash editing, and repaired info-box editing                                   |
 | [3 — Layout and media](./phase-3-layout-and-media/README.md) | 5                    | Consistent layout controls, rotation persistence, crop editing/rendering, and clearable tour-step labels                              |
-| [Deferred](./deferred/README.md)                             | 2 follow-up packages | An upstream Browser release/retest and the product terminology decision                                                               |
+| [Deferred](./deferred/README.md)                             | 1 follow-up package  | The product terminology decision                                                                                                      |
 
 ## Test manifests
 
@@ -67,6 +67,6 @@ Import a URL from the home screen, then use “Open in Exhibition Editor.” Do 
 - The worktree already had unrelated uncommitted changes in `presets/exhibition-preset/src/index.tsx`, `presets/exhibition-preset/src/creators/image-service-slide-creator.tsx`, and its new test when this plan was written. Preserve them and never sweep them into a task commit.
 - `skipEditingOnCreate` already exists in `RenderCreator` and is used by the slideshow “Add content” path. Task 1.4 should test and complete that contract, not introduce a competing mechanism.
 - The live preview menu already contains the active template, but it does not identify it as current; its action still says “Change preset.”
-- The requested IIIF Browser source is the local `iiif-browser` commit `c69b412`. It includes split MDX styling and both MDX integrations.
-- Browser selection failure D.1 is confirmed upstream at `c69b412`; Phase 1 remains pending a replacement package and selection-matrix rerun.
+- The requested IIIF Browser source is now local `iiif-browser` commit `07a09e1`, installed by repository commit `0d5d14b1`.
+- Browser selection failure D.1 is resolved; direct Canvas and checkbox selection passed the localhost matrix.
 - The embedded exhibition viewer tried `localhost:5174` during inspection and was unavailable. Editor behavior at port 3000 is still testable. A task requiring live viewer behavior must record whether it used the remote preview URL or a separately available viewer; it must not start or kill that viewer itself.

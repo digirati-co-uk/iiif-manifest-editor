@@ -1,10 +1,12 @@
-# D1 IIIF Browser canvas selection — upstream fix handoff
+# D1 IIIF Browser canvas selection — resolved
 
 ## Status
 
-The failure is deterministic in local IIIF Browser commit `c69b412`. It is not caused by the Leeds service, network timing, the manifest-editor adapter, or the canvas checkbox. Directly checking a canvas in the manifest grid works; navigating into that canvas selects it briefly and then replaces it with its parent Manifest.
+Resolved by IIIF Browser commit `07a09e1`, installed in this repository by
+`0d5d14b1`. Direct Canvas navigation and manifest-grid checkbox selection both
+retain the Canvas and expose its Select action against the Leeds source.
 
-This remains deferred only because this repository needs a newly published Browser version before the Phase 1 acceptance matrix can be rerun.
+The notes below retain the original diagnosis and handoff for provenance.
 
 ## Reproduction and event trace
 
@@ -41,9 +43,9 @@ The overwrite is visible in `/Users/stephen/github.com/digirati-co-uk/iiif-brows
 4. Add a Browser-level regression using one emitter for the browser and output stores: seed a loaded parent Manifest containing a Canvas, resolve the Canvas with `{ parent }`, and assert the final/default selected resource is that Canvas and its Canvas action is available.
 5. Keep a direct manifest-grid checkbox assertion so the working multi-select path does not regress.
 
-## Promotion gate
+## Resolution evidence
 
-- The upstream regression passes and a new IIIF Browser package/version is supplied.
-- Install that version in this repository and reload the existing development server through the normal human-owned workflow.
-- Rerun the Phase 1 selection matrix: direct Canvas navigation, checkbox selection, next/back, crop, rotation, multi-select, narrow layout, and both supplied manifests.
-- Accept Phase 1 only after those checks pass.
+- The upstream regression is fixed at `07a09e1`.
+- The repository uses that package through `0d5d14b1`.
+- Direct Canvas navigation, checkbox selection, next/back, crop, rotation, and
+  both supplied manifest flows were rerun at localhost:3000.

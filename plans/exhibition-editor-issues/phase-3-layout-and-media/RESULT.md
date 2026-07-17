@@ -9,7 +9,8 @@ All five Phase 3 implementation tasks are committed and integrated:
 - IIIF Browser crop and rotation cross the creator boundary together;
 - cropped and rotated images use the complex exhibition-grid thumbnail path;
 - cleared tour-step labels survive save and rehydration;
-- eligible existing IIIF crops have an isolated full-image crop editor with transactional save/cancel behaviour.
+- eligible existing IIIF crops have an isolated full-image crop editor with transactional save/cancel behaviour;
+- annotation Media panels have 0°, 90°, 180°, and 270° rotation controls, collapsed initially at zero.
 
 The integration review found and fixed issues that were hidden by isolated mocks:
 
@@ -17,7 +18,9 @@ The integration review found and fixed issues that were hidden by isolated mocks
 - new Image resources and thumbnails are imported through Vault entity actions and verified through a real export;
 - rotation is applied to thumbnail Image API URLs and 90/270-degree derived dimensions;
 - the `top` layout option remains available;
-- an explicit empty heading distinguishes a cleared tour label from a heading-first summary.
+- an explicit empty heading distinguishes a cleared tour label from a heading-first summary;
+- transformed `SpecificResource` bodies remain embedded when their source is already present in Vault;
+- project writes sharing an ETag are serialized so a later media edit cannot be overwritten by an overlapping save.
 
 ## Commits
 
@@ -27,13 +30,16 @@ The integration review found and fixed issues that were hidden by isolated mocks
 - `df9c1785` — Browser rotation
 - `1ba32637` — behaviour controls
 - `35b77ed6` — cross-task integration fixes
+- `0d5d14b1` — fixed IIIF Browser package update
+- `91004721` — preserve transformed SpecificResources at the creator boundary
+- `6ead963d` — annotation image-rotation controls
+- `559508ee` — serialized local project saves
 
 ## Automated evidence
 
-- Phase 3 focused tests: 54/54 pass across six suites.
-- Exhibition preset typecheck: pass.
-- Components typecheck: pass.
-- Manifest editor typecheck: pass.
+- Phase 3 focused tests: 77/77 pass across eleven suites.
+- The rotation suite includes a real Vault export of an uncropped image and verifies selector, source URL, and rotated dimensions.
+- Creator API, shell, exhibition preset, components, manifest editor, and web typechecks: pass.
 - Creators typecheck reaches one pre-existing error in
   `packages/ui/ui/VideoPlayer/VideoPlayer.tsx:35`; there are no Phase 3
   diagnostics.
@@ -48,14 +54,22 @@ the changed region, preserved rotation, and new source URL survive
 
 ## Localhost review
 
-`http://localhost:3000` responds with HTTP 200. Interactive testing could not
-be completed in this agent environment: both collaborative preview status/open
-returned `NoAvailableHost`, and the bundled browser runtime reported no
-available browser.
+Interactive review completed at `http://localhost:3000` with disposable Delft
+and Leeds projects:
 
-The pointer/keyboard matrix in `REVIEW.md` therefore remains a human acceptance
-step. Browser image selection also retains the separately documented upstream
-D1 package gate.
+- layout, cover, crop editing, cropped thumbnails, and cleared tour labels
+  persisted in the Delft project;
+- direct Canvas navigation and checkbox selection worked in the updated IIIF
+  Browser against the Leeds source;
+- the Media tab displayed all four rotation controls and exposed the selected
+  value after reload;
+- a 90° full-image edit survived reload and Preview → Raw Manifest exported a
+  `SpecificResource` with `ImageApiSelector.rotation: "90"`, `/90/` source and
+  thumbnail requests, and rotated canvas dimensions;
+- a clean reproduction after the save-queue fix produced no new ETag mismatch.
+
+The embedded viewer at `localhost:5174` was unavailable and was not started.
+Acceptance used the editor Preview and Raw Manifest paths at port 3000.
 
 ## Known boundary
 
@@ -68,6 +82,6 @@ behaviour.
 
 ## Deferred handoff
 
-- D1 remains gated on a replacement IIIF Browser package and rerunning the
-  Browser selection matrix.
+- D1 is resolved by Browser commit `07a09e1`, installed here by `0d5d14b1`,
+  and the direct-navigation/checkbox selection rerun.
 - D4 remains gated on an approved format-specific terminology glossary.
