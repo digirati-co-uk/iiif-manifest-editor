@@ -200,10 +200,19 @@ function isAllowedAttribute(tagName: string, name: string, value: string) {
   if (!allowedAttributes[tagName]?.has(name)) return false;
   if (name === "data-iiif-image") return value === "true";
 
-  return !(
-    (name === "href" || name === "src") &&
-    /^(javascript|data):/i.test(value.trim())
-  );
+  return !((name === "href" || name === "src") && hasUnsafeUrl(value));
+}
+
+function hasUnsafeUrl(value: string) {
+  const colonIndex = value.indexOf(":");
+  if (colonIndex === -1) return false;
+
+  const scheme = value
+    .slice(0, colonIndex)
+    .replace(/[\u0000-\u0020]/g, "")
+    .toLowerCase();
+
+  return scheme.includes("&") || scheme === "javascript" || scheme === "data";
 }
 
 function escapeHtmlAttribute(value: string) {

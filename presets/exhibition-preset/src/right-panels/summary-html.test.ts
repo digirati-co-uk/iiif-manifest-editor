@@ -16,11 +16,13 @@ describe("summary HTML", () => {
       '<p data-iiif-image="true">Text</p>' +
         '<a href="https://example.org" target="_blank" onclick="alert(1)">Link</a>' +
         '<img src="javascript:alert(1)" data-iiif-image="false" onclick="alert(1)" alt="Unsafe">' +
+        '<a href="java&#115;cript:alert(1)">Entity scheme</a>' +
+        '<img src="java\nscript:alert(1)" alt="Whitespace scheme">' +
         iiifImage,
     );
 
     expect(html).toBe(
-      '<p>Text</p><a href="https://example.org" target="_blank" rel="noopener noreferrer">Link</a><img alt="Unsafe"><img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true" />',
+      '<p>Text</p><a href="https://example.org" target="_blank" rel="noopener noreferrer">Link</a><img alt="Unsafe"><a>Entity scheme</a><img alt="Whitespace scheme"><img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true" />',
     );
   });
 });
