@@ -34,6 +34,7 @@ import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
+import { exhibitionImageCropEditor } from "./right-panels/ExhibitionImageCropEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
@@ -110,6 +111,7 @@ export const exhibitionEditorPreset = extendApp(
       infoBoxWorkbenchEditor,
       exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
+      exhibitionImageCropEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
