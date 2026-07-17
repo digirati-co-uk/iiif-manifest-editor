@@ -92,6 +92,7 @@ function sanitizeNode(node: Node) {
       const tagName = element.tagName.toLowerCase();
 
       if (!allowedTags.has(tagName)) {
+        sanitizeNode(element);
         element.replaceWith(...Array.from(element.childNodes));
         continue;
       }
