@@ -102,16 +102,12 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
             title: toggled.list ? "List view" : "Grid view",
             onClick: () => toggle("list"),
           },
-          ...(resolvedPreviewMode === "grid"
-            ? [
-                {
-                  icon: <ListEditIcon />,
-                  title: "Edit slides",
-                  toggled: toggled.editing,
-                  onClick: () => toggle("editing"),
-                },
-              ]
-            : []),
+          {
+            icon: <ListEditIcon />,
+            title: `Edit ${canvasName}s`,
+            toggled: toggled.editing,
+            onClick: () => toggle("editing"),
+          },
           {
             icon: <NewSlideIcon />,
             title: `Add new ${canvasName}`,
@@ -121,10 +117,10 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
         ]}
       />
       <SidebarContent>
-        {toggled.list ? (
-          <CanvasListView isEditing={toggled.editing} />
-        ) : resolvedPreviewMode === "grid" && toggled.editing ? (
+        {toggled.editing ? (
           <SortableExhibitionGrid />
+        ) : toggled.list ? (
+          <CanvasListView isEditing={toggled.editing} />
         ) : resolvedPreviewMode === "slideshow" || resolvedPreviewMode === "scroll" ? (
           <ExhibitionPreviewList mode={resolvedPreviewMode} />
         ) : (

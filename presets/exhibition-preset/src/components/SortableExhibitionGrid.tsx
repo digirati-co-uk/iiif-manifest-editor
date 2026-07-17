@@ -11,8 +11,9 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { createAppActions, useInStack } from "@manifest-editor/editors";
 import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { CanvasContext, useManifest } from "react-iiif-vault";
+import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import { ExhibitionContainer } from "./ExhibitionContainer";
 import { SortableExhibitionItem } from "./SortableExhibitionItem";
 
@@ -50,24 +51,19 @@ export function SortableExhibitionGrid() {
   );
 
   const canvasId = editingCanvas?.resource.source.id;
-  const canvasIndex = canvasId ? items.findIndex((canv) => canv.id === canvasId) : -1;
-  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  function onDeleteCanvas(deletedId: string) {
+    if (canvasId !== deletedId) return;
 
-  function onDeleteCanvas() {
-    editingStack.close(); // close the deleted canvas
-    const newCanvases = structural.items.getWithoutTracking(); // refresh canvases
+    const nextCanvasId = getSlideSelectionAfterDeletion(items, canvasId, deletedId);
+    editingStack.close();
 
-    if (newCanvases && newCanvases.length > 0) {
-      canvasActions.edit(newCanvases[prevCanvasIndex]);
-    } else {
-      canvasActions.edit(manifest);
+    if (nextCanvasId) {
+      const newCanvases = structural.items.getWithoutTracking();
+      const nextIndex = newCanvases.findIndex((item) => item.id === nextCanvasId);
+      const nextCanvas = newCanvases[nextIndex];
+      if (nextCanvas) canvasActions.edit(nextCanvas, nextIndex);
     }
   }
-
-  const createActions = useMemo(
-    () => createAppActions(structural.items, onDeleteCanvas),
-    [structural.items, onDeleteCanvas],
-  );
 
   return (
     <ExhibitionContainer>
@@ -90,7 +86,7 @@ export function SortableExhibitionGrid() {
                     open({ id: "current-canvas" });
                     canvasActions.edit(item, idx);
                   }}
-                  actions={createActions(item, idx, manifest!)}
+                  actions={createAppActions(structural.items, () => onDeleteCanvas(item.id))(item, idx, manifest!)}
                 />
               </CanvasContext>
             );

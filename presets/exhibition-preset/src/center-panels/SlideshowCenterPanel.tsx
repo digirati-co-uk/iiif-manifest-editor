@@ -5,6 +5,7 @@ import {
   type LayoutPanel,
   ResourceEditingProvider,
   useCreator,
+  useEditingStack,
   useInlineCreator,
   useLayoutActions,
   useManifestEditor,
@@ -27,6 +28,7 @@ import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
+import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import {
   createDefaultSlideContentTarget,
   getAnnotationTargetBox,
@@ -61,6 +63,7 @@ function SlideshowCenterPanel() {
     isPainting: true,
   });
   const editingCanvas = useInStack("Canvas");
+  const editingStack = useEditingStack();
   const { edit } = useLayoutActions();
   const clearContentPositioning = useSlideshowContentPositioning((state) => state.clear);
 
@@ -88,15 +91,20 @@ function SlideshowCenterPanel() {
       return;
     }
 
-    const nextItem = items[index + 1] || items[index - 1] || null;
-    const nextIndex = items[index + 1] ? index : index - 1;
-
-    clearContentPositioning();
+    const nextCanvasId = getSlideSelectionAfterDeletion(items, selectedItem?.id, item.id);
     structural.items.deleteAtIndex(index);
 
-    if (nextItem) {
-      openSlide(nextItem, Math.max(0, nextIndex));
-    }
+    if (selectedItem?.id !== item.id) return;
+
+    clearContentPositioning();
+    editingStack.close();
+
+    if (!nextCanvasId) return;
+
+    const nextItems = structural.items.getWithoutTracking();
+    const nextIndex = nextItems.findIndex((candidate) => candidate.id === nextCanvasId);
+    const nextItem = nextItems[nextIndex];
+    if (nextItem) openSlide(nextItem, nextIndex);
   };
 
   const previousSlide = selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
