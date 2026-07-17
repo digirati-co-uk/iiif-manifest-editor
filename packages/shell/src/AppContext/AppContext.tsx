@@ -60,6 +60,19 @@ export type PresetTemplateDefinition = {
   configuration?: PresetTemplateConfigurationField[];
 };
 
+export type PresetPreviewAction = {
+  id: string;
+  label: string;
+  status?: "available" | "configured" | "active";
+  disabled?: boolean;
+  onClick: () => void;
+};
+
+export type PresetPreviewOptions = {
+  mainAction?: PresetPreviewAction;
+  actions?: PresetPreviewAction[];
+};
+
 export type PresetOnboardingRenderContext = {
   templates: PresetTemplateDefinition[];
   selectedTemplateId: string | null;
@@ -71,6 +84,7 @@ export type PresetOnboardingRenderContext = {
 export type PresetPreviewButtonRenderContext = {
   downloadEnabled?: boolean;
   fileName?: string;
+  preview?: PresetPreviewOptions;
   showOnboardingPreviewHint?: boolean;
   onOnboardingPreviewHintClose?: () => void;
 };
@@ -90,6 +104,12 @@ export type PresetOnboardingDefinition = {
 export type PresetDefinition = {
   onboarding?: PresetOnboardingDefinition;
   templates?: PresetTemplateDefinition[];
+  /** Use `replace` with `templates: leedsTemplates` to replace an inherited list. */
+  templateStrategy?: "append" | "replace";
+  /** Applied to the complete inherited/replaced list, e.g. `(template) => template.id.startsWith("leeds-")`. */
+  templateFilter?: (template: PresetTemplateDefinition) => boolean;
+  /** Example: `preview: { mainAction: { id: "host-preview", label: "Preview", onClick: openPreview } }`. */
+  preview?: PresetPreviewOptions;
 };
 
 export interface AppExtension {
@@ -166,7 +186,7 @@ export function usePresetTemplateSelection() {
     [setState],
   );
 
-  return { selectedTemplateId, selectedTemplate, setSelectedTemplateId };
+  return { templates, selectedTemplateId, selectedTemplate, setSelectedTemplateId };
 }
 
 function AppStateProvider(props: {

@@ -51,6 +51,18 @@ describe("preset config", () => {
     expect(mapped.preset?.templates?.map((item) => item.id)).toEqual(["one"]);
   });
 
+  test("mapApp filters its template list", () => {
+    const mapped = mapApp({
+      default: { id: "example", title: "Example" },
+      preset: {
+        templates: [template("delft-template"), template("leeds-template")],
+        templateFilter: (item: PresetTemplateDefinition) => item.id.startsWith("leeds-"),
+      },
+    });
+
+    expect(mapped.preset?.templates?.map((item) => item.id)).toEqual(["leeds-template"]);
+  });
+
   test("extendApp appends templates and overrides onboarding", () => {
     const extended = extendApp(
       app({
@@ -73,6 +85,59 @@ describe("preset config", () => {
 
     expect(extended.preset?.onboarding?.id).toBe("override");
     expect(extended.preset?.templates?.map((item) => item.id)).toEqual(["base-template", "extra-template"]);
+  });
+
+  test("extendApp can replace templates", () => {
+    const extended = extendApp(
+      app({ preset: { templates: [template("base-template")] } }),
+      { id: "extended", title: "Extended" },
+      {
+        preset: {
+          templates: [template("leeds-template")],
+          templateStrategy: "replace",
+        },
+      },
+    );
+
+    expect(extended.preset?.templates?.map((item) => item.id)).toEqual(["leeds-template"]);
+  });
+
+  test("extendApp filters the resolved template list", () => {
+    const extended = extendApp(
+      app({
+        preset: {
+          templates: [template("delft-template"), template("leeds-template")],
+        },
+      }),
+      { id: "extended", title: "Extended" },
+      { preset: { templateFilter: (item) => item.id.startsWith("leeds-") } },
+    );
+
+    expect(extended.preset?.templates?.map((item) => item.id)).toEqual(["leeds-template"]);
+    expect(getSelectedPresetTemplate(extended.preset?.templates || [], "delft-template")).toBeNull();
+  });
+
+  test("extendApp preserves inherited preview options when adding host actions", () => {
+    const extended = extendApp(
+      app({
+        preset: {
+          preview: {
+            mainAction: { id: "preview", label: "Preview", onClick: () => {} },
+          },
+        },
+      }),
+      { id: "extended", title: "Extended" },
+      {
+        preset: {
+          preview: {
+            actions: [{ id: "host-action", label: "Host action", onClick: () => {} }],
+          },
+        },
+      },
+    );
+
+    expect(extended.preset?.preview?.mainAction?.id).toBe("preview");
+    expect(extended.preset?.preview?.actions?.map((item) => item.id)).toEqual(["host-action"]);
   });
 });
 

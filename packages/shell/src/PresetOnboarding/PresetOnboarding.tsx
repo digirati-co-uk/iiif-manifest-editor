@@ -62,6 +62,7 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
   if (custom) {
     return custom({
       ...props,
+      preview: app.preset?.preview,
       showOnboardingPreviewHint,
       onOnboardingPreviewHintClose: () => {
         if (showOnboardingPreviewHint) {
@@ -71,14 +72,13 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
     });
   }
 
-  return <PreviewButton {...props} />;
+  return <PreviewButton {...props} preview={app.preset?.preview} />;
 }
 
 export function PresetOnboarding() {
   const app = useApp();
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
-  const templates = app.preset?.templates || [];
   const { setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
   const templateSelection = usePresetTemplateSelection();
   const dismissalKey = useMemo(
@@ -133,7 +133,7 @@ export function PresetOnboarding() {
     >
       <div className="flex flex-col gap-4 p-6">
         {onboarding.summary ? <p className="text-sm text-gray-600">{onboarding.summary}</p> : null}
-        {onboarding.renderBody({ templates, dismiss, ...templateSelection })}
+        {onboarding.renderBody({ dismiss, ...templateSelection })}
       </div>
     </Modal>
   );
