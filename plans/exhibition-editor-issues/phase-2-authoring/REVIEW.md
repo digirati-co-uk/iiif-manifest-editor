@@ -16,6 +16,8 @@ Run this review after tasks 2.1–2.4 are complete and committed, using the acce
 - Confirm deletion neighbour selection is tested as a pure rule and every UI entry point uses it.
 - Confirm creator availability is tested for empty and non-empty scroll exhibitions.
 - Confirm Back/Cancel in the image form dispatches no manifest mutation.
+- Confirm the MDXEditor upgrade has one resolved version, only the Browser image plugin is registered, and plugin CSS is not loaded by the base Browser.
+- Confirm no custom Browser history key was introduced and existing HTML round trips without a data-format migration.
 - Do not build packages and do not alter the running development server.
 
 ## Browser matrix at localhost:3000
@@ -39,8 +41,9 @@ Use the Delft and Leeds sample manifests. Exercise full-page, slideshow, and scr
 
 1. Click the exhibition title and verify manifest properties open on the right without the overview detour.
 2. Edit manifest label/summary from the first splash; move it away from first and confirm the controls disappear.
-3. Open new and existing info boxes, edit their labels, cancel image insertion, and successfully insert an image.
-4. Reload and inspect manifest JSON for the correct resource targets.
+3. Open new and existing info boxes, edit their labels, cancel IIIF image insertion, and successfully insert an image.
+4. Insert an IIIF image in a tour-step summary and confirm both surfaces reuse the existing Browser history.
+5. Reload and inspect manifest JSON for the correct resource targets and serialized HTML.
 
 ## Cross-task regression review
 
@@ -48,6 +51,7 @@ Use the Delft and Leeds sample manifests. Exercise full-page, slideshow, and scr
 - The scroll creator output participates in the same reorder/delete flow as blank slides.
 - Manifest-level splash fields do not overwrite canvas label/summary.
 - Rich-text image cancellation preserves unsaved surrounding text.
+- Existing HTML content survives the editor upgrade and the snippet plugin is absent.
 - Preview/template behaviour accepted in Phase 1 still works.
 
 ## Phase decision

@@ -1,10 +1,10 @@
 # Phase 3 integration and final review
 
-Run after tasks 3.1–3.4 are complete and committed, based on the accepted Phase 2 integration commit.
+Run after tasks 3.1–3.5 are complete and committed, based on the accepted Phase 2 integration commit.
 
 ## Merge preparation
 
-1. Confirm the four branches stay within behaviour controls, Browser rotation, thumbnail rendering, and tour labels respectively.
+1. Confirm the five branches stay within behaviour controls, Browser rotation, thumbnail rendering, tour labels, and crop editing respectively.
 2. Merge one at a time. Pay particular attention to selector-shape conflicts between rotation and cropped-thumbnail tests.
 3. Inspect `git diff --check`, `git status --short`, and the full manifest-fixture diff.
 4. Commit any integration fix only once its combined regression passes.
@@ -16,6 +16,9 @@ Run after tasks 3.1–3.4 are complete and committed, based on the accepted Phas
 - Confirm behaviour transform tests preserve unknown values.
 - Confirm selector fixtures cover crop-only, rotation-only, and crop-plus-rotation.
 - Confirm the tour-label test includes save and rehydration.
+- Confirm crop-edit eligibility excludes `Choice` bodies and uncropped/non-painting annotations.
+- Confirm crop Save writes once, every cancellation path writes zero times, and a service error disables Save.
+- Confirm a single-image crop updates derived dimensions/thumbnail while a multi-annotation composition keeps its canvas dimensions.
 - Do not build packages or manage the development server.
 
 ## Browser review at localhost:3000
@@ -29,6 +32,10 @@ Use both sample manifests and inspect exported manifest JSON after each group.
 5. View that slide in the exhibition grid and confirm its thumbnail uses the crop.
 6. Compare an uncropped slide to ensure its thumbnail path and loading performance remain normal.
 7. Create a full-image tour step, clear “New step,” navigate away, reload, and confirm it remains empty.
+8. Edit an existing crop in the modal; verify its saved region is initially selected against the full source image.
+9. Save crop-only and crop-plus-rotation edits, then verify edit view, Preview, grid thumbnail, and exported JSON.
+10. Cancel through the visible action and Escape, then exercise an unavailable service and confirm all three paths leave the original body unchanged.
+11. Edit one of several painting annotations and confirm only that body changes and the composition dimensions remain stable.
 
 ## Whole-program smoke review
 
@@ -40,7 +47,7 @@ Use both sample manifests and inspect exported manifest JSON after each group.
 
 ## Deferred handoff
 
-For D1–D4, confirm each brief still states the unresolved evidence/decision. If Phase 3 work resolved a prerequisite, update the deferred brief but do not quietly expand this phase to implement it.
+For D1 and D4, confirm each brief still states its remaining release or product-decision gate. D2 and D3 were promoted into tasks 3.5 and 2.4 after their questions were answered.
 
 ## Final decision
 
@@ -51,4 +58,4 @@ For D1–D4, confirm each brief still states the unresolved evidence/decision. I
 - [ ] Integration changes are committed after confidence is established.
 - [ ] Deferred items have named next evidence/owners for triage.
 
-The accepted commit is the program handoff point. Record checks, known limitations, and the four deferred decisions in its PR or release notes.
+The accepted commit is the program handoff point. Record checks, known limitations, and the two remaining deferred handoffs in its PR or release notes.

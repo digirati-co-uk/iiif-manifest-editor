@@ -20,8 +20,8 @@ Do not start, stop, kill, or rebuild the development server. It is already runni
 | ------------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | [1 — Foundations](./phase-1-foundations/README.md)           | 4                    | Stable host extension APIs, the requested IIIF Browser version, shared creator settings, and explicit post-create selection behavior |
 | [2 — Authoring](./phase-2-authoring/README.md)               | 4                    | Consistent slide lifecycle, creator parity, manifest/splash editing, and repaired info-box editing                                   |
-| [3 — Layout and media](./phase-3-layout-and-media/README.md) | 4                    | Consistent layout controls, rotation persistence, cropped thumbnails, and clearable tour-step labels                                 |
-| [Deferred](./deferred/README.md)                             | 4 discovery packages | Issues that need a product/data-model decision, reproducible network conditions, or a separately reviewed interaction design         |
+| [3 — Layout and media](./phase-3-layout-and-media/README.md) | 5                    | Consistent layout controls, rotation persistence, crop editing/rendering, and clearable tour-step labels                              |
+| [Deferred](./deferred/README.md)                             | 2 follow-up packages | An upstream Browser release/retest and the product terminology decision                                                               |
 
 ## Test manifests
 
@@ -42,7 +42,7 @@ Import a URL from the home screen, then use “Open in Exhibition Editor.” Do 
 | Select a newly added blank slide                                                        | [1.4](./phase-1-foundations/04-creator-completion-selection.md)       |
 | Do not auto-open an annotation after “Add media”; return to edit mode                   | [1.4](./phase-1-foundations/04-creator-completion-selection.md)       |
 | Annotation left/right removes image behavior or is unnecessary for scroll               | [3.1](./phase-3-layout-and-media/01-behaviour-controls.md)            |
-| Add IIIF Browser MDX editor plugin without splitting history                            | [D.3](./deferred/D3-iiif-browser-mdx-plugin.md)                       |
+| Add IIIF Browser MDX editor plugin without splitting history                            | [2.4](./phase-2-authoring/04-info-box-editor.md)                      |
 | Manifest title opens manifest properties; remove manifest overview                      | [2.3](./phase-2-authoring/03-manifest-and-splash-editing.md)          |
 | Info-box label belongs in the main panel                                                | [2.4](./phase-2-authoring/04-info-box-editor.md)                      |
 | Info-box image editing is buggy and has no back action                                  | [2.4](./phase-2-authoring/04-info-box-editor.md)                      |
@@ -57,7 +57,7 @@ Import a URL from the home screen, then use “Open in Exhibition Editor.” Do 
 | IIIF Browser rotation is not persisted                                                  | [3.2](./phase-3-layout-and-media/02-browser-rotation.md)              |
 | Image cover is offered only on the splash slide                                         | [3.1](./phase-3-layout-and-media/01-behaviour-controls.md)            |
 | Grid thumbnail ignores a single-image crop                                              | [3.3](./phase-3-layout-and-media/03-cropped-grid-thumbnail.md)        |
-| Edit an existing crop through `requestAnnotation()`                                     | [D.2](./deferred/D2-edit-image-crop.md)                               |
+| Edit an existing crop through `requestAnnotation()`                                     | [3.5](./phase-3-layout-and-media/05-edit-image-crop.md)               |
 | “New step” cannot be cleared for full-image tour steps                                  | [3.4](./phase-3-layout-and-media/04-clear-tour-step-label.md)         |
 | Make slide/canvas/section terminology consistent                                        | [D.4](./deferred/D4-exhibition-terminology.md)                        |
 | Forked creators duplicate settings; add a shared configuration key                      | [1.3](./phase-1-foundations/03-shared-creator-configuration.md)       |
@@ -68,4 +68,5 @@ Import a URL from the home screen, then use “Open in Exhibition Editor.” Do 
 - `skipEditingOnCreate` already exists in `RenderCreator` and is used by the slideshow “Add content” path. Task 1.4 should test and complete that contract, not introduce a competing mechanism.
 - The live preview menu already contains the active template, but it does not identify it as current; its action still says “Change preset.”
 - The requested IIIF Browser source is the local `iiif-browser` commit `c69b412`. It includes split MDX styling and both MDX integrations.
+- Browser selection failure D.1 is confirmed upstream at `c69b412`; Phase 1 remains pending a replacement package and selection-matrix rerun.
 - The embedded exhibition viewer tried `localhost:5174` during inspection and was unavailable. Editor behavior at port 3000 is still testable. A task requiring live viewer behavior must record whether it used the remote preview URL or a separately available viewer; it must not start or kill that viewer itself.

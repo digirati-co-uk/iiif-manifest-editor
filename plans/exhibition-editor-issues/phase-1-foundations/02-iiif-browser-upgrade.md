@@ -27,7 +27,7 @@ This task owns the Phase 1 lockfile update. Other Phase 1 tasks must not run a g
 
 - The workspace currently points at `...iiif-browser@6665b7e`.
 - `c69b412` moves MDX plugin styles into `iiif-browser/mdx-plugins.css` and pares the base `index.css` back to browser styles.
-- MDX packages are optional peer integrations. Do not add `@mdxeditor/editor` merely to complete this dependency upgrade; that belongs to D.3 after its data-model decision.
+- MDX packages are optional peer integrations. Do not add `@mdxeditor/editor` merely to complete this dependency upgrade; the now-decided image-plugin integration belongs to Phase 2 task 2.4.
 
 ## Implementation steps
 

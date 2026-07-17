@@ -3,10 +3,11 @@
 ## Decision
 
 The four Phase 1 implementation tasks are integrated on `feature/Q3-2026`.
-The host/editor work is ready, but the phase review is not fully green: the
-existing IIIF Browser Select-availability problem in
-[D1](../deferred/D1-browser-select-availability.md) was reproduced and blocks
-the selection-dependent parts of the Browser upgrade acceptance matrix.
+The host/editor work is ready, but the phase review is not fully green. The
+IIIF Browser Select-availability problem in
+[D1](../deferred/D1-browser-select-availability.md) is now confirmed as an
+upstream `c69b412` defect and blocks the selection-dependent parts of the
+Browser upgrade acceptance matrix until a replacement package is supplied.
 
 Do not treat crop, rotation-control, multi-select, or narrow Browser modal
 behaviour as signed off from this review. The dependency, base styling,
@@ -80,9 +81,18 @@ Not passed:
 - Resizing across the editor breakpoint remounted/closed the open Browser
   modal, so the Browser's narrow-width modal layout was not signed off.
 
-This matches the separately deferred D1 report closely enough that it should be
-investigated there with a deterministic Browser-level reproduction rather than
-patched in the editor adapter speculatively.
+Follow-up diagnosis reproduced this directly in the standalone Browser. In the
+cached-parent Canvas resolution path, Browser history emits the correct Canvas
+selection and `browserSuccess()` then emits the parent Manifest as a second
+resource selection. The late Manifest overwrites the Canvas; because this host
+does not expose a Manifest output action, the footer becomes “No actions
+available.” D1 records the exact upstream handoff and regression test.
+
+The running port-3000 workspace also still resolved its Browser symlink to the
+older package directory during this review. Once a fixed version is supplied,
+the normal human-owned install/server reload must complete before the Browser
+acceptance matrix is considered a test of that version. This review did not
+stop, rebuild, or replace the running development server.
 
 ## Phase gate
 
