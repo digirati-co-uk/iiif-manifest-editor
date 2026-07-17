@@ -34,9 +34,15 @@ export function HTMLEditor({
     }
   }, []);
   const debounceSave = useDebounce(internalOnChange, 400);
-  const memoState = useMemo(() => {
+  const markdown = useMemo(() => {
     return htmlToMarkdown(value);
-  }, []);
+  }, [value]);
+
+  useEffect(() => {
+    if (value === lastEmittedHtml.current) return;
+    lastEmittedHtml.current = value;
+    editorRef.current?.setMarkdown(markdown);
+  }, [markdown, value]);
 
   useEffect(() => {
     const ref = editorRef.current;
@@ -71,7 +77,7 @@ export function HTMLEditor({
         ].join(" "),
         className,
       )}
-      markdown={memoState}
+      markdown={markdown}
       onError={(err) => {
         console.log("err", err);
       }}
