@@ -10,15 +10,10 @@ export function splitTourStepHtml(value: string | null | undefined) {
     const template = document.createElement("template");
     template.innerHTML = html;
     const firstNode = Array.from(template.content.childNodes).find(
-      (node) =>
-        node.nodeType === Node.ELEMENT_NODE ||
-        (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()),
+      (node) => node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()),
     );
 
-    if (
-      firstNode?.nodeType === Node.ELEMENT_NODE &&
-      /^h[1-6]$/i.test((firstNode as HTMLElement).tagName)
-    ) {
+    if (firstNode?.nodeType === Node.ELEMENT_NODE && /^h[1-6]$/i.test((firstNode as HTMLElement).tagName)) {
       const label = firstNode.textContent?.trim() || "";
       firstNode.remove();
       return {
@@ -30,9 +25,7 @@ export function splitTourStepHtml(value: string | null | undefined) {
     return { label: undefined, summary: sanitizeSummaryHtml(html) };
   }
 
-  const match = html.match(
-    /^(?:\s|<!--[\s\S]*?-->)*<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>\s*/i,
-  );
+  const match = html.match(/^(?:\s|<!--[\s\S]*?-->)*<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>\s*/i);
   if (!match) {
     return { label: undefined, summary: sanitizeSummaryHtml(html) };
   }
@@ -44,7 +37,7 @@ export function splitTourStepHtml(value: string | null | undefined) {
 }
 
 export function joinTourStepHtml(label: string | undefined, summary: string) {
-  const cleanLabel = label?.trim() ? `<h2>${escapeHtml(label.trim())}</h2>` : "";
+  const cleanLabel = label === undefined ? "" : label.trim() ? `<h2>${escapeHtml(label.trim())}</h2>` : "<h2></h2>";
   const cleanSummary = sanitizeSummaryHtml(summary || "");
 
   return `${cleanLabel}${cleanSummary}`;

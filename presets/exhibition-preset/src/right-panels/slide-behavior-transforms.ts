@@ -1,4 +1,4 @@
-export type LayoutPreset = "image" | "right" | "left" | "bottom";
+export type LayoutPreset = "image" | "right" | "left" | "bottom" | "top";
 
 export const positionBehaviors = new Set(["left", "right", "bottom", "top"]);
 export const layoutBehaviors = new Set([...positionBehaviors, "image"]);

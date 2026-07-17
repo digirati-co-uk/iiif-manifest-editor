@@ -16,6 +16,12 @@ describe("slide behavior transforms", () => {
       expected: ["custom-before", "bottom", "cover", "custom-after"],
     },
     {
+      name: "supports text above an image",
+      behavior: ["image", "bottom", "custom"],
+      preset: "top" as const,
+      expected: ["image", "top", "custom"],
+    },
+    {
       name: "removes positions for image-only layout",
       behavior: ["custom", "image", "left"],
       preset: "image" as const,

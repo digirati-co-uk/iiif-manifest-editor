@@ -1,18 +1,10 @@
-import {
-  type ContentState,
-  normaliseContentState,
-  parseContentState,
-  Vault,
-} from "@iiif/helpers";
+import { type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
-import {
-  browserImageApiSelector,
-  type IIIFBrowserOutputItem,
-} from "./iiif-browser-output";
+import { browserImageApiSelector, browserTransformDimensions, type IIIFBrowserOutputItem } from "./iiif-browser-output";
 
 export function croppedRegion(
   imageServiceId: string,
@@ -23,10 +15,11 @@ export function croppedRegion(
     height: number;
   },
   size: string,
+  rotation: number | string = 0,
 ) {
   return `${imageServiceId}/${Math.floor(region.x)},${Math.floor(region.y)},${Math.floor(region.width)},${Math.floor(
     region.height,
-  )}/${size}/0/default.jpg`;
+  )}/${size}/${rotation}/default.jpg`;
 }
 
 export interface IIIFBrowserCreatorPayload {
@@ -35,22 +28,11 @@ export interface IIIFBrowserCreatorPayload {
   // will simplify parsing and importing resources.
   output: IIIFBrowserOutputItem[];
   trackSize?: (dimensions: { width: number; height: number }) => void;
-  trackManifest?: (manifest: {
-    requiredStatement: any;
-    rights: any;
-    metadata?: any[];
-    partOf: any[];
-  }) => void;
+  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
 }
 
-export async function createFromIIIFBrowserOutput(
-  data: IIIFBrowserCreatorPayload,
-  ctx: CreatorFunctionContext,
-) {
-  const targetType = ctx.options.targetType as
-    | "Annotation"
-    | "Canvas"
-    | "ContentResource";
+export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
+  const targetType = ctx.options.targetType as "Annotation" | "Canvas" | "ContentResource";
   const resources = data.output;
 
   const returnResources: any[] = [];
@@ -60,11 +42,7 @@ export async function createFromIIIFBrowserOutput(
     const previewVault = new Vault();
 
     // Case 1 - we want the WHOLE canvas to come across.
-    if (
-      targetType === "Canvas" ||
-      targetType === "Annotation" ||
-      targetType === "ContentResource"
-    ) {
+    if (targetType === "Canvas" || targetType === "Annotation" || targetType === "ContentResource") {
       // Then we should have gotten eit
 
       if (type === "Canvas") {
@@ -77,19 +55,15 @@ export async function createFromIIIFBrowserOutput(
           type: "Manifest",
         });
         // 1st. Check the preview vault.
-        const manifest =
-          existingManifest || (await previewVault.loadManifest(manifestId));
+        const manifest = existingManifest || (await previewVault.loadManifest(manifestId));
 
         invariant(manifest, "Manifest not found");
 
-        const addManifestMetadataToCanvas =
-          ctx.config.addManifestMetadataToCanvas !== false;
+        const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
         data.trackManifest?.({
           requiredStatement: manifest.requiredStatement,
           rights: manifest.rights,
-          ...(addManifestMetadataToCanvas
-            ? { metadata: manifest.metadata || [] }
-            : {}),
+          ...(addManifestMetadataToCanvas ? { metadata: manifest.metadata || [] } : {}),
           partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
         });
         const addManifestTracking = (resource: any): any => {
@@ -100,18 +74,14 @@ export async function createFromIIIFBrowserOutput(
             };
           }
           const metadata =
-            resource.type === "Canvas" && !addManifestMetadataToCanvas
-              ? {}
-              : { metadata: manifest.metadata || [] };
+            resource.type === "Canvas" && !addManifestMetadataToCanvas ? {} : { metadata: manifest.metadata || [] };
 
           return {
             requiredStatement: manifest.requiredStatement,
             rights: manifest.rights,
             ...metadata,
             ...resource,
-            partOf: [
-              { id: manifestId, type: "Manifest", label: manifest.label },
-            ],
+            partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
           };
         };
 
@@ -132,19 +102,13 @@ export async function createFromIIIFBrowserOutput(
           // Load before embedding.
           ctx.vault.loadSync(fullCanvas.id, addManifestTracking(fullCanvas));
           // Then embed.
-          returnResources.push(
-            ctx.embed({ id: fullCanvas.id, type: "Canvas" }),
-          );
+          returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
           continue;
         }
 
         const annotationPage = previewVault.get(canvas.items[0]!);
         const annotation = previewVault.get(annotationPage.items[0]!);
-        if (
-          targetType === "Annotation" ||
-          targetType === "Canvas" ||
-          targetType === "ContentResource"
-        ) {
+        if (targetType === "Annotation" || targetType === "Canvas" || targetType === "ContentResource") {
           const fullAnnotation = previewVault.toPresentation3<any>(annotation);
           fullAnnotation.id = ctx.generateId("Annotation");
 
@@ -178,8 +142,8 @@ export async function createFromIIIFBrowserOutput(
             if (service && selector?.type === "BoxSelector") {
               const id = service.id || service["@id"] || "";
               if (id) {
-                newBody.id = croppedRegion(id, selector.spatial, "max");
-                thumbnailId = croppedRegion(id, selector.spatial, "512,");
+                newBody.id = croppedRegion(id, selector.spatial, "max", rotation);
+                thumbnailId = croppedRegion(id, selector.spatial, "512,", rotation);
               }
             }
             // Generate cropped image URL.
@@ -191,11 +155,17 @@ export async function createFromIIIFBrowserOutput(
               selector: imageApiSelector,
             };
 
-            if (data.trackSize && selector?.type === "BoxSelector") {
-              data.trackSize({
-                width: ~~selector.spatial.width,
-                height: ~~selector.spatial.height,
-              });
+            const transformedDimensions = browserTransformDimensions(
+              selector?.type === "BoxSelector"
+                ? {
+                    width: ~~selector.spatial.width,
+                    height: ~~selector.spatial.height,
+                  }
+                : dimensions,
+              rotation,
+            );
+            if (data.trackSize) {
+              data.trackSize(transformedDimensions);
             }
 
             if (targetType === "ContentResource") {
@@ -215,14 +185,7 @@ export async function createFromIIIFBrowserOutput(
                 items: [fullAnnotation],
               });
 
-              const width =
-                selector?.type === "BoxSelector"
-                  ? ~~selector.spatial.width
-                  : dimensions.width;
-              const height =
-                selector?.type === "BoxSelector"
-                  ? ~~selector.spatial.height
-                  : dimensions.height;
+              const { width, height } = transformedDimensions;
 
               returnResources.push(
                 ctx.embed(
@@ -278,6 +241,4 @@ export async function createFromIIIFBrowserOutput(
 
   return returnResources;
 }
-export const IIIFBrowserCreatorForm = lazy(
-  () => import("./iiif-browser-form.lazy"),
-);
+export const IIIFBrowserCreatorForm = lazy(() => import("./iiif-browser-form.lazy"));

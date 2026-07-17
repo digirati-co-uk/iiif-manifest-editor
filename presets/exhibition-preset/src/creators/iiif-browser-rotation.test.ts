@@ -18,12 +18,9 @@ vi.mock("@iiif/helpers", async (importOriginal) => {
     ...actual,
     Vault: class {
       get(reference: { id: string }) {
-        return [
-          fixture.manifest,
-          fixture.canvas,
-          fixture.page,
-          fixture.annotation,
-        ].find((resource) => resource.id === reference.id);
+        return [fixture.manifest, fixture.canvas, fixture.page, fixture.annotation].find(
+          (resource) => resource.id === reference.id,
+        );
       }
 
       async loadManifest() {
@@ -83,6 +80,7 @@ describe("createFromIIIFBrowserOutput transforms", () => {
       name: "no transform",
       transform: {},
       expectedBody: { type: "Image" },
+      expectedSize: { width: 1000, height: 800 },
     },
     {
       name: "rotation only",
@@ -91,6 +89,7 @@ describe("createFromIIIFBrowserOutput transforms", () => {
         type: "SpecificResource",
         selector: { type: "ImageApiSelector", rotation: "90" },
       },
+      expectedSize: { width: 800, height: 1000 },
     },
     {
       name: "crop only",
@@ -104,6 +103,7 @@ describe("createFromIIIFBrowserOutput transforms", () => {
         type: "SpecificResource",
         selector: { type: "ImageApiSelector", region: "10,20,300,400" },
       },
+      expectedSize: { width: 300, height: 400 },
     },
     {
       name: "crop and rotation",
@@ -121,33 +121,37 @@ describe("createFromIIIFBrowserOutput transforms", () => {
           region: "10,20,300,400",
           rotation: "270",
         },
+        source: {
+          id: "https://example.org/image/10,20,300,400/max/270/default.jpg",
+        },
       },
+      expectedSize: { width: 400, height: 300 },
     },
-  ])(
-    "creates a painting body for $name",
-    async ({ transform, expectedBody }) => {
-      const output = await createFromIIIFBrowserOutput(
-        {
-          output: [
-            {
-              resource: fixture.canvas,
-              parent: { id: fixture.manifest.id, type: "Manifest" },
-              selector: undefined,
-              rotation: undefined,
-              ...transform,
-            },
-          ],
-        } as IIIFBrowserCreatorPayload,
-        creatorContext(),
-      );
+  ])("creates a painting body for $name", async ({ transform, expectedBody, expectedSize }) => {
+    const trackSize = vi.fn();
+    const output = await createFromIIIFBrowserOutput(
+      {
+        output: [
+          {
+            resource: fixture.canvas,
+            parent: { id: fixture.manifest.id, type: "Manifest" },
+            selector: undefined,
+            rotation: undefined,
+            ...transform,
+          },
+        ],
+        trackSize,
+      } as IIIFBrowserCreatorPayload,
+      creatorContext(),
+    );
 
-      expect(output[0]).toMatchObject({
-        type: "Annotation",
-        target: "https://example.org/target-canvas",
-        body: expectedBody,
-      });
-    },
-  );
+    expect(output[0]).toMatchObject({
+      type: "Annotation",
+      target: "https://example.org/target-canvas",
+      body: expectedBody,
+    });
+    expect(trackSize).toHaveBeenLastCalledWith(expectedSize);
+  });
 });
 
 function creatorContext(): any {

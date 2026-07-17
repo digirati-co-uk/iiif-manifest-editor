@@ -48,6 +48,16 @@ export function getImageApiRegion(resource: any) {
   return null;
 }
 
+export function getImageApiRotation(resource: any) {
+  const selector = resource?.selector;
+  if (!selector || (selector.type !== "iiif:ImageApiSelector" && selector.type !== "ImageApiSelector")) {
+    return null;
+  }
+  const rotation = String(selector.rotation ?? "");
+  const angle = Number(rotation.replace(/^!/, ""));
+  return rotation && Number.isFinite(angle) ? rotation : null;
+}
+
 function isValidImageApiRegion(region: unknown) {
   if (typeof region !== "string") return false;
   const value = region.startsWith("pct:") ? region.slice(4) : region;
@@ -80,8 +90,7 @@ export function shouldUseComplexCanvasThumbnail(
 
       return (
         getImageApiRegion(candidate) !== null ||
-        ((selector?.type === "iiif:ImageApiSelector" ||
-          selector?.type === "ImageApiSelector") &&
+        ((selector?.type === "iiif:ImageApiSelector" || selector?.type === "ImageApiSelector") &&
           Number.isFinite(rotation) &&
           rotation !== 0)
       );
@@ -89,7 +98,7 @@ export function shouldUseComplexCanvasThumbnail(
   });
 }
 
-export function imageUrlWithRegion(id: string, region: string | null) {
+export function imageUrlWithTransform(id: string, region: string | null, rotation: string | null) {
   const parts = id.split("/");
   if (parts.length < 4) return id;
 
@@ -99,8 +108,15 @@ export function imageUrlWithRegion(id: string, region: string | null) {
   if (parts[parts.length - 3] === "full") {
     parts[parts.length - 3] = "256,";
   }
+  if (rotation) {
+    parts[parts.length - 2] = rotation;
+  }
 
   return parts.join("/");
+}
+
+export function imageUrlWithRegion(id: string, region: string | null) {
+  return imageUrlWithTransform(id, region, null);
 }
 
 function LazyThumbnailOuter({
@@ -118,10 +134,7 @@ function LazyThumbnailOuter({
   const vault = useVault();
   const useComplexThumbnail = shouldUseComplexCanvasThumbnail(
     strategy,
-    (body) =>
-      (body?.id
-        ? vault.get(body, { skipSelfReturn: false } as any)
-        : body) || body,
+    (body) => (body?.id ? vault.get(body, { skipSelfReturn: false } as any) : body) || body,
     region,
   );
 
@@ -288,10 +301,7 @@ function ComplexCanvasThumbnail({
         strategy.type !== "images" ||
         !shouldUseComplexCanvasThumbnail(
           strategy,
-          (body) =>
-            (body?.id
-              ? vault.get(body, { skipSelfReturn: false } as any)
-              : body) || body,
+          (body) => (body?.id ? vault.get(body, { skipSelfReturn: false } as any) : body) || body,
           region,
         )
       ) {
@@ -319,6 +329,7 @@ function ComplexCanvasThumbnail({
         const bodyRef = firstBody(image.annotation.body);
         const resource = bodyRef ? vault.get(bodyRef, { skipSelfReturn: false } as any) || bodyRef : image.annotation;
         const imageApiRegion = getImageApiRegion(resource) || getImageApiRegion(bodyRef);
+        const imageApiRotation = getImageApiRotation(resource) || getImageApiRotation(bodyRef);
         await helper
           .getBestThumbnailAtSize(resource, {
             width: 256,
@@ -335,7 +346,7 @@ function ComplexCanvasThumbnail({
               imagesToRender.push({
                 image: {
                   ...thumbnail.best,
-                  id: imageUrlWithRegion(thumbnail.best.id, imageApiRegion),
+                  id: imageUrlWithTransform(thumbnail.best.id, imageApiRegion, imageApiRotation),
                 },
                 target,
               });

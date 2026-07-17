@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import {
   browserImageApiSelector,
+  browserTransformDimensions,
   formatIIIFBrowserOutput,
   type IIIFBrowserSelectedItem,
 } from "../../../../packages/creators/src/ContentResource/IIIFBrowserCreator/iiif-browser-output";
@@ -57,5 +58,10 @@ describe("IIIF Browser output transforms", () => {
   test("omits a selector when there is no transform", () => {
     expect(browserImageApiSelector(undefined, undefined)).toBeUndefined();
     expect(browserImageApiSelector(undefined, 0)).toBeUndefined();
+  });
+
+  test("swaps derived dimensions for quarter-turn rotations", () => {
+    expect(browserTransformDimensions({ width: 1000, height: 800 }, 90)).toEqual({ width: 800, height: 1000 });
+    expect(browserTransformDimensions({ width: 1000, height: 800 }, 180)).toEqual({ width: 1000, height: 800 });
   });
 });

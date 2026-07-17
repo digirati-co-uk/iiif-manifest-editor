@@ -58,6 +58,7 @@ export const layoutPresetOptions: Array<{
   label: string;
 }> = [
   { value: "image", label: "Image only" },
+  { value: "top", label: "Text above image" },
   { value: "bottom", label: "Text below image" },
   { value: "left", label: "Text left of image" },
   { value: "right", label: "Text right of image" },
@@ -921,6 +922,7 @@ export function LayoutPresetCard({
 function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected: boolean }) {
   const isImage = preset === "image";
   const isBottom = preset === "bottom";
+  const isTop = preset === "top";
   const isLeft = preset === "left";
   const textClass = selected ? "bg-white/80" : "bg-[#25211f]";
   const imageClass = selected ? "bg-white/25 ring-white/70" : "bg-[#f8f6f3] ring-[#dcd5ce]";
@@ -930,7 +932,7 @@ function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected
       className={twMerge(
         "flex h-12 w-16 gap-1 overflow-hidden rounded border p-1",
         selected ? "border-white/70 bg-white/15" : "border-[#dcd5ce] bg-white",
-        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
+        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : isTop ? "flex-col-reverse" : "flex-row",
       )}
       aria-hidden="true"
     >
@@ -940,7 +942,7 @@ function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected
           className={twMerge(
             "flex flex-shrink-0 flex-col justify-center gap-0.5 rounded-sm px-0.5",
             textClass,
-            isBottom ? "h-3 w-full" : "h-full w-4",
+            isBottom || isTop ? "h-3 w-full" : "h-full w-4",
           )}
         >
           <TextLines compact tone={selected ? "dark" : "light"} />
@@ -1066,6 +1068,7 @@ export function SimpleFieldLabel({ children }: { children: React.ReactNode }) {
 
 export function getLayoutPreset(behavior: string[]): LayoutPreset {
   if (behavior.includes("left")) return "left";
+  if (behavior.includes("top")) return "top";
   if (behavior.includes("bottom")) return "bottom";
   if (behavior.includes("right")) return "right";
   if (behavior.includes("image")) return "image";
@@ -1423,7 +1426,7 @@ export function TextualContentLayoutEditor() {
   );
 }
 
-const TEXT_LAYOUTS = new Set<LayoutPreset>(["left", "right", "bottom"]);
+const TEXT_LAYOUTS = new Set<LayoutPreset>(["left", "right", "bottom", "top"]);
 
 /**
  * When switching to a layout that shows an editorial text panel, ensure the

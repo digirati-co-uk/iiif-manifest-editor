@@ -1,14 +1,9 @@
 import type { BoxSelector } from "@iiif/helpers";
 import type { IIIFBrowserProps } from "iiif-browser";
 
-type IIIFBrowserCustomFormat = Extract<
-  NonNullable<IIIFBrowserProps["output"]>[number]["format"],
-  { type: "custom" }
->;
+type IIIFBrowserCustomFormat = Extract<NonNullable<IIIFBrowserProps["output"]>[number]["format"], { type: "custom" }>;
 
-export type IIIFBrowserSelectedItem = Parameters<
-  IIIFBrowserCustomFormat["format"]
->[0];
+export type IIIFBrowserSelectedItem = Parameters<IIIFBrowserCustomFormat["format"]>[0];
 
 export interface IIIFBrowserOutputItem {
   resource: any;
@@ -34,18 +29,10 @@ export function formatIIIFBrowserOutput(
   }));
 }
 
-export function browserImageApiSelector(
-  selector: BoxSelector | undefined,
-  rotation: number | undefined,
-) {
+export function browserImageApiSelector(selector: BoxSelector | undefined, rotation: number | undefined) {
   const region =
     selector?.type === "BoxSelector"
-      ? [
-          ~~selector.spatial.x,
-          ~~selector.spatial.y,
-          ~~selector.spatial.width,
-          ~~selector.spatial.height,
-        ].join(",")
+      ? [~~selector.spatial.x, ~~selector.spatial.y, ~~selector.spatial.width, ~~selector.spatial.height].join(",")
       : undefined;
 
   if (!region && !rotation) return undefined;
@@ -55,4 +42,12 @@ export function browserImageApiSelector(
     ...(region ? { region } : {}),
     ...(rotation ? { rotation: `${rotation}` } : {}),
   };
+}
+
+export function browserTransformDimensions(
+  dimensions: { width: number; height: number },
+  rotation: number | undefined,
+) {
+  const angle = Number.isFinite(rotation) ? (((rotation as number) % 360) + 360) % 360 : 0;
+  return angle === 90 || angle === 270 ? { width: dimensions.height, height: dimensions.width } : dimensions;
 }

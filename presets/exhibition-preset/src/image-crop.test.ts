@@ -1,3 +1,4 @@
+import { Vault } from "@iiif/helpers";
 import { describe, expect, test, vi } from "vitest";
 import {
   applyImageCrop,
@@ -5,6 +6,7 @@ import {
   getEditableImageCrop,
   parseCropRegion,
   resolveImageService,
+  rotatedImageDimensions,
   shouldResizeCanvasForCrop,
   transformImageCrop,
 } from "./image-crop";
@@ -24,7 +26,6 @@ function fixture(overrides: any = {}) {
     motivation: "painting",
     body: [
       {
-        id: "specific-1",
         type: "SpecificResource",
         selector: {
           type: "ImageApiSelector",
@@ -50,26 +51,22 @@ describe("existing image crop eligibility", () => {
     expect(getEditableImageCrop(fixture())).not.toBeNull();
     const aliased = fixture();
     aliased.body[0].selector.type = "iiif:ImageApiSelector";
-    expect(getEditableImageCrop(aliased)?.selector.type).toBe(
-      "iiif:ImageApiSelector",
-    );
+    expect(getEditableImageCrop(aliased)?.selector.type).toBe("iiif:ImageApiSelector");
+  });
+
+  test("accepts an inline SpecificResource without an id", () => {
+    expect(getEditableImageCrop(fixture())?.annotationRef).toEqual({
+      id: "annotation-1",
+      type: "Annotation",
+    });
   });
 
   test.each([
-    [
-      "uncropped body",
-      fixture({ body: [{ ...fixture().body[0], selector: undefined }] }),
-    ],
+    ["uncropped body", fixture({ body: [{ ...fixture().body[0], selector: undefined }] })],
     ["non-painting annotation", fixture({ motivation: "commenting" })],
     ["choice body", fixture({ body: [{ type: "Choice", items: [] }] })],
-    [
-      "multiple bodies",
-      fixture({ body: [fixture().body[0], fixture().body[0]] }),
-    ],
-    [
-      "missing service",
-      fixture({ body: [{ ...fixture().body[0], source: { type: "Image" } }] }),
-    ],
+    ["multiple bodies", fixture({ body: [fixture().body[0], fixture().body[0]] })],
+    ["missing service", fixture({ body: [{ ...fixture().body[0], source: { type: "Image" } }] })],
     [
       "malformed selector",
       fixture({
@@ -89,9 +86,7 @@ describe("existing image crop eligibility", () => {
 describe("image service resolution", () => {
   test("uses embedded full dimensions without a request", async () => {
     const fetcher = vi.fn();
-    await expect(resolveImageService(service, fetcher as any)).resolves.toBe(
-      service,
-    );
+    await expect(resolveImageService(service, fetcher as any)).resolves.toBe(service);
     expect(fetcher).not.toHaveBeenCalled();
   });
 
@@ -105,15 +100,12 @@ describe("image service resolution", () => {
         height: 800,
       }),
     });
-    await expect(
-      resolveImageService(
-        { id: service.id, type: "ImageService3" },
-        fetcher as any,
-      ),
-    ).resolves.toMatchObject({
-      width: 1000,
-      height: 800,
-    });
+    await expect(resolveImageService({ id: service.id, type: "ImageService3" }, fetcher as any)).resolves.toMatchObject(
+      {
+        width: 1000,
+        height: 800,
+      },
+    );
     await expect(
       resolveImageService(
         { id: service.id, type: "ImageService3" },
@@ -140,18 +132,13 @@ describe("image crop transform", () => {
       retained: true,
     });
     expect(transformed.source.retained).toBe(true);
-    expect(transformed.sourceId).toBe(
-      "https://images.example.org/iiif/book-1/22,31,500,250/max/90/default.jpg",
-    );
-    expect(transformed.thumbnailId).toBe(
-      "https://images.example.org/iiif/book-1/22,31,500,250/512,/90/default.jpg",
-    );
+    expect(transformed.sourceId).toBe("https://images.example.org/iiif/book-1/22,31,500,250/max/90/default.jpg");
+    expect(transformed.thumbnailId).toBe("https://images.example.org/iiif/book-1/22,31,500,250/512,/90/default.jpg");
   });
 
   test("uses selector rotation when the old request was stale", () => {
     const annotation = fixture();
-    annotation.body[0].source.id =
-      "https://images.example.org/iiif/book-1/10,20,300,400/max/0/default.jpg";
+    annotation.body[0].source.id = "https://images.example.org/iiif/book-1/10,20,300,400/max/0/default.jpg";
     const transformed = transformImageCrop(getEditableImageCrop(annotation)!, {
       x: 2,
       y: 3,
@@ -159,6 +146,17 @@ describe("image crop transform", () => {
       height: 30,
     });
     expect(transformed.sourceId).toContain("/2,3,20,30/max/90/default.jpg");
+  });
+
+  test("reports rotated thumbnail dimensions", () => {
+    expect(rotatedImageDimensions(512, 256, "90")).toEqual({
+      width: 256,
+      height: 512,
+    });
+    expect(rotatedImageDimensions(512, 256, "180")).toEqual({
+      width: 512,
+      height: 256,
+    });
   });
 
   test("rejects malformed regions", () => {
@@ -182,18 +180,13 @@ describe("crop transaction side effects", () => {
   ])("%s performs zero writes", (_, response) => {
     const vault = {
       batch: vi.fn(),
-      loadSync: vi.fn(),
+      dispatch: vi.fn(),
       modifyEntityField: vi.fn(),
     };
     const annotation = fixture();
-    applyImageCropResponse(
-      vault,
-      getEditableImageCrop(annotation)!,
-      { id: "canvas-1" },
-      response as any,
-    );
+    applyImageCropResponse(vault, getEditableImageCrop(annotation)!, { id: "canvas-1" }, response as any);
     expect(vault.batch).not.toHaveBeenCalled();
-    expect(vault.loadSync).not.toHaveBeenCalled();
+    expect(vault.dispatch).not.toHaveBeenCalled();
     expect(vault.modifyEntityField).not.toHaveBeenCalled();
   });
 
@@ -214,7 +207,7 @@ describe("crop transaction side effects", () => {
     const entities: any = { "page-1": page, [annotation.id]: annotation };
     const vault = {
       batch: vi.fn((callback) => callback()),
-      loadSync: vi.fn(),
+      dispatch: vi.fn(),
       modifyEntityField: vi.fn(),
       get: vi.fn((ref) => entities[ref.id]),
     };
@@ -227,16 +220,15 @@ describe("crop transaction side effects", () => {
     });
 
     expect(vault.batch).toHaveBeenCalledTimes(1);
-    expect(vault.modifyEntityField).toHaveBeenCalledWith(
-      { id: "canvas-1", type: "Canvas" },
-      "width",
-      320,
-    );
-    expect(vault.modifyEntityField).toHaveBeenCalledWith(
-      { id: "canvas-1", type: "Canvas" },
-      "height",
-      180,
-    );
+    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "annotation-1", type: "Annotation" }, "body", [
+      expect.objectContaining({
+        type: "SpecificResource",
+        selector: expect.objectContaining({ region: "1,2,320,180" }),
+        source: expect.objectContaining({ type: "ContentResource" }),
+      }),
+    ]);
+    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "width", 320);
+    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "height", 180);
     expect(vault.modifyEntityField).toHaveBeenCalledWith(
       { id: "canvas-1", type: "Canvas" },
       "thumbnail",
@@ -246,9 +238,72 @@ describe("crop transaction side effects", () => {
 
   test("retains composition dimensions for multiple paintings and multi-image canvases", () => {
     expect(shouldResizeCanvasForCrop({ behavior: [] }, 2)).toBe(false);
-    expect(shouldResizeCanvasForCrop({ behavior: ["multi-image"] }, 1)).toBe(
-      false,
-    );
+    expect(shouldResizeCanvasForCrop({ behavior: ["multi-image"] }, 1)).toBe(false);
     expect(shouldResizeCanvasForCrop({ behavior: [] }, 1)).toBe(true);
+  });
+
+  test("updates and exports an inline normalized SpecificResource", () => {
+    const vault = new Vault();
+    const manifest = {
+      id: "https://example.org/manifest",
+      type: "Manifest",
+      label: { en: ["Crop test"] },
+      items: [
+        {
+          id: "https://example.org/canvas",
+          type: "Canvas",
+          width: 1000,
+          height: 1000,
+          items: [
+            {
+              id: "https://example.org/page",
+              type: "AnnotationPage",
+              items: [fixture()],
+            },
+          ],
+        },
+      ],
+    };
+    vault.loadManifestSync(manifest.id, manifest as any);
+    const annotation = vault.get<any>({
+      id: "annotation-1",
+      type: "Annotation",
+    });
+    const canvas = vault.get<any>({
+      id: "https://example.org/canvas",
+      type: "Canvas",
+    });
+    const crop = getEditableImageCrop(
+      annotation,
+      (resource) =>
+        vault.get(resource, {
+          preserveSpecificResources: true,
+          skipSelfReturn: false,
+        } as any) || resource,
+    );
+    expect(crop?.source.type).toBe("Image");
+
+    applyImageCrop(vault, crop!, canvas, {
+      x: 40,
+      y: 50,
+      width: 600,
+      height: 300,
+    });
+
+    const exported = vault.toPresentation3<any>({
+      id: manifest.id,
+      type: "Manifest",
+    });
+    expect(exported.items[0].items[0].items[0].body).toMatchObject({
+      type: "SpecificResource",
+      selector: {
+        type: "ImageApiSelector",
+        region: "40,50,600,300",
+        rotation: "90",
+      },
+      source: {
+        id: expect.stringContaining("/40,50,600,300/max/90/default.jpg"),
+      },
+    });
   });
 });

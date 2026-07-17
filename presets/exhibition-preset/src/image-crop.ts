@@ -5,6 +5,7 @@ import {
   isImageService,
   parseImageServiceRequest,
 } from "@iiif/parser/image-3";
+import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 
 export interface CropRegion {
   x: number;
@@ -15,8 +16,8 @@ export interface CropRegion {
 
 export interface EditableImageCrop {
   annotation: any;
+  annotationRef: { id: string; type: "Annotation" };
   body: any;
-  bodyRef: { id: string; type: string };
   selector: any;
   source: any;
   service: any;
@@ -28,24 +29,13 @@ export function getEditableImageCrop(
   annotation: any,
   resolve: Resolver = (resource) => resource,
 ): EditableImageCrop | null {
-  const motivations = Array.isArray(annotation?.motivation)
-    ? annotation.motivation
-    : [annotation?.motivation];
-  const bodyRefs = Array.isArray(annotation?.body)
-    ? annotation.body
-    : annotation?.body
-      ? [annotation.body]
-      : [];
+  const motivations = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
+  const bodyRefs = Array.isArray(annotation?.body) ? annotation.body : annotation?.body ? [annotation.body] : [];
   if (!motivations.includes("painting") || bodyRefs.length !== 1) return null;
 
   const bodyRef = bodyRefs[0];
-  const body = resolve(bodyRef) || bodyRef;
-  if (
-    body?.type !== "SpecificResource" ||
-    !body?.id ||
-    body?.source?.type === "Choice"
-  )
-    return null;
+  const body = bodyRef;
+  if (!annotation?.id || body?.type !== "SpecificResource" || body?.source?.type === "Choice") return null;
 
   const selector = body.selector;
   if (
@@ -59,11 +49,7 @@ export function getEditableImageCrop(
   const source = resolve(body.source) || body.source;
   if (source?.type !== "Image") return null;
 
-  const services = Array.isArray(source.service)
-    ? source.service
-    : source.service
-      ? [source.service]
-      : [];
+  const services = Array.isArray(source.service) ? source.service : source.service ? [source.service] : [];
   const service = services
     .map((item: any) => resolve(item) || item)
     .find((item: any) => isImageService(item) && (item.id || item["@id"]));
@@ -71,8 +57,8 @@ export function getEditableImageCrop(
 
   return {
     annotation,
+    annotationRef: { id: annotation.id, type: "Annotation" },
     body,
-    bodyRef: { id: body.id, type: body.type },
     selector,
     source,
     service,
@@ -104,10 +90,7 @@ export function normaliseCropRegion(region: CropRegion): CropRegion {
   return normalised;
 }
 
-export function transformImageCrop(
-  crop: EditableImageCrop,
-  editedRegion: CropRegion,
-) {
+export function transformImageCrop(crop: EditableImageCrop, editedRegion: CropRegion) {
   const region = normaliseCropRegion(editedRegion);
   const selector = { ...crop.selector, region: serialiseCropRegion(region) };
   const sourceId = imageRequestForCrop(crop, region);
@@ -130,95 +113,96 @@ export function applyImageCropResponse(
   vault: any,
   crop: EditableImageCrop,
   canvas: any,
-  response:
-    | { cancelled?: boolean; boundingBox?: CropRegion | null }
-    | null
-    | undefined,
+  response: { cancelled?: boolean; boundingBox?: CropRegion | null } | null | undefined,
 ) {
   if (!response || response.cancelled || !response.boundingBox) return null;
   return applyImageCrop(vault, crop, canvas, response.boundingBox);
 }
 
-export function shouldResizeCanvasForCrop(
-  canvas: any,
-  paintingAnnotationCount: number,
-) {
-  const behavior = Array.isArray(canvas?.behavior)
-    ? canvas.behavior
-    : canvas?.behavior
-      ? [canvas.behavior]
-      : [];
+export function shouldResizeCanvasForCrop(canvas: any, paintingAnnotationCount: number) {
+  const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : canvas?.behavior ? [canvas.behavior] : [];
   return paintingAnnotationCount === 1 && !behavior.includes("multi-image");
 }
 
-export function applyImageCrop(
-  vault: any,
-  crop: EditableImageCrop,
-  canvas: any,
-  editedRegion: CropRegion,
-) {
+export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any, editedRegion: CropRegion) {
   const transformed = transformImageCrop(crop, editedRegion);
   const paintingAnnotationCount = countPaintingAnnotations(vault, canvas);
+  const thumbnailDimensions = rotatedImageDimensions(
+    512,
+    Math.round((transformed.region.height / transformed.region.width) * 512),
+    crop.selector.rotation,
+  );
 
   vault.batch(() => {
-    vault.loadSync(transformed.sourceId, transformed.source);
-    vault.modifyEntityField(crop.bodyRef, "selector", transformed.selector);
-    vault.modifyEntityField(crop.bodyRef, "source", {
-      id: transformed.sourceId,
-      type: "ContentResource",
-    });
+    vault.dispatch(
+      importEntities({
+        entities: {
+          ContentResource: {
+            [transformed.sourceId]: transformed.source,
+            [transformed.thumbnailId]: {
+              id: transformed.thumbnailId,
+              type: "Image",
+              format: "image/jpeg",
+              width: thumbnailDimensions.width,
+              height: thumbnailDimensions.height,
+              service: [crop.service],
+            },
+          },
+        },
+      }),
+    );
+    vault.dispatch(
+      addMappings({
+        mapping: {
+          [transformed.sourceId]: "ContentResource",
+          [transformed.thumbnailId]: "ContentResource",
+        },
+      }),
+    );
+    vault.modifyEntityField(crop.annotationRef, "body", [
+      {
+        ...crop.body,
+        selector: transformed.selector,
+        source: {
+          id: transformed.sourceId,
+          type: "ContentResource",
+        },
+      },
+    ]);
 
-    vault.loadSync(transformed.thumbnailId, {
-      id: transformed.thumbnailId,
-      type: "Image",
-      format: "image/jpeg",
-      width: 512,
-      height: Math.round(
-        (transformed.region.height / transformed.region.width) * 512,
-      ),
-      service: [crop.service],
-    });
     vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "thumbnail", [
       { id: transformed.thumbnailId, type: "ContentResource" },
     ]);
 
     if (shouldResizeCanvasForCrop(canvas, paintingAnnotationCount)) {
-      vault.modifyEntityField(
-        { id: canvas.id, type: "Canvas" },
-        "width",
-        transformed.region.width,
-      );
-      vault.modifyEntityField(
-        { id: canvas.id, type: "Canvas" },
-        "height",
-        transformed.region.height,
-      );
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", transformed.region.width);
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", transformed.region.height);
     }
   });
 
   return transformed;
 }
 
-export function getServiceDimensions(
-  service: any,
-): { width: number; height: number } | null {
+export function rotatedImageDimensions(width: number, height: number, rotation: unknown) {
+  const angle = Number(String(rotation ?? 0).replace(/^!/, ""));
+  const normalised = Number.isFinite(angle) ? ((angle % 360) + 360) % 360 : 0;
+  return normalised === 90 || normalised === 270 ? { width: height, height: width } : { width, height };
+}
+
+export function getServiceDimensions(service: any): { width: number; height: number } | null {
   const width = Number(service?.width);
   const height = Number(service?.height);
   return width > 0 && height > 0 ? { width, height } : null;
 }
 
-export async function resolveImageService(
-  service: any,
-  fetcher: typeof fetch = fetch,
-): Promise<any> {
+export async function resolveImageService(service: any, fetcher: typeof fetch = fetch): Promise<any> {
   if (getServiceDimensions(service)) return service;
 
   const serviceId = service?.id || service?.["@id"];
   if (!serviceId) throw new Error("The image service has no identifier");
 
   const response = await fetcher(canonicalServiceUrl(serviceId));
-  if (!response.ok)
-    throw new Error(`The image service returned ${response.status}`);
+  if (!response.ok) throw new Error(`The image service returned ${response.status}`);
   const info = await response.json();
   const resolved = {
     ...service,
@@ -235,14 +219,9 @@ function serialiseCropRegion(region: CropRegion) {
   return `${region.x},${region.y},${region.width},${region.height}`;
 }
 
-function imageRequestForCrop(
-  crop: EditableImageCrop,
-  region: CropRegion,
-  thumbnailWidth?: number,
-) {
+function imageRequestForCrop(crop: EditableImageCrop, region: CropRegion, thumbnailWidth?: number) {
   const parsedSource = parseImageRequest(crop.source.id);
-  const request =
-    parsedSource || createImageServiceRequest(normaliseService(crop.service));
+  const request = parsedSource || createImageServiceRequest(normaliseService(crop.service));
   const rotation =
     crop.selector.rotation !== undefined
       ? selectorRotation(crop.selector.rotation)
@@ -289,11 +268,8 @@ function countPaintingAnnotations(vault: any, canvas: any) {
   for (const pageRef of canvas?.items || []) {
     const page = vault.get(pageRef, { skipSelfReturn: false }) || pageRef;
     for (const annotationRef of page?.items || []) {
-      const annotation =
-        vault.get(annotationRef, { skipSelfReturn: false }) || annotationRef;
-      const motivations = Array.isArray(annotation?.motivation)
-        ? annotation.motivation
-        : [annotation?.motivation];
+      const annotation = vault.get(annotationRef, { skipSelfReturn: false }) || annotationRef;
+      const motivations = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
       if (motivations.includes("painting")) count++;
     }
   }
