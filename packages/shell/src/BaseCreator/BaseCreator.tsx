@@ -28,6 +28,7 @@ import { useTemporaryHighlight } from "../highlighted-image-resources";
 import { ModulePanelButton, useSetCustomTitle } from "../Layout/components/ModularPanel";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { useInlineCreator } from "./BaseCreator.hooks";
+import { completeCreator } from "./creator-completion";
 import { useInitialData } from "./CreatorInitialData";
 
 interface BaseCreatorProps {
@@ -67,42 +68,37 @@ export const RenderCreator = memo(function RenderCreator(props: {
     initialData: { ...initialData, ...(props.resource.initialData || {}), ...(props.initialData || {}) },
   };
 
-  const runCreate = (payload: any) => {
+  const runCreate = async (payload: any) => {
+    if (isCreating || isCreatingRef.current) return;
+
+    setIsCreating(true);
+    isCreatingRef.current = true;
+
     try {
-      if (isCreating || isCreatingRef.current) return;
-      setIsCreating(true);
-      isCreatingRef.current = true;
-      creator
-        .create(props.creator.id, payload, options)
-        .catch((err) => {
-          setError(err?.message || "Unknown error");
-          return null;
-        })
-        .then(async (ref) => {
-          props.onCreate?.();
-          if (props.resource.initialData?.skipEditingOnCreate) {
-            setIsCreating(false);
-            modal.popStack();
-            modal.close();
-            return;
-          }
-          if (props.skipEditingOnCreate) return;
-          if (!ref) return;
-          const singleRef = Array.isArray(ref) ? ref[0] : ref;
-          setIsCreating(false);
-          modal.popStack();
-          modal.close();
-          // Ref might be an array?
-          if (singleRef) {
-            edit(singleRef!, {
-              parent: toRef(props.resource.parent),
-              property: props.resource.property,
-              index: props.resource.index,
-            });
-          }
-        });
+      await completeCreator({
+        create: () => creator.create(props.creator.id, payload, options),
+        onCreate: props.onCreate,
+        close: props.skipEditingOnCreate
+          ? undefined
+          : () => {
+              modal.popStack();
+              modal.close();
+            },
+        edit:
+          props.skipEditingOnCreate || props.resource.initialData?.skipEditingOnCreate
+            ? undefined
+            : (resource) =>
+                edit(resource, {
+                  parent: toRef(props.resource.parent),
+                  property: props.resource.property,
+                  index: props.resource.index,
+                }),
+      });
     } catch (err: any) {
       setError(err?.message || "Unknown error");
+    } finally {
+      setIsCreating(false);
+      isCreatingRef.current = false;
     }
   };
 
