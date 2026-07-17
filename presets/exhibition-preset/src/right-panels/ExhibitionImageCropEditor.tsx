@@ -231,24 +231,35 @@ function CropRegionRequest({
   onError: (message: string) => void;
 }) {
   const popup = useMemo(() => <CropRequestActions />, []);
-  const { requestAnnotation, cancelRequest } = useRequestAnnotation();
+  const { requestAnnotation, cancelRequest, requestId } =
+    useRequestAnnotation();
+  const requestRef = useRef(requestAnnotation);
+  const cancelRef = useRef(cancelRequest);
+  const resolveRef = useRef(onResolve);
+  const errorRef = useRef(onError);
+  requestRef.current = requestAnnotation;
+  cancelRef.current = cancelRequest;
+  resolveRef.current = onResolve;
+  errorRef.current = onError;
 
   useEffect(() => {
+    if (!requestId) return;
     let active = true;
-    requestAnnotation({
-      type: "box",
-      bounds,
-      selector: initialRegion,
-      annotationPopup: popup,
-    })
+    requestRef
+      .current({
+        type: "box",
+        bounds,
+        selector: initialRegion,
+        annotationPopup: popup,
+      })
       .then((response) => {
         if (active && response) {
-          return onResolve(response);
+          return resolveRef.current(response);
         }
       })
       .catch((reason) => {
         if (active)
-          onError(
+          errorRef.current(
             reason instanceof Error
               ? reason.message
               : "The crop editor could not be opened",
@@ -257,20 +268,19 @@ function CropRegionRequest({
 
     return () => {
       active = false;
-      cancelRequest();
+      cancelRef.current();
     };
   }, [
+    bounds.x,
+    bounds.y,
     bounds.height,
     bounds.width,
-    cancelRequest,
     initialRegion.height,
     initialRegion.width,
     initialRegion.x,
     initialRegion.y,
-    onError,
-    onResolve,
     popup,
-    requestAnnotation,
+    requestId,
   ]);
 
   return <RenderAnnotationEditing />;
