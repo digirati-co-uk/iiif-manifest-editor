@@ -41,11 +41,52 @@ export function getImageApiRegion(resource: any) {
   if (
     selector &&
     (selector.type === "iiif:ImageApiSelector" || selector.type === "ImageApiSelector") &&
-    typeof selector.region === "string"
+    isValidImageApiRegion(selector.region)
   ) {
     return selector.region;
   }
   return null;
+}
+
+function isValidImageApiRegion(region: unknown) {
+  if (typeof region !== "string") return false;
+  const value = region.startsWith("pct:") ? region.slice(4) : region;
+  const parts = value.split(",").map(Number);
+  return (
+    parts.length === 4 &&
+    parts.every(Number.isFinite) &&
+    parts[0]! >= 0 &&
+    parts[1]! >= 0 &&
+    parts[2]! > 0 &&
+    parts[3]! > 0
+  );
+}
+
+export function shouldUseComplexCanvasThumbnail(
+  strategy: any,
+  resolveBody: (body: any) => any = (body) => body,
+  region?: ThumbnailRegion,
+) {
+  if (strategy.type !== "images") return false;
+  if (strategy.images.length > 1 || region) return true;
+
+  return strategy.images.some((image: any) => {
+    const body = firstBody(image.annotation?.body);
+    const resource = resolveBody(body);
+
+    return [resource, body].some((candidate) => {
+      const selector = candidate?.selector;
+      const rotation = Number(selector?.rotation);
+
+      return (
+        getImageApiRegion(candidate) !== null ||
+        ((selector?.type === "iiif:ImageApiSelector" ||
+          selector?.type === "ImageApiSelector") &&
+          Number.isFinite(rotation) &&
+          rotation !== 0)
+      );
+    });
+  });
 }
 
 export function imageUrlWithRegion(id: string, region: string | null) {
@@ -74,8 +115,17 @@ function LazyThumbnailOuter({
   singleImage?: boolean;
 }) {
   const [strategy] = useRenderingStrategy();
+  const vault = useVault();
+  const useComplexThumbnail = shouldUseComplexCanvasThumbnail(
+    strategy,
+    (body) =>
+      (body?.id
+        ? vault.get(body, { skipSelfReturn: false } as any)
+        : body) || body,
+    region,
+  );
 
-  if (strategy.type === "images" && (strategy.images.length > 1 || region)) {
+  if (useComplexThumbnail) {
     return <ComplexCanvasThumbnail cover={cover} fade={fade} region={region} singleImage={singleImage} />;
   }
 
@@ -233,7 +283,18 @@ function ComplexCanvasThumbnail({
     const abort = new AbortController();
 
     (async () => {
-      if (!canvas || strategy.type !== "images" || (!region && strategy.images.length <= 1)) {
+      if (
+        !canvas ||
+        strategy.type !== "images" ||
+        !shouldUseComplexCanvasThumbnail(
+          strategy,
+          (body) =>
+            (body?.id
+              ? vault.get(body, { skipSelfReturn: false } as any)
+              : body) || body,
+          region,
+        )
+      ) {
         return;
       }
 

@@ -1,4 +1,9 @@
-import { getImageApiRegion, getRegionIntersection, imageUrlWithRegion } from "@manifest-editor/components";
+import {
+  getImageApiRegion,
+  getRegionIntersection,
+  imageUrlWithRegion,
+  shouldUseComplexCanvasThumbnail,
+} from "../../../../packages/components/src/LazyThumbnail";
 import { describe, expect, test } from "vitest";
 
 describe("getRegionIntersection", () => {
@@ -34,5 +39,64 @@ describe("imageUrlWithRegion", () => {
     expect(
       imageUrlWithRegion("https://example.org/iiif/image/full/256,/0/default.jpg", getImageApiRegion(body)),
     ).toBe("https://example.org/iiif/image/10,20,300,400/256,/0/default.jpg");
+  });
+});
+
+describe("shouldUseComplexCanvasThumbnail", () => {
+  const image = (body: any) => ({
+    annotation: { body },
+  });
+
+  test("uses the ordinary path for one uncropped image", () => {
+    expect(
+      shouldUseComplexCanvasThumbnail({
+        type: "images",
+        images: [image({ id: "https://example.org/image.jpg", type: "Image" })],
+      }),
+    ).toBe(false);
+  });
+
+  test("uses the composition path for a single valid body crop", () => {
+    expect(
+      shouldUseComplexCanvasThumbnail({
+        type: "images",
+        images: [
+          image({
+            type: "SpecificResource",
+            selector: {
+              type: "ImageApiSelector",
+              region: "10,20,300,400",
+            },
+          }),
+        ],
+      }),
+    ).toBe(true);
+  });
+
+  test("retains existing complex cases and rejects malformed selectors", () => {
+    const malformed = {
+      type: "images",
+      images: [
+        image({
+          type: "SpecificResource",
+          selector: { type: "ImageApiSelector", region: "not-a-region" },
+        }),
+      ],
+    };
+
+    expect(shouldUseComplexCanvasThumbnail(malformed)).toBe(false);
+    expect(
+      shouldUseComplexCanvasThumbnail({
+        type: "images",
+        images: [image({ type: "Image" }), image({ type: "Image" })],
+      }),
+    ).toBe(true);
+    expect(
+      shouldUseComplexCanvasThumbnail(
+        { type: "images", images: [image({ type: "Image" })] },
+        undefined,
+        { x: 0, y: 0, width: 100, height: 100 },
+      ),
+    ).toBe(true);
   });
 });
