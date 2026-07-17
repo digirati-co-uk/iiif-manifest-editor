@@ -40,6 +40,8 @@ function fixture(overrides: any = {}) {
           id: "https://images.example.org/iiif/book-1/10,20,300,400/max/90/default.jpg",
           type: "Image",
           format: "image/jpeg",
+          width: 777,
+          height: 1024,
           service: [service],
           retained: true,
         },
@@ -153,12 +155,16 @@ describe("image crop transform", () => {
       retained: true,
     });
     expect(transformed.source.retained).toBe(true);
+    expect(transformed.source).toMatchObject({ width: 250, height: 500 });
+    expect(transformed.imageDimensions).toEqual({ width: 250, height: 500 });
     expect(transformed.sourceId).toBe("https://images.example.org/iiif/book-1/22,31,500,250/max/90/default.jpg");
-    expect(transformed.thumbnailId).toBe("https://images.example.org/iiif/book-1/22,31,500,250/512,/90/default.jpg");
+    expect(transformed.thumbnailId).toBe("https://images.example.org/iiif/book-1/22,31,500,250/500,/90/default.jpg");
+    expect(transformed.thumbnailDimensions).toEqual({ width: 250, height: 500 });
   });
 
-  test("uses selector rotation when the old request was stale", () => {
+  test("updates non-rotated image dimensions when the old request was stale", () => {
     const annotation = fixture();
+    annotation.body[0].selector.rotation = undefined;
     annotation.body[0].source.id = "https://images.example.org/iiif/book-1/10,20,300,400/max/0/default.jpg";
     const transformed = transformImageCrop(getEditableImageCrop(annotation)!, {
       x: 2,
@@ -166,7 +172,26 @@ describe("image crop transform", () => {
       width: 20,
       height: 30,
     });
-    expect(transformed.sourceId).toContain("/2,3,20,30/max/90/default.jpg");
+    expect(transformed.sourceId).toContain("/2,3,20,30/max/0/default.jpg");
+    expect(transformed.source).toMatchObject({ width: 20, height: 30 });
+  });
+
+  test("uses a full-size crop request and preserves mirrored rotation", () => {
+    const annotation = fixture();
+    annotation.body[0].selector.rotation = "!90";
+    annotation.body[0].source.id = "https://images.example.org/iiif/book-1/full/800,/0/default.jpg";
+
+    const transformed = transformImageCrop(getEditableImageCrop(annotation)!, {
+      x: 2,
+      y: 3,
+      width: 20,
+      height: 30,
+    });
+
+    expect(transformed.sourceId).toContain("/2,3,20,30/max/!90/default.jpg");
+    expect(transformed.thumbnailId).toContain("/2,3,20,30/20,/!90/default.jpg");
+    expect(transformed.source).toMatchObject({ width: 30, height: 20 });
+    expect(transformed.thumbnailDimensions).toEqual({ width: 30, height: 20 });
   });
 
   test("reports rotated thumbnail dimensions", () => {
@@ -248,8 +273,8 @@ describe("crop transaction side effects", () => {
         source: expect.objectContaining({ type: "ContentResource" }),
       }),
     ]);
-    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "width", 320);
-    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "height", 180);
+    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "width", 180);
+    expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "height", 320);
     expect(vault.modifyEntityField).toHaveBeenCalledWith(
       { id: "canvas-1", type: "Canvas" },
       "thumbnail",
@@ -335,13 +360,14 @@ describe("crop transaction side effects", () => {
 
   test("updates and exports an inline normalized SpecificResource", () => {
     const vault = new Vault();
+    const canvasId = "https://example.org/canvas";
     const manifest = {
       id: "https://example.org/manifest",
       type: "Manifest",
       label: { en: ["Crop test"] },
       items: [
         {
-          id: "https://example.org/canvas",
+          id: canvasId,
           type: "Canvas",
           width: 1000,
           height: 1000,
@@ -349,7 +375,7 @@ describe("crop transaction side effects", () => {
             {
               id: "https://example.org/page",
               type: "AnnotationPage",
-              items: [fixture()],
+              items: [fixture({ target: canvasId })],
             },
           ],
         },
@@ -361,7 +387,7 @@ describe("crop transaction side effects", () => {
       type: "Annotation",
     });
     const canvas = vault.get<any>({
-      id: "https://example.org/canvas",
+      id: canvasId,
       type: "Canvas",
     });
     const crop = getEditableImageCrop(
@@ -385,6 +411,8 @@ describe("crop transaction side effects", () => {
       id: manifest.id,
       type: "Manifest",
     });
+    expect(exported.items[0]).toMatchObject({ width: 300, height: 600 });
+    expect(exported.items[0].thumbnail[0]).toMatchObject({ width: 256, height: 512 });
     expect(exported.items[0].items[0].items[0].body).toMatchObject({
       type: "SpecificResource",
       selector: {
@@ -394,6 +422,8 @@ describe("crop transaction side effects", () => {
       },
       source: {
         id: expect.stringContaining("/40,50,600,300/max/90/default.jpg"),
+        width: 300,
+        height: 600,
       },
     });
   });

@@ -99,15 +99,26 @@ export function transformImageCrop(crop: EditableImageCrop, editedRegion: CropRe
   const region = normaliseCropRegion(editedRegion);
   const selector = { ...crop.selector, region: serialiseCropRegion(region) };
   const sourceId = imageRequestForCrop(crop, region);
-  const thumbnailId = imageRequestForCrop(crop, region, 512);
+  const thumbnailWidth = Math.min(512, region.width);
+  const thumbnailId = imageRequestForCrop(crop, region, thumbnailWidth);
+  const imageDimensions = rotatedImageDimensions(region.width, region.height, crop.selector.rotation);
+  const thumbnailDimensions = rotatedImageDimensions(
+    thumbnailWidth,
+    Math.round((region.height / region.width) * thumbnailWidth),
+    crop.selector.rotation,
+  );
 
   return {
     region,
+    imageDimensions,
+    thumbnailDimensions,
     selector,
     source: {
       ...crop.source,
       id: sourceId,
       ...(crop.source["@id"] ? { "@id": sourceId } : {}),
+      width: imageDimensions.width,
+      height: imageDimensions.height,
     },
     sourceId,
     thumbnailId,
@@ -143,11 +154,6 @@ export function shouldResizeCanvasForCrop(canvas: any, annotation: any, painting
 export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any, editedRegion: CropRegion) {
   const transformed = transformImageCrop(crop, editedRegion);
   const paintingAnnotationCount = countPaintingAnnotations(vault, canvas);
-  const thumbnailDimensions = rotatedImageDimensions(
-    512,
-    Math.round((transformed.region.height / transformed.region.width) * 512),
-    crop.selector.rotation,
-  );
 
   vault.batch(() => {
     vault.dispatch(
@@ -159,8 +165,8 @@ export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any,
               id: transformed.thumbnailId,
               type: "Image",
               format: "image/jpeg",
-              width: thumbnailDimensions.width,
-              height: thumbnailDimensions.height,
+              width: transformed.thumbnailDimensions.width,
+              height: transformed.thumbnailDimensions.height,
               service: [crop.service],
             },
           },
@@ -191,8 +197,8 @@ export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any,
     ]);
 
     if (shouldResizeCanvasForCrop(canvas, crop.annotation, paintingAnnotationCount)) {
-      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", transformed.region.width);
-      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", transformed.region.height);
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", transformed.imageDimensions.width);
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", transformed.imageDimensions.height);
     }
   });
 
@@ -262,7 +268,7 @@ function imageRequestForCrop(crop: EditableImageCrop, region: CropRegion, thumbn
     region: { x: region.x, y: region.y, w: region.width, h: region.height },
     size: thumbnailWidth
       ? { max: false, confined: false, upscaled: false, width: thumbnailWidth }
-      : parsedSource?.size || { max: true, confined: false, upscaled: false },
+      : { max: true, confined: false, upscaled: false },
     rotation,
     quality: parsedSource?.quality || "default",
     format: parsedSource?.format || "jpg",
@@ -280,8 +286,9 @@ function parseImageRequest(id: unknown) {
 }
 
 function selectorRotation(value: unknown) {
-  const angle = Number(value);
-  return { angle: Number.isFinite(angle) ? angle : 0 };
+  const stringValue = String(value ?? 0);
+  const angle = Number(stringValue.replace(/^!/, ""));
+  return { angle: Number.isFinite(angle) ? angle : 0, ...(stringValue.startsWith("!") ? { mirror: true } : {}) };
 }
 
 function normaliseService(service: any) {
