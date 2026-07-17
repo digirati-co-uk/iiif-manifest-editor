@@ -41,6 +41,10 @@ import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
+export {
+  imageServiceSlideCreator,
+  type CreateImageServiceSlidePayload,
+} from "./creators/image-service-slide-creator";
 export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
 
