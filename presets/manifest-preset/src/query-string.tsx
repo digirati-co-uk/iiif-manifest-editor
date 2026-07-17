@@ -113,7 +113,11 @@ function QueryStringBackgroundTask() {
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);
-      manifest && edit(manifest);
+      manifest &&
+        edit(manifest, undefined, {
+          forceOpen: true,
+          selectedTab: "@manifest-editor/descriptive-properties",
+        });
       if (centerPanels.some((panel) => panel.id === manifestOverview.id)) {
         open({ id: manifestOverview.id });
       }
