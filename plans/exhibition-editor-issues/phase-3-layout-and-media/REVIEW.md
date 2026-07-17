@@ -51,11 +51,14 @@ For D1 and D4, confirm each brief still states its remaining release or product-
 
 ## Final decision
 
-- [ ] All Phase 3 task commits are focused and reviewed.
-- [ ] Targeted automated checks pass, or pre-existing failures are evidenced.
+- [x] All Phase 3 task commits are focused and reviewed.
+- [x] Targeted automated checks pass, or pre-existing failures are evidenced.
 - [ ] Both sample manifests pass the browser and JSON checks.
 - [ ] The whole-program smoke review passes.
-- [ ] Integration changes are committed after confidence is established.
-- [ ] Deferred items have named next evidence/owners for triage.
+- [x] Integration changes are committed after confidence is established.
+- [x] Deferred items have named next evidence/owners for triage.
 
 The accepted commit is the program handoff point. Record checks, known limitations, and the two remaining deferred handoffs in its PR or release notes.
+
+See [RESULT.md](./RESULT.md) for the completed automated review, integration
+findings, and the reason browser acceptance remains unchecked.
