@@ -1,4 +1,3 @@
-import type { InternationalString } from "@iiif/presentation-3";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
 import { CanvasContext } from "react-iiif-vault";
@@ -18,7 +17,7 @@ interface CanvasThumbnailGridItemProps {
   hideLabel?: boolean;
   containerProps?: any;
   dragState?: any;
-  customLabel?: (opts: { className: string; children: InternationalString }) => React.ReactNode;
+  customLabel?: (opts: { className: string }) => React.ReactNode;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
   const { dragProps } = useDrag({

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CreatorGrid, CreatorGridItem } from "../src/CreatorGrid";
+import { CreatorGrid } from "../src/CreatorGrid";
 
 export const exampleCreatorGrid = () => {
   const [selected, setSelected] = useState<any>(null);

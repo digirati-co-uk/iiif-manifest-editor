@@ -95,17 +95,32 @@ const useTooltipContext = () => {
   return context;
 };
 
-export function Tooltip({ children, ...options }: { children: React.ReactNode } & TooltipOptions) {
+export function Tooltip({
+  children,
+  ...options
+}: { children: React.ReactNode } & TooltipOptions) {
   // This can accept any props as options, e.g. `placement`,
   // or other positioning options.
   const tooltip = useTooltip(options);
-  return <TooltipContext.Provider value={tooltip}>{children}</TooltipContext.Provider>;
+  return (
+    <TooltipContext.Provider value={tooltip}>
+      {children}
+    </TooltipContext.Provider>
+  );
 }
 
 export const TooltipTrigger = React.forwardRef<
   HTMLElement,
-  React.HTMLProps<HTMLElement> & { asChild?: boolean; onPress?: any; as?: any; $dir?: any }
->(function TooltipTrigger({ children, as: Component, asChild = false, ...props }, propRef) {
+  React.HTMLProps<HTMLElement> & {
+    asChild?: boolean;
+    onPress?: any;
+    as?: any;
+    $dir?: any;
+  }
+>(function TooltipTrigger(
+  { children, as: Component, asChild = false, ...props },
+  propRef,
+) {
   const context = useTooltipContext();
   const childrenRef = (children as any).ref;
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -117,9 +132,9 @@ export const TooltipTrigger = React.forwardRef<
       context.getReferenceProps({
         ref,
         ...props,
-        ...children.props,
+        ...(children.props as React.HTMLAttributes<HTMLElement>),
         "data-state": context.open ? "open" : "closed",
-      }),
+      } as any),
     );
   }
 
@@ -162,11 +177,18 @@ export const TooltipContent = React.forwardRef<
   );
 });
 
-export function DefaultTooltipContent(props: { className?: string; root?: HTMLElement; children: React.ReactNode }) {
+export function DefaultTooltipContent(props: {
+  className?: string;
+  root?: HTMLElement;
+  children: React.ReactNode;
+}) {
   return (
     <TooltipContent
       root={props.root}
-      className={twMerge("bg-me-gray-900 text-white text-sm px-3 py-2 rounded opacity-90 z-50", props.className)}
+      className={twMerge(
+        "bg-me-gray-900 text-white text-sm px-3 py-2 rounded opacity-90 z-50",
+        props.className,
+      )}
     >
       {props.children}
     </TooltipContent>
