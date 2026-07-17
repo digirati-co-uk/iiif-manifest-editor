@@ -46,6 +46,9 @@ export function keepIIIFBrowserNested(
 ): CreatorDefinition {
   return {
     ...creator,
+    additionalTypes: creator.additionalTypes?.filter(
+      (type: string) => type !== "Canvas",
+    ),
     supports: {
       ...creator.supports,
       parentTypes: ["Annotation", "AnnotationPage"],

@@ -196,6 +196,40 @@ describe("imageBrowserSlideCreator", () => {
         { vault },
       ).filter((creator) => creator.label === "IIIF Browser"),
     ).toEqual([imageBrowserSlideCreator]);
+    expect(genericBrowser.additionalTypes).toEqual(["Annotation"]);
+    expect(imageBrowserSlideCreator.configKey).toBe(
+      "@manifest-editor/iiif-browser-creator",
+    );
+    expect(
+      matchBasedOnResource(
+        {
+          type: "Canvas",
+          parent: {
+            id: "https://example.org/page",
+            type: "AnnotationPage",
+          },
+          property: "items",
+          isPainting: true,
+        },
+        creators,
+        { vault },
+      ).filter((creator) => creator.label === "IIIF Browser"),
+    ).toEqual([]);
+    expect(
+      matchBasedOnResource(
+        {
+          type: "Annotation",
+          parent: {
+            id: "https://example.org/page",
+            type: "AnnotationPage",
+          },
+          property: "items",
+          isPainting: true,
+        },
+        creators,
+        { vault },
+      ).filter((creator) => creator.label === "IIIF Browser"),
+    ).toEqual([genericBrowser]);
   });
 });
 
