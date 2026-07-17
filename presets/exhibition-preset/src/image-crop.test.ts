@@ -237,7 +237,13 @@ describe("crop transaction side effects", () => {
   });
 
   test("saves in one batch, refreshes thumbnail, and resizes a single-image canvas", () => {
-    const annotation = fixture();
+    const annotation = fixture({
+      target: {
+        type: "SpecificResource",
+        source: { id: "canvas-1", type: "Canvas" },
+        selector: { type: "FragmentSelector", value: "xywh=0,0,1000,1000" },
+      },
+    });
     const canvas = {
       id: "canvas-1",
       type: "Canvas",
@@ -276,6 +282,15 @@ describe("crop transaction side effects", () => {
     expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "width", 180);
     expect(vault.modifyEntityField).toHaveBeenCalledWith({ id: "canvas-1", type: "Canvas" }, "height", 320);
     expect(vault.modifyEntityField).toHaveBeenCalledWith(
+      { id: "annotation-1", type: "Annotation" },
+      "target",
+      {
+        type: "SpecificResource",
+        source: { id: "canvas-1", type: "Canvas" },
+        selector: undefined,
+      },
+    );
+    expect(vault.modifyEntityField).toHaveBeenCalledWith(
       { id: "canvas-1", type: "Canvas" },
       "thumbnail",
       expect.any(Array),
@@ -290,9 +305,17 @@ describe("crop transaction side effects", () => {
     expect(shouldResizeCanvasForCrop(canvas, wholeCanvas, 1)).toBe(true);
   });
 
-  test("only resizes for a selector-free whole-canvas target", () => {
-    const canvas = { id: "canvas-1", behavior: [] };
-    expect(shouldResizeCanvasForCrop(canvas, { target: "canvas-1#xywh=0,0,1000,1000" }, 1)).toBe(false);
+  test("resizes for direct and full-size whole-canvas targets", () => {
+    const canvas = { id: "canvas-1", width: 1000, height: 1000, behavior: [] };
+    expect(shouldResizeCanvasForCrop(canvas, { target: "canvas-1" }, 1)).toBe(true);
+    expect(shouldResizeCanvasForCrop(canvas, { target: "canvas-1#xywh=0,0,1000,1000" }, 1)).toBe(true);
+    expect(
+      shouldResizeCanvasForCrop(
+        canvas,
+        { target: { type: "SpecificResource", source: "canvas-1#xywh=0,0,1000,1000" } },
+        1,
+      ),
+    ).toBe(true);
     expect(
       shouldResizeCanvasForCrop(
         canvas,
@@ -305,7 +328,7 @@ describe("crop transaction side effects", () => {
         },
         1,
       ),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       shouldResizeCanvasForCrop(
         canvas,
@@ -356,6 +379,11 @@ describe("crop transaction side effects", () => {
       "height",
       expect.anything(),
     );
+    expect(vault.modifyEntityField).not.toHaveBeenCalledWith(
+      { id: "annotation-1", type: "Annotation" },
+      "target",
+      expect.anything(),
+    );
   });
 
   test("updates and exports an inline normalized SpecificResource", () => {
@@ -375,7 +403,7 @@ describe("crop transaction side effects", () => {
             {
               id: "https://example.org/page",
               type: "AnnotationPage",
-              items: [fixture({ target: canvasId })],
+              items: [fixture({ target: `${canvasId}#xywh=0,0,1000,1000` })],
             },
           ],
         },
@@ -413,6 +441,7 @@ describe("crop transaction side effects", () => {
     });
     expect(exported.items[0]).toMatchObject({ width: 300, height: 600 });
     expect(exported.items[0].thumbnail[0]).toMatchObject({ width: 256, height: 512 });
+    expect(exported.items[0].items[0].items[0].target).toBe(canvasId);
     expect(exported.items[0].items[0].items[0].body).toMatchObject({
       type: "SpecificResource",
       selector: {

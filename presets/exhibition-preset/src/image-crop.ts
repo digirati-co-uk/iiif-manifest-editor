@@ -142,18 +142,14 @@ export function shouldResizeCanvasForCrop(canvas: any, annotation: any, painting
     : annotation?.target
       ? [annotation.target]
       : [];
-  const targetsWholeCanvas = targets.some((target: any) => {
-    if (typeof target === "string") return target === canvas.id;
-    if (target?.selector) return false;
-    const source = target?.type === "SpecificResource" ? target.source : target;
-    return (typeof source === "string" ? source : source?.id) === canvas.id;
-  });
+  const targetsWholeCanvas = targets.some((target: any) => targetCoversCanvas(target, canvas));
   return targetsWholeCanvas && paintingAnnotationCount === 1 && !behavior.includes("multi-image");
 }
 
 export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any, editedRegion: CropRegion) {
   const transformed = transformImageCrop(crop, editedRegion);
   const paintingAnnotationCount = countPaintingAnnotations(vault, canvas);
+  const resizeCanvas = shouldResizeCanvasForCrop(canvas, crop.annotation, paintingAnnotationCount);
 
   vault.batch(() => {
     vault.dispatch(
@@ -196,9 +192,10 @@ export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any,
       { id: transformed.thumbnailId, type: "ContentResource" },
     ]);
 
-    if (shouldResizeCanvasForCrop(canvas, crop.annotation, paintingAnnotationCount)) {
+    if (resizeCanvas) {
       vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", transformed.imageDimensions.width);
       vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", transformed.imageDimensions.height);
+      vault.modifyEntityField(crop.annotationRef, "target", removeWholeCanvasSelector(crop.annotation.target, canvas));
     }
   });
 
@@ -252,6 +249,58 @@ export function fullImageRequest(service: any) {
 
 function serialiseCropRegion(region: CropRegion) {
   return `${region.x},${region.y},${region.width},${region.height}`;
+}
+
+function targetCoversCanvas(target: any, canvas: any) {
+  const source = target?.type === "SpecificResource" ? target.source : target;
+  const sourceValue = typeof source === "string" ? source : source?.id;
+  if (typeof sourceValue !== "string") return false;
+  const [sourceId, fragment] = sourceValue.split("#", 2);
+  if (sourceId !== canvas.id) return false;
+
+  const selectors = Array.isArray(target?.selector)
+    ? target.selector
+    : target?.selector
+      ? [target.selector]
+      : [];
+  if (!selectors.length && !fragment) return true;
+
+  const selector = selectors.find(
+    (item: any) => item?.spatial || (typeof item?.value === "string" && item.value.startsWith("xywh=")),
+  );
+  let region = selector?.spatial;
+  const value = fragment || selector?.value;
+  if (!region && typeof value === "string" && value.startsWith("xywh=")) {
+    const [x, y, width, height] = value.replace(/^xywh=(?:pixel:)?/, "").split(/[,&]/).slice(0, 4).map(Number);
+    region = { x, y, width, height };
+  }
+  if (!region) return false;
+
+  return (
+    Number(region?.x) === 0 &&
+    Number(region?.y) === 0 &&
+    Number(region?.width) === Number(canvas?.width) &&
+    Number(region?.height) === Number(canvas?.height)
+  );
+}
+
+function removeWholeCanvasSelector(target: any, canvas: any): any {
+  if (Array.isArray(target)) {
+    return target.map((item) => (targetCoversCanvas(item, canvas) ? removeWholeCanvasSelector(item, canvas) : item));
+  }
+  if (typeof target === "string") return canvas.id;
+  if (target?.type !== "SpecificResource") return target;
+
+  return {
+    ...target,
+    source:
+      typeof target.source === "string"
+        ? canvas.id
+        : target.source?.id?.includes("#")
+          ? { ...target.source, id: canvas.id }
+          : target.source,
+    selector: undefined,
+  };
 }
 
 function imageRequestForCrop(crop: EditableImageCrop, region: CropRegion, thumbnailWidth?: number) {
