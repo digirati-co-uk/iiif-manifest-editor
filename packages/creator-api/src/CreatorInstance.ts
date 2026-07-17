@@ -38,7 +38,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     options: CreatorOptions,
     createConfigs: CreatorDefinition[],
     previewVault: Vault,
-    definitionId: string,
+    configKey: string,
     creatorConfig: CreatorConfig = {},
   ) {
     this.vault = vault;
@@ -46,7 +46,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     this.options = options;
     this.configs = createConfigs;
     this.creatorConfig = creatorConfig;
-    this.config = creatorConfig[definitionId] || {};
+    this.config = creatorConfig[configKey] || {};
     this.target = this.options.target || this.options.parent?.resource;
     const response: AnnotationResponse = this.options.initialData?.selector;
     this.selector = response ? annotationResponseToSelector(response) : null;

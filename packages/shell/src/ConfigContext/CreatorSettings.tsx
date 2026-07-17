@@ -1,25 +1,24 @@
 import { EmptyState, Form } from "@manifest-editor/components";
-import type { CreatorDefinition } from "@manifest-editor/creator-api";
+import {
+  type CreatorDefinition,
+  getCreatorConfigKey,
+} from "@manifest-editor/creator-api";
 import type { FormEvent } from "react";
 import { useMemo } from "react";
 import { useApp } from "../AppContext/AppContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
+import { getCreatorSettings } from "./CreatorSettings.helpers";
 
 export function CreatorSettings() {
   const app = useApp();
   const config = useConfig();
   const saveConfig = useSaveConfig();
   const creators = useMemo(() => {
-    const byId = new Map<string, CreatorDefinition>();
-    for (const creator of app.layout.creators || []) {
-      if (creator.configuration?.fields.length) {
-        byId.set(creator.id, creator);
-      }
-    }
-    return Array.from(byId.values());
+    return getCreatorSettings(app.layout.creators || []);
   }, [app.layout.creators]);
 
   function saveCreator(creator: CreatorDefinition, form: HTMLFormElement) {
+    const configKey = getCreatorConfigKey(creator);
     const formValues = new FormData(form);
     const nextSettings: Record<string, unknown> = {};
 
@@ -31,7 +30,7 @@ export function CreatorSettings() {
 
     saveConfig({
       creators: {
-        [creator.id]: nextSettings,
+        [configKey]: nextSettings,
       },
     } satisfies Partial<Config>);
   }
@@ -44,7 +43,7 @@ export function CreatorSettings() {
     <div className="flex max-w-3xl flex-col gap-6">
       {creators.map((creator) => (
         <Form.Form
-          key={creator.id}
+          key={getCreatorConfigKey(creator)}
           className="flex flex-col gap-3 border-b border-gray-100 pb-5 last:border-b-0"
           onChange={(e: FormEvent<HTMLFormElement>) => saveCreator(creator, e.currentTarget)}
         >
@@ -54,8 +53,9 @@ export function CreatorSettings() {
           </div>
 
           {creator.configuration?.fields.map((field) => {
-            const value = config.creators?.[creator.id]?.[field.id];
-            const fieldId = `${creator.id}-${field.id}`;
+            const configKey = getCreatorConfigKey(creator);
+            const value = config.creators?.[configKey]?.[field.id];
+            const fieldId = `${configKey}-${field.id}`;
 
             if (field.type === "checkbox") {
               return (

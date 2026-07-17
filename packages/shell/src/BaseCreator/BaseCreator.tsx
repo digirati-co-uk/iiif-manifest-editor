@@ -16,6 +16,7 @@ import {
   type CreatorOptions,
   type CreatorResourceProbeHelpers,
   type CreatorResourceProbeResult,
+  getCreatorConfigKey,
   matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -158,7 +159,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
           runCreate,
           validate,
           options,
-          config: config.creators?.[props.creator.id] || {},
+          config: config.creators?.[getCreatorConfigKey(props.creator)] || {},
         })}
       </Suspense>
     </>

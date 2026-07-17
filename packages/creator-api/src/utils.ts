@@ -25,6 +25,10 @@ import type {
   ResolvedCreatorReturn,
 } from "./types";
 
+export function getCreatorConfigKey(definition: CreatorDefinition): string {
+  return definition.configKey ?? definition.id;
+}
+
 export function resolveType(type: string): keyof Entities {
   switch (type) {
     case "Image":

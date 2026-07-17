@@ -152,6 +152,7 @@ export interface SpecificCreatorDefinition<
   dependencies?: string[];
   tags?: string[];
   configuration?: CreatorConfiguration;
+  readonly configKey?: string;
 
   create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;

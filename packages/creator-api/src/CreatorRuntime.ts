@@ -8,7 +8,7 @@ import type { Reference } from "@iiif/presentation-3";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
 import type { CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
-import { resolveType } from "./utils";
+import { getCreatorConfigKey, resolveType } from "./utils";
 
 export class CreatorRuntime {
   // This will hold state for the creation process
@@ -56,7 +56,7 @@ export class CreatorRuntime {
       this.options,
       this.configs,
       this.previewVault,
-      this.definition.id,
+      getCreatorConfigKey(this.definition),
       this.creatorConfig,
     );
     const result = await this.definition.create(this.payload, instance);
