@@ -111,8 +111,9 @@ export default {
       },
       ...exhibitionViewerTailwindColors,
     },
-    typography: exhibitionTypography,
-    extend: {},
+    extend: {
+      typography: exhibitionTypography,
+    },
   },
   plugins: [typography],
 };

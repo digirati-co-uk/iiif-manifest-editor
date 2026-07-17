@@ -19,7 +19,6 @@ export const youtubeMainEdtior: CanvasEditorDefinition = {
     ) : null,
   supports: {
     strategy: (strategy, resource, vault) => {
-      console.log(strategy);
       if (strategy.type !== "media") {
         return false;
       }

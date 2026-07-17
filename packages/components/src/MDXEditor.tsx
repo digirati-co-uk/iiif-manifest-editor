@@ -5,18 +5,18 @@ import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CreateLink,
-  ListsToggle,
-  type MDXEditorMethods,
-  type MDXEditorProps,
-  UndoRedo,
   diffSourcePlugin,
   headingsPlugin,
+  ListsToggle,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
+  type MDXEditorMethods,
+  type MDXEditorProps,
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
+  UndoRedo,
 } from "@mdxeditor/editor";
 import { InsertIIIFBrowser, iiifBrowserPlugin } from "iiif-browser/mdxeditor";
 import { type ForwardedRef, useMemo } from "react";

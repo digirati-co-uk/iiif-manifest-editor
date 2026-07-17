@@ -71,7 +71,7 @@ export function HTMLEditor({
       readOnly={disabled}
       className={twMerge(
         [
-          "bg-white prose-sm text-sm border rounded prose-a:text-me-primary-500 prose-a:underline prose-ul:list-disc p-0.5",
+          "bg-white prose prose-sm text-sm border rounded prose-a:text-me-primary-500 prose-a:underline prose-ul:list-disc p-0.5",
           "prose-ol:list-decimal",
           "focus-within:outline-none focus-within:border-me-primary-500 z-50 relative",
         ].join(" "),
