@@ -3,14 +3,17 @@ import { describe, expect, test, vi } from "vitest";
 import {
   applyImageCrop,
   applyImageCropResponse,
+  applyImageRotation,
   fullImageRequest,
   getEditableImageCrop,
   getImageCropContext,
+  normaliseImageRotation,
   parseCropRegion,
   resolveImageService,
   rotatedImageDimensions,
   shouldResizeCanvasForCrop,
   transformImageCrop,
+  transformImageRotation,
 } from "./image-crop";
 
 const service = {
@@ -205,6 +208,39 @@ describe("image crop transform", () => {
     });
   });
 
+  test("changes rotation without changing an existing crop", () => {
+    const transformed = transformImageRotation(getEditableImageCrop(fixture())!, 270);
+
+    expect(transformed.selector).toMatchObject({
+      type: "ImageApiSelector",
+      region: "10,20,300,400",
+      rotation: "270",
+      retained: true,
+    });
+    expect(transformed.sourceId).toBe(
+      "https://images.example.org/iiif/book-1/10,20,300,400/max/270/default.jpg",
+    );
+    expect(transformed.imageDimensions).toEqual({ width: 400, height: 300 });
+  });
+
+  test("rotates a full image without introducing a crop", () => {
+    const image = fixture().body[0].source;
+    const transformed = transformImageRotation(getImageCropContext(fixture({ body: [image] }))!, 90);
+
+    expect(transformed.selector).toEqual({
+      type: "ImageApiSelector",
+      rotation: "90",
+    });
+    expect(transformed.sourceId).toBe("https://images.example.org/iiif/book-1/full/max/90/default.jpg");
+    expect(transformed.imageDimensions).toEqual({ width: 1500, height: 2000 });
+  });
+
+  test("normalises rotation controls to quarter turns", () => {
+    expect(normaliseImageRotation("!270")).toBe(270);
+    expect(normaliseImageRotation(450)).toBe(90);
+    expect(normaliseImageRotation(45)).toBe(0);
+  });
+
   test("rejects malformed regions", () => {
     expect(parseCropRegion("1,2,0,4")).toBeNull();
     expect(() =>
@@ -294,6 +330,57 @@ describe("crop transaction side effects", () => {
       { id: "canvas-1", type: "Canvas" },
       "thumbnail",
       expect.any(Array),
+    );
+  });
+
+  test("saves rotation in one batch and updates a single-image canvas", () => {
+    const annotation = fixture();
+    const canvas = {
+      id: "canvas-1",
+      type: "Canvas",
+      width: 400,
+      height: 300,
+      items: [{ id: "page-1", type: "AnnotationPage" }],
+    };
+    const entities: any = {
+      "page-1": {
+        id: "page-1",
+        type: "AnnotationPage",
+        items: [{ id: annotation.id, type: "Annotation" }],
+      },
+      [annotation.id]: annotation,
+    };
+    const vault = {
+      batch: vi.fn((callback) => callback()),
+      dispatch: vi.fn(),
+      modifyEntityField: vi.fn(),
+      get: vi.fn((ref) => entities[ref.id]),
+    };
+
+    applyImageRotation(vault, getEditableImageCrop(annotation)!, canvas, 180);
+
+    expect(vault.batch).toHaveBeenCalledTimes(1);
+    expect(vault.modifyEntityField).toHaveBeenCalledWith(
+      { id: "annotation-1", type: "Annotation" },
+      "body",
+      [
+        expect.objectContaining({
+          selector: expect.objectContaining({
+            region: "10,20,300,400",
+            rotation: "180",
+          }),
+        }),
+      ],
+    );
+    expect(vault.modifyEntityField).toHaveBeenCalledWith(
+      { id: "canvas-1", type: "Canvas" },
+      "width",
+      300,
+    );
+    expect(vault.modifyEntityField).toHaveBeenCalledWith(
+      { id: "canvas-1", type: "Canvas" },
+      "height",
+      400,
     );
   });
 
@@ -453,6 +540,63 @@ describe("crop transaction side effects", () => {
         id: expect.stringContaining("/40,50,600,300/max/90/default.jpg"),
         width: 300,
         height: 600,
+      },
+    });
+  });
+
+  test("rotates and exports an uncropped image", () => {
+    const vault = new Vault();
+    const canvasId = "https://example.org/full-image-canvas";
+    const image = fixture().body[0].source;
+    const manifest = {
+      id: "https://example.org/full-image-manifest",
+      type: "Manifest",
+      label: { en: ["Rotation test"] },
+      items: [
+        {
+          id: canvasId,
+          type: "Canvas",
+          width: 2000,
+          height: 1500,
+          items: [
+            {
+              id: "https://example.org/full-image-page",
+              type: "AnnotationPage",
+              items: [fixture({ body: [image], target: canvasId })],
+            },
+          ],
+        },
+      ],
+    };
+    vault.loadManifestSync(manifest.id, manifest as any);
+    const annotation = vault.get<any>({ id: "annotation-1", type: "Annotation" });
+    const canvas = vault.get<any>({ id: canvasId, type: "Canvas" });
+    const crop = getImageCropContext(
+      annotation,
+      (resource) =>
+        vault.get(resource, {
+          preserveSpecificResources: true,
+          skipSelfReturn: false,
+        } as any) || resource,
+    );
+
+    applyImageRotation(vault, crop!, canvas, 90);
+
+    const exported = vault.toPresentation3<any>({
+      id: manifest.id,
+      type: "Manifest",
+    });
+    expect(exported.items[0]).toMatchObject({ width: 1500, height: 2000 });
+    expect(exported.items[0].items[0].items[0].body).toMatchObject({
+      type: "SpecificResource",
+      selector: {
+        type: "ImageApiSelector",
+        rotation: "90",
+      },
+      source: {
+        id: expect.stringContaining("/full/max/90/default.jpg"),
+        width: 1500,
+        height: 2000,
       },
     });
   });

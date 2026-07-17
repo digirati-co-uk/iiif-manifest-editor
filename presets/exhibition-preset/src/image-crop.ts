@@ -97,15 +97,36 @@ export function normaliseCropRegion(region: CropRegion): CropRegion {
 
 export function transformImageCrop(crop: EditableImageCrop, editedRegion: CropRegion) {
   const region = normaliseCropRegion(editedRegion);
-  const selector = { ...crop.selector, region: serialiseCropRegion(region) };
-  const sourceId = imageRequestForCrop(crop, region);
-  const thumbnailWidth = Math.min(512, region.width);
-  const thumbnailId = imageRequestForCrop(crop, region, thumbnailWidth);
-  const imageDimensions = rotatedImageDimensions(region.width, region.height, crop.selector.rotation);
+  return transformImage(crop, region, crop.selector.rotation);
+}
+
+export function transformImageRotation(crop: EditableImageCrop, rotation: number) {
+  const region = parseCropRegion(crop.selector.region);
+  const dimensions = region || getServiceDimensions(crop.service);
+  if (!dimensions) throw new Error("The image service did not provide full image dimensions");
+  return transformImage(crop, region, normaliseImageRotation(rotation), dimensions);
+}
+
+function transformImage(
+  crop: EditableImageCrop,
+  region: CropRegion | null,
+  rotation: unknown,
+  dimensions: { width: number; height: number } = region!,
+) {
+  const selector: any = {
+    ...crop.selector,
+    ...(rotation !== undefined ? { rotation: String(rotation) } : {}),
+  };
+  if (region) selector.region = serialiseCropRegion(region);
+  else delete selector.region;
+  const sourceId = imageRequestForTransform(crop, region, rotation);
+  const thumbnailWidth = Math.min(512, dimensions.width);
+  const thumbnailId = imageRequestForTransform(crop, region, rotation, thumbnailWidth);
+  const imageDimensions = rotatedImageDimensions(dimensions.width, dimensions.height, rotation);
   const thumbnailDimensions = rotatedImageDimensions(
     thumbnailWidth,
-    Math.round((region.height / region.width) * thumbnailWidth),
-    crop.selector.rotation,
+    Math.round((dimensions.height / dimensions.width) * thumbnailWidth),
+    rotation,
   );
 
   return {
@@ -148,6 +169,20 @@ export function shouldResizeCanvasForCrop(canvas: any, annotation: any, painting
 
 export function applyImageCrop(vault: any, crop: EditableImageCrop, canvas: any, editedRegion: CropRegion) {
   const transformed = transformImageCrop(crop, editedRegion);
+  return applyImageTransform(vault, crop, canvas, transformed);
+}
+
+export function applyImageRotation(vault: any, crop: EditableImageCrop, canvas: any, rotation: number) {
+  const transformed = transformImageRotation(crop, rotation);
+  return applyImageTransform(vault, crop, canvas, transformed);
+}
+
+function applyImageTransform(
+  vault: any,
+  crop: EditableImageCrop,
+  canvas: any,
+  transformed: ReturnType<typeof transformImage>,
+) {
   const paintingAnnotationCount = countPaintingAnnotations(vault, canvas);
   const resizeCanvas = shouldResizeCanvasForCrop(canvas, crop.annotation, paintingAnnotationCount);
 
@@ -303,18 +338,25 @@ function removeWholeCanvasSelector(target: any, canvas: any): any {
   };
 }
 
-function imageRequestForCrop(crop: EditableImageCrop, region: CropRegion, thumbnailWidth?: number) {
+function imageRequestForTransform(
+  crop: EditableImageCrop,
+  region: CropRegion | null,
+  rotationValue: unknown,
+  thumbnailWidth?: number,
+) {
   const parsedSource = parseImageRequest(crop.source.id);
   const request = parsedSource || createImageServiceRequest(normaliseService(crop.service));
   const rotation =
-    crop.selector.rotation !== undefined
-      ? selectorRotation(crop.selector.rotation)
+    rotationValue !== undefined
+      ? selectorRotation(rotationValue)
       : parsedSource?.rotation || { angle: 0 };
 
   return imageServiceRequestToString({
     ...request,
     type: "image",
-    region: { x: region.x, y: region.y, w: region.width, h: region.height },
+    region: region
+      ? { x: region.x, y: region.y, w: region.width, h: region.height }
+      : { full: true },
     size: thumbnailWidth
       ? { max: false, confined: false, upscaled: false, width: thumbnailWidth }
       : { max: true, confined: false, upscaled: false },
@@ -338,6 +380,12 @@ function selectorRotation(value: unknown) {
   const stringValue = String(value ?? 0);
   const angle = Number(stringValue.replace(/^!/, ""));
   return { angle: Number.isFinite(angle) ? angle : 0, ...(stringValue.startsWith("!") ? { mirror: true } : {}) };
+}
+
+export function normaliseImageRotation(rotation: unknown) {
+  const angle = Number(String(rotation ?? 0).replace(/^!/, ""));
+  const normalised = Number.isFinite(angle) ? ((angle % 360) + 360) % 360 : 0;
+  return [0, 90, 180, 270].includes(normalised) ? normalised : 0;
 }
 
 function normaliseService(service: any) {

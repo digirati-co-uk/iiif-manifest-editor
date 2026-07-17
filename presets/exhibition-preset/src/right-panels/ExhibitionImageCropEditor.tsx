@@ -13,12 +13,14 @@ import {
   VaultProvider,
 } from "react-iiif-vault";
 import {
+  applyImageRotation,
   applyImageCropResponse,
   type CropRegion,
   type EditableImageCrop,
   fullImageRequest,
   getImageCropContext,
   getServiceDimensions,
+  normaliseImageRotation,
   parseCropRegion,
   resolveImageService,
 } from "../image-crop";
@@ -48,6 +50,23 @@ function ExhibitionImageCropPanel() {
   const region = parseCropRegion(crop?.selector.region);
   const triggerRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
+  const [rotating, setRotating] = useState(false);
+  const [rotationError, setRotationError] = useState<string | null>(null);
+  const currentRotation = normaliseImageRotation(crop?.selector.rotation);
+
+  const rotate = async (rotation: number) => {
+    if (!crop || !canvas || rotation === currentRotation) return;
+    setRotating(true);
+    setRotationError(null);
+    try {
+      const service = await resolveImageService(crop.service);
+      applyImageRotation(vault, { ...crop, service }, canvas, rotation);
+    } catch (reason) {
+      setRotationError(reason instanceof Error ? reason.message : "The rotation could not be saved");
+    } finally {
+      setRotating(false);
+    }
+  };
 
   const close = () => {
     setOpen(false);
@@ -68,12 +87,6 @@ function ExhibitionImageCropPanel() {
           <dd className="text-gray-600">
             {region.width} × {region.height}
           </dd>
-          {crop.selector.rotation ? (
-            <>
-              <dt className="font-semibold text-gray-700">Rotation</dt>
-              <dd className="text-gray-600">{crop.selector.rotation}°</dd>
-            </>
-          ) : null}
         </dl>
       ) : (
         <p className="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
@@ -86,6 +99,25 @@ function ExhibitionImageCropPanel() {
     </div>
   );
 
+  const rotationSection = (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-4 gap-2" aria-label="Image rotation">
+        {[0, 90, 180, 270].map((rotation) => (
+          <ActionButton
+            key={rotation}
+            aria-pressed={rotation === currentRotation}
+            primary={rotation === currentRotation}
+            isDisabled={rotating}
+            onPress={() => rotate(rotation)}
+          >
+            {rotation}°
+          </ActionButton>
+        ))}
+      </div>
+      {rotationError ? <p className="text-sm text-red-700">{rotationError}</p> : null}
+    </div>
+  );
+
   return (
     <>
       <MediaEditor
@@ -94,6 +126,11 @@ function ExhibitionImageCropPanel() {
             label: "Image crop",
             initialOpen: Boolean(region),
             children: cropSection,
+          },
+          {
+            label: "Image rotation",
+            initialOpen: currentRotation !== 0,
+            children: rotationSection,
           },
         ]}
       />
