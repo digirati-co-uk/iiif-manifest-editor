@@ -118,7 +118,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
       />
       <SidebarContent>
         {toggled.editing ? (
-          <SortableExhibitionGrid />
+          <SortableExhibitionGrid mode={resolvedPreviewMode} />
         ) : toggled.list ? (
           <CanvasListView isEditing={toggled.editing} />
         ) : resolvedPreviewMode === "slideshow" || resolvedPreviewMode === "scroll" ? (

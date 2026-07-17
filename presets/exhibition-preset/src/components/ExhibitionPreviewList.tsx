@@ -16,17 +16,37 @@ import {
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
 import { splitTourStepHtml } from "./tour-step-html";
 
-type PreviewMode = "slideshow" | "scroll";
+export type PreviewMode = "slideshow" | "scroll";
 
 const scrollPreviewWidth = 332;
 const slideshowPreviewHeight = 180;
 
 export function ExhibitionPreviewList({ mode }: { mode: PreviewMode }) {
-  const manifest = useManifest();
-  const { edit, open } = useLayoutActions();
+  const { open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
   const [, canvasActions] = useCreator({ id: technical.id.get(), type: "Manifest" }, "items", "Canvas");
   const items = structural.items.get();
+
+  return (
+    <ExhibitionPreviewListLayout>
+      {items.map((item, index) => (
+        <CanvasContext key={item.id} canvas={item.id}>
+          <ExhibitionPreviewCard
+            mode={mode}
+            onClick={() => {
+              open({ id: "current-canvas" });
+              canvasActions.edit(item, index);
+            }}
+          />
+        </CanvasContext>
+      ))}
+    </ExhibitionPreviewListLayout>
+  );
+}
+
+export function ExhibitionPreviewListLayout({ children }: { children: React.ReactNode }) {
+  const manifest = useManifest();
+  const { edit } = useLayoutActions();
 
   return (
     <div className="flex flex-col gap-3 p-2">
@@ -43,22 +63,12 @@ export function ExhibitionPreviewList({ mode }: { mode: PreviewMode }) {
       >
         <LocaleString>{manifest?.label}</LocaleString>
       </button>
-      {items.map((item, index) => (
-        <CanvasContext key={item.id} canvas={item.id}>
-          <ExhibitionPreviewCard
-            mode={mode}
-            onClick={() => {
-              open({ id: "current-canvas" });
-              canvasActions.edit(item, index);
-            }}
-          />
-        </CanvasContext>
-      ))}
+      {children}
     </div>
   );
 }
 
-function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; onClick: () => void }) {
+export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; onClick: () => void }) {
   const canvas = useCanvas();
   const manifest = useManifest();
   const currentCanvas = useInStack("Canvas");

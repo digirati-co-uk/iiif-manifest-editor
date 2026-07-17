@@ -8,16 +8,22 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { createAppActions, useInStack } from "@manifest-editor/editors";
 import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
 import { CanvasContext, useManifest } from "react-iiif-vault";
 import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import { ExhibitionContainer } from "./ExhibitionContainer";
+import { ExhibitionPreviewListLayout, type PreviewMode } from "./ExhibitionPreviewList";
 import { SortableExhibitionItem } from "./SortableExhibitionItem";
 
-export function SortableExhibitionGrid() {
+export function SortableExhibitionGrid({ mode = "grid" }: { mode?: PreviewMode | "grid" }) {
   const manifest = useManifest();
   const { structural, technical } = useManifestEditor();
   const editingStack = useEditingStack();
@@ -65,34 +71,43 @@ export function SortableExhibitionGrid() {
     }
   }
 
+  const sortableItems = items.map((item, idx) => {
+    if (!item) return null;
+    return (
+      <CanvasContext key={item.id} canvas={item.id}>
+        <SortableExhibitionItem
+          item={item}
+          isFirst={idx === 0}
+          mode={mode === "grid" ? undefined : mode}
+          onClick={() => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
+          actions={createAppActions(structural.items, () => onDeleteCanvas(item.id))(item, idx, manifest!)}
+        />
+      </CanvasContext>
+    );
+  });
+  const layout =
+    mode === "grid" ? (
+      <ExhibitionContainer>{sortableItems}</ExhibitionContainer>
+    ) : (
+      <ExhibitionPreviewListLayout>{sortableItems}</ExhibitionPreviewListLayout>
+    );
+
   return (
-    <ExhibitionContainer>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={onDragEnd}
-        modifiers={[restrictToParentElement]}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={onDragEnd}
+      modifiers={[restrictToParentElement]}
+    >
+      <SortableContext
+        items={items}
+        strategy={mode === "grid" ? rectSortingStrategy : verticalListSortingStrategy}
       >
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((item, idx) => {
-            if (!item) return null;
-            return (
-              <CanvasContext key={item.id} canvas={item.id}>
-                <SortableExhibitionItem
-                  key={item.id}
-                  item={item}
-                  isFirst={idx === 0}
-                  onClick={() => {
-                    open({ id: "current-canvas" });
-                    canvasActions.edit(item, idx);
-                  }}
-                  actions={createAppActions(structural.items, () => onDeleteCanvas(item.id))(item, idx, manifest!)}
-                />
-              </CanvasContext>
-            );
-          })}
-        </SortableContext>
-      </DndContext>
-    </ExhibitionContainer>
+        {layout}
+      </SortableContext>
+    </DndContext>
   );
 }
