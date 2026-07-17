@@ -39,7 +39,7 @@ Use the Delft and Leeds sample manifests. Exercise full-page, slideshow, and scr
 
 ### Manifest, splash, and info box
 
-1. Click the exhibition title and verify manifest properties open on the right without the overview detour.
+1. Click the exhibition title and verify manifest properties open on the right. Open the manifest information panel from both the exhibition grid and Preview; verify the overview/thumbnail grid appears in the centre and manifest properties appear on the right immediately.
 2. Edit manifest label/summary from the first splash; move it away from first and confirm the controls disappear.
 3. Open new and existing info boxes, edit their labels, cancel IIIF image insertion, and successfully insert an image.
 4. Insert an IIIF image in a tour-step summary and confirm both surfaces reuse the existing Browser history.
@@ -56,11 +56,11 @@ Use the Delft and Leeds sample manifests. Exercise full-page, slideshow, and scr
 
 ## Phase decision
 
-- [ ] Four focused task histories are present.
-- [ ] Automated checks pass, or pre-existing failures are documented.
+- [x] Four focused task histories are present.
+- [ ] Automated checks pass, or pre-existing failures and missing coverage are resolved/documented.
 - [ ] All three exhibition formats pass the authoring matrix.
 - [ ] Reload/export checks prove changes are persisted, not UI-only.
-- [ ] Integration fixes are committed after review.
+- [x] Integration fixes are committed after review.
 - [ ] The accepted integration commit is recorded in the Phase 3 kickoff.
 
 Do not begin Phase 3 with unresolved stale-selection, malformed creator-output, or data-targeting defects.
