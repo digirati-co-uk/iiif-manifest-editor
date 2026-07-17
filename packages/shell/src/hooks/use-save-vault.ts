@@ -1,21 +1,29 @@
 import { Vault } from "@iiif/helpers";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDebounce } from "tiny-use-debounce";
 
-export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval: number, enabled = true) {
+export function useSaveVault(
+  vault: Vault,
+  saveChanges: () => void | Promise<void>,
+  saveInterval: number,
+  enabled = true,
+) {
+  const saveChangesRef = useRef(saveChanges);
+  saveChangesRef.current = saveChanges;
   const debounceSaveChanges = useDebounce(saveChanges, saveInterval);
 
   useEffect(() => {
     if (typeof window === "undefined") {
       return () => void 0;
     }
-    window.addEventListener("beforeunload", saveChanges, false);
+    const save = () => void saveChangesRef.current();
+    window.addEventListener("beforeunload", save, false);
 
     return () => {
-      saveChanges();
-      window.removeEventListener("beforeunload", saveChanges);
+      save();
+      window.removeEventListener("beforeunload", save);
     };
-  }, [saveChanges]);
+  }, []);
 
   useEffect(() => {
     if (vault && enabled) {
