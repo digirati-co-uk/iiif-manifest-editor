@@ -254,23 +254,10 @@ export function useBrowserGlobalPluginConfig() {
 export function useBrowserProject(id: string) {
   const etag = useRef<string | null>(null);
   const vaultRef = useRef<{ id: string; vault: Vault } | null>(null);
-  const saveQueueRef = useRef<{ id: string; tail: Promise<void> } | null>(null);
   if (vaultRef.current?.id !== id) {
     vaultRef.current = { id, vault: new Vault() };
   }
-  if (saveQueueRef.current?.id !== id) {
-    saveQueueRef.current = { id, tail: Promise.resolve() };
-  }
   const vault = vaultRef.current.vault;
-  const queueSave = useCallback(<T,>(save: () => Promise<T>) => {
-    const queue = saveQueueRef.current!;
-    const next = queue.tail.then(save, save);
-    queue.tail = next.then(
-      () => undefined,
-      () => undefined,
-    );
-    return next;
-  }, []);
   useEffect(() => {
     setVaultReady(false);
   }, [vault]);
@@ -308,25 +295,24 @@ export function useBrowserProject(id: string) {
   });
 
   const saveExtraData = useMutation({
-    mutationFn: async (data: object, force = false) =>
-      queueSave(async () => {
-        if (force) etag.current = await getLatestEtag(id);
-        if (!projectData) throw new Error("project not loaded");
-        if (!etag.current) throw new Error("etag not set");
-        const newEtag = await saveBrowserProjectExtraData(
-          id,
-          data,
-          etag.current!,
-        );
-        etag.current = newEtag;
-        queryClient.setQueryData(["browser-project", id], {
-          project: {
-            ...projectData.project,
-            extraData: { ...(projectData.project.extraData || {}), ...data },
-          },
-          wasAlreadyOpen: projectData.wasAlreadyOpen,
-        });
-      }),
+    mutationFn: async (data: object, force = false) => {
+      if (force) etag.current = await getLatestEtag(id);
+      if (!projectData) throw new Error("project not loaded");
+      if (!etag.current) throw new Error("etag not set");
+      const newEtag = await saveBrowserProjectExtraData(
+        id,
+        data,
+        etag.current!,
+      );
+      etag.current = newEtag;
+      queryClient.setQueryData(["browser-project", id], {
+        project: {
+          ...projectData.project,
+          extraData: { ...(projectData.project.extraData || {}), ...data },
+        },
+        wasAlreadyOpen: projectData.wasAlreadyOpen,
+      });
+    },
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -347,18 +333,17 @@ export function useBrowserProject(id: string) {
     mutationFn: async (
       data: LocalBrowserProject["resource"],
       force = false,
-    ) =>
-      queueSave(async () => {
-        if (force) etag.current = await getLatestEtag(id);
-        if (!projectData) throw new Error("project not loaded");
-        if (!etag.current) throw new Error("etag not set");
-        const newEtag = await saveBrowserProjectResource(id, data, etag.current!);
-        etag.current = newEtag;
-        queryClient.setQueryData(["browser-project", id], {
-          project: { ...projectData.project, resource: data },
-          wasAlreadyOpen: projectData.wasAlreadyOpen,
-        });
-      }),
+    ) => {
+      if (force) etag.current = await getLatestEtag(id);
+      if (!projectData) throw new Error("project not loaded");
+      if (!etag.current) throw new Error("etag not set");
+      const newEtag = await saveBrowserProjectResource(id, data, etag.current!);
+      etag.current = newEtag;
+      queryClient.setQueryData(["browser-project", id], {
+        project: { ...projectData.project, resource: data },
+        wasAlreadyOpen: projectData.wasAlreadyOpen,
+      });
+    },
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -370,32 +355,31 @@ export function useBrowserProject(id: string) {
     mutationFn: async ({
       force = false,
       resource,
-    }: { force?: boolean; resource?: object } = {}) =>
-      queueSave(async () => {
-        if (force) etag.current = await getLatestEtag(id);
-        if (!projectData) return null;
-        if (!etag.current) throw new Error("etag not set");
-        const data = vault.getState().iiif;
+    }: { force?: boolean; resource?: object } = {}) => {
+      if (force) etag.current = await getLatestEtag(id);
+      if (!projectData) return null;
+      if (!etag.current) throw new Error("etag not set");
+      const data = vault.getState().iiif;
 
-        const manifests = Object.keys(data.entities.Manifest || {});
-        const collections = Object.keys(data.entities.Manifest || {});
+      const manifests = Object.keys(data.entities.Manifest || {});
+      const collections = Object.keys(data.entities.Manifest || {});
 
-        if (manifests.length + collections.length === 0) {
-          // Ignore empty vaults.
-          return;
-        }
+      if (manifests.length + collections.length === 0) {
+        // Ignore empty vaults.
+        return;
+      }
 
-        etag.current = await saveBrowserProjectVaultData(
-          id,
-          data,
-          etag.current!,
-          resource as any,
-        );
-        queryClient.setQueryData(["browser-project", id], {
-          project: { ...projectData.project, vaultData: data },
-          wasAlreadyOpen: projectData.wasAlreadyOpen,
-        });
-      }),
+      etag.current = await saveBrowserProjectVaultData(
+        id,
+        data,
+        etag.current!,
+        resource as any,
+      );
+      queryClient.setQueryData(["browser-project", id], {
+        project: { ...projectData.project, vaultData: data },
+        wasAlreadyOpen: projectData.wasAlreadyOpen,
+      });
+    },
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -404,7 +388,12 @@ export function useBrowserProject(id: string) {
   });
 
   const closeProject = useMutation({
-    mutationFn: async () => queueSave(() => closeBrowserProject(id)),
+    mutationFn: async () => {
+      try {
+        await saveVaultData.mutateAsync({ force: false });
+      } catch (e) { }
+      await closeBrowserProject(id);
+    },
     onSuccess: async () => {
       // etag.current = null;
     },
