@@ -20,7 +20,7 @@ The integration review found and fixed issues that were hidden by isolated mocks
 - the `top` layout option remains available;
 - an explicit empty heading distinguishes a cleared tour label from a heading-first summary;
 - transformed `SpecificResource` bodies remain embedded when their source is already present in Vault;
-- project writes sharing an ETag are serialized so a later media edit cannot be overwritten by an overlapping save.
+- the original close-time save path is retained so an immediate refresh awaits the latest Vault write.
 
 ## Commits
 
@@ -33,7 +33,7 @@ The integration review found and fixed issues that were hidden by isolated mocks
 - `0d5d14b1` — fixed IIIF Browser package update
 - `91004721` — preserve transformed SpecificResources at the creator boundary
 - `6ead963d` — annotation image-rotation controls
-- `559508ee` — serialized local project saves
+- `f8f8aaff` — restore the original project save behaviour after reverting the save-queue regression
 
 ## Automated evidence
 
@@ -66,7 +66,8 @@ and Leeds projects:
 - a 90° full-image edit survived reload and Preview → Raw Manifest exported a
   `SpecificResource` with `ImageApiSelector.rotation: "90"`, `/90/` source and
   thumbnail requests, and rotated canvas dimensions;
-- a clean reproduction after the save-queue fix produced no new ETag mismatch.
+- changing rotation and refreshing before the debounce elapsed retained the edit
+  after restoring the original close-time save.
 
 The embedded viewer at `localhost:5174` was unavailable and was not started.
 Acceptance used the editor Preview and Raw Manifest paths at port 3000.

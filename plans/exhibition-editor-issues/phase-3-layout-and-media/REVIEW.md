@@ -51,7 +51,7 @@ Use both sample manifests and inspect exported manifest JSON after each group.
 - The Leeds disposable project passed direct Canvas and checkbox Browser selection after the Browser update.
 - The annotation Media tab exposes 0°, 90°, 180°, and 270° rotation controls. Zero starts collapsed; a non-zero saved value is selected after reload.
 - Preview → Raw Manifest confirmed a 90° full-image edit as a `SpecificResource` with an `ImageApiSelector`, `/90/` source and thumbnail requests, and 4000 × 6000 derived canvas dimensions.
-- A clean reload produced no new ETag error. The earlier reproduction exposed overlapping saves, which are now serialized.
+- An immediate refresh before the debounce elapsed retained the latest edit after the attempted save-queue rewrite was reverted.
 - The embedded viewer expected at `localhost:5174` was unavailable and was not started. Port 3000 editor Preview and Raw Manifest paths were used for acceptance.
 
 ## Deferred handoff
