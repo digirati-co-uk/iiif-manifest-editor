@@ -18,6 +18,7 @@ import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../h
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
+import { normaliseTourStepAnnotationResponse } from "../tour-step-target";
 import { hasFloatingBehavior, resolveExhibitionTemplateType, SimpleCheckbox } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
@@ -283,6 +284,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
       const bodyValue = resp.metadata.bodyValue ?? DEFAULT_TOUR_STEP_HTML;
 
       if (!resp.cancelled && resp.target && canvas && firstAnnotationPage) {
+        const selector = normaliseTourStepAnnotationResponse(resp, canvas);
         creator.create(
           "@manifest-editor/html-annotation",
           {
@@ -312,7 +314,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
               },
             },
             initialData: {
-              selector: resp,
+              selector,
             },
           },
         );

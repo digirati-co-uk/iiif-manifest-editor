@@ -1,12 +1,41 @@
-import { type BoxStyle, parseCssToBoxStyleMap, parseSelector, type SupportedSelectors } from "@iiif/helpers";
-import type { Selector, SpecificResource, Stylesheet } from "@iiif/presentation-3";
+import {
+  type BoxStyle,
+  parseCssToBoxStyleMap,
+  parseSelector,
+  type SupportedSelectors,
+} from "@iiif/helpers";
+import type {
+  Selector,
+  SpecificResource,
+  Stylesheet,
+} from "@iiif/presentation-3";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import type { InputShape } from "polygon-editor";
 import { BasePropertyEditor } from "./BasePropertyEditor";
-import { boxStyleMapToCss, generateStyleClass, getStylesheetCss, mergeBoxStyle } from "./helpers/box-style";
+import {
+  boxStyleMapToCss,
+  generateStyleClass,
+  getStylesheetCss,
+  mergeBoxStyle,
+} from "./helpers/box-style";
 import type { EditorConfig } from "./types";
 
-export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormalized, SpecificResource> {
+function hasInvalidSelectorNumbers(selector: Selector | Selector[]) {
+  return (Array.isArray(selector) ? selector : [selector]).some(
+    (item) =>
+      typeof item === "object" &&
+      item !== null &&
+      item.type === "SvgSelector" &&
+      "value" in item &&
+      typeof item.value === "string" &&
+      /\b(?:NaN|Infinity|undefined)\b/.test(item.value),
+  );
+}
+
+export class AnnotationTargetEditor extends BasePropertyEditor<
+  AnnotationNormalized,
+  SpecificResource
+> {
   constructor(config: EditorConfig) {
     super(config, "target");
   }
@@ -27,12 +56,18 @@ export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormali
   getParsedSelector(): SupportedSelectors | null {
     const resource = this.get();
     if (resource.selector) {
-      return parseSelector(resource.selector)?.selector;
+      try {
+        return parseSelector(resource.selector)?.selector || null;
+      } catch {
+        return null;
+      }
     }
     return null;
   }
 
   setSelector(selector: Selector | Selector[]) {
+    if (hasInvalidSelectorNumbers(selector)) return;
+
     const existing = this.getWithoutTracking();
     if (existing && existing.source) {
       this.set({
@@ -43,6 +78,15 @@ export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormali
   }
 
   setSvgSelector(shape: InputShape, canvas: { width: number; height: number }) {
+    if (
+      !shape.points.length ||
+      shape.points.some((point) =>
+        point.some((coordinate) => !Number.isFinite(coordinate)),
+      )
+    ) {
+      return;
+    }
+
     const existing = this.getWithoutTracking();
     if (existing && existing.source) {
       const el = shape.open ? "polyline" : "polygon";
@@ -56,7 +100,22 @@ export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormali
     }
   }
 
-  setPosition(position: { x: number; y: number; width: number; height: number }) {
+  setPosition(position: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    if (
+      ![position.x, position.y, position.width, position.height].every(
+        Number.isFinite,
+      ) ||
+      position.width <= 0 ||
+      position.height <= 0
+    ) {
+      return;
+    }
+
     const existing = this.getWithoutTracking();
     if (existing && existing.source) {
       this.set({

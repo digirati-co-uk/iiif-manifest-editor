@@ -46,12 +46,14 @@ export function TourNormalAnnotationEditor({
   );
 
   const {
+    target,
     isPending,
     cancelRequest,
     busy,
     requestAnnotationFromTarget,
     deleteAnnotation,
   } = useAnnotationEditor();
+  const invalidRegion = !target;
 
   const [isOpen, setIsOpen] = useState(false);
   const showInSlideshowWorkbench = () => {
@@ -86,7 +88,9 @@ export function TourNormalAnnotationEditor({
     <div
       {...highlightProps}
       className={`exhibition-tour-step-card border shadow-sm rounded bg-white relative ${
-        tourStyle === "non-linear" ? "border-gray-900 hover:border-black" : "border-gray-300 hover:border-me-500"
+        tourStyle === "non-linear"
+          ? "border-gray-900 hover:border-black"
+          : "border-gray-300 hover:border-me-500"
       }`}
       onClick={showInSlideshowWorkbench}
     >
@@ -94,9 +98,16 @@ export function TourNormalAnnotationEditor({
         className="absolute right-3 top-3 z-10 rounded-full px-2 py-1 text-xs font-semibold"
         style={{ backgroundColor: "#f5f5f5", color: "#b84c74" }}
       >
-        {tourStyle === "non-linear" ? `Point ${index + 1}` : `Step ${index + 1}`}
+        {tourStyle === "non-linear"
+          ? `Point ${index + 1}`
+          : `Step ${index + 1}`}
       </div>
       <div className="relative">
+        {invalidRegion ? (
+          <div className="mx-3 mt-3 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+            Invalid region. Select Edit to draw a new region.
+          </div>
+        ) : null}
         {isOpen ? (
           <div className="p-3">
             <TourStepHtmlForm
@@ -147,11 +158,15 @@ export function TourNormalAnnotationEditor({
           <DeleteIcon /> Delete
         </ActionButton>
         <div className="ml-auto flex items-center gap-2">
-          {editAlignment ? <TourStepSideControl annotation={annotation} /> : null}
+          {editAlignment ? (
+            <TourStepSideControl annotation={annotation} />
+          ) : null}
           <TourStepBorderPicker />
         </div>
       </div>
-      {tourStyle === "linear" ? <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" /> : null}
+      {tourStyle === "linear" ? (
+        <div className="absolute -bottom-5 left-5 h-5 border-l-2 border-gray-300 w-0" />
+      ) : null}
     </div>
   );
 }
