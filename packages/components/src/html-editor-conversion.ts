@@ -8,7 +8,8 @@ const turndownService = new TurndownService();
 turndownService.addRule("iiif-image", {
   filter: (node) =>
     node.nodeName === "IMG" && node.getAttribute("data-iiif-image") === "true",
-  replacement: (_content, node) => (node as HTMLElement).outerHTML,
+  replacement: (_content, node) =>
+    (node as HTMLElement).outerHTML.replace(/\/?>$/, " />"),
 });
 
 export function htmlToMarkdown(value: string) {

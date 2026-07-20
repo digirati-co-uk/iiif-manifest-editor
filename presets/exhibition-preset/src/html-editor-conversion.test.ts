@@ -9,10 +9,14 @@ describe("HTML editor conversion", () => {
     const html =
       '<p>Before</p><img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true"><p>After</p>';
 
-    const roundTrip = markdownToHtml(htmlToMarkdown(html));
+    const markdown = htmlToMarkdown(html);
+    const roundTrip = markdownToHtml(markdown);
 
+    expect(markdown).toContain(
+      '<img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true" />',
+    );
     expect(roundTrip).toContain(
-      '<img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true">',
+      '<img src="https://example.org/iiif/image/full/max/0/default.jpg" alt="A &quot;quoted&quot; image" data-iiif-image="true" />',
     );
     expect(roundTrip).toContain("<p>Before</p>");
     expect(roundTrip).toContain("<p>After</p>");
