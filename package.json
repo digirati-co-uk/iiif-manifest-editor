@@ -33,6 +33,7 @@
       "exhibition-viewer": "^1.0.14",
       "react-reconciler": "0.33.0",
       "iiif-browser": "catalog:",
+      "react-iiif-vault": "https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@f6cfc9f",
       "react": "catalog:",
       "react-dom": "catalog:",
       "@types/react": "^19",

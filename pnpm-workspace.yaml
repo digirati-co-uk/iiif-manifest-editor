@@ -7,16 +7,16 @@ packages:
   - "!examples/**"
 
 catalog:
-  react-iiif-vault: 2.0.17
+  react-iiif-vault: 2.0.18
   react: 19.2.0
   react-dom: 19.2.0
   styled-components: 6.1.8
   zustand: 4.5.2
   "@iiif/parser": 2.2.14
   "@iiif/helpers": 1.6.1
-  "iiif-browser": https://pkg.pr.new/iiif-browser@663212a
+  "iiif-browser": 2.2.4
   "@atlas-viewer/atlas": 3.2.3
   "react-aria-components": ^1.12
 overrides:
   "@atlas-viewer/atlas": 3.2.3
-  react-iiif-vault: 2.0.17
+  react-iiif-vault: 2.0.18
