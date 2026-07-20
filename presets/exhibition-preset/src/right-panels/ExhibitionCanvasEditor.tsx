@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
+import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
 import {
   getTourStepAnnotations,
@@ -108,6 +109,8 @@ export function ExhibitionCanvasAdvancedContent() {
   return (
     <ResourceEditingProvider resource={canvas}>
       {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
+
+      <RescaleSingleImagePrompt />
 
       {isOpeningCover ? (
         <ManifestSplashFields manifestEditor={manifestEditor} />

@@ -7,6 +7,7 @@ import {
 } from "./image-browser-slide-creator";
 import { imageSlideCreator } from "./image-slide-creator";
 
+vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
 vi.mock("@manifest-editor/creators", () => ({
   iiifBrowserCreator: {
     id: "@manifest-editor/iiif-browser-creator",
@@ -25,6 +26,7 @@ vi.mock("@manifest-editor/creators", () => ({
 describe("imageBrowserSlideCreator", () => {
   test("does not inherit IIIF browser canvas side effects", () => {
     expect(imageBrowserSlideCreator.sideEffects).toEqual([]);
+    expect(imageBrowserSlideCreator.tags).toContain("exhibition-slideshow-slide");
   });
 
   test("copies imported manifest tracking onto the exhibition slide canvas", async () => {

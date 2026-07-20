@@ -1,6 +1,12 @@
 import { describe, expect, test, vi } from "vitest";
 import { infoBoxCreator } from "./info-box-creator";
-import { imageSlideCreator } from "./image-slide-creator";
+import {
+  imageSlideCreator,
+  slideshowImageOnlyCreator,
+  slideshowImageTextCreator,
+} from "./image-slide-creator";
+
+vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
 
 function ctx() {
   let id = 0;
@@ -17,6 +23,11 @@ function ctx() {
 }
 
 describe("scroll template image defaults", () => {
+  test("labels the empty slideshow creators as multiple-image options", () => {
+    expect(slideshowImageOnlyCreator.label).toBe("Multiple images");
+    expect(slideshowImageTextCreator.label).toBe("Multiple images with text");
+  });
+
   test("image slide creator consumes the initial splash behaviour", () => {
     const slide = imageSlideCreator.create({ type: "default" }, ctx());
 

@@ -24,7 +24,7 @@ export const imageBrowserSlideCreator = defineCreator({
   configKey: iiifBrowserCreator.id,
   create: createBrowser,
   sideEffects: [],
-  tags: ["image", "exhibition-slide"],
+  tags: ["image", "exhibition-slide", "exhibition-slideshow-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
   resourceType: "Canvas",

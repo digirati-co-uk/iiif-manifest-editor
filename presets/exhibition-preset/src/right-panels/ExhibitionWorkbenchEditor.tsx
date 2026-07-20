@@ -9,6 +9,7 @@ import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
 import {
   supportsTourSteps,
   useSlideshowWorkbenchState,
@@ -211,6 +212,7 @@ function ExhibitionWorkbenchRightPanel({
         <div className="mt-8 px-4">
           {selectedTab === "layout" ? (
             <>
+              <RescaleSingleImagePrompt />
               <SlideshowDurationField />
               <SlideBehavioursContent
                 mode={mode}

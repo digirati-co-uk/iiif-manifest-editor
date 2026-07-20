@@ -63,8 +63,8 @@ export const imageSlideBottomCreator = defineCreator({
 export const slideshowImageOnlyCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/slideshow-image-only-creator",
-  label: "Image only",
-  summary: "A slideshow slide focused on an image.",
+  label: "Multiple images",
+  summary: "An empty slideshow slide for adding multiple images.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createImageSlide(
@@ -82,8 +82,8 @@ export const slideshowImageOnlyCreator = defineCreator({
 export const slideshowImageTextCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/slideshow-image-text-creator",
-  label: "Image with text",
-  summary: "A slideshow slide with image and text.",
+  label: "Multiple images with text",
+  summary: "An empty slideshow slide for adding multiple images and text.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createImageSlide(

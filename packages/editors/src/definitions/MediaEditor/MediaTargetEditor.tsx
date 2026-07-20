@@ -1,12 +1,16 @@
 import { useCustomContextMenu, useEditor } from "@manifest-editor/shell";
-import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation } from "react-iiif-vault";
+import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation, useVault } from "react-iiif-vault";
 import { useStore } from "zustand";
 import { InputContainer } from "../../components";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
 import { ActionButton, CheckIcon } from "@manifest-editor/components";
+import { targetWholeCanvas } from "./target-whole-canvas";
 
 export function MediaTargetEditor() {
-  const canvas = useCanvas();
+  const vault = useVault();
+  const annotationEditor = useEditor();
+  const { target } = annotationEditor.annotation;
+  const canvas = useCanvas({ id: target.getSourceId() });
   const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
   const { requestAnnotation, isPending, isActive, busy, completeRequest, cancelRequest, requestId } = useRequestAnnotation({
     onSuccess: (response) => {
@@ -15,9 +19,8 @@ export function MediaTargetEditor() {
       }
     },
   });
-  const annotationEditor = useEditor();
-  const { target } = annotationEditor.annotation;
   const currentSelector = target.getParsedSelector();
+  const setTargetWholeCanvas = () => targetWholeCanvas(vault, canvas, annotationEditor.annotation);
 
   useCustomContextMenu(
     {
@@ -63,7 +66,7 @@ export function MediaTargetEditor() {
           id: "target-whole-canvas",
           label: "Target whole canvas",
           enabled: currentSelector?.type === "BoxSelector",
-          onAction: () => target.removeSelector(),
+          onAction: setTargetWholeCanvas,
         },
       ],
     },
@@ -123,7 +126,7 @@ export function MediaTargetEditor() {
               Reposition
             </ActionButton>
           )}
-          <ActionButton type="button" onPress={() => target.removeSelector()}>
+          <ActionButton type="button" onPress={setTargetWholeCanvas}>
             Target whole canvas
           </ActionButton>
         </div>

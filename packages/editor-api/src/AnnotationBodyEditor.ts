@@ -31,19 +31,33 @@ export class AnnotationBodyEditor extends BaseReferenceListEditor<
     try {
       const bodyRef = this.getFirst();
       const selector = (bodyRef as any).selector;
-      if (!selector) {
-        return null;
-      }
-
       if (
-        selector["@context"] !==
-        "http://iiif.io/api/annex/openannotation/context.json"
+        !selector ||
+        (selector["@context"] !==
+          "http://iiif.io/api/annex/openannotation/context.json" &&
+          !["ImageApiSelector", "iiif:ImageApiSelector"].includes(
+            selector.type,
+          ))
       ) {
         return null;
       }
 
-      const [x, y, width, height] = selector.region.split(",").map(Number);
-      return { height, width };
+      const region = selector.region?.split(",").map(Number);
+      if (
+        region?.length !== 4 ||
+        !region.every(Number.isFinite) ||
+        region[2] <= 0 ||
+        region[3] <= 0
+      ) {
+        return null;
+      }
+
+      const [, , width, height] = region;
+      const rotation = Number(String(selector.rotation ?? 0).replace(/^!/, ""));
+      const quarterTurn =
+        Number.isFinite(rotation) &&
+        [90, 270].includes(((rotation % 360) + 360) % 360);
+      return quarterTurn ? { width: height, height: width } : { width, height };
     } catch (err) {
       return null;
     }

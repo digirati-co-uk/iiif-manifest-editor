@@ -18,8 +18,8 @@ export const imageUrlSlideCreator = defineCreator({
   ...imageUrlCreator,
   id: "@exhibitions/image-url-creator",
   create: createUrlSlide,
-  tags: ["exhibition-slide"],
-  label: "Image",
+  tags: ["exhibition-slide", "exhibition-slideshow-slide"],
+  label: "Image from URL",
   summary: "Image from URL",
   resourceType: "Canvas",
   supports: {

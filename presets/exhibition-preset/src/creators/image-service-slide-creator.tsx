@@ -24,7 +24,7 @@ export const imageServiceSlideCreator = defineCreator({
   ...imageServiceCreator,
   id: "@exhibitions/image-service-creator",
   create: createImageService,
-  tags: ["image", "exhibition-slide"],
+  tags: ["image", "exhibition-slide", "exhibition-slideshow-slide"],
   label: "IIIF Image",
   summary: "IIIF Image service",
   resourceType: "Canvas",

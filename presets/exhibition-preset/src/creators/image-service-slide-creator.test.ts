@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from "vitest";
 import { imageServiceSlideCreator } from "./image-service-slide-creator";
 import { imageSlideCreator } from "./image-slide-creator";
 
+vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
 vi.mock("@manifest-editor/creators", () => ({
   imageServiceCreator: {
     id: "@manifest-editor/image-service-creator",
@@ -67,6 +68,7 @@ function unwrap(value: any): any {
 
 describe("imageServiceSlideCreator", () => {
   test("creates a complete exhibition Canvas from an Image Service", async () => {
+    expect(imageServiceSlideCreator.tags).toContain("exhibition-slideshow-slide");
     const canvas = await createSlide({}, { imageSlideBehavior: ["splash"] });
 
     expect(canvas).toMatchObject({
