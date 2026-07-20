@@ -16,14 +16,17 @@ import {
 import {
   applyImageRotation,
   applyImageCropResponse,
+  displayRegionToImage,
   type CropRegion,
   type EditableImageCrop,
   fullImageRequest,
   getImageCropContext,
   getServiceDimensions,
+  imageRegionToDisplay,
   normaliseImageRotation,
   parseCropRegion,
   resolveImageService,
+  rotatedImageDimensions,
 } from "../image-crop";
 
 export const exhibitionImageCropEditor: EditorDefinition = {
@@ -203,11 +206,26 @@ function ImageCropModal({
   }, [crop.service]);
 
   const dimensions = getServiceDimensions(service);
-  const initialRegion =
+  const sourceRegion =
     parseCropRegion(crop.selector.region) ||
     (dimensions
       ? { x: 0, y: 0, width: dimensions.width, height: dimensions.height }
       : null);
+  const displayDimensions = dimensions
+    ? rotatedImageDimensions(
+        dimensions.width,
+        dimensions.height,
+        crop.selector.rotation,
+      )
+    : null;
+  const initialRegion =
+    dimensions && sourceRegion
+      ? imageRegionToDisplay(
+          sourceRegion,
+          dimensions,
+          crop.selector.rotation,
+        )
+      : null;
   const serviceId = service?.id || service?.["@id"];
 
   const resolveRequest = useCallback(
@@ -215,11 +233,19 @@ function ImageCropModal({
       cancelled?: boolean;
       boundingBox?: CropRegion | null;
     }) => {
-      if (response.cancelled || !response.boundingBox) return setEditing(false);
+      if (response.cancelled || !response.boundingBox || !dimensions)
+        return setEditing(false);
       setSaving(true);
       setError(null);
       try {
-        applyImageCropResponse(vault, { ...crop, service }, canvas, response);
+        applyImageCropResponse(vault, { ...crop, service }, canvas, {
+          ...response,
+          boundingBox: displayRegionToImage(
+            response.boundingBox,
+            dimensions,
+            crop.selector.rotation,
+          ),
+        });
         onClose();
       } catch (reason) {
         setError(
@@ -252,12 +278,12 @@ function ImageCropModal({
       <div className="flex min-h-0 flex-1 flex-col p-4">
         {error ? (
           <CropError message={error} />
-        ) : dimensions && initialRegion && serviceId ? (
+        ) : dimensions && displayDimensions && initialRegion && serviceId ? (
           <div className="relative min-h-0 flex-1 overflow-hidden rounded border border-gray-200 bg-gray-950">
             <VirtualCropCanvas
               crop={crop}
               service={service}
-              dimensions={dimensions}
+              dimensions={displayDimensions}
               initialRegion={initialRegion}
               editing={editing}
               onEditingChange={setEditing}
@@ -307,8 +333,20 @@ function VirtualCropCanvas({
 }) {
   const changeCropRef = useRef<() => void>(() => undefined);
   const virtualManifest = useMemo(
-    () => createVirtualCropManifest(crop, service, dimensions),
-    [crop.annotationRef.id, dimensions.height, dimensions.width, service],
+    () =>
+      createVirtualCropManifest(
+        crop,
+        service,
+        dimensions,
+        crop.selector.rotation,
+      ),
+    [
+      crop.annotationRef.id,
+      crop.selector.rotation,
+      dimensions.height,
+      dimensions.width,
+      service,
+    ],
   );
   const temporaryVault = useMemo(() => {
     const nextVault = new Vault();
@@ -374,6 +412,7 @@ function createVirtualCropManifest(
   crop: EditableImageCrop,
   service: any,
   dimensions: { width: number; height: number },
+  rotation: unknown,
 ) {
   const manifestId = `${crop.annotationRef.id}/crop-editor/manifest`;
   const canvasId = `${manifestId}/canvas`;
@@ -401,12 +440,11 @@ function createVirtualCropManifest(
                 motivation: "painting",
                 target: canvasId,
                 body: {
-                  id: fullImageRequest(service),
+                  id: fullImageRequest(service, rotation),
                   type: "Image",
                   format: "image/jpeg",
                   width: dimensions.width,
                   height: dimensions.height,
-                  service: [service],
                 },
               },
             ],

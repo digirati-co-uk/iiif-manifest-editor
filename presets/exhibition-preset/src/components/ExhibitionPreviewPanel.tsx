@@ -1,7 +1,10 @@
 import { useInStack } from "@manifest-editor/editors";
-import { createIframeVaultBridge, useAppResource } from "@manifest-editor/shell";
+import {
+  createIframeVaultBridge,
+  useAppResource,
+} from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import {
   createScrollingPreviewUrl,
@@ -10,7 +13,10 @@ import {
 } from "../helpers/exhibition-preview-url-helper";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
-import { getPreviewStructureKey } from "./preview-structure";
+import {
+  getPreviewImageTransformKey,
+  getPreviewStructureKey,
+} from "./preview-structure";
 
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
@@ -41,16 +47,32 @@ export function ExhibitionPreviewPanel({
   const resourceRef = useRef(rootResource);
   const canvasIdRef = useRef<string | null>(null);
   const annotationIdRef = useRef<string | null>(null);
-  const [status, setStatus] = useState<"waiting" | "connected" | "error">("waiting");
+  const [status, setStatus] = useState<"waiting" | "connected" | "error">(
+    "waiting",
+  );
   const [viewportWidth, setViewportWidth] = useState(0);
   const [useScaledPreview, setUseScaledPreview] = useState(false);
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
-  const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
-  const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
+  const selectedTourStepId = useSlideshowContentPositioning(
+    (state) => state.selectedTourStepId,
+  );
+  const currentCanvasId = focusSelectedCanvas
+    ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null
+    : null;
   const structureKey = getPreviewStructureKey(rootResource, manifest?.items);
+  const imageTransformKey = useVaultSelector(
+    (_, currentVault) =>
+      getPreviewImageTransformKey(currentVault, manifest?.items),
+    [structureKey],
+  );
   const previousStructureKeyRef = useRef(structureKey);
   const src = useMemo(
-    () => createScrollingPreviewUrl(preset, presetOptions, template?.previewUrl).toString(),
+    () =>
+      createScrollingPreviewUrl(
+        preset,
+        presetOptions,
+        template?.previewUrl,
+      ).toString(),
     [preset, presetOptions, template?.previewUrl],
   );
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
@@ -60,7 +82,8 @@ export function ExhibitionPreviewPanel({
     : viewportWidth
       ? Math.round(viewportWidth / previewScale)
       : 0;
-  const isMobileViewport = iframeViewportWidth > 0 && iframeViewportWidth <= MOBILE_VIEWPORT_WIDTH;
+  const isMobileViewport =
+    iframeViewportWidth > 0 && iframeViewportWidth <= MOBILE_VIEWPORT_WIDTH;
 
   resourceRef.current = rootResource;
   canvasIdRef.current = currentCanvasId;
@@ -123,7 +146,14 @@ export function ExhibitionPreviewPanel({
       },
       targetOrigin,
     );
-  }, [status, rootResource.id, rootResource.type, currentCanvasId, selectedTourStepId, targetOrigin]);
+  }, [
+    status,
+    rootResource.id,
+    rootResource.type,
+    currentCanvasId,
+    selectedTourStepId,
+    targetOrigin,
+  ]);
 
   useEffect(() => {
     const structureChanged = previousStructureKeyRef.current !== structureKey;
@@ -178,13 +208,17 @@ export function ExhibitionPreviewPanel({
     <div className="flex h-full min-h-0 flex-col bg-zinc-950">
       {status !== "connected" ? (
         <div className="border-b border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300">
-          {status === "error" ? "Preview connection failed." : "Connecting to exhibition viewer..."}
+          {status === "error"
+            ? "Preview connection failed."
+            : "Connecting to exhibition viewer..."}
         </div>
       ) : null}
       <PreviewViewportNotice
         iframeViewportWidth={iframeViewportWidth}
         isMobileViewport={isMobileViewport}
-        showScaleOption={viewportWidth > 0 && viewportWidth <= MOBILE_VIEWPORT_WIDTH}
+        showScaleOption={
+          viewportWidth > 0 && viewportWidth <= MOBILE_VIEWPORT_WIDTH
+        }
         showMobileWidthOption={viewportWidth > MOBILE_VIEWPORT_WIDTH}
         useScaledPreview={useScaledPreview}
         useMobileWidthPreview={useMobileWidthPreview}
@@ -199,6 +233,7 @@ export function ExhibitionPreviewPanel({
         )}
       >
         <iframe
+          key={imageTransformKey}
           ref={iframeRef}
           src={src}
           title="Exhibition preview"
@@ -214,7 +249,9 @@ export function ExhibitionPreviewPanel({
                 : "100%",
             maxWidth: useMobileWidthPreview ? "100%" : undefined,
             height: useScaledPreview ? `${100 / SCALED_PREVIEW_SIZE}%` : "100%",
-            transform: useScaledPreview ? `scale(${SCALED_PREVIEW_SIZE})` : undefined,
+            transform: useScaledPreview
+              ? `scale(${SCALED_PREVIEW_SIZE})`
+              : undefined,
             transformOrigin: "top left",
           }}
           onLoad={() => setStatus("waiting")}
@@ -261,16 +298,25 @@ function PreviewViewportNotice({
           {isMobileViewport ? "Mobile view" : "Desktop view"}
         </span>
         <span className="truncate text-zinc-400">
-          Iframe viewport: {iframeViewportWidth}px. Mobile starts at {MOBILE_VIEWPORT_WIDTH}px and below.
+          Iframe viewport: {iframeViewportWidth}px. Mobile starts at{" "}
+          {MOBILE_VIEWPORT_WIDTH}px and below.
         </span>
       </div>
 
       {showScaleOption ? (
-        <PreviewToggle label="50% scale" checked={useScaledPreview} onChange={onUseScaledPreviewChange} />
+        <PreviewToggle
+          label="50% scale"
+          checked={useScaledPreview}
+          onChange={onUseScaledPreviewChange}
+        />
       ) : null}
 
       {showMobileWidthOption ? (
-        <PreviewToggle label="Mobile width" checked={useMobileWidthPreview} onChange={onUseMobileWidthPreviewChange} />
+        <PreviewToggle
+          label="Mobile width"
+          checked={useMobileWidthPreview}
+          onChange={onUseMobileWidthPreviewChange}
+        />
       ) : null}
     </div>
   );

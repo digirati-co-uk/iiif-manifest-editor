@@ -4,9 +4,11 @@ import {
   applyImageCrop,
   applyImageCropResponse,
   applyImageRotation,
+  displayRegionToImage,
   fullImageRequest,
   getEditableImageCrop,
   getImageCropContext,
+  imageRegionToDisplay,
   normaliseImageRotation,
   parseCropRegion,
   resolveImageService,
@@ -108,6 +110,9 @@ describe("existing image crop eligibility", () => {
 describe("image service resolution", () => {
   test("creates an uncropped full-image request for a virtual canvas", () => {
     expect(fullImageRequest(service)).toBe("https://images.example.org/iiif/book-1/full/max/0/default.jpg");
+    expect(fullImageRequest(service, "!90")).toBe(
+      "https://images.example.org/iiif/book-1/full/max/!90/default.jpg",
+    );
   });
 
   test("uses embedded full dimensions without a request", async () => {
@@ -207,6 +212,27 @@ describe("image crop transform", () => {
       height: 256,
     });
   });
+
+  test.each([0, 90, 180, 270, "!90"])(
+    "maps a crop through the %s degree display and back",
+    (rotation) => {
+      const dimensions = { width: 1000, height: 800 };
+      const region = { x: 100, y: 200, width: 300, height: 150 };
+      const displayed = imageRegionToDisplay(region, dimensions, rotation);
+
+      expect(displayRegionToImage(displayed, dimensions, rotation)).toEqual(
+        region,
+      );
+      if (rotation === 90) {
+        expect(displayed).toEqual({
+          x: 450,
+          y: 100,
+          width: 150,
+          height: 300,
+        });
+      }
+    },
+  );
 
   test("changes rotation without changing an existing crop", () => {
     const transformed = transformImageRotation(getEditableImageCrop(fixture())!, 270);

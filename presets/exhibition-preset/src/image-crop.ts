@@ -243,6 +243,72 @@ export function rotatedImageDimensions(width: number, height: number, rotation: 
   return normalised === 90 || normalised === 270 ? { width: height, height: width } : { width, height };
 }
 
+function rotateRegion(
+  region: CropRegion,
+  dimensions: { width: number; height: number },
+  rotation: unknown,
+): CropRegion {
+  switch (normaliseImageRotation(rotation)) {
+    case 90:
+      return {
+        x: dimensions.height - region.y - region.height,
+        y: region.x,
+        width: region.height,
+        height: region.width,
+      };
+    case 180:
+      return {
+        x: dimensions.width - region.x - region.width,
+        y: dimensions.height - region.y - region.height,
+        width: region.width,
+        height: region.height,
+      };
+    case 270:
+      return {
+        x: region.y,
+        y: dimensions.width - region.x - region.width,
+        width: region.height,
+        height: region.width,
+      };
+    default:
+      return { ...region };
+  }
+}
+
+export function imageRegionToDisplay(
+  region: CropRegion,
+  dimensions: { width: number; height: number },
+  rotation: unknown,
+): CropRegion {
+  const sourceRegion = String(rotation ?? "").startsWith("!")
+    ? { ...region, x: dimensions.width - region.x - region.width }
+    : region;
+  return rotateRegion(sourceRegion, dimensions, rotation);
+}
+
+export function displayRegionToImage(
+  region: CropRegion,
+  dimensions: { width: number; height: number },
+  rotation: unknown,
+): CropRegion {
+  const displayDimensions = rotatedImageDimensions(
+    dimensions.width,
+    dimensions.height,
+    rotation,
+  );
+  const sourceRegion = rotateRegion(
+    region,
+    displayDimensions,
+    360 - normaliseImageRotation(rotation),
+  );
+  return String(rotation ?? "").startsWith("!")
+    ? {
+        ...sourceRegion,
+        x: dimensions.width - sourceRegion.x - sourceRegion.width,
+      }
+    : sourceRegion;
+}
+
 export function getServiceDimensions(service: any): { width: number; height: number } | null {
   const width = Number(service?.width);
   const height = Number(service?.height);
@@ -269,14 +335,14 @@ export async function resolveImageService(service: any, fetcher: typeof fetch = 
   return resolved;
 }
 
-export function fullImageRequest(service: any) {
+export function fullImageRequest(service: any, rotation: unknown = 0) {
   const request = createImageServiceRequest(normaliseService(service));
   return imageServiceRequestToString({
     ...request,
     type: "image",
     region: { full: true },
     size: { max: true, confined: false, upscaled: false },
-    rotation: { angle: 0 },
+    rotation: selectorRotation(rotation),
     quality: "default",
     format: "jpg",
   } as any);
