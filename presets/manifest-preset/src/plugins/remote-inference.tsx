@@ -41,10 +41,13 @@ const STRUCTURED_OUTPUT_MODEL = "qwen-structure";
 const REMOTE_INFERENCE_MODELS = [
   // { value: "palette", label: "Palette" },
   // { value: "ocr", label: "OCR" },
-  { value: "glm-ocr", label: "GLM: Small OCR (1B)" },
+  { value: "glm-ocr", label: "GLM OCR (1B)" },
   // { value: "surya-ocr", label: "surya" },
-  { value: "deepseek-ocr", label: "DeepSeek: Medium OCR (3B)" },
-  { value: "qwen-ocr", label: "Qwen: vLLM (9B)" },
+  // { value: "deepseek-ocr", label: "DeepSeek: Medium OCR (3B)" },
+  { value: "gemma-ocr-medium", label: "Gemma 3 (4B)" },
+  { value: "qwen-ocr", label: "Qwen 3.6 (9B)" },
+  { value: "gemma-ocr-large", label: "Gemma 4 (31B)" },
+  { value: "qwen-ocr-large", label: "Qwen 3.6 (35B)" },
 ] as const;
 
 export const REMOTE_INFERENCE_IMAGE_SIZES = [768, 1024, 1536, 2048] as const;
