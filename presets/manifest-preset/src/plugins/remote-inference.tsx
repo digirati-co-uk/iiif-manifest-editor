@@ -8,13 +8,24 @@ import {
   FLAG_TAG,
   type ManifestEditorTag,
   type PluginMetadata,
+  type PluginSettingsDefinition,
+  type PluginSettingsRenderContext,
+  usePluginSettings,
 } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
+import {
+  getCustomModels,
+  getRemoteInferenceModels,
+  REMOTE_INFERENCE_MODELS,
+  type RemoteInferenceModelOption,
+} from "./remote-inference-models";
 
 // ─── Plugin metadata ──────────────────────────────────────────────────────────
 
+const PLUGIN_ID = "@manifest-editor/remote-inference";
+
 export default {
-  id: "@manifest-editor/remote-inference",
+  id: PLUGIN_ID,
   label: "Remote Inference",
   description: "Run remote OCR/HTR inference jobs against a configurable server",
   author: "Digirati",
@@ -38,24 +49,118 @@ const STRUCTURED_FIELDS_STORAGE_KEY = "@manifest-editor/remote-inference/structu
 const DEFAULT_SERVER_URL = "http://localhost:8000";
 const STRUCTURED_OUTPUT_MODEL = "qwen-structure";
 
-const REMOTE_INFERENCE_MODELS = [
-  // { value: "palette", label: "Palette" },
-  // { value: "ocr", label: "OCR" },
-  { value: "glm-ocr", label: "GLM OCR (1B)" },
-  // { value: "surya-ocr", label: "surya" },
-  // { value: "deepseek-ocr", label: "DeepSeek: Medium OCR (3B)" },
-  { value: "gemma-ocr-medium", label: "Gemma 3 (4B)" },
-  { value: "qwen-ocr", label: "Qwen 3.6 (9B)" },
-  { value: "gemma-ocr-large", label: "Gemma 4 (31B)" },
-  { value: "qwen-ocr-large", label: "Qwen 3.6 (35B)" },
-] as const;
-
 export const REMOTE_INFERENCE_IMAGE_SIZES = [768, 1024, 1536, 2048] as const;
 
-type RemoteInferenceModel = (typeof REMOTE_INFERENCE_MODELS)[number]["value"];
+type RemoteInferenceModel = string;
 type RemoteInferenceResultModel = RemoteInferenceModel | typeof STRUCTURED_OUTPUT_MODEL;
 
 const DEFAULT_MODEL: RemoteInferenceModel = "glm-ocr";
+
+type RemoteInferencePluginSettings = {
+  models: RemoteInferenceModelOption[];
+};
+
+function RemoteInferenceSettings({
+  value,
+  onChange,
+}: PluginSettingsRenderContext<RemoteInferencePluginSettings>) {
+  const customModels = getCustomModels(value.models);
+  const [key, setKey] = useState("");
+  const [label, setLabel] = useState("");
+  const allKeys = new Set([...REMOTE_INFERENCE_MODELS, ...customModels].map((model) => model.key));
+  const canAdd = !!key.trim() && !!label.trim() && !allKeys.has(key.trim());
+
+  return (
+    <div className="grid gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 text-xs font-medium text-zinc-500">
+        <span>Key</span>
+        <span>Label</span>
+        <span className="sr-only">Actions</span>
+      </div>
+      {[...REMOTE_INFERENCE_MODELS, ...customModels].map((model, index) => {
+        const readOnly = index < REMOTE_INFERENCE_MODELS.length;
+        return (
+          <div
+            key={`${readOnly ? "built-in" : "custom"}-${model.key}`}
+            className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2"
+          >
+            <input
+              aria-label={`${model.label} key`}
+              className="min-w-0 rounded border border-zinc-200 bg-zinc-50 p-2 text-sm"
+              value={model.key}
+              readOnly
+            />
+            <input
+              aria-label={`${model.key} label`}
+              className="min-w-0 rounded border border-zinc-200 bg-zinc-50 p-2 text-sm"
+              value={model.label}
+              readOnly
+            />
+            {readOnly ? (
+              <span className="w-16 text-center text-xs text-zinc-400">Built in</span>
+            ) : (
+              <button
+                type="button"
+                className="w-16 text-xs text-red-600 hover:text-red-700"
+                onClick={() =>
+                  onChange({
+                    ...value,
+                    models: customModels.filter((customModel) => customModel.key !== model.key),
+                  })
+                }
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        );
+      })}
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 border-t border-zinc-100 pt-3">
+        <input
+          aria-label="Custom model key"
+          className="min-w-0 rounded border border-zinc-300 p-2 text-sm"
+          value={key}
+          placeholder="model-key"
+          onChange={(event) => setKey(event.target.value)}
+        />
+        <input
+          aria-label="Custom model label"
+          className="min-w-0 rounded border border-zinc-300 p-2 text-sm"
+          value={label}
+          placeholder="Model label"
+          onChange={(event) => setLabel(event.target.value)}
+        />
+        <button
+          type="button"
+          className="w-16 rounded bg-zinc-100 px-2 py-2 text-xs text-zinc-700 disabled:opacity-40"
+          disabled={!canAdd}
+          onClick={() => {
+            onChange({
+              ...value,
+              models: [...customModels, { key: key.trim(), label: label.trim() }],
+            });
+            setKey("");
+            setLabel("");
+          }}
+        >
+          Add
+        </button>
+      </div>
+      {key.trim() && allKeys.has(key.trim()) ? (
+        <span className="text-xs text-red-600">Model keys must be unique.</span>
+      ) : null}
+    </div>
+  );
+}
+
+export const settings: PluginSettingsDefinition = {
+  defaults: { models: [] },
+  render: (context) => (
+    <RemoteInferenceSettings
+      {...(context as unknown as PluginSettingsRenderContext<RemoteInferencePluginSettings>)}
+    />
+  ),
+};
 
 // ─── Tag helpers (copied from docling tags.ts) ────────────────────────────────
 
@@ -152,14 +257,16 @@ type StructuredOutputRunOptions = {
   fields: StructuredOutputField[];
 };
 
-function getDefaultRunOptions(): RemoteInferenceRunOptions {
+function getDefaultRunOptions(models = REMOTE_INFERENCE_MODELS): RemoteInferenceRunOptions {
   const storedUrl =
     typeof localStorage !== "undefined"
       ? (localStorage.getItem(SERVER_URL_STORAGE_KEY) ?? DEFAULT_SERVER_URL)
       : DEFAULT_SERVER_URL;
   const storedApiKey = typeof localStorage !== "undefined" ? localStorage.getItem(API_KEY_STORAGE_KEY) || "" : "";
   const storedModel =
-    typeof localStorage !== "undefined" ? parseRemoteInferenceModel(localStorage.getItem(MODEL_STORAGE_KEY)) : null;
+    typeof localStorage !== "undefined"
+      ? parseRemoteInferenceModel(localStorage.getItem(MODEL_STORAGE_KEY), models)
+      : null;
   return {
     serverUrl: storedUrl,
     apiKey: storedApiKey,
@@ -243,8 +350,11 @@ function getStructuredOutputAnnotationPages(responseCanvas: any): any[] {
   );
 }
 
-function parseRemoteInferenceModel(value: string | null | undefined): RemoteInferenceModel | null {
-  return REMOTE_INFERENCE_MODELS.some((model) => model.value === value) ? (value as RemoteInferenceModel) : null;
+function parseRemoteInferenceModel(
+  value: string | null | undefined,
+  models = REMOTE_INFERENCE_MODELS,
+): RemoteInferenceModel | null {
+  return models.some((model) => model.key === value) ? value || null : null;
 }
 
 // ─── Result types ─────────────────────────────────────────────────────────────
@@ -590,21 +700,27 @@ function requestRemoteInferenceConfig(
   });
 }
 
-function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
+function RemoteInferenceConfigModal({
+  actionId,
+  models,
+}: {
+  actionId: string;
+  models: RemoteInferenceModelOption[];
+}) {
   const [request, setRequest] = useState<RemoteInferenceConfigRequest | null>(null);
-  const [options, setOptions] = useState<RemoteInferenceRunOptions>(getDefaultRunOptions());
+  const [options, setOptions] = useState<RemoteInferenceRunOptions>(() => getDefaultRunOptions(models));
 
   useEffect(() => {
     const listener = (event: Event) => {
       const detail = (event as CustomEvent<RemoteInferenceConfigRequest>).detail;
       if (detail?.actionId === actionId) {
         setRequest(detail);
-        setOptions(normaliseDefaults(detail.defaults, detail.tags));
+        setOptions(normaliseDefaults(detail.defaults, detail.tags, models));
       }
     };
     window.addEventListener(CONFIG_EVENT, listener);
     return () => window.removeEventListener(CONFIG_EVENT, listener);
-  }, [actionId]);
+  }, [actionId, models]);
 
   useEffect(() => {
     if (!request?.signal) return;
@@ -741,12 +857,12 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
             onChange={(event) =>
               setOptions((current) => ({
                 ...current,
-                model: parseRemoteInferenceModel(event.target.value) || DEFAULT_MODEL,
+                model: parseRemoteInferenceModel(event.target.value, models) || DEFAULT_MODEL,
               }))
             }
           >
-            {REMOTE_INFERENCE_MODELS.map((model) => (
-              <option key={model.value} value={model.value}>
+            {models.map((model) => (
+              <option key={model.key} value={model.key}>
                 {model.label}
               </option>
             ))}
@@ -867,6 +983,7 @@ function RemoteInferenceConfigModal({ actionId }: { actionId: string }) {
 function normaliseDefaults(
   defaults: RemoteInferenceRunOptions,
   tags: RemoteInferenceTagOption[],
+  models = REMOTE_INFERENCE_MODELS,
 ): RemoteInferenceRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
   const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
@@ -874,7 +991,7 @@ function normaliseDefaults(
     ...defaults,
     serverUrl: defaults.serverUrl || DEFAULT_SERVER_URL,
     apiKey: defaults.apiKey || "",
-    model: parseRemoteInferenceModel(defaults.model) || DEFAULT_MODEL,
+    model: parseRemoteInferenceModel(defaults.model, models) || DEFAULT_MODEL,
     scope: defaults.scope === "tag" && tags.length ? "tag" : defaults.scope === "selected" ? "selected" : "all",
     tagKey: hasSelectedTag ? defaults.tagKey : fallbackTagKey,
     skipAnnotatedCanvases: defaults.skipAnnotatedCanvases !== false,
@@ -1525,6 +1642,18 @@ function throwIfAborted(signal: AbortSignal) {
 
 // ─── Background action ────────────────────────────────────────────────────────
 
+function RemoteInferenceBackgroundActionUi({ actionId }: { actionId: string }) {
+  const pluginSettings = usePluginSettings<RemoteInferencePluginSettings>(PLUGIN_ID);
+  const models = useMemo(() => getRemoteInferenceModels(pluginSettings.models), [pluginSettings.models]);
+
+  return (
+    <>
+      <RemoteInferenceConfigModal actionId={actionId} models={models} />
+      <RemoteInferenceResultsModal actionId={actionId} />
+    </>
+  );
+}
+
 const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   id: REMOTE_INFERENCE_ACTION_ID,
   label: "Run remote inference",
@@ -1534,12 +1663,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   resourceTypes: ["Manifest"],
   resumable: true,
 
-  render: (ctx) => (
-    <>
-      <RemoteInferenceConfigModal actionId={ctx.definition.id} />
-      <RemoteInferenceResultsModal actionId={ctx.definition.id} />
-    </>
-  ),
+  render: (ctx) => <RemoteInferenceBackgroundActionUi actionId={ctx.definition.id} />,
 
   onResults: (ctx) => openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
 
@@ -1551,7 +1675,10 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   prepare: async (ctx) => {
     const canvases = getManifestCanvases(ctx);
     const prepareData = ctx.prepareData as RemoteInferencePrepareData | undefined;
-    const defaults = getDefaultRunOptions();
+    const models = getRemoteInferenceModels(
+      ctx.plugins.getSettings<RemoteInferencePluginSettings>(PLUGIN_ID).models,
+    );
+    const defaults = getDefaultRunOptions(models);
     const requestDefaults = prepareData?.scope === "selected" ? { ...defaults, scope: "selected" as const } : defaults;
     const options = await requestRemoteInferenceConfig({
       actionId: ctx.definition.id,
@@ -1578,7 +1705,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
     const totalCanvases = getPlanTotal(plan);
     const serverUrl = options.serverUrl.trim() || DEFAULT_SERVER_URL;
     const endpoint = getRemoteInferenceEndpoint(serverUrl);
-    const model = parseRemoteInferenceModel(options.model) || DEFAULT_MODEL;
+    const model = options.model.trim() || DEFAULT_MODEL;
 
     ctx.setActionLabel("Running remote inference");
 
