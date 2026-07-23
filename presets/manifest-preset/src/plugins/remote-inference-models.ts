@@ -5,7 +5,7 @@ export type RemoteInferenceModelOption = {
 
 export const REMOTE_INFERENCE_MODELS: RemoteInferenceModelOption[] = [
   { key: "glm-ocr", label: "GLM OCR (1B)" },
-  { key: "gemma-ocr-medium", label: "Gemma 3 (4B)" },
+  // { key: "gemma-ocr-medium", label: "Gemma 3 (4B)" },
   { key: "qwen-ocr", label: "Qwen 3.6 (9B)" },
   { key: "gemma-ocr-large", label: "Gemma 4 (31B)" },
   { key: "qwen-ocr-large", label: "Qwen 3.6 (35B)" },
