@@ -38,7 +38,7 @@ export default function BrowserRecents() {
                 {project.resource.thumbnail ? (
                   <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
+                  <div className="w-full h-full flex items-center justify-center text-black/60">No thumbnail</div>
                 )}
               </div>
               <LocaleString className="underline p-3 text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
@@ -109,8 +109,11 @@ function ProjectContextualMenu({ id }: { id: string }) {
 
   return (
     <DialogTrigger>
-      <Button className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-0.5 text-2xl rounded-full">
-        <MoreIcon />
+      <Button
+        aria-label="Project actions"
+        className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-0.5 text-2xl rounded-full"
+      >
+        <MoreIcon aria-hidden="true" />
       </Button>
       <Popover placement="bottom left">
         <Dialog className="bg-white/95 p-0.5 shadow-md rounded-md animate-fadeIn w-44 flex flex-col items-start gap-1 focus:outline-none text-sm border border-[#000] border-opacity-10 backdrop-blur">

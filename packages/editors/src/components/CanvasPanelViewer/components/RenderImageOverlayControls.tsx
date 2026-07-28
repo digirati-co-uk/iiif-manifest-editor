@@ -87,6 +87,7 @@ function SingleImageOverlay(props: {
               Edit
             </ActionButton>
             <ActionButton
+              aria-label="Image actions"
               onPress={(e) => {
                 store.toggle({
                   x: target.x + props.target.width / 2,
@@ -94,7 +95,7 @@ function SingleImageOverlay(props: {
                 });
               }}
             >
-              <MoreIcon className="text-xl" />
+              <MoreIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
           </div>
         ) : null}
