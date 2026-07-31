@@ -23,7 +23,7 @@ export interface IIIFMediaPlayerProps {
 export function IIIFMediaPlayer(props: IIIFMediaPlayerProps) {
   const mediaPlayer = useRef<MediaPlayerInstance>(null);
   const captions = props.captions || [];
-  const language = props.language;
+  const language = props.language || "en";
   const timeRef = useRef<number>(props.startTime || 0);
 
   return (

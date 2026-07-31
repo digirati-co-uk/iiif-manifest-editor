@@ -234,6 +234,7 @@ export function PluginManager() {
       </div>
 
       <input
+        aria-label="Search plugins"
         className="rounded border border-gray-200 px-2.5 py-1.5 text-xs focus:border-me-primary-500 focus:ring-2 focus:ring-me-primary-500/20 focus:outline-none"
         type="search"
         placeholder="Search plugins…"
@@ -263,8 +264,8 @@ export function PluginManager() {
             <article
               key={plugin.metadata.id}
               className={`flex gap-2.5 rounded-lg border bg-white p-3 text-sm transition-colors ${
-                active ? "border-gray-200" : "border-gray-100 opacity-60"
-              } ${!compatible ? "opacity-40" : ""}`}
+                active ? "border-gray-200" : "border-gray-100 bg-gray-50"
+              } ${!compatible ? "bg-gray-100" : ""}`}
             >
               {image ? (
                 <img
@@ -275,7 +276,7 @@ export function PluginManager() {
               ) : (
                 <div
                   className={`h-9 w-9 rounded flex items-center justify-center flex-none mt-0.5 text-lg ${
-                    active ? "bg-me-primary-50 text-me-primary-500" : "bg-gray-100 text-gray-400"
+                    active ? "bg-me-primary-50 text-me-primary-500" : "bg-gray-100 text-gray-600"
                   }`}
                 >
                   <ConfigureIcon className="w-4 h-4" />
@@ -292,7 +293,7 @@ export function PluginManager() {
                       </span>
                     ) : null}
                     {plugin.metadata.version ? (
-                      <span className="text-[10px] text-gray-400">{plugin.metadata.version}</span>
+                      <span className="text-[10px] text-gray-600">{plugin.metadata.version}</span>
                     ) : null}
                   </div>
 
@@ -301,7 +302,8 @@ export function PluginManager() {
                       <button
                         type="button"
                         title="Configure plugin"
-                        className="rounded p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                        aria-label={`Configure ${plugin.metadata.label}`}
+                        className="rounded p-1 text-gray-600 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setSelectedPluginId(plugin.metadata.id)}
                       >
                         <ConfigureIcon className="w-3.5 h-3.5" />
@@ -311,6 +313,7 @@ export function PluginManager() {
                       <button
                         type="button"
                         title={`Open ${entryPoint.label}`}
+                        aria-label={`Open ${entryPoint.label}`}
                         className="rounded p-1 text-me-primary-500 hover:bg-me-primary-50 transition-colors"
                         onClick={() => openPlugin(plugin)}
                       >
@@ -325,7 +328,7 @@ export function PluginManager() {
                         selected ? "bg-me-primary-500" : "bg-gray-200"
                       }`}
                       title={selected ? "Disable plugin" : "Enable plugin"}
-                      aria-label={selected ? "Disable plugin" : "Enable plugin"}
+                      aria-label={`${selected ? "Disable" : "Enable"} ${plugin.metadata.label}`}
                     >
                       <span
                         className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
@@ -344,7 +347,7 @@ export function PluginManager() {
                 {loadError ? <span className="text-xs text-red-600">{loadError}</span> : null}
                 {blocked ? <span className="text-xs text-amber-600">Waiting for required dependencies</span> : null}
                 {!compatible && compatibilityReason ? (
-                  <span className="text-xs text-gray-400">{compatibilityReason}</span>
+                  <span className="text-xs text-gray-600">{compatibilityReason}</span>
                 ) : null}
               </div>
             </article>
@@ -500,7 +503,7 @@ function PluginSettingsEditor({
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 px-5 py-4">
         <button
           type="button"
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-40"
+          className="text-xs text-gray-600 hover:text-gray-700 transition-colors disabled:opacity-40"
           disabled={saving}
           onClick={reset}
         >

@@ -10,3 +10,26 @@
 
 relative z-10 flex h-full w-full flex-col justify-center bg-InfoBlock text-InfoBlockText overflow-y-auto overflow-x-hidden md:rounded lg:flex-row
 */
+
+.iiif-browser.iiif-browser-accessible .text-gray-400 {
+  color: #4b5563;
+}
+
+.iiif-browser.iiif-browser-accessible .text-blue-500 {
+  color: #1d4ed8;
+}
+
+.iiif-browser.iiif-browser-accessible .bg-blue-500 {
+  background-color: #b84c74;
+}
+
+.iiif-browser.iiif-browser-accessible .opacity-40,
+.iiif-browser.iiif-browser-accessible .opacity-50 {
+  opacity: 1;
+}
+
+.iiif-browser.iiif-browser-accessible
+  :is(button, a, input, [role="button"], [role="gridcell"], [role^="menuitem"]):focus-visible {
+  outline: 2px solid #b84c74;
+  outline-offset: 2px;
+}

@@ -99,10 +99,18 @@ export function DescriptiveProperties() {
         <InputContainer $wide id={navDate.containerId()}>
           <InputLabel htmlFor={navDate.focusId()}>Nav Date</InputLabel>
           <DateTimePicker
+            calendarAriaLabel="Open Nav Date calendar"
             className={$.datePicker}
+            clearAriaLabel="Clear Nav Date"
+            dayAriaLabel="Nav Date day"
+            hourAriaLabel="Nav Date hour"
             id={navDate.focusId()}
+            minuteAriaLabel="Nav Date minute"
+            monthAriaLabel="Nav Date month"
+            nativeInputAriaLabel="Nav Date"
             value={navDate.getDate()}
             onChange={(v) => navDate.setDate(v)}
+            yearAriaLabel="Nav Date year"
           />
         </InputContainer>
       ) : null}

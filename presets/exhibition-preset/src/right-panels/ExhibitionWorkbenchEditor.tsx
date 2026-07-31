@@ -186,6 +186,8 @@ function ExhibitionWorkbenchRightPanel({
         </div>
 
         <div
+          role="tablist"
+          aria-label="Canvas editing sections"
           className={[
             "mt-5 grid border-b border-[#e4ddd6]",
             tabs.length === 4 ? "grid-cols-4" : "grid-cols-3",
@@ -195,6 +197,10 @@ function ExhibitionWorkbenchRightPanel({
             <button
               key={tab.id}
               type="button"
+              id={`exhibition-workbench-tab-${tab.id}`}
+              role="tab"
+              aria-selected={selectedTab === tab.id}
+              aria-controls={`exhibition-workbench-panel-${tab.id}`}
               className={[
                 "exhibition-workbench-tab",
                 "-mb-px border-b-[3px] border-transparent px-1 pb-3 text-center text-sm font-semibold",
@@ -209,7 +215,12 @@ function ExhibitionWorkbenchRightPanel({
           ))}
         </div>
 
-        <div className="mt-8 px-4">
+        <div
+          id={`exhibition-workbench-panel-${selectedTab}`}
+          role="tabpanel"
+          aria-labelledby={`exhibition-workbench-tab-${selectedTab}`}
+          className="mt-8 px-4"
+        >
           {selectedTab === "layout" ? (
             <>
               <RescaleSingleImagePrompt />
@@ -251,6 +262,8 @@ function SegmentedToggle<T extends string>({
 }) {
   return (
     <div
+      role="group"
+      aria-label="Editing mode"
       className="grid w-full max-w-[240px] grid-cols-2 rounded-full p-1"
       style={{ backgroundColor: toggleColours.track }}
     >
@@ -259,6 +272,7 @@ function SegmentedToggle<T extends string>({
         return (
           <Button
             key={option.value}
+            aria-pressed={selected}
             className="border-none rounded-full bg-transparent px-4 py-2 text-sm font-semibold transition-colors"
             style={{
               backgroundColor: selected ? toggleColours.active : "transparent",

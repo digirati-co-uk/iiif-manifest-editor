@@ -19,8 +19,8 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
 
   if (stack.length) {
     return (
-      <ModulePanelButton onClick={back}>
-        <BackIcon />
+      <ModulePanelButton aria-label="Back" onClick={back}>
+        <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     );
   }
@@ -35,11 +35,12 @@ export function BaseEditorCloseButton({ closeAction, fallback }: any) {
   if (current || stack.length) {
     return (
       <ModulePanelButton
+        aria-label="Close panel"
         onClick={() => {
           closeAction();
         }}
       >
-        <CloseIcon />
+        <CloseIcon aria-hidden="true" />
       </ModulePanelButton>
     );
   }

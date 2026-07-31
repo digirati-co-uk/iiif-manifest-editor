@@ -868,6 +868,7 @@ function SimpleLayoutPreview({
           {isImage ? null : (
             <button
               type="button"
+              aria-label="Edit slide text"
               className={twMerge(
                 "flex-shrink-0 border-0 bg-[#25211f] p-3 text-left text-white transition-colors hover:bg-[#332f2c] focus:outline-none focus:ring-2 focus:ring-me-primary-500 focus:ring-offset-2",
                 isBottom ? "h-1/3 w-full" : "h-full w-1/3",
@@ -905,6 +906,7 @@ export function LayoutPresetCard({
   return (
     <button
       type="button"
+      aria-pressed={selected}
       className="flex min-h-[112px] flex-col items-center justify-center gap-3 rounded-md border px-3 py-4 text-center text-sm font-semibold transition-colors"
       style={{
         backgroundColor: selected ? simpleLayoutColours.primary : simpleLayoutColours.buttonText,
@@ -1031,13 +1033,18 @@ export function SimpleAdvancedToggle({
   onChange: (value: EditingMode) => void;
 }) {
   return (
-    <div className="grid w-full max-w-[240px] grid-cols-2 rounded-full bg-[#f5eaf0] p-1">
+    <div
+      role="group"
+      aria-label="Editing mode"
+      className="grid w-full max-w-[240px] grid-cols-2 rounded-full bg-[#f5eaf0] p-1"
+    >
       {(["simple", "advanced"] as EditingMode[]).map((option) => {
         const selected = value === option;
 
         return (
           <Button
             key={option}
+            aria-pressed={selected}
             className="border-none rounded-full bg-transparent px-4 py-2 text-sm font-semibold capitalize transition-colors"
             style={{
               backgroundColor: selected ? simpleLayoutColours.primary : "transparent",

@@ -133,7 +133,7 @@ export function ManifestPanel() {
         ) : null}
 
         {metadata && metadata.length === 0 ? (
-          <div className="py-2 text-gray-400">
+          <div className="py-2 text-gray-600">
             You can add some descriptive metadata for this manifest using the
             editing panel on the right
           </div>
@@ -147,7 +147,7 @@ export function ManifestPanel() {
             label: "font-bold text-black w-full text-sm font-semibold mb-1",
             value:
               "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
-            empty: "text-gray-400",
+            empty: "text-gray-600",
           }}
         />
       </SidebarContent>

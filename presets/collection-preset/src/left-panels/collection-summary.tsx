@@ -79,7 +79,7 @@ export function CollectionSummaryPanel() {
       ) : null}
 
       {metadata && metadata.length === 0 ? (
-        <div className="py-2 text-gray-400">
+        <div className="py-2 text-gray-600">
           You can add some descriptive metadata for this Collection using the editing panel on the right
         </div>
       ) : null}
@@ -92,7 +92,7 @@ export function CollectionSummaryPanel() {
           row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
           label: "font-bold text-black w-full text-sm font-semibold mb-1",
           value: "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
-          empty: "text-gray-400",
+          empty: "text-gray-600",
         }}
       />
     </>

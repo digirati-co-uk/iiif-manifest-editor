@@ -142,7 +142,7 @@ function LazyThumbnailOuter({
 
   if (strategy.type === "textual-content") {
     return (
-      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
+      <div className="text-black/60 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
         <TextIcon className="w-16 h-16" />
       </div>
     );
@@ -225,14 +225,14 @@ function ThumbnailFallback() {
 
   if (strategy.type === "textual-content") {
     return (
-      <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
+      <div className="text-black/60 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
         <TextIcon className="w-16 h-16" />
       </div>
     );
   }
 
   return (
-    <div className="text-black/30 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
+    <div className="text-black/60 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
       No thumbnail
     </div>
   );

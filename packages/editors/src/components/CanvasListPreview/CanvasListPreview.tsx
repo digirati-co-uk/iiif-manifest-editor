@@ -16,6 +16,7 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
 
   return (
     <button
+      type="button"
       data-canvas-selected={props.active}
       className={twMerge(
         cx(
@@ -23,7 +24,7 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
           props.active && "bg-gray-50 text-black border-[#892c4e]",
         ),
       )}
-      aria-selected={props.active}
+      aria-current={props.active ? "true" : undefined}
       onClick={props.editing ? undefined : props.onClick}
       onClickCapture={props.editing ? props.onClick : undefined}
     >

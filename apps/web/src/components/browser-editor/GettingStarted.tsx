@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fileOpen } from "browser-fs-access";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Dialog, DialogTrigger, Toolbar } from "react-aria-components";
 import {
   createBlankCollection,
@@ -20,6 +20,7 @@ export default function GettingStarted() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIIIFBrowserOpen, setIsIIIFBrowserOpen] = useState(false);
+  const iiifBrowserTriggerRef = useRef<HTMLButtonElement>(null);
   const blankManifest = useMutation({
     mutationFn: createBlankManifest,
     onSuccess: (data) => {
@@ -110,6 +111,7 @@ export default function GettingStarted() {
         </Button>
 
         <Button
+          ref={iiifBrowserTriggerRef}
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
           onPress={() => setIsIIIFBrowserOpen(true)}
         >
@@ -144,7 +146,13 @@ export default function GettingStarted() {
         </Button>
       </Toolbar>
       <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
-      <IIIFBrowserModal isOpen={isIIIFBrowserOpen} setIsOpen={setIsIIIFBrowserOpen} />
+      <IIIFBrowserModal
+        isOpen={isIIIFBrowserOpen}
+        setIsOpen={(open) => {
+          setIsIIIFBrowserOpen(open);
+          if (!open) requestAnimationFrame(() => iiifBrowserTriggerRef.current?.focus());
+        }}
+      />
     </div>
   );
 }

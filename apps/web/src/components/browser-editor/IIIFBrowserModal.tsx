@@ -3,12 +3,27 @@ import { useMutation } from "@tanstack/react-query";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { createManifestFromId } from "./browser-state";
 
 export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const router = useRouter();
+  const browserRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const browser = browserRef.current;
+    if (!isOpen || !browser) return;
+    const makeSearchResultsFocusable = () => {
+      const results = browser.querySelectorAll<HTMLElement>('[role="menuitemradio"]');
+      results.forEach((result, index) => {
+        result.tabIndex = index === 0 ? 0 : -1;
+      });
+    };
+    const observer = new MutationObserver(makeSearchResultsFocusable);
+    observer.observe(browser, { childList: true, subtree: true });
+    makeSearchResultsFocusable();
+    return () => observer.disconnect();
+  }, [isOpen]);
   const createProject = useMutation({
     mutationFn: createManifestFromId,
     onSuccess: (data) => {
@@ -54,14 +69,21 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
   }
 
   return (
-    <Modal open={isOpen} title="Open a Manifest or Collection from a URL" onClose={() => setIsOpen(false)}>
+    <Modal open={isOpen} title="Browse IIIF manifests" onClose={() => setIsOpen(false)}>
       <VaultProvider useGlobal={false}>
-        <IIIFBrowser
-          className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
-          navigation={navigationOptions}
-          output={output}
-          ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
-        />
+        {createProject.isError ? (
+          <div role="alert" className="border-b border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            The manifest could not be opened. Check the URL and try again.
+          </div>
+        ) : null}
+        <div ref={browserRef}>
+          <IIIFBrowser
+            className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
+            navigation={navigationOptions}
+            output={output}
+            ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
+          />
+        </div>
       </VaultProvider>
     </Modal>
   );

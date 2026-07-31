@@ -95,6 +95,8 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
           <FloatingOverlay lockScroll style={{ zIndex: 60 }}>
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
+                role="menu"
+                aria-label={ariaLabel ? `${ariaLabel} options` : "Actions"}
                 className="absolute bg-white border border-gray-300 shadow-lg rounded-md p-1 list-none m-0 min-w-0"
                 ref={refs.setFloating}
                 style={{
@@ -107,15 +109,19 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                   const listItem = (
                     <li
                       key={key}
+                      role="none"
                       className={cx(
                         "bg-white rounded-sm flex text-sm",
                         item.active && "font-semibold shadow-[0_0_0_2px_#bfd1ed]",
                       )}
-                      {...(itemProps as any)[key]}
-                      onClick={item.onClick}
                     >
                       {item.onClick ? (
-                        <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex-1 text-left p-1.5 rounded-sm flex hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]">
+                        <button
+                          type="button"
+                          {...(itemProps as any)[key]}
+                          onClick={item.onClick}
+                          className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex-1 text-left p-1.5 rounded-sm flex hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]"
+                        >
                           {item.icon ? (
                             <span className="flex items-center px-1 text-xl">
                               <span className="w-3.5">{item.icon}</span>
@@ -126,7 +132,13 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                         </button>
                       ) : (
                         <div className="flex-1 text-left h-9.5 flex items-center">
-                          <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex items-center py-2.5 px-2.5 rounded-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]">
+                          <button
+                            type="button"
+                            {...(itemProps as any)[key]}
+                            aria-label={`${item.isRunning ? "Pause" : "Run"} ${item.label}`}
+                            onClick={item.action}
+                            className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex items-center py-2.5 px-2.5 rounded-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]"
+                          >
                             <span className="w-3">
                               {item.icon || (item.isRunning ? <PauseIcon /> : <PlayIcon title="" />)}
                             </span>
@@ -138,7 +150,12 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                             {item.label}
                           </span>
                           {item.actionLink ? (
-                            <button className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit text-blue-500 underline px-2 focus:outline-2 focus:outline-[#bfd1ed]">
+                            <button
+                              type="button"
+                              aria-label={`${item.actionLinkLabel || "View"} ${item.label}`}
+                              onClick={item.actionLink}
+                              className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit text-blue-700 underline px-2 focus:outline-2 focus:outline-[#bfd1ed]"
+                            >
                               {item.actionLinkLabel || "view"}
                             </button>
                           ) : null}
@@ -154,7 +171,9 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                         {item.sectionAbove.divider ? (
                           <hr className="mt-1 mb-1 -ml-1 -mr-1 h-px bg-gray-300 border-none" />
                         ) : null}
-                        <li className="text-xs text-gray-500 font-medium py-1 px-1">{item.sectionAbove.label}</li>
+                        <li role="presentation" className="text-xs text-gray-700 font-medium py-1 px-1">
+                          {item.sectionAbove.label}
+                        </li>
                         {listItem}
                       </Fragment>
                     );

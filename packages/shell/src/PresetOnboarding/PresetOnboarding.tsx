@@ -108,13 +108,14 @@ export function PresetOnboarding() {
   useEffect(() => {
     const reopen = (event: Event) => {
       if ((event as CustomEvent<string | null>).detail === dismissalKey) {
+        setState({ presetOnboardingPreviewHintKey: null });
         setOpen(!!onboarding);
         setAutoOpened(false);
       }
     };
     window.addEventListener(reopenEvent, reopen);
     return () => window.removeEventListener(reopenEvent, reopen);
-  }, [dismissalKey, onboarding]);
+  }, [dismissalKey, onboarding, setState]);
 
   if (!onboarding || !dismissalKey) return null;
 

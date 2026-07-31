@@ -35,7 +35,7 @@ const exhibitionColours = {
   darkBorderSoft: "rgba(246, 241, 244, 0.14)",
 };
 
-export const Main = styled.div`
+export const Main = styled.main`
   display: flex;
   flex: 1 1 0;
   min-height: 0;
@@ -265,6 +265,11 @@ export const PanelSwitchButton = styled.button`
   svg {
     width: 1.25em;
     height: 1.25em;
+  }
+
+  @media (max-width: 1020px) {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 `;
 

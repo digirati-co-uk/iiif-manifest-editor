@@ -423,28 +423,31 @@ export default function BrowserEditor({
       <header
         className={
           isFocusedExhibition
-            ? `h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-6 items-center border-b border-white/10 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
-            : "h-[64px] grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 px-4 items-center shadow"
+            ? `grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 border-b border-white/10 lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-6 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : "grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 shadow lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-4"
         }
       >
-        <Link href="/" className="flex min-w-0 items-center justify-start gap-2">
+        <Link
+          href="/"
+          className="col-span-2 col-start-1 row-start-1 flex min-w-0 items-center justify-start gap-2 overflow-hidden whitespace-nowrap lg:col-span-1"
+        >
           {isFocusedExhibition ? (
             <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
           ) : (
             <>
               <ManifestEditorLogo />
-              {presetName ? <span className="text-lg text-gray-600">/ {presetName}</span> : null}
+              {presetName ? <span className="min-w-0 truncate text-lg text-gray-600">/ {presetName}</span> : null}
             </>
           )}
         </Link>
         <ManifestPaginationNavigation
-          className="justify-self-center"
+          className="col-span-2 col-start-1 row-start-2 justify-self-center lg:col-span-1 lg:col-start-2 lg:row-start-1"
           variant={isFocusedExhibition ? "dark" : "light"}
         />
-        <div className="flex min-w-0 items-center justify-end gap-5">
+        <div className="col-span-2 row-start-3 flex min-w-0 items-center justify-end lg:col-span-1 lg:col-start-3 lg:row-start-1">
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center justify-end gap-1 sm:gap-2 lg:w-auto">
             <ShareButton />
             <BackgroundActionsMenu />
             {isFocusedExhibition ? (
@@ -892,6 +895,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
     includeCurrentSelectedItem: true,
     includeCurrentTab: true,
   });
+  const [copied, setCopied] = useState(false);
 
   const { includeCurrentSelectedItem, includeCurrentTab } = options;
 
@@ -933,16 +937,26 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
   const renderLink = (link: string) =>
     link ? (
       <div>
-        <div className="flex gap-2 my-4">
-          <input className="flex-1 p-2 border-b bg-gray-50" type="text" value={link} readOnly />
+        <div className="my-4 flex flex-col gap-2 sm:!flex-row">
+          <input
+            aria-label="Share link"
+            className="min-w-0 flex-1 border-b bg-gray-50 p-2"
+            type="text"
+            value={link}
+            readOnly
+          />
           <button
-            className="bg-me-primary-500 text-white px-5 rounded-md"
+            type="button"
+            className="rounded-md bg-me-primary-500 px-5 py-2 text-white"
             onClick={() => {
-              navigator.clipboard.writeText(link);
+              void navigator.clipboard.writeText(link).then(() => setCopied(true));
             }}
           >
-            Copy
+            {copied ? "Copied" : "Copy"}
           </button>
+          <span className="sr-only" role="status">
+            {copied ? "Share link copied" : ""}
+          </span>
         </div>
       </div>
     ) : (
@@ -953,7 +967,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
     <div className="min-h-64 px-4">
       <p className="mb-8">
         Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
-        continue collaborating on this manifest
+        continue collaborating on this resource
       </p>
       {renderLink(
         data

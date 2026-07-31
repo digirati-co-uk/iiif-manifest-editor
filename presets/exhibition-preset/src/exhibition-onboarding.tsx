@@ -59,23 +59,18 @@ export const exhibitionPresetConfig: PresetDefinition = {
               <article
                 key={template.id}
                 className={[
-                  "cursor-pointer overflow-hidden rounded border bg-white outline-none",
-                  selected ? "border-me-primary-500 ring-2 ring-me-primary-100" : "border-gray-200",
+                  "relative overflow-hidden rounded border-2 bg-white",
+                  selected ? "border-me-primary-500" : "border-gray-200",
                 ].join(" ")}
-                role="button"
-                tabIndex={0}
-                aria-pressed={selected}
-                onClick={select}
-                onKeyDown={(event) => {
-                  if (event.target !== event.currentTarget) return;
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    select();
-                  }
-                }}
               >
+                <Button
+                  aria-label={`Use ${template.label} format`}
+                  aria-pressed={selected}
+                  className="absolute inset-0 z-10 cursor-pointer rounded outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-me-primary-500"
+                  onPress={select}
+                />
                 <img src={template.thumbnailUrl} alt="" className="aspect-video w-full bg-gray-100 object-cover" />
-                <div className="flex flex-col gap-2 p-3">
+                <div className="pointer-events-none flex flex-col gap-2 p-3">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900">{template.label}</h3>
                     <p className="mt-1 text-xs uppercase tracking-normal text-gray-500">{template.type}</p>
@@ -85,8 +80,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
                     href={template.previewUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-sm font-medium text-me-700 hover:text-me-900"
-                    onClick={(event) => event.stopPropagation()}
+                    className="pointer-events-auto relative z-20 inline-flex w-fit items-center rounded py-0.5 text-sm font-medium text-me-700 hover:text-me-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-500 focus-visible:ring-offset-2"
                   >
                     Preview
                   </a>

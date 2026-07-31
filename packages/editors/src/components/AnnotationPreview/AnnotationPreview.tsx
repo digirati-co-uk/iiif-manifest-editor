@@ -29,7 +29,7 @@ function AnnotationImageThumbnail() {
 
   return thumbnail ? (
     <ThumbnailContainer $size={40}>
-      <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+      <ThumbnailImg src={thumbnail.id} alt="" />
     </ThumbnailContainer>
   ) : null;
 }
@@ -54,7 +54,7 @@ function ChoiceImageThumbnailInner({ resourceId }: { resourceId: string }) {
 
   return thumbnail ? (
     <ThumbnailContainer $size={40}>
-      <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+      <ThumbnailImg src={thumbnail.id} alt="" />
     </ThumbnailContainer>
   ) : null;
 }
