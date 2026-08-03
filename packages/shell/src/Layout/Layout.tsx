@@ -487,7 +487,29 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
               <M.DrawerBody $open={state.rightPanel.open}>{renderRightPanel()}</M.DrawerBody>
             ) : null}
             {dockedLeftPanels.length > 0 ? (
-              <M.LeftPanel $open={state.leftPanel.open}>{renderLeftPanel()}</M.LeftPanel>
+              <M.LeftPanel $open={state.leftPanel.open}>
+                <nav aria-label="Left panel tabs" className="flex flex-none overflow-x-auto border-b border-gray-300">
+                  {dockedLeftPanels.map((panel) => (
+                    <button
+                      type="button"
+                      key={panel.id}
+                      aria-pressed={state.leftPanel.current === panel.id}
+                      className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 border-0 border-b-[3px] p-3 text-gray-700 [&>svg]:shrink-0 [&>svg]:text-xl ${state.leftPanel.current === panel.id ? "border-b-[#b83265] bg-[#f9e8ef]" : "border-b-transparent bg-white"}`}
+                      onClick={() => {
+                        actions.rightPanel.close();
+                        actions.leftPanel.open({
+                          id: panel.id,
+                          state: panel.defaultState,
+                        });
+                      }}
+                    >
+                      {panel.icon}
+                      {panel.label}
+                    </button>
+                  ))}
+                </nav>
+                {renderLeftPanel()}
+              </M.LeftPanel>
             ) : null}
             {leftPanels.length > 0 || rightPanels.length > 0 ? (
               <M.Lightbox
@@ -502,6 +524,10 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             ) : null}
           </M.Container>
         </L.Main>
+        <div className="hidden">{backgroundItems}</div>
+        <BackgroundActionsMount />
+        <BackgroundActionToasts />
+        <>{renderModal()}</>
         <PresetOnboarding />
       </L.OuterWrapper>
     );

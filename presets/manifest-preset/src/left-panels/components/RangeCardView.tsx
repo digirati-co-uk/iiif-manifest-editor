@@ -1,4 +1,4 @@
-import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import { ActionButton, BackIcon, DeleteForeverIcon, EmptyState, MoreMenuIcon } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
@@ -277,8 +277,8 @@ export function RangeCardView() {
     <div className="flex items-center gap-4 mb-4">
       {rangeInStack ? (
         <>
-          <ActionButton onPress={() => back()}>
-            <BackIcon className="text-xl" />
+          <ActionButton aria-label="Back to parent range" onPress={() => back()}>
+            <BackIcon aria-hidden="true" className="text-xl" />
           </ActionButton>
           <LocaleString as="h3">{range.label}</LocaleString>
         </>
@@ -331,15 +331,13 @@ export function RangeCardView() {
               {isEditing ? (
                 <div className="flex items-center gap-2">
                   <MenuTrigger>
-                    <ActionButton>
-                      <MoreMenuIcon className="text-lg" />
+                    <ActionButton aria-label={`Actions for ${getValue(item.label) || "untitled range"}`}>
+                      <MoreMenuIcon aria-hidden="true" className="text-lg" />
                     </ActionButton>
                     <Popover className="bg-white shadow-md rounded-md p-1">
                       <Menu>
                         <MenuItem
-                          onAction={() =>
-                            window.confirm("Are you sure you want to delete this range?") && deleteRange(item)
-                          }
+                          onAction={() => window.confirm("Are you sure you want to delete this range?") && deleteRange(item)}
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
                           <DeleteForeverIcon /> Delete range item
@@ -347,8 +345,8 @@ export function RangeCardView() {
                       </Menu>
                     </Popover>
                   </MenuTrigger>
-                  <Button slot="drag">
-                    <ResizeHandleIcon className="text-xl" />
+                  <Button aria-label={`Reorder ${getValue(item.label) || "untitled range"}`} slot="drag">
+                    <ResizeHandleIcon aria-hidden="true" className="text-xl" />
                   </Button>
                 </div>
               ) : null}

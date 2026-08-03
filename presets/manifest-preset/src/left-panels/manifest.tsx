@@ -1,4 +1,5 @@
 import {
+  CheckIcon,
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -6,7 +7,10 @@ import {
 import { InlineLocaleStringEditor } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
+  useEditingResource,
+  useEditingStack,
   useLayoutActions,
+  useLayoutState,
   useManifestEditor,
 } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
@@ -70,7 +74,15 @@ export function ManifestPanel() {
   const summary = descriptive.summary.get();
   const requiredStatement = descriptive.requiredStatement.get();
   const metadata = descriptive.metadata.get();
-  const { edit, open } = useLayoutActions();
+  const editingResource = useEditingResource();
+  const editingStack = useEditingStack();
+  const { rightPanel } = useLayoutState();
+  const { edit, rightPanel: rightPanelActions } = useLayoutActions();
+  const isEditingManifest =
+    rightPanel.open &&
+    rightPanel.current === "@manifest-editor/editor" &&
+    editingResource?.resource.source.id === id &&
+    editingResource.resource.source.type === "Manifest";
 
   return (
     <Sidebar>
@@ -78,12 +90,23 @@ export function ManifestPanel() {
         title="Manifest summary"
         actions={[
           {
-            icon: <EditManifestMetadataIcon className="text-xl" />,
-            title: "Edit metadata",
+            icon: isEditingManifest ? (
+              <CheckIcon className="text-xl" />
+            ) : (
+              <EditManifestMetadataIcon className="text-xl" />
+            ),
+            title: isEditingManifest ? "Finish editing" : "Edit metadata",
+            toggled: isEditingManifest,
             onClick: () => {
-              edit({ id, type: "Manifest" }, undefined, { forceOpen: true });
-              open("@manifest-editor/editor", {
-                currentTab: "@manifest-editor/descriptive-properties",
+              if (isEditingManifest) {
+                rightPanelActions.close();
+                editingStack.close();
+                return;
+              }
+
+              edit({ id, type: "Manifest" }, undefined, {
+                forceOpen: true,
+                selectedTab: "@manifest-editor/descriptive-properties",
               });
             },
           },
@@ -93,7 +116,9 @@ export function ManifestPanel() {
         <InlineLocaleStringEditor
           as="h2"
           placeholder="Add an exhibition title"
-          className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
+          className="text-lg font-semibold [&>a]:underline [&>a]:hover:text-slate-400"
+          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
+          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
           editor={descriptive.label}
         >
           {label}
@@ -104,7 +129,9 @@ export function ManifestPanel() {
           enableDangerouslySetInnerHTML
           as="p"
           placeholder="Add an exhibition summary"
-          className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
+          className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400"
+          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
+          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
           editor={descriptive.summary}
         >
           {summary}
@@ -115,7 +142,7 @@ export function ManifestPanel() {
           <>
             <div className="py-2 text-black">
               <LocaleString
-                as="h4"
+                as="h3"
                 className="font-bold text-black w-full text-sm font-semibold mb-0 [&>a]:underline [&>a]:hover:text-slate-400"
               >
                 {requiredStatement.label}

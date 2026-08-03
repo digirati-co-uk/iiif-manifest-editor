@@ -165,6 +165,7 @@ export function RangeWorkbenchSection({
         <div id={`workbench-${range.id}`} className="absolute -top-16" />
         <div className="flex items-center gap-4 max-w-full">
           <Button
+            aria-label={`${isExpanded ? "Collapse" : "Expand"} ${getValue(range.label) || "untitled range"}`}
             className="flex items-center gap-2 min-w-0"
             onPress={() => {
               if (isExpanded) reset();
@@ -193,8 +194,8 @@ export function RangeWorkbenchSection({
           ) : null}
 
           <MenuTrigger>
-            <ActionButton>
-              <MoreMenuIcon className="text-xl" />
+            <ActionButton aria-label={`Actions for ${getValue(range.label) || "untitled range"}`}>
+              <MoreMenuIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
             <Popover className="bg-white shadow-md rounded-md p-1">
               <Menu>
@@ -353,6 +354,7 @@ export function RangeWorkbenchSection({
                         parent: { id: range.id },
                       }}
                       containerProps={{
+                        "aria-label": `Preview ${getValue(item.label) || "canvas"}`,
                         "data-range1-label": getValue(range.label),
                         "data-range2-label": nextRangeLabel || "Untitled range",
                         ...(isFirstCanvas
@@ -362,12 +364,10 @@ export function RangeWorkbenchSection({
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}
                       icon={
-                        <ActionButton
-                          className="absolute top-2 right-2 hidden group-hover:block"
-                          onPress={() => onPreviewCanvas?.(range, item)}
-                        >
-                          <CanvasPreviewIcon className="text-2xl" />
-                        </ActionButton>
+                        <CanvasPreviewIcon
+                          aria-hidden="true"
+                          className="absolute top-2 right-2 hidden text-2xl group-hover:block"
+                        />
                       }
                     />
                   </CanvasContext>

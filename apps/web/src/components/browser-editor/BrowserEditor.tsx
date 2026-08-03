@@ -429,6 +429,7 @@ export default function BrowserEditor({
       >
         <Link
           href="/"
+          aria-label={`${isFocusedExhibition ? "Exhibition" : "Manifest"} Editor home`}
           className="col-span-2 col-start-1 row-start-1 flex min-w-0 items-center justify-start gap-2 overflow-hidden whitespace-nowrap lg:col-span-1"
         >
           {isFocusedExhibition ? (

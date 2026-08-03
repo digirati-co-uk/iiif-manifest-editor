@@ -103,6 +103,8 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
 `;
 
 export const LeftPanel = styled.div<{ $open?: boolean }>`
+  display: flex;
+  flex-direction: column;
   position: absolute;
   transform: translateX(-100%);
   background: #fff;
@@ -111,7 +113,7 @@ export const LeftPanel = styled.div<{ $open?: boolean }>`
   bottom: 0;
   width: min(90%, 420px);
   z-index: 10;
-  overflow-y: auto;
+  overflow: hidden;
   transition: 0.5s transform;
   ${(props) =>
     props.$open &&
