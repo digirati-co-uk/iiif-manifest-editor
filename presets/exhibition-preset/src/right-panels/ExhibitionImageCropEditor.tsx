@@ -2,7 +2,7 @@ import { ActionButton, Modal } from "@manifest-editor/components";
 import { MediaEditor } from "@manifest-editor/editors";
 import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
 import { HTMLPortal } from "@atlas-viewer/atlas";
-import { Vault } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AtlasStoreReactContext,
@@ -349,7 +349,7 @@ function VirtualCropCanvas({
     ],
   );
   const temporaryVault = useMemo(() => {
-    const nextVault = new Vault();
+    const nextVault = new Vault4();
     nextVault.loadManifestSync(virtualManifest.id, virtualManifest);
     return nextVault;
   }, [virtualManifest]);

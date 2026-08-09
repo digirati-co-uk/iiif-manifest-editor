@@ -1,4 +1,5 @@
-import { type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
+import { type ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -28,7 +29,7 @@ export interface IIIFBrowserCreatorPayload {
   // will simplify parsing and importing resources.
   output: IIIFBrowserOutputItem[];
   trackSize?: (dimensions: { width: number; height: number }) => void;
-  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
+  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: readonly any[]; partOf: any[] }) => void;
 }
 
 export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
@@ -39,7 +40,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
   for (const { resource, selector, parent, rotation } of resources) {
     const type = resource.type;
-    const previewVault = new Vault();
+    const previewVault = new Vault4();
 
     // Case 1 - we want the WHOLE canvas to come across.
     if (targetType === "Canvas" || targetType === "Annotation" || targetType === "ContentResource") {

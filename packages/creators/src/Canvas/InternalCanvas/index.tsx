@@ -75,7 +75,7 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
   return (
     <VaultProvider vault={vault}>
       <IIIFBrowser
-        vault={vault}
+        vault={vault as any}
         navigation={navigationOptions}
         output={output}
         history={historyOptions}

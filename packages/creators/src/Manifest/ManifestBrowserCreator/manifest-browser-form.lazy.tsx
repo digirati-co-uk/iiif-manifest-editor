@@ -87,7 +87,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
     <PreviewVaultBoundary>
       <IIIFBrowser
         ui={uiOptions}
-        vault={vault}
+        vault={vault as any}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}
         navigation={navigationOptions}
