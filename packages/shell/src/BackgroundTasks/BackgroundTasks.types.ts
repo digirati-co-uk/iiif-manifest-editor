@@ -1,5 +1,5 @@
 import type { Reference } from "@iiif/presentation-3";
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { ReactNode } from "react";
 import type { Resource } from "../AppResourceProvider/AppResourceProvider";
 import type { Config } from "../ConfigContext/ConfigContext";
@@ -189,7 +189,7 @@ export interface BackgroundActionInstance {
 export interface BackgroundActionSystemContext {
   rootResource: Resource;
   currentCanvas?: BackgroundActionTarget;
-  vault: Vault;
+  vault: Vault4;
   tags: ManifestEditorTagsApi;
   canvasProgress: ManifestEditorCanvasProgressApi;
   plugins: PluginRuntimeApi;

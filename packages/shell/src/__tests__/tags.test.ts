@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { describe, expect, test } from "vitest";
 import {
   addResourceTag,
@@ -53,7 +53,7 @@ const printedTag: ManifestEditorTag = {
 };
 
 function createVault() {
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadManifestSync(manifestRef.id, {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     ...manifestRef,

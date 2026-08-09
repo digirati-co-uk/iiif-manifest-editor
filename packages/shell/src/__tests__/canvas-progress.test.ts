@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { describe, expect, test } from "vitest";
 import {
   CANVAS_PROGRESS_META_NAMESPACE,
@@ -13,7 +13,7 @@ const manifestRef = { id: "https://example.org/manifest", type: "Manifest" };
 const canvasRef = { id: "https://example.org/canvas/1", type: "Canvas" };
 
 function createVault() {
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadManifestSync(manifestRef.id, {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     ...manifestRef,

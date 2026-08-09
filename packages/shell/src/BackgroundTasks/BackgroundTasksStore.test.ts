@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { describe, expect, test, vi } from "vitest";
 import { createManifestEditorCanvasProgressApi, getCanvasProgressStatus } from "../CanvasProgress";
 import type {
@@ -31,7 +31,7 @@ const canvasTarget: BackgroundActionTarget = {
   scope: "canvas",
 };
 
-const testVault = new Vault();
+const testVault = new Vault4();
 
 const systemContext: BackgroundActionSystemContext = {
   rootResource: manifestTarget,
@@ -777,7 +777,7 @@ describe("BackgroundTasksStore", () => {
   });
 
   test("clears canvas progress statuses touched by an action when it finishes", async () => {
-    const vault = new Vault();
+    const vault = new Vault4();
     vault.loadManifestSync(manifestTarget.id, {
       "@context": "http://iiif.io/api/presentation/3/context.json",
       id: manifestTarget.id,

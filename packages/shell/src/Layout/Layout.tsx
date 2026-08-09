@@ -7,6 +7,7 @@ import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
 import { Fragment, memo, useContext, useLayoutEffect, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext, useVaultSelector } from "react-iiif-vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
@@ -53,7 +54,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   const rootResource = useAppResource();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
-  const vault = _vault || undefined;
+  const vault = (_vault || undefined) as Vault4 | undefined;
   const vaultState = useVaultSelector((state) => state.iiif);
   const leftPanelRef = useRef<HTMLDivElement | null>(null);
   const rightPanelRef = useRef<HTMLDivElement | null>(null);

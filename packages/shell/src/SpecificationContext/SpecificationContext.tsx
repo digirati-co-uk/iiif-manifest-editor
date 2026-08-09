@@ -11,6 +11,7 @@ import type {
   SpecificationPropertyPath,
 } from "./SpecificationContext.types";
 import type { Reference } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 
 const SpecificationReactContext = createContext<ManifestEditorSpecification[]>(
   [],
@@ -43,7 +44,7 @@ export function useSpecificationReport(rootRef?: Reference) {
 
   return useVaultSelector(
     (_state, vault) =>
-      evaluateSpecifications(specifications, vault, resolvedRootRef),
+      evaluateSpecifications(specifications, vault as unknown as Vault4, resolvedRootRef),
     [specifications, resolvedRootRef.id, resolvedRootRef.type],
   );
 }

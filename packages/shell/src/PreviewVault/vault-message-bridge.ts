@@ -1,4 +1,5 @@
-import type { AllActions, Vault } from "@iiif/helpers/vault";
+import type { AllActions } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { BatchAction } from "@iiif/helpers/vault/actions";
 import type { RemoteVaultAction, RemoteVaultClientMessage } from "@manifest-editor/client-vault";
 import { randomId } from "../helpers";
@@ -9,14 +10,14 @@ type BridgeTarget = {
 };
 
 export type VaultBridgeRegistry = {
-  originalDispatch: Vault["dispatch"];
-  patchedDispatch: Vault["dispatch"];
+  originalDispatch: Vault4["dispatch"];
+  patchedDispatch: Vault4["dispatch"];
   targets: Set<BridgeTarget>;
 };
 
-const registries = new WeakMap<Vault, VaultBridgeRegistry>();
+const registries = new WeakMap<Vault4, VaultBridgeRegistry>();
 
-export function createIframeVaultBridge(vault: Vault, port: MessagePort) {
+export function createIframeVaultBridge(vault: Vault4, port: MessagePort) {
   const target: BridgeTarget = {
     port,
     lastActionId: "@genesis",
@@ -74,13 +75,13 @@ export function createIframeVaultBridge(vault: Vault, port: MessagePort) {
   };
 }
 
-function getVaultBridgeRegistry(vault: Vault): VaultBridgeRegistry {
+function getVaultBridgeRegistry(vault: Vault4): VaultBridgeRegistry {
   const existing = registries.get(vault);
   if (existing) {
     return existing;
   }
 
-  const originalDispatch = vault.dispatch.bind(vault) as Vault["dispatch"];
+  const originalDispatch = vault.dispatch.bind(vault) as Vault4["dispatch"];
   const targets = new Set<BridgeTarget>();
   const patchedDispatch = ((action: AllActions | BatchAction) => {
     const result = originalDispatch(action);

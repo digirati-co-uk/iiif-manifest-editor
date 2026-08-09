@@ -1,4 +1,5 @@
 import { useVault } from "react-iiif-vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useMemo } from "react";
 import {
   type CreatableResource,
@@ -17,7 +18,7 @@ interface BaseAnnotationCreatorProps {
 
 export function BaseAnnotationCreator(props: BaseAnnotationCreatorProps) {
   const {} = props;
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const app = useApp();
   const supported = useMemo(
     () =>

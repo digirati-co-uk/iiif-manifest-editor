@@ -1,4 +1,5 @@
 import { toRef } from "@iiif/parser";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { Reference } from "@iiif/presentation-3";
 import { Creator, matchBasedOnResource } from "@manifest-editor/creator-api";
 import { useCallback, useMemo } from "react";
@@ -16,11 +17,11 @@ export function useCreator(
   target?: Reference,
   options?: { isPainting?: boolean; onlyReference?: boolean },
 ) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const app = useApp();
   const { create, edit } = useLayoutActions();
   const supported = useMemo(
-    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault }),
+    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault: vault as any }),
     [parent, property, app.layout.creators, type, vault],
   );
   const canCreate = parent && supported.length !== 0;
@@ -103,11 +104,11 @@ export function useCreator(
 }
 
 export function useInlineCreator() {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const previewVault = usePreviewVault();
   const app = useApp();
   const config = useConfig();
   return useMemo(() => {
-    return new Creator(vault, app.layout.creators || [], previewVault, config.creators);
+    return new Creator(vault as any, app.layout.creators || [], previewVault as any, config.creators);
   }, [app.layout.creators, config.creators, previewVault, vault]);
 }

@@ -1,9 +1,7 @@
-import rawUseDropdownMenu from "react-accessible-dropdown-menu-hook";
+import type useDropdownMenuType from "react-accessible-dropdown-menu-hook";
+import * as dropdownMenuModule from "react-accessible-dropdown-menu-hook";
 
-const useDropdownMenu = (
-  typeof rawUseDropdownMenu === "object" && rawUseDropdownMenu !== null && "default" in rawUseDropdownMenu
-    ? rawUseDropdownMenu.default
-    : rawUseDropdownMenu
-) as typeof rawUseDropdownMenu;
+const imported = dropdownMenuModule as any;
+const useDropdownMenu = (imported.default?.default ?? imported.default ?? imported) as typeof useDropdownMenuType;
 
 export default useDropdownMenu;

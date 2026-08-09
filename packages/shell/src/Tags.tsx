@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { type CSSProperties, type SVGProps, useMemo } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
 
@@ -105,7 +105,7 @@ function compareTagGroups(a: ManifestEditorTagGroup, b: ManifestEditorTagGroup) 
   return a.type.localeCompare(b.type);
 }
 
-export function getResourceTags(vault: Vault, resource: ManifestEditorTagResource): ManifestEditorTag[] {
+export function getResourceTags(vault: Vault4, resource: ManifestEditorTagResource): ManifestEditorTag[] {
   const id = getResourceId(resource);
   if (!id) {
     return EMPTY_TAGS;
@@ -125,7 +125,7 @@ export function getResourceTagsFromState(state: any, resource: ManifestEditorTag
 }
 
 export function setResourceTags(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tags: ManifestEditorTag[],
 ): ManifestEditorTag[] {
@@ -140,7 +140,7 @@ export function setResourceTags(
 }
 
 export function addResourceTag(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tag: ManifestEditorTag,
 ): ManifestEditorTag[] {
@@ -148,7 +148,7 @@ export function addResourceTag(
 }
 
 export function getResourceTag(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tagType: string,
 ): ManifestEditorTag | undefined {
@@ -156,7 +156,7 @@ export function getResourceTag(
 }
 
 export function removeResourceTag(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tagType: string,
   tagId?: string,
@@ -169,7 +169,7 @@ export function removeResourceTag(
 }
 
 export function getResourceTagGroups(
-  vault: Vault,
+  vault: Vault4,
   resources: ManifestEditorTagResource[],
 ): ManifestEditorTagGroup[] {
   const groups = new Map<string, ManifestEditorTagGroup>();
@@ -226,7 +226,7 @@ export function getResourceTagGroups(
 }
 
 export function hasResourceTag(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tagType: string,
   tagId?: string,
@@ -236,7 +236,7 @@ export function hasResourceTag(
 }
 
 export function toggleResourceTag(
-  vault: Vault,
+  vault: Vault4,
   resource: ManifestEditorTagResource,
   tag: ManifestEditorTag,
 ): ManifestEditorTag[] {
@@ -256,7 +256,7 @@ export interface ManifestEditorTagsApi {
   toggleTag(resource: ManifestEditorTagResource, tag: ManifestEditorTag): ManifestEditorTag[];
 }
 
-export function createManifestEditorTagsApi(vault: Vault): ManifestEditorTagsApi {
+export function createManifestEditorTagsApi(vault: Vault4): ManifestEditorTagsApi {
   return {
     getTags(resource) {
       return getResourceTags(vault, resource);
@@ -297,7 +297,7 @@ export function useResourceTags(resource: ManifestEditorTagResource): ManifestEd
 }
 
 export function useResourceTagActions(resource: ManifestEditorTagResource) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const resourceId = getResourceId(resource);
   const tagActions = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
 

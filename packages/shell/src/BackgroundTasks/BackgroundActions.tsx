@@ -18,6 +18,7 @@ import {
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import useDropdownMenu from "../use-dropdown-menu";
 import { useVault } from "react-iiif-vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { useEditingResource, useEditingResourceStack } from "../EditingStack/EditingStack";
@@ -77,7 +78,7 @@ function useCurrentCanvasTarget() {
 function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
   const rootResource = useAppResource();
   const currentCanvas = useCurrentCanvasTarget();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const tags = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
   const canvasProgress = useMemo(() => createManifestEditorCanvasProgressApi(vault), [vault]);
   const plugins = usePluginRuntimeApi();

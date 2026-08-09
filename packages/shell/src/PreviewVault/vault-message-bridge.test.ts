@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import { describe, expect, test, vi } from "vitest";
 import { createIframeVaultBridge } from "./vault-message-bridge";
@@ -34,7 +34,7 @@ describe("createIframeVaultBridge", () => {
     const manifestId = "https://example.org/manifest";
     const firstCanvasId = "https://example.org/canvas/1";
     const secondCanvasId = "https://example.org/canvas/2";
-    const source = new Vault();
+    const source = new Vault4();
     source.loadManifestSync(manifestId, {
       id: manifestId,
       type: "Manifest",
@@ -49,7 +49,7 @@ describe("createIframeVaultBridge", () => {
     );
     port.receive(JSON.stringify({ _type: "init-request" }));
 
-    const receiving = new Vault();
+    const receiving = new Vault4();
     const init = JSON.parse(port.messages.shift()!);
     receiving.getStore().setState(init.data);
 
@@ -110,7 +110,7 @@ describe("createIframeVaultBridge", () => {
   });
 });
 
-function flushMirroredActions(port: TestPort, receiving: Vault) {
+function flushMirroredActions(port: TestPort, receiving: Vault4) {
   for (const message of port.messages.splice(0)) {
     const parsed = JSON.parse(message);
     if (parsed._type === "vault-action") {

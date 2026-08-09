@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/helpers";
-import * as IIIFVault from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 
 // This is from the ts version
 // Create an image in the DOM to measure height and width
@@ -159,7 +159,7 @@ export async function analyseJson(data: any, url: string) {
   if (!dataId) {
     return null;
   }
-  const vault = new IIIFVault.Vault();
+  const vault = new Vault4();
   const vaultData = await vault.load(url, data); // we could use dataId here, but just in case it's wrong...
   if (!vaultData) {
     return;

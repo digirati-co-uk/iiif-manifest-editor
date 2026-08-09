@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useMemo } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
 
@@ -34,7 +34,7 @@ function isActiveCanvasProgressStatus(status: CanvasProgressStatusInput): status
   return typeof status === "string" && ACTIVE_STATUSES.has(status as CanvasProgressActiveStatus);
 }
 
-export function getCanvasProgressStatus(vault: Vault, resource: CanvasProgressResource): CanvasProgressStatus {
+export function getCanvasProgressStatus(vault: Vault4, resource: CanvasProgressResource): CanvasProgressStatus {
   const id = getResourceId(resource);
   if (!id) {
     return "none";
@@ -59,7 +59,7 @@ export function getCanvasProgressStatusFromState(state: any, resource: CanvasPro
 }
 
 export function setCanvasProgressStatus(
-  vault: Vault,
+  vault: Vault4,
   resource: CanvasProgressResource,
   status: CanvasProgressStatusInput,
 ): CanvasProgressStatus {
@@ -73,12 +73,12 @@ export function setCanvasProgressStatus(
   return nextStatus || "none";
 }
 
-export function clearCanvasProgressStatus(vault: Vault, resource: CanvasProgressResource): CanvasProgressStatus {
+export function clearCanvasProgressStatus(vault: Vault4, resource: CanvasProgressResource): CanvasProgressStatus {
   return setCanvasProgressStatus(vault, resource, "none");
 }
 
 export function setCanvasProgressStatuses(
-  vault: Vault,
+  vault: Vault4,
   resources: CanvasProgressResource[],
   status: CanvasProgressStatusInput,
 ): Record<string, CanvasProgressStatus> {
@@ -97,7 +97,7 @@ export function setCanvasProgressStatuses(
 }
 
 export function clearCanvasProgressStatuses(
-  vault: Vault,
+  vault: Vault4,
   resources: CanvasProgressResource[],
 ): Record<string, CanvasProgressStatus> {
   return setCanvasProgressStatuses(vault, resources, "none");
@@ -111,7 +111,7 @@ export interface ManifestEditorCanvasProgressApi {
   clearStatuses(resources: CanvasProgressResource[]): Record<string, CanvasProgressStatus>;
 }
 
-export function createManifestEditorCanvasProgressApi(vault: Vault): ManifestEditorCanvasProgressApi {
+export function createManifestEditorCanvasProgressApi(vault: Vault4): ManifestEditorCanvasProgressApi {
   return {
     getStatus(resource) {
       return getCanvasProgressStatus(vault, resource);
@@ -188,7 +188,7 @@ export function useCanvasProgressStatus(resource: CanvasProgressResource): Canva
 }
 
 export function useCanvasProgressActions(resource: CanvasProgressResource) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const resourceId = getResourceId(resource);
   const progressActions = useMemo(() => createManifestEditorCanvasProgressApi(vault), [vault]);
 

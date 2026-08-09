@@ -4,6 +4,7 @@ import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
 import { type CSSProperties, Fragment, memo, useContext, useLayoutEffect, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext, useVaultSelector } from "react-iiif-vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
@@ -32,7 +33,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
   const rootResource = useAppResource();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
-  const vault = _vault || undefined;
+  const vault = (_vault || undefined) as Vault4 | undefined;
   const vaultState = useVaultSelector((state) => state.iiif);
   const {
     loading,
