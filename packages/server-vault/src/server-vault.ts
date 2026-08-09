@@ -1,5 +1,6 @@
 // Server vault.
-import { AllActions, IIIFStore, Vault } from "@iiif/helpers/vault";
+import type { AllActions, IIIFStore } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { BatchAction } from "@iiif/helpers/vault/actions";
 import { Collection, Manifest } from "@iiif/presentation-3";
 import WebSocket, { RawData, WebSocketServer } from "ws";
@@ -75,7 +76,7 @@ export interface ServerVaultOptions {
 }
 
 export class ServerVault {
-  vault: Vault;
+  vault: Vault4;
   ws: WebSocketServer;
   lastActionId: string = GenesisId;
   pingInterval: NodeJS.Timeout;
@@ -85,7 +86,7 @@ export class ServerVault {
   private _handleClose = new Map();
 
   constructor(options: ServerVaultOptions = {}) {
-    this.vault = new Vault();
+    this.vault = new Vault4();
     this.ws = new WebSocketServer({ noServer: true });
 
     this.ws.on("connection", this.setupWebSocket);

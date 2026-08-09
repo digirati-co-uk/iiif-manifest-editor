@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { CreatorRuntime } from "./CreatorRuntime";
@@ -7,14 +7,14 @@ import { matchBasedOnResource } from "./utils";
 
 export class Creator {
   configs: CreatorDefinition[];
-  vault: Vault;
-  previewVault: Vault;
+  vault: Vault4;
+  previewVault: Vault4;
   creatorConfig: CreatorConfig;
 
-  constructor(vault: Vault, configs: CreatorDefinition[], previewVault?: Vault, creatorConfig?: CreatorConfig) {
+  constructor(vault: Vault4, configs: CreatorDefinition[], previewVault?: Vault4, creatorConfig?: CreatorConfig) {
     this.configs = configs || [];
     this.vault = vault;
-    this.previewVault = previewVault || new Vault();
+    this.previewVault = previewVault || new Vault4();
     this.creatorConfig = creatorConfig || {};
   }
 
@@ -44,7 +44,7 @@ export class Creator {
         const type = foundDefinition.supports.parentFieldMap[options.parent.resource.type];
         if (!type || !type.includes(options.parent.property)) {
           throw new Error(
-            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`,
+            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`
           );
         }
       }
@@ -63,7 +63,7 @@ export class Creator {
       this.configs,
       this.previewVault,
       options,
-      this.creatorConfig,
+      this.creatorConfig
     );
 
     const run = await runtime.run();
@@ -79,7 +79,7 @@ export class Creator {
               type: options.parent.resource.type as any,
               value: resource.ref(),
               key: options.parent.property,
-            }),
+            })
           );
         } else {
           afterActions.push(
@@ -89,7 +89,7 @@ export class Creator {
               reference: resource.ref(),
               key: options.parent.property,
               index: options.parent.atIndex,
-            }),
+            })
           );
         }
       }

@@ -19,7 +19,7 @@ import { ensureUniqueFilename } from "./helpers/ensure-unique-filename";
 import { projectFromCollection } from "./helpers/project-from-collection";
 import { ClientVault } from "@manifest-editor/client-vault";
 import { randomId } from "./helpers/random-id";
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { Preview, getManifestNomalized } from "@manifest-editor/shell";
 
 export function useProjectActionsWithBackend(
@@ -275,7 +275,7 @@ export function useProjectLoader<T extends Storage = any>(
     ready,
     error,
   } as {
-    vault: Vault | null;
+    vault: Vault4 | null;
     ready: boolean;
     error: string;
   };

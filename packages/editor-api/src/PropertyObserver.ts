@@ -1,13 +1,13 @@
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { TrackerState } from "./types";
 
 export class PropertyObserver implements TrackerState {
   observed: string[];
-  vault: Vault;
+  vault: Vault4;
   entity: any;
   key = "";
 
-  constructor(vault: Vault, entity: any) {
+  constructor(vault: Vault4, entity: any) {
     this.vault = vault;
     this.observed = [];
     this.entity = entity;

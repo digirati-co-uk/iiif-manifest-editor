@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { Reference } from "@iiif/presentation-3";
 import type { EditorConfig } from "./types";
 
@@ -37,16 +37,16 @@ export class BaseEditor<T> {
   }
 
   protected _observe(
-    selector: (resource: T, context: any, vault: Vault) => any,
+    selector: (resource: T, context: any, vault: Vault4) => any,
     cb: (selected: any, resource: T, context: any) => void,
-    skipInitial = true,
+    skipInitial = true
   ) {
     return this.config.vault.subscribe(
       () => selector(this.entity(), this.config.context, this.config.vault),
       (selected) => {
         cb(selected, this.entity(), this.config.context);
       },
-      skipInitial,
+      skipInitial
     );
   }
 }

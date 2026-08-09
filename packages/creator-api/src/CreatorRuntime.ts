@@ -1,9 +1,5 @@
-import type { Vault } from "@iiif/helpers/vault";
-import {
-  addMappings,
-  batchActions,
-  importEntities,
-} from "@iiif/helpers/vault/actions";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import { addMappings, batchActions, importEntities } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
@@ -14,21 +10,21 @@ export class CreatorRuntime {
   // This will hold state for the creation process
   resource: CreatorResource | Array<CreatorResource> | null = null;
   payload: any;
-  vault: Vault;
-  previewVault: Vault;
+  vault: Vault4;
+  previewVault: Vault4;
   definition: CreatorDefinition;
   options: CreatorOptions;
   configs: CreatorDefinition[];
   creatorConfig: CreatorConfig;
 
   constructor(
-    vault: Vault,
+    vault: Vault4,
     definition: CreatorDefinition,
     payload: any,
     createConfigs: CreatorDefinition[],
-    previewVault: Vault,
+    previewVault: Vault4,
     options?: Partial<CreatorOptions>,
-    creatorConfig?: CreatorConfig,
+    creatorConfig?: CreatorConfig
   ) {
     this.vault = vault;
     this.previewVault = previewVault;
@@ -57,7 +53,7 @@ export class CreatorRuntime {
       this.configs,
       this.previewVault,
       getCreatorConfigKey(this.definition),
-      this.creatorConfig,
+      this.creatorConfig
     );
     const result = await this.definition.create(this.payload, instance);
 
@@ -90,9 +86,7 @@ export class CreatorRuntime {
       return [];
     }
 
-    const allResources = Array.isArray(this.resource)
-      ? this.resource
-      : [this.resource];
+    const allResources = Array.isArray(this.resource) ? this.resource : [this.resource];
 
     const actions = [];
 
@@ -132,9 +126,7 @@ export class CreatorRuntime {
     }
 
     const actions = this.getActions();
-    this.vault.dispatch(
-      batchActions({ actions: [...actions, ...afterActions] }),
-    );
+    this.vault.dispatch(batchActions({ actions: [...actions, ...afterActions] }));
 
     if (Array.isArray(this.resource)) {
       return this.resource.map((resource) => resource.ref() as Reference);

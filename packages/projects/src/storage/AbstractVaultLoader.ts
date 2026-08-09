@@ -1,13 +1,15 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { EditorProject, ProjectStorage } from "../ProjectContext.types";
 import { Collection, Manifest, Reference } from "@iiif/presentation-3";
 import { CollectionStorage, ManifestStorage, Storage } from "../types/Storage";
 
-export abstract class AbstractVaultLoader<T extends Storage>
-  implements ProjectStorage<ManifestStorage | CollectionStorage, Manifest | Collection, T>
-{
+export abstract class AbstractVaultLoader<T extends Storage> implements ProjectStorage<
+  ManifestStorage | CollectionStorage,
+  Manifest | Collection,
+  T
+> {
   abstract type: string;
-  vaults: Record<string, Vault | null> = {};
+  vaults: Record<string, Vault4 | null> = {};
   saveInterval: number;
 
   protected constructor(config: Partial<{ saveInterval: number }> = {}) {
@@ -28,13 +30,13 @@ export abstract class AbstractVaultLoader<T extends Storage>
 
   abstract create(project: EditorProject, data: Manifest | Collection): Promise<T>;
 
-  createVaultInstance(project: EditorProject): [Vault, Promise<void>] {
+  createVaultInstance(project: EditorProject): [Vault4, Promise<void>] {
     const foundVault = this.vaults[project.storage.data.key];
     if (foundVault) {
       return [foundVault, Promise.resolve()];
     }
 
-    const vault = new Vault();
+    const vault = new Vault4();
 
     const promise = async () => {
       const data = await this.getStorage(project.storage as any);
@@ -45,7 +47,7 @@ export abstract class AbstractVaultLoader<T extends Storage>
     return [vault, promise() as Promise<void>];
   }
 
-  closeVaultInstance(project: EditorProject, vault: Vault): void {
+  closeVaultInstance(project: EditorProject, vault: Vault4): void {
     // No-op
   }
 
@@ -58,7 +60,11 @@ export abstract class AbstractVaultLoader<T extends Storage>
 
     // There will only be something to save if there is active vault.
     if (vault) {
-      const data = vault.toPresentation3<Manifest | Collection>(manifestRef);
+      const resource = vault.get(manifestRef);
+      const hasScenes = resource?.type === "Manifest" && resource.items?.some((item) => item.type === "Scene");
+      const data = hasScenes
+        ? vault.toPresentation4<Manifest | Collection>(manifestRef)
+        : vault.toPresentation3<Manifest | Collection>(manifestRef);
 
       const stored: ManifestStorage | CollectionStorage =
         data.type === "Collection"

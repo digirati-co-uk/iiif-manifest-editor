@@ -1,10 +1,10 @@
-import type { VaultOptions } from "@iiif/helpers/vault";
+import type { Vault4Options } from "@iiif/helpers/vault-4";
 import { RemoteClientVault } from "./remote-client-vault";
 
 export class MessagePortClientVault extends RemoteClientVault {
   port: MessagePort;
 
-  constructor(port: MessagePort, options?: Partial<VaultOptions>) {
+  constructor(port: MessagePort, options?: Partial<Vault4Options>) {
     super(options);
     this.port = port;
     this.port.addEventListener("message", this.handleMessage);

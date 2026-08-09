@@ -1,10 +1,10 @@
-import type { VaultOptions } from "@iiif/helpers/vault";
+import type { Vault4Options } from "@iiif/helpers/vault-4";
 import { RemoteClientVault } from "./remote-client-vault";
 
 export class ClientVault extends RemoteClientVault {
   ws: WebSocket;
 
-  constructor(url: string, options?: Partial<VaultOptions>) {
+  constructor(url: string, options?: Partial<Vault4Options>) {
     super(options);
 
     this.ws = new WebSocket(url);

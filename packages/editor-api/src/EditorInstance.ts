@@ -16,7 +16,7 @@ import { TechnicalEditor } from "./TechnicalPropertiesEditor";
 import { MetadataEditor } from "./MetadataEditor";
 import { LinkingEditor } from "./LinkingEditor";
 import { StructuralEditor } from "./StructuralEditor";
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { resources } from "./meta/resources";
 import { AnnotationEditor } from "./AnnotationEditor";
 import { HAS_PART, PART_OF } from "@iiif/parser";
@@ -45,7 +45,7 @@ export class EditorInstance<
   context?: SelfReferenceEditor<T>;
   observe: TrackerState;
 
-  constructor(_config: { vault: Vault; reference: Reference } & Partial<EditorConfig>) {
+  constructor(_config: { vault: Vault4; reference: Reference } & Partial<EditorConfig>) {
     const config: EditorConfig = _config as any;
     config.context = config.context || {};
     config.context.resource = config.context.resource || { type: "SpecificResource", source: config.reference };
@@ -96,9 +96,9 @@ export class EditorInstance<
     return null;
   }
 
-  ref() {
+  ref = () => {
     return this.config.reference;
-  }
+  };
 
   validate() {
     const validators = this.config.validators;
