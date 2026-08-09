@@ -6,6 +6,7 @@ import { useVault } from "react-iiif-vault";
 import type { PresetPreviewOptions } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
+import { serializeResource } from "../helpers";
 import { usePreviewContext } from "../PreviewContext/PreviewContext";
 import {
   ButtonChange,
@@ -52,10 +53,7 @@ export function PreviewButton({
             fileName={fileName || "manifest.json"}
             label="Download manifest"
             getData={() => {
-              if (config.export && config.export.version === 2) {
-                return JSON.stringify(vault.toPresentation2(resource as any), null, 2);
-              }
-              return JSON.stringify(vault.toPresentation3(resource as any), null, 2);
+              return JSON.stringify(serializeResource(vault as any, resource as any, config.export?.version), null, 2);
             }}
           />
         </div>

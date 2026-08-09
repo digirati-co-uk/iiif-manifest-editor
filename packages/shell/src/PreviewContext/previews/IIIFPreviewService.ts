@@ -1,6 +1,7 @@
 import { Vault } from "@iiif/helpers/vault";
 import { Preview, PreviewConfiguration, PreviewHandler } from "../PreviewContext.types";
 import invariant from "tiny-invariant";
+import { serializeResource } from "../../helpers";
 
 type IIIFPreviewResponse = {
   location: string;
@@ -33,7 +34,7 @@ export class IIIFPreviewService implements PreviewHandler {
   }
 
   async isPreviewValid(instanceId: string, instance: Preview): Promise<boolean> {
-    if (!!this.cache[instanceId]) {
+    if (this.cache[instanceId]) {
       return true;
     }
 
@@ -53,7 +54,7 @@ export class IIIFPreviewService implements PreviewHandler {
   }
 
   async createPreview(instanceId: string, resource: { id: string; type: string }, vault: Vault): Promise<Preview> {
-    const manifest = vault.toPresentation3(resource as any);
+    const manifest = serializeResource(vault as any, resource);
     const response = await fetch(this.serviceUrl, {
       method: "POST",
       headers: {
@@ -91,7 +92,7 @@ export class IIIFPreviewService implements PreviewHandler {
     }
 
     const updateUrl = cached.updateLocation;
-    const manifest = vault.toPresentation3(resource as any);
+    const manifest = serializeResource(vault as any, resource);
 
     const response = await fetch(updateUrl, {
       method: "PUT",

@@ -4,14 +4,14 @@ import { useManifest, useVault } from "react-iiif-vault";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { CenterPanelContainer } from "@manifest-editor/ui/CenterPanelContainer";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
-import { copyToClipboard, createDownload } from "../helpers";
+import { copyToClipboard, createDownload, serializeResource } from "../helpers";
 import { DownloadIcon } from "@manifest-editor/ui/icons/DownloadIcon";
 import { ButtonRow } from "@manifest-editor/ui/atoms/ButtonRow";
 
 export interface ExportPanelProps {
   // We could limit versions / download options etc.
-  initialVersion?: 2 | 3;
-  versions?: Array<2 | 3>;
+  initialVersion?: 2 | 3 | 4;
+  versions?: Array<2 | 3 | 4>;
 }
 
 export function ExportPanel(props: ExportPanelProps) {
@@ -27,17 +27,43 @@ export function ExportPanel(props: ExportPanelProps) {
     return JSON.stringify(vault.toPresentation2(manifest as any), null, 2);
   }, [manifest, vault]);
 
+  const version4 = useMemo(() => {
+    return JSON.stringify(serializeResource(vault as any, manifest as any, 4), null, 2);
+  }, [manifest, vault]);
+
   return (
     <CenterPanelContainer title="Export manifest" close={actions.centerPanel.popStack}>
       <div style={{ flex: 1, overflowY: "auto" }}>
         <Accordion
           items={[
             {
+              label: "Presentation 4",
+              description: 'Download this version by clicking the "Download" button.',
+              maxHeight: 400,
+              large: true,
+              initialOpen: props.initialVersion === 4,
+              overflow: true,
+              icon: (
+                <Button onClick={() => createDownload(version4, "manifest-v4.json")}>
+                  <DownloadIcon />
+                </Button>
+              ),
+              children: (
+                <div style={{ maxWidth: "100%" }}>
+                  <pre style={{ whiteSpace: "pre-wrap" }}>{version4}</pre>
+                  <ButtonRow data-sticky="true">
+                    <Button onClick={() => copyToClipboard(version4)}>Copy to clipboard</Button>
+                    <Button onClick={() => createDownload(version4, "manifest-v4.json")}>Download</Button>
+                  </ButtonRow>
+                </div>
+              ),
+            },
+            {
               label: "Presentation 3",
               description: 'Download this version by clicking the "Download" button.',
               maxHeight: 400,
               large: true,
-              initialOpen: true,
+              initialOpen: props.initialVersion !== 4,
               overflow: true,
               icon: (
                 <Button onClick={() => createDownload(version3, "manifest.json")}>
