@@ -1,7 +1,11 @@
 import type useDropdownMenuType from "react-accessible-dropdown-menu-hook";
 import * as dropdownMenuModule from "react-accessible-dropdown-menu-hook";
 
-const imported = dropdownMenuModule as any;
-const useDropdownMenu = (imported.default?.default ?? imported.default ?? imported) as typeof useDropdownMenuType;
+export function resolveDropdownMenu(module: any): typeof useDropdownMenuType {
+  const defaultExport = Reflect.get(module, "default");
+  return (Reflect.get(defaultExport ?? {}, "default") ?? defaultExport ?? module) as typeof useDropdownMenuType;
+}
+
+const useDropdownMenu = resolveDropdownMenu(dropdownMenuModule);
 
 export default useDropdownMenu;
