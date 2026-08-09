@@ -1,6 +1,6 @@
 "use client";
 
-import { Vault } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { upgrade } from "@iiif/parser/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
@@ -9,11 +9,12 @@ import { ManifestEditor } from "manifest-editor";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { GlobalNav } from "../site/GlobalNav";
+import { serializeVaultResource } from "../../helpers/serialize-vault-resource";
 
 export default function LocalEditor() {
   const [file, setFile] = useState<FileWithHandle | null>(null);
   const [manifest, setManifest] = useState<any | null>(null);
-  const [vault] = useState(() => new Vault());
+  const [vault] = useState(() => new Vault4());
   const [lastModified, setLastModified] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,7 +72,7 @@ export default function LocalEditor() {
             if (!file || !manifest || !vault) {
               return;
             }
-            const manifestJson = vault.toPresentation3({ id: manifest.id, type: "Manifest" });
+            const manifestJson = serializeVaultResource(vault, { id: manifest.id, type: "Manifest" });
             if (!manifestJson) {
               return;
             }
@@ -82,7 +83,7 @@ export default function LocalEditor() {
                 fileName: file.name,
                 extensions: [".json"],
               },
-              file.handle,
+              file.handle
             );
             if (handle) {
               const file = await handle.getFile();

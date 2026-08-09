@@ -1,6 +1,7 @@
 "use client";
 
-import { Vault, createThumbnailHelper } from "@iiif/helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import type { CanvasNormalized, CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
 import { ActionButton } from "@manifest-editor/components";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -27,7 +28,7 @@ export default function SharePage() {
       if (queryString.projectId && !copy) {
         if (existing) {
           const id = existing.id;
-          const vault = new Vault();
+          const vault = new Vault4();
           const thumbnailHelper = createThumbnailHelper(vault);
           const newResource = await vault.load<CollectionNormalized | ManifestNormalized>(queryString.resource);
           if (!newResource) throw new Error("Invalid resource");
@@ -46,7 +47,7 @@ export default function SharePage() {
           const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
             newResource,
             { width: 256, height: 256 },
-            false,
+            false
           );
           const resource = {
             id: newResource.id,

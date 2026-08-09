@@ -1,7 +1,8 @@
 // 1. List projects
 // 2. Get project by ID
 
-import { createThumbnailHelper, Vault } from "@iiif/helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import type { InternationalString } from "@iiif/presentation-3";
 import { type Config, mergePartialConfig, randomId } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -11,18 +12,12 @@ import { queryClient } from "../site/Provider";
 
 const localStore =
   typeof window !== "undefined"
-    ? createStore(
-      "manifest-editor-projects-v2",
-      "manifest-editor-project-store",
-    )
+    ? createStore("manifest-editor-projects-v2", "manifest-editor-project-store")
     : undefined;
 
 const globalPluginConfigStore =
   typeof window !== "undefined"
-    ? createStore(
-      "manifest-editor-global-plugin-config-v1",
-      "manifest-editor-global-plugin-config-store",
-    )
+    ? createStore("manifest-editor-global-plugin-config-v1", "manifest-editor-global-plugin-config-store")
     : undefined;
 
 const globalPluginConfigKey = "global-plugin-config";
@@ -58,9 +53,7 @@ export interface LocalBrowserProject {
   etag: string | null;
 }
 
-export async function listBrowserProjects(): Promise<
-  LocalBrowserProjectSnippet[]
-> {
+export async function listBrowserProjects(): Promise<LocalBrowserProjectSnippet[]> {
   if (!localStore) {
     return [];
   }
@@ -80,14 +73,12 @@ export async function listBrowserProjects(): Promise<
   return projects.sort((a, b) => b.updated - a.updated);
 }
 
-export async function internal_getBrowserProjectById(
-  projectId: string,
-): Promise<LocalBrowserProject | null> {
+export async function internal_getBrowserProjectById(projectId: string): Promise<LocalBrowserProject | null> {
   return (await get(projectId, localStore)) || null;
 }
 
 export async function openBrowserProject(
-  id: string,
+  id: string
 ): Promise<{ project: LocalBrowserProject; wasAlreadyOpen: boolean }> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
@@ -99,9 +90,7 @@ export async function openBrowserProject(
   };
 }
 
-export async function closeBrowserProject(
-  id: string,
-): Promise<LocalBrowserProject> {
+export async function closeBrowserProject(id: string): Promise<LocalBrowserProject> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   const project = { ...current, isOpen: false };
@@ -114,7 +103,7 @@ export async function createBrowserProject(
   resource: LocalBrowserProject["resource"],
   source: LocalBrowserProject["source"],
   vaultData: LocalBrowserProject["vaultData"],
-  extraData: LocalBrowserProject["extraData"],
+  extraData: LocalBrowserProject["extraData"]
 ): Promise<LocalBrowserProject> {
   const project: LocalBrowserProject = {
     id,
@@ -134,13 +123,12 @@ export async function createBrowserProject(
 export async function saveBrowserProjectResource(
   id: string,
   resource: LocalBrowserProject["resource"],
-  etag: string,
+  etag: string
 ): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag)
-    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const project = { ...current, resource, updated: Date.now(), etag: newEtag };
   await set(id, project, localStore);
@@ -151,13 +139,12 @@ export async function saveBrowserProjectVaultData(
   id: string,
   data: object,
   etag: string,
-  resource?: LocalBrowserProject["resource"],
+  resource?: LocalBrowserProject["resource"]
 ): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag)
-    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const project = {
     ...current,
@@ -170,16 +157,11 @@ export async function saveBrowserProjectVaultData(
   return newEtag;
 }
 
-export async function saveBrowserProjectExtraData(
-  id: string,
-  data: object,
-  etag: string,
-): Promise<string> {
+export async function saveBrowserProjectExtraData(id: string, data: object, etag: string): Promise<string> {
   const current = await get<LocalBrowserProject>(id, localStore);
   if (!current) throw new Error("Project not found");
   if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag)
-    throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
   const newEtag = `etag_${Date.now()}`;
   const newExtraData = { ...(current.extraData || {}), ...data };
   const project = {
@@ -240,7 +222,7 @@ export function useBrowserGlobalPluginConfig() {
     async (config: Config["plugins"]) => {
       await save.mutateAsync(config || { apps: {} });
     },
-    [save],
+    [save]
   );
 
   return {
@@ -253,9 +235,9 @@ export function useBrowserGlobalPluginConfig() {
 
 export function useBrowserProject(id: string) {
   const etag = useRef<string | null>(null);
-  const vaultRef = useRef<{ id: string; vault: Vault } | null>(null);
+  const vaultRef = useRef<{ id: string; vault: Vault4 } | null>(null);
   if (vaultRef.current?.id !== id) {
-    vaultRef.current = { id, vault: new Vault() };
+    vaultRef.current = { id, vault: new Vault4() };
   }
   const vault = vaultRef.current.vault;
   useEffect(() => {
@@ -299,11 +281,7 @@ export function useBrowserProject(id: string) {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) throw new Error("project not loaded");
       if (!etag.current) throw new Error("etag not set");
-      const newEtag = await saveBrowserProjectExtraData(
-        id,
-        data,
-        etag.current!,
-      );
+      const newEtag = await saveBrowserProjectExtraData(id, data, etag.current!);
       etag.current = newEtag;
       queryClient.setQueryData(["browser-project", id], {
         project: {
@@ -326,14 +304,11 @@ export function useBrowserProject(id: string) {
         config: mergePartialConfig(projectData?.project.extraData?.config || {}, config),
       });
     },
-    [projectData?.project.extraData?.config, saveExtraData],
+    [projectData?.project.extraData?.config, saveExtraData]
   );
 
   const saveResource = useMutation({
-    mutationFn: async (
-      data: LocalBrowserProject["resource"],
-      force = false,
-    ) => {
+    mutationFn: async (data: LocalBrowserProject["resource"], force = false) => {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) throw new Error("project not loaded");
       if (!etag.current) throw new Error("etag not set");
@@ -352,10 +327,7 @@ export function useBrowserProject(id: string) {
   });
 
   const saveVaultData = useMutation({
-    mutationFn: async ({
-      force = false,
-      resource,
-    }: { force?: boolean; resource?: object } = {}) => {
+    mutationFn: async ({ force = false, resource }: { force?: boolean; resource?: object } = {}) => {
       if (force) etag.current = await getLatestEtag(id);
       if (!projectData) return null;
       if (!etag.current) throw new Error("etag not set");
@@ -369,12 +341,7 @@ export function useBrowserProject(id: string) {
         return;
       }
 
-      etag.current = await saveBrowserProjectVaultData(
-        id,
-        data,
-        etag.current!,
-        resource as any,
-      );
+      etag.current = await saveBrowserProjectVaultData(id, data, etag.current!, resource as any);
       queryClient.setQueryData(["browser-project", id], {
         project: { ...projectData.project, vaultData: data },
         wasAlreadyOpen: projectData.wasAlreadyOpen,
@@ -391,7 +358,7 @@ export function useBrowserProject(id: string) {
     mutationFn: async () => {
       try {
         await saveVaultData.mutateAsync({ force: false });
-      } catch (e) { }
+      } catch (e) {}
       await closeBrowserProject(id);
     },
     onSuccess: async () => {
@@ -421,9 +388,7 @@ export function useBrowserProject(id: string) {
     isProjectLoading: isLoading,
     isProjectError: isError,
     wasAlreadyOpen: projectData?.wasAlreadyOpen,
-    projectConfig: projectData?.project?.extraData?.config as
-      | Partial<Config>
-      | undefined,
+    projectConfig: projectData?.project?.extraData?.config as Partial<Config> | undefined,
     saveProjectConfig,
     project: projectData?.project,
     saveExtraData,
@@ -447,7 +412,7 @@ export async function createBlankExhibition() {
     items: [],
   };
 
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadCollectionSync(manifest.id, manifest);
   const vaultData = vault.getState().iiif;
 
@@ -462,7 +427,7 @@ export async function createBlankExhibition() {
     },
     { id: "blank-exhibition", type: "Template" },
     vaultData,
-    {},
+    {}
   );
 
   return project;
@@ -480,7 +445,7 @@ export async function createBlankCollection() {
     items: [],
   };
 
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadCollectionSync(collection.id, collection);
   const vaultData = vault.getState().iiif;
 
@@ -494,7 +459,7 @@ export async function createBlankCollection() {
     },
     { id: "blank-collection", type: "Template" },
     vaultData,
-    {},
+    {}
   );
 
   return project;
@@ -512,7 +477,7 @@ export async function createBlankManifest() {
     items: [],
   };
 
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadManifestSync(manifest.id, manifest);
   const vaultData = vault.getState().iiif;
 
@@ -526,7 +491,7 @@ export async function createBlankManifest() {
     },
     { id: "blank-manifest", type: "Template" },
     vaultData,
-    {},
+    {}
   );
 
   return project;
@@ -535,7 +500,7 @@ export async function createBlankManifest() {
 export async function createManifestFromJson(json: any, extra: any = {}) {
   const { projectId, ...extraFields } = extra;
   const id = projectId || randomId();
-  const vault = new Vault();
+  const vault = new Vault4();
   const manifest = vault.loadManifestSync(json.id, json);
 
   if (!manifest) throw new Error("Manifest not found");
@@ -549,7 +514,7 @@ export async function createManifestFromJson(json: any, extra: any = {}) {
       width: 256,
       height: 256,
     },
-    true,
+    true
   );
   const thumb = thumbnail?.best?.id;
 
@@ -563,7 +528,7 @@ export async function createManifestFromJson(json: any, extra: any = {}) {
     },
     { id: json.id, type: "Import" },
     vaultData,
-    extraFields,
+    extraFields
   );
 
   return project;
@@ -572,7 +537,7 @@ export async function createManifestFromJson(json: any, extra: any = {}) {
 export async function createManifestFromId(url: string, extra: any = {}) {
   const { projectId, ...extraFields } = extra;
   const id = projectId || randomId();
-  const vault = new Vault();
+  const vault = new Vault4();
   const manifest = await vault.loadManifest(url);
 
   if (!manifest) throw new Error("Manifest not found");
@@ -586,7 +551,7 @@ export async function createManifestFromId(url: string, extra: any = {}) {
       width: 256,
       height: 256,
     },
-    true,
+    true
   );
   const thumb = thumbnail?.best?.id;
 
@@ -600,7 +565,7 @@ export async function createManifestFromId(url: string, extra: any = {}) {
     },
     { id: url, type: "Template" },
     vaultData,
-    extraFields,
+    extraFields
   );
 
   return project;
@@ -609,7 +574,7 @@ export async function createManifestFromId(url: string, extra: any = {}) {
 export async function createCollectionFromId(url: string, extra: any = {}) {
   const { projectId, ...extraFields } = extra;
   const id = projectId || randomId();
-  const vault = new Vault();
+  const vault = new Vault4();
   const collection = await vault.loadCollection(url);
 
   if (!collection) throw new Error("Collection not found");
@@ -626,7 +591,7 @@ export async function createCollectionFromId(url: string, extra: any = {}) {
     },
     { id: url, type: "Template" },
     vaultData,
-    extraFields,
+    extraFields
   );
 
   return project;

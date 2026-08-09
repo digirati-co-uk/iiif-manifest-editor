@@ -1,5 +1,5 @@
 import { AnnotationNormalized, CanvasNormalized, IIIFExternalWebResource } from "@iiif/presentation-3";
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { emptyAnnotation } from "@iiif/parser";
 import { v4 } from "uuid";
 import invariant from "tiny-invariant";
@@ -8,7 +8,7 @@ import { centerRectangles } from "@/helpers/center-rectangles";
 import { addMappings, modifyEntityField } from "@iiif/helpers/vault/actions";
 
 export function addPaintingAnnotationToCanvas(
-  vault: Vault,
+  vault: Vault4,
   canvas: CanvasNormalized,
   resourceInformation: IIIFExternalWebResource
 ) {

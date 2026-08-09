@@ -1,6 +1,6 @@
 import { RecentFilesWidget, RecentLabel, RecentThumbnails } from "../../atoms/RecentFilesWidget";
 import { getValue } from "@iiif/helpers";
-import * as IIIFVault from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { useEffect, useState } from "react";
 import { TemplateCardContainer, TemplateCardNew, TemplateCardPlaceholder } from "../../atoms/TemplateCard";
 import { AddIcon } from "../../icons/AddIcon";
@@ -15,7 +15,7 @@ const TemplateCard: React.FC<{
   manifestUrl: string;
   changeManifest: (id: string) => void;
 }> = ({ manifestUrl, changeManifest }) => {
-  const vault = new IIIFVault.Vault();
+  const vault = new Vault4();
 
   const [manifest, setManifest] = useState<any>();
 

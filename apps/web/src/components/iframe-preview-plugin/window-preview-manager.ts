@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import {
   IFRAME_PREVIEW_CONNECT,
   IFRAME_PREVIEW_READY,
@@ -8,7 +8,7 @@ import {
 import { createIframeVaultBridge } from "./vault-message-bridge";
 
 type PreviewWindowOptions = {
-  vault: Vault;
+  vault: Vault4;
   resource: { id: string; type: string };
   canvasId: string | null;
 };
@@ -26,11 +26,7 @@ export function openIframePreviewWindow(options: PreviewWindowOptions) {
 
   if (!previewWindow || previewWindow.closed) {
     cleanupWindowBridge();
-    previewWindow = window.open(
-      previewUrl,
-      "manifest-editor-iframe-preview",
-      "popup,width=1200,height=900",
-    );
+    previewWindow = window.open(previewUrl, "manifest-editor-iframe-preview", "popup,width=1200,height=900");
   } else {
     previewWindow.focus();
     if (cleanupBridge) {
@@ -89,7 +85,7 @@ function connectPreviewWindow(options: PreviewWindowOptions) {
       canvasId: options.canvasId,
     },
     previewOrigin,
-    [channel.port2],
+    [channel.port2]
   );
 }
 
@@ -101,7 +97,7 @@ function sendPreviewWindowSelection(options: PreviewWindowOptions) {
       resource: options.resource,
       canvasId: options.canvasId,
     },
-    previewOrigin,
+    previewOrigin
   );
 }
 
