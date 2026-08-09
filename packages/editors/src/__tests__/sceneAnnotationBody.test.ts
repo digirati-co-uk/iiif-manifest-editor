@@ -1,7 +1,11 @@
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { describe, expect, test } from "vitest";
 import { annotationBodyType } from "../definitions/Model3DEditor";
-import { getFirstAnnotationBody, resolveFirstAnnotationBody } from "../helpers/scene-annotation-body";
+import {
+  getFirstAnnotationBody,
+  resolveFirstAnnotationBody,
+  setAnnotationBodyTransforms,
+} from "../helpers/scene-annotation-body";
 
 describe("Presentation 4 annotation bodies", () => {
   test("matches a normalized singleton Model body", async () => {
@@ -50,6 +54,24 @@ describe("Presentation 4 annotation bodies", () => {
     expect(resolveFirstAnnotationBody(vault.get(annotation), vault)).toMatchObject({
       id: "https://example.org/model.glb",
       type: "Model",
+    });
+
+    setAnnotationBodyTransforms(
+      annotation,
+      [
+        { type: "RotateTransform", x: 0, y: 90, z: 0 },
+        { type: "TranslateTransform", x: 2, y: 0, z: 0 },
+      ],
+      vault
+    );
+    const serialised = vault.toPresentation4<any>(manifest);
+    expect(serialised.items[0].items[0].items[0].body).toMatchObject({
+      type: "SpecificResource",
+      source: { id: "https://example.org/model.glb", type: "Model" },
+      transform: [
+        { type: "RotateTransform", x: 0, y: 90, z: 0 },
+        { type: "TranslateTransform", x: 2, y: 0, z: 0 },
+      ],
     });
   });
 });

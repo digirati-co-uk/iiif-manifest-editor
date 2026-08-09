@@ -22,6 +22,7 @@ const common = {
   resourceType: "Annotation" as const,
   resourceFields: ["id", "type", "motivation", "body", "target"],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["AnnotationPage"] as const,
     parentFields: ["items"] as const,

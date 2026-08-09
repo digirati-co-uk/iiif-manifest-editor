@@ -1,11 +1,12 @@
-import { isSpecificResource } from "@iiif/parser";
 import { useEditor } from "@manifest-editor/shell";
+import { useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
-import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";
+import { resolveFirstAnnotationBody, setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
 import {
   getTransformVector,
   setTransformAxis,
+  setTransformVector,
   type ModelTransform,
   type TransformAxis,
   type TransformType,
@@ -20,29 +21,20 @@ const fields: Array<{ label: string; type: TransformType; step: number }> = [
 export function TransformFields() {
   const editor = useEditor();
   const vault = useVault();
+  const [uniformScale, setUniformScale] = useState(true);
   const bodyEditor = editor.annotation.body;
   const rawBody = bodyEditor.get() as any;
   const body = resolveFirstAnnotationBody({ body: rawBody }, vault);
-  const wrapper: any = isSpecificResource(body) ? body : { type: "SpecificResource", source: body };
+  const wrapper: any = body?.type === "SpecificResource" ? body : { type: "SpecificResource", source: body };
   const transforms = (wrapper.transform || []) as ModelTransform[];
 
   const update = (type: TransformType, axis: TransformAxis, value: number) => {
     if (!Number.isFinite(value)) return;
-    const nextTransforms = setTransformAxis(transforms, type, axis, value);
-    if (Array.isArray(rawBody)) {
-      bodyEditor.updateReference(0, { ...wrapper, transform: nextTransforms } as any);
-    } else if (isSpecificResource(body)) {
-      vault.modifyEntityField({ id: body.id, type: "SpecificResource" } as any, "transform", nextTransforms);
-    } else {
-      const id = `vault://manifest-editor/SpecificResource/${encodeURIComponent(editor.ref().id)}`;
-      vault.loadSync(id, {
-        id,
-        type: "SpecificResource",
-        source: body,
-        transform: nextTransforms,
-      } as any);
-      vault.modifyEntityField(editor.ref() as any, "body", { id, type: "ContentResource" });
-    }
+    const nextTransforms =
+      type === "ScaleTransform" && uniformScale
+        ? setTransformVector(transforms, type, { x: value, y: value, z: value })
+        : setTransformAxis(transforms, type, axis, value);
+    setAnnotationBodyTransforms(editor.ref() as any, nextTransforms, vault as any);
   };
 
   return (
@@ -51,7 +43,22 @@ export function TransformFields() {
         const value = getTransformVector(transforms, type);
         return (
           <InputContainer $wide key={type}>
-            <InputLabel>{label}</InputLabel>
+            <div className="flex items-center justify-between">
+              <InputLabel>{label}</InputLabel>
+              <button
+                className="text-xs text-gray-500 hover:text-gray-900"
+                type="button"
+                onClick={() =>
+                  setAnnotationBodyTransforms(
+                    editor.ref() as any,
+                    transforms.filter((transform) => transform.type !== type),
+                    vault as any
+                  )
+                }
+              >
+                Reset
+              </button>
+            </div>
             <div className="flex gap-2">
               {(["x", "y", "z"] as const).map((axis) => (
                 <label className="flex-1 text-xs uppercase" key={axis}>
@@ -66,6 +73,16 @@ export function TransformFields() {
                 </label>
               ))}
             </div>
+            {type === "ScaleTransform" ? (
+              <label className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={uniformScale}
+                  onChange={(event) => setUniformScale(event.target.checked)}
+                />
+                Uniform scale
+              </label>
+            ) : null}
           </InputContainer>
         );
       })}

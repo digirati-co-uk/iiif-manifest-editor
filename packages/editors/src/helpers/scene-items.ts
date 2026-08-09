@@ -1,0 +1,66 @@
+import { getValue } from "@iiif/helpers";
+import { isSpecificResource } from "@iiif/parser";
+import { resolveFirstAnnotationBody } from "./scene-annotation-body";
+
+const friendlyTypes: Record<string, string> = {
+  Model: "3D model",
+  PerspectiveCamera: "Perspective camera",
+  OrthographicCamera: "Orthographic camera",
+  AmbientLight: "Ambient light",
+  DirectionalLight: "Directional light",
+  ImageBasedLight: "Environment light",
+  PointLight: "Point light",
+  SpotLight: "Spot light",
+  AmbientAudio: "Ambient audio",
+  PointAudio: "Point audio",
+  SpotAudio: "Spot audio",
+};
+
+export type SceneItemGroup = "Objects" | "Cameras" | "Lights" | "Audio" | "Other";
+
+export function sceneItemGroup(type: string): SceneItemGroup {
+  if (type === "Model" || type === "Scene" || type === "Canvas") return "Objects";
+  if (type.endsWith("Camera")) return "Cameras";
+  if (type.endsWith("Light")) return "Lights";
+  if (type.endsWith("Audio") || type === "Sound" || type === "Audio") return "Audio";
+  return "Other";
+}
+
+export function sceneItemIcon(type: string) {
+  if (type === "Model") return "◇";
+  if (type.endsWith("Camera")) return "◉";
+  if (type === "SpotLight") return "▽";
+  if (type.endsWith("Light")) return "☀";
+  if (type.endsWith("Audio") || type === "Audio" || type === "Sound") return "♪";
+  return "•";
+}
+
+export function describeSceneAnnotation(annotation: any, vault: any, index = 0) {
+  const body = resolveFirstAnnotationBody(annotation, vault);
+  const source = isSpecificResource(body) ? body.source : body;
+  const resource = source ? vault.get(source, { skipSelfReturn: false }) || source : undefined;
+  const type = String(resource?.type || body?.type || "ContentResource");
+  const typeLabel = friendlyTypes[type] || type.replace(/([A-Z])/g, " $1").trim();
+  const annotationLabel = getValue(annotation?.label);
+  const resourceLabel = getValue(resource?.label);
+  const urlName = type === "Model" ? filenameLabel(resource?.id) : "";
+  return {
+    annotation,
+    resource,
+    type,
+    typeLabel,
+    group: sceneItemGroup(type),
+    icon: sceneItemIcon(type),
+    label: resourceLabel || annotationLabel || urlName || `${typeLabel} ${index + 1}`,
+  };
+}
+
+function filenameLabel(value?: string) {
+  if (!value) return "";
+  try {
+    const filename = new URL(value).pathname.split("/").filter(Boolean).pop() || "";
+    return decodeURIComponent(filename).replace(/\.(glb|gltf)$/i, "");
+  } catch {
+    return "";
+  }
+}

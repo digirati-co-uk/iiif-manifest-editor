@@ -10,6 +10,7 @@ export * from "./CanvasGrid/CanvasGrid";
 export * from "./CanvasList/CanvasList";
 export * from "./CanvasPanelEditor/CanvasPanelEditor";
 export * from "./SceneEditor/SceneEditor";
+export * from "./SceneContents/SceneContents";
 export * from "./TimelineEditor/TimelineEditor";
 export * from "./CanvasPanelViewer/CanvasPanelViewer";
 export * from "./CanvasPanelViewer/components/AnnotationTargetEditor";

@@ -27,3 +27,37 @@ export function setTransformAxis(
   }
   return next;
 }
+
+export function setTransformVector(
+  transforms: readonly ModelTransform[],
+  type: TransformType,
+  value: { x: number; y: number; z: number }
+) {
+  const next = transforms.filter((item) => item.type !== type).map((item) => ({ ...item }));
+  next.push({ type, ...value });
+  return next;
+}
+
+export function sceneTransformValueToTransforms(value: {
+  translation: readonly [number, number, number];
+  rotation: readonly [number, number, number];
+  scale: readonly [number, number, number];
+}) {
+  const round = (number: number) => Math.round(number * 1_000_000) / 1_000_000;
+  const vector = (values: readonly [number, number, number]) => ({
+    x: round(values[0]),
+    y: round(values[1]),
+    z: round(values[2]),
+  });
+  const transforms: ModelTransform[] = [];
+  if (value.scale.some((item) => Math.abs(item - 1) > 0.000001)) {
+    transforms.push({ type: "ScaleTransform", ...vector(value.scale) });
+  }
+  if (value.rotation.some((item) => Math.abs(item) > 0.000001)) {
+    transforms.push({ type: "RotateTransform", ...vector(value.rotation) });
+  }
+  if (value.translation.some((item) => Math.abs(item) > 0.000001)) {
+    transforms.push({ type: "TranslateTransform", ...vector(value.translation) });
+  }
+  return transforms;
+}
