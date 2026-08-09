@@ -21,7 +21,9 @@ export function setAnnotationBodyTransforms(
   if (!body) return false;
 
   if (isSpecificResource(body) && body.id) {
-    vault.modifyEntityField({ id: body.id, type: "SpecificResource" } as any, "transform", transforms);
+    // SpecificResources are normalized into the ContentResource bucket. Using
+    // the serialised type here writes to a non-existent entity collection.
+    vault.modifyEntityField({ id: body.id, type: "ContentResource" } as any, "transform", transforms);
     return true;
   }
 

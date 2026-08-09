@@ -73,5 +73,18 @@ describe("Presentation 4 annotation bodies", () => {
         { type: "TranslateTransform", x: 2, y: 0, z: 0 },
       ],
     });
+
+    setAnnotationBodyTransforms(
+      annotation,
+      [
+        { type: "ScaleTransform", x: 1.5, y: 1.5, z: 1.5 },
+        { type: "TranslateTransform", x: 2.5, y: 0, z: 0 },
+      ],
+      vault
+    );
+    expect(vault.toPresentation4<any>(manifest).items[0].items[0].items[0].body.transform).toEqual([
+      { type: "ScaleTransform", x: 1.5, y: 1.5, z: 1.5 },
+      { type: "TranslateTransform", x: 2.5, y: 0, z: 0 },
+    ]);
   });
 });

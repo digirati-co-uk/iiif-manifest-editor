@@ -31,6 +31,8 @@ export function SceneEditor() {
   const creator = useInlineCreator();
   const panel = useRef<ScenePanelHandle>(null);
   const sceneRef = scene?.resource.source;
+  const sceneId = sceneRef?.id;
+  const sceneInput = useMemo(() => (sceneId ? { id: sceneId, type: "Scene" as const } : null), [sceneId]);
   const selectedAnnotation = current?.resource.source.type === "Annotation" ? current.resource.source.id : null;
   const [mode, setMode] = useState<SceneTransformMode>("translate");
   const [space, setSpace] = useState<"local" | "world">("local");
@@ -39,6 +41,7 @@ export function SceneEditor() {
   const [statuses, setStatuses] = useState<SceneResourceStatus[]>([]);
   const [message, setMessage] = useState("");
   const [creating, setCreating] = useState(false);
+  const [addingModel, setAddingModel] = useState(false);
 
   const resolved = useVaultSelector(
     (_, currentVault) => {
@@ -214,7 +217,7 @@ export function SceneEditor() {
         selectedAnnotation={selectedAnnotation}
         snap={snap}
         space={space}
-        onAddModel={() => createActions.creator("@manifest-editor/model-annotation")}
+        onAddModel={() => setAddingModel(true)}
         onAddLight={() => createActions.creator("@manifest-editor/light-annotation")}
         onAddStudioLighting={addStudioLighting}
         onCameraChange={(id: string) => {
@@ -253,10 +256,20 @@ export function SceneEditor() {
           onAdd={(url) => createDirect("@manifest-editor/model-annotation", { url })}
         />
       ) : null}
+      {annotations.length && addingModel ? (
+        <ModelUrlPrompt
+          creating={creating}
+          onCancel={() => setAddingModel(false)}
+          onAdd={async (url) => {
+            const created = await createDirect("@manifest-editor/model-annotation", { url });
+            if (created) setAddingModel(false);
+          }}
+        />
+      ) : null}
       <ScenePanel
         ref={panel}
         key={sceneRef.id}
-        scene={{ id: sceneRef.id, type: "Scene" }}
+        scene={sceneInput!}
         vault={vault}
         controls={!editing}
         cameraControls={{ mode: editing ? "orbit" : "manifest" }}
@@ -407,7 +420,21 @@ function ToolbarButton({ active, className = "", ...props }: any) {
   );
 }
 
-function EmptyScenePrompt({ creating, onAdd }: { creating: boolean; onAdd: (url: string) => void }) {
+function EmptyScenePrompt({ creating, onAdd }: { creating: boolean; onAdd: (url: string) => unknown }) {
+  return <ModelUrlPrompt creating={creating} empty onAdd={onAdd} />;
+}
+
+function ModelUrlPrompt({
+  creating,
+  empty = false,
+  onAdd,
+  onCancel,
+}: {
+  creating: boolean;
+  empty?: boolean;
+  onAdd: (url: string) => unknown;
+  onCancel?: () => void;
+}) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
   const submit = (event: FormEvent) => {
@@ -427,7 +454,14 @@ function EmptyScenePrompt({ creating, onAdd }: { creating: boolean; onAdd: (url:
         className="w-full max-w-xl rounded border border-white/20 bg-zinc-950/90 p-5 text-white shadow"
         onSubmit={submit}
       >
-        <h2 className="text-base font-semibold">Add your first 3D model</h2>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-base font-semibold">{empty ? "Add your first 3D model" : "Add a 3D model"}</h2>
+          {onCancel ? (
+            <button className="text-sm text-zinc-300 hover:text-white" type="button" onClick={onCancel}>
+              Cancel
+            </button>
+          ) : null}
+        </div>
         <p className="mt-1 text-sm text-zinc-300">
           Paste a public GLB or glTF URL. The model will be placed at the Scene origin.
         </p>

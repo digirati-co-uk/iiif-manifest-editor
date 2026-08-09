@@ -1,5 +1,7 @@
 # ScenePanel editing requirements
 
+> Status: implemented upstream in `react-iiif-vault` commit `74bcbd7` and consumed by the Manifest Editor. The API delivered controlled selection, transform modes and commits, snapping, helpers, framing, view capture, and resource status reporting. The sketch below is retained as the original integration brief.
+
 The Manifest Editor can display Scenes with `ScenePanel` and edit authored transform values in forms. Interactive translate, rotate, and scale handles need a small public editing API in `react-iiif-vault`.
 
 ## Required API

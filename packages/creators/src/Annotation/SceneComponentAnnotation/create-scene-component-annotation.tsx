@@ -22,6 +22,7 @@ export interface CreateSceneComponentPayload {
 
 export function createSceneComponentAnnotation(data: CreateSceneComponentPayload, ctx: CreatorFunctionContext) {
   const id = ctx.generateId(data.type.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`).replace(/^-/, ""));
+  const position = data.view?.position || data.position;
   const component = {
     id,
     type: data.type,
@@ -44,16 +45,10 @@ export function createSceneComponentAnnotation(data: CreateSceneComponentPayload
             profile: "equirectangular",
           }
         : undefined,
+    transform: position ? [{ type: "TranslateTransform", x: position[0], y: position[1], z: position[2] }] : undefined,
   };
 
-  const position = data.view?.position || data.position;
-  const body = position
-    ? ctx.embed({
-        type: "SpecificResource",
-        source: component,
-        transform: [{ type: "TranslateTransform", x: position[0], y: position[1], z: position[2] }],
-      })
-    : ctx.embed(component);
+  const body = ctx.embed(component);
 
   return ctx.embed({
     id: ctx.generateId("annotation"),

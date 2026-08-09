@@ -15,13 +15,9 @@ export function modelFormat(url: string, format?: string) {
 
 export function createModelAnnotation(data: CreateModelAnnotationPayload, ctx: CreatorFunctionContext) {
   const body = ctx.embed({
-    type: "SpecificResource",
-    source: {
-      id: data.url,
-      type: "Model",
-      format: modelFormat(data.url, data.format),
-    },
-    transform: [],
+    id: data.url,
+    type: "Model",
+    format: modelFormat(data.url, data.format),
   });
 
   return ctx.embed({

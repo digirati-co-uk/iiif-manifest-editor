@@ -1,5 +1,9 @@
 # Scene editing UX plan
 
+## Implementation checkpoint
+
+The first visual authoring slice is implemented: empty-Scene model entry, a grouped Scene contents outliner, shared viewport/sidebar selection, move/rotate/scale tools, snapping and framing, authored studio lights, captured cameras, precise transform fields, resource status, and Edit/Preview modes. The later-phase ideas in this document remain the roadmap for richer naming, duplication, drag ordering, presets, accessibility polish, and guided onboarding.
+
 ## Goal
 
 Let a user start with an empty IIIF Scene and a model URL, then build a useful scene without needing to understand AnnotationPages, painting Annotations, SpecificResources, transform arrays, or generated IDs.

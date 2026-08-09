@@ -16,6 +16,7 @@ export function createEmptyScene(data: CreateEmptyScenePayload, ctx: CreatorFunc
     type: "AnnotationPage",
     items: [],
   });
+  page.setPartOf(sceneId);
 
   return ctx.embed({
     id: sceneId,
