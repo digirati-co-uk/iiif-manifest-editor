@@ -33,6 +33,7 @@ export function manifestHasCanvasTags(vault: Vault | undefined, rootResource: Ma
     | { items?: Array<{ id?: string; type?: string }> }
     | undefined;
   const canvasResources = (manifest?.items || [])
+    .filter((item) => item?.type === "Canvas")
     .map((canvas) => canvas?.id)
     .filter((id): id is string => !!id)
     .map((id) => ({ id, type: "Canvas" }) satisfies CanvasTagResource);
@@ -43,10 +44,11 @@ export function manifestHasCanvasTags(vault: Vault | undefined, rootResource: Ma
 function TagsSidebar() {
   const vault = useVault();
   const { structural } = useManifestEditor();
-  const canvases = structural.items.get() || [];
+  const canvases = structural.items.get();
   const canvasResources = useMemo(
     () =>
-      canvases
+      (canvases || [])
+        .filter((item) => item?.type === "Canvas")
         .map((canvas) => canvas?.id)
         .filter((id): id is string => !!id)
         .map((id) => ({ id, type: "Canvas" }) satisfies CanvasTagResource),

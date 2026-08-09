@@ -178,7 +178,9 @@ function countBySeverity(issues: QualityIssue[]) {
 
 function createQualityReport(manifest: any, vault: any): QualityReport {
   const issues: QualityIssue[] = [];
-  const canvases = manifest?.items ? vault.get(manifest.items) || [] : [];
+  const canvases = manifest?.items
+    ? (vault.get(manifest.items) || []).filter((item: any) => item?.type === "Canvas")
+    : [];
   let paintingAnnotationCount = 0;
 
   if (!manifest) {

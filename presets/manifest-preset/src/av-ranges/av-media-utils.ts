@@ -27,6 +27,7 @@ export function getAvCanvases(
   manifest: any,
 ): AvCanvas[] {
   return (manifest?.items || [])
+    .filter((item: any) => item?.type === "Canvas")
     .map((canvasRef: Reference<"Canvas">) => {
       const canvas = vault.get(canvasRef, { skipSelfReturn: false });
       return canvas ? getAvCanvas(vault, canvas) : null;

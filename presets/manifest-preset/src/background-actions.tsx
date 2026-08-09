@@ -333,7 +333,7 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
     resourceTypes: ["Manifest"],
     supports: (ctx) => {
       const manifest = getTargetResource(ctx);
-      return !!manifest?.items?.length;
+      return !!manifest?.items?.some((item: any) => item?.type === "Canvas");
     },
     render: () => <DemoBackgroundActionMount actionId="demo-audit-manifest-structure" />,
     run: async (ctx) => {
@@ -348,7 +348,7 @@ export const demoBackgroundActions: BackgroundActionDefinition[] = [
       return {
         action: "Audit manifest structure",
         target: ctx.target.id,
-        canvases: manifest?.items?.length || 0,
+        canvases: manifest?.items?.filter((item: any) => item?.type === "Canvas").length || 0,
         ranges: manifest?.structures?.length || 0,
         warnings: ["Demo warning: first canvas has no OCR annotation page"],
       };

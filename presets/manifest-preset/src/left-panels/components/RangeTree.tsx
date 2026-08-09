@@ -101,7 +101,10 @@ export function RangeTree(props: RangeTreeProps) {
       })! || {};
     const flatItems = flattenedRanges(range);
 
-    const canvasesNotInRanges = getCanvasesNotInRanges(flatItems, manifest?.items || []);
+    const canvasesNotInRanges = getCanvasesNotInRanges(
+      flatItems,
+      (manifest?.items || []).filter((item): item is Reference<"Canvas"> => item.type === "Canvas"),
+    );
 
     return { structures, range, flatItems, canvasesNotInRanges };
   });
