@@ -7,16 +7,19 @@ import {
   ScenePanel,
   type ScenePanelHandle,
   type SceneResourceStatus,
-  type SceneTransformMode,
-  type SceneTransformValue,
   type SceneView,
 } from "react-iiif-vault/scene-panel";
 import "react-iiif-vault/scene-panel.css";
 import { useInStack } from "../../helpers";
-import { sceneTransformValueToTransforms } from "../../helpers/model-transforms";
+import {
+  sceneTransformValueToTransforms,
+  type SceneTransformMode,
+  type SceneTransformValue,
+} from "../../helpers/model-transforms";
 import { setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
 import { sceneCameraRotation, sceneCameraView } from "../../helpers/scene-camera";
 import { describeSceneAnnotation } from "../../helpers/scene-items";
+import { SceneResourceEditor } from "./SceneResourceEditor";
 
 const toolLabels: Record<SceneTransformMode, string> = {
   translate: "Move",
@@ -32,6 +35,7 @@ export function SceneEditor() {
   const creator = useInlineCreator();
   const panel = useRef<ScenePanelHandle>(null);
   const transformView = useRef<SceneView | null>(null);
+  const initiallyFramedScene = useRef<string | null>(null);
   const sceneRef = scene?.resource.source;
   const sceneId = sceneRef?.id;
   const sceneInput = useMemo(() => (sceneId ? { id: sceneId, type: "Scene" as const } : null), [sceneId]);
@@ -140,15 +144,14 @@ export function SceneEditor() {
     [creator, creating, page, sceneRef, selectAnnotation]
   );
 
-  const addCamera = useCallback(async () => {
+  const addCamera = useCallback(() => {
     const view = panel.current?.getView();
     if (!view) return;
-    const camera = await createDirect(
+    createActions.creator(
       "@manifest-editor/camera-annotation",
       cameraPayloadFromView(view, `Camera ${cameras.length + 1}`)
     );
-    if (camera) setMessage("Camera saved from the current view");
-  }, [cameras.length, createDirect]);
+  }, [cameras.length, createActions]);
 
   const updateCamera = useCallback(
     (cameraItem: any) => {
@@ -351,35 +354,48 @@ export function SceneEditor() {
         scene={sceneInput!}
         vault={vault}
         controls={false}
+        selectedAnnotation={selectedAnnotation}
+        onSelectAnnotation={selectAnnotation}
         cameraControls={{ mode: editing ? "orbit" : "manifest" }}
         stage={editing}
-        editing={{
-          enabled: editing,
-          mode,
-          space,
-          selectedAnnotation,
-          translationSnap: snap ? 0.25 : null,
-          rotationSnap: snap ? 15 : null,
-          scaleSnap: snap ? 0.1 : null,
-          showSelectionOutline: true,
-          showLightHelpers,
-          showCameraHelpers,
-          onSelectAnnotation: selectAnnotation,
-          onTransformChange: () => restoreTransformView(),
-          onTransformCommit: (value) => {
-            commitTransform(value);
-            restoreTransformView(true);
-          },
-          onTransformCancel: () => {
-            setMessage("Transform cancelled");
-            restoreTransformView(true);
-          },
-        }}
+        resourceDecorator={(resource) =>
+          editing ? (
+            <SceneResourceEditor
+              {...resource}
+              mode={mode}
+              space={space}
+              snap={snap}
+              showCameraHelpers={showCameraHelpers}
+              showLightHelpers={showLightHelpers}
+              onTransformChange={() => restoreTransformView()}
+              onCommit={(value) => {
+                commitTransform(value);
+                restoreTransformView(true);
+              }}
+              onCancel={() => {
+                setMessage("Transform cancelled");
+                restoreTransformView(true);
+              }}
+            />
+          ) : null
+        }
         className="h-full min-h-0 bg-me-gray-900"
         style={{ height: "100%" }}
         loadingFallback="Loading scene…"
         errorFallback="The scene could not be rendered."
-        onResourceStatusChange={setStatuses}
+        onResourceStatusChange={(nextStatuses) => {
+          setStatuses(nextStatuses);
+          if (
+            editing &&
+            sceneId &&
+            initiallyFramedScene.current !== sceneId &&
+            nextStatuses.length > 0 &&
+            nextStatuses.every((status) => status.status !== "loading")
+          ) {
+            initiallyFramedScene.current = sceneId;
+            queueMicrotask(() => panel.current?.frameAll());
+          }
+        }}
         onDiagnostic={(diagnostic) => {
           if (diagnostic.severity !== "info") setMessage(diagnostic.message);
         }}

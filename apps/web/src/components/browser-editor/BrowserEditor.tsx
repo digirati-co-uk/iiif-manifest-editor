@@ -66,7 +66,7 @@ const previews: PreviewConfiguration[] = [
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://b5becb03.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://feature-presentation-4-rc.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
   },
   {
@@ -219,7 +219,7 @@ function applyExhibitionViewerSettings(
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://b5becb03.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://feature-presentation-4-rc.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
   };
   const floatingTourPreview: PreviewConfiguration = {

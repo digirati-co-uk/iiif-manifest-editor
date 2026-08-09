@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { sceneCameraRotation, sceneCameraView } from "../helpers/scene-camera";
+import type { SceneView } from "react-iiif-vault/scene-panel";
+import { sceneCameraPresetView, sceneCameraRotation, sceneCameraView } from "../helpers/scene-camera";
 
 describe("Scene camera views", () => {
   test("restores a camera position and referenced lookAt", () => {
@@ -53,5 +54,44 @@ describe("Scene camera views", () => {
         rotation: [0, 0, 0],
       })
     ).toEqual([-45, 0, 0]);
+  });
+
+  test("keeps the framed target and distance for preset angles", () => {
+    const view: SceneView = {
+      projection: "perspective",
+      position: [1, 2, 13],
+      rotation: [0, 0, 0],
+      target: [1, 2, 3],
+      fieldOfView: 50,
+      near: 0.1,
+      far: 2000,
+    };
+    const top = sceneCameraPresetView(view, "top", "perspective");
+    const isometric = sceneCameraPresetView(view, "isometric", "perspective");
+
+    expect(top.position).toEqual([1, 12, 3]);
+    expect(top.target).toEqual(view.target);
+    expect(top.rotation).toEqual([-90, 0, 0]);
+    expect(Math.hypot(...isometric.position.map((value, index) => value - view.target[index]!))).toBeCloseTo(10);
+    expect(isometric.rotation).toEqual([-35.264389682754654, 45, 0]);
+  });
+
+  test("matches perspective framing when switching to orthographic", () => {
+    const orthographic = sceneCameraPresetView(
+      {
+        projection: "perspective",
+        position: [0, 0, 10],
+        rotation: [0, 0, 0],
+        target: [0, 0, 0],
+        fieldOfView: 50,
+        near: 0.1,
+        far: 2000,
+      },
+      "front",
+      "orthographic"
+    );
+
+    expect(orthographic.projection).toBe("orthographic");
+    expect(orthographic.viewHeight).toBeCloseTo(9.326153);
   });
 });

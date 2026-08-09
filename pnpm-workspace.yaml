@@ -31,7 +31,7 @@ catalog:
   "@types/node": 22.20.1
   "@types/react": 19.2.18
   "@types/react-dom": 19.2.4
-  react-iiif-vault: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7
+  react-iiif-vault: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7
   react: 19.2.8
   react-dom: 19.2.8
   styled-components: 6.1.8

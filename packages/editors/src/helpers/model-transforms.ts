@@ -1,6 +1,16 @@
+import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+
 export type TransformType = "ScaleTransform" | "RotateTransform" | "TranslateTransform";
 export type TransformAxis = "x" | "y" | "z";
 export type ModelTransform = { type: TransformType; x?: number; y?: number; z?: number };
+export type SceneTransformMode = "translate" | "rotate" | "scale";
+export type SceneTransformSpace = "local" | "world";
+export type SceneTransformValue = {
+  annotationId: string;
+  translation: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+};
 
 export function getTransformVector(transforms: readonly ModelTransform[], type: TransformType) {
   const transform = transforms.find((item) => item.type === type);
@@ -60,4 +70,24 @@ export function sceneTransformValueToTransforms(value: {
     transforms.push({ type: "TranslateTransform", ...vector(value.translation) });
   }
   return transforms;
+}
+
+export function sceneTransformValueFromMatrix(
+  annotationId: string,
+  localMatrix: Matrix4,
+  targetPoint: readonly [number, number, number] | null = null
+): SceneTransformValue {
+  const point = targetPoint || [0, 0, 0];
+  const authored = new Matrix4().makeTranslation(-point[0], -point[1], -point[2]).multiply(localMatrix);
+  const position = new Vector3();
+  const quaternion = new Quaternion();
+  const scale = new Vector3();
+  authored.decompose(position, quaternion, scale);
+  const rotation = new Euler().setFromQuaternion(quaternion, "ZYX");
+  return {
+    annotationId,
+    translation: position.toArray(),
+    rotation: [rotation.x, rotation.y, rotation.z].map((value) => (value * 180) / Math.PI) as [number, number, number],
+    scale: scale.toArray(),
+  };
 }

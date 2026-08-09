@@ -37,7 +37,7 @@ catalogs:
       specifier: 19.2.8
       version: 19.2.8
     react-iiif-vault:
-      specifier: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7
+      specifier: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7
       version: 3.0.0-beta.1
     styled-components:
       specifier: 6.1.8
@@ -314,7 +314,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -495,7 +495,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -574,7 +574,7 @@ importers:
         version: 0.0.23
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -632,7 +632,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -826,7 +826,7 @@ importers:
         version: 14.1.0(i18next@25.6.2(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       react-leaflet:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -879,6 +879,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.4(@types/react@19.2.18)
+      '@types/three':
+        specifier: 0.185.4
+        version: 0.185.4
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
@@ -988,7 +991,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -1082,7 +1085,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1213,7 +1216,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1295,7 +1298,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1332,7 +1335,7 @@ importers:
         version: 19.2.8
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       zustand:
         specifier: 'catalog:'
         version: 4.5.2(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
@@ -1481,7 +1484,7 @@ importers:
         version: 19.2.8
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -1536,7 +1539,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1621,7 +1624,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1706,7 +1709,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
+        version: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -10041,16 +10044,16 @@ packages:
       react: ^18.2.0 || ^19.2.0
       react-dom: ^18.2.0 || ^19.2.0
 
-  react-iiif-vault@https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7:
-    resolution: {integrity: sha512-57uRHtwW+VTyLO84wM6f9UKWZGxPfn0RXdKs1ETar0ACq4pkBvsbQ4cU7BljpPG7+WwvdtUMfTy+JifHEk9R0g==, tarball: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7}
+  react-iiif-vault@https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7:
+    resolution: {integrity: sha512-xgdKn2Ri4iOR7WsTn41PxddXi70qN2P/o+pILvCIjPnYLzf/jXfq+oqMGsvk8V0Jup1AhGgcv41pLqXNqH7K0g==, tarball: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7}
     version: 3.0.0-beta.1
     engines: {node: '>=22'}
     peerDependencies:
       '@atlas-viewer/atlas': 3.2.3
       '@react-three/drei': 10.7.7
       '@react-three/fiber': 9.6.1
-      react: ^18.2.0 || ^19.2.0
-      react-dom: ^18.2.0 || ^19.2.0
+      react: ^19.0.0
+      react-dom: ^19.0.0
       three: 0.185.1
     peerDependenciesMeta:
       '@react-three/drei':
@@ -22662,7 +22665,7 @@ snapshots:
       - '@types/react'
       - immer
 
-  react-iiif-vault@https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@74bcbd7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1):
+  react-iiif-vault@https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@575a0d7(@atlas-viewer/atlas@3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@react-three/drei@10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(@types/three@0.185.4)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@react-three/fiber@9.6.1(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1):
     dependencies:
       '@atlas-viewer/atlas': 3.2.3(@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@e12c127(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@8dd1762))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@floating-ui/react': 0.27.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -23913,7 +23916,7 @@ snapshots:
       unconfig-core: 7.5.0
       verkit: 0.3.2
     optionalDependencies:
-      '@tsdown/css': 0.22.14(jiti@2.6.1)(postcss-import@16.1.0(postcss@8.5.26))(postcss-modules@6.0.1(postcss@8.5.26))(postcss@8.5.26)(sass@1.77.2)(tsdown@0.22.14)(yaml@2.9.0)
+      '@tsdown/css': 0.22.14(jiti@2.6.1)(postcss-import@16.1.0(postcss@8.4.38))(postcss-modules@6.0.1(postcss@8.4.38))(postcss@8.4.38)(sass@1.77.2)(tsdown@0.22.14)(yaml@2.9.0)
       publint: 0.3.23
       typescript: 7.0.2
       unrun: 0.2.9(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
