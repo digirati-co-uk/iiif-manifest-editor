@@ -1,5 +1,4 @@
-import { CloseIcon, useLocalStorage } from "@manifest-editor/components";
-import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
+import { useLocalStorage } from "@manifest-editor/components";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
@@ -21,10 +20,11 @@ export function MaybeExhibitionPrompt({
   const behaviours = useVaultSelector(
     (_, v) =>
       (v.get(manifest?.items || []) || [])
+        .filter((item) => item.type === "Canvas")
         .slice(0, 5)
-        .map((item) => item.behavior.join(" "))
+        .map((item) => (item.behavior || []).join(" "))
         .join(" "),
-    [manifest],
+    [manifest]
   );
   const isExhibition = useMemo(() => {
     if (

@@ -1,10 +1,11 @@
 import { isSpecificResource } from "@iiif/parser";
 import type { EditorDefinition } from "@manifest-editor/shell";
+import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";
 import { Model3DEditor } from "./Model3DEditor";
 
 export function annotationBodyType(resource: any, vault: any) {
   const annotation = vault.get(resource.resource);
-  const first = annotation?.body?.[0];
+  const first = resolveFirstAnnotationBody(annotation, vault);
   if (!first) return undefined;
   const source = isSpecificResource(first) ? first.source : first;
   return vault.get(source, { skipSelfReturn: false })?.type || source.type;

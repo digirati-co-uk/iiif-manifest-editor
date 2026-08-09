@@ -1,13 +1,16 @@
 import { isSpecificResource } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor, useGenericEditor } from "@manifest-editor/shell";
+import { useVault } from "react-iiif-vault";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
+import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";
 import { TransformFields } from "./TransformFields";
 
 export function Model3DEditor() {
   const annotationEditor = useEditor();
-  const body = annotationEditor.annotation.body.getFirst() as any;
+  const vault = useVault();
+  const body = resolveFirstAnnotationBody({ body: annotationEditor.annotation.body.get() }, vault);
   const source = isSpecificResource(body) ? body.source : body;
   const modelEditor = useGenericEditor(source, {
     parent: annotationEditor.ref(),

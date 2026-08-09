@@ -1,6 +1,8 @@
 import { isSpecificResource } from "@iiif/parser";
 import { useEditor } from "@manifest-editor/shell";
+import { useVault } from "react-iiif-vault";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
+import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";
 import {
   getTransformVector,
   setTransformAxis,
@@ -17,17 +19,30 @@ const fields: Array<{ label: string; type: TransformType; step: number }> = [
 
 export function TransformFields() {
   const editor = useEditor();
+  const vault = useVault();
   const bodyEditor = editor.annotation.body;
-  const body = bodyEditor.getFirst() as any;
+  const rawBody = bodyEditor.get() as any;
+  const body = resolveFirstAnnotationBody({ body: rawBody }, vault);
   const wrapper: any = isSpecificResource(body) ? body : { type: "SpecificResource", source: body };
   const transforms = (wrapper.transform || []) as ModelTransform[];
 
   const update = (type: TransformType, axis: TransformAxis, value: number) => {
     if (!Number.isFinite(value)) return;
-    bodyEditor.updateReference(0, {
-      ...wrapper,
-      transform: setTransformAxis(transforms, type, axis, value),
-    } as any);
+    const nextTransforms = setTransformAxis(transforms, type, axis, value);
+    if (Array.isArray(rawBody)) {
+      bodyEditor.updateReference(0, { ...wrapper, transform: nextTransforms } as any);
+    } else if (isSpecificResource(body)) {
+      vault.modifyEntityField({ id: body.id, type: "SpecificResource" } as any, "transform", nextTransforms);
+    } else {
+      const id = `vault://manifest-editor/SpecificResource/${encodeURIComponent(editor.ref().id)}`;
+      vault.loadSync(id, {
+        id,
+        type: "SpecificResource",
+        source: body,
+        transform: nextTransforms,
+      } as any);
+      vault.modifyEntityField(editor.ref() as any, "body", { id, type: "ContentResource" });
+    }
   };
 
   return (
