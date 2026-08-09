@@ -1,6 +1,12 @@
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
+import {
+  Input,
+  InputContainer,
+  InputLabel,
+  sceneCameraRotation,
+  sceneTransformValueToTransforms,
+} from "@manifest-editor/editors";
 import { type FormEvent, useState } from "react";
 import type { SceneView } from "react-iiif-vault/scene-panel";
 
@@ -45,7 +51,13 @@ export function createSceneComponentAnnotation(data: CreateSceneComponentPayload
             profile: "equirectangular",
           }
         : undefined,
-    transform: position ? [{ type: "TranslateTransform", x: position[0], y: position[1], z: position[2] }] : undefined,
+    transform: position
+      ? sceneTransformValueToTransforms({
+          translation: position,
+          rotation: data.view ? sceneCameraRotation(data.view) : [0, 0, 0],
+          scale: [1, 1, 1],
+        })
+      : undefined,
   };
 
   const body = ctx.embed(component);

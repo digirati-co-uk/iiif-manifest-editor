@@ -36,9 +36,9 @@ export function sceneItemIcon(type: string) {
 }
 
 export function describeSceneAnnotation(annotation: any, vault: any, index = 0) {
-  const body = resolveFirstAnnotationBody(annotation, vault);
+  const body: any = resolveFirstAnnotationBody(annotation, vault);
   const source = isSpecificResource(body) ? body.source : body;
-  const resource = source ? vault.get(source, { skipSelfReturn: false }) || source : undefined;
+  const resource: any = source ? vault.get(source, { skipSelfReturn: false }) || source : undefined;
   const type = String(resource?.type || body?.type || "ContentResource");
   const typeLabel = friendlyTypes[type] || type.replace(/([A-Z])/g, " $1").trim();
   const annotationLabel = getValue(annotation?.label);
@@ -46,7 +46,9 @@ export function describeSceneAnnotation(annotation: any, vault: any, index = 0) 
   const urlName = type === "Model" ? filenameLabel(resource?.id) : "";
   return {
     annotation,
+    body,
     resource,
+    transforms: (isSpecificResource(body) ? (body as any).transform : resource?.transform) || [],
     type,
     typeLabel,
     group: sceneItemGroup(type),

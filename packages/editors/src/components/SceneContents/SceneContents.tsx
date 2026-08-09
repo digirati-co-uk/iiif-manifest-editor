@@ -70,6 +70,7 @@ export function SceneContents() {
                           (annotation) => annotation.id === item.annotation.id
                         );
                         const selected = item.annotation.id === selectedId;
+                        const hidden = (item.resource?.behavior || []).includes("hidden");
                         return (
                           <div
                             className={[
@@ -95,6 +96,29 @@ export function SceneContents() {
                                 <span className="block truncate text-xs text-gray-500">{item.typeLabel}</span>
                               </span>
                             </button>
+                            {item.group === "Lights" ? (
+                              <button
+                                aria-label={`${hidden ? "Turn on" : "Turn off"} ${item.label}`}
+                                aria-pressed={!hidden}
+                                className={`mr-1 rounded border px-1.5 py-1 text-xs ${
+                                  hidden
+                                    ? "border-gray-300 bg-white text-gray-500"
+                                    : "border-green-700 bg-green-50 text-green-800"
+                                }`}
+                                title={`${hidden ? "Turn on" : "Turn off"} light`}
+                                type="button"
+                                onClick={() => {
+                                  const behavior = (item.resource?.behavior || []) as string[];
+                                  vault.modifyEntityField(
+                                    { id: item.resource.id, type: "ContentResource" } as any,
+                                    "behavior",
+                                    hidden ? behavior.filter((value) => value !== "hidden") : [...behavior, "hidden"]
+                                  );
+                                }}
+                              >
+                                {hidden ? "Off" : "On"}
+                              </button>
+                            ) : null}
                             <button
                               aria-label={`Remove ${item.label}`}
                               className="mr-1 hidden rounded px-2 py-1 text-lg text-gray-400 hover:bg-gray-200 hover:text-red-700 group-hover:block focus:block"
