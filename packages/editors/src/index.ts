@@ -10,5 +10,6 @@ export * from "./helpers/choice-painting-annotations";
 export * from "./helpers/constrain-position";
 export * from "./helpers/create-app-actions";
 export * from "./helpers/get-youtube-id";
+export * from "./helpers/model-transforms";
 export * from "./hooks";
 export * from "./definitions/MediaEditor/target-whole-canvas";

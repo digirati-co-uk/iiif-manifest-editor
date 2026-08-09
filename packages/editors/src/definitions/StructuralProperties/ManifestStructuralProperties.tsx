@@ -18,6 +18,7 @@ export function ManifestStructuralProperties() {
   const [canCreateCanvas, canvasActions] = useCreator(resource?.resource, "items", "Canvas", undefined, {
     isPainting: true,
   });
+  const [canCreateScene, sceneActions] = useCreator(resource?.resource, "items", "Scene");
 
   return (
     <PaddedSidebarContainer>
@@ -26,14 +27,14 @@ export function ManifestStructuralProperties() {
           <InputContainer $wide>
             {!items.get()?.length ? (
               <>
-                <InputLabel>Canvases</InputLabel>
+                <InputLabel>Items</InputLabel>
                 <EmptyState $noMargin $box>
-                  No canvases
+                  No items
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                Canvases
+                Items
                 <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
               </InputLabel>
             )}
@@ -46,7 +47,12 @@ export function ManifestStructuralProperties() {
               createActions={createAppActions(items)}
             />
           </InputContainer>
-          {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
+          {canCreateCanvas || canCreateScene ? (
+            <div className="flex gap-2">
+              {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
+              {canCreateScene ? <Button onClick={() => sceneActions.create()}>Add scene</Button> : null}
+            </div>
+          ) : null}
         </>
       ) : null}
 
