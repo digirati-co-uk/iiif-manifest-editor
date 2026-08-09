@@ -1,39 +1,22 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import invariant from "tiny-invariant";
 import { decrypt, encrypt, generateId, getHeaders, getKeys } from "../helpers";
 import type { RouteConfig } from "../types";
+import { serializeStoredResource } from "./serialize-stored-resource";
 
 export async function updateRoute(
   request: Request,
-  params:
-    | Promise<{ keys: string; key3: string }>
-    | { keys: string; key3: string },
-  config: RouteConfig,
+  params: Promise<{ keys: string; key3: string }> | { keys: string; key3: string },
+  config: RouteConfig
 ): Promise<Response> {
-  const {
-    storage,
-    baseUrl,
-    encryptedEnabled,
-    expirationTtl,
-    partLength,
-    rotatingUpdateKey,
-    updateKeyLength,
-  } = config;
+  const { storage, baseUrl, encryptedEnabled, expirationTtl, partLength, rotatingUpdateKey, updateKeyLength } = config;
   const corsHeaders = getHeaders(request);
   const awaitedParams = await params;
-  const { key1, key2, key3, storeKey } = getKeys(
-    awaitedParams.keys,
-    awaitedParams.key3,
-    partLength,
-    encryptedEnabled,
-  );
+  const { key1, key2, key3, storeKey } = getKeys(awaitedParams.keys, awaitedParams.key3, partLength, encryptedEnabled);
 
   const object = await storage.get(storeKey);
 
-  invariant(
-    object?.update && object.manifest && object.delete,
-    "Invalid Object",
-  );
+  invariant(object?.update && object.manifest && object.delete, "Invalid Object");
 
   const keyToCompare = object.update;
   if (encryptedEnabled) {
@@ -46,23 +29,18 @@ export async function updateRoute(
   const body: any = await request.json();
   const id = body.id || body["@id"];
   const type = body.type || body["@type"];
-  const vault = new Vault();
+  const vault = new Vault4();
   const manifest = await vault.loadManifest(id, body);
   const newKey3 = rotatingUpdateKey ? generateId(updateKeyLength) : key3;
 
   invariant(!!manifest, "Invalid Manifest");
   invariant(
-    type === "Manifest" ||
-      type === "Collection" ||
-      type === "sc:Manifest" ||
-      type === "sc:Collection",
-    "Invalid Type",
+    type === "Manifest" || type === "Collection" || type === "sc:Manifest" || type === "sc:Collection",
+    "Invalid Type"
   );
 
-  const data = vault.toPresentation3(manifest);
-  const manifestJson = encryptedEnabled
-    ? await encrypt(JSON.stringify(data), key1)
-    : JSON.stringify(data);
+  const data = serializeStoredResource(vault, manifest);
+  const manifestJson = encryptedEnabled ? await encrypt(JSON.stringify(data), key1) : JSON.stringify(data);
 
   await storage.put(
     storeKey,
@@ -75,7 +53,7 @@ export async function updateRoute(
     {
       expirationTtl,
       metadata: { ttl: Date.now() + expirationTtl },
-    },
+    }
   );
 
   // POST /edit/:id -> Response<{ location: string; updateLocation: string; }>
@@ -91,6 +69,6 @@ export async function updateRoute(
         ...corsHeaders,
         "Content-Type": "application/json",
       },
-    },
+    }
   );
 }

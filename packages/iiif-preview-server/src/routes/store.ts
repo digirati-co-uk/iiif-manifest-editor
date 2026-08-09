@@ -1,21 +1,11 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import invariant from "tiny-invariant";
 import { encrypt, generateId, getHeaders } from "../helpers";
 import type { RouteConfig } from "../types";
+import { serializeStoredResource } from "./serialize-stored-resource";
 
-export async function storeRoute(
-  request: Request,
-  params: any,
-  config: RouteConfig,
-): Promise<Response> {
-  const {
-    storage,
-    baseUrl,
-    encryptedEnabled,
-    expirationTtl,
-    partLength,
-    updateKeyLength,
-  } = config;
+export async function storeRoute(request: Request, params: any, config: RouteConfig): Promise<Response> {
+  const { storage, baseUrl, encryptedEnabled, expirationTtl, partLength, updateKeyLength } = config;
   const body: any = await request.json();
   const headers = getHeaders(request);
 
@@ -26,14 +16,11 @@ export async function storeRoute(
   const type = body.type || body["@type"];
 
   invariant(
-    type === "Manifest" ||
-      type === "Collection" ||
-      type === "sc:Manifest" ||
-      type === "sc:Collection",
-    "Invalid Type",
+    type === "Manifest" || type === "Collection" || type === "sc:Manifest" || type === "sc:Collection",
+    "Invalid Type"
   );
 
-  const vault = new Vault();
+  const vault = new Vault4();
   const manifest =
     type === "Manifest" || type === "sc:Manifest"
       ? await vault.loadManifest(id, body)
@@ -47,10 +34,8 @@ export async function storeRoute(
   const key4 = generateId(updateKeyLength);
   const storeKey = encryptedEnabled ? key1 : key1 + key2;
 
-  const data = vault.toPresentation3(manifest);
-  const manifestJson = encryptedEnabled
-    ? await encrypt(JSON.stringify(data), key1)
-    : JSON.stringify(data);
+  const data = serializeStoredResource(vault, manifest);
+  const manifestJson = encryptedEnabled ? await encrypt(JSON.stringify(data), key1) : JSON.stringify(data);
 
   await storage.put(
     storeKey,
@@ -63,7 +48,7 @@ export async function storeRoute(
     {
       expirationTtl, // 48 hours
       metadata: { ttl: Date.now() + expirationTtl * 1000 },
-    },
+    }
   );
 
   // POST /store  Body<Manifest> -> Response<{ location: string; updateLocation: string }>
@@ -80,6 +65,6 @@ export async function storeRoute(
         ...headers,
         "Content-Type": "application/json",
       },
-    },
+    }
   );
 }
