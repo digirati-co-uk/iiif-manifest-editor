@@ -13,7 +13,10 @@
     "dev-full": "turbo dev --filter='web...' --filter='./plugins/*' --concurrency=24",
     "dev:plugins": "turbo watch build --filter='./plugins/*' --only --concurrency=10 --ui=stream",
     "lint": "oxlint . --deny-warnings && turbo lint",
+<<<<<<< HEAD
     "lint:ci": "oxlint . && turbo lint",
+=======
+>>>>>>> 6a0f2c0e (Update dependencies + lint config)
     "lint:fix": "oxlint . --fix",
     "lint:staged": "lint-staged",
     "format": "oxfmt --write .",
