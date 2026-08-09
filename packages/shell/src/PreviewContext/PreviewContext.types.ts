@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 
 export interface Preview {
   id: string;
@@ -52,14 +52,14 @@ export interface PreviewHandler {
 
   isPreviewValid(instanceId: string, instance: Preview): boolean | Promise<boolean>;
 
-  createPreview(instanceId: string, resource: { id: string; type: string }, vault: Vault, ctx: any): Promise<Preview>;
+  createPreview(instanceId: string, resource: { id: string; type: string }, vault: Vault4, ctx: any): Promise<Preview>;
 
   focus(instanceId: string): Promise<void>;
 
   updatePreview(
     instanceId: string,
     resource: { id: string; type: string },
-    vault: Vault,
+    vault: Vault4,
     ctx: any
   ): Promise<Preview | null>;
 

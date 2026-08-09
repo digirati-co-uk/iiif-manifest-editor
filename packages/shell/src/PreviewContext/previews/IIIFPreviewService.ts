@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { Preview, PreviewConfiguration, PreviewHandler } from "../PreviewContext.types";
 import invariant from "tiny-invariant";
 import { serializeResource } from "../../helpers";
@@ -53,8 +53,8 @@ export class IIIFPreviewService implements PreviewHandler {
     }
   }
 
-  async createPreview(instanceId: string, resource: { id: string; type: string }, vault: Vault): Promise<Preview> {
-    const manifest = serializeResource(vault as any, resource);
+  async createPreview(instanceId: string, resource: { id: string; type: string }, vault: Vault4): Promise<Preview> {
+    const manifest = serializeResource(vault, resource);
     const response = await fetch(this.serviceUrl, {
       method: "POST",
       headers: {
@@ -85,14 +85,14 @@ export class IIIFPreviewService implements PreviewHandler {
     // no op.
   }
 
-  async updatePreview(instanceId: string, resource: { id: string; type: string }, vault: Vault): Promise<Preview> {
+  async updatePreview(instanceId: string, resource: { id: string; type: string }, vault: Vault4): Promise<Preview> {
     const cached = this.cache[instanceId];
     if (!cached || Date.now() > cached.expirationTtl + cached.time || !cached.updateLocation) {
       return this.createPreview(instanceId, resource, vault);
     }
 
     const updateUrl = cached.updateLocation;
-    const manifest = serializeResource(vault as any, resource);
+    const manifest = serializeResource(vault, resource);
 
     const response = await fetch(updateUrl, {
       method: "PUT",

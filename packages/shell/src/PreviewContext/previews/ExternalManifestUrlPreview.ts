@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { Preview, PreviewHandler } from "../PreviewContext.types";
 
 export class ExternalManifestUrlPreview implements PreviewHandler {
@@ -36,7 +36,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
   async createPreview(
     instanceId: string,
     resource: { id: string; type: string },
-    vault: Vault,
+    vault: Vault4,
     ctx: { readOnlyManifest: string },
   ): Promise<Preview> {
     // @todo change this to be a template, with more features.
@@ -65,7 +65,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
   async updatePreview(
     instanceId: string,
     resource: { id: string; type: string },
-    vault: Vault,
+    vault: Vault4,
     ctx: { readOnlyManifest: string },
   ): Promise<Preview | null> {
     const found = this.windows[instanceId];
