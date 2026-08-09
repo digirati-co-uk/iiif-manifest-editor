@@ -90,7 +90,7 @@ The reusable part built here will do the following:
   - Link the resource to the specified property
 
 ```ts
-const vault = new Vault();
+const vault = new Vault4();
 
 const builder = new IIIFBuilder(vault);
 
