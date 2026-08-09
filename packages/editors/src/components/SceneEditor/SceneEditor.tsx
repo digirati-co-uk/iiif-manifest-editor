@@ -31,6 +31,7 @@ export function SceneEditor() {
   const layout = useLayoutActions();
   const creator = useInlineCreator();
   const panel = useRef<ScenePanelHandle>(null);
+  const transformView = useRef<SceneView | null>(null);
   const sceneRef = scene?.resource.source;
   const sceneId = sceneRef?.id;
   const sceneInput = useMemo(() => (sceneId ? { id: sceneId, type: "Scene" as const } : null), [sceneId]);
@@ -105,6 +106,16 @@ export function SceneEditor() {
     },
     [mode, vault]
   );
+
+  const restoreTransformView = useCallback((finished = false) => {
+    const view = transformView.current || panel.current?.getView();
+    if (!view) return;
+    transformView.current = view;
+    queueMicrotask(() => {
+      panel.current?.setView(view);
+      if (finished) transformView.current = null;
+    });
+  }, []);
 
   const createDirect = useCallback(
     async (definition: string, payload: any) => {
@@ -222,6 +233,10 @@ export function SceneEditor() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [editing, selectedAnnotation]);
+
+  useEffect(() => {
+    transformView.current = null;
+  }, [selectedAnnotation]);
 
   useEffect(() => {
     if (!selectedCamera) return;
@@ -350,8 +365,15 @@ export function SceneEditor() {
           showLightHelpers,
           showCameraHelpers,
           onSelectAnnotation: selectAnnotation,
-          onTransformCommit: commitTransform,
-          onTransformCancel: () => setMessage("Transform cancelled"),
+          onTransformChange: () => restoreTransformView(),
+          onTransformCommit: (value) => {
+            commitTransform(value);
+            restoreTransformView(true);
+          },
+          onTransformCancel: () => {
+            setMessage("Transform cancelled");
+            restoreTransformView(true);
+          },
         }}
         className="h-full min-h-0 bg-me-gray-900"
         style={{ height: "100%" }}
