@@ -15,7 +15,7 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
   const [isEnabled, setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
   const run = isEnabled || forceStart;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: like setState in React.
+  // oxlint-disable react/exhaustive-deps -- setIsEnabled is stable like React setState.
   useEffect(() => {
     const onRestart = (e: Event) => {
       const target = (e as CustomEvent<{ id?: string }>).detail?.id;
@@ -26,6 +26,7 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
     window.addEventListener("onboarding:restart", onRestart as EventListener);
     return () => window.removeEventListener("onboarding:restart", onRestart as EventListener);
   }, [id]);
+  // oxlint-enable react/exhaustive-deps
 
   useEffect(() => {
     const editor = document.getElementById("manifest-editor-container");

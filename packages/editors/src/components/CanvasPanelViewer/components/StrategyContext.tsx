@@ -1,13 +1,23 @@
 import { ChoiceDescription } from "@iiif/helpers";
 import { ReactNode, useMemo } from "react";
-import { CanvasStrategyProvider, ComplexTimelineStrategy, ControlsReactContext, EmptyStrategy, MediaStrategy, RenderingStrategy, SingleImageStrategy, StrategyActions, useCanvas } from "react-iiif-vault";
+import {
+  CanvasStrategyProvider,
+  ComplexTimelineStrategy,
+  ControlsReactContext,
+  EmptyStrategy,
+  MediaStrategy,
+  RenderingStrategy,
+  SingleImageStrategy,
+  StrategyActions,
+  useCanvas,
+} from "react-iiif-vault";
 
 interface CustomStrategyProviderProps {
   onChoiceChange?: (choice?: ChoiceDescription) => void;
   registerActions?: (actions: StrategyActions) => void;
   defaultChoices?: Array<{ id: string; opacity?: number }>;
   keepCanvasScale?: boolean;
-  strategies?: Array<RenderingStrategy['type']>;
+  strategies?: Array<RenderingStrategy["type"]>;
   throwOnUnknown?: boolean;
   renderViewerControls?: (strategy: SingleImageStrategy | EmptyStrategy) => ReactNode;
   viewControlsDeps?: any[];
@@ -20,7 +30,7 @@ interface CustomStrategyProviderProps {
 
 export function CustomStrategyProvider(props: CustomStrategyProviderProps) {
   const canvas = useCanvas()!;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This is a false positive.
+  // oxlint-disable react/exhaustive-deps -- Controls intentionally stay stable for the provider lifetime.
   const controls = useMemo(
     () => ({
       renderViewerControls: props.renderViewerControls,
@@ -31,6 +41,7 @@ export function CustomStrategyProvider(props: CustomStrategyProviderProps) {
     }),
     []
   );
+  // oxlint-enable react/exhaustive-deps
 
   if (!canvas) {
     return null;

@@ -135,7 +135,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
       stacked?: boolean | undefined;
       forceOpen?: boolean;
       selectedTab?: string;
-    } = {},
+    } = {}
   ) {
     const toEdit: EditableResource = {
       resource: isSpecificResource(resource)
@@ -201,7 +201,7 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
 
   return (
     <LayoutActionsReactContext.Provider
-      // biome-ignore lint/correctness/useExhaustiveDependencies: actions do not change
+      // oxlint-disable-next-line react/exhaustive-deps -- Actions do not change.
       value={useMemo(() => ({ ...actions, ...otherActions }), [available])}
     >
       <LayoutStateReactContext.Provider value={state}>{props.children}</LayoutStateReactContext.Provider>

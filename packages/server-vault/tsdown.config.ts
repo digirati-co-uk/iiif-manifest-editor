@@ -7,4 +7,5 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "node",
+  sourcemap: true,
 }));

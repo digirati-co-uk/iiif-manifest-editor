@@ -27,7 +27,8 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./index.css": "./dist/index.css"
   },
   "scripts": {
     "build": "tsdown src/index.ts",
@@ -57,16 +58,18 @@
   "devDependencies": {
     "@atlas-viewer/iiif-image-api": "^2.2.0",
     "@manifest-editor/ui": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "postcss-import": "^16.1.0",
-    "rollup-plugin-postcss": "^4.0.2",
+    "@tsdown/css": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "0.16.4"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "22aa937fcbd97344b3d350b75e46bb8887c56d47"
+  "gitHead": "22aa937fcbd97344b3d350b75e46bb8887c56d47",
+  "inlinedDependencies": {
+    "@atlas-viewer/iiif-image-api": "2.2.0",
+    "tiny-invariant": "1.3.3"
+  }
 }

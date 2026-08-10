@@ -7,9 +7,10 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
+  sourcemap: true,
   entry: {
     index: "src/index.ts",
     lazy: "src/lazy.ts",
   },
-  copy: [{ from: "src/assets", to: "dist/assets" }],
+  copy: [{ from: "src/assets/*", to: "dist/assets" }],
 }));

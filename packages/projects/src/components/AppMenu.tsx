@@ -1,13 +1,8 @@
 import { MenuIcon } from "@manifest-editor/ui/icons/MenuIcon";
-import {
-  Dropdown,
-  DropdownDivider,
-  DropdownLabel,
-  DropdownMenu,
-} from "@manifest-editor/ui/atoms/Dropdown";
+import { Dropdown, DropdownDivider, DropdownLabel, DropdownMenu } from "@manifest-editor/ui/atoms/Dropdown";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useLocalStorage } from "@manifest-editor/shell";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../use-dropdown-menu";
 import { useProjectContext } from "../ProjectContext";
 import { MappedApp, useApps } from "@manifest-editor/shell";
 import styled from "styled-components";
@@ -66,9 +61,7 @@ export function AppMenu(props: { hideMenu?: boolean }) {
 
     return true;
   });
-  const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(
-    filteredApps.length + 1,
-  );
+  const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(filteredApps.length + 1);
 
   return (
     <Dropdown>
@@ -94,10 +87,7 @@ export function AppMenu(props: { hideMenu?: boolean }) {
           <>
             <DropdownLabel>Quick Settings</DropdownLabel>
             <DropdownDivider />
-            <Button
-              {...(itemProps[filteredApps.length + 0] as any)}
-              onClick={() => setIsMenuHidden(!isMenuHidden)}
-            >
+            <Button {...(itemProps[filteredApps.length + 0] as any)} onClick={() => setIsMenuHidden(!isMenuHidden)}>
               {isMenuHidden ? "Show menu" : "Hide menu"}
             </Button>
           </>

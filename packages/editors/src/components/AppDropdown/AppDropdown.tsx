@@ -13,7 +13,7 @@ import { PauseIcon } from "@manifest-editor/ui/icons/PauseIcon";
 import { PlayIcon } from "@manifest-editor/ui/icons/PlayIcon";
 import cx from "classnames";
 import { type CSSProperties, Fragment, useLayoutEffect } from "react";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../../use-dropdown-menu";
 
 export interface AppDropdownItem {
   label: string;
@@ -81,9 +81,11 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
     }
   };
 
+  // oxlint-disable react/exhaustive-deps -- The initial floating position is calculated once on mount.
   useLayoutEffect(() => {
     update();
   }, []);
+  // oxlint-enable react/exhaustive-deps
 
   return (
     <div className="relative" style={style}>
@@ -106,13 +108,14 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                 }}
               >
                 {items.map((item, key) => {
+                  /* oxlint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- itemProps supplies the menu keyboard handler. */
                   const listItem = (
                     <li
                       key={key}
                       role="none"
                       className={cx(
                         "bg-white rounded-sm flex text-sm",
-                        item.active && "font-semibold shadow-[0_0_0_2px_#bfd1ed]",
+                        item.active && "font-semibold shadow-[0_0_0_2px_#bfd1ed]"
                       )}
                     >
                       {item.onClick ? (
@@ -164,6 +167,7 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                       )}
                     </li>
                   );
+                  /* oxlint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
 
                   if (item.sectionAbove) {
                     return (

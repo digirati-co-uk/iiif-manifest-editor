@@ -44,11 +44,13 @@
     "polygon-editor": "0.0.23"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "0.16.4"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "inlinedDependencies": {
+    "tiny-invariant": "1.3.3"
   }
 }

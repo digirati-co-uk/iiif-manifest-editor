@@ -9,7 +9,7 @@ import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../../use-dropdown-menu";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactVaultContext } from "react-iiif-vault";
 import type { TransitionStatus } from "react-transition-group";
@@ -192,7 +192,6 @@ export function ModularPanel({
   const appState = useAppState();
   const layout = useLayoutProvider();
   const { tabs, pinnable, hideHeader } = panel?.options || {};
-  const resetKeys = [appState.state.canvasId, panel?.id];
   const switchablePanels = useMemo(() => {
     return (available || []).filter((p) => !p.requiresState);
   }, [available]);
@@ -200,7 +199,7 @@ export function ModularPanel({
   const [customTitle, setCustomTitle] = useState("");
   const setCustomTitleRef = useRef<((title: string) => void) | undefined>(undefined);
 
-  useEffect(() => setDidError(false), resetKeys);
+  useEffect(() => setDidError(false), [appState.state.canvasId, panel?.id]);
 
   useEffect(() => setCustomTitle(""), [panel]);
 
@@ -231,10 +230,10 @@ export function ModularPanel({
         e.preventDefault();
         setIsOpen(true);
       } else {
-        originalCallback && originalCallback();
+        originalCallback?.();
       }
     },
-    [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length],
+    [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length]
   );
 
   const menuHandler = (newPanel: LayoutPanel) => {
@@ -324,15 +323,15 @@ export function ModularPanel({
             // onResetKeysChange={() => setDidError(false)}
             onError={() => setDidError(true)}
             FallbackComponent={PanelError}
-            resetKeys={resetKeys}
+            resetKeys={[appState.state.canvasId, panel?.id]}
             onReset={() => setDidError(false)}
           >
             {renderHelper(
               panel.render(
                 state.state || panel.defaultState || {},
                 { ...layout, current: actions, vault: vault as any, transition, isModal },
-                appState,
-              ),
+                appState
+              )
             )}
           </ErrorBoundary>
         </ModularPanelContent>

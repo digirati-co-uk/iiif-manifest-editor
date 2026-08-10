@@ -4,7 +4,7 @@ function getPasswordKey(password: string): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
 }
 
-function deriveKey(passwordKey: CryptoKey, salt: ArrayBuffer, keyUsage: string[]) {
+function deriveKey(passwordKey: CryptoKey, salt: BufferSource, keyUsage: KeyUsage[]) {
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
@@ -15,7 +15,7 @@ function deriveKey(passwordKey: CryptoKey, salt: ArrayBuffer, keyUsage: string[]
     passwordKey,
     { name: "AES-GCM", length: 256 },
     false,
-    keyUsage as any[]
+    keyUsage
   );
 }
 

@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "jsx-a11y", "nextjs"],
+  "categories": {
+    "correctness": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "settings": {
+    "next": {
+      "rootDir": "apps/web/"
+    }
+  },
+  "ignorePatterns": [".fallow/**", "apps/web/cloudflare-env.d.ts"],
+  "rules": {
+    "no-unused-vars": "off",
+    "no-else-return": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "react/no-array-index-key": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-empty-object-type": "off",
+    "typescript/no-non-null-assertion": "off"
+  }
+}

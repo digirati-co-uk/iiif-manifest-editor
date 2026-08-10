@@ -2,7 +2,10 @@ import { useGenericEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
 import { useAnnotation, useAnnotationPage, useCanvas, useRequestAnnotation } from "react-iiif-vault";
 
-export function useAnnotationEditor({ annotationPopup, bounds: inputBounds }: { annotationPopup?: React.ReactNode, bounds?: { x: number, y: number, width: number, height: number } } = {}) {
+export function useAnnotationEditor({
+  annotationPopup,
+  bounds: inputBounds,
+}: { annotationPopup?: React.ReactNode; bounds?: { x: number; y: number; width: number; height: number } } = {}) {
   const annotation = useAnnotation();
   const canvas = useCanvas();
   const editor = useGenericEditor(annotation);
@@ -11,7 +14,7 @@ export function useAnnotationEditor({ annotationPopup, bounds: inputBounds }: { 
   const { requestAnnotation, isPending, cancelRequest, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       if (resp.target) {
-        console.log('success!', resp.target)
+        console.log("success!", resp.target);
         editor.annotation.target.setSelector(resp.target);
       }
     },
@@ -20,7 +23,7 @@ export function useAnnotationEditor({ annotationPopup, bounds: inputBounds }: { 
   const bounds = inputBounds || (canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null);
 
   // Request Annotation selector correctly.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We don't support changing it.
+  // oxlint-disable react/exhaustive-deps -- Changing popup and bounds is not supported during a request.
   const requestAnnotationFromTarget = useCallback(
     function requestAnnotationFromTarget() {
       if (target) {
@@ -62,8 +65,9 @@ export function useAnnotationEditor({ annotationPopup, bounds: inputBounds }: { 
       }
       return requestAnnotation({ type: "polygon", open: true, points: [], annotationPopup, bounds });
     },
-    [target, requestAnnotation],
+    [target, requestAnnotation]
   );
+  // oxlint-enable react/exhaustive-deps
 
   const deleteAnnotation = useCallback(() => {
     if (annotation && confirm("Are you sure you want to delete this annotation?")) {

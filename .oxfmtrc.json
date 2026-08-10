@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": false,
+  "printWidth": 120,
+  "trailingComma": "es5",
+  "sortPackageJson": false,
+  "ignorePatterns": [".fallow/**", "apps/web/cloudflare-env.d.ts"]
+}
