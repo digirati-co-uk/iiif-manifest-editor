@@ -1,6 +1,6 @@
-import { getValue } from "@iiif/helpers";
 import { InternationalString } from "@iiif/presentation-3";
 import { createRef, KeyboardEventHandler, useLayoutEffect, useMemo, useState } from "react";
+import { LocaleString } from "react-iiif-vault";
 import { InlineSelectStyles } from "./InlineSelect.styles";
 
 export interface InlineSelectProps<T> {
@@ -94,7 +94,7 @@ export function InlineSelect<T extends string = string>(props: InlineSelectProps
               }
             }}
           >
-            {typeof option.label === "string" ? option.label : getValue(option.label)}
+            <LocaleString>{option.label}</LocaleString>
           </InlineSelectStyles.Item>
         );
       })}

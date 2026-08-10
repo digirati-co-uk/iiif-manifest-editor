@@ -35,7 +35,7 @@ const exhibitionColours = {
   darkBorderSoft: "rgba(246, 241, 244, 0.14)",
 };
 
-export const Main = styled.main`
+export const Main = styled.div`
   display: flex;
   flex: 1 1 0;
   min-height: 0;

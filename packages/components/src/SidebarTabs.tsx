@@ -163,9 +163,8 @@ const MoreMenu = createHideableComponent<
     <MenuTrigger>
       <Button
         aria-label="More tabs"
-        style={{ minHeight: 24 }}
         className={cn(
-          "border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-600 semibold uppercase text-[10px]",
+          "min-h-6 border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-600 semibold uppercase text-[10px]",
           selectedIndex > hidden && "bg-me-primary-500 text-white rounded",
         )}
       >

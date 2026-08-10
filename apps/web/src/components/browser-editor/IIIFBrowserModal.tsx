@@ -3,27 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { createManifestFromId } from "./browser-state";
 
 export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const router = useRouter();
-  const browserRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const browser = browserRef.current;
-    if (!isOpen || !browser) return;
-    const makeSearchResultsFocusable = () => {
-      const results = browser.querySelectorAll<HTMLElement>('[role="menuitemradio"]');
-      results.forEach((result, index) => {
-        result.tabIndex = index === 0 ? 0 : -1;
-      });
-    };
-    const observer = new MutationObserver(makeSearchResultsFocusable);
-    observer.observe(browser, { childList: true, subtree: true });
-    makeSearchResultsFocusable();
-    return () => observer.disconnect();
-  }, [isOpen]);
   const createProject = useMutation({
     mutationFn: createManifestFromId,
     onSuccess: (data) => {
@@ -76,14 +61,12 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
             The manifest could not be opened. Check the URL and try again.
           </div>
         ) : null}
-        <div ref={browserRef}>
-          <IIIFBrowser
-            className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
-            navigation={navigationOptions}
-            output={output}
-            ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
-          />
-        </div>
+        <IIIFBrowser
+          className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
+          navigation={navigationOptions}
+          output={output}
+          ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
+        />
       </VaultProvider>
     </Modal>
   );

@@ -22,7 +22,7 @@ export const Footer = styled.div`
   background: #fff;
 `;
 
-export const Main = styled.main`
+export const Main = styled.div`
   display: flex;
   flex: 1 1 0;
   min-height: 0;
