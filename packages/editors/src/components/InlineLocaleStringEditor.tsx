@@ -125,7 +125,7 @@ export function InlineLocaleStringEditor({
           onClick={() => setIsEditing(true)}
           {...props}
         >
-          {children}
+          {value ? children : undefined}
         </LocaleString>
       )}
       {!isEditing ? (

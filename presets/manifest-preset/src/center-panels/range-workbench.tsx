@@ -468,7 +468,7 @@ function RangeWorkbench() {
                 placeholder="Untitled range"
                 className="text-xl text-white"
               >
-                {topLevelRange.label || "Untitled range"}
+                {topLevelRange.label}
               </InlineLocaleStringEditor>
             )}
             <MenuTrigger>
