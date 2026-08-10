@@ -21,7 +21,9 @@ export function editingStackReducer(
       let reset = action.payload.reset;
       if (
         action.payload.resource?.resource.source?.type === "Manifest" ||
-        action.payload.resource?.resource.source?.type === "Canvas"
+        action.payload.resource?.resource.source?.type === "Canvas" ||
+        action.payload.resource?.resource.source?.type === "Timeline" ||
+        action.payload.resource?.resource.source?.type === "Scene"
       ) {
         reset = true;
       }

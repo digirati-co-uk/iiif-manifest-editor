@@ -17,7 +17,7 @@ const collectionWithPreviews = extendApp(
           type: "external-manifest-preview",
           label: "Theseus",
           config: {
-            url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
+            url: "https://b5becb03.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
           },
         },
         {

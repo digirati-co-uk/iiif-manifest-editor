@@ -1,7 +1,7 @@
 import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import { allCreators } from "@manifest-editor/creators";
-import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
+import { allEditors } from "@manifest-editor/editors";
 import {
   type BackgroundActionDefinition,
   type BackgroundPanel,
@@ -12,6 +12,7 @@ import {
 } from "@manifest-editor/shell";
 import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-builder/background-action";
 import { manifestOverview } from "./center-panels/manifest-overview";
+import { ManifestItemCenterPanel } from "./center-panels/manifest-item";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
 import { CanvasesListIcon } from "./icons";
@@ -35,9 +36,9 @@ export const centerPanels: LayoutPanel[] = [
   manifestOverview,
   {
     id: "current-canvas",
-    label: "Current canvas",
+    label: "Current item",
     icon: <CanvasesListIcon />,
-    render: (state, { actions }) => <CanvasPanelEditor />,
+    render: () => <ManifestItemCenterPanel />,
   },
   rangeWorkbench,
 ];
@@ -67,7 +68,17 @@ export const editors = allEditors;
 
 export const creators = allCreators;
 
-export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
+export const resources = [
+  "Manifest",
+  "Canvas",
+  "Timeline",
+  "Scene",
+  "ContentResource",
+  "Agent",
+  "AnnotationPage",
+  "Annotation",
+  "Range",
+];
 
 export { annotationsPlugin, avRangesPlugin, canvasLabelGeneratorPlugin };
 

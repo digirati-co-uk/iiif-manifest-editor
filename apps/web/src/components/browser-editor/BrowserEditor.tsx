@@ -66,7 +66,7 @@ const previews: PreviewConfiguration[] = [
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://b5becb03.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
   },
   {
@@ -219,7 +219,7 @@ function applyExhibitionViewerSettings(
     type: "external-manifest-preview",
     label: "Theseus",
     config: {
-      url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://b5becb03.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
   };
   const floatingTourPreview: PreviewConfiguration = {
@@ -552,14 +552,14 @@ function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {
       return;
     }
 
-    const firstCanvas = manifest.items[0];
-    if (!firstCanvas?.id) {
+    const firstItem = manifest.items[0];
+    if (!firstItem?.id) {
       return;
     }
 
     hasSelectedInitialCanvas.current = true;
     edit(
-      { id: firstCanvas.id, type: "Canvas" },
+      firstItem as any,
       {
         parent: { id: manifest.id, type: "Manifest" },
         property: "items",
@@ -772,7 +772,7 @@ function FromQueryString({
     }
     if (editing) {
       edit(editing);
-      if (editing.type === "Canvas") {
+      if (["Canvas", "Timeline", "Scene"].includes(editing.type)) {
         open({ id: "current-canvas" });
         open({ id: "canvas-listing", state: { gridView: true } });
       }

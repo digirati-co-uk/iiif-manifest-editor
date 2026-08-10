@@ -79,7 +79,7 @@ const defaultConfig: Partial<Config> = {
       type: "external-manifest-preview",
       label: "Theseus Viewer",
       config: {
-        url: "https://theseusviewer.org?iiif-content={manifestId}",
+        url: "https://b5becb03.theseus-viewer.pages.dev?iiif-content={manifestId}",
       },
     },
     {

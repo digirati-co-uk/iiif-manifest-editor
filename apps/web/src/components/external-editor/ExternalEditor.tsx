@@ -183,7 +183,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
           <BackgroundActionsMenu />
           <a
             target="_blank"
-            href={`https://theseusviewer.org?iiif-content=${manifest}`}
+            href={`https://b5becb03.theseus-viewer.pages.dev?iiif-content=${manifest}`}
             className="px-3 py-2 gap-3 disabled:text-white/50 text-sm underline"
             rel="noreferrer"
           >

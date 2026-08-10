@@ -12,7 +12,7 @@ export function ManifestOverviewEmptyState({ onCreate, canCreate }: { onCreate: 
       <div className="font-bold text-lg">Let's get started!</div>
       <div className="max-w-xl px-5 my-4">
         Add a title and top level information for this manifest using the editing panel on the right, and then add some
-        canvases and content.
+        manifest items and content.
       </div>
       {canCreate ? (
         <Button
