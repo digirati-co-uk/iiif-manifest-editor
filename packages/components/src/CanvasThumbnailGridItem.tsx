@@ -1,6 +1,7 @@
+import { getValue } from "@iiif/helpers";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { CanvasLabel } from "./CanvasLabel";
 import { Card3D } from "./Card3D";
@@ -20,6 +21,7 @@ interface CanvasThumbnailGridItemProps {
   customLabel?: (opts: { className: string }) => React.ReactNode;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
+  const canvas = useCanvas({ id: props.id });
   const { dragProps } = useDrag({
     isDisabled: !props.dragState,
     getItems() {
@@ -45,6 +47,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         )}
         data-canvas-selected={props.selected}
         aria-current={isCurrent ? "true" : undefined}
+        aria-label={props.onClick ? getValue(canvas?.label as any) || "Untitled canvas" : undefined}
         {...(props.containerProps || {})}
       >
         <div className="bg-me-gray-100 relative w-full aspect-square group flex-1 overflow-hidden rounded">

@@ -88,7 +88,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
               );
             })}
           </TabList>
-          <div ref={setHiddenMenu} id="hidden-menu" />
+          <div ref={setHiddenMenu} />
         </div>
         {menu.map((item) => (
           <TabPanel key={item.id} id={item.id} className="flex-1 overflow-y-auto h-full">

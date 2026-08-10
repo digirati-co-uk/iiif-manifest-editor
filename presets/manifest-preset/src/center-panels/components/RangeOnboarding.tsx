@@ -67,12 +67,13 @@ export function RangeOnboarding() {
     <>
       <ActionButton
         id="launch_range_tour"
+        aria-label="Range help"
         primary={forceStart}
         onPress={() => {
           setForceStart(true);
         }}
       >
-        <HelpIcon className="text-xl" />
+        <HelpIcon aria-hidden="true" className="text-xl" />
       </ActionButton>
       <OnboardingTour
         key={forceStart ? "range-listing-tour" : "default"}

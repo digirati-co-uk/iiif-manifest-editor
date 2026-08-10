@@ -17,7 +17,7 @@ export function useGridOptions(
 
   const component = (
     <div className="flex gap-2 items-center" id="grid-options">
-      <div className={onDark ? "opacity-90 text-white text-sm" : "opacity-90 text-sm"}>Grid size:</div>
+      <div className={onDark ? " text-white text-sm" : " text-sm"}>Grid size:</div>
       <ActionButton onDark={onDark} primary={size === "grid-sm"} onPress={() => setSize("grid-sm")}>
         Small
       </ActionButton>

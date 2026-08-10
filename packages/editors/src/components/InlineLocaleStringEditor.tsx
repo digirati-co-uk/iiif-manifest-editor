@@ -18,6 +18,7 @@ export type LocaleStringProps = {
   placeholder?: string;
   className?: string;
   buttonClassName?: string;
+  editButtonClassName?: string;
 };
 
 export interface InlineLocaleStringEditorProps extends LocaleStringProps {
@@ -32,6 +33,7 @@ export function InlineLocaleStringEditor({
   editor,
   placeholder,
   buttonClassName,
+  editButtonClassName,
   ...props
 }: InlineLocaleStringEditorProps) {
   const [value, language] = useLocaleString(children);
@@ -123,13 +125,13 @@ export function InlineLocaleStringEditor({
           onClick={() => setIsEditing(true)}
           {...props}
         >
-          {children}
+          {value ? children : undefined}
         </LocaleString>
       )}
       {!isEditing ? (
         <Button
           onPress={() => setIsEditing(true)}
-          className="absolute shadow-md flex items-center z-20 text-xs gap-2 -bottom-8 right-0 p-1.5 bg-gray-200 rounded opacity-0 group-focus-within:opacity-100 group-hover:opacity-100"
+          className={twMerge("absolute shadow-md flex items-center z-20 text-xs gap-2 -bottom-8 right-0 p-1.5 bg-gray-200 rounded opacity-0 group-focus-within:opacity-100 group-hover:opacity-100", editButtonClassName)}
         >
           <EditTextIcon className="text-xl" /> Edit
         </Button>

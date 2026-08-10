@@ -450,8 +450,8 @@ function RangeWorkbench() {
         <RangeWorkbenchHeader className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 z-30 border-me-400 border-b">
           <div className="flex items-center gap-4">
             {hasParent ? (
-              <ActionButton onPress={() => goToParent()}>
-                <ArrowUpIcon className="text-xl" />
+              <ActionButton aria-label="Go to parent range" onPress={() => goToParent()}>
+                <ArrowUpIcon aria-hidden="true" className="text-xl" />
               </ActionButton>
             ) : null}
             {isEditingLabel && !topLevelRange.isVirtual ? (
@@ -464,15 +464,16 @@ function RangeWorkbench() {
               <InlineLocaleStringEditor
                 key={topLevelRange.id}
                 editor={rangeEditor.descriptive.label}
-                as="h3"
+                as="h2"
+                placeholder="Untitled range"
                 className="text-xl text-white"
               >
                 {topLevelRange.label}
               </InlineLocaleStringEditor>
             )}
             <MenuTrigger>
-              <ActionButton>
-                <MoreMenuIcon className="text-xl" />
+              <ActionButton aria-label="Range actions">
+                <MoreMenuIcon aria-hidden="true" className="text-xl" />
               </ActionButton>
               <Popover className="bg-white shadow-md rounded-md p-1">
                 <Menu>
@@ -502,7 +503,7 @@ function RangeWorkbench() {
       )}
 
       {isSplitting && !preview ? (
-        <RangeWorkbenchNotice className="mb-4 flex gap-4 sticky top-16 rounded-none z-30">
+        <RangeWorkbenchNotice className="mb-4 flex gap-4 sticky top-16 rounded-none bg-me-primary-600 z-30">
           Splitting range, click to confirm the the new range item
           <ActionButton onPress={() => setIsSplitting(false)}>
             Exit splitting mode
@@ -513,8 +514,8 @@ function RangeWorkbench() {
       {preview && (
         <div className="flex flex-col h-full">
           <RangeWorkbenchHeader className="flex bg-me-primary-500 sticky top-0 h-16 z-20 border-b-white border-b items-center gap-4">
-            <ActionButton onPress={handleClosePreview}>
-              <ArrowBackwardIcon className="text-xl" />
+              <ActionButton aria-label="Back to range" onPress={handleClosePreview}>
+              <ArrowBackwardIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
             {isEditingLabel && !topLevelRange.isVirtual ? (
               <InlineLabelEditor
@@ -528,8 +529,8 @@ function RangeWorkbench() {
                   {previewRangeLabel}
                 </LocaleString>
                 <MenuTrigger>
-                  <ActionButton>
-                    <MoreMenuIcon className="text-xl" />
+                  <ActionButton aria-label="Range actions">
+                    <MoreMenuIcon aria-hidden="true" className="text-xl" />
                   </ActionButton>
                   <Popover className="bg-white shadow-md rounded-md p-1">
                     <Menu>
