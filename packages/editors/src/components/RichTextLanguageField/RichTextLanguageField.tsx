@@ -24,6 +24,7 @@ import { useCreateLink } from "./hooks/use-create-link";
 import * as S from "./RichTextLanguageField.styles";
 
 interface RichTextLanguageField {
+  ariaLabel?: string;
   id?: string;
   language: string;
   value: string;
@@ -298,6 +299,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
         {props.onUpdateLanguage && props.languages ? (
           <S.ToolbarItem>
             <select
+              aria-label={`${props.ariaLabel || "Text value"} language`}
               onFocus={props.onFocus}
               onBlur={props.onBlur}
               value={props.language}
@@ -353,6 +355,7 @@ export function RichTextLanguageField(props: RichTextLanguageField) {
           </>
         ) : (
           <ComposableInput.Text
+            aria-label={props.ariaLabel || "Text value"}
             id={props.id}
             as={props.disableMultiline ? "input" : Textarea}
             onFocus={() => setIsFocused(true)}

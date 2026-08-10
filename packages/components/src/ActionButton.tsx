@@ -15,8 +15,8 @@ export function ActionButton({
       className={(t) =>
         twMerge(
           //
-          "border-none flex gap-1 items-center bg-me-50 flex-nowrap whitespace-nowrap text-me-700 text-sm rounded hover:bg-me-100",
-          primary && !onDark ? "bg-me-500 text-white hover:bg-me-600" : "",
+          "border-none flex gap-1 items-center bg-me-50 flex-nowrap whitespace-nowrap text-me-700 text-sm rounded hover:bg-me-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-500 focus-visible:ring-offset-2",
+          primary && !onDark ? "bg-me-primary-500 text-white hover:bg-me-primary-600" : "",
           primary && onDark ? "bg-me-700 text-white hover:bg-me-800" : "",
           center ? "place-content-center" : "",
           large ? "px-4 py-2" : "px-2 py-1",

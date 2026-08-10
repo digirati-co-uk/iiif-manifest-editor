@@ -140,20 +140,25 @@ export const HandleControls = forwardRef<
       <UnscaledContainer $open={open} $dir={dir} className="group">
         {!open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
-            <TooltipTrigger as={OpenControl} $dir={dir} onClick={(e) => actions.open()}>
-              <DownIcon className="text-2xl" rotate={dir === "right" ? 90 : 270} />
+            <TooltipTrigger
+              aria-label={`Open ${dir} panel`}
+              as={OpenControl}
+              $dir={dir}
+              onClick={(e) => actions.open()}
+            >
+              <DownIcon aria-hidden="true" className="text-2xl" rotate={dir === "right" ? 90 : 270} />
             </TooltipTrigger>
             <DefaultTooltipContent>Open</DefaultTooltipContent>
           </Tooltip>
         ) : null}
       </UnscaledContainer>
       <Tooltip placement={dir === "left" ? "right" : "left"}>
-        <TooltipTrigger aria-label="Resize panel" asChild>
+        <TooltipTrigger asChild>
           <div>
             <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
               {open ? (
                 <Tooltip placement={dir === "left" ? "right" : "left"}>
-                  <TooltipTrigger as={IconHandle} onPress={() => actions.close()}>
+                  <TooltipTrigger aria-label={`Close ${dir} panel`} as={IconHandle} onPress={() => actions.close()}>
                     <div
                       onMouseOut={() => {
                         setShowDragToolTip(true);
@@ -162,7 +167,7 @@ export const HandleControls = forwardRef<
                         setShowDragToolTip(false);
                       }}
                     >
-                      <CloseIcon />
+                      <CloseIcon aria-hidden="true" />
                     </div>
                   </TooltipTrigger>
                   <DefaultTooltipContent>Close</DefaultTooltipContent>
@@ -170,7 +175,7 @@ export const HandleControls = forwardRef<
               ) : null}
               {reset && open ? (
                 <Tooltip placement={dir === "left" ? "right" : "left"}>
-                  <TooltipTrigger as={IconHandle} onPress={() => reset()}>
+                  <TooltipTrigger aria-label={`Reset ${dir} panel size`} as={IconHandle} onPress={() => reset()}>
                     <div
                       onMouseOut={() => {
                         setShowDragToolTip(true);
@@ -179,7 +184,7 @@ export const HandleControls = forwardRef<
                         setShowDragToolTip(false);
                       }}
                     >
-                      <ResetIcon />
+                      <ResetIcon aria-hidden="true" />
                     </div>
                   </TooltipTrigger>
                   <DefaultTooltipContent>Reset</DefaultTooltipContent>
@@ -187,7 +192,7 @@ export const HandleControls = forwardRef<
               ) : null}
               {open ? (
                 <Tooltip placement={dir === "left" ? "right" : "left"}>
-                  <TooltipTrigger asChild aria-label="Resize panel">
+                  <TooltipTrigger asChild>
                     <div
                       onMouseOut={() => {
                         setShowDragToolTip(true);

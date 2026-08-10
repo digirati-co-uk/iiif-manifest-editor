@@ -9,6 +9,7 @@ import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
 import { useEvent } from "../hooks/use-event";
+import { useMatchMedia } from "../hooks/use-match-media";
 import { PresetOnboarding } from "../PresetOnboarding/PresetOnboarding";
 import { ModularPanel } from "./components/ModularPanel";
 import { PanelError } from "./components/PanelError";
@@ -127,6 +128,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
     panel.focusedMode?.onSelect?.(focusedPanelContext);
   };
   const closeLeftPanelOnMainPanelClick = !leftPanel || leftPanel.focusedMode?.closeOnMainPanelClick !== false;
+  const [mobile] = useMatchMedia(["(max-width: 1020px)"]);
 
   const backgroundItems = useMemo(() => {
     return (layout.background || []).map((bg, key) => {
@@ -158,6 +160,12 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       );
     }
   }, [state.centerPanel.current, centerPanel?.id]);
+
+  useLayoutEffect(() => {
+    if (mobile && state.leftPanel.open && state.rightPanel.open) {
+      actions.rightPanel.close();
+    }
+  }, [mobile, state.leftPanel.open, state.rightPanel.open]);
 
   useLayoutEffect(() => {
     if (!state.leftPanel.open || !state.leftPanel.current) {
@@ -307,6 +315,9 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                 aria-label={panel.label}
                 data-selected={current === panel.id}
                 onClick={() => {
+                  if (mobile) {
+                    side === "left" ? actions.rightPanel.close() : actions.leftPanel.close();
+                  }
                   if (current === panel.id) {
                     panelActions.toggle();
                   } else {
@@ -369,6 +380,9 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                     data-selected={activeLeftPanelId === panel.id}
                     onClick={() => {
                       if (panel.modal) {
+                        if (mobile) {
+                          actions.rightPanel.close();
+                        }
                         if (state.modal.open && state.modal.current === panel.id) {
                           actions.modal.close();
                         } else {
@@ -376,6 +390,9 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                           handleFocusedPanelSelect(panel);
                         }
                         return;
+                      }
+                      if (mobile) {
+                        actions.rightPanel.close();
                       }
                       if (state.leftPanel.current === panel.id) {
                         actions.leftPanel.toggle();

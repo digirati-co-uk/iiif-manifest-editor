@@ -453,21 +453,36 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
         )}
         <L.Main>
           <M.Container>
-            <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>
             <M.MobileBar>
               {dockedLeftPanels.length > 0 ? (
-                <M.LeftBarButton onClick={actions.leftPanel.toggle}>{leftPanel?.label}</M.LeftBarButton>
+                <M.LeftBarButton
+                  type="button"
+                  aria-expanded={state.leftPanel.open}
+                  onClick={() => {
+                    actions.rightPanel.close();
+                    actions.leftPanel.toggle();
+                  }}
+                >
+                  {leftPanel?.label}
+                </M.LeftBarButton>
               ) : null}
               {rightPanels.length > 0 ? (
                 <M.DrawerContainer>
-                  <M.DrawerButton onClick={actions.rightPanel.toggle}>
-                    <DownIcon rotate={180} />
+                  <M.DrawerButton
+                    type="button"
+                    aria-expanded={state.rightPanel.open}
+                    onClick={() => {
+                      actions.leftPanel.close();
+                      actions.rightPanel.toggle();
+                    }}
+                  >
+                    <DownIcon aria-hidden="true" rotate={90} />
                     {rightPanel?.label}
                   </M.DrawerButton>
                 </M.DrawerContainer>
               ) : null}
-              <M.PreviewBarButton>Preview</M.PreviewBarButton>
             </M.MobileBar>
+            <M.CenterPanel>{renderCenterPanel()}</M.CenterPanel>
             {rightPanels.length > 0 ? (
               <M.DrawerBody $open={state.rightPanel.open}>{renderRightPanel()}</M.DrawerBody>
             ) : null}
@@ -476,6 +491,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             ) : null}
             {leftPanels.length > 0 || rightPanels.length > 0 ? (
               <M.Lightbox
+                type="button"
+                aria-label="Close panels"
                 $open={state.leftPanel.open || state.rightPanel.open}
                 onClick={() => {
                   actions.leftPanel.close();

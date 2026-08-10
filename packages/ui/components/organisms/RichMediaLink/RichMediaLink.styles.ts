@@ -64,7 +64,7 @@ const Title = styled.div`
 `;
 
 const Link = styled.a`
-  color: #bdbdbd;
+  color: #666;
   font-size: 0.8em;
   white-space: nowrap;
   overflow: hidden;
@@ -74,7 +74,7 @@ const Link = styled.a`
 `;
 
 const NoLink = styled.div`
-  color: #bdbdbd;
+  color: #666;
   font-size: 0.8em;
   white-space: nowrap;
   overflow: hidden;
@@ -84,7 +84,7 @@ const NoLink = styled.div`
 `;
 
 const Label = styled.div`
-  color: #9a9a9a;
+  color: #666;
   font-size: 0.8em;
   margin-left: auto;
 `;

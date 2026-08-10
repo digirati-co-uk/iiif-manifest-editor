@@ -129,7 +129,16 @@ export const ModulePanelButton = styled.button`
   background: transparent;
   padding: 0 0.4em;
   margin: 0.3em;
+  min-width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 3px;
+  &:focus-visible {
+    outline: 2px solid #b84c74;
+    outline-offset: 2px;
+  }
   &:hover {
     background: #eee;
   }
@@ -142,8 +151,10 @@ const ModulePanelSpacer = styled.div`
   flex: 1 1 0px;
 `;
 
-const ModularPanelLabel = styled.div`
+const ModularPanelLabel = styled.h2`
   font-size: 0.875em;
+  font-weight: 400;
+  margin: 0;
   flex: 1 1 0px;
   padding-left: 1em;
   text-align: center;
@@ -240,14 +251,14 @@ export function ModularPanel({
 
   const backButton =
     panel.backAction || state.stack.length ? (
-      <ModulePanelButton onClick={backAction}>
-        <BackIcon />
+      <ModulePanelButton aria-label="Back" onClick={backAction}>
+        <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     ) : null;
 
   const closeButton = (
-    <ModulePanelButton onClick={close || actions.close}>
-      <CloseIcon />
+    <ModulePanelButton aria-label="Close panel" onClick={close || actions.close}>
+      <CloseIcon aria-hidden="true" />
     </ModulePanelButton>
   );
 
@@ -265,7 +276,7 @@ export function ModularPanel({
             <Dropdown style={{ display: "flex", height: "100%" }}>
               {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
               {switchablePanels.length ? (
-                <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
+                <DropdownMenu $open={isOpen} role="menu" style={{ left: "0.5em" }}>
                   <DropdownLabel>All panels</DropdownLabel>
                   <DropdownDivider />
                   {switchablePanels.map((newPanel, i) => (
@@ -283,20 +294,23 @@ export function ModularPanel({
             </Dropdown>
 
             {customTitle ? (
-              <ModularPanelLabel>{customTitle}</ModularPanelLabel>
+              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>{customTitle}</ModularPanelLabel>
             ) : hideHeader ? (
               <ModulePanelSpacer />
             ) : (
-              <ModularPanelLabel>{panel.label}</ModularPanelLabel>
+              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>{panel.label}</ModularPanelLabel>
             )}
             {pinnable ? (
               (state as PinnablePanelState).pinned ? (
-                <ModulePanelButton onClick={pinActions.unpin}>
-                  <StarIcon fill="orange" />
+                <ModulePanelButton aria-label="Unpin panel" onClick={pinActions.unpin}>
+                  <StarIcon aria-hidden="true" fill="orange" />
                 </ModulePanelButton>
               ) : (
-                <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
-                  <StarIcon fill="#ddd" />
+                <ModulePanelButton
+                  aria-label="Pin panel"
+                  onClick={() => pinActions.pin({ id: panel.id, state: state.state })}
+                >
+                  <StarIcon aria-hidden="true" fill="#ddd" />
                 </ModulePanelButton>
               )
             ) : null}

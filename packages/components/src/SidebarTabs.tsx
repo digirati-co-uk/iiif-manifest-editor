@@ -137,9 +137,9 @@ const SidebarTab = memo(function SidebarTab({
       id={id}
       className={({ isSelected, isFocusVisible }) =>
         cn(
-          "border-b-2 px-2 py-1 text-sm text-gray-400 select-none hover:text-black focus:ring-0 focus:outline-none",
+          "border-b-2 px-2 py-1 text-sm text-gray-600 select-none hover:text-black focus:outline-none",
           isSelected && "border-me-primary-500 text-black",
-          isFocusVisible && "ring-0 bg-me-gray-100",
+          isFocusVisible && "ring-2 ring-inset ring-me-primary-500 bg-me-gray-100",
           isHidden && "hidden",
         )
       }
@@ -162,8 +162,9 @@ const MoreMenu = createHideableComponent<
   return (
     <MenuTrigger>
       <Button
+        aria-label="More tabs"
         className={cn(
-          "border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-500 semibold uppercase text-[10px]",
+          "min-h-6 border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-600 semibold uppercase text-[10px]",
           selectedIndex > hidden && "bg-me-primary-500 text-white rounded",
         )}
       >

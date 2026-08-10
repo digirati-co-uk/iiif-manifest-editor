@@ -96,7 +96,7 @@ function PromptCreationOfTourSteps() {
       <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
 
       <Button
-        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
         onPress={() => createEmptyAnnotationPage()}
       >
         Create Tour
@@ -197,7 +197,11 @@ export function ExhibitionTourStepsContent({
             <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-sm font-semibold text-gray-700">Marker</div>
-                <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5">
+                <div
+                  role="group"
+                  aria-label="Tour marker style"
+                  className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5"
+                >
                   <MarkerStyleButton selected={markerStyle === "circle"} onPress={() => setMarkerStyle("circle")}>
                     Circle
                   </MarkerStyleButton>
@@ -231,7 +235,7 @@ export function ExhibitionTourStepsContent({
               ) : (
                 <Button
                   onPress={requestTourStep}
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
                 >
                   {nonLinear ? "+ Add map point" : "+ Add new step"}
                 </Button>
@@ -265,6 +269,7 @@ function MarkerStyleButton({
 }) {
   return (
     <Button
+      aria-pressed={selected}
       className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
         selected ? "bg-white text-me-primary-600 shadow-sm" : "text-gray-500 hover:text-gray-800"
       }`}

@@ -156,9 +156,9 @@ function TemplateConfigurationField({
     <InputContainer $wide>
       <InputLabel>{field.label}</InputLabel>
       {field.type === "textarea" ? (
-        <textarea className="w-full rounded border border-slate-300 bg-slate-50 px-3 py-2 text-sm" value={String(value)} onChange={(event) => onChange(event.target.value)} />
+        <textarea aria-label={field.label} className="w-full rounded border border-slate-300 bg-slate-50 px-3 py-2 text-sm" value={String(value)} onChange={(event) => onChange(event.target.value)} />
       ) : (
-        <Input type={field.type === "number" ? "number" : "text"} value={String(value)} onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(field.type === "number" ? event.target.valueAsNumber : event.target.value)} />
+        <Input aria-label={field.label} type={field.type === "number" ? "number" : "text"} value={String(value)} onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(field.type === "number" ? event.target.valueAsNumber : event.target.value)} />
       )}
     </InputContainer>
   );
@@ -314,6 +314,7 @@ function ThemeColorField({
         {label}
       </label>
       <input
+        aria-label={`${label} colour picker`}
         className="h-9 w-12 shrink-0 cursor-pointer rounded border border-slate-300 bg-white p-1"
         type="color"
         value={toHexColor(value)}
@@ -323,6 +324,7 @@ function ThemeColorField({
       />
       <div className="min-w-0">
         <Input
+          aria-label={`${label} colour value`}
           style={{ width: "100%" }}
           value={value}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -347,6 +349,7 @@ function ThemeTextField({
     <InputContainer $wide>
       <InputLabel>{label}</InputLabel>
       <Input
+        aria-label={label}
         value={value}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange(event.target.value)
@@ -373,6 +376,7 @@ function ThemeSelectField<T extends string>({
     <InputContainer $wide>
       <InputLabel>{label}</InputLabel>
       <select
+        aria-label={label}
         className="w-full rounded border border-slate-300 bg-slate-50 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
         value={value}
         disabled={disabled}

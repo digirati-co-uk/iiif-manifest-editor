@@ -30,20 +30,26 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
       ];
     },
   });
+  const Component = props.onClick ? "button" : "div";
+  const isCurrent = props.selected || props.active;
 
   return (
     <CanvasContext canvas={props.id}>
-      <div
+      <Component
+        {...(props.onClick ? { type: "button" as const } : {})}
         {...(props.dragState ? dragProps : {})}
         onClick={props.onClick}
-        className={twMerge("flex flex-col", props.className)}
+        className={twMerge(
+          "flex flex-col border-0 bg-transparent p-0 text-inherit",
+          props.className,
+        )}
         data-canvas-selected={props.selected}
+        aria-current={isCurrent ? "true" : undefined}
         {...(props.containerProps || {})}
       >
         <div className="bg-me-gray-100 relative w-full aspect-square group flex-1 overflow-hidden rounded">
           <Card3D
             data-canvas-selected={props.active}
-            aria-selected={props.active}
             className={cn(
               "border-2 border-transparent  p-1 w-full h-full rounded select-none",
               props.selected && "border-me-primary-500",
@@ -58,7 +64,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         ) : (
           <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />
         )}
-      </div>
+      </Component>
     </CanvasContext>
   );
 }

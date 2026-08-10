@@ -1,7 +1,7 @@
 import { LazyThumbnail } from "@manifest-editor/components";
 import { getInternationalStringText, useInStack } from "@manifest-editor/editors";
 import { useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { CanvasContext, LocaleString, useCanvas, useManifest, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getGridStats } from "../helpers";
@@ -75,6 +75,7 @@ export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; on
   const currentCanvas = useInStack("Canvas");
   const selected = currentCanvas?.resource.source?.id === canvas?.id;
   const [showSteps, setShowSteps] = useState(false);
+  const stepsId = useId();
   const isInfoBox = (canvas?.behavior || []).includes("info");
   const isScrollInfoBox = mode === "scroll" && isInfoBox;
   const isCoverCanvas = useVaultSelector(
@@ -117,6 +118,8 @@ export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; on
         <div className="border-t border-slate-100">
           <button
             type="button"
+            aria-expanded={showSteps}
+            aria-controls={stepsId}
             className="flex w-full items-center justify-between px-2 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
             onClick={(event) => {
               event.stopPropagation();
@@ -127,7 +130,7 @@ export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; on
             <span>{tourSteps.length}</span>
           </button>
           {showSteps ? (
-            <div className="flex flex-col gap-2 border-t border-slate-100 p-2">
+            <div id={stepsId} className="flex flex-col gap-2 border-t border-slate-100 p-2">
               {tourSteps.map((step: any, index: number) => (
                 <TourStepPreview key={step.id || index} annotation={step} canvas={canvas} onClick={onClick} />
               ))}

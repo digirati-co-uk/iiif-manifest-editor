@@ -169,7 +169,7 @@ export function SlideshowSlidePreview({
         <div
           className={twMerge(
             "flex h-full w-full items-center justify-center text-sm font-semibold",
-            mode === "preview" ? "text-white/40" : "bg-white text-slate-400",
+            mode === "preview" ? "text-white/70" : "bg-white text-slate-600",
           )}
         >
           {mode === "preview" ? "This slide has no content yet" : "Empty slide"}
@@ -259,7 +259,7 @@ function TourStepTarget({
           top: `${((box.y + box.height / 2) / canvasHeight) * 100}%`,
           transform: "translate(-50%, -50%)",
         }}
-        onPointerDown={(event) => {
+        onClick={(event) => {
           event.stopPropagation();
           onSelect();
         }}
@@ -270,7 +270,9 @@ function TourStepTarget({
   }
 
   return (
-    <div
+    <button
+      type="button"
+      aria-label={`Select tour step ${index + 1}`}
       className={twMerge(
         "absolute select-none border-2 border-me-primary-500 bg-me-primary-500/10 touch-none",
         selected ? "z-40" : "z-30",
@@ -290,7 +292,7 @@ function TourStepTarget({
             }
           : {}),
       }}
-      onPointerDown={(event) => {
+      onClick={(event) => {
         event.stopPropagation();
         onSelect();
       }}
@@ -308,7 +310,7 @@ function TourStepTarget({
       >
         Step {index + 1}
       </span>
-    </div>
+    </button>
   );
 }
 

@@ -71,16 +71,20 @@ export function BrowserSettingsPanel() {
   }
 
   return (
-    <div className="flex h-[70vh] min-h-[60vh] overflow-hidden border-t border-gray-100 bg-white w-full">
-      <nav className="w-52 flex-none border-r border-gray-200 bg-gray-50 p-3" aria-label="Settings sections">
-        <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Settings</div>
-        <div className="flex flex-col gap-1">
+    <div className="flex h-[70vh] min-h-[60vh] w-full flex-col overflow-hidden border-t border-gray-100 bg-white sm:!flex-row">
+      <nav
+        className="w-full flex-none border-b border-gray-200 bg-gray-50 p-3 sm:!w-52 sm:!border-r sm:!border-b-0"
+        aria-label="Settings sections"
+      >
+        <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-gray-600">Settings</div>
+        <div className="flex gap-1 overflow-x-auto sm:!flex-col">
           {sections.map((item) => (
             <button
               key={item.id}
               type="button"
+              aria-current={section === item.id ? "page" : undefined}
               className={[
-                "rounded-md px-3 py-2 text-left text-sm font-medium transition-colors",
+                "whitespace-nowrap rounded-md px-3 py-2 text-left text-sm font-medium transition-colors",
                 section === item.id ? "bg-white text-me-primary-600 shadow-sm" : "text-gray-600 hover:bg-white",
               ].join(" ")}
               onClick={() => setSection(item.id)}
@@ -91,7 +95,7 @@ export function BrowserSettingsPanel() {
         </div>
       </nav>
 
-      <main className="min-w-0 flex-1 overflow-y-auto p-6">
+      <div className="min-w-0 flex-1 overflow-y-auto p-4 sm:!p-6">
         {section === "plugins" ? (
           <SettingsSection title="Plugins">
             <PluginManager />
@@ -212,7 +216,7 @@ export function BrowserSettingsPanel() {
             ) : null}
           </Form.Form>
         )}
-      </main>
+      </div>
     </div>
   );
 }

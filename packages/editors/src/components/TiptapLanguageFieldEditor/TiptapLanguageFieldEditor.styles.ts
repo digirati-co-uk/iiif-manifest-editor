@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 export const EmptyLanguageField = styled(ButtonReset as any)`
   padding: 0.8em 1em;
   background: #f8f9fa;
-  color: #999;
+  color: #666;
   font-size: 0.9em;
   border-bottom: 1px solid rgba(5, 42, 68, 0.2);
   margin: 0.5em 0 2.18em;
@@ -352,7 +352,7 @@ export const EditorWrap = styled.div`
   }
 
   .tiptap p.is-editor-empty:first-child::before {
-    color: #9ca3af;
+    color: #6b7280;
     content: attr(data-placeholder);
     float: left;
     height: 0;

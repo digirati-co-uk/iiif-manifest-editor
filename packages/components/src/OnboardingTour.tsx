@@ -13,6 +13,7 @@ interface OnboardingTourProps {
 
 export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel }: OnboardingTourProps) {
   const [isEnabled, setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
+  const run = isEnabled || forceStart;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: like setState in React.
   useEffect(() => {
@@ -25,6 +26,16 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
     window.addEventListener("onboarding:restart", onRestart as EventListener);
     return () => window.removeEventListener("onboarding:restart", onRestart as EventListener);
   }, [id]);
+
+  useEffect(() => {
+    const editor = document.getElementById("manifest-editor-container");
+    if (!editor || !run) return;
+
+    editor.setAttribute("inert", "");
+    return () => {
+      editor.removeAttribute("inert");
+    };
+  }, [run]);
 
   const lifecycle = (e: CallBackProps) => {
     if (
@@ -51,7 +62,7 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
       showSkipButton
       continuous
       steps={steps}
-      run={isEnabled || forceStart}
+      run={run}
       callback={lifecycle}
       locale={lastButtonLabel ? { last: lastButtonLabel } : undefined}
       styles={{

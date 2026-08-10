@@ -571,7 +571,12 @@ export function BackgroundActionsMenu() {
   return (
     <BackgroundActionMenuRoot>
       <BackgroundActionMenuButton active={isOpen} runningCount={runningCount} errorCount={errorCount} aria-label="Actions menu" {...buttonProps} />
-      <BackgroundActionMenuPanel open={isOpen} role="menu">
+      <BackgroundActionMenuPanel
+        open={isOpen}
+        role="menu"
+        aria-hidden={!isOpen}
+        inert={!isOpen}
+      >
         <div className="py-1.5">
         {groups.map((group, groupIndex) => (
           <Fragment key={group.id}>

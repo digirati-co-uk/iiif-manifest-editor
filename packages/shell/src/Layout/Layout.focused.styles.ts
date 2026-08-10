@@ -266,6 +266,11 @@ export const PanelSwitchButton = styled.button`
     width: 1.25em;
     height: 1.25em;
   }
+
+  @media (max-width: 1020px) {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 `;
 
 export const PanelSwitchGroup = styled.div`

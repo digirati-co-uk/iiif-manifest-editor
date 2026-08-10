@@ -96,12 +96,12 @@ export function PreviewButton({
           {preview?.mainAction?.label || "Preview"}
         </ButtonMain>
         {configsToShow.length + customActions.length > 0 ? (
-          <ButtonChange $open={isOpen} {...buttonProps}>
-            <DownIcon />
+          <ButtonChange $open={isOpen} {...buttonProps} aria-label="Choose preview">
+            <DownIcon aria-hidden />
           </ButtonChange>
         ) : null}
 
-        <MenuContainer $open={isOpen}>
+        <MenuContainer $open={isOpen} role="menu">
           {configsToShow.map((config, key) => {
             const inactive = active.indexOf(config.id) === -1;
             return (
