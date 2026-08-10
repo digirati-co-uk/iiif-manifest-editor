@@ -8,4 +8,5 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
+  sourcemap: true,
 }));

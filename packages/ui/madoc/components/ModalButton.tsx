@@ -12,6 +12,8 @@ import {
   ModalResizeIcon,
 } from "./Modal";
 
+export { ModalCloseIcon } from "./Modal";
+
 export const ModalButton: React.FC<{
   ref?: any;
   title: string;
@@ -55,10 +57,10 @@ export const ModalButton: React.FC<{
     tabIndex,
     role,
   },
-  ref,
+  ref
 ) {
   const portalEl = useRef<HTMLElement | undefined>(undefined);
-  const [ready, setIsReady] = useState(false);
+  const [ready, setIsReady] = useState(openByDefault);
   const [expanded, setIsExpanded] = useState(false);
   const containerRef = useRef<any>(null);
 
@@ -66,10 +68,6 @@ export const ModalButton: React.FC<{
     const element = document.createElement("div");
     document.body.appendChild(element);
     portalEl.current = element;
-
-    if (openByDefault) {
-      setIsReady(true);
-    }
 
     return () => {
       portalEl.current = undefined;
@@ -117,7 +115,7 @@ export const ModalButton: React.FC<{
                 </InnerModalContainer>
               </ModalContainer>
             </>,
-            portalEl.current,
+            portalEl.current
           )
         : null}
       <Component

@@ -49,3 +49,7 @@ prev/
 # Env
 .dev.env.dev
 .vscode/settings.json
+
+# Shared editor tooling
+!.zed/
+!.zed/settings.json

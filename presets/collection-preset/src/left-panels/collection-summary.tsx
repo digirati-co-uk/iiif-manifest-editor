@@ -31,7 +31,7 @@ export function CollectionSummaryPanel() {
   const requiredStatement = descriptive.requiredStatement.get();
   const metadata = descriptive.metadata.get();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only runs once.
+  // oxlint-disable react/exhaustive-deps -- The overview opens once when the panel mounts.
   useEffect(() => {
     // if (!current || !isInitial.current) {
     edit(collection);
@@ -40,6 +40,7 @@ export function CollectionSummaryPanel() {
 
     isInitial.current = false;
   }, []);
+  // oxlint-enable react/exhaustive-deps
 
   return (
     <>

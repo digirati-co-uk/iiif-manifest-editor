@@ -6,6 +6,7 @@ export default defineConfig((options) => ({
   exports: true,
   format: ["esm", "cjs"],
   platform: "node",
+  sourcemap: true,
   entry: {
     index: "src/index.ts",
     "next-app-router": "src/wrappers/next-app-router.ts",

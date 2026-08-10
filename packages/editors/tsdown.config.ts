@@ -1,6 +1,4 @@
-// @ts-expect-error
-import postcssImport from "postcss-import";
-import postcssModulesRollup from "rollup-plugin-postcss-modules";
+import { esmExternalRequirePlugin } from "rolldown/plugins";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
@@ -8,6 +6,10 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
+  deps: {
+    alwaysBundle: ["react-accessible-dropdown-menu-hook"],
+    dts: { neverBundle: ["@manifest-editor/ui"] },
+  },
   exports: {
     customExports: (exports) => {
       exports["./dist/index.css"] = "./dist/index.css";
@@ -15,18 +17,18 @@ export default defineConfig((options) => ({
     },
   },
   clean: !options.watch,
-  minifi: !options.watch,
+  css: {
+    fileName: "index.css",
+    transformer: "postcss",
+    modules: {
+      localsConvention: "camelCase",
+      globalModulePaths: [/index\.css/],
+    },
+  },
+  minify: !options.watch,
+  sourcemap: true,
   define: {
     "global.setImmediate": "window.setImmediate",
   },
-  plugins: [
-    postcssModulesRollup({
-      plugins: [postcssImport()],
-      modules: {
-        localsConvention: "camelCase",
-        globalModulePaths: [/index\.css/],
-      },
-      extract: "index.css",
-    }),
-  ],
+  plugins: [esmExternalRequirePlugin({ external: ["react"] })],
 }));

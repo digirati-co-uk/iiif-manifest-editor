@@ -1,5 +1,6 @@
 import { ActionButton, CheckIcon, EditTextIcon } from "@manifest-editor/components";
 import { BaseAnnotationCreator, useAtlasStore, useConfig } from "@manifest-editor/shell";
+import { ModalCloseIcon } from "@manifest-editor/ui/madoc/components/ModalButton";
 import { Button, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import {
   polygonToTarget,
@@ -9,7 +10,6 @@ import {
   useCurrentAnnotationRequest,
 } from "react-iiif-vault";
 import { useStore } from "zustand";
-import { ModalCloseIcon } from "../../../ui/madoc/components/Modal";
 import { AnnotationPopUpSwitcherButton } from "./AnnotationPopUpSwitcherButton";
 
 export function AnnotationCreationPopup({

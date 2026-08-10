@@ -28,6 +28,7 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
+    "./index.css": "./dist/index.css",
     "./dist/index.css": "./dist/index.css"
   },
   "scripts": {
@@ -91,31 +92,30 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@tsdown/css": "catalog:",
     "@manifest-editor/ui": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
     "@types/dompurify": "3.0.5",
     "@types/draft-convert": "^2.1.4",
     "@types/draft-js": "^0.11.9",
     "@types/geojson": "^7946.0.14",
     "@types/leaflet": "^1.9.3",
-    "@types/react": "^18.3.3",
+    "@types/react": "catalog:",
     "@types/react-beautiful-dnd": "^13.1.2",
-    "@types/react-dom": "^18.3.0",
-    "esbuild-plugin-css-module": "^0.1.0",
-    "esbuild-plugin-react18-css": "^0.0.2",
+    "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",
-    "postcss-import": "^16.1.0",
-    "postcss-modules": "^6.0.1",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-postcss-modules": "^2.1.1",
     "tailwindcss": "^3.4.3",
     "tiny-invariant": "^1.3.3",
     "tiny-use-debounce": "^1.0.4",
-    "tsdown": "0.16.4",
-    "vitest": "v3.0.9"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "22aa937fcbd97344b3d350b75e46bb8887c56d47"
+  "gitHead": "22aa937fcbd97344b3d350b75e46bb8887c56d47",
+  "inlinedDependencies": {
+    "react-accessible-dropdown-menu-hook": "4.0.0",
+    "tiny-invariant": "1.3.3",
+    "tiny-use-debounce": "1.0.4"
+  }
 }

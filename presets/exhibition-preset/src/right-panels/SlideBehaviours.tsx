@@ -114,7 +114,7 @@ export function getExhibitionTemplateControls(
   scrollEnabled = false,
   hasTourSteps = true,
   isOpeningCover = false,
-  isImageSlide = true,
+  isImageSlide = true
 ) {
   const scrollContext = templateType === "scroll" || scrollEnabled;
   const showGridSizing = templateType === "fullpage" && !scrollEnabled;
@@ -151,7 +151,7 @@ export function useExhibitionTemplateControls(behavior: string[] = [], hasTourSt
     resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id),
     hasScrollBehavior(behavior),
     hasTourSteps,
-    behavior.includes("splash"),
+    behavior.includes("splash")
   );
 }
 
@@ -263,14 +263,14 @@ export function getAdvancedExhibitionConfigs(
   behavior: string[] = [],
   isCoverCanvas = true,
   hasTourSteps = true,
-  isImageSlide = true,
+  isImageSlide = true
 ): BehaviorEditorProps["configs"] {
   const controls = getExhibitionTemplateControls(
     templateType,
     hasScrollBehavior(behavior),
     hasTourSteps,
     behavior.includes("splash") && isCoverCanvas,
-    isImageSlide,
+    isImageSlide
   );
   const showCoverDisplay = controls.showScrollDisplay && isCoverCanvas;
   const configs: BehaviorEditorProps["configs"] = [];
@@ -453,7 +453,7 @@ export function EditSize({
     }
 
     return (
-      // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events -- Existing interaction behavior.
       <div
         key={i}
         className={`flex aspect-square rounded cursor-se-resize items-center justify-center ${bgClass}`}
@@ -507,13 +507,13 @@ export function SlideBehavioursContent({
   const selectedTemplate = useExhibitionTemplate();
   const templateType = resolveExhibitionTemplateType(
     selectedTemplate?.type,
-    layoutContext === "slideshow" ? "exhibition-slideshow-editor" : app.metadata.id,
+    layoutContext === "slideshow" ? "exhibition-slideshow-editor" : app.metadata.id
   );
   const { width, height } = editor.technical;
   const behavior = editor.technical.behavior.get() || [];
   const hasTourSteps = useVaultSelector(
     (_, vaultInstance) => (currentCanvas ? getTourStepAnnotations(vaultInstance, currentCanvas).length > 0 : false),
-    [currentCanvas?.id, currentCanvas?.annotations?.[0]?.id],
+    [currentCanvas?.id, currentCanvas?.annotations?.[0]?.id]
   );
   const isImageSlide = Boolean(currentCanvas && isImageCanvas(vault, currentCanvas));
   const isCoverCanvas = Boolean(currentCanvas && manifestFirstCanvasId(manifest) === currentCanvas.id && isImageSlide);
@@ -522,7 +522,7 @@ export function SlideBehavioursContent({
     hasScrollBehavior(behavior),
     hasTourSteps,
     behavior.includes("splash") && isCoverCanvas,
-    isImageSlide,
+    isImageSlide
   );
 
   if (!canvas || editor.technical.type !== "Canvas") {
@@ -618,7 +618,7 @@ function SimpleSlideLayoutEditor({
       ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault)
       : null;
   const isCoverCanvas = Boolean(
-    canvas && manifestFirstCanvasId(manifest) === canvas.id && isImageCanvas(vault, canvas),
+    canvas && manifestFirstCanvasId(manifest) === canvas.id && isImageCanvas(vault, canvas)
   );
 
   const applySettings = (next: {
@@ -663,7 +663,7 @@ function SimpleSlideLayoutEditor({
         showImageCover: controls.showImageCover,
         showScrollToggle: controls.showScrollToggle,
         showScrollDisplay: controls.showScrollDisplay && isCoverCanvas,
-      }),
+      })
     );
 
     if (canvas && nextLayoutPreset) {
@@ -857,7 +857,7 @@ function SimpleLayoutPreview({
         <div
           className={twMerge(
             "flex h-full w-full min-h-0",
-            isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
+            isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row"
           )}
         >
           <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
@@ -871,7 +871,7 @@ function SimpleLayoutPreview({
               aria-label="Edit slide text"
               className={twMerge(
                 "flex-shrink-0 border-0 bg-[#25211f] p-3 text-left text-white transition-colors hover:bg-[#332f2c] focus:outline-none focus:ring-2 focus:ring-me-primary-500 focus:ring-offset-2",
-                isBottom ? "h-1/3 w-full" : "h-full w-1/3",
+                isBottom ? "h-1/3 w-full" : "h-full w-1/3"
               )}
               onClick={onTextClick}
             >
@@ -934,7 +934,7 @@ function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected
       className={twMerge(
         "flex h-12 w-16 gap-1 overflow-hidden rounded border p-1",
         selected ? "border-white/70 bg-white/15" : "border-[#dcd5ce] bg-white",
-        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : isTop ? "flex-col-reverse" : "flex-row",
+        isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : isTop ? "flex-col-reverse" : "flex-row"
       )}
       aria-hidden="true"
     >
@@ -944,7 +944,7 @@ function LayoutPresetIcon({ preset, selected }: { preset: LayoutPreset; selected
           className={twMerge(
             "flex flex-shrink-0 flex-col justify-center gap-0.5 rounded-sm px-0.5",
             textClass,
-            isBottom || isTop ? "h-3 w-full" : "h-full w-4",
+            isBottom || isTop ? "h-3 w-full" : "h-full w-4"
           )}
         >
           <TextLines compact tone={selected ? "dark" : "light"} />
@@ -1085,7 +1085,7 @@ export function getLayoutPreset(behavior: string[]): LayoutPreset {
 export function buildLayoutPresetBehaviors(
   behavior: string[],
   layoutPreset: LayoutPreset,
-  canvasDimensions?: { width: number; height: number },
+  canvasDimensions?: { width: number; height: number }
 ) {
   const next = replaceLayoutBehavior(behavior, layoutPreset);
   if (canvasDimensions?.width && canvasDimensions?.height) {
@@ -1289,7 +1289,7 @@ export function getBehaviorWidth(behavior: string[]): number {
 export function computeFitWidth(
   currentCanvasId: string,
   manifestItems: Array<{ id: string }>,
-  vault: ReturnType<typeof useVault>,
+  vault: ReturnType<typeof useVault>
 ): { width: number; neighbour: "previous" | "next" } | null {
   const idx = manifestItems.findIndex((c) => c.id === currentCanvasId);
   if (idx === -1) return null;

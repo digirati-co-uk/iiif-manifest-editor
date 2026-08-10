@@ -16,7 +16,7 @@ import {
   Modal,
 } from "@manifest-editor/components";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../use-dropdown-menu";
 import { useVault } from "react-iiif-vault";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
@@ -97,7 +97,7 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
       layoutState,
       layoutActions,
     }),
-    [rootResource, currentCanvas, vault, tags, canvasProgress, plugins, config, layoutState, layoutActions],
+    [rootResource, currentCanvas, vault, tags, canvasProgress, plugins, config, layoutState, layoutActions]
   );
 }
 
@@ -187,7 +187,7 @@ export function BackgroundActionToasts() {
 
   const definitionsById = useMemo(
     () => new Map(definitions.map((definition) => [definition.id, definition])),
-    [definitions],
+    [definitions]
   );
 
   useEffect(() => {
@@ -216,7 +216,7 @@ export function BackgroundActionToasts() {
           ? () => {
               void definition.onResults?.(context);
             }
-          : undefined,
+          : undefined
       );
 
       if (content) {
@@ -319,7 +319,12 @@ const logLevelConfig: Record<string, { label: string; className: string }> = {
 };
 
 function getLogLevelConfig(level: string) {
-  return logLevelConfig[level?.toLowerCase()] ?? { label: level?.toUpperCase().slice(0, 3) ?? "LOG", className: "text-zinc-300" };
+  return (
+    logLevelConfig[level?.toLowerCase()] ?? {
+      label: level?.toUpperCase().slice(0, 3) ?? "LOG",
+      className: "text-zinc-300",
+    }
+  );
 }
 
 const milestoneEventBadgeClass: Record<string, string> = {
@@ -477,7 +482,12 @@ function BackgroundActionDetailsModal({
               <div className="divide-y divide-zinc-100 rounded-lg border border-zinc-200">
                 {milestoneEvents.map((event) => (
                   <div key={event.id} className="flex items-baseline gap-3 px-3 py-2">
-                    <span className={["shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide", getMilestoneBadgeClass(event.type)].join(" ")}>
+                    <span
+                      className={[
+                        "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                        getMilestoneBadgeClass(event.type),
+                      ].join(" ")}
+                    >
                       {event.type}
                     </span>
                     <span className="min-w-0 flex-1 truncate text-sm text-zinc-700">{event.message || event.type}</span>
@@ -513,10 +523,7 @@ function BackgroundActionDetailsModal({
                 {instance.logs.map((log) => {
                   const levelCfg = getLogLevelConfig(log.level);
                   return (
-                    <div
-                      key={log.id}
-                      className="group flex gap-0 hover:bg-white/5 rounded px-2 py-1 leading-relaxed"
-                    >
+                    <div key={log.id} className="group flex gap-0 hover:bg-white/5 rounded px-2 py-1 leading-relaxed">
                       {/* Timestamp */}
                       <time className="w-20 shrink-0 text-zinc-600 select-none pr-2">{formatTime(log.createdAt)}</time>
                       {/* Level badge */}
@@ -551,11 +558,11 @@ export function BackgroundActionsMenu() {
   const actionCount = groups.reduce((total, group) => total + group.actions.length, 0);
   const runningCount = groups.reduce(
     (total, group) => total + group.actions.filter((action) => isBusy(action.instance)).length,
-    0,
+    0
   );
   const errorCount = groups.reduce(
     (total, group) => total + group.actions.filter((action) => action.instance?.status === "error").length,
-    0,
+    0
   );
   const { isOpen, buttonProps, itemProps, setIsOpen } = useDropdownMenu(actionCount);
 
@@ -570,115 +577,114 @@ export function BackgroundActionsMenu() {
 
   return (
     <BackgroundActionMenuRoot>
-      <BackgroundActionMenuButton active={isOpen} runningCount={runningCount} errorCount={errorCount} aria-label="Actions menu" {...buttonProps} />
-      <BackgroundActionMenuPanel
-        open={isOpen}
-        role="menu"
-        aria-hidden={!isOpen}
-        inert={!isOpen}
-      >
+      <BackgroundActionMenuButton
+        active={isOpen}
+        runningCount={runningCount}
+        errorCount={errorCount}
+        aria-label="Actions menu"
+        {...buttonProps}
+      />
+      <BackgroundActionMenuPanel open={isOpen} role="menu" aria-hidden={!isOpen} inert={!isOpen}>
         <div className="py-1.5">
-        {groups.map((group, groupIndex) => (
-          <Fragment key={group.id}>
-            {groupIndex ? <BackgroundActionMenuDivider /> : null}
-            <BackgroundActionMenuSection>{group.label}</BackgroundActionMenuSection>
-            {group.actions.map((action) => {
-              const currentItemProps = itemProps[itemIndex++] || {};
-              const { onKeyDown, ...menuItemProps } = currentItemProps as any;
-              const statusLabel = getActionStatusLabel(action.instance);
-              const busy = isBusy(action.instance);
-              const runAction = () => {
-                if (!busy) {
-                  runBackgroundAction({ store, context: action.context });
-                  setIsOpen(true);
-                }
-              };
-              const cancelAction = () => {
-                if (busy) {
-                  store.getState().cancelAction(action.instanceKey);
-                  setIsOpen(true);
-                }
-              };
+          {groups.map((group, groupIndex) => (
+            <Fragment key={group.id}>
+              {groupIndex ? <BackgroundActionMenuDivider /> : null}
+              <BackgroundActionMenuSection>{group.label}</BackgroundActionMenuSection>
+              {group.actions.map((action) => {
+                const currentItemProps = itemProps[itemIndex++] || {};
+                const { onKeyDown, ...menuItemProps } = currentItemProps as any;
+                const statusLabel = getActionStatusLabel(action.instance);
+                const busy = isBusy(action.instance);
+                const runAction = () => {
+                  if (!busy) {
+                    runBackgroundAction({ store, context: action.context });
+                    setIsOpen(true);
+                  }
+                };
+                const cancelAction = () => {
+                  if (busy) {
+                    store.getState().cancelAction(action.instanceKey);
+                    setIsOpen(true);
+                  }
+                };
 
-              return (
-                <BackgroundActionMenuItem key={action.instanceKey} status={action.instance?.status || "idle"}>
-                  <BackgroundActionMenuTrigger
-                    running={busy}
-                    {...menuItemProps}
-                    aria-label={busy ? `Cancel ${action.definition.label}` : `Run ${action.definition.label}`}
-                    onMouseDown={(event) => {
-                      event.preventDefault();
-                    }}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      if (busy) {
-                        cancelAction();
-                      } else {
-                        runAction();
-                      }
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
+                return (
+                  <BackgroundActionMenuItem key={action.instanceKey} status={action.instance?.status || "idle"}>
+                    <BackgroundActionMenuTrigger
+                      running={busy}
+                      {...menuItemProps}
+                      aria-label={busy ? `Cancel ${action.definition.label}` : `Run ${action.definition.label}`}
+                      onMouseDown={(event) => {
                         event.preventDefault();
+                      }}
+                      onClick={(event) => {
                         event.stopPropagation();
                         if (busy) {
                           cancelAction();
                         } else {
                           runAction();
                         }
-                      } else {
-                        onKeyDown?.(event);
-                      }
-                    }}
-                  >
-                    <BackgroundActionMenuText>
-                      <BackgroundActionMenuLabel running={busy}>
-                        {action.instance?.label || action.definition.label}
-                      </BackgroundActionMenuLabel>
-                      {statusLabel ? (
-                        <BackgroundActionMenuMeta variant={action.instance?.status === "error" ? "error" : "default"}>
-                          {statusLabel}
-                        </BackgroundActionMenuMeta>
-                      ) : null}
-                      {action.definition.summary && !statusLabel ? (
-                        <BackgroundActionMenuMeta>
-                          {action.definition.summary}
-                        </BackgroundActionMenuMeta>
-                      ) : null}
-                      {busy && action.instance?.progress ? (
-                        <BackgroundActionMenuProgressBar
-                          percent={action.instance.progress.percent}
-                          label={action.instance.progress.label || statusLabel || action.definition.label}
-                        />
-                      ) : null}
-                    </BackgroundActionMenuText>
-                  </BackgroundActionMenuTrigger>
-                  {action.instance?.resultsAvailable && action.definition.onResults ? (
-                    <BackgroundActionMenuInlineAction
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        action.definition.onResults?.(action.context);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          if (busy) {
+                            cancelAction();
+                          } else {
+                            runAction();
+                          }
+                        } else {
+                          onKeyDown?.(event);
+                        }
                       }}
                     >
-                      Results
-                    </BackgroundActionMenuInlineAction>
-                  ) : null}
-                  {action.instance ? (
-                    <BackgroundActionMenuInfoButton
-                      aria-label={`View ${action.definition.label} details`}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setDetailsInstanceKey(action.instanceKey);
-                        setIsOpen(true);
-                      }}
-                    />
-                  ) : null}
-                </BackgroundActionMenuItem>
-              );
-            })}
-          </Fragment>
-        ))}
+                      <BackgroundActionMenuText>
+                        <BackgroundActionMenuLabel running={busy}>
+                          {action.instance?.label || action.definition.label}
+                        </BackgroundActionMenuLabel>
+                        {statusLabel ? (
+                          <BackgroundActionMenuMeta variant={action.instance?.status === "error" ? "error" : "default"}>
+                            {statusLabel}
+                          </BackgroundActionMenuMeta>
+                        ) : null}
+                        {action.definition.summary && !statusLabel ? (
+                          <BackgroundActionMenuMeta>{action.definition.summary}</BackgroundActionMenuMeta>
+                        ) : null}
+                        {busy && action.instance?.progress ? (
+                          <BackgroundActionMenuProgressBar
+                            percent={action.instance.progress.percent}
+                            label={action.instance.progress.label || statusLabel || action.definition.label}
+                          />
+                        ) : null}
+                      </BackgroundActionMenuText>
+                    </BackgroundActionMenuTrigger>
+                    {action.instance?.resultsAvailable && action.definition.onResults ? (
+                      <BackgroundActionMenuInlineAction
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          action.definition.onResults?.(action.context);
+                        }}
+                      >
+                        Results
+                      </BackgroundActionMenuInlineAction>
+                    ) : null}
+                    {action.instance ? (
+                      <BackgroundActionMenuInfoButton
+                        aria-label={`View ${action.definition.label} details`}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          setDetailsInstanceKey(action.instanceKey);
+                          setIsOpen(true);
+                        }}
+                      />
+                    ) : null}
+                  </BackgroundActionMenuItem>
+                );
+              })}
+            </Fragment>
+          ))}
         </div>
       </BackgroundActionMenuPanel>
       {selectedAction?.instance ? (

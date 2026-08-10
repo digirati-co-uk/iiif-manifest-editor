@@ -1,7 +1,7 @@
 import { DownloadButton } from "@manifest-editor/components";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../use-dropdown-menu";
 import { useVault } from "react-iiif-vault";
 import type { PresetPreviewOptions } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
@@ -19,10 +19,7 @@ import {
   MenuItemStatus,
 } from "./PreviewButton.styles";
 
-export function hasPreviewOption(
-  configCount: number,
-  preview?: PresetPreviewOptions,
-) {
+export function hasPreviewOption(configCount: number, preview?: PresetPreviewOptions) {
   return configCount > 0 || !!preview?.mainAction || !!preview?.actions?.length;
 }
 
@@ -41,9 +38,7 @@ export function PreviewButton({
   const resource = useAppResource();
   const configsToShow = configs.filter((c) => c.type === "external-manifest-preview");
   const customActions = preview?.actions || [];
-  const { isOpen, buttonProps, itemProps } = useDropdownMenu(
-    configsToShow.length + customActions.length,
-  );
+  const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length + customActions.length);
 
   if (!hasPreviewOption(configsToShow.length, preview)) {
     return <ButtonEmpty>Preview not available</ButtonEmpty>;
@@ -68,10 +63,7 @@ export function PreviewButton({
       <ButtonContainer>
         <ButtonMain
           data-preview-action={preview?.mainAction?.id}
-          disabled={
-            preview?.mainAction?.disabled ||
-            (!preview?.mainAction && configsToShow.length === 0)
-          }
+          disabled={preview?.mainAction?.disabled || (!preview?.mainAction && configsToShow.length === 0)}
           onClick={() => {
             if (preview?.mainAction) {
               preview.mainAction.onClick();
