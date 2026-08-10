@@ -1,11 +1,10 @@
-import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
-import { useEditor, useLayoutActions } from "@manifest-editor/shell";
+import { PaddedSidebarContainer } from "@manifest-editor/components";
+import { useEditor } from "@manifest-editor/shell";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 
 export function OverviewSceneEditor() {
   const editor = useEditor();
-  const layout = useLayoutActions();
 
   return (
     <PaddedSidebarContainer>
@@ -33,12 +32,6 @@ export function OverviewSceneEditor() {
           />
         </div>
       </InputContainer>
-      <div className="border-t border-gray-200 pt-4">
-        <p className="mb-3 text-sm text-gray-600">
-          Models, cameras, and lights are organised in the Scene contents panel.
-        </p>
-        <ActionButton onPress={() => layout.leftPanel.open({ id: "scene-contents" })}>Open Scene contents</ActionButton>
-      </div>
     </PaddedSidebarContainer>
   );
 }
