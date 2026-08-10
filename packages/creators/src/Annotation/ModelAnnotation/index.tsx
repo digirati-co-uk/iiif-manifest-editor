@@ -20,6 +20,7 @@ export const modelAnnotation = defineCreator({
   icon: <EmptyCanvasIcon />,
   render: (ctx) => <ModelAnnotationCreatorForm {...ctx} />,
   resourceType: "Annotation",
+  additionalTypes: ["Canvas"],
   resourceFields: ["id", "type", "motivation", "body", "target"],
   async supportsResource(value, helpers) {
     if (!isHttpUrl(value)) return false;
@@ -32,9 +33,9 @@ export const modelAnnotation = defineCreator({
   supports: {
     initialData: true,
     onlyPainting: true,
-    parentTypes: ["AnnotationPage"],
+    parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
-    custom: annotationPageIsInScene,
+    custom: (parent, vault) => parent.resource.type === "Manifest" || annotationPageIsInScene(parent, vault),
   },
   staticFields: { type: "Annotation" },
 });

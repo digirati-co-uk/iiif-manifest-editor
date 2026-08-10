@@ -25,7 +25,6 @@ import { youTubeBodyCreator } from "./ContentResource/YouTubeCreator";
 import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 import { rangeWithItems } from "./Range/RangeWithItems";
 import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
-import { emptyScene } from "./Scene/EmptyScene";
 
 export * from "./Agent/ProviderCreator/create-provider";
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
@@ -51,7 +50,6 @@ export * from "./ContentResource/YouTubeCreator/create-youtube-body";
 export * from "./Manifest/ManifestBrowserCreator/manifest-browser-creator";
 export * from "./Range/RangeWithItems/create-range-with-items";
 export * from "./Range/TopLevelRangeCreator/create-range-top-level";
-export * from "./Scene/EmptyScene/create-empty-scene";
 
 export const allCreators = [
   // Images first.
@@ -69,7 +67,6 @@ export const allCreators = [
   youTubeBodyCreator,
   iiifBrowserCreator,
   emptyCanvas,
-  emptyScene,
   plaintextCreator,
   webPageCreator,
   emptyAnnotationPage,
@@ -108,7 +105,6 @@ export {
   imageUrlListAnnotation,
   rangeTopLevel,
   rangeWithItems,
-  emptyScene,
   // Not included
   manifestBrowserCreator,
   providerCreator,

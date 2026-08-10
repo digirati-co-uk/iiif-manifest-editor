@@ -103,7 +103,6 @@ export function CanvasListing({
     undefined,
     { isPainting: true },
   );
-  const [canCreateScene, sceneActions] = useCreator(manifest, "items", "Scene");
   const [canCreateTimeline, timelineActions] = useCreator(manifest, "items", "Timeline");
   const manifestItems = useFastList(items.get(), 24);
 
@@ -153,15 +152,6 @@ export function CanvasListing({
             onClick: () => canvasActions.create(),
             disabled: !canCreateCanvas,
           },
-          ...(canCreateScene
-            ? [
-                {
-                  icon: <ManifestItemTypeIcon type="Scene" />,
-                  title: "Add new scene",
-                  onClick: () => sceneActions.create(),
-                },
-              ]
-            : []),
           ...(canCreateTimeline
             ? [
                 {

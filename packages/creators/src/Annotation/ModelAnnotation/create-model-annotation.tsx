@@ -20,13 +20,52 @@ export function createModelAnnotation(data: CreateModelAnnotationPayload, ctx: C
     format: modelFormat(data.url, data.format),
   });
 
-  return ctx.embed({
-    id: ctx.generateId("annotation"),
-    type: "Annotation",
-    motivation: "painting",
-    body,
-    target: ctx.getTarget(),
-  });
+  const targetType = ctx.options.targetType as "Annotation" | "Canvas";
+
+  if (targetType === "Canvas") {
+    const sceneId = ctx.generateId("scene");
+    const page = ctx.embed({
+      id: ctx.generateId("annotation-page", { id: sceneId, type: "Scene" } as any),
+      type: "AnnotationPage",
+      items: [
+        ctx.embed({
+          id: ctx.generateId("annotation"),
+          type: "Annotation",
+          motivation: "painting",
+          body,
+          target: {
+            type: "SpecificResource",
+            source: { id: sceneId, type: "Scene" },
+          },
+        }),
+      ],
+    });
+    page.setPartOf(sceneId);
+
+    const filename = data.url
+      .split(/[?#]/)[0]
+      ?.split("/")
+      .pop()
+      ?.replace(/\.(glb|gltf)$/i, "");
+    return ctx.embed({
+      id: sceneId,
+      type: "Scene",
+      label: { en: [filename || "Untitled scene"] },
+      items: [page],
+    });
+  }
+
+  if (targetType === "Annotation") {
+    return ctx.embed({
+      id: ctx.generateId("annotation"),
+      type: "Annotation",
+      motivation: "painting",
+      body,
+      target: ctx.getTarget(),
+    });
+  }
+
+  throw new Error("Unsupported target type");
 }
 
 export function ModelAnnotationCreatorForm(props: CreatorContext<CreateModelAnnotationPayload>) {

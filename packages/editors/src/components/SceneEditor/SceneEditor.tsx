@@ -1,5 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { useCreator, useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
+import { EditTextIcon, InfoIcon, PreviewIcon, ResetIcon } from "@manifest-editor/components";
+import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
@@ -47,11 +48,8 @@ export function SceneEditor() {
   const [statuses, setStatuses] = useState<SceneResourceStatus[]>([]);
   const [message, setMessage] = useState("");
   const [creating, setCreating] = useState(false);
-  const [addingModel, setAddingModel] = useState(false);
   const [showLightHelpers, setShowLightHelpers] = useState(false);
   const [showCameraHelpers, setShowCameraHelpers] = useState(true);
-  const [helperMenuOpen, setHelperMenuOpen] = useState(false);
-  const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [viewCameraId, setViewCameraId] = useState("");
 
@@ -79,7 +77,6 @@ export function SceneEditor() {
   const selectedCamera = selectedItem?.group === "Cameras" ? selectedItem : null;
   const selectedCameraAnnotationId = selectedCamera?.annotation.id || "";
   const currentCamera = selectedCamera || cameras.find((camera) => camera.resource.id === viewCameraId);
-  const [, createActions] = useCreator(page, "items", "Annotation", sceneRef as any, { isPainting: true });
 
   const selectAnnotation = useCallback(
     (annotation: any | null) => {
@@ -144,15 +141,6 @@ export function SceneEditor() {
     [creator, creating, page, sceneRef, selectAnnotation]
   );
 
-  const addCamera = useCallback(() => {
-    const view = panel.current?.getView();
-    if (!view) return;
-    createActions.creator(
-      "@manifest-editor/camera-annotation",
-      cameraPayloadFromView(view, `Camera ${cameras.length + 1}`)
-    );
-  }, [cameras.length, createActions]);
-
   const updateCamera = useCallback(
     (cameraItem: any) => {
       const view = panel.current?.getView();
@@ -187,11 +175,6 @@ export function SceneEditor() {
     [vault]
   );
 
-  const saveCamera = useCallback(() => {
-    if (currentCamera) updateCamera(currentCamera);
-    else addCamera();
-  }, [addCamera, currentCamera, updateCamera]);
-
   const addStudioLighting = useCallback(async () => {
     const view = panel.current?.getView();
     const target = selectedAnnotation
@@ -219,11 +202,7 @@ export function SceneEditor() {
       const target = event.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
       if (event.key === "?") setInfoOpen((value) => !value);
-      if (event.key === "Escape") {
-        setInfoOpen(false);
-        setHelperMenuOpen(false);
-        setCameraMenuOpen(false);
-      }
+      if (event.key === "Escape") setInfoOpen(false);
       if (!editing) return;
       if (event.key.toLowerCase() === "w") setMode("translate");
       if (event.key.toLowerCase() === "e") setMode("rotate");
@@ -277,11 +256,9 @@ export function SceneEditor() {
   return (
     <div className="relative h-full min-h-0 overflow-hidden bg-me-gray-900">
       <SceneToolbar
-        cameraMenuOpen={cameraMenuOpen}
         cameras={cameras}
         currentCamera={currentCamera}
         editing={editing}
-        helperMenuOpen={helperMenuOpen}
         infoOpen={infoOpen}
         mode={mode}
         selectedAnnotation={selectedAnnotation}
@@ -290,10 +267,6 @@ export function SceneEditor() {
         snap={snap}
         space={space}
         viewCameraId={viewCameraId}
-        onAddCamera={addCamera}
-        onAddModel={() => setAddingModel(true)}
-        onAddLight={() => createActions.creator("@manifest-editor/light-annotation")}
-        onAddStudioLighting={addStudioLighting}
         onCameraChange={(id: string) => {
           setViewCameraId(id);
           if (id) panel.current?.selectCamera(id);
@@ -302,11 +275,8 @@ export function SceneEditor() {
             if (view) panel.current?.setView(view);
           }
         }}
-        onCameraMenuChange={setCameraMenuOpen}
         onEditingChange={(value: boolean) => {
           setEditing(value);
-          setCameraMenuOpen(false);
-          setHelperMenuOpen(false);
           setInfoOpen(false);
         }}
         onFrame={() =>
@@ -314,8 +284,7 @@ export function SceneEditor() {
         }
         onModeChange={setMode}
         onResetView={() => panel.current?.resetView()}
-        onSaveCamera={saveCamera}
-        onHelperMenuChange={setHelperMenuOpen}
+        onUpdateCamera={() => currentCamera && updateCamera(currentCamera)}
         onInfoChange={setInfoOpen}
         onShowCameraHelpersChange={setShowCameraHelpers}
         onShowLightHelpersChange={setShowLightHelpers}
@@ -326,6 +295,7 @@ export function SceneEditor() {
       {editing && !hasAuthoredLight && annotations.length ? (
         <button
           className="absolute bottom-10 left-3 z-20 max-w-sm rounded border border-amber-400/40 bg-black/75 px-3 py-2 text-left text-xs text-amber-100 hover:bg-black"
+          style={{ bottom: "2.5rem" }}
           type="button"
           onClick={addStudioLighting}
         >
@@ -336,16 +306,6 @@ export function SceneEditor() {
         <EmptyScenePrompt
           creating={creating}
           onAdd={(url) => createDirect("@manifest-editor/model-annotation", { url })}
-        />
-      ) : null}
-      {annotations.length && addingModel ? (
-        <ModelUrlPrompt
-          creating={creating}
-          onCancel={() => setAddingModel(false)}
-          onAdd={async (url) => {
-            const created = await createDirect("@manifest-editor/model-annotation", { url });
-            if (created) setAddingModel(false);
-          }}
         />
       ) : null}
       <ScenePanel
@@ -410,11 +370,9 @@ export function SceneEditor() {
 }
 
 function SceneToolbar({
-  cameraMenuOpen,
   cameras,
   currentCamera,
   editing,
-  helperMenuOpen,
   infoOpen,
   mode,
   selectedAnnotation,
@@ -423,19 +381,13 @@ function SceneToolbar({
   snap,
   space,
   viewCameraId,
-  onAddCamera,
-  onAddModel,
-  onAddLight,
-  onAddStudioLighting,
   onCameraChange,
-  onCameraMenuChange,
   onEditingChange,
   onFrame,
-  onHelperMenuChange,
   onInfoChange,
   onModeChange,
   onResetView,
-  onSaveCamera,
+  onUpdateCamera,
   onShowCameraHelpersChange,
   onShowLightHelpersChange,
   onSnapChange,
@@ -444,27 +396,36 @@ function SceneToolbar({
   return (
     <div
       aria-label={editing ? "Scene editing tools" : "Scene viewing tools"}
-      className="absolute left-3 right-3 top-3 z-30 flex min-h-12 flex-wrap items-center gap-1 rounded-lg border border-gray-700 bg-gray-950 p-1.5 text-sm text-white shadow-sm"
+      className="absolute left-1/2 top-3 z-30 flex -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-md border border-me-gray-300 bg-white p-1 text-me-gray-900 shadow-sm"
       role="toolbar"
+      style={{ maxWidth: "calc(100% - 1.5rem)", width: "max-content" }}
     >
       {editing ? (
         <>
-          {(["translate", "rotate", "scale"] as SceneTransformMode[]).map((tool) => (
-            <ToolbarButton
-              key={tool}
-              active={mode === tool}
-              disabled={!selectedAnnotation}
-              title={`${toolLabels[tool]} (${tool === "translate" ? "W" : tool === "rotate" ? "E" : "R"})`}
-              onClick={() => onModeChange(tool)}
-            >
-              {toolLabels[tool]}
-            </ToolbarButton>
-          ))}
-          <span className="mx-1 h-5 w-px bg-gray-600" />
-          <label className="flex items-center gap-1 px-1 text-xs">
-            Space
+          <fieldset
+            aria-label="Transform tool"
+            className="m-0 flex min-w-0 overflow-hidden rounded border border-me-gray-300 p-0"
+          >
+            {(["translate", "rotate", "scale"] as SceneTransformMode[]).map((tool) => (
+              <ToolbarButton
+                grouped
+                key={tool}
+                active={mode === tool}
+                aria-label={toolLabels[tool]}
+                disabled={!selectedAnnotation}
+                title={`${toolLabels[tool]} (${tool === "translate" ? "W" : tool === "rotate" ? "E" : "R"})`}
+                onClick={() => onModeChange(tool)}
+              >
+                <SceneToolIcon name={tool === "translate" ? "move" : tool} />
+              </ToolbarButton>
+            ))}
+          </fieldset>
+          <label title="Transform space">
+            <span className="sr-only">Transform space</span>
             <select
-              className="rounded-md border border-gray-600 bg-gray-800 px-1.5 py-1.5 text-white"
+              aria-label="Transform space"
+              className="h-8 rounded border border-me-gray-300 bg-white px-2 text-xs text-me-gray-900 hover:bg-me-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!selectedAnnotation}
               value={space}
               onChange={(event) => onSpaceChange(event.target.value)}
             >
@@ -472,80 +433,55 @@ function SceneToolbar({
               <option value="world">World</option>
             </select>
           </label>
-          <ToolbarButton active={snap} onClick={() => onSnapChange(!snap)}>
-            Snap
+          <ToolbarButton
+            active={snap}
+            aria-label="Snap transforms"
+            disabled={!selectedAnnotation}
+            title={`${snap ? "Disable" : "Enable"} transform snapping`}
+            onClick={() => onSnapChange(!snap)}
+          >
+            <SceneToolIcon name="snap" />
           </ToolbarButton>
-          <ToolbarButton title="Frame selection (F)" onClick={onFrame}>
-            Frame
+          <ToolbarButton aria-label="Frame selection" title="Frame selection (F)" onClick={onFrame}>
+            <SceneToolIcon name="frame" />
           </ToolbarButton>
-          <ToolbarButton onClick={onResetView}>Reset view</ToolbarButton>
-          <span className="mx-1 h-5 w-px bg-gray-600" />
-          <ToolbarButton onClick={onAddModel}>Add model</ToolbarButton>
-          <ToolbarButton onClick={onAddLight}>Add light</ToolbarButton>
-          <ToolbarButton onClick={onAddStudioLighting}>Studio light</ToolbarButton>
-          <div className="relative flex">
+          <ToolbarButton aria-label="Reset view" title="Reset view" onClick={onResetView}>
+            <ResetIcon />
+          </ToolbarButton>
+          <span aria-hidden className="mx-0.5 h-5 w-px bg-me-gray-300" />
+          {currentCamera ? (
             <ToolbarButton
-              className="rounded-r-none"
-              title={currentCamera ? `Replace ${currentCamera.label}` : "Save a camera"}
-              onClick={onSaveCamera}
+              aria-label={`Update ${currentCamera.label}`}
+              title={`Update ${currentCamera.label} from the current view`}
+              onClick={onUpdateCamera}
             >
-              Save camera
+              <SceneToolIcon name="camera-update" />
             </ToolbarButton>
-            <ToolbarButton
-              active={cameraMenuOpen}
-              aria-label="Camera save options"
-              className="rounded-l-none border-l-gray-600 px-1.5"
-              onClick={() => onCameraMenuChange(!cameraMenuOpen)}
-            >
-              ▾
-            </ToolbarButton>
-            {cameraMenuOpen ? (
-              <div className="absolute left-0 top-full z-40 mt-1 min-w-44 rounded-md border border-gray-600 bg-gray-900 p-1 shadow-md">
-                <button
-                  className="block w-full rounded px-2 py-1.5 text-left text-xs hover:bg-gray-700"
-                  type="button"
-                  onClick={() => {
-                    onCameraMenuChange(false);
-                    onAddCamera();
-                  }}
-                >
-                  Add new camera
-                </button>
-              </div>
-            ) : null}
-          </div>
-          <div className="relative">
-            <ToolbarButton active={helperMenuOpen} onClick={() => onHelperMenuChange(!helperMenuOpen)}>
-              Helpers
-            </ToolbarButton>
-            {helperMenuOpen ? (
-              <div className="absolute right-0 top-full z-40 mt-1 min-w-44 rounded-md border border-gray-600 bg-gray-900 p-2 text-xs shadow-md">
-                <label className="flex items-center gap-2 py-1">
-                  <input
-                    checked={showCameraHelpers}
-                    type="checkbox"
-                    onChange={(event) => onShowCameraHelpersChange(event.target.checked)}
-                  />
-                  Camera helpers
-                </label>
-                <label className="flex items-center gap-2 py-1">
-                  <input
-                    checked={showLightHelpers}
-                    type="checkbox"
-                    onChange={(event) => onShowLightHelpersChange(event.target.checked)}
-                  />
-                  Light helpers
-                </label>
-              </div>
-            ) : null}
-          </div>
+          ) : null}
+          <ToolbarButton
+            active={showCameraHelpers}
+            aria-label="Camera helpers"
+            title={`${showCameraHelpers ? "Hide" : "Show"} camera helpers`}
+            onClick={() => onShowCameraHelpersChange(!showCameraHelpers)}
+          >
+            <SceneToolIcon name="camera" />
+          </ToolbarButton>
+          <ToolbarButton
+            active={showLightHelpers}
+            aria-label="Light helpers"
+            title={`${showLightHelpers ? "Hide" : "Show"} light helpers`}
+            onClick={() => onShowLightHelpersChange(!showLightHelpers)}
+          >
+            <SceneToolIcon name="light" />
+          </ToolbarButton>
         </>
       ) : (
-        <label className="flex items-center gap-1 px-1 text-xs">
-          View
+        <label className="flex items-center gap-1 pl-1" title="View from camera">
+          <SceneToolIcon name="camera" />
+          <span className="sr-only">View from camera</span>
           <select
             aria-label="Scene camera"
-            className="max-w-48 rounded-md border border-gray-600 bg-gray-800 px-2 py-1.5 text-white"
+            className="h-8 max-w-48 rounded border border-me-gray-300 bg-white px-2 text-xs text-me-gray-900 hover:bg-me-gray-100"
             value={viewCameraId}
             onChange={(event) => onCameraChange(event.target.value)}
           >
@@ -558,47 +494,125 @@ function SceneToolbar({
           </select>
         </label>
       )}
-      {!editing ? <ToolbarButton onClick={onResetView}>Reset view</ToolbarButton> : null}
-      <span className="min-w-2 flex-1" />
+      {!editing ? (
+        <ToolbarButton aria-label="Reset view" title="Reset view" onClick={onResetView}>
+          <ResetIcon />
+        </ToolbarButton>
+      ) : null}
+      <span aria-hidden className="mx-0.5 h-5 w-px bg-me-gray-300" />
       <ToolbarButton
         active={infoOpen}
         aria-label="Scene controls help"
         title="Controls and shortcuts (?)"
         onClick={() => onInfoChange(!infoOpen)}
       >
-        Info
+        <InfoIcon />
       </ToolbarButton>
-      <ToolbarButton active={!editing} onClick={() => onEditingChange(!editing)}>
-        {editing ? "View" : "Edit"}
+      <ToolbarButton
+        aria-label={editing ? "View scene" : "Edit scene"}
+        title={editing ? "Switch to view mode" : "Switch to edit mode"}
+        onClick={() => onEditingChange(!editing)}
+      >
+        {editing ? <PreviewIcon /> : <EditTextIcon />}
       </ToolbarButton>
     </div>
   );
 }
 
-function ToolbarButton({ active, className = "", style, ...props }: any) {
+function ToolbarButton({ active, className = "", grouped = false, ...props }: any) {
   return (
     <button
       type="button"
-      aria-pressed={active || undefined}
-      className={`rounded-md border px-2 py-1.5 text-xs text-white disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? "border-me-400 bg-me-600" : "border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700"
+      aria-pressed={active === undefined ? undefined : active}
+      className={`flex h-8 min-w-8 items-center justify-center text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-40 ${
+        grouped ? "border-r border-me-gray-300 px-2 last:border-r-0" : "rounded border border-me-gray-300 px-2"
+      } ${
+        active
+          ? "bg-me-primary-500 text-white hover:bg-me-primary-600"
+          : "bg-white text-me-gray-700 hover:bg-me-gray-100 hover:text-me-gray-900"
       } ${className}`}
-      style={{ backgroundColor: active ? "#b84c74" : "#1f2937", ...style }}
       {...props}
     />
+  );
+}
+
+type SceneToolIconName = "move" | "rotate" | "scale" | "snap" | "frame" | "camera" | "camera-update" | "light";
+
+function SceneToolIcon({ name }: { name: SceneToolIconName }) {
+  const common = {
+    "aria-hidden": true,
+    className: "h-4 w-4",
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    strokeWidth: 1.8,
+    viewBox: "0 0 24 24",
+  };
+
+  if (name === "move") {
+    return (
+      <svg {...common}>
+        <path d="m8 3 4-2 4 2M8 21l4 2 4-2M3 8l-2 4 2 4M21 8l2 4-2 4M12 1v22M1 12h22" />
+      </svg>
+    );
+  }
+  if (name === "rotate") {
+    return (
+      <svg {...common}>
+        <path d="M20 7V3m0 0h-4m4 0-3.1 3.1a8 8 0 1 0 2.2 8.4" />
+      </svg>
+    );
+  }
+  if (name === "scale") {
+    return (
+      <svg {...common}>
+        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+      </svg>
+    );
+  }
+  if (name === "snap") {
+    return (
+      <svg {...common}>
+        <path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4M6 3h4M14 3h4" />
+      </svg>
+    );
+  }
+  if (name === "frame") {
+    return (
+      <svg {...common}>
+        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    );
+  }
+  if (name === "light") {
+    return (
+      <svg {...common}>
+        <path d="M9 18h6M10 22h4M8.5 15.5a6 6 0 1 1 7 0c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <path d="M14.5 6 13 4h-2L9.5 6H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4.5Z" />
+      <circle cx="12" cy="12.5" r="3" />
+      {name === "camera-update" ? <path d="M17 11h4m-2-2v4" /> : null}
+    </svg>
   );
 }
 
 function SceneHelp({ editing, onClose }: { editing: boolean; onClose: () => void }) {
   return (
     <aside
-      className="absolute right-3 top-16 z-30 w-72 rounded-lg border border-gray-700 bg-gray-950 p-3 text-sm text-gray-100 shadow-md"
+      className="absolute right-3 top-16 z-30 w-72 rounded-md border border-me-gray-300 bg-white p-3 text-sm text-me-gray-900 shadow-sm"
       aria-label="Scene controls"
+      style={{ width: "18rem" }}
     >
       <div className="flex items-center justify-between">
         <strong>{editing ? "Edit controls" : "View controls"}</strong>
         <button
-          className="rounded px-1.5 py-0.5 text-gray-300 hover:bg-gray-800 hover:text-white"
+          className="rounded px-1.5 py-0.5 text-me-gray-600 hover:bg-me-gray-100 hover:text-me-gray-900"
           type="button"
           onClick={onClose}
         >
@@ -607,17 +621,17 @@ function SceneHelp({ editing, onClose }: { editing: boolean; onClose: () => void
       </div>
       {editing ? (
         <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
-          <dt className="font-mono text-gray-300">W / E / R</dt>
+          <dt className="font-mono text-me-gray-600">W / E / R</dt>
           <dd>Move, rotate, or scale</dd>
-          <dt className="font-mono text-gray-300">F</dt>
+          <dt className="font-mono text-me-gray-600">F</dt>
           <dd>Frame the selection</dd>
-          <dt className="font-mono text-gray-300">Esc</dt>
+          <dt className="font-mono text-me-gray-600">Esc</dt>
           <dd>Cancel a transform</dd>
-          <dt className="font-mono text-gray-300">Drag</dt>
+          <dt className="font-mono text-me-gray-600">Drag</dt>
           <dd>Orbit the free camera</dd>
         </dl>
       ) : (
-        <div className="mt-2 space-y-2 text-xs text-gray-300">
+        <div className="mt-2 space-y-2 text-xs text-me-gray-600">
           <p>Choose an authored camera or Free view from the View menu.</p>
           <p>
             Free-view mouse and keyboard controls are provided by the Scene viewer. Authored cameras follow their
@@ -625,7 +639,9 @@ function SceneHelp({ editing, onClose }: { editing: boolean; onClose: () => void
           </p>
         </div>
       )}
-      <p className="mt-2 border-t border-gray-700 pt-2 text-xs text-gray-400">Press ? to show or hide this panel.</p>
+      <p className="mt-2 border-t border-me-gray-300 pt-2 text-xs text-me-gray-600">
+        Press ? to show or hide this panel.
+      </p>
     </aside>
   );
 }

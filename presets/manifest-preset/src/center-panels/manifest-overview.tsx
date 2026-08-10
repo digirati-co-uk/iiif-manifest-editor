@@ -73,7 +73,6 @@ export function ManifestOverviewCenterPanel() {
   const currentItemId = currentItem?.resource.source.id;
   const manifest = { id: manifestId, type: "Manifest" };
   const [canCreateCanvas, canvasActions] = useCreator(manifest, "items", "Canvas", undefined, { isPainting: true });
-  const [canCreateScene, sceneActions] = useCreator(manifest, "items", "Scene");
   const [canCreateTimeline, timelineActions] = useCreator(manifest, "items", "Timeline");
   const manifestItems = useFastList(items.get(), 24);
   const layoutMode = useLayoutMode();
@@ -144,12 +143,9 @@ export function ManifestOverviewCenterPanel() {
     return (
       <div>
         <ManifestOverviewEmptyState onCreate={createCanvas} canCreate={canCreateCanvas} />
-        {canCreateScene || canCreateTimeline ? (
+        {canCreateTimeline ? (
           <div className="flex justify-center gap-2 pb-8">
-            {canCreateScene ? <ActionButton onPress={() => sceneActions.create()}>Add a scene</ActionButton> : null}
-            {canCreateTimeline ? (
-              <ActionButton onPress={() => timelineActions.create()}>Add a timeline</ActionButton>
-            ) : null}
+            <ActionButton onPress={() => timelineActions.create()}>Add a timeline</ActionButton>
           </div>
         ) : null}
       </div>
@@ -173,17 +169,13 @@ export function ManifestOverviewCenterPanel() {
             <ActionButton isDisabled={!canCreateCanvas} onPress={() => createCanvas()}>
               <AddIcon className="text-xl" /> Add new canvas
             </ActionButton>
+
             <ActionButton
               aria-label="Browse IIIF resources"
               onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}
             >
               <IIIFBrowserIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
-            {canCreateScene ? (
-              <ActionButton onPress={() => sceneActions.create()}>
-                <AddIcon className="text-xl" /> Add new scene
-              </ActionButton>
-            ) : null}
             {canCreateTimeline ? (
               <ActionButton onPress={() => timelineActions.create()}>
                 <AddIcon className="text-xl" /> Add new timeline
