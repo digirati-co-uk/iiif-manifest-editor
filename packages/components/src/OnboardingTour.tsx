@@ -27,7 +27,6 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
     return () => window.removeEventListener("onboarding:restart", onRestart as EventListener);
   }, [id]);
   // oxlint-enable react/exhaustive-deps
-<<<<<<< HEAD
 
   useEffect(() => {
     const editor = document.getElementById("manifest-editor-container");
@@ -38,8 +37,6 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
       editor.removeAttribute("inert");
     };
   }, [run]);
-=======
->>>>>>> 6a0f2c0e (Update dependencies + lint config)
 
   const lifecycle = (e: CallBackProps) => {
     if (
