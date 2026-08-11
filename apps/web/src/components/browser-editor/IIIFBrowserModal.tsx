@@ -65,7 +65,7 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
           className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
           navigation={navigationOptions}
           output={output}
-          ui={{ homeLink: typeof window !== "undefined" ? `${window.location.origin}/collection.json` : undefined }}
+          ui={{ homeLink: process.env.NEXT_PUBLIC_IIIF_BROWSER_COLLECTION }}
         />
       </VaultProvider>
     </Modal>

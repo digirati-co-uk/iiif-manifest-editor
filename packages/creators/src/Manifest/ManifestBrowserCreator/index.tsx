@@ -16,6 +16,7 @@ declare module "@manifest-editor/creator-api" {
 
 export const manifestBrowserCreator = defineCreator({
   id: "@manifest-editor/manifest-browser-creator",
+  configKey: "@manifest-editor/iiif-browser-creator",
   create: createFromManifestBrowserOutput,
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",

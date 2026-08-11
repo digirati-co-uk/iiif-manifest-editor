@@ -36,6 +36,8 @@ export interface Config {
     version: 3 | 2;
   };
 
+  creators: Record<string, Record<string, unknown>>;
+
   plugins?: {
     apps?: Record<
       string,
@@ -98,6 +100,20 @@ const DEFAULT_CONFIG: Config = {
   export: {
     baseIdentifier: null,
     version: 3,
+  },
+};
+```
+
+### IIIF Browser collection
+
+The IIIF Browser has no default collection unless the host configures one. The same setting applies when browsing for content or for a Manifest:
+
+```ts
+const config: Partial<Config> = {
+  creators: {
+    "@manifest-editor/iiif-browser-creator": {
+      defaultCollection: "https://example.org/iiif/collection.json",
+    },
   },
 };
 ```

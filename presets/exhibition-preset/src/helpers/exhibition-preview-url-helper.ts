@@ -141,11 +141,9 @@ export function createScrollingPreviewUrl(
   previewUrl?: string,
 ): URL {
   const searchParams = createPresetUrlSearchParams(preset, (options || {}) as any);
-  const configuredBase =
-    window.localStorage.getItem("exhibition-viewer-preview-url") || process.env.NEXT_PUBLIC_EXHIBITION_VIEWER_URL;
-  const url = new URL(configuredBase || previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
+  const url = new URL(previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
 
-  if (!configuredBase && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port === "3000") {
+  if (!previewUrl && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port === "3000") {
     url.protocol = "http:";
     url.host = "localhost:5174";
   }

@@ -145,6 +145,11 @@ const previews: PreviewConfiguration[] = [
 
 const config: Partial<Config> = {
   previews,
+  creators: {
+    "@manifest-editor/iiif-browser-creator": {
+      defaultCollection: process.env.NEXT_PUBLIC_IIIF_BROWSER_COLLECTION,
+    },
+  },
   // editorConfig: {
   //   Manifest: {
   //     singleTab: "@manifest-editor/overview",

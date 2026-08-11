@@ -23,9 +23,9 @@ export function validateYouTube(data: CreateYouTubeBodyPayload) {
   return !!getYouTubeId(data.youtubeUrl);
 }
 
-export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
+export function createYoutubeBodyResource(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
   const id = getYouTubeId(data.youtubeUrl);
-  const body = ctx.embed({
+  return ctx.embed({
     id: `https://www.youtube.com/watch?v=${id}`,
     type: "Video",
     service: [
@@ -41,6 +41,10 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
       },
     ],
   });
+}
+
+export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
+  const body = createYoutubeBodyResource(data, ctx);
 
   if (ctx.options.targetType === "Canvas") {
     const canvasId = ctx.generateId("canvas");

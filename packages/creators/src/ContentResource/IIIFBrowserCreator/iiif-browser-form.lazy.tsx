@@ -51,11 +51,12 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   const uiOptions = useMemo(() => {
     return {
       buttonClassName: "bg-me-primary-500 text-white hover:bg-me-primary-600",
-      homeLink: initialData.url || `${window.location.origin}/collection.json`,
-      // /collection.json
+      homeLink:
+        initialData.url ||
+        (typeof props.config?.defaultCollection === "string" ? props.config.defaultCollection : undefined),
       ...(initialData.iiifBrowserOptions?.ui || {}),
     } as IIIFBrowserProps["ui"];
-  }, [initialData]);
+  }, [initialData, props.config]);
   const historyOptions = useMemo(() => {
     const history = initialData.iiifBrowserOptions?.history || {};
     if (!initialData.url) return history;
