@@ -1,14 +1,5 @@
-import {
-  ActionButton,
-  AddIcon,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@manifest-editor/components";
-import {
-  BaseAnnotationCreator,
-  useInlineCreator,
-} from "@manifest-editor/shell";
+import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { BaseAnnotationCreator, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useEffect, useMemo, useState } from "react";
 import { useVaultSelector } from "react-iiif-vault/presentation-4";
@@ -17,35 +8,51 @@ import {
   scenePointTarget,
   useSceneAnnotationCreation,
 } from "../../helpers/scene-annotation-creation";
+import { describeSceneAnnotation, isActivatingAnnotation } from "../../helpers/scene-items";
 import { useInStack } from "../../helpers";
 
 export function SceneAnnotations() {
   const scene = useInStack("Scene");
   const sceneRef = scene?.resource.source;
   const creator = useInlineCreator();
+  const layout = useLayoutActions();
   const draft = useSceneAnnotationCreation();
   const [creatingPage, setCreatingPage] = useState(false);
   const resolved = useVaultSelector(
     (_, vault) => {
-      if (!sceneRef) return { page: undefined, annotationCount: 0 };
+      if (!sceneRef) return { page: undefined, annotations: [] as any[] };
       const currentScene = vault.get(sceneRef as any, {
         skipSelfReturn: false,
       }) as any;
       const pages = (vault.get([...(currentScene?.annotations || [])], { parent: currentScene }) || []) as any[];
       const editablePages = pages.filter((page) => Array.isArray(page?.items));
+      const pageEntries = editablePages.map((page) => ({
+        page,
+        annotations: ((vault.get([...(page.items || [])], { parent: page }) || []) as any[]).map(
+          (annotation, index) => ({ annotation, index, page })
+        ),
+      }));
+      const visibleEntries = pageEntries
+        .flatMap((entry) => entry.annotations)
+        .filter(({ annotation }) => !isActivatingAnnotation(annotation));
       const page =
-        editablePages.find((candidate) => candidate.label?.en?.includes("Scene annotations")) || editablePages[0];
+        pageEntries.find(({ page: candidate }) => candidate.label?.en?.includes("Scene annotations"))?.page ||
+        pageEntries.find(({ annotations }) => annotations.some(({ annotation }) => !isActivatingAnnotation(annotation)))
+          ?.page;
       return {
         page,
-        annotationCount: editablePages.reduce((total, candidate) => total + candidate.items.length, 0),
+        annotations: visibleEntries.map((entry, index) => ({
+          ...entry,
+          label: describeSceneAnnotation(entry.annotation, vault, index).label,
+        })),
       };
     },
-    [sceneRef?.id],
+    [sceneRef?.id]
   );
   const currentDraft = draft?.sceneId === sceneRef?.id ? draft : null;
   const pointLabel = useMemo(
     () => currentDraft?.point?.map((value) => value.toFixed(3)).join(", "),
-    [currentDraft?.point],
+    [currentDraft?.point]
   );
 
   useEffect(() => () => sceneAnnotationCreation.cancel(), [sceneRef?.id]);
@@ -61,7 +68,7 @@ export function SceneAnnotations() {
           target: sceneRef,
           targetType: "AnnotationPage",
           parent: { property: "annotations", resource: sceneRef },
-        },
+        }
       )
       .then((created: any) => {
         const pageId = (Array.isArray(created) ? created[0] : created)?.id;
@@ -97,28 +104,47 @@ export function SceneAnnotations() {
           <>
             <p className="text-sm text-gray-600">
               Add HTML annotations anchored to points on 3D model surfaces.
-              {resolved.annotationCount
-                ? ` This Scene has ${resolved.annotationCount} annotation${resolved.annotationCount === 1 ? "" : "s"}.`
+              {resolved.annotations.length
+                ? ` This Scene has ${resolved.annotations.length} annotation${resolved.annotations.length === 1 ? "" : "s"}.`
                 : ""}
             </p>
-            <ActionButton
-              large
-              primary
-              isDisabled={creatingPage}
-              onPress={begin}
-            >
+            {resolved.annotations.length ? (
+              <section>
+                <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">Annotations</h2>
+                <ul aria-label="Scene annotations" className="overflow-hidden rounded border border-gray-200 bg-white">
+                  {resolved.annotations.map(({ annotation, index, label, page: annotationPage }) => (
+                    <li className="border-b border-gray-200 last:border-b-0" key={annotation.id}>
+                      <button
+                        className="block w-full px-3 py-2 text-left hover:bg-gray-50"
+                        type="button"
+                        onClick={() =>
+                          layout.edit(
+                            { id: annotation.id, type: "Annotation" } as any,
+                            {
+                              parent: { id: annotationPage.id, type: "AnnotationPage" } as any,
+                              property: "items",
+                              index,
+                            },
+                            { forceOpen: true }
+                          )
+                        }
+                      >
+                        <span className="block truncate text-sm text-gray-900">{label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+            <ActionButton large primary isDisabled={creatingPage} onPress={begin}>
               <AddIcon className="text-xl" />
               {creatingPage ? "Preparing…" : "Add point annotation"}
             </ActionButton>
           </>
         ) : !currentDraft.point ? (
           <>
-            <p className="text-sm text-gray-700">
-              Click a point on a model surface in the Scene.
-            </p>
-            <ActionButton onPress={() => sceneAnnotationCreation.cancel()}>
-              Cancel
-            </ActionButton>
+            <p className="text-sm text-gray-700">Click a point on a model surface in the Scene.</p>
+            <ActionButton onPress={() => sceneAnnotationCreation.cancel()}>Cancel</ActionButton>
           </>
         ) : !currentDraft.pageId ? (
           <p className="text-sm text-gray-700">Preparing the Scene annotation page…</p>
@@ -149,17 +175,14 @@ export function SceneAnnotations() {
                   target: sceneRef,
                   initialData: {
                     showEmptyForm: true,
-                    getSerialisedSelector: () =>
-                      scenePointTarget(sceneRef.id, currentDraft.point!).selector,
+                    getSerialisedSelector: () => scenePointTarget(sceneRef.id, currentDraft.point!).selector,
                     motivation: "commenting",
                   },
                 } as any
               }
             />
             <div className="p-2 pt-0">
-              <ActionButton onPress={() => sceneAnnotationCreation.cancel()}>
-                Cancel
-              </ActionButton>
+              <ActionButton onPress={() => sceneAnnotationCreation.cancel()}>Cancel</ActionButton>
             </div>
           </div>
         )}

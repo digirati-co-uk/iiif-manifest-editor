@@ -2,6 +2,7 @@ import type { Vault4 } from "@iiif/helpers/vault-4";
 import { EditTextIcon, InfoIcon, PreviewIcon, ResetIcon } from "@manifest-editor/components";
 import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
+import { Html } from "@react-three/drei";
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import {
@@ -18,10 +19,7 @@ import {
   type SceneTransformValue,
 } from "../../helpers/model-transforms";
 import { setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
-import {
-  sceneAnnotationCreation,
-  useSceneAnnotationCreation,
-} from "../../helpers/scene-annotation-creation";
+import { sceneAnnotationCreation, useSceneAnnotationCreation } from "../../helpers/scene-annotation-creation";
 import { sceneCameraRotation, sceneCameraView } from "../../helpers/scene-camera";
 import { describeSceneAnnotation } from "../../helpers/scene-items";
 import { SceneResourceEditor } from "./SceneResourceEditor";
@@ -66,8 +64,8 @@ export function SceneEditor() {
       const pages = (currentVault.get([...(currentScene?.items || [])], { parent: currentScene }) || []) as any[];
       const page = pages[0];
       const annotations = page ? ((currentVault.get((page as any).items || [], { parent: page }) || []) as any[]) : [];
-      const modelAnnotations = pages.flatMap((candidate) =>
-        (currentVault.get([...(candidate?.items || [])], { parent: candidate }) || []) as any[],
+      const modelAnnotations = pages.flatMap(
+        (candidate) => (currentVault.get([...(candidate?.items || [])], { parent: candidate }) || []) as any[]
       );
       return { page, annotations, modelAnnotations };
     },
@@ -85,15 +83,12 @@ export function SceneEditor() {
         resolved.modelAnnotations
           .map((annotation, index) => describeSceneAnnotation(annotation, vault, index))
           .filter((item) => item.type === "Model")
-          .map((item) => item.annotation.id),
+          .map((item) => item.annotation.id)
       ),
-    [resolved.modelAnnotations, vault],
+    [resolved.modelAnnotations, vault]
   );
-  const pickingAnnotationPoint = !!(
-    annotationDraft &&
-    annotationDraft.sceneId === sceneId &&
-    !annotationDraft.point
-  );
+  const pickingAnnotationPoint = !!(annotationDraft && annotationDraft.sceneId === sceneId && !annotationDraft.point);
+  const selectedAnnotationPoint = annotationDraft?.sceneId === sceneId ? annotationDraft.point : null;
   const selectedItem = sceneItems.find((item) => item.annotation.id === selectedAnnotation);
   const hasAuthoredLight = sceneItems.some((item) => item.group === "Lights");
   const cameras = sceneItems.filter((item) => item.group === "Cameras");
@@ -382,6 +377,15 @@ export function SceneEditor() {
           if (diagnostic.severity !== "info") setMessage(diagnostic.message);
         }}
       >
+        {selectedAnnotationPoint ? (
+          <Html position={selectedAnnotationPoint} center style={{ pointerEvents: "none" }}>
+            <span
+              aria-hidden="true"
+              className="block h-4 w-4 rounded-full border-2 border-white bg-me-primary-500 shadow-md"
+              data-selected-annotation-point
+            />
+          </Html>
+        ) : null}
         <SceneSurfacePicker
           active={pickingAnnotationPoint}
           modelAnnotationIds={modelAnnotationIds}

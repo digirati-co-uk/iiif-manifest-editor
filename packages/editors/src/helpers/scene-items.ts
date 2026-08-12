@@ -35,6 +35,11 @@ export function sceneItemIcon(type: string) {
   return "•";
 }
 
+export function isActivatingAnnotation(annotation: any) {
+  const motivations = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
+  return motivations.includes("activating");
+}
+
 export function describeSceneAnnotation(annotation: any, vault: any, index = 0) {
   const body: any = resolveFirstAnnotationBody(annotation, vault);
   const source = isSpecificResource(body) ? body.source : body;
@@ -43,6 +48,7 @@ export function describeSceneAnnotation(annotation: any, vault: any, index = 0) 
   const typeLabel = friendlyTypes[type] || type.replace(/([A-Z])/g, " $1").trim();
   const annotationLabel = getValue(annotation?.label);
   const resourceLabel = getValue(resource?.label);
+  const textualBodyLabel = type === "TextualBody" ? plainText(resource?.value) : "";
   const urlName = type === "Model" ? filenameLabel(resource?.id) : "";
   return {
     annotation,
@@ -53,8 +59,17 @@ export function describeSceneAnnotation(annotation: any, vault: any, index = 0) 
     typeLabel,
     group: sceneItemGroup(type),
     icon: sceneItemIcon(type),
-    label: resourceLabel || annotationLabel || urlName || `${typeLabel} ${index + 1}`,
+    label: resourceLabel || annotationLabel || textualBodyLabel || urlName || `${typeLabel} ${index + 1}`,
   };
+}
+
+function plainText(value?: string) {
+  return (
+    value
+      ?.replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim() || ""
+  );
 }
 
 function filenameLabel(value?: string) {
