@@ -1,9 +1,9 @@
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { useCallback, useState, useEffect } from "react";
 import { importEntities, removeReference } from "@iiif/helpers/vault/actions";
 
 import { useAnnotationPage } from "./useAnnotationPage";
-import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { emptyAnnotationPage, emptyAnnotation } from "@iiif/parser";
 import { addReference } from "@iiif/helpers/vault/actions";
 import { randomId } from "../helpers";

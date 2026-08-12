@@ -5,7 +5,7 @@ import { AddIcon } from "@manifest-editor/ui/icons/AddIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
 import { createRef, type RefObject, useMemo, useState } from "react";
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { ComposableInput } from "../../form-elements/ComposableInput/ComposableInput";
 import { InputContainer, InputLabel } from "../Input";
 import type { BehaviorEditorConfiguration } from "./BehaviorEditor.types";

@@ -1,4 +1,4 @@
-import { Service } from "@iiif/presentation-3";
+import { Service } from "@iiif/parser";
 import { parseServiceProfile } from "./ServiceList.utility";
 import { ServiceContainer } from "./ServiceList.styles";
 import { useLayoutActions } from "@manifest-editor/shell";

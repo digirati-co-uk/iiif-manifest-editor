@@ -1,4 +1,4 @@
-import { useContextMenuStore, useStrategy } from "react-iiif-vault";
+import { useContextMenuStore, useStrategy } from "react-iiif-vault/presentation-4";
 
 export function RenderCurrentContextMenuItem() {
   const { isMenuOpen, menuPosition } = useContextMenuStore();

@@ -3,7 +3,7 @@ import { useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputContainer, InputLabel } from "../../components/Input";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";

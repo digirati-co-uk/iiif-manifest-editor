@@ -1,4 +1,4 @@
-import { DescriptiveProperties } from "@iiif/presentation-3";
+import { DescriptiveProperties } from "@iiif/parser";
 
 export interface DescriptivePropertiesProps {
   supported: Array<keyof DescriptiveProperties>;

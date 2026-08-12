@@ -1,5 +1,5 @@
 import { isImageService } from "@atlas-viewer/iiif-image-api";
-import type { ImageService } from "@iiif/presentation-3";
+import type { ImageService } from "@iiif/parser";
 import { useCustomContextMenu, useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
@@ -7,7 +7,7 @@ import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/l
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import type { ReactNode } from "react";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
 import { Input, InputContainer, InputLabel } from "../../components/Input";

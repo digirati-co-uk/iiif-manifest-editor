@@ -10,7 +10,7 @@ import {
   SingleImageStrategy,
   StrategyActions,
   useCanvas,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 
 interface CustomStrategyProviderProps {
   onChoiceChange?: (choice?: ChoiceDescription) => void;

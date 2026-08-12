@@ -2,7 +2,7 @@ import { ActionButton, AddIcon, CheckIcon, Modal } from "@manifest-editor/compon
 import { useAnnotationPageEditor, useConfig, useCreator } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { useEffect, useMemo, useState } from "react";
-import { AnnotationContext, useResourceContext, useVault } from "react-iiif-vault";
+import { AnnotationContext, useResourceContext, useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { useToggleList } from "../../helpers";
 import {

@@ -11,6 +11,8 @@ export const combinedProperties: EditorDefinition = {
       "Collection",
       "Manifest",
       "Canvas",
+      "Scene",
+      "Timeline",
       "ContentResource",
       "Agent",
       // Ignore for annotations as they already have a combined editor.

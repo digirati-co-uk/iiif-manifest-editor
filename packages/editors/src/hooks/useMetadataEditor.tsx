@@ -1,8 +1,8 @@
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { useConfig } from "@manifest-editor/shell";
 import { produce } from "immer";
 import { useMemo, useReducer } from "react";
-import { useClosestLanguage } from "react-iiif-vault";
+import { useClosestLanguage } from "react-iiif-vault/presentation-4";
 
 export type MetadataEditorState = {
   fieldIds: number[]; // for ordering.

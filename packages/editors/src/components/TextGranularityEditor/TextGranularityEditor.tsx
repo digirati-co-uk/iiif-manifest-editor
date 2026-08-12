@@ -1,4 +1,4 @@
-import { TextGranularityOptions } from "@iiif/presentation-3";
+import { TextGranularityOptions } from "@iiif/parser";
 import { InputContainer, InputLabel } from "../Input";
 import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 

@@ -7,7 +7,7 @@ export const navPlaceEditor: EditorDefinition = {
   supports: {
     edit: true,
     properties: ["navPlace"],
-    resourceTypes: ["Collection", "Manifest", "Canvas", "Range"],
+    resourceTypes: ["Collection", "Manifest", "Canvas", "Scene", "Timeline", "Range"],
     readOnlyProperties: [],
   },
   component: () => <NavPlaceEditor />,

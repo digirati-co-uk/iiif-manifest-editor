@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { useInStack } from "../../helpers";
 
 export function TimelineEditor() {

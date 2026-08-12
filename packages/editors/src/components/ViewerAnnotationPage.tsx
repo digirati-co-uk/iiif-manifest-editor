@@ -1,4 +1,4 @@
-import { AnnotationContext, useAnnotationPage } from "react-iiif-vault";
+import { AnnotationContext, useAnnotationPage } from "react-iiif-vault/presentation-4";
 import { ViewerAnnotation } from "./ViewerAnnotation";
 import { ViewerAnnotationBadge } from "./ViewerAnnotationBadge";
 

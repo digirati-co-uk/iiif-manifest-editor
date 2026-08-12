@@ -1,4 +1,4 @@
-import type { BoxSelector } from "react-iiif-vault";
+import type { BoxSelector } from "react-iiif-vault/presentation-4";
 
 export function AtlasRenderBoxSelector({
   id,

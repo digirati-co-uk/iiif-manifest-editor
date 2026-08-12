@@ -1,4 +1,4 @@
-import type { ViewingDirection } from "@iiif/presentation-3";
+import type { ViewingDirection } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
 import { BehaviorEditor } from "../../components/BehaviorEditor/BehaviorEditor";

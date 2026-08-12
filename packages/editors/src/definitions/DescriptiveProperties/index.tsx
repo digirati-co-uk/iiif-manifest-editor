@@ -11,6 +11,8 @@ export const descriptiveProperties: EditorDefinition = {
       "Collection",
       "Manifest",
       "Canvas",
+      "Scene",
+      "Timeline",
       "ContentResource",
       "Agent",
       "Annotation",

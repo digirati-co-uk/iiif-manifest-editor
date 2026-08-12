@@ -1,4 +1,4 @@
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
 import type { EditorDefinition } from "@manifest-editor/shell";
 import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";
 import { Model3DEditor } from "./Model3DEditor";

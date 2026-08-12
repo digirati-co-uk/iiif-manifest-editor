@@ -1,8 +1,8 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { DimensionsTriplet } from "../../components/DimensionsTriplet";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { useContentResourceThumbnail } from "../../hooks/useContentResourceThumbnailHelper";

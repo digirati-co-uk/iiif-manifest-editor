@@ -1,5 +1,5 @@
 import { DrawBox, RegionHighlight } from "@atlas-viewer/atlas";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { useAnnotationList } from "../../../hooks/useAnnotationList";
 
 function getAnnotationTarget(annotation: any, canvas: any) {

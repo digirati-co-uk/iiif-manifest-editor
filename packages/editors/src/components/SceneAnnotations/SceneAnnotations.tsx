@@ -10,7 +10,7 @@ import {
   useInlineCreator,
 } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useVaultSelector } from "react-iiif-vault/presentation-4";
 import {
   sceneAnnotationCreation,
@@ -31,13 +31,14 @@ export function SceneAnnotations() {
       const currentScene = vault.get(sceneRef as any, {
         skipSelfReturn: false,
       }) as any;
-      const page = currentScene?.annotations?.[0]
-        ? vault.get(currentScene.annotations[0], {
-            parent: currentScene,
-            skipSelfReturn: false,
-          })
-        : undefined;
-      return { page, annotationCount: (page as any)?.items?.length || 0 };
+      const pages = (vault.get([...(currentScene?.annotations || [])], { parent: currentScene }) || []) as any[];
+      const editablePages = pages.filter((page) => Array.isArray(page?.items));
+      const page =
+        editablePages.find((candidate) => candidate.label?.en?.includes("Scene annotations")) || editablePages[0];
+      return {
+        page,
+        annotationCount: editablePages.reduce((total, candidate) => total + candidate.items.length, 0),
+      };
     },
     [sceneRef?.id],
   );
@@ -47,27 +48,31 @@ export function SceneAnnotations() {
     [currentDraft?.point],
   );
 
-  const begin = async () => {
+  useEffect(() => () => sceneAnnotationCreation.cancel(), [sceneRef?.id]);
+
+  useEffect(() => {
+    if (!sceneRef || !currentDraft?.point || currentDraft.pageId || creatingPage) return;
+    setCreatingPage(true);
+    creator
+      .create(
+        "@manifest-editor/empty-annotation-page",
+        { label: { en: ["Scene annotations"] } },
+        {
+          target: sceneRef,
+          targetType: "AnnotationPage",
+          parent: { property: "annotations", resource: sceneRef },
+        },
+      )
+      .then((created: any) => {
+        const pageId = (Array.isArray(created) ? created[0] : created)?.id;
+        if (pageId) sceneAnnotationCreation.setPage(sceneRef.id, pageId);
+      })
+      .finally(() => setCreatingPage(false));
+  }, [creator, creatingPage, currentDraft?.pageId, currentDraft?.point, sceneRef]);
+
+  const begin = () => {
     if (!sceneRef || creatingPage) return;
-    let pageId = (resolved.page as any)?.id as string | undefined;
-    if (!pageId) {
-      setCreatingPage(true);
-      try {
-        const created = (await creator.create(
-          "@manifest-editor/empty-annotation-page",
-          { label: { en: ["Scene annotations"] } },
-          {
-            target: sceneRef,
-            targetType: "AnnotationPage",
-            parent: { property: "annotations", resource: sceneRef },
-          },
-        )) as any;
-        pageId = (Array.isArray(created) ? created[0] : created)?.id;
-      } finally {
-        setCreatingPage(false);
-      }
-    }
-    if (pageId) sceneAnnotationCreation.start(sceneRef.id, pageId);
+    sceneAnnotationCreation.start(sceneRef.id, (resolved.page as any)?.id || null);
   };
 
   if (!sceneRef) {
@@ -115,6 +120,8 @@ export function SceneAnnotations() {
               Cancel
             </ActionButton>
           </>
+        ) : !currentDraft.pageId ? (
+          <p className="text-sm text-gray-700">Preparing the Scene annotation page…</p>
         ) : (
           <div className="rounded border border-gray-200 bg-white">
             <div className="flex items-center justify-between gap-2 border-b border-gray-200 p-2 text-sm">

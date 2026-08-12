@@ -23,6 +23,8 @@ export const technicalProperties: EditorDefinition = {
       "Collection",
       "Manifest",
       "Canvas",
+      "Scene",
+      "Timeline",
       "Annotation",
       "AnnotationPage",
       "Range",

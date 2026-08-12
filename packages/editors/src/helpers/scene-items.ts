@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
 import { resolveFirstAnnotationBody } from "./scene-annotation-body";
 
 const friendlyTypes: Record<string, string> = {

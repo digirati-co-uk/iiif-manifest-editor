@@ -11,6 +11,8 @@ export const metadata: EditorDefinition = {
       "Collection",
       "Manifest",
       "Canvas",
+      "Scene",
+      "Timeline",
       "Range",
       "ContentResource",
       "Annotation",

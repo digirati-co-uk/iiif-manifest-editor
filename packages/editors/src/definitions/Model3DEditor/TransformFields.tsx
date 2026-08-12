@@ -1,6 +1,6 @@
 import { useEditor } from "@manifest-editor/shell";
 import { useState } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { resolveFirstAnnotationBody, setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
 import {

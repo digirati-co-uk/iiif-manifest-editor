@@ -1,7 +1,7 @@
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor, useGenericEditor } from "@manifest-editor/shell";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { resolveFirstAnnotationBody } from "../../helpers/scene-annotation-body";

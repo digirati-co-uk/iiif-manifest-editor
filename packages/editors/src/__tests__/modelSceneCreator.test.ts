@@ -46,7 +46,7 @@ describe("3D model manifest item creator", () => {
     const annotation = vault.get(page.items[0]);
     expect(scene).toMatchObject({ type: "Scene", label: { en: ["astronaut"] } });
     expect(annotation).toMatchObject({
-      motivation: "painting",
+      motivation: ["painting"],
       target: { type: "SpecificResource", source: created },
     });
     expect(vault.get(annotation.body[0])).toMatchObject({

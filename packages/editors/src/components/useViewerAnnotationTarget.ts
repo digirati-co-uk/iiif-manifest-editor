@@ -1,5 +1,5 @@
 import { useGenericEditor } from "@manifest-editor/shell";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { useAnnotationInfo } from "../hooks/useAnnotationInfo";
 import { safelyGetViewerAnnotationTarget } from "./viewer-annotation-target";
 

@@ -1,4 +1,4 @@
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { ModelTransform } from "./model-transforms";
 

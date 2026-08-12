@@ -6,7 +6,7 @@ import {
 import { useMemo } from "react";
 import { Header, Menu, MenuItem, MenuSection } from "react-aria-components";
 import { flushSync } from "react-dom";
-import { useStrategy } from "react-iiif-vault";
+import { useStrategy } from "react-iiif-vault/presentation-4";
 
 export function RenderContextMenu({
   position,

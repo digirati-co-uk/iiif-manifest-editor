@@ -32,7 +32,7 @@ import {
   useCanvas,
   useCanvasChoices,
   useManifest,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { useTheme } from "styled-components";
 import { useStore } from "zustand";
 import { useAnnotationEditing } from "../../helpers/annotation-editing";

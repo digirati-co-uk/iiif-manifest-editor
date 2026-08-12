@@ -3,7 +3,7 @@ import { AddIcon, ListEditIcon, Sidebar, SidebarContent, SidebarHeader } from "@
 import { useCreator, useEditingResource, useEditingStack, useGenericEditor } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useMemo, useState } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { useInStack } from "../../helpers";
 import { describeSceneAnnotation, type SceneItemGroup } from "../../helpers/scene-items";
 

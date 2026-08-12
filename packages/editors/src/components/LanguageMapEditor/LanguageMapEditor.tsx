@@ -1,8 +1,8 @@
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { useResource, useConfig } from "@manifest-editor/shell";
-import { DescriptiveProperties } from "@iiif/presentation-3";
+import { DescriptiveProperties } from "@iiif/parser";
 import { LanguageMapEditorProps } from "./LanguageMapEditor.types";
 import { Container } from "./LanguageMapEditor.styles";
 import { LanguageFieldEditor } from "../LanguageFieldEditor/LanguageFieldEditor";

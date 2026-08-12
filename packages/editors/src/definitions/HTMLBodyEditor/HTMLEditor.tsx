@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
 import { InputContainer, InputLabel } from "../../components/Input";

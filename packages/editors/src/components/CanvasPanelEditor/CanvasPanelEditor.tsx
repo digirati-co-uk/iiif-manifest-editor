@@ -1,7 +1,7 @@
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useEffect } from "react";
-import { CanvasContext, useManifest, useVaultSelector } from "react-iiif-vault";
+import { CanvasContext, useManifest, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { useInStack } from "../../helpers";
 import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 

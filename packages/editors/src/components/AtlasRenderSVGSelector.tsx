@@ -1,4 +1,4 @@
-import { type SvgSelector, useCanvas } from "react-iiif-vault";
+import { type SvgSelector, useCanvas } from "react-iiif-vault/presentation-4";
 
 export function AtlasRenderSVGSelector({
   id,

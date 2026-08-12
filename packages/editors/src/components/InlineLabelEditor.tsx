@@ -1,4 +1,4 @@
-import type { InternationalString, Reference, SpecificResource } from "@iiif/presentation-3";
+import type { InternationalString, Reference, SpecificResource } from "@iiif/parser";
 import { ActionButton } from "@manifest-editor/components";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useMemo, useRef } from "react";
