@@ -14,7 +14,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A guided exhibition layout with full-page scenes and focused narrative steps.",
     type: "fullpage",
     previewUrl: "https://preview.exhibitionviewer.org/preview/delft/full-page",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-fullpage.png",
     configuration: [
       boolean("delft.exhibition.cutCorners", "Cut corners", true),
       // boolean("delft.exhibition.fullTitleBar", "Show full title bar", false),
@@ -39,7 +39,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A slide-based exhibition for linear presentations and teaching material.",
     type: "slideshow",
     previewUrl: "https://preview.exhibitionviewer.org/preview/delft/slideshow",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-slideshow.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-slideshow.png",
     configuration: [
       boolean("delft.presentation.cutCorners", "Cut corners", false),
       boolean("delft.presentation.isFloating", "Floating controls", false),
@@ -65,7 +65,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A vertical reading experience for essays, object stories, and long-form interpretation.",
     type: "scroll",
     previewUrl: "https://preview.exhibitionviewer.org/preview/delft/scroll",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-scroll.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-scroll.png",
     configuration: [
       boolean("scroll.options.showTitleBlock", "Show title block", true),
       boolean("scroll.options.titleBlock.fullHeight", "Full-height title block", true),
@@ -83,7 +83,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A full-page exhibition template for the Leeds University Library.",
     type: "fullpage",
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/full-page",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-fullpage-leeds.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-fullpage-leeds.png",
     configuration: [],
   },
   {
@@ -92,7 +92,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A slideshow exhibition template for the Leeds University Library.",
     type: "slideshow",
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/slideshow",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-slideshow-leeds.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-slideshow-leeds.png",
     configuration: [],
   },
   {
@@ -101,7 +101,7 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     summary: "A scroll exhibition template for the Leeds University Library.",
     type: "scroll",
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/scroll",
-    thumbnailUrl: "https://deploy-preview-391--manifest-editor-docs.netlify.app/exhibition-scroll-leeds.png",
+    thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-scroll-leeds.png",
     configuration: [],
   }
 ];
