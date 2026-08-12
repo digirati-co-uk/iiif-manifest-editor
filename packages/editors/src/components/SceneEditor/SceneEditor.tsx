@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { createSceneHelper } from "@iiif/helpers/scenes";
-import { EditTextIcon, InfoIcon, PreviewIcon, ResetIcon } from "@manifest-editor/components";
+import { EditTextIcon, InfoIcon, PreviewIcon, SceneIcon, type SceneIconName } from "@manifest-editor/components";
 import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { Html } from "@react-three/drei";
@@ -39,6 +39,12 @@ const toolLabels: Record<SceneTransformMode, string> = {
   translate: "Move",
   rotate: "Rotate",
   scale: "Scale",
+};
+
+const toolIcons: Record<SceneTransformMode, SceneIconName> = {
+  translate: "move",
+  rotate: "rotate",
+  scale: "scale",
 };
 
 export function SceneEditor() {
@@ -565,7 +571,7 @@ function SceneToolbar({
                 title={`${toolLabels[tool]} (${tool === "translate" ? "W" : tool === "rotate" ? "E" : "R"})`}
                 onClick={() => onModeChange(tool)}
               >
-                <SceneToolIcon name={tool === "translate" ? "move" : tool} />
+                <SceneIcon className="h-4 w-4" name={toolIcons[tool]} />
               </ToolbarButton>
             ))}
           </fieldset>
@@ -589,13 +595,13 @@ function SceneToolbar({
             title={`${snap ? "Disable" : "Enable"} transform snapping`}
             onClick={() => onSnapChange(!snap)}
           >
-            <SceneToolIcon name="snap" />
+            <SceneIcon className="h-4 w-4" name="snap" />
           </ToolbarButton>
           <ToolbarButton aria-label="Frame selection" title="Frame selection (F)" onClick={onFrame}>
-            <SceneToolIcon name="frame" />
+            <SceneIcon className="h-4 w-4" name="frame" />
           </ToolbarButton>
           <ToolbarButton aria-label="Reset view" title="Reset view" onClick={onResetView}>
-            <ResetIcon />
+            <SceneIcon className="h-4 w-4" name="reset-view" />
           </ToolbarButton>
           <span aria-hidden className="mx-0.5 h-5 w-px bg-me-gray-300" />
           {currentCamera ? (
@@ -604,7 +610,7 @@ function SceneToolbar({
               title={`Update ${currentCamera.label} from the current view`}
               onClick={onUpdateCamera}
             >
-              <SceneToolIcon name="camera-update" />
+              <SceneIcon className="h-4 w-4" name="camera-update" />
             </ToolbarButton>
           ) : null}
           <ToolbarButton
@@ -613,7 +619,7 @@ function SceneToolbar({
             title={`${showCameraHelpers ? "Hide" : "Show"} camera helpers`}
             onClick={() => onShowCameraHelpersChange(!showCameraHelpers)}
           >
-            <SceneToolIcon name="camera" />
+            <SceneIcon className="h-4 w-4" name="camera" />
           </ToolbarButton>
           <ToolbarButton
             active={showLightHelpers}
@@ -621,12 +627,12 @@ function SceneToolbar({
             title={`${showLightHelpers ? "Hide" : "Show"} light helpers`}
             onClick={() => onShowLightHelpersChange(!showLightHelpers)}
           >
-            <SceneToolIcon name="light" />
+            <SceneIcon className="h-4 w-4" name="light" />
           </ToolbarButton>
         </>
       ) : (
         <label className="flex items-center gap-1 pl-1" title="View from camera">
-          <SceneToolIcon name="camera" />
+          <SceneIcon className="h-4 w-4" name="camera" />
           <span className="sr-only">View from camera</span>
           <select
             aria-label="Scene camera"
@@ -645,7 +651,7 @@ function SceneToolbar({
       )}
       {!editing ? (
         <ToolbarButton aria-label="Reset view" title="Reset view" onClick={onResetView}>
-          <ResetIcon />
+          <SceneIcon className="h-4 w-4" name="reset-view" />
         </ToolbarButton>
       ) : null}
       <span aria-hidden className="mx-0.5 h-5 w-px bg-me-gray-300" />
@@ -682,72 +688,6 @@ function ToolbarButton({ active, className = "", grouped = false, ...props }: an
       } ${className}`}
       {...props}
     />
-  );
-}
-
-type SceneToolIconName = "move" | "rotate" | "scale" | "snap" | "frame" | "camera" | "camera-update" | "light";
-
-function SceneToolIcon({ name }: { name: SceneToolIconName }) {
-  const common = {
-    "aria-hidden": true,
-    className: "h-4 w-4",
-    fill: "none",
-    stroke: "currentColor",
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    strokeWidth: 1.8,
-    viewBox: "0 0 24 24",
-  };
-
-  if (name === "move") {
-    return (
-      <svg {...common}>
-        <path d="m8 3 4-2 4 2M8 21l4 2 4-2M3 8l-2 4 2 4M21 8l2 4-2 4M12 1v22M1 12h22" />
-      </svg>
-    );
-  }
-  if (name === "rotate") {
-    return (
-      <svg {...common}>
-        <path d="M20 7V3m0 0h-4m4 0-3.1 3.1a8 8 0 1 0 2.2 8.4" />
-      </svg>
-    );
-  }
-  if (name === "scale") {
-    return (
-      <svg {...common}>
-        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-      </svg>
-    );
-  }
-  if (name === "snap") {
-    return (
-      <svg {...common}>
-        <path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4M6 3h4M14 3h4" />
-      </svg>
-    );
-  }
-  if (name === "frame") {
-    return (
-      <svg {...common}>
-        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
-    );
-  }
-  if (name === "light") {
-    return (
-      <svg {...common}>
-        <path d="M9 18h6M10 22h4M8.5 15.5a6 6 0 1 1 7 0c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z" />
-      </svg>
-    );
-  }
-  return (
-    <svg {...common}>
-      <path d="M14.5 6 13 4h-2L9.5 6H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4.5Z" />
-      <circle cx="12" cy="12.5" r="3" />
-      {name === "camera-update" ? <path d="M17 11h4m-2-2v4" /> : null}
-    </svg>
   );
 }
 

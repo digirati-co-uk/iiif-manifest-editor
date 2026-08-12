@@ -1,8 +1,15 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { AddIcon, IconButton, ListEditIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import {
+  AddIcon,
+  IconButton,
+  ListEditIcon,
+  SceneIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "@manifest-editor/components";
 import { useCreator, useEditingResource, useEditingStack, useGenericEditor } from "@manifest-editor/shell";
 import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
-import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useMemo, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
@@ -128,7 +135,7 @@ export function SceneContents() {
                                 );
                               }}
                             >
-                              <LightIcon className={hidden ? "text-gray-400" : "text-amber-500"} />
+                              <SceneIcon className={hidden ? "text-gray-400" : "text-amber-500"} name="light" />
                             </IconButton>
                           ) : null}
                           {editingItems ? (
