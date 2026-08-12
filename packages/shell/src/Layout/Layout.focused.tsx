@@ -9,6 +9,7 @@ import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
+import { useEditingResource, useEditingResourceStack } from "../EditingStack/EditingStack";
 import { useEvent } from "../hooks/use-event";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { PresetOnboarding } from "../PresetOnboarding/PresetOnboarding";
@@ -31,6 +32,8 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
   const app = useApp();
   const appState = useAppState();
   const rootResource = useAppResource();
+  const editingResource = useEditingResource();
+  const editingStack = useEditingResourceStack();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
   const vault = (_vault || undefined) as Vault4 | undefined;
@@ -53,8 +56,10 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       app,
       layoutState: state,
       appState,
+      editingResource,
+      editingStack,
     }),
-    [rootResource, vault, app, state, appState, vaultState],
+    [rootResource, vault, app, state, appState, editingResource, editingStack, vaultState]
   );
 
   const leftPanels = useMemo(
@@ -62,28 +67,28 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }).filter((panel) => !panel.focusedMode?.hide),
-    [configuredLeftPanels, supportContext],
+    [configuredLeftPanels, supportContext]
   );
   const centerPanels = useMemo(
     () =>
       filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredCenterPanels, supportContext],
+    [configuredCenterPanels, supportContext]
   );
   const rightPanels = useMemo(
     () =>
       filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }).filter((panel) => !panel.focusedMode?.hide),
-    [configuredRightPanels, supportContext],
+    [configuredRightPanels, supportContext]
   );
   const modals = useMemo(
     () =>
       filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredModals, supportContext],
+    [configuredModals, supportContext]
   );
   const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
   const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
@@ -97,7 +102,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       rightPanels,
       modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels]
   );
 
   const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
@@ -123,7 +128,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       appState,
       actions,
     }),
-    [rootResource, vault, app, state, appState, actions],
+    [rootResource, vault, app, state, appState, actions]
   );
   const handleFocusedPanelSelect = (panel: LayoutPanel) => {
     panel.focusedMode?.onSelect?.(focusedPanelContext);
@@ -157,7 +162,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
           current: actions.centerPanel,
           vault: vault as any,
         },
-        appState,
+        appState
       );
     }
   }, [state.centerPanel.current, centerPanel?.id]);
@@ -246,7 +251,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
         actions.rightPanel.open();
       }
     },
-    [panelIds(rightPanels), rightPanel?.id, state.rightPanel.open],
+    [panelIds(rightPanels), rightPanel?.id, state.rightPanel.open]
   );
 
   const sidebarSmall = "4.5rem";
@@ -430,8 +435,8 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
             modalToRender.render(
               state.modal.state || modalToRender.defaultState || {},
               { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
-              appState,
-            ),
+              appState
+            )
           )
         )}
       </Modal>
@@ -461,8 +466,8 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                     current: actions.centerPanel,
                     vault: vault,
                   },
-                  appState,
-                ),
+                  appState
+                )
               )
             ) : null
           ) : null}

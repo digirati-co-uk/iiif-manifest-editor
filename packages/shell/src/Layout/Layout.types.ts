@@ -64,7 +64,7 @@ export interface LayoutActions {
       stacked?: boolean | undefined;
       selectedTab?: string;
       forceOpen?: boolean;
-    },
+    }
   ): void;
   create(resource: CreatableResource): Promise<any>;
 
@@ -132,7 +132,7 @@ export type LayoutFunction = (
     transition?: TransitionStatus;
     isModal?: boolean;
   } & LayoutContext,
-  app: AppState,
+  app: AppState
 ) => ReactNode;
 
 export interface AnnotationPanel {
@@ -164,7 +164,7 @@ export interface LayoutPanel {
   onMount?: (
     state: any,
     ctx: { current: PanelActions; vault?: Vault4 } & LayoutContext,
-    app: AppState,
+    app: AppState
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
@@ -187,6 +187,8 @@ export interface LayoutPanelSupportContext {
   app: MappedApp;
   layoutState: LayoutState;
   appState: AppState;
+  editingResource?: EditableResource | null;
+  editingStack?: EditableResource[];
 }
 
 export interface LayoutPanelFocusedModeContext {

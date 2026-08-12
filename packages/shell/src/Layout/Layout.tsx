@@ -13,6 +13,7 @@ import equal from "shallowequal";
 import { useApp, useAppState } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { BackgroundActionsMount, BackgroundActionToasts } from "../BackgroundTasks/BackgroundActions";
+import { useEditingResource, useEditingResourceStack } from "../EditingStack/EditingStack";
 import { useMatchMedia } from "../hooks/use-match-media";
 import { PresetOnboarding } from "../PresetOnboarding/PresetOnboarding";
 import { HandleControls } from "./components/HandleControls";
@@ -52,6 +53,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   const app = useApp();
   const appState = useAppState();
   const rootResource = useAppResource();
+  const editingResource = useEditingResource();
+  const editingStack = useEditingResourceStack();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
   const vault = (_vault || undefined) as Vault4 | undefined;
@@ -74,36 +77,38 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       app,
       layoutState: state,
       appState,
+      editingResource,
+      editingStack,
     }),
-    [rootResource, vault, app, state, appState, vaultState],
+    [rootResource, vault, app, state, appState, editingResource, editingStack, vaultState]
   );
   const leftPanels = useMemo(
     () =>
       filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredLeftPanels, supportContext],
+    [configuredLeftPanels, supportContext]
   );
   const centerPanels = useMemo(
     () =>
       filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredCenterPanels, supportContext],
+    [configuredCenterPanels, supportContext]
   );
   const rightPanels = useMemo(
     () =>
       filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredRightPanels, supportContext],
+    [configuredRightPanels, supportContext]
   );
   const modals = useMemo(
     () =>
       filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredModals, supportContext],
+    [configuredModals, supportContext]
   );
   const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
   const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
@@ -116,7 +121,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       rightPanels,
       modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels]
   );
   const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
@@ -209,7 +214,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
           current: actions.centerPanel,
           vault: vault as any,
         },
-        appState,
+        appState
       );
     }
   }, [state.centerPanel.current, centerPanel?.id]);
@@ -345,8 +350,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             modalToRender.render(
               state.modal.state || modalToRender.defaultState || {},
               { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
-              appState,
-            ),
+              appState
+            )
           )
         )}
       </Modal>
@@ -383,8 +388,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                     current: actions.centerPanel,
                     vault: vault,
                   },
-                  appState,
-                ),
+                  appState
+                )
               )
             ) : null
           ) : null}

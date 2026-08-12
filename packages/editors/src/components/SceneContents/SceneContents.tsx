@@ -124,8 +124,7 @@ export function SceneContents() {
                           {item.group === "Lights" ? (
                             <IconButton
                               label={`${hidden ? "Turn on" : "Turn off"} ${item.label}`}
-                              active={!hidden}
-                              className="text-base"
+                              className="bg-transparent text-base"
                               onPress={() => {
                                 const behavior = (item.resource?.behavior || []) as string[];
                                 vault.modifyEntityField(
@@ -135,7 +134,7 @@ export function SceneContents() {
                                 );
                               }}
                             >
-                              <SceneIcon className={hidden ? "text-gray-400" : "text-amber-500"} name="light" />
+                              <SceneIcon className={hidden ? "text-gray-400" : "text-amber-600"} name="light" />
                             </IconButton>
                           ) : null}
                           {editingItems ? (

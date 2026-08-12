@@ -1,12 +1,26 @@
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { describe, expect, test } from "vitest";
-import { describeSceneAnnotation, isActivatingAnnotation } from "../helpers/scene-items";
+import { describeSceneAnnotation, getActivationTargetIds, isActivatingAnnotation } from "../helpers/scene-items";
 
 describe("scene item descriptions", () => {
   test("identifies activation annotations", () => {
     expect(isActivatingAnnotation({ motivation: ["activating"] })).toBe(true);
     expect(isActivatingAnnotation({ motivation: "activating" })).toBe(true);
     expect(isActivatingAnnotation({ motivation: ["commenting"] })).toBe(false);
+  });
+
+  test("identifies annotations used as activation triggers", () => {
+    expect(
+      getActivationTargetIds([
+        { id: "trigger", type: "Annotation", motivation: ["commenting"] },
+        {
+          id: "activation",
+          type: "Annotation",
+          motivation: ["activating"],
+          target: [{ type: "SpecificResource", source: { id: "trigger", type: "Annotation" } }],
+        },
+      ])
+    ).toEqual(new Set(["trigger"]));
   });
 
   test("uses resource labels, filenames, and friendly type fallbacks instead of IDs", () => {

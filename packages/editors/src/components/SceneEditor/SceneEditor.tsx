@@ -1,7 +1,7 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { createSceneHelper } from "@iiif/helpers/scenes";
 import { EditTextIcon, InfoIcon, PreviewIcon, SceneIcon, type SceneIconName } from "@manifest-editor/components";
-import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
+import { useEditingResource, useInlineCreator, useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { Html } from "@react-three/drei";
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -52,6 +52,7 @@ export function SceneEditor() {
   const current = useEditingResource();
   const vault = useVault() as unknown as Vault4;
   const layout = useLayoutActions();
+  const layoutState = useLayoutState();
   const creator = useInlineCreator();
   const panel = useRef<ScenePanelHandle>(null);
   const transformView = useRef<SceneView | null>(null);
@@ -138,6 +139,10 @@ export function SceneEditor() {
   const selectedCamera = selectedItem?.group === "Cameras" ? selectedItem : null;
   const selectedCameraAnnotationId = selectedCamera?.annotation.id || "";
   const currentCamera = selectedCamera || cameras.find((camera) => camera.resource.id === viewCameraId);
+
+  useEffect(() => {
+    if (selectedItem?.group === "Lights") setShowLightHelpers(true);
+  }, [selectedItem?.annotation.id, selectedItem?.group]);
 
   const selectAnnotation = useCallback(
     (annotation: any | null) => {
@@ -385,7 +390,9 @@ export function SceneEditor() {
   }, [activationFingerprint, activeActivationLabel, resolvedActivationId, sceneId]);
 
   useEffect(() => {
-    if (sceneRef) layout.leftPanel.open({ id: "scene-contents" });
+    if (sceneRef && !layoutState.leftPanel.current?.startsWith("scene-")) {
+      layout.leftPanel.open({ id: "scene-contents" });
+    }
     // Open once when entering a different Scene; the user can switch panels afterwards.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneRef?.id]);

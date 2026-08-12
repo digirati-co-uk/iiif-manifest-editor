@@ -13,6 +13,9 @@ import { useEditCanvasItems } from "./components";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
+import { sceneActivationsPanel } from "./left-panels/scene-activations";
+import { sceneAnnotationsPanel } from "./left-panels/scene-annotations";
+import { sceneContentsPanel } from "./left-panels/scene-contents";
 import { useManifestItemInStack } from "./manifest-items";
 
 export const queryStringTask: BackgroundPanel = {
@@ -49,24 +52,14 @@ function QueryStringBackgroundTask() {
   const manifest = useManifest();
   const selectedItem = useManifestItemInStack();
   const { leftPanel, rightPanel } = useLayoutState();
-  const {
-    edit,
-    leftPanel: leftPanelActions,
-    rightPanel: rightPanelActions,
-  } = useLayoutActions();
+  const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
-  const {
-    editorFeatureFlags: {
-      rememberCanvasId = true,
-      rememberLeftPanelId = false,
-    } = {},
-  } = useConfig();
+  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
   const lastItem = useRef<string | null>(null);
   const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
-  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] =
-    useState(false);
+  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
 
   useEffect(() => {
     if (isLeftPanelOpen) {
@@ -139,7 +132,12 @@ function QueryStringBackgroundTask() {
     }
 
     // When the item listing opens, edit the last selected item or the first item.
-    if (leftPanel.current === canvasListing.id) {
+    if (
+      leftPanel.current === canvasListing.id ||
+      leftPanel.current === sceneContentsPanel.id ||
+      leftPanel.current === sceneActivationsPanel.id ||
+      leftPanel.current === sceneAnnotationsPanel.id
+    ) {
       const firstItemId = lastItem.current || manifest?.items?.[0]?.id;
       const firstItem = manifest?.items?.find((item) => item.id === firstItemId);
       if (firstItem) {
@@ -166,11 +164,7 @@ function QueryStringBackgroundTask() {
 
     const shouldOpenRightPanel = leftPanel.current !== rangesPanel.id;
 
-    if (
-      !rightPanel.open &&
-      shouldOpenRightPanel &&
-      wasLeftPanelOpenedAutomatically
-    ) {
+    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

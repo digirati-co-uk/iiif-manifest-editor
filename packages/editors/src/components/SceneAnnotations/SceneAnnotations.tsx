@@ -16,7 +16,7 @@ import {
   scenePointTarget,
   useSceneAnnotationCreation,
 } from "../../helpers/scene-annotation-creation";
-import { describeSceneAnnotation, isActivatingAnnotation } from "../../helpers/scene-items";
+import { describeSceneAnnotation, getActivationTargetIds, isActivatingAnnotation } from "../../helpers/scene-items";
 import { useInStack } from "../../helpers";
 
 export function SceneAnnotations() {
@@ -40,13 +40,18 @@ export function SceneAnnotations() {
           (annotation, index) => ({ annotation, index, page })
         ),
       }));
-      const visibleEntries = pageEntries
-        .flatMap((entry) => entry.annotations)
-        .filter(({ annotation }) => !isActivatingAnnotation(annotation));
+      const allEntries = pageEntries.flatMap((entry) => entry.annotations);
+      const activationTargetIds = getActivationTargetIds(allEntries.map(({ annotation }) => annotation));
+      const visibleEntries = allEntries.filter(
+        ({ annotation }) => !isActivatingAnnotation(annotation) && !activationTargetIds.has(annotation.id)
+      );
       const page =
         pageEntries.find(({ page: candidate }) => candidate.label?.en?.includes("Scene annotations"))?.page ||
-        pageEntries.find(({ annotations }) => annotations.some(({ annotation }) => !isActivatingAnnotation(annotation)))
-          ?.page;
+        pageEntries.find(({ annotations }) =>
+          annotations.some(
+            ({ annotation }) => !isActivatingAnnotation(annotation) && !activationTargetIds.has(annotation.id)
+          )
+        )?.page;
       return {
         page,
         annotations: visibleEntries.map((entry, index) => ({

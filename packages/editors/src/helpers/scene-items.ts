@@ -31,6 +31,16 @@ export function isActivatingAnnotation(annotation: any) {
   return motivations.includes("activating");
 }
 
+export function getActivationTargetIds(annotations: any[]) {
+  return new Set(
+    annotations
+      .filter(isActivatingAnnotation)
+      .flatMap((annotation) => (Array.isArray(annotation.target) ? annotation.target : [annotation.target]))
+      .map((target) => (typeof target === "string" ? target : target?.source?.id || target?.id))
+      .filter(Boolean)
+  );
+}
+
 export function describeSceneAnnotation(annotation: any, vault: any, index = 0) {
   const body: any = resolveFirstAnnotationBody(annotation, vault);
   const source = isSpecificResource(body) ? body.source : body;
