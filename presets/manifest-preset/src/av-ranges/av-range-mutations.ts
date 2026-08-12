@@ -5,7 +5,9 @@ import {
   addMappings,
 } from "@iiif/helpers/vault/actions";
 import type { Vault } from "@iiif/helpers/vault";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
+import { emptyRange } from "@iiif/parser/presentation-4";
+import type { Reference } from "@iiif/parser/presentation-4/types";
 import {
   createTemporalCanvasReference,
   makeRangeId,
@@ -26,10 +28,11 @@ export function createTemporalRange(
 ) {
   const rangeId = makeRangeId(manifest.id);
   const range = {
+    ...emptyRange,
     id: rangeId,
     type: "Range",
     label: data.label,
-    behavior: data.behavior?.length ? data.behavior : undefined,
+    behavior: data.behavior || [],
     items: [createTemporalCanvasReference(data.canvasId, data.start, data.end)],
   };
   const reference = { id: rangeId, type: "Range" } as Reference<"Range">;
@@ -40,7 +43,7 @@ export function createTemporalRange(
         importEntities({
           entities: {
             Range: {
-              [rangeId]: range,
+              [rangeId]: range as any,
             },
           },
         }),

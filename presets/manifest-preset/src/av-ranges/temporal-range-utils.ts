@@ -1,16 +1,10 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
-import type {
-  InternationalString,
-  Reference,
-  SpecificResource,
-} from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 
 export type TemporalRangeItemReference = SpecificResource & {
   source: Reference<"Canvas">;
-  selector?:
-    | { type?: string; value?: string }
-    | Array<{ type?: string; value?: string }>;
 };
 
 export interface TemporalRangeSegment {
@@ -70,10 +64,12 @@ export function createTemporalCanvasReference(
   return {
     type: "SpecificResource",
     source: { id: canvasId, type: "Canvas" },
-    selector: {
-      type: "FragmentSelector",
-      value: formatTemporalFragmentValue(start, end),
-    },
+    selector: [
+      {
+        type: "FragmentSelector",
+        value: formatTemporalFragmentValue(start, end),
+      },
+    ],
   };
 }
 
@@ -84,7 +80,7 @@ export function parseTemporalRangeItem(
     return null;
   }
 
-  const source = item.source;
+  const source = (item as TemporalRangeItemReference).source;
   const rawSourceId = typeof source === "string" ? source : source?.id;
   const sourceType = typeof source === "string" ? "Canvas" : source?.type;
   if (!rawSourceId || sourceType !== "Canvas") {

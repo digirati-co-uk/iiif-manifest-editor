@@ -14,7 +14,8 @@ import {
   parseImageServiceRequest,
   type RegionParameter,
 } from "@iiif/parser/image-3";
-import type { ImageService } from "@iiif/presentation-3";
+import { emptyContentResource } from "@iiif/parser/presentation-4";
+import type { ImageService } from "@iiif/parser/presentation-4/types";
 import { Modal } from "@manifest-editor/components";
 import type {
   BackgroundActionDefinition,
@@ -23,7 +24,7 @@ import type {
   BackgroundActionTarget,
 } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
-import { CanvasContext, useThumbnail } from "react-iiif-vault";
+import { CanvasContext, useThumbnail } from "react-iiif-vault/presentation-4";
 
 export const BULK_THUMBNAIL_BUILDER_ACTION_ID = "@manifest-editor/manifest-preset/bulk-thumbnail-builder";
 
@@ -915,6 +916,7 @@ function serviceImageAtSize(service: ImageService, size: { width?: number; heigh
 
 function addThumbnailToResource(ctx: BackgroundActionRunContext, input: ThumbnailTaskInput, thumbnail: ThumbnailBuild) {
   const resource = {
+    ...emptyContentResource,
     id: thumbnail.id,
     type: "Image",
     format: thumbnail.format,

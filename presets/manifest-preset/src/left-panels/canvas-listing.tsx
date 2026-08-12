@@ -8,7 +8,7 @@ import {
   ThumbnailGridContainer,
   useFastList,
 } from "@manifest-editor/components";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import {
   CanvasGrid,
   CanvasList,
@@ -32,7 +32,7 @@ import {
   useResourceTags,
 } from "@manifest-editor/shell";
 import { type SVGProps, useLayoutEffect } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { useManifestItemInStack } from "../manifest-items";
 
 export const CanvasListingIcon = ({
@@ -251,7 +251,7 @@ export function CanvasGridView({ isEditing }: { isEditing: boolean }) {
             canvasActions.edit(item, idx);
             closeAfterCanvasSelect();
           }}
-          createActions={createAppActions(items, onDeleteCanvas)}
+          createActions={createAppActions(items, onDeleteCanvas) as any}
           inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
           thumbnailIcon={renderCanvasTagThumbnailOverlay}
         />
@@ -311,7 +311,7 @@ export function CanvasListView({
           createActions={(ref, index, item) =>
             createAppActions(items, () =>
               onDelete ? onDelete(ref.id) : onDeleteCanvas(),
-            )(ref, index, item)
+            )(ref, index, item as any)
           }
           inlineActions={isEditing ? renderCanvasFlagInlineAction : undefined}
         />

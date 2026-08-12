@@ -1,4 +1,5 @@
 import { addReference, batchActions, importEntities, removeReference } from "@iiif/helpers/vault/actions";
+import { emptyAnnotationPage } from "@iiif/parser/presentation-4";
 import { Modal } from "@manifest-editor/components";
 import {
   type BackgroundActionDefinition,
@@ -534,11 +535,12 @@ function writeRemoteInferenceAnnotations(
         entities: {
           AnnotationPage: {
             [pageId]: {
+              ...emptyAnnotationPage,
               id: pageId,
               type: "AnnotationPage",
               label: { en: ["Inline annotations"] },
               items: [],
-            },
+            } as any,
           },
         },
       }),

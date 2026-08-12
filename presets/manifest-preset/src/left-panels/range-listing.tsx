@@ -1,4 +1,5 @@
 import { createRangeHelper } from "@iiif/helpers";
+import { toRef } from "@iiif/parser/presentation-4";
 import {
   ActionButton,
   ListEditIcon,
@@ -11,7 +12,7 @@ import {
 } from "@manifest-editor/components";
 import { type LayoutPanel, useLayoutActions } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import {
   ArrowBackwardIcon,
   CardsViewIcon,
@@ -56,7 +57,7 @@ export function RangeLeftPanel() {
       helper.rangesToTableOfContentsTree(
         selectedTopLevelRange
           ? [vault.get(selectedTopLevelRange)]
-          : vault.get(manifest!.structures || []),
+          : vault.get([...(manifest!.structures || [])]),
         undefined,
         {
           showNoNav: true,
@@ -78,8 +79,10 @@ export function RangeLeftPanel() {
     }
 
     return helper.isContiguous(
-      (manifest!.structures || [])[0]!,
-      manifest!.items,
+      toRef((manifest!.structures || [])[0], "Range")!,
+      manifest!.items.flatMap((item) =>
+        item.type === "Canvas" ? [{ id: item.id, type: "Canvas" as const }] : [],
+      ),
       { detail: true },
     );
   }, [manifest, helper]);

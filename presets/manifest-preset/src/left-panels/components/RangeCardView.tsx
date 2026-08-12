@@ -1,5 +1,5 @@
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { ActionButton, BackIcon, DeleteForeverIcon, EmptyState, MoreMenuIcon } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
@@ -17,7 +17,7 @@ import {
   Popover,
   useDragAndDrop,
 } from "react-aria-components";
-import { LocaleString, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { LocaleString, useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { flattenedRanges, useRangeTreeOptions } from "./RangeTree";
 
 export function RangeCardView() {
@@ -36,7 +36,7 @@ export function RangeCardView() {
         return helper.rangeToTableOfContentsTree(vault.get(rangeInStack.resource), { showNoNav: true })!;
       }
 
-      const structures = vault.get(manifest!.structures || []);
+      const structures = vault.get([...(manifest!.structures || [])]);
       return helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || {};
     },
     [vault, manifest, rangeInStack],
