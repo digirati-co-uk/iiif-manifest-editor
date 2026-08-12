@@ -1,5 +1,5 @@
-import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import { ContentResourcePreview } from "../ContentResourcePreview/ContentResourcePreview";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
@@ -33,7 +33,7 @@ export function ContentResourceList(props: ContentResourceListProps) {
   return (
     <div id={props.id}>
       {props.list.map((item, idx) => {
-        const ref = isSpecificResource(item) ? item.source : item;
+        const ref = toRef(item)!;
         return <ContentResourcePreview margin key={ref.id} id={ref.id} onClick={() => props.onSelect(item, idx)} />;
       })}
     </div>

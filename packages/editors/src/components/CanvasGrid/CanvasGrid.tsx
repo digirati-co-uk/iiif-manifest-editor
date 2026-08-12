@@ -1,8 +1,8 @@
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { CanvasContext, useVault } from "react-iiif-vault";
+import { CanvasContext, useVault } from "react-iiif-vault/presentation-4";
 import { CanvasThumbnailGridItem } from "@manifest-editor/components";
 import { getValue } from "@iiif/helpers";
 import type { ReactNode } from "react";
@@ -64,7 +64,7 @@ export function CanvasGrid(props: CanvasGridProps) {
   return (
     <>
       {props.list.map((item, idx) => {
-        const ref = isSpecificResource(item) ? item.source : item;
+        const ref = toRef(item)!;
         return ref.type === "Canvas" ? (
           <CanvasContext canvas={ref.id} key={ref.id}>
             <CanvasThumbnailGridItem

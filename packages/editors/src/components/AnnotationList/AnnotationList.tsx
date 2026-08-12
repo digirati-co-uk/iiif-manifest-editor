@@ -1,7 +1,7 @@
-import { isSpecificResource } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import { EmptyState } from "@manifest-editor/components";
-import { AnnotationContext, useAtlasStore } from "react-iiif-vault";
+import { AnnotationContext, useAtlasStore } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { AnnotationPreview } from "../AnnotationPreview/AnnotationPreview";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
@@ -40,7 +40,7 @@ export function AnnotationList(props: AnnotationListProps) {
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
         renderItem={(item, index) => {
-          const ref = isSpecificResource(item) ? item.source : item;
+          const ref = toRef(item)!;
           return (
             <AnnotationContext annotation={ref.id} key={ref.id}>
               <CanvasTargetContext>
@@ -57,7 +57,7 @@ export function AnnotationList(props: AnnotationListProps) {
   return (
     <div id={props.id}>
       {props.list.map((item, idx) => {
-        const ref = isSpecificResource(item) ? item.source : item;
+        const ref = toRef(item)!;
         return (
           <AnnotationContext annotation={ref.id} key={ref.id}>
             <CanvasTargetContext>

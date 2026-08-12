@@ -3,7 +3,7 @@ import { EditTextIcon, InfoIcon, PreviewIcon, ResetIcon } from "@manifest-editor
 import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import {
   ScenePanel,
   type ScenePanelHandle,
@@ -61,13 +61,15 @@ export function SceneEditor() {
 
   const resolved = useVaultSelector(
     (_, currentVault) => {
-      if (!sceneRef) return { page: undefined, annotations: [] as any[] };
+      if (!sceneRef) return { page: undefined, annotations: [] as any[], modelAnnotations: [] as any[] };
       const currentScene = currentVault.get(sceneRef as any, { skipSelfReturn: false }) as any;
-      const page = currentScene?.items?.[0]
-        ? currentVault.get(currentScene.items[0], { parent: currentScene, skipSelfReturn: false })
-        : undefined;
+      const pages = (currentVault.get([...(currentScene?.items || [])], { parent: currentScene }) || []) as any[];
+      const page = pages[0];
       const annotations = page ? ((currentVault.get((page as any).items || [], { parent: page }) || []) as any[]) : [];
-      return { page, annotations };
+      const modelAnnotations = pages.flatMap((candidate) =>
+        (currentVault.get([...(candidate?.items || [])], { parent: candidate }) || []) as any[],
+      );
+      return { page, annotations, modelAnnotations };
     },
     [sceneRef?.id]
   );
@@ -78,8 +80,14 @@ export function SceneEditor() {
     [annotations, vault]
   );
   const modelAnnotationIds = useMemo(
-    () => new Set(sceneItems.filter((item) => item.type === "Model").map((item) => item.annotation.id)),
-    [sceneItems],
+    () =>
+      new Set(
+        resolved.modelAnnotations
+          .map((annotation, index) => describeSceneAnnotation(annotation, vault, index))
+          .filter((item) => item.type === "Model")
+          .map((item) => item.annotation.id),
+      ),
+    [resolved.modelAnnotations, vault],
   );
   const pickingAnnotationPoint = !!(
     annotationDraft &&
@@ -328,7 +336,6 @@ export function SceneEditor() {
         key={sceneRef.id}
         scene={sceneInput!}
         vault={vault}
-        controls={false}
         selectedAnnotation={selectedAnnotation}
         onSelectAnnotation={selectAnnotation}
         cameraControls={{ mode: editing ? "orbit" : "manifest" }}

@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser/presentation-4/types";
 import { ActionButton, AddIcon, DeleteIcon, EditTextIcon, IconButton } from "@manifest-editor/components";
 import { useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";
@@ -6,7 +6,7 @@ import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainerColumn, FlexImage } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { DeleteButton } from "@manifest-editor/ui/DeleteButton";
 import { useMemo } from "react";
-import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { AnnotationPreview } from "../../components/AnnotationPreview/AnnotationPreview";
 import { InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";

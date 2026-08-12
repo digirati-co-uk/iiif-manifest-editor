@@ -2,7 +2,7 @@ import type { AppDropdownItem } from "../components/AppDropdown/AppDropdown";
 import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
-import type { MetadataItem, Reference, SpecificResource } from "@iiif/presentation-3";
+import type { MetadataItem, Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import type { MetadataEditor, BaseReferenceListEditor } from "@manifest-editor/editor-api";
 
 export function createAppActions(

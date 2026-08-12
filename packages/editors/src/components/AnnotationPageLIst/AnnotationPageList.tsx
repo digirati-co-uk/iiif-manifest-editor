@@ -1,9 +1,9 @@
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { AnnotationPagePreview } from "../AnnotationPagePreview/AnnotationPagePreview";
-import { AnnotationPageContext } from "react-iiif-vault";
+import { AnnotationPageContext } from "react-iiif-vault/presentation-4";
 
 interface AnnotationPageListProps {
   id?: string;
@@ -36,7 +36,7 @@ export function AnnotationPageList(props: AnnotationPageListProps) {
   return (
     <div id={props.id}>
       {props.list.map((item, idx) => {
-        const ref = isSpecificResource(item) ? item.source : item;
+        const ref = toRef(item)!;
         return (
           <AnnotationPageContext annotationPage={ref.id} key={ref.id}>
             <AnnotationPagePreview margin key={item.id} onClick={() => props.onSelect(ref, idx)} />

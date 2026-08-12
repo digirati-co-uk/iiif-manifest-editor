@@ -7,7 +7,7 @@ import type {
 } from "@atlas-viewer/iiif-image-api";
 import { createThumbnailHelper } from "@iiif/helpers";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAnnotation, useVault } from "react-iiif-vault";
+import { useAnnotation, useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { getAnnotationThumbnailResource } from "../helpers/choice-painting-annotations";
 import { constrainCroppedThumbnail, getAnnotationThumbnailCacheKey } from "./annotation-thumbnail";
@@ -36,7 +36,12 @@ export function useAnnotationThumbnail({
     [annotation, vault],
   );
   const cacheKey = getAnnotationThumbnailCacheKey(annotationId, thumbnailResource);
-  const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
+  // helpers v4 accepts Vault4 at runtime, but its compatibility type is still
+  // expressed using the v3 Vault method signatures.
+  const helper = useMemo(
+    () => createThumbnailHelper(vault as unknown as Parameters<typeof createThumbnailHelper>[0]),
+    [vault],
+  );
   const [thumbnail, setThumbnail] = useState<
     FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage
   >();

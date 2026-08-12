@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
   FixedSizeImage,
@@ -31,7 +31,12 @@ export function useContentResourceThumbnail({
     [resource, vault],
   );
   const cacheKey = getThumbnailCacheKey(resourceId, thumbnailResource);
-  const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
+  // helpers v4 accepts Vault4 at runtime, but its compatibility type is still
+  // expressed using the v3 Vault method signatures.
+  const helper = useMemo(
+    () => createThumbnailHelper(vault as unknown as Parameters<typeof createThumbnailHelper>[0]),
+    [vault],
+  );
   const [thumbnail, setThumbnail] = useState<
     FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage
   >();

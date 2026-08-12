@@ -1,7 +1,7 @@
-import { isSpecificResource } from "@iiif/parser";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
 import { useHoverHighlightImageResource } from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { useAnnotation } from "react-iiif-vault";
+import { useAnnotation } from "react-iiif-vault/presentation-4";
 
 export function useAnnotationInfo() {
   const annotation = useAnnotation();
@@ -20,8 +20,7 @@ export function useAnnotationInfo() {
     ] as const;
   }
 
-  const body = annotation?.body;
-  const firstBody = (body || [])[0] as any;
+  const firstBody = Array.isArray(annotation.body) ? annotation.body[0] : annotation.body;
   const item = isSpecificResource(firstBody) ? firstBody.source : firstBody;
 
   const isValid: boolean = !!(item && (item.type === "Image" || item.type === "Sound" || item.type === "Video"));

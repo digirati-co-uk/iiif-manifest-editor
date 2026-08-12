@@ -1,4 +1,4 @@
-import { ResourceProvider } from "react-iiif-vault";
+import { ResourceReactContext } from "react-iiif-vault/presentation-4";
 import { type ReactNode, useCallback } from "react";
 import { ReorderListItem } from "../ReorderListItem/ReorderListItem.dndkit";
 import {
@@ -81,7 +81,9 @@ export function ReorderList<T extends { id: string; type?: string }>({
         grid={grid}
       >
         {item.type ? (
-          <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
+          <ResourceReactContext.Provider value={{ [item.type]: item.id }}>
+            {renderItem(item, idx, item)}
+          </ResourceReactContext.Provider>
         ) : (
           renderItem(item, idx, item)
         )}

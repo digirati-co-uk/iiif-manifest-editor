@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { Editor } from "@manifest-editor/editor-api";
 import { describe, expect, test } from "vitest";
 
@@ -8,7 +8,7 @@ const pageRef = { id: "https://example.org/canvas/1/page", type: "AnnotationPage
 const annotationRef = { id: "https://example.org/annotation/1", type: "Annotation" as const };
 
 function createVault() {
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadManifestSync(manifestRef.id, {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     ...manifestRef,
@@ -46,7 +46,7 @@ function createVault() {
   return vault;
 }
 
-function getAnnotation(vault: Vault) {
+function getAnnotation(vault: Vault4) {
   return vault.get(annotationRef) as any;
 }
 

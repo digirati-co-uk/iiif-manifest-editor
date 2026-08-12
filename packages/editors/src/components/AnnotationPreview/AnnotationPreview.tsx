@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
-import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import type { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
 import { useHoverHighlightImageResource } from "@manifest-editor/shell";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
@@ -14,7 +14,7 @@ import {
   useAnnotation,
   useRenderingStrategy,
   useVault,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import {
   getChoiceBodyInfo,
   getChoiceItems,
@@ -86,8 +86,7 @@ export function AnnotationPreview({
     return null;
   }
 
-  const body = annotation?.body;
-  const firstBody = (body || [])[0] as any;
+  const firstBody = Array.isArray(annotation.body) ? annotation.body[0] : annotation.body;
   const item = isSpecificResource(firstBody) ? firstBody.source : firstBody;
 
   const isValid =
