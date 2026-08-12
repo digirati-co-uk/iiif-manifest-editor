@@ -19,8 +19,8 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
 
   if (stack.length) {
     return (
-      <ModulePanelButton onClick={back}>
-        <BackIcon />
+      <ModulePanelButton aria-label="Back" onClick={back}>
+        <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     );
   }
@@ -35,11 +35,12 @@ export function BaseEditorCloseButton({ closeAction, fallback }: any) {
   if (current || stack.length) {
     return (
       <ModulePanelButton
+        aria-label="Close panel"
         onClick={() => {
           closeAction();
         }}
       >
-        <CloseIcon />
+        <CloseIcon aria-hidden="true" />
       </ModulePanelButton>
     );
   }
@@ -63,8 +64,12 @@ export function editBasedOnResource(
     // Check for a match in order.
     const sortKeys: string[] = [];
     const sortKeyFallbacks: Record<string, EditorDefinition> = {};
+    const partOfOverride = resource.property === "partOf";
     // 1. Filter out the
     const editors = (item.editors || []).filter((editor) => {
+      if (partOfOverride && editor.id !== "@manifest-editor/part-of-reference") {
+        return false;
+      }
       if (config.hideTabs && config.hideTabs.includes(editor.id)) {
         return false;
       }

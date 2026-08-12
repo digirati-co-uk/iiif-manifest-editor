@@ -19,7 +19,7 @@ const Item = styled.button`
   background: transparent;
   border: none;
   padding: 0.6em;
-  color: #777;
+  color: #555;
   white-space: nowrap;
   font-size: 0.875em;
 

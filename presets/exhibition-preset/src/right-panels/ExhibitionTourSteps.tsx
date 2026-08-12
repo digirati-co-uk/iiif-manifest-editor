@@ -1,15 +1,25 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useInlineCreator } from "@manifest-editor/shell";
-import { useEffect, useState } from "react";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useApp,
+  useEditor,
+  useInlineCreator,
+} from "@manifest-editor/shell";
+import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "react-aria-components";
 import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
-import { ExhibitionTourStepPopup } from "../components/ExhibitionTourStepPopup";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
+import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas, isVideoCanvas } from "../helpers";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";
+import { nonLinearTourBehavior, tourMarkerPinBehavior } from "../tour-behaviors";
+import { normaliseTourStepAnnotationResponse } from "../tour-step-target";
+import { hasFloatingBehavior, resolveExhibitionTemplateType, SimpleCheckbox } from "./SlideBehaviours";
 
 type EditingMode = "simple" | "advanced";
 
@@ -17,12 +27,17 @@ export const exhibitionTourSteps: EditorDefinition = {
   id: "@exhibition/tour-steps",
   supports: {
     edit: true,
-    properties: ["annotations"],
+    properties: ["annotations", "behavior"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
       if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      const canvas = vault.get(resource as any) as any;
       // Tour steps are supported for image canvases only.
-      return !isInfoBoxCanvas(resource as any, vault) && !isVideoCanvas(resource as any, vault);
+      return (
+        !canvas?.behavior?.includes("splash") &&
+        !isInfoBoxCanvas(resource as any, vault) &&
+        !isVideoCanvas(resource as any, vault)
+      );
     },
   },
   label: "Tour steps",
@@ -81,7 +96,7 @@ function PromptCreationOfTourSteps() {
       <div className="p-4 opacity-50 text-center">This image does not yet have a tour.</div>
 
       <Button
-        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+        className="border w-full disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
         onPress={() => createEmptyAnnotationPage()}
       >
         Create Tour
@@ -98,27 +113,45 @@ export function ExhibitionTourStepsContent({
   useSlideshowWorkbench?: boolean;
 }) {
   const canvas = useCanvas();
+  const editor = useEditor();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const itemsAnnotationPage = canvas?.items?.[0];
   const [reorderable, setReorderable] = useState(false);
+  const [editAlignment, setEditAlignment] = useState(false);
+  const app = useApp();
+  const selectedTemplate = useExhibitionTemplate();
+  const templateType = resolveExhibitionTemplateType(selectedTemplate?.type, app.metadata.id);
+  const canUseNonLinearTour = templateType === "slideshow";
+  const canvasBehavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
+  const canEditAlignment = templateType === "scroll" || hasFloatingBehavior(canvasBehavior);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const stopContentRepositioning = useSlideshowContentPositioning((state) => state.stopRepositioning);
   const stopTextRepositioning = useSlideshowContentPositioning((state) => state.stopTextRepositioning);
 
   useEffect(() => {
     setShowTourSteps(true);
+    setCenterPanelMode("edit");
     stopContentRepositioning();
     stopTextRepositioning();
-  }, [setShowTourSteps, stopContentRepositioning, stopTextRepositioning]);
+  }, [setCenterPanelMode, setShowTourSteps, stopContentRepositioning, stopTextRepositioning]);
   const { requestTourStep, isPending, busy } = useTourStepAnnotationRequest({
     onBeforeRequest: useSlideshowWorkbench
       ? () => {
           setShowTourSteps(true);
+          setCenterPanelMode("edit");
           stopContentRepositioning();
           stopTextRepositioning();
         }
       : undefined,
   });
+  const toggleEditAlignment = () => {
+    setEditAlignment((value) => {
+      const nextValue = !value;
+      setCenterPanelMode(nextValue ? "preview" : "edit");
+      return nextValue;
+    });
+  };
 
   if (!canvas) return null;
   if (!firstAnnotationPage) {
@@ -126,21 +159,73 @@ export function ExhibitionTourStepsContent({
   }
 
   const showPaintingAnnotations = mode === "advanced" && Boolean(itemsAnnotationPage);
+  const behavior = editor.technical.type === "Canvas" ? editor.technical.behavior.get() || [] : [];
+  const nonLinear = canUseNonLinearTour && behavior.includes(nonLinearTourBehavior);
+  const markerStyle = behavior.includes(tourMarkerPinBehavior) ? "pin" : "circle";
+  const tourStyle = nonLinear ? "non-linear" : "linear";
+  const setNonLinearTour = (nextNonLinear: boolean) => {
+    if (editor.technical.type !== "Canvas") return;
+    const next = behavior.filter((item) => item !== nonLinearTourBehavior);
+    editor.technical.behavior.set(nextNonLinear ? [...next, nonLinearTourBehavior] : next);
+  };
+  const setMarkerStyle = (nextMarkerStyle: "circle" | "pin") => {
+    if (editor.technical.type !== "Canvas") return;
+    const next = behavior.filter((item) => item !== tourMarkerPinBehavior);
+    editor.technical.behavior.set(nextMarkerStyle === "pin" ? [...next, tourMarkerPinBehavior] : next);
+  };
 
   return (
     <>
       <div className="flex gap-4 border-b pt-4 pb-2 mb-2">
         <h2 className="text-lg font-semibold flex-1">Tour steps</h2>
-        {mode === "advanced" ? (
+        {mode === "advanced" && !nonLinear ? (
           <ActionButton onPress={() => setReorderable((r) => !r)}>{reorderable ? "Done" : "Reorder"}</ActionButton>
         ) : null}
+        {mode === "advanced" && canEditAlignment ? (
+          <ActionButton onPress={toggleEditAlignment}>{editAlignment ? "Done" : "Edit alignment"}</ActionButton>
+        ) : null}
       </div>
+
+      {canUseNonLinearTour ? (
+        <div className="mb-4 rounded border border-gray-200 bg-white p-3">
+          <div className="mb-2 text-sm font-semibold text-gray-700">Tour style</div>
+          <SimpleCheckbox checked={nonLinear} label="Let visitors choose map points" onChange={setNonLinearTour} />
+          <p className="mt-2 text-xs leading-relaxed text-gray-500">
+            Shows all tour steps as markers that visitors can open in any order.
+          </p>
+          {nonLinear ? (
+            <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-sm font-semibold text-gray-700">Marker</div>
+                <div
+                  role="group"
+                  aria-label="Tour marker style"
+                  className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-0.5"
+                >
+                  <MarkerStyleButton selected={markerStyle === "circle"} onPress={() => setMarkerStyle("circle")}>
+                    Circle
+                  </MarkerStyleButton>
+                  <MarkerStyleButton selected={markerStyle === "pin"} onPress={() => setMarkerStyle("pin")}>
+                    Pin
+                  </MarkerStyleButton>
+                </div>
+              </div>
+              <p className="text-xs leading-relaxed text-gray-500">
+                Marker colour follows the exhibition theme annotation text colour.
+              </p>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       <ResourceEditingProvider resource={canvas}>
         <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
           <div className="flex flex-col gap-4">
+            <div className="text-sm font-semibold text-gray-700">{nonLinear ? "Map points" : "Linear step list"}</div>
             <TourAnnotationPageEditor
-              reorderable={mode === "advanced" ? reorderable : false}
+              reorderable={mode === "advanced" && !nonLinear ? reorderable : false}
+              tourStyle={tourStyle}
+              editAlignment={canEditAlignment && editAlignment}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
 
@@ -150,9 +235,9 @@ export function ExhibitionTourStepsContent({
               ) : (
                 <Button
                   onPress={requestTourStep}
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-black/40 hover:text-me-500"
+                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
                 >
-                  + Add new step
+                  {nonLinear ? "+ Add map point" : "+ Add new step"}
                 </Button>
               )
             ) : null}
@@ -173,21 +258,44 @@ export function ExhibitionTourStepsContent({
   );
 }
 
+function MarkerStyleButton({
+  children,
+  selected,
+  onPress,
+}: {
+  children: ReactNode;
+  selected: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Button
+      aria-pressed={selected}
+      className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
+        selected ? "bg-white text-me-primary-600 shadow-sm" : "text-gray-500 hover:text-gray-800"
+      }`}
+      onPress={onPress}
+    >
+      {children}
+    </Button>
+  );
+}
+
 export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequest?: () => void } = {}) {
   const canvas = useCanvas();
   const firstAnnotationPage = canvas?.annotations?.[0];
   const creator = useInlineCreator();
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
-      const bodyValue = resp.metadata.bodyValue || "";
+      const bodyValue = resp.metadata.bodyValue ?? DEFAULT_TOUR_STEP_HTML;
 
       if (!resp.cancelled && resp.target && canvas && firstAnnotationPage) {
+        const selector = normaliseTourStepAnnotationResponse(resp, canvas);
         creator.create(
           "@manifest-editor/html-annotation",
           {
             label: { en: ["Tour step"] },
             body: {
-              en: [bodyValue || "<h2>New step</h2><p>Description</p>"],
+              en: [bodyValue],
             },
             motivation: "tagging",
           } as {
@@ -211,7 +319,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
               },
             },
             initialData: {
-              selector: resp,
+              selector,
             },
           },
         );
@@ -223,7 +331,6 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
     onBeforeRequest?.();
     requestAnnotation({
       type: "box",
-      annotationPopup: <ExhibitionTourStepPopup />,
     });
   };
 

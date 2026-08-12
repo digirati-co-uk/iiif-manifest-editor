@@ -43,20 +43,10 @@ export interface LayoutActions {
   stack(args: { id: string; state?: any }): void;
 
   open(id: string, state?: any): void;
-  open(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  open(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   change(id: string, state?: any): void;
-  change(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
 
   close(id: string, state?: any): void;
   close(args: { id: string; state?: any }): void;
@@ -95,18 +85,8 @@ export interface PanelState {
 }
 
 export interface PanelActions {
-  change(args: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
-  open(args?: {
-    id: string;
-    state?: any;
-    stacked?: boolean;
-    unique?: boolean;
-  }): void;
+  change(args: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
+  open(args?: { id: string; state?: any; stacked?: boolean; unique?: boolean }): void;
   close(): void;
   toggle(): void;
   minimise(): void;
@@ -150,6 +130,7 @@ export type LayoutFunction = (
     current: PanelActions;
     vault?: Vault;
     transition?: TransitionStatus;
+    isModal?: boolean;
   } & LayoutContext,
   app: AppState,
 ) => ReactNode;
@@ -173,6 +154,7 @@ export interface LayoutPanel {
   separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
   supports?: (ctx: LayoutPanelSupportContext) => boolean;
+  modal?: boolean;
   focusedMode?: {
     hide?: boolean;
     closeOnMainPanelClick?: boolean;
@@ -186,19 +168,9 @@ export interface LayoutPanel {
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
-  backAction?: (
-    state: any,
-    ctx: { current: PanelActions } & LayoutContext,
-    app: AppState,
-  ) => void;
-  renderBackAction?: (options: {
-    backAction: (e?: React.MouseEvent) => void;
-    fallback: any;
-  }) => ReactNode | null;
-  renderCloseAction?: (options: {
-    closeAction: () => void;
-    fallback: any;
-  }) => ReactNode | null;
+  backAction?: (state: any, ctx: { current: PanelActions } & LayoutContext, app: AppState) => void;
+  renderBackAction?: (options: { backAction: (e?: React.MouseEvent) => void; fallback: any }) => ReactNode | null;
+  renderCloseAction?: (options: { closeAction: () => void; fallback: any }) => ReactNode | null;
   options?: {
     minWidth?: number;
     maxWidth?: number;
@@ -237,11 +209,7 @@ export interface CanvasEditorDefinition {
   id: string;
   label: string;
   supports: {
-    strategy: (
-      strategy: RenderingStrategy,
-      resource: EditableResource,
-      vault: Vault,
-    ) => boolean;
+    strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault) => boolean;
   };
   component: (strategy: RenderingStrategy) => ReactNode | null;
 }

@@ -1,7 +1,7 @@
 import { emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
-import { youTubeBodyCreator } from "@manifest-editor/creators";
+import { createYoutubeBodyResource, youTubeBodyCreator } from "@manifest-editor/creators";
 import { getYouTubeId } from "@manifest-editor/editors";
 
 declare module "@manifest-editor/creator-api" {
@@ -46,15 +46,14 @@ async function createYoutube(data: YouTubeCreatePayload, ctx: CreatorFunctionCon
     type: "Canvas",
   });
 
-  const annotation = await ctx.create("@manifest-editor/youtube", data, {
+  const annotation = ctx.embed({
+    id: ctx.generateId("annotation", { id: pageId, type: "AnnotationPage" }),
+    type: "Annotation",
+    motivation: "painting",
+    body: [createYoutubeBodyResource(data, ctx)],
     target: {
-      id: canvasId,
-      type: "Canvas",
-    },
-    targetType: "Annotation",
-    parent: {
-      resource: { id: pageId, type: "AnnotationPage" },
-      property: "items",
+      type: "SpecificResource",
+      source: { id: canvasId, type: "Canvas" },
     },
   });
 

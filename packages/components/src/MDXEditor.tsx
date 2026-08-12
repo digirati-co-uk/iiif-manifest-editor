@@ -1,26 +1,24 @@
 import "@mdxeditor/editor/style.css";
+import "iiif-browser/mdx-plugins.css";
 import {
   MDXEditor as BaseMDXEditor,
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CreateLink,
-  InsertImage,
-  ListsToggle,
-  type MDXEditorMethods,
-  type MDXEditorProps,
-  UndoRedo,
-  codeBlockPlugin,
-  codeMirrorPlugin,
   diffSourcePlugin,
   headingsPlugin,
-  imagePlugin,
+  ListsToggle,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
+  type MDXEditorMethods,
+  type MDXEditorProps,
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
+  UndoRedo,
 } from "@mdxeditor/editor";
+import { InsertIIIFBrowser, iiifBrowserPlugin } from "iiif-browser/mdxeditor";
 import { type ForwardedRef, useMemo } from "react";
 
 // Only import this to the next file
@@ -38,7 +36,15 @@ export function MDXEditor({
           linkPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
-          imagePlugin(),
+          iiifBrowserPlugin({
+            browserProps: {
+              navigation: {
+                canSelectCollection: false,
+                canSelectManifest: false,
+                canSelectCanvas: true,
+              },
+            },
+          }),
           linkDialogPlugin(),
           diffSourcePlugin(),
           toolbarPlugin({
@@ -49,7 +55,7 @@ export function MDXEditor({
                 <BlockTypeSelect />
                 <ListsToggle options={["bullet", "number"]} />
                 <CreateLink />
-                <InsertImage />
+                <InsertIIIFBrowser />
               </>
             ),
           }),

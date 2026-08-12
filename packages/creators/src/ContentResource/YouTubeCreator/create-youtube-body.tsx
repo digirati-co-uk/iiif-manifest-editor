@@ -23,9 +23,9 @@ export function validateYouTube(data: CreateYouTubeBodyPayload) {
   return !!getYouTubeId(data.youtubeUrl);
 }
 
-export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
+export function createYoutubeBodyResource(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
   const id = getYouTubeId(data.youtubeUrl);
-  const body = ctx.embed({
+  return ctx.embed({
     id: `https://www.youtube.com/watch?v=${id}`,
     type: "Video",
     service: [
@@ -41,6 +41,10 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
       },
     ],
   });
+}
+
+export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: CreatorFunctionContext) {
+  const body = createYoutubeBodyResource(data, ctx);
 
   if (ctx.options.targetType === "Canvas") {
     const canvasId = ctx.generateId("canvas");
@@ -91,6 +95,7 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
 }
 
 export function YouTubeForm(props: CreatorContext) {
+  const initialData = props.options.initialData as Partial<CreateYouTubeBodyPayload>;
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -106,7 +111,7 @@ export function YouTubeForm(props: CreatorContext) {
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
           <InputLabel htmlFor="id">Link to YouTube</InputLabel>
-          <Input id="youtubeUrl" name="youtubeUrl" defaultValue="" />
+          <Input id="youtubeUrl" name="youtubeUrl" defaultValue={initialData.youtubeUrl || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

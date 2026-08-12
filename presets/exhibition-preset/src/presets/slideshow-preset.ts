@@ -4,15 +4,20 @@ import { tourStepAnnotations } from "../annotations/TourStepAnnotations";
 import { exhibitionBackgroundTask } from "../background-panel";
 import { slideshowCanvasEditor } from "../canvas-editors/slideshow-canvas-editor";
 import { slideshowCenterPanel } from "../center-panels/SlideshowCenterPanel";
+import { imageBrowserSlideCreator } from "../creators/image-browser-slide-creator";
+import { imageServiceSlideCreator } from "../creators/image-service-slide-creator";
 import {
   slideshowImageOnlyCreator,
   slideshowImageTextCreator,
 } from "../creators/image-slide-creator";
+import { imageUrlSlideCreator } from "../creators/image-url-slide";
 import { slideshowLongEditorialCreator } from "../creators/info-box-creator";
 import { slideshowVideoCreator } from "../creators/video-slide-creator";
 import { slideshowYoutubeCreator } from "../creators/youtube-slide-creator";
+import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { slideshowGridLeftPanel } from "../left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "../left-panels/ExhibitionOverview";
+import { exhibitionThemeLeftPanel } from "../left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
@@ -29,6 +34,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {
         Canvas: {
@@ -49,6 +55,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     leftPanels: [
       //
       slideshowGridLeftPanel,
+      exhibitionThemeLeftPanel,
       // exhibitionOverviewLeftPanel,
     ],
     centerPanels: [
@@ -78,6 +85,9 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       exhibitionTourSteps,
     ],
     creators: [
+      imageBrowserSlideCreator,
+      imageServiceSlideCreator,
+      imageUrlSlideCreator,
       slideshowImageOnlyCreator,
       slideshowImageTextCreator,
       slideshowVideoCreator,

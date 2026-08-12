@@ -1,12 +1,18 @@
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp } from "@manifest-editor/shell";
-import { imageBrowserSlideCreator } from "../creators/image-browser-slide-creator";
+import {
+  imageBrowserSlideCreator,
+  keepIIIFBrowserNested,
+} from "../creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "../creators/image-service-slide-creator";
 import { imageSlideCreator } from "../creators/image-slide-creator";
 import { imageUrlSlideCreator } from "../creators/image-url-slide";
 import { infoBoxCreator } from "../creators/info-box-creator";
 import { videoSlideCreator } from "../creators/video-slide-creator";
+import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { youtubeSlideCreator } from "../creators/youtube-slide-creator";
+import { scrollGridLeftPanel } from "../left-panels/ExhibitionGrid";
+import { exhibitionThemeLeftPanel } from "../left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
@@ -15,7 +21,17 @@ import { infoBoxWorkbenchEditor } from "../right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "../right-panels/SlideBehaviours";
 
 export const exhibitionEditorScrollingPreset = extendApp(
-  mapApp(ManifestPreset),
+  mapApp(ManifestPreset, (app) => ({
+    ...app,
+    layout: {
+      ...app.layout,
+      creators: app.layout.creators?.map((creator) =>
+        creator.id === "@manifest-editor/iiif-browser-creator"
+          ? keepIIIFBrowserNested(creator)
+          : creator,
+      ),
+    },
+  })),
   {
     id: "exhibition-scrolling-editor",
     title: "Exhibition Editor (scrolling)",
@@ -23,12 +39,16 @@ export const exhibitionEditorScrollingPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {},
     },
     leftPanels: [
       //
+      scrollGridLeftPanel,
+      exhibitionThemeLeftPanel,
     ],
+    leftPanelIds: ["left-panel-manifest"],
     centerPanels: [
       //
     ],

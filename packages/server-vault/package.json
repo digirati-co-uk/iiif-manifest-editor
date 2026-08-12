@@ -49,11 +49,10 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@types/node": "^20.11.24",
+    "@types/node": "catalog:",
     "@types/uuid": "^9.0.8",
     "@types/ws": "8.5.10",
-    "tsdown": "0.16.4"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"

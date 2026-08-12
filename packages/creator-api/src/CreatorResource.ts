@@ -113,6 +113,16 @@ export class CreatorResource {
             continue;
           }
 
+          // A SpecificResource carries its selector and source inline. Vault.get()
+          // resolves it to its source, so an existing source must not turn the
+          // wrapper into a plain reference.
+          if (isSpecificResource(item)) {
+            const newItem = new CreatorResource(item, vault);
+            this.embedded.push(newItem);
+            newItems.push(newItem);
+            continue;
+          }
+
           const exists = this.vault.get(item, { skipSelfReturn: true });
           if (exists) {
             const type = resolveType(item.type);

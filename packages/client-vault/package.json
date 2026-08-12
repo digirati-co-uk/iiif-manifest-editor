@@ -40,8 +40,7 @@
     "@iiif/helpers": "catalog:"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "tsdown": "0.16.4"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"

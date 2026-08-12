@@ -4,5 +4,5 @@
     "noUncheckedIndexedAccess": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__tests__/**"]
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__tests__/**"]
 }

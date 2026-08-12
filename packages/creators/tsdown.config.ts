@@ -1,6 +1,3 @@
-// @ts-expect-error
-import postcssImport from "postcss-import";
-import postcss from "rollup-plugin-postcss";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
@@ -10,11 +7,10 @@ export default defineConfig((options) => ({
   format: ["esm", "cjs"],
   platform: "browser",
   clean: !options.watch,
+  css: {
+    fileName: "index.css",
+    transformer: "postcss",
+  },
   minify: !options.watch,
-  plugins: [
-    (postcss as any as typeof postcss.default)({
-      plugins: [postcssImport()],
-      extract: "index.css",
-    }),
-  ],
+  sourcemap: true,
 }));

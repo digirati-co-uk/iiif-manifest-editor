@@ -95,6 +95,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                 onMouseLeave={() => activeState.clear(true)}
               >
                 <RichTextLanguageField
+                  ariaLabel={`${props.label} (${field.language === "none" ? "no language" : field.language})`}
                   autoFocus={n === 0 ? props.autoFocus : undefined}
                   disableMultiline={props.disableMultiline}
                   disallowHTML={props.disallowHTML}

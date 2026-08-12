@@ -54,13 +54,18 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
   }
 
   return (
-    <Modal open={isOpen} title="Open a Manifest or Collection from a URL" onClose={() => setIsOpen(false)}>
+    <Modal open={isOpen} title="Browse IIIF manifests" onClose={() => setIsOpen(false)}>
       <VaultProvider useGlobal={false}>
+        {createProject.isError ? (
+          <div role="alert" className="border-b border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            The manifest could not be opened. Check the URL and try again.
+          </div>
+        ) : null}
         <IIIFBrowser
-          className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
+          className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
           navigation={navigationOptions}
           output={output}
-          ui={{ homeLink: `${window.location.origin}/collection.json` }}
+          ui={{ homeLink: process.env.NEXT_PUBLIC_IIIF_BROWSER_COLLECTION }}
         />
       </VaultProvider>
     </Modal>

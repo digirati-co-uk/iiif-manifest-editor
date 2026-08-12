@@ -11,4 +11,5 @@ export default defineConfig((options) => ({
   format: ["esm", "cjs"],
   platform: "browser",
   minify: !options.watch,
+  sourcemap: true,
 }));

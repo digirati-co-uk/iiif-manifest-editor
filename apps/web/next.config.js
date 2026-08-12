@@ -4,11 +4,8 @@ initOpenNextCloudflareForDev();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   reactStrictMode: false,
-  swcMinify: true,
+  allowedDevOrigins: ["127.0.0.1"],
 };
 
 export default nextConfig;

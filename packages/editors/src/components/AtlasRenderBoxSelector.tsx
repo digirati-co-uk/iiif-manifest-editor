@@ -13,7 +13,7 @@ export function AtlasRenderBoxSelector({
 }) {
   const { x, y, width, height } = target.spatial;
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events -- Existing interaction behavior.
     <box
       id={id}
       relativeStyle={true}

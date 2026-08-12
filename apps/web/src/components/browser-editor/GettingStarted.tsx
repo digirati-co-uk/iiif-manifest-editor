@@ -73,65 +73,71 @@ export default function GettingStarted() {
 
   return (
     <div className="bg-me-gray-100 pb-8 pt-4 px-6 border-b">
-      <h2 className="text-lg mb-3">Get started</h2>
-      <Toolbar className="flex gap-3">
-        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => blankManifest.mutate()}>
+      <h1 className="text-lg mb-3">Get started</h1>
+      <Toolbar className="flex flex-wrap gap-3">
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
+          onPress={() => blankManifest.mutate()}
+        >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <AddIcon />
+              <AddIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create new manifest</div>
         </Button>
-        <Button className="w-36 flex items-center flex-col group cursor-default" onPress={() => setIsModalOpen(true)}>
+        <Button
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
+          onPress={() => setIsModalOpen(true)}
+        >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <LinkIcon />
+              <LinkIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest URL</div>
         </Button>
         <Button
-          className="w-36 flex items-center flex-col group cursor-default"
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
           onPress={() => filesystemManifest.mutate()}
         >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <FileIcon />
+              <FileIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest file</div>
         </Button>
 
         <Button
-          className="w-36 flex items-center flex-col group cursor-default"
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
           onPress={() => setIsIIIFBrowserOpen(true)}
         >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <IIIFBrowserIcon />
+              <IIIFBrowserIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Browse for IIIF</div>
         </Button>
         <Button
-          className="w-36 flex items-center flex-col group cursor-default"
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
           onPress={() => blankCollection.mutate()}
         >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <CollectionIcon />
+              <CollectionIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Collection</div>
         </Button>
         <Button
-          className="w-36 flex items-center flex-col group cursor-default"
+          className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
           onPress={() => blankExhibition.mutate()}
         >
           <div className="bg-me-gray-300 group-hover:bg-me-gray-300/60 rounded w-full h-36 flex items-center justify-center">
             <div className="w-10 h-10 flex items-center justify-center bg-me-primary-500 rounded-full text-white/70 group-hover:text-white text-2xl">
-              <AddIcon />
+              <AddIcon aria-hidden="true" />
             </div>
           </div>
           <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Exhibition</div>
@@ -150,8 +156,6 @@ function CollectionIcon(props: React.SVGProps<SVGSVGElement>) {
       width="1em"
       height="1em"
       viewBox="0 -960 960 960"
-      aria-label="collection"
-      role="img"
       {...props}
     >
       <path

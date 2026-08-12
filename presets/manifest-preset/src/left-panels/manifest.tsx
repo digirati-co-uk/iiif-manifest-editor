@@ -1,4 +1,5 @@
 import {
+  CheckIcon,
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -6,7 +7,10 @@ import {
 import { InlineLocaleStringEditor } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
+  useEditingResource,
+  useEditingStack,
   useLayoutActions,
+  useLayoutState,
   useManifestEditor,
 } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
@@ -70,7 +74,15 @@ export function ManifestPanel() {
   const summary = descriptive.summary.get();
   const requiredStatement = descriptive.requiredStatement.get();
   const metadata = descriptive.metadata.get();
-  const { edit, open } = useLayoutActions();
+  const editingResource = useEditingResource();
+  const editingStack = useEditingStack();
+  const { rightPanel } = useLayoutState();
+  const { edit, rightPanel: rightPanelActions } = useLayoutActions();
+  const isEditingManifest =
+    rightPanel.open &&
+    rightPanel.current === "@manifest-editor/editor" &&
+    editingResource?.resource.source.id === id &&
+    editingResource.resource.source.type === "Manifest";
 
   return (
     <Sidebar>
@@ -78,44 +90,59 @@ export function ManifestPanel() {
         title="Manifest summary"
         actions={[
           {
-            icon: <EditManifestMetadataIcon className="text-xl" />,
-            title: "Edit metadata",
+            icon: isEditingManifest ? (
+              <CheckIcon className="text-xl" />
+            ) : (
+              <EditManifestMetadataIcon className="text-xl" />
+            ),
+            title: isEditingManifest ? "Finish editing" : "Edit metadata",
+            toggled: isEditingManifest,
             onClick: () => {
-              edit({ id, type: "Manifest" }, undefined, { forceOpen: true });
-              open("@manifest-editor/editor", {
-                currentTab: "@manifest-editor/descriptive-properties",
+              if (isEditingManifest) {
+                rightPanelActions.close();
+                editingStack.close();
+                return;
+              }
+
+              edit({ id, type: "Manifest" }, undefined, {
+                forceOpen: true,
+                selectedTab: "@manifest-editor/descriptive-properties",
               });
             },
           },
         ]}
       />
       <SidebarContent className="p-4">
-        {label ? (
-          <InlineLocaleStringEditor
-            as="h2"
-            className="text-lg font-semibold mb-2 [&>a]:underline [&>a]:hover:text-slate-400"
-            editor={descriptive.label}
-          >
-            {label}
-          </InlineLocaleStringEditor>
-        ) : null}
+        <InlineLocaleStringEditor
+          as="h2"
+          placeholder="Add an exhibition title"
+          className="text-lg font-semibold [&>a]:underline [&>a]:hover:text-slate-400"
+          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
+          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
+          editor={descriptive.label}
+        >
+          {label}
+        </InlineLocaleStringEditor>
 
-        {summary ? (
-          <LocaleString
-            enableDangerouslySetInnerHTML
-            as="p"
-            className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400 mb-2"
-          >
-            {summary}
-          </LocaleString>
-        ) : null}
+        <InlineLocaleStringEditor
+          multiline
+          enableDangerouslySetInnerHTML
+          as="p"
+          placeholder="Add an exhibition summary"
+          className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400"
+          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
+          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
+          editor={descriptive.summary}
+        >
+          {summary}
+        </InlineLocaleStringEditor>
 
         <hr />
         {requiredStatement ? (
           <>
             <div className="py-2 text-black">
               <LocaleString
-                as="h4"
+                as="h3"
                 className="font-bold text-black w-full text-sm font-semibold mb-0 [&>a]:underline [&>a]:hover:text-slate-400"
               >
                 {requiredStatement.label}
@@ -133,7 +160,7 @@ export function ManifestPanel() {
         ) : null}
 
         {metadata && metadata.length === 0 ? (
-          <div className="py-2 text-gray-400">
+          <div className="py-2 text-gray-600">
             You can add some descriptive metadata for this manifest using the
             editing panel on the right
           </div>
@@ -147,7 +174,7 @@ export function ManifestPanel() {
             label: "font-bold text-black w-full text-sm font-semibold mb-1",
             value:
               "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
-            empty: "text-gray-400",
+            empty: "text-gray-600",
           }}
         />
       </SidebarContent>

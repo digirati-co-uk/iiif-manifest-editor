@@ -11,15 +11,30 @@ import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
 import { exhibitionRemotePreviewPanel } from "./center-panels/ExhibitionRemotePreviewPanel";
 import { imageBrowserSlideCreator } from "./creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "./creators/image-service-slide-creator";
-import { imageSlideCreator } from "./creators/image-slide-creator";
+import {
+  imageSlideCreator,
+  slideshowImageOnlyCreator,
+  slideshowImageTextCreator,
+} from "./creators/image-slide-creator";
 import { imageUrlSlideCreator } from "./creators/image-url-slide";
-import { infoBoxCreator } from "./creators/info-box-creator";
-import { videoSlideCreator } from "./creators/video-slide-creator";
-import { youtubeSlideCreator } from "./creators/youtube-slide-creator";
+import { exhibitionPresetConfig } from "./exhibition-onboarding";
+import {
+  infoBoxCreator,
+  slideshowLongEditorialCreator,
+} from "./creators/info-box-creator";
+import {
+  slideshowVideoCreator,
+  videoSlideCreator,
+} from "./creators/video-slide-creator";
+import {
+  slideshowYoutubeCreator,
+  youtubeSlideCreator,
+} from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
 import { exhibitionCanvasEditor } from "./right-panels/ExhibitionCanvasEditor";
+import { exhibitionImageCropEditor } from "./right-panels/ExhibitionImageCropEditor";
 import { exhibitionSummaryEdtior } from "./right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
@@ -27,11 +42,24 @@ import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
+export {
+  imageServiceSlideCreator,
+  type CreateImageServiceSlidePayload,
+} from "./creators/image-service-slide-creator";
 export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
 
 export const exhibitionEditorPreset = extendApp(
-  mapApp(ManifestPreset),
+  mapApp(ManifestPreset, (app) => ({
+    ...app,
+    layout: {
+      ...app.layout,
+      leftPanels: [
+        exhibitionGridLeftPanel,
+        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest"),
+      ],
+    },
+  })),
   {
     id: "exhibition-editor",
     title: "Exhibition Editor",
@@ -39,6 +67,7 @@ export const exhibitionEditorPreset = extendApp(
     projectType: "Manifest",
   },
   {
+    preset: exhibitionPresetConfig,
     config: {
       editorConfig: {
         Canvas: {
@@ -57,7 +86,6 @@ export const exhibitionEditorPreset = extendApp(
     },
     leftPanels: [
       //
-      exhibitionGridLeftPanel,
       // exhibitionOverviewLeftPanel,
       exhibitionThemeLeftPanel,
     ],
@@ -70,7 +98,7 @@ export const exhibitionEditorPreset = extendApp(
       //
       tourStepAnnotations,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["canvas-listing", "left-panel-manifest"],
     background: [exhibitionBackgroundTask],
     canvasEditors: [
       //
@@ -83,6 +111,7 @@ export const exhibitionEditorPreset = extendApp(
       infoBoxWorkbenchEditor,
       exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
+      exhibitionImageCropEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
@@ -95,6 +124,11 @@ export const exhibitionEditorPreset = extendApp(
       imageSlideCreator,
       imageUrlSlideCreator,
       videoSlideCreator,
+      slideshowImageOnlyCreator,
+      slideshowImageTextCreator,
+      slideshowVideoCreator,
+      slideshowYoutubeCreator,
+      slideshowLongEditorialCreator,
     ],
   },
 );

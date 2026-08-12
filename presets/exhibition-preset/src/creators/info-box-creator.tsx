@@ -29,6 +29,7 @@ export const infoBoxCreator = defineCreator({
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },

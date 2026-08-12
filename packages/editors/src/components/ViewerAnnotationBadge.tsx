@@ -1,14 +1,8 @@
 import { HTMLPortal } from "@atlas-viewer/atlas";
-import { useGenericEditor } from "@manifest-editor/shell";
-import { useAnnotation } from "react-iiif-vault";
-import { useAnnotationInfo } from "../hooks/useAnnotationInfo";
+import { useViewerAnnotationTarget } from "./useViewerAnnotationTarget";
 
 export function ViewerAnnotationBadge(props: { index: number }) {
-  const [annotation, annotationInfo] = useAnnotationInfo();
-  const annotationTargetResource = "annotationTargetResource" in annotationInfo ? annotationInfo.annotationTargetResource : undefined;
-
-  const editor = useGenericEditor(annotationTargetResource as any);
-  const target = editor.annotation.target.getParsedSelector();
+  const { annotation, target } = useViewerAnnotationTarget();
 
   if (!annotation || !target?.spatial) {
     return null;

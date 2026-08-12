@@ -5,6 +5,7 @@ import {
   type LayoutPanel,
   ResourceEditingProvider,
   useCreator,
+  useEditingStack,
   useInlineCreator,
   useLayoutActions,
   useManifestEditor,
@@ -18,19 +19,22 @@ import {
   CanvasContext,
   LocaleString,
   useCanvas,
+  useManifest,
   useVault,
   useVaultSelector,
 } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
+import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
+import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
+import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import {
   createDefaultSlideContentTarget,
   getAnnotationTargetBox,
   getPaintingAnnotations,
   getSlideLayoutRegions,
   getTourStepAnnotations,
-  repairSlideContentTargets,
   type SlideContentBox,
   setAnnotationTargetBox,
   setSlideTextRegionBox,
@@ -42,8 +46,6 @@ import {
 const contentCreatorOptions = {
   skipEditingOnCreate: true,
 };
-
-const DEFAULT_TOUR_STEP_HTML = "<h2>New step</h2><p>Description</p>";
 
 export const slideshowCenterPanel: LayoutPanel = {
   id: "@exhibitions/slideshow-center-panel",
@@ -61,6 +63,7 @@ function SlideshowCenterPanel() {
     isPainting: true,
   });
   const editingCanvas = useInStack("Canvas");
+  const editingStack = useEditingStack();
   const { edit } = useLayoutActions();
   const clearContentPositioning = useSlideshowContentPositioning((state) => state.clear);
 
@@ -68,12 +71,6 @@ function SlideshowCenterPanel() {
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const selectedSlideIndex = selectedIndex >= 0 ? selectedIndex : 0;
   const selectedItem = selectedIndex >= 0 ? items[selectedIndex] : items[0] || null;
-
-  useEffect(() => {
-    for (const item of items) {
-      repairSlideContentTargets(vault, vault.get(item as any));
-    }
-  }, [items, vault]);
 
   const addNewSlide = () => {
     canvasActions.createFiltered("exhibition-slideshow-slide", items.length ? selectedSlideIndex + 1 : undefined);
@@ -94,15 +91,20 @@ function SlideshowCenterPanel() {
       return;
     }
 
-    const nextItem = items[index + 1] || items[index - 1] || null;
-    const nextIndex = items[index + 1] ? index : index - 1;
-
-    clearContentPositioning();
+    const nextCanvasId = getSlideSelectionAfterDeletion(items, selectedItem?.id, item.id);
     structural.items.deleteAtIndex(index);
 
-    if (nextItem) {
-      openSlide(nextItem, Math.max(0, nextIndex));
-    }
+    if (selectedItem?.id !== item.id) return;
+
+    clearContentPositioning();
+    editingStack.close();
+
+    if (!nextCanvasId) return;
+
+    const nextItems = structural.items.getWithoutTracking();
+    const nextIndex = nextItems.findIndex((candidate) => candidate.id === nextCanvasId);
+    const nextItem = nextItems[nextIndex];
+    if (nextItem) openSlide(nextItem, nextIndex);
   };
 
   const previousSlide = selectedSlideIndex > 0 ? items[selectedSlideIndex - 1] : undefined;
@@ -289,6 +291,7 @@ function TourStepNavigation({
 
 function SelectedSlidePreview() {
   const canvas = useCanvas();
+  const manifest = useManifest();
   const vault = useVault();
   const inlineCreator = useInlineCreator();
   const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
@@ -299,7 +302,6 @@ function SelectedSlidePreview() {
     { type: "add" } | { type: "edit"; annotationId: string } | null
   >(null);
   const [targetDrawingTool, setTargetDrawingTool] = useState<"box" | "circle" | "line" | "polygon">("box");
-  const previousAnnotationCount = useRef<number | null>(null);
   const previousTourStepCount = useRef<number | null>(null);
   const annotationPageId = canvas?.annotations?.[0]?.id;
   const pageRef = canvas?.items?.[0] ? { id: canvas.items[0].id, type: "AnnotationPage" } : undefined;
@@ -324,7 +326,6 @@ function SelectedSlidePreview() {
     selectTourStep,
     stopTourStepRepositioning,
   } = useSlideshowContentPositioning();
-  const requestWorkbenchTab = useSlideshowWorkbenchState((state) => state.requestTab);
   const showTourSteps = useSlideshowWorkbenchState((state) => state.showTourSteps);
   const setShowTourSteps = useSlideshowWorkbenchState((state) => state.setShowTourSteps);
   const annotations = useVaultSelector(
@@ -356,7 +357,6 @@ function SelectedSlidePreview() {
   };
 
   useEffect(() => {
-    previousAnnotationCount.current = null;
     previousTourStepCount.current = null;
     setTargetDrawingMode(null);
     setTargetDrawingTool("box");
@@ -375,22 +375,6 @@ function SelectedSlidePreview() {
       setMode("edit");
     }
   }, [tourAuthoringActive]);
-
-  useEffect(() => {
-    if (previousAnnotationCount.current === null) {
-      previousAnnotationCount.current = annotations.length;
-      return;
-    }
-
-    const newestAnnotation = annotations[annotations.length - 1];
-    if (annotations.length > previousAnnotationCount.current && newestAnnotation?.id) {
-      selectAnnotation(newestAnnotation.id);
-      requestWorkbenchTab("content");
-      setShowTourSteps(false);
-    }
-
-    previousAnnotationCount.current = annotations.length;
-  }, [annotations, requestWorkbenchTab, selectAnnotation, setShowTourSteps]);
 
   useEffect(() => {
     if (previousTourStepCount.current === null) {
@@ -465,7 +449,7 @@ function SelectedSlidePreview() {
     setShowTourSteps(true);
     stopRepositioning();
     stopTextRepositioning();
-    setTargetDrawingTool("box");
+    setTargetDrawingTool(getTourStepTargetDrawingTool(selectedTourStep));
     setTargetDrawingMode({
       type: "edit",
       annotationId: selectedTourStep.id,
@@ -483,7 +467,7 @@ function SelectedSlidePreview() {
     >
       <div className="exhibition-slideshow-toolbar flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
         <span className="exhibition-slideshow-muted text-xs font-semibold text-slate-500">
-          {mode === "edit" ? "Click content to edit or reposition it" : "Slideshow layout preview (approximate)"}
+          {mode === "edit" ? "Click content to edit or reposition it" : "Live slideshow preview"}
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
@@ -507,10 +491,13 @@ function SelectedSlidePreview() {
                     current={selectedTourStepIndex + 1}
                     total={tourSteps.length}
                     onPrevious={
-                      selectedTourStepIndex > 0 ? () => selectTourStepAtIndex(selectedTourStepIndex - 1) : undefined
+                      selectedTourStepIndex > 0
+                        ? () => selectTourStepAtIndex(selectedTourStepIndex - 1)
+                        : undefined
                     }
                     onNext={
-                      selectedTourStepIndex >= 0 && selectedTourStepIndex < tourSteps.length - 1
+                      selectedTourStepIndex >= 0 &&
+                      selectedTourStepIndex < tourSteps.length - 1
                         ? () => selectTourStepAtIndex(selectedTourStepIndex + 1)
                         : undefined
                     }
@@ -535,6 +522,8 @@ function SelectedSlidePreview() {
                 <Button
                   className="rounded-md bg-me-primary-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-me-primary-600"
                   onPress={() => {
+                    setMode("edit");
+                    selectAnnotation(null);
                     setShowTourSteps(false);
                     stopTourStepRepositioning();
                     contentActions.create(undefined, contentCreatorOptions);
@@ -546,19 +535,36 @@ function SelectedSlidePreview() {
             </>
           ) : null}
           <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
-            <PreviewModeButton selected={mode === "edit"} onPress={() => setMode("edit")}>
+            <PreviewModeButton
+              selected={mode === "edit"}
+              onPress={() => setMode("edit")}
+            >
               Edit
             </PreviewModeButton>
-            <PreviewModeButton selected={mode === "preview"} onPress={() => setMode("preview")}>
+            <PreviewModeButton
+              selected={mode === "preview"}
+              onPress={() => setMode("preview")}
+            >
               Preview
             </PreviewModeButton>
           </div>
         </div>
       </div>
       <div className="relative min-h-0 flex-1 bg-black">
-        <SlideshowSlidePreview editable={mode === "edit"} mode={mode} showTourSteps={tourAuthoringActive} />
+        {mode === "preview" ? (
+          <ExhibitionPreviewPanel
+            preset="slideshow"
+            presetOptions={{
+              manifest: manifest?.id || "",
+              canvas: canvas?.id,
+              minimal: true,
+            }}
+          />
+        ) : (
+          <SlideshowSlidePreview editable mode={mode} showTourSteps={tourAuthoringActive} />
+        )}
 
-        {targetDrawingMode && canvas && annotationPageId ? (
+        {mode === "edit" && targetDrawingMode && canvas && annotationPageId ? (
           <TourStepTargetDrawingOverlay
             annotationPageId={annotationPageId}
             canvas={canvas}
@@ -578,18 +584,28 @@ function SelectedSlidePreview() {
           />
         ) : null}
 
-        {!targetDrawingMode && mode === "edit" && !tourAuthoringActive && selectedAnnotation && canvas ? (
+        {!targetDrawingMode &&
+        mode === "edit" &&
+        !tourAuthoringActive &&
+        selectedAnnotation &&
+        canvas ? (
           <CentrePositionControls
             annotation={selectedAnnotation}
             canvas={canvas}
-            isRepositioning={repositioningAnnotationId === selectedAnnotation.id}
+            isRepositioning={
+              repositioningAnnotationId === selectedAnnotation.id
+            }
             onStartReposition={() => startRepositioning(selectedAnnotation.id)}
             onStopReposition={stopRepositioning}
             vault={vault}
           />
         ) : null}
 
-        {!targetDrawingMode && mode === "edit" && !tourAuthoringActive && selectedTextRegionBox && canvas ? (
+        {!targetDrawingMode &&
+        mode === "edit" &&
+        !tourAuthoringActive &&
+        selectedTextRegionBox &&
+        canvas ? (
           <CentrePositionControls
             canvas={canvas}
             currentBox={selectedTextRegionBox}
@@ -602,7 +618,10 @@ function SelectedSlidePreview() {
           />
         ) : null}
 
-        {!targetDrawingMode && mode === "edit" && tourAuthoringActive && canvas ? (
+        {!targetDrawingMode &&
+        mode === "edit" &&
+        tourAuthoringActive &&
+        canvas ? (
           selectedTourStep ? (
             <CentrePositionControls
               annotation={selectedTourStep}
@@ -980,7 +999,6 @@ function createTourStepAnnotation(vault: any, canvas: any, annotationPageId: str
               id: annotationId,
               type: "Annotation",
               motivation: "tagging",
-              label: { en: ["New step"] },
               body: [{ id: bodyId, type: "ContentResource" }],
               target,
             },
@@ -1333,6 +1351,18 @@ function makeSvgSelectorValue(shape: Exclude<TourStepShape, { type: "box" }>) {
   return `<svg xmlns="http://www.w3.org/2000/svg"><polygon points="${shape.points
     .map((point) => `${Math.round(point.x)},${Math.round(point.y)}`)
     .join(" ")}" /></svg>`;
+}
+
+function getTourStepTargetDrawingTool(annotation: any): "box" | "circle" | "line" | "polygon" {
+  const selector = Array.isArray(annotation?.target?.selector)
+    ? annotation.target.selector.find((item: any) => item?.type === "SvgSelector")
+    : annotation?.target?.selector;
+
+  if (selector?.type !== "SvgSelector") return "box";
+  if (Array.isArray(selector.points) && selector.svgShape !== "polyline") {
+    return "polygon";
+  }
+  return typeof selector.value === "string" && /<polygon\b/i.test(selector.value) ? "polygon" : "box";
 }
 
 function clamp(value: number, min: number, max: number) {

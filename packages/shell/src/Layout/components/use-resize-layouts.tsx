@@ -34,7 +34,7 @@ export function useResizeLayout(
     loading?: boolean;
   } = {},
 ) {
-  const container = useRef<HTMLDivElement | null>(null);
+  const container = useRef<HTMLElement | null>(null);
   const resizableDiv = useRef<HTMLDivElement | null>(null);
   const otherDiv = useRef<HTMLDivElement | null>(null);
   const resizer = useRef<HTMLDivElement | null>(null);

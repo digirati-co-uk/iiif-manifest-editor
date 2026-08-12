@@ -82,11 +82,12 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
             ) : (
               <ComposableInput.Container key={k}>
                 <ComposableInput.Text
+                  aria-label={`Custom behavior ${k + 1}`}
                   value={t.value}
                   onChange={(e) => changeBehaviorValue(t.value, e.currentTarget.value)}
                 />
-                <Button onClick={() => changeBehaviorValue(t.value, "")}>
-                  <CloseIcon />
+                <Button aria-label={`Remove ${t.value} behavior`} onClick={() => changeBehaviorValue(t.value, "")}>
+                  <CloseIcon aria-hidden />
                 </Button>
               </ComposableInput.Container>
             ),

@@ -38,7 +38,7 @@ export function ContentResourcePreview({
         icon={
           thumbnail ? (
             <ThumbnailContainer $size={40}>
-              <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+              <ThumbnailImg src={thumbnail.id} alt="" />
             </ThumbnailContainer>
           ) : null
         }

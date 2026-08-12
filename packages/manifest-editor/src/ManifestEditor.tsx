@@ -58,7 +58,9 @@ function configInvariant(
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
-  const vault = useExistingVault(props.vault);
+  const existingVault = useExistingVault(props.vault);
+  const fallbackVault = useRef(existingVault);
+  const vault = props.vault || fallbackVault.current;
   const didLoad = useRef("");
 
   configInvariant(

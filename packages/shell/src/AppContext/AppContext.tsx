@@ -39,10 +39,82 @@ export type MappedApp = {
   metadata: LoadedApp["default"];
   layout: LayoutProps;
   config?: Partial<Config>;
+  preset?: PresetDefinition;
+};
+
+export type PresetTemplateConfigurationField = {
+  id: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "boolean" | "select";
+  defaultValue?: string | number | boolean;
+  options?: Array<{ label: string; value: string | number | boolean }>;
+};
+
+export type PresetTemplateDefinition = {
+  id: string;
+  label: string;
+  summary: string;
+  type: "slideshow" | "fullpage" | "scroll";
+  previewUrl: string;
+  thumbnailUrl: string;
+  configuration?: PresetTemplateConfigurationField[];
+};
+
+export type PresetPreviewAction = {
+  id: string;
+  label: string;
+  status?: "available" | "configured" | "active";
+  disabled?: boolean;
+  onClick: () => void;
+};
+
+export type PresetPreviewOptions = {
+  mainAction?: PresetPreviewAction;
+  actions?: PresetPreviewAction[];
+};
+
+export type PresetOnboardingRenderContext = {
+  templates: PresetTemplateDefinition[];
+  selectedTemplateId: string | null;
+  selectedTemplate: PresetTemplateDefinition | null;
+  setSelectedTemplateId: (id: string | null) => void;
+  dismiss: () => void;
+};
+
+export type PresetPreviewButtonRenderContext = {
+  downloadEnabled?: boolean;
+  fileName?: string;
+  preview?: PresetPreviewOptions;
+  showOnboardingPreviewHint?: boolean;
+  onOnboardingPreviewHintClose?: () => void;
+};
+
+export type PresetOnboardingDefinition = {
+  id: string;
+  mode: "global" | "per-resource";
+  title: string;
+  summary?: string;
+  openLabel?: string;
+  dismissLabel?: string;
+  primaryLabel?: string;
+  renderBody: (ctx: PresetOnboardingRenderContext) => ReactNode;
+  renderPreviewButton?: (ctx: PresetPreviewButtonRenderContext) => ReactNode;
+};
+
+export type PresetDefinition = {
+  onboarding?: PresetOnboardingDefinition;
+  templates?: PresetTemplateDefinition[];
+  /** Use `replace` with `templates: leedsTemplates` to replace an inherited list. */
+  templateStrategy?: "append" | "replace";
+  /** Applied to the complete inherited/replaced list, e.g. `(template) => template.id.startsWith("leeds-")`. */
+  templateFilter?: (template: PresetTemplateDefinition) => boolean;
+  /** Example: `preview: { mainAction: { id: "host-preview", label: "Preview", onClick: openPreview } }`. */
+  preview?: PresetPreviewOptions;
 };
 
 export interface AppExtension {
   config?: Partial<Config>;
+  preset?: PresetDefinition;
   leftPanels?: LayoutPanel[];
   centerPanels?: LayoutPanel[];
   rightPanels?: LayoutPanel[];
@@ -91,6 +163,30 @@ export function useApp() {
 
 export function useAppState<S = any>() {
   return useContext(AppStateReactContext);
+}
+
+export function getSelectedPresetTemplate(
+  templates: PresetTemplateDefinition[],
+  selectedTemplateId?: string | null,
+) {
+  return templates.find((template) => template.id === selectedTemplateId) || null;
+}
+
+export function usePresetTemplateSelection() {
+  const app = useApp();
+  const { state, setState } = useAppState<{ presetTemplateId?: string | null }>();
+  const templates = app.preset?.templates || [];
+  const selectedTemplateId = typeof state?.presetTemplateId === "string" ? state.presetTemplateId : null;
+  const selectedTemplate = useMemo(
+    () => getSelectedPresetTemplate(templates, selectedTemplateId),
+    [selectedTemplateId, templates],
+  );
+  const setSelectedTemplateId = useCallback(
+    (presetTemplateId: string | null) => setState({ presetTemplateId }),
+    [setState],
+  );
+
+  return { templates, selectedTemplateId, selectedTemplate, setSelectedTemplateId };
 }
 
 function AppStateProvider(props: {

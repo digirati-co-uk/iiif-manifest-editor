@@ -69,13 +69,25 @@ export function ReorderListItem({
   }
 
   return (
-    <Component {...props} ref={setNodeRef} style={style} {...attributes} {...(inlineHandle ? listeners : {})}>
+    <Component
+      {...props}
+      ref={setNodeRef}
+      style={style}
+      {...(inlineHandle ? attributes : {})}
+      {...(inlineHandle ? listeners : {})}
+      role={as === "li" ? "listitem" : inlineHandle ? attributes.role : undefined}
+    >
       <ItemWithHandle
         grid={grid}
         actions={actionControls}
         handle={
           inlineHandle ? null : (
-            <HandleContainer aria-label="Reorder item" ref={setActivatorNodeRef} {...listeners}>
+            <HandleContainer
+              ref={setActivatorNodeRef}
+              {...attributes}
+              aria-label="Reorder item"
+              {...listeners}
+            >
               <ResizeHandleIcon />
             </HandleContainer>
           )

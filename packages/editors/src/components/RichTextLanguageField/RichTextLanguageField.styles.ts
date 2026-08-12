@@ -33,7 +33,7 @@ export const ToolbarItem = styled.div<{ $active?: boolean }>`
   padding: 0 0.2em;
   a {
     font-size: 0.875em;
-    color: #3498db;
+    color: #1d4ed8;
     padding: 0 0.4em;
   }
 
@@ -64,7 +64,7 @@ export const ToolbarIcon = styled.div`
 `;
 
 export const InlineLink = styled.a`
-  color: #3498db;
+  color: #1d4ed8;
   text-decoration: underline;
 `;
 

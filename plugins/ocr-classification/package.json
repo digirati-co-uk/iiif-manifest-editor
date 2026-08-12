@@ -37,7 +37,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "test": "vitest run",
+    "test": "vitest run --config ../../vitest.config.cjs",
     "typecheck": "tsc --noEmit",
     "prepack": "tsdown --clean"
   },
@@ -49,10 +49,9 @@
     "react": "catalog:"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@types/react": "^18.3.3",
-    "tsdown": "0.16.4",
-    "vitest": "v3.0.9"
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

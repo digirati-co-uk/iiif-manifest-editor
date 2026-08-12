@@ -28,6 +28,7 @@ export interface ReorderListProps<T extends { id: string; type?: string }> {
   inlineActions?: (ref: T, index: number, item: T) => ReactNode;
   marginBottom?: string | number;
   grid?: boolean;
+  list?: boolean;
 }
 
 export function ReorderList<T extends { id: string; type?: string }>({
@@ -40,6 +41,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
   inlineActions,
   marginBottom,
   grid,
+  list,
 }: ReorderListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -62,6 +64,30 @@ export function ReorderList<T extends { id: string; type?: string }>({
   );
 
   const enabled = items.length > 0;
+  function renderItemRow(item: T, idx: number) {
+    if (!item) {
+      return null;
+    }
+    return (
+      <ReorderListItem
+        as={list ? "li" : undefined}
+        key={item.id as string}
+        item={item}
+        inlineHandle={inlineHandle}
+        reorderEnabled={enabled}
+        actions={createActions ? createActions(item, idx, item) : undefined}
+        inlineActions={inlineActions ? inlineActions(item, idx, item) : undefined}
+        marginBottom={marginBottom}
+        grid={grid}
+      >
+        {item.type ? (
+          <ResourceProvider value={{ [item.type]: item.id }}>{renderItem(item, idx, item)}</ResourceProvider>
+        ) : (
+          renderItem(item, idx, item)
+        )}
+      </ReorderListItem>
+    );
+  }
 
   return (
     <DndContext
@@ -71,35 +97,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
       modifiers={[restrictToParentElement]}
     >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        {items.map((item, idx) => {
-          if (!item) {
-            return null;
-          }
-          return (
-            <ReorderListItem
-              key={item.id as string}
-              item={item}
-              inlineHandle={inlineHandle}
-              reorderEnabled={enabled}
-              actions={
-                createActions ? createActions(item, idx, item) : undefined
-              }
-              inlineActions={
-                inlineActions ? inlineActions(item, idx, item) : undefined
-              }
-              marginBottom={marginBottom}
-              grid={grid}
-            >
-              {item.type ? (
-                <ResourceProvider value={{ [item.type]: item.id }}>
-                  {renderItem(item, idx, item)}
-                </ResourceProvider>
-              ) : (
-                renderItem(item, idx, item)
-              )}
-            </ReorderListItem>
-          );
-        })}
+        {list ? <ul>{items.map(renderItemRow)}</ul> : items.map(renderItemRow)}
       </SortableContext>
     </DndContext>
   );

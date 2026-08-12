@@ -1,8 +1,19 @@
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
-import { BehaviorEditor, DimensionsTriplet, InputContainer, LanguageMapEditor } from "@manifest-editor/editors";
-import { type EditorDefinition, ResourceEditingProvider, useEditor, useLocalStorage } from "@manifest-editor/shell";
+import {
+  BehaviorEditor,
+  DimensionsTriplet,
+  InputContainer,
+  LanguageMapEditor,
+} from "@manifest-editor/editors";
+import {
+  type EditorDefinition,
+  ResourceEditingProvider,
+  useEditor,
+  useLocalStorage,
+} from "@manifest-editor/shell";
 import { useCanvas, useManifest, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
+import { ExhibitionHtmlSummaryEditor } from "./ExhibitionSummaryEditor";
 import {
   computeFitWidth,
   type DisplayWidth,
@@ -14,7 +25,9 @@ import {
   SimpleOptionButton,
   simpleLayoutColours,
   textualWidthOptions,
+  useExhibitionTemplateControls,
 } from "./SlideBehaviours";
+import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 
@@ -41,6 +54,7 @@ export function InfoBoxPanel() {
   const vault = useVault();
   const manifest = useManifest();
   const editor = useEditor();
+  const controls = useExhibitionTemplateControls();
 
   if (!canvas || editor.technical.type !== "Canvas") return null;
 
@@ -48,7 +62,9 @@ export function InfoBoxPanel() {
   const currentWidth = (getBehaviorWidth(behavior) as DisplayWidth) || 12;
 
   const setWidth = (w: DisplayWidth) => {
-    const next = behavior.filter((b) => !b.startsWith("w-") && !b.startsWith("h-"));
+    const next = behavior.filter(
+      (b) => !b.startsWith("w-") && !b.startsWith("h-"),
+    );
     const existingH = behavior.find((b) => b.startsWith("h-"));
     next.push(`w-${w}`);
     if (!existingH) next.push("h-4");
@@ -56,7 +72,13 @@ export function InfoBoxPanel() {
   };
 
   const fitSuggestion =
-    manifest?.items && canvas ? computeFitWidth(canvas.id, manifest.items as Array<{ id: string }>, vault) : null;
+    controls.showGridSizing && manifest?.items && canvas
+      ? computeFitWidth(
+          canvas.id,
+          manifest.items as Array<{ id: string }>,
+          vault,
+        )
+      : null;
 
   return (
     <Sidebar>
@@ -66,28 +88,38 @@ export function InfoBoxPanel() {
         </div>
 
         <div className="mt-8 flex flex-col gap-7">
+          <SlideshowDurationField />
+
           {/* Text content */}
           <ResourceEditingProvider resource={canvas}>
             {mode === "simple" ? (
               <SimpleField>
                 <SimpleFieldLabel>Title</SimpleFieldLabel>
                 <div className="mt-2">
-                  <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
+                  <LanguageMapEditor
+                    dispatchType="label"
+                    disableMultiline
+                    disallowHTML
+                  />
                 </div>
               </SimpleField>
             ) : (
               <SimpleField>
                 <SimpleFieldLabel>Label &amp; summary</SimpleFieldLabel>
                 <div className="mt-2 flex flex-col gap-3">
-                  <LanguageMapEditor dispatchType="label" disableMultiline disallowHTML />
-                  <LanguageMapEditor dispatchType="summary" />
+                  <LanguageMapEditor
+                    dispatchType="label"
+                    disableMultiline
+                    disallowHTML
+                  />
+                  <ExhibitionHtmlSummaryEditor resource={canvas} />
                 </div>
               </SimpleField>
             )}
           </ResourceEditingProvider>
 
           {/* Width */}
-          {mode === "simple" ? (
+          {mode === "simple" && controls.showGridSizing ? (
             <>
               <SimpleField>
                 <SimpleFieldLabel>Width</SimpleFieldLabel>
@@ -106,11 +138,15 @@ export function InfoBoxPanel() {
 
               {fitSuggestion ? (
                 <SimpleField>
-                  <SimpleFieldLabel>Fit alongside {fitSuggestion.neighbour} slide</SimpleFieldLabel>
+                  <SimpleFieldLabel>
+                    Fit alongside {fitSuggestion.neighbour} slide
+                  </SimpleFieldLabel>
                   <div className="mt-3">
                     <SimpleOptionButton
                       selected={currentWidth === fitSuggestion.width}
-                      onClick={() => setWidth(fitSuggestion.width as DisplayWidth)}
+                      onClick={() =>
+                        setWidth(fitSuggestion.width as DisplayWidth)
+                      }
                     >
                       w-{fitSuggestion.width} — fills remaining space
                     </SimpleOptionButton>
@@ -118,11 +154,14 @@ export function InfoBoxPanel() {
                 </SimpleField>
               ) : null}
 
-              <div className="text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
+              <div
+                className="text-center text-xs"
+                style={{ color: simpleLayoutColours.muted }}
+              >
                 w-{currentWidth}
               </div>
             </>
-          ) : (
+          ) : mode === "advanced" ? (
             <>
               <div className="px-2">
                 <InputContainer $wide>
@@ -136,24 +175,29 @@ export function InfoBoxPanel() {
                   />
                 </InputContainer>
               </div>
-              <BehaviorEditor
-                behavior={behavior}
-                onChange={(v) => editor.technical.behavior.set(v)}
-                configs={[
-                  {
-                    id: "size",
-                    component: (existing, setBehaviors) => (
-                      <EditSize behaviors={existing} setBehaviors={setBehaviors} />
-                    ),
-                    label: { en: ["Size"] },
-                    type: "custom",
-                    initialOpen: true,
-                    supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
-                  },
-                ]}
-              />
+              {controls.showGridSizing ? (
+                <BehaviorEditor
+                  behavior={behavior}
+                  onChange={(v) => editor.technical.behavior.set(v)}
+                  configs={[
+                    {
+                      id: "size",
+                      component: (existing, setBehaviors) => (
+                        <EditSize
+                          behaviors={existing}
+                          setBehaviors={setBehaviors}
+                        />
+                      ),
+                      label: { en: ["Size"] },
+                      type: "custom",
+                      initialOpen: true,
+                      supports: (b) => b.startsWith("w-") || b.startsWith("h-"),
+                    },
+                  ]}
+                />
+              ) : null}
             </>
-          )}
+          ) : null}
         </div>
       </SidebarContent>
     </Sidebar>

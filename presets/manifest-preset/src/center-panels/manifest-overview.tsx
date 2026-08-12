@@ -157,8 +157,8 @@ export function ManifestOverviewCenterPanel() {
             <ActionButton isDisabled={!canCreateCanvas} onPress={() => createCanvas()}>
               <AddIcon className="text-xl" /> Add new canvas
             </ActionButton>
-            <ActionButton onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}>
-              <IIIFBrowserIcon className="text-xl" />
+            <ActionButton aria-label="Browse IIIF resources" onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}>
+              <IIIFBrowserIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
           </div>
         </CanvasGridControls>

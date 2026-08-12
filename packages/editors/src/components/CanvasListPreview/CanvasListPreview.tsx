@@ -1,7 +1,7 @@
 import { getValue } from "@iiif/helpers";
+import { EmptyCanvasIcon } from "@manifest-editor/components";
 import cx from "classnames";
 import { LocaleString, useCanvas } from "react-iiif-vault";
-import { twMerge } from "tailwind-merge";
 import { EditableCanvasLabel } from "../EditableCanvasLabel";
 
 interface CanvasListPreviewProps {
@@ -13,30 +13,32 @@ interface CanvasListPreviewProps {
 
 export function CanvasListPreview(props: CanvasListPreviewProps) {
   const canvas = useCanvas();
+  const Component = props.editing ? "div" : "button";
+  const icon = <EmptyCanvasIcon aria-hidden="true" className={cx("h-6 w-6 text-gray-300", props.active && "text-[#b84c74]")} />;
 
   return (
-    <button
+    <Component
+      type={props.editing ? undefined : "button"}
       data-canvas-selected={props.active}
-      className={twMerge(
-        cx(
-          "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
-          props.active && "bg-gray-50 text-black border-[#892c4e]",
-        ),
+      className={cx(
+        "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+        props.active && "bg-gray-50 text-black border-[#892c4e]",
       )}
-      aria-selected={props.active}
+      aria-current={props.active ? "true" : undefined}
       onClick={props.editing ? undefined : props.onClick}
-      onClickCapture={props.editing ? props.onClick : undefined}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="24px"
-        viewBox="0 -960 960 960"
-        width="24px"
-        fill="currentColor"
-        className={twMerge(cx("text-gray-300", props.active && "text-[#b84c74]"))}
-      >
-        <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
-      </svg>
+      {props.editing ? (
+        <button
+          type="button"
+          aria-label={`Select ${getValue(canvas?.label) || "Untitled canvas"}`}
+          className="rounded-sm border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-me-primary-500"
+          onClick={props.onClick}
+        >
+          {icon}
+        </button>
+      ) : (
+        icon
+      )}
       <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
         {props.editing ? (
           <EditableCanvasLabel buttonClassName="w-full block" className="w-full block" placeholder="Untitled canvas" />
@@ -46,6 +48,6 @@ export function CanvasListPreview(props: CanvasListPreviewProps) {
           </LocaleString>
         )}
       </div>
-    </button>
+    </Component>
   );
 }

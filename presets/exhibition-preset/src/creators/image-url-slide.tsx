@@ -18,11 +18,12 @@ export const imageUrlSlideCreator = defineCreator({
   ...imageUrlCreator,
   id: "@exhibitions/image-url-creator",
   create: createUrlSlide,
-  tags: ["exhibition-slide"],
-  label: "Image",
+  tags: ["exhibition-slide", "exhibition-slideshow-slide"],
+  label: "Image from URL",
   summary: "Image from URL",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
@@ -73,5 +74,6 @@ async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionC
     height,
     type: "default", // default / left / right / bottom
     items: [annotation],
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
   });
 }

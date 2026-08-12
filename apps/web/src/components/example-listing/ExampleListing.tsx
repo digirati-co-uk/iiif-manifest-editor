@@ -15,7 +15,7 @@ export function ExampleListing({
                 {example.thumbnail ? (
                   <img src={example.thumbnail} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-black/40">No thumbnail</div>
+                  <div className="w-full h-full flex items-center justify-center text-black/60">No thumbnail</div>
                 )}
               </div>
               <span className="underline p-3  text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">

@@ -12,17 +12,17 @@ import { queryClient } from "../site/Provider";
 const localStore =
   typeof window !== "undefined"
     ? createStore(
-        "manifest-editor-projects-v2",
-        "manifest-editor-project-store",
-      )
+      "manifest-editor-projects-v2",
+      "manifest-editor-project-store",
+    )
     : undefined;
 
 const globalPluginConfigStore =
   typeof window !== "undefined"
     ? createStore(
-        "manifest-editor-global-plugin-config-v1",
-        "manifest-editor-global-plugin-config-store",
-      )
+      "manifest-editor-global-plugin-config-v1",
+      "manifest-editor-global-plugin-config-store",
+    )
     : undefined;
 
 const globalPluginConfigKey = "global-plugin-config";
@@ -253,9 +253,11 @@ export function useBrowserGlobalPluginConfig() {
 
 export function useBrowserProject(id: string) {
   const etag = useRef<string | null>(null);
-  const vault = useMemo(() => {
-    return new Vault();
-  }, [id]);
+  const vaultRef = useRef<{ id: string; vault: Vault } | null>(null);
+  if (vaultRef.current?.id !== id) {
+    vaultRef.current = { id, vault: new Vault() };
+  }
+  const vault = vaultRef.current.vault;
   useEffect(() => {
     setVaultReady(false);
   }, [vault]);
@@ -389,7 +391,7 @@ export function useBrowserProject(id: string) {
     mutationFn: async () => {
       try {
         await saveVaultData.mutateAsync({ force: false });
-      } catch (e) {}
+      } catch (e) { }
       await closeBrowserProject(id);
     },
     onSuccess: async () => {

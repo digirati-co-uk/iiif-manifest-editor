@@ -17,60 +17,53 @@ export const CenterPanel = styled.div`
 
 export const MobileBar = styled.div`
   display: flex;
-  justify-content: space-around;
+  gap: 0.5rem;
   width: 100%;
   background: #fff;
-  border-top: 1px solid #cbcbcb;
-  padding: 0.5em;
-  height: 3.4rem;
-`;
-
-export const LeftBarButton = styled.button`
-  //background: red;
-  padding: 0.5em 1em;
-  width: 32%;
-
-  border-radius: 5px;
-  border: none;
-  background: #ffffff;
-`;
-
-export const PreviewBarButton = styled.button`
-  padding: 0.5em 1em;
-  width: 32%;
-
-  border-radius: 5px;
-
-  background: #5e59c2;
-  border: 1px solid rgba(0, 0, 0, 0.21);
-  color: #ffffff;
-`;
-
-export const DrawerContainer = styled.div`
-  position: relative;
-  width: 32%;
-  margin: 0 0.75em;
+  border-bottom: 1px solid #cbcbcb;
+  padding: 0.5rem;
+  min-height: 4rem;
   z-index: 9;
 `;
 
-export const DrawerButton = styled.button`
-  padding: 0.4em 1em 0.65em;
-  position: absolute;
-  width: 100%;
-  bottom: 1em;
-  background: #ffffff;
-  box-shadow: 0 3px 18px 0 rgba(0, 0, 0, 0.04);
+export const LeftBarButton = styled.button`
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
   border-radius: 5px;
   border: 1px solid #979797;
-  letter-spacing: -0.46px;
+  background: #ffffff;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const DrawerContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+export const DrawerButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #979797;
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   svg {
-    display: block;
-    margin: auto;
-    font-size: 1.8em;
+    flex: 0 0 auto;
+    font-size: 1.25em;
   }
 `;
 
@@ -78,15 +71,16 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
   background: #fff;
   display: flex;
   position: absolute;
-  transform: translateY(100%);
+  transform: translateX(100%);
   overflow-y: auto;
-  left: 0;
+  left: auto;
   right: 0;
-  top: 7em;
+  top: 4rem;
+  width: min(100%, 480px);
   z-index: 10;
   box-shadow:
-    0 -5px 15px 0 rgba(0, 0, 0, 0),
-    0 -3px 5px 0 rgba(0, 0, 0, 0);
+    -5px 0 15px 0 rgba(0, 0, 0, 0),
+    -3px 0 5px 0 rgba(0, 0, 0, 0);
   bottom: 0;
   transition:
     0.3s transform ease-in-out,
@@ -95,9 +89,9 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
     props.$open &&
     css`
       box-shadow:
-        0 -5px 15px 0 rgba(0, 0, 0, 0.1),
-        0 -3px 5px 0 rgba(0, 0, 0, 0.1);
-      transform: translateY(0);
+        -5px 0 15px 0 rgba(0, 0, 0, 0.1),
+        -3px 0 5px 0 rgba(0, 0, 0, 0.1);
+      transform: translateX(0);
     `}
 
   ${ModularPanelHeader} {
@@ -109,14 +103,17 @@ export const DrawerBody = styled.div<{ $open?: boolean }>`
 `;
 
 export const LeftPanel = styled.div<{ $open?: boolean }>`
+  display: flex;
+  flex-direction: column;
   position: absolute;
   transform: translateX(-100%);
   background: #fff;
   left: 0;
-  top: 0;
+  top: 4rem;
   bottom: 0;
+  width: min(90%, 420px);
   z-index: 10;
-  overflow-y: auto;
+  overflow: hidden;
   transition: 0.5s transform;
   ${(props) =>
     props.$open &&
@@ -125,7 +122,8 @@ export const LeftPanel = styled.div<{ $open?: boolean }>`
     `}
 `;
 
-export const Lightbox = styled.div<{ $open?: boolean }>`
+export const Lightbox = styled.button<{ $open?: boolean }>`
+  border: 0;
   background: rgba(0, 0, 0, 0.4);
   pointer-events: none;
   position: absolute;

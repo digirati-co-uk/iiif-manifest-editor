@@ -49,7 +49,7 @@ function QueryStringBackgroundTask() {
     leftPanel: leftPanelActions,
     rightPanel: rightPanelActions,
   } = useLayoutActions();
-  const { leftPanels } = useAvailableLayouts();
+  const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
   const {
     editorFeatureFlags: {
@@ -113,8 +113,14 @@ function QueryStringBackgroundTask() {
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);
-      manifest && edit(manifest);
-      open({ id: manifestOverview.id });
+      manifest &&
+        edit(manifest, undefined, {
+          forceOpen: true,
+          selectedTab: "@manifest-editor/descriptive-properties",
+        });
+      if (centerPanels.some((panel) => panel.id === manifestOverview.id)) {
+        open({ id: manifestOverview.id });
+      }
     }
 
     if (leftPanel.current === rangesPanel.id) {

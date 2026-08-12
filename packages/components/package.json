@@ -27,28 +27,27 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./lib": {
-      "import": "./dist/lib.js",
-      "require": "./dist/lib.cjs"
-    },
     "./package.json": "./package.json",
+    "./lib.css": "./dist/lib.css",
     "./dist/lib.css": "./dist/lib.css"
   },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "storybook": "vite --port=7007 --host=0.0.0.0 --open",
+    "storybook": "storylite dev --port 7007 --host",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
     "prepack": "tsdown"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@floating-ui/react": "^0.26.13",
     "@floating-ui/react-dom": "^2.0.9",
     "@headlessui/react": "^2.0.3",
     "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
-    "@mdxeditor/editor": "^3.29.0",
+    "@mdxeditor/editor": "^4.0.4",
     "@react-aria/collections": "3.0.0-alpha.4",
     "@react-aria/toast": "^3.0.7",
     "@react-stately/toast": "^3.1.2",
@@ -56,7 +55,6 @@
     "@vidstack/react": "^1.11.29",
     "clsx": "^2.1.1",
     "iiif-browser": "catalog:",
-    "lexical": "^0.28.0",
     "mitt": "^3.0.1",
     "polygon-editor": "0.0.23",
     "react": "catalog:",
@@ -77,22 +75,16 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@storylite/storylite": "^0.15.1",
-    "@storylite/vite-plugin": "^0.15.0",
-    "@tailwindcss/postcss": "^4.1.12",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@storylite/renderer-react": "^1.5.4",
+    "@storylite/storylite": "^1.5.4",
+    "@tsdown/css": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@types/react-lazy-load-image-component": "^1.6.4",
     "@types/showdown": "^2.0.6",
-    "@vitejs/plugin-react-swc": "^3.6.0",
     "postcss": "^8.4.38",
-    "postcss-import": "^16.1.0",
-    "rollup-plugin-postcss": "^4.0.2",
     "tailwindcss": "^3.4.3",
-    "tsdown": "0.16.4",
-    "unplugin-lightningcss": "^0.4.1",
-    "vite": "^5.4.21"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"

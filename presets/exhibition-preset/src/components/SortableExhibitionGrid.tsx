@@ -8,15 +8,22 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { createAppActions, useInStack } from "@manifest-editor/editors";
 import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { CanvasContext, useManifest } from "react-iiif-vault";
+import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import { ExhibitionContainer } from "./ExhibitionContainer";
+import { ExhibitionPreviewListLayout, type PreviewMode } from "./ExhibitionPreviewList";
 import { SortableExhibitionItem } from "./SortableExhibitionItem";
 
-export function SortableExhibitionGrid() {
+export function SortableExhibitionGrid({ mode = "grid" }: { mode?: PreviewMode | "grid" }) {
   const manifest = useManifest();
   const { structural, technical } = useManifestEditor();
   const editingStack = useEditingStack();
@@ -50,53 +57,57 @@ export function SortableExhibitionGrid() {
   );
 
   const canvasId = editingCanvas?.resource.source.id;
-  const canvasIndex = canvasId ? items.findIndex((canv) => canv.id === canvasId) : -1;
-  const prevCanvasIndex: number = canvasIndex && canvasIndex > 0 ? Number(canvasIndex - 1) : 0;
+  function onDeleteCanvas(deletedId: string) {
+    if (canvasId !== deletedId) return;
 
-  function onDeleteCanvas() {
-    editingStack.close(); // close the deleted canvas
-    const newCanvases = structural.items.getWithoutTracking(); // refresh canvases
+    const nextCanvasId = getSlideSelectionAfterDeletion(items, canvasId, deletedId);
+    editingStack.close();
 
-    if (newCanvases && newCanvases.length > 0) {
-      canvasActions.edit(newCanvases[prevCanvasIndex]);
-    } else {
-      canvasActions.edit(manifest);
+    if (nextCanvasId) {
+      const newCanvases = structural.items.getWithoutTracking();
+      const nextIndex = newCanvases.findIndex((item) => item.id === nextCanvasId);
+      const nextCanvas = newCanvases[nextIndex];
+      if (nextCanvas) canvasActions.edit(nextCanvas, nextIndex);
     }
   }
 
-  const createActions = useMemo(
-    () => createAppActions(structural.items, onDeleteCanvas),
-    [structural.items, onDeleteCanvas],
-  );
+  const sortableItems = items.map((item, idx) => {
+    if (!item) return null;
+    return (
+      <CanvasContext key={item.id} canvas={item.id}>
+        <SortableExhibitionItem
+          item={item}
+          isFirst={idx === 0}
+          mode={mode === "grid" ? undefined : mode}
+          onClick={() => {
+            open({ id: "current-canvas" });
+            canvasActions.edit(item, idx);
+          }}
+          actions={createAppActions(structural.items, () => onDeleteCanvas(item.id))(item, idx, manifest!)}
+        />
+      </CanvasContext>
+    );
+  });
+  const layout =
+    mode === "grid" ? (
+      <ExhibitionContainer>{sortableItems}</ExhibitionContainer>
+    ) : (
+      <ExhibitionPreviewListLayout>{sortableItems}</ExhibitionPreviewListLayout>
+    );
 
   return (
-    <ExhibitionContainer>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={onDragEnd}
-        modifiers={[restrictToParentElement]}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={onDragEnd}
+      modifiers={[restrictToParentElement]}
+    >
+      <SortableContext
+        items={items}
+        strategy={mode === "grid" ? rectSortingStrategy : verticalListSortingStrategy}
       >
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((item, idx) => {
-            if (!item) return null;
-            return (
-              <CanvasContext key={item.id} canvas={item.id}>
-                <SortableExhibitionItem
-                  key={item.id}
-                  item={item}
-                  isFirst={idx === 0}
-                  onClick={() => {
-                    open({ id: "current-canvas" });
-                    canvasActions.edit(item, idx);
-                  }}
-                  actions={createActions(item, idx, manifest!)}
-                />
-              </CanvasContext>
-            );
-          })}
-        </SortableContext>
-      </DndContext>
-    </ExhibitionContainer>
+        {layout}
+      </SortableContext>
+    </DndContext>
   );
 }

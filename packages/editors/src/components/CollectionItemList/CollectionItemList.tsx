@@ -53,6 +53,7 @@ export function CollectionItemList(props: CollectionItemListProps) {
   if (props.reorder) {
     return (
       <ReorderList
+        list
         id={props.id || "reorder-collection-item-list"}
         marginBottom="0.5em"
         items={props.list || []}
@@ -62,11 +63,19 @@ export function CollectionItemList(props: CollectionItemListProps) {
           const ref = isSpecificResource(item) ? item.source : item;
           return ref.type === "Manifest" ? (
             <ManifestContext manifest={ref.id}>
-              <ManifestListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
+              <ManifestListItem
+                as="div"
+                onAction={() => props.onSelect(ref, index)}
+                isActive={props.activeId === ref.id}
+              />
             </ManifestContext>
           ) : (
             <CollectionContext collection={ref.id}>
-              <CollectionListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />
+              <CollectionListItem
+                as="div"
+                onAction={() => props.onSelect(ref, index)}
+                isActive={props.activeId === ref.id}
+              />
             </CollectionContext>
           );
         }}

@@ -24,7 +24,7 @@ export function useOptionalLocalStorage<T>(
 }
 
 export function useLocalStorage<T>(key: string, initialValue?: T) {
-  const lastStoredValue = useRef<string>();
+  const lastStoredValue = useRef<string | undefined>(undefined);
 
   if (!lastStoredValue.current && typeof initialValue !== "undefined") {
     lastStoredValue.current = JSON.stringify(initialValue);

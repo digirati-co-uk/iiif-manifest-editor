@@ -1,3 +1,4 @@
+import { esmExternalRequirePlugin } from "rolldown/plugins";
 import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
@@ -8,4 +9,7 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
+  deps: { alwaysBundle: ["react-accessible-dropdown-menu-hook"] },
+  sourcemap: true,
+  plugins: [esmExternalRequirePlugin({ external: ["react"] })],
 }));

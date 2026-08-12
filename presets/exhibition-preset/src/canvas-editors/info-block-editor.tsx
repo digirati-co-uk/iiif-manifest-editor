@@ -1,5 +1,4 @@
-import { ActionButton } from "@manifest-editor/components";
-import { TiptapRichTextLanguageField } from "@manifest-editor/editors";
+import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import {
   type CanvasEditorDefinition,
   useConfig,
@@ -21,18 +20,12 @@ import {
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { getGridStats, getHeightWidthRatio } from "../helpers";
-import {
-  exhibitionPreviewPresetOptions,
-  useExhibitionPreviewPreset,
-} from "../helpers/exhibition-preview-state";
-import type { PresetUrlSearchParamsPreset } from "../helpers/exhibition-preview-url-helper";
+import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
 
 export const infoBlockEditor: CanvasEditorDefinition = {
   id: "info-block-editor",
   label: "info Block Editor",
-  component: (strategy) => (
-    <InfoBlockEditor strategy={strategy as TextualContentStrategy} />
-  ),
+  component: (strategy) => <InfoBlockEditor strategy={strategy as TextualContentStrategy} />,
   supports: {
     strategy: (strategy, _resource, _vault) => {
       if (strategy.type !== "textual-content") {
@@ -94,9 +87,7 @@ function LanguageSelector({
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
-  const addableLanguages = availableLanguages.filter(
-    (l) => !languages.includes(l),
-  );
+  const addableLanguages = availableLanguages.filter((l) => !languages.includes(l));
   const details = getLanguageCodeDetails(selectedLanguage);
 
   return (
@@ -107,13 +98,7 @@ function LanguageSelector({
         onClick={() => setOpen((v) => !v)}
       >
         <span className="">{details?.label || selectedLanguage}</span>
-        <svg
-          className="h-3 w-3 text-slate-400"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
+        <svg className="h-3 w-3 text-slate-400" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={2}>
           <path d="M2 4l4 4 4-4" />
         </svg>
       </button>
@@ -133,9 +118,7 @@ function LanguageSelector({
                     type="button"
                     className={twMerge(
                       "flex w-full items-center gap-2 px-3 py-1.5 text-xs hover:bg-slate-50",
-                      lang === selectedLanguage
-                        ? "font-semibold text-slate-900"
-                        : "text-slate-600",
+                      lang === selectedLanguage ? "font-semibold text-slate-900" : "text-slate-600",
                     )}
                     onClick={() => {
                       onSelectLanguage(lang);
@@ -143,24 +126,13 @@ function LanguageSelector({
                     }}
                   >
                     {lang === selectedLanguage ? (
-                      <svg
-                        className="h-3 w-3 shrink-0 text-slate-500"
-                        viewBox="0 0 12 12"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M2 6l3 3 5-5"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          fill="none"
-                        />
+                      <svg className="h-3 w-3 shrink-0 text-slate-500" viewBox="0 0 12 12" fill="currentColor">
+                        <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth={2} fill="none" />
                       </svg>
                     ) : (
                       <div className="h-3 w-3 shrink-0 text-slate-500" />
                     )}
-                    <span className={lang === selectedLanguage ? "" : "ml-5"}>
-                      {details?.label || lang}
-                    </span>
+                    <span className={lang === selectedLanguage ? "" : "ml-5"}>{details?.label || lang}</span>
                   </button>
                 );
               })}
@@ -169,9 +141,7 @@ function LanguageSelector({
 
           {addableLanguages.length > 0 && (
             <>
-              {languages.length > 0 && (
-                <div className="my-1 border-t border-slate-100" />
-              )}
+              {languages.length > 0 && <div className="my-1 border-t border-slate-100" />}
               <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                 Add language
               </div>
@@ -204,9 +174,7 @@ function LanguageSelector({
           )}
 
           {addableLanguages.length === 0 && languages.length === 0 && (
-            <div className="px-3 py-2 text-xs text-slate-400">
-              No languages available
-            </div>
+            <div className="px-3 py-2 text-xs text-slate-400">No languages available</div>
           )}
         </div>
       )}
@@ -242,9 +210,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const hasDimension = Boolean(dims.h && dims.w);
   const { isBottom, isLeft, isRight } = getGridStats(behavior);
   const compact = hasDimension && dims.w <= 6;
-  const annotationPage = useVaultSelector((_, vault) =>
-    canvas?.items[0] ? vault.get(canvas.items[0]) : null,
-  );
+  const annotationPage = useVaultSelector((_, vault) => (canvas?.items[0] ? vault.get(canvas.items[0]) : null));
   const longSummaries = useVaultSelector((_, vault) =>
     canvas?.annotations[0] ? vault.get(canvas?.annotations[0]!) : null,
   );
@@ -253,11 +219,12 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
     i18n: { availableLanguages, defaultLanguage },
   } = useConfig();
 
-  const [mode, setMode] = useLocalStorage<InfoBlockMode>(
-    "exhibition-info-block-mode",
-    "edit",
-  );
-  const [previewPreset, setPreviewPreset] = useExhibitionPreviewPreset();
+  const [mode, setMode] = useLocalStorage<InfoBlockMode>("exhibition-info-block-mode", "edit");
+  const previewPreset = useConfiguredExhibitionPreviewPreset();
+  const isFullPagePreset = previewPreset === "exhibition";
+  const showShortSummary = isFullPagePreset;
+  const shortSummaryHeading = "Short text in info box";
+  const longSummaryHeading = isFullPagePreset ? "Read more text in modal" : "Summary";
 
   // Collect all languages present in the canvas
   const presentLanguages = useMemo(() => {
@@ -284,16 +251,14 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   };
 
   // For narrow columns (w <= 6), cap the editor width so it doesn't sprawl
-  const editorMaxWidth = compact ? "28rem" : undefined;
+  const editorMaxWidth = compact ? "30rem" : undefined;
 
   return (
     <div className="relative z-0 flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden bg-white">
       {/* Toolbar — same height and position as the image viewer toolbar */}
       <div className="exhibition-slideshow-current-toolbar flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="min-w-0 flex-1">
-          <LocaleString className="block truncate text-sm font-semibold text-slate-800">
-            {canvas?.label}
-          </LocaleString>
+          <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas?.label}</LocaleString>
         </div>
         <div className="flex items-center gap-2">
           {mode === "edit" && (
@@ -305,32 +270,11 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
               onAddLanguage={handleAddLanguage}
             />
           )}
-          {mode === "preview" ? (
-            <select
-              className="rounded-md border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm"
-              value={previewPreset}
-              onChange={(e) =>
-                setPreviewPreset(e.target.value as PresetUrlSearchParamsPreset)
-              }
-            >
-              {exhibitionPreviewPresetOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          ) : null}
           <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-xs font-semibold">
-            <ModeButton
-              selected={mode === "edit"}
-              onPress={() => setMode("edit")}
-            >
+            <ModeButton selected={mode === "edit"} onPress={() => setMode("edit")}>
               Edit
             </ModeButton>
-            <ModeButton
-              selected={mode === "preview"}
-              onPress={() => setMode("preview")}
-            >
+            <ModeButton selected={mode === "preview"} onPress={() => setMode("preview")}>
               Preview
             </ModeButton>
           </div>
@@ -344,26 +288,28 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
         </div>
       ) : (
         <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-          <SummarySection
-            annotationPage={annotationPage}
-            compact={compact}
-            editorMaxWidth={editorMaxWidth}
-            fallbackText={strategy.items[0]?.text}
-            heading="Short summary"
-            panelClassName={twMerge(
-              "border-b border-gray-100",
-              compact ? "p-3" : "p-5",
-              hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
-              hasDimension && isBottom ? "max-w-4xl" : "",
-            )}
-            parentProperty="items"
-            selectedLanguage={effectiveLanguage}
-            onLanguageAdded={handleAddLanguage}
-          />
+          {showShortSummary ? (
+            <SummarySection
+              annotationPage={annotationPage}
+              compact={compact}
+              editorMaxWidth={editorMaxWidth}
+              fallbackText={strategy.items[0]?.text}
+              heading={shortSummaryHeading}
+              panelClassName={twMerge(
+                "border-b border-gray-100",
+                compact ? "p-3" : "p-5",
+                hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
+                hasDimension && isBottom ? "max-w-4xl" : "",
+              )}
+              parentProperty="items"
+              selectedLanguage={effectiveLanguage}
+              onLanguageAdded={handleAddLanguage}
+            />
+          ) : null}
           <SummarySection
             annotationPage={longSummaries}
             compact={compact}
-            heading="Long summary"
+            heading={longSummaryHeading}
             panelClassName={twMerge(compact ? "p-3" : "p-5")}
             parentProperty="annotations"
             selectedLanguage={effectiveLanguage}
@@ -377,22 +323,12 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
 
 // ─── Small UI components ──────────────────────────────────────────────────────
 
-function ModeButton({
-  children,
-  selected,
-  onPress,
-}: {
-  children: string;
-  selected: boolean;
-  onPress: () => void;
-}) {
+function ModeButton({ children, selected, onPress }: { children: string; selected: boolean; onPress: () => void }) {
   return (
     <Button
       className={twMerge(
         "px-3 py-2 text-xs font-semibold transition",
-        selected
-          ? "bg-white text-slate-900 shadow-sm"
-          : "text-slate-500 hover:text-slate-700",
+        selected ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700",
       )}
       onPress={onPress}
     >
@@ -499,9 +435,7 @@ function SummarySection({
 
       // Create a new body with the selected language by cloning the first body's structure
       const firstBodyRef = bodies[0];
-      const firstBody = firstBodyRef
-        ? resolveResource(firstBodyRef, vault)
-        : null;
+      const firstBody = firstBodyRef ? resolveResource(firstBodyRef, vault) : null;
       const newBodyId = `${annotation.id}-body-${selectedLanguage}-${Date.now()}`;
       vault.batch(() => {
         vault.dispatch({
@@ -515,11 +449,10 @@ function SummarySection({
             motivation: firstBody?.motivation,
           },
         });
-        vault.modifyEntityField(
-          { id: annotation.id, type: "Annotation" },
-          "body",
-          [...bodies, { id: newBodyId, type: "ContentResource" }],
-        );
+        vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", [
+          ...bodies,
+          { id: newBodyId, type: "ContentResource" },
+        ]);
       });
       addedAny = true;
     }
@@ -550,12 +483,7 @@ function SummarySection({
 
   return (
     <section className={twMerge("min-w-0 max-w-full", panelClassName)}>
-      <div
-        className={twMerge(
-          "flex items-center justify-between gap-3",
-          visibleItems.length ? "mb-3" : "mb-0",
-        )}
-      >
+      <div className={twMerge("flex items-center justify-between gap-3", visibleItems.length ? "mb-3" : "mb-0")}>
         <h2
           className={twMerge(
             "font-semibold tracking-tight text-gray-700",
@@ -573,21 +501,15 @@ function SummarySection({
 
       {!page && fallbackText ? (
         <div className="mt-2 text-sm text-gray-600">
-          <LocaleString enableDangerouslySetInnerHTML>
-            {fallbackText}
-          </LocaleString>
+          <LocaleString enableDangerouslySetInnerHTML>{fallbackText}</LocaleString>
         </div>
       ) : null}
 
       {visibleItems.length ? (
         <div className="min-w-0 max-w-full">
           {visibleItems.map(({ item: annotation, index }) => (
-            <AnnotationContext
-              key={annotation.id + index}
-              annotation={annotation.id}
-            >
+            <AnnotationContext key={annotation.id + index} annotation={annotation.id}>
               <AnnotationEditor
-                compact={compact}
                 editorMaxWidth={editorMaxWidth}
                 pageItems={items}
                 pageRef={{ id: page.id, type: "AnnotationPage" }}
@@ -596,9 +518,7 @@ function SummarySection({
                   vault.modifyEntityField(
                     { id: page.id, type: "AnnotationPage" },
                     "items",
-                    items.filter(
-                      (_item: any, itemIndex: number) => itemIndex !== index,
-                    ),
+                    items.filter((_item: any, itemIndex: number) => itemIndex !== index),
                   );
                 }}
               />
@@ -606,28 +526,19 @@ function SummarySection({
           ))}
         </div>
       ) : page && languageExistsInPage ? (
-        <div
-          className={twMerge(
-            "mt-2 text-sm text-gray-400 italic",
-            compact ? "" : "",
-          )}
-        >
-          No text added yet.
-        </div>
+        <div className={twMerge("mt-2 text-sm text-gray-400 italic", compact ? "" : "")}>No text added yet.</div>
       ) : null}
     </section>
   );
 }
 
 function AnnotationEditor({
-  compact,
   editorMaxWidth,
   onRemoveAnnotation: _onRemoveAnnotation,
   pageItems,
   pageRef,
   selectedLanguage,
 }: {
-  compact?: boolean;
   editorMaxWidth?: string;
   onRemoveAnnotation: () => void;
   pageItems: any[];
@@ -648,30 +559,20 @@ function AnnotationEditor({
     item,
     index,
   }));
-  const languageBodies = allBodiesWithIndex.filter(
-    ({ item }: { item: any }) => {
-      const body = resolveResource(item, vault);
-      return body?.language === selectedLanguage;
-    },
-  );
+  const languageBodies = allBodiesWithIndex.filter(({ item }: { item: any }) => {
+    const body = resolveResource(item, vault);
+    return body?.language === selectedLanguage;
+  });
   const visibleBodies = languageBodies.length > 0 ? languageBodies : [];
 
   const pruneEmptySiblings = useCallback(
     (currentBodyId: string) => {
       const nextBodies = filterEmptyRefs(bodies, vault, currentBodyId);
       if (nextBodies.length !== bodies.length) {
-        vault.modifyEntityField(
-          { id: annotation.id, type: "Annotation" },
-          "body",
-          nextBodies,
-        );
+        vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", nextBodies);
       }
 
-      const nextPageItems = filterEmptyAnnotations(
-        pageItems,
-        vault,
-        annotation.id,
-      );
+      const nextPageItems = filterEmptyAnnotations(pageItems, vault, annotation.id);
       if (nextPageItems.length !== pageItems.length) {
         vault.modifyEntityField(pageRef, "items", nextPageItems);
       }
@@ -686,39 +587,31 @@ function AnnotationEditor({
 
   return (
     <div className="min-w-0 max-w-full overflow-hidden">
-      {visibleBodies.map(
-        ({ item: body, index }: { item: any; index: number }) => (
-          <TiptapAnnotationBodyEditor
-            key={body.id || index}
-            resourceId={body.id}
-            onRemove={() => editor.annotation.body.deleteAtIndex(index)}
-            onUpdate={() => pruneEmptySiblings(body.id)}
-            compact={compact}
-            editorMaxWidth={editorMaxWidth}
-          />
-        ),
-      )}
+      {visibleBodies.map(({ item: body, index }: { item: any; index: number }) => (
+        <HTMLAnnotationBodyEditor
+          key={body.id || index}
+          resourceId={body.id}
+          onRemove={() => editor.annotation.body.deleteAtIndex(index)}
+          onUpdate={() => pruneEmptySiblings(body.id)}
+          editorMaxWidth={editorMaxWidth}
+        />
+      ))}
     </div>
   );
 }
 
-function TiptapAnnotationBodyEditor({
-  compact,
+function HTMLAnnotationBodyEditor({
   editorMaxWidth,
   resourceId,
   onRemove,
   onUpdate,
 }: {
-  compact?: boolean;
   editorMaxWidth?: string;
   resourceId: string;
   onRemove: () => void;
   onUpdate: () => void;
 }) {
-  const resourceRef = useMemo(
-    () => ({ id: resourceId, type: "ContentResource" as const }),
-    [resourceId],
-  );
+  const resourceRef = useMemo(() => ({ id: resourceId, type: "ContentResource" as const }), [resourceId]);
   const editor = useGenericEditor(resourceRef);
   const {
     i18n: { advancedLanguageMode, availableLanguages, defaultLanguage },
@@ -730,9 +623,7 @@ function TiptapAnnotationBodyEditor({
     : languageValue || defaultLanguage || "en";
 
   useEffect(() => {
-    const nextLanguage = Array.isArray(language.get())
-      ? language.get()[0]
-      : language.get();
+    const nextLanguage = Array.isArray(language.get()) ? language.get()[0] : language.get();
     if (!advancedLanguageMode && nextLanguage !== currentLanguage) {
       language.set(currentLanguage as any);
     }
@@ -744,20 +635,32 @@ function TiptapAnnotationBodyEditor({
       className="min-w-0 max-w-full overflow-hidden"
       style={editorMaxWidth ? { maxWidth: editorMaxWidth } : undefined}
     >
-      <TiptapRichTextLanguageField
-        language={currentLanguage}
-        languages={availableLanguages}
+      {advancedLanguageMode ? (
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <select
+            aria-label="Language"
+            className="rounded border border-slate-200 bg-white px-2 py-1 text-sm"
+            value={currentLanguage}
+            onChange={(event) => language.set(event.currentTarget.value as any)}
+          >
+            {availableLanguages.map((availableLanguage) => (
+              <option key={availableLanguage} value={availableLanguage}>
+                {availableLanguage}
+              </option>
+            ))}
+          </select>
+          <button type="button" className="text-sm text-slate-600 hover:text-slate-900" onClick={onRemove}>
+            Remove
+          </button>
+        </div>
+      ) : null}
+      <HTMLEditor
+        key={`${resourceId}:${currentLanguage}`}
         value={value.get() || ""}
-        onUpdate={(newValue) => {
+        onChange={(newValue) => {
           value.set(newValue);
           onUpdate();
         }}
-        onUpdateLanguage={
-          advancedLanguageMode
-            ? (newLanguage) => language.set(newLanguage as any)
-            : undefined
-        }
-        onRemove={advancedLanguageMode ? onRemove : undefined}
       />
     </div>
   );
@@ -765,9 +668,7 @@ function TiptapAnnotationBodyEditor({
 
 function getVisibleItems(items: any[], vault: any) {
   const withIndex = items.map((item, index) => ({ item, index }));
-  const nonEmpty = withIndex.filter(
-    ({ item }) => !isAnnotationEmpty(item, vault),
-  );
+  const nonEmpty = withIndex.filter(({ item }) => !isAnnotationEmpty(item, vault));
   return nonEmpty.length ? nonEmpty : withIndex.slice(0, 1);
 }
 
@@ -778,16 +679,12 @@ function getVisibleBodyRefs(items: any[], vault: any) {
 }
 
 function filterEmptyAnnotations(items: any[], vault: any, keepId?: string) {
-  const filtered = items.filter(
-    (item) => item?.id === keepId || !isAnnotationEmpty(item, vault),
-  );
+  const filtered = items.filter((item) => item?.id === keepId || !isAnnotationEmpty(item, vault));
   return filtered.length ? filtered : items.slice(0, 1);
 }
 
 function filterEmptyRefs(items: any[], vault: any, keepId?: string) {
-  const filtered = items.filter(
-    (item) => item?.id === keepId || !isBodyRefEmpty(item, vault),
-  );
+  const filtered = items.filter((item) => item?.id === keepId || !isBodyRefEmpty(item, vault));
   return filtered.length ? filtered : items.slice(0, 1);
 }
 
@@ -827,9 +724,7 @@ function resolveResource(resource: any, vault: any) {
     return resource;
   }
 
-  return (
-    vault.get(resource as any, { skipSelfReturn: false } as any) || resource
-  );
+  return vault.get(resource as any, { skipSelfReturn: false } as any) || resource;
 }
 
 function toArray<T>(value: T | T[] | null | undefined): T[] {

@@ -1,25 +1,39 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { InputContainer, PaintingAnnotationList } from "@manifest-editor/editors";
+import { InputContainer, LanguageMapEditor, PaintingAnnotationList } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
   useEditingResource,
+  useCreator,
   useEditor,
   useLayoutActions,
+  useManifestEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { AnnotationPageContext, useCanvas, useVault } from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
+import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
+import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
-import { supportsTourSteps } from "../slideshow-content-positioning";
+import {
+  getTourStepAnnotations,
+  supportsTourSteps,
+  useSlideshowWorkbenchState,
+} from "../slideshow-content-positioning";
 import {
   buildLayoutPresetBehaviors,
+  FloatingPositionPicker,
+  getFloatingBehavior,
   getLayoutPreset,
+  hasFloatingBehavior,
   injectTextPlaceholders,
   LayoutPresetCard,
-  layoutPresetOptions,
+  updateFloatingBehavior,
+  useExhibitionTemplateControls,
 } from "./SlideBehaviours";
 import { getLanguageMapHtml } from "./summary-html";
+import { ExhibitionHtmlSummaryEditor } from "./ExhibitionSummaryEditor";
+import { isOpeningSplashCanvas } from "./opening-splash";
 
 export const exhibitionCanvasEditor: EditorDefinition = {
   id: "@exhibition/right-panel-editor",
@@ -48,18 +62,37 @@ export function ExhibitionCanvasAdvancedPanel() {
 }
 
 export function ExhibitionCanvasAdvancedContent() {
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
   const vault = useVault();
+  const manifestEditor = useManifestEditor();
   const resource = useEditingResource();
   const { structural, technical } = useEditor();
   const { items } = structural;
   const behavior = technical.behavior.get() || [];
   const pages = items.get();
   const page = pages[0];
+  const [, annotationActions] = useCreator(
+    page ? { id: page.id, type: "AnnotationPage" } : undefined,
+    "items",
+    "Annotation",
+    canvas ? { id: canvas.id, type: "Canvas" } : undefined,
+    { isPainting: true },
+  );
 
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
+  const isOpeningCover = isOpeningSplashCanvas(canvas, manifestEditor.structural.items.get());
   const tourSupported = supportsTourSteps(vault, canvas);
+  const hasTourSteps = useVaultSelector(
+    (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
+    [canvas?.id, canvas?.annotations?.[0]?.id],
+  );
+  const controls = useExhibitionTemplateControls(behavior, hasTourSteps);
+
+  useEffect(() => {
+    setCenterPanelMode("preview");
+  }, [setCenterPanelMode]);
 
   if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
 
@@ -77,42 +110,80 @@ export function ExhibitionCanvasAdvancedContent() {
     <ResourceEditingProvider resource={canvas}>
       {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
 
-      <ReadonlyExhibitionSummary canvas={canvas} />
+      <RescaleSingleImagePrompt />
 
-      <InputContainer $wide>
-        <div>
-          <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">Layout preset</div>
-          <div className="grid grid-cols-2 gap-3">
-            {layoutPresetOptions.map((option) => (
-              <LayoutPresetCard
-                key={option.value}
-                preset={option.value}
-                label={option.label}
-                selected={getLayoutPreset(behavior) === option.value}
-                onClick={() => {
-                  technical.behavior.set(
-                    buildLayoutPresetBehaviors(
-                      behavior,
-                      option.value,
-                      canvas ? { width: canvas.width, height: canvas.height } : undefined,
-                    ),
-                  );
-                  if (canvas) {
-                    injectTextPlaceholders(vault, canvas, option.value);
-                  }
-                }}
+      {isOpeningCover ? (
+        <ManifestSplashFields manifestEditor={manifestEditor} />
+      ) : (
+        <ReadonlyExhibitionSummary canvas={canvas} />
+      )}
+
+      <CanvasBackgroundColorField editor={technical.backgroundColor} />
+
+      {controls.layoutOptions.length || (controls.isSlideshow && hasFloatingBehavior(behavior)) ? (
+        <InputContainer $wide>
+          <div>
+            <div className="exhibition-workbench-muted mb-3 text-sm font-semibold">
+              {controls.isSlideshow && hasFloatingBehavior(behavior) ? "Text overlay position" : "Text placement"}
+            </div>
+            {controls.isSlideshow && hasFloatingBehavior(behavior) ? (
+              <FloatingPositionPicker
+                value={getFloatingBehavior(behavior)}
+                onChange={(next) => technical.behavior.set(updateFloatingBehavior(behavior, next))}
               />
-            ))}
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {controls.layoutOptions.map((option) => (
+                  <LayoutPresetCard
+                    key={option.value}
+                    preset={option.value}
+                    label={option.label}
+                    selected={getLayoutPreset(behavior) === option.value}
+                    onClick={() => {
+                      technical.behavior.set(
+                        buildLayoutPresetBehaviors(
+                          behavior,
+                          option.value,
+                          canvas ? { width: canvas.width, height: canvas.height } : undefined,
+                        ),
+                      );
+                      if (canvas) {
+                        injectTextPlaceholders(vault, canvas, option.value);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="More display options" />
           </div>
-          <EditorTabLink canvas={canvas} tabId="slide-behaviors" label="Edit layout options" />
-        </div>
-      </InputContainer>
+        </InputContainer>
+      ) : null}
 
-      {tourSupported ? <TourStepsSummary canvas={canvas} /> : null}
+      {tourSupported && !isOpeningCover ? <TourStepsSummary canvas={canvas} /> : null}
 
       <AnnotationPageContext annotationPage={page.id}>
-        <PaintingAnnotationList createFilter="image" />
+        <PaintingAnnotationList
+          onCreate={() => {
+            setCenterPanelMode("edit");
+            annotationActions.createFiltered("image", undefined, { skipEditingOnCreate: true });
+          }}
+        />
       </AnnotationPageContext>
+    </ResourceEditingProvider>
+  );
+}
+
+function ManifestSplashFields({ manifestEditor }: { manifestEditor: ReturnType<typeof useManifestEditor> }) {
+  const manifest = {
+    ...manifestEditor.ref(),
+    summary: manifestEditor.descriptive.summary.get(),
+  };
+
+  return (
+    <ResourceEditingProvider resource={manifest}>
+      <LanguageMapEditor dispatchType="label" />
+      <ExhibitionHtmlSummaryEditor resource={manifest} />
     </ResourceEditingProvider>
   );
 }

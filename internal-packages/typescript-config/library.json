@@ -1,12 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Next.js",
+  "display": "Library",
   "extends": "./base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "declarationMap": true,
     "declaration": true,
-    "moduleResolution": "Bundler",
-    "allowJs": true
+    "declarationMap": true
   }
 }

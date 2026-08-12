@@ -1,11 +1,12 @@
-import { type BoxSelector, type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
+import { type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
+import { browserImageApiSelector, browserTransformDimensions, type IIIFBrowserOutputItem } from "./iiif-browser-output";
 
-function croppedRegion(
+export function croppedRegion(
   imageServiceId: string,
   region: {
     x: number;
@@ -14,22 +15,20 @@ function croppedRegion(
     height: number;
   },
   size: string,
+  rotation: number | string = 0,
 ) {
   return `${imageServiceId}/${Math.floor(region.x)},${Math.floor(region.y)},${Math.floor(region.width)},${Math.floor(
     region.height,
-  )}/${size}/0/default.jpg`;
+  )}/${size}/${rotation}/default.jpg`;
 }
 
 export interface IIIFBrowserCreatorPayload {
   // This is the output (JSON) from the IIIF Browser.
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
-  output: Array<{
-    resource: any;
-    parent: { id: string; type: string } | undefined;
-    selector: BoxSelector | undefined;
-  }>;
+  output: IIIFBrowserOutputItem[];
   trackSize?: (dimensions: { width: number; height: number }) => void;
+  trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
 }
 
 export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext) {
@@ -38,7 +37,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
   const returnResources: any[] = [];
 
-  for (const { resource, selector, parent } of resources) {
+  for (const { resource, selector, parent, rotation } of resources) {
     const type = resource.type;
     const previewVault = new Vault();
 
@@ -60,22 +59,48 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
         invariant(manifest, "Manifest not found");
 
+        const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
+        data.trackManifest?.({
+          requiredStatement: manifest.requiredStatement,
+          rights: manifest.rights,
+          ...(addManifestMetadataToCanvas ? { metadata: manifest.metadata || [] } : {}),
+          partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+        });
+        const addManifestTracking = (resource: any): any => {
+          if (resource.type === "SpecificResource" && resource.source) {
+            return {
+              ...resource,
+              source: addManifestTracking(resource.source),
+            };
+          }
+          const metadata =
+            resource.type === "Canvas" && !addManifestMetadataToCanvas ? {} : { metadata: manifest.metadata || [] };
+
+          return {
+            requiredStatement: manifest.requiredStatement,
+            rights: manifest.rights,
+            ...metadata,
+            ...resource,
+            partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+          };
+        };
+
         const canvasRef = manifest.items.find((item) => item.id === canvasId);
 
         invariant(canvasRef, "Canvas not found");
 
         const canvas = previewVault.get(canvasRef);
 
-        if (targetType === "Canvas" && selector?.type !== "BoxSelector") {
+        const imageApiSelector = browserImageApiSelector(selector, rotation);
+
+        if (targetType === "Canvas" && !imageApiSelector) {
           const fullCanvas = previewVault.toPresentation3<Canvas>(canvas)!;
           if (!fullCanvas.label) {
             fullCanvas.label = { en: ["Untitled canvas"] };
           }
 
-          // @todo add partof manifest
-
           // Load before embedding.
-          ctx.vault.loadSync(fullCanvas.id, fullCanvas);
+          ctx.vault.loadSync(fullCanvas.id, addManifestTracking(fullCanvas));
           // Then embed.
           returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
           continue;
@@ -109,26 +134,16 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           }
 
           // Check for selector on state.
-          if (selector?.type === "BoxSelector") {
-            const imageApiSelector = {
-              type: "ImageApiSelector",
-              region: [
-                ~~selector.spatial.x,
-                ~~selector.spatial.y,
-                ~~selector.spatial.width,
-                ~~selector.spatial.height,
-              ].join(","),
-            };
-
-            // Change the body ID to be the cropped image.
+          if (imageApiSelector) {
+            // Preserve the existing cropped request URL when a region exists.
             const newBody = { ...fullAnnotation.body };
             let thumbnailId = "";
             // Cropped id.
-            if (service) {
+            if (service && selector?.type === "BoxSelector") {
               const id = service.id || service["@id"] || "";
               if (id) {
-                newBody.id = croppedRegion(id, selector.spatial, "max");
-                thumbnailId = croppedRegion(id, selector.spatial, "512,");
+                newBody.id = croppedRegion(id, selector.spatial, "max", rotation);
+                thumbnailId = croppedRegion(id, selector.spatial, "512,", rotation);
               }
             }
             // Generate cropped image URL.
@@ -140,15 +155,21 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
               selector: imageApiSelector,
             };
 
+            const transformedDimensions = browserTransformDimensions(
+              selector?.type === "BoxSelector"
+                ? {
+                    width: ~~selector.spatial.width,
+                    height: ~~selector.spatial.height,
+                  }
+                : dimensions,
+              rotation,
+            );
             if (data.trackSize) {
-              data.trackSize({
-                width: ~~selector.spatial.width,
-                height: ~~selector.spatial.height,
-              });
+              data.trackSize(transformedDimensions);
             }
 
             if (targetType === "ContentResource") {
-              returnResources.push(fullAnnotation.body);
+              returnResources.push(addManifestTracking(fullAnnotation.body));
               continue;
             }
 
@@ -164,35 +185,41 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                 items: [fullAnnotation],
               });
 
+              const { width, height } = transformedDimensions;
+
               returnResources.push(
-                ctx.embed({
-                  id: canvasId,
-                  type: "Canvas",
-                  label: { en: ["Untitled canvas"] },
-                  width: ~~selector.spatial.width,
-                  height: ~~selector.spatial.height,
-                  thumbnail: thumbnailId
-                    ? [
-                        ctx.embed({
-                          id: thumbnailId,
-                          type: "Image",
-                          format: "image/jpeg",
-                          width: 512,
-                          height: Math.round((selector.spatial.height / selector.spatial.width) * 512),
-                        }),
-                      ]
-                    : undefined,
-                  items: [annotationPage],
-                }),
+                ctx.embed(
+                  addManifestTracking({
+                    id: canvasId,
+                    type: "Canvas",
+                    label: { en: ["Untitled canvas"] },
+                    width,
+                    height,
+                    thumbnail: thumbnailId
+                      ? [
+                          ctx.embed({
+                            id: thumbnailId,
+                            type: "Image",
+                            format: "image/jpeg",
+                            width: 512,
+                            height: Math.round((height / width) * 512),
+                          }),
+                        ]
+                      : undefined,
+                    items: [annotationPage],
+                  }),
+                ),
               );
               continue;
             }
 
             returnResources.push(
-              ctx.embed({
-                ...fullAnnotation,
-                target: ctx.getTarget(),
-              }),
+              ctx.embed(
+                addManifestTracking({
+                  ...fullAnnotation,
+                  target: ctx.getTarget(),
+                }),
+              ),
             );
             continue;
           }
@@ -200,10 +227,12 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           // @todo check return types (At the moment only annotation is supported.)
 
           returnResources.push(
-            ctx.embed({
-              ...fullAnnotation,
-              target: ctx.getTarget(),
-            }),
+            ctx.embed(
+              addManifestTracking({
+                ...fullAnnotation,
+                target: ctx.getTarget(),
+              }),
+            ),
           );
         }
       }

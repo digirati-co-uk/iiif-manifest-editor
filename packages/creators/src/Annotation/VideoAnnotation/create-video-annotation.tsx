@@ -78,7 +78,8 @@ export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, 
 }
 
 export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnotationPayload>) {
-  const [url, setUrl] = useState("");
+  const initialData = props.options.initialData as Partial<CreateVideoAnnotationPayload>;
+  const [url, setUrl] = useState(initialData.url || "");
   const [duration, setDuration] = useState(0);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);

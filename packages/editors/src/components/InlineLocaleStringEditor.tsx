@@ -3,9 +3,8 @@ import { EditTextIcon } from "@manifest-editor/components";
 import type { InternationalStringEditor } from "@manifest-editor/editor-api";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Button } from "react-aria-components";
-import { LocaleString, useIIIFLanguage, useLocaleString } from "react-iiif-vault";
+import { LocaleString, useLocaleString } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { CheckIcon } from "./CanvasPanelViewer/components/SVGIcons";
 
 export type LocaleStringProps = {
   as?: string | React.FC<any>;
@@ -19,6 +18,7 @@ export type LocaleStringProps = {
   placeholder?: string;
   className?: string;
   buttonClassName?: string;
+  editButtonClassName?: string;
 };
 
 export interface InlineLocaleStringEditorProps extends LocaleStringProps {
@@ -33,6 +33,7 @@ export function InlineLocaleStringEditor({
   editor,
   placeholder,
   buttonClassName,
+  editButtonClassName,
   ...props
 }: InlineLocaleStringEditorProps) {
   const [value, language] = useLocaleString(children);
@@ -58,8 +59,6 @@ export function InlineLocaleStringEditor({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
       onClick={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onKeyDown={(e) => {
@@ -93,6 +92,7 @@ export function InlineLocaleStringEditor({
         >
           {multiline ? (
             <textarea
+              aria-label={placeholder ? `Edit ${placeholder}` : "Edit text"}
               ref={editorRef as any}
               className={twMerge(
                 "inline-block w-full bg-transparent textarea-reset mb-0 field-sizing-content focus:outline-none resize-none",
@@ -105,6 +105,7 @@ export function InlineLocaleStringEditor({
             />
           ) : (
             <input
+              aria-label={placeholder ? `Edit ${placeholder}` : "Edit text"}
               ref={editorRef as any}
               className={twMerge(
                 "inline-block w-full bg-transparent textarea-reset mb-0 field-sizing-content focus:outline-none resize-none",
@@ -124,15 +125,13 @@ export function InlineLocaleStringEditor({
           onClick={() => setIsEditing(true)}
           {...props}
         >
-          {children}
+          {value ? children : undefined}
         </LocaleString>
       )}
       {!isEditing ? (
         <Button
-          onClick={() => {
-            setIsEditing(true);
-          }}
-          className="absolute shadow-md flex items-center z-20 text-xs gap-2 -bottom-8 right-0 p-1.5 bg-gray-200 rounded opacity-0 group-focus-within:opacity-100 group-hover:opacity-100"
+          onPress={() => setIsEditing(true)}
+          className={twMerge("absolute shadow-md flex items-center z-20 text-xs gap-2 -bottom-8 right-0 p-1.5 bg-gray-200 rounded opacity-0 group-focus-within:opacity-100 group-hover:opacity-100", editButtonClassName)}
         >
           <EditTextIcon className="text-xl" /> Edit
         </Button>

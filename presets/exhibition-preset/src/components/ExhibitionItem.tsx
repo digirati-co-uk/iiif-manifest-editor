@@ -1,5 +1,8 @@
 import { LazyThumbnail } from "@manifest-editor/components";
-import { useInStack } from "@manifest-editor/editors";
+import {
+  getInternationalStringText,
+  useInStack,
+} from "@manifest-editor/editors";
 import { forwardRef } from "react";
 import {
   LocaleString,
@@ -19,7 +22,7 @@ export interface ExhibitionItemProps
 
 export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
   function ExhibitionItem(
-    { isFirst, item, children: divChildren, ...props },
+    { isFirst, item, children: divChildren, onClick, ...props },
     ref,
   ) {
     const canvas = useCanvas();
@@ -32,6 +35,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
     );
 
     const isSelected = currentCanvas?.resource.source?.id === canvas?.id;
+    const label = getInternationalStringText(canvas?.label, "Untitled");
     const isSlideshowItem =
       behavior.includes("w-12") && behavior.includes("h-8");
 
@@ -65,7 +69,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
         >
           <div className="flex-1 overflow-hidden relative justify-self-stretch">
             <div className="absolute inset-0 w-full h-full">
-              <LazyThumbnail cover={behavior.includes("cover")} fade={false} />
+              <LazyThumbnail cover={behavior.includes("cover") || behavior.includes("image-cover")} fade={false} />
             </div>
           </div>
           {isImage ? null : (
@@ -95,6 +99,12 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
         {...props}
       >
         {children}
+        <button
+          type="button"
+          className="absolute inset-0 z-20 cursor-pointer bg-transparent focus:outline focus:outline-2 focus:outline-offset-[-2px] focus:outline-me-primary-500"
+          aria-label={`Edit slide ${label}`}
+          onClick={onClick}
+        />
         {divChildren}
       </div>
     );

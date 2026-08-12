@@ -1,8 +1,9 @@
 import { DownloadButton } from "@manifest-editor/components";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from "../use-dropdown-menu";
 import { useVault } from "react-iiif-vault";
+import type { PresetPreviewOptions } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { usePreviewContext } from "../PreviewContext/PreviewContext";
@@ -18,15 +19,28 @@ import {
   MenuItemStatus,
 } from "./PreviewButton.styles";
 
-export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?: boolean; fileName?: string }) {
+export function hasPreviewOption(configCount: number, preview?: PresetPreviewOptions) {
+  return configCount > 0 || !!preview?.mainAction || !!preview?.actions?.length;
+}
+
+export function PreviewButton({
+  downloadEnabled,
+  fileName,
+  preview,
+}: {
+  downloadEnabled?: boolean;
+  fileName?: string;
+  preview?: PresetPreviewOptions;
+}) {
   const { active, configs, actions, selected } = usePreviewContext();
   const vault = useVault();
   const config = useConfig();
   const resource = useAppResource();
   const configsToShow = configs.filter((c) => c.type === "external-manifest-preview");
-  const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length);
+  const customActions = preview?.actions || [];
+  const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length + customActions.length);
 
-  if (configsToShow.length === 0) {
+  if (!hasPreviewOption(configsToShow.length, preview)) {
     return <ButtonEmpty>Preview not available</ButtonEmpty>;
   }
 
@@ -48,7 +62,14 @@ export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?:
       ) : null}
       <ButtonContainer>
         <ButtonMain
+          data-preview-action={preview?.mainAction?.id}
+          disabled={preview?.mainAction?.disabled || (!preview?.mainAction && configsToShow.length === 0)}
           onClick={() => {
+            if (preview?.mainAction) {
+              preview.mainAction.onClick();
+              return;
+            }
+            if (!configsToShow.length) return;
             if (!selected) {
               const defaultPreviewId = config.defaultPreview;
               if (defaultPreviewId) {
@@ -64,13 +85,15 @@ export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?:
             actions.updatePreviews();
           }}
         >
-          Preview
+          {preview?.mainAction?.label || "Preview"}
         </ButtonMain>
-        <ButtonChange $open={isOpen} {...buttonProps}>
-          <DownIcon />
-        </ButtonChange>
+        {configsToShow.length + customActions.length > 0 ? (
+          <ButtonChange $open={isOpen} {...buttonProps} aria-label="Choose preview">
+            <DownIcon aria-hidden />
+          </ButtonChange>
+        ) : null}
 
-        <MenuContainer $open={isOpen}>
+        <MenuContainer $open={isOpen} role="menu">
           {configsToShow.map((config, key) => {
             const inactive = active.indexOf(config.id) === -1;
             return (
@@ -91,6 +114,19 @@ export function PreviewButton({ downloadEnabled, fileName }: { downloadEnabled?:
               </MenuItem>
             );
           })}
+          {customActions.map((action, key) => (
+            <MenuItem
+              key={action.id}
+              {...(itemProps[configsToShow.length + key] as any)}
+              aria-disabled={action.disabled || undefined}
+              onClick={() => {
+                if (!action.disabled) action.onClick();
+              }}
+            >
+              <MenuItemStatus $status={action.status || "available"} />
+              <MenuItemLabel>{action.label}</MenuItemLabel>
+            </MenuItem>
+          ))}
         </MenuContainer>
       </ButtonContainer>
     </>

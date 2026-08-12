@@ -1,6 +1,6 @@
 import { toRef } from "@iiif/parser";
 import type { ManifestNormalized } from "@iiif/presentation-3-normalized";
-import type { AppExtension, MappedApp } from "./AppContext/AppContext";
+import type { AppExtension, MappedApp, PresetTemplateDefinition } from "./AppContext/AppContext";
 import { mergeBackgroundActionDefinitions } from "./BackgroundTasks/BackgroundTasksStore";
 import { mergePartialConfig } from "./ConfigContext/ConfigContext";
 
@@ -68,7 +68,7 @@ export function mapApp(
   input: any,
   map?: (app: MappedApp) => MappedApp,
 ): MappedApp {
-  const { default: metadata, config, ...props } = input;
+  const { default: metadata, config, preset, ...props } = input;
   const app = {
     metadata: metadata as any,
     layout: {
@@ -78,9 +78,47 @@ export function mapApp(
       ...(props as any),
     },
     config,
+    preset,
   };
 
-  return map ? map(app) : app;
+  const mapped = map ? map(app) : app;
+  return { ...mapped, preset: mergePresetConfig(undefined, mapped.preset) };
+}
+
+export function mergePresetConfig(
+  base: MappedApp["preset"] | undefined,
+  override: MappedApp["preset"] | undefined,
+): MappedApp["preset"] | undefined {
+  if (!base && !override) return undefined;
+
+  const templateFilter =
+    base?.templateFilter && override?.templateFilter
+      ? (template: PresetTemplateDefinition) =>
+          base.templateFilter!(template) && override.templateFilter!(template)
+      : override?.templateFilter || base?.templateFilter;
+  const templates =
+    override?.templateStrategy === "replace"
+      ? override.templates || []
+      : [...(base?.templates || []), ...(override?.templates || [])];
+  const preview =
+    base?.preview || override?.preview
+      ? {
+          ...(base?.preview || {}),
+          ...(override?.preview || {}),
+          actions: [
+            ...(base?.preview?.actions || []),
+            ...(override?.preview?.actions || []),
+          ],
+        }
+      : undefined;
+
+  return {
+    ...(base || {}),
+    ...(override || {}),
+    templateFilter,
+    templates: templateFilter ? templates.filter(templateFilter) : templates,
+    preview,
+  };
 }
 
 export function extendApp(
@@ -92,6 +130,7 @@ export function extendApp(
     ...app,
     metadata,
     config: mergePartialConfig(app.config || {}, extensions.config || {}),
+    preset: mergePresetConfig(app.preset, extensions.preset),
     layout: {
       ...app.layout,
       leftPanels: [

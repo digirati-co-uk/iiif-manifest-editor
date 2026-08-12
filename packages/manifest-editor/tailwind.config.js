@@ -136,8 +136,8 @@ module.exports = {
       },
       ...exhibitionViewerTailwindColors,
     },
-    typography: exhibitionTypography,
     extend: {
+      typography: exhibitionTypography,
       // that is animation class
       animation: {
         fadeIn: "fadeIn 300ms ease-in-out",

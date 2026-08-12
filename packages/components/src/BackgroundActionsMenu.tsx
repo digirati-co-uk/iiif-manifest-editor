@@ -68,7 +68,7 @@ export function BackgroundActionMenuPanel({
 export function BackgroundActionMenuSection({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-400", className)}
+      className={cn("px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-600", className)}
       {...props}
     />
   );
@@ -151,7 +151,7 @@ export function BackgroundActionMenuMeta({
     <span
       className={cn(
         "text-xs leading-tight",
-        variant === "error" ? "text-red-500 font-medium line-clamp-2" : "truncate text-zinc-400",
+        variant === "error" ? "text-red-700 font-medium line-clamp-2" : "truncate text-zinc-600",
         className,
       )}
       {...props}

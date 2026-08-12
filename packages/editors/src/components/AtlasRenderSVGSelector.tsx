@@ -14,7 +14,7 @@ export function AtlasRenderSVGSelector({
   const canvas = useCanvas();
   if (!canvas) return null;
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events -- Existing interaction behavior.
     <shape
       id={id}
       points={target.points || []}

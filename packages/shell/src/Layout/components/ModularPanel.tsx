@@ -1,26 +1,26 @@
-import { TransitionStatus } from "react-transition-group";
-import { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePanelState } from "../Layout.types";
-import styled, { css } from "styled-components";
-import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
-import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
-import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
-import { useLayoutProvider } from "../Layout.context";
-import { ErrorBoundary } from "react-error-boundary";
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { PanelError } from "./PanelError";
-import { renderHelper } from "../Layout.helpers";
-import { ReactVaultContext } from "react-iiif-vault";
 import {
+  Dropdown,
   DropdownDivider,
+  DropdownItem,
   DropdownLabel,
   DropdownMenu,
-  Dropdown,
-  DropdownItem,
 } from "@manifest-editor/ui/atoms/Dropdown";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
+import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import useDropdownMenu from "../../use-dropdown-menu";
+import { ErrorBoundary } from "react-error-boundary";
+import { ReactVaultContext } from "react-iiif-vault";
+import type { TransitionStatus } from "react-transition-group";
+import styled, { css } from "styled-components";
 import { useAppState } from "../../AppContext/AppContext";
+import { useLayoutProvider } from "../Layout.context";
+import { renderHelper } from "../Layout.helpers";
+import type { LayoutPanel, PanelActions, PanelState, PinnablePanelActions, PinnablePanelState } from "../Layout.types";
+import { PanelError } from "./PanelError";
 
-const OverrideScrollbar = 'OverrideScrollbar';
+const OverrideScrollbar = "OverrideScrollbar";
 
 interface ModularPanelProps {
   panel?: LayoutPanel;
@@ -30,6 +30,7 @@ interface ModularPanelProps {
   pinActions?: PinnablePanelActions;
   transition?: TransitionStatus;
   noHeader?: boolean;
+  isModal?: boolean;
   close?: () => void;
   available?: LayoutPanel[];
   style?: any;
@@ -51,6 +52,10 @@ const ModularPanelWrapper = styled.div<{ $floating?: boolean; $state?: Transitio
 
   &[data-header="false"] {
     border-top: 1px solid #e4e7f0;
+  }
+
+  &[data-modal="true"] {
+    width: 100%;
   }
 
   &[data-floating="true"] {
@@ -124,7 +129,16 @@ export const ModulePanelButton = styled.button`
   background: transparent;
   padding: 0 0.4em;
   margin: 0.3em;
+  min-width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 3px;
+  &:focus-visible {
+    outline: 2px solid #b84c74;
+    outline-offset: 2px;
+  }
   &:hover {
     background: #eee;
   }
@@ -137,8 +151,10 @@ const ModulePanelSpacer = styled.div`
   flex: 1 1 0px;
 `;
 
-const ModularPanelLabel = styled.div`
+const ModularPanelLabel = styled.h2`
   font-size: 0.875em;
+  font-weight: 400;
+  margin: 0;
   flex: 1 1 0px;
   padding-left: 1em;
   text-align: center;
@@ -169,13 +185,13 @@ export function ModularPanel({
   available = [],
   style,
   noHeader,
+  isModal,
 }: ModularPanelProps) {
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
   const appState = useAppState();
   const layout = useLayoutProvider();
   const { tabs, pinnable, hideHeader } = panel?.options || {};
-  const resetKeys = [appState.state.canvasId, panel?.id];
   const switchablePanels = useMemo(() => {
     return (available || []).filter((p) => !p.requiresState);
   }, [available]);
@@ -183,7 +199,7 @@ export function ModularPanel({
   const [customTitle, setCustomTitle] = useState("");
   const setCustomTitleRef = useRef<((title: string) => void) | undefined>(undefined);
 
-  useEffect(() => setDidError(false), resetKeys);
+  useEffect(() => setDidError(false), [appState.state.canvasId, panel?.id]);
 
   useEffect(() => setCustomTitle(""), [panel]);
 
@@ -214,7 +230,7 @@ export function ModularPanel({
         e.preventDefault();
         setIsOpen(true);
       } else {
-        originalCallback && originalCallback();
+        originalCallback?.();
       }
     },
     [actions, appState, layout, panel, setIsOpen, state, switchablePanels.length]
@@ -234,26 +250,32 @@ export function ModularPanel({
 
   const backButton =
     panel.backAction || state.stack.length ? (
-      <ModulePanelButton onClick={backAction}>
-        <BackIcon />
+      <ModulePanelButton aria-label="Back" onClick={backAction}>
+        <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     ) : null;
 
   const closeButton = (
-    <ModulePanelButton onClick={close || actions.close}>
-      <CloseIcon />
+    <ModulePanelButton aria-label="Close panel" onClick={close || actions.close}>
+      <CloseIcon aria-hidden="true" />
     </ModulePanelButton>
   );
 
   return (
     <LayoutTitleReactContext.Provider value={_setCustomTitle}>
-      <ModularPanelWrapper data-state={transition} data-flipped={isLeft} style={style} data-header={!noHeader}>
+      <ModularPanelWrapper
+        data-modal={isModal}
+        data-state={transition}
+        data-flipped={isLeft}
+        style={style}
+        data-header={!noHeader}
+      >
         {noHeader ? null : (
           <ModularPanelHeader data-tabs={!!tabs} data-error={didError}>
             <Dropdown style={{ display: "flex", height: "100%" }}>
               {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
               {switchablePanels.length ? (
-                <DropdownMenu $open={isOpen} style={{ left: "0.5em" }}>
+                <DropdownMenu $open={isOpen} role="menu" style={{ left: "0.5em" }}>
                   <DropdownLabel>All panels</DropdownLabel>
                   <DropdownDivider />
                   {switchablePanels.map((newPanel, i) => (
@@ -271,20 +293,23 @@ export function ModularPanel({
             </Dropdown>
 
             {customTitle ? (
-              <ModularPanelLabel>{customTitle}</ModularPanelLabel>
+              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>{customTitle}</ModularPanelLabel>
             ) : hideHeader ? (
               <ModulePanelSpacer />
             ) : (
-              <ModularPanelLabel>{panel.label}</ModularPanelLabel>
+              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>{panel.label}</ModularPanelLabel>
             )}
             {pinnable ? (
               (state as PinnablePanelState).pinned ? (
-                <ModulePanelButton onClick={pinActions.unpin}>
-                  <StarIcon fill="orange" />
+                <ModulePanelButton aria-label="Unpin panel" onClick={pinActions.unpin}>
+                  <StarIcon aria-hidden="true" fill="orange" />
                 </ModulePanelButton>
               ) : (
-                <ModulePanelButton onClick={() => pinActions.pin({ id: panel.id, state: state.state })}>
-                  <StarIcon fill="#ddd" />
+                <ModulePanelButton
+                  aria-label="Pin panel"
+                  onClick={() => pinActions.pin({ id: panel.id, state: state.state })}
+                >
+                  <StarIcon aria-hidden="true" fill="#ddd" />
                 </ModulePanelButton>
               )
             ) : null}
@@ -298,13 +323,13 @@ export function ModularPanel({
             // onResetKeysChange={() => setDidError(false)}
             onError={() => setDidError(true)}
             FallbackComponent={PanelError}
-            resetKeys={resetKeys}
+            resetKeys={[appState.state.canvasId, panel?.id]}
             onReset={() => setDidError(false)}
           >
             {renderHelper(
               panel.render(
                 state.state || panel.defaultState || {},
-                { ...layout, current: actions, vault: vault as any, transition },
+                { ...layout, current: actions, vault: vault as any, transition, isModal },
                 appState
               )
             )}

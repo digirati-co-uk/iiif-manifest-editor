@@ -2,18 +2,20 @@ import { Vault } from "@iiif/helpers/vault";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { CreatorRuntime } from "./CreatorRuntime";
-import type { CreatableResource, CreatorDefinition, CreatorOptions } from "./types";
+import type { CreatableResource, CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
 import { matchBasedOnResource } from "./utils";
 
 export class Creator {
   configs: CreatorDefinition[];
   vault: Vault;
   previewVault: Vault;
+  creatorConfig: CreatorConfig;
 
-  constructor(vault: Vault, configs: CreatorDefinition[], previewVault?: Vault) {
+  constructor(vault: Vault, configs: CreatorDefinition[], previewVault?: Vault, creatorConfig?: CreatorConfig) {
     this.configs = configs || [];
     this.vault = vault;
     this.previewVault = previewVault || new Vault();
+    this.creatorConfig = creatorConfig || {};
   }
 
   matchBasedOnResource(resource: CreatableResource) {
@@ -54,7 +56,15 @@ export class Creator {
       }
     }
 
-    const runtime = new CreatorRuntime(this.vault, foundDefinition, payload, this.configs, this.previewVault, options);
+    const runtime = new CreatorRuntime(
+      this.vault,
+      foundDefinition,
+      payload,
+      this.configs,
+      this.previewVault,
+      options,
+      this.creatorConfig,
+    );
 
     const run = await runtime.run();
     const allResources = Array.isArray(run) ? run : [run];

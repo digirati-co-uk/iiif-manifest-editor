@@ -71,7 +71,7 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
   return resource;
 }
 
-function getCanonicalUrl(url: string) {
+export function getCanonicalUrl(url: string) {
   return url.endsWith("default.jpg")
     ? imageServiceRequestToString({
         ...parseImageServiceRequest(url),
@@ -82,7 +82,9 @@ function getCanonicalUrl(url: string) {
 
 // @todo cover a lot more things - like offering size dropdown.
 export function CreateImageServerForm(props: CreatorContext<CreateImageServicePayload>) {
-  const [url, setUrl] = useState("");
+  const initialData = props.options.initialData as Partial<CreateImageServicePayload>;
+  const initialUrl = initialData.url ? getCanonicalUrl(initialData.url) : "";
+  const [url, setUrl] = useState(initialUrl || "");
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -115,7 +117,7 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
             <Input
               id="url"
               name="url"
-              defaultValue=""
+              defaultValue={initialData.url || ""}
               onPaste={(e) => {
                 const text = e.clipboardData.getData("text/plain");
                 setUrl(text ? getCanonicalUrl(text) : "");

@@ -1,10 +1,14 @@
 import {
   type CreatorFunctionContext,
+  type CreatorDefinition,
   creatorHelper,
   type CreatorResource,
   defineCreator,
 } from "@manifest-editor/creator-api";
-import { type IIIFBrowserCreatorPayload, iiifBrowserCreator } from "@manifest-editor/creators";
+import {
+  type IIIFBrowserCreatorPayload,
+  iiifBrowserCreator,
+} from "@manifest-editor/creators";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -17,14 +21,17 @@ declare module "@manifest-editor/creator-api" {
 export const imageBrowserSlideCreator = defineCreator({
   ...iiifBrowserCreator,
   id: "@exhibitions/browser-creator",
+  configKey: iiifBrowserCreator.id,
   create: createBrowser,
-  tags: ["image", "exhibition-slide"],
+  sideEffects: [],
+  tags: ["image", "exhibition-slide", "exhibition-slideshow-slide"],
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
   resourceType: "Canvas",
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: [],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
@@ -34,7 +41,29 @@ export const imageBrowserSlideCreator = defineCreator({
   },
 });
 
-async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFunctionContext): Promise<CreatorResource> {
+export function keepIIIFBrowserNested(
+  creator: CreatorDefinition,
+): CreatorDefinition {
+  return {
+    ...creator,
+    additionalTypes: creator.additionalTypes?.filter(
+      (type: string) => type !== "Canvas",
+    ),
+    supports: {
+      ...creator.supports,
+      parentTypes: ["Annotation", "AnnotationPage"],
+      parentFieldMap: {
+        Annotation: ["body"],
+        AnnotationPage: ["items"],
+      },
+    },
+  };
+}
+
+async function createBrowser(
+  data: IIIFBrowserCreatorPayload,
+  ctx: CreatorFunctionContext,
+): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
   const pageId = ctx.generateId("annotation-page", {
     id: canvasId,
@@ -42,6 +71,9 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
   });
 
   const dimensions = { width: 0, height: 0 };
+  let manifestTracking:
+    | Parameters<NonNullable<IIIFBrowserCreatorPayload["trackManifest"]>>[0]
+    | undefined;
 
   const createBrowserAnnotation = creatorHelper(
     ctx,
@@ -57,6 +89,9 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
         dimensions.height = height;
         dimensions.width = width;
       },
+      trackManifest(manifest) {
+        manifestTracking = manifest;
+      },
     },
     {
       targetType: "Annotation",
@@ -67,7 +102,12 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     },
   );
 
-  const createSlide = creatorHelper(ctx, "Manifest", "items", "@exhibitions/image-slide-creator");
+  const createSlide = creatorHelper(
+    ctx,
+    "Manifest",
+    "items",
+    "@exhibitions/image-slide-creator",
+  );
 
   // 2. Pass that to an empty slide.
   return await createSlide({
@@ -76,5 +116,7 @@ async function createBrowser(data: IIIFBrowserCreatorPayload, ctx: CreatorFuncti
     height: dimensions.height,
     type: "default", // default / left / right / bottom
     items: annotation,
+    imageSlideBehavior: ctx.options.initialData?.imageSlideBehavior,
+    ...manifestTracking,
   });
 }

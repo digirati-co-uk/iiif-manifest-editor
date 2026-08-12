@@ -4,13 +4,19 @@ import {
   useAppResource,
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { useManifest, useVault } from "react-iiif-vault";
 import {
   createScrollingPreviewUrl,
   type PresetUrlSearchParamsOptions,
   type PresetUrlSearchParamsPreset,
 } from "../helpers/exhibition-preview-url-helper";
+import { useExhibitionTemplate } from "../helpers/exhibition-template";
+import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
+import {
+  getPreviewImageTransformKey,
+  getPreviewStructureKey,
+} from "./preview-structure";
 
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
@@ -33,24 +39,41 @@ export function ExhibitionPreviewPanel({
   const vault = useVault();
   const rootResource = useAppResource();
   const manifest = useManifest();
+  const template = useExhibitionTemplate();
   const canvas = useInStack("Canvas");
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
   const resourceRef = useRef(rootResource);
   const canvasIdRef = useRef<string | null>(null);
+  const annotationIdRef = useRef<string | null>(null);
   const [status, setStatus] = useState<"waiting" | "connected" | "error">(
     "waiting",
   );
   const [viewportWidth, setViewportWidth] = useState(0);
   const [useScaledPreview, setUseScaledPreview] = useState(false);
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
+  const selectedTourStepId = useSlideshowContentPositioning(
+    (state) => state.selectedTourStepId,
+  );
   const currentCanvasId = focusSelectedCanvas
     ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null
     : null;
+  const structureKey = getPreviewStructureKey(rootResource, manifest?.items);
+  const imageTransformKey = useVaultSelector(
+    (_, currentVault) =>
+      getPreviewImageTransformKey(currentVault, manifest?.items),
+    [structureKey],
+  );
+  const previousStructureKeyRef = useRef(structureKey);
   const src = useMemo(
-    () => createScrollingPreviewUrl(preset, presetOptions).toString(),
-    [preset, presetOptions],
+    () =>
+      createScrollingPreviewUrl(
+        preset,
+        presetOptions,
+        template?.previewUrl,
+      ).toString(),
+    [preset, presetOptions, template?.previewUrl],
   );
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
   const previewScale = useScaledPreview ? SCALED_PREVIEW_SIZE : 1;
@@ -64,6 +87,7 @@ export function ExhibitionPreviewPanel({
 
   resourceRef.current = rootResource;
   canvasIdRef.current = currentCanvasId;
+  annotationIdRef.current = selectedTourStepId;
 
   const connectPreview = useCallback(() => {
     const iframe = iframeRef.current;
@@ -81,6 +105,7 @@ export function ExhibitionPreviewPanel({
           _type: PREVIEW_CONNECT,
           resource: resourceRef.current,
           canvasId: canvasIdRef.current,
+          annotationId: annotationIdRef.current || undefined,
         },
         targetOrigin,
         [channel.port2],
@@ -117,6 +142,7 @@ export function ExhibitionPreviewPanel({
         _type: PREVIEW_SELECTION,
         resource: rootResource,
         canvasId: currentCanvasId,
+        annotationId: selectedTourStepId || undefined,
       },
       targetOrigin,
     );
@@ -125,8 +151,18 @@ export function ExhibitionPreviewPanel({
     rootResource.id,
     rootResource.type,
     currentCanvasId,
+    selectedTourStepId,
     targetOrigin,
   ]);
+
+  useEffect(() => {
+    const structureChanged = previousStructureKeyRef.current !== structureKey;
+    previousStructureKeyRef.current = structureKey;
+
+    if (structureChanged && status === "connected") {
+      connectPreview();
+    }
+  }, [connectPreview, status, structureKey]);
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -174,7 +210,7 @@ export function ExhibitionPreviewPanel({
         <div className="border-b border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300">
           {status === "error"
             ? "Preview connection failed."
-            : "Connecting to local exhibition viewer..."}
+            : "Connecting to exhibition viewer..."}
         </div>
       ) : null}
       <PreviewViewportNotice
@@ -197,6 +233,7 @@ export function ExhibitionPreviewPanel({
         )}
       >
         <iframe
+          key={imageTransformKey}
           ref={iframeRef}
           src={src}
           title="Exhibition preview"

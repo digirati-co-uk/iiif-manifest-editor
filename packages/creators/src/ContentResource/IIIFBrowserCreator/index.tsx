@@ -1,12 +1,11 @@
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
+import { getIIIFType, getJsonResource, isDigitalCollectionPage } from "../../resource-probes";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
-import {
-  IIIFBrowserCreatorForm,
-  createFromIIIFBrowserOutput,
-} from "./iiif-browser-creator";
+import { updateCanvasThumbnailFromCrop } from "../../side-effects/update-canvas-thumbnail-from-crop";
+import { IIIFBrowserCreatorForm, createFromIIIFBrowserOutput } from "./iiif-browser-creator";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -22,15 +21,38 @@ export const iiifBrowserCreator = defineCreator({
   label: "IIIF Browser",
   summary: "Browse IIIF Resources",
   icon: <IIIFBrowserIcon />,
+  configuration: {
+    fields: [
+      {
+        id: "addManifestMetadataToCanvas",
+        type: "checkbox",
+        label: "Add manifest metadata to imported canvases",
+        summary: "Copies metadata from the source Manifest when the IIIF Browser creates a Canvas.",
+        defaultValue: true,
+      },
+    ],
+  },
   render(ctx: any) {
     return <IIIFBrowserCreatorForm {...ctx} />;
   },
   hiddenModal: true,
   tags: ["image", "image-service"],
+  async supportsResource(value, helpers) {
+    const resource = await getJsonResource(value, helpers);
+    const type = getIIIFType(resource);
+    if (type === "Manifest" || type === "Collection") {
+      return { initialData: { url: value } };
+    }
+    if (await isDigitalCollectionPage(value)) {
+      return { initialData: { url: value } };
+    }
+    return false;
+  },
   resourceType: "ContentResource",
   resourceFields: ["id", "language", "type", "format", "value"],
   additionalTypes: ["Annotation", "Canvas"],
   supports: {
+    initialData: true,
     onlyPainting: true,
     parentTypes: ["Annotation", "Manifest", "AnnotationPage"],
     parentFields: ["body", "items"],
@@ -41,6 +63,7 @@ export const iiifBrowserCreator = defineCreator({
     },
   },
   sideEffects: [
+    updateCanvasThumbnailFromCrop,
     resizeToFitService,
     resizeResourceToEmptyCanvas,
     repositionMultipleImages,

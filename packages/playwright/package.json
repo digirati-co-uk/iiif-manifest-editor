@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "screenshots:exhibition-presets": "node scripts/capture-thumbnails.mjs exhibition-presets.json",
     "test": "playwright test",
     "test:report": "playwright show-report"
   },
@@ -13,7 +14,7 @@
   "license": "ISC",
   "devDependencies": {
     "@manifest-editor/editor-api": "workspace:*",
-    "@playwright/test": "^1.51.1",
-    "@types/node": "^20.11.24"
+    "@playwright/test": "^1.62.1",
+    "@types/node": "catalog:"
   }
 }

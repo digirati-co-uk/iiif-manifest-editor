@@ -46,8 +46,7 @@ export function defineCreator<
   const ResourceType extends AllAvailableParentTypes = never,
   const AdditionalResourceTypes extends Array<AllAvailableParentTypes> = [],
   const AllResourceTypes = [ResourceType, ...AdditionalResourceTypes],
-  const SupportsParentTypes extends
-    Array<AllAvailableParentTypes> = AllParentTypes,
+  const SupportsParentTypes extends Array<AllAvailableParentTypes> = AllParentTypes,
   const SupportsParentFields extends Array<AllProperties> = [],
   const CreateReturnType = any,
 >(
@@ -60,7 +59,7 @@ export function defineCreator<
     SupportsParentTypes,
     SupportsParentFields,
     CreateReturnType
-  >,
+  >
 ) {
   return options;
 }
@@ -68,7 +67,7 @@ export function defineCreator<
 export function withInitialData<T extends CreatorDefinition>(
   creator: T,
   data: Record<string, any>,
-  overrides: Record<string, any> = {},
+  overrides: Record<string, any> = {}
 ): T {
   const render = creator.render
     ? (ctx: CreatorContext<any>) => {
@@ -92,10 +91,7 @@ export function withInitialData<T extends CreatorDefinition>(
 
 export function withCustomRender<T extends CreatorDefinition>(
   creator: T,
-  render: (
-    ctx: CreatorContext<any>,
-    originalRender: (ctx: CreatorContext<any>) => React.ReactNode,
-  ) => React.ReactNode,
+  render: (ctx: CreatorContext<any>, originalRender: (ctx: CreatorContext<any>) => React.ReactNode) => React.ReactNode
 ): T {
   const newRender = (ctx: CreatorContext<any>) => {
     return render(ctx, creator.render as any);
@@ -105,7 +101,6 @@ export function withCustomRender<T extends CreatorDefinition>(
 }
 
 export declare namespace IIIFManifestEditor {
-  // biome-ignore lint/suspicious/noEmptyInterface: Empty for global register.
   interface CreatorDefinitions {}
 }
 
@@ -132,19 +127,13 @@ export type ExtractCreatorGenerics<T extends CreatorDefinition> =
       }
     : never;
 
-type CreatorSupportsParentTypes<
-  T,
-  Type extends AllAvailableParentTypes,
-> = T extends CreatorDefinition
+type CreatorSupportsParentTypes<T, Type extends AllAvailableParentTypes> = T extends CreatorDefinition
   ? ExtractCreatorGenerics<T>["SupportsParentTypes"] extends never
     ? false
     : HelperInArray<Type, ExtractCreatorGenerics<T>["SupportsParentTypes"]>
   : false;
 
-type CreatorSupportsParentFields<
-  T,
-  Field extends AllProperties,
-> = T extends CreatorDefinition
+type CreatorSupportsParentFields<T, Field extends AllProperties> = T extends CreatorDefinition
   ? ExtractCreatorGenerics<T>["SupportsParentFields"] extends never
     ? false
     : HelperInArray<Field, ExtractCreatorGenerics<T>["SupportsParentFields"]>
@@ -162,10 +151,7 @@ type CreatorSupportsParent<
     : false
   : false;
 
-type HelperInArray<
-  ToFind,
-  Array extends readonly any[],
-> = Array extends readonly [infer Head, ...infer Tail]
+type HelperInArray<ToFind, Array extends readonly any[]> = Array extends readonly [infer Head, ...infer Tail]
   ? Head extends ToFind
     ? true
     : HelperInArray<ToFind, Tail>
@@ -174,10 +160,7 @@ type HelperInArray<
 export type CreatorDefinitionFilterByParent<
   Type extends AllAvailableParentTypes,
   Field extends AllProperties = AllProperties,
-  CD extends
-    IIIFManifestEditor.CreatorDefinitions = IIIFManifestEditor.CreatorDefinitions,
+  CD extends IIIFManifestEditor.CreatorDefinitions = IIIFManifestEditor.CreatorDefinitions,
 > = {
-  [K in keyof CD]: CreatorSupportsParent<CD[K], Type, Field> extends true
-    ? CD[K]
-    : never;
+  [K in keyof CD]: CreatorSupportsParent<CD[K], Type, Field> extends true ? CD[K] : never;
 }[keyof CD];

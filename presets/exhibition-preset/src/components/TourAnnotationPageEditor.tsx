@@ -4,10 +4,14 @@ import { AnnotationContext, useAnnotationPage } from "react-iiif-vault";
 import { TourAnnotationEditor } from "./TourAnnotationEditor";
 
 export function TourAnnotationPageEditor({
+  editAlignment = false,
   reorderable = false,
+  tourStyle = "linear",
   useSlideshowWorkbench = false,
 }: {
+  editAlignment?: boolean;
   reorderable?: boolean;
+  tourStyle?: "linear" | "non-linear";
   useSlideshowWorkbench?: boolean;
 }) {
   const page = useAnnotationPage();
@@ -20,9 +24,12 @@ export function TourAnnotationPageEditor({
   if (!reorderable) {
     return (
       <>
-        {page.items.map((annotation) => (
+        {page.items.map((annotation, index) => (
           <AnnotationContext annotation={annotation.id} key={annotation.id}>
             <TourAnnotationEditor
+              index={index}
+              tourStyle={tourStyle}
+              editAlignment={editAlignment}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
           </AnnotationContext>
@@ -44,6 +51,9 @@ export function TourAnnotationPageEditor({
         renderItem={(ref, index) => (
           <AnnotationContext annotation={ref.id as string}>
             <TourAnnotationEditor
+              index={index}
+              tourStyle={tourStyle}
+              editAlignment={editAlignment}
               useSlideshowWorkbench={useSlideshowWorkbench}
             />
           </AnnotationContext>

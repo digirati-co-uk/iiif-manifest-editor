@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Node 22 build and deploy
+    name: Node 24 build and deploy
     permissions:
       contents: read
       deployments: write
@@ -28,7 +28,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.11.0
+          version: 11.21.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -52,7 +52,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: "pnpm"
 
       - name: Install dependencies
@@ -62,7 +62,7 @@ jobs:
         run: pnpm run build
 
       - name: Lint
-        run: pnpm run lint
+        run: pnpm run lint:ci
 
       - name: Deploy production
         if: github.event_name != 'pull_request'

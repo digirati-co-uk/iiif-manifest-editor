@@ -37,6 +37,7 @@
     "prepack": "tsdown --clean"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@iiif/helpers": "catalog:",
     "@iiif/parser": "catalog:",
     "@manifest-editor/components": "workspace:*",
@@ -47,10 +48,9 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@types/react": "^18.3.3",
-    "tsdown": "0.16.4",
-    "vitest": "v3.0.9"
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

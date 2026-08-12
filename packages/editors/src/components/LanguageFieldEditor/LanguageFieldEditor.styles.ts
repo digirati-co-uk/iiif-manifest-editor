@@ -29,7 +29,7 @@ export const Label = styled.label`
 export const EmptyLanguageField = styled(ButtonReset as any)`
   padding: 0.8em 1em;
   background: #f8f9fa;
-  color: #999;
+  color: #666;
   font-size: 0.9em;
   border-bottom: 1px solid rgba(5, 42, 68, 0.2);
   margin: 0.5em 0 2.18em;

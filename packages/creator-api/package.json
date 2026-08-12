@@ -37,6 +37,7 @@
     "prepack": "tsdown src/index.ts"
   },
   "dependencies": {
+    "@atlas-viewer/atlas": "catalog:",
     "@iiif/helpers": "catalog:",
     "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
@@ -46,10 +47,9 @@
     "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@types/react": "^18.3.3",
+    "@types/react": "catalog:",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "0.16.4"
+    "tsdown": "catalog:"
   },
   "publishConfig": {
     "access": "public"

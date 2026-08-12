@@ -7,6 +7,11 @@ import {
 import { type CreateImageServicePayload, imageServiceCreator } from "@manifest-editor/creators";
 import { imageSlideCreator } from "./image-slide-creator";
 
+export interface CreateImageServiceSlidePayload extends CreateImageServicePayload {
+  imageSlideBehavior?: string[];
+  slideType?: "default" | "left" | "right" | "bottom";
+}
+
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
     interface CreatorDefinitions {
@@ -19,18 +24,19 @@ export const imageServiceSlideCreator = defineCreator({
   ...imageServiceCreator,
   id: "@exhibitions/image-service-creator",
   create: createImageService,
-  tags: ["image", "exhibition-slide"],
+  tags: ["image", "exhibition-slide", "exhibition-slideshow-slide"],
   label: "IIIF Image",
   summary: "IIIF Image service",
   resourceType: "Canvas",
   supports: {
+    initialData: true,
     parentTypes: ["Manifest"],
     parentFields: ["items"],
   },
 });
 
 async function createImageService(
-  data: CreateImageServicePayload,
+  data: CreateImageServiceSlidePayload,
   ctx: CreatorFunctionContext,
 ): Promise<CreatorResource> {
   const canvasId = ctx.generateId("canvas");
@@ -74,7 +80,8 @@ async function createImageService(
     canvasId,
     width,
     height,
-    type: "default", // default / left / right / bottom
+    type: data.slideType ?? "default",
     items: [annotation],
+    imageSlideBehavior: data.imageSlideBehavior ?? ctx.options.initialData?.imageSlideBehavior,
   });
 }

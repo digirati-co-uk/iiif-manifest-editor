@@ -11,3 +11,4 @@ export * from "./helpers/constrain-position";
 export * from "./helpers/create-app-actions";
 export * from "./helpers/get-youtube-id";
 export * from "./hooks";
+export * from "./definitions/MediaEditor/target-whole-canvas";

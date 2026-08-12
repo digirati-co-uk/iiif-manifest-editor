@@ -1,7 +1,7 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import { getValue } from "@iiif/helpers";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { CanvasLabel } from "./CanvasLabel";
 import { Card3D } from "./Card3D";
@@ -18,9 +18,10 @@ interface CanvasThumbnailGridItemProps {
   hideLabel?: boolean;
   containerProps?: any;
   dragState?: any;
-  customLabel?: (opts: { className: string; children: InternationalString }) => React.ReactNode;
+  customLabel?: (opts: { className: string }) => React.ReactNode;
 }
 export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
+  const canvas = useCanvas({ id: props.id });
   const { dragProps } = useDrag({
     isDisabled: !props.dragState,
     getItems() {
@@ -31,20 +32,27 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
       ];
     },
   });
+  const Component = props.onClick ? "button" : "div";
+  const isCurrent = props.selected || props.active;
 
   return (
     <CanvasContext canvas={props.id}>
-      <div
+      <Component
+        {...(props.onClick ? { type: "button" as const } : {})}
         {...(props.dragState ? dragProps : {})}
         onClick={props.onClick}
-        className={twMerge("flex flex-col", props.className)}
+        className={twMerge(
+          "flex flex-col border-0 bg-transparent p-0 text-inherit",
+          props.className,
+        )}
         data-canvas-selected={props.selected}
+        aria-current={isCurrent ? "true" : undefined}
+        aria-label={props.onClick ? getValue(canvas?.label as any) || "Untitled canvas" : undefined}
         {...(props.containerProps || {})}
       >
         <div className="bg-me-gray-100 relative w-full aspect-square group flex-1 overflow-hidden rounded">
           <Card3D
             data-canvas-selected={props.active}
-            aria-selected={props.active}
             className={cn(
               "border-2 border-transparent  p-1 w-full h-full rounded select-none",
               props.selected && "border-me-primary-500",
@@ -59,7 +67,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         ) : (
           <CanvasLabel className="text-sm text-center truncate mt-1" as="div" />
         )}
-      </div>
+      </Component>
     </CanvasContext>
   );
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/delft/full-page",
+    "output": "../../apps/docs/public/exhibition-fullpage.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/delft/slideshow",
+    "output": "../../apps/docs/public/exhibition-slideshow.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/delft/scroll",
+    "output": "../../apps/docs/public/exhibition-scroll.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/leeds/full-page",
+    "output": "../../apps/docs/public/exhibition-fullpage-leeds.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/leeds/scroll",
+    "output": "../../apps/docs/public/exhibition-scroll-leeds.png"
+  },
+  {
+    "url": "https://preview.exhibitionviewer.org/preview/leeds/slideshow",
+    "output": "../../apps/docs/public/exhibition-slideshow-leeds.png"
+  }
+]

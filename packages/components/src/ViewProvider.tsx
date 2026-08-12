@@ -9,28 +9,30 @@ export function ViewProvider({ resource, onPress }: { resource: { id: string; ty
 
   if (!provider) return null;
 
-  const isUnknown = getValue(provider.label) === "Unknown";
+  const providerLabel = getValue(provider.label);
+  const isUnknown = providerLabel === "Unknown";
   return (
-    <Button
+    <div
       className="rounded p-2 border border-gray-200 text-center hover:border-me-500 shadow-sm"
       key={provider.id}
-      onPress={onPress}
     >
-      {provider.logo?.length > 0 ? (
-        <div>
-          {provider.logo.map((logo: any, n: number) => (
-            <ProviderImage key={n} item={logo} />
-          ))}
-        </div>
-      ) : null}
+      <Button aria-label={`Edit ${providerLabel || "provider"}`} className="w-full rounded border-0 bg-transparent p-0 text-inherit" onPress={onPress}>
+        {provider.logo?.length > 0 ? (
+          <div>
+            {provider.logo.map((logo: any, n: number) => (
+              <ProviderImage key={n} item={logo} />
+            ))}
+          </div>
+        ) : null}
 
-      {!isUnknown && (
-        <div className="px-2 font-semibold mb-5">
-          <LocaleString enableDangerouslySetInnerHTML separator="<br>">
-            {provider?.label}
-          </LocaleString>
-        </div>
-      )}
+        {!isUnknown && (
+          <div className="px-2 font-semibold mb-5">
+            <LocaleString enableDangerouslySetInnerHTML separator="<br>">
+              {provider?.label}
+            </LocaleString>
+          </div>
+        )}
+      </Button>
 
       {provider.homepage?.length > 0 ? (
         <div>
@@ -47,6 +49,6 @@ export function ViewProvider({ resource, onPress }: { resource: { id: string; ty
           ))}
         </div>
       ) : null}
-    </Button>
+    </div>
   );
 }

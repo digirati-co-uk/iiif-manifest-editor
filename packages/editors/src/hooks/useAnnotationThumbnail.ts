@@ -1,15 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useAnnotation, useVault } from "react-iiif-vault";
-import { createThumbnailHelper } from "@iiif/helpers";
-import {
+import type {
   FixedSizeImage,
   FixedSizeImageService,
   ImageCandidateRequest,
   UnknownSizeImage,
   VariableSizeImage,
 } from "@atlas-viewer/iiif-image-api";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAnnotation, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { getAnnotationThumbnailResource } from "../helpers/choice-painting-annotations";
+import { constrainCroppedThumbnail, getAnnotationThumbnailCacheKey } from "./annotation-thumbnail";
 
 const globalThumbnailCache = new Map<
   string,
@@ -34,7 +35,7 @@ export function useAnnotationThumbnail({
     () => (annotation ? getAnnotationThumbnailResource(annotation, vault) : undefined),
     [annotation, vault],
   );
-  const cacheKey = getThumbnailCacheKey(annotationId, thumbnailResource);
+  const cacheKey = getAnnotationThumbnailCacheKey(annotationId, thumbnailResource);
   const helper = useMemo(() => createThumbnailHelper(vault), [vault]);
   const [thumbnail, setThumbnail] = useState<
     FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage
@@ -53,11 +54,15 @@ export function useAnnotationThumbnail({
     try {
       setThumbnail(undefined);
       helper
-        .getBestThumbnailAtSize(thumbnailResource, { maxWidth: 200, maxHeight: 200, allowUnsafe: true, ...options })
+        .getBestThumbnailAtSize(thumbnailResource, { maxWidth: 256, maxHeight: 256, allowUnsafe: true, ...options })
         .then((result) => {
           if (last === lastAnnotation.current && result.best) {
-            globalThumbnailCache.set(cacheKey, result.best);
-            setThumbnail(result.best);
+            const thumbnail = {
+              ...result.best,
+              id: constrainCroppedThumbnail(result.best.id),
+            };
+            globalThumbnailCache.set(cacheKey, thumbnail);
+            setThumbnail(thumbnail);
           }
         });
     } catch (e) {
@@ -70,10 +75,4 @@ export function useAnnotationThumbnail({
   }
 
   return thumbnail;
-}
-
-function getThumbnailCacheKey(annotationId: string, resource: any) {
-  const resourceId = typeof resource === "string" ? resource : resource?.id;
-  const resourceType = typeof resource === "object" ? resource?.type : undefined;
-  return ["Annotation", annotationId, resourceType, resourceId].filter(Boolean).join("|");
 }
