@@ -1,5 +1,5 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
+import { ActionButton, DeleteIcon, IconButton, PaddedSidebarContainer, ResetIcon } from "@manifest-editor/components";
 import { useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
@@ -115,10 +115,10 @@ export function ActivationStateEditor() {
           <InputContainer $wide key={type}>
             <div className="flex items-center justify-between">
               <InputLabel>{label}</InputLabel>
-              <button
-                className="text-xs text-gray-500 hover:text-gray-900"
-                type="button"
-                onClick={() =>
+              <IconButton
+                label={`Reset ${label.toLowerCase()}`}
+                className="text-base text-gray-500"
+                onPress={() =>
                   vault.modifyEntityField(
                     ref as any,
                     "transform",
@@ -126,8 +126,8 @@ export function ActivationStateEditor() {
                   )
                 }
               >
-                Reset
-              </button>
+                <ResetIcon />
+              </IconButton>
             </div>
             <div className="flex gap-2">
               {(["x", "y", "z"] as const).map((axis) => (
@@ -167,6 +167,7 @@ export function ActivationStateEditor() {
             layout.rightPanel.close();
           }}
         >
+          <DeleteIcon className="text-base" />
           Remove from activation
         </ActionButton>
       </div>

@@ -1,4 +1,12 @@
-import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import {
+  ActionButton,
+  AddIcon,
+  IconButton,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  TargetIcon,
+} from "@manifest-editor/components";
 import { BaseAnnotationCreator, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useEffect, useMemo, useState } from "react";
@@ -113,9 +121,12 @@ export function SceneAnnotations() {
                 <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">Annotations</h2>
                 <ul aria-label="Scene annotations" className="overflow-hidden rounded border border-gray-200 bg-white">
                   {resolved.annotations.map(({ annotation, index, label, page: annotationPage }) => (
-                    <li className="border-b border-gray-200 last:border-b-0" key={annotation.id}>
+                    <li
+                      className="flex items-center border-b border-gray-200 last:border-b-0 hover:bg-gray-50"
+                      key={annotation.id}
+                    >
                       <button
-                        className="block w-full px-3 py-2 text-left hover:bg-gray-50"
+                        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left"
                         type="button"
                         onClick={() =>
                           layout.edit(
@@ -129,6 +140,7 @@ export function SceneAnnotations() {
                           )
                         }
                       >
+                        <TargetIcon className="shrink-0 text-base text-gray-400" />
                         <span className="block truncate text-sm text-gray-900">{label}</span>
                       </button>
                     </li>
@@ -151,14 +163,16 @@ export function SceneAnnotations() {
         ) : (
           <div className="rounded border border-gray-200 bg-white">
             <div className="flex items-center justify-between gap-2 border-b border-gray-200 p-2 text-sm">
-              <span title={pointLabel}>Point: {pointLabel}</span>
-              <button
-                className="text-me-600 hover:underline"
-                type="button"
-                onClick={() => sceneAnnotationCreation.start(sceneRef.id, currentDraft.pageId)}
+              <span className="truncate" title={pointLabel}>
+                Point: {pointLabel}
+              </span>
+              <IconButton
+                label="Pick again"
+                className="text-base"
+                onPress={() => sceneAnnotationCreation.start(sceneRef.id, currentDraft.pageId)}
               >
-                Pick again
-              </button>
+                <TargetIcon />
+              </IconButton>
             </div>
             <BaseAnnotationCreator
               key={pointLabel}
