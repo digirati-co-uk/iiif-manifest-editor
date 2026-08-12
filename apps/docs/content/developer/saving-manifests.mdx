@@ -132,8 +132,8 @@ const manifestId = 'https://example.org/manifest-1';
 const vault = ...
 
 const saveVault = useCallback(() => {
-  // Returns Presentation 3 Manifest.
-  const data = vault.toPresentation3({ id: manifestId, type: 'Manifest' });
+  // Returns a Presentation 4 Manifest.
+  const data = vault.toPresentation4({ id: manifestId, type: 'Manifest' });
 
   // Save the data to somewhere else...
   fetch('/api/save-manifests', {
@@ -146,6 +146,10 @@ const saveVault = useCallback(() => {
   // ...
 }, []);
 ```
+
+Presentation 3 should be treated as a compatibility export for viewers that do not yet support
+Presentation 4. Some Presentation 4 features, including Scenes and 3D annotations, cannot be
+downgraded without losing information.
 
 This example takes more time to process, and for larger Manifests may decrease the user experience when saving.
 

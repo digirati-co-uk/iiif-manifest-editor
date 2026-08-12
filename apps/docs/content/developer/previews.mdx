@@ -54,6 +54,10 @@ If you want to implement the preview server yourself, you can read the [RFC here
 
 ### Adding custom viewers
 
+Declare the Presentation API versions each viewer supports. The editor uses this metadata to hide
+incompatible viewers; for example, a Manifest containing a Scene cannot be sent to a Presentation
+3-only viewer.
+
 Here is the default configuration that you can use and adapt:
 
 ```ts
@@ -62,14 +66,16 @@ const previews: PreviewConfiguration[] = [
     id: "theseus",
     type: "external-manifest-preview",
     label: "Theseus",
+    presentationVersions: [3, 4],
     config: {
-      url: "https://theseusviewer.org/?iiif-content={manifestId}&ref=manifest-editor",
+      url: "https://feature-presentation-4-rc.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
   },
   {
     id: "universal-viewer",
     type: "external-manifest-preview",
     label: "Universal viewer",
+    presentationVersions: [2, 3],
     config: {
       url: "https://universalviewer.dev/#?iiifManifestId={manifestId}",
     },
@@ -78,6 +84,7 @@ const previews: PreviewConfiguration[] = [
     id: "mirador-3",
     type: "external-manifest-preview",
     label: "Mirador 3",
+    presentationVersions: [2, 3],
     config: {
       url: "https://projectmirador.org/embed/?iiif-content={manifestId}",
     },
@@ -86,6 +93,7 @@ const previews: PreviewConfiguration[] = [
     id: "annona",
     type: "external-manifest-preview",
     label: "Annona",
+    presentationVersions: [2, 3],
     config: {
       url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
     },
@@ -94,6 +102,7 @@ const previews: PreviewConfiguration[] = [
     id: "clover",
     type: "external-manifest-preview",
     label: "Clover",
+    presentationVersions: [2, 3],
     config: {
       url: "https://samvera-labs.github.io/clover-iiif/docs/viewer/demo?iiif-content={manifestId}",
     },
@@ -102,6 +111,7 @@ const previews: PreviewConfiguration[] = [
     id: "delft-viewer",
     type: "external-manifest-preview",
     label: "Delft viewer",
+    presentationVersions: [2, 3],
     config: {
       url: "https://delft-viewer.netlify.app/#manifest={manifestId}",
     },
@@ -118,6 +128,7 @@ const previews: PreviewConfiguration[] = [
     id: "raw-manifest",
     type: "external-manifest-preview",
     label: "Raw Manifest",
+    presentationVersions: [2, 3, 4],
     config: {
       url: "{manifestId}",
     },
