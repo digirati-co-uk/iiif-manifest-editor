@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { sceneActivationEditing, useSceneActivationEditing } from "../../helpers/scene-activation-editing";
-import { getSceneActivations, removeActivationState } from "../../helpers/scene-activations";
+import { getSceneActivations, getSceneModels, removeActivationState } from "../../helpers/scene-activations";
 import { describeSceneAnnotation } from "../../helpers/scene-items";
 import {
   getTransformVector,
@@ -41,21 +41,33 @@ export function ActivationStateEditor() {
     [ref.id]
   );
   const source = useVaultSelector(
-    (_, currentVault) =>
-      state?.source ? currentVault.get<any>(state.source, { skipSelfReturn: false }) : undefined,
+    (_, currentVault) => (state?.source ? currentVault.get<any>(state.source, { skipSelfReturn: false }) : undefined),
     [state?.source?.id]
   );
   const modelLabel = source ? describeSceneAnnotation(source, vault).label : "Model";
   const actions = asArray<string>(state?.action);
   const transforms = asArray<ModelTransform>(state?.transform);
+  const restActions = editing
+    ? getSceneModels({ id: editing.sceneId, type: "Scene" }, vault).find(
+        (model) => model.annotation.id === state?.source?.id
+      )?.restActions || ["show", "enable"]
+    : ["show", "enable"];
 
-  const setAction = (group: string[], value: string) => {
-    vault.modifyEntityField(
-      ref as any,
-      "action",
-      [...actions.filter((action) => !group.includes(action)), ...(value ? [value] : [])]
-    );
+  const setAction = (group: string[], value: string, restAction: string) => {
+    vault.modifyEntityField(ref as any, "action", [
+      ...actions.filter((action) => !group.includes(action)),
+      value || restAction,
+    ]);
   };
+  const visibility = actions.filter((action) => action === "show" || action === "hide").at(-1);
+  const restVisibility = restActions.includes("hide") ? "hide" : "show";
+  const availability = actions.filter((action) => action === "enable" || action === "disable").at(-1);
+  const restAvailability = restActions.includes("disable") ? "disable" : "enable";
+  const activation = editing
+    ? getSceneActivations({ id: editing.sceneId, type: "Scene" }, vault).find(
+        (candidate) => candidate.id === editing.activationId
+      )
+    : undefined;
   const updateTransform = (type: TransformType, axis: TransformAxis, value: number) => {
     if (!Number.isFinite(value)) return;
     const next =
@@ -76,8 +88,8 @@ export function ActivationStateEditor() {
         <select
           className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
           id="activation-visibility"
-          value={actions.find((action) => action === "show" || action === "hide") || ""}
-          onChange={(event) => setAction(["show", "hide"], event.target.value)}
+          value={visibility === restVisibility ? "" : visibility || ""}
+          onChange={(event) => setAction(["show", "hide"], event.target.value, restVisibility)}
         >
           <option value="">No change</option>
           <option value="show">Show</option>
@@ -89,8 +101,8 @@ export function ActivationStateEditor() {
         <select
           className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
           id="activation-availability"
-          value={actions.find((action) => action === "enable" || action === "disable") || ""}
-          onChange={(event) => setAction(["enable", "disable"], event.target.value)}
+          value={availability === restAvailability ? "" : availability || ""}
+          onChange={(event) => setAction(["enable", "disable"], event.target.value, restAvailability)}
         >
           <option value="">No change</option>
           <option value="enable">Enable</option>
@@ -146,12 +158,9 @@ export function ActivationStateEditor() {
       })}
       <div className="mt-3 border-t border-gray-200 pt-3">
         <ActionButton
+          isDisabled={!activation || activation.states.length <= 1}
           onPress={() => {
             if (!editing || !window.confirm(`Remove ${modelLabel} from this activation?`)) return;
-            const activation = getSceneActivations(
-              { id: editing.sceneId, type: "Scene" },
-              vault
-            ).find((candidate) => candidate.id === editing.activationId);
             if (!activation) return;
             removeActivationState(activation, ref.id, vault);
             sceneActivationEditing.selectModel(null);

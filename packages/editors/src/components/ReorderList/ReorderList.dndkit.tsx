@@ -10,11 +10,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
+import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 
@@ -29,6 +25,7 @@ export interface ReorderListProps<T extends { id: string; type?: string }> {
   marginBottom?: string | number;
   grid?: boolean;
   list?: boolean;
+  itemClassName?: string;
 }
 
 export function ReorderList<T extends { id: string; type?: string }>({
@@ -42,12 +39,13 @@ export function ReorderList<T extends { id: string; type?: string }>({
   marginBottom,
   grid,
   list,
+  itemClassName,
 }: ReorderListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const onDragEnd = useCallback(
@@ -60,7 +58,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
         });
       }
     },
-    [items, reorder],
+    [items, reorder]
   );
 
   const enabled = items.length > 0;
@@ -79,6 +77,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
         inlineActions={inlineActions ? inlineActions(item, idx, item) : undefined}
         marginBottom={marginBottom}
         grid={grid}
+        className={itemClassName}
       >
         {item.type ? (
           <ResourceReactContext.Provider value={{ [item.type]: item.id }}>

@@ -1,11 +1,14 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { AddIcon, ListEditIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import { AddIcon, IconButton, ListEditIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useCreator, useEditingResource, useEditingStack, useGenericEditor } from "@manifest-editor/shell";
+import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
+import LightIcon from "@manifest-editor/ui/icons/LightIcon";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useMemo, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { useInStack } from "../../helpers";
 import { describeSceneAnnotation, type SceneItemGroup } from "../../helpers/scene-items";
+import { SceneItemIcon } from "./SceneItemIcon";
 
 const groupOrder: SceneItemGroup[] = ["Objects", "Cameras", "Lights", "Audio", "Other"];
 
@@ -104,7 +107,7 @@ export function SceneContents() {
                               aria-hidden
                               className="flex h-7 w-7 shrink-0 items-center justify-center text-lg text-gray-500"
                             >
-                              {item.icon}
+                              <SceneItemIcon type={item.type} />
                             </span>
                             <span className="min-w-0 flex-1">
                               <span className="block truncate text-sm text-gray-900">{item.label}</span>
@@ -112,17 +115,11 @@ export function SceneContents() {
                             </span>
                           </button>
                           {item.group === "Lights" ? (
-                            <button
-                              aria-label={`${hidden ? "Turn on" : "Turn off"} ${item.label}`}
-                              aria-pressed={!hidden}
-                              className={`mr-1 w-10 rounded border px-1.5 py-1 text-xs ${
-                                hidden
-                                  ? "border-gray-300 bg-white text-gray-500"
-                                  : "border-green-700 bg-green-50 text-green-800"
-                              }`}
-                              title={`${hidden ? "Turn on" : "Turn off"} light`}
-                              type="button"
-                              onClick={() => {
+                            <IconButton
+                              label={`${hidden ? "Turn on" : "Turn off"} ${item.label}`}
+                              active={!hidden}
+                              className="text-base"
+                              onPress={() => {
                                 const behavior = (item.resource?.behavior || []) as string[];
                                 vault.modifyEntityField(
                                   { id: item.resource.id, type: "ContentResource" } as any,
@@ -131,23 +128,21 @@ export function SceneContents() {
                                 );
                               }}
                             >
-                              {hidden ? "Off" : "On"}
-                            </button>
+                              <LightIcon className={hidden ? "text-gray-400" : "text-amber-500"} />
+                            </IconButton>
                           ) : null}
                           {editingItems ? (
-                            <button
-                              aria-label={`Remove ${item.label}`}
-                              className="mr-1 flex h-7 w-7 items-center justify-center rounded text-lg text-gray-500 hover:bg-red-50 hover:text-red-700"
-                              title="Remove from Scene"
-                              type="button"
-                              onClick={() => {
+                            <IconButton
+                              label={`Remove ${item.label}`}
+                              className="text-base text-gray-500 hover:bg-red-50 hover:text-red-700"
+                              onPress={() => {
                                 if (!window.confirm(`Remove “${item.label}” from this Scene?`)) return;
                                 if (selected) editingStack.edit(scene!, true);
                                 pageEditor?.structural.items.deleteAtIndex(index);
                               }}
                             >
-                              ×
-                            </button>
+                              <DeleteIcon />
+                            </IconButton>
                           ) : null}
                         </div>
                       );

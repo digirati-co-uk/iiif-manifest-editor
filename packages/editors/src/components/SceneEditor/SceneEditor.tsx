@@ -1,4 +1,5 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
+import { createSceneHelper } from "@iiif/helpers/scenes";
 import { EditTextIcon, InfoIcon, PreviewIcon, ResetIcon } from "@manifest-editor/components";
 import { useEditingResource, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
@@ -19,10 +20,11 @@ import {
   type SceneTransformMode,
   type SceneTransformValue,
 } from "../../helpers/model-transforms";
-import { resolveFirstAnnotationBody, setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
+import { setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
 import { sceneAnnotationCreation, useSceneAnnotationCreation } from "../../helpers/scene-annotation-creation";
 import { useSceneActivationEditing, sceneActivationEditing } from "../../helpers/scene-activation-editing";
 import {
+  addModelsToSceneActivation,
   findActivationState,
   getSceneActivations,
   setActivationStateTransforms,
@@ -99,7 +101,7 @@ export function SceneEditor() {
   const resolvedActivationId = activeActivation?.id;
   const activeActivationLabel = activeActivation?.label || "activation";
   const selectedAnnotation = activeActivation
-    ? activationEditing?.modelAnnotationId || null
+    ? activationEditing?.modelAnnotationId || undefined
     : current?.resource.source.type === "Annotation"
       ? current.resource.source.id
       : null;
@@ -123,7 +125,7 @@ export function SceneEditor() {
     [resolved.modelAnnotations, vault]
   );
   const pickingAnnotationPoint = !!(annotationDraft && annotationDraft.sceneId === sceneId && !annotationDraft.point);
-  const selectedAnnotationPoint = annotationDraft?.sceneId === sceneId ? annotationDraft.point : null;
+  const selectedAnnotationPoint = annotationDraft && annotationDraft.sceneId === sceneId ? annotationDraft.point : null;
   const selectedItem = sceneItems.find((item) => item.annotation.id === selectedAnnotation);
   const hasAuthoredLight = sceneItems.some((item) => item.group === "Lights");
   const cameras = sceneItems.filter((item) => item.group === "Cameras");
@@ -140,22 +142,41 @@ export function SceneEditor() {
           layout.rightPanel.close();
           return;
         }
-        const stateIndex = activeActivation.states.findIndex((state) => state.source.id === annotation.id);
-        const state = activeActivation.states[stateIndex];
+        let currentActivation = activeActivation;
+        let stateIndex = currentActivation.states.findIndex((state) => state.source.id === annotation.id);
+        let state = currentActivation.states[stateIndex];
         if (!state) {
-          setMessage("Add this model to the activation before editing it");
-          return;
+          addModelsToSceneActivation(
+            sceneRef as any,
+            currentActivation,
+            [{ id: annotation.id, type: "Annotation" }],
+            vault
+          );
+          currentActivation = getSceneActivations(sceneRef as any, vault).find(
+            (candidate) => candidate.id === activeActivation.id
+          )!;
+          stateIndex = currentActivation.states.findIndex((candidate) => candidate.source.id === annotation.id);
+          state = currentActivation.states[stateIndex];
+          if (!state) return;
+          setMessage(`${describeSceneAnnotation(annotation, vault).label} added to ${activeActivation.label}`);
         }
         sceneActivationEditing.selectModel(annotation.id);
         layout.edit(
           state.ref as any,
           {
-            parent: { id: activeActivation.body.id, type: "ContentResource" } as any,
-            property: activeActivation.body.type === "List" ? "items" : "body",
+            parent:
+              currentActivation.body.type === "List"
+                ? ({ id: currentActivation.body.id, type: "ContentResource" } as any)
+                : ({ id: currentActivation.id, type: "Annotation" } as any),
+            property: currentActivation.body.type === "List" ? "items" : "body",
             index: stateIndex,
           },
           { forceOpen: true }
         );
+        queueMicrotask(() => {
+          panel.current?.reset();
+          panel.current?.activate(currentActivation.id);
+        });
         return;
       }
       if (!annotation) {
@@ -170,23 +191,26 @@ export function SceneEditor() {
         { forceOpen: true }
       );
     },
-    [activeActivation, annotations, layout, page, sceneRef]
+    [activeActivation, annotations, layout, page, sceneRef, vault]
   );
 
   const commitTransform = useCallback(
     (value: SceneTransformValue) => {
       if (activeActivation) {
         const state = findActivationState(activeActivation, value.annotationId);
-        const annotation = resolved.modelAnnotations.find((candidate) => candidate.id === value.annotationId);
-        const body = annotation ? resolveFirstAnnotationBody(annotation, vault) : undefined;
-        if (!state || !body) {
+        const paintable = sceneRef
+          ? createSceneHelper(vault)
+              .getPaintables(vault.get<any>(sceneRef as any, { skipSelfReturn: false }))
+              .items.find((candidate) => candidate.annotationId === value.annotationId)
+          : undefined;
+        if (!state || !paintable) {
           setMessage("This model is not part of the current activation");
           return;
         }
         const activationValue = sceneActivationTransformValueFromMatrix(
           value.annotationId,
           value.matrix,
-          body.transform || [],
+          paintable.bodyTransform,
           value.targetPoint
         );
         setActivationStateTransforms(state, sceneTransformValueToTransforms(activationValue), vault);
@@ -200,7 +224,7 @@ export function SceneEditor() {
       );
       setMessage(`${toolLabels[mode]} saved`);
     },
-    [activeActivation, mode, resolved.modelAnnotations, vault]
+    [activeActivation, mode, sceneRef, vault]
   );
 
   const restoreTransformView = useCallback((finished = false) => {

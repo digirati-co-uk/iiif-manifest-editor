@@ -1,10 +1,20 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { ActionButton, AddIcon, BackIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
+import {
+  ActionButton,
+  AddIcon,
+  BackIcon,
+  ListEditIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "@manifest-editor/components";
 import { useLayoutActions } from "@manifest-editor/shell";
+import { CopyIcon } from "@manifest-editor/ui/icons/CopyIcon";
+import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useEffect, useMemo, useState } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
-import { useInStack } from "../../helpers";
+import { useInStack, useToggleList } from "../../helpers";
 import { sceneActivationEditing, useSceneActivationEditing } from "../../helpers/scene-activation-editing";
 import {
   addModelsToSceneActivation,
@@ -21,12 +31,15 @@ import {
 } from "../../helpers/scene-activations";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 
+const rowClassName = "border-b border-gray-200 last:border-b-0 hover:bg-gray-50";
+
 export function SceneActivations() {
   const scene = useInStack("Scene");
   const sceneRef = scene?.resource.source as any;
   const vault = useVault() as unknown as Vault4;
   const layout = useLayoutActions();
   const editing = useSceneActivationEditing();
+  const [toggled, toggle] = useToggleList();
   const [creating, setCreating] = useState(false);
   const [label, setLabel] = useState("");
   const [creationMode, setCreationMode] = useState<"all" | "selected">("all");
@@ -59,8 +72,9 @@ export function SceneActivations() {
     setAddingModels(false);
     sceneActivationEditing.select(sceneRef.id, next.id);
   };
-  const openState = (state: SceneActivationState, index: number) => {
+  const openState = (state: SceneActivationState) => {
     if (!activation) return;
+    const index = activation.states.findIndex((item) => item.id === state.id);
     sceneActivationEditing.selectModel(state.source.id);
     layout.edit(
       state.ref as any,
@@ -84,6 +98,7 @@ export function SceneActivations() {
   if (activation) {
     const visibleStates = changedOnly ? activation.states.filter((state) => state.changed) : activation.states;
     const changedCount = activation.states.filter((state) => state.changed).length;
+    const editingStates = toggled.states && !changedOnly;
     return (
       <Sidebar>
         <SidebarHeader
@@ -98,29 +113,36 @@ export function SceneActivations() {
               },
             },
             {
+              icon: <ListEditIcon />,
+              title: "Edit models",
+              toggled: toggled.states,
+              disabled: changedOnly || activation.states.length < 1,
+              onClick: () => toggle("states"),
+            },
+            {
               icon: <AddIcon />,
               title: "Add models",
               disabled: missingModels.length === 0,
               toggled: addingModels,
-              onClick: () => setAddingModels((value) => !value),
+              onClick: () => {
+                setModelsToAdd([]);
+                setAddingModels((value) => !value);
+              },
             },
           ]}
         />
         <SidebarContent className="pb-0">
-          <div className="border-b border-gray-200 p-3">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-gray-600">
-                {changedCount} of {activation.states.length} model{activation.states.length === 1 ? "" : "s"} changed
-              </p>
-              <label className="flex shrink-0 items-center gap-2 text-xs text-gray-600">
-                <input
-                  type="checkbox"
-                  checked={changedOnly}
-                  onChange={(event) => setChangedOnly(event.target.checked)}
-                />
-                Changed only
-              </label>
-            </div>
+          <div className="flex items-center justify-between gap-3 border-b border-gray-200 p-3">
+            <p className="text-sm text-gray-600" aria-live="polite">
+              {changedCount} of {activation.states.length} model{activation.states.length === 1 ? "" : "s"} changed
+            </p>
+            <ActionButton
+              primary={changedOnly}
+              aria-pressed={changedOnly}
+              onPress={() => setChangedOnly((value) => !value)}
+            >
+              Changed only
+            </ActionButton>
           </div>
           {addingModels ? (
             <section className="border-b border-gray-200 bg-gray-50 p-3" aria-label="Add models">
@@ -132,6 +154,7 @@ export function SceneActivations() {
                   isDisabled={!modelsToAdd.length}
                   onPress={() => {
                     addModelsToSceneActivation(
+                      sceneRef,
                       activation,
                       missingModels
                         .filter((model) => modelsToAdd.includes(model.annotation.id))
@@ -144,48 +167,36 @@ export function SceneActivations() {
                 >
                   Add selected
                 </ActionButton>
-                <ActionButton onPress={() => setAddingModels(false)}>Cancel</ActionButton>
+                <ActionButton
+                  onPress={() => {
+                    setModelsToAdd([]);
+                    setAddingModels(false);
+                  }}
+                >
+                  Cancel
+                </ActionButton>
               </div>
             </section>
           ) : null}
           {visibleStates.length ? (
-            changedOnly ? (
-              <ul aria-label="Changed activation states">
-                {visibleStates.map((state) => (
-                  <StateRow
-                    key={state.id}
-                    state={state}
-                    selected={editing?.modelAnnotationId === state.source.id}
-                    onOpen={() => openState(state, activation.states.findIndex((item) => item.id === state.id))}
-                    onRemove={() => {
-                      if (!window.confirm(`Remove ${state.label} from this activation?`)) return;
-                      removeActivationState(activation, state.id, vault);
-                    }}
-                  />
-                ))}
-              </ul>
-            ) : (
-              <ReorderList
-                id={`${activation.id}-states`}
-                items={activation.states}
-                inlineHandle={false}
-                list
-                reorder={({ startIndex, endIndex }) =>
-                  reorderActivationStates(activation, startIndex, endIndex, vault)
+            <StatesList
+              states={visibleStates}
+              editing={editingStates}
+              canRemove={activation.states.length > 1}
+              selectedId={editing?.modelAnnotationId}
+              onOpen={openState}
+              onRemove={(state) => {
+                if (!window.confirm(`Remove ${state.label} from this activation?`)) return;
+                if (
+                  removeActivationState(activation, state.id, vault) &&
+                  editing?.modelAnnotationId === state.source.id
+                ) {
+                  sceneActivationEditing.selectModel(null);
+                  layout.rightPanel.close();
                 }
-                renderItem={(state, index) => (
-                  <StateRow
-                    state={state}
-                    selected={editing?.modelAnnotationId === state.source.id}
-                    onOpen={() => openState(state, index)}
-                    onRemove={() => {
-                      if (!window.confirm(`Remove ${state.label} from this activation?`)) return;
-                      removeActivationState(activation, state.id, vault);
-                    }}
-                  />
-                )}
-              />
-            )
+              }}
+              reorder={({ startIndex, endIndex }) => reorderActivationStates(activation, startIndex, endIndex, vault)}
+            />
           ) : (
             <div className="px-4 py-8 text-center text-sm text-gray-500">
               {changedOnly ? "No models differ from their rest state." : "This activation has no models."}
@@ -201,6 +212,13 @@ export function SceneActivations() {
       <SidebarHeader
         title="Activations"
         actions={[
+          {
+            icon: <ListEditIcon />,
+            title: "Edit activations",
+            toggled: toggled.activations,
+            disabled: resolved.activations.length < 1,
+            onClick: () => toggle("activations"),
+          },
           {
             icon: <AddIcon />,
             title: "Create activation",
@@ -223,24 +241,20 @@ export function SceneActivations() {
             </label>
             <fieldset className="mt-3">
               <legend className="text-sm font-medium text-gray-900">Models to change</legend>
-              <label className="mt-2 flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
+              <div className="mt-2 flex flex-col gap-2">
+                <RadioRow
                   name="activation-models"
                   checked={creationMode === "all"}
                   onChange={() => setCreationMode("all")}
+                  label="All models"
                 />
-                All models
-              </label>
-              <label className="mt-2 flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
+                <RadioRow
                   name="activation-models"
                   checked={creationMode === "selected"}
                   onChange={() => setCreationMode("selected")}
+                  label="Selected models"
                 />
-                Selected models
-              </label>
+              </div>
             </fieldset>
             {creationMode === "selected" ? (
               <div className="mt-2 max-h-56 overflow-auto rounded border border-gray-200 bg-white p-2">
@@ -273,44 +287,20 @@ export function SceneActivations() {
           </section>
         ) : null}
         {resolved.activations.length ? (
-          <ReorderList
-            id={`${sceneRef.id}-activations`}
-            items={resolved.activations}
-            inlineHandle={false}
-            list
+          <ActivationsList
+            activations={resolved.activations}
+            editing={toggled.activations}
+            onOpen={openActivation}
             reorder={({ startIndex, endIndex }) =>
               reorderSceneActivations(resolved.activations, startIndex, endIndex, vault)
             }
-            createActions={(item) => [
-              {
-                label: "Duplicate",
-                onClick: () => {
-                  const id = duplicateSceneActivation(sceneRef, item, vault);
-                  sceneActivationEditing.select(sceneRef.id, id);
-                },
-              },
-              {
-                label: "Delete",
-                onClick: () => {
-                  if (!window.confirm(`Delete activation “${item.label}”?`)) return;
-                  removeSceneActivation(item, vault);
-                },
-              },
-            ]}
-            renderItem={(item) => {
-              const changed = item.states.filter((state) => state.changed).length;
-              return (
-                <button
-                  className="min-w-0 flex-1 px-3 py-2 text-left hover:bg-gray-50"
-                  type="button"
-                  onClick={() => openActivation(item)}
-                >
-                  <span className="block truncate text-sm text-gray-900">{item.label}</span>
-                  <span className="block text-xs text-gray-500">
-                    {changed} changed · {item.states.length} model{item.states.length === 1 ? "" : "s"}
-                  </span>
-                </button>
-              );
+            onDuplicate={(item) => {
+              const id = duplicateSceneActivation(sceneRef, item, vault);
+              sceneActivationEditing.select(sceneRef.id, id);
+            }}
+            onDelete={(item) => {
+              if (!window.confirm(`Delete activation “${item.label}”?`)) return;
+              removeSceneActivation(sceneRef, item, vault);
             }}
           />
         ) : !creating ? (
@@ -324,6 +314,134 @@ export function SceneActivations() {
         ) : null}
       </SidebarContent>
     </Sidebar>
+  );
+}
+
+function ActivationsList({
+  activations,
+  editing,
+  onOpen,
+  reorder,
+  onDuplicate,
+  onDelete,
+}: {
+  activations: SceneActivation[];
+  editing: boolean;
+  onOpen: (item: SceneActivation) => void;
+  reorder: (result: { startIndex: number; endIndex: number }) => void;
+  onDuplicate: (item: SceneActivation) => void;
+  onDelete: (item: SceneActivation) => void;
+}) {
+  const renderRow = (item: SceneActivation) => {
+    const changed = item.states.filter((state) => state.changed).length;
+    return (
+      <button className="min-w-0 flex-1 px-3 py-2 text-left" type="button" onClick={() => onOpen(item)}>
+        <span className="block truncate text-sm text-gray-900">{item.label}</span>
+        <span className="block text-xs text-gray-500">
+          {changed} changed · {item.states.length} model{item.states.length === 1 ? "" : "s"}
+        </span>
+      </button>
+    );
+  };
+
+  if (editing) {
+    return (
+      <ReorderList
+        id="scene-activations-list"
+        items={activations}
+        inlineHandle={false}
+        list
+        itemClassName={rowClassName}
+        reorder={reorder}
+        createActions={(item) => [
+          { label: "Duplicate", icon: <CopyIcon />, onClick: () => onDuplicate(item) },
+          { label: "Delete", icon: <DeleteIcon />, onClick: () => onDelete(item) },
+        ]}
+        renderItem={renderRow}
+      />
+    );
+  }
+
+  return (
+    <ul aria-label="Scene activations">
+      {activations.map((item) => (
+        <li className={`flex ${rowClassName}`} key={item.id}>
+          {renderRow(item)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function StatesList({
+  states,
+  editing,
+  canRemove,
+  selectedId,
+  onOpen,
+  onRemove,
+  reorder,
+}: {
+  states: SceneActivationState[];
+  editing: boolean;
+  canRemove: boolean;
+  selectedId?: string | null;
+  onOpen: (state: SceneActivationState) => void;
+  onRemove: (state: SceneActivationState) => void;
+  reorder: (result: { startIndex: number; endIndex: number }) => void;
+}) {
+  const renderRow = (state: SceneActivationState) => (
+    <StateRow state={state} selected={selectedId === state.source.id} onOpen={() => onOpen(state)} />
+  );
+
+  if (editing) {
+    return (
+      <ReorderList
+        id="scene-activation-states-list"
+        items={states}
+        inlineHandle={false}
+        list
+        itemClassName={rowClassName}
+        reorder={reorder}
+        createActions={(state) =>
+          canRemove ? [{ label: "Remove from activation", icon: <DeleteIcon />, onClick: () => onRemove(state) }] : []
+        }
+        renderItem={renderRow}
+      />
+    );
+  }
+
+  return (
+    <ul aria-label="Activation states">
+      {states.map((state) => (
+        <li className={rowClassName} key={state.id}>
+          {renderRow(state)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function RadioRow({
+  name,
+  checked,
+  onChange,
+  label,
+}: {
+  name: string;
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+}) {
+  return (
+    <label
+      className={`flex cursor-pointer items-center gap-3 rounded-md border p-2 text-sm transition-colors ${
+        checked ? "border-me-500 bg-me-50" : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+      }`}
+    >
+      <input type="radio" name={name} checked={checked} onChange={onChange} />
+      {label}
+    </label>
   );
 }
 
@@ -358,37 +476,16 @@ function ModelChoices({
   );
 }
 
-function StateRow({
-  state,
-  selected,
-  onOpen,
-  onRemove,
-}: {
-  state: SceneActivationState;
-  selected: boolean;
-  onOpen: () => void;
-  onRemove: () => void;
-}) {
+function StateRow({ state, selected, onOpen }: { state: SceneActivationState; selected: boolean; onOpen: () => void }) {
   return (
     <div
-      className={`flex min-w-0 items-center border-l-2 border-b border-gray-200 ${
-        selected ? "border-l-me-600 bg-gray-100" : "border-l-transparent"
-      }`}
+      className={`flex min-w-0 items-center border-l-2 ${selected ? "border-l-me-600 bg-gray-100" : "border-l-transparent"}`}
     >
-      <button className="min-w-0 flex-1 px-3 py-2 text-left hover:bg-gray-50" type="button" onClick={onOpen}>
+      <button className="min-w-0 flex-1 px-3 py-2 text-left" type="button" onClick={onOpen}>
         <span className="block truncate text-sm text-gray-900">{state.label}</span>
         <span className={`block text-xs ${state.changed ? "font-medium text-amber-700" : "text-gray-500"}`}>
           {state.changed ? "Changed from rest" : "Same as rest"}
         </span>
-      </button>
-      <button
-        aria-label={`Remove ${state.label}`}
-        className="mr-1 flex h-7 w-7 items-center justify-center rounded text-lg text-gray-500 hover:bg-red-50 hover:text-red-700"
-        title="Remove from activation"
-        type="button"
-        onClick={onRemove}
-      >
-        ×
       </button>
     </div>
   );

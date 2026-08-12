@@ -26,15 +26,6 @@ export function sceneItemGroup(type: string): SceneItemGroup {
   return "Other";
 }
 
-export function sceneItemIcon(type: string) {
-  if (type === "Model") return "◇";
-  if (type.endsWith("Camera")) return "◉";
-  if (type === "SpotLight") return "▽";
-  if (type.endsWith("Light")) return "☀";
-  if (type.endsWith("Audio") || type === "Audio" || type === "Sound") return "♪";
-  return "•";
-}
-
 export function isActivatingAnnotation(annotation: any) {
   const motivations = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
   return motivations.includes("activating");
@@ -58,7 +49,6 @@ export function describeSceneAnnotation(annotation: any, vault: any, index = 0) 
     type,
     typeLabel,
     group: sceneItemGroup(type),
-    icon: sceneItemIcon(type),
     label: resourceLabel || annotationLabel || textualBodyLabel || urlName || `${typeLabel} ${index + 1}`,
   };
 }

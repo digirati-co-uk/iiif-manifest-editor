@@ -31,6 +31,7 @@ export type SceneActivation = {
 export type SceneModel = {
   annotation: any;
   label: string;
+  restActions: string[];
 };
 
 const asArray = <T>(value: T | readonly T[] | null | undefined): T[] =>
@@ -53,6 +54,9 @@ export function getSceneModels(sceneRef: Reference<"Scene">, vault: Vault4): Sce
     .map((paintable, index) => ({
       annotation: paintable.annotation,
       label: describeSceneAnnotation(paintable.annotation, vault, index).label,
+      restActions: [paintable.behavior.includes("hidden") ? "hide" : "show"].concat(
+        paintable.behavior.includes("disabled") ? "disable" : "enable"
+      ),
     }));
 }
 
@@ -121,17 +125,20 @@ export function getSceneActivations(sceneRef: Reference<"Scene">, vault: Vault4)
 
 export function activationStateDiffersFromRest(state: any, rest: { hidden?: boolean; disabled?: boolean } = {}) {
   const actions = asArray<string>(state?.action);
+  const visibility = actions.filter((action) => action === "show" || action === "hide").at(-1);
+  if (visibility && (visibility === "hide") !== !!rest.hidden) return true;
+  const availability = actions.filter((action) => action === "enable" || action === "disable").at(-1);
+  if (availability && (availability === "disable") !== !!rest.disabled) return true;
+  const playback = actions.filter((action) => action === "start" || action === "stop").at(-1);
+  if (playback === "start" || actions.includes("select")) return true;
   if (
-    actions.some((action) => {
-      if (action === "show") return !!rest.hidden;
-      if (action === "hide") return !rest.hidden;
-      if (action === "enable") return !!rest.disabled;
-      if (action === "disable") return !rest.disabled;
-      return true;
-    })
-  )
+    actions.some(
+      (action) => !["show", "hide", "enable", "disable", "start", "stop", "reset", "select"].includes(action)
+    )
+  ) {
     return true;
-  if (asArray(state?.selector).length) return true;
+  }
+  if (actions.includes("reset")) return false;
   return asArray<ModelTransform>(state?.transform).some((transform) => {
     if (transform.type === "ScaleTransform") {
       return [transform.x, transform.y, transform.z].some((value) => value !== undefined && Math.abs(value - 1) > 1e-8);
@@ -144,13 +151,19 @@ function resourceId(parentId: string, type: string) {
   return `${parentId.replace(/\/$/, "")}/${type}/${globalThis.crypto.randomUUID()}`;
 }
 
-function activationState(activationId: string, model: Reference<"Annotation">, index: number, source?: any) {
+function activationState(
+  activationId: string,
+  model: Reference<"Annotation">,
+  index: number,
+  source?: any,
+  restActions: string[] = ["show", "enable"]
+) {
   const actions = asArray<string>(source?.actions ?? source?.action);
   return {
     id: resourceId(activationId, `state-${index + 1}`),
     type: "SpecificResource",
     source: model,
-    action: actions.length ? actions : ["show"],
+    action: actions.length ? actions : restActions,
     selector: asArray(source?.selectors ?? source?.selector),
     transform: asArray(source?.transforms ?? source?.transform),
   };
@@ -160,14 +173,16 @@ function activationResources(
   sceneId: string,
   label: string,
   models: Reference<"Annotation">[],
-  source?: SceneActivation
+  source?: SceneActivation,
+  restActions = new Map<string, string[]>()
 ) {
-  const triggerId = resourceId(sceneId, "activation-trigger");
   const activationId = resourceId(sceneId, "activation");
+  const triggerId = `${activationId}/trigger`;
   const trigger = {
     id: triggerId,
     type: "Annotation",
     motivation: ["commenting"],
+    target: { id: sceneId, type: "Scene" },
     label: { en: [label] },
     body: {
       id: resourceId(triggerId, "body"),
@@ -185,7 +200,9 @@ function activationResources(
     body: {
       id: resourceId(activationId, "body"),
       type: "List",
-      items: models.map((model, index) => activationState(activationId, model, index, sourceStates.get(model.id))),
+      items: models.map((model, index) =>
+        activationState(activationId, model, index, sourceStates.get(model.id), restActions.get(model.id))
+      ),
     },
   };
   return { trigger, activation };
@@ -258,7 +275,8 @@ export function createSceneActivation(
   vault: Vault4
 ) {
   const page = activationPage(sceneRef, vault);
-  const created = activationResources(sceneRef.id, label, models);
+  const restActions = new Map(getSceneModels(sceneRef, vault).map((model) => [model.annotation.id, model.restActions]));
+  const created = activationResources(sceneRef.id, label, models, undefined, restActions);
   importActivation(vault, created);
   vault.modifyEntityField(page as any, "items", [
     ...asArray(page.items),
@@ -272,6 +290,17 @@ export function duplicateSceneActivation(sceneRef: Reference<"Scene">, source: S
   const label = `Copy of ${source.label}`;
   const models = source.states.map((state) => state.source);
   const created = activationResources(sceneRef.id, label, models, source);
+  const sourceBody = vault.toPresentation4<any>({ id: source.body.id, type: "ContentResource" });
+  const sourceItems = sourceBody.type === "List" ? asArray(sourceBody.items) : [sourceBody];
+  created.activation.body = {
+    ...(sourceBody.type === "List" ? sourceBody : {}),
+    id: resourceId(created.activation.id, "body"),
+    type: "List",
+    items: sourceItems.map((item, index) => ({
+      ...item,
+      id: resourceId(created.activation.id, `state-${index + 1}`),
+    })),
+  } as any;
   const page = resolve(vault, { id: source.page.id, type: "AnnotationPage" });
   const items = asArray(page.items);
   const insertAt = items.findIndex((item: any) => item.id === source.id) + 1;
@@ -287,22 +316,39 @@ export function duplicateSceneActivation(sceneRef: Reference<"Scene">, source: S
   return created.activation.id;
 }
 
-export function removeSceneActivation(activation: SceneActivation, vault: Vault4) {
+export function removeSceneActivation(sceneRef: Reference<"Scene">, activation: SceneActivation, vault: Vault4) {
   const targetId = asArray(activation.annotation.target)[0]?.id;
   const page = resolve(vault, { id: activation.page.id, type: "AnnotationPage" });
-  const otherUsesTarget = asArray(page.items).some((item: any) => {
-    if (item.id === activation.id) return false;
-    const annotation = resolve(vault, item, page);
-    return isActivatingAnnotation(annotation) && asArray(annotation.target)[0]?.id === targetId;
-  });
+  const ownedTarget = targetId === `${activation.id}/trigger`;
+  const otherUsesTarget = getSceneActivations(sceneRef, vault).some(
+    (candidate) => candidate.id !== activation.id && asArray(candidate.annotation.target)[0]?.id === targetId
+  );
   vault.modifyEntityField(
     { id: page.id, type: "AnnotationPage" } as any,
     "items",
-    asArray(page.items).filter((item: any) => item.id !== activation.id && (otherUsesTarget || item.id !== targetId))
+    asArray(page.items).filter(
+      (item: any) => item.id !== activation.id && (!ownedTarget || otherUsesTarget || item.id !== targetId)
+    )
   );
 }
 
+function ensureActivationList(activation: SceneActivation, vault: Vault4) {
+  if (activation.body.type === "List") return activation.body;
+  const list = {
+    id: resourceId(activation.id, "body"),
+    type: "List",
+    items: [],
+  };
+  vault.loadSync(list.id, list as any);
+  vault.modifyEntityField({ id: list.id, type: "ContentResource" } as any, "items", [activation.states[0]!.ref]);
+  vault.modifyEntityField({ id: activation.id, type: "Annotation" } as any, "body", [
+    { id: list.id, type: "ContentResource" },
+  ]);
+  return resolve(vault, { id: list.id, type: "ContentResource" });
+}
+
 export function addModelsToSceneActivation(
+  sceneRef: Reference<"Scene">,
   activation: SceneActivation,
   models: Reference<"Annotation">[],
   vault: Vault4
@@ -310,17 +356,23 @@ export function addModelsToSceneActivation(
   const existing = new Set(activation.states.map((state) => state.source.id));
   const additions = models.filter((model) => !existing.has(model.id));
   if (!additions.length) return;
-  const items = asArray(activation.body.items);
-  const newStates = additions.map((model, index) => activationState(activation.id, model, items.length + index));
-  importActivationStates(vault, activation.body.id, newStates, [...items, ...newStates]);
+  const body = ensureActivationList(activation, vault);
+  const items = asArray(body.items);
+  const restActions = new Map(getSceneModels(sceneRef, vault).map((model) => [model.annotation.id, model.restActions]));
+  const newStates = additions.map((model, index) =>
+    activationState(activation.id, model, items.length + index, undefined, restActions.get(model.id))
+  );
+  importActivationStates(vault, body.id, newStates, [...items, ...newStates]);
 }
 
 export function removeActivationState(activation: SceneActivation, stateId: string, vault: Vault4) {
+  if (activation.states.length <= 1 || activation.body.type !== "List") return false;
   vault.modifyEntityField(
     { id: activation.body.id, type: "ContentResource" } as any,
     "items",
     asArray(activation.body.items).filter((item: any) => item.id !== stateId)
   );
+  return true;
 }
 
 export function reorderActivationStates(
@@ -329,8 +381,10 @@ export function reorderActivationStates(
   endIndex: number,
   vault: Vault4
 ) {
+  if (activation.body.type !== "List") return false;
   const items = move(asArray(activation.body.items), startIndex, endIndex);
   vault.modifyEntityField({ id: activation.body.id, type: "ContentResource" } as any, "items", items);
+  return true;
 }
 
 export function reorderSceneActivations(
@@ -339,27 +393,22 @@ export function reorderSceneActivations(
   endIndex: number,
   vault: Vault4
 ) {
-  const source = activations[startIndex];
-  const destination = activations[endIndex];
-  if (!source || !destination || source.page.id !== destination.page.id) return false;
-  const page = resolve(vault, { id: source.page.id, type: "AnnotationPage" });
-  const items = asArray<any>(page.items);
-  const pairs = activations
-    .filter((activation) => activation.page.id === page.id)
-    .map((activation) => {
-      const targetId = asArray(activation.annotation.target)[0]?.id;
-      const targetUses = activations.filter(
-        (candidate) => asArray(candidate.annotation.target)[0]?.id === targetId
-      ).length;
-      return items.filter((item) => item.id === activation.id || (targetUses === 1 && item.id === targetId));
+  if (!activations[startIndex] || !activations[endIndex]) return false;
+  const reordered = move(
+    activations.map((activation) => ({ id: activation.id, type: "Annotation" })),
+    startIndex,
+    endIndex
+  );
+  let nextIndex = 0;
+  const pageIds = [...new Set(activations.map((activation) => activation.page.id))];
+  for (const pageId of pageIds) {
+    const page = resolve(vault, { id: pageId, type: "AnnotationPage" });
+    const items = asArray<any>(page.items).map((item) => {
+      const annotation = resolve(vault, item, page);
+      return isActivatingAnnotation(annotation) ? reordered[nextIndex++]! : item;
     });
-  const pairIds = new Set(pairs.flatMap((pair) => pair.map((item) => item.id)));
-  const firstPairIndex = items.findIndex((item) => pairIds.has(item.id));
-  const others = items.filter((item) => !pairIds.has(item.id));
-  const otherBefore = items.slice(0, firstPairIndex).filter((item) => !pairIds.has(item.id)).length;
-  const reordered = move(pairs, startIndex, endIndex).flat();
-  others.splice(otherBefore, 0, ...reordered);
-  vault.modifyEntityField({ id: page.id, type: "AnnotationPage" } as any, "items", others);
+    vault.modifyEntityField({ id: page.id, type: "AnnotationPage" } as any, "items", items);
+  }
   return true;
 }
 
