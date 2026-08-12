@@ -43,7 +43,7 @@ export interface DoclingAnnotationTarget {
 export interface DoclingAnnotation {
   id: string
   type: 'Annotation'
-  motivation: 'supplementing'
+  motivation: ['supplementing']
   category: string
   body: DoclingAnnotationBody[]
   target: DoclingAnnotationTarget
