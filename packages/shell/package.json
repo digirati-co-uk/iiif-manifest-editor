@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/shell",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -70,8 +70,8 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "@tsdown/css": "catalog:",
     "@manifest-editor/ui": "workspace:*",
+    "@tsdown/css": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-transition-group": "^4.4.4",
