@@ -30,6 +30,7 @@ export function createYoutubeBodyResource(data: CreateYouTubeBodyPayload, ctx: C
     type: "Video",
     service: [
       {
+        type: "Service",
         profile: "http://digirati.com/objectifier",
         params: {
           data: `https://www.youtube.com/embed/${id}`,
@@ -37,6 +38,7 @@ export function createYoutubeBodyResource(data: CreateYouTubeBodyPayload, ctx: C
       },
       {
         id: `https://www.youtube.com/watch?v=${id}`,
+        type: "Service",
         profile: "https://www.youtube.com",
       },
     ],
