@@ -6,7 +6,7 @@ import {
   StructuralProperties,
   TechnicalProperties,
   TextGranularityExtension,
-} from "@iiif/presentation-3";
+} from "@iiif/parser";
 import { BaseEditor } from "./BaseEditor";
 import { DescriptiveEditor } from "./DescriptiveEditor";
 import { EditorConfig, EntityValidationResponse, TrackerState } from "./types";

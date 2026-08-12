@@ -1,5 +1,4 @@
-import { isSpecificResource } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import type { CreatableResource } from "@manifest-editor/creator-api";
 import { type ReactNode, memo, useMemo, useReducer } from "react";
 import invariant from "tiny-invariant";
@@ -138,8 +137,8 @@ export const LayoutProvider = memo(function LayoutProvider(props: { children: Re
     } = {}
   ) {
     const toEdit: EditableResource = {
-      resource: isSpecificResource(resource)
-        ? resource
+      resource: resource.type === "SpecificResource"
+        ? (resource as SpecificResource)
         : {
             type: "SpecificResource",
             source: resource,

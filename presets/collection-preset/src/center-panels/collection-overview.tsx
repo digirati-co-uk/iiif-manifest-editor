@@ -8,7 +8,7 @@ import {
 } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useState } from "react";
-import { CollectionContext, LocaleString, ManifestContext, useManifest, useThumbnail } from "react-iiif-vault";
+import { CollectionContext, LocaleString, ManifestContext, useManifest, useThumbnail } from "react-iiif-vault/presentation-4";
 import { CollectionPreviewItem } from "../components/CollectionPreviewItem";
 import { ManifestPreviewItem } from "../components/ManifestPreviewItem";
 import { PreviewManifestInBrowser } from "../components/PreviewManifestInBrowser";

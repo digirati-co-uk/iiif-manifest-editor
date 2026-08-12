@@ -1,4 +1,4 @@
-import { LocaleString, useCanvas } from "react-iiif-vault";
+import { LocaleString, useCanvas } from "react-iiif-vault/presentation-4";
 
 export function CanvasLabel(props: { className?: string; as?: string }) {
   const canvas = useCanvas();

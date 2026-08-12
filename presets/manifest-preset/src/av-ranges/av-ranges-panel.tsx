@@ -12,7 +12,7 @@ import {
 } from "@manifest-editor/components";
 import { type LayoutPanel, useLayoutActions } from "@manifest-editor/shell";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { deleteTemporalRange, updateTemporalRange } from "./av-range-mutations";
 import { useAvRangeStore } from "./av-range-store";
 import { getAvCanvases } from "./av-media-utils";

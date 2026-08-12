@@ -1,6 +1,6 @@
 import { getAvailableLanguagesFromResource } from "@iiif/helpers/i18n";
 import type { Vault } from "@iiif/helpers/vault";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import type { InternationalString, Reference } from "@iiif/parser";
 import type {
   LanguageMapLike,
   TranslationOccurrence,

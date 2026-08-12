@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { createContext } from "../helpers/create-context";
-import { ImageService } from "@iiif/presentation-3";
+import { ImageService } from "@iiif/parser";
 
 export const [useImageServiceContext, ImageServiceContext] = createContext<ImageService>();
 

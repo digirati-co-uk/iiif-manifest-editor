@@ -1,4 +1,4 @@
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { getHeightWidthRatio } from "../helpers";
 

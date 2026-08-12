@@ -1,6 +1,6 @@
 import { AnnotationPreview, CanvasTargetContext } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
-import { LocaleString, useAnnotation, useAtlasStore, useCanvas } from "react-iiif-vault";
+import { LocaleString, useAnnotation, useAtlasStore, useCanvas } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 
 export function RenderPaintingAnnotationPreview() {

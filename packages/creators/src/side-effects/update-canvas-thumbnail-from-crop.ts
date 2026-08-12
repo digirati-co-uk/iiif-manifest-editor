@@ -1,5 +1,5 @@
 import { isImageService } from "@iiif/parser/image-3";
-import type { ImageService, SpecificResource } from "@iiif/presentation-3";
+import type { ImageService, SpecificResource } from "@iiif/parser";
 import type { CreatorSideEffect } from "@manifest-editor/creator-api";
 import { croppedRegion } from "../ContentResource/IIIFBrowserCreator/iiif-browser-creator";
 

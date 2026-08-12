@@ -1,7 +1,7 @@
 import { type ContentState, normaliseContentState, parseContentState } from "@iiif/helpers";
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
-import type { Canvas } from "@iiif/presentation-3";
+import type { Canvas } from "@iiif/parser";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";

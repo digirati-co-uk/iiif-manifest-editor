@@ -1,4 +1,4 @@
-import { formatTime, useMediaActions, useMediaElements, useMediaState } from "react-iiif-vault";
+import { formatTime, useMediaActions, useMediaElements, useMediaState } from "react-iiif-vault/presentation-4";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { PauseIcon, PlayIcon, VolumeDownIcon, VolumeOffIcon, VolumeUpIcon } from "./MediaControls.icons";
 import {

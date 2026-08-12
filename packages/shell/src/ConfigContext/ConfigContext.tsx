@@ -1,4 +1,4 @@
-import type { Collection } from "@iiif/presentation-3";
+import type { Collection } from "@iiif/parser";
 import type { CreatorConfig } from "@manifest-editor/creator-api";
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";

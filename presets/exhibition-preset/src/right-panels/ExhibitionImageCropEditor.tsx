@@ -12,7 +12,7 @@ import {
   useRequestAnnotation,
   useVault,
   VaultProvider,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import {
   applyImageRotation,
   applyImageCropResponse,
@@ -437,7 +437,7 @@ function createVirtualCropManifest(
               {
                 id: `${pageId}/painting`,
                 type: "Annotation",
-                motivation: "painting",
+                motivation: ["painting"],
                 target: canvasId,
                 body: {
                   id: fullImageRequest(service, rotation),

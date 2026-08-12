@@ -8,7 +8,7 @@ import {
   useLayoutActions,
 } from "@manifest-editor/shell";
 import { type SVGProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LocaleString, useManifest, useVault } from "react-iiif-vault";
+import { LocaleString, useManifest, useVault } from "react-iiif-vault/presentation-4";
 import {
   IFRAME_PREVIEW_CENTER_PANEL_ID,
   IFRAME_PREVIEW_CONNECT,

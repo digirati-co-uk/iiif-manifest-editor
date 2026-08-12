@@ -6,7 +6,7 @@ import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
 import { Fragment, memo, useContext, useLayoutEffect, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ReactVaultContext, useVaultSelector } from "react-iiif-vault";
+import { ReactVaultContext, useVaultSelector } from "react-iiif-vault/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import equal from "shallowequal";

@@ -1,6 +1,6 @@
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { EditorProject, ProjectStorage } from "../ProjectContext.types";
-import { Collection, Manifest, Reference } from "@iiif/presentation-3";
+import { Collection, Manifest, Reference } from "@iiif/parser";
 import { CollectionStorage, ManifestStorage, Storage } from "../types/Storage";
 
 export abstract class AbstractVaultLoader<T extends Storage> implements ProjectStorage<
@@ -40,7 +40,12 @@ export abstract class AbstractVaultLoader<T extends Storage> implements ProjectS
 
     const promise = async () => {
       const data = await this.getStorage(project.storage as any);
-      await vault.loadManifest(project.resource.id, JSON.parse(JSON.stringify(data?.data)));
+      const storedResource = JSON.parse(JSON.stringify(data?.data));
+      if (project.resource.type === "Collection") {
+        await vault.loadCollection(project.resource.id, storedResource);
+      } else {
+        await vault.loadManifest(project.resource.id, storedResource);
+      }
       this.vaults[project.storage.data.key] = vault;
     };
 
@@ -60,11 +65,7 @@ export abstract class AbstractVaultLoader<T extends Storage> implements ProjectS
 
     // There will only be something to save if there is active vault.
     if (vault) {
-      const resource = vault.get(manifestRef);
-      const hasScenes = resource?.type === "Manifest" && resource.items?.some((item) => item.type === "Scene");
-      const data = hasScenes
-        ? vault.toPresentation4<Manifest | Collection>(manifestRef)
-        : vault.toPresentation3<Manifest | Collection>(manifestRef);
+      const data = vault.toPresentation4(manifestRef) as Manifest | Collection;
 
       const stored: ManifestStorage | CollectionStorage =
         data.type === "Collection"

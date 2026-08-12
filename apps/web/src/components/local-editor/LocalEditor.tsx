@@ -1,7 +1,7 @@
 "use client";
 
 import { Vault4 } from "@iiif/helpers/vault-4";
-import { upgrade } from "@iiif/parser/upgrader";
+import { upgradeToPresentation4 } from "@iiif/parser/presentation-4/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
 import { ManifestEditor } from "manifest-editor";
@@ -37,7 +37,7 @@ export default function LocalEditor() {
               const text = await file.text();
               const manifest = JSON.parse(text);
               setManifest(JSON.parse(text));
-              const upgraded = upgrade(manifest);
+              const upgraded = upgradeToPresentation4(manifest);
               if (upgraded) {
                 vault.loadManifestSync(upgraded.id, upgraded);
                 setLastModified(file.lastModified);

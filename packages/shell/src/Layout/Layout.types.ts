@@ -1,8 +1,8 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import type { CreatableResource } from "@manifest-editor/creator-api";
 import type { ReactNode } from "react";
-import type { RenderingStrategy } from "react-iiif-vault";
+import type { RenderingStrategy } from "react-iiif-vault/presentation-4";
 import type { TransitionStatus } from "react-transition-group";
 import type { AppState } from "../AppContext/AppContext";
 import type { MappedApp } from "../AppContext/AppContext";

@@ -1,5 +1,5 @@
 import { emptyAnnotationPage, emptyCanvas } from "@iiif/parser";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
 import { type CreatorFunctionContext, type CreatorResource, defineCreator } from "@manifest-editor/creator-api";
 

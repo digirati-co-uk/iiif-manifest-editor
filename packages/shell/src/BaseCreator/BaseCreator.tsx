@@ -1,4 +1,4 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import {
   ActionButton,
@@ -22,7 +22,7 @@ import {
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { type FormEvent, memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { useApp } from "../AppContext/AppContext";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { useTemporaryHighlight } from "../highlighted-image-resources";

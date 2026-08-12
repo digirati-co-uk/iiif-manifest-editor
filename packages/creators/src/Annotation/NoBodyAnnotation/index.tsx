@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
 import {
   type CreatorFunctionContext,
@@ -50,7 +50,7 @@ export function createNoBodyAnnotation(
     type: "Annotation",
     label: data?.label,
     motivation:
-      data.motivation || ctx.options.initialData?.motivation || "highlighting",
+      [data.motivation || ctx.options.initialData?.motivation || "highlighting"],
     target: ctx.getTarget(),
   });
 }

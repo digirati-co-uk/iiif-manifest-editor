@@ -1,6 +1,6 @@
 import { EditorProject } from "../ProjectContext.types";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { Collection, Manifest } from "@iiif/presentation-3";
+import { Collection, Manifest } from "@iiif/parser";
 import { ManifestStorage, CollectionStorage, RemoteWebsocketStorage } from "../types/Storage";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import { ClientVault } from "@manifest-editor/client-vault";

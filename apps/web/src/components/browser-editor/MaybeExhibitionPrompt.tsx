@@ -2,7 +2,7 @@ import { useLocalStorage } from "@manifest-editor/components";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
-import { useManifest, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 export function MaybeExhibitionPrompt({
   id,
@@ -19,7 +19,7 @@ export function MaybeExhibitionPrompt({
 
   const behaviours = useVaultSelector(
     (_, v) =>
-      (v.get(manifest?.items || []) || [])
+      (v.get([...(manifest?.items || [])]) || [])
         .filter((item) => item.type === "Canvas")
         .slice(0, 5)
         .map((item) => (item.behavior || []).join(" "))

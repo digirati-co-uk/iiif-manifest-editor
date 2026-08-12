@@ -1,6 +1,6 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
@@ -24,7 +24,7 @@ import {
   Separator,
 } from "react-aria-components";
 import { flushSync } from "react-dom";
-import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
+import { CanvasContext, LocaleString, useVault } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { ArrowForwardIcon } from "../../icons";
 import { ChevronDownIcon } from "../../left-panels/components/ChevronDownIcon";

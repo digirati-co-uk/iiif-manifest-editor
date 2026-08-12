@@ -1,8 +1,8 @@
 import { getValue } from "@iiif/helpers";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { ArrowRightIcon, BackIcon } from "@manifest-editor/components";
 import type { ReactNode, SVGProps } from "react";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { useEditingResource, useEditingResourceStack } from "./EditingStack/EditingStack";
 import { useLayoutActions } from "./Layout/Layout.context";
 

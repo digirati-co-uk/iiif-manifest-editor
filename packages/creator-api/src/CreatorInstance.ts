@@ -1,7 +1,7 @@
 import type { SupportedSelector } from "@iiif/helpers";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { Reference, Selector, SpecificResource } from "@iiif/presentation-3";
-import { type AnnotationResponse, annotationResponseToSelector, seraliseSupportedSelector } from "react-iiif-vault";
+import type { Reference, Selector, SpecificResource } from "@iiif/parser";
+import { type AnnotationResponse, annotationResponseToSelector, seraliseSupportedSelector } from "react-iiif-vault/presentation-4";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
@@ -18,7 +18,7 @@ export class CreatorInstance implements CreatorFunctionContext {
 
   target: CreatorOptions["target"];
   selector: SupportedSelector | undefined | null;
-  serialisedSelector: { type: string; value: string } | null = null;
+  serialisedSelector: Selector | Selector[] | null = null;
 
   constructor(
     vault: Vault4,
@@ -72,7 +72,7 @@ export class CreatorInstance implements CreatorFunctionContext {
       return {
         type: "SpecificResource",
         source: target,
-        selector: serialisedSelector as Selector,
+        selector: (Array.isArray(serialisedSelector) ? serialisedSelector : [serialisedSelector]) as any,
       };
     }
 

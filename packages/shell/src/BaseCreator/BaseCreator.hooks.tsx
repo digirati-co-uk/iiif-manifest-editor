@@ -1,9 +1,9 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { Creator, matchBasedOnResource } from "@manifest-editor/creator-api";
 import { useCallback, useMemo } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { useApp } from "../AppContext/AppContext";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { createActionIdentity } from "../helpers";

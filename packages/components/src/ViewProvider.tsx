@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
 import { Button } from "react-aria-components";
-import { LocaleString, useVault, useVaultSelector } from "react-iiif-vault";
+import { LocaleString, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { ProviderImage } from "./ProviderImage";
 import { ProviderLink } from "./ProviderLink";
 

@@ -11,7 +11,7 @@ import { StarIcon } from "@manifest-editor/ui/icons/StarIcon";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useDropdownMenu from "../../use-dropdown-menu";
 import { ErrorBoundary } from "react-error-boundary";
-import { ReactVaultContext } from "react-iiif-vault";
+import { ReactVaultContext } from "react-iiif-vault/presentation-4";
 import type { TransitionStatus } from "react-transition-group";
 import styled, { css } from "styled-components";
 import { useAppState } from "../../AppContext/AppContext";

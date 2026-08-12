@@ -7,7 +7,7 @@ import {
 } from "@manifest-editor/shell";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
 import {

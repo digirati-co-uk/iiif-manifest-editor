@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { type AtlasStore, AtlasStoreProvider, AtlasStoreReactContext } from "react-iiif-vault";
+import { type AtlasStore, AtlasStoreProvider, AtlasStoreReactContext } from "react-iiif-vault/presentation-4";
 import type { StoreApi } from "zustand";
 
 export { AtlasStoreProvider, AtlasStoreReactContext };

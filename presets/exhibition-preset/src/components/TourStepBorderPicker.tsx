@@ -1,6 +1,6 @@
 import { useGenericEditor } from "@manifest-editor/shell";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { useAnnotation } from "react-iiif-vault";
+import { useAnnotation } from "react-iiif-vault/presentation-4";
 
 /**
  * A compact border-colour picker for tour step annotations. It shows a small

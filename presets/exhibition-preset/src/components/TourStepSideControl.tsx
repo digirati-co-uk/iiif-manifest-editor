@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import {
   type FloatingBehavior,
   FloatingPositionIcon,

@@ -1,4 +1,4 @@
-import { Manifest } from "@iiif/presentation-3";
+import { Manifest } from "@iiif/parser";
 import { getValue } from "@iiif/helpers";
 import slugify from "slugify";
 import { EditorProject } from "../ProjectContext.types";

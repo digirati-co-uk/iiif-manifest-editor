@@ -1,5 +1,5 @@
 "use client";
-import { upgrade } from "@iiif/parser/upgrader";
+import { upgradeToPresentation4 } from "@iiif/parser/presentation-4/upgrader";
 import { IIIFBrowserIcon, Modal } from "@manifest-editor/components";
 import { useMutation } from "@tanstack/react-query";
 import { fileOpen } from "browser-fs-access";
@@ -58,7 +58,7 @@ export default function GettingStarted() {
       });
       const text = await file.text();
       const json = JSON.parse(text);
-      const upgraded = upgrade(json);
+      const upgraded = upgradeToPresentation4(json);
       if (!upgraded) {
         throw new Error("Invalid manifest");
       }

@@ -1,6 +1,9 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { isSpecificResource } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
+
+function isSpecificResource(resource: Reference | SpecificResource): resource is SpecificResource {
+  return resource.type === "SpecificResource";
+}
 
 export class ReferencedResource {
   vault: Vault4;

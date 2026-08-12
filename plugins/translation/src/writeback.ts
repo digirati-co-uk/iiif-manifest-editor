@@ -4,7 +4,7 @@ import {
   importEntities,
 } from "@iiif/helpers/vault/actions";
 import type { Vault } from "@iiif/helpers/vault";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import type { InternationalString, Reference } from "@iiif/parser";
 import {
   fingerprintTranslationText,
   getLanguageMapTargetText,

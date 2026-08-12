@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { addMappings, batchActions, importEntities } from "@iiif/helpers/vault/actions";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { CreatorInstance } from "./CreatorInstance";
 import { CreatorResource } from "./CreatorResource";
 import type { CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";

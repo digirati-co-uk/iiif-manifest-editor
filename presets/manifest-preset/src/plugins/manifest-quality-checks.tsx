@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { type LayoutPanel, type PluginMetadata, useLayoutActions } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
-import { useManifest, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 type IssueSeverity = "error" | "warning" | "info";
 

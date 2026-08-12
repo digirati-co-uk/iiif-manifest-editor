@@ -1,4 +1,4 @@
-import { DescriptiveProperties, InternationalString, MetadataItem } from "@iiif/presentation-3";
+import { DescriptiveProperties, InternationalString, MetadataItem } from "@iiif/parser";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 

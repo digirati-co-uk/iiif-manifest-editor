@@ -3,7 +3,7 @@
 
 import { createThumbnailHelper } from "@iiif/helpers";
 import { Vault4 } from "@iiif/helpers/vault-4";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { type Config, mergePartialConfig, randomId } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createStore, del, delMany, get, keys, set } from "idb-keyval";
@@ -334,7 +334,7 @@ export function useBrowserProject(id: string) {
       const data = vault.getState().iiif;
 
       const manifests = Object.keys(data.entities.Manifest || {});
-      const collections = Object.keys(data.entities.Manifest || {});
+      const collections = Object.keys(data.entities.Collection || {});
 
       if (manifests.length + collections.length === 0) {
         // Ignore empty vaults.
@@ -403,7 +403,7 @@ export function useBrowserProject(id: string) {
 export async function createBlankExhibition() {
   const id = randomId();
   const manifest = {
-    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "@context": "http://iiif.io/api/presentation/4/context.json",
     id: `https://example.org/${id}`,
     type: "Manifest",
     label: {
@@ -413,7 +413,7 @@ export async function createBlankExhibition() {
   };
 
   const vault = new Vault4();
-  vault.loadCollectionSync(manifest.id, manifest);
+  vault.loadManifestSync(manifest.id, manifest);
   const vaultData = vault.getState().iiif;
 
   const project = await createBrowserProject(
@@ -436,7 +436,7 @@ export async function createBlankExhibition() {
 export async function createBlankCollection() {
   const id = randomId();
   const collection = {
-    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "@context": "http://iiif.io/api/presentation/4/context.json",
     id: `https://example.org/${id}`,
     type: "Collection",
     label: {
@@ -468,7 +468,7 @@ export async function createBlankCollection() {
 export async function createBlankManifest() {
   const id = randomId();
   const manifest = {
-    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "@context": "http://iiif.io/api/presentation/4/context.json",
     id: `https://example.org/${id}`,
     type: "Manifest",
     label: {

@@ -1,8 +1,8 @@
-import { CanvasContext, useManifest, useSimpleViewer, useVault, VisibleCanvasReactContext } from "react-iiif-vault";
+import { CanvasContext, useManifest, useSimpleViewer, useVault, VisibleCanvasReactContext } from "react-iiif-vault/presentation-4";
 import { SingleCanvasThumbnail } from "../SingleCanvasThumbnail/SingleCanvasThumbnail";
 import { ThumbnailViewer, Thumbnail, ThumbnailCover } from "./ThumbnailPageList.styles";
 import { useContext, useLayoutEffect } from "react";
-import { CanvasNormalized } from "@iiif/presentation-3";
+import { CanvasNormalized } from "@iiif/parser";
 
 export function ThumbnailPagedList() {
   const manifest = useManifest();

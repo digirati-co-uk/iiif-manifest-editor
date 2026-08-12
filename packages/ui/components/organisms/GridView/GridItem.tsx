@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
 import { useCallback, useState } from "react";
-import { useCanvas, useManifest } from "react-iiif-vault";
+import { useCanvas, useManifest } from "react-iiif-vault/presentation-4";
 import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
 import { DropdownContent } from "@/atoms/Dropdown";
 import { DropdownItem } from "@/atoms/DropdownPreviewMenu";
@@ -12,7 +12,7 @@ import { Group, ThumbnailContainer, ThumnbnailLabel } from "./GridView.styles";
 import { useAppState } from "@/shell";
 import { ModalButton } from "@/madoc/components/ModalButton";
 import { NewCanvas } from "@/components/widgets/NewCanvas";
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import { CanvasThumbnail } from "@/components/organisms/CanvasThumbnail/CanvasThumbnail";
 
 export const GridItem: React.FC<{

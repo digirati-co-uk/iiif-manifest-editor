@@ -1,4 +1,4 @@
-import { AnnotationContext, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
+import { AnnotationContext, useAnnotation, useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { Button } from "../../../atoms/Button";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
 import { LightBox } from "../../../atoms/LightBox";

@@ -8,8 +8,8 @@ import type {
   Selector,
   SpecificResource,
   Stylesheet,
-} from "@iiif/presentation-3";
-import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+} from "@iiif/parser";
+import type { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import type { InputShape } from "polygon-editor";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import {
@@ -151,7 +151,7 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
   /** The raw `CssStylesheet` on the parent annotation, if any. */
   private getStylesheet(): Stylesheet | undefined {
     const entity = this.entity() as AnnotationNormalized;
-    return (entity?.stylesheet as Stylesheet | undefined) ?? undefined;
+    return ((entity as AnnotationNormalized & { stylesheet?: Stylesheet })?.stylesheet) ?? undefined;
   }
 
   /** The raw CSS text of the annotation stylesheet. */

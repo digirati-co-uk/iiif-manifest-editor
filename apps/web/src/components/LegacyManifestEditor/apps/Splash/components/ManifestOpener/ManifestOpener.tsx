@@ -3,11 +3,11 @@ import { useProjectCreators, useProjectContext } from "@manifest-editor/projects
 import { useApps, analyse } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { InfoMessage } from "@manifest-editor/ui/madoc/components/callouts/InfoMessage";
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { ManifestOpenerStyles as S } from "./ManifestOpener.styles";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { Input } from "@manifest-editor/editors";
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
 import { TickIcon } from "@manifest-editor/ui/icons/TickIcon";
 

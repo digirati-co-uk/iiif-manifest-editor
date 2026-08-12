@@ -1,7 +1,7 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import invariant from "tiny-invariant";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 interface ResourceEditingContext {
   resource: Reference<any> | null;

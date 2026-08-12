@@ -6,7 +6,7 @@ import {
 import { useCreator } from "@manifest-editor/shell";
 import { type ReactNode } from "react";
 import { Button } from "react-aria-components";
-import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import {
   type SlideContentBox,
   getSlideLayoutRegions,

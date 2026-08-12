@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 
 export async function completeCreator(options: {
   create: () => Promise<Reference | Reference[]>;

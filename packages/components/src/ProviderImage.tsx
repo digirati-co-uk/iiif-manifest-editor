@@ -1,5 +1,5 @@
-import type { Reference } from "@iiif/presentation-3";
-import { useVaultSelector } from "react-iiif-vault";
+import type { Reference } from "@iiif/parser";
+import { useVaultSelector } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 
 export function ProviderImage({ className, item }: { className?: string; item: Reference<"ContentResource"> }) {

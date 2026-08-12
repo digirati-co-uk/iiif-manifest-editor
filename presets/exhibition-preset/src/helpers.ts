@@ -1,5 +1,5 @@
 import type { Vault } from "@iiif/helpers/vault";
-import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import type { CanvasNormalized } from "@iiif/parser/presentation-4-normalized/types";
 
 const heightMap = {
   "h-1": "lg:min-h-[100px] row-span-1",

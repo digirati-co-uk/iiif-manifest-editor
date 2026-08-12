@@ -1,10 +1,10 @@
 import type { RangeTableOfContentsNode } from "@iiif/helpers";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { ActionButton } from "@manifest-editor/components";
 import { ViewControls } from "@manifest-editor/ui/ViewControls";
 import { useMemo } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, CanvasPanel, LocaleString, useCanvas } from "react-iiif-vault";
+import { CanvasContext, CanvasPanel, LocaleString, useCanvas } from "react-iiif-vault/presentation-4";
 import { ArrowBackwardIcon, ArrowForwardIcon } from "../../icons";
 
 export function RangeWorkbenchCanvas(props: {

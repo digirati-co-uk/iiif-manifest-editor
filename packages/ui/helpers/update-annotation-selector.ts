@@ -1,5 +1,5 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { AnnotationNormalized, CanvasNormalized, Reference } from "@iiif/presentation-3";
+import { AnnotationNormalized, CanvasNormalized, Reference } from "@iiif/parser";
 import { SupportedSelectors } from "@iiif/helpers";
 import { modifyEntityField } from "@iiif/helpers/vault/actions";
 

@@ -4,7 +4,7 @@ import {
   useLayoutState,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
 import { exhibitionRemotePreviewPanel } from "./center-panels/ExhibitionRemotePreviewPanel";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";

@@ -1,5 +1,5 @@
-import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import { Reference, SpecificResource } from "@iiif/parser";
 import { ContentResourcePreview } from "../ContentResourcePreview/ContentResourcePreview";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";

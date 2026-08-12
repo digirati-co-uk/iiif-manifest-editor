@@ -15,7 +15,7 @@ import type { Config, StorageInterface } from "../types";
 // Routes:
 // * POST /{BASE}/store - Store a manifest or collection
 // * PUT /{BASE}/update/{id} - Update a manifest or collection
-// * GET /{BASE}/p3/{id}/{key3} - Get a manifest or collection
+// * GET /{BASE}/iiif/{id} - Get a manifest or collection (`p3` remains an alias)
 // * DELETE /{BASE}/delete/{id}/{key3} - Delete a manifest or collection
 export function createIIIFPreviewNextApiHandler({
   apiPath,
@@ -83,8 +83,8 @@ export function createIIIFPreviewNextApiHandler({
       }
 
       const awaitedParams = await params;
-      const [p3, id] = awaitedParams.slug;
-      invariant(p3 === "p3", "Invalid path");
+      const [format, id] = awaitedParams.slug;
+      invariant(format === "iiif" || format === "p3", "Invalid path");
       invariant(id, "Invalid resource");
 
       const config = {

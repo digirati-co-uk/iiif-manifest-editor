@@ -1,10 +1,10 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
 import { flushSync } from "react-dom";
-import { useResourceContext, useVault } from "react-iiif-vault";
+import { useResourceContext, useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { useAppInstance } from "../AppContext/AppContext";
 import { editingStackReducer } from "./EditingStack.reducer";

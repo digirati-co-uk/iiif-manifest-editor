@@ -8,7 +8,7 @@ import type {
   SpecificResource,
   StructuralProperties,
   TechnicalProperties,
-} from "@iiif/presentation-3";
+} from "@iiif/parser";
 import type { resources, technicalProperties } from "@manifest-editor/editor-api";
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";

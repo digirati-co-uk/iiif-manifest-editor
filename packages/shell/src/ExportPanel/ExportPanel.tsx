@@ -1,6 +1,6 @@
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useMemo } from "react";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { useLayoutActions } from "../Layout/Layout.context";
 import { CenterPanelContainer } from "@manifest-editor/ui/CenterPanelContainer";
 import { Accordion } from "@manifest-editor/ui/atoms/Accordion";

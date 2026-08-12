@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/helpers";
-import { useVault, useCanvas } from "react-iiif-vault";
+import { useVault, useCanvas } from "react-iiif-vault/presentation-4";
 import { Button, CalltoButton } from "../../../atoms/Button";
 import { LightBox } from "../../../atoms/LightBox";
 import { PaddingComponentMedium, PaddingComponentSmall } from "../../../atoms/PaddingComponent";

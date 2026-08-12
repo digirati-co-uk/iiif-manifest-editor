@@ -1,4 +1,4 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { ActionButton, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import {
   createManifestEditorTagsApi,
@@ -11,7 +11,7 @@ import {
   useManifestEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 type CanvasTagResource = { id: string; type: "Canvas" };
 type ManifestRootResource = { id: string; type?: string } | null | undefined;
@@ -24,7 +24,7 @@ export const tagsPanel: LayoutPanel = {
   render: () => <TagsSidebar />,
 };
 
-export function manifestHasCanvasTags(vault: Vault | undefined, rootResource: ManifestRootResource): boolean {
+export function manifestHasCanvasTags(vault: Vault4 | undefined, rootResource: ManifestRootResource): boolean {
   if (!vault || rootResource?.type !== "Manifest" || !rootResource.id) {
     return false;
   }

@@ -1,4 +1,4 @@
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useMemo } from "react";
 import {

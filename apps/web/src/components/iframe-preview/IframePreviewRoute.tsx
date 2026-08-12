@@ -14,7 +14,7 @@ import {
   ManifestContext,
   VaultProvider,
   useManifest,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 
 type PreviewConnection = {
   vault: MessagePortClientVault;

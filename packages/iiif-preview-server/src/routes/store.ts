@@ -54,7 +54,7 @@ export async function storeRoute(request: Request, params: any, config: RouteCon
   // POST /store  Body<Manifest> -> Response<{ location: string; updateLocation: string }>
   return new Response(
     JSON.stringify({
-      location: `${baseUrl}p3/${key1}${key2}`,
+      location: `${baseUrl}iiif/${key1}${key2}`,
       updateLocation: `${baseUrl}update/${key1}${key2}/${key3}`,
       deleteLocation: `${baseUrl}delete/${key1}${key2}/${key4}`,
       expirationTtl,

@@ -4,7 +4,7 @@ import {
   imageServiceRequestToString,
   parseImageServiceRequest,
 } from "@iiif/parser/image-3";
-import type { ImageService } from "@iiif/presentation-3";
+import type { ImageService } from "@iiif/parser";
 
 export function serviceImageAtSize(service: ImageService, size: { width: number; height?: number }) {
   if (service["@id"]) {

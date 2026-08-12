@@ -34,6 +34,7 @@ describe("preview button options", () => {
 describe("manifest export version", () => {
   test("defaults to Presentation 3 for canvases and 4 for scenes", () => {
     const vault = {
+      toPresentation3: vi.fn().mockReturnValue({}),
       get: vi
         .fn()
         .mockReturnValueOnce({ items: [{ id: "canvas", type: "Canvas" }] })
@@ -43,6 +44,29 @@ describe("manifest export version", () => {
 
     expect(getExportVersion(vault as any, manifest)).toBe(3);
     expect(getExportVersion(vault as any, manifest)).toBe(4);
+  });
+
+  test("uses Presentation 4 when the v3 compatibility serializer rejects a resource", () => {
+    const vault = {
+      get: vi.fn().mockReturnValue({ items: [{ id: "canvas", type: "Canvas" }] }),
+      toPresentation3: vi.fn(() => {
+        throw new Error("Presentation 4 -> 3 downgrade unsupported: PointSelector");
+      }),
+    };
+
+    expect(getExportVersion(vault as any, { id: "manifest", type: "Manifest" })).toBe(4);
+  });
+
+  test("does not hide unexpected serialization failures", () => {
+    const error = new Error("Invalid resource");
+    const vault = {
+      get: vi.fn().mockReturnValue({ items: [] }),
+      toPresentation3: vi.fn(() => {
+        throw error;
+      }),
+    };
+
+    expect(() => getExportVersion(vault as any, { id: "manifest", type: "Manifest" })).toThrow(error);
   });
 
   test("honours an explicit Presentation 2 or 4 export", () => {

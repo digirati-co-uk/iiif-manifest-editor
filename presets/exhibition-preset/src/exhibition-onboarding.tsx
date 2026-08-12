@@ -19,7 +19,7 @@ import {
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { type SVGProps, useEffect } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { getExhibitionTemplatePreviews, useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionTemplates } from "./exhibition-templates";
 

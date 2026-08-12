@@ -6,7 +6,7 @@ import { HorizontalDivider } from "@/atoms/HorizontalDivider";
 import { analyse } from "@/helpers/analyse";
 import { ErrorBoundary } from "@/atoms/ErrorBoundary";
 import { InformationLink } from "@/atoms/InformationLink";
-import { useExistingVault } from "react-iiif-vault";
+import { useExistingVault } from "react-iiif-vault/presentation-4";
 import { useManifest } from "@/hooks/useManifest";
 import { IIIFBuilder } from "iiif-builder";
 import { PaddingComponentLarge, PaddingComponentMedium, PaddingComponentSmall } from "@/atoms/PaddingComponent";
@@ -98,7 +98,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
           can.createAnnotation(`${newCanvasID}/painting`, {
             id: `${newCanvasID}/painting`,
             type: "Annotation",
-            motivation: "painting",
+            motivation: ["painting"],
             body: {
               id: inputValue,
               type: "Image",
@@ -125,7 +125,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
           can.createAnnotation(`${newCanvasID}/painting`, {
             id: `${newCanvasID}/painting`,
             type: "Annotation",
-            motivation: "painting",
+            motivation: ["painting"],
             body: [
               {
                 id: inputValue,

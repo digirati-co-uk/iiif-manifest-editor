@@ -1,5 +1,5 @@
-import type { Reference, StructuralProperties } from "@iiif/presentation-3";
-import type { RangeNormalized } from "@iiif/presentation-3-normalized";
+import type { Reference, StructuralProperties } from "@iiif/parser";
+import type { RangeNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { BaseEditor } from "./BaseEditor";
 import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
 import { RangeReferenceListEditor } from "./RangeReferenceListEditor";

@@ -10,7 +10,7 @@ import {
 import { type EditorDefinition, useApp, useEditor, useLocalStorage } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { Button } from "react-aria-components";
-import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { AspectRatioWarning } from "../components/AspectRatioWarning";
 import {

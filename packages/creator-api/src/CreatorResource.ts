@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { HAS_PART, isSpecificResource, PART_OF } from "@iiif/parser";
-import type { SpecificResource } from "@iiif/presentation-3";
+import { HAS_PART, isSpecificResource, PART_OF } from "@iiif/parser/presentation-4";
+import type { SpecificResource } from "@iiif/parser";
 import { references } from "@manifest-editor/editor-api";
 import { ReferencedResource } from "./ReferencedResource";
 import { getEmptyType, resolveType } from "./utils";
@@ -77,7 +77,10 @@ export class CreatorResource {
         }
 
         if (typeof target === "string") {
-          target = { id: target, type: "Canvas" };
+          target = {
+            id: target,
+            type: vault.getState().iiif.mapping[target] || "Canvas",
+          };
         }
 
         const targetRef = new ReferencedResource(target, vault);

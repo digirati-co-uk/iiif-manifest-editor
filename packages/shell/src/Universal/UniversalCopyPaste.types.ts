@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import * as React from "react";
 
 export interface UniversalCopyPasteProps<T> {

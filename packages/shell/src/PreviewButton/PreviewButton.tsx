@@ -2,11 +2,11 @@ import { DownloadButton } from "@manifest-editor/components";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import useDropdownMenu from "../use-dropdown-menu";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import type { PresetPreviewOptions } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";
-import { serializeResource } from "../helpers";
+import { getExportVersion, serializeResource } from "../helpers";
 import { usePreviewContext } from "../PreviewContext/PreviewContext";
 import {
   ButtonChange,
@@ -37,7 +37,12 @@ export function PreviewButton({
   const vault = useVault();
   const config = useConfig();
   const resource = useAppResource();
-  const configsToShow = configs.filter((c) => c.type === "external-manifest-preview");
+  const exportVersion = getExportVersion(vault as any, resource as any, config.export?.version);
+  const configsToShow = configs.filter(
+    (candidate) =>
+      candidate.type === "external-manifest-preview" &&
+      (!candidate.presentationVersions || candidate.presentationVersions.includes(exportVersion)),
+  );
   const customActions = preview?.actions || [];
   const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length + customActions.length);
 
@@ -68,17 +73,18 @@ export function PreviewButton({
               return;
             }
             if (!configsToShow.length) return;
-            if (!selected) {
+            if (!selected || !configsToShow.some((candidate) => candidate.id === selected)) {
               const defaultPreviewId = config.defaultPreview;
               if (defaultPreviewId) {
-                const found = configs.find((c) => c.id === defaultPreviewId);
+                const found = configsToShow.find((c) => c.id === defaultPreviewId);
                 if (found) {
                   actions.selectPreview(found.id);
                   return;
                 }
               }
 
-              actions.selectPreview(configs[0]!.id);
+              actions.selectPreview(configsToShow[0]!.id);
+              return;
             }
             actions.updatePreviews();
           }}

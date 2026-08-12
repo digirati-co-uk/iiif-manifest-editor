@@ -84,7 +84,7 @@ export function createSceneComponentAnnotation(data: CreateSceneComponentPayload
   return ctx.embed({
     id: ctx.generateId("annotation"),
     type: "Annotation",
-    motivation: "painting",
+    motivation: ["painting"],
     body,
     target: ctx.getTarget(),
   });
@@ -283,7 +283,6 @@ function CameraPresetPreview({
           cameraControls={{ mode: "orbit" }}
           cameraCue={false}
           className="pointer-events-none h-full"
-          controls={false}
           scene={scene}
           stage={false}
           style={{ height: "100%" }}

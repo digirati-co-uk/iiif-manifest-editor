@@ -1,6 +1,6 @@
 import { ReorderList } from "@manifest-editor/editors";
 import { useGenericEditor } from "@manifest-editor/shell";
-import { AnnotationContext, useAnnotationPage } from "react-iiif-vault";
+import { AnnotationContext, useAnnotationPage } from "react-iiif-vault/presentation-4";
 import { TourAnnotationEditor } from "./TourAnnotationEditor";
 
 export function TourAnnotationPageEditor({

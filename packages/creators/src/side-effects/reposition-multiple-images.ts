@@ -1,5 +1,5 @@
 import { isImageService } from "@iiif/parser/image-3";
-import type { ImageService, SpecificResource } from "@iiif/presentation-3";
+import type { ImageService, SpecificResource } from "@iiif/parser";
 import type { CreatorSideEffect } from "@manifest-editor/creator-api";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { centerRectangles } from "@manifest-editor/editors";

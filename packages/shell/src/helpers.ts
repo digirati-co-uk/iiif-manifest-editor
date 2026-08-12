@@ -1,6 +1,6 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { ManifestNormalized } from "@iiif/presentation-3-normalized";
+import type { ManifestNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import type { AppExtension, MappedApp, PresetTemplateDefinition } from "./AppContext/AppContext";
 import { mergeBackgroundActionDefinitions } from "./BackgroundTasks/BackgroundTasksStore";
 import { mergePartialConfig } from "./ConfigContext/ConfigContext";
@@ -15,7 +15,15 @@ export function getExportVersion(
   if (requestedVersion === 2 || requestedVersion === 4) return requestedVersion;
 
   const root = vault.get(resource as any) as { items?: Array<{ type?: string }> } | undefined;
-  return root?.items?.some((item) => item.type === "Scene") ? 4 : 3;
+  if (root?.items?.some((item) => item.type === "Scene")) return 4;
+
+  try {
+    vault.toPresentation3(resource as any);
+    return 3;
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Presentation 4 -> 3 downgrade unsupported:")) return 4;
+    throw error;
+  }
 }
 
 export function serializeResource(

@@ -10,7 +10,7 @@ import {
   useManifestEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
 import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";

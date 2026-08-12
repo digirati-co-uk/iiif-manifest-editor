@@ -1,7 +1,7 @@
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
-import { AtlasStoreProvider, ImageServiceLoaderContext } from "react-iiif-vault";
+import { AtlasStoreProvider, ImageServiceLoaderContext } from "react-iiif-vault/presentation-4";
 import { ThemeProvider } from "styled-components";
 import { useAppInstance } from "../AppContext/AppContext";
 import { AppResourceProvider, type Resource } from "../AppResourceProvider/AppResourceProvider";
@@ -26,11 +26,13 @@ const previewConfigs: PreviewConfiguration[] = [
     },
     type: "external-manifest-preview",
     label: "Universal viewer",
+    presentationVersions: [2, 3],
   },
   {
     id: "mirador-3",
     type: "external-manifest-preview",
     label: "Mirador 3",
+    presentationVersions: [2, 3],
     config: {
       url: "https://tomcrane.github.io/scratch/mirador3/?iiif-content={manifestId}",
     },
@@ -39,6 +41,7 @@ const previewConfigs: PreviewConfiguration[] = [
     id: "annona",
     type: "external-manifest-preview",
     label: "Annona",
+    presentationVersions: [2, 3],
     config: {
       url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
     },

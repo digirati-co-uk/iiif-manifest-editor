@@ -1,4 +1,4 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type {
   EditingStackActionCreators,
   EditingStackState,

@@ -4,7 +4,7 @@ import {
   AnnotationPageContext,
   CanvasContext,
   useCanvas,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { ANNOTATIONS_LEFT_PANEL_ID } from "./constants";
 import { AnnotationsCreateEmptyPage } from "./components/AnnotationsCreateEmptyPage";
 import { AnnotationsListingAnnotations } from "./components/AnnotationsListingAnnotations";

@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import type { InternationalString, Reference } from "@iiif/parser";
 
 export interface AvCanvas {
   id: string;

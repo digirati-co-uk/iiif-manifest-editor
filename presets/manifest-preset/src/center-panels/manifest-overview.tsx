@@ -27,7 +27,7 @@ import {
 } from "@manifest-editor/shell";
 import { getValue } from "@iiif/helpers";
 import { useMemo, useState } from "react";
-import { useVaultSelector } from "react-iiif-vault";
+import { useVaultSelector } from "react-iiif-vault/presentation-4";
 import styled from "styled-components";
 import { useManifestItemInStack } from "../manifest-items";
 

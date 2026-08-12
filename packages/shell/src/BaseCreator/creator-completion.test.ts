@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { matchBasedOnResource } from "@manifest-editor/creator-api";
 import { describe, expect, test, vi } from "vitest";
 import { completeCreator } from "./creator-completion";

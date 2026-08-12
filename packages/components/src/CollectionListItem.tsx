@@ -1,4 +1,4 @@
-import { LocaleString, useCollection } from "react-iiif-vault";
+import { LocaleString, useCollection } from "react-iiif-vault/presentation-4";
 import { CollectionIcon } from "./icons/CollectionIcon";
 import { usePress } from "react-aria";
 import { getValue } from "@iiif/helpers/i18n";

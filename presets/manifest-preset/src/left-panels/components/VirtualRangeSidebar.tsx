@@ -5,7 +5,7 @@ import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
 import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { useCallback } from "react";
-import { LocaleString, useVault } from "react-iiif-vault";
+import { LocaleString, useVault } from "react-iiif-vault/presentation-4";
 import { MergeDownIcon } from "../../center-panels/components/RangeWorkbenchSection";
 
 export function VirtualRangeSidebar({

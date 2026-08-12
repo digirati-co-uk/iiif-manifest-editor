@@ -1,9 +1,11 @@
-import type { StructuralProperties } from "@iiif/presentation-3";
+import type { StructuralProperties } from "@iiif/parser";
 
 const required = {
   Collection: ["items"],
   Manifest: ["items"],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: ["target"],
   AnnotationPage: [],
   Range: [],
@@ -16,6 +18,8 @@ const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: ["items"],
+  Scene: ["items"],
+  Timeline: ["items"],
   Annotation: ["body"],
   AnnotationPage: ["items"],
   Range: [],
@@ -28,6 +32,8 @@ const optional = {
   Collection: ["annotations"],
   Manifest: ["structures", "annotations"],
   Canvas: ["annotations"],
+  Scene: ["annotations"],
+  Timeline: ["annotations"],
   Annotation: [],
   AnnotationPage: [],
   Range: ["annotations"],
@@ -40,6 +46,8 @@ const notAllowed = {
   Collection: ["structures", "target", "body"],
   Manifest: ["target", "body"],
   Canvas: ["structures", "target", "body"],
+  Scene: ["structures", "target", "body"],
+  Timeline: ["structures", "target", "body"],
   Annotation: ["items", "structures", "annotations"],
   AnnotationPage: ["structures", "annotations", "target", "body"],
   Range: ["structures", "target", "body"],
@@ -59,6 +67,8 @@ type StructuralMap = Record<
   | "Collection"
   | "Manifest"
   | "Canvas"
+  | "Scene"
+  | "Timeline"
   | "Annotation"
   | "AnnotationPage"
   | "Range"

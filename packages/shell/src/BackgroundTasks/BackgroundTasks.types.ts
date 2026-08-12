@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import type { ReactNode } from "react";
 import type { Resource } from "../AppResourceProvider/AppResourceProvider";

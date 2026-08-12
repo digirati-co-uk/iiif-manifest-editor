@@ -7,7 +7,7 @@ import { ProjectBackend, ProjectState, ProjectContext } from "./ProjectContext.t
 import { LocalStorageBackend } from "./backend/LocalStorageBackend";
 import { AbstractVaultLoader } from "./storage/AbstractVaultLoader";
 import { LocalStorageLoader } from "./storage/LocalStorageLoader";
-import { VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 
 export interface ProjectProviderProps {
   children: ReactNode;

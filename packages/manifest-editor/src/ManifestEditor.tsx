@@ -1,5 +1,5 @@
-import type { Vault4 } from "@iiif/helpers/vault-4";
-import type { Collection, Manifest } from "@iiif/presentation-3";
+import { Vault4 } from "@iiif/helpers/vault-4";
+import type { Collection, Manifest } from "@iiif/parser/presentation-4/types";
 import { collectionPreset } from "@manifest-editor/collection-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -12,7 +12,7 @@ import {
   ShellProvider,
 } from "@manifest-editor/shell";
 import { useRef } from "react";
-import { useExistingVault, VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 
 const manifestEditor = mapApp(manifestEditorPreset);
@@ -57,8 +57,8 @@ function configInvariant(
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
-  const existingVault = useExistingVault(props.vault);
-  const fallbackVault = useRef(existingVault);
+  const fallbackVault = useRef<Vault4 | null>(null);
+  fallbackVault.current ??= new Vault4();
   const vault = props.vault || fallbackVault.current;
   const didLoad = useRef("");
 

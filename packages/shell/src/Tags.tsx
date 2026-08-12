@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { type CSSProperties, type SVGProps, useMemo } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 export const TAGS_META_NAMESPACE = "@manifest-editor/tags";
 export const TAGS_META_KEY = "tags";

@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { Reference } from "@iiif/presentation-3";
-import { AnnotationNormalized, AnnotationPageNormalized, CanvasNormalized } from "@iiif/presentation-3-normalized";
+import { Reference } from "@iiif/parser";
+import { AnnotationNormalized, AnnotationPageNormalized, CanvasNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import invariant from "tiny-invariant";
 import { removeReference } from "@iiif/helpers/vault/actions";
 

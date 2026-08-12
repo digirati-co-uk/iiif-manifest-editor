@@ -1,4 +1,4 @@
-import type { NavPlaceExtension, TextGranularityExtension } from "@iiif/presentation-3";
+import type { NavPlaceExtension, TextGranularityExtension } from "@iiif/parser";
 
 export type ExtensionProperties = TextGranularityExtension & NavPlaceExtension;
 
@@ -6,6 +6,8 @@ const required = {
   Collection: [],
   Manifest: [],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -18,6 +20,8 @@ const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -30,6 +34,8 @@ const optional = {
   Collection: ["navPlace"],
   Manifest: ["navPlace"],
   Canvas: ["navPlace"],
+  Scene: ["navPlace"],
+  Timeline: ["navPlace"],
   Annotation: ["textGranularity"],
   AnnotationPage: [],
   Range: ["navPlace"],
@@ -42,6 +48,8 @@ const notAllowed = {
   Collection: ["textGranularity"],
   Manifest: ["textGranularity"],
   Canvas: ["textGranularity"],
+  Scene: ["textGranularity"],
+  Timeline: ["textGranularity"],
   Annotation: ["navPlace"],
   AnnotationPage: ["textGranularity", "navPlace"],
   Range: ["textGranularity"],
@@ -54,6 +62,8 @@ type ExtensionsMap = Record<
   | "Collection"
   | "Manifest"
   | "Canvas"
+  | "Scene"
+  | "Timeline"
   | "Annotation"
   | "AnnotationPage"
   | "Range"

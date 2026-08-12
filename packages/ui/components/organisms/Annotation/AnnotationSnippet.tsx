@@ -9,7 +9,7 @@ import { CloseIcon } from "../../../icons/CloseIcon";
 import { Button } from "../../../atoms/Button";
 import { AnnotationTarget } from "./AnnotationTarget";
 import { AnnotationPreview } from "./AnnotationPreview";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { useAnnotation } from "../../../hooks/useAnnotation";
 import { useVaultSelector } from "../../../hooks/useVaultSelector";
 

@@ -1,5 +1,5 @@
 import { type PresetTemplateDefinition, useApp, usePresetTemplateSelection } from "@manifest-editor/shell";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 
 function getFallbackTemplateType(appId?: string) {
   if (appId === "exhibition-slideshow-editor") return "slideshow";

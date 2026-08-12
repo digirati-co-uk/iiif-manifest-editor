@@ -6,7 +6,7 @@ import {
   useBackgroundActionsStoreApi,
   useCanvasProgressStatus,
 } from "@manifest-editor/shell";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 
 const OCR_ACTIONS = [
   {

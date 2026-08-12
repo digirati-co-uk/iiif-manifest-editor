@@ -26,7 +26,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { type SVGProps, useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-aria-components";
-import { VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { serializeVaultResource } from "../../helpers/serialize-vault-resource";
 

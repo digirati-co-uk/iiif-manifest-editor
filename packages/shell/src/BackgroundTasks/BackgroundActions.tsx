@@ -17,7 +17,7 @@ import {
 } from "@manifest-editor/components";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import useDropdownMenu from "../use-dropdown-menu";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useConfig } from "../ConfigContext/ConfigContext";

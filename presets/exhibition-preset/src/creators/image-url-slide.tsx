@@ -58,7 +58,7 @@ async function createUrlSlide(data: CreateImageUrlPayload, ctx: CreatorFunctionC
   const annotation = ctx.embed({
     id: annotationId,
     type: "Annotation",
-    motivation: "painting",
+    motivation: ["painting"],
     body: [resource],
     target: {
       type: "SpecificResource",

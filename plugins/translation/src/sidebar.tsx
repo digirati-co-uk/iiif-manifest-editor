@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import {
   type LayoutPanel,
@@ -12,7 +12,7 @@ import {
   usePluginRuntimeApi,
 } from "@manifest-editor/shell";
 import { type SVGProps, useEffect, useMemo, useState } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { queueTranslationRunOptions } from "./background-action";
 import {
   collectDetectedManifestLanguages,

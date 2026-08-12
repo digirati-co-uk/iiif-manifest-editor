@@ -1,4 +1,4 @@
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { Reference, SpecificResource } from "@iiif/parser";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 
 export interface EditorConfig {

@@ -1,4 +1,4 @@
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { Reference, SpecificResource } from "@iiif/parser";
 import { AppDropdownItem } from "@/_components/ui/AppDropdown/AppDropdown";
 import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
 import { useState } from "react";

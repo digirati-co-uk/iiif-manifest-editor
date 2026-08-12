@@ -1,4 +1,4 @@
-import { useCanvas, useResourceContext, useThumbnail, useVault } from "react-iiif-vault";
+import { useCanvas, useResourceContext, useThumbnail, useVault } from "react-iiif-vault/presentation-4";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { ThumbnailImage, ThumbnailPlaceholder } from "../ThumbnailPagedList/ThumbnailPageList.styles";
 import { memo, useMemo } from "react";

@@ -14,7 +14,7 @@ import {
   useManifestEditor,
 } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
-import { LocaleString, ManifestMetadata } from "react-iiif-vault";
+import { LocaleString, ManifestMetadata } from "react-iiif-vault/presentation-4";
 
 export function ManifestIcon({
   title,

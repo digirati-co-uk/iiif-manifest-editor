@@ -1,5 +1,5 @@
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
-import { useManifest, useVault, CanvasContext, useResourceContext } from "react-iiif-vault";
+import { useManifest, useVault, CanvasContext, useResourceContext } from "react-iiif-vault/presentation-4";
 import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
 import { RecentLabel } from "../../../atoms/RecentFilesWidget";
 import { TemplateCardContainer, TemplateCardNew } from "../../../atoms/TemplateCard";
@@ -9,7 +9,7 @@ import { GridItem } from "./GridItem";
 import { Fragment, useCallback } from "react";
 import { unstable_batchedUpdates } from "react-dom";
 import { reorderEntityField, removeReference } from "@iiif/helpers/vault/actions";
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import { useCanvasSubset } from "../../../hooks/useCanvasSubset";
 
 export const GridList: React.FC<{

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import styled from "styled-components";
 import { useAppState } from "@/shell";
 

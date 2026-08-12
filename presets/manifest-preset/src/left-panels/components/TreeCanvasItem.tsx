@@ -1,5 +1,5 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import {
   AddImageIcon,
   DeleteForeverIcon,
@@ -24,7 +24,7 @@ import {
   TreeItemContent,
 } from "react-aria-components";
 import { flushSync } from "react-dom";
-import { LocaleString, useCanvas, useVault } from "react-iiif-vault";
+import { LocaleString, useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { useRangeTreeOptions } from "./RangeTree";
 

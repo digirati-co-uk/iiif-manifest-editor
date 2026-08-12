@@ -8,7 +8,7 @@ import {
   LocaleString,
   useCanvas,
   useRenderingStrategy,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";

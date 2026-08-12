@@ -287,7 +287,7 @@ export function useProjectCreators() {
   const createBlankManifest = useCallback(function createBlankManifest() {
     actions.createProject(
       projectFromManifest({
-        "@context": "http://iiif.io/api/presentation/3/context.json",
+        "@context": "http://iiif.io/api/presentation/4/context.json",
         id: `https://example.org/${randomId()}`,
         type: "Manifest",
         label: {

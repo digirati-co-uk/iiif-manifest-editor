@@ -38,6 +38,7 @@ export interface PreviewConfiguration<Config = any> {
   type: string;
   label: string;
   config: Config;
+  presentationVersions?: Array<2 | 3 | 4>;
 }
 
 export interface PreviewHandler {

@@ -3,7 +3,7 @@ import { SidebarTabs } from "@manifest-editor/components";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { type ReactNode, useContext, useEffect, useMemo } from "react";
-import { ResourceReactContext, useVault } from "react-iiif-vault";
+import { ResourceReactContext, useVault } from "react-iiif-vault/presentation-4";
 import { useApp } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";

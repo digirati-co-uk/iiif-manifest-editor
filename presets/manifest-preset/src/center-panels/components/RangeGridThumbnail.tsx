@@ -2,7 +2,7 @@ import { createRangeHelper } from "@iiif/helpers";
 import { CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
 import { memo, useMemo } from "react";
 import { useDrag } from "react-aria";
-import { useRange, useVault } from "react-iiif-vault";
+import { useRange, useVault } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 
 export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {

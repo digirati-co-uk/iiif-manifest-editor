@@ -1,12 +1,12 @@
 import { moveEntities } from "@iiif/helpers/vault/actions";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import {
   ActionButton,
   CanvasThumbnailGridItem,
 } from "@manifest-editor/components";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInlineCreator } from "@manifest-editor/shell";
-import { CanvasContext, useRange, useVault } from "react-iiif-vault";
+import { CanvasContext, useRange, useVault } from "react-iiif-vault/presentation-4";
 import { RangeGridThumbnail } from "./RangeGridThumbnail";
 
 export function BulkActionsWorkbench() {

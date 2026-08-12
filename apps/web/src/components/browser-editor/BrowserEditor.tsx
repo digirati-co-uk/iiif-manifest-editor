@@ -54,7 +54,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useManifest, VaultProvider } from "react-iiif-vault";
+import { useManifest, VaultProvider } from "react-iiif-vault/presentation-4";
 import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
 import { BrowserSettingsPanel } from "./BrowserSettingsPanel";
@@ -65,6 +65,7 @@ const previews: PreviewConfiguration[] = [
     id: "theseus",
     type: "external-manifest-preview",
     label: "Theseus",
+    presentationVersions: [3, 4],
     config: {
       url: "https://feature-presentation-4-rc.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
@@ -73,6 +74,7 @@ const previews: PreviewConfiguration[] = [
     id: "universal-viewer",
     type: "external-manifest-preview",
     label: "Universal viewer",
+    presentationVersions: [2, 3],
     config: {
       url: "https://universalviewer.dev/#?iiifManifestId={manifestId}",
     },
@@ -81,6 +83,7 @@ const previews: PreviewConfiguration[] = [
     id: "mirador-3",
     type: "external-manifest-preview",
     label: "Mirador 3",
+    presentationVersions: [2, 3],
     config: {
       url: "https://projectmirador.org/embed/?iiif-content={manifestId}",
     },
@@ -89,6 +92,7 @@ const previews: PreviewConfiguration[] = [
     id: "annona",
     type: "external-manifest-preview",
     label: "Annona",
+    presentationVersions: [2, 3],
     config: {
       url: "https://ncsu-libraries.github.io/annona/tools/#/display?url={manifestId}&viewtype=iiif-storyboard&settings=%7B%22fullpage%22%3Atrue%7D",
     },
@@ -97,6 +101,7 @@ const previews: PreviewConfiguration[] = [
     id: "clover",
     type: "external-manifest-preview",
     label: "Clover",
+    presentationVersions: [2, 3],
     config: {
       url: "https://samvera-labs.github.io/clover-iiif/docs/viewer/demo?iiif-content={manifestId}",
     },
@@ -105,6 +110,7 @@ const previews: PreviewConfiguration[] = [
     id: "tify",
     type: "external-manifest-preview",
     label: "TIFY",
+    presentationVersions: [2, 3],
     config: {
       url: "https://tify-iiif-viewer.github.io/tify/?iiif-content={manifestId}",
     },
@@ -113,6 +119,7 @@ const previews: PreviewConfiguration[] = [
     id: "triiiceratops",
     type: "external-manifest-preview",
     label: "Triiiceratops",
+    presentationVersions: [2, 3],
     config: {
       url: "https://d-flood.github.io/triiiceratops/viewer/?iiif-content={manifestId}",
     },
@@ -121,6 +128,7 @@ const previews: PreviewConfiguration[] = [
     id: "glycerine",
     type: "external-manifest-preview",
     label: "Glycerine Viewer",
+    presentationVersions: [2, 3],
     config: {
       url: "https://demo.viewer.glycerine.io/viewer?iiif-content={manifestId}",
     },
@@ -137,6 +145,7 @@ const previews: PreviewConfiguration[] = [
     id: "raw-manifest",
     type: "external-manifest-preview",
     label: "Raw Manifest",
+    presentationVersions: [2, 3, 4],
     config: {
       url: "{manifestId}",
     },
@@ -218,6 +227,7 @@ function applyExhibitionViewerSettings(
     id: "theseus",
     type: "external-manifest-preview",
     label: "Theseus",
+    presentationVersions: [3, 4],
     config: {
       url: "https://feature-presentation-4-rc.theseus-viewer.pages.dev/?iiif-content={manifestId}&ref=manifest-editor",
     },
@@ -226,6 +236,7 @@ function applyExhibitionViewerSettings(
     id: "minimal-floating-tour",
     type: "external-manifest-preview",
     label: "Floating tour",
+    presentationVersions: [2, 3],
     config: {
       url: createFloatingTourUrl(settings.floatingPosition),
     },

@@ -1,6 +1,6 @@
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useMemo } from "react";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 export const CANVAS_PROGRESS_META_NAMESPACE = "@manifest-editor/canvas-progress";
 export const CANVAS_PROGRESS_STATUS_META_KEY = "status";

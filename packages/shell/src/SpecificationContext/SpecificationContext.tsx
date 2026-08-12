@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext, useMemo } from "react";
-import { useVaultSelector } from "react-iiif-vault";
+import { useVaultSelector } from "react-iiif-vault/presentation-4";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import {
   evaluateSpecifications,
@@ -10,7 +10,7 @@ import type {
   ManifestEditorSpecification,
   SpecificationPropertyPath,
 } from "./SpecificationContext.types";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 
 const SpecificationReactContext = createContext<ManifestEditorSpecification[]>(

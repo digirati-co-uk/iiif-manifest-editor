@@ -1,6 +1,6 @@
 import { EditorProject } from "../ProjectContext.types";
 import type { Vault4 } from "@iiif/helpers/vault-4";
-import { Collection, Manifest } from "@iiif/presentation-3";
+import { Collection, Manifest } from "@iiif/parser";
 import { ResourceKeyedStorage, ManifestStorage, CollectionStorage } from "../types/Storage";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import invariant from "tiny-invariant";

@@ -2,7 +2,7 @@
 import type { AllActions, IIIFStore } from "@iiif/helpers/vault";
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { BatchAction } from "@iiif/helpers/vault/actions";
-import { Collection, Manifest } from "@iiif/presentation-3";
+import { Collection, Manifest } from "@iiif/parser";
 import WebSocket, { RawData, WebSocketServer } from "ws";
 import { v4 } from "uuid";
 import { clearInterval, setInterval } from "timers";

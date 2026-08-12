@@ -1,4 +1,4 @@
-import { LocaleString, useManifest } from "react-iiif-vault";
+import { LocaleString, useManifest } from "react-iiif-vault/presentation-4";
 import { ManifestIcon } from "./icons/ManifestIcon";
 import { usePress } from "react-aria";
 import { getValue } from "@iiif/helpers";

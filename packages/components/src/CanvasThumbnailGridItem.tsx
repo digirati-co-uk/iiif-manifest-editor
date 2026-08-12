@@ -1,7 +1,7 @@
 import { getValue } from "@iiif/helpers";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
-import { CanvasContext, useCanvas } from "react-iiif-vault";
+import { CanvasContext, useCanvas } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { CanvasLabel } from "./CanvasLabel";
 import { Card3D } from "./Card3D";

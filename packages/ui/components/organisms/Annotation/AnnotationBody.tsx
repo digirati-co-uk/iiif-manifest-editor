@@ -1,4 +1,4 @@
-import { useAnnotation, useVault, useVaultSelector } from "react-iiif-vault";
+import { useAnnotation, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { InputLabel, InputUnderlined } from "../../../editors/Input";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 import Textarea from "react-textarea-autosize";

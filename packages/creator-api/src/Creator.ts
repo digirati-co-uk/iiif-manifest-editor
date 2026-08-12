@@ -1,6 +1,6 @@
 import { Vault4 } from "@iiif/helpers/vault-4";
 import { entityActions } from "@iiif/helpers/vault/actions";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { CreatorRuntime } from "./CreatorRuntime";
 import type { CreatableResource, CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
 import { matchBasedOnResource } from "./utils";

@@ -1,5 +1,5 @@
 import { emptyAnnotation, emptyCanvas } from "@iiif/parser";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 
 declare module "@manifest-editor/creator-api" {
@@ -89,7 +89,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
 
   const annotationResource = ctx.embed({
     ...annotation,
-    motivation: "painting",
+    motivation: ["painting"],
     body: bodies,
     target: {
       type: "SpecificResource",
@@ -104,7 +104,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const longDescriptionResource = ctx.embed({
     id: annotationLongId,
     type: "Annotation",
-    motivation: "tagging",
+    motivation: ["tagging"],
     body: [
       await ctx.create(
         "@manifest-editor/html-body-creator",

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { queryClient } from "../site/Provider";
 import { deleteBrowserProject, internal_getBrowserProjectById, listBrowserProjects } from "./browser-state";
 import { serializeVaultResource } from "../../helpers/serialize-vault-resource";

@@ -7,7 +7,7 @@ import {
   type SingleYouTubeVideo,
   useCanvas,
   useVaultSelector,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 
 export const youtubeMainEdtior: CanvasEditorDefinition = {

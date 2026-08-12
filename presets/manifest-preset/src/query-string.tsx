@@ -6,7 +6,7 @@ import {
   useLayoutState,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { useEditCanvasItems } from "./components";

@@ -30,14 +30,17 @@ export async function updateRoute(
   const id = body.id || body["@id"];
   const type = body.type || body["@type"];
   const vault = new Vault4();
-  const manifest = await vault.loadManifest(id, body);
-  const newKey3 = rotatingUpdateKey ? generateId(updateKeyLength) : key3;
-
-  invariant(!!manifest, "Invalid Manifest");
   invariant(
     type === "Manifest" || type === "Collection" || type === "sc:Manifest" || type === "sc:Collection",
     "Invalid Type"
   );
+  const manifest =
+    type === "Collection" || type === "sc:Collection"
+      ? await vault.loadCollection(id, body)
+      : await vault.loadManifest(id, body);
+  const newKey3 = rotatingUpdateKey ? generateId(updateKeyLength) : key3;
+
+  invariant(!!manifest, "Invalid Manifest");
 
   const data = serializeStoredResource(vault, manifest);
   const manifestJson = encryptedEnabled ? await encrypt(JSON.stringify(data), key1) : JSON.stringify(data);
@@ -52,14 +55,14 @@ export async function updateRoute(
     },
     {
       expirationTtl,
-      metadata: { ttl: Date.now() + expirationTtl },
+      metadata: { ttl: Date.now() + expirationTtl * 1000 },
     }
   );
 
   // POST /edit/:id -> Response<{ location: string; updateLocation: string; }>
   return new Response(
     JSON.stringify({
-      location: `${baseUrl}p3/${key1}${key2}`,
+      location: `${baseUrl}iiif/${key1}${key2}`,
       updateLocation: `${baseUrl}update/${key1}${key2}/${newKey3}`,
       expirationTtl,
     }),

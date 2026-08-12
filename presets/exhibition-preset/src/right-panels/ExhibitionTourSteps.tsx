@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@manifest-editor/shell";
 import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "react-aria-components";
-import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas, useRequestAnnotation } from "react-iiif-vault/presentation-4";
 import { PendingTourStepAnnotation } from "../components/PendingTourStepAnnotation";
 import { TourAnnotationPageEditor } from "../components/TourAnnotationPageEditor";
 import { DEFAULT_TOUR_STEP_HTML } from "../components/tour-step-html";
@@ -297,7 +297,7 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
             body: {
               en: [bodyValue],
             },
-            motivation: "tagging",
+            motivation: ["tagging"],
           } as {
             label?: InternationalString;
             body: InternationalString;

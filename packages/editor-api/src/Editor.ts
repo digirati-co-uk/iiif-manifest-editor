@@ -1,4 +1,4 @@
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import type { Vault4 } from "@iiif/helpers/vault-4";
 import { EditorConfig } from "./types";
 import { EditorInstance } from "./EditorInstance";

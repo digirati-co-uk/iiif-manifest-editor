@@ -2,7 +2,7 @@
 
 import { createThumbnailHelper } from "@iiif/helpers";
 import { Vault4 } from "@iiif/helpers/vault-4";
-import type { CanvasNormalized, CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
+import type { CanvasNormalized, CollectionNormalized, ManifestNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { ActionButton } from "@manifest-editor/components";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";

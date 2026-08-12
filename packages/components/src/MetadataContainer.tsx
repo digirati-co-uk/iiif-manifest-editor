@@ -1,6 +1,6 @@
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { cn } from "./utils";
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 
 export function MetadataContainer({
   className,

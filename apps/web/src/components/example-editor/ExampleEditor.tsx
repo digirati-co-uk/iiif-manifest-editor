@@ -1,6 +1,6 @@
 "use client";
 
-import { upgrade } from "@iiif/parser/upgrader";
+import { upgradeToPresentation4 } from "@iiif/parser/presentation-4/upgrader";
 import { useQuery } from "@tanstack/react-query";
 import { ManifestEditor } from "manifest-editor";
 
@@ -15,7 +15,7 @@ export default function ExampleEditor({
 }) {
   const { isPending, data, error } = useQuery({
     queryKey: ["iiif-manifest-example", { manifest: manifest }],
-    queryFn: async () => upgrade(await fetch(manifest).then((res) => res.json())),
+    queryFn: async () => upgradeToPresentation4(await fetch(manifest).then((res) => res.json())),
   });
 
   if (isPending) return <div>Loading...</div>;

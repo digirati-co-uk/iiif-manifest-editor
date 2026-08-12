@@ -31,7 +31,7 @@ export function createModelAnnotation(data: CreateModelAnnotationPayload, ctx: C
         ctx.embed({
           id: ctx.generateId("annotation"),
           type: "Annotation",
-          motivation: "painting",
+          motivation: ["painting"],
           body,
           target: {
             type: "SpecificResource",
@@ -59,7 +59,7 @@ export function createModelAnnotation(data: CreateModelAnnotationPayload, ctx: C
     return ctx.embed({
       id: ctx.generateId("annotation"),
       type: "Annotation",
-      motivation: "painting",
+      motivation: ["painting"],
       body,
       target: ctx.getTarget(),
     });

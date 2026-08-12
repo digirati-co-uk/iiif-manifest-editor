@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useCurrentAnnotationMetadata } from "react-iiif-vault";
+import { useCurrentAnnotationMetadata } from "react-iiif-vault/presentation-4";
 
 export function useAnnotationCreatorState<Type = any>({ key, initialValue, requestId, getInitialValue }: {
   key: string,

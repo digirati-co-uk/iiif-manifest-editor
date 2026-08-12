@@ -1,4 +1,4 @@
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import type { CreatableResource } from "@manifest-editor/creator-api";
 
 export interface EditableResource {

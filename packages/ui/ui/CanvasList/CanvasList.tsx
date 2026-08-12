@@ -1,9 +1,9 @@
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { isSpecificResource, toRef } from "@iiif/parser/presentation-4";
+import { Reference, SpecificResource } from "@iiif/parser";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext } from "react-iiif-vault/presentation-4";
 
 interface CanvasListProps {
   id?: string;

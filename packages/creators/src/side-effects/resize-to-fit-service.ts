@@ -1,4 +1,4 @@
-import type { ImageService, SpecificResource } from "@iiif/presentation-3";
+import type { ImageService, SpecificResource } from "@iiif/parser";
 // @ts-ignore
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { CreatorSideEffect } from "@manifest-editor/creator-api";

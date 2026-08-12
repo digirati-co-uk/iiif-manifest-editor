@@ -1,4 +1,4 @@
-import type { SpecificationTimeMode, TechnicalProperties, ViewingDirection } from "@iiif/presentation-3";
+import type { SpecificationTimeMode, TechnicalProperties, ViewingDirection } from "@iiif/parser";
 import { BaseEditor } from "./BaseEditor";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { BehaviorEditor } from "./BehaviorEditor";
