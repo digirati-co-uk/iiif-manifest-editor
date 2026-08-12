@@ -1,5 +1,6 @@
 import type { Entities } from "@iiif/helpers/vault";
 import type { Vault4 } from "@iiif/helpers/vault-4";
+import { emptyService } from "@iiif/parser";
 import {
   emptyAgent,
   emptyAnnotation,
@@ -8,9 +9,10 @@ import {
   emptyCollection,
   emptyManifest,
   emptyRange,
-  emptyService,
+  emptyScene,
+  emptyTimeline,
   toRef,
-} from "@iiif/parser";
+} from "@iiif/parser/presentation-4";
 import type { CreatorDefinitionFilterByParent, IIIFManifestEditor } from "./creator-register";
 import type {
   AllAvailableParentTypes,
@@ -71,6 +73,8 @@ const emptyTypes = {
   Collection: emptyCollection,
   Manifest: emptyManifest,
   Range: emptyRange,
+  Scene: emptyScene,
+  Timeline: emptyTimeline,
   ResourceProvider: emptyAgent,
   Service: emptyService,
 };

@@ -82,6 +82,17 @@ export class Creator {
             })
           );
         } else {
+          const parent = this.vault.get(options.parent.resource as any, { skipSelfReturn: true }) as any;
+          if (parent && parent[options.parent.property] == null) {
+            afterActions.push(
+              entityActions.modifyEntityField({
+                id: options.parent.resource.id,
+                type: options.parent.resource.type as any,
+                value: [],
+                key: options.parent.property,
+              })
+            );
+          }
           afterActions.push(
             entityActions.addReference({
               id: options.parent.resource.id,
