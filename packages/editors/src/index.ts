@@ -13,6 +13,7 @@ export * from "./helpers/get-youtube-id";
 export * from "./helpers/model-transforms";
 export * from "./helpers/scene-camera";
 export * from "./helpers/scene-annotation-body";
+export * from "./helpers/scene-annotation-creation";
 export * from "./helpers/scene-items";
 export * from "./hooks";
 export * from "./definitions/MediaEditor/target-whole-canvas";

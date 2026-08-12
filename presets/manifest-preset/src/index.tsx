@@ -17,6 +17,7 @@ import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
 import { CanvasesListIcon } from "./icons";
 import { canvasListing } from "./left-panels/canvas-listing";
+import { sceneAnnotationsPanel } from "./left-panels/scene-annotations";
 import { sceneContentsPanel } from "./left-panels/scene-contents";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
@@ -48,6 +49,7 @@ export const leftPanels: LayoutPanel[] = [
   manifestPanel,
   canvasListing,
   sceneContentsPanel,
+  sceneAnnotationsPanel,
   tagsPanel,
   rangesPanel,
   // @todo we will come back to the image grid

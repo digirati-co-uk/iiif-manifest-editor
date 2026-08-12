@@ -18,9 +18,14 @@ import {
   type SceneTransformValue,
 } from "../../helpers/model-transforms";
 import { setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
+import {
+  sceneAnnotationCreation,
+  useSceneAnnotationCreation,
+} from "../../helpers/scene-annotation-creation";
 import { sceneCameraRotation, sceneCameraView } from "../../helpers/scene-camera";
 import { describeSceneAnnotation } from "../../helpers/scene-items";
 import { SceneResourceEditor } from "./SceneResourceEditor";
+import { SceneSurfacePicker } from "./SceneSurfacePicker";
 
 const toolLabels: Record<SceneTransformMode, string> = {
   translate: "Move",
@@ -52,6 +57,7 @@ export function SceneEditor() {
   const [showCameraHelpers, setShowCameraHelpers] = useState(true);
   const [infoOpen, setInfoOpen] = useState(false);
   const [viewCameraId, setViewCameraId] = useState("");
+  const annotationDraft = useSceneAnnotationCreation();
 
   const resolved = useVaultSelector(
     (_, currentVault) => {
@@ -70,6 +76,15 @@ export function SceneEditor() {
   const sceneItems = useMemo(
     () => annotations.map((annotation, index) => describeSceneAnnotation(annotation, vault, index)),
     [annotations, vault]
+  );
+  const modelAnnotationIds = useMemo(
+    () => new Set(sceneItems.filter((item) => item.type === "Model").map((item) => item.annotation.id)),
+    [sceneItems],
+  );
+  const pickingAnnotationPoint = !!(
+    annotationDraft &&
+    annotationDraft.sceneId === sceneId &&
+    !annotationDraft.point
   );
   const selectedItem = sceneItems.find((item) => item.annotation.id === selectedAnnotation);
   const hasAuthoredLight = sceneItems.some((item) => item.group === "Lights");
@@ -359,9 +374,15 @@ export function SceneEditor() {
         onDiagnostic={(diagnostic) => {
           if (diagnostic.severity !== "info") setMessage(diagnostic.message);
         }}
-      />
+      >
+        <SceneSurfacePicker
+          active={pickingAnnotationPoint}
+          modelAnnotationIds={modelAnnotationIds}
+          onPick={(point) => sceneId && sceneAnnotationCreation.pick(sceneId, point)}
+        />
+      </ScenePanel>
       <output className="pointer-events-none absolute bottom-2 right-3 z-20 rounded bg-black/70 px-2 py-1 text-xs text-white">
-        {selectedItem?.label || "Scene"}
+        {pickingAnnotationPoint ? "Click a model surface to place the annotation" : selectedItem?.label || "Scene"}
         {selectedStatus ? ` · ${selectedStatus.status}` : ""}
         {message ? ` · ${message}` : ""}
       </output>

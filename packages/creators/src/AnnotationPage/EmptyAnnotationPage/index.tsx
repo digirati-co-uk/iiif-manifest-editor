@@ -31,11 +31,12 @@ export const emptyAnnotationPage = defineCreator({
   resourceType: "AnnotationPage",
   resourceFields: ["id", "type", "items"],
   supports: {
-    parentTypes: ["Manifest", "Canvas", "Range"],
+    parentTypes: ["Manifest", "Canvas", "Range", "Scene"] as any,
     parentFieldMap: {
       Manifest: ["annotations"],
       Canvas: ["items", "annotations"],
       Range: ["annotations"],
-    },
+      Scene: ["annotations"],
+    } as any,
   },
 });
