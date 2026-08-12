@@ -61,11 +61,12 @@ describe("model transforms", () => {
   test("recovers only an activation override from the composed model matrix", () => {
     const rest = [{ type: "TranslateTransform" as const, x: -0.03125, y: 0, z: -0.15625 }];
     const override = [{ type: "TranslateTransform" as const, x: 0, y: 0, z: 0.125 }];
-    const final = new Matrix4().fromArray(createSceneTransformMatrix([...rest, ...override], [0, 0, 0]));
+    const point = [1, 2, 3] as const;
+    const final = new Matrix4().fromArray(createSceneTransformMatrix([...rest, ...override], point));
 
-    expect(sceneTransformValueToTransforms(sceneActivationTransformValueFromMatrix("model", final, rest))).toEqual([
-      { type: "TranslateTransform", x: 0, y: 0, z: 0.125 },
-    ]);
+    expect(
+      sceneTransformValueToTransforms(sceneActivationTransformValueFromMatrix("model", final, rest, point))
+    ).toEqual([{ type: "TranslateTransform", x: 0, y: 0, z: 0.125 }]);
   });
 
   test("sets a complete vector without disturbing other transform types", () => {

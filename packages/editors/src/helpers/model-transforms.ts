@@ -9,6 +9,7 @@ export type SceneTransformSpace = "local" | "world";
 export type SceneTransformValue = {
   annotationId: string;
   matrix: Matrix4;
+  targetPoint: readonly [number, number, number] | null;
   translation: [number, number, number];
   rotation: [number, number, number];
   scale: [number, number, number];
@@ -89,6 +90,7 @@ export function sceneTransformValueFromMatrix(
   return {
     annotationId,
     matrix: localMatrix.clone(),
+    targetPoint,
     translation: position.toArray(),
     rotation: [rotation.x, rotation.y, rotation.z].map((value) => (value * 180) / Math.PI) as [number, number, number],
     scale: scale.toArray(),

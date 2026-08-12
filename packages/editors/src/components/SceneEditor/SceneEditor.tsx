@@ -14,12 +14,20 @@ import {
 import "react-iiif-vault/scene-panel.css";
 import { useInStack } from "../../helpers";
 import {
+  sceneActivationTransformValueFromMatrix,
   sceneTransformValueToTransforms,
   type SceneTransformMode,
   type SceneTransformValue,
 } from "../../helpers/model-transforms";
-import { setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
+import { resolveFirstAnnotationBody, setAnnotationBodyTransforms } from "../../helpers/scene-annotation-body";
 import { sceneAnnotationCreation, useSceneAnnotationCreation } from "../../helpers/scene-annotation-creation";
+import { useSceneActivationEditing, sceneActivationEditing } from "../../helpers/scene-activation-editing";
+import {
+  findActivationState,
+  getSceneActivations,
+  setActivationStateTransforms,
+  type SceneActivation,
+} from "../../helpers/scene-activations";
 import { sceneCameraRotation, sceneCameraView } from "../../helpers/scene-camera";
 import { describeSceneAnnotation } from "../../helpers/scene-items";
 import { SceneResourceEditor } from "./SceneResourceEditor";
@@ -40,10 +48,11 @@ export function SceneEditor() {
   const panel = useRef<ScenePanelHandle>(null);
   const transformView = useRef<SceneView | null>(null);
   const initiallyFramedScene = useRef<string | null>(null);
+  const activatedScene = useRef<string | null>(null);
   const sceneRef = scene?.resource.source;
   const sceneId = sceneRef?.id;
   const sceneInput = useMemo(() => (sceneId ? { id: sceneId, type: "Scene" as const } : null), [sceneId]);
-  const selectedAnnotation = current?.resource.source.type === "Annotation" ? current.resource.source.id : null;
+  const activationEditing = useSceneActivationEditing();
   const [mode, setMode] = useState<SceneTransformMode>("translate");
   const [space, setSpace] = useState<"local" | "world">("local");
   const [snap, setSnap] = useState(false);
@@ -59,7 +68,13 @@ export function SceneEditor() {
 
   const resolved = useVaultSelector(
     (_, currentVault) => {
-      if (!sceneRef) return { page: undefined, annotations: [] as any[], modelAnnotations: [] as any[] };
+      if (!sceneRef)
+        return {
+          page: undefined,
+          annotations: [] as any[],
+          modelAnnotations: [] as any[],
+          activations: [] as SceneActivation[],
+        };
       const currentScene = currentVault.get(sceneRef as any, { skipSelfReturn: false }) as any;
       const pages = (currentVault.get([...(currentScene?.items || [])], { parent: currentScene }) || []) as any[];
       const page = pages[0];
@@ -67,12 +82,32 @@ export function SceneEditor() {
       const modelAnnotations = pages.flatMap(
         (candidate) => (currentVault.get([...(candidate?.items || [])], { parent: candidate }) || []) as any[]
       );
-      return { page, annotations, modelAnnotations };
+      return {
+        page,
+        annotations,
+        modelAnnotations,
+        activations: getSceneActivations(sceneRef as any, currentVault as unknown as Vault4),
+      };
     },
     [sceneRef?.id]
   );
   const page = resolved.page as any;
   const annotations = resolved.annotations;
+  const activeActivationId =
+    activationEditing && activationEditing.sceneId === sceneId ? activationEditing.activationId : undefined;
+  const activeActivation = resolved.activations.find((activation) => activation.id === activeActivationId);
+  const resolvedActivationId = activeActivation?.id;
+  const activeActivationLabel = activeActivation?.label || "activation";
+  const selectedAnnotation = activeActivation
+    ? activationEditing?.modelAnnotationId || null
+    : current?.resource.source.type === "Annotation"
+      ? current.resource.source.id
+      : null;
+  const activationFingerprint = activeActivation
+    ? JSON.stringify(
+        activeActivation.states.map((state) => [state.id, state.actions, state.transforms, state.selectors])
+      )
+    : "";
   const sceneItems = useMemo(
     () => annotations.map((annotation, index) => describeSceneAnnotation(annotation, vault, index)),
     [annotations, vault]
@@ -99,6 +134,30 @@ export function SceneEditor() {
   const selectAnnotation = useCallback(
     (annotation: any | null) => {
       if (!sceneRef) return;
+      if (activeActivation) {
+        if (!annotation) {
+          sceneActivationEditing.selectModel(null);
+          layout.rightPanel.close();
+          return;
+        }
+        const stateIndex = activeActivation.states.findIndex((state) => state.source.id === annotation.id);
+        const state = activeActivation.states[stateIndex];
+        if (!state) {
+          setMessage("Add this model to the activation before editing it");
+          return;
+        }
+        sceneActivationEditing.selectModel(annotation.id);
+        layout.edit(
+          state.ref as any,
+          {
+            parent: { id: activeActivation.body.id, type: "ContentResource" } as any,
+            property: activeActivation.body.type === "List" ? "items" : "body",
+            index: stateIndex,
+          },
+          { forceOpen: true }
+        );
+        return;
+      }
       if (!annotation) {
         layout.edit(sceneRef as any, {}, { forceOpen: true, reset: true });
         return;
@@ -111,11 +170,29 @@ export function SceneEditor() {
         { forceOpen: true }
       );
     },
-    [annotations, layout, page, sceneRef]
+    [activeActivation, annotations, layout, page, sceneRef]
   );
 
   const commitTransform = useCallback(
     (value: SceneTransformValue) => {
+      if (activeActivation) {
+        const state = findActivationState(activeActivation, value.annotationId);
+        const annotation = resolved.modelAnnotations.find((candidate) => candidate.id === value.annotationId);
+        const body = annotation ? resolveFirstAnnotationBody(annotation, vault) : undefined;
+        if (!state || !body) {
+          setMessage("This model is not part of the current activation");
+          return;
+        }
+        const activationValue = sceneActivationTransformValueFromMatrix(
+          value.annotationId,
+          value.matrix,
+          body.transform || [],
+          value.targetPoint
+        );
+        setActivationStateTransforms(state, sceneTransformValueToTransforms(activationValue), vault);
+        setMessage(`${toolLabels[mode]} saved to ${activeActivation.label}`);
+        return;
+      }
       setAnnotationBodyTransforms(
         { id: value.annotationId, type: "Annotation" },
         sceneTransformValueToTransforms(value),
@@ -123,7 +200,7 @@ export function SceneEditor() {
       );
       setMessage(`${toolLabels[mode]} saved`);
     },
-    [mode, vault]
+    [activeActivation, mode, resolved.modelAnnotations, vault]
   );
 
   const restoreTransformView = useCallback((finished = false) => {
@@ -260,6 +337,22 @@ export function SceneEditor() {
       if (view) panel.current?.setView(view);
     }
   }, [editing, selectedCameraAnnotationId, viewCameraId]);
+
+  useEffect(() => {
+    if (!sceneId) return;
+    queueMicrotask(() => {
+      if (!panel.current) return;
+      if (!resolvedActivationId) {
+        if (activatedScene.current === sceneId) panel.current.reset();
+        activatedScene.current = null;
+        return;
+      }
+      panel.current.reset();
+      const result = panel.current.activate(resolvedActivationId);
+      activatedScene.current = sceneId;
+      if (!result.ok) setMessage(result.error || `Could not apply ${activeActivationLabel}`);
+    });
+  }, [activationFingerprint, activeActivationLabel, resolvedActivationId, sceneId]);
 
   useEffect(() => {
     if (sceneRef) layout.leftPanel.open({ id: "scene-contents" });
