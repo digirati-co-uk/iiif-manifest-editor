@@ -1,3 +1,4 @@
+import { createSceneTransformMatrix } from "@iiif/helpers/scenes";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 
 export type TransformType = "ScaleTransform" | "RotateTransform" | "TranslateTransform";
@@ -7,6 +8,7 @@ export type SceneTransformMode = "translate" | "rotate" | "scale";
 export type SceneTransformSpace = "local" | "world";
 export type SceneTransformValue = {
   annotationId: string;
+  matrix: Matrix4;
   translation: [number, number, number];
   rotation: [number, number, number];
   scale: [number, number, number];
@@ -86,8 +88,24 @@ export function sceneTransformValueFromMatrix(
   const rotation = new Euler().setFromQuaternion(quaternion, "ZYX");
   return {
     annotationId,
+    matrix: localMatrix.clone(),
     translation: position.toArray(),
     rotation: [rotation.x, rotation.y, rotation.z].map((value) => (value * 180) / Math.PI) as [number, number, number],
     scale: scale.toArray(),
   };
+}
+
+export function sceneActivationTransformValueFromMatrix(
+  annotationId: string,
+  finalMatrix: Matrix4,
+  restTransforms: readonly ModelTransform[],
+  targetPoint: readonly [number, number, number] | null = null
+) {
+  const point = targetPoint || [0, 0, 0];
+  const restMatrix = new Matrix4().fromArray(createSceneTransformMatrix(restTransforms, [0, 0, 0])).invert();
+  const activationMatrix = new Matrix4()
+    .makeTranslation(-point[0], -point[1], -point[2])
+    .multiply(finalMatrix)
+    .multiply(restMatrix);
+  return sceneTransformValueFromMatrix(annotationId, activationMatrix);
 }

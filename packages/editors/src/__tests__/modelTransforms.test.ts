@@ -3,6 +3,7 @@ import { Matrix4 } from "three";
 import { describe, expect, test } from "vitest";
 import {
   getTransformVector,
+  sceneActivationTransformValueFromMatrix,
   sceneTransformValueFromMatrix,
   sceneTransformValueToTransforms,
   setTransformAxis,
@@ -55,6 +56,16 @@ describe("model transforms", () => {
     value.translation.forEach((component, index) => expect(component).toBeCloseTo(index + 1, 10));
     value.rotation.forEach((component, index) => expect(component).toBeCloseTo((index + 1) * 10, 10));
     value.scale.forEach((component, index) => expect(component).toBeCloseTo(index + 2, 10));
+  });
+
+  test("recovers only an activation override from the composed model matrix", () => {
+    const rest = [{ type: "TranslateTransform" as const, x: -0.03125, y: 0, z: -0.15625 }];
+    const override = [{ type: "TranslateTransform" as const, x: 0, y: 0, z: 0.125 }];
+    const final = new Matrix4().fromArray(createSceneTransformMatrix([...rest, ...override], [0, 0, 0]));
+
+    expect(sceneTransformValueToTransforms(sceneActivationTransformValueFromMatrix("model", final, rest))).toEqual([
+      { type: "TranslateTransform", x: 0, y: 0, z: 0.125 },
+    ]);
   });
 
   test("sets a complete vector without disturbing other transform types", () => {
