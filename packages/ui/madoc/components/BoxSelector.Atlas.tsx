@@ -4,7 +4,7 @@ import { useCroppedRegion } from "./helpers/Atlas.helpers";
 import { BoxSelectorProps } from "./BoxSelector";
 import { BoxStyle, DrawBox, ResizeWorldItem } from "@atlas-viewer/atlas";
 import { useBoxSelector } from "./BoxSelector.helpers";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 
 type RegionHighlightType = {
   id: any;

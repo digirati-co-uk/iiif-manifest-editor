@@ -48,10 +48,11 @@ export function writeDoclingRegionAnnotations(
               id: pageId,
               type: "AnnotationPage",
               label: { en: ["Inline annotations"] },
+              behavior: [],
               items: [],
             },
           },
-        },
+        } as any,
       }),
     );
     actions.push(
@@ -85,7 +86,7 @@ export function writeDoclingRegionAnnotations(
     entities.Annotation[annotation.id] = {
       id: annotation.id,
       type: "Annotation",
-      motivation: "supplementing",
+      motivation: ["supplementing"],
       body: [
         {
           id: annotation.bodyId,

@@ -11,7 +11,7 @@ import {
   useEditor,
   useLocalStorage,
 } from "@manifest-editor/shell";
-import { useCanvas, useManifest, useVault } from "react-iiif-vault";
+import { useCanvas, useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { ExhibitionHtmlSummaryEditor } from "./ExhibitionSummaryEditor";
 import {

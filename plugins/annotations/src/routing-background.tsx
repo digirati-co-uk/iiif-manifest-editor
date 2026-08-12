@@ -6,7 +6,7 @@ import {
   useLayoutState,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { ANNOTATIONS_LEFT_PANEL_ID } from "./constants";
 
 const RANGES_PANEL_ID = "@manifest-editor/ranges-listing";

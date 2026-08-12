@@ -173,7 +173,7 @@ export function createDoclingAnnotations(
     return {
       id: `https://example.invalid/annotation/${createRandomId(`region-${index + 1}`)}`,
       type: 'Annotation',
-      motivation: 'supplementing',
+      motivation: ['supplementing'],
       category: region.category,
       body: [
         {

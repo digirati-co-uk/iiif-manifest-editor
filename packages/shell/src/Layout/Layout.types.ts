@@ -1,8 +1,8 @@
-import type { Vault } from "@iiif/helpers/vault";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import type { CreatableResource } from "@manifest-editor/creator-api";
 import type { ReactNode } from "react";
-import type { RenderingStrategy } from "react-iiif-vault";
+import type { RenderingStrategy } from "react-iiif-vault/presentation-4";
 import type { TransitionStatus } from "react-transition-group";
 import type { AppState } from "../AppContext/AppContext";
 import type { MappedApp } from "../AppContext/AppContext";
@@ -64,7 +64,7 @@ export interface LayoutActions {
       stacked?: boolean | undefined;
       selectedTab?: string;
       forceOpen?: boolean;
-    },
+    }
   ): void;
   create(resource: CreatableResource): Promise<any>;
 
@@ -128,11 +128,11 @@ export type LayoutFunction = (
   state: any,
   ctx: {
     current: PanelActions;
-    vault?: Vault;
+    vault?: Vault4;
     transition?: TransitionStatus;
     isModal?: boolean;
   } & LayoutContext,
-  app: AppState,
+  app: AppState
 ) => ReactNode;
 
 export interface AnnotationPanel {
@@ -163,8 +163,8 @@ export interface LayoutPanel {
   render: LayoutFunction;
   onMount?: (
     state: any,
-    ctx: { current: PanelActions; vault?: Vault } & LayoutContext,
-    app: AppState,
+    ctx: { current: PanelActions; vault?: Vault4 } & LayoutContext,
+    app: AppState
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
@@ -183,15 +183,17 @@ export interface LayoutPanel {
 
 export interface LayoutPanelSupportContext {
   rootResource?: Resource;
-  vault?: Vault;
+  vault?: Vault4;
   app: MappedApp;
   layoutState: LayoutState;
   appState: AppState;
+  editingResource?: EditableResource | null;
+  editingStack?: EditableResource[];
 }
 
 export interface LayoutPanelFocusedModeContext {
   rootResource?: Resource;
-  vault?: Vault;
+  vault?: Vault4;
   app: MappedApp;
   layoutState: LayoutState;
   appState: AppState;
@@ -209,7 +211,7 @@ export interface CanvasEditorDefinition {
   id: string;
   label: string;
   supports: {
-    strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault) => boolean;
+    strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault4) => boolean;
   };
   component: (strategy: RenderingStrategy) => ReactNode | null;
 }
@@ -232,7 +234,7 @@ export interface EditorDefinition {
     customLocking?: boolean;
     target?: boolean;
     multi?: boolean;
-    custom?: (resource: EditableResource, vault: Vault) => boolean;
+    custom?: (resource: EditableResource, vault: Vault4) => boolean;
   };
   component: (config: EditorConfig) => ReactNode; // @todo type component.
 }

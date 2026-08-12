@@ -26,14 +26,14 @@ export function ManifestStructuralProperties() {
           <InputContainer $wide>
             {!items.get()?.length ? (
               <>
-                <InputLabel>Canvases</InputLabel>
+                <InputLabel>Items</InputLabel>
                 <EmptyState $noMargin $box>
-                  No canvases
+                  No items
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                Canvases
+                Items
                 <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
               </InputLabel>
             )}

@@ -1,7 +1,7 @@
 import { type BoxSelector, createThumbnailHelper, type FixedSizeImage, type TemporalBoxSelector } from "@iiif/helpers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { useCanvas, useRenderingStrategy, useThumbnail, useVault } from "react-iiif-vault";
+import { useCanvas, useRenderingStrategy, useThumbnail, useVault } from "react-iiif-vault/presentation-4";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { twMerge } from "tailwind-merge";
 import { TextIcon } from "./icons/TextIcon";

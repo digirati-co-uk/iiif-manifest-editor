@@ -1,5 +1,5 @@
-import { CanvasPanel, MediaPlayerProvider, useSimpleMediaPlayer } from "react-iiif-vault";
-import { SingleVideo } from "react-iiif-vault";
+import { CanvasPanel, MediaPlayerProvider, useSimpleMediaPlayer } from "react-iiif-vault/presentation-4";
+import { SingleVideo } from "react-iiif-vault/presentation-4";
 import { MediaControls } from "../MediaControls/MediaControls";
 
 export function VideoPlayer({

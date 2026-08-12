@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import {
   Creator,
   type CreatorDefinition,
@@ -54,7 +54,7 @@ describe("creator configuration keys", () => {
         }),
       );
     const creators = [capture("base"), capture("fork"), capture("other")];
-    const runtime = new Creator(new Vault(), creators, undefined, {
+    const runtime = new Creator(new Vault4(), creators, undefined, {
       base: { enabled: true },
       other: { enabled: false },
       fork: { enabled: "legacy duplicate" },

@@ -6,14 +6,14 @@ import {
   type RegionParameter,
   type SizeParameter,
 } from "@iiif/parser/image-3";
-import type { ImageService } from "@iiif/presentation-3";
+import type { ImageService } from "@iiif/parser";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { type FormEvent, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ImageService as ImageServiceComponent, useImage } from "react-iiif-vault";
+import { ImageService as ImageServiceComponent, useImage } from "react-iiif-vault/presentation-4";
 
 export interface CreateImageServicePayload {
   url: string;

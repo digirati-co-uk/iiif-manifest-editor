@@ -1,4 +1,4 @@
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { InputHTMLAttributes } from "react";
 
 interface ResourceEditing {

@@ -8,7 +8,7 @@ import {
   useCanvas,
   useCurrentAnnotationActions,
   useCurrentAnnotationRequest,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { AnnotationPopUpSwitcherButton } from "./AnnotationPopUpSwitcherButton";
 

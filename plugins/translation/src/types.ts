@@ -1,4 +1,4 @@
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import type { InternationalString, Reference } from "@iiif/parser";
 
 export type TranslationRuntimePreference = "auto" | "webgpu" | "wasm";
 export type TranslationWritePolicy = "fill-missing";

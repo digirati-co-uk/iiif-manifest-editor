@@ -1,9 +1,11 @@
-import type { DescriptiveProperties } from "@iiif/presentation-3";
+import type { DescriptiveProperties } from "@iiif/parser";
 
 const required = {
   Collection: ["label"],
   Manifest: ["label"],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -16,6 +18,8 @@ const recommended = {
   Collection: ["metadata", "summary", "provider", "thumbnail"],
   Manifest: ["metadata", "summary", "provider", "thumbnail"],
   Canvas: ["label"],
+  Scene: ["label"],
+  Timeline: ["label"],
   Annotation: [],
   AnnotationPage: [],
   Range: ["label"],
@@ -28,6 +32,28 @@ const optional = {
   Collection: ["requiredStatement", "rights", "navDate", "placeholderCanvas", "accompanyingCanvas"],
   Manifest: ["requiredStatement", "rights", "navDate", "placeholderCanvas", "accompanyingCanvas"],
   Canvas: [
+    "metadata",
+    "summary",
+    "requiredStatement",
+    "rights",
+    "navDate",
+    "provider",
+    "thumbnail",
+    "placeholderCanvas",
+    "accompanyingCanvas",
+  ],
+  Scene: [
+    "metadata",
+    "summary",
+    "requiredStatement",
+    "rights",
+    "navDate",
+    "provider",
+    "thumbnail",
+    "placeholderCanvas",
+    "accompanyingCanvas",
+  ],
+  Timeline: [
     "metadata",
     "summary",
     "requiredStatement",
@@ -60,6 +86,8 @@ const notAllowed = {
   Collection: ["language"],
   Manifest: ["language"],
   Canvas: ["language"],
+  Scene: ["language"],
+  Timeline: ["language"],
   Annotation: ["navDate", "language", "placeholderCanvas", "accompanyingCanvas"],
   AnnotationPage: ["navDate", "language", "placeholderCanvas", "accompanyingCanvas"],
   Range: ["language"],
@@ -83,6 +111,8 @@ type DescriptiveMap = Record<
   | "Collection"
   | "Manifest"
   | "Canvas"
+  | "Scene"
+  | "Timeline"
   | "Annotation"
   | "AnnotationPage"
   | "Range"

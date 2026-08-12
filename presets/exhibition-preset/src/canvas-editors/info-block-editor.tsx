@@ -16,7 +16,7 @@ import {
   useCanvas,
   useVault,
   useVaultSelector,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { getGridStats, getHeightWidthRatio } from "../helpers";

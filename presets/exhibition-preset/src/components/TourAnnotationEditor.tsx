@@ -1,7 +1,7 @@
 import { useAnnotationInfo } from "@manifest-editor/editors";
 import { ResourceEditingProvider } from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { AnnotationContext } from "react-iiif-vault";
+import { AnnotationContext } from "react-iiif-vault/presentation-4";
 import { TourNormalAnnotationEditor } from "./TourNormalAnnotationEditor";
 import { TourPaintingAnnotationEditor } from "./TourPaintingAnnotationEditor";
 

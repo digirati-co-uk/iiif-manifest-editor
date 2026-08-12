@@ -1,4 +1,4 @@
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { createRef, KeyboardEventHandler, useLayoutEffect, useMemo, useState } from "react";
 import { InlineSelectStyles } from "@/_components/form-elements/InlineSelect/InlineSelect.styles";
 import { LocaleString } from "@/atoms/LocaleString";

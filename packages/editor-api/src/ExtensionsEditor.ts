@@ -1,4 +1,4 @@
-import { NavPlaceExtension, TextGranularityExtension } from "@iiif/presentation-3";
+import { NavPlaceExtension, TextGranularityExtension } from "@iiif/parser";
 import { BaseEditor } from "./BaseEditor";
 import { EditorConfig } from "./types";
 import { NavPlaceEditor } from "./NavPlaceEditor";

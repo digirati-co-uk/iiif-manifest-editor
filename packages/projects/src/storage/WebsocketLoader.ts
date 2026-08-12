@@ -1,6 +1,6 @@
 import { EditorProject } from "../ProjectContext.types";
-import { Vault } from "@iiif/helpers/vault";
-import { Collection, Manifest } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import { Collection, Manifest } from "@iiif/parser";
 import { ManifestStorage, CollectionStorage, RemoteWebsocketStorage } from "../types/Storage";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import { ClientVault } from "@manifest-editor/client-vault";
@@ -36,13 +36,13 @@ export class WebsocketLoader extends AbstractVaultLoader<RemoteWebsocketStorage>
     return false;
   }
 
-  createVaultInstance(project: EditorProject): [Vault, Promise<void>] {
+  createVaultInstance(project: EditorProject): [Vault4, Promise<void>] {
     const vault = new ClientVault(`${this.baseUrl}/vault/${project.storage.data.id}?token=${this.token}`);
 
-    return [vault, vault.waitUntilReady()];
+    return [vault as unknown as Vault4, vault.waitUntilReady()];
   }
 
-  closeVaultInstance(project: EditorProject, vault: Vault): void {
+  closeVaultInstance(project: EditorProject, vault: Vault4): void {
     if (vault instanceof ClientVault) {
       vault.ws.close();
     }

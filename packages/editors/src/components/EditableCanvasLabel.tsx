@@ -1,5 +1,5 @@
 import { useGenericEditor } from "@manifest-editor/shell";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { InlineLocaleStringEditor, type LocaleStringProps } from "./InlineLocaleStringEditor";
 
 export function EditableCanvasLabel(props: Omit<LocaleStringProps, "children">) {

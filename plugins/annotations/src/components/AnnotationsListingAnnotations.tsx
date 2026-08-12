@@ -12,7 +12,7 @@ import {
   useCanvas,
   useRenderingStrategy,
   useRequestAnnotation,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { AddAnnotationIcon } from "../icons";
 import { AnnotationsSidebarListItem } from "./AnnotationsSidebarListItem";
 import { AnnotationsOcrActions } from "./AnnotationsOcrActions";

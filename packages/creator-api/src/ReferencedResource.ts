@@ -1,21 +1,20 @@
-import type { Vault } from "@iiif/helpers/vault";
-import { isSpecificResource } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import type { Reference, SpecificResource } from "@iiif/parser";
+
+function isSpecificResource(resource: Reference | SpecificResource): resource is SpecificResource {
+  return resource.type === "SpecificResource";
+}
 
 export class ReferencedResource {
-  vault: Vault;
+  vault: Vault4;
   original: Reference | SpecificResource;
   reference: Reference;
   resource: SpecificResource;
-  constructor(reference: Reference | SpecificResource, vault: Vault) {
+  constructor(reference: Reference | SpecificResource, vault: Vault4) {
     this.vault = vault;
     this.original = reference;
-    this.reference = isSpecificResource(reference)
-      ? reference.source
-      : reference;
-    this.resource = isSpecificResource(reference)
-      ? reference
-      : { type: "SpecificResource", source: this.reference };
+    this.reference = isSpecificResource(reference) ? reference.source : reference;
+    this.resource = isSpecificResource(reference) ? reference : { type: "SpecificResource", source: this.reference };
   }
 
   // @todo editable specific resource.

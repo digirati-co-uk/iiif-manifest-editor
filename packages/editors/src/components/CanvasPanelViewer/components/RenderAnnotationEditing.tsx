@@ -1,6 +1,6 @@
 import { polygonToBoundingBox, useAtlasStore } from "@manifest-editor/shell";
 import { useMemo } from "react";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { AnnotationPopupTools } from "./AnnotationPopupTools";
 import { RenderHighlightAnnotation } from "./RenderHighlightedAnnotation";

@@ -1,4 +1,4 @@
-import { CanvasContext, useManifest } from "react-iiif-vault";
+import { CanvasContext, useManifest } from "react-iiif-vault/presentation-4";
 
 import { SmallThumbnailStripContainer, ThumbnailContainer } from "../../atoms/ThumbnailContainer";
 import { Thumbnail } from "../../atoms/Thumbnail";

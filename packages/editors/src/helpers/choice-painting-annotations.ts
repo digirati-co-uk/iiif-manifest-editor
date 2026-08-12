@@ -1,10 +1,11 @@
-import type { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { addMappings, importEntities, modifyEntityField } from "@iiif/helpers/vault/actions";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
-import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import type { LanguageMap, Reference } from "@iiif/parser/presentation-4/types";
+import type { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { randomId } from "../helpers";
 
 export type ChoiceBodyRef = Reference<"ContentResource">;
+type InternationalString = LanguageMap;
 
 export type ChoiceBody = {
   id?: string;
@@ -51,7 +52,7 @@ export function isChoiceBody(resource: unknown): resource is ChoiceBody {
   return !!resource && typeof resource === "object" && (resource as any).type === "Choice";
 }
 
-export function getChoiceBodyInfo(annotation: AnnotationNormalized | any, vault: Vault): ChoiceBodyInfo | null {
+export function getChoiceBodyInfo(annotation: AnnotationNormalized | any, vault: Vault4): ChoiceBodyInfo | null {
   const bodies = toArray(annotation?.body);
 
   for (const [bodyIndex, body] of bodies.entries()) {
@@ -69,7 +70,7 @@ export function getChoiceBodyInfo(annotation: AnnotationNormalized | any, vault:
   return null;
 }
 
-export function getChoiceItems(choice: ChoiceBody | null | undefined, vault: Vault): ChoiceItemInfo[] {
+export function getChoiceItems(choice: ChoiceBody | null | undefined, vault: Vault4): ChoiceItemInfo[] {
   return toArray(choice?.items).map((item, index) => {
     const resource = resolveContentResource(vault, item);
     return {
@@ -81,7 +82,7 @@ export function getChoiceItems(choice: ChoiceBody | null | undefined, vault: Vau
   });
 }
 
-export function getChoiceThumbnailResource(choice: ChoiceBody | null | undefined, vault: Vault): any {
+export function getChoiceThumbnailResource(choice: ChoiceBody | null | undefined, vault: Vault4): any {
   const firstItem = getChoiceItems(choice, vault)[0];
   if (!firstItem) {
     return choice;
@@ -95,18 +96,18 @@ export function getChoiceThumbnailResource(choice: ChoiceBody | null | undefined
   return resource;
 }
 
-export function getAnnotationThumbnailResource(annotation: AnnotationNormalized | any, vault: Vault): any {
+export function getAnnotationThumbnailResource(annotation: AnnotationNormalized | any, vault: Vault4): any {
   const choiceInfo = getChoiceBodyInfo(annotation, vault);
   return choiceInfo ? getChoiceThumbnailResource(choiceInfo.choice, vault) : annotation;
 }
 
-export function getContentResourceThumbnailResource(resource: unknown, vault: Vault): any {
+export function getContentResourceThumbnailResource(resource: unknown, vault: Vault4): any {
   const resolved = resolveContentResource(vault, resource);
   return isChoiceBody(resolved) ? getChoiceThumbnailResource(resolved, vault) : resolved;
 }
 
 export function updateChoiceField(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
   key: string,
@@ -124,7 +125,7 @@ export function updateChoiceField(
 }
 
 export function updateChoiceItems(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
   items: unknown[],
@@ -133,7 +134,7 @@ export function updateChoiceItems(
 }
 
 export function ensureChoiceBodyRef(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
 ): ChoiceBodyRef {
@@ -153,11 +154,13 @@ export function ensureChoiceBodyRef(
   vault.batch((batchVault) => {
     batchVault.dispatch(
       importEntities({
+        // The shared action creator still describes v3 normalized entities,
+        // although Vault4 consumes the same runtime action shape.
         entities: {
           ContentResource: {
             [choiceId]: choice,
           },
-        },
+        } as any,
       }),
     );
     batchVault.dispatch(
@@ -181,7 +184,7 @@ export function ensureChoiceBodyRef(
 }
 
 export function updateChoiceItemLabel(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   choiceInfo: ChoiceBodyInfo,
   itemInfo: ChoiceItemInfo,
@@ -197,12 +200,12 @@ export function updateChoiceItemLabel(
   updateChoiceItems(vault, annotationRef, choiceInfo, items);
 }
 
-export function getPaintingChoiceCandidates(vault: Vault, annotationRefs: Array<Reference | any>) {
+export function getPaintingChoiceCandidates(vault: Vault4, annotationRefs: Array<Reference | any>) {
   return annotationRefs.map((ref, index) => getPaintingChoiceCandidate(vault, ref, index));
 }
 
 export function getPaintingChoiceCandidate(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference | any,
   index: number,
 ): PaintingChoiceCandidate {
@@ -267,7 +270,7 @@ export function getPaintingChoiceCandidate(
 }
 
 export function combinePaintingAnnotationsIntoChoice(
-  vault: Vault,
+  vault: Vault4,
   options: {
     annotationPageRef: Reference<"AnnotationPage">;
     selectedAnnotationIds: string[];
@@ -315,7 +318,7 @@ export function combinePaintingAnnotationsIntoChoice(
   const annotation = {
     id: annotationId,
     type: "Annotation",
-    motivation: "painting",
+    motivation: ["painting"],
     body: [choiceRef],
     target: clone(first.annotation.target),
   };
@@ -332,7 +335,7 @@ export function combinePaintingAnnotationsIntoChoice(
           Annotation: {
             [annotationId]: annotation,
           },
-        },
+        } as any,
       }),
     );
     batchVault.dispatch(
@@ -357,7 +360,7 @@ export function combinePaintingAnnotationsIntoChoice(
 }
 
 export function unwrapChoicePaintingAnnotation(
-  vault: Vault,
+  vault: Vault4,
   options: {
     annotationRef: Reference<"Annotation">;
     annotationPageRef?: Reference<"AnnotationPage">;
@@ -395,7 +398,7 @@ export function unwrapChoicePaintingAnnotation(
     annotationEntities[annotationId] = {
       id: annotationId,
       type: "Annotation",
-      motivation: "painting",
+      motivation: ["painting"],
       body: [clone(item.item)],
       target: clone(annotation.target),
     };
@@ -412,7 +415,7 @@ export function unwrapChoicePaintingAnnotation(
       importEntities({
         entities: {
           Annotation: annotationEntities,
-        },
+        } as any,
       }),
     );
     batchVault.dispatch(
@@ -437,7 +440,7 @@ export function unwrapChoicePaintingAnnotation(
   };
 }
 
-export function resolveContentResource(vault: Vault, input: any): any {
+export function resolveContentResource(vault: Vault4, input: any): any {
   if (!input) {
     return null;
   }
@@ -481,10 +484,10 @@ export function hasInternationalStringText(value: unknown): boolean {
   return getInternationalStringText(value, "").trim().length > 0;
 }
 
-export function toArray<T>(value: T | T[] | null | undefined): T[] {
-  if (Array.isArray(value)) return value;
+export function toArray<T>(value: T | readonly T[] | null | undefined): T[] {
+  if (Array.isArray(value)) return [...value];
   if (typeof value === "undefined" || value === null) return [];
-  return [value];
+  return [value as T];
 }
 
 function createDisabledCandidate(
@@ -557,7 +560,7 @@ function createChoiceItem(body: any, resource: any) {
 }
 
 function ensureChoiceItemLabel(
-  vault: Vault,
+  vault: Vault4,
   candidate: PaintingChoiceCandidate,
   defaultLanguage: string,
   optionNumber: number,
@@ -627,7 +630,7 @@ function replaceSelectedPageItems(
 }
 
 function findAnnotationPageMatch(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   annotationPageRef?: Reference<"AnnotationPage">,
 ): { annotationPageRef: Reference<"AnnotationPage">; items: any[]; index: number } | null {
@@ -655,7 +658,7 @@ function findAnnotationPageMatch(
 }
 
 function updateEmbeddedChoice(
-  vault: Vault,
+  vault: Vault4,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
   choice: ChoiceBody,

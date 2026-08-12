@@ -1,5 +1,5 @@
 import { emptyCanvas } from "@iiif/parser";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 import { createYoutubeBodyResource, youTubeBodyCreator } from "@manifest-editor/creators";
 import { getYouTubeId } from "@manifest-editor/editors";

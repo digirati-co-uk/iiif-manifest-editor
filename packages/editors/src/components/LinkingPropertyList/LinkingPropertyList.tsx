@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource, toRef } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import {
   ActionButton,
   AddIcon,
@@ -20,7 +20,7 @@ import { AnnotationPageList } from "../AnnotationPageLIst/AnnotationPageList";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 
 interface LinkingPropertyListProps {
-  parent?: SpecificResource;
+  parent?: { source?: any };
   property: string;
   containerId?: string;
   label: string;
@@ -78,7 +78,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
             inlineHandle={false}
             reorder={isOpen ? props.reorder : undefined}
             onSelect={(e, index) => {
-              const ref = isSpecificResource(e) ? e.source : e;
+              const ref = getReferencedResource(e);
               edit(
                 props.property === "partOf" && ref
                   ? {
@@ -89,7 +89,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
                         type: "ContentResource",
                       },
                     }
-                  : e,
+                  : (e as any),
                 { parent: toRef(props.parent?.source || props.parent) as any, property: props.property, index },
                 { selectedTab: props.editTab },
               );
@@ -147,7 +147,7 @@ function ReferenceOnlyList(props: {
         <li key={`${index}_${item.id}`} className="flex items-stretch">
           <ReferenceOnlyItem item={item} onClick={() => props.onSelect(item, index)} />
           {props.inlineActions
-            ? props.inlineActions((isSpecificResource(item) ? item.source : item) as Reference, index, item)
+            ? props.inlineActions(getReferencedResource(item) as Reference, index, item)
             : null}
         </li>
       ))}
@@ -156,7 +156,7 @@ function ReferenceOnlyList(props: {
 }
 
 function ReferenceOnlyItem(props: { item: Reference | SpecificResource; onClick: () => void }) {
-  const ref = isSpecificResource(props.item) ? props.item.source : props.item;
+  const ref = getReferencedResource(props.item);
   const label = getValue(ref.label) || "";
   const summary = getValue(ref.summary) || "";
   const icon =
@@ -179,6 +179,11 @@ function ReferenceOnlyItem(props: { item: Reference | SpecificResource; onClick:
       </span>
     </button>
   );
+}
+
+function getReferencedResource(item: Reference | SpecificResource): any {
+  const specificResource = item as SpecificResource;
+  return specificResource.type === "SpecificResource" ? specificResource.source : item;
 }
 
 export function IIIFBrowserFromPartOfButton(props: { manifestId: string; openBrowser: (manifestId: string) => void }) {

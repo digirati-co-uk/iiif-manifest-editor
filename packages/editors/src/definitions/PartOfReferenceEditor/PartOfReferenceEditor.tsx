@@ -1,8 +1,8 @@
 import { importEntities } from "@iiif/helpers/vault/actions";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import type { InternationalString, Reference } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource } from "@manifest-editor/shell";
-import { useVault, useVaultSelector } from "react-iiif-vault";
+import { useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 

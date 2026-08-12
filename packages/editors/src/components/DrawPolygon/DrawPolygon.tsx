@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PolygonSelector, RenderSvgEditorControls } from "react-iiif-vault";
+import { PolygonSelector, RenderSvgEditorControls } from "react-iiif-vault/presentation-4";
 import { InputShape } from "polygon-editor";
 import { ConfirmSelectionButton, SvgControlBar } from "@manifest-editor/components";
 

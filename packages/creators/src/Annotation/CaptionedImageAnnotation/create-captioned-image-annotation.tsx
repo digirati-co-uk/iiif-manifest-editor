@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
@@ -58,7 +58,7 @@ export async function createCaptionedImageAnnotation(
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: [data.motivation || ctx.options.initialData?.motivation || "painting"],
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -74,7 +74,7 @@ export async function createCaptionedImageAnnotation(
 
     const annotationResource = ctx.embed({
       ...annotation,
-      motivation: "painting",
+      motivation: ["painting"],
       body: bodies,
       target: {
         type: "SpecificResource",

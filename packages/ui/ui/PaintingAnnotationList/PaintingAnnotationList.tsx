@@ -1,4 +1,4 @@
-import { useResourceContext } from "react-iiif-vault";
+import { useResourceContext } from "react-iiif-vault/presentation-4";
 import { useAnnotationPageEditor } from "@/shell/EditingStack/EditingStack";
 import { useToggleList } from "@/_editors/LinkingProperties/LinkingProperties";
 import invariant from "tiny-invariant";

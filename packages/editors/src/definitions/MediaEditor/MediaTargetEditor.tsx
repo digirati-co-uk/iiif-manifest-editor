@@ -1,5 +1,5 @@
 import { useCustomContextMenu, useEditor } from "@manifest-editor/shell";
-import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation, useVault } from "react-iiif-vault";
+import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation, useVault } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { InputContainer } from "../../components";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";

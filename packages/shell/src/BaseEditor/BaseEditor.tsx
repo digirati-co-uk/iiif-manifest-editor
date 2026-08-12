@@ -1,9 +1,9 @@
-import type { Vault } from "@iiif/helpers";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { SidebarTabs } from "@manifest-editor/components";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { type ReactNode, useContext, useEffect, useMemo } from "react";
-import { ResourceReactContext, useVault } from "react-iiif-vault";
+import { ResourceReactContext, useVault } from "react-iiif-vault/presentation-4";
 import { useApp } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { type EditorConfig, useConfig } from "../ConfigContext/ConfigContext";
@@ -51,7 +51,7 @@ export function BaseEditorCloseButton({ closeAction, fallback }: any) {
 export function editBasedOnResource(
   resource: EditableResource,
   list: ResourceDefinition[],
-  options: { edit?: boolean; vault: Vault },
+  options: { edit?: boolean; vault: Vault4 },
   config: EditorConfig,
 ): ResourceDefinition | null {
   const filteredList = list.filter((l) => l.resourceType === resource.resource.source.type);
@@ -130,7 +130,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
   const rootResource = useAppResource();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const { change } = useLayoutActions();
   const set = useSetCustomTitle();
   const { editorConfig } = useConfig();

@@ -20,7 +20,7 @@ import {
   LinkingProperties,
   StructuralProperties,
   TechnicalProperties,
-} from "@iiif/presentation-3";
+} from "@iiif/parser";
 
 type DocDefinition = {
   link: string;

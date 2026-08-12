@@ -1,6 +1,6 @@
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { toRef } from "@iiif/parser";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { ActionButton, InfoMessage, MoreMenuIcon, useGridOptions } from "@manifest-editor/components";
 import { InlineLabelEditor, InlineLocaleStringEditor, useInStack } from "@manifest-editor/editors";
 import {
@@ -13,7 +13,7 @@ import {
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { LocaleString, RangeContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import styled from "styled-components";
 import { ArrowBackwardIcon, RangesIcon, SplitRangeIcon } from "../icons";
 import { ArrowDownIcon } from "../left-panels/components/ArrowDownIcon";
@@ -124,7 +124,7 @@ function RangeWorkbench() {
         return null;
       }
 
-      const structures = vault.get(manifest!.structures || []);
+      const structures = vault.get([...(manifest!.structures || [])]);
       return (
         helper.rangesToTableOfContentsTree(structures, undefined, {
           showNoNav: true,
@@ -327,7 +327,7 @@ function RangeWorkbench() {
   const rootToc = useVaultSelector(
     (_, v) => {
       if (!manifest?.structures) return null;
-      const structures = v.get(manifest.structures || []);
+      const structures = v.get([...(manifest.structures || [])]);
       return (
         helper.rangesToTableOfContentsTree(structures, undefined, {
           showNoNav: true,

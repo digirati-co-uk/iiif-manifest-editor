@@ -7,7 +7,7 @@ production application.
 Let's take a look at that `<ManifestEditor />` component to see how it works:
 
 ```tsx
-import { Vault } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { Manifest } from "@iiif/presentation-3";
 import { AppProvider, Layout, ShellProvider, mapApp } from "@manifest-editor/shell";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
@@ -103,7 +103,7 @@ import { VaultProvider } from 'react-iiif-vault';
 import { Vault } from '@iiif/helpers';
 //...
 
-const myCustomVault = new Vault();
+const myCustomVault = new Vault4();
 
 function App() {
   // ...

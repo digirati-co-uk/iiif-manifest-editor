@@ -1,14 +1,15 @@
 "use client";
 
-import { Vault } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { queryClient } from "../site/Provider";
 import { deleteBrowserProject, internal_getBrowserProjectById, listBrowserProjects } from "./browser-state";
+import { serializeVaultResource } from "../../helpers/serialize-vault-resource";
 
 export default function BrowserRecents() {
   const router = useRouter();
@@ -91,10 +92,10 @@ function ProjectContextualMenu({ id }: { id: string }) {
   async function doDownloadManifest() {
     const project = await internal_getBrowserProjectById(id);
     if (project) {
-      const vault = new Vault();
+      const vault = new Vault4();
       vault.getStore().setState({ iiif: project.vaultData as any });
       const item = vault.get(project.resource);
-      const manifestJson = vault.toPresentation3(item);
+      const manifestJson = serializeVaultResource(vault, item);
       const fullData = JSON.stringify(manifestJson, null, 2);
       // Do download
       const blob = new Blob([fullData], { type: "application/json" });

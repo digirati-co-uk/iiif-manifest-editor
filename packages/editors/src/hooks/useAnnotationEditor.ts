@@ -1,6 +1,6 @@
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
-import { useAnnotation, useAnnotationPage, useCanvas, useRequestAnnotation } from "react-iiif-vault";
+import { useAnnotation, useAnnotationPage, useCanvas, useRequestAnnotation } from "react-iiif-vault/presentation-4";
 
 export function useAnnotationEditor({
   annotationPopup,

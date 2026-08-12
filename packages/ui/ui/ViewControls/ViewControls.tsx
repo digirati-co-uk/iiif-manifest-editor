@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { useViewerPreset } from "react-iiif-vault";
+import { useViewerPreset } from "react-iiif-vault/presentation-4";
 import styled, { css } from "styled-components";
 import { HomeIcon } from "../../icons/HomeIcon";
 import { MinusIcon } from "../../icons/MinusIcon";

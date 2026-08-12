@@ -1,6 +1,6 @@
 import type { createHelper } from "polygon-editor";
 import { useEffect } from "react";
-import { RenderSvgEditorControls } from "react-iiif-vault";
+import { RenderSvgEditorControls } from "react-iiif-vault/presentation-4";
 import { DeleteForeverIcon } from "./icons/DeleteForeverIcon";
 import { DrawIcon } from "./icons/DrawIcon";
 import { HexagonIcon } from "./icons/HexagonIcon";

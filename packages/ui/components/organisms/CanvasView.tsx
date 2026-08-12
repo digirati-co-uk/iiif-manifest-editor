@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
 import { useManifest } from "../../hooks/useManifest";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";

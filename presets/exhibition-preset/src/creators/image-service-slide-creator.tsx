@@ -66,7 +66,7 @@ async function createImageService(
   const annotation = ctx.embed({
     id: ctx.generateId("annotation"),
     type: "Annotation",
-    motivation: "painting",
+    motivation: ["painting"],
     body: [resource],
     target: {
       type: "SpecificResource",

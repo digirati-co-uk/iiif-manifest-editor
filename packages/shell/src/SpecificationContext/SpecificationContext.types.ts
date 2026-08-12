@@ -1,4 +1,4 @@
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 
 export type SpecificationEntityType =
   | "Collection"

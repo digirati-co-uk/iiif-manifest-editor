@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
-import { Vault } from "@iiif/helpers/vault";
-import { VaultProvider } from "react-iiif-vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import { createPreviewVault } from "./create-preview-vault";
 
 export function usePreviewVault() {
   return useContext(PreviewVaultReactContext);
 }
 
-const PreviewVaultReactContext = createContext<Vault>(new Vault());
+const PreviewVaultReactContext = createContext<Vault4>(new Vault4());
 
 const PreviewVaultAddHistory = createContext({
   addHistory: (id: string, type: string) => {},

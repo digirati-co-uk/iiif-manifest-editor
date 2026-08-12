@@ -8,7 +8,7 @@ import {
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
 import { type ChangeEvent, type ReactNode, useMemo, useState } from "react";
 import { Button } from "react-aria-components";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
 import type {
   ExhibitionThemeConfig,

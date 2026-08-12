@@ -7,7 +7,7 @@ export const linkingProperties: EditorDefinition = {
   supports: {
     edit: true,
     properties: ["seeAlso", "rendering", "supplementary", "homepage", "logo"],
-    resourceTypes: ["Manifest", "Canvas", "ContentResource", "Agent", "Range", "Collection"],
+    resourceTypes: ["Manifest", "Canvas", "Scene", "Timeline", "ContentResource", "Agent", "Range", "Collection"],
     readOnlyProperties: [],
   },
   component: () => <LinkingProperties />,

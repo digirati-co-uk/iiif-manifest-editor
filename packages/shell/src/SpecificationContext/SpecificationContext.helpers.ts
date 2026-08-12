@@ -1,5 +1,5 @@
-import type { Vault } from "@iiif/helpers/vault";
-import type { Reference } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import type { Reference } from "@iiif/parser";
 import type {
   ManifestEditorSpecification,
   SpecificationEditorTarget,
@@ -247,7 +247,7 @@ export function getPropertyPolicy(
 
 export function evaluateSpecifications(
   specifications: ManifestEditorSpecification[] | undefined,
-  vault: Vault,
+  vault: Vault4,
   rootRef: Reference,
 ): SpecificationReport {
   const resolvedSpecifications = specifications || [];
@@ -270,7 +270,7 @@ export function evaluateSpecifications(
 }
 
 export function collectSpecificationResources(
-  vault: Vault,
+  vault: Vault4,
   rootRef: Reference,
 ): CollectedResource[] {
   const collected: CollectedResource[] = [];
@@ -315,7 +315,7 @@ function evaluateRule(
   rule: SpecificationRule,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault4,
 ): SpecificationReportItem[] {
   switch (rule.type) {
     case "disallow-property":
@@ -443,7 +443,7 @@ function evaluateCanvasWithImageService(
   rule: Extract<SpecificationRule, { type: "iiif:canvas-with-image-service" }>,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault4,
 ): SpecificationReportItem {
   const canvases = resources.filter((item) => item.ref.type === "Canvas");
   const expected = getExpectedServiceIds(rule);
@@ -476,7 +476,7 @@ function evaluateThumbnailFromBodyService(
   >,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault4,
 ): SpecificationReportItem[] {
   const entityType = rule.entityType || "Canvas";
   const targets = resources.filter((item) => item.ref.type === entityType);
@@ -749,7 +749,7 @@ function countResults(
   return counts;
 }
 
-function resolveResource(vault: Vault, input: any) {
+function resolveResource(vault: Vault4, input: any) {
   const ref = toReference(input);
   if (!ref) return input;
 
@@ -821,7 +821,7 @@ function serviceMatches(actual: string[], expected: string[]) {
   return expected.some((serviceId) => actualSet.has(serviceId));
 }
 
-function getCanvasPaintingServiceIds(canvas: any, vault: Vault): string[] {
+function getCanvasPaintingServiceIds(canvas: any, vault: Vault4): string[] {
   const pages = resolveReferenceList(vault, canvas?.items);
   const serviceIds: string[] = [];
 
@@ -844,7 +844,7 @@ function getCanvasPaintingServiceIds(canvas: any, vault: Vault): string[] {
 function thumbnailUsesBodyService(
   resource: any,
   bodyServiceIds: string[],
-  vault: Vault,
+  vault: Vault4,
 ) {
   const thumbnails = resolveReferenceList(vault, resource?.thumbnail);
   if (!thumbnails.length || !bodyServiceIds.length) return false;
@@ -869,7 +869,7 @@ function thumbnailUsesBodyService(
   return false;
 }
 
-function normaliseBodies(body: any, vault: Vault): any[] {
+function normaliseBodies(body: any, vault: Vault4): any[] {
   const resolved = resolveResource(vault, body);
   if (!resolved) return [];
   if (Array.isArray(resolved))
@@ -898,7 +898,7 @@ function getImageServiceIds(resource: any): string[] {
   return Array.from(new Set(ids));
 }
 
-function resolveReferenceList(vault: Vault, value: any): any[] {
+function resolveReferenceList(vault: Vault4, value: any): any[] {
   if (!value) return [];
   const list = Array.isArray(value) ? value : [value];
 

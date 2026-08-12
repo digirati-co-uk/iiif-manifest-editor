@@ -1,13 +1,6 @@
-import type { Collection } from "@iiif/presentation-3";
+import type { Collection } from "@iiif/parser";
 import type { CreatorConfig } from "@manifest-editor/creator-api";
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 
 export interface Config {
@@ -52,7 +45,7 @@ export interface Config {
   // Options when exporting from Vault.
   export: {
     baseIdentifier: string | null;
-    version: 3 | 2;
+    version: 2 | 3 | 4;
   };
 
   creators: CreatorConfig;
@@ -135,7 +128,7 @@ const DEFAULT_CONFIG: Config = {
 
 function mergeEditorConfig(
   base: Config["editorConfig"] | undefined,
-  override: Config["editorConfig"] | undefined,
+  override: Config["editorConfig"] | undefined
 ): Config["editorConfig"] | undefined {
   if (!base && !override) return undefined;
 
@@ -151,7 +144,7 @@ function mergeEditorConfig(
 
 function mergePluginConfig(
   base: Config["plugins"] | undefined,
-  override: Config["plugins"] | undefined,
+  override: Config["plugins"] | undefined
 ): Config["plugins"] | undefined {
   if (!base && !override) return undefined;
 
@@ -176,7 +169,7 @@ function mergePluginConfig(
 
 function mergeCreatorConfig(
   base: Config["creators"] | undefined,
-  override: Config["creators"] | undefined,
+  override: Config["creators"] | undefined
 ): Config["creators"] | undefined {
   if (!base && !override) return undefined;
 
@@ -191,9 +184,7 @@ function mergeCreatorConfig(
   return next;
 }
 
-export function mergePartialConfig(
-  ...configs: Array<Partial<Config> | null | undefined>
-): Partial<Config> {
+export function mergePartialConfig(...configs: Array<Partial<Config> | null | undefined>): Partial<Config> {
   let merged: Partial<Config> = {};
 
   for (const config of configs) {
@@ -212,17 +203,17 @@ export function mergePartialConfig(
           : undefined,
       i18n:
         merged.i18n || config.i18n
-          ? {
+          ? ({
               ...(merged.i18n || {}),
               ...(config.i18n || {}),
-            } as Config["i18n"]
+            } as Config["i18n"])
           : undefined,
       export:
         merged.export || config.export
-          ? {
+          ? ({
               ...(merged.export || {}),
               ...(config.export || {}),
-            } as Config["export"]
+            } as Config["export"])
           : undefined,
       creators: mergeCreatorConfig(merged.creators, config.creators),
       plugins: mergePluginConfig(merged.plugins, config.plugins),
@@ -232,16 +223,12 @@ export function mergePartialConfig(
   return merged;
 }
 
-export function mergeConfig(
-  ...configs: Array<Partial<Config> | null | undefined>
-): Config {
+export function mergeConfig(...configs: Array<Partial<Config> | null | undefined>): Config {
   return mergePartialConfig(DEFAULT_CONFIG, ...configs) as Config;
 }
 
 export const ConfigReactContext = createContext<Config>(DEFAULT_CONFIG);
-export const SaveConfigReactContext = createContext<
-  (config: Partial<Config>) => void
->(() => {});
+export const SaveConfigReactContext = createContext<(config: Partial<Config>) => void>(() => {});
 
 export function useConfig() {
   return useContext(ConfigReactContext);
@@ -260,13 +247,8 @@ export function ConfigProvider({
   config?: Partial<Config>;
   saveConfig?: (config: Partial<Config>) => void;
 }) {
-  const [runtimeConfig, setRuntimeConfig] = useState<Partial<Config> | null>(
-    null,
-  );
-  const resolvedConfig: Config = useMemo(
-    () => mergeConfig(config, runtimeConfig),
-    [config, runtimeConfig],
-  );
+  const [runtimeConfig, setRuntimeConfig] = useState<Partial<Config> | null>(null);
+  const resolvedConfig: Config = useMemo(() => mergeConfig(config, runtimeConfig), [config, runtimeConfig]);
 
   const memoSaveConfig = useCallback(
     (config: Partial<Config>) => {
@@ -275,14 +257,12 @@ export function ConfigProvider({
         saveConfig(config);
       }
     },
-    [saveConfig],
+    [saveConfig]
   );
 
   return (
     <SaveConfigReactContext.Provider value={memoSaveConfig}>
-      <ConfigReactContext.Provider value={resolvedConfig}>
-        {children}
-      </ConfigReactContext.Provider>
+      <ConfigReactContext.Provider value={resolvedConfig}>{children}</ConfigReactContext.Provider>
     </SaveConfigReactContext.Provider>
   );
 }

@@ -4,7 +4,7 @@ import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useMemo } from "react";
-import { VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import { createManifestFromId } from "./browser-state";
 
 export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {

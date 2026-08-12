@@ -4,7 +4,7 @@ import {
   LocaleString,
   type TextualContentStrategy,
   useVault,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 
 export function RenderTextualContent(props: {
   strategy: TextualContentStrategy;

@@ -1,9 +1,11 @@
-import type { TechnicalProperties } from "@iiif/presentation-3";
+import type { TechnicalProperties } from "@iiif/parser";
 
 const required = {
   Collection: ["id", "type"],
   Manifest: ["id", "type"],
   Canvas: ["id", "type"],
+  Scene: ["id", "type"],
+  Timeline: ["id", "type", "duration"],
   Annotation: ["id", "type"],
   AnnotationPage: ["id", "type"],
   Range: ["id", "type"],
@@ -16,6 +18,8 @@ const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -28,6 +32,8 @@ const optional = {
   Collection: ["viewingDirection", "behavior"],
   Manifest: ["viewingDirection", "behavior"],
   Canvas: ["height", "width", "duration", "behavior"],
+  Scene: ["duration", "behavior"],
+  Timeline: ["behavior"],
   Annotation: ["behavior", "timeMode"],
   AnnotationPage: ["behavior"],
   Range: ["viewingDirection", "behavior"],
@@ -42,6 +48,8 @@ const notAllowed = {
   Collection: ["format", "profile", "height", "width", "duration", "timeMode", ...annotationOnly],
   Manifest: ["format", "profile", "height", "width", "duration", "timeMode", ...annotationOnly],
   Canvas: ["format", "profile", "viewingDirection", "timeMode", ...annotationOnly],
+  Scene: ["format", "profile", "height", "width", "viewingDirection", "timeMode", ...annotationOnly],
+  Timeline: ["format", "profile", "height", "width", "viewingDirection", "timeMode", ...annotationOnly],
   Annotation: ["format", "profile", "height", "width", "duration", "viewingDirection"],
   AnnotationPage: [
     "format",
@@ -82,6 +90,8 @@ type TechnicalMap = Record<
   | "Collection"
   | "Manifest"
   | "Canvas"
+  | "Scene"
+  | "Timeline"
   | "Annotation"
   | "AnnotationPage"
   | "Range"

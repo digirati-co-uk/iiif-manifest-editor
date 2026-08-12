@@ -9,7 +9,7 @@ import { NewCanvas } from "@/components/widgets/NewCanvas";
 import { Button, CalltoButton } from "@/atoms/Button";
 import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
 import { useCanvasSubset } from "@/hooks/useCanvasSubset";
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import { InfoMessage } from "@/madoc/components/callouts/InfoMessage";
 import { UniversalCopyTarget } from "@/shell";
 import { usePasteCanvas } from "@/hooks/usePasteCanvas";

@@ -1,5 +1,5 @@
-import type { SpecificResource } from "@iiif/presentation-3";
-import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import type { SpecificResource } from "@iiif/parser";
+import type { CanvasNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import type { CreatorSideEffect } from "@manifest-editor/creator-api";
 import { EditorInstance } from "@manifest-editor/editor-api";
 

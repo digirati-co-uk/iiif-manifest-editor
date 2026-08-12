@@ -1,9 +1,8 @@
 import { getValue } from "@iiif/helpers";
-import type { Reference } from "@iiif/presentation-3";
+import type { Reference } from "@iiif/parser";
 import { ArrowRightIcon, BackIcon } from "@manifest-editor/components";
 import type { ReactNode, SVGProps } from "react";
-import { useMemo } from "react";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault/presentation-4";
 import { useEditingResource, useEditingResourceStack } from "./EditingStack/EditingStack";
 import { useLayoutActions } from "./Layout/Layout.context";
 
@@ -12,10 +11,11 @@ export interface ManifestPaginationNavigationProps {
   variant?: "light" | "dark";
 }
 
-type CanvasOption = {
+type ManifestItemOption = {
   id: string;
   pageNumber: number;
   labelText: string;
+  type: string;
 };
 
 export function ManifestPaginationNavigation({ className, variant = "light" }: ManifestPaginationNavigationProps) {
@@ -29,36 +29,38 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
   const isRev = manifest?.viewingDirection === "right-to-left" || manifest?.viewingDirection === "bottom-to-top";
   const isVert = manifest?.viewingDirection === "top-to-bottom" || manifest?.viewingDirection === "bottom-to-top";
 
-  const currentCanvasId =
-    findCanvasId(currentEditingResource) || editingStack.map(findCanvasId).find(Boolean) || items[0]?.id || "";
+  const currentItemId =
+    findManifestItemId(currentEditingResource) ||
+    editingStack.map(findManifestItemId).find(Boolean) ||
+    items[0]?.id ||
+    "";
   const currentIndex = Math.max(
     0,
-    items.findIndex((item) => item.id === currentCanvasId),
+    items.findIndex((item) => item.id === currentItemId),
   );
-  const selectedCanvasId = items[currentIndex]?.id || "";
+  const selectedItemId = items[currentIndex]?.id || "";
   const currentPage = currentIndex + 1;
 
-  const canvasOptions = useMemo<CanvasOption[]>(() => {
-    return items.map((item, index) => {
-      const canvas = vault.get({ id: item.id, type: "Canvas" });
-      return {
-        id: item.id,
-        pageNumber: index + 1,
-        labelText: getValue(canvas?.label as any) || `Page ${index + 1}`,
-      };
-    });
-  }, [items, vault]);
+  const itemOptions: ManifestItemOption[] = items.map((item, index) => {
+    const resource = vault.get(item as any, { skipSelfReturn: false }) as any;
+    return {
+      id: item.id,
+      pageNumber: index + 1,
+      labelText: getValue(resource?.label as any) || `${item.type} ${index + 1}`,
+      type: item.type,
+    };
+  });
 
-  const goToCanvas = (canvasId: string) => {
-    const index = items.findIndex((item) => item.id === canvasId);
-    const canvas = items[index];
+  const goToItem = (itemId: string) => {
+    const index = items.findIndex((item) => item.id === itemId);
+    const item = items[index];
 
-    if (!canvas || !manifest) {
+    if (!item || !manifest) {
       return;
     }
 
     edit(
-      { id: canvas.id, type: "Canvas" },
+      item as any,
       {
         parent: { id: manifest.id, type: "Manifest" },
         property: "items",
@@ -72,8 +74,8 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
     return <div />;
   }
 
-  const previousCanvas = items[currentIndex - 1];
-  const nextCanvas = items[currentIndex + 1];
+  const previousItem = items[currentIndex - 1];
+  const nextItem = items[currentIndex + 1];
   const dark = variant === "dark";
 
   return (
@@ -88,9 +90,9 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
       )}
     >
       <NavigationButton
-        ariaLabel="Previous canvas"
-        disabled={!previousCanvas}
-        onClick={() => previousCanvas && goToCanvas(previousCanvas.id)}
+        ariaLabel="Previous manifest item"
+        disabled={!previousItem}
+        onClick={() => previousItem && goToItem(previousItem.id)}
         dark={dark}
       >
         <DirectionIcon reverse={isRev} vertical={isVert} />
@@ -114,23 +116,23 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
         <ArrowDownIcon className={cx("shrink-0 text-base", dark ? "text-white/60" : "text-me-gray-500")} />
         <select
           id="manifest-pagination-page-select"
-          aria-label="Jump to canvas"
-          value={selectedCanvasId}
-          onChange={(event) => goToCanvas(event.target.value)}
+          aria-label="Jump to manifest item"
+          value={selectedItemId}
+          onChange={(event) => goToItem(event.target.value)}
           className="absolute inset-0 cursor-pointer appearance-none border-0 bg-white opacity-0"
         >
-          {canvasOptions.map((canvas) => (
-            <option key={canvas.id} value={canvas.id}>
-              Page {canvas.pageNumber} - {canvas.labelText}
+          {itemOptions.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.pageNumber}. {item.type} - {item.labelText}
             </option>
           ))}
         </select>
       </label>
 
       <NavigationButton
-        ariaLabel="Next canvas"
-        disabled={!nextCanvas}
-        onClick={() => nextCanvas && goToCanvas(nextCanvas.id)}
+        ariaLabel="Next manifest item"
+        disabled={!nextItem}
+        onClick={() => nextItem && goToItem(nextItem.id)}
         dark={dark}
       >
         <DirectionIcon reverse={!isRev} vertical={isVert} />
@@ -139,7 +141,7 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
   );
 }
 
-function findCanvasId(
+function findManifestItemId(
   resource:
     | {
         resource?: {
@@ -150,7 +152,7 @@ function findCanvasId(
     | undefined,
 ) {
   const source = resource?.resource?.source;
-  return source?.type === "Canvas" ? source.id : null;
+  return source && ["Canvas", "Timeline", "Scene"].includes(source.type) ? source.id : null;
 }
 
 function NavigationButton({

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useThumbnail } from "react-iiif-vault";
+import { useThumbnail } from "react-iiif-vault/presentation-4";
 import styled from "styled-components";
 import { FlexContainer } from "../components/layout/FlexContainer";
 import { BlockIcon } from "../icons/BlockIcon";

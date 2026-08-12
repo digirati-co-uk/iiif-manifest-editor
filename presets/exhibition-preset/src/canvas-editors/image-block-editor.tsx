@@ -3,7 +3,7 @@ import type { CanvasEditorDefinition } from "@manifest-editor/shell";
 import { useLocalStorage } from "@manifest-editor/shell";
 import { useEffect } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
+import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";

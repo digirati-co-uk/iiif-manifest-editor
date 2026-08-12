@@ -1,4 +1,4 @@
-import { upgrade } from "@iiif/parser/upgrader";
+import { upgradeToPresentation4 } from "@iiif/parser/presentation-4/upgrader";
 import { useQuery } from "@tanstack/react-query";
 import { ManifestEditor } from "manifest-editor";
 import { useMemo } from "react";
@@ -6,7 +6,7 @@ import { useMemo } from "react";
 export function SharePreviewEditor({ manifest }: { manifest: string }) {
   const { isPending, data, error } = useQuery({
     queryKey: ["preview-editor", { manifest: manifest }],
-    queryFn: async () => upgrade(await fetch(manifest).then((res) => res.json())),
+    queryFn: async () => upgradeToPresentation4(await fetch(manifest).then((res) => res.json())),
     staleTime: Number.POSITIVE_INFINITY,
     retryOnMount: false,
     retry: false,

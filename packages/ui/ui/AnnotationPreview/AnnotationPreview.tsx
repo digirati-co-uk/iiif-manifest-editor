@@ -1,12 +1,12 @@
-import { AnnotationContext, useAnnotation, useRenderingStrategy } from "react-iiif-vault";
+import { AnnotationContext, useAnnotation, useRenderingStrategy } from "react-iiif-vault/presentation-4";
 import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
 import { getAnnotationType } from "@/helpers/get-annotation-type";
-import { isSpecificResource, toRef } from "@iiif/parser";
+import { isSpecificResource, toRef } from "@iiif/parser/presentation-4";
 import { getValue } from "@iiif/helpers";
 import { LocaleString } from "@/atoms/LocaleString";
 

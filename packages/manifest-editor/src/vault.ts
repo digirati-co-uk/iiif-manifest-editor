@@ -1,1 +1,1 @@
-export * from "react-iiif-vault";
+export * from "react-iiif-vault/presentation-4";

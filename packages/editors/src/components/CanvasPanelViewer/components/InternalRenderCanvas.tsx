@@ -21,7 +21,7 @@ import {
   useContextBridge,
   useCustomContextBridge,
   useStrategy,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { AnnotationEditingTools } from "./AnnotationEditingTools";
 import { AnnotationPopupTools } from "./AnnotationPopupTools";
 import { RenderContextMenu } from "./RenderContextMenu";

@@ -4,9 +4,9 @@ import {
   useGenericEditor,
   useInlineCreator,
 } from "@manifest-editor/shell";
-import { useAnnotation } from "react-iiif-vault";
+import { useAnnotation } from "react-iiif-vault/presentation-4";
 import { useMemo } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { AnnotationBodyEditor } from "./AnnotationBodyEditor";
 
 type EditableBodyEntry = {
@@ -20,7 +20,7 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
   const annotation = useAnnotation();
   const vault = useVault();
   const creator = useInlineCreator();
-  const bodies = annotation?.body || [];
+  const bodies = toArray(annotation?.body);
   const editor = useGenericEditor(annotation);
   const {
     i18n: { defaultLanguage, advancedLanguageMode },
@@ -102,7 +102,7 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
 }
 
 function getEditableBodyEntries(
-  bodies: any[],
+  bodies: readonly any[],
   vault: any,
 ): EditableBodyEntry[] {
   return bodies.flatMap((body, bodyIndex) =>
@@ -136,7 +136,7 @@ function getEditableBodyEntry(
     : [];
 }
 
-function getFirstChoiceRef(bodies: any[], vault: any) {
+function getFirstChoiceRef(bodies: readonly any[], vault: any) {
   for (const body of bodies) {
     const resource = resolveResource(body, vault);
     const ref = getResourceRef(body, resource);
@@ -170,8 +170,8 @@ function resolveResource(resource: any, vault: any) {
   );
 }
 
-function toArray<T>(value: T | T[] | null | undefined): T[] {
-  if (Array.isArray(value)) return value;
+function toArray<T>(value: T | readonly T[] | null | undefined): T[] {
+  if (Array.isArray(value)) return [...value];
   if (typeof value === "undefined" || value === null) return [];
-  return [value];
+  return [value as T];
 }

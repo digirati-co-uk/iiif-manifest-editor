@@ -5,7 +5,7 @@ import {
 } from "@manifest-editor/components";
 import { useAnnotationEditor } from "@manifest-editor/editors";
 import { useEffect, useRef, useState } from "react";
-import { useAnnotation, useVault } from "react-iiif-vault";
+import { useAnnotation, useVault } from "react-iiif-vault/presentation-4";
 import { CheckIcon } from "../icons/CheckIcon";
 import {
   useSlideshowContentPositioning,

@@ -1,6 +1,6 @@
 import { ViewerAnnotationPage } from "@manifest-editor/editors";
 import { type AnnotationPanel, useAtlasStore, useLayoutState } from "@manifest-editor/shell";
-import { AnnotationPageContext, useCanvas } from "react-iiif-vault";
+import { AnnotationPageContext, useCanvas } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { ANNOTATIONS_LEFT_PANEL_ID, CANVAS_ANNOTATIONS_PANEL_ID } from "./constants";
 

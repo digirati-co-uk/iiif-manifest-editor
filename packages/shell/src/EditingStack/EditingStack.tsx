@@ -1,9 +1,10 @@
-import { toRef } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
 import { flushSync } from "react-dom";
-import { useResourceContext, useVault } from "react-iiif-vault";
+import { useResourceContext, useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { useAppInstance } from "../AppContext/AppContext";
 import { editingStackReducer } from "./EditingStack.reducer";
@@ -40,7 +41,7 @@ export function useCreatingResource() {
 
 export function useManifestEditor() {
   const { manifest } = useResourceContext();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(manifest, "Manifest not found");
@@ -64,7 +65,7 @@ export function useManifestEditor() {
 
 export function useCollectionEditor() {
   const { collection } = useResourceContext();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(collection, "Collection not found");
@@ -90,7 +91,7 @@ export function useGenericEditor(
   ref: Reference<any> | SpecificResource | undefined,
   ctx: { parent?: Reference; parentProperty?: string; index?: number; allowNull?: boolean } = {},
 ) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   !ctx.allowNull && invariant(ref, "Resource not found");
@@ -129,7 +130,7 @@ export function useAnnotationPageEditor() {
 
 export function useEditor() {
   const resource = useEditingResource();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
   invariant(resource, "No resource selected");
@@ -152,7 +153,7 @@ export function useEditor() {
 }
 
 function useInternalEditingStackActions(defaultState: EditingStackState) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [state, _dispatch] = useReducer(editingStackReducer, defaultState);
 
   const dispatch = useCallback((action: any) => {

@@ -17,7 +17,7 @@ import {
 import { createAppActions, useInStack } from "@manifest-editor/editors";
 import { useCreator, useEditingStack, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
-import { CanvasContext, useManifest } from "react-iiif-vault";
+import { CanvasContext, useManifest } from "react-iiif-vault/presentation-4";
 import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
 import { ExhibitionContainer } from "./ExhibitionContainer";
 import { ExhibitionPreviewListLayout, type PreviewMode } from "./ExhibitionPreviewList";

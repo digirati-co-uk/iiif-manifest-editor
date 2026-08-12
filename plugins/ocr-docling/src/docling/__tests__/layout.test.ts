@@ -125,7 +125,7 @@ describe('docling layout helpers', () => {
     expect(annotations).toHaveLength(2)
     expect(annotations[0]).toMatchObject({
       type: 'Annotation',
-      motivation: 'supplementing',
+      motivation: ['supplementing'],
       category: 'paragraph',
       target: {
         source: 'https://example.invalid/canvas/test',
@@ -170,7 +170,7 @@ describe('docling layout helpers', () => {
           {
             id: 'annotation-1',
             type: 'Annotation',
-            motivation: 'supplementing',
+            motivation: ['supplementing'],
             category: 'title',
             body: [{ type: 'TextualBody', purpose: 'tagging', value: 'title' }],
             target: {
@@ -196,7 +196,7 @@ describe('docling layout helpers', () => {
           {
             id: 'annotation-2',
             type: 'Annotation',
-            motivation: 'supplementing',
+            motivation: ['supplementing'],
             category: 'title',
             body: [{ type: 'TextualBody', purpose: 'tagging', value: 'title' }],
             target: {
@@ -211,7 +211,7 @@ describe('docling layout helpers', () => {
           {
             id: 'annotation-3',
             type: 'Annotation',
-            motivation: 'supplementing',
+            motivation: ['supplementing'],
             category: 'paragraph',
             body: [{ type: 'TextualBody', purpose: 'tagging', value: 'paragraph' }],
             target: {

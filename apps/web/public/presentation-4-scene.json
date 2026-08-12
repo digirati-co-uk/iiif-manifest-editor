@@ -1,0 +1,42 @@
+{
+  "@context": "http://iiif.io/api/presentation/4/context.json",
+  "id": "http://localhost:3000/presentation-4-scene.json",
+  "type": "Manifest",
+  "label": {
+    "en": ["Presentation 4 model test"]
+  },
+  "summary": {
+    "en": ["Local Manifest Editor fixture for Scene and Model editing"]
+  },
+  "items": [
+    {
+      "id": "http://localhost:3000/presentation-4-scene.json/scene/1",
+      "type": "Scene",
+      "label": {
+        "en": ["Astronaut scene"]
+      },
+      "items": [
+        {
+          "id": "http://localhost:3000/presentation-4-scene.json/scene/1/page/1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "http://localhost:3000/presentation-4-scene.json/scene/1/page/1/annotation/1",
+              "type": "Annotation",
+              "motivation": ["painting"],
+              "body": {
+                "id": "https://raw.githubusercontent.com/IIIF/3d/main/assets/astronaut/astronaut.glb",
+                "type": "Model",
+                "format": "model/gltf-binary"
+              },
+              "target": {
+                "id": "http://localhost:3000/presentation-4-scene.json/scene/1",
+                "type": "Scene"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

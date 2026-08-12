@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { CollectionContext, ManifestContext, VaultProvider, useExistingVault } from "react-iiif-vault";
+import { CollectionContext, ManifestContext, VaultProvider, useExistingVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 
 export interface Resource {

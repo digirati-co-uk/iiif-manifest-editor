@@ -1,7 +1,8 @@
-import { isSpecificResource, toRef } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
+import { getValue } from "@iiif/helpers";
 import type { ReactNode } from "react";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext, useVault } from "react-iiif-vault/presentation-4";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { CanvasListPreview } from "../CanvasListPreview/CanvasListPreview";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
@@ -26,16 +27,26 @@ export function CanvasList(props: CanvasListProps) {
         items={props.list || []}
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
-        renderItem={(ref, index) => (
-          <CanvasContext canvas={toRef(ref)?.id as string}>
-            <CanvasListPreview
+        renderItem={(item, index) => {
+          const ref = toRef(item) as Reference;
+          return ref.type === "Canvas" ? (
+            <CanvasContext canvas={ref.id}>
+              <CanvasListPreview
+                key={item.id}
+                editing
+                active={props?.activeId === ref.id}
+                onClick={() => props.onSelect(item, index)}
+              />
+            </CanvasContext>
+          ) : (
+            <ManifestItemListPreview
               key={ref.id}
-              editing
-              active={props?.activeId === toRef(ref)?.id}
-              onClick={() => props.onSelect(ref, index)}
+              item={ref}
+              active={props?.activeId === ref.id}
+              onClick={() => props.onSelect(item, index)}
             />
-          </CanvasContext>
-        )}
+          );
+        }}
         createActions={props.createActions}
         inlineActions={props.inlineActions}
       />
@@ -45,8 +56,8 @@ export function CanvasList(props: CanvasListProps) {
   return (
     <div id={props.id}>
       {props.list.map((item, idx) => {
-        const ref = isSpecificResource(item) ? item.source : item;
-        return (
+        const ref = toRef(item)!;
+        return ref.type === "Canvas" ? (
           <CanvasContext canvas={ref.id} key={ref.id}>
             <CanvasListPreview
               margin
@@ -55,8 +66,48 @@ export function CanvasList(props: CanvasListProps) {
               onClick={() => props.onSelect(ref, idx)}
             />
           </CanvasContext>
+        ) : (
+          <ManifestItemListPreview
+            key={ref.id}
+            item={ref}
+            active={props?.activeId === ref.id}
+            onClick={() => props.onSelect(ref, idx)}
+          />
         );
       })}
     </div>
+  );
+}
+
+function ManifestItemListPreview({
+  item,
+  active,
+  onClick,
+}: {
+  item: Reference;
+  active: boolean;
+  onClick: () => void;
+}) {
+  const vault = useVault();
+  const resource = vault.get(item as any, { skipSelfReturn: false }) as any;
+
+  return (
+    <button
+      type="button"
+      className={[
+        "flex w-full cursor-pointer items-center gap-2 border-b border-gray-200 bg-white p-1.5 text-left hover:bg-gray-50",
+        active ? "border-[#892c4e] bg-gray-50 text-black" : "",
+      ].join(" ")}
+      data-canvas-selected={active}
+      onClick={onClick}
+    >
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center text-lg text-gray-400" aria-hidden>
+        {item.type === "Scene" ? "◫" : "↔"}
+      </span>
+      <span className="min-w-0 flex-1 truncate">
+        {getValue(resource?.label) || `Untitled ${item.type.toLowerCase()}`}
+      </span>
+      <span className="text-xs text-gray-400">{item.type}</span>
+    </button>
   );
 }

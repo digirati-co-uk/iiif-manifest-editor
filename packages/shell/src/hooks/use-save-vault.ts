@@ -1,8 +1,8 @@
-import { Vault } from "@iiif/helpers";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { useEffect } from "react";
 import { useDebounce } from "tiny-use-debounce";
 
-export function useSaveVault(vault: Vault, saveChanges: () => void, saveInterval: number, enabled = true) {
+export function useSaveVault(vault: Vault4, saveChanges: () => void, saveInterval: number, enabled = true) {
   const debounceSaveChanges = useDebounce(saveChanges, saveInterval);
 
   useEffect(() => {

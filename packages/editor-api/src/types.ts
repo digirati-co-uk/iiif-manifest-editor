@@ -1,8 +1,8 @@
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { Vault } from "@iiif/helpers/vault";
+import { Reference, SpecificResource } from "@iiif/parser";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 
 export interface EditorConfig {
-  vault: Vault;
+  vault: Vault4;
   reference: Reference;
   context: {
     resource: SpecificResource;
@@ -29,7 +29,7 @@ export interface Validator {
   message: string;
   error?: boolean;
   warning?: boolean;
-  valid: (resource: any, vault: Vault, context: any) => boolean;
+  valid: (resource: any, vault: Vault4, context: any) => boolean;
 }
 
 export interface PropertyValidationResponse {

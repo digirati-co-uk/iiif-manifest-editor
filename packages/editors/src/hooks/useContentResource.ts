@@ -1,10 +1,15 @@
-import { ContentResource } from "@iiif/presentation-3";
-import { useVaultSelector } from "react-iiif-vault";
+import type {
+  ContentResourceNormalized,
+  SpecificResourceNormalized,
+} from "@iiif/parser/presentation-4-normalized/types";
+import { useVaultSelector } from "react-iiif-vault/presentation-4";
 
-export function useContentResource<T = ContentResource>(
+export function useContentResource(
   options: {
     id?: string;
   } = {}
-): ContentResource | T | undefined {
-  return useVaultSelector((state) => state.iiif.entities.ContentResource[options.id || ""]);
+): ContentResourceNormalized | SpecificResourceNormalized | undefined {
+  return useVaultSelector(
+    (state) => state.iiif.entities.ContentResource[options.id || ""],
+  ) as ContentResourceNormalized | SpecificResourceNormalized | undefined;
 }

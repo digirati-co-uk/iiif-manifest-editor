@@ -1,11 +1,11 @@
 import { getValue } from "@iiif/helpers";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { LanguageFieldEditor } from "@manifest-editor/editors";
 import { useAnnotationCreatorState } from "@manifest-editor/shell";
 import { useState } from "react";
-import { useCurrentAnnotationMetadata } from "react-iiif-vault";
+import { useCurrentAnnotationMetadata } from "react-iiif-vault/presentation-4";
 
 export interface CreateHTMLAnnotationPayload {
   label?: InternationalString;
@@ -44,7 +44,7 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
   if (targetType === "Annotation") {
     return ctx.embed({
       ...annotation,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: [data.motivation || ctx.options.initialData?.motivation || "painting"],
       body: bodies,
       target: ctx.getTarget(),
     });
@@ -59,7 +59,7 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
 
     const annotationResource = ctx.embed({
       ...annotation,
-      motivation: "painting",
+      motivation: ["painting"],
       body: bodies,
       target: {
         type: "SpecificResource",

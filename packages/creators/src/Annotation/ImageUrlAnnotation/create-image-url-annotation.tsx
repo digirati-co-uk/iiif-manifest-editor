@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import {
   type CreatorContext,
   type CreatorFunctionContext,
@@ -32,7 +32,7 @@ export async function createImageUrlAnnotation(
     return ctx.embed({
       ...annotation,
       body: [resource],
-      motivation: data.motivation || "painting",
+      motivation: [data.motivation || "painting"],
       target: ctx.getTarget(),
     });
   }
@@ -46,7 +46,7 @@ export async function createImageUrlAnnotation(
 
     const annotationResource = ctx.embed({
       ...annotation,
-      motivation: "painting",
+      motivation: ["painting"],
       body: [resource],
       target: {
         type: "SpecificResource",

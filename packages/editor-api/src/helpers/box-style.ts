@@ -1,5 +1,5 @@
 import type { BoxStyle } from "@iiif/helpers";
-import type { Stylesheet } from "@iiif/presentation-3";
+import type { Stylesheet } from "@iiif/parser";
 
 /**
  * The set of box style properties we currently support editing. These map

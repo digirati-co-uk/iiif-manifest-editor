@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { Button, SecondaryButton } from "@/atoms/Button";
 import { LightBox } from "@/atoms/LightBox";
 import { PaddingComponentMedium } from "@/atoms/PaddingComponent";

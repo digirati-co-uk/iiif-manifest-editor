@@ -1,4 +1,5 @@
-import { Vault, createThumbnailHelper } from "@iiif/helpers";
+import { createThumbnailHelper } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import type { CreateImageUrlPayload } from "@manifest-editor/creators";
 import { PreviewVaultBoundary } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
@@ -13,7 +14,7 @@ export function PreviewManifestInBrowser({
   type?: string;
   setThumbnail?: (thumbnail: CreateImageUrlPayload) => void;
 }) {
-  const vault = useMemo(() => new Vault(), []);
+  const vault = useMemo(() => new Vault4(), []);
   const thumbnailHelper = useMemo(() => createThumbnailHelper(vault), [vault]);
   const output = useMemo(() => {
     return [
@@ -79,7 +80,7 @@ export function PreviewManifestInBrowser({
       <IIIFBrowser
         debug
         ui={uiOptions}
-        vault={vault}
+        vault={vault as any}
         history={historyOptions}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}

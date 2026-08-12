@@ -1,9 +1,9 @@
-import { ResourceProvider } from "react-iiif-vault";
+import { ResourceReactContext } from "react-iiif-vault/presentation-4";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import { ReactNode, useCallback } from "react";
 import { StrictModeDroppable } from "./strict-mode-droppable";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
-import { toRef } from "@iiif/parser";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
+import { toRef } from "@iiif/parser/presentation-4";
 import { ReorderListItem } from "../ReorderListItem/ReorderListItem";
 
 export interface ReorderListProps {
@@ -55,9 +55,9 @@ export function ReorderList({ items, renderItem, id, reorder, inlineHandle = tru
                           handleProps={innerProvided.dragHandleProps}
                           {...innerProvided.draggableProps}
                         >
-                          <ResourceProvider value={{ [ref.type]: ref.id }}>
+                          <ResourceReactContext.Provider value={{ [ref.type]: ref.id }}>
                             {renderItem(ref, idx, item)}
-                          </ResourceProvider>
+                          </ResourceReactContext.Provider>
                         </ReorderListItem>
                       );
                     }}

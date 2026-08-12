@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
-import { useAnnotationPage } from "react-iiif-vault";
+import { useAnnotationPage } from "react-iiif-vault/presentation-4";
 import { isExternal } from "../../helpers";
 
 interface AnnotationPagePreviewProps {

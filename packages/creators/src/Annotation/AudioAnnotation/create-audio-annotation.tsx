@@ -1,11 +1,11 @@
 import { getValue } from "@iiif/helpers";
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { ActionButton, ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { FormFieldWrapper, Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
 import { useEffect, useState } from "react";
-import { CanvasPanel } from "react-iiif-vault";
+import { CanvasPanel } from "react-iiif-vault/presentation-4";
 
 export interface CreateAudioAnnotationPayload {
   label?: InternationalString;
@@ -33,7 +33,7 @@ export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, 
     return ctx.embed({
       ...annotation,
       label: getValue(data.label) && data.label,
-      motivation: data.motivation || ctx.options.initialData?.motivation || "painting",
+      motivation: [data.motivation || ctx.options.initialData?.motivation || "painting"],
       body,
       target: ctx.getTarget(),
     });
@@ -48,7 +48,7 @@ export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, 
 
     const annotationResource = ctx.embed({
       ...annotation,
-      motivation: "painting",
+      motivation: ["painting"],
       body,
       target: {
         type: "SpecificResource",

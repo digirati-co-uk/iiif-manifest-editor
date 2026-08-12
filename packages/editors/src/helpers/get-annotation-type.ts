@@ -1,4 +1,4 @@
-import { RenderingStrategy } from "react-iiif-vault";
+import { RenderingStrategy } from "react-iiif-vault/presentation-4";
 // @ts-ignore
 import { parseImageServiceRequest } from "@atlas-viewer/iiif-image-api";
 

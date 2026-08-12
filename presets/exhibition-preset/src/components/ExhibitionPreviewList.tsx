@@ -2,7 +2,7 @@ import { LazyThumbnail } from "@manifest-editor/components";
 import { getInternationalStringText, useInStack } from "@manifest-editor/editors";
 import { useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { useId, useState } from "react";
-import { CanvasContext, LocaleString, useCanvas, useManifest, useVaultSelector } from "react-iiif-vault";
+import { CanvasContext, LocaleString, useCanvas, useManifest, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { getGridStats } from "../helpers";
 import {

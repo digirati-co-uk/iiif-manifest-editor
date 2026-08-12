@@ -1,4 +1,4 @@
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
 import { Input, InputLabel } from "@/editors/Input";

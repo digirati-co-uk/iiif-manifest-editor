@@ -7,7 +7,7 @@ import {
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { useInlineCreator } from "@manifest-editor/shell";
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import { AddAnnotationIcon } from "../icons";
 import { AnnotationsOcrActions } from "./AnnotationsOcrActions";
 

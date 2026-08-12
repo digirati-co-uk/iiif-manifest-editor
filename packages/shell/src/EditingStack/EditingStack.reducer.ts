@@ -1,4 +1,4 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import type {
   EditingStackActionCreators,
   EditingStackState,
@@ -21,7 +21,9 @@ export function editingStackReducer(
       let reset = action.payload.reset;
       if (
         action.payload.resource?.resource.source?.type === "Manifest" ||
-        action.payload.resource?.resource.source?.type === "Canvas"
+        action.payload.resource?.resource.source?.type === "Canvas" ||
+        action.payload.resource?.resource.source?.type === "Timeline" ||
+        action.payload.resource?.resource.source?.type === "Scene"
       ) {
         reset = true;
       }

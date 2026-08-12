@@ -1,8 +1,8 @@
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import { Reference, SpecificResource } from "@iiif/parser";
 import { AppDropdownItem } from "../AppDropdown/AppDropdown";
-import { AnnotationContext } from "react-iiif-vault";
+import { AnnotationContext } from "react-iiif-vault/presentation-4";
 import { AnnotationPreview } from "@/_components/ui/AnnotationPreview/AnnotationPreview";
 import { CanvasTargetContext } from "@/helpers/CanvasTargetContext";
 import { InputLabel } from "@/editors/Input";

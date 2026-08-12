@@ -1,4 +1,4 @@
-import { ImageService } from "@iiif/presentation-3";
+import { ImageService } from "@iiif/parser";
 import { getFixedSizesFromService } from "@atlas-viewer/iiif-image-api";
 import { StyledSelect } from "@/editors/LanguageSelector";
 

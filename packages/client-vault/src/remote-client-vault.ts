@@ -1,15 +1,13 @@
-import { AllActions, Vault, VaultOptions } from "@iiif/helpers/vault";
+import type { AllActions } from "@iiif/helpers/vault";
+import { Vault4, type Vault4Options } from "@iiif/helpers/vault-4";
 import { BatchAction } from "@iiif/helpers/vault/actions";
-import type {
-  RemoteVaultAction,
-  RemoteVaultServerMessage,
-} from "./protocol";
+import type { RemoteVaultAction, RemoteVaultServerMessage } from "./protocol";
 
 function randomId() {
   return `${Math.random().toString(36).substr(2)}-${Date.now().toString(36)}`;
 }
 
-export abstract class RemoteClientVault extends Vault {
+export abstract class RemoteClientVault extends Vault4 {
   lastActionId = "@genesis";
   lastInitActionId = "@genesis";
   pendingActions = new Map<string, AllActions | BatchAction>();
@@ -19,7 +17,7 @@ export abstract class RemoteClientVault extends Vault {
   isEmpty = false;
   queuedActions: Array<AllActions | BatchAction> = [];
 
-  constructor(options?: Partial<VaultOptions>) {
+  constructor(options?: Partial<Vault4Options>) {
     super(options);
   }
 
@@ -78,9 +76,7 @@ export abstract class RemoteClientVault extends Vault {
       const action = this.pendingActions.get(parsed._id);
       if (action) {
         this.pendingActions.delete(parsed._id);
-        this.pendingActionOrder = this.pendingActionOrder.filter(
-          (id) => id !== parsed._id,
-        );
+        this.pendingActionOrder = this.pendingActionOrder.filter((id) => id !== parsed._id);
       }
     }
 
@@ -109,9 +105,7 @@ export abstract class RemoteClientVault extends Vault {
     }
   };
 
-  private async parseMessage(
-    data: Blob | string | unknown,
-  ): Promise<RemoteVaultServerMessage | null> {
+  private async parseMessage(data: Blob | string | unknown): Promise<RemoteVaultServerMessage | null> {
     if (typeof data === "string") {
       return JSON.parse(data);
     }

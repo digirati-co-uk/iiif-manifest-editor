@@ -11,7 +11,7 @@ import { useInStack } from "@manifest-editor/editors";
 import { useEditingResource, useGenericEditor, useInlineCreator, useLayoutActions } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useState } from "react";
-import { LocaleString, useManifest, useThumbnail } from "react-iiif-vault";
+import { LocaleString, useManifest, useThumbnail } from "react-iiif-vault/presentation-4";
 import { PreviewManifestInBrowser } from "./PreviewManifestInBrowser";
 import { usePress } from "react-aria";
 import { getValue } from "@iiif/helpers";

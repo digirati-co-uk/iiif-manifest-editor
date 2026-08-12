@@ -226,7 +226,7 @@ describe("Docling OCR background action", () => {
     expect(annotation.target).toBe(
       "https://example.org/canvas/1#xywh=250,1000,250,1000",
     );
-    expect(annotation.motivation).toBe("supplementing");
+    expect(annotation.motivation).toEqual(["supplementing"]);
     expect(body).toMatchObject({
       type: "TextualBody",
       format: "text/plain",
@@ -252,7 +252,7 @@ describe("Docling OCR background action", () => {
               {
                 id: "https://example.org/canvas/1/ocr-docling/1/annotation",
                 type: "Annotation",
-                motivation: "supplementing",
+                motivation: ["supplementing"],
                 body: [],
                 target: "https://example.org/canvas/1#xywh=1,1,1,1",
               },

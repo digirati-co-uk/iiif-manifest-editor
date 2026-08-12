@@ -3,8 +3,8 @@ import {
   type RangeTableOfContentsNode,
 } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
-import { toRef } from "@iiif/parser";
-import type { RangeNormalized } from "@iiif/presentation-3-normalized";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { RangeNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import type { EditorConfig } from ".";
 import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
 

@@ -17,7 +17,7 @@ import {
   ControlsReactContext,
   CustomContextBridgeProvider,
   StrategyReactContext,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 
 export function AdditionalContextBridge(props: { children: React.ReactNode }) {
   const contexts = useMemo(() => {

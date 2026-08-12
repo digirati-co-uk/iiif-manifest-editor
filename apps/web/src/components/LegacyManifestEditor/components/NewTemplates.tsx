@@ -5,7 +5,8 @@ import {
   TemplateCardPlaceholder,
 } from "@manifest-editor/ui/atoms/TemplateCard";
 import { AddIcon } from "@manifest-editor/ui/icons/AddIcon";
-import { Vault, getValue } from "@iiif/helpers";
+import { getValue } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { RecentFilesWidget, RecentLabel, RecentThumbnails } from "@manifest-editor/ui/atoms/RecentFilesWidget";
 import { WidgetHeader } from "@manifest-editor/ui/atoms/WidgetHeader";
 
@@ -15,7 +16,7 @@ interface NewTemplatesProps {
 }
 
 function TemplateCard({ manifestUrl, changeManifest }: { manifestUrl: string; changeManifest: (id: string) => void }) {
-  const vault = new Vault();
+  const vault = new Vault4();
 
   const [manifest, setManifest] = useState<any>();
 

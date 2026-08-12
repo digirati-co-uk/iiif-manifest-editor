@@ -1,6 +1,6 @@
 import { AddImageIcon } from "@manifest-editor/components";
 import { useDrag } from "react-aria";
-import { LocaleString, useCanvas } from "react-iiif-vault";
+import { LocaleString, useCanvas } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 
 export function OrphanedTreeCanvasItem() {

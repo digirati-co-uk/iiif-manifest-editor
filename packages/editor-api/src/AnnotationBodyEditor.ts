@@ -1,6 +1,6 @@
-import { toRef } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
-import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser";
+import type { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import invariant from "tiny-invariant";
 import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
 import type { EditorConfig } from "./types";

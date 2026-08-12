@@ -1,7 +1,7 @@
 import { targetWholeCanvas } from "@manifest-editor/editors";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { Button } from "react-aria-components";
-import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { getSingleImageAnnotationToRescale } from "./single-image-rescale";
 
 export function RescaleSingleImagePrompt() {

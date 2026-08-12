@@ -1,12 +1,12 @@
-import { Reference } from "@iiif/presentation-3";
-import { Vault } from "@iiif/helpers/vault";
+import { Reference } from "@iiif/parser";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { EditorConfig } from "./types";
 import { EditorInstance } from "./EditorInstance";
 
 export class Editor {
-  vault: Vault;
+  vault: Vault4;
 
-  constructor(vault: Vault) {
+  constructor(vault: Vault4) {
     this.vault = vault;
   }
 

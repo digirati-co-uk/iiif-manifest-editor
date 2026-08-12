@@ -1,7 +1,7 @@
-import { isSpecificResource } from "@iiif/parser";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import { ReorderList } from "./ReorderList/ReorderList.dndkit";
-import { CanvasContext, LocaleString, RangeContext, useCanvas, useRange } from "react-iiif-vault";
+import { CanvasContext, LocaleString, RangeContext, useCanvas, useRange } from "react-iiif-vault/presentation-4";
 
 interface RangeListProps {
   id?: string;
@@ -37,7 +37,7 @@ function RangePreview(props: { id: string; onClick?: () => void; margin?: boolea
 
 export function RangeList(props: RangeListProps) {
   const renderItem = (item: Reference | SpecificResource, idx: number) => {
-    const ref = isSpecificResource(item) ? item.source : item;
+    const ref = toRef(item)!;
 
     if (ref.type === "Canvas") {
       return (

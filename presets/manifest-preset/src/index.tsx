@@ -1,7 +1,7 @@
 import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import { allCreators } from "@manifest-editor/creators";
-import { allEditors, CanvasPanelEditor } from "@manifest-editor/editors";
+import { activationStateEditor, allEditors } from "@manifest-editor/editors";
 import {
   type BackgroundActionDefinition,
   type BackgroundPanel,
@@ -12,10 +12,14 @@ import {
 } from "@manifest-editor/shell";
 import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-builder/background-action";
 import { manifestOverview } from "./center-panels/manifest-overview";
+import { ManifestItemCenterPanel } from "./center-panels/manifest-item";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { contextMenus } from "./context-menus";
 import { CanvasesListIcon } from "./icons";
 import { canvasListing } from "./left-panels/canvas-listing";
+import { sceneAnnotationsPanel } from "./left-panels/scene-annotations";
+import { sceneActivationsPanel } from "./left-panels/scene-activations";
+import { sceneContentsPanel } from "./left-panels/scene-contents";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
@@ -35,9 +39,9 @@ export const centerPanels: LayoutPanel[] = [
   manifestOverview,
   {
     id: "current-canvas",
-    label: "Current canvas",
+    label: "Current item",
     icon: <CanvasesListIcon />,
-    render: (state, { actions }) => <CanvasPanelEditor />,
+    render: () => <ManifestItemCenterPanel />,
   },
   rangeWorkbench,
 ];
@@ -45,6 +49,9 @@ export const centerPanels: LayoutPanel[] = [
 export const leftPanels: LayoutPanel[] = [
   manifestPanel,
   canvasListing,
+  sceneContentsPanel,
+  sceneActivationsPanel,
+  sceneAnnotationsPanel,
   tagsPanel,
   rangesPanel,
   // @todo we will come back to the image grid
@@ -67,7 +74,24 @@ export const editors = allEditors;
 
 export const creators = allCreators;
 
-export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
+export const resources = [
+  {
+    id: "@manifest-editor/activation-state-resource",
+    label: "Activation state",
+    resourceType: "ContentResource",
+    auto: true,
+    editors: [activationStateEditor],
+  },
+  "Manifest",
+  "Canvas",
+  "Timeline",
+  "Scene",
+  "ContentResource",
+  "Agent",
+  "AnnotationPage",
+  "Annotation",
+  "Range",
+];
 
 export { annotationsPlugin, avRangesPlugin, canvasLabelGeneratorPlugin };
 

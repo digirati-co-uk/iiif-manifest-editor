@@ -18,6 +18,9 @@ allowBuilds:
   simple-git-hooks: true
   workerd: true
 
+# The Presentation 4 preview packages currently reference each other by pkg.pr.new URL.
+blockExoticSubdeps: false
+
 catalog:
   typescript: 7.0.2
   "@tsdown/css": 0.22.14
@@ -28,13 +31,13 @@ catalog:
   "@types/node": 22.20.1
   "@types/react": 19.2.18
   "@types/react-dom": 19.2.4
-  react-iiif-vault: 2.0.18
+  react-iiif-vault: https://pkg.pr.new/digirati-co-uk/react-iiif-vault/react-iiif-vault@4ea85a4
   react: 19.2.8
   react-dom: 19.2.8
   styled-components: 6.1.8
   zustand: 4.5.2
-  "@iiif/parser": 2.2.14
-  "@iiif/helpers": 1.6.1
+  "@iiif/helpers": "4.0.0"
+  "@iiif/parser": "4.0.0"
   # "iiif-browser": 2.2.4
   iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@4934ee2
   "@atlas-viewer/atlas": 3.2.3
@@ -55,5 +58,4 @@ overrides:
   "@atlas-viewer/atlas": 3.2.3
   react-aria: 3.43.2
   react-aria-components: 1.12.1
-  react-iiif-vault: 2.0.18
   react-reconciler: 0.33.0

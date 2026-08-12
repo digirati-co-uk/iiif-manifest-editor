@@ -1,6 +1,6 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
-import type { InternationalString, Reference } from "@iiif/presentation-3";
+import { isSpecificResource } from "@iiif/parser/presentation-4";
+import type { InternationalString, Reference } from "@iiif/parser";
 
 export interface AvCanvas {
   id: string;
@@ -27,6 +27,7 @@ export function getAvCanvases(
   manifest: any,
 ): AvCanvas[] {
   return (manifest?.items || [])
+    .filter((item: any) => item?.type === "Canvas")
     .map((canvasRef: Reference<"Canvas">) => {
       const canvas = vault.get(canvasRef, { skipSelfReturn: false });
       return canvas ? getAvCanvas(vault, canvas) : null;

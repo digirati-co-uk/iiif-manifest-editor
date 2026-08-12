@@ -1,4 +1,4 @@
-import { LinkingProperties, Reference, Service } from "@iiif/presentation-3";
+import { LinkingProperties, Reference, Service } from "@iiif/parser";
 import { BaseEditor } from "./BaseEditor";
 import { EditorConfig } from "./types";
 import { BasePropertyEditor } from "./BasePropertyEditor";

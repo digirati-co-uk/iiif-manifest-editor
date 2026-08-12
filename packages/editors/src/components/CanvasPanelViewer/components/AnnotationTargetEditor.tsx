@@ -1,15 +1,15 @@
 import { HTMLPortal, useMode } from "@atlas-viewer/atlas";
-import type { SupportedTarget, SvgSelector } from "@iiif/helpers";
-import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import type { SvgSelector } from "@iiif/helpers";
 import { useGenericEditor } from "@manifest-editor/shell";
-import { PolygonSelector, RenderSvgEditorControls, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
+import { PolygonSelector, RenderSvgEditorControls, useAnnotation, useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { constrainPosition } from "../../../helpers/constrain-position";
 import { ResizeWorldItem } from "./ResizeWorldItem";
 
 export function AnnotationTargetEditor() {
   const canvas = useCanvas();
-  const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
+  const annotation = useAnnotation();
   const editor = useGenericEditor(annotation ? { id: annotation.id, type: "Annotation" } : undefined);
+  const selector = editor.annotation.target.getParsedSelector();
 
   const updateAnnotationTarget = (input: any) => {
     if (input.type === "polygon" && canvas) {
@@ -47,9 +47,9 @@ export function AnnotationTargetEditor() {
     return null;
   }
 
-  if (!annotation || !annotation.target || annotation.target.selector?.type !== "BoxSelector") {
+  if (!annotation.target || selector?.type !== "BoxSelector") {
     // Refused to show the resizing if it's targeting the whole canvas.
-    if (canvas && annotation?.target.selector === null) {
+    if (canvas && selector === null) {
       return (
         <box
           relativeStyle
@@ -61,9 +61,9 @@ export function AnnotationTargetEditor() {
     }
 
     // Svg.
-    if (canvas && annotation?.target.selector?.type === "SvgSelector") {
-      const selector: SvgSelector = annotation?.target.selector!;
-      if (!selector.points) return null;
+    if (canvas && selector?.type === "SvgSelector") {
+      const svgSelector: SvgSelector = selector;
+      if (!svgSelector.points) return null;
       return (
         <PolygonSelector
           id={annotation.id}
@@ -75,8 +75,8 @@ export function AnnotationTargetEditor() {
           }}
           polygon={{
             id: annotation.id,
-            open: selector.svgShape === "polyline",
-            points: selector.points,
+            open: svgSelector.svgShape === "polyline",
+            points: svgSelector.points,
           }}
           annotationBucket="default"
           renderControls={(helper, state, showShapes) => (
@@ -91,13 +91,14 @@ export function AnnotationTargetEditor() {
     return null;
   }
 
-  const bodyWidth = (annotation as any).body?.[0].width;
-  const bodyHeight = (annotation as any).body?.[0].height;
+  const firstBody = Array.isArray(annotation.body) ? annotation.body[0] : annotation.body;
+  const bodyWidth = (firstBody as any)?.width;
+  const bodyHeight = (firstBody as any)?.height;
   const bodyAspectRatio = bodyWidth && bodyHeight ? bodyWidth / bodyHeight : undefined;
 
   return (
     <ResizeWorldItem
-      {...annotation.target.selector.spatial}
+      {...selector.spatial}
       resizable
       aspectRatio={isSpatial ? bodyAspectRatio : undefined}
       maintainAspectRatio={isSpatial}

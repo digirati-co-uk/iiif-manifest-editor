@@ -1,6 +1,6 @@
 "use client";
 
-import { Vault } from "@iiif/helpers";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { ActionButton, ManifestEditorLogo } from "@manifest-editor/components";
 import {
   exhibitionEditorPreset,
@@ -26,8 +26,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { type SVGProps, useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-aria-components";
-import { VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
+import { serializeVaultResource } from "../../helpers/serialize-vault-resource";
 
 const presets: Record<string, MappedApp> = {
   manifest: mapApp(manifestPreset),
@@ -41,10 +42,10 @@ const presets: Record<string, MappedApp> = {
 const externalDefaultEnabledPlugins = ["@manifest-editor/av-ranges"];
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
-  const vaultRef = useRef<{ key: string; vault: Vault } | null>(null);
+  const vaultRef = useRef<{ key: string; vault: Vault4 } | null>(null);
   const vaultKey = `${manifest}\0${preset || ""}`;
   if (vaultRef.current?.key !== vaultKey) {
-    vaultRef.current = { key: vaultKey, vault: new Vault() };
+    vaultRef.current = { key: vaultKey, vault: new Vault4() };
   }
   const vault = vaultRef.current.vault;
 
@@ -100,7 +101,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
       }
 
       lastSavedJson.current = JSON.stringify(
-        vault.toPresentation3({
+        serializeVaultResource(vault, {
           id: loaded.id,
           type: "Manifest",
         }),
@@ -120,7 +121,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   const onVaultSave = useCallback(() => {
     if (manifestData?.ref) {
       console.log("save");
-      const manifest = JSON.stringify(vault.toPresentation3(manifestData.ref as any));
+      const manifest = JSON.stringify(serializeVaultResource(vault, manifestData.ref));
       if (lastSavedJson.current !== manifest) {
         setUnsavedChanges(true);
         setSaved.clear();
@@ -138,7 +139,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
         return;
       }
 
-      const toSave = vault.toPresentation3(manifestData.ref as any);
+      const toSave = serializeVaultResource(vault, manifestData.ref);
       if (!toSave || !(toSave as any).id) return;
       const json = JSON.stringify(toSave);
 
@@ -183,7 +184,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
           <BackgroundActionsMenu />
           <a
             target="_blank"
-            href={`https://theseusviewer.org?iiif-content=${manifest}`}
+            href={`https://feature-presentation-4-rc.theseus-viewer.pages.dev?iiif-content=${manifest}`}
             className="px-3 py-2 gap-3 disabled:text-white/50 text-sm underline"
             rel="noreferrer"
           >

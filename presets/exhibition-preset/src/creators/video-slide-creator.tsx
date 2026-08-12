@@ -1,5 +1,5 @@
 import { emptyCanvas } from "@iiif/parser";
-import type { ContentResource } from "@iiif/presentation-3";
+import type { ContentResource } from "@iiif/parser";
 import { type CreatorFunctionContext, creatorHelper, defineCreator } from "@manifest-editor/creator-api";
 import { type CreateVideoAnnotationPayload, videoAnnotation } from "@manifest-editor/creators";
 

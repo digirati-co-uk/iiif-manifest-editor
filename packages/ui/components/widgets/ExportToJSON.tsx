@@ -5,7 +5,7 @@ import { TabPanel } from "../layout/TabPanel";
 import { WarningMessage } from "../../atoms/callouts/WarningMessage";
 import { useManifest } from "../../hooks/useManifest";
 import { JSONPreview } from "../../atoms/JSONPreview";
-import { useCollection, useVault } from "react-iiif-vault";
+import { useCollection, useVault } from "react-iiif-vault/presentation-4";
 import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
 
 export const ExportToJson: React.FC<{

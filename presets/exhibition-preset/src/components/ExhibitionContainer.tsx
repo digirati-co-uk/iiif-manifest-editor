@@ -1,6 +1,6 @@
 import { useLayoutActions } from "@manifest-editor/shell";
 import { Button } from "react-aria-components";
-import { LocaleString, useManifest } from "react-iiif-vault";
+import { LocaleString, useManifest } from "react-iiif-vault/presentation-4";
 
 export function ExhibitionContainer({ children }: { children: React.ReactNode }) {
   const manifest = useManifest();

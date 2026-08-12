@@ -1,7 +1,7 @@
 import { ActionButton, DeleteIcon, EditTextIcon } from "@manifest-editor/components";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useRef, useState } from "react";
-import { useAnnotation, useAnnotationPage, useCanvas, useVault } from "react-iiif-vault";
+import { useAnnotation, useAnnotationPage, useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { CheckIcon } from "../icons/CheckIcon";
 import { normalizeSummaryForSave } from "../right-panels/summary-html";
 import { useSlideshowContentPositioning, useSlideshowWorkbenchState } from "../slideshow-content-positioning";

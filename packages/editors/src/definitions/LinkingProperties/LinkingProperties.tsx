@@ -1,10 +1,10 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useAppResource, useCreator, useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
-import { CanvasContext, useResourceContext, useVaultSelector } from "react-iiif-vault";
+import { CanvasContext, useResourceContext, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { CanvasListPreview } from "../../components/CanvasListPreview/CanvasListPreview";
 import { ContentResourceList } from "../../components/ContentResourceList/ContentResourceList";
 import { InputContainer, InputLabel, InputLabelEdit } from "../../components/Input";

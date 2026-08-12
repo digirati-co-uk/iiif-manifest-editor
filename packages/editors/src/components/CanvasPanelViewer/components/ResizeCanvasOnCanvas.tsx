@@ -1,4 +1,4 @@
-import { useCanvas } from "react-iiif-vault";
+import { useCanvas } from "react-iiif-vault/presentation-4";
 import "@atlas-viewer/atlas";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useCallback, useRef, useState } from "react";

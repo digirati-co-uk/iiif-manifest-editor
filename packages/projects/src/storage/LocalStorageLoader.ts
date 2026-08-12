@@ -1,6 +1,6 @@
 import { EditorProject } from "../ProjectContext.types";
-import { Vault } from "@iiif/helpers/vault";
-import { Collection, Manifest } from "@iiif/presentation-3";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import { Collection, Manifest } from "@iiif/parser";
 import { ResourceKeyedStorage, ManifestStorage, CollectionStorage } from "../types/Storage";
 import { AbstractVaultLoader } from "./AbstractVaultLoader";
 import invariant from "tiny-invariant";
@@ -12,7 +12,7 @@ export class LocalStorageLoader extends AbstractVaultLoader<ResourceKeyedStorage
   namespace: string;
   storage: LocalForage;
 
-  vaults: Record<string, Vault | null> = {};
+  vaults: Record<string, Vault4 | null> = {};
 
   constructor(settings?: { namespace?: string }) {
     super({ saveInterval: 5000 });

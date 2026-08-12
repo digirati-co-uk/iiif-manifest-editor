@@ -1,4 +1,4 @@
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { ReactNode } from "react";
 
 export type BehaviorEditorConfiguration = BehaviorChoice | BehaviorTemplate | BehaviorCustom;

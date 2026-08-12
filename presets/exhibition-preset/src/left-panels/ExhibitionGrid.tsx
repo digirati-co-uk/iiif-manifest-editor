@@ -15,7 +15,7 @@ import {
   useEditingStack,
   useManifestEditor,
 } from "@manifest-editor/shell";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { ExhibitionGrid } from "../components/ExhibitionGrid";
 import { ExhibitionPreviewList } from "../components/ExhibitionPreviewList";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";

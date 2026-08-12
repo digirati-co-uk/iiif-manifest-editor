@@ -1,7 +1,7 @@
 import invariant from "tiny-invariant";
 import { BaseReferenceListEditor } from "./BaseReferenceListEditor";
 import { EditorConfig, TrackerState } from "./types";
-import { Reference, SpecificResource } from "@iiif/presentation-3";
+import { Reference, SpecificResource } from "@iiif/parser";
 
 const emptyTracker: TrackerState = {
   key: "",

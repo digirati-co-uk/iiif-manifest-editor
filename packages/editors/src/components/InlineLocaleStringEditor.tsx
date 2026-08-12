@@ -1,9 +1,9 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { EditTextIcon } from "@manifest-editor/components";
 import type { InternationalStringEditor } from "@manifest-editor/editor-api";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Button } from "react-aria-components";
-import { LocaleString, useLocaleString } from "react-iiif-vault";
+import { LocaleString, useLocaleString } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 
 export type LocaleStringProps = {

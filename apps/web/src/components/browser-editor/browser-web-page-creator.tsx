@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { defineCreator } from "@manifest-editor/creator-api";

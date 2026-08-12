@@ -4,7 +4,7 @@ import {
   useAppResource,
 } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import {
   createScrollingPreviewUrl,

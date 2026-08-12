@@ -1,5 +1,5 @@
-import type { Vault } from "@iiif/helpers";
-import type { Collection, Manifest } from "@iiif/presentation-3";
+import { Vault4 } from "@iiif/helpers/vault-4";
+import type { Collection, Manifest } from "@iiif/parser/presentation-4/types";
 import { collectionPreset } from "@manifest-editor/collection-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -12,7 +12,7 @@ import {
   ShellProvider,
 } from "@manifest-editor/shell";
 import { useRef } from "react";
-import { useExistingVault, VaultProvider } from "react-iiif-vault";
+import { VaultProvider } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 
 const manifestEditor = mapApp(manifestEditorPreset);
@@ -20,7 +20,7 @@ const manifestEditor = mapApp(manifestEditorPreset);
 export interface ManifestEditorProps {
   resource: string | { id: string; type: "Manifest" | "Collection" };
   data?: Manifest | Collection;
-  vault?: Vault;
+  vault?: Vault4;
   config?: Partial<Config>;
   saveConfig?: (config: Partial<Config>) => void;
   globalPluginConfig?: Config["plugins"];
@@ -44,22 +44,21 @@ function configInvariant(
    * Can provide a string, or a function that returns a string for cases where
    * the message takes a fair amount of effort to compute
    */
-  message?: string | (() => string),
+  message?: string | (() => string)
 ): asserts condition {
   if (condition) {
     return;
   }
   const prefix: string = "Configuration Error";
 
-  const provided: string | undefined =
-    typeof message === "function" ? message() : message;
+  const provided: string | undefined = typeof message === "function" ? message() : message;
   const value: string = provided ? `${prefix}: ${provided}` : prefix;
   throw new Error(value);
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
-  const existingVault = useExistingVault(props.vault);
-  const fallbackVault = useRef(existingVault);
+  const fallbackVault = useRef<Vault4 | null>(null);
+  fallbackVault.current ??= new Vault4();
   const vault = props.vault || fallbackVault.current;
   const didLoad = useRef("");
 
@@ -67,13 +66,10 @@ export function ManifestEditor(props: ManifestEditorProps) {
     props.resource,
     `Prop resource is required. Usage example:
   <ManifestEditor resource="https://example.org/manifest" />
-`,
+`
   );
 
-  const resource =
-    typeof props.resource === "string"
-      ? { id: props.resource, type: "Manifest" }
-      : props.resource;
+  const resource = typeof props.resource === "string" ? { id: props.resource, type: "Manifest" } : props.resource;
 
   if (!vault.requestStatus(resource.id)) {
     if (props.data) {
@@ -116,11 +112,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
     >
       <AppProvider appId={appId} definition={preset} instanceId="test-1">
         <VaultProvider vault={vault}>
-          <ShellProvider
-            resource={resource}
-            config={props.config}
-            saveConfig={props.saveConfig}
-          >
+          <ShellProvider resource={resource} config={props.config} saveConfig={props.saveConfig}>
             <Layout layoutMode={props.layoutMode} />
           </ShellProvider>
         </VaultProvider>

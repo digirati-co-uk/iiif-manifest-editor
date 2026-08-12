@@ -1,4 +1,6 @@
-import type { Entities, Vault } from "@iiif/helpers/vault";
+import type { Entities } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import { emptyService } from "@iiif/parser";
 import {
   emptyAgent,
   emptyAnnotation,
@@ -7,13 +9,11 @@ import {
   emptyCollection,
   emptyManifest,
   emptyRange,
-  emptyService,
+  emptyScene,
+  emptyTimeline,
   toRef,
-} from "@iiif/parser";
-import type {
-  CreatorDefinitionFilterByParent,
-  IIIFManifestEditor,
-} from "./creator-register";
+} from "@iiif/parser/presentation-4";
+import type { CreatorDefinitionFilterByParent, IIIFManifestEditor } from "./creator-register";
 import type {
   AllAvailableParentTypes,
   CreatableResource,
@@ -42,6 +42,20 @@ export function resolveType(type: string): keyof Entities {
     case "Choice":
     case "Independents":
     case "Audience":
+    case "Model":
+    case "Camera":
+    case "PerspectiveCamera":
+    case "OrthographicCamera":
+    case "Light":
+    case "AmbientLight":
+    case "DirectionalLight":
+    case "ImageBasedLight":
+    case "PointLight":
+    case "SpotLight":
+    case "AudioEmitter":
+    case "AmbientAudio":
+    case "PointAudio":
+    case "SpotAudio":
       return "ContentResource";
     case "ImageService1":
     case "ImageService2":
@@ -59,6 +73,8 @@ const emptyTypes = {
   Collection: emptyCollection,
   Manifest: emptyManifest,
   Range: emptyRange,
+  Scene: emptyScene,
+  Timeline: emptyTimeline,
   ResourceProvider: emptyAgent,
   Service: emptyService,
 };
@@ -75,7 +91,7 @@ export function randomId() {
 export function matchBasedOnResource(
   resource: CreatableResource,
   list: CreatorDefinition[],
-  options: { vault: Vault },
+  options: { vault: Vault4 }
 ): CreatorDefinition[] {
   const supported = [];
   if (list.length === 0) {
@@ -120,18 +136,13 @@ export function matchBasedOnResource(
       }
 
       if (def.supports.custom) {
-        const isValid = def.supports.custom(
-          { property, resource: parent, atIndex: resource.index },
-          options.vault,
-        );
+        const isValid = def.supports.custom({ property, resource: parent, atIndex: resource.index }, options.vault);
         if (!isValid) {
           continue;
         }
       }
 
-      const initialDataKeys = Object.keys(resource.initialData || {}).filter(
-        (key) => key !== "skipEditingOnCreate",
-      );
+      const initialDataKeys = Object.keys(resource.initialData || {}).filter((key) => key !== "skipEditingOnCreate");
 
       if (!def.supports.initialData && initialDataKeys.length !== 0) {
         continue;
@@ -153,17 +164,14 @@ export function creatorHelper<
   const ResourceType extends AllAvailableParentTypes,
   const Parent extends { id: string; type: ResourceType },
   const ResourceField extends GetSupportedResourceFields<ResourceType>,
-  const CID extends CreatorDefinitionFilterByParent<
-    ResourceType,
-    ResourceField
-  >["id"],
+  const CID extends CreatorDefinitionFilterByParent<ResourceType, ResourceField>["id"],
   Payload = GetCreatorPayload<IIIFManifestEditor.CreatorDefinitions[CID]>,
   Return = ResolvedCreatorReturn<IIIFManifestEditor.CreatorDefinitions[CID]>,
 >(
   ctx: CreatorFunctionContext,
   parent: Parent | ResourceType,
   property: ResourceField,
-  definition: CID,
+  definition: CID
 ): (payload: Payload, options?: Partial<CreatorOptions>) => Promise<Return> {
   return (payload: Payload, options = {}) => {
     if (typeof parent !== "string") {

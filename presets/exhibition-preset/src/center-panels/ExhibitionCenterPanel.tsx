@@ -18,7 +18,7 @@ import {
   useState,
 } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, useManifest, useVault } from "react-iiif-vault";
+import { CanvasContext, useManifest, useVault } from "react-iiif-vault/presentation-4";
 import {
   getThemeConfigFromServices,
   getThemeCssVariables,

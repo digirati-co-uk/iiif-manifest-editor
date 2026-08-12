@@ -1,5 +1,5 @@
-import { useAnnotation, useCanvas, useVault } from "react-iiif-vault";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { useAnnotation, useCanvas, useVault } from "react-iiif-vault/presentation-4";
+import { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { SupportedTarget, SvgSelector } from "@iiif/helpers";
 import { BoxStyle } from "@atlas-viewer/atlas";
 

@@ -56,6 +56,7 @@ export * from "./icons/RangesIcon";
 export * from "./icons/ResetIcon";
 export * from "./icons/ResizeHandleIcon";
 export * from "./icons/ScaledImageIcon";
+export * from "./icons/SceneIcon";
 export * from "./icons/TargetIcon";
 export * from "./icons/TextIcon";
 export * from "./icons/VideoIcon";

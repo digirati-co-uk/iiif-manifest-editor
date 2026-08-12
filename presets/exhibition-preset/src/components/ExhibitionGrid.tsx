@@ -3,7 +3,7 @@ import {
   useLayoutActions,
   useManifestEditor,
 } from "@manifest-editor/shell";
-import { CanvasContext } from "react-iiif-vault";
+import { CanvasContext } from "react-iiif-vault/presentation-4";
 import { ExhibitionContainer } from "./ExhibitionContainer";
 import { ExhibitionItem } from "./ExhibitionItem";
 

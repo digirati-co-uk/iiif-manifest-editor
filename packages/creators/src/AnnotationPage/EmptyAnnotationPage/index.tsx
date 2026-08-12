@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 
@@ -31,11 +31,12 @@ export const emptyAnnotationPage = defineCreator({
   resourceType: "AnnotationPage",
   resourceFields: ["id", "type", "items"],
   supports: {
-    parentTypes: ["Manifest", "Canvas", "Range"],
+    parentTypes: ["Manifest", "Canvas", "Range", "Scene"] as any,
     parentFieldMap: {
       Manifest: ["annotations"],
       Canvas: ["items", "annotations"],
       Range: ["annotations"],
-    },
+      Scene: ["annotations"],
+    } as any,
   },
 });

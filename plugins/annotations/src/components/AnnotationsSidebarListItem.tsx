@@ -2,7 +2,7 @@ import { ActionButton, CheckIcon, DeleteIcon, EditTextIcon, HTMLAnnotationBodyRe
 import { HTMLAnnotationEditor, useAnnotationEditor, useAnnotationInfo } from "@manifest-editor/editors";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { useState } from "react";
-import { AnnotationContext } from "react-iiif-vault";
+import { AnnotationContext } from "react-iiif-vault/presentation-4";
 import { RenderPaintingAnnotationPreview } from "./RenderPaintingAnnotationPreview";
 
 export function AnnotationsSidebarListItem() {

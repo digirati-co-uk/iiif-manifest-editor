@@ -1,4 +1,4 @@
-import { DescriptiveProperties, Reference } from "@iiif/presentation-3";
+import { DescriptiveProperties, Reference } from "@iiif/parser";
 import { BaseEditor } from "./BaseEditor";
 import { EditorConfig } from "./types";
 import { MetadataEditor } from "./MetadataEditor";

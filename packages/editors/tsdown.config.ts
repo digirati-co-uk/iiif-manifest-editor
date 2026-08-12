@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  tsconfig: "tsconfig.build.json",
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",

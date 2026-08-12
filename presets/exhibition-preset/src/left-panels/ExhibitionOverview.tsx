@@ -1,5 +1,5 @@
 import type { LayoutPanel } from "@manifest-editor/shell";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { PreviewIcon } from "../icons/PreviewIcon";
 
 export const exhibitionOverviewLeftPanel: LayoutPanel = {

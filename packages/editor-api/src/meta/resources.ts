@@ -8,6 +8,8 @@ const all = [
   "Collection",
   "Manifest",
   "Canvas",
+  "Scene",
+  "Timeline",
   "Annotation",
   "AnnotationPage",
   "Range",
@@ -58,6 +60,8 @@ function getSupported<const Type extends AllResourceTypes>(type: Type) {
 const Collection = getSupported("Collection");
 const Manifest = getSupported("Manifest");
 const Canvas = getSupported("Canvas");
+const Scene = getSupported("Scene");
+const Timeline = getSupported("Timeline");
 const Annotation = getSupported("Annotation");
 const AnnotationPage = getSupported("AnnotationPage");
 const Range = getSupported("Range");
@@ -72,6 +76,8 @@ export const resources = {
     Collection,
     Manifest,
     Canvas,
+    Scene,
+    Timeline,
     Annotation,
     AnnotationPage,
     Range,

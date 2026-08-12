@@ -1,4 +1,5 @@
 import { addReference, batchActions, importEntities, removeReference } from "@iiif/helpers/vault/actions";
+import { emptyAnnotationPage } from "@iiif/parser/presentation-4";
 import { Modal } from "@manifest-editor/components";
 import {
   type BackgroundActionDefinition,
@@ -534,11 +535,12 @@ function writeRemoteInferenceAnnotations(
         entities: {
           AnnotationPage: {
             [pageId]: {
+              ...emptyAnnotationPage,
               id: pageId,
               type: "AnnotationPage",
               label: { en: ["Inline annotations"] },
               items: [],
-            },
+            } as any,
           },
         },
       }),
@@ -1436,9 +1438,11 @@ function ResultStat({ label, value }: { label: string; value: number }) {
 
 // ─── Plan helpers ─────────────────────────────────────────────────────────────
 
-function getManifestCanvases(ctx: BackgroundActionRunContext) {
+function getManifestCanvases(ctx: Pick<BackgroundActionRunContext, "vault" | "target">) {
   const manifest = ctx.vault.get(ctx.target as any) as any;
-  return manifest?.items ? ((ctx.vault.get(manifest.items) as any) || []).filter(Boolean) : [];
+  return manifest?.items
+    ? ((ctx.vault.get(manifest.items) as any) || []).filter((item: any) => item?.type === "Canvas")
+    : [];
 }
 
 function selectCanvases(ctx: BackgroundActionRunContext, canvases: any[], options: CanvasSelectionOptions) {
@@ -1668,8 +1672,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   onResults: (ctx) => openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
 
   supports: (ctx) => {
-    const manifest = ctx.vault.get(ctx.target as any) as any;
-    return !!manifest?.items?.length;
+    return getManifestCanvases(ctx).length > 0;
   },
 
   prepare: async (ctx) => {
@@ -1931,8 +1934,7 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
   onResults: (ctx) => openRemoteInferenceResults(ctx.definition.id, ctx.instance?.result),
 
   supports: (ctx) => {
-    const manifest = ctx.vault.get(ctx.target as any) as any;
-    return !!manifest?.items?.length;
+    return getManifestCanvases(ctx).length > 0;
   },
 
   prepare: async (ctx) => {

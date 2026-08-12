@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 
 export const CANVAS_LABEL_PATTERN_PRESETS = [
   { id: "page", label: "Page {n}", pattern: "Page {n}" },

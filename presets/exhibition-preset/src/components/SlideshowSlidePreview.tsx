@@ -1,7 +1,7 @@
 import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef, useState } from "react";
-import { AnnotationContext, LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { AnnotationContext, LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
 import {

@@ -1,4 +1,4 @@
-import type { InternationalString } from "@iiif/presentation-3";
+import type { InternationalString } from "@iiif/parser";
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   LanguageMapEditor,
@@ -15,7 +15,7 @@ import {
   useEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useMemo } from "react";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 import {

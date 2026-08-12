@@ -1,7 +1,7 @@
 import { InfoIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { type LayoutPanel, useCollectionEditor, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { type SVGProps, useEffect, useRef } from "react";
-import { LocaleString, ManifestMetadata, Metadata } from "react-iiif-vault";
+import { LocaleString, ManifestMetadata, Metadata } from "react-iiif-vault/presentation-4";
 
 export const collectionSummary: LayoutPanel = {
   id: "collection-summary",

@@ -1,5 +1,5 @@
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
-import { Reference } from "@iiif/presentation-3";
+import { Reference } from "@iiif/parser";
 import {
   ActionButton,
   AddImageIcon,
@@ -36,7 +36,7 @@ import {
   TreeItemContent,
 } from "react-aria-components";
 import { flushSync } from "react-dom";
-import { LocaleString, useVault } from "react-iiif-vault";
+import { LocaleString, useVault } from "react-iiif-vault/presentation-4";
 import { twJoin, twMerge } from "tailwind-merge";
 import { RangesIcon } from "../../icons";
 import { ChevronDownIcon } from "./ChevronDownIcon";

@@ -10,7 +10,7 @@ import {
   useCanvas,
   useCurrentAnnotationRequest,
   useManifest,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { isExhibitionItem } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";

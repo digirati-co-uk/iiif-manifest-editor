@@ -22,7 +22,7 @@ import {
   useManifest,
   useVault,
   useVaultSelector,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
@@ -998,7 +998,7 @@ function createTourStepAnnotation(vault: any, canvas: any, annotationPageId: str
             [annotationId]: {
               id: annotationId,
               type: "Annotation",
-              motivation: "tagging",
+              motivation: ["tagging"],
               body: [{ id: bodyId, type: "ContentResource" }],
               target,
             },

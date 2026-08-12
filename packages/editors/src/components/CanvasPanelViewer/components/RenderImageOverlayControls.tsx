@@ -2,7 +2,7 @@ import { HTMLPortal } from "@atlas-viewer/atlas";
 import { ActionButton } from "@manifest-editor/components";
 import { useEditingResource, useEditingStack, useLayoutActions } from "@manifest-editor/shell";
 import { type SVGProps, useState } from "react";
-import { useCanvas, useContextMenuStore, useCurrentAnnotationRequest, useStrategy } from "react-iiif-vault";
+import { useCanvas, useContextMenuStore, useCurrentAnnotationRequest, useStrategy } from "react-iiif-vault/presentation-4";
 
 export function RenderImageOverlayControls() {
   const { strategy } = useStrategy();

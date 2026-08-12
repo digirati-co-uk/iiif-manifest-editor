@@ -19,7 +19,7 @@ describe("temporal range utils", () => {
     ).toEqual({
       type: "SpecificResource",
       source: { id: "https://example.org/canvas/1", type: "Canvas" },
-      selector: { type: "FragmentSelector", value: "t=12.42,42" },
+      selector: [{ type: "FragmentSelector", value: "t=12.42,42" }],
     });
     expect(formatTemporalFragmentValue(1.23456, 9.8)).toBe("t=1.235,9.8");
   });

@@ -1,8 +1,8 @@
 import { getValue } from "@iiif/helpers";
-import { isSpecificResource } from "@iiif/parser";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Reference, SpecificResource } from "@iiif/parser/presentation-4/types";
 import cx from "classnames";
-import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
+import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault/presentation-4";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import {twMerge} from 'tailwind-merge';
@@ -60,7 +60,7 @@ export function CollectionItemList(props: CollectionItemListProps) {
         inlineHandle={props.inlineHandle}
         reorder={props.reorder}
         renderItem={(item, index) => {
-          const ref = isSpecificResource(item) ? item.source : item;
+          const ref = toRef(item)!;
           return ref.type === "Manifest" ? (
             <ManifestContext manifest={ref.id}>
               <ManifestListItem
@@ -87,7 +87,7 @@ export function CollectionItemList(props: CollectionItemListProps) {
   return (
     <ul aria-label="Collection items" id={props.id}>
       {props.list.map((item, index) => {
-        const ref = isSpecificResource(item) ? item.source : item;
+        const ref = toRef(item)!;
         return ref.type === "Manifest" ? (
           <ManifestContext key={`${index}_${item.id}`} manifest={ref.id}>
             <ManifestListItem onAction={() => props.onSelect(ref, index)} isActive={props.activeId === ref.id} />

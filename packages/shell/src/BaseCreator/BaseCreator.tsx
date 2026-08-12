@@ -1,4 +1,5 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import {
   ActionButton,
   BackIcon,
@@ -21,7 +22,7 @@ import {
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
 import { type FormEvent, memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { useApp } from "../AppContext/AppContext";
 import { useConfig } from "../ConfigContext/ConfigContext";
 import { useTemporaryHighlight } from "../highlighted-image-resources";
@@ -42,7 +43,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   skipEditingOnCreate?: boolean;
   initialData?: Record<string, any>;
 }) {
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const { edit, modal } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -164,7 +165,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
-  const vault = useVault();
+  const vault = useVault() as unknown as Vault4;
   const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
   const [currentInitialData, setCurrentInitialData] = useState<Record<string, any> | undefined>();
   const [resourceValue, setResourceValue] = useState("");

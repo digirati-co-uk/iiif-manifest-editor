@@ -1,6 +1,6 @@
-import { TechnicalProperties } from "@iiif/presentation-3";
+import { TechnicalProperties } from "@iiif/parser";
 import { useResource } from "@manifest-editor/shell";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import { InputContainer, InputLabel } from "../Input";
 import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 

@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import {
   createTemporalRange,
   deleteTemporalRange,

@@ -1,4 +1,3 @@
-import { useInStack } from "@manifest-editor/editors";
 import {
   type BackgroundPanel,
   useAvailableLayouts,
@@ -7,13 +6,17 @@ import {
   useLayoutState,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { manifestOverview } from "./center-panels/manifest-overview";
 import { rangeWorkbench } from "./center-panels/range-workbench";
 import { useEditCanvasItems } from "./components";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
+import { sceneActivationsPanel } from "./left-panels/scene-activations";
+import { sceneAnnotationsPanel } from "./left-panels/scene-annotations";
+import { sceneContentsPanel } from "./left-panels/scene-contents";
+import { useManifestItemInStack } from "./manifest-items";
 
 export const queryStringTask: BackgroundPanel = {
   id: "manifest-query-string",
@@ -36,32 +39,27 @@ function setCanvasIdQueryString(value: string | null | undefined) {
   setQueryString("canvas", value);
 }
 
+function setManifestItemIdQueryString(value: string | null | undefined) {
+  setQueryString("item", value);
+}
+
 function setLeftPanelIdQueryString(value: string | null | undefined) {
   setQueryString("leftPanel", value);
 }
 
 function QueryStringBackgroundTask() {
+  // oxlint-disable react/exhaustive-deps -- These background effects intentionally track scalar panel/resource IDs.
   const manifest = useManifest();
-  const canvas = useInStack("Canvas");
+  const selectedItem = useManifestItemInStack();
   const { leftPanel, rightPanel } = useLayoutState();
-  const {
-    edit,
-    leftPanel: leftPanelActions,
-    rightPanel: rightPanelActions,
-  } = useLayoutActions();
+  const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
-  const {
-    editorFeatureFlags: {
-      rememberCanvasId = true,
-      rememberLeftPanelId = false,
-    } = {},
-  } = useConfig();
-  const lastCanvas = useRef<string | null>(null);
+  const { editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
+  const lastItem = useRef<string | null>(null);
   const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
-  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] =
-    useState(false);
+  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
 
   useEffect(() => {
     if (isLeftPanelOpen) {
@@ -69,18 +67,21 @@ function QueryStringBackgroundTask() {
     }
   }, [isLeftPanelOpen]);
 
-  // This rule opens up the canvas listing on the initial render if there is
-  // a canvas ID in the query string.
+  // Open the item listing on initial render when an item ID is present.
   useEffect(() => {
-    // Initialize the query string with the current canvas ID.
+    // `canvas` remains supported for existing links; new non-Canvas items use `item`.
     const initialQueryString = new URLSearchParams(window.location.search);
-    const canvasId = initialQueryString.get("canvas");
-    lastCanvas.current = canvasId;
+    const itemId = initialQueryString.get("item") || initialQueryString.get("canvas");
+    lastItem.current = itemId;
 
-    if (canvasId) {
+    if (itemId) {
+      const item = manifest?.items?.find((candidate) => candidate.id === itemId) || {
+        id: itemId,
+        type: "Canvas",
+      };
       open({ id: canvasListing.id });
       open({ id: "current-canvas" });
-      canvasActions.edit({ id: canvasId, type: "Canvas" });
+      canvasActions.edit(item);
     }
 
     const leftPanelId = initialQueryString.get("leftPanel");
@@ -96,28 +97,31 @@ function QueryStringBackgroundTask() {
     }
   }, [leftPanel.current]);
 
-  // This rule will set the query string when the canvas changes.
+  // Keep the selected manifest item in the query string.
   useEffect(() => {
-    const canvasId = canvas?.resource?.source?.id;
-    if (canvasId) {
-      lastCanvas.current = canvasId;
+    const item = selectedItem?.resource?.source;
+    if (item?.id) {
+      lastItem.current = item.id;
     }
     if (!rememberCanvasId) {
       return;
     }
-    setCanvasIdQueryString(canvasId);
-  }, [canvas?.resource?.source?.id]);
+    setCanvasIdQueryString(item?.type === "Canvas" ? item.id : null);
+    setManifestItemIdQueryString(item?.type !== "Canvas" ? item?.id : null);
+  }, [selectedItem?.resource?.source?.id, selectedItem?.resource?.source?.type]);
 
   // Changing based on panels.
   useEffect(() => {
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
       setCanvasIdQueryString(null);
-      manifest &&
+      setManifestItemIdQueryString(null);
+      if (manifest) {
         edit(manifest, undefined, {
           forceOpen: true,
           selectedTab: "@manifest-editor/descriptive-properties",
         });
+      }
       if (centerPanels.some((panel) => panel.id === manifestOverview.id)) {
         open({ id: manifestOverview.id });
       }
@@ -127,12 +131,18 @@ function QueryStringBackgroundTask() {
       open({ id: rangeWorkbench.id });
     }
 
-    // When the canvas listing is opened, then edit the first canvas (or last).
-    if (leftPanel.current === canvasListing.id) {
-      const firstCanvas = lastCanvas.current || manifest?.items?.[0]?.id;
-      if (firstCanvas) {
+    // When the item listing opens, edit the last selected item or the first item.
+    if (
+      leftPanel.current === canvasListing.id ||
+      leftPanel.current === sceneContentsPanel.id ||
+      leftPanel.current === sceneActivationsPanel.id ||
+      leftPanel.current === sceneAnnotationsPanel.id
+    ) {
+      const firstItemId = lastItem.current || manifest?.items?.[0]?.id;
+      const firstItem = manifest?.items?.find((item) => item.id === firstItemId);
+      if (firstItem) {
         open({ id: "current-canvas" });
-        canvasActions.edit({ id: firstCanvas, type: "Canvas" });
+        canvasActions.edit(firstItem);
       }
     }
 
@@ -154,11 +164,7 @@ function QueryStringBackgroundTask() {
 
     const shouldOpenRightPanel = leftPanel.current !== rangesPanel.id;
 
-    if (
-      !rightPanel.open &&
-      shouldOpenRightPanel &&
-      wasLeftPanelOpenedAutomatically
-    ) {
+    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

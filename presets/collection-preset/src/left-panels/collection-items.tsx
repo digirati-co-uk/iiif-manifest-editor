@@ -1,5 +1,5 @@
 import { getValue } from "@iiif/helpers";
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import {
   IIIFBrowserIcon,
   ListEditIcon,
@@ -24,7 +24,7 @@ import {
   useSetCustomTitle,
 } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { useCollection } from "react-iiif-vault";
+import { useCollection } from "react-iiif-vault/presentation-4";
 
 export const collectionItems: LayoutPanel = {
   id: "collection-items",

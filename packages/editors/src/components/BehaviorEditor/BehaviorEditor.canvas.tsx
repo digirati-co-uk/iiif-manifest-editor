@@ -1,4 +1,4 @@
-import { useCanvas, useManifest, useVault } from "react-iiif-vault";
+import { useCanvas, useManifest, useVault } from "react-iiif-vault/presentation-4";
 
 import { BehaviorEditor } from "./BehaviorEditor";
 

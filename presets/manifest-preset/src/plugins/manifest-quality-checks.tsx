@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { type LayoutPanel, type PluginMetadata, useLayoutActions } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
-import { useManifest, useVaultSelector } from "react-iiif-vault";
+import { useManifest, useVaultSelector } from "react-iiif-vault/presentation-4";
 
 type IssueSeverity = "error" | "warning" | "info";
 
@@ -178,7 +178,9 @@ function countBySeverity(issues: QualityIssue[]) {
 
 function createQualityReport(manifest: any, vault: any): QualityReport {
   const issues: QualityIssue[] = [];
-  const canvases = manifest?.items ? vault.get(manifest.items) || [] : [];
+  const canvases = manifest?.items
+    ? (vault.get(manifest.items) || []).filter((item: any) => item?.type === "Canvas")
+    : [];
   let paintingAnnotationCount = 0;
 
   if (!manifest) {

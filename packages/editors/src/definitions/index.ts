@@ -17,14 +17,23 @@ import { descriptiveProperties } from "./DescriptiveProperties";
 import { fallbackAnnotationEditor } from "./FallbackAnnotationEditor";
 import { navPlaceEditor } from "./NavPlaceEditor";
 import { partOfReferenceEditor } from "./PartOfReferenceEditor";
+import { model3DEditor } from "./Model3DEditor";
+import { cameraEditor, lightEditor } from "./SceneComponentEditor";
+import { overviewSceneEditor } from "./OverviewSceneEditor";
+import { activationStateEditor } from "./ActivationStateEditor";
 
 export const allEditors = [
   // First tab ones.
+  activationStateEditor,
   imageEditor,
+  model3DEditor,
+  cameraEditor,
+  lightEditor,
   choicePaintingAnnotationEditor,
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,
+  overviewSceneEditor,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   partOfReferenceEditor,
@@ -43,11 +52,16 @@ export const allEditors = [
 ];
 
 export {
+  activationStateEditor,
   imageEditor,
+  model3DEditor,
+  cameraEditor,
+  lightEditor,
   choicePaintingAnnotationEditor,
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,
+  overviewSceneEditor,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   combinedProperties,

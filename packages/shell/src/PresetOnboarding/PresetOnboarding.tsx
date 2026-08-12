@@ -1,6 +1,6 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest } from "react-iiif-vault/presentation-4";
 import { useApp, useAppState, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";

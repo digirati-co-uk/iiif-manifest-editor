@@ -4,7 +4,7 @@ import {
   MetadataItem,
   Reference,
   SpecificResource,
-} from "@iiif/presentation-3";
+} from "@iiif/parser";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import { EditorConfig } from "./types";
 import { entityActions } from "@iiif/helpers/vault/actions";

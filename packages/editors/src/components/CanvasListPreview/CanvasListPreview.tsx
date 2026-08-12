@@ -1,7 +1,7 @@
 import { getValue } from "@iiif/helpers";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
 import cx from "classnames";
-import { LocaleString, useCanvas } from "react-iiif-vault";
+import { LocaleString, useCanvas } from "react-iiif-vault/presentation-4";
 import { EditableCanvasLabel } from "../EditableCanvasLabel";
 
 interface CanvasListPreviewProps {

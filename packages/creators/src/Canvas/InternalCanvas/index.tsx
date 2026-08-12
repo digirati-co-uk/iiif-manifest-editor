@@ -1,7 +1,7 @@
 import { type CreatorContext, type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 import { IIIFBrowser, IIIFBrowserProps } from "iiif-browser";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
-import { useManifest, useVault, VaultProvider } from "react-iiif-vault";
+import { useManifest, useVault, VaultProvider } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { useMemo } from "react";
 
@@ -75,7 +75,7 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
   return (
     <VaultProvider vault={vault}>
       <IIIFBrowser
-        vault={vault}
+        vault={vault as any}
         navigation={navigationOptions}
         output={output}
         history={historyOptions}

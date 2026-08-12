@@ -1,6 +1,6 @@
-import { InternationalString } from "@iiif/presentation-3";
+import { InternationalString } from "@iiif/parser";
 import { createRef, KeyboardEventHandler, useLayoutEffect, useMemo, useState } from "react";
-import { LocaleString } from "react-iiif-vault";
+import { LocaleString } from "react-iiif-vault/presentation-4";
 import { InlineSelectStyles } from "./InlineSelect.styles";
 
 export interface InlineSelectProps<T> {

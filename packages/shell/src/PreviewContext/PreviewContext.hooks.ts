@@ -1,5 +1,5 @@
 import { type Dispatch, useMemo } from "react";
-import { useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { useAppResource, useAppResourceInstance } from "../AppResourceProvider/AppResourceProvider";
 import type {

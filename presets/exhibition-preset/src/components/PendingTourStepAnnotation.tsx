@@ -7,7 +7,7 @@ import { useAtlasStore } from "@manifest-editor/shell";
 import {
   useCurrentAnnotationActions,
   useCurrentAnnotationMetadata,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 import { CheckIcon } from "../icons/CheckIcon";
 import { TourStepHtmlForm } from "./TourStepHtmlForm";

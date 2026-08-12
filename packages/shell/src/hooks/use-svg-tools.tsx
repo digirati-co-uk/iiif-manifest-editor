@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAtlasStore } from "react-iiif-vault";
+import { useAtlasStore } from "react-iiif-vault/presentation-4";
 import { useStore } from "zustand";
 
 export function useSvgTools() {

@@ -1,5 +1,5 @@
 import { BaseEditor } from "./BaseEditor";
-import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { AnnotationNormalized } from "@iiif/parser/presentation-4-normalized/types";
 import { EditorConfig } from "./types";
 import { AnnotationTargetEditor } from "./AnnotationTargetEditor";
 import { AnnotationBodyEditor } from "./AnnotationBodyEditor";

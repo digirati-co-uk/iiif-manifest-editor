@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { LightBox } from "../../../atoms/LightBox";
 import { CheckboxInput, Input, InputLabel } from "../../../editors/Input";
 import {

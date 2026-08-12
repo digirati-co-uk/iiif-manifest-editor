@@ -1,9 +1,11 @@
-import type { LinkingProperties } from "@iiif/presentation-3";
+import type { LinkingProperties } from "@iiif/parser";
 
 const required = {
   Collection: [],
   Manifest: [],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -16,6 +18,8 @@ const recommended = {
   Collection: [],
   Manifest: [],
   Canvas: [],
+  Scene: [],
+  Timeline: [],
   Annotation: [],
   AnnotationPage: [],
   Range: [],
@@ -28,6 +32,8 @@ const optional = {
   Collection: ["seeAlso", "service", "homepage", "rendering", "partOf", "services"],
   Manifest: ["seeAlso", "service", "homepage", "rendering", "partOf", "start", "services"],
   Canvas: ["seeAlso", "service", "homepage", "rendering", "partOf"],
+  Scene: ["seeAlso", "service", "homepage", "rendering", "partOf"],
+  Timeline: ["seeAlso", "service", "homepage", "rendering", "partOf"],
   Annotation: ["seeAlso", "service", "homepage", "rendering", "partOf"],
   AnnotationPage: ["seeAlso", "service", "homepage", "rendering", "partOf"],
   Range: ["seeAlso", "service", "homepage", "rendering", "partOf", "start", "supplementary"],
@@ -40,6 +46,8 @@ const notAllowed = {
   Collection: ["supplementary", "logo"],
   Manifest: ["supplementary", "logo"],
   Canvas: ["start", "supplementary", "services", "logo"],
+  Scene: ["start", "supplementary", "services", "logo"],
+  Timeline: ["start", "supplementary", "services", "logo"],
   Annotation: ["start", "supplementary", "services", "logo"],
   AnnotationPage: ["start", "supplementary", "services", "logo"],
   Range: ["services", "logo"],
@@ -52,6 +60,8 @@ type LinkingMap = Record<
   | "Collection"
   | "Manifest"
   | "Canvas"
+  | "Scene"
+  | "Timeline"
   | "Annotation"
   | "AnnotationPage"
   | "Range"

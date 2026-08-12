@@ -1,4 +1,4 @@
-import { toRef } from "@iiif/parser";
+import { toRef } from "@iiif/parser/presentation-4";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useCreator, useEditingResource, useEditor } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";

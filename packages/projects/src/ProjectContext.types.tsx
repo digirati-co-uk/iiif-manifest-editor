@@ -1,6 +1,6 @@
 import { Storage } from "./types/Storage";
 import { Publication } from "./types/Publication";
-import { Vault } from "@iiif/helpers/vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
 import { Preview } from "@manifest-editor/shell";
 
 export interface ProjectState {
@@ -96,7 +96,7 @@ export interface ProjectStorage<S extends Storage, DataType = any, Ref extends S
 
   // Runtime
   getBackendStorage(project: EditorProject): Ref;
-  createVaultInstance(project: EditorProject): [Vault, Promise<void>];
-  closeVaultInstance(project: EditorProject, vault: Vault): void;
+  createVaultInstance(project: EditorProject): [Vault4, Promise<void>];
+  closeVaultInstance(project: EditorProject, vault: Vault4): void;
   shouldUpdateWithVault(): boolean;
 }

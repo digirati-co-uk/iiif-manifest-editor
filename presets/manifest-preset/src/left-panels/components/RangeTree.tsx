@@ -1,8 +1,8 @@
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
-import { toRef } from "@iiif/parser";
-import type { Reference } from "@iiif/presentation-3";
-import type { CanvasNormalized } from "@iiif/presentation-3-normalized";
+import { toRef } from "@iiif/parser/presentation-4";
+import type { CanvasNormalized } from "@iiif/parser/presentation-4-normalized/types";
+import type { Reference } from "@iiif/parser/presentation-4/types";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { useCallback, useMemo, useState } from "react";
@@ -17,7 +17,7 @@ import {
   Tree,
   useDragAndDrop,
 } from "react-aria-components";
-import { CanvasContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
+import { CanvasContext, useManifest, useVault, useVaultSelector } from "react-iiif-vault/presentation-4";
 import { create } from "zustand";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { OrphanedTreeCanvasItem } from "./OrphanedTreeCanvasItem";
@@ -93,7 +93,7 @@ export function RangeTree(props: RangeTreeProps) {
   const { range, flatItems, canvasesNotInRanges } = useVaultSelector((_, vault) => {
     const structures = props.selectedTopLevelRange
       ? [vault.get(props.selectedTopLevelRange)]
-      : vault.get(manifest!.structures || []);
+      : vault.get([...(manifest!.structures || [])]);
 
     const range =
       helper.rangesToTableOfContentsTree(structures, undefined, {
@@ -101,7 +101,10 @@ export function RangeTree(props: RangeTreeProps) {
       })! || {};
     const flatItems = flattenedRanges(range);
 
-    const canvasesNotInRanges = getCanvasesNotInRanges(flatItems, manifest?.items || []);
+    const canvasesNotInRanges = getCanvasesNotInRanges(
+      flatItems,
+      (manifest?.items || []).filter((item): item is Reference<"Canvas"> => item.type === "Canvas"),
+    );
 
     return { structures, range, flatItems, canvasesNotInRanges };
   });
@@ -202,8 +205,8 @@ export function RangeTree(props: RangeTreeProps) {
           const itemIndex = flatItems.findIndex((item) => toMoveItem.item === item.item.id);
           if (itemIndex === -1) return null;
 
-          const item = flatItems[itemIndex];
-          return { id: item?.item.id, type: item?.item.type, order: itemIndex };
+          const item = flatItems[itemIndex]!;
+          return { id: item.item.id, type: item.item.type, order: itemIndex };
         })
         .filter((item) => item !== null)
         .sort((a, b) => a.order - b.order)

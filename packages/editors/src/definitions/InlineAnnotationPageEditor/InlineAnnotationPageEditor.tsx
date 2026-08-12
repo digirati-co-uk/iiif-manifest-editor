@@ -1,5 +1,5 @@
-import { isSpecificResource, toRef } from "@iiif/parser";
-import type { Reference } from "@iiif/presentation-3";
+import { isSpecificResource, toRef } from "@iiif/parser/presentation-4";
+import type { Reference } from "@iiif/parser/presentation-4/types";
 import { ActionButton, PaddedSidebarContainer, TargetIcon } from "@manifest-editor/components";
 import { useCreator, useEditor, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -10,7 +10,7 @@ import {
   useAnnotationPage,
   useRequestAnnotation,
   useVaultSelector,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 import invariant from "tiny-invariant";
 import { AnnotationCreationPopup } from "../../components/AnnotationCreationPopup";
 import { AnnotationList } from "../../components/AnnotationList/AnnotationList";
@@ -112,7 +112,7 @@ export function PromptToAddPaintingAnnotations({
   const totalItems = (pageEditor.structural.items.get() || []).length;
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
-    (state, vault) => vault.get(paintingAnnotations?.items || []),
+    (_state, vault) => vault.get([...(paintingAnnotations?.items || [])]),
     [targets, totalItems],
   );
 

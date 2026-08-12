@@ -1,10 +1,10 @@
 import { createImageServiceRequest, imageServiceRequestToString } from "@iiif/parser/image-3";
-import type { ImageService } from "@iiif/presentation-3";
+import type { ImageService } from "@iiif/parser";
 import { ActionButton, AddIcon } from "@manifest-editor/components";
 import { createAppActions, InputContainer, LinkingPropertyList } from "@manifest-editor/editors";
 import { useCreator, useEditingResource, useEditor, useInlineCreator } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useCanvas, useVault } from "react-iiif-vault/presentation-4";
 import { getPaintingAnnotations, getResolvedAnnotationBody } from "../slideshow-content-positioning";
 
 type ThumbnailCandidate = {

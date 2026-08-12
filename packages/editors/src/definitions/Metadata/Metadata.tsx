@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { InternationalString, MetadataItem } from "@iiif/presentation-3";
+import type { InternationalString, MetadataItem } from "@iiif/parser";
 import {
   ActionButton,
   AddIcon,

@@ -8,7 +8,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { useStrategy, useVault } from "react-iiif-vault";
+import { useStrategy, useVault } from "react-iiif-vault/presentation-4";
 import { useInStack } from "../../../helpers";
 
 const SelfContext = createContext<null | React.ReactNode>(null);

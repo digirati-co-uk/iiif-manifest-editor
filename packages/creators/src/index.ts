@@ -8,6 +8,8 @@ import { imageUrlAnnotation } from "./Annotation/ImageUrlAnnotation";
 import { imageUrlListAnnotation } from "./Annotation/ImageUrlListAnnotation";
 import { noBodyAnnotation } from "./Annotation/NoBodyAnnotation";
 import { videoAnnotation } from "./Annotation/VideoAnnotation";
+import { modelAnnotation } from "./Annotation/ModelAnnotation";
+import { cameraAnnotation, lightAnnotation } from "./Annotation/SceneComponentAnnotation";
 import { emptyAnnotationPage } from "./AnnotationPage/EmptyAnnotationPage";
 import { emptyCanvas } from "./Canvas/EmptyCanvas";
 import { internalCanvas } from "./Canvas/InternalCanvas";
@@ -33,6 +35,8 @@ export * from "./Annotation/ImageUrlAnnotation/create-image-url-annotation";
 export * from "./Annotation/ImageUrlListAnnotation/create-image-url-list-annotation";
 export * from "./Annotation/NoBodyAnnotation/index";
 export * from "./Annotation/VideoAnnotation/create-video-annotation";
+export * from "./Annotation/ModelAnnotation/create-model-annotation";
+export * from "./Annotation/SceneComponentAnnotation/create-scene-component-annotation";
 export * from "./Canvas/InternalCanvas/index";
 export * from "./ContentResource/HTMLBodyCreator/create-html-body";
 export * from "./ContentResource/IIIFBrowserCreator/iiif-browser-creator";
@@ -54,6 +58,9 @@ export const allCreators = [
   imageUrlCreator,
   imageUrlAnnotation,
   videoAnnotation,
+  modelAnnotation,
+  cameraAnnotation,
+  lightAnnotation,
   audioAnnotation,
   htmlBodyCreator,
   htmlAnnotation,
@@ -90,6 +97,9 @@ export {
   imageUrlAnnotation,
   audioAnnotation,
   videoAnnotation,
+  modelAnnotation,
+  cameraAnnotation,
+  lightAnnotation,
   captionedImageAnnotation,
   imageUrlListCreator,
   imageUrlListAnnotation,

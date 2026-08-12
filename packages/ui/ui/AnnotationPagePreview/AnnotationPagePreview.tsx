@@ -1,7 +1,7 @@
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
 import { isExternal } from "@/helpers/is-external";
 import { getValue } from "@iiif/helpers";
-import { useAnnotationPage } from "react-iiif-vault";
+import { useAnnotationPage } from "react-iiif-vault/presentation-4";
 
 interface AnnotationPagePreviewProps {
   onClick?: () => void;

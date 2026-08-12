@@ -1,4 +1,4 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 import { describe, expect, test } from "vitest";
 import {
@@ -16,7 +16,7 @@ const canvasRef = { id: "https://example.org/canvas/1", type: "Canvas" as const 
 const pageRef = { id: "https://example.org/canvas/1/page", type: "AnnotationPage" as const };
 
 function createVault() {
-  const vault = new Vault();
+  const vault = new Vault4();
   vault.loadManifestSync(manifestRef.id, {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     ...manifestRef,
@@ -98,7 +98,7 @@ describe("painting annotation Choices", () => {
     ]);
 
     const annotation = vault.get<any>(result);
-    expect(annotation.motivation).toBe("painting");
+    expect(annotation.motivation).toEqual(["painting"]);
     expect(annotation.target).toEqual(firstTarget);
 
     const choice = vault.get<any>(annotation.body[0]);
@@ -159,7 +159,7 @@ describe("painting annotation Choices", () => {
 
     const first = vault.get<any>(result.annotationRefs[0]!);
     const second = vault.get<any>(result.annotationRefs[1]!);
-    expect(first.motivation).toBe("painting");
+    expect(first.motivation).toEqual(["painting"]);
     expect(first.target).toEqual(choiceAnnotation.target);
     expect(second.target).toEqual(choiceAnnotation.target);
     expect(first.body).toEqual([{ id: "https://example.org/image/1.jpg", type: "ContentResource" }]);
@@ -174,7 +174,7 @@ describe("painting annotation Choices", () => {
   });
 
   test("detects imported embedded Choice bodies", () => {
-    const vault = new Vault();
+    const vault = new Vault4();
     vault.loadManifestSync(manifestRef.id, {
       "@context": "http://iiif.io/api/presentation/3/context.json",
       ...manifestRef,
@@ -233,7 +233,7 @@ describe("painting annotation Choices", () => {
   });
 
   test("resolves referenced Choice bodies from ContentResource entities", () => {
-    const vault = new Vault();
+    const vault = new Vault4();
     const choiceId = "https://example.org/choice/1";
     const annotationId = "https://example.org/annotation/referenced-choice";
 
@@ -265,12 +265,12 @@ describe("painting annotation Choices", () => {
             [annotationId]: {
               id: annotationId,
               type: "Annotation",
-              motivation: "painting",
-              body: [{ id: choiceId, type: "Choice" }],
-              target: canvasRef.id,
+              motivation: ["painting"],
+              body: [{ id: choiceId, type: "ContentResource" }],
+              target: { id: canvasRef.id, type: "Canvas" },
             },
           },
-        },
+        } as any,
       }),
     );
     vault.dispatch(

@@ -1,4 +1,4 @@
-import { Collection } from "@iiif/presentation-3";
+import { Collection } from "@iiif/parser";
 import { EditorProject } from "../ProjectContext.types";
 import { getValue } from "@iiif/helpers";
 import slugify from "slugify";

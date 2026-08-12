@@ -1,6 +1,6 @@
 import { createRangeHelper } from "@iiif/helpers";
 import { entityActions } from "@iiif/helpers/vault/actions";
-import type { Reference, SpecificResource } from "@iiif/presentation-3";
+import type { Reference, SpecificResource } from "@iiif/parser";
 import { BasePropertyEditor } from "./BasePropertyEditor";
 import type { EditorConfig } from "./types";
 import { flattenRanges, randomId } from "./utils";

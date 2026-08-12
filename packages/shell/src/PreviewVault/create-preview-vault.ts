@@ -1,15 +1,12 @@
-import { Vault } from "@iiif/helpers/vault";
+import { Vault4 } from "@iiif/helpers/vault-4";
 import {
   addReference,
-  batchActions,
   modifyEntityField,
   reorderEntityField,
-  requestResource,
 } from "@iiif/helpers/vault/actions";
-import { actionListFromResource } from "@iiif/helpers/vault/utility";
 
 export function createPreviewVault(homepageCollectionId = "vault://homepage-collection.json") {
-  const vault = new Vault();
+  const vault = new Vault4();
 
   // 1st - ensure that our "default" collection exists OR import one.
   const previewCollection = window.localStorage.getItem("preview-vault-collection");
@@ -18,9 +15,7 @@ export function createPreviewVault(homepageCollectionId = "vault://homepage-coll
     try {
       const previewState = JSON.parse(previewCollection);
       if (previewState.id && previewState.id === homepageCollectionId) {
-        vault.dispatch(requestResource({ id: previewState.id }));
-        const toDispatch: any = actionListFromResource(previewState.id, previewState);
-        vault.dispatch(batchActions({ actions: toDispatch }));
+        vault.loadCollectionSync(previewState.id, previewState);
         didImport = true;
       }
     } catch (e) {
@@ -29,15 +24,13 @@ export function createPreviewVault(homepageCollectionId = "vault://homepage-coll
   }
 
   if (!didImport) {
-    const toDispatch: any = actionListFromResource(homepageCollectionId, {
+    vault.loadCollectionSync(homepageCollectionId, {
       "@context": "http://iiif.io/api/presentation/3/context.json",
       id: homepageCollectionId,
       type: "Collection",
       label: { en: ["Recent items"] },
       items: [],
     });
-    vault.dispatch(requestResource({ id: homepageCollectionId }));
-    vault.dispatch(batchActions({ actions: toDispatch }));
   }
 
   const clearHistory = () => {

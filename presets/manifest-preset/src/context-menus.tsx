@@ -15,7 +15,7 @@ import {
   useRequestAnnotation,
   useVault,
   useVaultSelector,
-} from "react-iiif-vault";
+} from "react-iiif-vault/presentation-4";
 
 export const contextMenus: BackgroundPanel = {
   id: "manifest-context-menus",

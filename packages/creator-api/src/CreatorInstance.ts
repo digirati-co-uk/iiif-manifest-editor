@@ -1,29 +1,16 @@
 import type { SupportedSelector } from "@iiif/helpers";
-import type { Vault } from "@iiif/helpers/vault";
-import type {
-  Reference,
-  Selector,
-  SpecificResource,
-} from "@iiif/presentation-3";
-import {
-  type AnnotationResponse,
-  annotationResponseToSelector,
-  seraliseSupportedSelector,
-} from "react-iiif-vault";
+import type { Vault4 } from "@iiif/helpers/vault-4";
+import type { Reference, Selector, SpecificResource } from "@iiif/parser";
+import { type AnnotationResponse, annotationResponseToSelector, seraliseSupportedSelector } from "react-iiif-vault/presentation-4";
 import { CreatorResource } from "./CreatorResource";
 import { CreatorRuntime } from "./CreatorRuntime";
 import { ReferencedResource } from "./ReferencedResource";
-import type {
-  CreatorConfig,
-  CreatorDefinition,
-  CreatorFunctionContext,
-  CreatorOptions,
-} from "./types";
+import type { CreatorConfig, CreatorDefinition, CreatorFunctionContext, CreatorOptions } from "./types";
 import { randomId } from "./utils";
 
 export class CreatorInstance implements CreatorFunctionContext {
-  vault: Vault;
-  previewVault: Vault;
+  vault: Vault4;
+  previewVault: Vault4;
   configs: CreatorDefinition[];
   options: CreatorOptions;
   config: Record<string, unknown>;
@@ -31,15 +18,15 @@ export class CreatorInstance implements CreatorFunctionContext {
 
   target: CreatorOptions["target"];
   selector: SupportedSelector | undefined | null;
-  serialisedSelector: { type: string; value: string } | null = null;
+  serialisedSelector: Selector | Selector[] | null = null;
 
   constructor(
-    vault: Vault,
+    vault: Vault4,
     options: CreatorOptions,
     createConfigs: CreatorDefinition[],
-    previewVault: Vault,
+    previewVault: Vault4,
     configKey: string,
-    creatorConfig: CreatorConfig = {},
+    creatorConfig: CreatorConfig = {}
   ) {
     this.vault = vault;
     this.previewVault = previewVault;
@@ -51,8 +38,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     const response: AnnotationResponse = this.options.initialData?.selector;
     this.selector = response ? annotationResponseToSelector(response) : null;
     if (this.options.initialData?.getSerialisedSelector) {
-      this.serialisedSelector =
-        this.options.initialData.getSerialisedSelector();
+      this.serialisedSelector = this.options.initialData.getSerialisedSelector();
     }
   }
 
@@ -70,10 +56,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     }
     const selector = this.selector;
     if (selector) {
-      const serialisedSelector = seraliseSupportedSelector(
-        selector,
-        this.options.initialData?.on,
-      );
+      const serialisedSelector = seraliseSupportedSelector(selector, this.options.initialData?.on);
       if (serialisedSelector) {
         return serialisedSelector;
       }
@@ -89,7 +72,7 @@ export class CreatorInstance implements CreatorFunctionContext {
       return {
         type: "SpecificResource",
         source: target,
-        selector: serialisedSelector as Selector,
+        selector: (Array.isArray(serialisedSelector) ? serialisedSelector : [serialisedSelector]) as any,
       };
     }
 
@@ -147,11 +130,7 @@ export class CreatorInstance implements CreatorFunctionContext {
     return new CreatorResource(data, this.vault);
   }
 
-  async create(
-    definition: string,
-    payload: any,
-    options?: Partial<CreatorOptions>,
-  ) {
+  async create(definition: string, payload: any, options?: Partial<CreatorOptions>) {
     const foundDefinition = this.configs.find((t) => t.id === definition);
     if (!foundDefinition) {
       throw new Error(`Creator config ${definition} not found`);
@@ -164,7 +143,7 @@ export class CreatorInstance implements CreatorFunctionContext {
       this.configs,
       this.previewVault,
       options,
-      this.creatorConfig,
+      this.creatorConfig
     );
 
     return (await runtime.run()) as any;

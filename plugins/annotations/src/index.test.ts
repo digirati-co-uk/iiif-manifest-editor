@@ -110,6 +110,16 @@ describe("annotations plugin application", () => {
     expect(app.layout.backgroundActions?.map((item) => item.id)).toContain(BULK_ANNOTATION_IMPORT_ACTION_ID);
   });
 
+  test("shows the annotations panel only for a selected Canvas", () => {
+    const supports = annotationsPlugin.leftPanels[0].supports;
+    const editable = (type: string) => ({ resource: { type: "SpecificResource", source: { id: type, type } } });
+
+    expect(supports({ editingResource: editable("Canvas"), editingStack: [] })).toBe(true);
+    expect(supports({ editingResource: editable("Scene"), editingStack: [] })).toBe(false);
+    expect(supports({ editingResource: editable("Annotation"), editingStack: [editable("Canvas")] })).toBe(true);
+    expect(supports({ editingResource: editable("Annotation"), editingStack: [editable("Scene")] })).toBe(false);
+  });
+
   test("can be disabled by workspace plugin config", () => {
     const mapped = mapPlugin(annotationsPlugin as any);
     const state: PluginStoreSnapshot = {
