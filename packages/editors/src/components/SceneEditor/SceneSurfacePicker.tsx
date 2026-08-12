@@ -27,6 +27,13 @@ export function SceneSurfacePicker({
       pointerDown = null;
       if (!start || Math.hypot(event.clientX - start[0], event.clientY - start[1]) > 5) return;
       const bounds = element.getBoundingClientRect();
+      if (
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom
+      )
+        return;
       const pointer = new Vector2(
         ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
         -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
@@ -36,19 +43,28 @@ export function SceneSurfacePicker({
         raycaster.intersectObjects(scene.children, true),
         modelAnnotationIds,
       );
-      if (!point) return;
+      event.preventDefault();
       event.stopImmediatePropagation();
+      if (!point) return;
       onPick(point);
     };
 
     const recordPointerDown = (event: PointerEvent) => {
-      pointerDown = [event.clientX, event.clientY];
+      const bounds = element.getBoundingClientRect();
+      pointerDown =
+        event.button === 0 &&
+        event.clientX >= bounds.left &&
+        event.clientX <= bounds.right &&
+        event.clientY >= bounds.top &&
+        event.clientY <= bounds.bottom
+          ? [event.clientX, event.clientY]
+          : null;
     };
-    element.addEventListener("pointerdown", recordPointerDown, true);
-    element.addEventListener("click", pick, true);
+    window.addEventListener("pointerdown", recordPointerDown, true);
+    window.addEventListener("click", pick, true);
     return () => {
-      element.removeEventListener("pointerdown", recordPointerDown, true);
-      element.removeEventListener("click", pick, true);
+      window.removeEventListener("pointerdown", recordPointerDown, true);
+      window.removeEventListener("click", pick, true);
       element.style.cursor = cursor;
     };
   }, [active, camera, gl, modelAnnotationIds, onPick, raycaster, scene]);

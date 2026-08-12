@@ -25,7 +25,7 @@ describe("Scene annotation creation", () => {
     expect(scenePointTarget("scene", [1, 2, 3])).toEqual({
       type: "SpecificResource",
       source: { id: "scene", type: "Scene" },
-      selector: { type: "PointSelector", x: 1, y: 2, z: 3 },
+      selector: [{ type: "PointSelector", x: 1, y: 2, z: 3 }],
     });
   });
 });

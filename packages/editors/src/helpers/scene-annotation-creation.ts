@@ -3,7 +3,7 @@ import type { Intersection, Object3D } from "three";
 
 export type SceneAnnotationDraft = {
   sceneId: string;
-  pageId: string;
+  pageId: string | null;
   point: [number, number, number] | null;
 };
 
@@ -16,8 +16,11 @@ function update(next: SceneAnnotationDraft | null) {
 }
 
 export const sceneAnnotationCreation = {
-  start(sceneId: string, pageId: string) {
+  start(sceneId: string, pageId: string | null) {
     update({ sceneId, pageId, point: null });
+  },
+  setPage(sceneId: string, pageId: string) {
+    if (draft?.sceneId === sceneId) update({ ...draft, pageId });
   },
   pick(sceneId: string, point: [number, number, number]) {
     if (draft?.sceneId === sceneId) update({ ...draft, point });
@@ -62,6 +65,6 @@ export function scenePointTarget(sceneId: string, point: readonly [number, numbe
   return {
     type: "SpecificResource",
     source: { id: sceneId, type: "Scene" },
-    selector: { type: "PointSelector", x: point[0], y: point[1], z: point[2] },
+    selector: [{ type: "PointSelector", x: point[0], y: point[1], z: point[2] }],
   };
 }
