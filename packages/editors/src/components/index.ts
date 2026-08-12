@@ -11,6 +11,7 @@ export * from "./CanvasList/CanvasList";
 export * from "./CanvasPanelEditor/CanvasPanelEditor";
 export * from "./SceneEditor/SceneEditor";
 export * from "./SceneAnnotations/SceneAnnotations";
+export * from "./SceneActivations/SceneActivations";
 export * from "./SceneContents/SceneContents";
 export * from "./TimelineEditor/TimelineEditor";
 export * from "./CanvasPanelViewer/CanvasPanelViewer";

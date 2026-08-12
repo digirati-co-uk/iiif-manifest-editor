@@ -1,7 +1,7 @@
 import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import { allCreators } from "@manifest-editor/creators";
-import { allEditors } from "@manifest-editor/editors";
+import { activationStateEditor, allEditors } from "@manifest-editor/editors";
 import {
   type BackgroundActionDefinition,
   type BackgroundPanel,
@@ -18,6 +18,7 @@ import { contextMenus } from "./context-menus";
 import { CanvasesListIcon } from "./icons";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { sceneAnnotationsPanel } from "./left-panels/scene-annotations";
+import { sceneActivationsPanel } from "./left-panels/scene-activations";
 import { sceneContentsPanel } from "./left-panels/scene-contents";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
@@ -49,6 +50,7 @@ export const leftPanels: LayoutPanel[] = [
   manifestPanel,
   canvasListing,
   sceneContentsPanel,
+  sceneActivationsPanel,
   sceneAnnotationsPanel,
   tagsPanel,
   rangesPanel,
@@ -73,6 +75,13 @@ export const editors = allEditors;
 export const creators = allCreators;
 
 export const resources = [
+  {
+    id: "@manifest-editor/activation-state-resource",
+    label: "Activation state",
+    resourceType: "ContentResource",
+    auto: true,
+    editors: [activationStateEditor],
+  },
   "Manifest",
   "Canvas",
   "Timeline",
