@@ -122,7 +122,10 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                         <button
                           type="button"
                           {...(itemProps as any)[key]}
-                          onClick={item.onClick}
+                          onClick={() => {
+                            setIsOpen(false);
+                            item.onClick?.();
+                          }}
                           className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex-1 text-left p-1.5 rounded-sm flex hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]"
                         >
                           {item.icon ? (
