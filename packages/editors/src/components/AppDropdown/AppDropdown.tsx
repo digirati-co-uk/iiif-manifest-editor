@@ -94,7 +94,11 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
       </Comp>
       {isOpen && (
         <FloatingPortal>
-          <FloatingOverlay lockScroll style={{ zIndex: 60 }}>
+          <FloatingOverlay
+            lockScroll
+            style={{ zIndex: 60 }}
+            onClick={(event) => event.target === event.currentTarget && setIsOpen(false)}
+          >
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
                 role="menu"
