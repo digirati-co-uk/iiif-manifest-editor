@@ -83,6 +83,7 @@ export function ExhibitionCanvasAdvancedContent() {
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
   const isOpeningCover = isOpeningSplashCanvas(canvas, manifestEditor.structural.items.get());
+  const isMisplacedSplash = behavior.includes("splash") && !isOpeningCover;
   const tourSupported = supportsTourSteps(vault, canvas);
   const hasTourSteps = useVaultSelector(
     (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
@@ -99,7 +100,9 @@ export function ExhibitionCanvasAdvancedContent() {
   if (isTextOnly) {
     return (
       <ResourceEditingProvider resource={canvas}>
-        {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
+        {!isAnExhibitionCanvas || isMisplacedSplash ? (
+          <ExhibitionItemConversion misplacedSplash={isMisplacedSplash} />
+        ) : null}
         <ReadonlyExhibitionSummary canvas={canvas} />
         {tourSupported ? <TourStepsSummary canvas={canvas} /> : null}
       </ResourceEditingProvider>
@@ -108,7 +111,9 @@ export function ExhibitionCanvasAdvancedContent() {
 
   return (
     <ResourceEditingProvider resource={canvas}>
-      {!isAnExhibitionCanvas ? <ExhibitionItemConversion /> : null}
+      {!isAnExhibitionCanvas || isMisplacedSplash ? (
+        <ExhibitionItemConversion misplacedSplash={isMisplacedSplash} />
+      ) : null}
 
       <RescaleSingleImagePrompt />
 

@@ -5,7 +5,11 @@ import {
   withExhibitionDefaults,
 } from "./exhibition-item-defaults";
 
-export function ExhibitionItemConversion() {
+export function ExhibitionItemConversion({
+  misplacedSplash = false,
+}: {
+  misplacedSplash?: boolean;
+}) {
   const editor = useEditor();
 
   const applyDefaultSettings = () => {
@@ -16,7 +20,9 @@ export function ExhibitionItemConversion() {
 
     const currentBehaviors = behaviors.get();
     const defaultBehaviors = withExhibitionDefaults(
-      currentBehaviors,
+      misplacedSplash
+        ? currentBehaviors.filter((behavior) => behavior !== "splash")
+        : currentBehaviors,
       canvasWidth,
       canvasHeight,
     );
@@ -37,8 +43,9 @@ export function ExhibitionItemConversion() {
 
   return (
     <div className="flex flex-col items-center gap-4 border-me-100 border-2 p-4 rounded">
-      This canvas was not created in the exhibition editor. Do you want to apply
-      default settings?
+      {misplacedSplash
+        ? "Opening cover canvases must be first. Apply defaults to use this canvas as a regular exhibition slide."
+        : "This canvas was not created in the exhibition editor. Do you want to apply default settings?"}
       <ActionButton onPress={() => applyDefaultSettings()}>
         Apply defaults
       </ActionButton>
