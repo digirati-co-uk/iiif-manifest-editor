@@ -15,6 +15,7 @@ import { PluginConfigBridge } from "../PluginContext/PluginContext";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import type { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
+import { PreviewWindowProvider } from "../PreviewWindow/PreviewWindowContext";
 import { ToastProvider } from "../Toast/ToastContext";
 import { defaultTheme } from "./default-theme";
 
@@ -86,7 +87,7 @@ export function ShellProvider({
       {
         previews: resolvedPreviews,
       },
-      config,
+      config
     );
   }, [existingConfig, config]);
   const backgroundActionPersistenceKey = useMemo(
@@ -98,7 +99,7 @@ export function ShellProvider({
         type: resource.type,
       },
     }),
-    [app.appId, app.instanceId, resource.id, resource.type],
+    [app.appId, app.instanceId, resource.id, resource.type]
   );
 
   return (
@@ -119,7 +120,9 @@ export function ShellProvider({
                         <ToastProvider>
                           {/* @todo swap these out for (config?.previews || []) */}
                           <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
-                            <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                            <PreviewWindowProvider>
+                              <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                            </PreviewWindowProvider>
                           </PreviewProvider>
                         </ToastProvider>
                       </ContextMenuProvider>
