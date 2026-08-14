@@ -18,18 +18,9 @@ import {
 } from "./creators/image-slide-creator";
 import { imageUrlSlideCreator } from "./creators/image-url-slide";
 import { exhibitionPresetConfig } from "./exhibition-onboarding";
-import {
-  infoBoxCreator,
-  slideshowLongEditorialCreator,
-} from "./creators/info-box-creator";
-import {
-  slideshowVideoCreator,
-  videoSlideCreator,
-} from "./creators/video-slide-creator";
-import {
-  slideshowYoutubeCreator,
-  youtubeSlideCreator,
-} from "./creators/youtube-slide-creator";
+import { infoBoxCreator, slideshowLongEditorialCreator } from "./creators/info-box-creator";
+import { slideshowVideoCreator, videoSlideCreator } from "./creators/video-slide-creator";
+import { slideshowYoutubeCreator, youtubeSlideCreator } from "./creators/youtube-slide-creator";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
@@ -42,12 +33,10 @@ import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
-export {
-  imageServiceSlideCreator,
-  type CreateImageServiceSlidePayload,
-} from "./creators/image-service-slide-creator";
+export { imageServiceSlideCreator, type CreateImageServiceSlidePayload } from "./creators/image-service-slide-creator";
 export { exhibitionEditorScrollingPreset } from "./presets/scrolling-preset";
 export { exhibitionEditorSlideshowPreset } from "./presets/slideshow-preset";
+export { useExhibitionPreviewWindow } from "./components/ExhibitionPreviewPanel";
 
 export const exhibitionEditorPreset = extendApp(
   mapApp(ManifestPreset, (app) => ({
@@ -130,5 +119,5 @@ export const exhibitionEditorPreset = extendApp(
       slideshowYoutubeCreator,
       slideshowLongEditorialCreator,
     ],
-  },
+  }
 );
