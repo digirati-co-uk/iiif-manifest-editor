@@ -15,12 +15,12 @@ import {
   useEditingStack,
   useManifestEditor,
 } from "@manifest-editor/shell";
-import { useVault } from "react-iiif-vault";
 import { ExhibitionGrid } from "../components/ExhibitionGrid";
 import { ExhibitionPreviewList } from "../components/ExhibitionPreviewList";
 import { SortableExhibitionGrid } from "../components/SortableExhibitionGrid";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { getSlideSelectionAfterDeletion } from "../helpers/slide-selection";
+import { getOpeningSplashCreatorInitialData } from "../right-panels/opening-splash";
 
 export const exhibitionGridLeftPanel = createExhibitionGridLeftPanel({
   label: "Exhibition grid",
@@ -67,7 +67,6 @@ function createExhibitionGridLeftPanel({
 function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter: string; previewMode: PreviewMode }) {
   const { structural, technical } = useManifestEditor();
   const selectedTemplate = useExhibitionTemplate();
-  const vault = useVault();
   const resolvedPreviewMode = resolvePreviewMode(previewMode, selectedTemplate?.type);
   const resolvedCreatorFilter = resolvedPreviewMode === "slideshow" ? "exhibition-slideshow-slide" : creatorFilter;
   const manifestId = technical.id.get();
@@ -78,8 +77,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
   const selectedCanvasId = editingCanvas?.resource.source.id;
   const selectedIndex = selectedCanvasId ? items.findIndex((item) => item.id === selectedCanvasId) : -1;
   const insertIndex = selectedIndex >= 0 ? selectedIndex + 1 : undefined;
-  const scrollInitialData =
-    resolvedPreviewMode === "scroll" && !hasSplashCanvas(items, vault) ? { imageSlideBehavior: ["splash"] } : undefined;
+  const scrollInitialData = resolvedPreviewMode === "scroll" ? getOpeningSplashCreatorInitialData(items) : undefined;
   const [canCreateCanvas, canvasActions] = useCreator(
     manifest,
     "items",
@@ -160,13 +158,6 @@ function resolvePreviewMode(previewMode: PreviewMode, templateType?: string): Re
   if (previewMode !== "configured") return previewMode;
   if (templateType === "slideshow" || templateType === "scroll") return templateType;
   return "grid";
-}
-
-function hasSplashCanvas(items: Array<{ id: string }>, vault: ReturnType<typeof useVault>) {
-  return items.some((item) => {
-    const canvas = vault.get(item as any) as any;
-    return Array.isArray(canvas?.behavior) && canvas.behavior.includes("splash");
-  });
 }
 
 function ExhibitionGridIcon() {

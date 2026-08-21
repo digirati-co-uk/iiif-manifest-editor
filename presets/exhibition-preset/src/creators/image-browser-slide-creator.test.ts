@@ -50,7 +50,7 @@ describe("imageBrowserSlideCreator", () => {
     ];
     const ctx: any = {
       config: {},
-      options: { targetType: "Canvas" },
+      options: { targetType: "Canvas", initialData: { imageSlideBehavior: ["splash"] } },
       embed: vi.fn((resource) => ({
         get: () => resource,
         ref: () => ({ id: resource.id, type: resource.type }),
@@ -78,6 +78,7 @@ describe("imageBrowserSlideCreator", () => {
       rights: manifestTracking.rights,
       metadata: manifestTracking.metadata,
       partOf: manifestTracking.partOf,
+      behavior: ["splash"],
       width: 640,
       height: 480,
     });

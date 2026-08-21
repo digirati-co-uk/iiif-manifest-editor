@@ -1,10 +1,14 @@
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useManifest } from "react-iiif-vault";
+import { useManifest, useVault } from "react-iiif-vault";
 import { useApp, useAppState, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
-import { resolvePresetTemplateSelection } from "./preset-template-selection";
+import {
+  applyPresetTemplateSelection,
+  getConfiguredPresetTemplate,
+  resolvePresetTemplateSelection,
+} from "./preset-template-selection";
 
 const reopenEvent = "manifest-editor:preset-onboarding:open";
 
@@ -84,10 +88,13 @@ export function PresetOnboarding() {
   const { setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
   const templateSelection = usePresetTemplateSelection();
   const manifest = useManifest();
+  const vault = useVault();
+  const manifestBehavior = (manifest?.behavior as string[]) || [];
+  const configuredTemplate = getConfiguredPresetTemplate(templateSelection.templates, manifestBehavior);
   const resolvedTemplate = resolvePresetTemplateSelection(
     templateSelection.templates,
     templateSelection.selectedTemplateId,
-    (manifest?.behavior as string[]) || [],
+    manifestBehavior,
   );
   const selectedTemplateIdRef = useRef<string | null>(resolvedTemplate?.id || null);
   selectedTemplateIdRef.current = resolvedTemplate?.id || null;
@@ -100,10 +107,10 @@ export function PresetOnboarding() {
 
   useEffect(() => {
     if (!dismissalKey) return;
-    const shouldOpen = !isDismissed(dismissalKey);
+    const shouldOpen = !configuredTemplate && !isDismissed(dismissalKey);
     setOpen(shouldOpen);
     setAutoOpened(shouldOpen);
-  }, [dismissalKey]);
+  }, [configuredTemplate, dismissalKey]);
 
   useEffect(() => {
     const reopen = (event: Event) => {
@@ -134,6 +141,23 @@ export function PresetOnboarding() {
   const setSelectedTemplateId = (id: string | null) => {
     selectedTemplateIdRef.current = id;
     templateSelection.setSelectedTemplateId(id);
+    const selectedTemplate = templateSelection.templates.find((template) => template.id === id);
+    if (!manifest || !selectedTemplate) return;
+
+    const currentBehavior = (manifest.behavior as string[]) || [];
+    const behavior = applyPresetTemplateSelection(currentBehavior, selectedTemplate);
+    if (
+      behavior.length === currentBehavior.length &&
+      behavior.every((item, index) => item === currentBehavior[index])
+    ) {
+      return;
+    }
+    vault.modifyEntityField(manifest, "behavior", behavior);
+  };
+
+  const confirm = () => {
+    setSelectedTemplateId(selectedTemplateIdRef.current);
+    dismiss();
   };
 
   return (
@@ -145,7 +169,7 @@ export function PresetOnboarding() {
         <div className="flex gap-2">
           <ActionButton onPress={dismiss}>{onboarding.dismissLabel || "Dismiss"}</ActionButton>
           {resolvedTemplate ? (
-            <ActionButton primary onPress={dismiss}>
+            <ActionButton primary onPress={confirm}>
               {onboarding.primaryLabel || "Continue"}
             </ActionButton>
           ) : null}

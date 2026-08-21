@@ -17,18 +17,14 @@ import {
   usePreviewContext,
 } from "@manifest-editor/shell";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
-import { type SVGProps, useEffect } from "react";
+import { type SVGProps } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import { useManifest, useVault } from "react-iiif-vault";
+import { useVault } from "react-iiif-vault";
 import { getExhibitionTemplatePreviews, useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionTemplates } from "./exhibition-templates";
 
 export { exhibitionTemplates } from "./exhibition-templates";
 
-const exhibitionTemplateBehaviors = exhibitionTemplates.flatMap((template) => [
-  template.type,
-  `template-${template.id}`,
-]);
 const exhibitionTemplateShortLabels = {
   fullpage: "Full page",
   slideshow: "Slideshow",
@@ -111,7 +107,6 @@ function ExhibitionPresetPreviewButton({
 }: PresetPreviewButtonRenderContext) {
   const { actions, configs, active } = usePreviewContext();
   const vault = useVault();
-  const manifest = useManifest();
   const config = useConfig();
   const resource = useAppResource();
   const layoutActions = useLayoutActions();
@@ -126,27 +121,6 @@ function ExhibitionPresetPreviewButton({
     previewConfigs[0];
   const theseus = previewConfigs.find((item) => item.id === "theseus" || item.id === "theseus-viewer");
   const json = previewConfigs.find((item) => item.id === "raw-manifest");
-
-  useEffect(() => {
-    if (!manifest || !selectedTemplate) return;
-
-    const currentBehavior = (manifest.behavior as string[]) || [];
-    const resolvedTemplateBehaviors = templates.flatMap((template) => [template.type, `template-${template.id}`]);
-    const behavior = [
-      ...currentBehavior.filter(
-        (item) => !exhibitionTemplateBehaviors.includes(item) && !resolvedTemplateBehaviors.includes(item),
-      ),
-      selectedTemplate.type,
-      `template-${selectedTemplate.id}`,
-    ];
-    if (
-      behavior.length === currentBehavior.length &&
-      behavior.every((item, index) => item === currentBehavior[index])
-    ) {
-      return;
-    }
-    vault.modifyEntityField(manifest, "behavior", behavior);
-  }, [manifest, selectedTemplate, templates, vault]);
 
   async function openPreview(template: PresetTemplateDefinition) {
     const manifestId = await actions.getPreviewLink();

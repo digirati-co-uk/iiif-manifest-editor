@@ -4,6 +4,10 @@ import type { EditableResource } from "@manifest-editor/shell";
 type CanvasLike = { id: string; behavior?: string[] | null };
 type ManifestItem = { id: string };
 
+export function getOpeningSplashCreatorInitialData(items: ManifestItem[]) {
+  return items.length === 0 ? { imageSlideBehavior: ["splash"] } : undefined;
+}
+
 export function isOpeningSplashCanvas(
   canvas: CanvasLike | null | undefined,
   items: ManifestItem[] | null | undefined,
