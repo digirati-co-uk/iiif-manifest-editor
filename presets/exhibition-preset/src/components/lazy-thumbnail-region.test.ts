@@ -5,8 +5,16 @@ import {
   getRegionIntersection,
   imageUrlWithRegion,
   imageUrlWithTransform,
+  paintingAnnotationTargetsCanvas,
   shouldUseComplexCanvasThumbnail,
 } from "../../../../packages/components/src/LazyThumbnail";
+
+describe("paintingAnnotationTargetsCanvas", () => {
+  test("ignores painting annotations belonging to another canvas", () => {
+    expect(paintingAnnotationTargetsCanvas({ target: "canvas-2#xywh=0,0,100,100" }, "canvas-1")).toBe(false);
+    expect(paintingAnnotationTargetsCanvas({ target: "canvas-1#xywh=0,0,100,100" }, "canvas-1")).toBe(true);
+  });
+});
 
 describe("getRegionIntersection", () => {
   test("returns the overlapping canvas region", () => {

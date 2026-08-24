@@ -1,14 +1,10 @@
-import { LazyThumbnail } from "@manifest-editor/components";
+import { LazyThumbnail, useCanvasRenderingStrategy } from "@manifest-editor/components";
 import {
   getInternationalStringText,
   useInStack,
 } from "@manifest-editor/editors";
 import { forwardRef } from "react";
-import {
-  LocaleString,
-  useCanvas,
-  useRenderingStrategy,
-} from "react-iiif-vault";
+import { LocaleString, useCanvas } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
@@ -26,7 +22,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
     ref,
   ) {
     const canvas = useCanvas();
-    const [strategy] = useRenderingStrategy();
+    const strategy = useCanvasRenderingStrategy();
     const behavior = canvas?.behavior || [];
     const currentCanvas = useInStack("Canvas");
     const className = getClassName(canvas?.behavior, isFirst);
