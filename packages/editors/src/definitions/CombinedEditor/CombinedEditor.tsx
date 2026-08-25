@@ -43,7 +43,6 @@ export function CombinedEditor({ config }: { config: EditorConfig }) {
     ${hideIfEmpty(descriptive.summary)}
     ${hideIfEmpty(descriptive.rights)}
     ${hideIfEmpty(descriptive.navDate)}
-    ${hideIfEmpty(descriptive.requiredStatement)}
     ${hideIfEmpty(descriptive.provider)}
     ${hideIfEmpty(descriptive.thumbnail)}
     ${hideIfEmpty(descriptive.language)}

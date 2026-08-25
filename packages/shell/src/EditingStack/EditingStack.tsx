@@ -6,6 +6,7 @@ import { flushSync } from "react-dom";
 import { useResourceContext, useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { useAppInstance } from "../AppContext/AppContext";
+import { useEditingContext } from "../ResourceEditingContext/ResourceEditingContext";
 import { editingStackReducer } from "./EditingStack.reducer";
 import type { EditableResource, EditingStackActions, EditingStackState } from "./EditingStack.types";
 
@@ -129,6 +130,7 @@ export function useAnnotationPageEditor() {
 
 export function useEditor() {
   const resource = useEditingResource();
+  const { resource: contextualResource } = useEditingContext();
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
 
@@ -136,10 +138,10 @@ export function useEditor() {
 
   const editor = useMemo(() => {
     return new EditorInstance({
-      reference: resource.resource.source || resource.resource,
+      reference: contextualResource || resource.resource.source || resource.resource,
       vault,
     });
-  }, [resource, vault]);
+  }, [contextualResource, resource, vault]);
 
   useEffect(() => {
     return editor.observe.start(invalidate);

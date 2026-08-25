@@ -1,7 +1,21 @@
-import { type BoxSelector, createThumbnailHelper, type FixedSizeImage, type TemporalBoxSelector } from "@iiif/helpers";
+import {
+  type BoxSelector,
+  createPaintingAnnotationsHelper,
+  createThumbnailHelper,
+  expandTarget,
+  type FixedSizeImage,
+  type TemporalBoxSelector,
+} from "@iiif/helpers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { useCanvas, useRenderingStrategy, useThumbnail, useVault } from "react-iiif-vault";
+import {
+  getRenderingStrategy,
+  useCanvas,
+  useLoadImageService,
+  usePaintingAnnotations,
+  useThumbnail,
+  useVault,
+} from "react-iiif-vault";
 import { LazyLoadComponent } from "react-lazy-load-image-component";
 import { twMerge } from "tailwind-merge";
 import { TextIcon } from "./icons/TextIcon";
@@ -35,6 +49,37 @@ export function LazyThumbnail({
 }
 
 const renderCache = new Map<string, string>();
+
+export function paintingAnnotationTargetsCanvas(annotation: any, canvasId?: string) {
+  return !!canvasId && expandTarget(annotation.target).source.id === canvasId;
+}
+
+export function useCanvasRenderingStrategy() {
+  const canvas = useCanvas();
+  const vault = useVault();
+  const annotations = usePaintingAnnotations();
+  const [loadImageService] = useLoadImageService();
+  const helper = useMemo(() => createPaintingAnnotationsHelper(vault), [vault]);
+  const paintables = useMemo(
+    () =>
+      helper.getPaintables(
+        annotations.filter((annotation) => paintingAnnotationTargetsCanvas(annotation, canvas?.id)),
+      ),
+    [annotations, canvas?.id, helper],
+  );
+
+  return useMemo(
+    () =>
+      getRenderingStrategy({
+        canvas,
+        paintables,
+        supports: ["empty", "images", "media", "textual-content", "complex-timeline"],
+        loadImageService,
+        vault,
+      }),
+    [canvas, loadImageService, paintables, vault],
+  );
+}
 
 export function getImageApiRegion(resource: any) {
   const selector = resource?.selector;
@@ -128,7 +173,7 @@ function LazyThumbnailOuter({
   region?: ThumbnailRegion;
   singleImage?: boolean;
 }) {
-  const [strategy] = useRenderingStrategy();
+  const strategy = useCanvasRenderingStrategy();
   const vault = useVault();
   const useComplexThumbnail = shouldUseComplexCanvasThumbnail(
     strategy,
@@ -221,7 +266,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
 }
 
 function ThumbnailFallback() {
-  const [strategy] = useRenderingStrategy();
+  const strategy = useCanvasRenderingStrategy();
 
   if (strategy.type === "textual-content") {
     return (
@@ -271,7 +316,7 @@ function ComplexCanvasThumbnail({
   singleImage?: boolean;
 }) {
   const canvas = useCanvas();
-  const [strategy] = useRenderingStrategy();
+  const strategy = useCanvasRenderingStrategy();
   const vault = useVault();
   const helper = useMemo(() => {
     return createThumbnailHelper(vault);

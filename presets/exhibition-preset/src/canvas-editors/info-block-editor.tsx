@@ -1,4 +1,5 @@
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
+import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 import {
   type CanvasEditorDefinition,
   useConfig,
@@ -132,7 +133,7 @@ function LanguageSelector({
                     ) : (
                       <div className="h-3 w-3 shrink-0 text-slate-500" />
                     )}
-                    <span className={lang === selectedLanguage ? "" : "ml-5"}>{details?.label || lang}</span>
+                    <span>{details?.label || lang}</span>
                   </button>
                 );
               })}
@@ -204,7 +205,6 @@ function collectLanguagesFromPage(page: any, vault: any): string[] {
 
 function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const canvas = useCanvas();
-  const vault = useVault();
   const behavior = canvas?.behavior || [];
   const dims = getHeightWidthRatio(behavior);
   const hasDimension = Boolean(dims.h && dims.w);
@@ -227,23 +227,23 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const longSummaryHeading = isFullPagePreset ? "Read more text in modal" : "Summary";
 
   // Collect all languages present in the canvas
-  const presentLanguages = useMemo(() => {
-    const fromItems = collectLanguagesFromPage(annotationPage, vault);
-    const fromAnnotations = collectLanguagesFromPage(longSummaries, vault);
-    const all = new Set([...fromItems, ...fromAnnotations]);
-    if (all.size === 0) all.add(defaultLanguage || "en");
-    return Array.from(all);
-  }, [annotationPage, longSummaries, vault, defaultLanguage]);
-
-  const [selectedLanguage, setSelectedLanguage] = useLocalStorage<string>(
-    "exhibition-info-block-language",
-    defaultLanguage || "en",
+  const presentLanguages = useVaultSelector(
+    (_, selectedVault) => {
+      const fromItems = collectLanguagesFromPage(annotationPage, selectedVault);
+      const fromAnnotations = collectLanguagesFromPage(longSummaries, selectedVault);
+      const all = new Set([...fromItems, ...fromAnnotations]);
+      if (all.size === 0) all.add(defaultLanguage || "en");
+      return Array.from(all);
+    },
+    [annotationPage?.id, longSummaries?.id, defaultLanguage],
   );
 
-  // Make sure selected language is always in the present list
-  const effectiveLanguage = presentLanguages.includes(selectedLanguage)
-    ? selectedLanguage
-    : presentLanguages[0] || defaultLanguage || "en";
+  const [selectedLanguage, setSelectedLanguage] = useState<string>();
+  const effectiveLanguage =
+    selectedLanguage ||
+    (presentLanguages.includes(defaultLanguage)
+      ? defaultLanguage
+      : presentLanguages[0] || defaultLanguage || "en");
 
   // When a new language is added we switch to it immediately
   const handleAddLanguage = (lang: string) => {
@@ -256,7 +256,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   return (
     <div className="relative z-0 flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden bg-white">
       {/* Toolbar — same height and position as the image viewer toolbar */}
-      <div className="exhibition-slideshow-current-toolbar flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <div className="exhibition-slideshow-current-toolbar relative z-[70] flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="min-w-0 flex-1">
           <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas?.label}</LocaleString>
         </div>
@@ -438,17 +438,22 @@ function SummarySection({
       const firstBody = firstBodyRef ? resolveResource(firstBodyRef, vault) : null;
       const newBodyId = `${annotation.id}-body-${selectedLanguage}-${Date.now()}`;
       vault.batch(() => {
-        vault.dispatch({
-          type: "entities/update",
-          payload: {
-            type: "ContentResource",
-            id: newBodyId,
-            language: selectedLanguage,
-            value: "",
-            format: firstBody?.format || "text/html",
-            motivation: firstBody?.motivation,
-          },
-        });
+        vault.dispatch(
+          importEntities({
+            entities: {
+              ContentResource: {
+                [newBodyId]: {
+                  id: newBodyId,
+                  type: firstBody?.type || "TextualBody",
+                  language: selectedLanguage,
+                  value: "",
+                  format: firstBody?.format || "text/html",
+                },
+              },
+            },
+          }),
+        );
+        vault.dispatch(addMappings({ mapping: { [newBodyId]: "ContentResource" } }));
         vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", [
           ...bodies,
           { id: newBodyId, type: "ContentResource" },
@@ -467,19 +472,22 @@ function SummarySection({
   };
 
   // Check whether the selected language is already represented in this page
-  const languageExistsInPage = useMemo(() => {
-    if (!page) return false;
-    for (const annotationRef of items) {
-      const annotation = resolveResource(annotationRef, vault);
-      if (!annotation) continue;
-      const bodies = toArray(annotation.body);
-      for (const bodyRef of bodies) {
-        const body = resolveResource(bodyRef, vault);
-        if (body?.language === selectedLanguage) return true;
+  const languageExistsInPage = useVaultSelector(
+    (_, selectedVault) => {
+      if (!page) return false;
+      for (const annotationRef of items) {
+        const annotation = resolveResource(annotationRef, selectedVault);
+        if (!annotation) continue;
+        const bodies = toArray(annotation.body);
+        for (const bodyRef of bodies) {
+          const body = resolveResource(bodyRef, selectedVault);
+          if (body?.language === selectedLanguage) return true;
+        }
       }
-    }
-    return false;
-  }, [page, items, vault, selectedLanguage]);
+      return false;
+    },
+    [page?.id, items, selectedLanguage],
+  );
 
   return (
     <section className={twMerge("min-w-0 max-w-full", panelClassName)}>

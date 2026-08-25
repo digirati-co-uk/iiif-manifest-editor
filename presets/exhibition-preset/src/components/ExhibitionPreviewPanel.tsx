@@ -1,8 +1,5 @@
 import { useInStack } from "@manifest-editor/editors";
-import {
-  createIframeVaultBridge,
-  useAppResource,
-} from "@manifest-editor/shell";
+import { createIframeVaultBridge, useAppResource, usePreviewWindow } from "@manifest-editor/shell";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
@@ -13,10 +10,7 @@ import {
 } from "../helpers/exhibition-preview-url-helper";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { useSlideshowContentPositioning } from "../slideshow-content-positioning";
-import {
-  getPreviewImageTransformKey,
-  getPreviewStructureKey,
-} from "./preview-structure";
+import { getPreviewImageTransformKey, getPreviewStructureKey } from "./preview-structure";
 
 export interface ExhibitionPreviewPanelProps {
   preset: PresetUrlSearchParamsPreset;
@@ -36,6 +30,7 @@ export function ExhibitionPreviewPanel({
   presetOptions,
   focusSelectedCanvas = true,
 }: ExhibitionPreviewPanelProps) {
+  const previewWindow = useExhibitionPreviewWindow({ preset, presetOptions, focusSelectedCanvas });
   const vault = useVault();
   const rootResource = useAppResource();
   const manifest = useManifest();
@@ -47,33 +42,21 @@ export function ExhibitionPreviewPanel({
   const resourceRef = useRef(rootResource);
   const canvasIdRef = useRef<string | null>(null);
   const annotationIdRef = useRef<string | null>(null);
-  const [status, setStatus] = useState<"waiting" | "connected" | "error">(
-    "waiting",
-  );
+  const [status, setStatus] = useState<"waiting" | "connected" | "error">("waiting");
   const [viewportWidth, setViewportWidth] = useState(0);
   const [useScaledPreview, setUseScaledPreview] = useState(false);
   const [useMobileWidthPreview, setUseMobileWidthPreview] = useState(false);
-  const selectedTourStepId = useSlideshowContentPositioning(
-    (state) => state.selectedTourStepId,
-  );
-  const currentCanvasId = focusSelectedCanvas
-    ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null
-    : null;
+  const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
+  const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
   const structureKey = getPreviewStructureKey(rootResource, manifest?.items);
   const imageTransformKey = useVaultSelector(
-    (_, currentVault) =>
-      getPreviewImageTransformKey(currentVault, manifest?.items),
-    [structureKey],
+    (_, currentVault) => getPreviewImageTransformKey(currentVault, manifest?.items),
+    [structureKey]
   );
   const previousStructureKeyRef = useRef(structureKey);
   const src = useMemo(
-    () =>
-      createScrollingPreviewUrl(
-        preset,
-        presetOptions,
-        template?.previewUrl,
-      ).toString(),
-    [preset, presetOptions, template?.previewUrl],
+    () => createScrollingPreviewUrl(preset, presetOptions, template?.previewUrl).toString(),
+    [preset, presetOptions, template?.previewUrl]
   );
   const targetOrigin = useMemo(() => new URL(src).origin, [src]);
   const previewScale = useScaledPreview ? SCALED_PREVIEW_SIZE : 1;
@@ -82,8 +65,7 @@ export function ExhibitionPreviewPanel({
     : viewportWidth
       ? Math.round(viewportWidth / previewScale)
       : 0;
-  const isMobileViewport =
-    iframeViewportWidth > 0 && iframeViewportWidth <= MOBILE_VIEWPORT_WIDTH;
+  const isMobileViewport = iframeViewportWidth > 0 && iframeViewportWidth <= MOBILE_VIEWPORT_WIDTH;
 
   resourceRef.current = rootResource;
   canvasIdRef.current = currentCanvasId;
@@ -108,7 +90,7 @@ export function ExhibitionPreviewPanel({
           annotationId: annotationIdRef.current || undefined,
         },
         targetOrigin,
-        [channel.port2],
+        [channel.port2]
       );
       setStatus("connected");
     } catch {
@@ -144,16 +126,9 @@ export function ExhibitionPreviewPanel({
         canvasId: currentCanvasId,
         annotationId: selectedTourStepId || undefined,
       },
-      targetOrigin,
+      targetOrigin
     );
-  }, [
-    status,
-    rootResource.id,
-    rootResource.type,
-    currentCanvasId,
-    selectedTourStepId,
-    targetOrigin,
-  ]);
+  }, [status, rootResource, currentCanvasId, selectedTourStepId, targetOrigin]);
 
   useEffect(() => {
     const structureChanged = previousStructureKeyRef.current !== structureKey;
@@ -208,28 +183,25 @@ export function ExhibitionPreviewPanel({
     <div className="flex h-full min-h-0 flex-col bg-zinc-950">
       {status !== "connected" ? (
         <div className="border-b border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300">
-          {status === "error"
-            ? "Preview connection failed."
-            : "Connecting to exhibition viewer..."}
+          {status === "error" ? "Preview connection failed." : "Connecting to exhibition viewer..."}
         </div>
       ) : null}
       <PreviewViewportNotice
         iframeViewportWidth={iframeViewportWidth}
         isMobileViewport={isMobileViewport}
-        showScaleOption={
-          viewportWidth > 0 && viewportWidth <= MOBILE_VIEWPORT_WIDTH
-        }
+        showScaleOption={viewportWidth > 0 && viewportWidth <= MOBILE_VIEWPORT_WIDTH}
         showMobileWidthOption={viewportWidth > MOBILE_VIEWPORT_WIDTH}
         useScaledPreview={useScaledPreview}
         useMobileWidthPreview={useMobileWidthPreview}
         onUseScaledPreviewChange={setScaledPreview}
         onUseMobileWidthPreviewChange={setMobileWidthPreview}
+        previewWindow={previewWindow}
       />
       <div
         ref={viewportRef}
         className={twMerge(
           "flex min-h-0 flex-1 overflow-hidden bg-white",
-          useScaledPreview ? "justify-start" : "justify-center",
+          useScaledPreview ? "justify-start" : "justify-center"
         )}
       >
         <iframe
@@ -239,7 +211,7 @@ export function ExhibitionPreviewPanel({
           title="Exhibition preview"
           className={twMerge(
             "block h-full shrink-0 border-0 bg-white",
-            useMobileWidthPreview ? "shadow-2xl shadow-black/40" : "",
+            useMobileWidthPreview ? "shadow-2xl shadow-black/40" : ""
           )}
           style={{
             width: useMobileWidthPreview
@@ -249,15 +221,58 @@ export function ExhibitionPreviewPanel({
                 : "100%",
             maxWidth: useMobileWidthPreview ? "100%" : undefined,
             height: useScaledPreview ? `${100 / SCALED_PREVIEW_SIZE}%` : "100%",
-            transform: useScaledPreview
-              ? `scale(${SCALED_PREVIEW_SIZE})`
-              : undefined,
+            transform: useScaledPreview ? `scale(${SCALED_PREVIEW_SIZE})` : undefined,
             transformOrigin: "top left",
           }}
           onLoad={() => setStatus("waiting")}
         />
       </div>
     </div>
+  );
+}
+
+export function useExhibitionPreviewWindow({
+  preset,
+  presetOptions,
+  focusSelectedCanvas = true,
+}: ExhibitionPreviewPanelProps) {
+  const { open, update, focus, isClosed } = usePreviewWindow();
+  const rootResource = useAppResource();
+  const manifest = useManifest();
+  const template = useExhibitionTemplate();
+  const canvas = useInStack("Canvas");
+  const selectedTourStepId = useSlideshowContentPositioning((state) => state.selectedTourStepId);
+  const currentCanvasId = focusSelectedCanvas ? canvas?.resource.source.id || manifest?.items?.[0]?.id || null : null;
+  const structureKey = getPreviewStructureKey(rootResource, manifest?.items);
+  const imageTransformKey = useVaultSelector(
+    (_, currentVault) => getPreviewImageTransformKey(currentVault, manifest?.items),
+    [structureKey]
+  );
+  const url = useMemo(
+    () => createScrollingPreviewUrl(preset, presetOptions, template?.previewUrl).toString(),
+    [preset, presetOptions, template?.previewUrl]
+  );
+  const options = useMemo(
+    () => ({
+      url,
+      resource: rootResource,
+      canvasId: currentCanvasId,
+      annotationId: selectedTourStepId,
+      name: "manifest-editor-exhibition-preview",
+      reloadKey: `${structureKey}:${imageTransformKey}`,
+    }),
+    [currentCanvasId, imageTransformKey, rootResource, selectedTourStepId, structureKey, url]
+  );
+
+  useEffect(() => update(options), [options, update]);
+
+  return useMemo(
+    () => ({
+      open: () => open(options),
+      focus,
+      isClosed,
+    }),
+    [focus, isClosed, open, options]
   );
 }
 
@@ -270,6 +285,7 @@ function PreviewViewportNotice({
   useMobileWidthPreview,
   onUseScaledPreviewChange,
   onUseMobileWidthPreviewChange,
+  previewWindow,
 }: {
   iframeViewportWidth: number;
   isMobileViewport: boolean;
@@ -279,6 +295,7 @@ function PreviewViewportNotice({
   useMobileWidthPreview: boolean;
   onUseScaledPreviewChange: (useScaledPreview: boolean) => void;
   onUseMobileWidthPreviewChange: (useMobileWidthPreview: boolean) => void;
+  previewWindow: Pick<ReturnType<typeof useExhibitionPreviewWindow>, "open" | "focus" | "isClosed">;
 }) {
   if (!iframeViewportWidth) {
     return null;
@@ -292,32 +309,37 @@ function PreviewViewportNotice({
             "shrink-0 rounded-full px-2 py-1 font-semibold ring-1 ring-inset",
             isMobileViewport
               ? "bg-amber-300/90 text-amber-950 ring-amber-200/50"
-              : "bg-emerald-300/90 text-emerald-950 ring-emerald-200/50",
+              : "bg-emerald-300/90 text-emerald-950 ring-emerald-200/50"
           )}
         >
           {isMobileViewport ? "Mobile view" : "Desktop view"}
         </span>
         <span className="truncate text-zinc-400">
-          Iframe viewport: {iframeViewportWidth}px. Mobile starts at{" "}
-          {MOBILE_VIEWPORT_WIDTH}px and below.
+          Iframe viewport: {iframeViewportWidth}px. Mobile starts at {MOBILE_VIEWPORT_WIDTH}px and below.
         </span>
       </div>
 
-      {showScaleOption ? (
-        <PreviewToggle
-          label="50% scale"
-          checked={useScaledPreview}
-          onChange={onUseScaledPreviewChange}
-        />
-      ) : null}
+      <div className="flex items-center gap-2">
+        {showScaleOption ? (
+          <PreviewToggle label="50% scale" checked={useScaledPreview} onChange={onUseScaledPreviewChange} />
+        ) : null}
 
-      {showMobileWidthOption ? (
-        <PreviewToggle
-          label="Mobile width"
-          checked={useMobileWidthPreview}
-          onChange={onUseMobileWidthPreviewChange}
-        />
-      ) : null}
+        {showMobileWidthOption ? (
+          <PreviewToggle
+            label="Mobile width"
+            checked={useMobileWidthPreview}
+            onChange={onUseMobileWidthPreviewChange}
+          />
+        ) : null}
+
+        <button
+          type="button"
+          className="shrink-0 rounded-md border border-zinc-700 bg-zinc-950/70 px-2.5 py-1.5 font-semibold text-zinc-200 shadow-sm shadow-black/20 transition-colors hover:border-zinc-600 hover:bg-zinc-950"
+          onClick={previewWindow.isClosed ? previewWindow.open : previewWindow.focus}
+        >
+          {previewWindow.isClosed ? "Open in new window" : "Focus preview window"}
+        </button>
+      </div>
     </div>
   );
 }
