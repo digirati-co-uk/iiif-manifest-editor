@@ -65,7 +65,7 @@ export function normalizeSummaryForSave(value: InternationalString): Internation
     }
   }
 
-  return normalized;
+  return Object.keys(normalized).length ? normalized : { none: [""] };
 }
 
 export function getLanguageMapHtml(value: unknown): string {
