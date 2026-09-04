@@ -59,9 +59,53 @@ This will load the selected Manifest for you to begin working with your copy of 
 
 ## Using the IIIF Browser to add content to your manifest
 
-You can use the IIIF Browser to discover and reuse existing IIIF content within your Manifest. You may want to add one or more canvases for example to your Manifest; or you might want to select a specific crop of an image
-from an existing IIIF resource to include on your canvas.
+The IIIF Browser enables you to discover, preview, and reuse content from existing IIIF resources when building a Manifest. Rather than creating every canvas from scratch, you can browse published IIIF Manifests and Collections and selectively include some of that content into your manifest.
 
-### Creating a canvas using existing IIIF content
+### When to Use the IIIF Browser
 
-### Using the IIIF Browser to select and crop an image
+Use the IIIF Browser when you want to:
+- Reuse content from an existing IIIF Manifest or Collection.
+- Include content published by another institution or repository.
+- Select individual canvases from an existing Manifest.
+- Reuse a specific region of an image by creating a crop.
+- Build new narratives or exhibitions using existing IIIF resources.
+
+### Opening the IIIF Browser
+- Open your Manifest in the Manifest Editor.
+- Navigate to the Canvases in the left hand menu and select the IIIF Browser link
+- Alternatively, using the 'Add new canvas' you can select the IIIF Browser option from the Add content menu
+
+### Finding IIIF Content
+- Paste the URL of a IIIF Manifest or Collection into the browser.
+- The Manifest or Collection will be displayed as an available resource.
+- Select Open to browse its contents.
+
+![Use IIIF Browser to find content](../../public/iiif-browser-pasting-link-to-add-content-to-manifest1.png)
+
+### Browsing Canvases
+Once a Manifest or Collection has been opened:
+- Review the list of available manifests or canvases.
+- Navigate through the list to find the item you wish to open and view.
+- Select a canvas thumbnail to preview the content.
+
+![Use IIIF Browser to browse content](../../public/iiif-browser-browsing-to-add-content-to-manifest2.png)
+
+### Selecting Content
+When viewing a canvas:
+
+- Review the content in the preview window.
+- If required, use the available image tools to define a cropped region of the image or to rotate the image.
+- Use the Select option to add your selection to your Manifest as a new canvas.
+
+Note: Not all IIIF viewers support image cropping. If you use a cropped region, verify that your target viewer supports the feature.
+
+![Use IIIF Browser to crop rotate or simply select the content](../../public/iiif-browser-cropping-and-rotating-selected-image-to-add-to-manifest3.png)
+
+### Metadata Preservation
+When content is added through the IIIF Browser:
+
+- Metadata from the source resource is retained.
+- Rights statements and required attribution statements are carried across with the selected content where available.
+- The originating Manifest can be referenced through the IIIF metadata structure, supporting provenance and citation of reused material.
+
+![Source metadata is added to the Canvas](../../public/iiif-browser-includes-metadata-within-added-canvas-manifest4.png)
