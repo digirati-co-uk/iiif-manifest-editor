@@ -42,7 +42,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         {...(props.dragState ? dragProps : {})}
         onClick={props.onClick}
         className={twMerge(
-          "flex flex-col border-0 bg-transparent p-0 text-inherit",
+          "flex w-full flex-col border-0 bg-transparent p-0 text-inherit",
           props.className,
         )}
         data-canvas-selected={props.selected}
