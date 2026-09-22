@@ -8,7 +8,6 @@ packages:
 
 allowBuilds:
   "@tailwindcss/oxide": true
-  contentlayer2: true
   core-js: true
   esbuild: true
   onnxruntime-node: true
@@ -61,6 +60,3 @@ overrides:
   react-aria: 3.43.2
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0
-
-patchedDependencies:
-  '@contentlayer2/core@0.5.8': patches/@contentlayer2__core@0.5.8.patch
