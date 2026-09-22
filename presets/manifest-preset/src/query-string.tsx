@@ -14,31 +14,13 @@ import { useEditCanvasItems } from "./components";
 import { canvasListing } from "./left-panels/canvas-listing";
 import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
+import { getSearchParam, replaceSearchParam } from "./query-string-state";
 
 export const queryStringTask: BackgroundPanel = {
   id: "manifest-query-string",
   label: "Query string",
   render: () => <QueryStringBackgroundTask />,
 };
-
-function setQueryString(key: string, value: string | null | undefined) {
-  const currentQueryString = new URLSearchParams(window.location.search);
-  const newQueryString = new URLSearchParams(currentQueryString);
-  if (value) {
-    newQueryString.set(key, value);
-  } else {
-    newQueryString.delete(key);
-  }
-  window.history.replaceState(null, "", `?${newQueryString.toString()}`);
-}
-
-function setCanvasIdQueryString(value: string | null | undefined) {
-  setQueryString("canvas", value);
-}
-
-function setLeftPanelIdQueryString(value: string | null | undefined) {
-  setQueryString("leftPanel", value);
-}
 
 function QueryStringBackgroundTask() {
   const manifest = useManifest();
@@ -52,6 +34,7 @@ function QueryStringBackgroundTask() {
   const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
   const {
+    urlState,
     editorFeatureFlags: {
       rememberCanvasId = true,
       rememberLeftPanelId = false,
@@ -73,8 +56,7 @@ function QueryStringBackgroundTask() {
   // a canvas ID in the query string.
   useEffect(() => {
     // Initialize the query string with the current canvas ID.
-    const initialQueryString = new URLSearchParams(window.location.search);
-    const canvasId = initialQueryString.get("canvas");
+    const canvasId = getSearchParam("canvas", urlState);
     lastCanvas.current = canvasId;
 
     if (canvasId) {
@@ -83,7 +65,7 @@ function QueryStringBackgroundTask() {
       canvasActions.edit({ id: canvasId, type: "Canvas" });
     }
 
-    const leftPanelId = initialQueryString.get("leftPanel");
+    const leftPanelId = getSearchParam("leftPanel", urlState);
     lastLeftPanel.current = leftPanelId;
     if (leftPanelId && leftPanels.some((panel) => panel.id === leftPanelId)) {
       leftPanelActions.open({ id: leftPanelId });
@@ -92,7 +74,7 @@ function QueryStringBackgroundTask() {
 
   useEffect(() => {
     if (rememberLeftPanelId) {
-      setLeftPanelIdQueryString(leftPanel.current);
+      replaceSearchParam("leftPanel", leftPanel.current, urlState);
     }
   }, [leftPanel.current]);
 
@@ -105,14 +87,16 @@ function QueryStringBackgroundTask() {
     if (!rememberCanvasId) {
       return;
     }
-    setCanvasIdQueryString(canvasId);
+    replaceSearchParam("canvas", canvasId, urlState);
   }, [canvas?.resource?.source?.id]);
 
   // Changing based on panels.
   useEffect(() => {
     // When the Manifest panel is opened, edit the Manifest.
     if (leftPanel.current === manifestPanel.id) {
-      setCanvasIdQueryString(null);
+      if (rememberCanvasId) {
+        replaceSearchParam("canvas", null, urlState);
+      }
       manifest &&
         edit(manifest, undefined, {
           forceOpen: true,

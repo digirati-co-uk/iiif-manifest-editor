@@ -1,10 +1,5 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
-  "compilerOptions": {
-    "paths": {
-      "contentlayer/generated": ["./.contentlayer/generated"]
-    }
-  },
   "include": [
     "cloudflare-env.d.ts",
     "next-env.d.ts",
@@ -13,7 +8,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    ".contentlayer/generated"
+    ".next/dev/types/**/*.ts"
   ]
 }

@@ -18,6 +18,11 @@ export interface Config {
 
   defaultPreview: string | null;
 
+  urlState?: {
+    getSearchParam: (key: string) => string | null;
+    replaceSearchParam: (key: string, value: string | null) => void;
+  };
+
   editorConfig: {
     All?: EditorConfig;
     Manifest?: EditorConfig;

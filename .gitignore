@@ -37,7 +37,6 @@ yarn-error.log*
 .DS_Store
 *.pem
 prev/
-.contentlayer
 .obsidian/
 .space/
 .makemd/
