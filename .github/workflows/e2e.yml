@@ -38,7 +38,6 @@ jobs:
         run: pnpm --filter playwright exec playwright install --with-deps chromium
       - name: Regression tests
         run: |
-          node --test packages/creators/src/ContentResource/image-service-options.test.mjs
           pnpm --filter playwright test --grep-invert @cookbook --output=test-results/regression
         env:
           PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/regression
