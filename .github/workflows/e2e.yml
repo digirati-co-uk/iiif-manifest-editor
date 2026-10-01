@@ -1,0 +1,59 @@
+name: E2E
+
+on:
+  pull_request:
+    branches: [main]
+  # Test production only after this commit has been built and deployed.
+  workflow_run:
+    workflows: [Build]
+    branches: [main]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.event.pull_request.number || 'production' }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    if: github.event_name == 'pull_request' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: true
+      E2E_TARGET: ${{ github.event_name == 'pull_request' && 'local' || 'prod' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Chromium and system dependencies
+        run: pnpm --filter playwright exec playwright install --with-deps chromium
+      - name: Regression tests
+        run: |
+          node --test packages/creators/src/ContentResource/image-service-options.test.mjs
+          pnpm --filter playwright test --grep-invert @cookbook --output=test-results/regression
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/regression
+      - name: Cookbook coverage (advisory)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: pnpm --filter playwright test --grep @cookbook --retries=0 --output=test-results/cookbook
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/cookbook
+      - name: Upload reports, traces and cookbook exports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ github.event_name == 'pull_request' && 'local' || 'prod' }}
+          path: |
+            packages/playwright/playwright-report/
+            packages/playwright/test-results/
+          retention-days: 14

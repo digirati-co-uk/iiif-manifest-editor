@@ -4,6 +4,7 @@ import type { CreatorContext, CreatorFunctionContext, CreatorResource } from "@m
 import { Input, InputContainer, InputLabel } from "@manifest-editor/editors";
 import { type FormEvent, useMemo, useState } from "react";
 import { getCanonicalUrl, serviceImageAtSize } from "./thumbnail-helpers";
+import { compactImageService, normalizeImageService } from "../image-service-options";
 
 export interface CreateThumbnailPayload {
   service: ImageService;
@@ -14,14 +15,10 @@ export interface CreateThumbnailPayload {
 
 export async function createThumbnail(data: CreateThumbnailPayload, ctx: CreatorFunctionContext) {
   // Here is where we can add a thumbnail, if appropriate.
-  const service = { ...data.service };
+  const service = normalizeImageService(data.service);
   const sizes = service.sizes;
-  if (service["@id"]) {
-    service.id = service["@id"];
-  }
-  if (service["@type"]) {
-    service.type = service["@type"];
-  }
+  // Thumbnails retain available sizes/tiles regardless of the workspace's painting-image defaults.
+  const embeddedService = compactImageService(service, ctx.config, true);
 
   if (data.thumbnailUrl) {
     return ctx.embed({
@@ -30,6 +27,7 @@ export async function createThumbnail(data: CreateThumbnailPayload, ctx: Creator
       format: "image/jpeg",
       width: data.width,
       height: data.height,
+      service: [embeddedService],
     });
   }
 
@@ -51,6 +49,7 @@ export async function createThumbnail(data: CreateThumbnailPayload, ctx: Creator
         format: "image/jpeg",
         width: bestMatch.width,
         height: bestMatch.height,
+        service: [embeddedService],
       });
     }
   }
@@ -144,7 +143,7 @@ export function CreateThumbnailForm(props: CreatorContext) {
       <form onSubmit={onSubmit}>
         <div className="flex gap-2 items-center">
           <InputContainer $wide>
-            <InputLabel htmlFor="id">Link to image service</InputLabel>
+            <InputLabel htmlFor="url">Link to image service</InputLabel>
             <Input
               id="url"
               name="url"

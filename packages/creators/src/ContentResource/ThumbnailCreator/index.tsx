@@ -12,6 +12,7 @@ declare module "@manifest-editor/creator-api" {
 
 export const thumbnailCreator = defineCreator({
   id: "@manifest-editor/thumbnail-image",
+  configKey: "iiif-image-services",
   create: createThumbnail,
   label: "Thumbnail from service",
   summary: "Add thumbnail from an image service",
@@ -20,7 +21,7 @@ export const thumbnailCreator = defineCreator({
     return <CreateThumbnailForm {...ctx} />;
   },
   resourceType: "ContentResource",
-  resourceFields: ["id", "type", "format"],
+  resourceFields: ["id", "type", "format", "width", "height", "service"],
   supports: {
     parentFields: ["thumbnail"],
   },

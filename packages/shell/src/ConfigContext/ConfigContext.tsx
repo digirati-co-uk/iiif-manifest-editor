@@ -135,7 +135,13 @@ const DEFAULT_CONFIG: Config = {
     baseIdentifier: null,
     version: 3,
   },
-  creators: {},
+  creators: {
+    "iiif-image-services": {
+      compact: "with-dimensions",
+      includeSizes: false,
+      includeTiles: false,
+    },
+  },
 };
 
 function mergeEditorConfig(
