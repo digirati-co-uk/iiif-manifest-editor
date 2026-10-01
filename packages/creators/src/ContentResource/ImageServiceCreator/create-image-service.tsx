@@ -14,6 +14,7 @@ import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { type FormEvent, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ImageService as ImageServiceComponent, useImage } from "react-iiif-vault";
+import { compactImageService, normalizeImageService } from "../image-service-options";
 
 export interface CreateImageServicePayload {
   url: string;
@@ -27,13 +28,7 @@ export interface CreateImageServicePayload {
 }
 
 export async function createImageServer(data: CreateImageServicePayload, ctx: CreatorFunctionContext) {
-  const service = { ...data.service };
-  if (service["@id"]) {
-    service.id = service["@id"];
-  }
-  if (service["@type"]) {
-    service.type = service["@type"];
-  }
+  const service = normalizeImageService(data.service);
 
   const request = createImageServiceRequest(service);
   const imageId = imageServiceRequestToString({
@@ -63,7 +58,10 @@ export async function createImageServer(data: CreateImageServicePayload, ctx: Cr
     format: data.format || "image/jpeg",
     height: data.height || service.height,
     width: data.width || service.width,
-    service: data.embedService === false ? undefined : [data.service],
+    service:
+      data.embedService === false
+        ? undefined
+        : [compactImageService(service, ctx.config, ctx.options.parent?.property === "thumbnail")],
   });
 
   // @todo add in support for the region selector (creating specific resource)
@@ -113,7 +111,7 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
       <form onSubmit={onSubmit}>
         <div className="flex gap-2 items-center">
           <InputContainer $wide>
-            <InputLabel htmlFor="id">Link to image service</InputLabel>
+            <InputLabel htmlFor="url">Link to image service</InputLabel>
             <Input
               id="url"
               name="url"

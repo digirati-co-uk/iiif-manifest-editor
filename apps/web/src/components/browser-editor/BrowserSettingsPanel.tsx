@@ -4,6 +4,7 @@ import { Form } from "@manifest-editor/components";
 import {
   type Config,
   CreatorSettings,
+  IIIFOptions,
   PluginManager,
   useAppResource,
   useConfig,
@@ -12,13 +13,14 @@ import {
 } from "@manifest-editor/shell";
 import { useState } from "react";
 
-type SettingsSection = "general" | "preview" | "editor" | "export" | "creators" | "plugins";
+type SettingsSection = "general" | "preview" | "editor" | "export" | "iiif" | "creators" | "plugins";
 
 const sections: Array<{ id: SettingsSection; label: string }> = [
   { id: "general", label: "General" },
   { id: "preview", label: "Preview" },
   { id: "editor", label: "Editor" },
   { id: "export", label: "Export" },
+  { id: "iiif", label: "IIIF Options" },
   { id: "creators", label: "Creator settings" },
   { id: "plugins", label: "Plugins" },
 ];
@@ -100,6 +102,8 @@ export function BrowserSettingsPanel() {
           <SettingsSection title="Plugins">
             <PluginManager />
           </SettingsSection>
+        ) : section === "iiif" ? (
+          <IIIFOptions />
         ) : section === "creators" ? (
           <SettingsSection title="Creator settings">
             <CreatorSettings />

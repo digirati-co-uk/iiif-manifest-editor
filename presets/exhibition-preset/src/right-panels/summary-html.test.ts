@@ -11,6 +11,12 @@ describe("summary HTML", () => {
     });
   });
 
+  test("serializes an empty summary as a valid empty IIIF string", () => {
+    expect(normalizeSummaryForSave({ en: [""] })).toEqual({
+      none: [""],
+    });
+  });
+
   test("only permits the IIIF marker on images with the value true", () => {
     const html = sanitizeSummaryHtml(
       '<p data-iiif-image="true">Text</p>' +

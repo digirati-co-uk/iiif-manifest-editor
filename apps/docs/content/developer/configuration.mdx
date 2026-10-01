@@ -6,6 +6,11 @@ export interface Config {
   behaviorPresets: string[];
   defaultPreview: string | null;
 
+  urlState?: {
+    getSearchParam: (key: string) => string | null;
+    replaceSearchParam: (key: string, value: string | null) => void;
+  };
+
   editorConfig: {
     All?: EditorConfig;
     Manifest?: EditorConfig;
@@ -56,6 +61,29 @@ export interface EditorConfig {
   hideTabs?: string[];
   onlyTabs?: string[];
 }
+```
+
+### Host-managed URL state
+
+By default, the manifest preset reads and replaces its `canvas` and `leftPanel` search parameters using the browser History API. Hosts with their own router can keep that router as the sole history writer:
+
+```ts
+const config: Partial<Config> = {
+  urlState: {
+    getSearchParam: (key) => router.state.location.search[key] ?? null,
+    replaceSearchParam: (key, value) =>
+      router.navigate({
+        to: ".",
+        replace: true,
+        search: (previous) => {
+          const next = { ...previous };
+          if (value === null) delete next[key];
+          else next[key] = value;
+          return next;
+        },
+      }),
+  },
+};
 ```
 
 ### Default config

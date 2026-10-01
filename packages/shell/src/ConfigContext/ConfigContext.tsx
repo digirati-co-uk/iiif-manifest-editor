@@ -18,6 +18,11 @@ export interface Config {
 
   defaultPreview: string | null;
 
+  urlState?: {
+    getSearchParam: (key: string) => string | null;
+    replaceSearchParam: (key: string, value: string | null) => void;
+  };
+
   editorConfig: {
     All?: EditorConfig;
     Manifest?: EditorConfig;
@@ -130,7 +135,13 @@ const DEFAULT_CONFIG: Config = {
     baseIdentifier: null,
     version: 3,
   },
-  creators: {},
+  creators: {
+    "iiif-image-services": {
+      compact: "with-dimensions",
+      includeSizes: false,
+      includeTiles: false,
+    },
+  },
 };
 
 function mergeEditorConfig(

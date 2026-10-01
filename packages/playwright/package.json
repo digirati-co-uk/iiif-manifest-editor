@@ -6,6 +6,7 @@
   "scripts": {
     "screenshots:exhibition-presets": "node scripts/capture-thumbnails.mjs exhibition-presets.json",
     "test": "playwright test",
+    "dev": "E2E_TARGET=watch playwright test --ui",
     "test:report": "playwright show-report"
   },
   "keywords": [],

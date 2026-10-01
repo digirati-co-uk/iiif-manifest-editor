@@ -4,6 +4,7 @@ import { useDecayState } from "../hooks/use-decay-state";
 import { PluginManager } from "../PluginContext/PluginManager";
 import { usePreviewContext, usePreviews } from "../PreviewContext/PreviewContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
+import { IIIFOptions } from "./IIIFOptions";
 
 export function ConfigEditor() {
   const previews = usePreviewContext();
@@ -53,6 +54,7 @@ export function ConfigEditor() {
       <SidebarHeader title="Workspace configuration" />
       {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">Changes saved</div> : null}
       <SidebarContent className="p-4">
+        <IIIFOptions />
         <Form.Form onSubmit={onSubmit} className="flex flex-col gap-3">
           <Form.InputContainer>
             <Form.Label htmlFor="defaultLanguage">Default Language</Form.Label>
