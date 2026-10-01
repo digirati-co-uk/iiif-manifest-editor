@@ -85,3 +85,28 @@ The development of the IIIF Manifest Editor has been supported by:
 
 Adapted from [azu/monorepo-github-releases](https://github.com/azu/monorepo-github-releases/tree/main) see instructions.
 
+## Development and E2E tests
+
+Install dependencies and the test browser once from the repository root:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm --filter playwright exec playwright install chromium
+```
+
+| Command          | Workflow                                                                                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm e2e:local` | Build the web app and its dependencies, start only the web server at http://localhost:3000, run tests, then stop the server.                              |
+| `pnpm e2e:dev`   | Run tests against https://manifest-editor-preview.digirati.workers.dev/.                                                                                  |
+| `pnpm e2e:prod`  | Run tests against https://manifest-editor.digirati.services/.                                                                                             |
+| `pnpm dev:test`  | Build dependencies and plugins, start the full development workflow with package/plugin watchers and Next.js hot reload, and open the Playwright test UI. |
+
+Port 3000 must be free for the local workflows; they never replace an existing server.
+The E2E production build uses `apps/web/.next-e2e`, leaving development output separate.
+Press Ctrl+C to stop the development workflow. Enable the
+eye icon in the test UI to rerun tests when their files change.
+
+Pass Playwright options through the root commands, for example
+`pnpm e2e:local --grep @baseline`. Reports and failure traces are saved under
+`packages/playwright/playwright-report` and `packages/playwright/test-results`.
+View the latest report with `pnpm --filter playwright test:report`.

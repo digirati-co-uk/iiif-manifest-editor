@@ -6,7 +6,7 @@ test.describe("Basic Manifest Editor actions", async () => {
   test(
     "Can create empty Manifest",
     { tag: "@baseline" },
-    async ({ page: page }) => {
+    async ({ page }) => {
       const homepage = new Homepage(page);
 
       await homepage.goto();
@@ -27,13 +27,14 @@ test.describe("Basic Manifest Editor actions", async () => {
       await expect(manifestIdentifier).toHaveValue(/https:\/\/example.org\/.*/);
 
       // Update the label.
+      await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
       const labelContainer = manifestPage.resolveContainer("Manifest", "label");
       const $label = labelContainer.getByRole("textbox", { name: "Label" });
-      $label.focus();
-      $label.fill("My Test Manifest");
-      $label.blur();
+      await $label.focus();
+      await $label.fill("My Test Manifest");
+      await $label.blur();
 
-      await expect(page.getByRole("heading", { level: 2 })).toHaveText(
+      await expect(manifestPage.manifestHeading).toHaveText(
         "My Test Manifest",
         { timeout: 1000 },
       );
@@ -111,8 +112,8 @@ test.describe("Basic Manifest Editor actions", async () => {
       );
       await expect(manifestPage.getMetadataDoneButtonByIndex(1)).toBeVisible();
 
-      await manifestPage.getMetadataActionMenuByIndex(1).click();
-      await page.getByRole("button", { name: "Delete" }).click();
+      await manifestPage.getMetadataActionMenuByIndex(1).press("Enter");
+      await page.getByRole("menuitem", { name: "Delete", exact: true }).click();
       await expect(manifestPage.getMetadataFieldsetByIndex(1)).toHaveCount(0);
       await expect(manifestPage.getMetadataFieldsetByIndex(0)).toContainText(
         "Another test label",
@@ -122,7 +123,7 @@ test.describe("Basic Manifest Editor actions", async () => {
       await page.waitForTimeout(1000);
 
       const previewPromise = page.waitForEvent("popup");
-      await page.getByRole("button", { name: "Preview" }).click();
+      await page.getByRole("button", { name: "Preview", exact: true }).click();
 
       // Wait for popup - still a bit janky.
       await page.waitForTimeout(1000);
