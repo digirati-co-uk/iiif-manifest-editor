@@ -1,7 +1,5 @@
 import { expect, type Page, Locator } from "@playwright/test";
-import { resources } from "@manifest-editor/editor-api";
-
-const meta = resources.supported.Manifest;
+import type { resources } from "@manifest-editor/editor-api";
 
 export class ManifestPresetPage {
   readonly page: Page;
@@ -11,7 +9,7 @@ export class ManifestPresetPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.manifestHeading = this.page.getByRole("heading", { level: 2 });
+    this.manifestHeading = this.page.locator("h2[title]");
     this.addMetadataButton = page.getByRole("button", {
       name: "Add metadata item",
     });
@@ -20,6 +18,12 @@ export class ManifestPresetPage {
 
   async waitForPage() {
     await this.page.waitForURL(/editor\/(.*)/);
+  }
+
+  async openPlugins() {
+    await this.page.getByRole("button", { name: "Settings", exact: true }).click();
+    await this.page.getByRole("button", { name: "Plugins", exact: true }).click();
+    await expect(this.page.getByRole("heading", { name: "Plugins", level: 2 })).toBeVisible();
   }
 
   get identifier() {
@@ -58,10 +62,11 @@ export class ManifestPresetPage {
   }
 
   async waitForIdentifier() {
+    await this.page.getByRole("tab", { name: "Technical", exact: true }).click();
     const manifestIdentifier = await this.page.getByRole("textbox", {
       name: "Identifier",
     });
-    expect(manifestIdentifier).toHaveValue(/https?:\/\/.*/);
+    await expect(manifestIdentifier).toHaveValue(/https?:\/\/.*/);
     this.#identifier = await manifestIdentifier.inputValue();
   }
 
@@ -69,9 +74,7 @@ export class ManifestPresetPage {
     Type extends keyof (typeof resources)["supported"],
     Field extends (typeof resources)["supported"][Type]["all"][number],
   >(type: Type, field: Field) {
-    return this.page.locator(
-      `[id='container_${this.identifier}_${type}_${field}']`,
-    );
+    return this.page.locator(`[id='container_${this.identifier}_${type}_${field}']`);
   }
 
   async goto() {

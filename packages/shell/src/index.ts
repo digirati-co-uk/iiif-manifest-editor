@@ -20,6 +20,7 @@ export * from "./CanvasProgress";
 export * from "./ConfigContext/ConfigContext";
 export * from "./ConfigContext/ConfigEditor";
 export * from "./ConfigContext/CreatorSettings";
+export * from "./ConfigContext/IIIFOptions";
 export * from "./ContextMenu/ContextMenuContext";
 export * from "./EditingStack/EditingStack";
 export * from "./EditingStack/EditingStack.types";

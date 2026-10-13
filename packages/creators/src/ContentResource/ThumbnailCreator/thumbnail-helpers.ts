@@ -5,15 +5,10 @@ import {
   parseImageServiceRequest,
 } from "@iiif/parser/image-3";
 import type { ImageService } from "@iiif/presentation-3";
+import { normalizeImageService } from "../image-service-options";
 
 export function serviceImageAtSize(service: ImageService, size: { width: number; height?: number }) {
-  if (service["@id"]) {
-    service.id = service["@id"];
-  }
-  if (service["@type"]) {
-    service.type = service["@type"];
-  }
-  const request = createImageServiceRequest(service);
+  const request = createImageServiceRequest(normalizeImageService(service));
   return imageServiceRequestToString({
     identifier: request.identifier,
     server: request.server,

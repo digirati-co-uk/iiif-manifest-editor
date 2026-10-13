@@ -13,6 +13,7 @@ declare module "@manifest-editor/creator-api" {
 
 export const imageServiceCreator = defineCreator({
   id: "@manifest-editor/image-service-creator",
+  configKey: "iiif-image-services",
   create: createImageServer,
   label: "Image Service",
   summary: "Add an image from Image Service",
