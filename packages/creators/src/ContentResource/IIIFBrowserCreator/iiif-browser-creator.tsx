@@ -101,8 +101,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
           // Load before embedding.
           ctx.vault.loadSync(fullCanvas.id, addManifestTracking(fullCanvas));
-          // Then embed.
-          returnResources.push(ctx.embed({ id: fullCanvas.id, type: "Canvas" }));
+          // Embed the loaded canvas so empty defaults do not overwrite its content on commit.
+          returnResources.push(ctx.embed(ctx.vault.get({ id: fullCanvas.id, type: "Canvas" })));
           continue;
         }
 
