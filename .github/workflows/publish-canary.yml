@@ -14,6 +14,7 @@ jobs:
   canary-release:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write # Job permissions override workflow permissions; required for npm OIDC.
       contents: write
       issues: write
       pull-requests: write
@@ -44,11 +45,6 @@ jobs:
         with:
           version: 11.21.0
           run_install: false
-
-      - name: Set publishing config
-        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: Setup node
         uses: actions/setup-node@v4
