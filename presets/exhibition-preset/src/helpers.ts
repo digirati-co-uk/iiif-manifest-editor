@@ -151,7 +151,10 @@ export function isVideoCanvas(resource: { source?: { id?: string; type?: string 
         const source = resource?.type === "SpecificResource" ? resource.source : resource;
         const services = Array.isArray(source?.service) ? source.service : source?.service ? [source.service] : [];
 
-        if (source?.type === "Video" || services.some((service: any) => service?.profile === "https://www.youtube.com")) {
+        if (
+          source?.type === "Video" ||
+          services.some((service: any) => service?.profile === "https://www.youtube.com")
+        ) {
           return true;
         }
       }
@@ -167,11 +170,7 @@ export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
   if (!canvas) return false;
 
   const behaviors = canvas.behavior || [];
-  if (
-    behaviors.includes("image") ||
-    behaviors.includes("info") ||
-    behaviors.includes("splash")
-  ) {
+  if (behaviors.includes("image") || behaviors.includes("info") || behaviors.includes("splash")) {
     return true;
   }
 
@@ -182,4 +181,21 @@ export function isExhibitionItem(canvas: CanvasNormalized | undefined) {
   }
 
   return false;
+}
+
+/** Keep the chosen grid width unless a portrait canvas would need more than twelve rows. */
+export function fitCanvasGridBehavior(behavior: string[], width: number, height: number) {
+  if (!(width > 0 && height > 0 && Number.isFinite(width / height))) return behavior;
+  const { isLeft, isRight, isBottom } = getGridStats(behavior);
+  const currentWidth = Number(behavior.find((value) => /^w-([1-9]|1[0-2])$/.test(value))?.slice(2)) || 12;
+  const widthFactor = isLeft || isRight ? 2 / 3 : 1;
+  const heightFactor = isBottom ? 2 / 3 : 1;
+  const ratio = width / height;
+  const neededHeight = (currentWidth * widthFactor) / (ratio * heightFactor);
+  const nextWidth =
+    neededHeight > 12
+      ? Math.max(1, Math.min(currentWidth, Math.round((12 * ratio * heightFactor) / widthFactor)))
+      : currentWidth;
+  const nextHeight = Math.max(1, Math.min(12, Math.round((nextWidth * widthFactor) / (ratio * heightFactor))));
+  return [...behavior.filter((value) => !/^[wh]-\d+$/.test(value)), `w-${nextWidth}`, `h-${nextHeight}`];
 }
