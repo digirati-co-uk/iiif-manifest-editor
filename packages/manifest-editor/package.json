@@ -68,6 +68,10 @@
       "import": "./dist/parser.js",
       "require": "./dist/parser.cjs"
     },
+    "./remote": {
+      "import": "./dist/remote.js",
+      "require": "./dist/remote.cjs"
+    },
     "./shell": {
       "import": "./dist/shell.js",
       "require": "./dist/shell.cjs"
@@ -86,7 +90,8 @@
     "dev": "tsdown --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsdown"
+    "prepack": "tsdown && node browser/build.mjs",
+    "test:remote": "vitest run src/remote/releases.test.ts browser/runtime-api.test.mjs"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",
@@ -111,9 +116,11 @@
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
+    "@tailwindcss/typography": "0.5.20",
     "@tsdown/css": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "autoprefixer": "10.5.4",
     "postcss": "^8.4.38",
     "postcss-import": "^16.1.0",
     "postcss-nested": "^7.0.2",
@@ -122,7 +129,8 @@
     "react-datetime-picker": "^5.6.0",
     "tailwindcss": "^3.4.3",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

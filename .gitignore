@@ -55,3 +55,8 @@ prev/
 # Shared editor tooling
 !.zed/
 !.zed/settings.json
+
+# Generated browser-runtime fixtures
+apps/web/public/remote-editor/
+.wrangler/
+*.tsbuildinfo

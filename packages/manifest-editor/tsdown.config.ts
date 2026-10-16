@@ -11,6 +11,7 @@ export default defineConfig((options) => ({
   },
   entry: {
     index: "./src/index.ts",
+    remote: "./src/remote/index.ts",
     "collection-preset": "./src/collection-preset.ts",
     components: "./src/components.ts",
     editors: "./src/editors.ts",

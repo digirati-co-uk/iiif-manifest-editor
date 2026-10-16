@@ -35,7 +35,11 @@
     "release": "lerna publish from-package",
     "release-next": "lerna publish --preid next --pre-dist-tag next --canary --force-publish --no-git-reset",
     "ci:release": "lerna publish from-package --yes",
-    "ci:release-next": "lerna publish --preid next --pre-dist-tag next --canary --force-publish --no-git-reset --yes"
+    "ci:release-next": "lerna publish --preid next --pre-dist-tag next --canary --force-publish --no-git-reset --yes",
+    "browser:local": "node packages/manifest-editor/browser/build.mjs --local",
+    "browser:bundle": "node packages/manifest-editor/browser/build.mjs",
+    "test:remote": "pnpm --filter manifest-editor test:remote",
+    "browser:register": "node packages/manifest-editor/browser/register.mjs"
   },
   "devDependencies": {
     "@lerna-lite/cli": "^5.4.2",
