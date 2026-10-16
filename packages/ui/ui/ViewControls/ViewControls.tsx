@@ -12,6 +12,8 @@ export const CanvasViewerButton = styled.button<{ $active?: boolean }>`
   border: none;
   background: rgba(255, 255, 255);
   display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
   border-radius: 3px;
   transition: background 500ms;
