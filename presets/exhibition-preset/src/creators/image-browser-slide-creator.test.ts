@@ -1,3 +1,4 @@
+vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { Vault } from "@iiif/helpers/vault";
 import { matchBasedOnResource } from "@manifest-editor/creator-api";
 import { describe, expect, test, vi } from "vitest";

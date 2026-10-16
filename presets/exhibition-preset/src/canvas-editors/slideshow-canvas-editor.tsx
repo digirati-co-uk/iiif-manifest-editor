@@ -1,7 +1,8 @@
 import { CanvasPanelEditor, useAnnotationEditing } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition, EditableResource } from "@manifest-editor/shell";
 import { useLayoutActions, useLayoutState } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCanvasLayout, getPaintingAnnotations } from "@manifest-editor/editor-api";
 import { Button } from "react-aria-components";
 import {
   CanvasContext,
@@ -10,6 +11,7 @@ import {
   useCanvas,
   useCurrentAnnotationRequest,
   useManifest,
+  useVault,
 } from "react-iiif-vault";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
 import { isExhibitionItem } from "../helpers";
@@ -30,6 +32,14 @@ export const slideshowCanvasEditor: CanvasEditorDefinition = {
 function SlideshowCanvasEditor() {
   const canvas = useCanvas();
   const manifest = useManifest();
+  const vault = useVault();
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
+  const canvasId = canvas?.id;
+  useEffect(() => {
+    if (!canvasId) return;
+    const resource = vault.get({ id: canvasId, type: "Canvas" });
+    if (getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length) setCenterPanelMode("edit");
+  }, [canvasId, vault, setCenterPanelMode]);
   const { edit } = useLayoutActions();
   const { rightPanel } = useLayoutState();
   const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
@@ -51,7 +61,17 @@ function SlideshowCanvasEditor() {
     (rightPanel.current === "@manifest-editor/editor" &&
       rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps"))
   ) {
-    return <CanvasPanelEditor asFallback />;
+    return (
+      <CanvasPanelEditor
+        enableAddMedia
+        asFallback
+        moveMode={
+          centerPanelMode === "edit" &&
+          !editingAnnotationId &&
+          !rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps")
+        }
+      />
+    );
   }
 
   return (

@@ -1,6 +1,7 @@
 import type { Vault } from "@iiif/helpers/vault";
 import {
   addMappings,
+  metaActions,
   batchActions,
   importEntities,
 } from "@iiif/helpers/vault/actions";
@@ -110,6 +111,11 @@ export class CreatorRuntime {
 
       for (const item of allItems) {
         const resource = item.getVaultResource();
+        for (const [meta, values] of Object.entries(item.meta)) {
+          for (const [key, value] of Object.entries(values)) {
+            actions.push(metaActions.setMetaValue({ id: resource.id, meta, key, value }));
+          }
+        }
         if (!resource.type || !resource.id) {
           continue;
         }
