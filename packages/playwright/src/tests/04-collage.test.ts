@@ -22,6 +22,40 @@ async function exportedCanvas(page: Page) {
   expect(JSON.stringify(manifest)).not.toContain('"canvas-layout"');
   return manifest.items[0];
 }
+// Reload only once the debounced workspace save has reached IndexedDB.
+async function waitForSavedCanvas(page: Page, canvas: { id: string; width: number; height: number }, layoutId: string) {
+  const projectId = new URL(page.url()).pathname.split("/")[2];
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          ({ projectId, canvasId }) =>
+            new Promise((resolve, reject) => {
+              const request = indexedDB.open("manifest-editor-projects-v2");
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => {
+                const db = request.result;
+                const transaction = db.transaction("manifest-editor-project-store", "readonly");
+                const saved = transaction.objectStore("manifest-editor-project-store").get(projectId!);
+                saved.onerror = () => reject(saved.error);
+                saved.onsuccess = () => {
+                  const data = saved.result?.vaultData;
+                  const canvas = data?.entities.Canvas[canvasId];
+                  resolve({
+                    width: canvas?.width,
+                    height: canvas?.height,
+                    layoutId: data?.meta?.[canvasId]?.["canvas-layout"]?.state?.layoutId,
+                  });
+                };
+                transaction.oncomplete = () => db.close();
+              };
+            }),
+          { projectId, canvasId: canvas.id }
+        ),
+      { timeout: 15_000 }
+    )
+    .toEqual({ width: canvas.width, height: canvas.height, layoutId });
+}
 async function openDelft(page: Page) {
   await page.route(delft.id, (route) => route.fulfill({ json: delft }));
   await page.goto("/");
@@ -89,6 +123,7 @@ test("Delft collage: layout, smart resize, dragging, export and reload", async (
   expect(canvas.items[0].items[0].target).not.toEqual(before);
   expect(canvas.width).toBeGreaterThan(1500);
   expect(await viewer!.evaluate((node) => node.isConnected)).toBe(true);
+  await waitForSavedCanvas(page, canvas, "feature-left");
   await page.reload();
   await page.getByRole("button", { name: "Edit slide Citarum River, then and now", exact: true }).click();
   await page
@@ -201,7 +236,7 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await expect(page.getByRole("group", { name: "Canvas shape", exact: true })).toHaveCount(0);
   await page.getByRole("radio", { name: "Side by side", exact: true }).check();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
-  await page.waitForTimeout(5500); // The browser workspace saves changes after a five-second debounce.
+  await waitForSavedCanvas(page, single, "pair");
   await page.reload();
   await page.getByRole("button", { name: "Edit slide Untitled collage", exact: true }).click();
   await page
@@ -298,6 +333,7 @@ test("resize across a placeholder and discard both image and canvas changes", as
     .boundingBox())!;
   await page.keyboard.down("Shift");
   await page.mouse.move(selection.x + selection.width, selection.y + selection.height);
+  await expect(page.locator(".atlas-canvas")).toHaveClass(/atlas-cursor-se/);
   await page.mouse.down();
   await page.mouse.move(placeholder.x + placeholder.width / 2, placeholder.y + placeholder.height / 2, { steps: 18 });
   await page.mouse.up();

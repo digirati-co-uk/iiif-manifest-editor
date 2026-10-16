@@ -52,8 +52,9 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   const [active, setActive] = useState<string | null>(null);
   const [queued, setQueued] = useState<{ id: string; rect: Rectangle } | null>(null);
   const [preview, setPreview] = useState<Rectangle | null>(null);
+  const [pointerDragging, setPointerDragging] = useState(false);
   const transitioning = useStore(store, (state) => state.polygonState.transitioning);
-  const dragging = transitioning || !!preview;
+  const dragging = pointerDragging || transitioning || !!preview;
   const images = useVaultSelector((_, v) => getPaintingImages(v, canvas), [canvas]);
   const placeholders = useVaultSelector((_, v) => getEmptyCanvasPlaceholders(v, canvas), [canvas]);
   const { requestAnnotation, cancelRequest, isActive, busy, requestId } = useRequestAnnotation({
@@ -246,16 +247,27 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     };
     window.addEventListener("keydown", key, true);
     window.addEventListener("keyup", key, true);
+    // Capture from the press, before the helper's drag threshold: adjacent portals can otherwise swallow the first move.
+    const capture = (event: PointerEvent) => {
+      if (!current.current.isActive || event.button !== 0 || !(event.target instanceof HTMLCanvasElement)) return;
+      event.target.setPointerCapture(event.pointerId);
+      setPointerDragging(true);
+    };
+    window.addEventListener("pointerdown", capture, true);
     // A release over a sidebar must still finish the gesture that began in the viewer.
     const release = () => {
+      setPointerDragging(false);
       const helper = store.getState().polygons;
       if (current.current.isActive && helper.state.slowState.transitioning) helper.pointerUp();
     };
     window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
     return () => {
       window.removeEventListener("keydown", key, true);
       window.removeEventListener("keyup", key, true);
+      window.removeEventListener("pointerdown", capture, true);
       window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
     };
   }, [store, cancel, finish, discard]);
   useEffect(
