@@ -358,3 +358,38 @@ test("resize across a placeholder and discard both image and canvas changes", as
   expect(await exportedCanvas(page)).toEqual(original);
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
 });
+
+test("selected image handles stay usable beneath an overlapping image", async ({ page }) => {
+  await openDelft(page);
+  await page.getByRole("tab", { name: "Images", exact: true }).click();
+  await page.getByRole("radio", { name: "Offset pair", exact: true }).check();
+  const original = await exportedCanvas(page);
+  const foreground = page.getByRole("button", { name: "Select image 2", exact: true });
+  const foregroundBox = (await foreground.boundingBox())!;
+  await page.getByRole("button", { name: "Select image 1", exact: true }).click();
+  const selection = (await page
+    .locator('svg:has(> title:text-is("Annotation Editor")) > polygon')
+    .first()
+    .boundingBox())!;
+  const x = selection.x + selection.width;
+  const y = selection.y + selection.height;
+  expect(x).toBeGreaterThan(foregroundBox.x);
+  expect(x).toBeLessThan(foregroundBox.x + foregroundBox.width);
+  expect(y).toBeGreaterThan(foregroundBox.y);
+  expect(y).toBeLessThan(foregroundBox.y + foregroundBox.height);
+  await page.mouse.move(x, y);
+  await expect(page.locator(".atlas-canvas")).toHaveClass(/atlas-cursor-se/);
+  await page.mouse.down();
+  await page.mouse.move(x + 30, y + 20, { steps: 15 });
+  await page.mouse.up();
+  await page.keyboard.press("Enter");
+  const resized = await exportedCanvas(page);
+  const width = (target: string) => Number(target.split("xywh=")[1].split(",")[2]);
+  expect(width(resized.items[0].items[0].target)).toBeGreaterThan(width(original.items[0].items[0].target));
+  expect(resized.items[0].items[1].target).toEqual(original.items[0].items[1].target);
+  // Switching images still works in the part of the foreground image outside the selection.
+  await page.getByRole("button", { name: "Select image 1", exact: true }).click();
+  await foreground.click({ position: { x: foregroundBox.width * 0.9, y: foregroundBox.height * 0.9 } });
+  await expect(foreground).toBeHidden();
+  await expect(page.getByRole("button", { name: "Select image 1", exact: true })).toBeVisible();
+});

@@ -40,6 +40,16 @@ function pointsToRectangle(points?: number[][] | null): Rectangle | null {
   return validRectangle(rect) ? rect : null;
 }
 
+/** Let the active selection and its screen-sized handles receive events through overlapping portals. */
+function selectionHitArea(rect: Rectangle, selection: Rectangle | null) {
+  if (!selection) return undefined;
+  const left = `clamp(0px, calc(${((selection.x - rect.x) / rect.width) * 100}% - 10px), 100%)`;
+  const top = `clamp(0px, calc(${((selection.y - rect.y) / rect.height) * 100}% - 10px), 100%)`;
+  const right = `clamp(0px, calc(${((selection.x + selection.width - rect.x) / rect.width) * 100}% + 10px), 100%)`;
+  const bottom = `clamp(0px, calc(${((selection.y + selection.height - rect.y) / rect.height) * 100}% + 10px), 100%)`;
+  return `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${left} ${top}, ${left} ${bottom}, ${right} ${bottom}, ${right} ${top}, ${left} ${top})`;
+}
+
 /** Uses the same target request as the media editor, with canvas growth committed on release. */
 export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolean; onResizeDone: () => void }) {
   const canvas = useCanvas()!;
@@ -290,6 +300,8 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     if (busy && resizing) onResizeDone();
   }, [busy, resizing, onResizeDone]);
 
+  const activeImage = images.find((image) => image.id === active);
+  const activeRect = activeImage ? getAnnotationRectangle(vault, activeImage, canvas) : null;
   const expansion = preview && (resizing ? preview : expandedCanvasBounds(canvas, [preview]));
   const expanding =
     expansion && (expansion.x || expansion.y || expansion.width !== canvas.width || expansion.height !== canvas.height);
@@ -309,32 +321,24 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         const rect = getAnnotationRectangle(vault, image, canvas);
         if (busy || resizing || !rect || !(image.target as any)?.selector || active === image.id) return null;
         return (
-          <world-object
-            key={image.id}
-            x={rect.x}
-            y={rect.y}
-            width={rect.width}
-            height={rect.height}
-            onClick={(event: any) => {
-              event.stopPropagation();
-              void select(image.id, rect);
-            }}
-          >
+          <world-object key={image.id} x={rect.x} y={rect.y} width={rect.width} height={rect.height}>
             <box
               target={{ x: 0, y: 0, width: rect.width, height: rect.height }}
-              interactive={!dragging}
+              interactive={false}
               relativeStyle
               style={{ backgroundColor: "rgba(0,0,0,0)", ":hover": { outline: "2px solid #b84c74" } }}
             />
 
             {!dragging && (
-              <HTMLPortal target={{ x: 0, y: 0, width: rect.width, height: rect.height }} relative interactive>
+              <HTMLPortal target={{ x: 0, y: 0, width: rect.width, height: rect.height }} relative interactive={false}>
                 <button
                   type="button"
                   aria-label={`Select image ${index + 1}`}
                   onClick={() => select(image.id, rect)}
                   style={{
                     display: "block",
+                    pointerEvents: "auto",
+                    clipPath: selectionHitArea(rect, activeRect),
                     width: "100%",
                     height: "100%",
                     background: "transparent",
@@ -359,10 +363,16 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                 style={{ backgroundColor: "rgba(184,76,116,0.04)", border: "1px dashed #bfa5af" }}
               />
               {!dragging && (
-                <HTMLPortal target={{ x: 0, y: 0, width: rect.width, height: rect.height }} relative interactive>
+                <HTMLPortal
+                  target={{ x: 0, y: 0, width: rect.width, height: rect.height }}
+                  relative
+                  interactive={false}
+                >
                   <div
                     style={{
                       display: "flex",
+                      pointerEvents: "auto",
+                      clipPath: selectionHitArea(rect, activeRect),
                       alignItems: "center",
                       justifyContent: "center",
                       width: "100%",
