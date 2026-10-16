@@ -16,3 +16,7 @@ export * from "./meta/rights";
 export * from "./meta/structural";
 export * from "./meta/technical";
 export * from "./types";
+export * from "./canvas-layout/geometry";
+export * from "./canvas-layout/layout";
+
+export * from "./canvas-layout/colors";
