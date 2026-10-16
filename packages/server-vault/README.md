@@ -1,136 +1,128 @@
-# Vault
+<p align="center">
+  <a href="https://github.com/digirati-co-uk/iiif-manifest-editor"><img src="https://raw.githubusercontent.com/digirati-co-uk/iiif-manifest-editor/main/apps/docs/content/img/logo.svg" width="360" alt="Manifest Editor"></a>
+</p>
+<p align="center">
+  <a href="https://www.npmjs.com/package/@manifest-editor/server-vault"><img src="https://img.shields.io/npm/v/%40manifest-editor%2Fserver-vault" alt="npm version"></a>
+  <a href="https://github.com/digirati-co-uk/iiif-manifest-editor/actions/workflows/build-test.yml"><img src="https://img.shields.io/github/actions/workflow/status/digirati-co-uk/iiif-manifest-editor/build-test.yml?branch=main&amp;label=build" alt="Build status"></a>
+  <a href="https://manifest-editor-docs.netlify.app/"><img src="https://img.shields.io/badge/docs-Manifest_Editor-blue" alt="Documentation"></a>
+</p>
 
+# @manifest-editor/server-vault
 
+## Getting started with Manifest Editor
 
-**.vaultfile**
+For the complete editor, start with [`manifest-editor`](https://www.npmjs.com/package/manifest-editor) and its [installation and integration guide](https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/packages/manifest-editor#readme). It combines the editor UI, presets, creators, and editing APIs. This package is one part of that workspace.
+
+## About
+
+Experimental Node.js WebSocket service for sharing in-memory Vault state between clients.
+
+## Quick start
+
+```sh
+npm install @manifest-editor/server-vault
 ```
+
+```ts
+import { MultiVaultServer } from "@manifest-editor/server-vault";
+
+const server = new MultiVaultServer();
+server.listen(8081, "127.0.0.1");
+// Clients connect to ws://localhost:8081/vault/demo.
+```
+
+This implementation keeps state in memory and does not implement the authentication, durable storage, or GitHub integration described in earlier design notes. Keep this example local; a deployed host must supply its own access controls and persistence.
+
+## Architecture and lifecycle
+
+A `MultiVaultServer` owns an HTTP server and a map of named `ServerVault` instances. Each `ServerVault` contains a normal `@iiif/helpers` Vault plus a WebSocket server. The browser uses [`@manifest-editor/client-vault`](../client-vault) to receive the initial state and exchange Vault actions.
+
+1. A client connects to `/vault/<id>`.
+2. The server looks up that ID and creates an empty in-memory Vault if necessary.
+3. The server sends an `init-response` containing its current IIIF store.
+4. Clients send atomic Vault actions; the server applies them and broadcasts them to other clients.
+5. The originating client receives an acknowledgement, or a rejection if applying the action throws.
+
+`GET /vault` returns the IDs currently in the server's map. There is no project database or user-specific project listing behind that route.
+
+## Start with an existing manifest
+
+For a local demonstration, seed the server's Vault before clients connect:
+
+```ts
+import { MultiVaultServer, ServerVault } from "@manifest-editor/server-vault";
+
+const server = new MultiVaultServer();
+const shared = new ServerVault();
+await shared.vault.loadManifest("https://wellcomelibrary.org/iiif/b18035723/manifest");
+server.vaults.set("demo", shared);
+server.listen(8081, "127.0.0.1");
+```
+
+In a separate browser application:
+
+```ts
+import { createClientVault } from "@manifest-editor/client-vault";
+
+const vault = await createClientVault("ws://localhost:8081/vault/demo");
+// Pass this Vault to ManifestEditor or a VaultProvider.
+```
+
+The client factory waits for initial state. It does not load a manifest from disk or create a project record on the server. The underlying `shared.vault` is available for server-side loading and serialization, but the server's broadcasts are driven by incoming client messages; do not assume arbitrary server-side Vault mutations are automatically broadcast.
+
+## Wire protocol
+
+Messages are JSON. Action messages carry `_id`, `_type`, `_lastActionId`, and `action`; initialisation messages carry the complete IIIF store in `data`.
+
+| Message | Direction | Behavior |
+| --- | --- | --- |
+| `init-request` | Client → server | Request current state. |
+| `init-response` | Server → client | Send the normalised store and action position. |
+| `vault-action` | Client → server → other clients | Apply and distribute a Vault action or batch. |
+| `vault-action-confirmation` | Server → originating client | Acknowledge the action. |
+| `vault-action-rejection` | Server → originating client | Report an action the server could not apply. |
+
+The older design proposed rejecting actions whose `_lastActionId` does not match the server's current position. The implementation carries that field but **does not enforce this conflict check**. It is not a conflict-resolution protocol or a CRDT. Likewise, the exported `initialise-with-resource`/`empty-vault-response` types should not be read as proof of a complete server-side initialisation flow: the handler currently processes `init-request` and `vault-action`.
+
+## Connections and cleanup
+
+`ServerVaultOptions.pingTimeout` controls the heartbeat interval in milliseconds (default 30,000). Unresponsive clients are terminated. `onClose` runs when the WebSocket server closes, and `await shared.close()` closes that server and clears its timer. Close connected clients and the HTTP server as part of host shutdown too.
+
+Do not rely on the last client disconnecting to persist or automatically dispose of a named Vault. A host should explicitly decide retention, cleanup, and storage policy.
+
+## Iframes and MessagePort previews
+
+The older README described a server-hosted iframe proxying messages between a parent page and WebSockets. That complete transport/proxy service is not implemented here.
+
+There is now a separate browser-side preview path: the shell exports `createIframeVaultBridge(vault, port)`, and client-vault exports `MessagePortClientVault`. The shell bridge sends initial state and host updates but rejects actions from the preview, making it a read-only preview bridge. It returns a cleanup function. The embedding host still has to create/transfer the MessagePort and establish the iframe relationship.
+
+## Persistence and hosted collaboration: design notes
+
+The original direction remains useful for hosts extending this package, but these features are **not provided by the current server**:
+
+- A `.vaultfile` mapping a source manifest to files, periodic snapshots, and loading/saving to disk.
+- Authentication, allowed-origin checks, project ownership, and distinct read-only/read-write permissions.
+- Durable action history, reconnect/replay, and rejection/reconciliation of stale edits.
+- GitHub login, repository-backed manifests, editing branches, commits, and pull requests.
+- A user-scoped project API and authenticated iframe bootstrap.
+
+One proposed file mapping looked like this (a design example, **not** a configuration file this package reads):
+
+```json
 {
   "source": { "id": "https://example.org/manifest", "type": "Manifest" },
-  "resources": {
-    "https://example.org/manifest": "./manifest.json",
-  }
+  "resources": { "https://example.org/manifest": "./manifest.json" }
 }
 ```
 
+For durable storage, a host could serialize `shared.vault.toPresentation3(reference)` and restore it on startup. For GitHub-backed work, that serialization would become the input to the host's commit/PR workflow. These are integration responsibilities, not automatic behavior of `MultiVaultServer`.
 
-The server vault will take this optional config and use it to load the manifest from the file system. The instance of
-vault will live on the server for a period of time and can be stopped or started.
+The current implementation accepts Vault actions from connected clients without authentication. Bind a development instance to loopback, as shown above; deploying a collaborative service requires implementing the access and validation boundaries described here.
 
-Multiple clients can then connect to the vault and use the manifest. They can connect as a read-only user or as a
-read-write user. The read-write user can make changes to the manifest and save it back to the vault. These changes will
-be reflected in the vault and will be available to all users. The changes will also be reflected in the file system
-where the manifest is stored.
+## API overview
 
-Vault communicates using atomic actions. These actions are sent to the vault and the vault will respond with the result
-of the action. The vault will also broadcast the action to all connected clients. The clients can then update their
-state based on the action. If the actions are applied in the same order on all clients then the state of the clients
-will be the same.
+- `MultiVaultServer`: HTTP server, `/vault` listing, and WebSocket upgrades under `/vault/<id>`.
+- `ServerVault`: one shared Vault, action broadcasting, connection heartbeat, and `close()`.
+- `ServerVaultOptions`, `ClientAction`, and `ServerAction`: configuration and message types.
 
-Each action will have a unique id. This id will be used to ensure that the actions are applied in the same order on all
-clients. Clients are required to send the previous action id with each action. The vault will then check that the
-previous action id matches the last action id that was applied to the vault. If the previous action id does not match
-then the action will be rejected. The client will then need to update its state to match the vault and then try again.
-
-## Post Message communication
-
-The server will also host a webpage that can be used to communicate with the vault. This webpage will be loaded in an
-iframe on the client. The client will then be able to connect to the vault and send actions to the vault. The vault
-will then broadcast the actions to all connected clients. The client will then update its state based on the actions.
-
-This allows the client to be a static webpage that can be hosted on any server. The client will not need to be hosted
-on the same server as the vault. However, the server will need to allow cross-origin requests from the client, and will
-ensure that only select hosts are allowed to connect to the vault.
-
-For post-message you have the server iframe, communicating to the server via web-sockets and the client application
-that has the server in an iframe. When an event originates from the client, the following happens:
-
-- The client sends a message to the server iframe via post-message
-- The server iframe sends a message to the server via web-sockets
-- The server broadcasts the message to all connected clients via web-sockets
-- The server iframe receives the message from the server via web-sockets
-- The server iframe sends the message to the other clients via post-message
-
-When an event originates from the server, the following happens:
-- The server sends a message to the server iframe via web-sockets
-- The server iframe sends the message to the other clients via post-message
-
-
-- ClientPostMessageVault.dispatch() -> sends message to server iframe
-- ServerPostMessageVault.dispatch() -> sends message to server
-- ServerWebSocketVault.dispatch() -> sends message to all clients
-
-
-
-## GitHub integration
-
-On the server there will be a GitHub integration. This integration will allow the vault to be connected to a GitHub
-repository. The vault will then be able to load the manifest from the GitHub repository. The vault will also be able
-to save the manifest to the GitHub repository.
-
-As changes are made to the manifest the vault will commit the changes to the GitHub repository. The server will also
-create a pull request for the changes.
-
-When a client requests a vault instance, the server will create a new branch in the GitHub repository. The vault will
-then load the manifest from the new branch. The client will then be able to make changes to the manifest. Alternatively
-the client can request a read-only instance of the vault. The client will then be able to view the manifest but will
-not be able to make changes to the manifest.
-
-Clients can also request an existing branch. The vault will then load the manifest from the existing branch. The client
-will then be able to make changes to the manifest. The client will also be able to save the changes to the existing
-branch. If other clients are also connected to the vault then they will be able to see the changes that the client has
-made.
-
-## Authentication
-
-On the client the user will be able to login to GitHub through the server. This will be done by opening a popup window served by the  server. The user will then be able to login to GitHub and grant the server access to their GitHub account.
-Initially this will only be for authentication and will grant access to manifests hosted in SQLite on the server. Eventually
-this will also allow the server to access manifests hosted in GitHub repositories.
-
-Once logged in the server will redirect back to the client. The client will then be able to use the access token to
-create an iFrame that can be used to communicate with the vault.
-
-## Listing projects
-
-Before a client can connect to a vault it will need to know the id of the vault. The client will be able to request a
-list of vaults from the server. This is also done using a post message. The server will then respond with a list of
-vaults that the user has access to. The client will then be able to connect to the vault.
-
-
-## Server responsibilities and routes
-
-- [ ] Request login status of the user using a post message
-- [ ] Request a list of vaults using a post message
-- [ ] Request a vault instance using a post message
-- [ ] Login via Github in a popup
-- [ ] Create a new vault instance
-
-
-2 new types of Vault instance
-
-- Server vault
-- Client vault
-
-**Server vault**
-1. Creates normal internal vault instance
-2. Loads manifest from file system
-3. Handles client opening and closing connections
-4. Accepts client actions
-  - Applies action to internal vault instance
-  - Responds to client with result of action
-  - Broadcasts action to all connected clients
-5. Saves manifest to file system periodically
-
-
-**Client vault**
-1. Connects to server vault
-  - Opens connection
-  - Loads initial state from server vault, including last action id
-2. Sends actions to server vault
-  - Includes last action id
-  - Waits for response from server vault
-  - Updates state based on response from server vault
-  - If response is an error then update state to match server vault
-  - May retry action if response is a conflict
-3. Receives actions from server vault
-4. Applies actions to internal vault instance
-
+See the [source exports](https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/packages/server-vault/src) for the complete API and TypeScript definitions.
