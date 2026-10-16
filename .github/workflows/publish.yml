@@ -47,6 +47,7 @@ jobs:
     needs: check
     if: always() && (needs.check.outputs.EXISTS_TAG == 'false')
     permissions:
+      id-token: write # Job permissions override workflow permissions; required for npm OIDC.
       contents: write
       issues: write
       pull-requests: write
@@ -83,11 +84,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Set publishing config
-        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: Publish
         run: pnpm run ci:release
