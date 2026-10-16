@@ -8,11 +8,10 @@ import {
   useInStack,
 } from "@manifest-editor/editors";
 import { type EditorDefinition, useApp, useEditor, useLocalStorage } from "@manifest-editor/shell";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { AspectRatioWarning } from "../components/AspectRatioWarning";
 import {
   FloatingPositionPicker,
   floatingBehaviorOptions,
@@ -473,11 +472,6 @@ export function EditSize({
 
 export function SlideBehavioursPanel() {
   const [mode, setMode] = useLocalStorage<EditingMode>(layoutPanelModeStorageKey, "simple");
-  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
-
-  useEffect(() => {
-    setCenterPanelMode("preview");
-  }, [setCenterPanelMode]);
 
   return (
     <Sidebar>
@@ -531,36 +525,22 @@ export function SlideBehavioursContent({
 
   if (mode === "simple") {
     return (
-      <SimpleSlideLayoutEditor
-        behavior={editor.technical.behavior.get() || []}
-        controls={controls}
-        canvasWidth={width.get() || 0}
-        canvasHeight={height.get() || 0}
-        onChange={(v) => {
-          editor.technical.behavior.set(v);
-        }}
-      />
+      <>
+        <SimpleSlideLayoutEditor
+          behavior={editor.technical.behavior.get() || []}
+          controls={controls}
+          canvasWidth={width.get() || 0}
+          canvasHeight={height.get() || 0}
+          onChange={(v) => {
+            editor.technical.behavior.set(v);
+          }}
+        />
+      </>
     );
   }
 
   return (
     <>
-      <div className="px-2">
-        <InputContainer $wide>
-          <DimensionsTriplet
-            widthId={width.containerId()}
-            width={width.get() || 0}
-            changeWidth={(v) => width.set(v)}
-            heightId={height.containerId()}
-            height={height.get() || 0}
-            changeHeight={(v) => height.set(v)}
-          />
-          <div>
-            <AspectRatioWarning />
-          </div>
-        </InputContainer>
-      </div>
-
       <BehaviorEditor
         behavior={editor.technical.behavior.get() || []}
         onChange={(v) => {
@@ -1233,6 +1213,8 @@ function manifestFirstCanvasId(manifest: any) {
 
 function isImageCanvas(vault: any, canvas: any) {
   if (!canvas || canvas.behavior?.includes("info")) return false;
+
+  if (canvas.behavior?.includes("multi-image")) return true;
 
   return getPaintingAnnotations(vault, canvas).some((annotation: any) => {
     const body = getResolvedAnnotationBody(vault, annotation);
