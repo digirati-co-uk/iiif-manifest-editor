@@ -638,6 +638,9 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.22.14(@tsdown/css@0.22.14)(publint@0.3.23)(typescript@7.0.2)(unrun@0.2.9(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.10.1)(vite@8.2.1(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(less@4.2.0)(sass@1.77.2)(stylus@0.62.0(supports-color@10.2.2))(terser@5.16.9)(yaml@2.9.0))
 
   packages/editor-api:
     dependencies:
