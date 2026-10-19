@@ -68,7 +68,7 @@ export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, 
     return ctx.embed({
       id: canvasId,
       type: "Canvas",
-      label: data.label || { en: ["Untitled HTML canvas"] },
+      label: getValue(data.label) ? data.label : undefined,
       duration: data.duration || 0,
       width: data.width,
       height: data.height,

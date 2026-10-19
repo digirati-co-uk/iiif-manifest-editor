@@ -9,6 +9,7 @@ import { imageUrlListAnnotation } from "./Annotation/ImageUrlListAnnotation";
 import { noBodyAnnotation } from "./Annotation/NoBodyAnnotation";
 import { videoAnnotation } from "./Annotation/VideoAnnotation";
 import { emptyAnnotationPage } from "./AnnotationPage/EmptyAnnotationPage";
+import { vttAnnotationPage } from "./AnnotationPage/VttAnnotationPage";
 import { emptyCanvas } from "./Canvas/EmptyCanvas";
 import { internalCanvas } from "./Canvas/InternalCanvas";
 import { htmlBodyCreator } from "./ContentResource/HTMLBodyCreator";
@@ -33,6 +34,7 @@ export * from "./Annotation/ImageUrlAnnotation/create-image-url-annotation";
 export * from "./Annotation/ImageUrlListAnnotation/create-image-url-list-annotation";
 export * from "./Annotation/NoBodyAnnotation/index";
 export * from "./Annotation/VideoAnnotation/create-video-annotation";
+export * from "./AnnotationPage/VttAnnotationPage/create-vtt-annotation-page";
 export * from "./Canvas/InternalCanvas/index";
 export * from "./ContentResource/HTMLBodyCreator/create-html-body";
 export * from "./ContentResource/IIIFBrowserCreator/iiif-browser-creator";
@@ -63,6 +65,7 @@ export const allCreators = [
   plaintextCreator,
   webPageCreator,
   emptyAnnotationPage,
+  vttAnnotationPage,
   noBodyAnnotation,
   internalCanvas,
   captionedImageAnnotation,
@@ -81,6 +84,7 @@ export {
   htmlBodyCreator,
   htmlAnnotation,
   emptyAnnotationPage,
+  vttAnnotationPage,
   youTubeBodyCreator,
   imageUrlCreator,
   imageServiceCreator,

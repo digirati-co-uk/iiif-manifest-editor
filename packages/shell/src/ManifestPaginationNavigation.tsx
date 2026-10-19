@@ -69,7 +69,7 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
   };
 
   if (!manifest || items.length < 2) {
-    return <div />;
+    return <div className={className} />;
   }
 
   const previousCanvas = items[currentIndex - 1];

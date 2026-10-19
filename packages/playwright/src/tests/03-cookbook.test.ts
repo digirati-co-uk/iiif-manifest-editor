@@ -72,6 +72,7 @@ test("0005: create a single image-service canvas from scratch", { tag: "@cookboo
   await page.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
 
   await expect(page.getByRole("button", { name: canvas.label.en[0], exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Subtitles and captions", exact: true })).toHaveCount(0);
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download manifest", exact: true }).click();
