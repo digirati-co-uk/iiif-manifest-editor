@@ -44,10 +44,11 @@ test(
     await dialog.getByRole("button", { name: "Add video", exact: true }).click();
     await expect(dialog).toBeHidden();
 
-    await page.getByRole("button", { name: "More tabs", exact: true }).click();
-    await page.getByRole("menuitem", { name: "Structure", exact: true }).click();
-    await page.getByRole("button", { name: "Add Annotations", exact: true }).click();
-    await page.getByRole("option", { name: /WebVTT captions/ }).click();
+    const captionSection = page.getByRole("region", { name: "Subtitles and captions", exact: true });
+    await expect(captionSection.getByText("No subtitles or captions", { exact: true })).toBeVisible();
+    await captionSection.getByRole("button", { name: "Add subtitles or captions", exact: true }).click();
+    // Only the tagged caption creator is available, so its form opens directly.
+    await expect(dialog.getByRole("option", { name: /Empty annotation page/ })).toHaveCount(0);
     await expect(dialog.getByText("Link an existing WebVTT (.vtt) file", { exact: false })).toBeVisible();
     const url = dialog.getByRole("textbox", { name: "WebVTT file URL", exact: true });
     await url.fill("ftp://example.org/captions.vtt");
@@ -64,6 +65,9 @@ test(
     // Include a persistence round-trip before checking the complete exported recipe.
     await page.reload();
     await manifestPage.waitForPage();
+    await expect(captionSection.getByText(captions.label.en[0], { exact: true })).toBeVisible();
+    await expect(captionSection.getByText("WebVTT · English", { exact: true })).toBeVisible();
+    await expect(captionSection.getByText(captions.id, { exact: true })).toBeVisible();
     const downloadPromise = page.waitForEvent("download");
     await page.getByRole("button", { name: "Download manifest", exact: true }).click();
     const download = await downloadPromise;
@@ -79,5 +83,17 @@ test(
       await testInfo.attach(`${name}.json`, { body: JSON.stringify(value, null, 2), contentType: "application/json" });
     }
     expect(normalizeCookbookManifest(actual)).toEqual(normalizeCookbookManifest(recipe));
+
+    const captionRow = captionSection.getByRole("button", { name: `Edit ${captions.label.en[0]}`, exact: true });
+    await captionRow.focus();
+    await captionRow.press("Enter");
+    const captionLabel = page.getByRole("textbox", { name: "Label (en)", exact: true });
+    await expect(captionLabel).toHaveValue(captions.label.en[0]);
+    await captionLabel.fill("English subtitles");
+    await captionLabel.blur();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(captionSection.getByText("English subtitles", { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(captionSection.getByText("English subtitles", { exact: true })).toBeVisible();
   }
 );

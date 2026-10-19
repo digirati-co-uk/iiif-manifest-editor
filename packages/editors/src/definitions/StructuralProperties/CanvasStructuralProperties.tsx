@@ -1,3 +1,4 @@
+import { CanvasCaptions } from "../../components/CanvasCaptions/CanvasCaptions";
 import { ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
@@ -25,6 +26,8 @@ export function CanvasStructuralProperties() {
         <AnnotationPageContext annotationPage={page.id}>
           <PaintingAnnotationList />
         </AnnotationPageContext>
+
+        <CanvasCaptions />
 
         <LinkingPropertyList
           containerId={annotations.containerId()}

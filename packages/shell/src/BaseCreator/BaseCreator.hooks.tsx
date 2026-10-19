@@ -14,14 +14,17 @@ export function useCreator(
   property: string,
   type: string,
   target?: Reference,
-  options?: { isPainting?: boolean; onlyReference?: boolean },
+  options?: { isPainting?: boolean; onlyReference?: boolean; filter?: string }
 ) {
   const vault = useVault();
   const app = useApp();
   const { create, edit } = useLayoutActions();
   const supported = useMemo(
-    () => matchBasedOnResource({ type, parent, index: 0, property }, app.layout.creators || [], { vault }),
-    [parent, property, app.layout.creators, type, vault],
+    () =>
+      matchBasedOnResource({ type, parent, index: 0, property, filter: options?.filter }, app.layout.creators || [], {
+        vault,
+      }),
+    [parent, property, app.layout.creators, type, vault, options?.filter]
   );
   const canCreate = parent && supported.length !== 0;
 
@@ -39,7 +42,7 @@ export function useCreator(
         });
       }
     },
-    [create, parent, property, type, options, target],
+    [create, parent, property, type, options, target]
   );
 
   const wrappedFilteredCreate = useCallback(
@@ -57,14 +60,14 @@ export function useCreator(
         });
       }
     },
-    [create, parent, property, type, options, target],
+    [create, parent, property, type, options, target]
   );
 
   const wrappedEdit = useCallback(
     (resource: any, index?: number) => {
       edit(resource, parent ? { parent: toRef(parent), property, index } : undefined);
     },
-    [edit, parent, property],
+    [edit, parent, property]
   );
 
   const wrappedCreator = useCallback(
@@ -81,7 +84,7 @@ export function useCreator(
         });
       }
     },
-    [type, property, parent, target, create, options],
+    [type, property, parent, target, create, options]
   );
 
   const buttonProps = useMemo(() => {

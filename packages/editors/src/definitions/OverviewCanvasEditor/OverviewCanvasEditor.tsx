@@ -1,3 +1,4 @@
+import { CanvasCaptions } from "../../components/CanvasCaptions/CanvasCaptions";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
 import { AnnotationPageContext, CanvasContext } from "react-iiif-vault";
@@ -32,6 +33,8 @@ export function OverviewCanvasEditor() {
         <AnnotationPageContext annotationPage={page.id}>
           <PaintingAnnotationList />
         </AnnotationPageContext>
+
+        <CanvasCaptions />
 
         {annotationList && annotationList.length ? (
           <LinkingPropertyList

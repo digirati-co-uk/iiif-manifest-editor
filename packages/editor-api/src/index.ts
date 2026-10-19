@@ -3,6 +3,7 @@ export * from "./BaseReferenceListEditor";
 export * from "./Editor";
 export * from "./EditorInstance";
 export * from "./helpers/box-style";
+export * from "./helpers/canvas-media";
 export * from "./InternationalStringEditor";
 export * from "./MetadataEditor";
 export * from "./meta/behavior";
