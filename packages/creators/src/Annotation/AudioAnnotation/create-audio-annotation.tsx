@@ -73,11 +73,11 @@ export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, 
 }
 
 export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnotationPayload>) {
-  const initialData = props.options.initialData as Partial<CreateAudioAnnotationPayload>;
+  const [initialData] = useState(() => props.options.initialData as Partial<CreateAudioAnnotationPayload>);
   const [url, setUrl] = useState(initialData.url || "");
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState(initialData.duration || 0);
   const [error, setError] = useState("");
-  const [label, setLabel] = useState({ en: [""] } as InternationalString);
+  const [label, setLabel] = useState(initialData.label || ({ en: [""] } as InternationalString));
 
   const onSubmit = () => {
     props.runCreate({
@@ -89,13 +89,13 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
 
   useEffect(() => {
     setError("");
-    setDuration(0);
+    setDuration(url === initialData.url ? initialData.duration || 0 : 0);
     if (url) {
       // Find label from url.
       const labelFromUrl = url.split("/").pop()?.split(".").shift();
-      setLabel({ en: [labelFromUrl || ""] } as InternationalString);
+      setLabel(url === initialData.url && initialData.label ? initialData.label : { en: [labelFromUrl || ""] });
     }
-  }, [url]);
+  }, [url, initialData]);
 
   return (
     <PaddedSidebarContainer>

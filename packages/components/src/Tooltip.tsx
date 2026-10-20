@@ -165,14 +165,16 @@ export const TooltipContent = React.forwardRef<
 
   return (
     <FloatingPortal root={rootEl}>
-      <div
-        ref={ref}
-        style={{
-          ...context.floatingStyles,
-          ...style,
-        }}
-        {...context.getFloatingProps(props)}
-      />
+      <div className="manifest-editor">
+        <div
+          ref={ref}
+          style={{
+            ...context.floatingStyles,
+            ...style,
+          }}
+          {...context.getFloatingProps(props)}
+        />
+      </div>
     </FloatingPortal>
   );
 });

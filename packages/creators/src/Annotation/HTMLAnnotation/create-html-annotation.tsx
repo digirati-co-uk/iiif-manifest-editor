@@ -35,8 +35,8 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
             language,
             body,
           },
-          { parent: { resource: annotation, property: "items" } },
-        ),
+          { parent: { resource: annotation, property: "items" } }
+        )
       );
     }
   }
@@ -87,7 +87,7 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
 export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
-    initialValue: { en: [""] },
+    initialValue: props.options.initialData?.body || { en: [""] },
     requestId: props.options.initialData?.requestId,
   });
 

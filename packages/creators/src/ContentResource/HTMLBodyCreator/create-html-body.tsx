@@ -21,8 +21,8 @@ export async function createHtmlBody(data: CreateHTMLBodyPayload, ctx: CreatorFu
 
 export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>) {
   const { i18n } = useConfig();
-  const [body, setBodyValue] = useState<string>("<p></p>");
-  const [language, setLang] = useState(i18n.defaultLanguage);
+  const [body, setBodyValue] = useState<string>(props.options.initialData?.body ?? "<p></p>");
+  const [language, setLang] = useState<string>(props.options.initialData?.language ?? i18n.defaultLanguage);
 
   const onSubmit = () => {
     props.runCreate({

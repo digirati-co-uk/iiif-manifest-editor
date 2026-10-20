@@ -19,9 +19,11 @@ export async function createPlaintext(data: CreatePlaintextPayload, ctx: Creator
 }
 
 export function CreatePlaintextForm(props: CreatorContext) {
-  const [label, setLabel] = useState<InternationalString>({
-    en: ["View as text"],
-  });
+  const [label, setLabel] = useState<InternationalString>(
+    props.options.initialData?.label || {
+      en: ["View as text"],
+    }
+  );
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -45,7 +47,7 @@ export function CreatePlaintextForm(props: CreatorContext) {
 
         <InputContainer $wide>
           <InputLabel htmlFor="id">Link to plaintext</InputLabel>
-          <Input id="url" name="url" defaultValue="" />
+          <Input id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

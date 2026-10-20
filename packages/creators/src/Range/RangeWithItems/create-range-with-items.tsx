@@ -13,7 +13,7 @@ export interface CreateRangeWithItemsPayload {
 export async function createRangeWithItems(
   data: CreateRangeWithItemsPayload,
   ctx: CreatorFunctionContext,
-  parentId?: string,
+  parentId?: string
 ): Promise<CreatorResource> {
   const rangeId = ctx.generateId(`range`, parentId ? { id: parentId, type: "Range" } : undefined);
 
@@ -26,13 +26,13 @@ export async function createRangeWithItems(
 }
 
 export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithItemsPayload>) {
-  const [label, setLabel] = useState<InternationalString>({ en: [""] });
+  const [label, setLabel] = useState<InternationalString>(props.options.initialData?.label || { en: [""] });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (label) {
-      props.runCreate({ type: "Range", label });
+      props.runCreate({ type: "Range", label, items: props.options.initialData?.items || [] });
     }
   };
 
