@@ -11,7 +11,7 @@
 
 <br>
 <br>
-<br>
+<br> 
 
 # Digirati IIIF Manifest Editor
 
