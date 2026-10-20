@@ -40,7 +40,9 @@ export async function createVttAnnotationPage(data: CreateVttAnnotationPagePaylo
 }
 
 export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnotationPagePayload>) {
-  const [label, setLabel] = useState<InternationalString>({ en: ["Captions in WebVTT format"] });
+  const [label, setLabel] = useState<InternationalString>(
+    props.options.initialData?.label || { en: ["Captions in WebVTT format"] }
+  );
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,7 +75,7 @@ export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnot
             pattern="https?://.+"
             title="Enter an absolute http:// or https:// URL"
             aria-describedby="vtt-help"
-            defaultValue=""
+            defaultValue={props.options.initialData?.url || ""}
           />
         </InputContainer>
 
@@ -92,7 +94,7 @@ export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnot
             type="text"
             placeholder="en"
             title="A language code such as en, fr or pt-BR"
-            defaultValue="en"
+            defaultValue={props.options.initialData?.language ?? "en"}
           />
         </InputContainer>
 

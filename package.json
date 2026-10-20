@@ -39,7 +39,8 @@
     "browser:local": "node packages/manifest-editor/browser/build.mjs --local",
     "browser:bundle": "node packages/manifest-editor/browser/build.mjs",
     "test:remote": "pnpm --filter manifest-editor test:remote",
-    "browser:register": "node packages/manifest-editor/browser/register.mjs"
+    "browser:register": "node packages/manifest-editor/browser/register.mjs",
+    "storybook": "pnpm --filter @manifest-editor/storybook dev"
   },
   "devDependencies": {
     "@lerna-lite/cli": "^5.4.2",

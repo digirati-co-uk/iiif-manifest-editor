@@ -14,7 +14,7 @@ export interface CreateImageUrlListPayload {
 
 export async function createImageUrlList(
   payload: CreateImageUrlListPayload,
-  ctx: CreatorFunctionContext,
+  ctx: CreatorFunctionContext
 ): Promise<CreatorResource[]> {
   const items = [];
   const createImage = creatorHelper(ctx, "Annotation", "body", "@manifest-editor/image-url-creator");
@@ -42,7 +42,14 @@ export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListP
       <Form.Form onSubmit={onSubmit}>
         <Form.InputContainer className="mb-4">
           <Form.Label>Enter a list of URLs (one per line)</Form.Label>
-          <Form.TextArea name="urls" rows="10" />
+          <Form.TextArea
+            aria-label="Image URLs"
+            name="urls"
+            rows="10"
+            defaultValue={
+              props.options.initialData?.images?.map((image: CreateImageUrlPayload) => image.url).join("\n") || ""
+            }
+          />
         </Form.InputContainer>
         <ActionButton primary large type="submit">
           Create

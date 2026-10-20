@@ -1,0 +1,238 @@
+html,
+body,
+#storybook-root,
+.sb-preview {
+  height: 100%;
+}
+.sb-frame {
+  --sb-toolbar-height: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #fff;
+  color: #222;
+  font:
+    400 14px/1.5 ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+.sb-frame *,
+.sb-frame *::before,
+.sb-frame *::after {
+  box-sizing: inherit;
+}
+.sb-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--sb-toolbar-height);
+  flex-shrink: 0;
+  padding: 0 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+}
+.sb-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font:
+    500 12px/20px ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+.sb-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+.sb-link {
+  color: #444;
+  text-underline-offset: 2px;
+}
+.sb-button,
+.sb-details > summary {
+  padding: 1px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  font: inherit;
+}
+.sb-button:hover,
+.sb-details > summary:hover {
+  background: #f3f4f6;
+}
+.sb-details {
+  position: relative;
+}
+.sb-details > summary {
+  list-style: none;
+}
+.sb-details > summary::-webkit-details-marker {
+  display: none;
+}
+.sb-details > p {
+  position: absolute;
+  z-index: 100;
+  top: 100%;
+  right: 0;
+  width: min(320px, 85vw);
+  margin: 4px 0 0;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+}
+.sb-link:focus-visible,
+.sb-button:focus-visible,
+.sb-details > summary:focus-visible,
+.sb-json-pre:focus-visible {
+  outline: 2px solid #892c4e;
+  outline-offset: 2px;
+}
+.sb-summary {
+  margin: 0 0 8px;
+  color: #555;
+  font-size: 12px;
+}
+.sb-body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.sb-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
+  height: 100%;
+}
+.sb-split > * {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+@media (min-width: 900px) {
+  .sb-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+.sb-pane {
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  overflow: auto;
+  align-content: start;
+}
+.sb-json {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-left: 1px solid #e5e7eb;
+}
+.sb-json-title {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 4px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #555;
+  font-size: 12px;
+  font-weight: 500;
+}
+.sb-json-pre {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  font:
+    12px/1.5 ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+  tab-size: 2;
+  white-space: pre;
+}
+.sb-json .token.property {
+  color: #0550ae;
+}
+.sb-json .token.string {
+  color: #116329;
+}
+.sb-json .token.number {
+  color: #953800;
+}
+.sb-json .token.boolean,
+.sb-json .token.null {
+  color: #8250df;
+}
+.sb-json .token.punctuation,
+.sb-json .token.operator {
+  color: #57606a;
+}
+.sb-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sb-status {
+  padding: 8px;
+}
+.sb-editor {
+  display: flex;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sb-creator-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
+  height: 100%;
+  padding: 0 16px;
+}
+.sb-creator-form {
+  /* Match Modal's max-w-4xl and BaseCreator's p-2 py-6, without modal chrome. */
+  width: 100%;
+  min-height: 0;
+  max-width: 56rem;
+  max-height: calc(80dvh - 4rem);
+  justify-self: center;
+  padding: 24px 8px;
+  overflow-y: auto;
+  font-size: 16px;
+  line-height: 24px;
+}
+.sb-json-wrapper,
+.sb-atlas {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.sb-atlas {
+  height: 100%;
+  padding: 0;
+}
+@media (min-width: 78rem) {
+  .sb-creator-workbench {
+    grid-template-columns: 56rem minmax(0, 1fr);
+  }
+}
