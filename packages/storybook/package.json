@@ -1,0 +1,51 @@
+{
+  "name": "@manifest-editor/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006 --no-open --disable-telemetry",
+    "storybook": "storybook dev -p 6006 --no-open --disable-telemetry",
+    "build-storybook": "storybook build --disable-telemetry",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@iiif/helpers": "catalog:",
+    "@iiif/presentation-3": "^2.2.3",
+    "@manifest-editor/components": "workspace:*",
+    "@manifest-editor/creator-api": "workspace:*",
+    "@manifest-editor/creators": "workspace:*",
+    "@manifest-editor/editor-api": "workspace:*",
+    "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/shell": "workspace:*",
+    "@manifest-editor/manifest-preset": "workspace:*",
+    "@manifest-editor/collection-preset": "workspace:*",
+    "@manifest-editor/exhibition-preset": "workspace:*",
+    "manifest-editor": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-aria-components": "^1.12",
+    "react-iiif-vault": "catalog:",
+    "prismjs": "1.30.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "10.6.2",
+    "@storybook/addon-docs": "10.6.2",
+    "@storybook/react-vite": "10.6.2",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "storybook": "10.6.2",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "tailwindcss": "^3.4.3",
+    "postcss": "^8.4.38",
+    "postcss-import": "^16.1.0",
+    "postcss-nested": "^7.0.2",
+    "autoprefixer": "10.5.4",
+    "@tailwindcss/typography": "0.5.20",
+    "@types/prismjs": "1.26.6"
+  }
+}

@@ -125,3 +125,7 @@ Pass Playwright options through the root commands, for example
 `pnpm e2e:local --grep @baseline`. Reports and failure traces are saved under
 `packages/playwright/playwright-report` and `packages/playwright/test-results`.
 View the latest report with `pnpm --filter playwright test:report`.
+
+## Storybook
+
+Run `pnpm storybook` to open the customised component and editor workbench at http://localhost:6006. See [the Storybook package](packages/storybook/README.md) and its [story checklist](packages/storybook/STORIES.md) for components, headless context, creators, editors and full presets.
