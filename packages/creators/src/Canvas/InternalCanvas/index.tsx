@@ -1,3 +1,4 @@
+import { useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import { type CreatorContext, type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 import { IIIFBrowser, IIIFBrowserProps } from "iiif-browser";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
@@ -29,6 +30,7 @@ export const internalCanvas = defineCreator({
 });
 
 function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
+  const notebookPlugins = useNotebookBrowserPlugins();
   const { runCreate } = props;
   const manifest = useManifest();
   const vault = useVault();
@@ -75,7 +77,13 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
 
   return (
     <VaultProvider vault={vault}>
-      <IIIFBrowser vault={vault} navigation={navigationOptions} output={output} history={historyOptions} />
+      <IIIFBrowser
+        plugins={notebookPlugins}
+        vault={vault}
+        navigation={navigationOptions}
+        output={output}
+        history={historyOptions}
+      />
     </VaultProvider>
   );
 }

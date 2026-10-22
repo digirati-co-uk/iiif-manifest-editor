@@ -1,5 +1,5 @@
 import { type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
-import { canonicalServiceUrl, getImageServices } from "@iiif/parser/image-3";
+import { canonicalServiceUrl, getImageServices, isImageService } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
@@ -15,10 +15,10 @@ export function croppedRegion(
     height: number;
   },
   size: string,
-  rotation: number | string = 0,
+  rotation: number | string = 0
 ) {
   return `${imageServiceId}/${Math.floor(region.x)},${Math.floor(region.y)},${Math.floor(region.width)},${Math.floor(
-    region.height,
+    region.height
   )}/${size}/${rotation}/default.jpg`;
 }
 
@@ -40,6 +40,55 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
   for (const { resource, selector, parent, rotation } of resources) {
     const type = resource.type;
     const previewVault = new Vault();
+
+    if (isImageService(resource) || type === "ImageService") {
+      const service = isImageService(resource)
+        ? resource
+        : await fetch(canonicalServiceUrl(resource.id)).then((response) => {
+            if (!response.ok) throw new Error("Could not load the image service");
+            return response.json();
+          });
+      let body = await ctx.create(
+        "@manifest-editor/image-service-creator",
+        { url: resource.id, service },
+        { targetType: "ContentResource" }
+      );
+      const dimensions = browserTransformDimensions(
+        selector?.type === "BoxSelector"
+          ? { width: Math.floor(selector.spatial.width), height: Math.floor(selector.spatial.height) }
+          : { width: service.width, height: service.height },
+        rotation
+      );
+      data.trackSize?.(dimensions);
+      const imageApiSelector = browserImageApiSelector(selector, rotation);
+      if (imageApiSelector) {
+        body = ctx.embed({ type: "SpecificResource", source: body, selector: imageApiSelector });
+      }
+      if (targetType === "ContentResource") {
+        returnResources.push(body);
+        continue;
+      }
+      const canvasId = targetType === "Canvas" ? ctx.generateId("Canvas") : undefined;
+      const annotation = ctx.embed({
+        id: ctx.generateId("Annotation"),
+        type: "Annotation",
+        motivation: "painting",
+        body,
+        target: canvasId ?? ctx.getTarget(),
+      });
+      returnResources.push(
+        targetType === "Canvas"
+          ? ctx.embed({
+              id: canvasId,
+              type: "Canvas",
+              label: resource.label || { en: ["Untitled canvas"] },
+              ...dimensions,
+              items: [ctx.embed({ id: ctx.generateId("AnnotationPage"), type: "AnnotationPage", items: [annotation] })],
+            })
+          : annotation
+      );
+      continue;
+    }
 
     // Case 1 - we want the WHOLE canvas to come across.
     if (targetType === "Canvas" || targetType === "Annotation" || targetType === "ContentResource") {
@@ -162,7 +211,7 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                     height: ~~selector.spatial.height,
                   }
                 : dimensions,
-              rotation,
+              rotation
             );
             if (data.trackSize) {
               data.trackSize(transformedDimensions);
@@ -207,8 +256,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                         ]
                       : undefined,
                     items: [annotationPage],
-                  }),
-                ),
+                  })
+                )
               );
               continue;
             }
@@ -218,8 +267,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                 addManifestTracking({
                   ...fullAnnotation,
                   target: ctx.getTarget(),
-                }),
-              ),
+                })
+              )
             );
             continue;
           }
@@ -231,8 +280,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
               addManifestTracking({
                 ...fullAnnotation,
                 target: ctx.getTarget(),
-              }),
-            ),
+              })
+            )
           );
         }
       }

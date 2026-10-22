@@ -1,3 +1,4 @@
+import { ProjectNotebookSync } from "../Notebook/ProjectNotebook";
 import { AnnotationRequestCleanup } from "../AtlasStore/AtlasStoreProvider";
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
@@ -111,6 +112,7 @@ export function ShellProvider({
             <ThemeProvider theme={theme || defaultTheme}>
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
                 <PluginConfigBridge config={mergedConfig} />
+                <ProjectNotebookSync />
                 <EditingStack>
                   <LayoutProvider>
                     <BackgroundActionsProvider
