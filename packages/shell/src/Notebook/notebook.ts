@@ -36,15 +36,17 @@ export function getProjectNotebook(projectId: string): NotebookStore {
 }
 
 export function parseNotebookMarkdown(markdown: string): JSONContent {
-  return new MarkdownManager({ extensions: [
-    StarterKit,
-    TaskList,
-    TaskItem.configure({ nested: true }),
-    IIIFImage.extend({
-      markdownTokenName: "image",
-      parseMarkdown: (token, helpers) => helpers.createNode("iiifImage", { src: token.href, alt: token.text || "" }),
-    }),
-  ] }).parse(markdown);
+  return new MarkdownManager({
+    extensions: [
+      StarterKit,
+      TaskList,
+      TaskItem.configure({ nested: true }),
+      IIIFImage.extend({
+        markdownTokenName: "image",
+        parseMarkdown: (token, helpers) => helpers.createNode("iiifImage", { src: token.href, alt: token.text || "" }),
+      }),
+    ],
+  }).parse(markdown);
 }
 
 export function seedProjectNotebook(notebook: NotebookStore, projectId: string, config: ProjectNotebookConfig) {
