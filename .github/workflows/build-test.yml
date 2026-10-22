@@ -5,19 +5,17 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
 jobs:
   build:
-    if: github.event.action != 'labeled' || github.event.label.name == 'deploy'
     runs-on: ubuntu-latest
     name: Node 24 build and deploy
     permissions:
       contents: read
       deployments: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +49,9 @@ jobs:
           node-version: 24
           cache: "pnpm"
 
+      - name: Test preview controller
+        run: node --test .github/scripts/preview/preview.test.mjs
+
       - name: Install dependencies
         run: pnpm install
 
@@ -70,21 +71,3 @@ jobs:
           workingDirectory: apps/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           command: deploy --env production
-
-      - name: Deploy preview
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')
-        id: deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          preCommands: pnpm run pre-build
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: apps/web
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: deploy --env preview
-
-      - name: Comment Preview URL on PR
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')
-        uses: moojing/cf-preview-bot@v1
-        with:
-          deployment_url: ${{ steps.deploy.outputs.deployment-url }}
