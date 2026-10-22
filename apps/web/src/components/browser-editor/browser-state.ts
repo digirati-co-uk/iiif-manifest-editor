@@ -500,14 +500,50 @@ export async function createBlankCollection() {
   return project;
 }
 
+export interface NotebookProjectInput {
+  markdown: string;
+  noteTitle: string;
+  noteId?: string;
+  label?: string;
+  source?: LocalBrowserProject["source"];
+  extraData?: LocalBrowserProject["extraData"];
+}
+
+/** Create a fresh empty manifest and persist its notebook seed in the project itself. */
+export async function createNotebookProject(input: NotebookProjectInput) {
+  return createBlankManifestProject(
+    input.label ?? "Blank Manifest",
+    input.source ?? { id: "notebook-project", type: "Template" },
+    {
+      ...input.extraData,
+      config: mergePartialConfig(input.extraData?.config, {
+        notebook: {
+          enabled: true,
+          initialNotes: [
+            { id: input.noteId ?? "project-instructions", title: input.noteTitle, markdown: input.markdown },
+          ],
+        },
+      }) as Config,
+    }
+  );
+}
+
 export async function createBlankManifest() {
+  return createBlankManifestProject("Blank Manifest", { id: "blank-manifest", type: "Template" }, {});
+}
+
+async function createBlankManifestProject(
+  label: string,
+  source: LocalBrowserProject["source"],
+  extraData: LocalBrowserProject["extraData"]
+) {
   const id = randomId();
   const manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: `https://example.org/${id}`,
     type: "Manifest",
     label: {
-      en: ["Blank Manifest"],
+      en: [label],
     },
     items: [],
   };
@@ -521,12 +557,12 @@ export async function createBlankManifest() {
     {
       id: manifest.id,
       type: "Manifest",
-      label: { en: ["Blank Manifest"] },
+      label: { en: [label] },
       thumbnail: "",
     },
-    { id: "blank-manifest", type: "Template" },
+    source,
     vaultData,
-    {},
+    extraData
   );
 
   return project;

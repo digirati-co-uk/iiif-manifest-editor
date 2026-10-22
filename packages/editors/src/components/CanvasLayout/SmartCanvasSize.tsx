@@ -13,7 +13,15 @@ import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 
 const ACCENT = "#b84c74";
 
-export function SmartCanvasSize({ children, showShapes = false }: { children?: ReactNode; showShapes?: boolean }) {
+export function SmartCanvasSize({
+  children,
+  showShapes = false,
+  fallback = null,
+}: {
+  children?: ReactNode;
+  showShapes?: boolean;
+  fallback?: ReactNode;
+}) {
   const canvas = useCanvas();
   const vault = useVault();
   const id = useId();
@@ -38,7 +46,7 @@ export function SmartCanvasSize({ children, showShapes = false }: { children?: R
       ratioBasis.current = { width, height };
     }
   }, [canvas?.id, width, height]);
-  if (!canvas || !canResizeCanvas(vault, canvas)) return null;
+  if (!canvas || !canResizeCanvas(vault, canvas)) return fallback;
 
   const fit = expandedCanvasBounds(canvas, rectangles);
   const needsFit = fit.width !== canvas.width || fit.height !== canvas.height;
