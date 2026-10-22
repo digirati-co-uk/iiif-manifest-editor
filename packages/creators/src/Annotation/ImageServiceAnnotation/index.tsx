@@ -21,11 +21,11 @@ declare module "@manifest-editor/creator-api" {
 export const imageServiceAnnotation = defineCreator({
   id: "@manifest-editor/image-service-annotation",
   create: createImageServiceAnnotation,
-  label: "IIIF Image",
+  label: "IIIF image",
   dependencies: ["@manifest-editor/image-service-creator"],
-  summary: "IIIF Image service",
+  summary: "Add a zoomable image using an IIIF image service or info.json link.",
   tags: ["image", "image-service"],
-  icon: <IIIFLogo style={{ padding: 10 }} />,
+  icon: <IIIFLogo />,
   render(ctx) {
     return <CreateImageServiceAnnotationForm {...ctx} />;
   },

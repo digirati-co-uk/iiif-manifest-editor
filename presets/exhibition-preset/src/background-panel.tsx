@@ -1,5 +1,7 @@
+import { useInStack } from "@manifest-editor/editors";
 import {
   type BackgroundPanel,
+  useApp,
   useLayoutActions,
   useLayoutState,
 } from "@manifest-editor/shell";
@@ -7,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useManifest } from "react-iiif-vault";
 import { exhibitionCenterPanel } from "./center-panels/ExhibitionCenterPanel";
 import { exhibitionRemotePreviewPanel } from "./center-panels/ExhibitionRemotePreviewPanel";
+import { useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionGridLeftPanel } from "./left-panels/ExhibitionGrid";
 import { exhibitionOverviewLeftPanel } from "./left-panels/ExhibitionOverview";
 import { exhibitionThemeLeftPanel } from "./left-panels/ExhibitionTheme";
@@ -27,7 +30,10 @@ export const exhibitionBackgroundTask: BackgroundPanel = {
 };
 
 function ExhibitionBackgroundPanel() {
+  const { metadata } = useApp();
+  const template = useExhibitionTemplate();
   const manifest = useManifest();
+  const canvasId = useInStack("Canvas")?.resource.source.id;
   const { leftPanel, rightPanel } = useLayoutState();
   const {
     edit,
@@ -40,6 +46,12 @@ function ExhibitionBackgroundPanel() {
   ] = useState(false);
   const previousLeftPanel = useRef<string | null>(null);
   const previousManifestId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if ((metadata.id === "exhibition-slideshow-editor" || template?.type === "slideshow") && canvasId) {
+      centerPanelActions.open({ id: "current-canvas" });
+    }
+  }, [metadata.id, template?.type, canvasId, centerPanelActions]);
 
   useEffect(() => {
     const manifestId = manifest?.id || null;

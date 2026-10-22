@@ -16,8 +16,8 @@ declare module "@manifest-editor/creator-api" {
 export const internalCanvas = defineCreator({
   id: "@manifest-editor/internal-canvas",
   create: createInternalCanvas,
-  label: "Internal canvas link",
-  summary: "Canvas from the same manifest",
+  label: "Existing canvas",
+  summary: "Choose a canvas from this manifest.",
   icon: <ThumbnailStripIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label"],

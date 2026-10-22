@@ -114,8 +114,8 @@ export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnot
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
       <InputContainer $wide>
-        <InputLabel htmlFor="video-url">URL</InputLabel>
-        <Input type="text" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <InputLabel htmlFor="video-url">Link to video file</InputLabel>
+        <Input type="url" placeholder="https://example.org/video.mp4" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
 
       {url && !error ? (

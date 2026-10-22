@@ -37,7 +37,7 @@ export const emptyCanvas = defineCreator({
     };
   },
   label: "Empty canvas",
-  summary: "No content",
+  summary: "Create a blank canvas and add content later.",
   icon: <EmptyCanvasIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],

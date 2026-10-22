@@ -79,7 +79,8 @@ test(
         await openCanvases();
         await page.getByRole("button", { name: "Add new canvas", exact: true }).click();
       }
-      await page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true }).click();
+      await page.getByRole("button", { name: "Choose a content type instead", exact: true }).click();
+      await page.getByRole("option", { name: "IIIF image", exact: true }).click();
       const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
       const serviceUrl = dialog.getByRole("textbox", { name: "Link to image service", exact: true });
       await serviceUrl.fill(info.id);

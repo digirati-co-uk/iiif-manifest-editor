@@ -13,8 +13,8 @@ import { type CreatorDefinition, type CreatorFunctionContext, defineCreator } fr
 export const exampleCreator = defineCreator({
   id: "@manifest-editor/example-creator",
   create: createExampleCanvas,
-  label: "Example Creator",
-  summary: "New large blank canvas ",
+  label: "Blank canvas example",
+  summary: "Create a large blank canvas with a title.",
   icon: <EmptyCanvasIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],

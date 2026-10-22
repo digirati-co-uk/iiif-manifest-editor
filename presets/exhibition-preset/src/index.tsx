@@ -91,9 +91,10 @@ export const exhibitionEditorPreset = extendApp(
     background: [exhibitionBackgroundTask],
     canvasEditors: [
       //
-      imageBlockEditor,
       youtubeMainEdtior,
       infoBlockEditor,
+      // Use the preview/edit workspace for all remaining canvases, including empty slides.
+      imageBlockEditor,
     ],
     editors: [
       //

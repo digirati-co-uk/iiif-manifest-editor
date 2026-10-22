@@ -112,8 +112,8 @@ export function YouTubeForm(props: CreatorContext) {
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link to YouTube</InputLabel>
-          <Input id="youtubeUrl" name="youtubeUrl" defaultValue={initialData.youtubeUrl || ""} />
+          <InputLabel htmlFor="youtubeUrl">Link to YouTube</InputLabel>
+          <Input type="url" id="youtubeUrl" name="youtubeUrl" defaultValue={initialData.youtubeUrl || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

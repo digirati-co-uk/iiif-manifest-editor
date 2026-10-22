@@ -12,7 +12,6 @@ import {
   useManifest,
 } from "react-iiif-vault";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
-import { isExhibitionItem } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const slideshowCanvasEditor: CanvasEditorDefinition = {
@@ -22,7 +21,7 @@ export const slideshowCanvasEditor: CanvasEditorDefinition = {
   supports: {
     strategy: (_strategy: RenderingStrategy, resource: EditableResource, vault) => {
       const canvas = vault.get(resource.resource);
-      return canvas?.type === "Canvas" && isExhibitionItem(canvas as any);
+      return canvas?.type === "Canvas";
     },
   },
 };

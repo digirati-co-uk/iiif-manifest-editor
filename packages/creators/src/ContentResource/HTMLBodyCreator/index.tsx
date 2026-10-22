@@ -1,5 +1,5 @@
 import { defineCreator } from "@manifest-editor/creator-api";
-import { TextFormatIcon } from "@manifest-editor/ui/icons/TextFormatIcon";
+import { TextIcon } from "@manifest-editor/components";
 import { CreateHTMLBodyForm, createHtmlBody } from "./create-html-body";
 
 declare module "@manifest-editor/creator-api" {
@@ -13,9 +13,9 @@ declare module "@manifest-editor/creator-api" {
 export const htmlBodyCreator = defineCreator({
   id: "@manifest-editor/html-body-creator",
   create: createHtmlBody,
-  label: "HTML Body",
-  summary: "Add HTML annotation body",
-  icon: <TextFormatIcon />,
+  label: "Formatted text",
+  summary: "Write formatted text as the content of an annotation.",
+  icon: <TextIcon />,
   render(ctx) {
     return <CreateHTMLBodyForm {...ctx} />;
   },

@@ -29,10 +29,11 @@ test(
     await expect(manifestPage.manifestHeading).toHaveText(recipe.label.en[0]);
 
     await page.getByRole("button", { name: "Start adding content", exact: true }).click();
+    await page.getByRole("button", { name: "Choose a content type instead", exact: true }).click();
     await expect(page.getByRole("option", { name: /WebVTT captions/ })).toHaveCount(0);
-    await page.getByRole("option", { name: "Video Video annotation", exact: true }).click();
+    await page.getByRole("option", { name: "Video", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
-    await dialog.getByRole("textbox", { name: "URL", exact: true }).fill(video.id);
+    await dialog.getByRole("textbox", { name: "Link to video file", exact: true }).fill(video.id);
     await expect(dialog.getByRole("spinbutton", { name: /^Duration/ })).toHaveValue(/572\.03/, { timeout: 15_000 });
     await expect(dialog.getByRole("spinbutton", { name: /^Width/ })).toHaveValue(String(video.width));
     await expect(dialog.getByRole("spinbutton", { name: /^Height/ })).toHaveValue(String(video.height));
