@@ -9,6 +9,8 @@ import {
   select,
   fingerprint,
   comment,
+  outcome,
+  marker,
   snapshot,
   lastSuccess,
   shouldCompose,
@@ -29,7 +31,7 @@ const pull = (number, overrides = {}) => ({
   ...overrides,
 });
 
-test("selects all labelled open main PRs, including drafts, in numeric order", () => {
+test("selects labelled same-repository PRs across target branches in numeric order", () => {
   assert.deepEqual(
     select(
       [
@@ -43,7 +45,7 @@ test("selects all labelled open main PRs, including drafts, in numeric order", (
       ],
       repository
     ).map((pr) => pr.number),
-    [2, 10]
+    [2, 5, 10]
   );
 });
 
@@ -95,21 +97,128 @@ test("merge conflict is aborted and next PR merges; shared commits are not count
   }
 });
 
-test("comments distinguish failed candidates from the live deployment and escape conflict text", () => {
-  const manifest = {
-    base: "new",
-    run: "https://example.com/run",
+const candidate = {
+  base: "new0000000000",
+  run: "https://example.com/run",
+  prs: [
+    { number: 1, head: "aaa0000000000", status: "included", commits: ["aaa0000000000"] },
+    { number: 2, head: "bbb0000000000", status: "conflict", paths: ["<path>"], diagnostics: "</pre>hello" },
+    { number: 3, head: "ccc0000000000", status: "included", commits: ["c1", "ccc0000000000"] },
+  ],
+};
+const previousLive = {
+  base: "old0000000000",
+  run: "https://example.com/old",
+  deployedAt: "2026-10-01T10:00:00Z",
+  prs: [{ number: 1, head: "aaa0000000000", status: "included" }],
+};
+
+test("outcome maps workflow results without conflating publication and bookkeeping", () => {
+  assert.deepEqual(outcome({ DEPLOY_RESULT: "success", FRESH: "true", PUBLISH_RESULT: "success" }), {
+    state: "deployed",
+  });
+  assert.deepEqual(outcome({ DEPLOY_RESULT: "failure", FRESH: "true", PUBLISH_RESULT: "success" }), {
+    state: "bookkeeping",
+  });
+  assert.deepEqual(outcome({ DEPLOY_RESULT: "success", FRESH: "false" }), { state: "superseded" });
+  assert.deepEqual(outcome({ DEPLOY_RESULT: "skipped", FAILED_STEP: "Lint" }), { state: "failed", step: "Lint" });
+  assert.deepEqual(outcome({}), { state: "failed", step: null });
+});
+
+test("successful comment leads with live status and link, without repeating the snapshot", () => {
+  const live = { ...candidate, deployedAt: "2026-10-22T10:00:00Z" };
+  const body = comment(candidate, live, 3, { state: "deployed" });
+  const lines = body.split("\n");
+  assert.equal(lines[0], marker);
+  assert.equal(lines[1], "## ✅ #3 is live");
+  assert.match(body, /\*\*\[Open the shared dev preview ↗\]\(https:\/\/manifest-editor-preview/);
+  assert.match(body, /\*\*This PR:\*\* ✅ Live at `ccc0000`/);
+  assert.match(body, /\*\*Latest attempt:\*\* ✅ Deployed · \[workflow run\]\(https:\/\/example.com\/run\)/);
+  assert.match(body, /\| \| Live on dev site \|\n/);
+  assert.doesNotMatch(body, /Latest attempt \(not live\)/, "no duplicated candidate column");
+  assert.match(body, /\| #1 \| ✅ `aaa0000` \|/);
+  assert.match(body, /\| #2 \| ⚠️ conflict \|/);
+  assert.match(body, /\| \*\*#3\*\* \(this PR\) \| ✅ `ccc0000` \|/);
+  // Exact SHAs and commit lists stay available, but collapsed.
+  assert.match(body, /<details><summary>Exact SHAs and commits<\/summary>[\s\S]*`new0000000000`[\s\S]*- `c1`/);
+  assert.equal(body.match(/Exact SHAs/g).length, 1);
+  assert.doesNotMatch(body, /\*\*Live\*\* —/, "live SHAs are not repeated when identical");
+});
+
+test("failed or superseded candidates never appear live", () => {
+  for (const [result, title] of [
+    [{ state: "failed", step: "Build <app>" }, "## ❌ Preview failed — #3 is not live"],
+    [{ state: "superseded" }, "## ⏳ #3 is not live yet"],
+  ]) {
+    const body = comment(candidate, previousLive, 3, result);
+    assert.equal(body.split("\n")[1], title);
+    assert.doesNotMatch(body, /✅ Live at/);
+    assert.match(body, /\| \| Live on dev site \| Latest attempt \(not live\) \|/);
+    assert.match(body, /\| main \| `old0000` \| `new0000` \|/);
+    assert.match(body, /\| \*\*#3\*\* \(this PR\) \| — \| ✅ `ccc0000` \|/);
+    assert.match(body, /\*\*Live\*\* — main `old0000000000`/);
+  }
+  const failed = comment(candidate, previousLive, 3, { state: "failed", step: "Build <app>" });
+  assert.match(failed, /❌ Failed at Build &lt;app&gt;/);
+  assert.match(comment(candidate, previousLive, 1, { state: "failed" }), /## ✅ #1 is live/);
+  // A previously deployed head that has since changed is reported as older, not current.
+  const moved = { ...candidate, prs: [{ ...candidate.prs[0], head: "ddd0000000000" }] };
+  assert.match(comment(moved, previousLive, 1, { state: "failed" }), /an older head `aaa0000` is live/);
+});
+
+test("conflict comment summarises merge base and escapes paths and logs in a collapsed block", () => {
+  const body = comment(candidate, previousLive, 2, { state: "deployed" });
+  assert.equal(body.split("\n")[1], "## ⚠️ #2 skipped: merge conflict");
+  assert.match(body, /\*\*Merge conflict\*\* in 1 file against main `new0000` plus #1\./);
+  assert.match(body, /<details><summary>Conflicting files and merge output<\/summary>\n\n<pre>\n&lt;path&gt;\n/);
+  assert.match(body, /&lt;\/pre&gt;hello\n<\/pre>/);
+  assert.equal(body.match(/<\/pre>/g).length, 1, "untrusted output cannot close the block");
+  const huge = {
+    ...candidate,
     prs: [
-      { number: 1, head: "aaa", status: "included", commits: ["aaa"] },
-      { number: 2, head: "bbb", status: "conflict", paths: ["<path>"], diagnostics: "</pre>hello" },
+      { ...candidate.prs[1], paths: Array.from({ length: 150 }, (_, i) => `f${i}`), diagnostics: "x".repeat(9000) },
     ],
   };
-  const body = comment(manifest, { base: "old", prs: [], run: "https://example.com/old" }, 2, "failed");
-  assert.match(body, /Currently deployed[\s\S]*old/);
-  assert.match(body, /Latest candidate[\s\S]*new/);
-  assert.match(body, /plus #1/);
-  assert.match(body, /&lt;path&gt;/);
-  assert.match(comment(manifest, null, 3, "failed"), /no longer selected separately/);
+  const capped = comment(huge, null, 2, { state: "deployed" });
+  assert.match(capped, /f99\n… 50 more in the workflow artifact/);
+  assert.doesNotMatch(capped, /x{6001}/);
+});
+
+test("removed PRs, main-only snapshots, and missing deployments are reported accurately", () => {
+  const mainOnly = { base: "main000000000", run: "https://example.com/run", prs: [] };
+  const deployed = comment(mainOnly, { ...mainOnly, deployedAt: "now" }, 1, { state: "deployed" });
+  assert.equal(deployed.split("\n")[1], "## ➖ #1 removed from the dev preview");
+  assert.match(deployed, /main baseline/);
+  assert.match(deployed, /now · main only/);
+  assert.match(deployed, /- No PRs; main only\./);
+  const pending = comment(mainOnly, previousLive, 1, { state: "failed" });
+  assert.equal(pending.split("\n")[1], "## ➖ #1 deselected — still live");
+  assert.match(pending, /\| \*\*#1\*\* \(this PR\) \| ✅ `aaa0000` \| — \|/);
+  const none = comment(candidate, null, 3, { state: "failed" });
+  assert.match(none, /\*\*Live deployment:\*\* none yet/);
+  assert.match(none, /\| main \| — \| `new0000` \|/);
+  assert.match(none, /it is not live/);
+  const partial = { ...candidate, prs: [{ number: 4, head: "eee0000000000" }] };
+  assert.match(comment(partial, null, 4, { state: "failed" }), /❔ not processed/);
+});
+
+test("oversized comments drop collapsed detail before the status summary", () => {
+  const big = {
+    ...candidate,
+    prs: Array.from({ length: 40 }, (_, i) => ({
+      number: i + 1,
+      head: `${i}`.padStart(40, "a"),
+      status: "included",
+      commits: Array.from({ length: 100 }, (_, j) => `${i}-${j}`.padStart(40, "c")),
+    })),
+  };
+  const body = comment(big, null, 7, { state: "failed" });
+  assert.ok(body.length < 60000);
+  assert.ok(body.startsWith(marker));
+  assert.match(body, /\| \*\*#7\*\* \(this PR\) \| — \| ✅ `aaaaaaa` \|/);
+  assert.match(body, /\| #40 \|/);
+  assert.match(body, /Commit list omitted for length/);
+  assert.doesNotMatch(body, /<details>/);
 });
 
 test("snapshot uses pagination and captures main SHA", async () => {
@@ -118,7 +227,8 @@ test("snapshot uses pagination and captures main SHA", async () => {
     paginate: async (method, options) => {
       assert.equal(method, "pulls");
       assert.equal(options.per_page, 100);
-      return [pull(10), pull(2)];
+      assert.equal(Object.hasOwn(options, "base"), false, "must query PRs targeting any branch");
+      return [pull(10, { base: { ref: "feature-2" } }), pull(2)];
     },
   };
   assert.deepEqual(
@@ -145,7 +255,7 @@ test("finds last successful deployment even after it becomes inactive", async ()
 });
 
 test("report updates only bot comments, includes removed PRs, and continues after an API error", async () => {
-  const { report, marker } = await import("./preview.mjs");
+  const { report } = await import("./preview.mjs");
   const { mkdirSync } = await import("node:fs");
   const cwd = mkdtempSync(join(tmpdir(), "preview-report-"));
   const original = process.cwd();
@@ -208,9 +318,10 @@ test("report updates only bot comments, includes removed PRs, and continues afte
       created.map((item) => item.issue_number),
       [2, 3]
     );
-    assert.match(created[0].body, /published, but deployment bookkeeping failed/);
-    assert.match(created[0].body, /Currently deployed[\s\S]*#1/);
-    assert.match(created[1].body, /no longer selected separately/);
+    assert.match(created[0].body, /Published, but deployment bookkeeping failed — rerun the entire workflow/);
+    assert.match(created[0].body, /## ✅ #2 is live/, "publication succeeded, so the candidate is live");
+    assert.match(created[0].body, /\| #1 \| ✅ `a` \|/);
+    assert.match(created[1].body, /## ➖ #3 removed from the dev preview/);
     assert.match(failures[0], /#1: API unavailable/);
   } finally {
     process.chdir(original);
@@ -233,7 +344,7 @@ test("relevance ignores unchanged PR metadata, but reconciles membership/base dr
   assert.equal(shouldCompose("workflow_dispatch", current, current), true);
 });
 
-test("compose, freshness, and deployment ledger round-trip with real Git refs", async () => {
+test("compose includes a stacked PR after a conflict and round-trips the deployment ledger", async () => {
   const { mkdirSync, existsSync } = await import("node:fs");
   const root = mkdtempSync(join(tmpdir(), "preview-compose-"));
   const cwd = join(root, "controller");
@@ -257,7 +368,7 @@ test("compose, freshness, and deployment ledger round-trip with real Git refs", 
     const first = commit("shared.txt", "first");
     git(".", "checkout", "-b", "second", base);
     const second = commit("shared.txt", "second");
-    git(".", "checkout", "-b", "third", base);
+    git(".", "checkout", "-b", "third", first);
     const third = commit("independent.txt", "third");
     git(".", "checkout", "main");
     const remoteRoot = join(root, "remote");
@@ -271,7 +382,7 @@ test("compose, freshness, and deployment ledger round-trip with real Git refs", 
     ]) {
       git(remote, "update-ref", `refs/pull/${number}/head`, sha);
     }
-    let pulls = [pull(3), pull(2), pull(1)].map((pr) => ({
+    let pulls = [pull(3, { base: { ref: "first" } }), pull(2), pull(1)].map((pr) => ({
       ...pr,
       head: {
         ...pr.head,
@@ -326,6 +437,9 @@ test("compose, freshness, and deployment ledger round-trip with real Git refs", 
         [3, "included"],
       ]
     );
+    assert.deepEqual(manifest.prs[2].commits, [third], "stacked PR adds only its new commit");
+    assert.equal(git("integration", "show", "HEAD:shared.txt"), "first");
+    assert.equal(git("integration", "show", "HEAD:independent.txt"), "third");
     assert.equal(manifest.triggerPr, undefined, "unrelated triggering PR must not be reported");
     assert.equal(existsSync("state/source.tar"), true);
     assert.equal(git("integration", "status", "--porcelain"), "");

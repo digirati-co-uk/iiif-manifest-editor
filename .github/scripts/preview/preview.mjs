@@ -26,7 +26,6 @@ export function select(pulls, repository) {
     .filter(
       (pr) =>
         pr.state === "open" &&
-        pr.base.ref === "main" &&
         pr.head.repo?.full_name === repository &&
         pr.labels.some((label) => label.name === "deploy")
     )
@@ -45,7 +44,6 @@ export async function snapshot(github, repo) {
   const pulls = await github.paginate(github.rest.pulls.list, {
     ...repo,
     state: "open",
-    base: "main",
     per_page: 100,
   });
   return { base: main.data.sha, prs: select(pulls, `${repo.owner}/${repo.repo}`) };
@@ -194,88 +192,172 @@ export async function record({ github, context }) {
   });
 }
 
+const limit = 60000;
 const escape = (value) =>
   String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("`", "&#96;");
-const list = (manifest) =>
-  manifest.prs
-    .filter((pr) => pr.status === "included")
-    .map((pr) => `- #${pr.number} — \`${pr.head}\``)
-    .join("\n") || "- No PRs; main only.";
+const short = (sha) => `\`${String(sha).slice(0, 7)}\``;
+const refs = (prs) => prs.map((pr) => `#${pr.number}`).join(", ");
+const included = (manifest) => manifest?.prs.filter((pr) => pr.status === "included") || [];
+const cell = (pr) =>
+  !pr
+    ? "—"
+    : pr.status === "included"
+      ? `✅ ${short(pr.head)}`
+      : pr.status === "conflict"
+        ? "⚠️ conflict"
+        : "❔ not processed";
+const labels = {
+  deployed: "✅ Deployed",
+  bookkeeping: "⚠️ Published, but deployment bookkeeping failed — rerun the entire workflow",
+  superseded: "⏭️ Superseded by newer changes; not deployed",
+  failed: "❌ Failed",
+};
 
-export function comment(manifest, live, number, outcome) {
-  const pr = manifest.prs.find((pr) => pr.number === number);
-  const lines = [
-    marker,
-    "## Shared dev preview",
-    "",
-    `[Dev site](${url})`,
-    "",
-    `Latest attempt: **${outcome}** — [workflow and full manifest](${manifest.run}).`,
-    "",
-  ];
+// Attempt result from the workflow job outputs. What is live is derived separately.
+export function outcome(env = process.env) {
+  if (env.PUBLISH_RESULT === "success" && env.DEPLOY_RESULT !== "success") return { state: "bookkeeping" };
+  if (env.DEPLOY_RESULT === "success" && env.FRESH === "true") return { state: "deployed" };
+  if (env.FRESH === "false") return { state: "superseded" };
+  return { state: "failed", step: env.FAILED_STEP || null };
+}
+
+// Per-PR headline and detail; "live" claims come only from the live manifest.
+function status(number, pr, live, state) {
+  const deployed = live?.prs.find((item) => item.number === number && item.status === "included");
+  const current = deployed && pr?.status === "included" && deployed.head === pr.head;
+  const older = deployed ? `an older head ${short(deployed.head)} is live` : "it is not live";
   if (pr?.status === "conflict") {
-    const preceding = manifest.prs.filter((item) => item.number < number && item.status === "included");
-    lines.push(
-      `**This PR was skipped: merge conflict** against main \`${manifest.base}\`${preceding.length ? ` plus ${preceding.map((item) => `#${item.number}`).join(", ")}` : ""}.`,
+    return [
+      `⚠️ #${number} skipped: merge conflict`,
+      `⚠️ Skipped (merge conflict); ${deployed ? `an earlier head ${short(deployed.head)} is still live` : "not live"}`,
+    ];
+  }
+  if (current) return [`✅ #${number} is live`, `✅ Live at ${short(pr.head)}`];
+  if (pr?.status === "included") {
+    return state === "superseded"
+      ? [
+          `⏳ #${number} is not live yet`,
+          `⏳ Merged cleanly at ${short(pr.head)}, but ${older}; a newer run will pick it up`,
+        ]
+      : [`❌ Preview failed — #${number} is not live`, `❌ Merged cleanly at ${short(pr.head)}, but ${older}`];
+  }
+  if (!pr) {
+    return deployed
+      ? [
+          `➖ #${number} deselected — still live`,
+          `➖ No longer selected, but still live until the next successful deployment`,
+        ]
+      : [
+          `➖ #${number} removed from the dev preview`,
+          "➖ No longer selected. If merged, its changes may be in the main baseline",
+        ];
+  }
+  return [`❌ Preview failed — #${number} was not processed`, `❌ Not processed; ${older}`];
+}
+
+function table(manifest, live, number, same) {
+  const numbers = [...new Set([...manifest.prs, ...(same ? [] : live?.prs || [])].map((pr) => pr.number))].sort(
+    (a, b) => a - b
+  );
+  const find = (source, value) => source?.prs.find((pr) => pr.number === value);
+  const label = (value) => (value === number ? `**#${value}** (this PR)` : `#${value}`);
+  if (same) {
+    return [
+      "| | Live on dev site |",
+      "|---|---|",
+      `| main | ${short(live.base)} |`,
+      ...numbers.map((value) => `| ${label(value)} | ${cell(find(live, value))} |`),
+    ];
+  }
+  return [
+    "| | Live on dev site | Latest attempt (not live) |",
+    "|---|---|---|",
+    `| main | ${live ? short(live.base) : "—"} | ${short(manifest.base)} |`,
+    ...numbers.map(
+      (value) => `| ${label(value)} | ${live ? cell(find(live, value)) : "—"} | ${cell(find(manifest, value))} |`
+    ),
+  ];
+}
+
+function conflict(manifest, pr) {
+  const preceding = included(manifest).filter((item) => item.number < pr.number);
+  const files = `${pr.paths.length} file${pr.paths.length === 1 ? "" : "s"}`;
+  const paths = pr.paths.slice(0, 100).map(escape);
+  if (pr.paths.length > 100) paths.push(`… ${pr.paths.length - 100} more in the workflow artifact`);
+  return {
+    summary: [
+      `**Merge conflict** in ${files} against main ${short(manifest.base)}${preceding.length ? ` plus ${refs(preceding)}` : ""}. PRs merge in ascending number order; resolve against those and push to retry.`,
       "",
-      ...pr.paths.slice(0, 100).map((path) => `- \`${escape(path)}\``),
-      "",
-      "<details><summary>Merge details</summary>",
+    ],
+    details: [
+      "<details><summary>Conflicting files and merge output</summary>",
       "",
       "<pre>",
-      escape(pr.diagnostics).slice(0, 6000),
+      ...paths,
+      "",
+      escape(String(pr.diagnostics ?? "").slice(0, 6000)),
       "</pre>",
       "</details>",
-      ""
-    );
-  } else if (!pr) {
-    lines.push("This PR is no longer selected separately. If merged, its changes may be in the main baseline.", "");
-  } else {
-    lines.push(
-      pr.status === "included"
-        ? "This PR merged into the candidate successfully."
-        : "This PR was not processed completely.",
-      ""
-    );
-  }
-  if (live) {
-    lines.push(
-      `### Currently deployed`,
       "",
-      `Base: \`${live.base}\``,
-      "",
-      list(live),
-      "",
-      `Deployed: ${live.deployedAt || live.createdAt}. [Deployment run](${live.run}).`,
-      ""
-    );
-  } else {
-    lines.push("No successful deployment has been recorded by this workflow yet.", "");
+    ],
+  };
+}
+
+function commits(manifest, live, same) {
+  const lines = [
+    "<details><summary>Exact SHAs and commits</summary>",
+    "",
+    `**Latest attempt** — main \`${manifest.base}\``,
+    "",
+  ];
+  for (const item of included(manifest)) {
+    const list = item.commits || [];
+    lines.push(`- #${item.number} head \`${item.head}\` — ${list.length} new commit${list.length === 1 ? "" : "s"}`);
+    lines.push(...list.slice(0, 100).map((sha) => `  - \`${sha}\``));
+    if (list.length > 100) lines.push(`  - … ${list.length - 100} more in the workflow artifact`);
   }
-  lines.push(
-    "### Latest candidate",
-    "",
-    `Base: \`${manifest.base}\``,
-    "",
-    list(manifest),
-    "",
-    `Skipped: ${
-      manifest.prs
-        .filter((item) => item.status === "conflict")
-        .map((item) => `#${item.number}`)
-        .join(", ") || "none"
-    }.`,
-    "",
-    "<details><summary>Latest candidate commits (up to 100 per PR)</summary>",
-    ""
-  );
-  for (const item of manifest.prs.filter((item) => item.status === "included")) {
-    lines.push(`**#${item.number}**`, ...item.commits.slice(0, 100).map((sha) => `- \`${sha}\``), "");
+  if (!included(manifest).length) lines.push("- No PRs; main only.");
+  if (live && !same) {
+    lines.push("", `**Live** — main \`${live.base}\``, "");
+    lines.push(...included(live).map((item) => `- #${item.number} head \`${item.head}\``));
+    if (!included(live).length) lines.push("- No PRs; main only.");
   }
-  lines.push("</details>");
-  // Bound GitHub's comment size while preserving the current deployment section.
-  const body = lines.join("\n");
-  return body.length < 60000 ? body : `${body.slice(0, 59000)}\n\n… Full details in the workflow artifact.\n</details>`;
+  lines.push("", "</details>");
+  return lines;
+}
+
+export function comment(manifest, live, number, { state, step }) {
+  // One column when the live snapshot is the attempted one; otherwise show both side by side.
+  const same = Boolean(live) && fingerprint(live) === fingerprint(manifest);
+  const pr = manifest.prs.find((item) => item.number === number);
+  const [title, detail] = status(number, pr, live, state);
+  const attempt = `${labels[state]}${step ? ` at ${escape(step)}` : ""}`;
+  const head = [
+    marker,
+    `## ${title}`,
+    "",
+    `**[Open the shared dev preview ↗](${url})**`,
+    "",
+    `- **This PR:** ${detail}.`,
+    `- **Latest attempt:** ${attempt} · [workflow run](${manifest.run})`,
+    live
+      ? `- **Live deployment:** ${escape(live.deployedAt || live.createdAt || "time unknown")}${included(live).length ? "" : " · main only"} · [deployment run](${live.run})`
+      : "- **Live deployment:** none yet — no successful deployment has been recorded by this workflow.",
+    "",
+  ];
+  const block = pr?.status === "conflict" ? conflict(manifest, pr) : { summary: [], details: [] };
+  const essentials = [...head, ...block.summary, ...table(manifest, live, number, same), ""];
+  const omitted = (what) => [`_${what} omitted for length; see the [workflow run](${manifest.run}) artifact._`, ""];
+  // Bound GitHub's comment size: drop detail sections before touching the status summary.
+  for (const parts of [
+    [block.details, commits(manifest, live, same)],
+    [block.details, omitted("Commit list")],
+    [block.summary.length ? omitted("Conflict output") : [], omitted("Commit list")],
+  ]) {
+    const body = [...essentials, ...parts.flat()].join("\n");
+    if (body.length < limit) return body;
+  }
+  return `${essentials.join("\n").slice(0, limit - 200)}\n\n_Truncated; see the [workflow run](${manifest.run})._`;
 }
 
 export async function report({ github, context, core }) {
@@ -284,14 +366,7 @@ export async function report({ github, context, core }) {
   const recorded = await lastSuccess(github, context.repo);
   const published = process.env.PUBLISH_RESULT === "success";
   const live = published ? { ...manifest, deployedAt: process.env.DEPLOYED_AT } : recorded;
-  const outcome =
-    published && process.env.DEPLOY_RESULT !== "success"
-      ? "published, but deployment bookkeeping failed; see workflow logs"
-      : process.env.DEPLOY_RESULT === "success" && process.env.FRESH === "true"
-        ? "deployed"
-        : process.env.FRESH === "false"
-          ? "superseded; not deployed"
-          : `failed${process.env.FAILED_STEP ? ` at ${process.env.FAILED_STEP}` : ""}; see workflow logs`;
+  const result = outcome();
   const numbers = new Set([...manifest.prs, ...(previous?.prs || [])].map((pr) => pr.number));
   const failures = [];
   for (const number of numbers) {
@@ -304,7 +379,7 @@ export async function report({ github, context, core }) {
       const existing = comments.find(
         (item) => item.user?.login === "github-actions[bot]" && item.body?.includes(marker)
       );
-      const body = comment(manifest, live, number, outcome);
+      const body = comment(manifest, live, number, result);
       if (existing) await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
       else await github.rest.issues.createComment({ ...context.repo, issue_number: number, body });
     } catch (error) {

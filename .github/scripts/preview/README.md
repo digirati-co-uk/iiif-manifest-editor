@@ -1,10 +1,16 @@
 # Shared dev preview
 
-`deploy-preview.yml` composes same-repository open PRs targeting `main` with the
-exact `deploy` label, including drafts, in ascending PR-number order. It starts from a fresh
+`deploy-preview.yml` composes same-repository open PRs targeting any branch with
+the exact `deploy` label, including drafts, in ascending PR-number order. It starts from a fresh
 `main` checkout each time. Conflicting PRs are skipped and later PRs are still
 attempted. With no successful PR merges, the preview contains `main` alone.
 Neither the PR branches nor `main` are modified.
+
+Stacked PRs are supported: a labelled PR targeting another feature branch is
+merged by its head SHA just like a PR targeting `main`. Shared ancestor commits
+are included only once. A selected child also brings its ancestor commits, even
+if the parent PR is unlabelled; labels select branch heads, not isolated diffs.
+Merge order remains ascending PR number, with no automatic conflict resolution.
 
 The existing `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets publish to
 `https://manifest-editor-preview.digirati.workers.dev/`. Production deployment
@@ -42,7 +48,11 @@ the freshness check is reconciled by the next run.
 successful deployment. `preview-source-<attempt>` contains its source archive;
 `preview-worker-<attempt>` contains its OpenNext build. GitHub deployments in
 `shared-preview` retain compact successful manifests beyond artifact retention.
-Comments separate the latest candidate from what is actually deployed. Build or
+Each PR's comment opens with that PR's status and the dev site link, then a
+table of what is live. When the latest attempt was not deployed, a second
+column shows that attempt; a PR is called live only if the live deployment
+contains its current head. Exact SHAs, commit lists and conflict output are in
+collapsed sections, and these are dropped first if a comment gets too long. Build or
 lint failures stop publication; conflicts alone do not. Reporting attempts every
 affected PR even when one comment update fails.
 
