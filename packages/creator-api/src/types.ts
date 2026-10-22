@@ -69,7 +69,15 @@ interface CreatorParent {
   property: string;
   atIndex?: number;
 }
+/** A fitting hint, independent of an annotation's exact selector. */
+export interface PlaceholderPosition {
+  canvasId: string;
+  bounds: import("@manifest-editor/editor-api").Rectangle;
+  placeholderId?: string;
+}
+
 export interface CreatorOptions {
+  placeholderPosition?: PlaceholderPosition;
   targetType: string;
   target?: Reference;
   parent?: CreatorParent;
@@ -216,6 +224,7 @@ export interface CreatorSideEffect {
 }
 
 export interface CreatableResource {
+  placeholderPosition?: PlaceholderPosition;
   type: string;
   parent?: Reference;
   property?: string;

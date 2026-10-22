@@ -1,9 +1,10 @@
+import { getCanvasLayout, getPaintingAnnotations } from "@manifest-editor/editor-api";
 import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition } from "@manifest-editor/shell";
 import { useLocalStorage } from "@manifest-editor/shell";
 import { useEffect } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
+import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
@@ -15,7 +16,7 @@ export const imageBlockEditor: CanvasEditorDefinition = {
   component: (strategy) => <ImageBlockEditor strategy={strategy} />,
   supports: {
     strategy: (strategy, resource, vault) => {
-      if (strategy.type !== "images") {
+      if (strategy.type !== "images" && strategy.type !== "empty") {
         return false;
       }
 
@@ -44,6 +45,16 @@ export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingS
   const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const previewPreset = useConfiguredExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
+  const vault = useVault();
+  const canvasId = canvas?.resource.source?.id;
+  useEffect(() => {
+    if (!canvasId) return;
+    const resource = vault.get({ id: canvasId, type: "Canvas" });
+    if (getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length) {
+      setCenterPanelMode("edit");
+      setIsPreview(false);
+    }
+  }, [canvasId, vault, setCenterPanelMode, setIsPreview]);
 
   useEffect(() => {
     if (centerPanelMode === "edit" && isPreview) {
@@ -105,7 +116,7 @@ function ImageBlockEditorContent({
         </div>
       ) : (
         <div className="flex min-h-0 flex-1">
-          <CanvasPanelEditor asFallback />
+          <CanvasPanelEditor enableAddMedia asFallback moveMode />
         </div>
       )}
     </div>
@@ -117,7 +128,7 @@ function ModeButton({ children, selected, onPress }: { children: string; selecte
     <Button
       className={twMerge(
         "px-3 py-2 text-xs font-semibold transition",
-        selected ? "bg-me-primary-500 text-white shadow-sm" : "text-slate-500 hover:text-slate-700",
+        selected ? "bg-me-primary-500 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
       )}
       onPress={onPress}
     >

@@ -15,6 +15,11 @@ export const ViewerContainer = styled.div`
   flex-direction: column;
   min-width: 0;
 
+  .atlas-container {
+    --atlas-background: var(--canvas-workspace-background);
+    background: var(--canvas-workspace-background);
+  }
+
   .atlas-canvas {
     view-transition-name: viewer-container;
   }

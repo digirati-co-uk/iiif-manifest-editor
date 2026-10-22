@@ -1,3 +1,4 @@
+import { AnnotationRequestCleanup } from "../AtlasStore/AtlasStoreProvider";
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
@@ -121,7 +122,10 @@ export function ShellProvider({
                           {/* @todo swap these out for (config?.previews || []) */}
                           <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
                             <PreviewWindowProvider>
-                              <AtlasStoreProvider>{children}</AtlasStoreProvider>
+                              <AtlasStoreProvider>
+                                <AnnotationRequestCleanup />
+                                {children}
+                              </AtlasStoreProvider>
                             </PreviewWindowProvider>
                           </PreviewProvider>
                         </ToastProvider>

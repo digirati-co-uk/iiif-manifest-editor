@@ -1,3 +1,4 @@
+vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { imageServiceCreator } from "@manifest-editor/creators";
 import { describe, expect, test, vi } from "vitest";
 import { imageServiceSlideCreator } from "./image-service-slide-creator";

@@ -1,3 +1,4 @@
+vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { describe, expect, test, vi } from "vitest";
 import { infoBoxCreator } from "./info-box-creator";
 import {

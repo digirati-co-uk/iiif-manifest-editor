@@ -7,6 +7,7 @@ import { getEmptyType, resolveType } from "./utils";
 
 export class CreatorResource {
   resource: any;
+  meta: Record<string, Record<string, unknown>> = {};
   warnings: string[] = [];
   errors: string[] = [];
   partOf: any;
