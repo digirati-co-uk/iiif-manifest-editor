@@ -47,7 +47,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   initialData?: Record<string, any>;
 }) {
   const vault = useVault();
-  const { edit, modal } = useLayoutActions();
+  const { edit, modal, open } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const creator = useInlineCreator();
@@ -69,6 +69,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
         }
       : undefined,
     target: props.resource.target,
+    placeholderPosition: props.resource.placeholderPosition,
     initialData: { ...initialData, ...(props.resource.initialData || {}), ...(props.initialData || {}) },
   };
 
@@ -92,12 +93,14 @@ export const RenderCreator = memo(function RenderCreator(props: {
         edit:
           props.skipEditingOnCreate || props.resource.initialData?.skipEditingOnCreate
             ? undefined
-            : (resource) =>
+            : (resource) => {
+                if (resource.type === "Canvas") open({ id: "current-canvas" });
                 edit(resource, {
                   parent: toRef(props.resource.parent),
                   property: props.resource.property,
                   index: props.resource.index,
-                }),
+                });
+              },
       });
     } catch (err: any) {
       setError(err?.message || "Unknown error");

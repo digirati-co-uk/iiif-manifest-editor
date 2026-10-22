@@ -1,16 +1,15 @@
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
-import { InputContainer, LanguageMapEditor, PaintingAnnotationList } from "@manifest-editor/editors";
+import { InputContainer, LanguageMapEditor } from "@manifest-editor/editors";
 import {
   type EditorDefinition,
   ResourceEditingProvider,
   useEditingResource,
-  useCreator,
   useEditor,
   useLayoutActions,
   useManifestEditor,
 } from "@manifest-editor/shell";
 import { useEffect, useRef, useState } from "react";
-import { AnnotationPageContext, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
+import { useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion";
 import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
 import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
@@ -67,19 +66,8 @@ export function ExhibitionCanvasAdvancedContent() {
   const vault = useVault();
   const manifestEditor = useManifestEditor();
   const resource = useEditingResource();
-  const { structural, technical } = useEditor();
-  const { items } = structural;
+  const { technical } = useEditor();
   const behavior = technical.behavior.get() || [];
-  const pages = items.get();
-  const page = pages[0];
-  const [, annotationActions] = useCreator(
-    page ? { id: page.id, type: "AnnotationPage" } : undefined,
-    "items",
-    "Annotation",
-    canvas ? { id: canvas.id, type: "Canvas" } : undefined,
-    { isPainting: true },
-  );
-
   const isAnExhibitionCanvas = isExhibitionItem(canvas);
   const isTextOnly = behavior.includes("info");
   const isOpeningCover = isOpeningSplashCanvas(canvas, manifestEditor.structural.items.get());
@@ -95,7 +83,7 @@ export function ExhibitionCanvasAdvancedContent() {
     setCenterPanelMode("preview");
   }, [setCenterPanelMode]);
 
-  if (!canvas || !page || !resource) return <div className="p-8">Canvas, page, or resource not found</div>;
+  if (!canvas || !resource) return <div className="p-8">Canvas or resource not found</div>;
 
   if (isTextOnly) {
     return (
@@ -167,14 +155,7 @@ export function ExhibitionCanvasAdvancedContent() {
 
       {tourSupported && !isOpeningCover ? <TourStepsSummary canvas={canvas} /> : null}
 
-      <AnnotationPageContext annotationPage={page.id}>
-        <PaintingAnnotationList
-          onCreate={() => {
-            setCenterPanelMode("edit");
-            annotationActions.createFiltered("image", undefined, { skipEditingOnCreate: true });
-          }}
-        />
-      </AnnotationPageContext>
+
     </ResourceEditingProvider>
   );
 }

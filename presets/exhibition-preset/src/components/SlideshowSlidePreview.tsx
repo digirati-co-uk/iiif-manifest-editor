@@ -88,6 +88,7 @@ export function SlideshowSlidePreview({
       className={twMerge("relative h-full w-full overflow-hidden", mode === "edit" && "bg-white", className)}
       style={{
         aspectRatio: `${canvasWidth} / ${canvasHeight}`,
+        backgroundColor: (canvas as any).backgroundColor || (mode === "edit" ? "#fff" : undefined),
       }}
     >
       {layers.length ? (
