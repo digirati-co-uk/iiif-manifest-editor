@@ -19,6 +19,7 @@ export const manifestBrowserCreator = defineCreator({
   configKey: "@manifest-editor/iiif-browser-creator",
   create: createFromManifestBrowserOutput,
   label: "Browse IIIF content",
+  hideSummary: true,
   summary: "Browse IIIF manifests and collections to choose a resource to add.",
   icon: <IIIFBrowserIcon />,
   render(ctx: any) {

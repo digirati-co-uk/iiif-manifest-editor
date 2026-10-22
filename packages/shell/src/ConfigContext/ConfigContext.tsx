@@ -1,3 +1,4 @@
+import type { ProjectNotebookConfig } from "../Notebook/notebook";
 import type { Collection } from "@iiif/presentation-3";
 import type { CreatorConfig } from "@manifest-editor/creator-api";
 import {
@@ -11,6 +12,7 @@ import {
 import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 
 export interface Config {
+  notebook?: ProjectNotebookConfig;
   // Previous configuration.
   previews: PreviewConfiguration[];
   behaviorPresets: string[];
@@ -213,6 +215,7 @@ export function mergePartialConfig(
     merged = {
       ...merged,
       ...config,
+      notebook: merged.notebook || config.notebook ? { ...merged.notebook, ...config.notebook } : undefined,
       editorConfig: mergeEditorConfig(merged.editorConfig, config.editorConfig),
       editorFeatureFlags:
         merged.editorFeatureFlags || config.editorFeatureFlags
