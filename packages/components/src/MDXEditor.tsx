@@ -14,9 +14,9 @@ import {
   type MDXEditorMethods,
   type MDXEditorProps,
   quotePlugin,
+  Separator,
   thematicBreakPlugin,
   toolbarPlugin,
-  UndoRedo,
 } from "@mdxeditor/editor";
 import { InsertIIIFBrowser, iiifBrowserPlugin } from "iiif-browser/mdxeditor";
 import { type ForwardedRef, useMemo } from "react";
@@ -50,11 +50,12 @@ export function MDXEditor({
           toolbarPlugin({
             toolbarContents: () => (
               <>
-                <UndoRedo />
                 <BoldItalicUnderlineToggles />
+                <CreateLink />
+                <Separator />
                 <BlockTypeSelect />
                 <ListsToggle options={["bullet", "number"]} />
-                <CreateLink />
+                <Separator />
                 <InsertIIIFBrowser />
               </>
             ),

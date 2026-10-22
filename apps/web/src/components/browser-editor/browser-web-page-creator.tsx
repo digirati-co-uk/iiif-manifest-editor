@@ -194,6 +194,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
             <LanguageFieldEditor
               focusId="summary"
               label="Description"
+              disallowHTML={false}
               fields={summary}
               onSave={(e: any) => setSummary(e.toInternationalString())}
             />

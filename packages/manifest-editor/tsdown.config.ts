@@ -35,7 +35,4 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
-  define: {
-    "global.setImmediate": "window.setImmediate",
-  },
 }));

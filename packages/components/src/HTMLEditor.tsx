@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { useDebounce } from "tiny-use-debounce";
 import { htmlToMarkdown, markdownToHtml } from "./html-editor-conversion";
 import { MDXEditor } from "./MDXEditor";
+import "./HTMLEditor.css";
 
 export function HTMLEditor({
   className,
@@ -71,9 +72,8 @@ export function HTMLEditor({
       readOnly={disabled}
       className={twMerge(
         [
-          "bg-white prose prose-sm text-sm border rounded prose-a:text-me-primary-500 prose-a:underline prose-ul:list-disc p-0.5",
-          "prose-ol:list-decimal",
-          "focus-within:outline-none focus-within:border-me-primary-500 z-50 relative",
+          "me-html-editor prose prose-sm max-w-none text-sm prose-a:text-me-primary-500 prose-a:underline prose-ul:list-disc",
+          "prose-ol:list-decimal relative",
         ].join(" "),
         className,
       )}

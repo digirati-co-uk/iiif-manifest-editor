@@ -1,0 +1,119 @@
+/*
+ * Matches the language field editor: a flat grey field with a bottom border,
+ * and a compact formatting toolbar docked inside the bottom of the same box.
+ */
+.me-html-editor.mdxeditor {
+  display: flex;
+  flex-direction: column-reverse;
+  background: #f8f9fa;
+  border-bottom: 1px solid #cad0d5;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.me-html-editor.mdxeditor:focus-within {
+  background: #eceef5;
+  border-bottom-color: #b84c74;
+}
+
+.me-html-editor .mdxeditor-root-contenteditable [role="textbox"],
+.me-html-editor .mdxeditor-root-contenteditable [role="textbox"] + div {
+  padding: 0.8em;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.me-html-editor .mdxeditor-root-contenteditable [role="textbox"] {
+  min-height: 6em;
+}
+
+.me-html-editor .mdxeditor-root-contenteditable [role="textbox"] > :first-child {
+  margin-top: 0;
+}
+
+.me-html-editor .mdxeditor-root-contenteditable [role="textbox"] > :last-child {
+  margin-bottom: 0;
+}
+
+.me-html-editor .mdxeditor-toolbar {
+  position: sticky;
+  top: auto;
+  bottom: 0;
+  gap: 0;
+  padding: 0.25rem 0.3rem;
+  border-radius: 0;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+  background: inherit;
+  font-size: 0.8rem;
+}
+
+.me-html-editor .mdxeditor-toolbar > div {
+  margin: 0;
+}
+
+.me-html-editor .mdxeditor-toolbar div[role="separator"] {
+  height: 1.1rem;
+  margin: 0 0.2rem;
+  border: none;
+  border-left: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.me-html-editor .mdxeditor-toolbar svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: currentColor;
+}
+
+.me-html-editor .mdxeditor-toolbar button {
+  min-width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 4px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.me-html-editor .mdxeditor-toolbar button > span {
+  padding: 0;
+}
+
+.me-html-editor .mdxeditor-toolbar button:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111827;
+}
+
+.me-html-editor .mdxeditor-toolbar button:focus-visible {
+  outline: 2px solid #b84c74;
+  outline-offset: -2px;
+}
+
+.me-html-editor .mdxeditor-toolbar button[data-state="on"] {
+  background: #fff;
+  color: #b84c74;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.me-html-editor .mdxeditor-toolbar button[role="combobox"] {
+  width: auto;
+  min-width: 6.5rem;
+  gap: 0.25rem;
+  justify-content: space-between;
+  padding: 0 0.35rem;
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.me-html-editor .mdxeditor-toolbar button[role="combobox"] > span:first-child {
+  color: inherit;
+}
+
+.me-html-editor .mdxeditor-toolbar button[role="combobox"]:hover {
+  background: rgba(0, 0, 0, 0.06);
+}

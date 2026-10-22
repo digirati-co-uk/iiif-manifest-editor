@@ -1,7 +1,7 @@
 import { InternationalString } from "@iiif/presentation-3";
 import { useConfig } from "@manifest-editor/shell";
 import { produce } from "immer";
-import { useMemo, useReducer } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useClosestLanguage } from "react-iiif-vault";
 
 export type MetadataEditorState = {
@@ -227,7 +227,29 @@ export interface UseMetadataEditor {
 export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseMetadataEditor) {
   const { i18n } = useConfig();
   const { availableLanguages, defaultLanguage: defaultLocale } = i18n;
-  const [state, dispatch] = useReducer(metadataEditorReducer, { fields, key: metadataKey }, createInitialValues);
+  const [state, setState] = useState(() => createInitialValues({ fields, key: metadataKey }));
+  const latestState = useRef(state);
+  const previousFields = useRef(fields);
+  const onSaveRef = useRef(onSave);
+  onSaveRef.current = onSave;
+
+  // Flushes on blur/unmount must see edits made before React's next render.
+  const dispatch = (action: MetadataEditorActions) => {
+    latestState.current = metadataEditorReducer(latestState.current, action);
+    setState(latestState.current);
+  };
+
+  if (fields !== previousFields.current) {
+    previousFields.current = fields;
+    const incoming = Array.isArray(fields) ? fields : intlStringToValues(fields, metadataKey);
+    if (
+      JSON.stringify(valuesToIntlString(incoming)) !==
+      JSON.stringify(valuesToIntlString(Object.values(latestState.current.fields)))
+    ) {
+      latestState.current = createInitialValues({ fields, key: metadataKey });
+      setState(latestState.current);
+    }
+  }
 
   // Computed values.
   const fieldKeys = Object.keys(state.fields);
@@ -265,8 +287,9 @@ export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseM
     });
 
   const saveChanges = (index?: number, property?: "label" | "value") => {
-    if (onSave && state && state.hasChanged) {
-      onSave(
+    const state = latestState.current;
+    if (onSaveRef.current && state.hasChanged) {
+      onSaveRef.current(
         {
           items: Object.values(state.fields),
           key: metadataKey,
@@ -286,6 +309,7 @@ export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseM
   };
 
   const changeValue = (id: string, value: string) => {
+    if (!latestState.current.fields[id] || latestState.current.fields[id]!.value === value) return;
     dispatch({
       type: "CHANGE_VALUE",
       payload: { id, value },

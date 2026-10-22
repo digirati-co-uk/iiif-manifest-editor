@@ -45,6 +45,8 @@ export const RenderCreator = memo(function RenderCreator(props: {
   onCreate?: () => void;
   skipEditingOnCreate?: boolean;
   initialData?: Record<string, any>;
+  /** The parent shows the summary; no-form creators render just their action. */
+  compact?: boolean;
 }) {
   const vault = useVault();
   const { edit, modal, open } = useLayoutActions();
@@ -134,6 +136,18 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
   if (!props.creator.render) {
     if (isCreating) return spinner;
+    if (props.compact) {
+      return (
+        <>
+          {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+          <div className="flex justify-end">
+            <ActionButton primary onPress={() => runCreate({})}>
+              {props.creator.actionButton || "Create"}
+            </ActionButton>
+          </div>
+        </>
+      );
+    }
     return (
       <>
         {error ? <ErrorMessage>{error}</ErrorMessage> : <EmptyState>No options available</EmptyState>}
@@ -148,7 +162,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
     <>
       {isCreating ? spinner : null}
       <div hidden={isCreating}>
-        {props.creator.summary ? (
+        {props.creator.summary && !props.compact ? (
           <div className="flex justify-end px-4">
             <Tooltip>
               <TooltipTrigger

@@ -33,7 +33,7 @@ export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>)
 
   return (
     <PaddedSidebarContainer>
-      <HTMLEditor className="border-none" value={body} onChange={(newValue) => setBodyValue(newValue)} />
+      <HTMLEditor value={body} onChange={(newValue) => setBodyValue(newValue)} />
 
       <ActionButton primary large type="button" onPress={onSubmit}>
         Create

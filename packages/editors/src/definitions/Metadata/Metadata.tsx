@@ -247,6 +247,7 @@ function MetadataRow({
             fields={item.value || emptyLanguageMap}
             focusId={`${item.id}_value`}
             label="Value"
+            disallowHTML={false}
             onSave={(value: any) => onSaveValue(value.toInternationalString())}
           />
         </div>
