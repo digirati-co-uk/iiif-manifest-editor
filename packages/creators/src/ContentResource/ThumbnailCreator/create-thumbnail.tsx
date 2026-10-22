@@ -60,9 +60,12 @@ export async function createThumbnail(data: CreateThumbnailPayload, ctx: Creator
 
 // @todo cover a lot more things - like offering size dropdown.
 export function CreateThumbnailForm(props: CreatorContext) {
-  const [url, setUrl] = useState("");
-  const [service, setService] = useState<ImageService | null>(null);
-  const [selectedSize, setSelectedSize] = useState({ width: 0, height: 0 });
+  const [url, setUrl] = useState(props.options.initialData?.url || "");
+  const [service, setService] = useState<ImageService | null>(props.options.initialData?.service || null);
+  const [selectedSize, setSelectedSize] = useState({
+    width: props.options.initialData?.width || 0,
+    height: props.options.initialData?.height || 0,
+  });
   const previewUrl = useMemo(() => {
     if (!service) return null;
     if (!selectedSize.width || !selectedSize.height) return null;
@@ -129,7 +132,12 @@ export function CreateThumbnailForm(props: CreatorContext) {
           isDisabled={!previewUrl}
           onPress={() => {
             if (!service) return;
-            props.runCreate({ service, width: selectedSize.width, height: selectedSize.height });
+            props.runCreate({
+              service,
+              width: selectedSize.width,
+              height: selectedSize.height,
+              thumbnailUrl: previewUrl,
+            });
           }}
         >
           Add thumbnail
@@ -147,7 +155,7 @@ export function CreateThumbnailForm(props: CreatorContext) {
             <Input
               id="url"
               name="url"
-              defaultValue=""
+              defaultValue={props.options.initialData?.url || ""}
               onPaste={(e) => {
                 const text = e.clipboardData.getData("text/plain");
                 setUrl(text ? getCanonicalUrl(text) : "");

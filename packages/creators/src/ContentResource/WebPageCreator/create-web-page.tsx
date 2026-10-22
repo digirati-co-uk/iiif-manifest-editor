@@ -19,7 +19,7 @@ export async function createWebPage(data: CreateWebpagePayload, ctx: CreatorFunc
 }
 
 export function CreateWebPageForm(props: CreatorContext) {
-  const [label, setLabel] = useState<InternationalString>({ en: [""] });
+  const [label, setLabel] = useState<InternationalString>(props.options.initialData?.label || { en: [""] });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -42,8 +42,8 @@ export function CreateWebPageForm(props: CreatorContext) {
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link</InputLabel>
-          <Input id="url" name="url" defaultValue="" />
+          <InputLabel htmlFor="url">Link</InputLabel>
+          <Input type="url" id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

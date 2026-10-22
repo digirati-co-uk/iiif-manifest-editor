@@ -1,0 +1,18 @@
+{
+  "@context": "http://iiif.io/api/image/3/context.json",
+  "extraFormats": ["jpg", "png"],
+  "extraQualities": ["default", "color", "gray"],
+  "height": 2512,
+  "id": "https://iiif.io/api/image/3.0/example/reference/d3bbf5397c6df6b894c5991195c912ab-2-21198-zz001d8m5j_774612_master",
+  "profile": "level1",
+  "protocol": "http://iiif.io/api/image",
+  "tiles": [
+    {
+      "height": 512,
+      "scaleFactors": [1, 2, 4],
+      "width": 512
+    }
+  ],
+  "type": "ImageService3",
+  "width": 1792
+}

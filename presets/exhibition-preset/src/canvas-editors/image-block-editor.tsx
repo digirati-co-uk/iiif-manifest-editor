@@ -12,7 +12,7 @@ import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const imageBlockEditor: CanvasEditorDefinition = {
   id: "image-block-editor",
-  label: "Image Block Editor",
+  label: "Exhibition canvas editor",
   component: (strategy) => <ImageBlockEditor strategy={strategy} />,
   supports: {
     strategy: (strategy, resource, vault) => {
@@ -21,20 +21,7 @@ export const imageBlockEditor: CanvasEditorDefinition = {
       }
 
       const fullResource = vault.get(resource.resource);
-      if (fullResource.type !== "Canvas") {
-        return false;
-      }
-
-      const behaviors = fullResource.behavior || [];
-
-      let isImage = false;
-      for (const behaviour of behaviors) {
-        if (behaviour.startsWith("w-") || behaviour.startsWith("h-") || behaviour === "image") {
-          isImage = true;
-        }
-      }
-
-      return isImage;
+      return fullResource?.type === "Canvas";
     },
   },
 };

@@ -15,9 +15,9 @@ export const imageServiceCreator = defineCreator({
   id: "@manifest-editor/image-service-creator",
   configKey: "iiif-image-services",
   create: createImageServer,
-  label: "Image Service",
-  summary: "Add an image from Image Service",
-  icon: <IIIFLogo style={{ padding: 10 }} />,
+  label: "IIIF image",
+  summary: "Add a zoomable image using an IIIF image service or info.json link.",
+  icon: <IIIFLogo />,
   tags: ["image", "image-service"],
   async supportsResource(value, helpers) {
     if (!isHttpUrl(value)) return false;

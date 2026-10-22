@@ -16,8 +16,8 @@ declare module "@manifest-editor/creator-api" {
 export const rangeTopLevel = defineCreator({
   id: "@manifest-editor/range-top-level",
   create: createRangeTopLevel,
-  label: "Top Level Range",
-  summary: "Add a new top level range",
+  label: "Table of contents",
+  summary: "Create a top-level range to organise the manifest’s contents.",
   icon: <RangesIcon />,
   render(ctx) {
     return <TopLevelRangeCreatorForm {...ctx} />;

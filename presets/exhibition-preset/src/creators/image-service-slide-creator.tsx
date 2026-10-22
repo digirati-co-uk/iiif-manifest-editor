@@ -25,8 +25,8 @@ export const imageServiceSlideCreator = defineCreator({
   id: "@exhibitions/image-service-creator",
   create: createImageService,
   tags: ["image", "exhibition-slide", "exhibition-slideshow-slide"],
-  label: "IIIF Image",
-  summary: "IIIF Image service",
+  label: "IIIF image",
+  summary: "Add a zoomable image using an IIIF image service or info.json link.",
   resourceType: "Canvas",
   supports: {
     initialData: true,

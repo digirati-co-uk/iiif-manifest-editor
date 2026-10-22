@@ -1,3 +1,18 @@
+<br>
+<br>
+<p align="center">
+  <a href="https://github.com/digirati-co-uk/iiif-manifest-editor"><img src="https://raw.githubusercontent.com/digirati-co-uk/iiif-manifest-editor/main/apps/docs/content/img/logo.svg" width="360" alt="Manifest Editor"></a>
+</p>
+<p align="center">
+  <a href="https://www.npmjs.com/package/manifest-editor"><img src="https://img.shields.io/npm/v/manifest-editor" alt="npm version"></a>
+  <a href="https://github.com/digirati-co-uk/iiif-manifest-editor/actions/workflows/build-test.yml"><img src="https://img.shields.io/github/actions/workflow/status/digirati-co-uk/iiif-manifest-editor/build-test.yml?branch=main&amp;label=build" alt="Build status"></a>
+  <a href="https://manifest-editor-docs.netlify.app/"><img src="https://img.shields.io/badge/docs-Manifest_Editor-blue" alt="Documentation"></a>
+</p>
+
+<br>
+<br>
+<br> 
+
 # Digirati IIIF Manifest Editor
 
 An open-source, IIIF editing tool, the Manifest Editor is designed to provide a visually intuitive tool for creating, editing and updating IIIF Manifests and more. The Manifest Editor can be used as-is or can be further customised to support institute or organisation specific requirements.
@@ -110,3 +125,7 @@ Pass Playwright options through the root commands, for example
 `pnpm e2e:local --grep @baseline`. Reports and failure traces are saved under
 `packages/playwright/playwright-report` and `packages/playwright/test-results`.
 View the latest report with `pnpm --filter playwright test:report`.
+
+## Storybook
+
+Run `pnpm storybook` to open the customised component and editor workbench at http://localhost:6006. See [the Storybook package](packages/storybook/README.md) and its [story checklist](packages/storybook/STORIES.md) for components, headless context, creators, editors and full presets.

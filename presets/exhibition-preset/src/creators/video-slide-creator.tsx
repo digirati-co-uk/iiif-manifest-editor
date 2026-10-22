@@ -18,7 +18,7 @@ export const videoSlideCreator = defineCreator({
   create: createVideo,
   tags: ["video", "exhibition-slide"],
   label: "Video",
-  summary: "A video for an exhibition",
+  summary: "Add a video slide using a direct video-file link. Use YouTube for YouTube videos.",
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
   supports: {
@@ -32,7 +32,7 @@ export const slideshowVideoCreator = defineCreator({
   ...videoSlideCreator,
   id: "@exhibitions/slideshow-video-creator",
   label: "Video",
-  summary: "A video slide for a slideshow exhibition.",
+  summary: "Add a video slide using a direct video-file link. Use YouTube for YouTube videos.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createVideo(

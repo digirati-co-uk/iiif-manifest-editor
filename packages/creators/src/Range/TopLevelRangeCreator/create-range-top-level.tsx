@@ -13,7 +13,7 @@ export interface CreateTopLevelRangePayload {
 export async function createRangeTopLevel(
   data: CreateTopLevelRangePayload,
   ctx: CreatorFunctionContext,
-  parentId?: string,
+  parentId?: string
 ): Promise<CreatorResource> {
   const rangeId = ctx.generateId(`range`, parentId ? { id: parentId, type: "Range" } : undefined);
 
@@ -26,7 +26,7 @@ export async function createRangeTopLevel(
 }
 
 export function TopLevelRangeCreatorForm(props: CreatorContext<CreateTopLevelRangePayload>) {
-  const [label, setLabel] = useState<InternationalString>({ en: [""] });
+  const [label, setLabel] = useState<InternationalString>(props.options.initialData?.label || { en: [""] });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();

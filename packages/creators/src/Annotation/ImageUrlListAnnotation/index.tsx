@@ -17,9 +17,9 @@ declare module "@manifest-editor/creator-api" {
 export const imageUrlListAnnotation = defineCreator({
   id: "@manifest-editor/image-url-list-annotation",
   create: createImageUrlListAnnotation,
-  label: "List of Images",
+  label: "Multiple images",
   dependencies: ["@manifest-editor/image-url-annotation"],
-  summary: "List of Images from URLs",
+  summary: "Add several images using one direct image link per line.",
   tags: ["image"],
   icon: <ImageListIcon />,
   render(ctx) {

@@ -18,7 +18,7 @@ export const audioAnnotation = defineCreator({
   id: "@manifest-editor/audio-annotation",
   create: createAudioAnnotation,
   label: "Audio",
-  summary: "Audio annotation",
+  summary: "Add audio from a direct audio-file link.",
   icon: <AudioIcon />,
   render(ctx) {
     return <CreateAudioAnnotationForm {...ctx} />;

@@ -87,6 +87,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
   );
   const [toggled, toggle] = useToggleList();
   const createCanvas = () => canvasActions.createFiltered(resolvedCreatorFilter, insertIndex, scrollInitialData);
+  const appendCanvas = () => canvasActions.createFiltered(resolvedCreatorFilter, undefined, scrollInitialData);
   const canvasName = resolvedPreviewMode === "scroll" ? "section" : "slide";
   const onDeleteCanvas = (deletedId: string) => {
     if (selectedCanvasId !== deletedId) return;
@@ -145,7 +146,7 @@ function ExhibitionGridLeftPanel({ creatorFilter, previewMode }: { creatorFilter
           <ExhibitionGrid />
         )}
         <div className="flex justify-center p-4">
-          <ActionButton primary large isDisabled={!canCreateCanvas} onPress={createCanvas}>
+          <ActionButton primary large isDisabled={!canCreateCanvas} onPress={appendCanvas}>
             Create new {canvasName}
           </ActionButton>
         </div>

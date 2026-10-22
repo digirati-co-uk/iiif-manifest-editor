@@ -24,7 +24,7 @@ export const noBodyAnnotation = defineCreator({
   id: "@manifest-editor/no-body-annotation",
   create: createNoBodyAnnotation,
   label: "Annotation without body",
-  summary: "Add an annotation that only has motivation and target",
+  summary: "Create an annotation with a target and motivation, without a content body.",
   icon: <EmptyCanvasIcon />,
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "target"],

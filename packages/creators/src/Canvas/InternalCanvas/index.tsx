@@ -16,8 +16,8 @@ declare module "@manifest-editor/creator-api" {
 export const internalCanvas = defineCreator({
   id: "@manifest-editor/internal-canvas",
   create: createInternalCanvas,
-  label: "Internal canvas link",
-  summary: "Canvas from the same manifest",
+  label: "Existing canvas",
+  summary: "Choose a canvas from this manifest.",
   icon: <ThumbnailStripIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label"],
@@ -29,14 +29,15 @@ export const internalCanvas = defineCreator({
 });
 
 function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
+  const { runCreate } = props;
   const manifest = useManifest();
   const vault = useVault();
 
   const navigationOptions = useMemo(() => {
     return {
-      canSelectCanvas: false,
+      canSelectCanvas: true,
       canSelectCollection: false,
-      canSelectManifest: true,
+      canSelectManifest: false,
       canCropImage: false,
       alwaysShowNavigationArrow: false,
       multiSelect: false,
@@ -47,13 +48,13 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
     return [
       {
         type: "callback",
-        cb: (url: string) => props.runCreate({ id: url }),
+        cb: (url: string) => runCreate({ id: url }),
         label: "Select canvas",
         supportedTypes: ["Canvas"],
         format: { type: "url" },
       },
     ] as IIIFBrowserProps["output"];
-  }, [props.runCreate]);
+  }, [runCreate]);
 
   const historyOptions = useMemo(() => {
     return {
@@ -63,7 +64,7 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
         {
           url: manifest?.id,
           resource: manifest?.id,
-          route: `/loading?id=${manifest?.id}`,
+          route: `/manifest?id=${encodeURIComponent(manifest?.id || "")}`,
           metadata: { type: "Manifest" },
         },
       ],
@@ -74,12 +75,7 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
 
   return (
     <VaultProvider vault={vault}>
-      <IIIFBrowser
-        vault={vault}
-        navigation={navigationOptions}
-        output={output}
-        history={historyOptions}
-      />
+      <IIIFBrowser vault={vault} navigation={navigationOptions} output={output} history={historyOptions} />
     </VaultProvider>
   );
 }
@@ -89,5 +85,7 @@ export interface InternalCanvasPayload {
 }
 
 async function createInternalCanvas(data: InternalCanvasPayload, ctx: CreatorFunctionContext) {
-  return ctx.embed({ id: data.id, type: "Canvas" });
+  const canvas = ctx.vault.get({ id: data.id, type: "Canvas" }, { skipSelfReturn: true });
+  invariant(canvas, "Selected Canvas is not loaded");
+  return ctx.embed(canvas);
 }

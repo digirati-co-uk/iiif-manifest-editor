@@ -14,7 +14,7 @@ export const youTubeBodyCreator = defineCreator({
   id: "@manifest-editor/youtube",
   create: createYoutubeBody,
   label: "YouTube",
-  summary: "Embed YouTube",
+  summary: "Embed a video using its YouTube link.",
   icon: <YouTubeIcon />,
   resourceType: "ContentResource",
   additionalTypes: ["Canvas", "Annotation"],

@@ -54,7 +54,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
   const creator = useInlineCreator();
   const { back } = useEditingStack();
   const { edit } = useLayoutActions();
-  const popoverRef = useRef<HTMLElement | null>(null);
+  const menuTriggerRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const vault = useVault();
@@ -173,16 +173,12 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
 
   return (
     <TreeItem
+      ref={menuTriggerRef}
       onContextMenu={(e) => {
         if (isEditing) return;
         if (e.button === 2) {
           e.preventDefault();
-          flushSync(() => {
-            setIsMenuOpen(true);
-          });
-          if (popoverRef.current) {
-            popoverRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-          }
+          setIsMenuOpen(true);
         }
       }}
       className={twMerge(
@@ -251,7 +247,11 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
               <div className="flex items-center gap-2">
                 <MenuTrigger isOpen={isMenuOpen} onOpenChange={setIsMenuOpen}>
                   {isEditing ? <MoreMenuButton /> : null}
-                  <Popover ref={popoverRef} className="bg-white shadow-md rounded-md p-1">
+                  <Popover
+                    triggerRef={isEditing ? undefined : menuTriggerRef}
+                    placement="bottom start"
+                    className="bg-white shadow-md rounded-md p-1 overflow-auto"
+                  >
                     <Menu>
                       <MenuItem
                         onAction={() => insertEmptyRange(props.range)}

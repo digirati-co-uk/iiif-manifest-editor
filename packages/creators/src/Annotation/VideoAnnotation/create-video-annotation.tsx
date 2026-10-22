@@ -68,7 +68,7 @@ export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, 
     return ctx.embed({
       id: canvasId,
       type: "Canvas",
-      label: data.label || { en: ["Untitled HTML canvas"] },
+      label: getValue(data.label) ? data.label : undefined,
       duration: data.duration || 0,
       width: data.width,
       height: data.height,
@@ -78,13 +78,13 @@ export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, 
 }
 
 export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnotationPayload>) {
-  const initialData = props.options.initialData as Partial<CreateVideoAnnotationPayload>;
+  const [initialData] = useState(() => props.options.initialData as Partial<CreateVideoAnnotationPayload>);
   const [url, setUrl] = useState(initialData.url || "");
-  const [duration, setDuration] = useState(0);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [duration, setDuration] = useState(initialData.duration || 0);
+  const [width, setWidth] = useState(initialData.width || 0);
+  const [height, setHeight] = useState(initialData.height || 0);
   const [error, setError] = useState("");
-  const [label, setLabel] = useState({ en: [""] } as InternationalString);
+  const [label, setLabel] = useState(initialData.label || ({ en: [""] } as InternationalString));
 
   const onSubmit = () => {
     props.runCreate({
@@ -98,21 +98,24 @@ export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnot
 
   useEffect(() => {
     setError("");
-    setDuration(0);
+    const seed = url === initialData.url ? initialData : {};
+    setDuration(seed.duration || 0);
+    setWidth(seed.width || 0);
+    setHeight(seed.height || 0);
     if (url) {
       // Find label from url.
       const labelFromUrl = url.split("/").pop()?.split(".").shift();
-      setLabel({ en: [labelFromUrl || ""] } as InternationalString);
+      setLabel(url === initialData.url && initialData.label ? initialData.label : { en: [labelFromUrl || ""] });
     }
-  }, [url]);
+  }, [url, initialData]);
 
   return (
     <PaddedSidebarContainer>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
       <InputContainer $wide>
-        <InputLabel htmlFor="video-url">URL</InputLabel>
-        <Input type="text" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <InputLabel htmlFor="video-url">Link to video file</InputLabel>
+        <Input type="url" placeholder="https://example.org/video.mp4" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
 
       {url && !error ? (

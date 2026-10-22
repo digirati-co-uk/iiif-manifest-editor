@@ -16,7 +16,7 @@ export interface CreateCaptionedImageAnnotationPayload {
 
 export async function createCaptionedImageAnnotation(
   data: CreateCaptionedImageAnnotationPayload,
-  ctx: CreatorFunctionContext,
+  ctx: CreatorFunctionContext
 ) {
   const annotation = {
     id: ctx.generateId("annotation"),
@@ -37,8 +37,8 @@ export async function createCaptionedImageAnnotation(
             language,
             body,
           },
-          { parent: { resource: annotation, property: "items" } },
-        ),
+          { parent: { resource: annotation, property: "items" } }
+        )
       );
     }
   }
@@ -48,7 +48,7 @@ export async function createCaptionedImageAnnotation(
     { url: data.imageUrl },
     {
       parent: { resource: annotation, property: "body" },
-    },
+    }
   );
 
   if (resource) {
@@ -102,7 +102,7 @@ export async function createCaptionedImageAnnotation(
 export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
-    initialValue: { en: [""] },
+    initialValue: props.options.initialData?.body || { en: [""] },
     requestId: props.options.initialData?.requestId,
   });
 
@@ -122,7 +122,12 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
       <>
         <InputContainer $wide>
           <InputLabel htmlFor="url">URL to Image</InputLabel>
-          <Input id="url" name="url" defaultValue="" placeholder="https://example.org/image.jpg" />
+          <Input
+            id="url"
+            name="url"
+            defaultValue={props.options.initialData?.imageUrl || ""}
+            placeholder="https://example.org/image.jpg"
+          />
         </InputContainer>
 
         <InputContainer $wide>

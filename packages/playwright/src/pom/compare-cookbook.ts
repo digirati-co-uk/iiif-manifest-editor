@@ -1,4 +1,4 @@
-const structuralTypes = new Set(["Manifest", "Canvas", "AnnotationPage", "Annotation"]);
+const structuralTypes = new Set(["Manifest", "Canvas", "AnnotationPage", "Annotation", "Range"]);
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 
