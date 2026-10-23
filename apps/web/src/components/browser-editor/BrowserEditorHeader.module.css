@@ -1,0 +1,87 @@
+.header {
+  display: grid;
+  width: 100%;
+  min-height: 176px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 56px 56px 64px;
+  align-items: center;
+}
+
+.logo {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.pagination {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+}
+
+.actions {
+  grid-column: 1;
+  grid-row: 3;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .header {
+    height: 64px;
+    min-height: 0;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: 64px;
+    column-gap: 16px;
+  }
+
+  .pagination {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* These controls also appear outside the header with their own spacing. */
+.header .actionButtons > div {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.actionButtons > button,
+.actionButtons > div > button[aria-label="Actions menu"],
+.actionButtons > div > button[aria-label="Download manifest"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  line-height: 1;
+}
+
+.actionButtons > div > button {
+  height: 36px;
+}
+
+.actionButtons > button > svg,
+.actionButtons > div > button[aria-label="Actions menu"] > svg,
+.actionButtons > div > button[aria-label="Download manifest"] > svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+}

@@ -1,5 +1,6 @@
+import { exhibitionNotebookConfig } from "./notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
-import { extendApp, mapApp } from "@manifest-editor/shell";
+import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
 // import "exhibition-viewer/dist/index.css";
 import "./index.css";
 import { tourStepAnnotations } from "./annotations/TourStepAnnotations";
@@ -46,7 +47,7 @@ export const exhibitionEditorPreset = extendApp(
       ...app.layout,
       leftPanels: [
         exhibitionGridLeftPanel,
-        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest"),
+        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest" || panel.id === NOTEBOOK_PANEL_ID),
       ],
     },
   })),
@@ -59,6 +60,7 @@ export const exhibitionEditorPreset = extendApp(
   {
     preset: exhibitionPresetConfig,
     config: {
+      notebook: exhibitionNotebookConfig,
       editorConfig: {
         Canvas: {
           hideTabs: [
@@ -88,7 +90,7 @@ export const exhibitionEditorPreset = extendApp(
       //
       tourStepAnnotations,
     ],
-    leftPanelIds: ["canvas-listing", "left-panel-manifest"],
+    leftPanelIds: ["canvas-listing", "left-panel-manifest", NOTEBOOK_PANEL_ID],
     background: [exhibitionBackgroundTask],
     canvasEditors: [
       //

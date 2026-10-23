@@ -2,13 +2,10 @@ vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { Vault } from "@iiif/helpers/vault";
 import { matchBasedOnResource } from "@manifest-editor/creator-api";
 import { describe, expect, test, vi } from "vitest";
-import {
-  imageBrowserSlideCreator,
-  keepIIIFBrowserNested,
-} from "./image-browser-slide-creator";
+import { imageBrowserSlideCreator, keepIIIFBrowserNested } from "./image-browser-slide-creator";
 import { imageSlideCreator } from "./image-slide-creator";
 
-vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
+vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null, ImageListIcon: () => null }));
 vi.mock("@manifest-editor/creators", () => ({
   iiifBrowserCreator: {
     id: "@manifest-editor/iiif-browser-creator",
@@ -46,9 +43,7 @@ describe("imageBrowserSlideCreator", () => {
         },
       ],
     };
-    const annotation = [
-      { id: "https://example.org/annotation", type: "Annotation" },
-    ];
+    const annotation = [{ id: "https://example.org/annotation", type: "Annotation" }];
     const ctx: any = {
       config: {},
       options: { targetType: "Canvas", initialData: { imageSlideBehavior: ["splash"] } },
@@ -107,9 +102,7 @@ describe("imageBrowserSlideCreator", () => {
         get: () => resource,
         ref: () => ({ id: resource.id, type: resource.type }),
       })),
-      generateId: vi.fn((type) =>
-        type === "canvas" ? canvasId : `https://example.org/${type}`,
-      ),
+      generateId: vi.fn((type) => (type === "canvas" ? canvasId : `https://example.org/${type}`)),
       create: vi.fn(async (definition, payload) => {
         if (definition === "@manifest-editor/iiif-browser-creator") {
           payload.trackSize({ width: 1200, height: 800 });
@@ -124,9 +117,7 @@ describe("imageBrowserSlideCreator", () => {
       }),
     };
 
-    const slide = unwrap(
-      await imageBrowserSlideCreator.create({ output: [] }, ctx),
-    );
+    const slide = unwrap(await imageBrowserSlideCreator.create({ output: [] }, ctx));
 
     expect(slide).toMatchObject({
       id: canvasId,
@@ -142,9 +133,7 @@ describe("imageBrowserSlideCreator", () => {
       ],
       annotations: [{ type: "AnnotationPage", items: [] }],
     });
-    expect(
-      ctx.create.mock.calls.map(([definition]: [string]) => definition),
-    ).toEqual([
+    expect(ctx.create.mock.calls.map(([definition]: [string]) => definition)).toEqual([
       "@manifest-editor/iiif-browser-creator",
       "@exhibitions/image-slide-creator",
     ]);
@@ -175,13 +164,11 @@ describe("imageBrowserSlideCreator", () => {
           initialData,
         },
         creators,
-        { vault },
+        { vault }
       );
 
     vault.loadSync(manifest.id, { ...manifest, items: [] });
-    expect(available({ imageSlideBehavior: ["splash"] })).toEqual([
-      imageBrowserSlideCreator,
-    ]);
+    expect(available({ imageSlideBehavior: ["splash"] })).toEqual([imageBrowserSlideCreator]);
 
     vault.loadSync(manifest.id, {
       ...manifest,
@@ -197,13 +184,15 @@ describe("imageBrowserSlideCreator", () => {
           isPainting: true,
         },
         creators,
-        { vault },
-      ).filter((creator) => creator.label === "IIIF Browser"),
+        { vault }
+      ).filter(
+        (creator) =>
+          creator.configKey === imageBrowserSlideCreator.configKey ||
+          creator.id === "@manifest-editor/iiif-browser-creator"
+      )
     ).toEqual([imageBrowserSlideCreator]);
     expect(genericBrowser.additionalTypes).toEqual(["Annotation"]);
-    expect(imageBrowserSlideCreator.configKey).toBe(
-      "@manifest-editor/iiif-browser-creator",
-    );
+    expect(imageBrowserSlideCreator.configKey).toBe("@manifest-editor/iiif-browser-creator");
     expect(
       matchBasedOnResource(
         {
@@ -216,8 +205,12 @@ describe("imageBrowserSlideCreator", () => {
           isPainting: true,
         },
         creators,
-        { vault },
-      ).filter((creator) => creator.label === "IIIF Browser"),
+        { vault }
+      ).filter(
+        (creator) =>
+          creator.configKey === imageBrowserSlideCreator.configKey ||
+          creator.id === "@manifest-editor/iiif-browser-creator"
+      )
     ).toEqual([]);
     expect(
       matchBasedOnResource(
@@ -231,8 +224,12 @@ describe("imageBrowserSlideCreator", () => {
           isPainting: true,
         },
         creators,
-        { vault },
-      ).filter((creator) => creator.label === "IIIF Browser"),
+        { vault }
+      ).filter(
+        (creator) =>
+          creator.configKey === imageBrowserSlideCreator.configKey ||
+          creator.id === "@manifest-editor/iiif-browser-creator"
+      )
     ).toEqual([genericBrowser]);
   });
 });
@@ -241,7 +238,5 @@ function unwrap(value: any): any {
   if (value?.get instanceof Function) return unwrap(value.get());
   if (Array.isArray(value)) return value.map(unwrap);
   if (!value || typeof value !== "object") return value;
-  return Object.fromEntries(
-    Object.entries(value).map(([key, nested]) => [key, unwrap(nested)]),
-  );
+  return Object.fromEntries(Object.entries(value).map(([key, nested]) => [key, unwrap(nested)]));
 }

@@ -15,14 +15,14 @@ export interface IIIFBrowserOutputItem {
 export function formatIIIFBrowserOutput(
   resource: IIIFBrowserSelectedItem | IIIFBrowserSelectedItem[],
   parent: IIIFBrowserSelectedItem | null,
-  vault: Parameters<IIIFBrowserCustomFormat["format"]>[2],
+  vault: Parameters<IIIFBrowserCustomFormat["format"]>[2]
 ): IIIFBrowserOutputItem[] {
   const selectedItems = Array.isArray(resource)
     ? resource
     : [{ ...resource, parent: resource.parent ?? parent ?? undefined }];
 
   return selectedItems.map((item) => ({
-    resource: vault.get(item),
+    resource: vault.get(item.id) ?? item,
     parent: item.parent,
     selector: item.selector,
     rotation: item.rotation,
@@ -46,7 +46,7 @@ export function browserImageApiSelector(selector: BoxSelector | undefined, rotat
 
 export function browserTransformDimensions(
   dimensions: { width: number; height: number },
-  rotation: number | undefined,
+  rotation: number | undefined
 ) {
   const angle = Number.isFinite(rotation) ? (((rotation as number) % 360) + 360) % 360 : 0;
   return angle === 90 || angle === 270 ? { width: dimensions.height, height: dimensions.width } : dimensions;
