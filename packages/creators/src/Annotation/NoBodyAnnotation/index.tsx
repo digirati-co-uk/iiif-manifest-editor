@@ -23,8 +23,8 @@ export interface NoBodyAnnotationPayload {
 export const noBodyAnnotation = defineCreator({
   id: "@manifest-editor/no-body-annotation",
   create: createNoBodyAnnotation,
-  label: "Annotation without body",
-  summary: "Create an annotation with a target and motivation, without a content body.",
+  label: "Highlight",
+  summary: "Mark a region of the canvas without adding any content.",
   icon: <EmptyCanvasIcon />,
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "target"],
@@ -34,7 +34,7 @@ export const noBodyAnnotation = defineCreator({
     parentFields: ["items"],
     disallowPainting: true,
   },
-  actionButton: "Create empty annotation",
+  actionButton: "Create highlight",
   sideEffects: [],
   staticFields: {
     type: "Annotation",

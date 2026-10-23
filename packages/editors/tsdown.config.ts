@@ -27,8 +27,5 @@ export default defineConfig((options) => ({
   },
   minify: !options.watch,
   sourcemap: true,
-  define: {
-    "global.setImmediate": "window.setImmediate",
-  },
   plugins: [esmExternalRequirePlugin({ external: ["react"] })],
 }));

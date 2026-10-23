@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
+import { fieldText, placeholderColor } from "../TiptapLanguageFieldEditor/TiptapLanguageFieldEditor.styles";
 
 export const AddAnother = styled.div<{ $active?: boolean }>`
   display: flex;
@@ -27,13 +28,35 @@ export const Label = styled.label`
 `;
 
 export const EmptyLanguageField = styled(ButtonReset as any)`
-  padding: 0.8em 1em;
-  background: #f8f9fa;
-  color: #666;
-  font-size: 0.9em;
-  border-bottom: 1px solid rgba(5, 42, 68, 0.2);
-  margin: 0.5em 0 2.18em;
-  display: block;
-  text-align: left;
+  display: flex;
+  align-items: center;
   width: 100%;
+  margin: 0 0 0.5em;
+  background: #f8f9fa;
+  border-bottom: 1px solid #cad0d5;
+  text-align: left;
+  transition: background 0.15s;
+
+  > span {
+    ${fieldText}
+    flex: 1;
+    color: ${placeholderColor};
+  }
+
+  > svg {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.75rem;
+    color: #9ca3af;
+  }
+
+  &:hover {
+    background: #eceef5;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${(props: any) => props.theme?.color?.main || "#b84c74"};
+    outline-offset: -2px;
+  }
 `;
