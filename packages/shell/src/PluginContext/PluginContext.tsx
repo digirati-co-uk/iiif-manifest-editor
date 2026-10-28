@@ -1,3 +1,4 @@
+import { samePluginCatalog } from "./PluginCatalogs";
 import type { CatalogRegistration, EditorI18n } from "@manifest-editor/i18n/core";
 import { useOptionalEditorI18nInstance } from "@manifest-editor/i18n";
 import {
@@ -393,14 +394,26 @@ export function PluginI18nBridge() {
         if (!active) return;
         for (const registration of plugin.metadata.localisation?.registrations || []) {
           if (!active) return;
-          await oncePerRuntime(registeredPluginCatalogs, runtime, registration, () => runtime.register(registration));
+          try {
+            const canonical =
+              [...(registeredPluginCatalogs.get(runtime)?.keys() || [])].find((existing) =>
+                samePluginCatalog(existing, registration)
+              ) || registration;
+            await oncePerRuntime(registeredPluginCatalogs, runtime, canonical, () => runtime.register(canonical));
+          } catch (error) {
+            if (active) console.error("Plugin translation registration failed", plugin.metadata.id, error);
+          }
         }
         if (!active) return;
         const namespaces = [...new Set(plugin.metadata.localisation?.requiredNamespaces || [])].sort();
-        if (namespaces.length)
-          await oncePerRuntime(loadedPluginNamespaces, runtime, JSON.stringify(namespaces), () =>
-            runtime.loadNamespaces(namespaces)
-          );
+        for (const namespace of namespaces) {
+          if (!active) return;
+          try {
+            await oncePerRuntime(loadedPluginNamespaces, runtime, namespace, () => runtime.loadNamespaces([namespace]));
+          } catch (error) {
+            if (active) console.error("Plugin translation namespace failed", plugin.metadata.id, namespace, error);
+          }
+        }
       }
     })().catch((error) => {
       if (active) console.error("Plugin translation registration failed", error);

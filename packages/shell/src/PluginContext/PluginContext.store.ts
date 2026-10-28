@@ -1,3 +1,4 @@
+import { mergePluginCatalogs } from "./PluginCatalogs";
 import { createStore } from "zustand";
 import {
   disablePluginInConfig,
@@ -62,12 +63,10 @@ export function createPluginStore({
                   localisation:
                     existing.metadata.localisation || plugin.metadata.localisation
                       ? {
-                          registrations: [
-                            ...new Set([
-                              ...(existing.metadata.localisation?.registrations || []),
-                              ...(plugin.metadata.localisation?.registrations || []),
-                            ]),
-                          ],
+                          registrations: mergePluginCatalogs(
+                            existing.metadata.localisation?.registrations || [],
+                            plugin.metadata.localisation?.registrations || []
+                          ),
                           requiredNamespaces: [
                             ...new Set([
                               ...(existing.metadata.localisation?.requiredNamespaces || []),

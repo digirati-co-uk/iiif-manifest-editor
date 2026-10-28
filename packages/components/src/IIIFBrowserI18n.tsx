@@ -6,7 +6,7 @@ import { useMemo, type ReactNode } from "react";
 /** Portable inputs for direct browsers and plugin-owned browsers. Never translates resource content. */
 export function useIIIFBrowserI18n(): BrowserI18n {
   const t = useTranslations("components");
-  const { locale, direction } = useEditorI18n();
+  const { locale, direction, profile } = useEditorI18n();
   return useMemo(
     () => ({
       locale,
@@ -39,7 +39,8 @@ export function useIIIFBrowserI18n(): BrowserI18n {
         );
       },
     }),
-    [t, locale, direction]
+    // Profile changes must invalidate the browser command-search index as well as displayed labels.
+    [t, locale, direction, profile]
   );
 }
 

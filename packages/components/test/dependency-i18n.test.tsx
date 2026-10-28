@@ -342,3 +342,53 @@ it("translates actual IIIF image options in an open MDX dialog without resetting
     container.remove();
   }
 });
+
+it("reindexes browser command wording without resetting the query or history", async () => {
+  const i18n = createEditorI18n({
+    profiles: { plain: { "en-GB": { components: { browser: { history: "Activity log" } } } } },
+  });
+  let search!: ReturnType<typeof browserESM.useOmnisearchStore>;
+  let browser!: ReturnType<typeof useBrowserStoreContext>;
+  function Probe() {
+    search = browserESM.useOmnisearchStore();
+    browser = useBrowserStoreContext();
+    return null;
+  }
+  const plugins = [{ id: "wording-probe", header: <Probe /> }];
+  function Browser() {
+    const i18n = useIIIFBrowserI18n();
+    return (
+      <browserESM.IIIFBrowser
+        i18n={i18n}
+        plugins={plugins}
+        history={{ saveToLocalStorage: false, restoreFromLocalStorage: false }}
+      />
+    );
+  }
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  try {
+    await act(async () =>
+      root.render(
+        <EditorI18nProvider instance={i18n}>
+          <Browser />
+        </EditorI18nProvider>
+      )
+    );
+    await act(async () => search.getState().open("Activity"));
+    expect(search.getState().results?.some((item) => item.id === "iiif://history")).toBe(false);
+    const input = container.querySelector("input")!;
+    const history = browser.getState().history;
+    await act(async () => i18n.setProfile("plain"));
+    expect(container.querySelector("input")).toBe(input);
+    expect(input.value).toBe("Activity");
+    expect(browser.getState().history).toBe(history);
+    expect(search.getState().results?.some((item) => item.id === "iiif://history")).toBe(true);
+    await act(async () => i18n.setProfile("standard"));
+    expect(search.getState().results?.some((item) => item.id === "iiif://history")).toBe(false);
+  } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
+});

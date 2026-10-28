@@ -160,3 +160,7 @@ Integrated both commits with shell and editors. Frozen scripts-disabled installa
 Shell's ProjectNotebookPanel now wraps the notebook host in `IIIFBrowserI18nProvider`, so its browser and sibling image-options dialogs inherit the effective runtime. Independent notebook commands remain an open dependency surface. Creator, collection and web direct browsers remain assigned to their consumer modules.
 
 The existing Chromium create/edit/metadata/preview journey passes after integration. Both SSR/header tests currently fail on HTTP 500 with `Duplicate use of selection JSON ID gapcursor` in Turbopack's ProseMirror module evaluation after dependency installation; client hydration can still display the translated header. Root cause and clean-server verification remain unresolved. No server restart, cache deletion, dependency global guard or disabled SSR workaround was used. Earlier three-test browser success was before this dependency integration and is not a current combined acceptance result.
+
+## Independent review follow-up: wording search
+
+The browser adapter now invalidates its callback identity on wording-profile changes. The dependency can therefore reindex built-in command labels while preserving current history, selection and query. A real-browser-component regression changes History to Activity log in a plain overlay and verifies live search results update in both directions without replacing the input or store. The profile memo dependency is intentional cache invalidation even though the translator reads the current profile internally.

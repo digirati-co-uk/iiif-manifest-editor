@@ -1,3 +1,4 @@
+import { mergePluginCatalogs } from "../PluginContext/PluginCatalogs";
 import { PluginManager } from "../PluginContext/PluginManager";
 import { normalisePlugin } from "../PluginContext/PluginContext.helpers";
 import { LayoutActionsReactContext } from "../Layout/Layout.context";
@@ -669,4 +670,138 @@ test("shell policy cannot widen the inherited host locale allow-list", async () 
   await expect(api.setLocale("en-GB")).rejects.toThrow("Unavailable shell locale");
   expect(request).not.toHaveBeenCalled();
   expect(api.locale).toBe("nl");
+});
+
+test("plugin catalog failures do not block unrelated registrations or namespace loads and remain retryable", async () => {
+  const runtime = createEditorI18n(options);
+  const source = { label: "Ready" };
+  let fail = true;
+  const brokenLoader = vi.fn(async () => {
+    if (fail) throw new Error("offline");
+    return source;
+  });
+  const healthyLoader = vi.fn(async () => source);
+  const entry = (namespace: string, loader: () => Promise<typeof source>) => ({
+    owner: "test",
+    namespace,
+    sourceLocale: "en-GB",
+    contract: createCatalogContract(source),
+    loaders: { "en-GB": loader },
+  });
+  const broken = entry("broken-plugin", brokenLoader),
+    healthy = entry("healthy-plugin", healthyLoader);
+  const plugins = [
+    {
+      default: {
+        id: "broken",
+        label: "Broken",
+        localisation: { registrations: [broken], requiredNamespaces: [broken.namespace] },
+      },
+    },
+    {
+      default: {
+        id: "healthy",
+        label: "Healthy",
+        localisation: { registrations: [healthy], requiredNamespaces: ["unregistered-namespace", healthy.namespace] },
+      },
+    },
+  ];
+  let store!: ReturnType<typeof usePluginStoreApi>;
+  function Probe() {
+    store = usePluginStoreApi();
+    return null;
+  }
+  const { root } = mount();
+  const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    await act(async () =>
+      root.render(
+        <EditorI18nProvider instance={runtime}>
+          <PluginProvider plugins={plugins}>
+            <PluginI18nBridge />
+            <Probe />
+          </PluginProvider>
+        </EditorI18nProvider>
+      )
+    );
+    expect(healthyLoader).toHaveBeenCalledTimes(1);
+    expect(runtime.translate(healthy.namespace)("label")).toBe("Ready");
+    expect(errors).toHaveBeenCalled();
+    fail = false;
+    await act(async () => store.getState().setPluginLoaded("broken", normalisePlugin(plugins[0]!)));
+    expect(brokenLoader).toHaveBeenCalledTimes(2);
+    expect(runtime.translate(broken.namespace)("label")).toBe("Ready");
+    expect(healthyLoader).toHaveBeenCalledTimes(1);
+  } finally {
+    errors.mockRestore();
+  }
+});
+
+test("equivalent lazy and loaded catalog descriptors retain the registration and allow new namespaces", async () => {
+  const source = { label: "Shared" };
+  const loader = vi.fn(async () => source);
+  const registration = {
+    owner: "test",
+    namespace: "lazy-duplicate",
+    sourceLocale: "en-GB",
+    contract: createCatalogContract(source),
+    loaders: { "en-GB": loader },
+  };
+  const equivalent = { ...registration, contract: createCatalogContract(source), loaders: { ...registration.loaders } };
+  const extraLoader = vi.fn(async () => ({ label: "Loaded only" }));
+  const extra = { ...registration, namespace: "loaded-only", loaders: { "en-GB": extraLoader } };
+  const plugins = [
+    {
+      default: {
+        id: "lazy",
+        label: "Lazy",
+        localisation: { registrations: [registration], requiredNamespaces: [registration.namespace] },
+      },
+      load: async () => ({
+        default: {
+          id: "lazy",
+          label: "Loaded",
+          localisation: { registrations: [equivalent, extra], requiredNamespaces: [extra.namespace] },
+        },
+      }),
+    },
+  ];
+  const runtime = createEditorI18n(options);
+  let store!: ReturnType<typeof usePluginStoreApi>;
+  function Probe() {
+    store = usePluginStoreApi();
+    return null;
+  }
+  const { root } = mount();
+  const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    await act(async () =>
+      root.render(
+        <EditorI18nProvider instance={runtime}>
+          <PluginProvider plugins={plugins}>
+            <PluginI18nBridge />
+            <Probe />
+          </PluginProvider>
+        </EditorI18nProvider>
+      )
+    );
+    await act(async () => store.getState().setPluginLoaded("lazy", normalisePlugin(await plugins[0]!.load())));
+    expect(store.getState().plugins[0]!.metadata.localisation?.registrations).toEqual([registration, extra]);
+    expect(extraLoader).toHaveBeenCalledTimes(1);
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(runtime.translate(extra.namespace)("label")).toBe("Loaded only");
+    expect(errors).not.toHaveBeenCalled();
+    // Different owners, contracts, source locales or loader capabilities still reach runtime collision validation.
+    for (const conflict of [
+      { ...equivalent, owner: "other" },
+      { ...equivalent, sourceLocale: "nl" },
+      { ...equivalent, contract: createCatalogContract({ other: "Other" }) },
+      { ...equivalent, loaders: { "en-GB": async () => source } },
+    ]) {
+      expect(mergePluginCatalogs([registration], [conflict])).toHaveLength(2);
+      await expect(runtime.register(conflict)).rejects.toThrow();
+    }
+  } finally {
+    errors.mockRestore();
+  }
 });
