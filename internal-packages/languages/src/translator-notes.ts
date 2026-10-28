@@ -9,6 +9,45 @@ export interface TranslatorNote {
 
 /** Add context as catalogs expand. IDs and English wording alone do not fully specify meaning. */
 export const translatorNotes = {
+  manifest: {
+    "workflow.tourIntroduction": {
+      context:
+        "Range onboarding explains navigation structure. Plain wording is authored as complete page/item/section instructions, not term replacement.",
+      terminology:
+        "Standard Dutch uses canvas/canvassen and range/ranges. Plain uses pagina/pagina’s, item and sectie/secties. Authored defaults such as Range 1 remain literal content even inside help.",
+    },
+    "workflow.deleteTagsCanvases_other": {
+      context:
+        "Destructive tag confirmation; count selects tag-application grammar, while the key distinguishes one or several affected canvases. Never pluralise by adding a suffix.",
+      placeholders: {
+        count: "Number of tag applications",
+        canvases: "Number of affected canvases",
+        detail: "Whole translated selection summary or authored tag type. Treat as literal text.",
+      },
+    },
+    "workflow.segmentTimes": {
+      context:
+        "Accessible timeline interval label. UI text translates; times remain ASCII clock notation shared with the existing temporal editor.",
+      placeholders: {
+        label: "Authored range title or UI-only missing-title fallback",
+        start: "Formatted start time",
+        end: "Formatted end time",
+      },
+    },
+    "workflow.serverRespondedWith": {
+      context:
+        "Local task feedback around an external server diagnostic. Keep response code and raw diagnostic verbatim; no lookup is applied to remote output, model names or extracted fields.",
+      placeholders: {
+        current: "HTTP status code",
+        total: "Raw external diagnostic (despite historical placeholder name)",
+      },
+    },
+    "workflow.inferenceSummaryAnnotations_other": {
+      context:
+        "Retained task-history display reference. Two independent counts require four whole-sentence variants; selection never changes result/status codes, worker payloads or authored annotations.",
+      placeholders: { count: "Processed canvases/pages", annotations: "Created annotations" },
+    },
+  },
   creators: {
     "definitions.emptyCanvas.summary": {
       context:

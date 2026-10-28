@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
@@ -46,7 +47,7 @@ export function flattenedRanges(range: RangeTableOfContentsNode) {
 
 function getCanvasesNotInRanges(
   flatItems: { item: RangeTableOfContentsNode; parent: RangeTableOfContentsNode | null }[],
-  canvases: Reference<"Canvas">[],
+  canvases: Reference<"Canvas">[]
 ) {
   const canvasesInRanges = new Set(flatItems.filter((item) => item.item.type === "Canvas").map((item) => item.item.id));
   return canvases.filter((canvas) => !canvasesInRanges.has(canvas.id));
@@ -62,7 +63,7 @@ export async function deserialiseRangeItems(items: DropItem[]) {
         return text;
       }
       return null as never;
-    }),
+    })
   );
 }
 
@@ -85,6 +86,7 @@ export const useRangeTreeOptions = create<{
 });
 
 export function RangeTree(props: RangeTreeProps) {
+  const t = useTranslations("manifest");
   const vault = useVault();
   const manifest = useManifest();
   const helper = useMemo(() => createRangeHelper(vault), [vault]);
@@ -116,7 +118,7 @@ export function RangeTree(props: RangeTreeProps) {
         .filter(({ item }) => !item.isRangeLeaf && !item.isCanvasLeaf)
         //
         .map(({ item }) => item.id as Key),
-    [flatItems],
+    [flatItems]
   );
 
   const rangeItems = useMemo(() => [range], [range]);
@@ -144,7 +146,7 @@ export function RangeTree(props: RangeTreeProps) {
     renderDragPreview(items) {
       return (
         <div className="opacity-50 bg-gray-200 rounded p-1">
-          <span className="">{items.length} items</span>
+          <span className="">{t("workflow.itemCount", { count: items.length })}</span>
         </div>
       );
     },
@@ -274,7 +276,7 @@ export function RangeTree(props: RangeTreeProps) {
               type: "Range",
               key: "items",
             },
-          }),
+          })
         );
         return;
       }
@@ -317,7 +319,7 @@ export function RangeTree(props: RangeTreeProps) {
               key: "items",
               index: endIndex,
             },
-          }),
+          })
         );
         return;
       }
@@ -326,7 +328,7 @@ export function RangeTree(props: RangeTreeProps) {
       ///// PERFORM REORDER from different parent.
       /////
       const referenceIndex = fullParentVault.items.findIndex(
-        (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
+        (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id
       );
       if (referenceIndex === -1) {
         console.log("[error] Invalid index found for item to move");
@@ -369,7 +371,7 @@ export function RangeTree(props: RangeTreeProps) {
             key: "items",
             index: e.target.dropPosition === "after" ? targetFromParentIndex + 1 : targetFromParentIndex,
           },
-        }),
+        })
       );
     },
   });
@@ -393,7 +395,7 @@ export function RangeTree(props: RangeTreeProps) {
           ...keys,
           range.id,
           ...itemIds,
-        ]),
+        ])
       );
     });
   }, []);
@@ -426,7 +428,7 @@ export function RangeTree(props: RangeTreeProps) {
               />
               <span className="flex items-center gap-1">
                 <WarningIcon className="text-xl" />
-                Canvases without a range
+                {t("workflow.canvasesWithoutARange")}
               </span>
             </Button>
           </Heading>

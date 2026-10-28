@@ -1,3 +1,6 @@
+import { getValue } from "@iiif/helpers";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import {
   ActionButton,
   AddIcon,
@@ -32,23 +35,18 @@ import {
 export const avRangesPanel: LayoutPanel = {
   id: "@manifest-editor/av-ranges-listing",
   label: "A/V Ranges",
+  labelMessage: manifestMessage("workflow.aVRanges"),
   icon: <AudioIcon />,
   options: { minWidth: 300, maxWidth: 360 },
   render: () => <AvRangesPanel />,
 };
 
 function AvRangesPanel() {
+  const t = useTranslations("manifest");
   const vault = useVault();
   const manifest = useManifest();
   const { create } = useLayoutActions();
-  const {
-    canvasId,
-    selectedRangeId,
-    draft,
-    setCanvasId,
-    setSelectedRangeId,
-    setDraft,
-  } = useAvRangeStore();
+  const { canvasId, selectedRangeId, draft, setCanvasId, setSelectedRangeId, setDraft } = useAvRangeStore();
   const [query, setQuery] = useState("");
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +55,7 @@ function AvRangesPanel() {
       canvases: getAvCanvases(vault, manifest),
       segments: getTemporalSegmentsFromStructures(vault, manifest),
     }),
-    [manifest],
+    [manifest]
   );
 
   const activeCanvas = useMemo(() => {
@@ -73,12 +71,11 @@ function AvRangesPanel() {
 
   const canvasSegments = useMemo(
     () => (activeCanvas ? getSegmentsForCanvas(segments, activeCanvas.id) : []),
-    [segments, activeCanvas?.id],
+    [segments, activeCanvas?.id]
   );
-  const selectedSegment =
-    canvasSegments.find((segment) => segment.id === selectedRangeId) || null;
+  const selectedSegment = canvasSegments.find((segment) => segment.id === selectedRangeId) || null;
   const filteredSegments = canvasSegments.filter((segment) =>
-    segment.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+    segment.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
   );
 
   // Scroll editor into view when a range is selected
@@ -88,16 +85,9 @@ function AvRangesPanel() {
     }
   }, [selectedSegment?.id]);
 
-  const createFromInterval = (
-    interval: { start: number; end: number },
-    title = "Untitled range",
-  ) => {
+  const createFromInterval = (interval: { start: number; end: number }, title = "Untitled range") => {
     if (!manifest || !activeCanvas) return;
-    const clamped = clampIntervalToNeighbors(
-      interval,
-      canvasSegments,
-      activeCanvas.duration,
-    );
+    const clamped = clampIntervalToNeighbors(interval, canvasSegments, activeCanvas.duration);
     if (clamped.end <= clamped.start) return;
     create({
       type: "Range",
@@ -116,9 +106,7 @@ function AvRangesPanel() {
     setDraft(null);
   };
 
-  const gaps = activeCanvas
-    ? getTemporalGaps(canvasSegments, activeCanvas.duration)
-    : [];
+  const gaps = activeCanvas ? getTemporalGaps(canvasSegments, activeCanvas.duration) : [];
 
   const openNewRangeDraft = () => {
     if (!activeCanvas) return;
@@ -132,13 +120,13 @@ function AvRangesPanel() {
   return (
     <Sidebar>
       <SidebarHeader
-        title="A/V Ranges"
+        title={t("workflow.aVRanges")}
         actions={
           activeCanvas
             ? [
                 {
                   icon: <AddIcon color="currentColor" height={16} />,
-                  title: "New range",
+                  title: t("workflow.newRange"),
                   onClick: openNewRangeDraft,
                 },
               ]
@@ -146,17 +134,13 @@ function AvRangesPanel() {
         }
       />
       <SidebarContent className="p-3 flex flex-col gap-3">
-        {!canvases.length ? (
-          <WarningMessage>
-            No audio or video canvases are available for temporal range editing.
-          </WarningMessage>
-        ) : null}
+        {!canvases.length ? <WarningMessage>{t("workflow.noTemporalCanvases")}</WarningMessage> : null}
 
         {activeCanvas ? (
           <>
             {canvases.length > 1 ? (
               <Form.InputContainer>
-                <Form.Label htmlFor="av-canvas-select">Canvas</Form.Label>
+                <Form.Label htmlFor="av-canvas-select">{t("workflow.canvas")}</Form.Label>
                 <select
                   id="av-canvas-select"
                   className="p-2 bg-me-gray-100 border-b border-b-me-gray-500 text-sm"
@@ -165,7 +149,7 @@ function AvRangesPanel() {
                 >
                   {canvases.map((canvas) => (
                     <option key={canvas.id} value={canvas.id}>
-                      {canvas.title}
+                      {getValue(canvas.label) || t("workflow.untitledCanvas")}
                     </option>
                   ))}
                 </select>
@@ -175,11 +159,11 @@ function AvRangesPanel() {
             {draft ? (
               <div className="rounded-lg border border-me-primary-300 bg-me-primary-50 p-3 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-me-primary-900">Draft range</div>
+                  <div className="text-sm font-semibold text-me-primary-900">{t("workflow.draftRange")}</div>
                   <button
                     type="button"
                     className="text-me-gray-500 hover:text-me-gray-700 p-0.5 rounded hover:bg-white/50"
-                    aria-label="Discard draft"
+                    aria-label={t("workflow.discardDraft")}
                     onClick={() => setDraft(null)}
                   >
                     <CloseIcon width={14} height={14} />
@@ -187,16 +171,10 @@ function AvRangesPanel() {
                 </div>
                 <div className="text-sm tabular-nums text-me-primary-700">
                   {formatTimeDisplay(draft.start)} → {formatTimeDisplay(draft.end)}
-                  <span className="text-me-primary-500 ml-2">
-                    ({formatTimeDisplay(draft.end - draft.start)})
-                  </span>
+                  <span className="text-me-primary-500 ml-2">({formatTimeDisplay(draft.end - draft.start)})</span>
                 </div>
-                <ActionButton
-                  primary
-                  center
-                  onPress={() => createFromInterval(draft)}
-                >
-                  Create range from selection
+                <ActionButton primary center onPress={() => createFromInterval(draft)}>
+                  {t("workflow.createRangeFromSelection")}
                 </ActionButton>
               </div>
             ) : null}
@@ -213,9 +191,7 @@ function AvRangesPanel() {
             ) : null}
 
             {!selectedSegment && !draft && canvasSegments.length === 0 ? (
-              <InfoMessage>
-                Create the first range by dragging on the timeline, using Mark in/out, or pressing New range.
-              </InfoMessage>
+              <InfoMessage>{t("workflow.firstTemporalRangeHelp")}</InfoMessage>
             ) : null}
 
             {canvasSegments.length > 0 ? (
@@ -225,9 +201,9 @@ function AvRangesPanel() {
                     <Form.Input
                       id="av-range-search"
                       value={query}
-                      placeholder="Search ranges…"
+                      placeholder={t("workflow.searchRanges")}
                       onChange={(e: any) => setQuery(e.currentTarget.value)}
-                      aria-label="Search ranges"
+                      aria-label={t("workflow.searchRangesLabel")}
                     />
                   </Form.InputContainer>
                   <span className="text-xs text-me-gray-500 tabular-nums flex-shrink-0">
@@ -256,12 +232,10 @@ function AvRangesPanel() {
                           <div
                             className={[
                               "text-sm font-medium truncate leading-tight",
-                              selectedRangeId === segment.id
-                                ? "text-me-primary-900"
-                                : "text-me-gray-900",
+                              selectedRangeId === segment.id ? "text-me-primary-900" : "text-me-gray-900",
                             ].join(" ")}
                           >
-                            {segment.title}
+                            {getValue(segment.label) || t("workflow.untitledRange")}
                           </div>
                           <div className="text-xs text-me-gray-500 tabular-nums mt-0.5">
                             {formatTimeDisplay(segment.start)} – {formatTimeDisplay(segment.end)}{" "}
@@ -293,22 +267,27 @@ function SelectedRangeEditor({
   canvasDuration: number;
   segments: TemporalRangeSegment[];
 }) {
+  const t = useTranslations("manifest");
+  const { resolveMessage } = useEditorI18n();
   const vault = useVault();
   const { setSelectedRangeId } = useAvRangeStore();
   const [title, setTitle] = useState(segment.title);
   const [start, setStart] = useState(formatTime(segment.start));
   const [end, setEnd] = useState(formatTime(segment.end));
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [noNav, setNoNav] = useState(
-    segment.behavior?.includes("no-nav") || false,
-  );
+  const [noNav, setNoNav] = useState(segment.behavior?.includes("no-nav") || false);
   const parsedStart = parseTimeInput(start);
   const parsedEnd = parseTimeInput(end);
   const validation =
     parsedStart === null || parsedEnd === null
       ? {
           valid: false,
-          issues: [{ message: "Enter readable start and end times." }],
+          issues: [
+            {
+              message: "Enter readable start and end times.",
+              messageReference: manifestMessage("workflow.readableTimes"),
+            },
+          ],
         }
       : validateTemporalSegments(
           [
@@ -316,7 +295,7 @@ function SelectedRangeEditor({
             { id: segment.id, title, start: parsedStart, end: parsedEnd },
           ],
           canvasDuration,
-          { requireTitle: true },
+          { requireTitle: true }
         );
 
   const selectedIndex = segments.findIndex((item) => item.id === segment.id);
@@ -329,7 +308,7 @@ function SelectedRangeEditor({
       { start: parsedStart, end: parsedEnd },
       segments,
       canvasDuration,
-      segment.id,
+      segment.id
     );
     updateTemporalRange(vault as any, segment, {
       label: { en: [title.trim()] },
@@ -344,7 +323,7 @@ function SelectedRangeEditor({
       {/* Editor header */}
       <div className="flex items-center gap-2 px-3 py-2 bg-me-gray-50 border-b border-me-gray-200">
         <div className="text-xs font-semibold text-me-gray-600 uppercase tracking-wide flex-1">
-          Edit range
+          {t("workflow.editRange")}
         </div>
         <button
           type="button"
@@ -352,54 +331,41 @@ function SelectedRangeEditor({
           onClick={() => setSelectedRangeId(null)}
         >
           <CloseIcon width={12} height={12} />
-          Deselect
+          {t("workflow.deselect")}
         </button>
       </div>
 
       <div className="p-3 flex flex-col gap-3">
         <Form.InputContainer>
-          <Form.Label htmlFor="av-range-title">Title</Form.Label>
-          <Form.Input
-            id="av-range-title"
-            value={title}
-            onChange={(e: any) => setTitle(e.currentTarget.value)}
-          />
+          <Form.Label htmlFor="av-range-title">{t("workflow.title")}</Form.Label>
+          <Form.Input id="av-range-title" value={title} onChange={(e: any) => setTitle(e.currentTarget.value)} />
         </Form.InputContainer>
         <div className="grid grid-cols-2 gap-2">
           <Form.InputContainer>
-            <Form.Label htmlFor="av-range-start">Start</Form.Label>
-            <Form.Input
-              id="av-range-start"
-              value={start}
-              onChange={(e: any) => setStart(e.currentTarget.value)}
-            />
+            <Form.Label htmlFor="av-range-start">{t("workflow.start")}</Form.Label>
+            <Form.Input id="av-range-start" value={start} onChange={(e: any) => setStart(e.currentTarget.value)} />
           </Form.InputContainer>
           <Form.InputContainer>
-            <Form.Label htmlFor="av-range-end">End</Form.Label>
-            <Form.Input
-              id="av-range-end"
-              value={end}
-              onChange={(e: any) => setEnd(e.currentTarget.value)}
-            />
+            <Form.Label htmlFor="av-range-end">{t("workflow.end")}</Form.Label>
+            <Form.Input id="av-range-end" value={end} onChange={(e: any) => setEnd(e.currentTarget.value)} />
           </Form.InputContainer>
         </div>
         <div className="text-xs text-me-gray-500 tabular-nums">
-          Duration:{" "}
+          {t("workflow.duration")}{" "}
           <span className="font-medium text-me-gray-700">
-            {parsedStart !== null && parsedEnd !== null
-              ? formatTimeDisplay(Math.max(0, parsedEnd - parsedStart))
-              : "—"}
+            {parsedStart !== null && parsedEnd !== null ? formatTimeDisplay(Math.max(0, parsedEnd - parsedStart)) : "—"}
           </span>
         </div>
         {!validation.valid ? (
           <WarningMessage>
-            {validation.issues[0]?.message || "Range is invalid."}
+            {resolveMessage(validation.issues[0]?.messageReference, validation.issues[0]?.message) ||
+              t("workflow.rangeIsInvalid")}
           </WarningMessage>
         ) : null}
 
         <div className="flex flex-wrap gap-2">
           <ActionButton primary isDisabled={!validation.valid} onPress={save}>
-            Save
+            {t("workflow.save")}
           </ActionButton>
           <ActionButton
             className="text-red-700 hover:bg-red-50"
@@ -408,7 +374,7 @@ function SelectedRangeEditor({
               setSelectedRangeId(null);
             }}
           >
-            Delete
+            {t("workflow.delete")}
           </ActionButton>
         </div>
 
@@ -422,7 +388,7 @@ function SelectedRangeEditor({
                   setSelectedRangeId(previous.id);
                 }}
               >
-                ← Merge with previous
+                {t("workflow.mergeWithPrevious")}
               </ActionButton>
             ) : null}
             {next ? (
@@ -433,7 +399,7 @@ function SelectedRangeEditor({
                   setSelectedRangeId(segment.id);
                 }}
               >
-                Merge with next →
+                {t("workflow.mergeWithNext")}
               </ActionButton>
             ) : null}
           </div>
@@ -445,16 +411,12 @@ function SelectedRangeEditor({
           onClick={() => setAdvancedOpen((isOpen) => !isOpen)}
         >
           <ChevronIcon open={advancedOpen} />
-          Advanced options
+          {t("workflow.advancedOptions")}
         </button>
         {advancedOpen ? (
           <label className="flex items-center gap-2 text-sm text-me-gray-700 pl-5">
-            <input
-              type="checkbox"
-              checked={noNav}
-              onChange={(e) => setNoNav(e.currentTarget.checked)}
-            />
-            Hidden from navigation
+            <input type="checkbox" checked={noNav} onChange={(e) => setNoNav(e.currentTarget.checked)} />
+            {t("workflow.hiddenFromNavigation")}
           </label>
         ) : null}
       </div>
@@ -471,7 +433,14 @@ function ChevronIcon({ open }: { open: boolean }) {
       style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
       fill="currentColor"
     >
-      <path d="M5.5 3.5 10 8l-4.5 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M5.5 3.5 10 8l-4.5 4.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

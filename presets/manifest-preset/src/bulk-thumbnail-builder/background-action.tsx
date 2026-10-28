@@ -1,3 +1,6 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import {
   type BoxSelector,
   createPaintingAnnotationsHelper,
@@ -50,6 +53,7 @@ type BulkThumbnailBuilderRunOptions = {
 };
 
 type ThumbnailPreviewCanvas = {
+  labelMessage?: MessageReference;
   id: string;
   label: string;
   hasThumbnail: boolean;
@@ -72,6 +76,7 @@ type FirstServiceProbe = {
   serviceId?: string;
   infoUrl?: string;
   message?: string;
+  messageReference?: MessageReference;
   sizes: SizeChoice[];
 };
 
@@ -123,7 +128,7 @@ type ThumbnailBuildResult = {
   usedConfiguredSizes: number;
   composites: number;
   changes: Array<{ targetId: string; targetType: string; thumbnailId: string; width?: number; height?: number }>;
-  skippedTargets: Array<{ targetId: string; targetType: string; reason: string }>;
+  skippedTargets: Array<{ targetId: string; targetType: string; reason: string; reasonMessage?: MessageReference }>;
 };
 
 type BulkThumbnailBuilderConfigRequest = {
@@ -142,7 +147,7 @@ type BulkThumbnailBuilderDependencies = {
     preview: ThumbnailBuilderPreview,
     defaults: BulkThumbnailBuilderRunOptions,
     sizeChoices: SizeChoice[],
-    firstServiceProbe: FirstServiceProbe,
+    firstServiceProbe: FirstServiceProbe
   ) => Promise<BulkThumbnailBuilderRunOptions | false>;
 };
 
@@ -159,15 +164,18 @@ type FirstServiceSource = {
 };
 
 export function createBulkThumbnailBuilderBackgroundAction(
-  dependencies: BulkThumbnailBuilderDependencies = {},
+  dependencies: BulkThumbnailBuilderDependencies = {}
 ): BackgroundActionDefinition {
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
 
   return {
     id: BULK_THUMBNAIL_BUILDER_ACTION_ID,
     label: "Bulk Thumbnail Builder",
+    labelMessage: manifestMessage("workflow.bulkThumbnailBuilder"),
     summary: "Generate missing manifest and canvas thumbnails from painting annotations",
+    summaryMessage: manifestMessage("workflow.thumbnailBuilderSummary"),
     section: "Thumbnails",
+    sectionMessage: manifestMessage("workflow.thumbnails"),
     order: 10,
     resourceTypes: ["Manifest"],
     render: (ctx) => (
@@ -182,8 +190,8 @@ export function createBulkThumbnailBuilderBackgroundAction(
       return manifest?.type === "Manifest";
     },
     prepare: async (ctx) => {
-      ctx.setActionLabel("Preparing thumbnails");
-      ctx.setActionStatus("preparing", "Scanning canvases");
+      ctx.setActionLabel("Preparing thumbnails", manifestMessage("workflow.preparingThumbnails"));
+      ctx.setActionStatus("preparing", "Scanning canvases", manifestMessage("workflow.scanningCanvases"));
 
       const preview = createThumbnailBuilderPreview(ctx);
       const firstServiceProbe = await loadFirstServiceProbe(ctx, preview);
@@ -208,11 +216,20 @@ export function createBulkThumbnailBuilderBackgroundAction(
       const result = createInitialResult(ctx.plan);
       const serviceCache: ServiceCache = new Map();
 
-      ctx.setActionLabel("Building thumbnails");
+      ctx.setActionLabel("Building thumbnails", manifestMessage("workflow.buildingThumbnails"));
 
       if (!ctx.plan?.tasks.length) {
-        ctx.setActionStatus("running", "No thumbnail changes found");
-        ctx.setActionProgress({ current: 0, total: 0, label: "No thumbnails" });
+        ctx.setActionStatus(
+          "running",
+          "No thumbnail changes found",
+          manifestMessage("workflow.noThumbnailChangesFound")
+        );
+        ctx.setActionProgress({
+          current: 0,
+          total: 0,
+          label: "No thumbnails",
+          labelMessage: manifestMessage("workflow.noThumbnails"),
+        });
         return result;
       }
 
@@ -220,114 +237,125 @@ export function createBulkThumbnailBuilderBackgroundAction(
         ctx.plan.tasks
           .map((task) => task.target)
           .filter((target): target is BackgroundActionTarget => !!target && target.type === "Canvas"),
-        "queued",
+        "queued"
       );
 
-      await ctx.tasks.runEach(
-        async (task) => {
-          const input = task.input as ThumbnailTaskInput | undefined;
-          if (!input) {
-            result.skippedTargets.push({
-              targetId: task.id,
-              targetType: "Unknown",
-              reason: "Missing thumbnail task input",
-            });
-            return skippedTask("Missing thumbnail task input");
-          }
+      await ctx.tasks.runEach(async (task) => {
+        const input = task.input as ThumbnailTaskInput | undefined;
+        if (!input) {
+          result.skippedTargets.push({
+            targetId: task.id,
+            targetType: "Unknown",
+            reason: "Missing thumbnail task input",
+            reasonMessage: manifestMessage("workflow.missingThumbnailTaskInput"),
+          });
+          return skippedTask("Missing thumbnail task input", manifestMessage("workflow.missingThumbnailInput"));
+        }
 
-          const target = ctx.vault.get({ id: input.targetId, type: input.targetType } as any) as any;
-          if (!target) {
-            result.skippedTargets.push({
-              targetId: input.targetId,
-              targetType: input.targetType,
-              reason: "Target resource no longer exists",
-            });
-            return skippedTask("Target missing");
-          }
-
-          if (hasThumbnail(target) && !options.replaceExisting) {
-            result.skippedTargets.push({
-              targetId: input.targetId,
-              targetType: input.targetType,
-              reason: "Thumbnail already exists",
-            });
-            return skippedTask("Already has thumbnail");
-          }
-
-          const canvas = getThumbnailSourceCanvas(ctx, input);
-          if (!canvas) {
-            result.skippedTargets.push({
-              targetId: input.targetId,
-              targetType: input.targetType,
-              reason: "No source canvas with painting annotations found",
-            });
-            return skippedTask("No source canvas");
-          }
-
-          const thumbnail = await buildCanvasThumbnail(ctx, canvas, options, serviceCache);
-          if (!thumbnail) {
-            result.skippedTargets.push({
-              targetId: input.targetId,
-              targetType: input.targetType,
-              reason: "No thumbnail image could be generated",
-            });
-            return skippedTask("No thumbnail image");
-          }
-
-          addThumbnailToResource(ctx, input, thumbnail);
-
-          result.added += 1;
-          if (input.kind === "manifest") {
-            result.manifestAdded = true;
-          } else {
-            result.canvasAdded += 1;
-          }
-          if (thumbnail.verified) {
-            result.verified += 1;
-          }
-          if (thumbnail.usedConfiguredSize) {
-            result.usedConfiguredSizes += 1;
-          }
-          if (thumbnail.composite) {
-            result.composites += 1;
-          }
-          result.changes.push({
+        const target = ctx.vault.get({ id: input.targetId, type: input.targetType } as any) as any;
+        if (!target) {
+          result.skippedTargets.push({
             targetId: input.targetId,
             targetType: input.targetType,
+            reason: "Target resource no longer exists",
+            reasonMessage: manifestMessage("workflow.targetResourceNoLongerExists"),
+          });
+          return skippedTask("Target missing", manifestMessage("workflow.targetMissing"));
+        }
+
+        if (hasThumbnail(target) && !options.replaceExisting) {
+          result.skippedTargets.push({
+            targetId: input.targetId,
+            targetType: input.targetType,
+            reason: "Thumbnail already exists",
+            reasonMessage: manifestMessage("workflow.thumbnailAlreadyExists"),
+          });
+          return skippedTask("Already has thumbnail", manifestMessage("workflow.alreadyHasThumbnail"));
+        }
+
+        const canvas = getThumbnailSourceCanvas(ctx, input);
+        if (!canvas) {
+          result.skippedTargets.push({
+            targetId: input.targetId,
+            targetType: input.targetType,
+            reason: "No source canvas with painting annotations found",
+            reasonMessage: manifestMessage("workflow.thumbnailSourceMissing"),
+          });
+          return skippedTask("No source canvas", manifestMessage("workflow.noSourceCanvas"));
+        }
+
+        const thumbnail = await buildCanvasThumbnail(ctx, canvas, options, serviceCache);
+        if (!thumbnail) {
+          result.skippedTargets.push({
+            targetId: input.targetId,
+            targetType: input.targetType,
+            reason: "No thumbnail image could be generated",
+            reasonMessage: manifestMessage("workflow.thumbnailGenerationFailed"),
+          });
+          return skippedTask("No thumbnail image", manifestMessage("workflow.noThumbnailImage"));
+        }
+
+        addThumbnailToResource(ctx, input, thumbnail);
+
+        result.added += 1;
+        if (input.kind === "manifest") {
+          result.manifestAdded = true;
+        } else {
+          result.canvasAdded += 1;
+        }
+        if (thumbnail.verified) {
+          result.verified += 1;
+        }
+        if (thumbnail.usedConfiguredSize) {
+          result.usedConfiguredSizes += 1;
+        }
+        if (thumbnail.composite) {
+          result.composites += 1;
+        }
+        result.changes.push({
+          targetId: input.targetId,
+          targetType: input.targetType,
+          thumbnailId: thumbnail.id,
+          width: thumbnail.width,
+          height: thumbnail.height,
+        });
+
+        ctx.appendActionLog(
+          "Added thumbnail",
+          "info",
+          {
+            targetId: input.targetId,
+            targetType: input.targetType,
+            thumbnailId: thumbnail.id,
+          },
+          manifestMessage("workflow.addedThumbnail")
+        );
+
+        return {
+          result: {
             thumbnailId: thumbnail.id,
             width: thumbnail.width,
             height: thumbnail.height,
-          });
-
-          ctx.appendActionLog("Added thumbnail", "info", {
-            targetId: input.targetId,
-            targetType: input.targetType,
-            thumbnailId: thumbnail.id,
-          });
-
-          return {
-            result: {
-              thumbnailId: thumbnail.id,
-              width: thumbnail.width,
-              height: thumbnail.height,
-            },
-            statusText: "Thumbnail added",
-          };
-        },
-        {
-          progressLabel: (_task, index, total) => `Building thumbnails ${index + 1}/${total}`,
-        },
-      );
+          },
+          statusText: "Thumbnail added",
+          statusTextMessage: manifestMessage("workflow.thumbnailAdded"),
+        };
+      }, {});
 
       const tasks = ctx.tasks.getAll();
       result.failed = tasks.filter((task) => task.status === "error").length;
       result.skipped = tasks.filter((task) => task.status === "skipped").length;
 
-      ctx.setActionStatus("running", `Added ${result.added}/${result.total} thumbnails`);
+      ctx.setActionStatus(
+        "running",
+        `Added ${result.added}/${result.total} thumbnails`,
+        manifestMessage("workflow.addedThumbnailsStatus", { current: result.added, total: result.total })
+      );
       ctx.setActionProgress({
         current: result.total,
         total: result.total,
         label: "Thumbnails complete",
+        labelMessage: manifestMessage("workflow.thumbnailsComplete"),
       });
 
       return result;
@@ -339,7 +367,7 @@ function createBulkThumbnailBuilderPlan(
   preview: ThumbnailBuilderPreview,
   rawOptions: Partial<BulkThumbnailBuilderRunOptions>,
   sizeChoices: SizeChoice[],
-  firstServiceProbe: FirstServiceProbe,
+  firstServiceProbe: FirstServiceProbe
 ): BackgroundActionPlan {
   const options = normaliseRunOptions(rawOptions);
   const tasks: BackgroundActionPlan["tasks"] = [];
@@ -348,10 +376,12 @@ function createBulkThumbnailBuilderPlan(
     tasks.push({
       id: `${preview.manifestId}#thumbnail`,
       label: "Manifest thumbnail",
+      labelMessage: manifestMessage("workflow.manifestThumbnail"),
       target: {
         id: preview.manifestId,
         type: "Manifest",
         label: "Manifest",
+        labelMessage: manifestMessage("workflow.manifest"),
         scope: "root",
       },
       input: {
@@ -372,10 +402,12 @@ function createBulkThumbnailBuilderPlan(
     tasks.push({
       id: `${canvas.id}#thumbnail`,
       label: canvas.label || "Canvas thumbnail",
+      labelMessage: canvas.labelMessage,
       target: {
         id: canvas.id,
         type: "Canvas",
         label: canvas.label || "Canvas",
+        labelMessage: canvas.labelMessage,
         scope: "canvas",
       },
       input: {
@@ -427,6 +459,7 @@ function createThumbnailBuilderPreview(ctx: BackgroundActionRunContext): Thumbna
     previewCanvases.push({
       id: canvas.id,
       label: getResourceLabel(canvas, "Canvas"),
+      labelMessage: getValue(canvas.label) ? undefined : manifestMessage("workflow.canvas"),
       hasThumbnail: hasCanvasThumbnail,
       paintingLayerCount: layers.length,
     });
@@ -446,7 +479,7 @@ function createThumbnailBuilderPreview(ctx: BackgroundActionRunContext): Thumbna
 
 async function loadFirstServiceProbe(
   ctx: BackgroundActionRunContext,
-  preview: ThumbnailBuilderPreview,
+  preview: ThumbnailBuilderPreview
 ): Promise<FirstServiceProbe> {
   const firstSource = findFirstImageServiceSource(ctx, preview);
   const firstService = firstSource?.service;
@@ -456,6 +489,7 @@ async function loadFirstServiceProbe(
     return {
       status: "not-found",
       message: "No IIIF image service found in the painting annotations.",
+      messageReference: manifestMessage("workflow.thumbnailServiceMissing"),
       sizes: [],
     };
   }
@@ -465,6 +499,7 @@ async function loadFirstServiceProbe(
     return {
       status: "error",
       message: "The first IIIF image service has no id.",
+      messageReference: manifestMessage("workflow.thumbnailServiceIdMissing"),
       sizes: createSizeChoicesFromService(firstService),
     };
   }
@@ -474,6 +509,7 @@ async function loadFirstServiceProbe(
     return {
       status: "error",
       message: "The first IIIF image service could not be resolved.",
+      messageReference: manifestMessage("workflow.thumbnailServiceUnavailable"),
       sizes: [],
     };
   }
@@ -485,10 +521,14 @@ async function loadFirstServiceInfo(
   ctx: BackgroundActionRunContext,
   infoUrl: string,
   fallbackId: string,
-  fallbackService?: ImageService,
+  fallbackService?: ImageService
 ): Promise<FirstServiceProbe> {
   try {
-    ctx.setActionStatus("preparing", "Loading first image service");
+    ctx.setActionStatus(
+      "preparing",
+      "Loading first image service",
+      manifestMessage("workflow.loadingFirstImageService")
+    );
     const response = await fetch(infoUrl, { signal: ctx.signal });
     if (!response.ok) {
       return {
@@ -496,6 +536,7 @@ async function loadFirstServiceInfo(
         serviceId: fallbackId,
         infoUrl,
         message: `Unable to load info.json (${response.status}).`,
+        messageReference: manifestMessage("workflow.unableToLoadInfoJson", { current: response.status }),
         sizes: fallbackService ? createSizeChoicesFromService(fallbackService) : [],
       };
     }
@@ -524,7 +565,7 @@ async function loadFirstServiceInfo(
 
 function findFirstImageServiceSource(
   ctx: BackgroundActionRunContext,
-  preview: ThumbnailBuilderPreview,
+  preview: ThumbnailBuilderPreview
 ): FirstServiceSource | null {
   for (const canvasPreview of preview.canvases) {
     const canvas = ctx.vault.get({ id: canvasPreview.id, type: "Canvas" } as any) as any;
@@ -588,7 +629,7 @@ async function buildCanvasThumbnail(
   ctx: BackgroundActionRunContext,
   canvas: any,
   options: BulkThumbnailBuilderRunOptions,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<ThumbnailBuild | null> {
   const layers = getCanvasPaintingLayers(ctx, canvas);
   if (!layers.length) {
@@ -612,7 +653,7 @@ async function buildLayerThumbnail(
   ctx: BackgroundActionRunContext,
   layer: ThumbnailLayer,
   requestedWidth: number,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<ThumbnailBuild | null> {
   const candidate = await getLayerImageCandidate(ctx, layer, requestedWidth, serviceCache);
   if (!candidate) {
@@ -635,7 +676,7 @@ async function buildCompositeThumbnail(
   canvas: any,
   layers: ThumbnailLayer[],
   requestedWidth: number,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<ThumbnailBuild | null> {
   if (typeof document === "undefined") {
     return null;
@@ -646,7 +687,7 @@ async function buildCompositeThumbnail(
       width: canvas.width || requestedWidth,
       height: canvas.height || requestedWidth,
     },
-    requestedWidth,
+    requestedWidth
   );
   const canvasWidth = toPositiveNumber(canvas.width) || outputSize.width;
   const canvasHeight = toPositiveNumber(canvas.height) || outputSize.height;
@@ -711,7 +752,7 @@ async function getLayerImageCandidate(
   ctx: BackgroundActionRunContext,
   layer: ThumbnailLayer,
   requestedWidth: number,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<{
   id: string;
   width?: number;
@@ -781,7 +822,7 @@ async function getLayerImageCandidate(
 
 function getImageServiceFromResource(
   ctx: Pick<BackgroundActionRunContext, "vault">,
-  resource: any,
+  resource: any
 ): ImageService | null {
   const services = toArray(resource?.service)
     .map((service) => ctx.vault.get(service as any) || service)
@@ -793,7 +834,7 @@ function getImageServiceFromResource(
 async function loadService(
   ctx: BackgroundActionRunContext,
   service: ImageService,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<ServiceCacheEntry | null> {
   const serviceId = getServiceId(service);
   if (!serviceId) {
@@ -849,7 +890,7 @@ async function loadService(
 async function loadServiceFromImageUrl(
   ctx: BackgroundActionRunContext,
   imageUrl: unknown,
-  serviceCache: ServiceCache,
+  serviceCache: ServiceCache
 ): Promise<ServiceCacheEntry | null> {
   if (typeof imageUrl !== "string") {
     return null;
@@ -944,7 +985,7 @@ function addThumbnailToResource(ctx: BackgroundActionRunContext, input: Thumbnai
           value: [{ id: thumbnail.id, type: "ContentResource" }],
         }),
       ],
-    }),
+    })
   );
 }
 
@@ -984,7 +1025,7 @@ function getTargetBox(target: any, canvas: any) {
 
 function normaliseSelectorBox(
   selector: BoxSelector | TemporalBoxSelector,
-  canvasBox: { x: number; y: number; width: number; height: number },
+  canvasBox: { x: number; y: number; width: number; height: number }
 ) {
   const spatial = selector.spatial;
   if (spatial.unit === "percent") {
@@ -1075,11 +1116,12 @@ function createInitialResult(plan: BackgroundActionPlan | undefined): ThumbnailB
   };
 }
 
-function skippedTask(reason: string) {
+function skippedTask(reason: string, statusTextMessage: MessageReference) {
   return {
     taskStatus: "skipped" as const,
     result: { reason },
     statusText: reason,
+    statusTextMessage,
   };
 }
 
@@ -1255,7 +1297,7 @@ function defaultRequestConfig(
   preview: ThumbnailBuilderPreview,
   defaults: BulkThumbnailBuilderRunOptions,
   sizeChoices: SizeChoice[],
-  firstServiceProbe: FirstServiceProbe,
+  firstServiceProbe: FirstServiceProbe
 ) {
   return requestBulkThumbnailBuilderConfig({
     actionId: ctx.definition.id,
@@ -1268,7 +1310,7 @@ function defaultRequestConfig(
 }
 
 function requestBulkThumbnailBuilderConfig(
-  request: Omit<BulkThumbnailBuilderConfigRequest, "resolve">,
+  request: Omit<BulkThumbnailBuilderConfigRequest, "resolve">
 ): Promise<BulkThumbnailBuilderRunOptions | false> {
   return new Promise((resolve) => {
     if (request.signal?.aborted || typeof window === "undefined") {
@@ -1292,7 +1334,7 @@ function requestBulkThumbnailBuilderConfig(
     window.dispatchEvent(
       new CustomEvent<BulkThumbnailBuilderConfigRequest>(configEventName, {
         detail: { ...request, resolve: settle },
-      }),
+      })
     );
   });
 }
@@ -1302,6 +1344,7 @@ function renderBulkThumbnailBuilderConfigModal(actionId: string) {
 }
 
 function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
+  const t = useTranslations("manifest");
   const [request, setRequest] = useState<BulkThumbnailBuilderConfigRequest | null>(null);
   const [options, setOptions] = useState<BulkThumbnailBuilderRunOptions>(normaliseRunOptions({}));
 
@@ -1335,7 +1378,7 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
 
   const selectedSize = useMemo(
     () => request?.sizeChoices.find((choice) => choice.width === options.requestedWidth),
-    [request?.sizeChoices, options.requestedWidth],
+    [request?.sizeChoices, options.requestedWidth]
   );
 
   if (!request) {
@@ -1360,22 +1403,24 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
 
   return (
     <Modal
-      title="Bulk Thumbnail Builder"
+      title={t("workflow.bulkThumbnailBuilder")}
       onClose={() => close(false)}
       className="max-w-4xl"
       actions={
         <div className="flex items-center gap-3">
           <span className="text-sm text-zinc-400">
             {thumbnailCount === 0
-              ? "All thumbnails up to date"
-              : `${thumbnailCount} thumbnail${thumbnailCount === 1 ? "" : "s"} to ${options.replaceExisting ? "add or replace" : "add"}`}
+              ? t("workflow.allThumbnailsUpToDate")
+              : t(options.replaceExisting ? "workflow.thumbnailsToReplace" : "workflow.thumbnailsToAdd", {
+                  count: thumbnailCount,
+                })}
           </span>
           <button
             type="button"
             className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
             onClick={() => close(false)}
           >
-            Cancel
+            {t("workflow.cancel")}
           </button>
           <button
             type="button"
@@ -1383,7 +1428,7 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
             disabled={thumbnailCount === 0}
             onClick={() => close(options)}
           >
-            Build thumbnails
+            {t("workflow.buildThumbnails")}
           </button>
         </div>
       }
@@ -1393,19 +1438,21 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
         <div className="flex flex-col gap-4 overflow-y-auto border-r border-zinc-100 p-5 text-sm text-zinc-700">
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              {request.preview.totalCanvases} canvas{request.preview.totalCanvases === 1 ? "" : "es"}
+              {t("workflow.canvasCount", { count: request.preview.totalCanvases })}
             </div>
             <div className="rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2.5 text-xs text-zinc-500 leading-relaxed">
               {selectedSize?.source === "configured" ? (
-                <>Sizes from image service · <span className="font-mono text-zinc-700">{selectedSize.width}px</span></>
+                <>{t("workflow.imageServiceSize", { width: selectedSize.width })}</>
               ) : (
-                "Using standard sizes — no image service detected"
+                t("workflow.thumbnailStandardSizes")
               )}
             </div>
           </div>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Thumbnail size</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              {t("workflow.thumbnailSize")}
+            </span>
             <select
               className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm focus:border-me-primary-500 focus:outline-none"
               value={options.requestedWidth}
@@ -1430,12 +1477,14 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
                 setOptions((current) => ({ ...current, replaceExisting: event.currentTarget.checked }))
               }
             />
-            <span className="text-sm font-medium text-zinc-700">Replace existing</span>
+            <span className="text-sm font-medium text-zinc-700">{t("workflow.replaceExisting")}</span>
           </label>
 
           {hasMultiImage ? (
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Multi-image canvases</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                {t("workflow.multiImageCanvases")}
+              </span>
               <select
                 className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm focus:border-me-primary-500 focus:outline-none"
                 value={options.multiImageMode}
@@ -1443,16 +1492,18 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
                   setOptions((current) => ({ ...current, multiImageMode: event.target.value as MultiImageMode }))
                 }
               >
-                <option value="first">First image</option>
-                <option value="composite">Full composite</option>
-                <option value="layer">Specific layer</option>
+                <option value="first">{t("workflow.firstImage")}</option>
+                <option value="composite">{t("workflow.fullComposite")}</option>
+                <option value="layer">{t("workflow.specificLayer")}</option>
               </select>
             </label>
           ) : null}
 
           {options.multiImageMode === "layer" && hasMultiImage ? (
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Layer</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                {t("workflow.layerLabel")}
+              </span>
               <select
                 className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm focus:border-me-primary-500 focus:outline-none"
                 value={options.selectedLayerIndex}
@@ -1462,7 +1513,7 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
               >
                 {Array.from({ length: Math.max(request.preview.maxLayerCount, 1) }, (_, index) => (
                   <option key={index} value={index}>
-                    Layer {index + 1}
+                    {t("workflow.layerNumber", { number: index + 1 })}
                   </option>
                 ))}
               </select>
@@ -1473,12 +1524,16 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
         {/* Right: Thumbnail preview grid */}
         <div className="flex min-w-0 flex-col">
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-2.5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Canvas preview</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              {t("workflow.canvasPreview")}
+            </span>
             <span className="text-xs text-zinc-400">
               {thumbnailCount > 0 ? (
-                <span className="font-medium text-me-primary-500">{thumbnailCount} will be built</span>
+                <span className="font-medium text-me-primary-500">
+                  {t("workflow.thumbnailsToBuild", { count: thumbnailCount })}
+                </span>
               ) : (
-                "All up to date"
+                t("workflow.allUpToDate")
               )}
             </span>
           </div>
@@ -1491,6 +1546,7 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
                     key={canvas.id}
                     canvasId={canvas.id}
                     label={canvas.label}
+                    labelMessage={canvas.labelMessage}
                     willBuild={willBuild}
                     hasExisting={canvas.hasThumbnail}
                     replacing={canvas.hasThumbnail && options.replaceExisting}
@@ -1509,6 +1565,7 @@ function BulkThumbnailBuilderConfigModal({ actionId }: { actionId: string }) {
 function ThumbnailPreviewCell({
   canvasId,
   label,
+  labelMessage,
   willBuild,
   hasExisting,
   replacing,
@@ -1516,22 +1573,21 @@ function ThumbnailPreviewCell({
 }: {
   canvasId: string;
   label: string;
+  labelMessage?: MessageReference;
   willBuild: boolean;
   hasExisting: boolean;
   replacing: boolean;
   requestedWidth: number;
 }) {
+  const t = useTranslations("manifest");
+  const { resolveMessage } = useEditorI18n();
   return (
     <CanvasContext canvas={canvasId}>
       <div className="flex flex-col gap-1">
         <div
           className={[
             "relative aspect-square w-full overflow-hidden rounded-lg bg-zinc-100",
-            willBuild
-              ? replacing
-                ? "ring-2 ring-me-primary-300"
-                : "ring-2 ring-me-primary-500"
-              : "opacity-40",
+            willBuild ? (replacing ? "ring-2 ring-me-primary-300" : "ring-2 ring-me-primary-500") : "opacity-40",
           ].join(" ")}
         >
           <ConfiguredSizeThumbnail key={requestedWidth} width={requestedWidth} />
@@ -1539,43 +1595,45 @@ function ThumbnailPreviewCell({
             <span
               className={[
                 "absolute bottom-1 right-1 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wide",
-                replacing
-                  ? "bg-me-primary-100 text-me-primary-600"
-                  : "bg-me-primary-500 text-white",
+                replacing ? "bg-me-primary-100 text-me-primary-600" : "bg-me-primary-500 text-white",
               ].join(" ")}
             >
-              {replacing ? "Replace" : "Add"}
+              {replacing ? t("workflow.replace") : t("workflow.add")}
             </span>
           ) : null}
         </div>
-        <span className="truncate text-center text-[11px] leading-tight text-zinc-500">{label}</span>
+        <span className="truncate text-center text-[11px] leading-tight text-zinc-500">
+          {resolveMessage(labelMessage, label)}
+        </span>
       </div>
     </CanvasContext>
   );
 }
 
 function ConfiguredSizeThumbnail({ width }: { width: number }) {
+  const t = useTranslations("manifest");
   const thumbnail = useThumbnail({ width }, true);
   const [loaded, setLoaded] = useState(false);
 
   if (!thumbnail?.id) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
-        <span className="text-[10px] text-zinc-300">No image</span>
+        <span className="text-[10px] text-zinc-300">{t("workflow.noImage")}</span>
       </div>
     );
   }
 
   return (
     <>
-      {!loaded ? (
-        <div className="absolute inset-0 animate-pulse bg-zinc-200" />
-      ) : null}
+      {!loaded ? <div className="absolute inset-0 animate-pulse bg-zinc-200" /> : null}
       <img
         src={thumbnail.id}
         alt=""
         loading="lazy"
-        className={["absolute inset-0 h-full w-full object-contain transition-opacity duration-300", loaded ? "opacity-100" : "opacity-0"].join(" ")}
+        className={[
+          "absolute inset-0 h-full w-full object-contain transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0",
+        ].join(" ")}
         onLoad={() => setLoaded(true)}
       />
     </>
@@ -1593,7 +1651,7 @@ function openBulkThumbnailBuilderResults(actionId: string, result: unknown) {
         actionId,
         result: result as ThumbnailBuildResult | undefined,
       },
-    }),
+    })
   );
 }
 
@@ -1602,6 +1660,8 @@ function renderBulkThumbnailBuilderResults(actionId: string) {
 }
 
 function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
+  const t = useTranslations("manifest");
+  const { resolveMessage } = useEditorI18n();
   const [activeResult, setActiveResult] = useState<ThumbnailBuildResult | null>(null);
 
   useEffect(() => {
@@ -1621,28 +1681,34 @@ function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
   }
 
   return (
-    <Modal title="Thumbnail results" onClose={() => setActiveResult(null)} className="max-w-2xl">
+    <Modal title={t("workflow.thumbnailResults")} onClose={() => setActiveResult(null)} className="max-w-2xl">
       <div className="flex min-h-0 flex-col gap-0 text-sm text-zinc-700">
         {/* Summary bar */}
         <div className="flex items-center gap-6 border-b border-zinc-100 px-5 py-4">
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-2xl font-semibold leading-none text-zinc-900">{activeResult.added}</span>
-            <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">Added</span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+              {t("workflow.added")}
+            </span>
           </div>
           {activeResult.skipped > 0 ? (
             <div className="flex flex-col items-center gap-0.5">
               <span className="text-2xl font-semibold leading-none text-zinc-500">{activeResult.skipped}</span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">Skipped</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                {t("workflow.skipped")}
+              </span>
             </div>
           ) : null}
           {activeResult.failed > 0 ? (
             <div className="flex flex-col items-center gap-0.5">
               <span className="text-2xl font-semibold leading-none text-red-500">{activeResult.failed}</span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">Failed</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                {t("workflow.failed")}
+              </span>
             </div>
           ) : null}
           <div className="ml-auto text-xs text-zinc-400">
-            {activeResult.verified > 0 ? `${activeResult.verified} verified` : null}
+            {activeResult.verified > 0 ? t("workflow.verifiedCount", { count: activeResult.verified }) : null}
           </div>
         </div>
 
@@ -1650,7 +1716,7 @@ function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
           {activeResult.changes.length ? (
             <div>
               <div className="sticky top-0 z-10 border-b border-zinc-100 bg-zinc-50 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                Added thumbnails
+                {t("workflow.addedThumbnails")}
               </div>
               {activeResult.changes.map((item) => (
                 <div
@@ -1662,7 +1728,13 @@ function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
                     <div className="mt-0.5 truncate font-mono text-[10px] text-zinc-400">{item.thumbnailId}</div>
                   </div>
                   <div className="flex-none self-center rounded bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-                    {item.width ? `${item.width}${item.height ? `×${item.height}` : "px"}` : item.targetType}
+                    {item.width
+                      ? `${item.width}${item.height ? `×${item.height}` : "px"}`
+                      : item.targetType === "Canvas"
+                        ? t("workflow.canvas")
+                        : item.targetType === "Manifest"
+                          ? t("workflow.manifest")
+                          : item.targetType}
                   </div>
                 </div>
               ))}
@@ -1672,7 +1744,7 @@ function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
           {activeResult.skippedTargets.length ? (
             <div>
               <div className="sticky top-0 z-10 border-b border-zinc-100 bg-zinc-50 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                Skipped
+                {t("workflow.skipped")}
               </div>
               {activeResult.skippedTargets.map((item) => (
                 <div
@@ -1682,7 +1754,9 @@ function BulkThumbnailBuilderResultsModal({ actionId }: { actionId: string }) {
                   <div className="min-w-0">
                     <div className="truncate text-xs font-medium text-zinc-700">{item.targetId}</div>
                   </div>
-                  <div className="flex-none self-center text-xs text-zinc-400">{item.reason}</div>
+                  <div className="flex-none self-center text-xs text-zinc-400">
+                    {resolveMessage(item.reasonMessage, item.reason)}
+                  </div>
                 </div>
               ))}
             </div>

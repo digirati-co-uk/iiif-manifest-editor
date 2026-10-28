@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import {
   ActionButton,
   AddIcon,
@@ -48,22 +50,20 @@ const CanvasGridControls = styled.div`
   justify-content: space-between;
   gap: 0.5rem;
   padding-block: 0.5rem;
-  padding-inline-start: calc(
-    0.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px)
-  );
-  padding-inline-end: calc(
-    0.5rem + var(--manifest-editor-layout-right-sidebar-large, 0px)
-  );
+  padding-inline-start: calc(0.5rem + var(--manifest-editor-layout-left-sidebar-small, 0px));
+  padding-inline-end: calc(0.5rem + var(--manifest-editor-layout-right-sidebar-large, 0px));
 `;
 
 export const manifestOverview: LayoutPanel = {
   id: "overview",
   label: "Overview",
+  labelMessage: manifestMessage("panels.overview"),
   icon: <ManifestIcon />,
   render: () => <ManifestOverviewCenterPanel />,
 };
 
 export function ManifestOverviewCenterPanel() {
+  const t = useTranslations("manifest");
   const { metadata } = useApp();
   const { edit, open } = useLayoutActions();
   const { structural, technical } = useManifestEditor();
@@ -94,7 +94,7 @@ export function ManifestOverviewCenterPanel() {
       }
       return tags;
     },
-    [canvasIds],
+    [canvasIds]
   );
   const canvasProgressStatuses = useVaultSelector(
     (state) => {
@@ -107,11 +107,11 @@ export function ManifestOverviewCenterPanel() {
       }
       return statuses;
     },
-    [canvasIds],
+    [canvasIds]
   );
   const [visibleCanvases, numberOfFlaggedCanvases] = useMemo(() => {
     const flaggedCanvases = (canvases || []).filter((item) =>
-      canvasTags[item.id]?.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id),
+      canvasTags[item.id]?.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id)
     );
 
     if (!showOnlyFlagged) {
@@ -151,20 +151,23 @@ export function ManifestOverviewCenterPanel() {
                 aria-pressed={showOnlyFlagged}
                 onPress={() => setShowOnlyFlagged((showing) => !showing)}
               >
-                <ManifestEditorTagIcon icon={FLAG_TAG.icon} className="text-xl" /> Show only flagged
+                <ManifestEditorTagIcon icon={FLAG_TAG.icon} className="text-xl" /> {t("workflow.showOnlyFlagged")}
               </ActionButton>
             )}
             <ActionButton isDisabled={!canCreateCanvas} onPress={() => createCanvas()}>
-              <AddIcon className="text-xl" /> Add new canvas
+              <AddIcon className="text-xl" /> {t("workflow.addNewCanvas")}
             </ActionButton>
-            <ActionButton aria-label="Browse IIIF resources" onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}>
+            <ActionButton
+              aria-label={t("workflow.browseIiifResources")}
+              onPress={() => canvasActions.creator("@manifest-editor/iiif-browser-creator")}
+            >
               <IIIFBrowserIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
           </div>
         </CanvasGridControls>
       ) : null}
       {showOnlyFlagged && visibleCanvases.length === 0 ? (
-        <div className="p-6 text-sm text-gray-500">No flagged canvases</div>
+        <div className="p-6 text-sm text-gray-500">{t("workflow.noFlaggedCanvases")}</div>
       ) : (
         <CanvasGridLayoutOffset>
           <ThumbnailGridContainer wide size={size}>

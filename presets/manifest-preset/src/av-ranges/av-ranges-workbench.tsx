@@ -1,23 +1,11 @@
-import {
-  ActionButton,
-  InfoMessage,
-  WarningMessage,
-} from "@manifest-editor/components";
+import { getValue } from "@iiif/helpers";
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
+import { ActionButton, InfoMessage, WarningMessage } from "@manifest-editor/components";
 import { type LayoutPanel, useLayoutActions } from "@manifest-editor/shell";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useManifest, useVault, useVaultSelector } from "react-iiif-vault";
-import {
-  createTemporalRange,
-  deleteTemporalRange,
-  updateTemporalRange,
-} from "./av-range-mutations";
+import { createTemporalRange, deleteTemporalRange, updateTemporalRange } from "./av-range-mutations";
 import { useAvRangeStore } from "./av-range-store";
 import { getAvCanvases, type AvCanvas } from "./av-media-utils";
 import { AV_TEMPORAL_RANGE_CREATOR_ID } from "./av-temporal-range-creator";
@@ -34,35 +22,23 @@ import {
 export const avRangesWorkbench: LayoutPanel = {
   id: "av-ranges-workbench",
   label: "A/V Range Workbench",
+  labelMessage: manifestMessage("workflow.aVRangeWorkbench"),
   icon: "",
   render: () => <AvRangesWorkbench />,
 };
 
 const SNAP_SECONDS = 0.75;
 
-function snapTime(
-  time: number,
-  segments: Array<Pick<TemporalRangeSegment, "start" | "end">>,
-  duration: number,
-) {
-  const points = [
-    0,
-    duration,
-    ...segments.flatMap((segment) => [segment.start, segment.end]),
-  ];
+function snapTime(time: number, segments: Array<Pick<TemporalRangeSegment, "start" | "end">>, duration: number) {
+  const points = [0, duration, ...segments.flatMap((segment) => [segment.start, segment.end])];
   const nearest = points.reduce(
-    (best, point) =>
-      Math.abs(point - time) < Math.abs(best - time) ? point : best,
-    points[0] || 0,
+    (best, point) => (Math.abs(point - time) < Math.abs(best - time) ? point : best),
+    points[0] || 0
   );
   return Math.abs(nearest - time) <= SNAP_SECONDS ? nearest : time;
 }
 
-function snapInterval(
-  interval: { start: number; end: number },
-  segments: TemporalRangeSegment[],
-  duration: number,
-) {
+function snapInterval(interval: { start: number; end: number }, segments: TemporalRangeSegment[], duration: number) {
   return {
     start: snapTime(interval.start, segments, duration),
     end: snapTime(interval.end, segments, duration),
@@ -73,7 +49,7 @@ function snapMovedStart(
   start: number,
   movingSegment: TemporalRangeSegment,
   segments: TemporalRangeSegment[],
-  duration: number,
+  duration: number
 ) {
   const segmentDuration = movingSegment.end - movingSegment.start;
   const points = [
@@ -84,29 +60,21 @@ function snapMovedStart(
       .flatMap((segment) => [segment.end, segment.start - segmentDuration]),
   ].filter((point) => point >= 0 && point <= duration - segmentDuration);
   const nearest = points.reduce(
-    (best, point) =>
-      Math.abs(point - start) < Math.abs(best - start) ? point : best,
-    points[0] || 0,
+    (best, point) => (Math.abs(point - start) < Math.abs(best - start) ? point : best),
+    points[0] || 0
   );
   return Math.abs(nearest - start) <= SNAP_SECONDS ? nearest : start;
 }
 
 function AvRangesWorkbench() {
+  const t = useTranslations("manifest");
   const vault = useVault();
   const manifest = useManifest();
   const { create } = useLayoutActions();
   const mediaRef = useRef<HTMLMediaElement | null>(null);
   const dragRef = useRef<{ start: number; end: number } | null>(null);
-  const {
-    canvasId,
-    selectedRangeId,
-    draft,
-    markStart,
-    setCanvasId,
-    setSelectedRangeId,
-    setDraft,
-    setMarkStart,
-  } = useAvRangeStore();
+  const { canvasId, selectedRangeId, draft, markStart, setCanvasId, setSelectedRangeId, setDraft, setMarkStart } =
+    useAvRangeStore();
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -120,7 +88,7 @@ function AvRangesWorkbench() {
       canvases: getAvCanvases(vault, manifest),
       segments: getTemporalSegmentsFromStructures(vault, manifest),
     }),
-    [manifest],
+    [manifest]
   );
 
   const activeCanvas = useMemo(() => {
@@ -136,13 +104,10 @@ function AvRangesWorkbench() {
 
   const canvasSegments = useMemo(
     () => (activeCanvas ? getSegmentsForCanvas(segments, activeCanvas.id) : []),
-    [segments, activeCanvas?.id],
+    [segments, activeCanvas?.id]
   );
-  const selectedSegment =
-    canvasSegments.find((segment) => segment.id === selectedRangeId) || null;
-  const gaps = activeCanvas
-    ? getTemporalGaps(canvasSegments, activeCanvas.duration)
-    : [];
+  const selectedSegment = canvasSegments.find((segment) => segment.id === selectedRangeId) || null;
+  const gaps = activeCanvas ? getTemporalGaps(canvasSegments, activeCanvas.duration) : [];
 
   useEffect(() => {
     const media = mediaRef.current;
@@ -172,7 +137,7 @@ function AvRangesWorkbench() {
       }
       setCurrentTime(next);
     },
-    [activeCanvas?.duration],
+    [activeCanvas?.duration]
   );
 
   const togglePlay = useCallback(() => {
@@ -193,11 +158,7 @@ function AvRangesWorkbench() {
 
   const createFromDraft = useCallback(() => {
     if (!manifest || !activeCanvas || !draft) return;
-    const interval = clampIntervalToNeighbors(
-      draft,
-      canvasSegments,
-      activeCanvas.duration,
-    );
+    const interval = clampIntervalToNeighbors(draft, canvasSegments, activeCanvas.duration);
     if (interval.end <= interval.start) return;
     create({
       type: "Range",
@@ -227,20 +188,10 @@ function AvRangesWorkbench() {
       start: split,
       end: selectedSegment.end,
       label: { en: [`${selectedSegment.title} 2`] },
-      atIndex:
-        selectedSegment.parentKey === "structures"
-          ? selectedSegment.parentIndex + 1
-          : undefined,
+      atIndex: selectedSegment.parentKey === "structures" ? selectedSegment.parentIndex + 1 : undefined,
     });
     setSelectedRangeId(ref.id);
-  }, [
-    manifest,
-    activeCanvas,
-    selectedSegment,
-    currentTime,
-    vault,
-    setSelectedRangeId,
-  ]);
+  }, [manifest, activeCanvas, selectedSegment, currentTime, vault, setSelectedRangeId]);
 
   const deleteSelected = useCallback(() => {
     if (!selectedSegment) return;
@@ -253,17 +204,12 @@ function AvRangesWorkbench() {
       if (!activeCanvas) return null;
       const segment = canvasSegments.find((item) => item.id === rangeId);
       if (!segment) return null;
-      const clamped = clampIntervalToNeighbors(
-        interval,
-        canvasSegments,
-        activeCanvas.duration,
-        segment.id,
-      );
+      const clamped = clampIntervalToNeighbors(interval, canvasSegments, activeCanvas.duration, segment.id);
       if (clamped.end <= clamped.start) return null;
       updateTemporalRange(vault as any, segment, clamped);
       return clamped;
     },
-    [activeCanvas, canvasSegments, vault],
+    [activeCanvas, canvasSegments, vault]
   );
 
   const moveRange = useCallback(
@@ -275,13 +221,9 @@ function AvRangesWorkbench() {
       if (!segment) return;
       const segmentDuration = segment.end - segment.start;
       const previous = segmentIndex > 0 ? sorted[segmentIndex - 1] : null;
-      const next =
-        segmentIndex >= 0 && segmentIndex < sorted.length - 1
-          ? sorted[segmentIndex + 1]
-          : null;
+      const next = segmentIndex >= 0 && segmentIndex < sorted.length - 1 ? sorted[segmentIndex + 1] : null;
       const minStart = previous ? previous.end : 0;
-      const maxStart =
-        (next ? next.start : activeCanvas.duration) - segmentDuration;
+      const maxStart = (next ? next.start : activeCanvas.duration) - segmentDuration;
       const nextStart = Math.max(minStart, Math.min(start, maxStart));
 
       updateTemporalRange(vault as any, segment, {
@@ -289,7 +231,7 @@ function AvRangesWorkbench() {
         end: nextStart + segmentDuration,
       });
     },
-    [activeCanvas, canvasSegments, vault],
+    [activeCanvas, canvasSegments, vault]
   );
 
   useEffect(() => {
@@ -308,10 +250,7 @@ function AvRangesWorkbench() {
         togglePlay();
       } else if (event.key === "ArrowLeft" || event.key.toLowerCase() === "j") {
         seek(currentTime - 5);
-      } else if (
-        event.key === "ArrowRight" ||
-        event.key.toLowerCase() === "l"
-      ) {
+      } else if (event.key === "ArrowRight" || event.key.toLowerCase() === "l") {
         seek(currentTime + 5);
       } else if (event.key.toLowerCase() === "i") {
         setMarkStart(currentTime);
@@ -323,8 +262,8 @@ function AvRangesWorkbench() {
               end: Math.max(markStart, currentTime),
             },
             canvasSegments,
-            activeCanvas.duration,
-          ),
+            activeCanvas.duration
+          )
         );
         setMarkStart(null);
       } else if (event.key === "Enter" && draft) {
@@ -338,13 +277,9 @@ function AvRangesWorkbench() {
         deleteSelected();
       } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
-        const index = canvasSegments.findIndex(
-          (segment) => segment.id === selectedRangeId,
-        );
+        const index = canvasSegments.findIndex((segment) => segment.id === selectedRangeId);
         const nextIndex =
-          event.key === "ArrowUp"
-            ? Math.max(0, index - 1)
-            : Math.min(canvasSegments.length - 1, index + 1);
+          event.key === "ArrowUp" ? Math.max(0, index - 1) : Math.min(canvasSegments.length - 1, index + 1);
         const next = canvasSegments[index === -1 ? 0 : nextIndex];
         if (next) setSelectedRangeId(next.id);
       } else if ((event.key === "[" || event.key === "]") && selectedSegment) {
@@ -359,12 +294,7 @@ function AvRangesWorkbench() {
                 start: selectedSegment.start,
                 end: selectedSegment.end + (event.altKey ? -delta : delta),
               };
-        const clamped = clampIntervalToNeighbors(
-          next,
-          canvasSegments,
-          activeCanvas.duration,
-          selectedSegment.id,
-        );
+        const clamped = clampIntervalToNeighbors(next, canvasSegments, activeCanvas.duration, selectedSegment.id);
         updateTemporalRange(vault as any, selectedSegment, clamped);
       }
     };
@@ -392,9 +322,7 @@ function AvRangesWorkbench() {
   if (!canvases.length) {
     return (
       <div className="h-full flex items-center justify-center p-8">
-        <WarningMessage>
-          No audio or video canvases are available for temporal range editing.
-        </WarningMessage>
+        <WarningMessage>{t("workflow.noTemporalCanvases")}</WarningMessage>
       </div>
     );
   }
@@ -411,19 +339,17 @@ function AvRangesWorkbench() {
       <div className="bg-white border-b border-me-gray-200 px-4 py-2.5 flex items-center gap-3 flex-shrink-0">
         <div className="min-w-0 flex-1">
           <h2 className="font-semibold truncate leading-tight">
-            {activeCanvas.title}
+            {getValue(activeCanvas.label) || t("workflow.untitledCanvas")}
           </h2>
           <div className="text-xs text-me-gray-500 mt-0.5">
-            {isVideo ? "Video" : "Audio"} ·{" "}
+            {isVideo ? t("workflow.video") : t("workflow.audio")} ·{" "}
             <span className="tabular-nums">{formatTimeDisplay(activeCanvas.duration)}</span>
           </div>
         </div>
         {markStart !== null ? (
           <div className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs text-amber-700 font-medium flex-shrink-0">
             <MarkInIcon />
-            <span>
-              Mark in: {formatTimeDisplay(markStart)} · press <kbd className="font-mono">O</kbd> to mark end
-            </span>
+            <span>{t("workflow.markInHelp", { time: formatTimeDisplay(markStart) })}</span>
           </div>
         ) : null}
       </div>
@@ -455,7 +381,7 @@ function AvRangesWorkbench() {
                   src={caption.id}
                   kind="subtitles"
                   srcLang={caption.language || "en"}
-                  label={caption.language || "Captions"}
+                  label={caption.language || t("workflow.captions")}
                 />
               ))}
             </video>
@@ -483,7 +409,7 @@ function AvRangesWorkbench() {
                 src={caption.id}
                 kind="subtitles"
                 srcLang={caption.language || "en"}
-                label={caption.language || "Captions"}
+                label={caption.language || t("workflow.captions")}
               />
             ))}
           </audio>
@@ -515,8 +441,8 @@ function AvRangesWorkbench() {
                   end: Math.max(markStart, currentTime),
                 },
                 canvasSegments,
-                activeCanvas.duration,
-              ),
+                activeCanvas.duration
+              )
             );
             setMarkStart(null);
           }}
@@ -547,20 +473,20 @@ function AvRangesWorkbench() {
         <div className="flex flex-wrap items-center gap-1.5">
           <ActionButton isDisabled={!selectedSegment} onPress={playSelection}>
             <SelectionPlayIcon />
-            Play selection
+            {t("workflow.playSelection")}
           </ActionButton>
           <ActionButton isDisabled={!selectedSegment} onPress={splitAtPlayhead}>
             <SplitAtPlayheadIcon />
-            Split at playhead
+            {t("workflow.splitAtPlayhead")}
           </ActionButton>
           <ActionButton isDisabled={!selectedSegment} onPress={deleteSelected}>
             <DeleteRangeIcon />
-            Delete range
+            {t("workflow.deleteRange")}
           </ActionButton>
           {activeCanvas.captions.length ? (
             <ActionButton onPress={() => setTranscriptOpen((open) => !open)}>
               <CaptionsIcon />
-              {transcriptOpen ? "Hide captions" : "Show captions"}
+              {transcriptOpen ? t("workflow.hideCaptions") : t("workflow.showCaptions")}
             </ActionButton>
           ) : null}
         </div>
@@ -597,6 +523,7 @@ function TransportControls(props: {
   onMarkEnd: () => void;
   canMarkEnd: boolean;
 }) {
+  const t = useTranslations("manifest");
   return (
     <div
       className={[
@@ -605,23 +532,18 @@ function TransportControls(props: {
       ].join(" ")}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <ActionButton
-          primary
-          large
-          className="min-w-[92px]"
-          onPress={props.onTogglePlay}
-        >
+        <ActionButton primary large className="min-w-[92px]" onPress={props.onTogglePlay}>
           {props.isPlaying ? <PauseIcon /> : <PlayIcon />}
-          {props.isPlaying ? "Pause" : "Play"}
+          {props.isPlaying ? t("workflow.pause") : t("workflow.play")}
         </ActionButton>
         <div className="flex items-center gap-0.5">
           <ActionButton onPress={() => props.onSeek(props.currentTime - 5)}>
             <SkipBackIcon />
-            <span>-5s</span>
+            <span>{t("workflow.backFiveSeconds")}</span>
           </ActionButton>
           <ActionButton onPress={() => props.onSeek(props.currentTime + 5)}>
             <SkipForwardIcon />
-            <span>+5s</span>
+            <span>{t("workflow.forwardFiveSeconds")}</span>
           </ActionButton>
         </div>
         <div className="rounded bg-me-gray-100 border border-me-gray-200 px-2.5 py-1 text-sm tabular-nums text-me-gray-700">
@@ -631,12 +553,10 @@ function TransportControls(props: {
 
       <div className="flex flex-wrap items-center gap-2">
         <label className="text-sm flex items-center gap-1.5 text-me-gray-600">
-          <span className="text-xs">Speed</span>
+          <span className="text-xs">{t("workflow.speed")}</span>
           <select
             value={props.speed}
-            onChange={(event) =>
-              props.onSpeed(Number(event.currentTarget.value))
-            }
+            onChange={(event) => props.onSpeed(Number(event.currentTarget.value))}
             className="bg-white border border-me-gray-300 rounded px-1 py-0.5 text-xs"
           >
             {[0.5, 0.75, 1, 1.25, 1.5, 2].map((value) => (
@@ -649,49 +569,39 @@ function TransportControls(props: {
         <label className="text-sm flex items-center gap-1.5 text-me-gray-600">
           <VolumeIcon />
           <input
-            aria-label="Volume"
+            aria-label={t("workflow.volume")}
             type="range"
             min={0}
             max={1}
             step={0.05}
             value={props.volume}
-            onChange={(event) =>
-              props.onVolume(Number(event.currentTarget.value))
-            }
+            onChange={(event) => props.onVolume(Number(event.currentTarget.value))}
             className="w-20"
           />
         </label>
         <div className="flex items-center gap-0.5">
           <ActionButton onPress={props.onMarkStart}>
             <MarkInIcon />
-            Mark in
+            {t("workflow.markInLabel")}
           </ActionButton>
-          <ActionButton
-            isDisabled={!props.canMarkEnd}
-            onPress={props.onMarkEnd}
-          >
+          <ActionButton isDisabled={!props.canMarkEnd} onPress={props.onMarkEnd}>
             <MarkOutIcon />
-            Mark out
+            {t("workflow.markOut")}
           </ActionButton>
         </div>
         <div className="flex items-center gap-0.5">
-          <ActionButton
-            isDisabled={!props.hasSelection}
-            onPress={props.onPlaySelection}
-          >
+          <ActionButton isDisabled={!props.hasSelection} onPress={props.onPlaySelection}>
             <SelectionPlayIcon />
-            Play selection
+            {t("workflow.playSelection")}
           </ActionButton>
           <label className="text-xs flex items-center gap-1.5 px-2 py-1 text-me-gray-600">
             <input
               type="checkbox"
               checked={props.loopSelection}
               disabled={!props.hasSelection}
-              onChange={(event) =>
-                props.onLoopSelection(event.currentTarget.checked)
-              }
+              onChange={(event) => props.onLoopSelection(event.currentTarget.checked)}
             />
-            Loop
+            {t("workflow.loop")}
           </label>
         </div>
       </div>
@@ -701,12 +611,7 @@ function TransportControls(props: {
 
 function ControlIcon({ children }: { children: ReactNode }) {
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 20 20"
-      className="h-4 w-4 shrink-0"
-      fill="currentColor"
-    >
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="currentColor">
       {children}
     </svg>
   );
@@ -829,13 +734,11 @@ function Timeline({
   onSelectRange: (id: string) => void;
   onDraft: (draft: { start: number; end: number } | null) => void;
   onCreateDraft: () => void;
-  onResizeRange: (
-    rangeId: string,
-    interval: { start: number; end: number },
-  ) => { start: number; end: number } | null;
+  onResizeRange: (rangeId: string, interval: { start: number; end: number }) => { start: number; end: number } | null;
   onMoveRange: (rangeId: string, start: number) => void;
   onScale: (scale: number) => void;
 }) {
+  const t = useTranslations("manifest");
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const rangeLaneRef = useRef<HTMLDivElement | null>(null);
   const resizeRef = useRef<{
@@ -855,39 +758,26 @@ function Timeline({
   const [movingRangeId, setMovingRangeId] = useState<string | null>(null);
   const { major: majorTicks, minor: minorTicks } = useMemo(
     () => createTimelineTicks(canvas.duration, scale),
-    [canvas.duration, scale],
+    [canvas.duration, scale]
   );
-  const toPercent = (time: number) =>
-    `${Math.max(0, Math.min(100, (time / canvas.duration) * 100))}%`;
+  const toPercent = (time: number) => `${Math.max(0, Math.min(100, (time / canvas.duration) * 100))}%`;
   const eventToTime = (event: React.PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    return Math.max(
-      0,
-      Math.min(
-        canvas.duration,
-        ((event.clientX - rect.left) / rect.width) * canvas.duration,
-      ),
-    );
+    return Math.max(0, Math.min(canvas.duration, ((event.clientX - rect.left) / rect.width) * canvas.duration));
   };
   const clientXToRangeTime = (clientX: number) => {
     const rect = rangeLaneRef.current?.getBoundingClientRect();
     if (!rect) return 0;
-    return Math.max(
-      0,
-      Math.min(
-        canvas.duration,
-        ((clientX - rect.left) / rect.width) * canvas.duration,
-      ),
-    );
+    return Math.max(0, Math.min(canvas.duration, ((clientX - rect.left) / rect.width) * canvas.duration));
   };
 
   return (
     <div className="rounded-lg border border-me-gray-200 bg-white p-4 flex flex-col gap-3">
       <div className="flex items-center justify-end gap-3">
         <label className="flex items-center gap-2 text-xs text-me-gray-500">
-          Zoom
+          {t("workflow.zoom")}
           <input
-            aria-label="Timeline zoom"
+            aria-label={t("workflow.timelineZoom")}
             type="range"
             min={1}
             max={8}
@@ -900,23 +790,16 @@ function Timeline({
       </div>
 
       <div className="overflow-x-auto pb-2">
-        <div
-          className="min-w-full"
-          style={{ width: `${Math.max(1, scale) * 100}%` }}
-        >
-          <TimelineHeader
-            duration={canvas.duration}
-            major={majorTicks}
-            toPercent={toPercent}
-          />
-          <div className="text-[10px] font-medium text-me-gray-400 uppercase tracking-wider mb-1">Overview</div>
+        <div className="min-w-full" style={{ width: `${Math.max(1, scale) * 100}%` }}>
+          <TimelineHeader duration={canvas.duration} major={majorTicks} toPercent={toPercent} />
+          <div className="text-[10px] font-medium text-me-gray-400 uppercase tracking-wider mb-1">
+            {t("panels.overview")}
+          </div>
           <div
             ref={timelineRef}
             className="relative h-8 rounded bg-me-gray-100 border border-me-gray-300 overflow-hidden"
             style={{ height: 32, minHeight: 32 }}
-            onPointerDown={(event) =>
-              onSeek(snapTime(eventToTime(event), segments, canvas.duration))
-            }
+            onPointerDown={(event) => onSeek(snapTime(eventToTime(event), segments, canvas.duration))}
             onPointerMove={(event) => setHoverTime(eventToTime(event))}
             onPointerLeave={() => setHoverTime(null)}
           >
@@ -931,23 +814,19 @@ function Timeline({
                 }}
               />
             ))}
-            {hoverTime !== null ? (
-              <HoverTime time={hoverTime} duration={canvas.duration} />
-            ) : null}
+            {hoverTime !== null ? <HoverTime time={hoverTime} duration={canvas.duration} /> : null}
             <Playhead currentTime={currentTime} duration={canvas.duration} />
           </div>
 
-          <div className="mt-3 text-[10px] font-medium text-me-gray-400 uppercase tracking-wider mb-1">Ranges</div>
+          <div className="mt-3 text-[10px] font-medium text-me-gray-400 uppercase tracking-wider mb-1">
+            {t("panels.ranges")}
+          </div>
           <div
             ref={rangeLaneRef}
             className="relative h-28 rounded bg-me-gray-50 border border-me-gray-300 select-none overflow-hidden"
             style={{ height: 112, minHeight: 112 }}
             onPointerDown={(event) => {
-              const time = snapTime(
-                eventToTime(event),
-                segments,
-                canvas.duration,
-              );
+              const time = snapTime(eventToTime(event), segments, canvas.duration);
               dragRef.current = { start: time, end: time };
               event.currentTarget.setPointerCapture(event.pointerId);
               onDraft({ start: time, end: time });
@@ -958,16 +837,14 @@ function Timeline({
               if (resize) {
                 const time = snapTime(
                   eventToTime(event),
-                  segments.filter(
-                    (segment) => segment.id !== resize.segment.id,
-                  ),
-                  canvas.duration,
+                  segments.filter((segment) => segment.id !== resize.segment.id),
+                  canvas.duration
                 );
                 const resized = onResizeRange(
                   resize.segment.id,
                   resize.edge === "start"
                     ? { start: time, end: resize.segment.end }
-                    : { start: resize.segment.start, end: time },
+                    : { start: resize.segment.start, end: time }
                 );
                 if (resized) {
                   onSeek(resize.edge === "start" ? resized.start : resized.end);
@@ -976,24 +853,14 @@ function Timeline({
               }
               const move = moveRef.current;
               if (move) {
-                const rawStart =
-                  clientXToRangeTime(event.clientX) - move.offset;
-                const start = snapMovedStart(
-                  rawStart,
-                  move.segment,
-                  segments,
-                  canvas.duration,
-                );
+                const rawStart = clientXToRangeTime(event.clientX) - move.offset;
+                const start = snapMovedStart(rawStart, move.segment, segments, canvas.duration);
                 move.moved = true;
                 onMoveRange(move.segment.id, start);
                 return;
               }
               if (!dragRef.current) return;
-              const time = snapTime(
-                eventToTime(event),
-                segments,
-                canvas.duration,
-              );
+              const time = snapTime(eventToTime(event), segments, canvas.duration);
               dragRef.current.end = time;
               onDraft(
                 snapInterval(
@@ -1002,8 +869,8 @@ function Timeline({
                     end: Math.max(dragRef.current.start, time),
                   },
                   segments,
-                  canvas.duration,
-                ),
+                  canvas.duration
+                )
               );
             }}
             onPointerLeave={() => {
@@ -1037,9 +904,7 @@ function Timeline({
               const start = Math.min(current.start, current.end);
               const end = Math.max(current.start, current.end);
               if (end - start < 0.15) {
-                const gap = gaps.find(
-                  (item) => start >= item.start && start <= item.end,
-                );
+                const gap = gaps.find((item) => start >= item.start && start <= item.end);
                 onDraft(gap ? { start: gap.start, end: gap.end } : null);
               }
               if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -1062,7 +927,10 @@ function Timeline({
                   event.stopPropagation();
                   onDraft({ start: gap.start, end: gap.end });
                 }}
-                aria-label={`Create range from gap ${formatTimeDisplay(gap.start)} to ${formatTimeDisplay(gap.end)}`}
+                aria-label={t("workflow.createFromGap", {
+                  start: formatTimeDisplay(gap.start),
+                  end: formatTimeDisplay(gap.end),
+                })}
               />
             ))}
             {segments.map((segment) => (
@@ -1071,9 +939,7 @@ function Timeline({
                 type="button"
                 className={[
                   "absolute top-5 bottom-5 rounded-sm px-2 text-left overflow-hidden border shadow-sm group",
-                  selectedRangeId === segment.id ||
-                  resizingRangeId === segment.id ||
-                  movingRangeId === segment.id
+                  selectedRangeId === segment.id || resizingRangeId === segment.id || movingRangeId === segment.id
                     ? "bg-me-primary-500 text-white border-me-primary-700"
                     : "bg-me-primary-200 border-me-primary-400 text-me-gray-900",
                 ].join(" ")}
@@ -1087,8 +953,7 @@ function Timeline({
                   event.stopPropagation();
                   onSelectRange(segment.id);
                   if (selectedRangeId !== segment.id) return;
-                  const offset =
-                    clientXToRangeTime(event.clientX) - segment.start;
+                  const offset = clientXToRangeTime(event.clientX) - segment.start;
                   moveRef.current = {
                     pointerId: event.pointerId,
                     segment,
@@ -1107,7 +972,11 @@ function Timeline({
                   onSelectRange(segment.id);
                   onSeek(segment.start);
                 }}
-                title={`${segment.title}: ${formatTimeDisplay(segment.start)} to ${formatTimeDisplay(segment.end)}`}
+                title={t("workflow.segmentTimes", {
+                  label: getValue(segment.label) || t("workflow.untitledRange"),
+                  start: formatTimeDisplay(segment.start),
+                  end: formatTimeDisplay(segment.end),
+                })}
               >
                 <span
                   className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize bg-black/10 hover:bg-black/25"
@@ -1142,7 +1011,7 @@ function Timeline({
                   }}
                 />
                 <span className="block truncate text-xs font-semibold leading-4">
-                  {segment.title}
+                  {getValue(segment.label) || t("workflow.untitledRange")}
                 </span>
                 <span className="block truncate text-[10px] leading-4 opacity-80 tabular-nums">
                   {formatTimeDisplay(segment.start)} - {formatTimeDisplay(segment.end)}
@@ -1171,7 +1040,7 @@ function Timeline({
                     {formatTimeDisplay(draft.start)} - {formatTimeDisplay(draft.end)}
                   </span>
                   <ActionButton primary onPress={onCreateDraft}>
-                    Create
+                    {t("workflow.create")}
                   </ActionButton>
                 </div>
               </>
@@ -1253,17 +1122,9 @@ function TimelineHeader({
       {major.map((time) => {
         const isFirst = time === 0;
         const isLast = time === duration;
-        const transform = isFirst
-          ? "translateX(0)"
-          : isLast
-            ? "translateX(-100%)"
-            : "translateX(-50%)";
+        const transform = isFirst ? "translateX(0)" : isLast ? "translateX(-100%)" : "translateX(-50%)";
         return (
-          <span
-            key={time}
-            className="absolute top-0 tabular-nums"
-            style={{ left: toPercent(time), transform }}
-          >
+          <span key={time} className="absolute top-0 tabular-nums" style={{ left: toPercent(time), transform }}>
             {formatTimeDisplay(time)}
           </span>
         );
@@ -1297,7 +1158,7 @@ function TimelineTicks({
             className="absolute top-1/4 bottom-0 border-l border-me-gray-200/70"
             style={{ left: toPercent(time) }}
           />
-        ),
+        )
       )}
     </>
   );
@@ -1321,13 +1182,7 @@ function HoverTime({ time, duration }: { time: number; duration: number }) {
   );
 }
 
-function Playhead({
-  currentTime,
-  duration,
-}: {
-  currentTime: number;
-  duration: number;
-}) {
+function Playhead({ currentTime, duration }: { currentTime: number; duration: number }) {
   return (
     <div
       className="absolute top-0 bottom-0 w-0.5 bg-red-600 pointer-events-none"
@@ -1349,9 +1204,8 @@ function TranscriptLane({
   onSeek: (time: number) => void;
   onDraft: (draft: { start: number; end: number }) => void;
 }) {
-  const [cues, setCues] = useState<
-    Array<{ start: number; end: number; text: string }>
-  >([]);
+  const t = useTranslations("manifest");
+  const [cues, setCues] = useState<Array<{ start: number; end: number; text: string }>>([]);
   const dragStart = useRef<number | null>(null);
 
   useEffect(() => {
@@ -1370,7 +1224,7 @@ function TranscriptLane({
   }, [captionUrl]);
 
   if (!cues.length) {
-    return <InfoMessage>Transcript could not be loaded.</InfoMessage>;
+    return <InfoMessage>{t("workflow.transcriptCouldNotBeLoaded")}</InfoMessage>;
   }
 
   return (
@@ -1390,10 +1244,7 @@ function TranscriptLane({
               dragStart.current = cue.start;
             }}
             onPointerUp={() => {
-              if (
-                dragStart.current !== null &&
-                dragStart.current !== cue.start
-              ) {
+              if (dragStart.current !== null && dragStart.current !== cue.start) {
                 onDraft({
                   start: Math.min(dragStart.current, cue.start),
                   end: Math.max(dragStart.current, cue.end),
@@ -1402,9 +1253,7 @@ function TranscriptLane({
               dragStart.current = null;
             }}
           >
-            <span className="text-xs text-me-gray-600 mr-2">
-              {formatTimeDisplay(cue.start)}
-            </span>
+            <span className="text-xs text-me-gray-600 mr-2">{formatTimeDisplay(cue.start)}</span>
             {cue.text}
           </button>
         );
@@ -1420,9 +1269,7 @@ function parseVtt(input: string) {
     const lines = block.split("\n").filter(Boolean);
     const timingIndex = lines.findIndex((line) => line.includes("-->"));
     if (timingIndex === -1) continue;
-    const [startRaw, endRaw] = lines[timingIndex]!.split("-->").map(
-      (part) => part.trim().split(/\s+/)[0],
-    );
+    const [startRaw, endRaw] = lines[timingIndex]!.split("-->").map((part) => part.trim().split(/\s+/)[0]);
     const start = parseVttTime(startRaw || "");
     const end = parseVttTime(endRaw || "");
     if (start === null || end === null) continue;
@@ -1440,17 +1287,13 @@ function parseVttTime(value: string) {
   if (parts.length === 2) {
     const minutes = Number.parseFloat(parts[0]!);
     const seconds = Number.parseFloat(parts[1]!);
-    return Number.isFinite(minutes) && Number.isFinite(seconds)
-      ? minutes * 60 + seconds
-      : null;
+    return Number.isFinite(minutes) && Number.isFinite(seconds) ? minutes * 60 + seconds : null;
   }
   if (parts.length === 3) {
     const hours = Number.parseFloat(parts[0]!);
     const minutes = Number.parseFloat(parts[1]!);
     const seconds = Number.parseFloat(parts[2]!);
-    return Number.isFinite(hours) &&
-      Number.isFinite(minutes) &&
-      Number.isFinite(seconds)
+    return Number.isFinite(hours) && Number.isFinite(minutes) && Number.isFinite(seconds)
       ? hours * 3600 + minutes * 60 + seconds
       : null;
   }

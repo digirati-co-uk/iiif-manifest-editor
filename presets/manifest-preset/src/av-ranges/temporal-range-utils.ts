@@ -1,3 +1,5 @@
+import { manifestMessage } from "../i18n";
+import type { MessageReference } from "@manifest-editor/i18n/core";
 import { getValue } from "@iiif/helpers";
 import { isSpecificResource } from "@iiif/parser";
 import type {
@@ -36,6 +38,7 @@ export interface TemporalRangeValidationIssue {
   code: "invalid-time" | "out-of-bounds" | "overlap" | "blank-title";
   rangeId?: string;
   message: string;
+  messageReference?: MessageReference;
 }
 
 export interface TemporalRangeValidationResult {
@@ -188,6 +191,7 @@ export function validateTemporalSegments(
         code: "invalid-time",
         rangeId: segment.id,
         message: "End time must be after start time.",
+        messageReference: manifestMessage("workflow.endAfterStart"),
       });
     }
     if (segment.start < 0 || segment.end > canvasDuration) {
@@ -195,6 +199,7 @@ export function validateTemporalSegments(
         code: "out-of-bounds",
         rangeId: segment.id,
         message: "Range must stay within the canvas duration.",
+        messageReference: manifestMessage("workflow.withinDuration"),
       });
     }
     if (options.requireTitle && !segment.title.trim()) {
@@ -202,6 +207,7 @@ export function validateTemporalSegments(
         code: "blank-title",
         rangeId: segment.id,
         message: "Title is required.",
+        messageReference: manifestMessage("workflow.titleRequired"),
       });
     }
   }
@@ -214,6 +220,7 @@ export function validateTemporalSegments(
         code: "overlap",
         rangeId: current.id,
         message: "Ranges cannot overlap.",
+        messageReference: manifestMessage("workflow.noOverlap"),
       });
     }
   }

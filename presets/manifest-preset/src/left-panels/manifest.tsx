@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import {
   CheckIcon,
   Sidebar,
@@ -43,6 +45,7 @@ export function ManifestIcon({
 export const manifestPanel: LayoutPanel = {
   id: "left-panel-manifest",
   label: "Manifest summary",
+  labelMessage: manifestMessage("workflow.manifestSummary"),
   icon: <ManifestIcon />,
   render: (state, ctx, app) => {
     return <ManifestPanel />;
@@ -68,6 +71,7 @@ function EditManifestMetadataIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 export function ManifestPanel() {
+  const t = useTranslations("manifest");
   const { descriptive, technical } = useManifestEditor();
   const id = technical.id.get();
   const label = descriptive.label.get();
@@ -87,7 +91,7 @@ export function ManifestPanel() {
   return (
     <Sidebar>
       <SidebarHeader
-        title="Manifest summary"
+        title={t("workflow.manifestSummary")}
         actions={[
           {
             icon: isEditingManifest ? (
@@ -95,7 +99,7 @@ export function ManifestPanel() {
             ) : (
               <EditManifestMetadataIcon className="text-xl" />
             ),
-            title: isEditingManifest ? "Finish editing" : "Edit metadata",
+            title: isEditingManifest ? t("workflow.finishEditing") : t("workflow.editMetadata"),
             toggled: isEditingManifest,
             onClick: () => {
               if (isEditingManifest) {
@@ -115,7 +119,7 @@ export function ManifestPanel() {
       <SidebarContent className="p-4">
         <InlineLocaleStringEditor
           as="h2"
-          placeholder="Add an exhibition title"
+          placeholder={t("workflow.manifestTitlePlaceholder")}
           className="text-lg font-semibold [&>a]:underline [&>a]:hover:text-slate-400"
           buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
           editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
@@ -128,7 +132,7 @@ export function ManifestPanel() {
           multiline
           enableDangerouslySetInnerHTML
           as="p"
-          placeholder="Add an exhibition summary"
+          placeholder={t("workflow.manifestSummaryPlaceholder")}
           className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400"
           buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
           editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
@@ -161,8 +165,7 @@ export function ManifestPanel() {
 
         {metadata && metadata.length === 0 ? (
           <div className="py-2 text-gray-600">
-            You can add some descriptive metadata for this manifest using the
-            editing panel on the right
+            {t("workflow.metadataHelp")}
           </div>
         ) : null}
 

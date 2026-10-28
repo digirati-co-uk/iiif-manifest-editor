@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import { ActionButton } from "@manifest-editor/components";
@@ -13,6 +14,7 @@ export function RangeWorkbenchCanvas(props: {
   onBack: () => void;
   setCanvas: (canvas: RangeTableOfContentsNode) => void;
 }) {
+  const t = useTranslations("manifest");
   const canvasRef = toRef(props.canvas.resource);
   const canvasId = props.canvas.id ?? canvasRef?.id ?? null;
   const items = props.range.items || [];
@@ -48,7 +50,7 @@ export function RangeWorkbenchCanvas(props: {
   const onPreviousCanvas = previousCanvas ? () => props.setCanvas(previousCanvas) : undefined;
 
   if (!canvasRef && !canvasId) {
-    return <div>No canvas preview available</div>;
+    return <div>{t("workflow.noCanvasPreviewAvailable")}</div>;
   }
 
   const ctxCanvasId = canvasRef?.id ?? canvasId!;
@@ -73,6 +75,7 @@ export function RangeWorkbenchCanvas(props: {
 }
 
 function CanvasViewerNavigation(props: { enableNavigation: boolean; onNext?: () => void; onPrevious?: () => void }) {
+  const t = useTranslations("manifest");
   const canvas = useCanvas();
 
   if (!props.enableNavigation) {
@@ -87,7 +90,7 @@ function CanvasViewerNavigation(props: { enableNavigation: boolean; onNext?: () 
           className="p-2 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
         >
           <ArrowBackwardIcon className="text-2xl" />
-          <span className="sr-only">Previous</span>
+          <span className="sr-only">{t("workflow.previous")}</span>
         </Button>
         <LocaleString className="text-center w-[120px] text-sm truncate overflow-ellipsis">
           {canvas?.label}
@@ -98,7 +101,7 @@ function CanvasViewerNavigation(props: { enableNavigation: boolean; onNext?: () 
           className="p-2 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
         >
           <ArrowForwardIcon className="text-2xl" />
-          <span className="sr-only">Next</span>
+          <span className="sr-only">{t("workflow.next")}</span>
         </Button>
       </div>
     </div>

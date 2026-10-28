@@ -1,3 +1,5 @@
+import { useEditorI18n } from "@manifest-editor/i18n";
+import { manifestMessage } from "./i18n";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -7,7 +9,7 @@ import {
   useEditingResource,
   useLayoutActions,
 } from "@manifest-editor/shell";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import {
   parseSelector,
   useAtlasStore,
@@ -20,6 +22,7 @@ import {
 export const contextMenus: BackgroundPanel = {
   id: "manifest-context-menus",
   label: "Context menus",
+  labelMessage: manifestMessage("workflow.contextMenus"),
   render: () => <ContextMenus />,
 };
 
@@ -28,6 +31,10 @@ function ContextMenus() {
 }
 
 function CanvasContextMenu() {
+  const { resolveMessage, locale, profile } = useEditorI18n();
+  // The viewer currently reads label directly; retained menus must follow provider replacement too.
+  const resolver = useRef(resolveMessage);
+  resolver.current = resolveMessage;
   const canvasResource = useInStack("Canvas");
   const canvasRef = canvasResource?.resource.source;
 
@@ -45,24 +52,30 @@ function CanvasContextMenu() {
     canvasRef,
     {
       isPainting: true,
-    },
+    }
   );
 
   useCustomContextMenu(
     {
-      sectionTitle: "Canvas",
+      sectionTitle: resolveMessage(manifestMessage("workflow.canvas")),
       resource: { type: "Canvas" },
       items: [
         {
           id: "edit-canvas",
-          label: "Edit metadata",
+          get label() {
+            return resolver.current(manifestMessage("workflow.editMetadata"), "Edit metadata");
+          },
+          labelMessage: manifestMessage("workflow.editMetadata"),
           enabled: true,
           onAction: () =>
             edit({ id: canvasResource?.resource?.source?.id, type: "Canvas" }, undefined, { forceOpen: true }),
         },
         {
           id: "add-media",
-          label: "Add media...",
+          get label() {
+            return resolver.current(manifestMessage("workflow.addMedia"), "Add media...");
+          },
+          labelMessage: manifestMessage("workflow.addMedia"),
           enabled: true,
           onAction: ({ resource }) => {
             if (currentId !== resource.id) {
@@ -73,7 +86,10 @@ function CanvasContextMenu() {
         },
         {
           id: "add-browser",
-          label: "Add from IIIF Browser",
+          get label() {
+            return resolver.current(manifestMessage("workflow.addFromIiifBrowser"), "Add from IIIF Browser");
+          },
+          labelMessage: manifestMessage("workflow.addFromIiifBrowser"),
           enabled: true,
           onAction: ({ resource }) => {
             if (currentId !== resource.id) {
@@ -84,7 +100,7 @@ function CanvasContextMenu() {
         },
       ],
     },
-    [canvasRef, currentId, canCreateAnnotation],
+    [canvasRef, currentId, canCreateAnnotation, locale, profile, resolveMessage]
   );
 
   return null;
@@ -94,6 +110,10 @@ function CanvasContextMenu() {
  * This is currently not used, needs work.
  */
 function PaintingAnnotationContextMenu() {
+  const { resolveMessage, locale, profile } = useEditorI18n();
+  // The viewer currently reads label directly; retained menus must follow provider replacement too.
+  const resolver = useRef(resolveMessage);
+  resolver.current = resolveMessage;
   const canvasResource = useInStack("Canvas");
   const canvasRef = canvasResource?.resource.source;
 
@@ -106,7 +126,7 @@ function PaintingAnnotationContextMenu() {
   const annotationPage = canvas?.items?.[0]?.id;
   const fullAnnotationPage = useVaultSelector(
     (_, v) => (annotationPage ? v.get(annotationPage) : null),
-    [annotationPage],
+    [annotationPage]
   );
 
   const annotationPageEditor = useMemo(() => {
@@ -119,12 +139,15 @@ function PaintingAnnotationContextMenu() {
   // Annotation ordering
   useCustomContextMenu(
     {
-      sectionTitle: "Painting Annotation",
+      sectionTitle: resolveMessage(manifestMessage("workflow.paintingAnnotation")),
       resource: { type: "Annotation" },
       items: [
         {
           id: "edit",
-          label: "Edit",
+          get label() {
+            return resolver.current(manifestMessage("workflow.edit"), "Edit");
+          },
+          labelMessage: manifestMessage("workflow.edit"),
           enabledFunction({ resource }) {
             return resource.id !== currentId;
           },
@@ -134,7 +157,10 @@ function PaintingAnnotationContextMenu() {
         },
         {
           id: "reorder-bring-to-front",
-          label: "Bring to front",
+          get label() {
+            return resolver.current(manifestMessage("workflow.bringToFront"), "Bring to front");
+          },
+          labelMessage: manifestMessage("workflow.bringToFront"),
           enabled: !!(annotationPageEditor && (fullAnnotationPage?.items.length || 0) > 1),
           onAction: ({ resource }) => {
             if (annotationPageEditor) {
@@ -147,7 +173,10 @@ function PaintingAnnotationContextMenu() {
         },
         {
           id: "reorder-send-to-back",
-          label: "Send to back",
+          get label() {
+            return resolver.current(manifestMessage("workflow.sendToBack"), "Send to back");
+          },
+          labelMessage: manifestMessage("workflow.sendToBack"),
           enabled: !!(annotationPageEditor && (fullAnnotationPage?.items.length || 0) > 1),
           onAction: ({ resource }) => {
             if (annotationPageEditor) {
@@ -160,7 +189,7 @@ function PaintingAnnotationContextMenu() {
         },
       ],
     },
-    [currentId, annotationPageEditor, fullAnnotationPage],
+    [currentId, annotationPageEditor, fullAnnotationPage, locale, profile, resolveMessage]
   );
 
   return null;
@@ -170,6 +199,10 @@ function PaintingAnnotationContextMenu() {
  * This is not working yet.
  */
 function MediaTargetContextMenu() {
+  const { resolveMessage, locale, profile } = useEditorI18n();
+  // The viewer currently reads label directly; retained menus must follow provider replacement too.
+  const resolver = useRef(resolveMessage);
+  resolver.current = resolveMessage;
   // const canvas = useCanvas();
   const vault = useVault();
   const store = useAtlasStore();
@@ -186,12 +219,15 @@ function MediaTargetContextMenu() {
 
   useCustomContextMenu(
     {
-      sectionTitle: "Painting Annotation",
+      sectionTitle: resolveMessage(manifestMessage("workflow.paintingAnnotation")),
       resource: { type: "Annotation" },
       items: [
         {
           id: "edit-painting",
-          label: "Edit metadata",
+          get label() {
+            return resolver.current(manifestMessage("workflow.editMetadata"), "Edit metadata");
+          },
+          labelMessage: manifestMessage("workflow.editMetadata"),
           enabled: true,
           onAction: ({ resource }) => {
             edit(resource);
@@ -199,7 +235,10 @@ function MediaTargetContextMenu() {
         },
         {
           id: "save-changes",
-          label: "Save changes",
+          get label() {
+            return resolver.current(manifestMessage("workflow.saveChanges"), "Save changes");
+          },
+          labelMessage: manifestMessage("workflow.saveChanges"),
           enabled: isPending,
           onAction: () => {
             completeRequest();
@@ -207,7 +246,10 @@ function MediaTargetContextMenu() {
         },
         {
           id: "discard-changes",
-          label: "Discard changes",
+          get label() {
+            return resolver.current(manifestMessage("workflow.discardChanges"), "Discard changes");
+          },
+          labelMessage: manifestMessage("workflow.discardChanges"),
           enabled: isPending,
           onAction: () => {
             cancelRequest();
@@ -215,7 +257,10 @@ function MediaTargetContextMenu() {
         },
         {
           id: "edit-position",
-          label: "Edit position",
+          get label() {
+            return resolver.current(manifestMessage("workflow.editPosition"), "Edit position");
+          },
+          labelMessage: manifestMessage("workflow.editPosition"),
           enabled: !isPending,
           enabledFunction: ({ resource }) => {
             const annotation = vault.get(resource);
@@ -233,7 +278,10 @@ function MediaTargetContextMenu() {
         },
         {
           id: "target-whole-canvas",
-          label: "Target whole canvas",
+          get label() {
+            return resolver.current(manifestMessage("workflow.targetWholeCanvas"), "Target whole canvas");
+          },
+          labelMessage: manifestMessage("workflow.targetWholeCanvas"),
           enabledFunction: ({ resource }) => {
             const annotation = vault.get(resource);
             const selector = parseSelector(annotation.target?.selector)?.selector;
@@ -245,7 +293,7 @@ function MediaTargetContextMenu() {
         },
       ],
     },
-    [isPending],
+    [isPending, locale, profile, resolveMessage]
   );
 
   return null;

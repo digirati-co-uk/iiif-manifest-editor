@@ -135,6 +135,54 @@
     "panels.tags": {
       "source": "Tags",
       "reason": "Tags is established Dutch terminology for digital tagging."
+    },
+    "workflow.canvas": {
+      "source": "Canvas",
+      "reason": "Canvas is the established singular Dutch IIIF technical noun; plain wording uses Pagina."
+    },
+    "workflow.video": {
+      "source": "Video",
+      "reason": "Video is the standard Dutch media noun, also used for the Video display type."
+    },
+    "workflow.audio": {
+      "source": "Audio",
+      "reason": "Audio is the standard Dutch media noun."
+    },
+    "workflow.manifest": {
+      "source": "Manifest",
+      "reason": "Manifest is the IIIF technical resource term in Dutch standard wording; plain wording uses Item."
+    },
+    "workflow.label": {
+      "source": "Label",
+      "reason": "Label is the established Dutch noun for the IIIF label property; plain wording uses Titel."
+    },
+    "workflow.model": {
+      "source": "Model",
+      "reason": "Model is the Dutch noun for an inference model, with identical spelling."
+    },
+    "workflow.ocr": {
+      "source": "OCR",
+      "reason": "OCR is the international technical abbreviation for optical character recognition."
+    },
+    "workflow.tagType": {
+      "source": "Type: {{type}}",
+      "reason": "Type has identical Dutch spelling; the interpolated type is authored tag data and remains verbatim."
+    },
+    "workflow.canvasCount_one": {
+      "source": "{{count}} canvas",
+      "reason": "The Dutch singular IIIF noun canvas has identical spelling; the plural is canvassen."
+    },
+    "workflow.canvasNumber": {
+      "source": "Canvas {{number}}",
+      "reason": "Canvas is the Dutch singular IIIF term; this numbered missing-title display fallback is not authored content."
+    },
+    "workflow.rangeCount_one": {
+      "source": "{{count}} range",
+      "reason": "Range is the retained singular Dutch IIIF technical noun; plain wording uses sectie."
+    },
+    "workflow.rangeCount_other": {
+      "source": "{{count}} ranges",
+      "reason": "Ranges is the standard Dutch plural of the retained IIIF loanword range; plain wording uses secties."
     }
   },
   "locales/en-GB/plugin-ocr-classification.ts": {
@@ -243,6 +291,12 @@
     "browser.resourceTypeManifest": {
       "source": "Manifest",
       "reason": "Retain the IIIF technical noun Manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    }
+  },
+  "profiles/plain/en-GB/manifest.ts": {
+    "workflow.manifest": {
+      "source": "Item",
+      "reason": "Item is an established singular Dutch noun for the whole object in plain wording."
     }
   }
 }
