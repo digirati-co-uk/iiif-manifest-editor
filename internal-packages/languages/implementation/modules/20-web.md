@@ -240,3 +240,44 @@ The modal's retained output getter now reads a stable ref containing the current
 The same independent review reproduced the NL-only shell fallback metadata failure. Module19 owns its fix and real shell/facade regression; that finding is not closed by the modal-only test. Existing SSR gapcursor acceptance remains open. No catalog messages or authored data changed in this fix.
 
 The independent facade review caught and fixed the LocalEditor header logo callsite. The new local-file regression uses the actual public facade and real providers/Vault, with only native layout and filesystem boundaries replaced. Valid import, Welsh data, draft retention across EN/NL and failed-save retention are covered. The restored logo is not a new editor instance; the main ManifestEditor still receives full web resources.
+
+## All-language resources and unified header menu
+
+The web host now opts into all 16 generated locales plus English/Dutch, with base,
+plain, exhibition and exhibition/plain resources. The adapters import the private
+TypeScript catalogs only from apps/web, with local no-emit TypeScript checking.
+The registration metadata includes English fallback even under restricted deployments.
+Equivalent default-policy coverage checks reuse the static catalog result; custom
+resource checks still evaluate their actual inputs and exclude fallback coverage.
+
+Every header uses `HeaderLanguageMenu`: site/homepage, browser/focused exhibition,
+local, examples, external, share, legacy, error and not-found. The former
+`LanguageSwitcher` and `HeaderLanguageSwitcher` implementations and their obsolete
+tests are removed. The searchable native-name menu offers wording behind each
+language's caret and applies combined choices through one runtime `select` call.
+Its variant labels refresh with the UI language, hidden variants no longer trap
+arrow navigation, and variant-panel IDs are unique per menu. The compact site
+header uses two mobile rows. The [current menu guide](../language-switcher.md)
+supersedes the earlier Select/separate-wording mounting notes above.
+
+Actual parent checks: **29 web interaction tests pass**, including real site-layout
+mounting with exactly one control and all 18 choices, cookie/draft retention,
+controlled-request rejection, localized variant labels, keyboard navigation,
+regional names and all generated locale/profile resource combinations. The focused
+host no-emit check passes. The broad mapped source/test check reports **107 existing
+diagnostics**, with only the unchanged `CloudflareEnv.PREVIEW_KV` error in web and
+none in the new menu, adapters or tests. Catalog gaps remain zero at integration.
+
+The port-3000 watch Playwright run reaches the new menu, changes to Dutch, persists
+the cookie and passes the 320px header bounds checks. Both tests still fail their
+SSR/reload checks on the recorded `Duplicate use of selection JSON ID gapcursor`
+HTTP500. This remains an unresolved server integration issue, not a complete live
+browser pass. No builds, server restarts, cache deletion or publication operations
+were performed. Other UI modules and full browser/release acceptance remain open.
+
+A separate live Chromium probe found **18 menu choices**, searched for Japanese,
+selected `ja`, verified the saved cookie and all header controls within 320px.
+Its initial HTTP response remains 500 before client recovery, so this is explicitly
+client-side acceptance only. All **103 language tests** and both focused web/language
+no-emit checks pass after integration. Generated catalog values compare equal before
+and after formatting across all 416 imported catalog/overlay files.

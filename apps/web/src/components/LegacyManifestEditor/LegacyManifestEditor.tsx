@@ -1,5 +1,5 @@
 "use client";
-import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
 
 import { useTranslations } from "@manifest-editor/i18n";
@@ -108,7 +108,7 @@ function InternalEditor() {
   if (!project) {
     return (
       <div className="m-auto text-center">
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         <h4 className={`text-3xl text-center text-slate-700 mb-8`}>{webT("legacy.welcome")}</h4>
         {loading ? (
           <div className={`text-2xl text-center text-slate-500 mb-8`}>{webT("feedback.loading")}</div>

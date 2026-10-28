@@ -1,171 +1,81 @@
-# Language Switcher — design and mounting guide
+# Web language menu
 
-Status: **Component and site/browser mounting implemented**; remaining web routes and inventory migration belong to module20.
+Status: The shared searchable language menu is mounted in every apps/web header,
+including the homepage. The former Select and separate wording control are removed.
 
-File: [`apps/web/src/components/site/LanguageSwitcher.tsx`](../../../../apps/web/src/components/site/LanguageSwitcher.tsx)
+## Components and resources
 
----
+- [HeaderLanguageMenu](../../../apps/web/src/components/site/HeaderLanguageMenu.tsx)
+  connects the effective public i18n runtime to the menu and React Aria locale.
+- [LanguageMenu](../../../apps/web/src/components/site/LanguageMenu.tsx) is controlled
+  presentation: a translate icon opens native language names, searchable above eight
+  choices. Each language can expand its available wording profiles.
+- [Web resources](../../../apps/web/src/i18n/resources.ts) opt into English, Dutch and
+  16 generated language drafts, including their plain and exhibition layers.
+  [Language adapters](../../../apps/web/src/i18n/locales/) import the private
+  TypeScript catalogs only in the web host. Public SDK packages keep their existing
+  English defaults and explicit Dutch opt-in.
 
-## Component API
+The generated locales are `fr`, `de`, `it`, `es`, `pt`, `ja`, `zh`, `tr`, `fi`, `hi`,
+`pl`, `uk`, `cs`, `da`, `ms` and `ta`; together with `en-GB` and `nl`, the default web
+menu offers 18 languages. These additional translations remain experimental drafts;
+structural coverage does not establish native-speaker review.
+
+## Mounting
 
 ```tsx
-import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { HeaderLanguageMenu } from "./HeaderLanguageMenu";
 
-<LanguageSwitcher
-  locale="en-GB"                          // currently active BCP-47 tag
-  availableLocales={["en-GB", "nl"]}      // host-allowed list, ordered
-  onLocaleChange={(locale) => /* … */}    // called with new tag on selection
-  labels={{ interfaceLanguage: t("settings.interfaceLanguage"), availableLanguages: t("settings.availableLanguages"), loading: t("browser.loading") }}
-  loading={false}                         // true while applying the change
-  variant="light"                         // "light" | "dark" — see below
-/>
+<HeaderLanguageMenu />
+<HeaderLanguageMenu variant="dark" />
 ```
 
-### Props
+Use the light variant for site, local, example, external, share and legacy headers.
+BrowserEditor chooses dark when an exhibition is focused. Error and not-found routes
+use the same menu. A locale/profile is never a component key.
 
-| Prop | Type | Default | Notes |
-|------|------|---------|-------|
-| `locale` | `string` | required | Active BCP-47 tag, e.g. `"en-GB"` or `"nl"` |
-| `availableLocales` | `readonly string[]` | required | Ordered list the host permits |
-| `onLocaleChange` | `(locale: string) => void` | required | Called once on confirmed selection |
-| `labels` | `{ interfaceLanguage, availableLanguages, loading }` | required | Host-translated accessible copy |
-| `loading` | `boolean` | `false` | Renders a spinner; disables control without removing focus |
-| `variant` | `"light" \| "dark"` | `"light"` | See header variants below |
+At narrow widths, the homepage places the logo and menu on the first row and the
+navigation links on the second. Desktop keeps its single header row. There is one
+language control in the site header and no separate wording select.
 
-### Behaviour
+## Selection, accessibility and policy
 
-- **Display names** — uses `Intl.DisplayNames` with each full locale tag so names are native and regional variants remain distinguishable: `"en-GB" → English (United Kingdom)`, `"nl" → Nederlands`. No flags.
-- **Unavailable/loading** — one available locale disables the control. Loading instead uses `aria-disabled` and guarded opening/selection, retaining keyboard focus and tab position. A localized `<output>` announces loading; the spinner is decorative.
-- **Keyboard** — inherits react-aria-components `Select`: `Space`/`Enter` opens, arrow keys navigate, `Escape` closes, `Tab` moves focus away without selecting.
-- **Screen reader** — the hidden `<Label>` receives translated `labels.interfaceLanguage`. `SelectValue` makes the selected name part of the button's accessible name. Each `ListBoxItem` has `lang={loc}` so the AT uses the correct language's pronunciation rules for the native name. The `ListBox` receives translated `labels.availableLanguages`.
-- **`lang` attribute** — the trigger button renders `<span lang={locale}>` around the active locale name so screen readers pronounce, e.g., "Nederlands" correctly even when the host document is `lang="en"`.
+- Choosing a language keeps the current wording profile; expanding its caret offers
+  standard/plain wording. A combined choice uses one runtime `select` operation.
+- Variant labels resolve on every render so a stable translator cannot leave them
+  in the previous UI language. Runtime metadata supplies each native language name;
+  `Intl.DisplayNames` is the presentational fallback and distinguishes regional tags.
+- The icon trigger has a translated accessible name with the active language. Each
+  language name has its own `lang`; the portal inherits UI `lang`/`dir`. Loading and
+  rejected requests have translated status text, and the trigger remains in the tab
+  order while requests run.
+- Arrow keys traverse visible search, language, caret and expanded variant controls.
+  Collapsed choices are excluded. Escape closes through React Aria; each menu uses
+  instance-specific IDs for its variant panels.
+- Deployment locale/profile allow-lists and fallback metadata remain authoritative.
+  Every offered locale must cover every offered profile. Static web coverage is
+  reused across equivalent policy creation; custom resource checks still validate
+  their supplied catalogs directly.
+- The versioned `manifest-editor-ui` cookie stores independent UI preferences.
+  Authored IIIF language maps, content-language choices, editor drafts and history
+  retain their existing paths.
 
----
+## Checks and limits
 
-## Variant: `"light"` (default)
+The complete web JSDOM suite passes **29 tests**. These cover the real site layout,
+one header control and all 18 choices, live Dutch/plain wording, saved preferences,
+retained authored drafts, hidden-item keyboard navigation, regional names, host
+rejections, SSR hydration and deployment/exhibition policy. The additional-language
+host tests exercise all 16 generated locales in both wording profiles.
 
-Suits white or light-grey headers. Uses `border-slate-200 bg-white text-slate-900` trigger, `me-primary-50` hover and `me-primary-600` ring/selected-item accent.
+The focused host no-emit check passes. The broader mapped source/test check retains
+**107 dependency/baseline diagnostics**; the only web-local diagnostic is the existing
+`CloudflareEnv.PREVIEW_KV` declaration mismatch. There are no new menu/adapter/test
+source diagnostics. Catalog validation, lint/formatting and diff checks are recorded
+in module20's integration evidence.
 
-### Mounting location 1 — `(site)/layout.tsx`
-
-Add inside (or alongside) `<GlobalNav>` on the right of the 64 px site header:
-
-```diff
-// apps/web/src/app/(main)/(site)/layout.tsx
-+import { LanguageSwitcher } from "../../../components/site/LanguageSwitcher";
-
- <header className="h-[64px] flex w-full gap-[clamp(0.5rem,3.75vw,3rem)] …">
-   <Link …><ManifestEditorLogo … /></Link>
-   <div className="flex-1" />
-   <div>
-     <GlobalNav />
-   </div>
-+  <LanguageSwitcher
-+    locale={activeLocale}
-+    availableLocales={allowedLocales}
-+    onLocaleChange={handleLocaleChange}
-+  />
- </header>
-```
-
-`activeLocale`, `allowedLocales`, and `handleLocaleChange` come from `useEditorI18n()` in the shared public runtime. Mount with real locale selection after provider integration; a no-op switcher must not ship.
-
----
-
-## Variant: `"dark"`
-
-Suits the focused-exhibition purple header (`bg-[#26212a]` / `bg-[#18161d]`). Uses `border-white/20 bg-white/10 text-white` trigger; the dropdown panel uses `bg-[#2d2836]` (slightly lighter than the header to give layering depth).
-
-### Mounting location 2 — `BrowserEditor.tsx` header
-
-The editor header has two modes. The switcher belongs inside `headerStyles.actionButtons` in both:
-
-```diff
-// apps/web/src/components/browser-editor/BrowserEditor.tsx
-+import { LanguageSwitcher } from "../site/LanguageSwitcher";
-
- <div className={`${headerStyles.actions} flex items-center justify-end`}>
-   <div className={headerStyles.actionButtons}>
-     <ShareButton />
-     <BackgroundActionsMenu />
-     {isFocusedExhibition ? (
-       <button … onClick={toggleExhibitionTheme}>…</button>
-     ) : null}
-+    <LanguageSwitcher
-+      locale={activeLocale}
-+      availableLocales={allowedLocales}
-+      onLocaleChange={handleLocaleChange}
-+      variant={isFocusedExhibition ? "dark" : "light"}
-+    />
-     <PresetPreviewButton … />
-   </div>
- </div>
-```
-
-The `variant` prop is reactive — it switches between `"light"` and `"dark"` as `isFocusedExhibition` changes, with no remount required.
-
----
-
-## Other header routes
-
-The following routes also have headers that will eventually show the switcher. Sol web-host integration should mount it consistently across all of them after the runtime provider is available. None require a structural change to the component:
-
-| Route | File | Notes |
-|-------|------|-------|
-| `/local` | `src/components/local-editor/LocalEditor.tsx` | light |
-| `/share` | `src/app/(main)/share/page.tsx` | light |
-| `/examples` | `src/app/(main)/examples/layout.tsx` | light |
-| External editor | `src/components/external-editor/ExternalEditor.tsx` | light |
-| Legacy editor | `src/components/LegacyManifestEditor/…` | audit before adding |
-
----
-
-## What the Sol web-host module must provide
-
-This component is purely presentational. It depends on the runtime (module `01-public-runtime.md`) to supply:
-
-1. A hook or context value for `locale` (current selection).
-2. A hook or context value for `availableLocales` (host allow-list).
-3. A callback for `onLocaleChange` that:
-   - Loads required catalogs for the new locale.
-   - Commits the locale change without remounting or resetting the vault.
-   - Persists the user preference (separate from content-language config).
-   - Handles the loading race described in the internationalisation plan.
-
-Use the public `@manifest-editor/i18n` package for React hooks and `@manifest-editor/i18n/nl` for optional Dutch catalog data. Do not import private authoring sources from application code.
-
----
-
-## Dutch locale registration
-
-The optional public `@manifest-editor/i18n/nl` entry now exports `dutchCatalogs`, `dutchPlain`, `dutchExhibition` and `dutchExhibitionPlain`. Configure the provider with `locales: [...defaultLocales, dutchLocale]`, `catalogs: dutchCatalogs`, and `profiles: {plain: dutchPlain}`. The runtime remains English by default. See `packages/i18n/README.md` for the full configuration. No application is enabled until the web host wires it.
-
-The private authoring package exports all Dutch catalog subpaths. All 25 source/overlay files pass parity validation and strict unchanged-source review; consumer modules must expand these catalogs as they migrate remaining UI.
-
-## Parent review findings for web integration
-
-- [x] Require translated hidden label, option-list accessible name and loading announcement through `labels`; web keys exist in English and Dutch.
-- [x] Preserve keyboard focus while loading and guard new opening/selection. Verified with actual React Aria keyboard interactions in jsdom.
-- [x] Provide localized loading status via semantic `<output>` outside the decorative spinner.
-- Check narrow site/editor headers with full native language names and existing navigation.
-- Wire all supported header variants to the same live provider; do not mount a no-op placeholder.
-
----
-
-## Acceptance checks (for Sol web-host wiring)
-
-- [ ] Changing locale does not remount the editor, lose vault state, or reset undo history.
-- [ ] A persisted preference is applied on the next page load without flashing the fallback.
-- [ ] The `loading` spinner appears while catalogs are fetching and disappears on success.
-- [x] With only one available locale, the control renders but is inert (no dropdown opens).
-- [x] The `lang` attribute on the trigger text changes when the locale changes.
-- [ ] Exhibition header switches between `variant="dark"` and `variant="light"` without remount.
-- [ ] No IIIF content-language fields, resource labels, IDs, or export data change when the UI locale changes.
-
-## Parent verification
-
-Three focused web React/jsdom tests pass: keyboard opening/native option selection and translated accessible-name references; retained focus/tab position and prevented reopening while loading; regional distinctions and single-locale inactivity. Component/test/config typecheck and targeted lint pass. These do not prove header layout or page-level integration; narrow headers, persistence, whole-editor state and mounting remain web-host/E2E work. Test dependencies are declared in apps/web and use existing locked versions. `npm --prefix apps/web test` runs this suite without starting a server or building packages.
-
-## Live host wiring
-
-`HeaderLanguageSwitcher` is now the runtime-bound wrapper. `WebI18nProvider` initializes from the validated server cookie and supplies English/Dutch catalog/profile data. Site and BrowserEditor headers use the wrapper; remaining routes are explicitly tracked in guide20. The selector also receives UI direction for its portalled list and a React Aria locale provider. The actual 320px browser test verifies visible header controls remain in bounds, keyboard selection persists, and reload returns Dutch in the server HTML.
+The existing port-3000 Playwright watch run exercises the new menu and narrow header,
+but its two SSR/reload checks still fail on the previously recorded HTTP500
+`Duplicate use of selection JSON ID gapcursor`. This is not a full live browser pass.
+No server restart, cache deletion or package build was performed. Publication,
+whole-editor browser acceptance and the remaining UI module migrations remain open.

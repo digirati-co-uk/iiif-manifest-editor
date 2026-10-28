@@ -4,10 +4,11 @@
     "src/i18n/policy.ts",
     "src/i18n/resources.ts",
     "src/i18n/WebI18nProvider.tsx",
-    "src/components/site/LanguageSwitcher.tsx",
-    "src/components/site/HeaderLanguageSwitcher.tsx",
+    "src/components/site/LanguageMenu.tsx",
+    "src/components/site/HeaderLanguageMenu.tsx",
     "test/WebI18n.test.tsx",
-    "test/LanguageSwitcher.test.tsx",
+    "test/LanguageMenu.test.tsx",
+    "test/AdditionalLanguages.test.tsx",
     "test/HostUI.test.tsx"
   ]
 }

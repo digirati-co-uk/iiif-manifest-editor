@@ -1,5 +1,5 @@
 "use client";
-import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { useTranslations } from "@manifest-editor/i18n";
 
@@ -30,7 +30,7 @@ export default function ExampleEditor({
   return (
     <div className="flex flex-col flex-1">
       <div className="px-4 py-2 bg-blue-50 flex flex-wrap items-center gap-2">
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         <div className="font-semibold">{example.label}</div>
         <div className="">{example.description}</div>
         <div></div>

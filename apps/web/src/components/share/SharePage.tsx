@@ -1,10 +1,10 @@
 "use client";
-import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 export default function SharePage() {
   return (
     <>
       <header className="flex justify-end p-3">
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
       </header>
       <SharePageBody />
     </>

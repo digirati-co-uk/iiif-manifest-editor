@@ -41,7 +41,7 @@ it("validates versioned independent UI choices against the host allow-list", () 
     "null",
     "[]",
     encode({ version: 2, locale: "nl" }),
-    encode({ version: 1, locale: "fr", profile: "other" }),
+    encode({ version: 1, locale: "xx", profile: "other" }),
   ])
     expect(parseWebUiPreferences(data)).toEqual({});
   const restricted = createWebUiPolicy({ availableLocales: ["nl"], availableProfiles: ["plain"] });
@@ -53,7 +53,7 @@ it("validates versioned independent UI choices against the host allow-list", () 
     availableLocales: [{ id: "nl" }],
   });
   expect(() => createWebUiPolicy({ availableLocales: [] })).toThrow();
-  expect(() => createWebUiPolicy({ availableLocales: ["fr"] })).toThrow();
+  expect(() => createWebUiPolicy({ availableLocales: ["xx"] })).toThrow();
   expect(() => createWebUiPolicy({ availableProfiles: ["custom"] })).toThrow();
   expect(() => createWebUiPolicy({ availableLocales: ["nl"], defaultLocale: "en-GB" })).toThrow();
   expect(serializeWebUiPreferences({ profile: "plain" }, true)).toContain("; SameSite=Lax; Secure");
@@ -127,7 +127,7 @@ it("persists successful choices independently and preserves the draft and undo s
   expect(input.value).toBe("Teitl Cymraeg");
   const cookie = stored();
   await act(async () => {
-    await expect(controls.setLocale("fr")).rejects.toThrow();
+    await expect(controls.setLocale("xx")).rejects.toThrow();
   });
   expect(stored()).toBe(cookie);
   expect(controls.locale).toBe("nl");

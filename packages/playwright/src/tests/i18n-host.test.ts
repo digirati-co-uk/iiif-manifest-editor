@@ -35,8 +35,11 @@ test("header selection survives reload and fits a narrow header", async ({ page,
   }
   const switcher = page.getByRole("button", { name: /Interface language/ });
   await switcher.focus();
-  await page.keyboard.press("ArrowDown");
-  await page.getByRole("option", { name: "Nederlands", exact: true }).click();
+  await page.keyboard.press("Enter");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /^Nederlands/ })
+    .click();
   await expect(page.locator("html")).toHaveAttribute("lang", "nl");
   await expect
     .poll(async () => {

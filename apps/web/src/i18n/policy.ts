@@ -1,7 +1,6 @@
 import {
   createEditorI18n,
-  defaultLocales,
-  dutchLocale,
+  type EditorI18nSnapshot,
   type EditorI18nOptions,
   type UiI18nConfig,
 } from "@manifest-editor/i18n/core";
@@ -20,24 +19,32 @@ export const webRequiredNamespaces = Object.freeze([
   "ui",
 ]);
 
-/** The runtime coverage report excludes English fallback for a Dutch selection. */
+// These module-owned catalogs are static. Reuse their coverage when another route
+// creates the same deployment policy instead of validating all 18 languages again.
+const defaultCoverage = new Map<string, EditorI18nSnapshot["coverage"]>();
+
+/** The runtime coverage report excludes English fallback for translated selections. */
 export function webUiCoverage(
   locale: string,
   profile: string,
   requiredNamespaces: readonly string[],
   resources: EditorI18nOptions = webUiResources
 ) {
-  return createEditorI18n({
+  const key = JSON.stringify([locale, profile, [...new Set(requiredNamespaces)].sort()]);
+  if (resources === webUiResources && defaultCoverage.has(key)) return defaultCoverage.get(key)!;
+  const coverage = createEditorI18n({
     ...resources,
     locales: registeredLocales,
     locale,
     profile,
     requiredNamespaces,
   }).getSnapshot().coverage;
+  if (resources === webUiResources) defaultCoverage.set(key, coverage);
+  return coverage;
 }
 
 export const UI_PREFERENCES_COOKIE = "manifest-editor-ui";
-const registeredLocales = Object.freeze([...defaultLocales, dutchLocale].map((locale) => Object.freeze({ ...locale })));
+const registeredLocales = Object.freeze(webUiResources.locales.map((locale) => Object.freeze({ ...locale })));
 const registeredProfiles = Object.freeze(["standard", "plain"]);
 
 export interface WebUiPreferences {

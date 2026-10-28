@@ -3,7 +3,7 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { afterEach, expect, it, vi } from "vitest";
 import { EditorI18nProvider, useEditorI18n } from "@manifest-editor/i18n";
-import { HeaderLanguageSwitcher } from "../src/components/site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../src/components/site/HeaderLanguageMenu";
 import { AboutText } from "../src/components/LegacyManifestEditor/apps/About/components/AboutText";
 import ErrorPage from "../src/app/(main)/error";
 import { WebI18nProvider, createWebI18n } from "../src/i18n/WebI18nProvider";
@@ -29,6 +29,21 @@ function container() {
   document.body.append(node);
   return node;
 }
+async function openMenu(node: HTMLElement) {
+  await act(async () => node.querySelector<HTMLButtonElement>("button")!.click());
+}
+function languageRow(locale: string) {
+  return document.querySelector<HTMLElement>(`[role="dialog"] button [lang="${locale}"]`)!.closest("button")!;
+}
+async function chooseWording(node: HTMLElement, locale: string, wording: string) {
+  await openMenu(node);
+  const row = languageRow(locale);
+  await act(async () => row.parentElement!.querySelector<HTMLButtonElement>("[aria-controls]")!.click());
+  const option = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')].find(
+    (button) => button.textContent === wording && !button.closest("[hidden]")
+  )!;
+  await act(async () => option.click());
+}
 
 it("uses translated coverage rather than English fallback for deployment gating", () => {
   const missingDutch = webUiCoverage("nl", "standard", ["web"], {});
@@ -46,12 +61,12 @@ it("uses translated coverage rather than English fallback for deployment gating"
 it("hydrates the actual Dutch wording picker and help without a recovery or preference write", async () => {
   const tree = (
     <WebI18nProvider preferences={{ locale: "nl", profile: "plain" }}>
-      <HeaderLanguageSwitcher />
+      <HeaderLanguageMenu />
       <AboutText />
     </WebI18nProvider>
   );
   const html = renderToString(tree);
-  expect(html).toContain("Eenvoudig woordgebruik");
+  expect(html).toContain("Interfacetaal");
   expect(html).toContain("Wat is een manifest?");
   const node = container();
   node.innerHTML = html;
@@ -60,7 +75,9 @@ it("hydrates the actual Dutch wording picker and help without a recovery or pref
     roots.push(hydrateRoot(node, tree, { onRecoverableError: recoveries }));
   });
   expect(recoveries).not.toHaveBeenCalled();
-  expect(node.querySelector<HTMLSelectElement>("select[aria-label]")?.value).toBe("plain");
+  expect(node.querySelector("select")).toBeNull();
+  await openMenu(node);
+  expect(languageRow("nl").textContent).toContain("Eenvoudig woordgebruik");
   expect(document.cookie).not.toContain(UI_PREFERENCES_COOKIE);
 });
 
@@ -77,17 +94,13 @@ it("changes wording through the real control, preserves authored state, and pers
   await act(async () =>
     root.render(
       <WebI18nProvider>
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         <Draft />
       </WebI18nProvider>
     )
   );
   const input = node.querySelector("input");
-  const select = node.querySelector<HTMLSelectElement>("select[aria-label]")!;
-  await act(async () => {
-    select.value = "plain";
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  });
+  await chooseWording(node, "en-GB", "Plain wording");
   expect(runtime.profile).toBe("plain");
   const cookie = document.cookie
     .split("; ")
@@ -97,7 +110,10 @@ it("changes wording through the real control, preserves authored state, and pers
   await act(async () => runtime.setLocale("nl"));
   expect(node.querySelector("input")).toBe(input);
   expect(input?.value).toBe("Teitl Cymraeg");
-  expect(select.getAttribute("aria-label")).toBe("Woordgebruik");
+  expect(node.querySelector("button")!.getAttribute("aria-label")).toContain("Interfacetaal");
+  await openMenu(node);
+  // The memoized variant labels must follow the live locale too.
+  expect(languageRow("nl").textContent).toContain("Eenvoudig woordgebruik");
 });
 
 it("announces rejected wording requests and retains the authoritative host choice", async () => {
@@ -114,18 +130,13 @@ it("announces rejected wording requests and retains the authoritative host choic
           throw new Error("Rejected");
         }}
       >
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
       </EditorI18nProvider>
     )
   );
-  const select = node.querySelector<HTMLSelectElement>("select[aria-label]")!;
-  await act(async () => {
-    select.value = "plain";
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  });
+  await chooseWording(node, "nl", "Eenvoudig woordgebruik");
   expect(runtime.getSnapshot().profile).toBe("standard");
-  expect(select.value).toBe("standard");
-  expect(select.disabled).toBe(false);
+  expect(node.querySelector<HTMLButtonElement>("button")!.disabled).toBe(false);
   expect(node.textContent).toContain("De interface-instellingen konden niet worden gewijzigd.");
 });
 
@@ -160,7 +171,7 @@ it("applies changed deployment allow-lists without remounting the draft", async 
   const first = createWebUiPolicy();
   const render = (policy: typeof first) => (
     <WebI18nProvider policy={policy}>
-      <HeaderLanguageSwitcher />
+      <HeaderLanguageMenu />
       <Draft />
     </WebI18nProvider>
   );

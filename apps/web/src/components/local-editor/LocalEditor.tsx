@@ -1,5 +1,5 @@
 "use client";
-import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { useTranslations, useEditorI18n } from "@manifest-editor/i18n";
 
@@ -27,7 +27,7 @@ export default function LocalEditor() {
   if (!supported) {
     return (
       <div>
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         {webT("local.unsupported")}
       </div>
     );
@@ -36,7 +36,7 @@ export default function LocalEditor() {
   if (!file || !manifest) {
     return (
       <div>
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         {error ? <p role="alert">{webT(error)}</p> : null}
         <button
           onClick={async () => {
@@ -77,7 +77,7 @@ export default function LocalEditor() {
           <ManifestEditorLogo />
         </Link>
         <div className="flex-1 flex gap-2"></div>
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         <div>
           <GlobalNav />
         </div>

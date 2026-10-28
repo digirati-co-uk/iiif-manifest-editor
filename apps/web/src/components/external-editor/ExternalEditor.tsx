@@ -1,5 +1,5 @@
 "use client";
-import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { webExhibitionResources } from "../../i18n/resources";
 import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
@@ -180,14 +180,14 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   if (isLoading)
     return (
       <div>
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         {webT("feedback.loading")}
       </div>
     );
   if (isError || !manifestData)
     return (
       <div role="alert">
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         {webT("feedback.projectFailed")}
       </div>
     );
@@ -206,7 +206,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
         </div>
       </div>
       <div className="flex items-center justify-center gap-5">
-        <HeaderLanguageSwitcher />
+        <HeaderLanguageMenu />
         <div className="flex items-center gap-2">
           <BackgroundActionsMenu />
           <a
