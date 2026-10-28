@@ -77,6 +77,10 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@codemirror/commands": "6.8.0",
+    "@codemirror/search": "6.5.8",
+    "@codemirror/state": "6.5.2",
+    "@codemirror/view": "6.36.2",
     "@storylite/renderer-react": "^1.5.4",
     "@storylite/storylite": "^1.5.4",
     "@tsdown/css": "catalog:",

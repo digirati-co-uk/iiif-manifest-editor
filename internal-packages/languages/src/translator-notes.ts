@@ -25,7 +25,8 @@ export const translatorNotes = {
     },
     "fields.label": {
       context: "System heading for the IIIF label field.",
-      terminology: "Use Title/Titel in plain wording, consistent with the editors namespace; the property remains label.",
+      terminology:
+        "Use Title/Titel in plain wording, consistent with the editors namespace; the property remains label.",
     },
   },
   editors: {
@@ -48,11 +49,40 @@ export const translatorNotes = {
     },
   },
   components: {
+    "browser.selectResource": {
+      context: "Accessible selection action. The resource name remains literal authored IIIF content.",
+      placeholders: { name: "Authored resource label or stable ID; never translate its value." },
+    },
+    "browser.historyCount_other": {
+      context:
+        "Whole count of visited resources. count chooses the grammatical form; value is the UI-locale formatted number. Dutch uses vermelding/vermeldingen.",
+      placeholders: { count: "Raw numeric count for plural choice.", value: "Locale-formatted display count." },
+    },
+    "browser.preferredSize": {
+      context:
+        "Image API request dimensions. Only display numbers are formatted; the request URL and numeric dimensions stay unchanged.",
+      placeholders: { width: "Display width in pixels.", height: "Display height in pixels." },
+    },
+    "mdx.codeMirror.replacedMatches": {
+      context:
+        "CodeMirror substitutes its literal single dollar-sign token after translation. Preserve $, unlike ordinary double-brace i18next interpolation.",
+    },
+    "media.time.range": {
+      context:
+        "Complete spoken time-range ARIA message. Each value is an already-localised duration, separate from subtitle/content language.",
+      placeholders: { current: "Localised current duration.", duration: "Localised total duration." },
+    },
+    "media.time.seekBackward": {
+      context: "Whole seek announcement; Dutch places the duration before the action, English after it.",
+      placeholders: { time: "Localised duration, with semantic unit counts." },
+    },
     "mdx.diffSource.parseError": {
-      context: "Friendly feedback when authored Markdown cannot be parsed; the original parser diagnostic is separate technical data.",
+      context:
+        "Friendly feedback when authored Markdown cannot be parsed; the original parser diagnostic is separate technical data.",
     },
     "mdx.diffSource.recovery": {
-      context: "Recovery instruction for malformed Markdown. Source mode means editing the literal Markdown; rich text is its formatted view.",
+      context:
+        "Recovery instruction for malformed Markdown. Source mode means editing the literal Markdown; rich text is its formatted view.",
     },
     "provider.editNamed": {
       context:

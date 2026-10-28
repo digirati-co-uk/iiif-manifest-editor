@@ -1,3 +1,4 @@
+import { useMediaTimeTranslations } from "./useMediaTimeTranslations";
 import { EditorI18nScope, useTranslations } from "@manifest-editor/i18n";
 import "@vidstack/react/player/styles/base.css";
 import "@vidstack/react/player/styles/default/theme.css";
@@ -23,6 +24,7 @@ export interface IIIFMediaPlayerProps {
 }
 
 export function IIIFMediaPlayer(props: IIIFMediaPlayerProps) {
+  const uiTime = useMediaTimeTranslations();
   const t = useTranslations("components");
   const translations = {
     Announcements: t("media.announcements"),
@@ -89,6 +91,7 @@ export function IIIFMediaPlayer(props: IIIFMediaPlayerProps) {
 
   return (
     <MediaPlayer
+      uiTime={uiTime}
       onTimeUpdate={(time) => {
         const newT = Math.round(time.currentTime);
         if (timeRef.current === newT) return;

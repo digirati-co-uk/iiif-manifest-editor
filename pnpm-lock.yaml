@@ -63,8 +63,12 @@ overrides:
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0
 
+packageExtensionsChecksum: sha256-iuQfAFb4v+UK5Oe41b5b17X69Tg/CWtMxKwaJeJDqCg=
+
 patchedDependencies:
-  '@mdxeditor/editor@4.0.4': 2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877
+  '@mdxeditor/editor@4.0.4': 1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340
+  '@vidstack/react@1.12.12': 50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b
+  iiif-browser@2.2.6: fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df
 
 importers:
 
@@ -304,7 +308,7 @@ importers:
         version: 6.2.1
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       manifest-editor:
         specifier: workspace:*
         version: link:../../packages/manifest-editor
@@ -449,7 +453,7 @@ importers:
         version: link:../i18n
       '@mdxeditor/editor':
         specifier: ^4.0.4
-        version: 4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
+        version: 4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
       '@react-aria/collections':
         specifier: 3.0.0-alpha.4
         version: 3.0.0-alpha.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -464,13 +468,13 @@ importers:
         version: 5.0.5
       '@vidstack/react':
         specifier: ^1.11.29
-        version: 1.12.12(@types/react@19.2.18)(react@19.2.8)
+        version: 1.12.12(patch_hash=50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b)(@types/react@19.2.18)(react@19.2.8)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -526,6 +530,18 @@ importers:
         specifier: 'catalog:'
         version: 4.5.2(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
     devDependencies:
+      '@codemirror/commands':
+        specifier: 6.8.0
+        version: 6.8.0
+      '@codemirror/search':
+        specifier: 6.5.8
+        version: 6.5.8
+      '@codemirror/state':
+        specifier: 6.5.2
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 6.36.2
+        version: 6.36.2
       '@storylite/renderer-react':
         specifier: ^1.5.4
         version: 1.5.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -643,7 +659,7 @@ importers:
         version: link:../shell
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -1018,10 +1034,10 @@ importers:
         version: link:../shell
       '@mdxeditor/editor':
         specifier: ^4.0.4
-        version: 4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
+        version: 4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -1270,7 +1286,7 @@ importers:
         version: 3.32.0
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       immer:
         specifier: ^10.0.4
         version: 10.1.1
@@ -1759,7 +1775,7 @@ importers:
         version: link:../../packages/shell
       iiif-browser:
         specifier: 'catalog:'
-        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
+        version: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8))
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -14741,12 +14757,13 @@ snapshots:
       '@types/react': 19.2.18
       react: 19.2.8
 
-  '@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)':
+  '@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)':
     dependencies:
       '@codemirror/commands': 6.8.0
       '@codemirror/lang-markdown': 6.3.2
       '@codemirror/language-data': 6.5.1
       '@codemirror/merge': 6.8.0
+      '@codemirror/search': 6.5.8
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.2
       '@lexical/clipboard': 0.35.0
@@ -19268,14 +19285,14 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vidstack/react@1.12.12(@types/react@18.3.31)(react@18.3.1)':
+  '@vidstack/react@1.12.12(patch_hash=50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b)(@types/react@18.3.31)(react@18.3.1)':
     dependencies:
       '@floating-ui/dom': 1.6.13
       '@types/react': 18.3.31
       media-captions: 1.0.4
       react: 18.3.1
 
-  '@vidstack/react@1.12.12(@types/react@19.2.18)(react@19.2.8)':
+  '@vidstack/react@1.12.12(patch_hash=50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b)(@types/react@19.2.18)(react@19.2.8)':
     dependencies:
       '@floating-ui/dom': 1.6.13
       '@types/react': 19.2.18
@@ -20488,7 +20505,7 @@ snapshots:
       '@iiif/presentation-3-normalized': 0.9.7
       '@types/react': 18.3.31
       '@uidotdev/usehooks': 2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@vidstack/react': 1.12.12(@types/react@18.3.31)(react@18.3.1)
+      '@vidstack/react': 1.12.12(patch_hash=50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b)(@types/react@18.3.31)(react@18.3.1)
       embla-carousel-react: 8.6.0(react@18.3.1)
       i18next: 25.6.2(typescript@7.0.2)
       mitt: 3.0.1
@@ -21097,7 +21114,7 @@ snapshots:
 
   ignore@5.3.1: {}
 
-  iiif-browser@https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(@mdxeditor/editor@4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8)):
+  iiif-browser@https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef(patch_hash=fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df)(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8)):
     dependencies:
       '@atlas-viewer/atlas': 3.3.0(@iiif/helpers@4.0.0(@iiif/parser@4.0.1))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers': 4.0.0(@iiif/parser@4.0.1)
@@ -21118,7 +21135,7 @@ snapshots:
       tailwind-merge: 3.3.1
       zustand: 4.5.7(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
     optionalDependencies:
-      '@mdxeditor/editor': 4.0.4(patch_hash=2858ecc751780a94e77becaebc3eaa5d9baf18b7dd8e5e5b258888dc12b4c877)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
+      '@mdxeditor/editor': 4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23)
       '@tiptap/core': 3.32.0(@tiptap/pm@3.32.0)
       '@tiptap/extension-list': 3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)
       '@tiptap/pm': 3.32.0

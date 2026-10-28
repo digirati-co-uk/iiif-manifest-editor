@@ -65,3 +65,11 @@ overrides:
 
 patchedDependencies:
   '@mdxeditor/editor@4.0.4': patches/@mdxeditor__editor@4.0.4.patch
+  'iiif-browser@2.2.6': patches/iiif-browser@2.2.6.patch
+  '@vidstack/react@1.12.12': patches/@vidstack__react@1.12.12.patch
+
+# The maintained source/search patch uses the public search-panel commands.
+packageExtensions:
+  '@mdxeditor/editor@4.0.4':
+    dependencies:
+      '@codemirror/search': 6.5.8

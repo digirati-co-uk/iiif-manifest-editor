@@ -179,6 +179,26 @@
     "icons.manifest": {
       "source": "manifest",
       "reason": "The IIIF technical term manifest is also the established Dutch noun; lowercase icon name matches the source."
+    },
+    "browser.canvas": {
+      "source": "canvas",
+      "reason": "Retain the IIIF technical noun canvas in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.manifest": {
+      "source": "manifest",
+      "reason": "Retain the IIIF technical noun manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.manifestLabel": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical noun Manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.canvasLabel": {
+      "source": "Canvas",
+      "reason": "Retain the IIIF technical noun Canvas in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.resourceTypeManifest": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical noun Manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
     }
   }
 }

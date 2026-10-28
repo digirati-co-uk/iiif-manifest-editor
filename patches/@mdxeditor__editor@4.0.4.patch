@@ -18,3 +18,205 @@ index 7de82fe704c098df59e8063dfb41224f2968d213..be2d59119635200e1734373fe29fb8b0
  };
  export {
    DiffSourceWrapper
+diff --git a/dist/plugins/diff-source/DiffViewer.js b/dist/plugins/diff-source/DiffViewer.js
+index a7128b7..7362c4d 100644
+--- a/dist/plugins/diff-source/DiffViewer.js
++++ b/dist/plugins/diff-source/DiffViewer.js
+@@ -1,6 +1,7 @@
++import { useTranslatedPhrases } from "./useTranslatedPhrases.js";
+ import React__default from "react";
+ import { diffMarkdown$, readOnlyDiff$, cmExtensions$ } from "./index.js";
+-import { markdown$, readOnly$, markdownSourceEditorValue$, onBlur$ } from "../core/index.js";
++import { markdown$, readOnly$, markdownSourceEditorValue$, onBlur$, useTranslation } from "../core/index.js";
+ import { MergeView } from "@codemirror/merge";
+ import { EditorState } from "@codemirror/state";
+ import { EditorView } from "@codemirror/view";
+@@ -13,10 +14,20 @@ function setContent(view, content) {
+ }
+ const DiffViewer = () => {
+   const realm = useRealm();
++  const t = useTranslation();
++  const renderRevertControl = React__default.useCallback(() => {
++    const el = document.createElement("button");
++    el.classList.add("cm-merge-revert");
++    el.setAttribute("aria-label", t("codeMirror.revert", "Revert this chunk"));
++    el.title = t("codeMirror.revert", "Revert this chunk");
++    el.appendChild(document.createTextNode("⮕"));
++    return el;
++  }, [t]);
+   const [newMarkdown, oldMarkdown, readOnly, readOnlyDiff] = useCellValues(markdown$, diffMarkdown$, readOnly$, readOnlyDiff$);
+   const onUpdate = usePublisher(markdownSourceEditorValue$);
+   const elRef = React__default.useRef(null);
+   const cmMergeViewRef = React__default.useRef(null);
++  const phrases = useTranslatedPhrases(cmMergeViewRef, true);
+   const cmExtensions = useCellValue(cmExtensions$);
+   const triggerOnBlur = usePublisher(onBlur$);
+   React__default.useEffect(() => {
+@@ -37,12 +48,7 @@ const DiffViewer = () => {
+       renderRevertControl: void 0,
+       revertControls: void 0
+     } : {
+-      renderRevertControl: () => {
+-        const el = document.createElement("button");
+-        el.classList.add("cm-merge-revert");
+-        el.appendChild(document.createTextNode("⮕"));
+-        return el;
+-      },
++      renderRevertControl,
+       revertControls: "a-to-b"
+     };
+     cmMergeViewRef.current = new MergeView({
+@@ -52,17 +58,18 @@ const DiffViewer = () => {
+       gutter: true,
+       a: {
+         doc: oldMarkdown,
+-        extensions: [...cmExtensions, ...COMMON_STATE_CONFIG_EXTENSIONS, EditorState.readOnly.of(true)]
++        extensions: [phrases, ...cmExtensions, ...COMMON_STATE_CONFIG_EXTENSIONS, EditorState.readOnly.of(true)]
+       },
+       b: {
+         doc: newMarkdown,
+         extensions: [
++          phrases,
+           ...cmExtensions,
+           ...COMMON_STATE_CONFIG_EXTENSIONS,
+           EditorState.readOnly.of(isReadOnly),
+-          EditorView.updateListener.of(({ state }) => {
++          EditorView.updateListener.of(({ state, docChanged }) => {
+             const md = state.doc.toString();
+-            onUpdate(md);
++            if (docChanged) onUpdate(md);
+           }),
+           EditorView.focusChangeEffect.of((_, focused) => {
+             if (!focused) {
+@@ -79,6 +86,9 @@ const DiffViewer = () => {
+       cmMergeViewRef.current = null;
+     };
+   }, [onUpdate, cmExtensions]);
++  React__default.useEffect(() => {
++    cmMergeViewRef.current?.reconfigure({ renderRevertControl });
++  }, [renderRevertControl]);
+   return /* @__PURE__ */ React__default.createElement("div", { ref: elRef, className: "mdxeditor-diff-editor" });
+ };
+ export {
+diff --git a/dist/plugins/diff-source/SourceEditor.js b/dist/plugins/diff-source/SourceEditor.js
+index 51b7392..901371c 100644
+--- a/dist/plugins/diff-source/SourceEditor.js
++++ b/dist/plugins/diff-source/SourceEditor.js
+@@ -1,3 +1,4 @@
++import { useTranslatedPhrases } from "./useTranslatedPhrases.js";
+ import { markdown } from "@codemirror/lang-markdown";
+ import { EditorState } from "@codemirror/state";
+ import { lineNumbers, EditorView } from "@codemirror/view";
+@@ -19,16 +20,18 @@ const SourceEditor = () => {
+   const updateMarkdown = usePublisher(markdownSourceEditorValue$);
+   const triggerOnBlur = usePublisher(onBlur$);
+   const editorViewRef = React__default.useRef(null);
++  const phrases = useTranslatedPhrases(editorViewRef);
+   const ref = React__default.useCallback(
+     (el) => {
+       var _a;
+       if (el !== null) {
+         const extensions = [
+           // custom extensions should come first so that you can override the default extensions
++          phrases,
+           ...cmExtensions,
+           ...COMMON_STATE_CONFIG_EXTENSIONS,
+-          EditorView.updateListener.of(({ state }) => {
+-            updateMarkdown(state.doc.toString());
++          EditorView.updateListener.of(({ state, docChanged }) => {
++            if (docChanged) updateMarkdown(state.doc.toString());
+           }),
+           EditorView.focusChangeEffect.of((_, focused) => {
+             if (!focused) {
+diff --git a/dist/plugins/diff-source/useTranslatedPhrases.js b/dist/plugins/diff-source/useTranslatedPhrases.js
+new file mode 100644
+index 0000000..80bb69a
+--- /dev/null
++++ b/dist/plugins/diff-source/useTranslatedPhrases.js
+@@ -0,0 +1,72 @@
++import React from "react";
++import { Compartment, EditorState } from "@codemirror/state";
++import { searchPanelOpen, closeSearchPanel, openSearchPanel, getSearchQuery, setSearchQuery } from "@codemirror/search";
++import { useTranslation } from "../core/index.js";
++// Instance-local facet updates retain documents, selections, undo history and search queries.
++export function useTranslatedPhrases(viewRef, merge = false) {
++  const t = useTranslation();
++  const compartment = React.useMemo(() => new Compartment(), []);
++  const phrases = {
++    "Find": t("codeMirror.find", "Find"),
++    "Replace": t("codeMirror.replaceField", "Replace"),
++    "next": t("codeMirror.next", "next"),
++    "previous": t("codeMirror.previous", "previous"),
++    "all": t("codeMirror.all", "all"),
++    "match case": t("codeMirror.matchCase", "match case"),
++    "regexp": t("codeMirror.regexp", "regexp"),
++    "by word": t("codeMirror.byWord", "by word"),
++    "replace": t("codeMirror.replace", "replace"),
++    "replace all": t("codeMirror.replaceAll", "replace all"),
++    "close": t("codeMirror.close", "close"),
++    "Go to line": t("codeMirror.goToLine", "Go to line"),
++    "go": t("codeMirror.go", "go"),
++    "current match": t("codeMirror.currentMatch", "current match"),
++    "on line": t("codeMirror.onLine", "on line"),
++    "replaced match on line $": t("codeMirror.replacedMatch", "replaced match on line $"),
++    "replaced $ matches": t("codeMirror.replacedMatches", "replaced $ matches"),
++    "Selection deleted": t("codeMirror.selectionDeleted", "Selection deleted"),
++    "Folded lines": t("codeMirror.foldedLines", "Folded lines"),
++    "Unfolded lines": t("codeMirror.unfoldedLines", "Unfolded lines"),
++    "to": t("codeMirror.to", "to"),
++    "folded code": t("codeMirror.foldedCode", "folded code"),
++    "unfold": t("codeMirror.unfold", "unfold"),
++    "Fold line": t("codeMirror.foldLine", "Fold line"),
++    "Unfold line": t("codeMirror.unfoldLine", "Unfold line"),
++    "Completions": t("codeMirror.completions", "Completions"),
++    "Diagnostics": t("codeMirror.diagnostics", "Diagnostics"),
++    "No diagnostics": t("codeMirror.noDiagnostics", "No diagnostics"),
++    "Control character": t("codeMirror.controlCharacter", "Control character"),
++    "Loading\u2026": t("codeMirror.loading", "Loading\u2026"),
++    "No completions": t("codeMirror.noCompletions", "No completions"),
++    "original": t("codeMirror.original", "original"),
++    "modified": t("codeMirror.modified", "modified"),
++    "Revert this chunk": t("codeMirror.revert", "Revert this chunk")
++  };
++  const signature = JSON.stringify(phrases);
++  React.useEffect(() => {
++    const views = merge ? [viewRef.current?.a, viewRef.current?.b] : [viewRef.current];
++    for (const view of views) {
++      if (!view) continue;
++      const open = searchPanelOpen(view.state);
++      const query = open ? getSearchQuery(view.state) : null;
++      const active = document.activeElement;
++      const controls = [...view.dom.querySelectorAll(".cm-search input, .cm-search button")];
++      const focusedIndex = controls.indexOf(active);
++      const selection = active?.tagName === "INPUT" && active.type !== "checkbox"
++        ? [active.selectionStart, active.selectionEnd, active.selectionDirection] : null;
++      if (open) closeSearchPanel(view);
++      view.dispatch({ effects: compartment.reconfigure(EditorState.phrases.of(JSON.parse(signature))) });
++      if (open) {
++        openSearchPanel(view);
++        view.dispatch({ effects: setSearchQuery.of(query) });
++        const control = view.dom.querySelectorAll(".cm-search input, .cm-search button")[focusedIndex];
++        if (control) {
++          control.focus();
++          if (selection) control.setSelectionRange(...selection);
++        } else if (active === view.contentDOM) view.focus();
++        else if (active?.isConnected) active.focus();
++      }
++    }
++  }, [signature, compartment, merge, viewRef]);
++  return compartment.of(EditorState.phrases.of(phrases));
++}
+diff --git a/package.json b/package.json
+index 3ba83b2..3054931 100644
+--- a/package.json
++++ b/package.json
+@@ -92,7 +92,8 @@
+     "micromark-util-character": "^2.0.1",
+     "micromark-util-symbol": "^2.0.0",
+     "react-hook-form": "^7.56.1",
+-    "unidiff": "^1.0.2"
++    "unidiff": "^1.0.2",
++    "@codemirror/search": "^6.5.8"
+   },
+   "peerDependencies": {
+     "react": ">= 18 || >= 19",
