@@ -49,3 +49,5 @@ This is structural and terminology evidence. It cannot prove linguistic accuracy
 or detect all stale translations when English wording changes under the same key;
 that requires source-revision tracking or human review. Review the generated
 snapshot in [gaps.md](gaps.md) and regenerate it as module migrations add messages.
+The [28 October gap-fill notes](gap-fill-2026-10-28.md) record the generated additions,
+preservation checks and remaining terminology-review status.

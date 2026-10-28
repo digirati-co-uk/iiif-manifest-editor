@@ -1,44 +1,34 @@
 # Translation gaps
 
-Snapshot: 2026-10-28T18:33:12.160Z. English source: 26 base/overlay files.
+Snapshot: 2026-10-28T18:49:54.164Z. English source: 26 base/overlay files.
 
 Current on-disk catalogs only, without fallback. Presence does not establish linguistic quality, source freshness, UI reachability or host registration.
 
 | Locale | Language | Present / required | Key coverage | Missing | Invalid | English matches needing review |
 | --- | --- | --- | --- | --- | --- | --- |
-| cs | Czech | 1948 / 2639 | 73.82% | 691 | 0 | 47 |
-| da | Danish | 1888 / 2481 | 76.1% | 593 | 0 | 83 |
-| de | German | 1888 / 2481 | 76.1% | 593 | 0 | 87 |
-| es | Spanish | 1918 / 2560 | 74.92% | 642 | 0 | 38 |
-| fi | Finnish | 1888 / 2481 | 76.1% | 593 | 0 | 33 |
-| fr | French | 1918 / 2560 | 74.92% | 642 | 0 | 110 |
-| hi | Hindi | 1888 / 2481 | 76.1% | 593 | 0 | 17 |
-| it | Italian | 1918 / 2560 | 74.92% | 642 | 0 | 38 |
-| ja | Japanese | 1858 / 2402 | 77.35% | 544 | 0 | 17 |
-| ms | Malay | 1858 / 2402 | 77.35% | 544 | 0 | 60 |
+| cs | Czech | 2639 / 2639 | 100% | 0 | 0 | 56 |
+| da | Danish | 2481 / 2481 | 100% | 0 | 0 | 102 |
+| de | German | 2481 / 2481 | 100% | 0 | 0 | 108 |
+| es | Spanish | 2560 / 2560 | 100% | 0 | 0 | 47 |
+| fi | Finnish | 2481 / 2481 | 100% | 0 | 0 | 38 |
+| fr | French | 2560 / 2560 | 100% | 0 | 0 | 135 |
+| hi | Hindi | 2481 / 2481 | 100% | 0 | 0 | 20 |
+| it | Italian | 2560 / 2560 | 100% | 0 | 0 | 46 |
+| ja | Japanese | 2402 / 2402 | 100% | 0 | 0 | 19 |
+| ms | Malay | 2402 / 2402 | 100% | 0 | 0 | 70 |
 | nl | Dutch | 2481 / 2481 | 100% | 0 | 0 | 0 |
-| pl | Polish | 1948 / 2639 | 73.82% | 691 | 0 | 34 |
-| pt | Portuguese | 1918 / 2560 | 74.92% | 642 | 0 | 34 |
-| ta | Tamil | 1888 / 2481 | 76.1% | 593 | 0 | 17 |
-| tr | Turkish | 1888 / 2481 | 76.1% | 593 | 0 | 26 |
-| uk | Ukrainian | 1948 / 2639 | 73.82% | 691 | 0 | 21 |
-| zh | Chinese | 1858 / 2402 | 77.35% | 544 | 0 | 18 |
+| pl | Polish | 2639 / 2639 | 100% | 0 | 0 | 40 |
+| pt | Portuguese | 2560 / 2560 | 100% | 0 | 0 | 45 |
+| ta | Tamil | 2481 / 2481 | 100% | 0 | 0 | 19 |
+| tr | Turkish | 2481 / 2481 | 100% | 0 | 0 | 32 |
+| uk | Ukrainian | 2639 / 2639 | 100% | 0 | 0 | 23 |
+| zh | Chinese | 2402 / 2402 | 100% | 0 | 0 | 20 |
 
 Coverage means required keys are present. Blank/invalid messages are counted separately; unchanged English may be a legitimate technical term and needs individual review. Required counts differ with each locale's plural rules. Plain/preset gaps are measured independently, even when base fallback exists.
 
 ## Gaps by catalog
 
-| English source | Affected locales | Missing per affected locale | Invalid issues across locales |
-| --- | --- | --- | --- |
-| `locales/en-GB/editors.ts` | cs, da, de, es, fi, fr, hi, it, ja, ms, pl, pt, ta, tr, uk, zh | 53–89 | 0 |
-| `locales/en-GB/manifest.ts` | cs, da, de, es, fi, fr, hi, it, ja, ms, pl, pt, ta, tr, uk, zh | 343–409 | 0 |
-| `profiles/plain/en-GB/manifest.ts` | cs, da, de, es, fi, fr, hi, it, ja, ms, pl, pt, ta, tr, uk, zh | 148–193 | 0 |
-
-## Example missing keys
-
-- `locales/en-GB/editors.ts`: `map.draw.toolbar.actions.title`, `map.draw.toolbar.actions.text`, `map.draw.toolbar.finish.title`, `map.draw.toolbar.finish.text`, `map.draw.toolbar.undo.title`, `map.draw.toolbar.undo.text`, …
-- `locales/en-GB/manifest.ts`: `workflow.rangeCount_one`, `workflow.rangeCount_few`, `workflow.rangeCount_many`, `workflow.rangeCount_other`, `workflow.inferenceFailed`, `workflow.aVRanges`, …
-- `profiles/plain/en-GB/manifest.ts`: `workflow.rangeCount_one`, `workflow.rangeCount_few`, `workflow.rangeCount_many`, `workflow.rangeCount_other`, `workflow.inferenceFailed`, `workflow.aVRanges`, …
+No missing messages or invalid target catalogs found.
 
 ## Re-run
 
