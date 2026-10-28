@@ -47,6 +47,30 @@ export const translatorNotes = {
       placeholders: { count: "Numeric cardinal count; keep this placeholder name unchanged in every plural form." },
     },
   },
+  components: {
+    "provider.editNamed": {
+      context:
+        "Accessible name for the provider edit button. Translate the whole action, preserving the authored provider name.",
+      placeholders: { name: "Authored IIIF provider label; never translate this value." },
+    },
+    "background.summary": {
+      context:
+        "Accessible name for the background task menu. Both numbers can be zero, one or many; the complete sentence must work for all counts.",
+      placeholders: { running: "Number of running tasks.", errors: "Number of failed tasks." },
+    },
+    "tour.nextProgress": {
+      context:
+        "Joyride button label. Keep its single-brace {step} and {steps} tokens intact: Joyride substitutes them after translation, rather than i18next.",
+    },
+    "mdx.linkPreview.open": {
+      context: "Accessible action opening an authored link in a new window.",
+      placeholders: { url: "Authored URL, preserved exactly as text." },
+    },
+    "mdx.toolbar.blockTypes.heading": {
+      context: "Rich-text block style selector, for example Heading 2. The number is the semantic HTML heading level.",
+      placeholders: { level: "Heading level, currently 2 or 3." },
+    },
+  },
   shell: {
     "plugins.loadFailed": {
       context: "An editor plugin failed to load.",

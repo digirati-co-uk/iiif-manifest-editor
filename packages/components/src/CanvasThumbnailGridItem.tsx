@@ -1,3 +1,5 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { useRef } from "react";
 import { useDrag, useDraggableItem, usePress } from "react-aria";
@@ -20,7 +22,8 @@ interface CanvasThumbnailGridItemProps {
   dragState?: any;
   customLabel?: (opts: { className: string }) => React.ReactNode;
 }
-export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
+function CanvasThumbnailGridItemContent(props: CanvasThumbnailGridItemProps) {
+  const t = useTranslations("components");
   const canvas = useCanvas({ id: props.id });
   const { dragProps } = useDrag({
     isDisabled: !props.dragState,
@@ -41,13 +44,10 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         {...(props.onClick ? { type: "button" as const } : {})}
         {...(props.dragState ? dragProps : {})}
         onClick={props.onClick}
-        className={twMerge(
-          "flex w-full flex-col border-0 bg-transparent p-0 text-inherit",
-          props.className,
-        )}
+        className={twMerge("flex w-full flex-col border-0 bg-transparent p-0 text-inherit", props.className)}
         data-canvas-selected={props.selected}
         aria-current={isCurrent ? "true" : undefined}
-        aria-label={props.onClick ? getValue(canvas?.label as any) || "Untitled canvas" : undefined}
+        aria-label={props.onClick ? getValue(canvas?.label as any) || t("empty.untitledCanvas") : undefined}
         {...(props.containerProps || {})}
       >
         <div className="bg-me-gray-100 relative w-full aspect-square group flex-1 overflow-hidden rounded">
@@ -55,7 +55,7 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
             data-canvas-selected={props.active}
             className={cn(
               "border-2 border-transparent  p-1 w-full h-full rounded select-none",
-              props.selected && "border-me-primary-500",
+              props.selected && "border-me-primary-500"
             )}
           >
             <LazyThumbnail />
@@ -69,5 +69,13 @@ export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
         )}
       </Component>
     </CanvasContext>
+  );
+}
+
+export function CanvasThumbnailGridItem(props: CanvasThumbnailGridItemProps) {
+  return (
+    <ComponentI18nProvider>
+      <CanvasThumbnailGridItemContent {...props} />
+    </ComponentI18nProvider>
   );
 }

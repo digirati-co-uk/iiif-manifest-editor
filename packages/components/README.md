@@ -43,3 +43,27 @@ Use React 19. Components that read IIIF resources or editor state need the corre
 - Icons and hooks are exported from the package root.
 
 See the [source exports](https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/packages/components/src) for the complete API and TypeScript definitions.
+
+## Interface language
+
+Package-owned labels use the shared `@manifest-editor/i18n` runtime. Without an
+`EditorI18nProvider`, controls use the built-in English catalog. Wrap components
+in the host's existing provider to share live locale and wording changes; this
+package never creates a second provider instance or reads browser language/storage
+for UI selection. The host explicitly enables optional Dutch catalogs from
+`@manifest-editor/i18n/nl` (see the runtime README).
+
+`CreatorGrid` accepts optional `labelMessage`, and its items accept `titleMessage`
+and `descriptionMessage`. Panel menu items and sidebar tabs accept `labelMessage`;
+`SidebarHeader` and its actions accept `titleMessage`; `IconButton` accepts
+`labelMessage`. These serialisable public message references resolve at render
+time, with the existing string props as legacy fallbacks. Keep stable IDs unchanged.
+
+Caller-supplied children, labels and IIIF `InternationalString` values remain caller
+content. UI locale does not change content languages, caption languages, generated
+resource data or download filenames. Tooltip/modal/toast portals retain the shared
+React context and carry the UI language/direction. React Aria collection, modal
+and toast roots also receive the selected UI locale for dependency instructions.
+
+The module implementation guide records dependency-owned localisation gaps and
+validation evidence; optional catalogs alone do not establish whole-editor coverage.

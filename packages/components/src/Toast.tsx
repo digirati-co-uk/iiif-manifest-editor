@@ -1,3 +1,5 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
+import { EditorI18nScope, useTranslations } from "@manifest-editor/i18n";
 import { useToast, useToastRegion } from "@react-aria/toast";
 import type { QueuedToast, ToastState } from "@react-stately/toast";
 import type { ReactNode, SVGProps } from "react";
@@ -83,9 +85,10 @@ const variantConfig: Record<ToastVariant, VariantConfig> = {
   },
 };
 
-export function ToastRegion({ state, className, "aria-label": ariaLabel = "Notifications" }: ToastRegionProps) {
+function ToastRegionContent({ state, className, "aria-label": ariaLabel }: ToastRegionProps) {
+  const t = useTranslations("components");
   const ref = useRef<HTMLDivElement | null>(null);
-  const { regionProps } = useToastRegion({ "aria-label": ariaLabel }, state, ref);
+  const { regionProps } = useToastRegion({ "aria-label": ariaLabel ?? t("notifications.region") }, state, ref);
   // Portal requires a mounted DOM target — avoid SSR mismatch
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -98,31 +101,30 @@ export function ToastRegion({ state, className, "aria-label": ariaLabel = "Notif
   // not trapped inside any overflow:hidden or transformed ancestor.
   // Wrap in `.manifest-editor` so scoped Tailwind utilities still apply.
   return createPortal(
-    <div className="manifest-editor">
-      <div
-        {...regionProps}
-        ref={ref}
-        className={twMerge(
-          "fixed bottom-5 right-5 z-[10000000] flex w-[calc(100vw-2.5rem)] max-w-sm flex-col gap-2 pointer-events-none sm:w-96",
-          className,
-        )}
-      >
-        {state.visibleToasts.map((toast) => (
-          <ToastItem key={toast.key} toast={toast} state={state} />
-        ))}
+    <EditorI18nScope>
+      <div className="manifest-editor">
+        <div
+          {...regionProps}
+          ref={ref}
+          className={twMerge(
+            "fixed bottom-5 right-5 z-[10000000] flex w-[calc(100vw-2.5rem)] max-w-sm flex-col gap-2 pointer-events-none sm:w-96",
+            className
+          )}
+        >
+          {state.visibleToasts.map((toast) => (
+            <ToastItem key={toast.key} toast={toast} state={state} />
+          ))}
+        </div>
       </div>
-    </div>,
-    document.body,
+    </EditorI18nScope>,
+    document.body
   );
 }
 
 function ToastItem({ toast, state }: { toast: QueuedToast<ToastContent>; state: ToastState<ToastContent> }) {
+  const t = useTranslations("components");
   const ref = useRef<HTMLDivElement | null>(null);
-  const { toastProps, contentProps, titleProps, descriptionProps, closeButtonProps } = useToast(
-    { toast },
-    state,
-    ref,
-  );
+  const { toastProps, contentProps, titleProps, descriptionProps, closeButtonProps } = useToast({ toast }, state, ref);
   const content = toast.content;
   const variant = content.variant ?? "info";
   const config = variantConfig[variant];
@@ -139,15 +141,12 @@ function ToastItem({ toast, state }: { toast: QueuedToast<ToastContent>; state: 
         "data-[animation=exiting]:animate-toast-exit",
         // Focus ring
         "focus-visible:ring-2 focus-visible:ring-me-primary-500 focus-visible:ring-offset-2",
-        config.borderClass,
+        config.borderClass
       )}
     >
       <div className="flex items-start gap-3 px-4 py-3">
         {/* Variant icon */}
-        <config.Icon
-          aria-hidden
-          className={twMerge("mt-0.5 h-4 w-4 shrink-0 text-base", config.iconClass)}
-        />
+        <config.Icon aria-hidden className={twMerge("mt-0.5 h-4 w-4 shrink-0 text-base", config.iconClass)} />
         {/* Content */}
         <div {...contentProps} className="min-w-0 flex-1">
           <div {...titleProps} className="text-sm font-semibold leading-5 text-gray-900">
@@ -177,6 +176,7 @@ function ToastItem({ toast, state }: { toast: QueuedToast<ToastContent>; state: 
         {/* Close button */}
         <Button
           {...closeButtonProps}
+          aria-label={t("actions.close")}
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
         >
           <CloseIcon aria-hidden="true" className="h-3.5 w-3.5" />
@@ -185,10 +185,21 @@ function ToastItem({ toast, state }: { toast: QueuedToast<ToastContent>; state: 
       {/* Timeout progress bar */}
       {toast.timeout ? (
         <div
-          className={twMerge("absolute bottom-0 left-0 h-[2px] w-full origin-left animate-toast-progress opacity-40", config.progressClass)}
+          className={twMerge(
+            "absolute bottom-0 left-0 h-[2px] w-full origin-left animate-toast-progress opacity-40",
+            config.progressClass
+          )}
           style={{ animationDuration: `${toast.timeout}ms` }}
         />
       ) : null}
     </div>
+  );
+}
+
+export function ToastRegion(props: ToastRegionProps) {
+  return (
+    <ComponentI18nProvider>
+      <ToastRegionContent {...props} />
+    </ComponentI18nProvider>
   );
 }

@@ -1,15 +1,25 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
+import { EditorI18nScope, useEditorI18n, type MessageReference } from "@manifest-editor/i18n";
 import { FloatingPortal } from "@floating-ui/react";
 import type { ReactNode } from "react";
-import { ListBox, ListBoxItem } from "react-aria-components";
+import { ListBox, ListBoxItem, Text } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 import { EmptyCanvasIcon } from "./icons/EmptyCanvasIcon";
 import { useTooltip } from "./Tooltip";
 
-export function CreatorGrid(props: { label: string; items: CreatorGridItemProps[]; compact?: boolean }) {
+interface CreatorGridProps {
+  label: string;
+  labelMessage?: MessageReference;
+  items: CreatorGridItemProps[];
+  compact?: boolean;
+}
+
+function CreatorGridContent(props: CreatorGridProps) {
+  const { resolveMessage } = useEditorI18n();
   return (
     <ListBox
       orientation="horizontal"
-      aria-label={props.label}
+      aria-label={resolveMessage(props.labelMessage, props.label)}
       selectionMode="single"
       items={props.items}
       className={twMerge("grid grid-cols-2 gap-2 p-4 sm:grid-cols-3", props.compact && "flex flex-wrap pt-0")}
@@ -23,11 +33,16 @@ export interface CreatorGridItemProps {
   id: string;
   icon: ReactNode;
   title: string;
+  titleMessage?: MessageReference;
   description: string;
+  descriptionMessage?: MessageReference;
   onClick: () => void;
 }
 
 function CreatorGridItem(props: CreatorGridItemProps & { compact?: boolean }) {
+  const { resolveMessage } = useEditorI18n();
+  const title = resolveMessage(props.titleMessage, props.title);
+  const description = resolveMessage(props.descriptionMessage, props.description);
   const tooltip = useTooltip();
   const reference = tooltip.elements.reference;
   const modalRoot =
@@ -38,9 +53,8 @@ function CreatorGridItem(props: CreatorGridItemProps & { compact?: boolean }) {
         {...tooltip.getReferenceProps()}
         ref={tooltip.refs.setReference}
         id={props.id}
-        textValue={props.title}
-        aria-label={props.title}
-        aria-description={props.description}
+        textValue={title}
+        aria-label={title}
         onAction={props.onClick}
         className={($s) =>
           twMerge(
@@ -59,22 +73,35 @@ function CreatorGridItem(props: CreatorGridItemProps & { compact?: boolean }) {
         >
           {props.icon || <EmptyCanvasIcon />}
         </span>
-        <span className="text-sm font-medium">{props.title}</span>
+        <span className="text-sm font-medium">{title}</span>
+        <Text slot="description" className="sr-only">
+          {description}
+        </Text>
       </ListBoxItem>
-      {tooltip.open && props.description ? (
+      {tooltip.open && description ? (
         <FloatingPortal root={modalRoot || undefined}>
-          <div className="manifest-editor">
-            <div
-              ref={tooltip.refs.setFloating}
-              {...tooltip.getFloatingProps()}
-              style={tooltip.floatingStyles}
-              className="pointer-events-none z-50 max-w-xs rounded bg-gray-900 px-3 py-2 text-sm text-white shadow"
-            >
-              {props.description}
+          <EditorI18nScope>
+            <div className="manifest-editor">
+              <div
+                ref={tooltip.refs.setFloating}
+                {...tooltip.getFloatingProps()}
+                style={tooltip.floatingStyles}
+                className="pointer-events-none z-50 max-w-xs rounded bg-gray-900 px-3 py-2 text-sm text-white shadow"
+              >
+                {description}
+              </div>
             </div>
-          </div>
+          </EditorI18nScope>
         </FloatingPortal>
       ) : null}
     </>
+  );
+}
+
+export function CreatorGrid(props: CreatorGridProps) {
+  return (
+    <ComponentI18nProvider>
+      <CreatorGridContent {...props} />
+    </ComponentI18nProvider>
   );
 }

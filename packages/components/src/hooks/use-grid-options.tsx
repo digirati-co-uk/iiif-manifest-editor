@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton } from "../ActionButton";
 import { useLocalStorage } from "./use-local-storage";
 
@@ -7,25 +8,26 @@ export function useGridOptions(
   options: {
     defaultGridSize?: "grid-sm" | "grid-md" | "grid-lg";
     onDark?: boolean;
-  } = {},
+  } = {}
 ) {
+  const t = useTranslations("components");
   const { defaultGridSize = "grid-md", onDark = false } = options;
   const [size, setSize] = useLocalStorage<"grid-sm" | "grid-md" | "grid-lg">(
     name || "default-grid-size",
-    defaultGridSize || "grid-md",
+    defaultGridSize || "grid-md"
   );
 
   const component = (
     <div className="flex gap-2 items-center" id="grid-options">
-      <div className={onDark ? " text-white text-sm" : " text-sm"}>Grid size:</div>
+      <div className={onDark ? " text-white text-sm" : " text-sm"}>{t("grid.size")}</div>
       <ActionButton onDark={onDark} primary={size === "grid-sm"} onPress={() => setSize("grid-sm")}>
-        Small
+        {t("grid.small")}
       </ActionButton>
       <ActionButton onDark={onDark} primary={size === "grid-md"} onPress={() => setSize("grid-md")}>
-        Medium
+        {t("grid.medium")}
       </ActionButton>
       <ActionButton onDark={onDark} primary={size === "grid-lg"} onPress={() => setSize("grid-lg")}>
-        Large
+        {t("grid.large")}
       </ActionButton>
     </div>
   );

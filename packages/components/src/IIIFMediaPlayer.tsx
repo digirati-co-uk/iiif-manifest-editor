@@ -1,15 +1,17 @@
+import { EditorI18nScope, useTranslations } from "@manifest-editor/i18n";
 import "@vidstack/react/player/styles/base.css";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/captions.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 
 import { MediaPlayer, MediaProvider, Poster, Gesture, Track, type MediaPlayerInstance } from "@vidstack/react";
-import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
+import {
+  defaultLayoutIcons,
+  DefaultVideoLayout,
+  type DefaultLayoutTranslations,
+} from "@vidstack/react/player/layouts/default";
 import { getValue } from "@iiif/helpers";
 import { useRef } from "react";
-
-// Things not to forget
-// - Annoucer translations
 
 export interface IIIFMediaPlayerProps {
   canvas: { id: string };
@@ -21,13 +23,71 @@ export interface IIIFMediaPlayerProps {
 }
 
 export function IIIFMediaPlayer(props: IIIFMediaPlayerProps) {
+  const t = useTranslations("components");
+  const translations = {
+    Announcements: t("media.announcements"),
+    Accessibility: t("media.accessibility"),
+    AirPlay: t("media.airPlay"),
+    Audio: t("media.audio"),
+    Auto: t("media.auto"),
+    Boost: t("media.boost"),
+    Captions: t("media.captions"),
+    "Caption Styles": t("media.captionStyles"),
+    "Captions look like this": t("media.captionsLookLikeThis"),
+    Chapters: t("media.chapters"),
+    "Closed-Captions Off": t("media.closedCaptionsOff"),
+    "Closed-Captions On": t("media.closedCaptionsOn"),
+    Connected: t("media.connected"),
+    Continue: t("media.continue"),
+    Connecting: t("media.connecting"),
+    Default: t("media.default"),
+    Disabled: t("media.disabled"),
+    Disconnected: t("media.disconnected"),
+    "Display Background": t("media.displayBackground"),
+    Download: t("media.download"),
+    "Enter Fullscreen": t("media.enterFullscreen"),
+    "Enter PiP": t("media.enterPiP"),
+    "Exit Fullscreen": t("media.exitFullscreen"),
+    "Exit PiP": t("media.exitPiP"),
+    Font: t("media.font"),
+    Family: t("media.family"),
+    Fullscreen: t("media.fullscreen"),
+    "Google Cast": t("media.googleCast"),
+    "Keyboard Animations": t("media.keyboardAnimations"),
+    LIVE: t("media.live"),
+    Loop: t("media.loop"),
+    Mute: t("media.mute"),
+    Normal: t("media.normal"),
+    Off: t("media.off"),
+    Pause: t("media.pause"),
+    Play: t("media.play"),
+    Playback: t("media.playback"),
+    PiP: t("media.piP"),
+    Quality: t("media.quality"),
+    Replay: t("media.replay"),
+    Reset: t("media.reset"),
+    "Seek Backward": t("media.seekBackward"),
+    "Seek Forward": t("media.seekForward"),
+    Seek: t("media.seek"),
+    Settings: t("media.settings"),
+    "Skip To Live": t("media.skipToLive"),
+    Speed: t("media.speed"),
+    Size: t("media.size"),
+    Color: t("media.color"),
+    Opacity: t("media.opacity"),
+    Shadow: t("media.shadow"),
+    Text: t("media.text"),
+    "Text Background": t("media.textBackground"),
+    Track: t("media.track"),
+    Unmute: t("media.unmute"),
+    Volume: t("media.volume"),
+  } satisfies DefaultLayoutTranslations;
   const mediaPlayer = useRef<MediaPlayerInstance>(null);
   const captions = props.captions || [];
   const language = props.language;
   const timeRef = useRef<number>(props.startTime || 0);
 
   return (
-
     <MediaPlayer
       onTimeUpdate={(time) => {
         const newT = Math.round(time.currentTime);
@@ -79,12 +139,15 @@ export function IIIFMediaPlayer(props: IIIFMediaPlayerProps) {
           />
         ) : null}
         <Gestures />
-        <DefaultVideoLayout
-          className="z-1"
-          //
-          noGestures
-          icons={defaultLayoutIcons}
-        />
+        <EditorI18nScope>
+          <DefaultVideoLayout
+            className="z-1"
+            translations={translations}
+            //
+            noGestures
+            icons={defaultLayoutIcons}
+          />
+        </EditorI18nScope>
       </MediaProvider>
     </MediaPlayer>
   );

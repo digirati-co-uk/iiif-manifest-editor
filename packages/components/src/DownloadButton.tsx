@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Button } from "react-aria-components";
 import { DownloadIcon } from "./icons/DownloadIcon";
 import { useId } from "react-aria";
@@ -12,17 +13,19 @@ interface DownloadButtonProps {
 }
 
 export function DownloadButton({ label, id: _id, getData, fileName, fileType }: DownloadButtonProps) {
+  const t = useTranslations("components");
   const id = useId(_id);
+  const displayLabel = label ?? t("actions.download");
   return (
     <Tooltip placement="bottom">
       <TooltipTrigger
         className="bg-me-gray-100 hover:bg-me-primary-500 hover:text-white p-1 rounded-md text-me-primary-500 text-2xl"
-        aria-label={label}
+        aria-label={displayLabel}
         id={id}
         onPress={() => createDownload(getData(), fileName, fileType)}
       >
         <DownloadIcon aria-labelledby={_id} />
-        <DefaultTooltipContent>{label}</DefaultTooltipContent>
+        <DefaultTooltipContent>{displayLabel}</DefaultTooltipContent>
       </TooltipTrigger>
     </Tooltip>
   );

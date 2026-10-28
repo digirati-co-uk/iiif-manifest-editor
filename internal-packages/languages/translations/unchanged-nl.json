@@ -138,5 +138,11 @@
       "source": "Item",
       "reason": "Item is an established Dutch noun for an entry or object, consistent with the plain wording profile."
     }
+  },
+  "locales/en-GB/components.ts": {
+    "icons.manifest": {
+      "source": "manifest",
+      "reason": "The IIIF technical term manifest is also the established Dutch noun; lowercase icon name matches the source."
+    }
   }
 }
