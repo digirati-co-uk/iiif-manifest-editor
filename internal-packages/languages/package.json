@@ -18,6 +18,7 @@
     "./messages": "./src/messages.ts",
     "./pseudo": "./src/pseudo.ts",
     "./translation-files": "./src/translation-files.ts",
+    "./translation-review": "./src/translation-review.ts",
     "./translator-notes": "./src/translator-notes.ts",
     "./catalogs": "./src/catalogs.ts",
     "./locales/en-GB/*": "./src/locales/en-GB/*.ts",
@@ -32,7 +33,8 @@
     "validate": "node scripts/validate.mjs",
     "inventory": "node scripts/generate-module-inventories.mjs",
     "translations:export": "node scripts/export-translations.mjs",
-    "translations:import": "node scripts/import-translation.mjs"
+    "translations:import": "node scripts/import-translation.mjs",
+    "translations:check": "node scripts/check-translation.mjs"
   },
   "devDependencies": {
     "typescript": "catalog:"

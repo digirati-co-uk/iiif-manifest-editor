@@ -28,6 +28,7 @@ From the repository root, use the already-installed tools:
 npm --prefix internal-packages/languages test
 npm --prefix internal-packages/languages run typecheck
 npm --prefix internal-packages/languages run validate
+npm --prefix internal-packages/languages run translations:check
 npm --prefix internal-packages/languages run inventory -- --check
 ```
 
@@ -148,6 +149,8 @@ The initial contract supports nested string catalogs, named `{{variables}}`, car
 ICU/MF2 messages, ordinal plurals, interpolation formatter arguments, arbitrary HTML and executable translation values are **not** supported by this initial validator/type contract. Add support deliberately across authoring, validation, typing and runtime before using them. Optional empty messages require an explicit contract exception and an appropriate runtime `returnEmptyString` policy; the default engine options reject empty output.
 
 Keep one authoritative source per catalog. The current source is TypeScript. The [translator exchange tools](translations/README.md) export ignored JSON review copies and validate incoming JSON before writing a target TypeScript catalog. They do not enable a locale or overwrite source English. Profile/preset overlays and PO/platform-specific exchange still need their own workflow; do not manually maintain a second authoritative copy.
+
+`translations:check` reviews the actual Dutch base and profile/preset catalog files without English fallback. It checks required keys, target-locale plurals, placeholders and missing overlay messages. Text that matches English must have an exact-source terminology review in `translations/unchanged-nl.json`; stale or unused reviews fail. The seed reviews cover borrowed Dutch words, IIIF technical terms and product names, not arbitrary sentences. New or changed source keys require fresh evidence. This gate proves catalog coverage only; migrated callers, natural Dutch wording and state-preserving browser journeys remain separate acceptance requirements.
 
 ## Integration status and remaining work
 
