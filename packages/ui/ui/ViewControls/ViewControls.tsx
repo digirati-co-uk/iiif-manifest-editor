@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { CSSProperties, ReactNode } from "react";
 import { useViewerPreset } from "react-iiif-vault";
 import styled, { css } from "styled-components";
@@ -82,18 +83,19 @@ export function ViewControls({
   extraControls?: ReactNode;
   toggleCreateAnnotation?: () => void;
 }) {
+  const t = useTranslations("ui");
   const preset = useViewerPreset();
 
   return (
     <CanvasViewerControls style={style}>
       <CanvasViewerButton onDoubleClick={refresh} data-control="home" onClick={() => preset?.runtime.world.goHome()}>
-        <HomeIcon title={"Home"} />
+        <HomeIcon title={t("viewer.home")} />
       </CanvasViewerButton>
       <CanvasViewerButton data-control="zoom-out" onClick={() => preset?.runtime.world.zoomTo(1 / 0.75)}>
-        <MinusIcon title={"Zoom out"} />
+        <MinusIcon title={t("viewer.zoomOut")} />
       </CanvasViewerButton>
       <CanvasViewerButton data-control="zoom-in" onClick={() => preset?.runtime.world.zoomTo(0.75)}>
-        <PlusIcon title={"Zoom in"} />
+        <PlusIcon title={t("viewer.zoomIn")} />
       </CanvasViewerButton>
 
       {extraControls}

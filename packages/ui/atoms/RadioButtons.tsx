@@ -23,7 +23,7 @@ export const RadioButtons: React.FC<{
     <div>
       {options.map((item: LabelValue, index: number) => {
         return (
-          <RadioLabel key={item.label}>
+          <RadioLabel key={item.value}>
             <Input
               type="radio"
               checked={selectedIndex === index}

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState, useRef, useEffect } from "react";
 import { CalltoButton } from "../../atoms/Button";
 import { FlexContainer, FlexContainerColumn } from "../layout/FlexContainer";
@@ -11,9 +12,10 @@ import { PaddingComponentSmall } from "../../atoms/PaddingComponent";
 export const ExportToJson: React.FC<{
   close: any;
 }> = ({ close }) => {
+  const t = useTranslations("ui");
   const [selected, setSelected] = useState(0);
 
-  const [copySuccess, setCopySuccess] = useState("");
+  const [copySuccess, setCopySuccess] = useState(false);
   const textAreaRef = useRef(null);
   const manifest = useManifest();
   const collection = useCollection({} as any);
@@ -21,7 +23,7 @@ export const ExportToJson: React.FC<{
   const vault = useVault();
 
   useEffect(() => {
-    setCopySuccess("");
+    setCopySuccess(false);
   }, [selected]);
 
   function copyToClipboard() {
@@ -29,7 +31,7 @@ export const ExportToJson: React.FC<{
 
     if (textAreaRef && textAreaRef.current) {
       navigator.clipboard.writeText(JSON.stringify(man));
-      setCopySuccess("Copied!");
+      setCopySuccess(true);
     }
   }
 
@@ -66,13 +68,13 @@ export const ExportToJson: React.FC<{
   return (
     <>
       <FlexContainerColumn justify={"flex-start"} style={{ flex: 1 }}>
-        {selected === 1 && <WarningMessage>Not all features of IIIF are available in Version 2</WarningMessage>}
+        {selected === 1 && <WarningMessage>{t("export.warning")}</WarningMessage>}
         {resource && (
           <TabPanel
             style={{ width: "unset" }}
             menu={[
               {
-                label: "IIIF Presentation 3",
+                label: t("export.presentation3"),
                 component: (
                   <JSONPreview>
                     <pre>
@@ -82,7 +84,7 @@ export const ExportToJson: React.FC<{
                 ),
               },
               {
-                label: "IIIF Presentation 2",
+                label: t("export.presentation2"),
                 component: (
                   <JSONPreview>
                     <pre>
@@ -99,24 +101,24 @@ export const ExportToJson: React.FC<{
       </FlexContainerColumn>
 
       <FlexContainer style={{ justifyContent: "flex-end" }}>
-        <small>{copySuccess}</small>
+        <output>{copySuccess ? t("clipboard.copied") : null}</output>
         <PaddingComponentSmall />
         <CalltoButton
-          aria-label="copy"
+          aria-label={t("clipboard.copy")}
           onClick={() => {
             copyToClipboard();
           }}
         >
-          COPY TO CLIPBOARD
+          {t("clipboard.copy")}
         </CalltoButton>
         <PaddingComponentSmall />
         <CalltoButton
           onClick={(e: any) => {
             exportToJson(e);
           }}
-          aria-label="download json"
+          aria-label={t("export.download")}
         >
-          DOWNLOAD JSON
+          {t("export.download")}
         </CalltoButton>
       </FlexContainer>
     </>

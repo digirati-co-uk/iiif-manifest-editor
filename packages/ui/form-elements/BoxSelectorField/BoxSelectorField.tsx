@@ -1,6 +1,7 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { BoxSelector } from "@iiif/helpers";
-import { FieldsetContainer, Input, InputContainer, InputLabel } from "@/editors/Input";
-import { FlexContainer, FlexContainerColumn } from "@/components/layout/FlexContainer";
+import { FieldsetContainer, Input, InputContainer, InputLabel } from "../../editors/Input";
+import { FlexContainer, FlexContainerColumn } from "../../components/layout/FlexContainer";
 import { Fragment, ReactNode, useEffect, useRef } from "react";
 
 interface BoxSelectorFieldProps {
@@ -12,6 +13,7 @@ interface BoxSelectorFieldProps {
 }
 
 export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, children }: BoxSelectorFieldProps) {
+  const t = useTranslations("ui");
   const formEl = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
         <input type="hidden" name="selector.type" value="BoxSelector" />
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputContainer>
-            <InputLabel $margin htmlFor="type">
+            <InputLabel $margin htmlFor="selector-x">
               x
             </InputLabel>
             <Input id="selector-x" name="selector.x" type="number" defaultValue={selector.spatial.x} />
@@ -46,16 +48,16 @@ export function BoxSelectorField({ selector, form, onSubmit, inlineFieldset, chi
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputContainer>
-            <InputLabel $margin htmlFor="type">
-              width
+            <InputLabel $margin htmlFor="selector-width">
+              {t("canvas.width")}
             </InputLabel>
             <Input id="selector-width" name="selector.width" type="number" defaultValue={selector.spatial.width} />
           </InputContainer>
         </FlexContainerColumn>
         <FlexContainerColumn style={{ width: "100%", marginRight: "0.4em" }}>
           <InputContainer>
-            <InputLabel $margin htmlFor="selector-y">
-              height
+            <InputLabel $margin htmlFor="selector-height">
+              {t("canvas.height")}
             </InputLabel>
             <Input id="selector-height" name="selector.height" type="number" defaultValue={selector.spatial.height} />
           </InputContainer>

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import React, { useLayoutEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { AppDropdown } from "../../ui/AppDropdown/AppDropdown";
@@ -71,6 +72,7 @@ export const TabPanel: React.FC<{
   selected: number;
   style?: any;
 }> = ({ menu, switchPanel, selected, style }) => {
+  const t = useTranslations("ui");
   const ref = React.useRef<HTMLDivElement>(null);
   const first = React.useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = React.useState(0);
@@ -134,7 +136,7 @@ export const TabPanel: React.FC<{
         })}
         {hidden ? (
           <AppDropdown
-            aria-label="More tabs"
+            aria-label={t("viewer.moreTabs")}
             as={TabMore}
             style={{ marginLeft: "auto", height: "1.5em", width: "1.5em", alignSelf: "center", marginRight: "0.2em" }}
             data-active={menu.length - hidden <= selected}

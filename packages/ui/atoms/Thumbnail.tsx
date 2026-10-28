@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { useThumbnail } from "react-iiif-vault";
 import styled from "styled-components";
@@ -20,6 +21,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
   width,
   height,
 }) => {
+  const t = useTranslations("ui");
   const [error, setError] = useState(false);
 
   const thumb = useThumbnail({
@@ -32,7 +34,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
       <TemplateCardContainer onClick={onClick}>
         <BlockIcon color="grey" />
         <PaddingComponentSmall />
-        No thumbnail
+        {t("thumbnail.empty")}
       </TemplateCardContainer>
     );
   }
@@ -56,7 +58,7 @@ export const Thumbnail: React.FC<{ onClick: () => void; width?: number; height?:
             <TemplateCardNew>
               <TemplateCardPlaceholder />
             </TemplateCardNew>
-            <RecentLabel>ERROR</RecentLabel>
+            <RecentLabel>{t("thumbnail.error")}</RecentLabel>
           </TemplateCardContainer>
         )}
       </ErrorBoundary>

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useManifestEditor } from "@/apps/ManifestEditorLegacy/ManifestEditor.context";
 import { FlexContainer, FlexContainerRow } from "@/components/layout/FlexContainer";
 import { AddIcon } from "@/icons/AddIcon";
@@ -23,6 +24,7 @@ export const GridView: React.FC<{
   canvasIds?: Array<string | Reference>;
   clearCanvases?: () => void;
 }> = ({ handleChange, handleChangeDouble, width, strip, column, canvasIds, clearCanvases }) => {
+  const t = useTranslations("ui");
   const canvases = useCanvasSubset(canvasIds);
   const editorContext = useManifestEditor();
   const onPasteCanvas = usePasteCanvas();
@@ -47,11 +49,11 @@ export const GridView: React.FC<{
                 }}
               />
             )}
-            title="New Canvas"
+            title={t("canvas.new")}
           >
             <AddIcon height={300} color={"white"} />
             <PaddingComponentSmall />
-            Add Canvas
+            {t("canvas.add")}
           </ModalButton>
         </UniversalCopyTarget>
       </GridViewContainer>
@@ -61,9 +63,9 @@ export const GridView: React.FC<{
     <>
       {clearCanvases ? (
         <InfoMessage>
-          You are viewing only a subset of the canvases on this manifest{" "}
+          {t("canvas.subset")}{" "}
           <Button style={{ marginLeft: "1em" }} onClick={clearCanvases}>
-            Show all
+            {t("canvas.showAll")}
           </Button>
         </InfoMessage>
       ) : null}
@@ -98,11 +100,11 @@ export const GridView: React.FC<{
                   }}
                 />
               )}
-              title="New Canvas"
+              title={t("canvas.new")}
             >
               <AddIcon height={300} color={"white"} />
               <PaddingComponentSmall />
-              Add Canvas
+              {t("canvas.add")}
             </ModalButton>
           </>
         )}

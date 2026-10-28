@@ -30,3 +30,18 @@ The consuming toolchain must compile TypeScript/TSX and the relevant styles.
 ## API overview
 
 Subpath exports cover atoms, icons, layout components, modal controls, media controls, and legacy editing widgets. There is no useful root barrel export. See [`package.json`](./package.json) for the supported paths.
+
+## Interface language
+
+Display copy uses the shared `@manifest-editor/i18n` provider. English is the standalone default; hosts opt into Dutch using the public `@manifest-editor/i18n/nl` catalogs. Locale and wording profile changes update mounted controls and open dialogs. Caller-supplied labels/messages and authored IIIF language maps stay caller-owned.
+
+This is a **private source package**, with no publication build or bundler configuration. Publishing consumers must keep `@manifest-editor/i18n` external (including declarations); do not inline its provider/context when bundling these sources. There is no UI-local translation provider or private catalog import. See [module 05](../../internal-packages/languages/implementation/modules/05-ui.md) for the supported entry points, dormant widgets, dependency locale behavior, and validation limitations.
+
+Targeted checks from the repository root, without builds:
+
+```sh
+node packages/ui/node_modules/vitest/vitest.mjs run --config packages/ui/vitest.config.ts
+node node_modules/typescript/bin/tsc --noEmit -p packages/ui/tsconfig.i18n.json
+node node_modules/oxlint/bin/oxlint packages/ui
+npm --prefix internal-packages/languages run translations:check
+```

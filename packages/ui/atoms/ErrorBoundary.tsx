@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import React, { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
@@ -25,9 +26,14 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <h1>Sorry.. there was an error</h1>;
+      return <ErrorFallback />;
     }
 
     return this.props.children;
   }
+}
+
+function ErrorFallback() {
+  const t = useTranslations("ui");
+  return <h1 role="alert">{t("error.title")}</h1>;
 }

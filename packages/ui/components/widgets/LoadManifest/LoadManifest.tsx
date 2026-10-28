@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState, useEffect } from "react";
 import { Input, Submit } from "@/editors/Input";
 import { Button, SecondaryButton } from "@/atoms/Button";
@@ -14,6 +15,7 @@ import { BlockIcon } from "@/icons/BlockIcon";
 import { CloseIcon } from "@/icons/CloseIcon";
 
 export const LoadManifest: React.FC = () => {
+  const t = useTranslations("ui");
   const { createProjectFromManifestId, createBlankManifest } = useProjectCreators();
   const { currentApp, changeApp } = useApps();
   const { current: currentProject } = useProjectContext();
@@ -56,7 +58,7 @@ export const LoadManifest: React.FC = () => {
     <InfoMessage $banner>
       {currentProject?.name}
       <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
-        Continue editing
+        {t("load.continue")}
       </Button>
     </InfoMessage>
   );
@@ -66,7 +68,7 @@ export const LoadManifest: React.FC = () => {
       <FlexContainer>
         <BlockIcon />
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <small>This resource is a collection, please provide a IIIF Manifest.</small>
+          <small>{t("load.collection")}</small>
         </FlexContainer>
       </FlexContainer>
     ) : null;
@@ -79,11 +81,11 @@ export const LoadManifest: React.FC = () => {
       <FlexContainer>
         <BlockIcon />
         <FlexContainerColumn justify={"flex-start"}>
-          <p>This resource is not a manifest.</p>
+          <p>{t("load.notManifest")}</p>
           <small>{inputType}</small>
           <small>{label}</small>
-          <small>{width && `Image width: ${width}`}</small>
-          <small>{height && `Image height: ${height}`}</small>
+          <small>{width && t("load.width", { width })}</small>
+          <small>{height && t("load.height", { height })}</small>
           {imageServiceJSON && <small>{JSON.stringify(imageServiceJSON)}</small>}
         </FlexContainerColumn>
       </FlexContainer>
@@ -92,19 +94,19 @@ export const LoadManifest: React.FC = () => {
   const isValidManifest =
     inputType === "Manifest" && inputType && (currentApp.id === "manifest-editor" || currentApp.id === "splash") ? (
       <div>
-        <TickIcon /> Valid IIIF Manifest
+        <TickIcon /> {t("load.valid")}
       </div>
     ) : (
       <div>
-        <CloseIcon /> Invalid IIIF Manifest
+        <CloseIcon /> {t("load.invalid")}
       </div>
     );
 
   return (
     <FlexContainerColumn justify={"flex-start"} style={{ width: "90%", margin: "auto" }}>
       {currentProject && currentProjectWarning()}
-      <h1>Get started</h1>
-      <p>Load an existing IIIF Manifest</p>
+      <h1>{t("load.start")}</h1>
+      <p>{t("load.existing")}</p>
       <LoadManifestWidget
         onSubmit={(e) => {
           e.preventDefault();
@@ -112,19 +114,19 @@ export const LoadManifest: React.FC = () => {
         }}
       >
         <Input
-          placeholder={"Enter a IIIF manifest URL"}
+          placeholder={t("load.placeholder")}
           onChange={(e: any) => setInputValue(e.target.value)}
           onBlur={handleChange}
           onPaste={handleChange}
         />
         <PaddingComponentSmall />
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <Submit aria-label="add" onClick={handleChange} />
+          <Submit aria-label={t("actions.add")} onClick={handleChange} />
           <PaddingComponentSmall />
-          <p>or</p>
+          <p>{t("load.or")}</p>
           <PaddingComponentSmall />
-          <SecondaryButton aria-label="add" onClick={createBlankManifest}>
-            CREATE NEW
+          <SecondaryButton aria-label={t("actions.add")} onClick={createBlankManifest}>
+            {t("load.create")}
           </SecondaryButton>
         </FlexContainer>
       </LoadManifestWidget>

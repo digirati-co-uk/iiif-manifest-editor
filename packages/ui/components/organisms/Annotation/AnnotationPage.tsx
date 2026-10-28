@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useVault } from "react-iiif-vault";
 import { PaddingComponentSmall } from "@/atoms/PaddingComponent";
 import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/LanguageFieldEditor";
@@ -6,6 +7,7 @@ import { useAnnotationPage } from "@/hooks/useAnnotationPage";
 import { useConfig } from "@/shell";
 
 export const AnnotationPage: React.FC<{ id: string }> = ({ id }) => {
+  const t = useTranslations("ui");
   const annotationPage = useAnnotationPage({ id: id });
   const vault = useVault();
   const { defaultLanguages } = useConfig();
@@ -18,24 +20,24 @@ export const AnnotationPage: React.FC<{ id: string }> = ({ id }) => {
     <>
       <LanguageFieldEditor
         key={annotationPage.id}
-        label={"label"}
+        label={t("annotation.label")}
         fields={annotationPage.label}
         availableLanguages={defaultLanguages}
         onSave={(e: any) => {
           vault.modifyEntityField(
             { id: annotationPage.id, type: "AnnotationPage" },
             "label",
-            e.toInternationalString(),
+            e.toInternationalString()
           );
         }}
         property={"label"}
       />
       <InputLabel>
-        identifier
+        {t("annotation.identifier")}
         <Input key={annotationPage.id} value={annotationPage.id} disabled={true} property={"behavior"} />
       </InputLabel>
       <InputLabel>
-        behavior
+        {t("annotation.behavior")}
         <Input
           key={annotationPage.id}
           value={annotationPage.behavior}

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { AppDropdownItem } from "@/_components/ui/AppDropdown/AppDropdown";
 import { useCreator } from "@/_panels/right-panels/BaseCreator/BaseCreator";
@@ -23,6 +24,7 @@ interface LinkingPropertyListProps {
 }
 
 export function LinkingPropertyList(props: LinkingPropertyListProps) {
+  const t = useTranslations("ui");
   const [canCreate_, actions] = useCreator(props.parent?.source, props.property, props.creationType);
   const [isOpen, setIsOpen] = useState(false);
   const canCreate = props.singleMode ? (props.items || []).length === 0 : canCreate_;
@@ -63,7 +65,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
           createActions={props.createActions}
         />
       </InputContainer>
-      {canCreate ? <Button onClick={() => actions.create()}>Add {props.label}</Button> : null}
+      {canCreate ? <Button onClick={() => actions.create()}>{t("property.add", { label: props.label })}</Button> : null}
     </div>
   );
 }

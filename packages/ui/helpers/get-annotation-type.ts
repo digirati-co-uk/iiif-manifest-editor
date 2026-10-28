@@ -1,3 +1,4 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
 import { RenderingStrategy } from "react-iiif-vault";
 import { parseImageServiceRequest } from "@atlas-viewer/iiif-image-api";
 
@@ -49,4 +50,20 @@ export function getAnnotationType(strategy: RenderingStrategy): [SupportedAnnota
   }
 
   return unsupported;
+}
+
+/** Display-only companion; the legacy tuple and strategy identifiers remain unchanged. */
+export function getAnnotationTypeMessage(strategy: RenderingStrategy): MessageReference {
+  const [, label] = getAnnotationType(strategy);
+  const keys: Record<string, string> = {
+    "Unsupported strategy": "unsupported",
+    "Unsupported multiple images": "multipleImages",
+    "Image with service": "imageWithService",
+    "Image from service": "imageFromService",
+    Image: "image",
+    "Textual content": "text",
+    "AV Resource": "av",
+    "3D Model": "model",
+  };
+  return { namespace: "ui", key: `annotationTypes.${keys[label] || "unsupported"}`, defaultValue: label };
 }
