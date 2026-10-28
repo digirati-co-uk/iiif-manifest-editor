@@ -96,6 +96,8 @@ export function EditorTrans({ reference, fallback, components }: EditorTransProp
   const defaults = safeReference.defaultValue ?? fallback;
   if (defaults !== undefined)
     createCatalogContract({ message: defaults }, { richText: ["message"], allowEmpty: ["message"] });
+  // Trans can parse an absent key as its implicit fallback. Identifiers are never markup.
+  if (/[<>]/.test(safeReference.key)) return <>{runtime.resolveMessage(safeReference, fallback)}</>;
   const richComponents: Record<string, ReactElement> = {};
   for (const [tag, component] of Object.entries(components || {})) {
     if (!/^[A-Za-z][A-Za-z0-9]*$/.test(tag) || tag.toLowerCase().startsWith("i18nvalue"))

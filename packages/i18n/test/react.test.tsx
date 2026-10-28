@@ -312,3 +312,29 @@ it("an optional instance hook preserves actual provider identity and has no stan
   expect(seen).toContain(undefined);
   expect(seen).toContain(runtime);
 });
+
+it("renders a missing rich key as literal text instead of parsing its markup", async () => {
+  const key = '<link href="//evil.example">Injected</link>';
+  const ui = mount(
+    <EditorI18nProvider>
+      <EditorTrans
+        reference={{ namespace: "missing", key }}
+        components={{ link: <a href="https://example.org/trusted">Guide</a> }}
+      />
+    </EditorI18nProvider>
+  );
+  await ui.render();
+  expect(ui.container.textContent).toBe(key);
+  expect(ui.container.querySelector("a")).toBeNull();
+  await ui.render(
+    <EditorI18nProvider>
+      <EditorTrans
+        reference={{ namespace: "missing", key }}
+        fallback="Safe fallback"
+        components={{ link: <a href="https://example.org/trusted">Guide</a> }}
+      />
+    </EditorI18nProvider>
+  );
+  expect(ui.container.textContent).toBe("Safe fallback");
+  expect(ui.container.querySelector("a")).toBeNull();
+});
