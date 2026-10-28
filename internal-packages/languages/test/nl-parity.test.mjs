@@ -65,6 +65,7 @@ import { catalog as nlPlainEditors } from "../src/profiles/plain/nl/editors.ts";
 import { catalog as nlPlainCreators } from "../src/profiles/plain/nl/creators.ts";
 import { catalog as nlPlainManifest } from "../src/profiles/plain/nl/manifest.ts";
 import { catalog as nlPlainExhibition } from "../src/profiles/plain/nl/exhibition.ts";
+import { catalog as nlPlainEditorApi } from "../src/profiles/plain/nl/editor-api.ts";
 import { catalog as nlExhibitionEditors } from "../src/presets/exhibition/nl/editors.ts";
 import { catalog as nlExhibitionPlainEditors } from "../src/presets/exhibition/plain/nl/editors.ts";
 
@@ -75,22 +76,14 @@ const NL_LOCALE = "nl";
 function assertNoParity(nl, en, namespace) {
   const contract = createCatalogContract(en);
   const issues = validateCatalog(nl, contract, { locale: NL_LOCALE });
-  assert.deepEqual(
-    issues,
-    [],
-    `${namespace}: ${issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`
-  );
+  assert.deepEqual(issues, [], `${namespace}: ${issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
 }
 
 function assertOverlayValid(overlay, en, namespace) {
   const contract = createCatalogContract(en);
   // Overlays are deep partials, so complete=false suppresses missing-key errors.
   const issues = validateCatalog(overlay, contract, { locale: NL_LOCALE, complete: false });
-  assert.deepEqual(
-    issues,
-    [],
-    `${namespace} overlay: ${issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`
-  );
+  assert.deepEqual(issues, [], `${namespace} overlay: ${issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
 }
 
 // ── Base catalog parity tests ─────────────────────────────────────────────────
@@ -189,6 +182,10 @@ test("nl plain/exhibition overlay has no unknown keys or wrong placeholders", ()
   assertOverlayValid(nlPlainExhibition, enExhibition, "plain/exhibition");
 });
 
+test("nl plain/editor-api overlay has no unknown keys or wrong placeholders", () => {
+  assertOverlayValid(nlPlainEditorApi, enEditorApi, "plain/editor-api");
+});
+
 test("nl presets/exhibition/editors overlay is valid", () => {
   assertOverlayValid(nlExhibitionEditors, enEditors, "presets/exhibition/editors");
 });
@@ -253,7 +250,10 @@ test("Dutch apostrophe plurals are present for pagina and dia", () => {
   assert.ok(paginas?.includes("pagina's"), `Expected "pagina's" in plain/editors canvas.count_other, got: ${paginas}`);
 
   const diasExhibition = flattenCatalog(nlExhibitionEditors).get("canvas.count_other");
-  assert.ok(diasExhibition?.includes("dia's"), `Expected "dia's" in exhibition/editors canvas.count_other, got: ${diasExhibition}`);
+  assert.ok(
+    diasExhibition?.includes("dia's"),
+    `Expected "dia's" in exhibition/editors canvas.count_other, got: ${diasExhibition}`
+  );
 
   const nlExhibitionFlat = flattenCatalog(nlExhibition);
   const slidePlural = nlExhibitionFlat.get("slide.count_other");

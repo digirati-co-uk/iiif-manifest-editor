@@ -52,3 +52,7 @@ Keep stable IDs, protocol values and authored content outside UI lookups. Public
 ## Handoff
 
 Record migrated directories, reviewed/exempted inventory entries, added semantic IDs, required namespaces and supported locale/profile combinations. Add translator context for placeholders and terminology. Link validation results and outstanding dependency UI to this guide. Mark this task complete only when its acceptance checks pass; seed catalogs alone do not complete a consumer migration.
+
+## API metadata terminology handoff
+
+Module 02 now supplies a plain `editor-api` overlay as well as editor-form wording. When applying exhibition-specific slide terminology, include metadata resource/field labels and the blank layout alongside the editors namespace. Define both preset and preset/plain intersections where necessary so plain Page/Pagina does not override Slide/Dia in an exhibition. Keep protocol types (`Canvas`) and authored content unchanged.

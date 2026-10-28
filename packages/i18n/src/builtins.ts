@@ -21,6 +21,7 @@ import { catalog as plain0 } from "@manifest-editor/languages/profiles/plain/en-
 import { catalog as plain1 } from "@manifest-editor/languages/profiles/plain/en-GB/editors";
 import { catalog as plain2 } from "@manifest-editor/languages/profiles/plain/en-GB/exhibition";
 import { catalog as plain3 } from "@manifest-editor/languages/profiles/plain/en-GB/manifest";
+import { catalog as plainEditorApi } from "@manifest-editor/languages/profiles/plain/en-GB/editor-api";
 import type { ResourceStore } from "./types";
 export const builtinCatalogs: ResourceStore = {
   "en-GB": {
@@ -46,5 +47,5 @@ export const builtinCatalogs: ResourceStore = {
   },
 };
 export const builtinPlain: ResourceStore = {
-  "en-GB": { creators: plain0, editors: plain1, exhibition: plain2, manifest: plain3 },
+  "en-GB": { creators: plain0, editors: plain1, exhibition: plain2, manifest: plain3, "editor-api": plainEditorApi },
 };

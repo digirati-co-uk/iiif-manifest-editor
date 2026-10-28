@@ -18,6 +18,16 @@ export const translatorNotes = {
       context: "Delete the object indicated by the surrounding UI; keep distinct from removing a reference.",
     },
   },
+  "editor-api": {
+    "resources.canvas": {
+      context: "System resource-type heading; never the stored IIIF type or an authored canvas label.",
+      terminology: "Standard: Canvas. Plain: Page/Pagina. Exhibition may use Slide/Dia through its preset overlay.",
+    },
+    "fields.label": {
+      context: "System heading for the IIIF label field.",
+      terminology: "Use Title/Titel in plain wording, consistent with the editors namespace; the property remains label.",
+    },
+  },
   editors: {
     "fields.label": {
       context: "The form label for the IIIF label property, not the authored value of that property.",

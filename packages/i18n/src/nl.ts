@@ -22,6 +22,7 @@ import { catalog as plain0 } from "@manifest-editor/languages/profiles/plain/nl/
 import { catalog as plain1 } from "@manifest-editor/languages/profiles/plain/nl/editors";
 import { catalog as plain2 } from "@manifest-editor/languages/profiles/plain/nl/exhibition";
 import { catalog as plain3 } from "@manifest-editor/languages/profiles/plain/nl/manifest";
+import { catalog as plainEditorApi } from "@manifest-editor/languages/profiles/plain/nl/editor-api";
 import { catalog as exhibition } from "@manifest-editor/languages/presets/exhibition/nl/editors";
 import { catalog as exhibitionPlain } from "@manifest-editor/languages/presets/exhibition/plain/nl/editors";
 import type { ResourceStore } from "./types";
@@ -49,7 +50,7 @@ export const dutchCatalogs: ResourceStore = {
   },
 };
 export const dutchPlain: ResourceStore = {
-  nl: { creators: plain0, editors: plain1, exhibition: plain2, manifest: plain3 },
+  nl: { creators: plain0, editors: plain1, exhibition: plain2, manifest: plain3, "editor-api": plainEditorApi },
 };
 export const dutchExhibition: ResourceStore = { nl: { editors: exhibition } };
 export const dutchExhibitionPlain: ResourceStore = { nl: { editors: exhibitionPlain } };

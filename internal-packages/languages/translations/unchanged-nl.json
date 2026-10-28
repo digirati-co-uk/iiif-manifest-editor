@@ -132,5 +132,11 @@
       "source": "Manifest Editor",
       "reason": "Manifest Editor is the product brand, preserved across locales."
     }
+  },
+  "profiles/plain/en-GB/editor-api.ts": {
+    "resources.manifest": {
+      "source": "Item",
+      "reason": "Item is an established Dutch noun for an entry or object, consistent with the plain wording profile."
+    }
   }
 }

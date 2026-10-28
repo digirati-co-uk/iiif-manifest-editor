@@ -112,3 +112,9 @@ The strict Dutch translation gate reviewed the expanded catalog individually: `h
 ## Parent integration validation
 
 Removed the redundant `EditorInstance.ref()` method: `BaseEditor.ref` already provides the same bound implementation and return type. This resolves the pre-existing TS2425 property/method conflict without changing reference values or bindings. Full editor-api no-emit typecheck, 27 editor-api tests and targeted lint now pass. No package build was run.
+
+## Plain wording integration
+
+Typed English/Dutch `editor-api` overlays now align metadata labels with the existing plain editor profile: Manifest/Canvas/Range become Item/Page/Section (Item/Pagina/Sectie), label/summary become Title/Description (Titel/Beschrijving), and navigation date/required statement use the same plain field labels as the forms. The blank layout and relevant behavior headings follow page/item/section terminology. Technical IIIF documentation retains the original concepts.
+
+The public runtime loads the English overlay by default when plain wording is selected; its optional Dutch store includes the Dutch counterpart. The editor-api vault test now switches both language and profile, verifies live metadata labels and restores standard wording, while asserting exported IIIF and behavior values are unchanged. The standard catalog remains unchanged. Consumer migrations must resolve the metadata references rather than caching their source labels.

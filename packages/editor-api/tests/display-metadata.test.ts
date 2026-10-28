@@ -14,6 +14,7 @@ import { creativeCommons, type CCDefinition } from "../src/meta/rights";
 import type { DisplayMessageReference } from "../src/meta/display";
 import { resources } from "../src/meta/resources";
 import { createEditorI18n, defaultLocales, dutchLocale } from "../../i18n/src/runtime";
+import { dutchPlain } from "../../i18n/src/nl";
 import type { MessageReference } from "../../i18n/src/types";
 import { catalog as en } from "../../../internal-packages/languages/src/locales/en-GB/editor-api";
 import { catalog as nl } from "../../../internal-packages/languages/src/locales/nl/editor-api";
@@ -25,6 +26,7 @@ function runtime() {
     locales: [...defaultLocales, dutchLocale],
     config: { availableLocales: ["en-GB", "nl"] },
     catalogs: { "en-GB": { "editor-api": en }, nl: { "editor-api": nl } },
+    profiles: { plain: dutchPlain },
     requiredNamespaces: ["editor-api"],
   });
 }
@@ -109,6 +111,18 @@ describe("deferred system display metadata", () => {
       nl.documentation.descriptive.navDate
     );
     expect(i18n.resolveMessage(creativeCommons[1]!.descriptionMessage)).toBe(nl.rights.attribution.description);
+    await i18n.setProfile("plain");
+    expect(i18n.resolveMessage(resourceLabels.Canvas.labelMessage)).toBe("Pagina");
+    expect(i18n.resolveMessage(resourceLabels.Range.labelMessage)).toBe("Sectie");
+    expect(i18n.resolveMessage(propertyLabels.label.labelMessage)).toBe("Titel");
+    expect(i18n.resolveMessage(canvasLayouts.find((layout) => layout.id === "blank")!.labelMessage)).toBe(
+      "Lege pagina"
+    );
+    await i18n.setLocale("en-GB");
+    expect(i18n.resolveMessage(resourceLabels.Canvas.labelMessage)).toBe("Page");
+    expect(i18n.resolveMessage(propertyLabels.navDate.labelMessage)).toBe("Date for sorting");
+    await i18n.setProfile("standard");
+    expect(i18n.resolveMessage(resourceLabels.Canvas.labelMessage)).toBe("Canvas");
     expect(editor.technical.behavior.get()).toEqual(["paged"]);
     expect(editor.descriptive.rights.getDefinition()).toBe(creativeCommons[1]);
     expect(vault.toPresentation3({ id, type: "Manifest" })).toEqual(before);

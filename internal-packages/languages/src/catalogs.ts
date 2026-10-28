@@ -53,6 +53,7 @@ export async function createBuiltinRegistry(namespaces: readonly BuiltinNamespac
 }
 
 const plainLoaders: Partial<Record<BuiltinNamespace, () => Promise<Catalog>>> = {
+  "editor-api": () => import("./profiles/plain/en-GB/editor-api.ts").then((module) => module.catalog),
   editors: () => import("./profiles/plain/en-GB/editors.ts").then((module) => module.catalog),
   creators: () => import("./profiles/plain/en-GB/creators.ts").then((module) => module.catalog),
   manifest: () => import("./profiles/plain/en-GB/manifest.ts").then((module) => module.catalog),
