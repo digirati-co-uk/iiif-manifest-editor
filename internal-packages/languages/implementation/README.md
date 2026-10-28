@@ -33,7 +33,7 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | 22 | [Storybook localisation coverage](modules/22-storybook.md) | Pending | story titles stay developer-facing unless explicitly needed |
 | 23 | [End to end localisation acceptance](modules/23-playwright.md) | Pending | no catalog ownership |
 | 24 | [Client vault language boundary](modules/24-client-vault.md) | Pending | none by default |
-| 25 | [Server vault language boundary](modules/25-server-vault.md) | Pending | none by default |
+| 25 | [Server vault language boundary](modules/25-server-vault.md) | Reviewed; remains language-neutral | none |
 | 26 | [Preview server and external viewer boundary](modules/26-iiif-preview-server.md) | Pending | preview-owned UI only if present |
 | 27 | [Integration and translation contributor documentation](modules/27-docs.md) | Pending | documentation localisation is a separate scope |
 | 28 | [Shared TypeScript configuration compatibility](modules/28-typescript-config.md) | Pending | none |
