@@ -6,38 +6,38 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 
 ## Task index
 
-| Order | Module or task | State | Namespace ownership |
-| --- | --- | --- | --- |
-| 00 | [Language catalog foundation](modules/00-languages.md) | Implemented foundation; seed coverage only | all built-in namespaces |
-| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Reviewed runtime; parent regression fixes pass; release checks pending | runtime contract; no messages owned |
-| 02 | [Editor API display metadata](modules/02-editor-api.md) | Implemented contracts and English/Dutch catalogs; consumer migration pending | editor-api |
-| 03 | [Creator API message contracts](modules/03-creator-api.md) | Implemented contracts; form consumers pending | creator-api |
-| 04 | [Shared component messages and accessibility](modules/04-components.md) | First-party migrated; dependency gaps and browser acceptance pending | components and common |
-| 05 | [UI package and duplicate widget audit](modules/05-ui.md) | Supported controls migrated; integrated Dutch/browser acceptance pending | ui and common |
-| 06 | [Shell configuration and definition integration](modules/06-shell.md) | Pending | shell and common |
-| 07 | [Shared property editors and forms](modules/07-editors.md) | Pending | editors and common |
-| 08 | [Resource creator forms](modules/08-creators.md) | Pending | creators and common |
-| 09 | [Project and draft controls](modules/09-projects.md) | Migrated and reviewed; dependency typechecks/browser acceptance pending | projects and common |
-| 10 | [Manifest preset workflows](modules/10-manifest-preset.md) | Pending | manifest plus shared namespaces |
-| 11 | [Collection preset workflows](modules/11-collection-preset.md) | Pending | collection plus shared namespaces |
-| 12 | [Exhibition presets and terminology](modules/12-exhibition-preset.md) | Pending | exhibition plus editors overlays |
-| 13 | [Annotations plugin](modules/13-plugin-annotations.md) | Pending | plugin-annotations |
-| 14 | [Canvas label generator plugin](modules/14-plugin-canvas-label-generator.md) | Pending | plugin-canvas-label-generator |
-| 15 | [OCR classification plugin](modules/15-plugin-ocr-classification.md) | Pending | plugin-ocr-classification |
-| 16 | [Docling OCR plugin](modules/16-plugin-ocr-docling.md) | Pending | plugin-ocr-docling |
-| 17 | [Specifications plugin](modules/17-plugin-specifications.md) | Pending | plugin-specifications |
-| 18 | [Content translation plugin interface](modules/18-plugin-translation.md) | Pending | plugin-translation |
-| 19 | [Public editor facade and browser distribution](modules/19-manifest-editor.md) | Pending | facade-owned messages use shell/common or a dedicated reviewed namespace |
-| 20 | [Web host locale preferences and application UI](modules/20-web.md) | Pending | web plus reusable editor namespaces |
-| 21 | [Vite external integration example](modules/21-vite-example.md) | Pending | example-owned text, optional; editor messages stay in their owners |
-| 22 | [Storybook localisation coverage](modules/22-storybook.md) | Pending | story titles stay developer-facing unless explicitly needed |
-| 23 | [End to end localisation acceptance](modules/23-playwright.md) | Pending | no catalog ownership |
-| 24 | [Client vault language boundary](modules/24-client-vault.md) | Reviewed; remains language-neutral | none |
-| 25 | [Server vault language boundary](modules/25-server-vault.md) | Reviewed; remains language-neutral | none |
-| 26 | [Preview server and external viewer boundary](modules/26-iiif-preview-server.md) | Pending | preview-owned UI only if present |
-| 27 | [Integration and translation contributor documentation](modules/27-docs.md) | Pending | documentation localisation is a separate scope |
-| 28 | [Shared TypeScript configuration compatibility](modules/28-typescript-config.md) | Source compatibility verified; emitted artifacts pending | none |
-| 29 | [Catalog quality gates and publishing](modules/29-release-and-ci.md) | Pending | validation and ownership policy |
+| Order | Module or task                                                                   | State                                                                                                  | Namespace ownership                                                      |
+| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| 00    | [Language catalog foundation](modules/00-languages.md)                           | Implemented foundation; seed coverage only                                                             | all built-in namespaces                                                  |
+| 01    | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md)      | Reviewed runtime; parent regression fixes pass; release checks pending                                 | runtime contract; no messages owned                                      |
+| 02    | [Editor API display metadata](modules/02-editor-api.md)                          | Implemented contracts and English/Dutch catalogs; consumer migration pending                           | editor-api                                                               |
+| 03    | [Creator API message contracts](modules/03-creator-api.md)                       | Implemented contracts; form consumers pending                                                          | creator-api                                                              |
+| 04    | [Shared component messages and accessibility](modules/04-components.md)          | First-party and browser/media/source dependencies migrated; consumer wiring/browser acceptance pending | components and common                                                    |
+| 05    | [UI package and duplicate widget audit](modules/05-ui.md)                        | Supported controls migrated; integrated Dutch/browser acceptance pending                               | ui and common                                                            |
+| 06    | [Shell configuration and definition integration](modules/06-shell.md)            | Migrated with host/plugin regression fixes; integrated review/release checks pending                   | shell and common                                                         |
+| 07    | [Shared property editors and forms](modules/07-editors.md)                       | First-party forms migrated; map/viewer dependency and browser gates pending                            | editors and common                                                       |
+| 08    | [Resource creator forms](modules/08-creators.md)                                 | Pending                                                                                                | creators and common                                                      |
+| 09    | [Project and draft controls](modules/09-projects.md)                             | Migrated and reviewed; dependency typechecks/browser acceptance pending                                | projects and common                                                      |
+| 10    | [Manifest preset workflows](modules/10-manifest-preset.md)                       | Pending                                                                                                | manifest plus shared namespaces                                          |
+| 11    | [Collection preset workflows](modules/11-collection-preset.md)                   | Pending                                                                                                | collection plus shared namespaces                                        |
+| 12    | [Exhibition presets and terminology](modules/12-exhibition-preset.md)            | Pending                                                                                                | exhibition plus editors overlays                                         |
+| 13    | [Annotations plugin](modules/13-plugin-annotations.md)                           | Pending                                                                                                | plugin-annotations                                                       |
+| 14    | [Canvas label generator plugin](modules/14-plugin-canvas-label-generator.md)     | Pending                                                                                                | plugin-canvas-label-generator                                            |
+| 15    | [OCR classification plugin](modules/15-plugin-ocr-classification.md)             | Pending                                                                                                | plugin-ocr-classification                                                |
+| 16    | [Docling OCR plugin](modules/16-plugin-ocr-docling.md)                           | Pending                                                                                                | plugin-ocr-docling                                                       |
+| 17    | [Specifications plugin](modules/17-plugin-specifications.md)                     | Pending                                                                                                | plugin-specifications                                                    |
+| 18    | [Content translation plugin interface](modules/18-plugin-translation.md)         | Pending                                                                                                | plugin-translation                                                       |
+| 19    | [Public editor facade and browser distribution](modules/19-manifest-editor.md)   | Pending                                                                                                | facade-owned messages use shell/common or a dedicated reviewed namespace |
+| 20    | [Web host locale preferences and application UI](modules/20-web.md)              | Stable SSR preferences/site/browser headers implemented; remaining web UI pending                      | web plus reusable editor namespaces                                      |
+| 21    | [Vite external integration example](modules/21-vite-example.md)                  | Pending                                                                                                | example-owned text, optional; editor messages stay in their owners       |
+| 22    | [Storybook localisation coverage](modules/22-storybook.md)                       | Pending                                                                                                | story titles stay developer-facing unless explicitly needed              |
+| 23    | [End to end localisation acceptance](modules/23-playwright.md)                   | Pending                                                                                                | no catalog ownership                                                     |
+| 24    | [Client vault language boundary](modules/24-client-vault.md)                     | Reviewed; remains language-neutral                                                                     | none                                                                     |
+| 25    | [Server vault language boundary](modules/25-server-vault.md)                     | Reviewed; remains language-neutral                                                                     | none                                                                     |
+| 26    | [Preview server and external viewer boundary](modules/26-iiif-preview-server.md) | Pending                                                                                                | preview-owned UI only if present                                         |
+| 27    | [Integration and translation contributor documentation](modules/27-docs.md)      | Pending                                                                                                | documentation localisation is a separate scope                           |
+| 28    | [Shared TypeScript configuration compatibility](modules/28-typescript-config.md) | Source compatibility verified; emitted artifacts pending                                               | none                                                                     |
+| 29    | [Catalog quality gates and publishing](modules/29-release-and-ci.md)             | Pending                                                                                                | validation and ownership policy                                          |
 
 ## How to use a module guide
 
@@ -49,17 +49,17 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 
 ## Package source modules already implemented
 
-| Source module | Responsibility | Remaining integration |
-| --- | --- | --- |
-| schema.ts | Plain catalog/resource/reference contracts and safe shapes | Promote public contract shapes through the public runtime without private declaration imports. |
-| messages.ts and catalog-types.ts | Typed IDs, inferred interpolation values and serialisable references | Add references to definition contracts and resolve them in UI consumers. |
-| validation.ts | Catalog syntax/placeholder/plural checks and strict namespace coverage | Add CI and deployment availability gates after runtime integration. |
-| composition.ts | Immutable per-locale priority layers | Feed actual inherited preset/plugin/host layers from shell. |
-| selection.ts | Host/preset restrictions, preference negotiation, direction and engine options | Wire persistence, SSR and the UI picker in host/runtime. |
-| loaders.ts | Namespace ownership, lazy cache/retry, latest-load staging | Bridge lifecycle/subscriptions/errors into React; add optional cancellation if useful. |
-| pseudo.ts | Long-text QA catalogs preserving syntax | Add visual/interaction QA in Storybook and Playwright. |
-| catalogs.ts and catalog files | English seeds, partial plain profile and exhibition examples | Review and complete messages module by module; add real translated locales. |
-| translation-files.ts and translator-notes.ts | Validated JSON exchange, safe TypeScript data generation and translator context | Extend notes with migrated messages and add profile/preset/platform exchange where needed. |
+| Source module                                | Responsibility                                                                  | Remaining integration                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| schema.ts                                    | Plain catalog/resource/reference contracts and safe shapes                      | Promote public contract shapes through the public runtime without private declaration imports. |
+| messages.ts and catalog-types.ts             | Typed IDs, inferred interpolation values and serialisable references            | Add references to definition contracts and resolve them in UI consumers.                       |
+| validation.ts                                | Catalog syntax/placeholder/plural checks and strict namespace coverage          | Add CI and deployment availability gates after runtime integration.                            |
+| composition.ts                               | Immutable per-locale priority layers                                            | Feed actual inherited preset/plugin/host layers from shell.                                    |
+| selection.ts                                 | Host/preset restrictions, preference negotiation, direction and engine options  | Wire persistence, SSR and the UI picker in host/runtime.                                       |
+| loaders.ts                                   | Namespace ownership, lazy cache/retry, latest-load staging                      | Bridge lifecycle/subscriptions/errors into React; add optional cancellation if useful.         |
+| pseudo.ts                                    | Long-text QA catalogs preserving syntax                                         | Add visual/interaction QA in Storybook and Playwright.                                         |
+| catalogs.ts and catalog files                | English seeds, partial plain profile and exhibition examples                    | Review and complete messages module by module; add real translated locales.                    |
+| translation-files.ts and translator-notes.ts | Validated JSON exchange, safe TypeScript data generation and translator context | Extend notes with migrated messages and add profile/preset/platform exchange where needed.     |
 
 ## Inventory maintenance
 

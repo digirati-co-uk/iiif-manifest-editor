@@ -88,3 +88,7 @@ The exact unchanged diagnostic families are:
 - [x] Real date-picker accessible names, calendar navigation and validation are translated; Date callbacks/storage semantics are preserved.
 - [x] Strict full English/Dutch editor catalogs and plain overlays pass review, with whole plural messages.
 - [ ] Integrated browser, full upstream map/viewer/dependency accessibility copy and publication verification. Do not mark whole module/application UI complete until these gates pass.
+
+## Parent integration evidence
+
+Integrated with shell06 and component dependency adapters. Parent reran all **45 editor tests**, the components suite and strict Dutch gate (**1555 required combined messages**, zero missing/unreviewed English copies). The running-app English create/edit/metadata/preview journey passes. Two host SSR/header checks fail after dependency installation because ProseMirror's `gapcursor` selection registers twice during Turbopack server-module evaluation (HTTP500); that unresolved integration issue prevents a current whole-browser acceptance claim. The server remains running and untouched. Cross-module review, actual Dutch editor/Atlas state checks and the map/shape dependency gaps above remain open.

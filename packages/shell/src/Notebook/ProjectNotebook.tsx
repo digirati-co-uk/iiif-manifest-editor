@@ -1,7 +1,7 @@
 import { useTranslations } from "@manifest-editor/i18n";
 /* eslint-disable next/no-img-element -- External IIIF thumbnails in a shared React library. */
 import { getValue } from "@iiif/helpers";
-import { BackgroundActionMenuButton, IIIFBrowserIcon } from "@manifest-editor/components";
+import { BackgroundActionMenuButton, IIIFBrowserIcon, IIIFBrowserI18nProvider } from "@manifest-editor/components";
 import { useManifest } from "react-iiif-vault";
 import styled from "styled-components";
 import type { IIIFBrowserProps } from "iiif-browser";
@@ -164,16 +164,18 @@ export function ProjectNotebookPanel() {
         </div>
         <div className="min-h-0 flex-1">
           {noteId ? (
-            <SidebarNotebook
-              notebook={notebook}
-              projectId={projectId}
-              noteId={noteId}
-              height="100%"
-              defaultSidebarCollapsed
-              className="manifest-project-notebook"
-              browserProps={{ vault }}
-              onOpenResource={onOpenResource}
-            />
+            <IIIFBrowserI18nProvider>
+              <SidebarNotebook
+                notebook={notebook}
+                projectId={projectId}
+                noteId={noteId}
+                height="100%"
+                defaultSidebarCollapsed
+                className="manifest-project-notebook"
+                browserProps={{ vault }}
+                onOpenResource={onOpenResource}
+              />
+            </IIIFBrowserI18nProvider>
           ) : null}
         </div>
       </div>

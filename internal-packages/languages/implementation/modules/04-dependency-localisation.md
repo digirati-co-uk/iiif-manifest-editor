@@ -88,7 +88,9 @@ coverage is claimed.
 
 ```tsx
 import {
-  LocalizedIIIFBrowser, useIIIFBrowserI18n, IIIFBrowserI18nProvider,
+  LocalizedIIIFBrowser,
+  useIIIFBrowserI18n,
+  IIIFBrowserI18nProvider,
   useMediaTimeTranslations,
 } from "@manifest-editor/components";
 
@@ -98,10 +100,14 @@ const i18n = useIIIFBrowserI18n();
 <IIIFBrowser {...browserProps} i18n={i18n} />;
 
 // A plugin host needs context around both its browser and sibling image-options UI.
-<IIIFBrowserI18nProvider><MyRichEditor /></IIIFBrowserI18nProvider>;
+<IIIFBrowserI18nProvider>
+  <MyRichEditor />
+</IIIFBrowserI18nProvider>;
 
 const uiTime = useMediaTimeTranslations();
-<MediaPlayer uiTime={uiTime} lang={contentLanguage}>{children}</MediaPlayer>;
+<MediaPlayer uiTime={uiTime} lang={contentLanguage}>
+  {children}
+</MediaPlayer>;
 ```
 
 The components `MDXEditor` and `IIIFMediaPlayer` already wire these adapters.
@@ -146,3 +152,11 @@ Patch source maps retain upstream locations. No package build/publication artifa
 external installed SDK, dependency rebuild, upstream publication, push or PR is
 claimed verified. Hosted installs apply the maintained patches; external consumers
 need equivalent upstream APIs or the patches and MDX dependency extension.
+
+## Parent integration evidence
+
+Integrated both commits with shell and editors. Frozen scripts-disabled installation passes. Parent reran **16 component tests**, the **one production Vidstack test**, components no-emit check and strict Dutch validation: **1555 required messages, zero missing/unreviewed English copies** across the combined catalogs. This is declared catalog coverage only.
+
+Shell's ProjectNotebookPanel now wraps the notebook host in `IIIFBrowserI18nProvider`, so its browser and sibling image-options dialogs inherit the effective runtime. Independent notebook commands remain an open dependency surface. Creator, collection and web direct browsers remain assigned to their consumer modules.
+
+The existing Chromium create/edit/metadata/preview journey passes after integration. Both SSR/header tests currently fail on HTTP 500 with `Duplicate use of selection JSON ID gapcursor` in Turbopack's ProseMirror module evaluation after dependency installation; client hydration can still display the translated header. Root cause and clean-server verification remain unresolved. No server restart, cache deletion, dependency global guard or disabled SSR workaround was used. Earlier three-test browser success was before this dependency integration and is not a current combined acceptance result.
