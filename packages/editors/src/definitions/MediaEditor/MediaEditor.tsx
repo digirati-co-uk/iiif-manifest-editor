@@ -1,4 +1,7 @@
-import { targetPaintingImageRegion } from "@manifest-editor/editor-api";
+import type { MessageReference } from "@manifest-editor/i18n";
+import { useDisplayLabel } from "../../i18n";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { propertyLabels, targetPaintingImageRegion } from "@manifest-editor/editor-api";
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { ImageService } from "@iiif/presentation-3";
 import { useCustomContextMenu, useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
@@ -22,6 +25,7 @@ import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
 import { MediaTargetEditor } from "./MediaTargetEditor";
 
 function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
+  const t = useTranslations("editors");
   return (
     <div className="video-container3">
       <style>
@@ -42,7 +46,7 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
           `}
       </style>
       <iframe
-        title="YouTube video player"
+        title={t("ui.youtubeVideoPlayer")}
         className="video-yt3"
         src={`https://www.youtube.com/embed/${youTubeId}?enablejsapi=1&origin=${window.location.host}&modestbranding=1&rel=0`}
         // @ts-expect-error
@@ -55,12 +59,16 @@ function EmbedYoutube({ youTubeId }: { youTubeId: string }) {
 
 export interface MediaEditorSection {
   label: string;
+  labelMessage?: MessageReference;
   initialOpen?: boolean;
   children: ReactNode;
 }
 
 export function MediaEditor({ additionalSections = [] }: { additionalSections?: MediaEditorSection[] } = {}) {
+  const t = useTranslations("editors");
+  const { locale, profile } = useEditorI18n();
   // This is for an annotation
+  const apiLabel = useDisplayLabel();
   const vault = useVault();
   const annotationEditor = useEditor();
   const resourceRef = annotationEditor.annotation.body.getFirst();
@@ -115,7 +123,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
               width: dimensions.width,
               height: dimensions.height,
             },
-            0.6,
+            0.6
           );
 
           target.setPosition(imagePosition);
@@ -145,7 +153,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
           width: width.get(),
           height: height.get(),
         },
-        0.6,
+        0.6
       );
 
       target.setPosition(imagePosition);
@@ -154,19 +162,19 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
 
   useCustomContextMenu(
     {
-      sectionTitle: "Painting annotation",
+      sectionTitle: t("messages.paintingAnnotation"),
       resource: annotationEditor.ref(),
       items: currentTarget?.selector
         ? []
         : [
             {
               id: "target-region",
-              label: "Target specific region",
+              label: t("ui.targetSpecificRegion"),
               onAction: moveAndResizeImage,
             },
           ],
     },
-    [currentTarget?.selector],
+    [currentTarget?.selector, locale, profile]
   );
 
   // VideoYouTubeHTML
@@ -175,14 +183,14 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
     <>
       <LanguageFieldEditor
         focusId={label.focusId()}
-        label={"Label"}
+        label={apiLabel(propertyLabels.label)!}
         fields={label.get()}
         onSave={(e: any) => label.set(e.toInternationalString())}
       />
 
       <LanguageFieldEditor
         focusId={summary.focusId()}
-        label={"Summary"}
+        label={apiLabel(propertyLabels.summary)!}
         disallowHTML={false}
         fields={summary.get()}
         onSave={(e: any) => summary.set(e.toInternationalString())}
@@ -205,24 +213,24 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
 
       <InputContainer $wide>
         <InputLabel $margin htmlFor={type.focusId()}>
-          Type
+          {apiLabel(propertyLabels.type)!}
         </InputLabel>
         <Input
           id={type.focusId()}
           value={type.get()}
-          placeholder={"Image, sound etc"}
+          placeholder={t("messages.imageTypeExample")}
           onChange={(e: any) => type.set(e.target.value)}
         />
       </InputContainer>
 
       <InputContainer $wide>
         <InputLabel $margin htmlFor={format.focusId()}>
-          Format
+          {apiLabel(propertyLabels.format)!}
         </InputLabel>
         <Input
           id={format.focusId()}
           value={format.get()}
-          placeholder={"jpg, png etc."}
+          placeholder={t("ui.jpgPngEtc")}
           onChange={(e: any) => format.set(e.target.value)}
         />
       </InputContainer>
@@ -234,7 +242,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
   const services = serviceList.length ? (
     <>
       <ServiceContainer>
-        <InputLabel>Services</InputLabel>
+        <InputLabel>{apiLabel(propertyLabels.services)!}</InputLabel>
         {serviceList.map((service: any, key) => (
           <RichMediaLink
             key={key}
@@ -243,7 +251,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
               // edit(service, { parent: resourceEditor.ref(), property: "service", index: key });
             }}
             link={service.id || service["@id"]}
-            title={service.type || service["@type"] || "Unknown service"}
+            title={service.type || service["@type"] || t("messages.unknownService")}
             label={parseServiceProfile(service.profile)}
           />
         ))}
@@ -255,7 +263,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
     <>
       {canvas && !currentTarget.selector ? (
         <InputContainer $wide>
-          <InputLabel $margin>Target</InputLabel>
+          <InputLabel $margin>{apiLabel(propertyLabels.target)!}</InputLabel>
           <div
             style={{
               border: "1px solid #ddd",
@@ -264,10 +272,10 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
               color: "#999",
             }}
           >
-            This image fills the whole Canvas.
+            {t("ui.thisImageFillsTheWholeCanvas")}
           </div>
           <ButtonGroup $right>
-            <Button onClick={moveAndResizeImage}>Change</Button>
+            <Button onClick={moveAndResizeImage}>{t("ui.change")}</Button>
           </ButtonGroup>
         </InputContainer>
       ) : null}
@@ -288,32 +296,32 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
       <Accordion
         items={[
           {
-            label: "Descriptive",
+            label: t("ui.descriptive"),
             initialOpen: Object.keys(label.get() || {}).length !== 0 || Object.keys(summary.get() || {}).length !== 0,
             children: descriptive,
           },
           {
-            label: "Media information",
+            label: t("ui.mediaInformation"),
             initialOpen: true,
             children: media,
           },
           {
-            label: "Services",
+            label: apiLabel(propertyLabels.services)!,
             children: services,
           },
           {
-            label: "Target",
+            label: apiLabel(propertyLabels.target)!,
             initialOpen: currentSelector !== null,
             children: targetElements,
           },
-          ...additionalSections,
+          ...additionalSections.map((section) => ({ ...section, label: apiLabel(section) || section.label })),
         ]}
       />
 
       {annotationEditor.context ? (
         <DeleteButton
-          label="Remove from canvas"
-          message="Are you sure you want to remove from canvas"
+          label={t("ui.removeFromCanvas")}
+          message={t("messages.removeFromCanvasConfirm")}
           onDelete={() => {
             annotationEditor.context?.removeFromParent();
             edit(annotationEditor.ref());

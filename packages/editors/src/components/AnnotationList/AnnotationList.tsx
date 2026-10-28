@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { isSpecificResource } from "@iiif/parser";
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
 import { EmptyState } from "@manifest-editor/components";
@@ -20,13 +21,14 @@ interface AnnotationListProps {
 }
 
 export function AnnotationList(props: AnnotationListProps) {
+  const t = useTranslations("editors");
   const store = useAtlasStore();
   const viewport = useStore(store, (s) => (props.canvasId ? s.canvasViewports[props.canvasId] : null));
 
   if (props.list.length === 0) {
     return (
       <EmptyState $noMargin $box>
-        No {props.isMedia ? "media" : "annotations"}
+        {props.isMedia ? t("messages.noMedia") : t("ui.noAnnotations")}
       </EmptyState>
     );
   }

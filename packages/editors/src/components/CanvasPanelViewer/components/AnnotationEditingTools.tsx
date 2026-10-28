@@ -1,3 +1,4 @@
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
 import { IconButton } from "@manifest-editor/components";
 import { useAtlasStore, useSvgTools } from "@manifest-editor/shell";
 import { useStore } from "zustand";
@@ -16,6 +17,8 @@ import {
 } from "./SVGIcons";
 
 export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?: boolean }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const store = useAtlasStore();
   const tool = useStore(store, (s) => s.tool);
   const mode = useStore(store, (s) => s.mode);
@@ -31,19 +34,19 @@ export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?
   return (
     <div className="animate-fadeIn absolute bottom-3 left-0 right-0 z-30 flex w-full items-center justify-center gap-5 pointer-events-none">
       <div className="rounded-lg bg-white flex p-1.5 shadow gap-1.5 pointer-events-auto">
-        <IconButton onPress={() => changeMode("explore")} active={mode === "explore"} label="Pan and zoom">
+        <IconButton onPress={() => changeMode("explore")} active={mode === "explore"} label={t("ui.panAndZoom")}>
           <PanIcon />
         </IconButton>
 
-        <IconButton onPress={() => changeMode("sketch")} active={mode === "sketch"} label="Select">
+        <IconButton onPress={() => changeMode("sketch")} active={mode === "sketch"} label={commonT("actions.select")}>
           <CusorIcon />
         </IconButton>
 
         <IconButton
           disabled={!remove.active}
-          label="Delete"
+          label={commonT("actions.delete")}
           onPress={() => {
-            if (confirm("Are you sure you want to delete this annotation?")) {
+            if (confirm(t("messages.deleteAnnotationConfirm"))) {
               remove.enable();
             }
           }}
@@ -52,26 +55,36 @@ export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?
         </IconButton>
       </div>
       <div className="rounded-lg bg-white flex p-1.5 shadow gap-1.5 pointer-events-auto">
-        <IconButton label="Draw a box" onPress={square.enable} active={square.active}>
+        <IconButton label={t("ui.drawABox")} onPress={square.enable} active={square.active}>
           <SquareIcon />
         </IconButton>
         <IconButton
           disabled={toolType === "target"}
-          label="Polygon tool"
+          label={t("ui.polygonTool")}
           onPress={polygon.enable}
           active={polygon.active}
         >
           <PolygonIcon />
         </IconButton>
-        <IconButton disabled={toolType === "target"} label="Draw tool" onPress={draw.enable} active={draw.active}>
+        <IconButton
+          disabled={toolType === "target"}
+          label={t("ui.drawTool")}
+          onPress={draw.enable}
+          active={draw.active}
+        >
           <DrawIcon />
         </IconButton>
-        <IconButton disabled={toolType === "target"} label="Line tool" onPress={line.enable} active={line.active}>
+        <IconButton
+          disabled={toolType === "target"}
+          label={t("ui.lineTool")}
+          onPress={line.enable}
+          active={line.active}
+        >
           <LineIcon />
         </IconButton>
         <IconButton
           disabled={toolType === "target"}
-          label="Line-box tool"
+          label={t("ui.lineboxTool")}
           onPress={lineBox.enable}
           active={lineBox.active}
         >
@@ -79,7 +92,7 @@ export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?
         </IconButton>
         <IconButton
           disabled={toolType === "target"}
-          label="Create Triangle"
+          label={t("ui.createTriangle")}
           onPress={triangle.enable}
           active={triangle.active}
         >
@@ -87,7 +100,7 @@ export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?
         </IconButton>
         <IconButton
           disabled={toolType === "target"}
-          label="Create Hexagon"
+          label={t("ui.createHexagon")}
           onPress={hexagon.enable}
           active={hexagon.active}
         >
@@ -95,7 +108,7 @@ export function AnnotationEditingTools({ forceVisible = false }: { forceVisible?
         </IconButton>
         <IconButton
           disabled={toolType === "target"}
-          label="Create circle"
+          label={t("ui.createCircle")}
           onPress={circle.enable}
           active={circle.active}
         >

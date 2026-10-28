@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { TextGranularityOptions } from "@iiif/presentation-3";
 import { InputContainer, InputLabel } from "../Input";
 import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
@@ -9,9 +10,10 @@ interface TextGranularityEditorProps {
 }
 
 export function TextGranularityEditor({ focusId, onChange, value }: TextGranularityEditorProps) {
+  const t = useTranslations("editors");
   return (
     <InputContainer $fluid>
-      <InputLabel htmlFor={focusId}>Text granularity</InputLabel>
+      <InputLabel htmlFor={focusId}>{t("ui.textGranularity")}</InputLabel>
       <InlineSelect<TextGranularityOptions>
         onDeselect={() => onChange(undefined)}
         value={value}
@@ -20,27 +22,27 @@ export function TextGranularityEditor({ focusId, onChange, value }: TextGranular
         id={focusId}
         options={[
           {
-            label: { en: ["Whole Page"] },
+            label: { en: [t("ui.wholePage")] },
             value: "page",
           },
           {
-            label: { en: ["Region of text"] },
+            label: { en: [t("ui.regionOfText")] },
             value: "block",
           },
           {
-            label: { en: ["Paragraph"] },
+            label: { none: [t("ui.paragraph")] },
             value: "paragraph",
           },
           {
-            label: { en: ["Topographic line"] },
+            label: { en: [t("ui.topographicLine")] },
             value: "line",
           },
           {
-            label: { en: ["Single word"] },
+            label: { en: [t("ui.singleWord")] },
             value: "word",
           },
           {
-            label: { en: ["Single glyph"] },
+            label: { en: [t("ui.singleGlyph")] },
             value: "glyph",
           },
         ]}

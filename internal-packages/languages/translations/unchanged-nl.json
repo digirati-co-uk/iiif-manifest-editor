@@ -81,6 +81,30 @@
     "metadata.label": {
       "source": "Label",
       "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "ui.media": {
+      "source": "Media",
+      "reason": "Media is the standard Dutch collective noun for image, audio and video resources."
+    },
+    "ui.logo": {
+      "source": "logo",
+      "reason": "Logo has the same spelling in Dutch. Capitalisation only differs in the field heading."
+    },
+    "ui.html": {
+      "source": "HTML",
+      "reason": "HTML is the standard language-independent markup abbreviation, used for the value format toggle."
+    },
+    "ui.canvas": {
+      "source": "Canvas:",
+      "reason": "Canvas is the retained IIIF technical noun in the standard Dutch profile. Plain wording uses Pagina:."
+    },
+    "ui.west": {
+      "source": "west",
+      "reason": "The Dutch cardinal direction west has exactly the same spelling as English; names a resize handle."
+    },
+    "messages.mediaNumber": {
+      "source": "Media {{number}}",
+      "reason": "Media is the standard Dutch collective noun; this numbered fallback for an unlabelled media resource has the same Dutch word order."
     }
   },
   "locales/en-GB/manifest.ts": {

@@ -1,3 +1,5 @@
+import { EditorI18nBoundary } from "../EditorI18nBridge";
+import { useOptionalEditorI18nInstance, useTranslations } from "@manifest-editor/i18n";
 import {
   canResizeCanvas,
   getCanvasOrigin,
@@ -121,6 +123,8 @@ export function CanvasPanelViewer({
   editingAnnotationId,
   forceAnnotationTools = false,
 }: CanvasPanelViewerProps) {
+  const t = useTranslations("editors");
+  const i18nInstance = useOptionalEditorI18nInstance();
   const app = useApp();
   const vault = useVault();
   const addImage = useAddCanvasImage();
@@ -371,10 +375,10 @@ export function CanvasPanelViewer({
       <CanvasContainer>
         <GhostCanvas>
           <BlockIcon color="grey" />
-          <PaddingComponentSmall> No canvas selected</PaddingComponentSmall>
+          <PaddingComponentSmall> {t("ui.noCanvasSelected")}</PaddingComponentSmall>
           <PaddingComponentMedium />
-          <PaddingComponentSmall>Manage your canvases on the left </PaddingComponentSmall>
-          <PaddingComponentSmall>Edit your manifest properties on the right</PaddingComponentSmall>
+          <PaddingComponentSmall>{t("ui.manageYourCanvasesOnTheLeft")}</PaddingComponentSmall>
+          <PaddingComponentSmall>{t("ui.editYourManifestPropertiesOnTheRight")}</PaddingComponentSmall>
         </GhostCanvas>
       </CanvasContainer>
     );
@@ -403,7 +407,7 @@ export function CanvasPanelViewer({
           >
             {(createMode && createAnnotation && !editMode) ||
             ((currentlyEditingAnnotation || annotation) && editMode) ? (
-              <AtlasBanner controlsId="atlas-controls">Draw a box or select a shape</AtlasBanner>
+              <AtlasBanner controlsId="atlas-controls">{t("ui.drawABoxOrSelectAShape")}</AtlasBanner>
             ) : null}
             <AuthProvider>
               <CanvasPanel.Viewer
@@ -475,8 +479,8 @@ export function CanvasPanelViewer({
                 {enableAddMedia && (
                   <CanvasViewerButton
                     type="button"
-                    aria-label="Add media"
-                    title="Add media"
+                    aria-label={t("ui.addMedia")}
+                    title={t("ui.addMedia")}
                     onClick={() => void addImage()}
                   >
                     <AddImageIcon />
@@ -485,7 +489,7 @@ export function CanvasPanelViewer({
                 {canvas && canResizeCanvas(vault, canvas) && (
                   <CanvasViewerButton
                     type="button"
-                    aria-label="Resize canvas"
+                    aria-label={t("ui.resizeCanvas")}
                     aria-pressed={resizing}
                     style={{
                       fontSize: 13,
@@ -495,22 +499,26 @@ export function CanvasPanelViewer({
                     }}
                     onClick={() => setResizing((value) => !value)}
                   >
-                    Resize canvas
+                    {t("ui.resizeCanvas")}
                   </CanvasViewerButton>
                 )}
-                <CanvasViewerButton type="button" aria-label="Home" onClick={() => runtime.current?.world.goHome()}>
+                <CanvasViewerButton
+                  type="button"
+                  aria-label={t("ui.home")}
+                  onClick={() => runtime.current?.world.goHome()}
+                >
                   <HomeIcon />
                 </CanvasViewerButton>
                 <CanvasViewerButton
                   type="button"
-                  aria-label="Zoom out"
+                  aria-label={t("ui.zoomOut")}
                   onClick={() => runtime.current?.world.zoomTo(1 / 0.75)}
                 >
                   <MinusIcon />
                 </CanvasViewerButton>
                 <CanvasViewerButton
                   type="button"
-                  aria-label="Zoom in"
+                  aria-label={t("ui.zoomIn")}
                   onClick={() => runtime.current?.world.zoomTo(0.75)}
                 >
                   <PlusIcon />
@@ -538,7 +546,7 @@ export function CanvasPanelViewer({
       // resetKeys={[state.canvasId, refreshKey]}
       fallbackRender={() => (
         <CanvasContainer>
-          <GhostCanvas>Something went wrong</GhostCanvas>
+          <GhostCanvas>{t("ui.somethingWentWrong")}</GhostCanvas>
         </CanvasContainer>
       )}
     >
@@ -546,27 +554,33 @@ export function CanvasPanelViewer({
         strategies={["empty", "images", "media", "textual-content"]}
         renderViewerControls={() =>
           moveMode ? null : (
-            <ViewControls
-              refresh={refresh}
-              editIcon
-              editMode={editMode}
-              toggleEditMode={toggleEditMode}
-              createMode={createMode}
-              enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
-              onNext={onNextCanvas}
-              onPrevious={onPreviousCanvas}
-              toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
-              extraControls={
-                <>
-                  <CanvasChoiceControls canvasId={canvasId} />
-                  <CanvasViewerFlagButton canvasId={canvasId} />
-                </>
-              }
-            />
+            <EditorI18nBoundary instance={i18nInstance}>
+              <ViewControls
+                refresh={refresh}
+                editIcon
+                editMode={editMode}
+                toggleEditMode={toggleEditMode}
+                createMode={createMode}
+                enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
+                onNext={onNextCanvas}
+                onPrevious={onPreviousCanvas}
+                toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
+                extraControls={
+                  <>
+                    <CanvasChoiceControls canvasId={canvasId} />
+                    <CanvasViewerFlagButton canvasId={canvasId} />
+                  </>
+                }
+              />
+            </EditorI18nBoundary>
           )
         }
         viewControlsDeps={[editMode, createMode, createAnnotation, annotation, onNextCanvas, onPreviousCanvas]}
-        renderMediaControls={() => <MediaControls />}
+        renderMediaControls={() => (
+          <EditorI18nBoundary instance={i18nInstance}>
+            <MediaControls />
+          </EditorI18nBoundary>
+        )}
       >
         <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>
       </CustomStrategyProvider>
@@ -575,6 +589,7 @@ export function CanvasPanelViewer({
 }
 
 function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
+  const t = useTranslations("editors");
   const resource = { id: canvasId, type: "Canvas" };
   const tags = useResourceTags(resource);
   const { toggleTag } = useResourceTagActions(resource);
@@ -584,9 +599,9 @@ function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
     <CanvasViewerButton
       type="button"
       data-control="flag"
-      aria-label={flagged ? "Remove flag" : "Flag canvas"}
+      aria-label={t(flagged ? "messages.removeFlag" : "messages.flagCanvas")}
       aria-pressed={flagged}
-      title={flagged ? "Remove flag" : "Flag canvas"}
+      title={t(flagged ? "messages.removeFlag" : "messages.flagCanvas")}
       $active={flagged}
       onClick={() => toggleTag(FLAG_TAG)}
     >
@@ -596,6 +611,7 @@ function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
 }
 
 function CanvasChoiceControls({ canvasId }: { canvasId: string }) {
+  const t = useTranslations("editors");
   const { choices, actions } = useCanvasChoices({ canvasId });
 
   if (!choices.length) {
@@ -613,14 +629,14 @@ function CanvasChoiceControls({ canvasId }: { canvasId: string }) {
           return (
             <select
               key={`${choiceSet.canvasId}-${choiceSetIndex}-${choiceIndex}`}
-              aria-label="Canvas choice"
+              aria-label={t("ui.canvasChoice")}
               className="rounded border border-gray-200 bg-white px-2 py-2 text-sm shadow-sm"
               value={selected}
               onChange={(event) => actions.makeChoice(event.target.value, { deselectOthers: true })}
             >
               {(choice.items || []).map((item: any, itemIndex: number) => (
                 <option key={item.id} value={item.id}>
-                  {getInternationalStringText(item.label, `Option ${itemIndex + 1}`)}
+                  {getInternationalStringText(item.label, t("messages.option", { number: itemIndex + 1 }))}
                 </option>
               ))}
             </select>

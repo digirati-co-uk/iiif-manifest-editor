@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { CanvasCaptions } from "../../components/CanvasCaptions/CanvasCaptions";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
@@ -8,6 +9,8 @@ import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/
 import { createAppActions } from "../../helpers/create-app-actions";
 
 export function OverviewCanvasEditor() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const resource = useEditingResource();
   const { technical, descriptive, structural, notAllowed } = useEditor();
   const { label } = descriptive;
@@ -18,14 +21,14 @@ export function OverviewCanvasEditor() {
   const annotationList = annotations.get();
 
   if (!page) {
-    return <div>Error: Expected canvas to have at least one annotation page.</div>;
+    return <div>{t("ui.errorExpectedCanvasToHaveAtLeastOneAnnotationPage")}</div>;
   }
 
   return (
     <PaddedSidebarContainer>
       <LanguageFieldEditor
         focusId={label.focusId()}
-        label={"Label"}
+        label={t("fields.label")}
         fields={label.get()}
         onSave={(e: any) => label.set(e.toInternationalString())}
       />
@@ -38,13 +41,13 @@ export function OverviewCanvasEditor() {
 
         {annotationList && annotationList.length ? (
           <LinkingPropertyList
-            label="Annotations"
+            label={t("ui.annotations")}
             property="annotations"
             items={annotations.get()}
             reorder={(ctx) => annotations.reorder(ctx.startIndex, ctx.endIndex)}
-            createActions={createAppActions(annotations)}
+            createActions={createAppActions(annotations, undefined, t, commonT)}
             creationType="AnnotationPage"
-            emptyLabel="No annotations"
+            emptyLabel={t("ui.noAnnotations")}
             parent={resource?.resource}
           />
         ) : null}

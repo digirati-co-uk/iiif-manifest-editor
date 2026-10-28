@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations, type MessageReference } from "@manifest-editor/i18n";
 import { ControlButton, OpaqueControls } from "@manifest-editor/components";
 import { useConfig, useDecayState } from "@manifest-editor/shell";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
@@ -8,10 +9,12 @@ import { flushSync } from "react-dom";
 import { type UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
 import { InputGroup, InputLabel } from "../Input";
 import { RichTextLanguageField } from "../RichTextLanguageField/RichTextLanguageField";
+import { contentLanguageName } from "../../i18n";
 import { EmptyLanguageField } from "./LanguageFieldEditor.styles";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
+  labelMessage?: MessageReference;
   index?: number;
   className?: string;
   containerId?: string;
@@ -26,10 +29,20 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
-  return <LanguageFieldEditorFields key={props.focusId || props.containerId} {...props} />;
+  const { resolveMessage } = useEditorI18n();
+  return (
+    <LanguageFieldEditorFields
+      key={props.focusId || props.containerId}
+      {...props}
+      label={props.labelMessage ? resolveMessage(props.labelMessage, props.label) : props.label}
+    />
+  );
 }
 
 function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const { locale } = useEditorI18n();
   const {
     // This hook does the heavily lifting on the data side.
     firstItem,
@@ -99,7 +112,10 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
                 onMouseLeave={() => activeState.clear(true)}
               >
                 <RichTextLanguageField
-                  ariaLabel={`${props.label} (${field.language === "none" ? "no language" : field.language})`}
+                  ariaLabel={t("messages.fieldLabel", {
+                    label: props.label,
+                    language: contentLanguageName(field.language, locale, t("language.none")),
+                  })}
                   autoFocus={n === 0 ? props.autoFocus : undefined}
                   disableMultiline={props.disableMultiline}
                   disallowHTML={props.disallowHTML ?? true}
@@ -127,12 +143,12 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
                   <SmallButton
                     style={{ visibility: active ? "visible" : "hidden" }}
                     className="remove"
-                    aria-label="remove"
+                    aria-label={commonT("actions.remove")}
                     onClick={() => {
                       removeItem(key);
                       saveChanges(props.index, props.property);
                     }}
-                    title="delete"
+                    title={commonT("actions.delete")}
                   >
                     <CloseIcon />
                   </SmallButton>
@@ -146,12 +162,12 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
       {isFullMode && (!props.singleValue || fieldKeys.length > 1) ? (
         <OpaqueControls active={active}>
           {/* Here we can call createNewItem() with true, to indicate a new on existing */}
-          <ControlButton aria-label="create new" onClick={() => createNewItem(true)}>
-            Add another
+          <ControlButton aria-label={commonT("actions.create")} onClick={() => createNewItem(true)}>
+            {t("ui.addAnother")}
           </ControlButton>
 
-          <ControlButton aria-label="remove" onClick={() => setIsReorderMode((o) => !o)}>
-            Remove
+          <ControlButton aria-label={commonT("actions.remove")} onClick={() => setIsReorderMode((o) => !o)}>
+            {commonT("actions.remove")}
           </ControlButton>
         </OpaqueControls>
       ) : null}
@@ -176,7 +192,7 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
               document.getElementById(focusId)?.focus();
             }}
           >
-            <span>Add value</span>
+            <span>{t("ui.addValue")}</span>
             <LanguageIcon aria-hidden />
           </EmptyLanguageField>
         </>

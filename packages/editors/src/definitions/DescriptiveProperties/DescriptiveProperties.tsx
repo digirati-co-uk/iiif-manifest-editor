@@ -1,4 +1,7 @@
-import DateTimePicker from "react-datetime-picker";
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { NavigationDateField } from "../../components/NavigationDateField";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -10,7 +13,7 @@ import {
   PaddedSidebarContainer,
   ViewProvider,
 } from "@manifest-editor/components";
-import { allRights } from "@manifest-editor/editor-api";
+import { allRights, creativeCommons } from "@manifest-editor/editor-api";
 import { useCreator, useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useState } from "react";
 import { EmptyPrompt } from "../../components/EmptyPrompt/EmptyPrompt";
@@ -21,6 +24,10 @@ import { createAppActions } from "../../helpers/create-app-actions";
 import $ from "./DescriptiveProperties.module.css";
 
 export function DescriptiveProperties() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const { resolveMessage } = useEditorI18n();
+  const apiLabel = useDisplayLabel();
   const resource = useEditingResource();
   const [requiredStatementVisible, setRequiredStatementVisible] = useState(false);
   const { descriptive, notAllowed } = useEditor();
@@ -48,7 +55,7 @@ export function DescriptiveProperties() {
         <LanguageFieldEditor
           containerId={label.containerId()}
           focusId={label.focusId()}
-          label={"Label"}
+          label={apiLabel(propertyLabels.label)!}
           fields={label.get()}
           onSave={(e: any) => label.set(e.toInternationalString())}
         />
@@ -57,7 +64,7 @@ export function DescriptiveProperties() {
         <LanguageFieldEditor
           containerId={summary.containerId()}
           focusId={summary.focusId()}
-          label={"Summary"}
+          label={apiLabel(propertyLabels.summary)!}
           disallowHTML={false}
           fields={summary.get()}
           onSave={(e: any) => summary.set(e.toInternationalString())}
@@ -67,21 +74,21 @@ export function DescriptiveProperties() {
       {!notAllowed.includes("thumbnail") ? (
         <LinkingPropertyList
           containerId={thumbnail.containerId()}
-          label={"Thumbnail"}
+          label={apiLabel(propertyLabels.thumbnail)!}
           property="thumbnail"
           items={thumbnail.get()}
           singleMode
           reorder={(ctx) => thumbnail.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(thumbnail)}
+          createActions={createAppActions(thumbnail, undefined, t, commonT)}
           creationType="ContentResource"
-          emptyLabel="No thumbnail"
+          emptyLabel={t("thumbnail.empty")}
           parent={resource?.resource}
         />
       ) : null}
 
       {!notAllowed.includes("rights") ? (
         <InputContainer $wide id={rights.containerId()}>
-          <InputLabel htmlFor={rights.focusId()}>Rights</InputLabel>
+          <InputLabel htmlFor={rights.focusId()}>{apiLabel(propertyLabels.rights)!}</InputLabel>
           <Input
             id={rights.focusId()}
             value={rights.get() || ""}
@@ -89,57 +96,57 @@ export function DescriptiveProperties() {
             list="valid-rights"
           />
           <datalist id="valid-rights">
-            {allRights.map((url) => (
-              <option key={url} value={url} />
-            ))}
+            {allRights.map((url) => {
+              const definition = creativeCommons.find((item) => item.value === url);
+              return (
+                <option
+                  key={url}
+                  value={url}
+                  label={definition ? apiLabel(definition) : undefined}
+                  title={definition ? resolveMessage(definition.descriptionMessage, definition.description) : undefined}
+                />
+              );
+            })}
           </datalist>
         </InputContainer>
       ) : null}
 
       {!notAllowed.includes("navDate") ? (
         <InputContainer $wide id={navDate.containerId()}>
-          <InputLabel htmlFor={navDate.focusId()}>Nav Date</InputLabel>
-          <DateTimePicker
-            calendarAriaLabel="Open Nav Date calendar"
+          <InputLabel htmlFor={navDate.focusId()}>{apiLabel(propertyLabels.navDate)!}</InputLabel>
+          <NavigationDateField
             className={$.datePicker}
-            clearAriaLabel="Clear Nav Date"
-            dayAriaLabel="Nav Date day"
-            hourAriaLabel="Nav Date hour"
             id={navDate.focusId()}
-            minuteAriaLabel="Nav Date minute"
-            monthAriaLabel="Nav Date month"
-            nativeInputAriaLabel="Nav Date"
             value={navDate.getDate()}
             onChange={(v) => navDate.setDate(v)}
-            yearAriaLabel="Nav Date year"
           />
         </InputContainer>
       ) : null}
 
       {!notAllowed.includes("requiredStatement") ? (
         <InputContainer $wide id={requiredStatement.containerId()}>
-          <InputLabel htmlFor={requiredStatement.focusId()}>Required statement</InputLabel>
+          <InputLabel htmlFor={requiredStatement.focusId()}>{apiLabel(propertyLabels.requiredStatement)!}</InputLabel>
           {!requiredStatement.get() && !requiredStatementVisible ? (
             <EmptyPrompt
               action={{
                 id: requiredStatement.focusId(),
-                label: "Add new",
+                label: t("ui.addNew"),
                 onClick: () => setRequiredStatementVisible(true),
               }}
             >
-              No required statement
+              {t("ui.noRequiredStatement")}
             </EmptyPrompt>
           ) : (
             <InputFieldset id={requiredStatement.focusId()}>
               <LanguageFieldEditor
                 focusId={`${requiredStatement.focusId()}_label`}
-                label="Label"
+                label={apiLabel(propertyLabels.label)!}
                 fields={requiredStatement.get()?.label || { none: [] }}
                 onSave={(e: any) => requiredStatement.updateLabel(e.toInternationalString())}
               />
               <LanguageFieldEditor
                 focusId={`${requiredStatement.focusId()}_value`}
-                label="Value"
+                label={t("metadata.value")}
                 disallowHTML={false}
                 fields={requiredStatement.get()?.value || { none: [] }}
                 onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
@@ -151,12 +158,12 @@ export function DescriptiveProperties() {
 
       {!notAllowed.includes("provider") ? (
         <InputContainer $wide id={provider.containerId()}>
-          <InputLabel htmlFor={provider.focusId()}>Provider</InputLabel>
+          <InputLabel htmlFor={provider.focusId()}>{apiLabel(propertyLabels.provider)!}</InputLabel>
 
           {!(provider.get() || []).length ? (
             <>
               <EmptyState $noMargin $box>
-                Add a provider to attach your institution name and logo to this Manifest.
+                {t("ui.addAProviderToAttachYourInstitutionNameAndLogoToThisManifest")}
               </EmptyState>
               <div className="pt-2">
                 <ActionButton
@@ -168,7 +175,7 @@ export function DescriptiveProperties() {
                     });
                   }}
                 >
-                  <AddIcon /> Add Provider
+                  <AddIcon /> {t("ui.addProvider")}
                 </ActionButton>
               </div>
             </>
@@ -181,13 +188,13 @@ export function DescriptiveProperties() {
                     <ActionButton
                       className="pl-3"
                       onPress={() => {
-                        if (window.confirm("Are you sure you want to delete this provider?")) {
+                        if (window.confirm(t("provider.removeConfirm"))) {
                           (provider as any).deleteAtIndex(i);
                         }
                       }}
                     >
                       <DeleteIcon className="mr-1" />
-                      Delete Provider
+                      {t("ui.deleteProvider")}
                     </ActionButton>
                   </div>
                 ))}
@@ -203,7 +210,7 @@ export function DescriptiveProperties() {
                     })
                   }
                 >
-                  <AddIcon /> Add Provider
+                  <AddIcon /> {t("ui.addProvider")}
                 </ActionButton>
               </div>
             </>
@@ -214,7 +221,7 @@ export function DescriptiveProperties() {
       {/* NOTE: If this is an annotation, then it will be a string, otherwise a list of strings */}
       {!notAllowed.includes("language") ? (
         <InputContainer $wide id={language.containerId()}>
-          <InputLabel htmlFor={language.focusId()}>Language</InputLabel>
+          <InputLabel htmlFor={language.focusId()}>{apiLabel(propertyLabels.language)!}</InputLabel>
           <Input
             id={language.focusId()}
             value={(language.get() || [])[0]}

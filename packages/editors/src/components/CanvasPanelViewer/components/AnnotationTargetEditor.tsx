@@ -1,4 +1,5 @@
-import { HTMLPortal, useMode } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { useMode } from "@atlas-viewer/atlas";
 import type { SupportedTarget, SvgSelector } from "@iiif/helpers";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useGenericEditor } from "@manifest-editor/shell";

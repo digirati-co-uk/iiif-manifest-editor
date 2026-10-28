@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { Reference } from "@iiif/presentation-3";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useConfig, useEditor, useGenericEditor } from "@manifest-editor/shell";
@@ -20,6 +21,7 @@ export function HTMLEditor() {
 }
 
 function HTMLEditorItem({ item }: { item: Reference }) {
+  const t = useTranslations("editors");
   const { i18n } = useConfig();
   const editor = useGenericEditor(item);
 
@@ -36,7 +38,7 @@ function HTMLEditorItem({ item }: { item: Reference }) {
   return (
     <>
       <InputContainer $wide>
-        <InputLabel>HTML Body</InputLabel>
+        <InputLabel>{t("ui.htmlBody")}</InputLabel>
 
         <RichTextLanguageField
           value={value.get()}

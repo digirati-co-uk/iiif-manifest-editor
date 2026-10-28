@@ -1,5 +1,8 @@
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { EditorMessage } from "../../EditorMessage";
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
-import { HTMLPortal } from "@atlas-viewer/atlas";
+
 import { CanvasResizeEdges } from "./CanvasResizeEdges";
 import {
   captureCanvasComposition,
@@ -52,6 +55,7 @@ function selectionHitArea(rect: Rectangle, selection: Rectangle | null) {
 
 /** Uses the same target request as the media editor, with canvas growth committed on release. */
 export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolean; onResizeDone: () => void }) {
+  const t = useTranslations("editors");
   const canvas = useCanvas()!;
   const vault = useVault();
   const createImage = useAddCanvasImage();
@@ -149,14 +153,14 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
               style={{ background: "#b84c74", color: "white" }}
               onClick={finish}
             >
-              Done
+              <EditorMessage namespace="common" message="actions.done" />
             </button>
             <button
               type="button"
               onClick={discard}
               style={{ color: "#892c4e", background: "white", padding: "4px 12px", fontSize: 13 }}
             >
-              Discard changes
+              <EditorMessage message="ui.discardChanges" />
             </button>
           </div>
         ),
@@ -333,7 +337,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
               <HTMLPortal target={{ x: 0, y: 0, width: rect.width, height: rect.height }} relative interactive={false}>
                 <button
                   type="button"
-                  aria-label={`Select image ${index + 1}`}
+                  aria-label={t("messages.selectImage", { number: index + 1 })}
                   onClick={() => select(image.id, rect)}
                   style={{
                     display: "block",
@@ -381,7 +385,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                   >
                     <button
                       type="button"
-                      aria-label={`Add image to position ${index + 1}`}
+                      aria-label={t("messages.addImageAt", { number: index + 1 })}
                       className="rounded-md text-sm font-semibold focus-visible:outline"
                       style={{
                         background: "white",
@@ -393,12 +397,12 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                       }}
                       onClick={() => void addImage(slot)}
                     >
-                      + Add image
+                      {t("ui.addImage")}
                     </button>
                     <button
                       type="button"
-                      aria-label={`Browse IIIF for position ${index + 1}`}
-                      title="Browse IIIF"
+                      aria-label={t("messages.browseImageAt", { number: index + 1 })}
+                      title={t("ui.browseIiif")}
                       onClick={() => void addImage(slot, true)}
                       style={{
                         background: "white",
@@ -436,8 +440,10 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
               className="rounded px-3 py-1 text-xs font-semibold"
               style={{ background: "#b84c74", color: "white" }}
             >
-              {resizing ? "Canvas size" : "Canvas will expand"} · {Math.round(expansion.width)} ×{" "}
-              {Math.round(expansion.height)} px
+              {t(resizing ? "messages.canvasSizePreview" : "messages.canvasExpandPreview", {
+                width: Math.round(expansion.width),
+                height: Math.round(expansion.height),
+              })}
             </output>
           </HTMLPortal>
         </world-object>

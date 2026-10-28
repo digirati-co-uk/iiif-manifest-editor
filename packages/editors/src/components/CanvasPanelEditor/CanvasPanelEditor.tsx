@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getCanvasLayout } from "@manifest-editor/editor-api";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
@@ -6,7 +7,16 @@ import { CanvasContext, useManifest, useVaultSelector } from "react-iiif-vault";
 import { useInStack } from "../../helpers";
 import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 
-export function CanvasPanelEditor({ asFallback = false, moveMode, enableAddMedia }: { asFallback?: boolean; moveMode?: boolean; enableAddMedia?: boolean }) {
+export function CanvasPanelEditor({
+  asFallback = false,
+  moveMode,
+  enableAddMedia,
+}: {
+  asFallback?: boolean;
+  moveMode?: boolean;
+  enableAddMedia?: boolean;
+}) {
+  const t = useTranslations("editors");
   const { edit, create } = useLayoutActions();
   const canvas = useInStack("Canvas");
   const annotationPage = useInStack("AnnotationPage");
@@ -47,5 +57,5 @@ export function CanvasPanelEditor({ asFallback = false, moveMode, enableAddMedia
       </CanvasContext>
     );
   }
-  return <EmptyState>No canvas selected</EmptyState>;
+  return <EmptyState>{t("ui.noCanvasSelected")}</EmptyState>;
 }

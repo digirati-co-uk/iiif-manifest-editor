@@ -1,3 +1,5 @@
+import { contentLanguageName } from "../../i18n";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { canvasHasAv, getCanvasCaptionTracks } from "@manifest-editor/editor-api";
 import { useCreator, useEditor, useLayoutActions } from "@manifest-editor/shell";
@@ -35,24 +37,17 @@ function formatName(format?: string) {
   return FORMAT_NAMES[key] || format;
 }
 
-function languageName(language?: string) {
-  if (!language) return null;
-  try {
-    return new Intl.DisplayNames(["en"], { type: "language" }).of(language) || language;
-  } catch {
-    return language;
-  }
-}
-
 function CanvasCaptionsView({ tracks, canCreate, onCreate }: CanvasCaptionsProps) {
+  const t = useTranslations("editors");
+  const { locale } = useEditorI18n();
   return (
-    <section aria-label="Subtitles and captions" className="mb-2">
-      <InputLabel as="h3">Subtitles and captions</InputLabel>
+    <section aria-label={t("ui.subtitlesAndCaptions")} className="mb-2">
+      <InputLabel as="h3">{t("ui.subtitlesAndCaptions")}</InputLabel>
 
       {tracks.length === 0 ? (
         <div className="mb-2">
           <EmptyState $noMargin $box>
-            No subtitles or captions
+            {t("ui.noSubtitlesOrCaptions")}
           </EmptyState>
         </div>
       ) : (
@@ -62,7 +57,12 @@ function CanvasCaptionsView({ tracks, canCreate, onCreate }: CanvasCaptionsProps
               <RichMediaLink
                 margin
                 title={track.label}
-                label={[formatName(track.format), languageName(track.language)].filter(Boolean).join(" · ")}
+                label={[
+                  formatName(track.format),
+                  track.language ? contentLanguageName(track.language, locale, t("language.none")) : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
                 icon={<TextFormatIcon className="text-2xl" />}
                 noLink
                 link={track.id}
@@ -70,7 +70,7 @@ function CanvasCaptionsView({ tracks, canCreate, onCreate }: CanvasCaptionsProps
                 containerProps={{
                   role: "button",
                   tabIndex: 0,
-                  "aria-label": `Edit ${track.label}`,
+                  "aria-label": t("messages.editNamed", { label: track.label }),
                   title: track.id,
                   onKeyDown: (event) => {
                     if (event.key === "Enter" || event.key === " ") {
@@ -88,7 +88,7 @@ function CanvasCaptionsView({ tracks, canCreate, onCreate }: CanvasCaptionsProps
       {canCreate ? (
         <div className="flex flex-wrap gap-2">
           <ActionButton onPress={onCreate}>
-            <AddIcon /> Add subtitles or captions
+            <AddIcon /> {t("ui.addSubtitlesOrCaptions")}
           </ActionButton>
         </div>
       ) : null}
@@ -97,6 +97,7 @@ function CanvasCaptionsView({ tracks, canCreate, onCreate }: CanvasCaptionsProps
 }
 
 export function CanvasCaptions() {
+  const t = useTranslations("editors");
   const editor = useEditor();
   const canvas = editor.ref();
   const { edit } = useLayoutActions();
@@ -114,7 +115,7 @@ export function CanvasCaptions() {
       tracks={tracks.map((track) => ({
         annotationId: track.annotation.id,
         id: track.body.id,
-        label: getValue(track.body.label) || "Untitled captions",
+        label: getValue(track.body.label) || t("messages.untitledCaptions"),
         language: track.body.language,
         format: track.body.format,
         onEdit: () =>

@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import * as L from "leaflet";
 import React, { useEffect, useRef, useState } from "react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
@@ -10,6 +13,8 @@ import { InputLabel } from "../../components/Input";
 import { EditControl } from "./EditControl";
 
 export function NavPlaceEditor() {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const { extensions, notAllowed } = useEditor();
   const { navPlace } = extensions;
   const [center, setCenter] = useState([51.505, -0.09]);
@@ -63,7 +68,7 @@ export function NavPlaceEditor() {
 
   return (
     <PaddedSidebarContainer>
-      <InputLabel>Nav place</InputLabel>
+      <InputLabel>{apiLabel(propertyLabels.navPlace)!}</InputLabel>
       {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
       {/* @ts-ignore */}
       <MapContainer center={center} zoom={ZOOM_LEVEL} ref={mapRef} style={{ height: 300, zIndex: 1 }}>

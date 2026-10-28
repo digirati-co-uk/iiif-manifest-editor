@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useCallback } from "react";
 import { useAnnotation, useAnnotationPage, useCanvas, useRequestAnnotation } from "react-iiif-vault";
@@ -6,6 +7,7 @@ export function useAnnotationEditor({
   annotationPopup,
   bounds: inputBounds,
 }: { annotationPopup?: React.ReactNode; bounds?: { x: number; y: number; width: number; height: number } } = {}) {
+  const t = useTranslations("editors");
   const annotation = useAnnotation();
   const canvas = useCanvas();
   const editor = useGenericEditor(annotation);
@@ -70,12 +72,12 @@ export function useAnnotationEditor({
   // oxlint-enable react/exhaustive-deps
 
   const deleteAnnotation = useCallback(() => {
-    if (annotation && confirm("Are you sure you want to delete this annotation?")) {
+    if (annotation && confirm(t("messages.deleteAnnotationConfirm"))) {
       // Delete the original annotation.
       const index = pageEditor.structural.items.getWithoutTracking().findIndex((item) => item.id === annotation.id);
       pageEditor.structural.items.deleteAtIndex(index);
     }
-  }, [annotation, pageEditor]);
+  }, [annotation, pageEditor, t]);
 
   return {
     editor,

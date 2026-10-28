@@ -1,3 +1,5 @@
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { canvasLayouts, canvasSizePresets } from "@manifest-editor/editor-api";
 import type { InternationalString } from "@iiif/presentation-3";
 import { useState } from "react";
@@ -25,6 +27,8 @@ function RatioGlyph({ ratio }: { ratio: number }) {
 }
 
 export function CanvasLayoutForm({ runCreate }: { runCreate: (data: CanvasLayoutPayload) => void }) {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const [layout, setLayout] = useState(canvasLayouts[0]!);
   const [sizeIndex, setSizeIndex] = useState(0);
   const size = canvasSizePresets[sizeIndex]!;
@@ -46,11 +50,11 @@ export function CanvasLayoutForm({ runCreate }: { runCreate: (data: CanvasLayout
         });
       }}
     >
-      <fieldset aria-label="Canvas shape" className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-sm font-semibold text-gray-900">Shape</span>
+      <fieldset aria-label={t("ui.canvasShape")} className="flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-sm font-semibold text-gray-900">{t("ui.shape")}</span>
         {canvasSizePresets.map((preset, i) => {
           const active = i === sizeIndex;
-          const [name = preset.label] = preset.label.split(" · ").slice(1);
+          const name = apiLabel(preset);
           return (
             <button
               key={preset.label}
@@ -77,15 +81,13 @@ export function CanvasLayoutForm({ runCreate }: { runCreate: (data: CanvasLayout
       <CanvasLayoutPicker value={layout.id} onChange={setLayout} aspectRatio={size.columns / size.rows} />
 
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
-        <p className="text-xs text-gray-500">
-          {width} × {height} px · You can change this later.
-        </p>
+        <p className="text-xs text-gray-500">{t("messages.sizeLater", { width, height })}</p>
         <button
           type="submit"
           className="rounded-md px-4 py-1.5 text-sm font-semibold"
           style={{ background: ACCENT, color: "#ffffff", border: `1px solid ${ACCENT}` }}
         >
-          Create canvas
+          {t("ui.createCanvas")}
         </button>
       </div>
     </form>

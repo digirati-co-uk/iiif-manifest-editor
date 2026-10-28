@@ -1,9 +1,11 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { PolygonSelector, RenderSvgEditorControls } from "react-iiif-vault";
 import { InputShape } from "polygon-editor";
 import { ConfirmSelectionButton, SvgControlBar } from "@manifest-editor/components";
 
 export function DrawPolygon({ onCreate }: { onCreate: (polygon: InputShape) => void }) {
+  const t = useTranslations("editors");
   const [shape, setShape] = useState<InputShape>({ open: true, points: [] });
 
   return (
@@ -22,7 +24,7 @@ export function DrawPolygon({ onCreate }: { onCreate: (polygon: InputShape) => v
                 setShape({ open: true, points: [] });
               }}
             >
-              Confirm Selection
+              {t("ui.confirmSelection")}
             </ConfirmSelectionButton>
           </div>
         </>

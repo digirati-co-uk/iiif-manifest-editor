@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { EditTextIcon } from "@manifest-editor/components";
 import type { InternationalStringEditor } from "@manifest-editor/editor-api";
@@ -38,6 +39,8 @@ export function InlineLocaleStringEditor({
   editButtonClassName,
   ...props
 }: InlineLocaleStringEditorProps) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const [value, language] = useLocaleString(children);
   const [isEditing, setIsEditing] = useState(false);
   const [useHtmlEditor, setUseHtmlEditor] = useState(false);
@@ -94,7 +97,7 @@ export function InlineLocaleStringEditor({
         useHtmlEditor ? (
           <div>
             <RichTextLanguageField
-              ariaLabel={placeholder ? `Edit ${placeholder}` : "Edit text"}
+              ariaLabel={placeholder ? t("messages.editNamed", { label: placeholder }) : t("messages.editText")}
               autoFocus
               disableMultiline={!multiline}
               disallowHTML={editor.getProperty() !== "summary"}
@@ -108,7 +111,7 @@ export function InlineLocaleStringEditor({
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => setIsEditing(false)}
             >
-              Done
+              {commonT("actions.done")}
             </button>
           </div>
         ) : (
@@ -128,7 +131,7 @@ export function InlineLocaleStringEditor({
           >
             {multiline ? (
               <textarea
-                aria-label={placeholder ? `Edit ${placeholder}` : "Edit text"}
+                aria-label={placeholder ? t("messages.editNamed", { label: placeholder }) : t("messages.editText")}
                 ref={editorRef as any}
                 className={twMerge(
                   "inline-block w-full bg-transparent textarea-reset mb-0 field-sizing-content focus:outline-none resize-none",
@@ -141,7 +144,7 @@ export function InlineLocaleStringEditor({
               />
             ) : (
               <input
-                aria-label={placeholder ? `Edit ${placeholder}` : "Edit text"}
+                aria-label={placeholder ? t("messages.editNamed", { label: placeholder }) : t("messages.editText")}
                 ref={editorRef as any}
                 className={twMerge(
                   "inline-block w-full bg-transparent textarea-reset mb-0 field-sizing-content focus:outline-none resize-none",
@@ -173,7 +176,7 @@ export function InlineLocaleStringEditor({
             editButtonClassName
           )}
         >
-          <EditTextIcon className="text-xl" /> Edit
+          <EditTextIcon className="text-xl" /> {commonT("actions.edit")}
         </Button>
       ) : null}
     </div>

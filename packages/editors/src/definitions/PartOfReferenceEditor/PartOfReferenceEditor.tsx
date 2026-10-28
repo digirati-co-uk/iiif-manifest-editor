@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { importEntities } from "@iiif/helpers/vault/actions";
 import type { InternationalString, Reference } from "@iiif/presentation-3";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
@@ -7,6 +10,8 @@ import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 
 export function PartOfReferenceEditor() {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const editing = useEditingResource();
   const vault = useVault();
   const current = useVaultSelector((state) => {
@@ -48,7 +53,7 @@ export function PartOfReferenceEditor() {
               },
             },
           },
-        } as any),
+        } as any)
       );
     }
   }
@@ -56,18 +61,18 @@ export function PartOfReferenceEditor() {
   return (
     <PaddedSidebarContainer>
       <LanguageFieldEditor
-        label="Label"
+        label={apiLabel(propertyLabels.label)!}
         fields={(ref?.label || { none: [] }) as InternationalString}
         onSave={(value: any) => update({ label: value.toInternationalString() })}
       />
       <LanguageFieldEditor
-        label="Summary"
+        label={apiLabel(propertyLabels.summary)!}
         disallowHTML={false}
         fields={(ref?.summary || { none: [] }) as InternationalString}
         onSave={(value: any) => update({ summary: value.toInternationalString() })}
       />
       <InputContainer $wide>
-        <InputLabel htmlFor="part-of-reference-id">Identifier</InputLabel>
+        <InputLabel htmlFor="part-of-reference-id">{apiLabel(propertyLabels.id)!}</InputLabel>
         <Input id="part-of-reference-id" disabled value={ref?.id || ""} />
       </InputContainer>
     </PaddedSidebarContainer>

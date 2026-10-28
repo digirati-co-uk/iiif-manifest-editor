@@ -1,6 +1,7 @@
 import type { CatalogOverlay } from "../../../schema.ts";
 import type { SourceCatalogs } from "../../../catalog-types.ts";
 
+/** Whole-message plain wording; changes UI terminology only, never IIIF identifiers or authored values. */
 export const catalog = {
   fields: {
     label: "Title",
@@ -14,5 +15,60 @@ export const catalog = {
     removeConfirm: "Remove this page from the item?",
     count_one: "{{count}} page",
     count_other: "{{count}} pages",
+  },
+  ui: {
+    targetWholeCanvas: "Target whole page",
+    changePositionOnCanvas: "Change position on page",
+    thisImageFillsTheWholeCanvas: "This image fills the whole Page.",
+    removeFromCanvas: "Remove from page",
+    errorExpectedCanvasToHaveAtLeastOneAnnotationPage: "Error: Expected page to have at least one annotation page.",
+    thisAnnotationFillsTheWholeCanvas: "This annotation fills the whole Page.",
+    setAsManifestThumbnail: "Set as Item thumbnail",
+    drawABoxOnTheCanvas: "Draw a box on the page",
+    canvasInteraction: "Page interaction",
+    untitledCanvas: "Untitled page",
+    canvas: "Page:",
+    range: "Section:",
+    thisChoiceFillsTheWholeCanvas: "This choice fills the whole Page.",
+    canvasShape: "Page shape",
+    createCanvas: "Create page",
+    canvasSize: "Page size",
+    imagesExtendPastTheCanvas: "Images extend past the page.",
+    shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas:
+      "Shrinks and centres the image so more images can share this page.",
+    fitsTheCanvasToTheImageAndClearsEmptyPlaceholders: "Fits the page to the image and clears empty placeholders.",
+    ranges: "Sections",
+    noRanges: "No sections",
+    addRange: "Add section",
+    canvases: "Pages",
+    noCanvases: "No pages",
+    addAProviderToAttachYourInstitutionNameAndLogoToThisManifest:
+      "Add a provider to attach your institution name and logo to this Item.",
+    noCanvasSelected: "No page selected",
+    manageYourCanvasesOnTheLeft: "Manage your pages on the left",
+    editYourManifestPropertiesOnTheRight: "Edit your item properties on the right",
+    resizeCanvas: "Resize page",
+    canvasChoice: "Page choice",
+    editCanvas: "Edit page",
+    untitledManifest: "Untitled item",
+    sourceManifest: "Source Item",
+  },
+  messages: {
+    canvasSizePreview: "Page size · {{width}} × {{height}} px",
+    canvasExpandPreview: "Page will expand · {{width}} × {{height}} px",
+    flagCanvas: "Flag page",
+    removeFromCanvasConfirm: "Are you sure you want to remove from page?",
+    canvasWillExpand: "Page will expand",
+    resize_top: "Resize page top edge",
+    resize_bottom: "Resize page bottom edge",
+    resize_left: "Resize page left edge",
+    resize_right: "Resize page right edge",
+    resize_top_left: "Resize page top-left corner",
+    resize_top_right: "Resize page top-right corner",
+    resize_bottom_left: "Resize page bottom-left corner",
+    resize_bottom_right: "Resize page bottom-right corner",
+  },
+  metadata: {
+    label: "Title",
   },
 } as const satisfies CatalogOverlay<SourceCatalogs["editors"]>;
