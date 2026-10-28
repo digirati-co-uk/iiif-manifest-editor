@@ -38,7 +38,7 @@ Reviewed the entire preset source, beyond heuristic seed matches:
 - `query-string.tsx` metadata migrated; `query-string-state.ts`, range-splitting store, hooks/effects, icons, CSS and exports were reviewed as protocol/state/style plumbing. URL parameter keys, storage/event names and developer-only console guards remain unchanged.
 - `background-actions.tsx` is an unregistered demo file: no import anywhere in the repository and no package entry export. Its demonstration-only strings are explicitly exempt from the shipped preset migration; it was not silently enabled or rewritten. Existing test fixture strings are likewise not UI. Original inventories are retained as historical evidence, not regenerated.
 
-Shared browsers/media/rich editors/shape controls inherit modules04/05/07/08 adapters. Independent notebook commands and Leaflet/Draw remain known upstream gaps. First-party preset catalogs do not establish their completion. No source from other presets/plugins/shared packages/web or the parent's checkout was changed.
+Shared browsers/media/rich editors/shape controls inherit modules04/05/07/08 adapters. Independent notebook commands remain a dependency gap. Parent integration now includes the scoped Leaflet/Draw implementation documented in [guide07](07-editors.md); its live pointer/touch acceptance remains pending. First-party preset catalogs do not establish dependency completion. No source from other presets/plugins/shared packages/web or the parent's checkout was changed by the isolated module implementation.
 
 ## Verification and remaining acceptance
 
@@ -64,3 +64,26 @@ node --test internal-packages/languages/test/nl-parity.test.mjs internal-package
 ```
 
 The suite/typecheck limitations above are deliberate reports of actual results. Parent alone owns live browser integration (`E2E_TARGET=watch`) after merging alongside the concurrent rotation and manifest-summary changes. No experimental locale synchronization is implied by this handoff.
+
+## Parent merge verification
+
+Integrated as `177c9835` alongside the user's committed canvas controls and restored
+uncommitted manifest-summary styling. The styling remains outside the module commit;
+translated placeholders and the user's layout changes are both present. The scoped
+map follow-up is integrated as `24283e95`.
+
+After a full `pnpm install --ignore-scripts --frozen-lockfile`, the parent reran the
+complete preset suite: **25 pass, the same one clamp test fails** with the exact
+expected/actual values above. All nine new interaction tests pass. The combined
+editors suite passes **58 tests**, and all **68 tracked foundation tests** pass.
+The current test-inclusive preset no-emit check reports **80 diagnostics**, with no
+diagnostics in the new tests or display-reference helper; existing Vault, optional
+reference and sibling diagnostics remain. The editors test-inclusive check reports
+the documented **42 existing diagnostics**, with none in the map source/tests.
+Targeted preset/map lint and `git diff --check` pass (existing preset warnings remain).
+
+The Dutch check at this merge reports **2,481 required messages, zero missing and
+zero unreviewed English copies**, including concurrent web catalog changes. This is
+a point-in-time working-tree catalog check, not a claim that the experimental
+languages, integrated browser/SSR, or publication gates pass. An independent review
+and the remaining collection/exhibition consumer migrations are still required.

@@ -191,3 +191,15 @@ external npm install or upstream publication was performed. External SDK install
 need the same patch or upstream equivalent for Draw localization; the optional setter
 call keeps unpatched legacy Draw functional in English. No whole-UI or integrated
 SSR acceptance claim follows from this isolated module work.
+
+### Parent map integration
+
+Integrated as `24283e95` after manifest-preset module10. A full workspace frozen
+scripts-disabled install succeeds. The parent reran **58 editor tests** and **68
+tracked language foundation tests**, all passing, plus targeted source/test lint
+and diff checks. The test-inclusive no-emit check retains **42 existing diagnostics**
+with none in NavPlaceEditor or its map tests. The combined Dutch gate reports
+**2,481 required messages with zero missing/unreviewed**, including the manifest
+workflow expansion and concurrent web keys; extra experimental languages were left
+untouched. Map control/tooltip refresh and cleanup were source-reviewed. Independent
+review, live pointer/touch/undo acceptance and publication verification remain open.
