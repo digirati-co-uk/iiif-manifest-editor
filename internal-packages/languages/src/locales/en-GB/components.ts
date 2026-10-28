@@ -1,5 +1,19 @@
 /** Shared component UI; authored IIIF labels and protocol values are never translated. */
 export const catalog = {
+  svg: {
+    group: "Shape tools",
+    pointer: "Select",
+    hand: "Pan",
+    box: "Rectangle",
+    pen: "Polygon",
+    draw: "Freehand drawing",
+    line: "Line",
+    lineBox: "Line box",
+    triangle: "Triangle",
+    hexagon: "Hexagon",
+    circle: "Circle",
+    delete: "Delete selection",
+  },
   browser: {
     selectResource: "Select {{name}}",
     unmute: "Unmute",

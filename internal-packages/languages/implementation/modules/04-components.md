@@ -150,3 +150,9 @@ build, dev-server action, E2E webServer, upstream publication, push, PR or deleg
 was run. Independently installed SDK consumers need equivalent upstream support
 or the maintained patches plus MDX dependency extension. The installed Vidstack
 worker export paths lack shipped server files; no server compatibility is claimed.
+
+## Shape-control follow-up
+
+Added public `SvgEditorControls` over the dependency's existing `useSvgEditorControls` action/store API. All 11 tool/delete controls have live EN/NL accessible names and titles; selected tools expose `aria-pressed` without displaying raw enum codes. `SvgControlBar` uses this renderer and corrects its polygon/rectangle icon slot names. It retains the original helper/stamp initialization behavior and all tool IDs/actions. No vendor patch or global state was introduced.
+
+The components catalog adds 12 shape-control messages. Editor-owned polygon creation and annotation-target controls supply the actual bridged runtime at the dependency's separate DOM-root boundary. Tests use the real Atlas store/polygon engine, check action forwarding, retained geometry/tool/DOM identity on locale changes, icon-only accessible names, enabled/hidden tools and isolation between editors. Integrated canvas/portal visual verification remains pending.

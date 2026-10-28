@@ -5,6 +5,20 @@
  * "Volledig scherm" is two words in Dutch (unlike the compound "Vollbildmodus" in German).
  */
 export const catalog = {
+  svg: {
+    group: "Vormgereedschap",
+    pointer: "Selecteren",
+    hand: "Verschuiven",
+    box: "Rechthoek",
+    pen: "Veelhoek",
+    draw: "Uit de vrije hand tekenen",
+    line: "Lijn",
+    lineBox: "Kader van lijnen",
+    triangle: "Driehoek",
+    hexagon: "Zeshoek",
+    circle: "Cirkel",
+    delete: "Selectie verwijderen",
+  },
   browser: {
     selectResource: "{{name}} selecteren",
     unmute: "Geluid aanzetten",

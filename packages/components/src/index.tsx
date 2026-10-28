@@ -97,3 +97,5 @@ export * from "./WarningMessage";
 
 export * from "./useMediaTimeTranslations";
 export * from "./IIIFBrowserI18n";
+
+export * from "./SvgEditorControls";

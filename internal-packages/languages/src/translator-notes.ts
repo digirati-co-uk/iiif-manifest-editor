@@ -49,6 +49,11 @@ export const translatorNotes = {
     },
   },
   components: {
+    "svg.pen": { context: "Polygon drawing tool (the engine calls it pen). Label only; preserve tool identifiers." },
+    "svg.draw": { context: "Freehand drawing tool, distinct from the point-by-point polygon tool." },
+    "svg.hand": { context: "Action that pans the canvas viewport, not a content label." },
+    "svg.lineBox": { context: "Line-box drawing tool. Translate the display name, never the lineBox engine enum." },
+    "svg.delete": { context: "Action that removes the current shape/annotation selection." },
     "browser.selectResource": {
       context: "Accessible selection action. The resource name remains literal authored IIIF content.",
       placeholders: { name: "Authored resource label or stable ID; never translate its value." },
