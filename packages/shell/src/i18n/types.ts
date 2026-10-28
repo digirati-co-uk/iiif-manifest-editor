@@ -71,6 +71,7 @@ export const shellUiI18nSchema = {
 export function validateShellUiI18n(value: unknown): asserts value is ShellUiI18nConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new TypeError("uiI18n must be an object");
   for (const [key, item] of Object.entries(value)) {
+    if (!Object.hasOwn(shellUiI18nSchema.properties, key)) throw new TypeError(`Unknown uiI18n field: ${key}`);
     const field = shellUiI18nSchema.properties[key as keyof typeof shellUiI18nSchema.properties];
     if (!field) throw new TypeError(`Unknown uiI18n field: ${key}`);
     if (item === undefined) continue;

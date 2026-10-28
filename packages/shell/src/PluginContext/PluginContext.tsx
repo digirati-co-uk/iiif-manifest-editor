@@ -357,7 +357,29 @@ export function PluginConfigBridge({ config }: { config?: Partial<Config> }) {
   return null;
 }
 
-const registeredPluginCatalogs = new WeakMap<EditorI18n, Set<CatalogRegistration>>();
+const registeredPluginCatalogs = new WeakMap<EditorI18n, Map<CatalogRegistration, Promise<void>>>();
+const loadedPluginNamespaces = new WeakMap<EditorI18n, Map<string, Promise<void>>>();
+
+function oncePerRuntime<Key>(
+  caches: WeakMap<EditorI18n, Map<Key, Promise<void>>>,
+  runtime: EditorI18n,
+  key: Key,
+  action: () => Promise<void>
+): Promise<void> {
+  let cache = caches.get(runtime);
+  if (!cache) {
+    cache = new Map();
+    caches.set(runtime, cache);
+  }
+  const existing = cache.get(key);
+  if (existing) return existing;
+  const pending = Promise.resolve().then(action);
+  cache.set(key, pending);
+  void pending.catch(() => {
+    if (cache.get(key) === pending) cache.delete(key);
+  });
+  return pending;
+}
 
 /** Runtime owns collision diagnostics; failed atomic registrations remain retryable. */
 export function PluginI18nBridge() {
@@ -368,19 +390,17 @@ export function PluginI18nBridge() {
     let active = true;
     void (async () => {
       for (const plugin of plugins) {
+        if (!active) return;
         for (const registration of plugin.metadata.localisation?.registrations || []) {
           if (!active) return;
-          let registered = registeredPluginCatalogs.get(runtime);
-          if (!registered) {
-            registered = new Set();
-            registeredPluginCatalogs.set(runtime, registered);
-          }
-          if (!registered.has(registration)) {
-            await runtime.register(registration);
-            registered.add(registration);
-          }
+          await oncePerRuntime(registeredPluginCatalogs, runtime, registration, () => runtime.register(registration));
         }
-        await runtime.loadNamespaces(plugin.metadata.localisation?.requiredNamespaces || []);
+        if (!active) return;
+        const namespaces = [...new Set(plugin.metadata.localisation?.requiredNamespaces || [])].sort();
+        if (namespaces.length)
+          await oncePerRuntime(loadedPluginNamespaces, runtime, JSON.stringify(namespaces), () =>
+            runtime.loadNamespaces(namespaces)
+          );
       }
     })().catch((error) => {
       if (active) console.error("Plugin translation registration failed", error);

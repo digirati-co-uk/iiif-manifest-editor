@@ -8,14 +8,14 @@ Implementation commit: `ec656ee2589f8cb907c1b56d954ef24da3c8020f`. Baseline sour
 
 `Config.i18n` retains its existing meaning: `defaultLanguage`, `availableLanguages`, `advancedLanguageMode`, and text granularity concern authored IIIF content. `Config.uiI18n?: ShellUiI18nConfig` is separate, JSON-compatible UI configuration:
 
-| Field | Contract |
-| --- | --- |
-| `defaultLocale`, `fallbackLocale` | Optional nonempty locale strings; runtime defaults apply when omitted. English remains the default. |
-| `availableLocales` | Optional nonempty string array; replaces the earlier config array. Metadata/catalogs must be enabled independently. |
-| `defaultProfile` | Optional nonempty wording-profile ID. The persisted field is **defaultProfile**, never the illustrative plan's `profile`. |
-| `availableProfiles` | Optional nonempty string array, replacing the earlier config array. |
-| `requiredNamespaces` | Optional string array; deduplicated union in configuration/preset inheritance. Shell adds `shell` and reused `editor-api`. |
-| `timeZone` | Optional valid IANA timezone; task displays default explicitly to UTC. Does not change `navDate`, authored timestamps, or storage. |
+| Field                             | Contract                                                                                                                           |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `defaultLocale`, `fallbackLocale` | Optional nonempty locale strings; runtime defaults apply when omitted. English remains the default.                                |
+| `availableLocales`                | Optional nonempty string array; replaces the earlier config array. Metadata/catalogs must be enabled independently.                |
+| `defaultProfile`                  | Optional nonempty wording-profile ID. The persisted field is **defaultProfile**, never the illustrative plan's `profile`.          |
+| `availableProfiles`               | Optional nonempty string array, replacing the earlier config array.                                                                |
+| `requiredNamespaces`              | Optional string array; deduplicated union in configuration/preset inheritance. Shell adds `shell` and reused `editor-api`.         |
+| `timeZone`                        | Optional valid IANA timezone; task displays default explicitly to UTC. Does not change `navDate`, authored timestamps, or storage. |
 
 Exported `shellUiI18nSchema` is JSON Schema with `additionalProperties: false`; `validateShellUiI18n` validates persisted input and is invoked by `mergeUiI18n`. Unknown fields (including `locale`/`profile` aliases), invalid arrays and invalid timezones are rejected. Undefined optional values are allowed in TypeScript and disappear in JSON. Runtime validates actual locale/profile availability and policy intersections. No browser detection or persistence is introduced.
 
@@ -44,8 +44,11 @@ const localisation = {
 const runtime = createEditorI18n(localisation);
 <EditorI18nProvider instance={runtime}>{editor}</EditorI18nProvider>;
 // Or initialise/reconfigure the effective shell boundary explicitly:
-<ShellProvider resource={resource} localisation={localisation}
-  config={{ uiI18n: { defaultLocale: "nl", defaultProfile: "plain", timeZone: "Europe/Amsterdam" } }}>
+<ShellProvider
+  resource={resource}
+  localisation={localisation}
+  config={{ uiI18n: { defaultLocale: "nl", defaultProfile: "plain", timeZone: "Europe/Amsterdam" } }}
+>
   {children}
 </ShellProvider>;
 ```
@@ -85,10 +88,17 @@ History retranslates only explicit display references. Fields are `labelMessage`
 ```ts
 ctx.setActionLabel("Old label", { namespace: "my-plugin", key: "task.label" });
 ctx.setActionStatus("running", "Old status", { namespace: "my-plugin", key: "task.running" });
-ctx.appendActionLog("Diagnostic fallback", "info", diagnosticData,
-  { namespace: "my-plugin", key: "task.feedback", values: { count: 2 } });
-ctx.setActionProgress({ current: 1, total: 2, label: "Fallback",
-  labelMessage: { namespace: "my-plugin", key: "task.progress" } });
+ctx.appendActionLog("Diagnostic fallback", "info", diagnosticData, {
+  namespace: "my-plugin",
+  key: "task.feedback",
+  values: { count: 2 },
+});
+ctx.setActionProgress({
+  current: 1,
+  total: 2,
+  label: "Fallback",
+  labelMessage: { namespace: "my-plugin", key: "task.progress" },
+});
 ```
 
 `setActionError(error, statusText?, statusTextMessage?)` is also additive. Task result/status patches accept references. Store normalization, persistence, history cloning and error serialization preserve references. Built-in preparation/running/cancellation/resume/reload/result messages acquire explicit descriptors; raw remote diagnostics, results, stable status/event/log-level codes and target IDs are preserved. Rendering translates status/level badges, formats timestamps with UI locale + configured timezone, percentages with `Intl.NumberFormat`, and uses whole-message plural counts for items/entries/seconds. Already visible task toasts resolve through React at render time. This is display metadata, not a worker transport change.
@@ -135,3 +145,11 @@ npm --prefix internal-packages/languages run translations:check
 ```
 
 No shared index/generated inventory/runtime/other-package source was changed. The lockfile diff is confined to `packages/shell`'s dev importer. Parent should integrate this commit before downstream consumers rely on the new shell metadata and formatter contracts.
+
+## Parent integration review
+
+Integrated with the web host's stable English/Dutch provider. Parent review added regression coverage and fixes for asynchronous host rejection, combined locale/profile forwarding, prototype-named configuration fields, and concurrent plugin bridges. Shared registration and namespace-load promises are coalesced per actual runtime; failed promises are evicted for retry. The header retains usable controls and announces translated failure feedback when a controlled host rejects a request. No locale key/remount was added.
+
+The shell suite now has **121 passing tests**. Runtime and web interaction suites have **30** and **7** passing tests respectively. Existing live Chromium checks passed for create/edit/preview, server-rendered Dutch without hydration errors, keyboard language selection/reload, and bounded mobile headers. These checks establish host bootstrap behavior, not completion of all downstream UI or whole-editor undo coverage.
+
+Source aliases now live only in `tsconfig.test.json` (explicit `noEmit`) and `tsconfig.source.json`; publication/watch configuration keeps ordinary package resolution. `typecheck:source` checks the whole shell against actual dependency source and retains the 13 known layout Vault3/Vault4 diagnostics. The focused test/API config passes. This prevents the existing declaration watcher following check-only aliases into sibling source folders. Generated declaration/source-map pairs observed there were verified against their source files and moved to a temporary recovery directory; authored files and the running server were preserved. No package build or publication artifact check was performed.

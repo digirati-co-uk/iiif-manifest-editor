@@ -77,7 +77,126 @@ test("config merge keeps content languages separate, replaces allow lists and un
   expect(JSON.parse(JSON.stringify(merged.uiI18n))).toEqual(merged.uiI18n);
   expect(() => validateShellUiI18n({ profile: "plain" })).toThrow("Unknown uiI18n field");
   expect(() => validateShellUiI18n({ availableLocales: [] })).toThrow();
+  for (const field of ["__proto__", "constructor", "toString"])
+    expect(() => validateShellUiI18n(JSON.parse(`{"${field}":["en-GB"]}`))).toThrow("Unknown uiI18n field");
   expect(mergePartialConfig({ uiI18n: { defaultLocale: "nl" } }, {}).uiI18n?.defaultLocale).toBe("nl");
+});
+
+test("inherited controlled host rejection reaches the shell selection caller", async () => {
+  const runtime = createEditorI18n(options);
+  let api!: ReturnType<typeof useEditorI18n>;
+  function Probe() {
+    api = useEditorI18n();
+    return <span>{api.locale}</span>;
+  }
+  const { root, container } = mount();
+  await act(async () =>
+    root.render(
+      <EditorI18nProvider
+        instance={runtime}
+        locale="en-GB"
+        onLocaleChange={async () => {
+          throw new Error("Host rejected selection");
+        }}
+      >
+        <ConfigProvider>
+          <ShellI18nBoundary>
+            <Probe />
+          </ShellI18nBoundary>
+        </ConfigProvider>
+      </EditorI18nProvider>
+    )
+  );
+  await act(async () => {
+    await expect(api.setLocale("nl")).rejects.toThrow("Host rejected selection");
+  });
+  expect(container.textContent).toBe("en-GB");
+});
+
+test("combined forwarded host selection commits language and profile together", async () => {
+  const runtime = createEditorI18n(options);
+  let api!: ReturnType<typeof useEditorI18n>;
+  function Probe() {
+    api = useEditorI18n();
+    return (
+      <span>
+        {api.locale}/{api.profile}
+      </span>
+    );
+  }
+  const { root, container } = mount();
+  await act(async () =>
+    root.render(
+      <EditorI18nProvider instance={runtime}>
+        <ConfigProvider>
+          <ShellI18nBoundary>
+            <Probe />
+          </ShellI18nBoundary>
+        </ConfigProvider>
+      </EditorI18nProvider>
+    )
+  );
+  const committed: { locale: string; profile: string }[] = [];
+  const unsubscribe = runtime.subscribe(() => {
+    const state = runtime.getSnapshot();
+    if (!state.loading && !state.error) committed.push(state);
+  });
+  try {
+    await act(async () => api.select({ locale: "nl", profile: "plain" }));
+    expect(container.textContent).toBe("nl/plain");
+    expect(committed.length).toBeGreaterThan(0);
+    expect(committed.every((state) => state.locale === "nl" && state.profile === "plain")).toBe(true);
+  } finally {
+    unsubscribe();
+  }
+});
+
+test("concurrent plugin bridges coalesce registration on their shared host instance", async () => {
+  const runtime = createEditorI18n(options);
+  const source = { label: "Shared extension" };
+  let release!: () => void;
+  const loader = vi.fn(
+    () =>
+      new Promise<typeof source>((resolve) => {
+        release = () => resolve(source);
+      })
+  );
+  const registration = {
+    owner: "test",
+    namespace: "shared-host-extension",
+    sourceLocale: "en-GB",
+    contract: createCatalogContract(source),
+    loaders: { "en-GB": loader },
+  };
+  const plugins = [
+    {
+      default: {
+        id: "shared",
+        label: "Shared",
+        localisation: { registrations: [registration], requiredNamespaces: [registration.namespace] },
+      },
+    },
+  ];
+  const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+  const { root } = mount();
+  try {
+    await act(async () =>
+      root.render(
+        <EditorI18nProvider instance={runtime}>
+          <PluginProvider plugins={plugins}>
+            <PluginI18nBridge />
+            <PluginI18nBridge />
+          </PluginProvider>
+        </EditorI18nProvider>
+      )
+    );
+    expect(loader).toHaveBeenCalledTimes(1);
+    await act(async () => release());
+    expect(runtime.translate(registration.namespace)("label")).toBe("Shared extension");
+    expect(errors).not.toHaveBeenCalled();
+  } finally {
+    errors.mockRestore();
+  }
 });
 
 test("inherited preset overlays compose in order and host wins, policies intersect", () => {

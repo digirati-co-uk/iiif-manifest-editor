@@ -2,6 +2,9 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, expect, it, vi } from "vitest";
 import { LanguageSwitcher, type LanguageSwitcherProps } from "../src/components/site/LanguageSwitcher";
+import { HeaderLanguageSwitcher } from "../src/components/site/HeaderLanguageSwitcher";
+import { EditorI18nProvider } from "@manifest-editor/i18n";
+import { createWebI18n } from "../src/i18n/WebI18nProvider";
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 // jsdom lacks CSS.escape; the library queries our locale IDs in quoted attribute selectors.
@@ -108,4 +111,36 @@ it("keeps regional locale variants distinguishable and a single available locale
   await key(unavailable, "ArrowDown");
   expect(document.querySelector('[role="listbox"]')).toBeNull();
   expect(single.onLocaleChange).not.toHaveBeenCalled();
+});
+
+it("announces a rejected asynchronous host request and leaves the trigger usable", async () => {
+  const runtime = createWebI18n();
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  roots.push(root);
+  await act(async () =>
+    root.render(
+      <EditorI18nProvider
+        instance={runtime}
+        locale="en-GB"
+        onLocaleChange={async () => {
+          throw new Error("Host rejected selection");
+        }}
+      >
+        <HeaderLanguageSwitcher />
+      </EditorI18nProvider>
+    )
+  );
+  const button = container.querySelector("button")!;
+  await act(async () => button.focus());
+  await key(button, "ArrowDown");
+  const dutch = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find((option) =>
+    option.textContent?.includes("Nederlands")
+  )!;
+  await act(async () => dutch.click());
+  expect(container.textContent).toContain("The interface settings could not be changed. Try again.");
+  expect(runtime.getSnapshot().locale).toBe("en-GB");
+  expect(button.disabled).toBe(false);
+  expect(button.getAttribute("aria-disabled")).toBe("false");
 });

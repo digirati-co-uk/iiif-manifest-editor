@@ -31,8 +31,11 @@ export function EditorI18nProvider(props: EditorI18nProviderProps): ReactElement
   }, [runtime, locale, profile, onError]);
   const value = useMemo<EditorI18n>(() => {
     const select: EditorI18n["select"] = async (request) => {
-      if (request.locale !== undefined) onLocaleChange?.(request.locale);
-      if (request.profile !== undefined) onProfileChange?.(request.profile);
+      // Notify both fields together, and propagate asynchronous host rejection to the caller.
+      await Promise.all([
+        ...(request.locale !== undefined ? [Promise.resolve().then(() => onLocaleChange?.(request.locale!))] : []),
+        ...(request.profile !== undefined ? [Promise.resolve().then(() => onProfileChange?.(request.profile!))] : []),
+      ]);
       const uncontrolled = {
         ...(locale === undefined && request.locale !== undefined ? { locale: request.locale } : {}),
         ...(profile === undefined && request.profile !== undefined ? { profile: request.profile } : {}),

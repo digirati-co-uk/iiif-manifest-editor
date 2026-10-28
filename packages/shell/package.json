@@ -36,7 +36,8 @@
     "dev": "tsdown src/index.ts --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsdown src/index.ts"
+    "prepack": "tsdown src/index.ts",
+    "typecheck:source": "tsc --noEmit -p tsconfig.source.json"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",

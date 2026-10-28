@@ -1,5 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/i18n/**/*.test.tsx", "vitest.config.ts"],
-  "exclude": []
+  "exclude": [],
+  "compilerOptions": {
+    "paths": {
+      "@manifest-editor/client-vault": ["../client-vault/src/index.ts"],
+      "@manifest-editor/components": ["../components/src/index.tsx"],
+      "@manifest-editor/editor-api": ["../editor-api/src/index.ts"],
+      "@manifest-editor/creator-api": ["../creator-api/src/index.ts"]
+    },
+    "noEmit": true
+  }
 }

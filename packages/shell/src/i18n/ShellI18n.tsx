@@ -85,7 +85,7 @@ export function ShellI18nBoundary({
           ? (value) => {
               if (!snapshot.availableLocales.some((item) => item.id === value))
                 throw new RangeError(`Unavailable shell locale: ${value}`);
-              void parent.setLocale(value);
+              return parent.setLocale(value);
             }
           : undefined
       }
@@ -94,7 +94,7 @@ export function ShellI18nBoundary({
           ? (value) => {
               if (!snapshot.availableProfiles.includes(value))
                 throw new RangeError(`Unavailable shell profile: ${value}`);
-              void parent.setProfile(value);
+              return parent.setProfile(value);
             }
           : undefined
       }

@@ -3,12 +3,6 @@
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "paths": {
-      "@manifest-editor/client-vault": ["../client-vault/src/index.ts"],
-      "@manifest-editor/components": ["../components/src/index.tsx"],
-      "@manifest-editor/editor-api": ["../editor-api/src/index.ts"],
-      "@manifest-editor/creator-api": ["../creator-api/src/index.ts"]
-    }
+    "allowImportingTsExtensions": true
   }
 }
