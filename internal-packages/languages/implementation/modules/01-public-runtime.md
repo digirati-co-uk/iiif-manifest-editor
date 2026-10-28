@@ -102,3 +102,7 @@ Regression evidence: 26 runtime/React tests and 67 foundation tests pass, along 
 ## Optional Dutch data integration
 
 `@manifest-editor/i18n/nl` exports explicitly typed resource stores for all 19 current Dutch namespaces, the four plain overlays and both exhibition overlays. The host enables these together with Dutch locale metadata; default English behavior is preserved. The private package exposes Dutch source subpaths for bundling into the public entry, with no private imports in its public type signatures. Two additional runtime tests verify complete declared Dutch coverage, real plurals, reversible profile switches and the exhibition/plain intersection through the public subpath exports. App mounting and remaining module translations are still pending.
+
+## Follow-up review fixes
+
+The fresh review confirmed the original fixes and source-only `core`/`nl` imports with React imports rejected, then identified two further cases. Validation now scans every `<` delimiter and rejects incomplete or nested attribute markup instead of skipping it. A rejected staged locale loader is ignored when its selection version is obsolete, allowing registration to retry against the latest locale. Exact regression inputs include `<link href="https://evil.example/<link>">Injected</link>` and a French registration loader rejecting after a successful switch to English. All 29 runtime/React/Dutch tests and 67 foundation tests pass, with no-emit checks and targeted lint. Emitted artifacts and application integration remain unverified.

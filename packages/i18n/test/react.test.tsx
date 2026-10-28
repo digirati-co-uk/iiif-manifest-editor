@@ -252,6 +252,9 @@ it("rejects unsafe markup in rich fallback strings and numeric component names",
     "Invalid source message"
   );
   expect(() => renderToString(element("<0>Bad</0>"))).toThrow("Invalid source message");
+  expect(() => renderToString(element('<link href="https://evil.example/<link>">Injected</link>'))).toThrow(
+    "Invalid source message"
+  );
   expect(() => renderToString(element("Safe text", { "0": <a href="https://example.org/safe">Guide</a> }))).toThrow(
     "named tags"
   );

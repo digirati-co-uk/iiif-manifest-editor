@@ -307,4 +307,34 @@ describe("isolated i18next runtime", () => {
     await runtime.setLocale("fr");
     expect(changes).toBe(previous);
   });
+
+  it("registers against the latest selection after an obsolete locale loader fails", async () => {
+    const runtime = createEditorI18n({ ...options, locale: "fr" });
+    const source = { title: "Working English" };
+    let rejectFrench!: (error: Error) => void;
+    let started!: () => void;
+    const frenchStarted = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    const registered = runtime.register({
+      owner: "plugin",
+      namespace: "stale-failure",
+      sourceLocale: "en-GB",
+      contract: createCatalogContract(source),
+      loaders: {
+        "en-GB": async () => source,
+        fr: () =>
+          new Promise((_, reject) => {
+            rejectFrench = reject;
+            started();
+          }),
+      },
+    });
+    await frenchStarted;
+    await runtime.setLocale("en-GB");
+    rejectFrench(new Error("Obsolete French failure"));
+    await registered;
+    expect(runtime.getSnapshot()).toMatchObject({ locale: "en-GB", error: null, loading: false });
+    expect(runtime.translate("stale-failure")("title")).toBe("Working English");
+  });
 });

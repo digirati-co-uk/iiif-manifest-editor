@@ -240,11 +240,18 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       const request = { ...desired };
       const selection = selectionFor(request);
       const activeNamespaces = [...new Set([...namespaces, registration.namespace])];
-      const loaded = await staged.load(
-        selection.localeChain,
-        staged.namespaces().filter((namespace) => activeNamespaces.includes(namespace))
-      );
-      const prepared = prepare(request, loaded, staged, activeNamespaces);
+      let prepared: ReturnType<typeof prepare>;
+      try {
+        const loaded = await staged.load(
+          selection.localeChain,
+          staged.namespaces().filter((namespace) => activeNamespaces.includes(namespace))
+        );
+        prepared = prepare(request, loaded, staged, activeNamespaces);
+      } catch (error) {
+        // A failed obsolete locale must not reject a valid registration for the latest selection.
+        if (version !== selectionVersion) continue;
+        throw error;
+      }
       // Follow a user's newer locale/profile request before publishing any registration state.
       if (version !== selectionVersion) continue;
       selectionVersion++;

@@ -16,9 +16,18 @@ function syntax(value: string): { placeholders: string[]; tags: string[]; issues
       message: "Use named {{variables}}; nesting and formatter syntax are not supported by this contract yet",
     });
   const stack: string[] = [];
-  // Trans also recognises numeric tags; every markup token must pass this contract.
-  for (const match of value.matchAll(/<[^<>]*>/g)) {
-    const parsed = /^<(\/)?([A-Za-z][A-Za-z0-9]*)(\s*\/)?\s*>$/.exec(match[0]);
+  // Scan every opening delimiter. A regex that skips nested '<' can hide attributes from validation.
+  let cursor = 0;
+  while (value.indexOf("<", cursor) !== -1) {
+    const start = value.indexOf("<", cursor);
+    const end = value.indexOf(">", start + 1);
+    if (end === -1) {
+      issues.push({ code: "rich-text", path: "", message: "Unclosed markup delimiter" });
+      break;
+    }
+    const token = value.slice(start, end + 1);
+    cursor = end + 1;
+    const parsed = /^<(\/)?([A-Za-z][A-Za-z0-9]*)(\s*\/)?\s*>$/.exec(token);
     if (!parsed) {
       issues.push({ code: "rich-text", path: "", message: "Rich tags may not contain attributes" });
       continue;
