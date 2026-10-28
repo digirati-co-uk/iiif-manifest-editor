@@ -58,14 +58,20 @@ async function mount(child: ReactNode, i18n = runtime()) {
   document.body.append(container);
   const root = createRoot(container);
   mounted.push({ root, container });
-  await act(async () =>
+  const render = (instance: typeof i18n) =>
     root.render(
-      <EditorI18nProvider instance={i18n}>
+      <EditorI18nProvider instance={instance}>
         <ThemeProvider theme={{ padding: {}, color: {}, sizes: {} }}>{child}</ThemeProvider>
       </EditorI18nProvider>
-    )
-  );
-  return { container, i18n };
+    );
+  await act(async () => render(i18n));
+  return {
+    container,
+    i18n,
+    replaceI18n: async (instance: typeof i18n) => {
+      await act(async () => render(instance));
+    },
+  };
 }
 function context(initialData = {}, targetType = "ContentResource") {
   return { options: { initialData, targetType }, config: {}, runCreate: vi.fn() } as unknown as CreatorContext<any>;
@@ -146,7 +152,7 @@ it.each([
   async (_name, Form) => {
     const authored = { cy: ["Teitl Cymraeg"], fr: ["Titre français"] };
     const props = context({ label: authored, url: "https://example.org/authored" });
-    const { container, i18n } = await mount(<Form {...props} />);
+    const { container, i18n, replaceI18n } = await mount(<Form {...props} />);
     const url = container.querySelector<HTMLInputElement>('[name="url"]')!;
     await act(async () => inputValue(url, "https://example.org/draft"));
     const fields = [...container.querySelectorAll("textarea,input")];
@@ -244,7 +250,7 @@ it.each(["thumbnail", "service"])(
     vi.stubGlobal("fetch", fetcher);
     const props = context({ url: "https://example.org/image/info.json" });
     const Form = kind === "thumbnail" ? CreateThumbnailForm : CreateImageServerForm;
-    const { container, i18n } = await mount(<Form {...props} />);
+    const { container, i18n, replaceI18n } = await mount(<Form {...props} />);
     const url = container.querySelector<HTMLInputElement>('[name="url"]')!;
     await submit(container);
     expect(fetcher).toHaveBeenCalledTimes(1);
@@ -296,7 +302,7 @@ it("finishes an in-flight thumbnail request in Dutch, keeps selected numeric siz
 });
 
 it.each(["internal", "manifest", "content"])(
-  "keeps real %s browser history, search draft, selection and callback identifiers across live translation",
+  "keeps real %s browser state and callback identifiers across translation and runtime replacement",
   async (kind) => {
     const vault = fixture.vault!;
     await vault.loadManifest("https://example.org/m", {
@@ -332,7 +338,7 @@ it.each(["internal", "manifest", "content"])(
       ) : (
         <IIIFBrowserForm {...props} />
       );
-    const { container, i18n } = await mount(node);
+    const { container, i18n, replaceI18n } = await mount(node);
     const id = kind === "manifest" ? "https://example.org/m" : "https://example.org/c";
     const type = kind === "manifest" ? "Manifest" : "Canvas";
     await act(async () => {
@@ -343,6 +349,7 @@ it.each(["internal", "manifest", "content"])(
     const history = browser.getState().history;
     const location = history.location;
     const selected = output.getState().selectedItems;
+    const originalSearch = search;
     const input = [...document.querySelectorAll<HTMLInputElement>("input")].find((el) => el.value === "draft query")!;
     expect(input?.value).toBe("draft query");
     await act(async () => i18n.select({ locale: "nl", profile: "plain" }));
@@ -353,7 +360,38 @@ it.each(["internal", "manifest", "content"])(
     expect(input.value).toBe("draft query");
     await act(async () => search.getState().close());
     const label = kind === "internal" ? "Pagina selecteren" : kind === "manifest" ? "Selecteren" : "Aan item toevoegen";
-    await act(async () => button(container, label).click());
+    const action = button(container, label);
+    const replacement = createEditorI18n({
+      locales: [...defaultLocales, dutchLocale],
+      catalogs: dutchCatalogs,
+      profiles: { plain: dutchPlain },
+      locale: "nl",
+      profile: "plain",
+      host: {
+        nl: {
+          creators: {
+            browser: {
+              selectCanvas: "Nieuwe pagina kiezen",
+              select: "Nieuwe selectie",
+              addToManifest: "Aan nieuw item toevoegen",
+            },
+          },
+        },
+      },
+    });
+    await replaceI18n(replacement);
+    const changedLabel =
+      kind === "internal"
+        ? "Nieuwe pagina kiezen"
+        : kind === "manifest"
+          ? "Nieuwe selectie"
+          : "Aan nieuw item toevoegen";
+    expect(button(container, changedLabel)).toBe(action);
+    expect(browser.getState().history).toBe(history);
+    expect(history.location).toBe(location);
+    expect(output.getState().selectedItems).toBe(selected);
+    expect(search).toBe(originalSearch);
+    await act(async () => action.click());
     if (kind === "internal") expect(props.runCreate).toHaveBeenCalledWith({ id });
     else expect((props.runCreate as any).mock.calls[0][0].output[0].resource.id).toBe(id);
     expect(JSON.stringify(vault.getState())).toBe(before);
@@ -398,7 +436,7 @@ it.each(["manifest", "content", "notebook", "override"])(
       kind === "notebook" || kind === "override" ? "Canvas" : "ContentResource"
     );
     const Form = kind === "manifest" ? ManifestBrowserForm : IIIFBrowserForm;
-    const { container, i18n } = await mount(<Form {...props} />);
+    const { container, i18n, replaceI18n } = await mount(<Form {...props} />);
     const id = kind === "manifest" ? "https://example.org/m" : "https://example.org/image";
     const type = kind === "manifest" ? "Manifest" : "ImageService";
     if (kind !== "manifest")
@@ -408,6 +446,15 @@ it.each(["manifest", "content", "notebook", "override"])(
     expect(button(container, "Add")).toBeTruthy();
     await act(async () => i18n.setLocale("nl"));
     expect(button(container, "Toevoegen")).toBeTruthy();
+    expect(output.getState().selectedItems).toBe(before);
+    const replacement = createEditorI18n({
+      locales: [...defaultLocales, dutchLocale],
+      catalogs: dutchCatalogs,
+      locale: "nl",
+      host: { nl: { common: { actions: { add: "Nieuwe toevoeging" } } } },
+    });
+    await replaceI18n(replacement);
+    expect(button(container, "Nieuwe toevoeging")).toBeTruthy();
     expect(output.getState().selectedItems).toBe(before);
   }
 );

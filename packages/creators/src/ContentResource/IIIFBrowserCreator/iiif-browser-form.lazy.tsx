@@ -4,7 +4,7 @@ import { useConfig, useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import type { IIIFBrowserProps } from "iiif-browser";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { formatIIIFBrowserOutput } from "./iiif-browser-output";
 
 export interface IIIFBrowserCreatorInitialData {
@@ -28,39 +28,47 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
     options: { targetType },
   } = props;
   const notebookConfig = useConfig().notebook;
+  const live = useRef({
+    t,
+    resolveMessage,
+    targetType,
+    notebookConfig,
+    reference: initialData.actionLabelMessage,
+    runCreate,
+  });
+  live.current = {
+    t,
+    resolveMessage,
+    targetType,
+    notebookConfig,
+    reference: initialData.actionLabelMessage,
+    runCreate,
+  };
   const output = useMemo(() => {
     return [
       {
         type: "callback",
         // Output descriptors live for the browser lifetime. Keep labels reactive without remounting.
         get label() {
+          const { t, resolveMessage, targetType, notebookConfig, reference } = live.current;
           const fallback =
             targetType === "Canvas"
               ? (notebookConfig?.canvasActionLabel ?? t("browser.addToManifest"))
               : t("browser.select");
           return resolveMessage(
-            initialData.actionLabelMessage ||
-              (targetType === "Canvas" ? notebookConfig?.canvasActionLabelMessage : undefined),
+            reference || (targetType === "Canvas" ? notebookConfig?.canvasActionLabelMessage : undefined),
             fallback
           );
         },
         supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
-        cb: (resource) => runCreate({ output: resource }),
+        cb: (resource) => live.current.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: formatIIIFBrowserOutput,
         },
       },
     ] as IIIFBrowserProps["output"];
-  }, [
-    runCreate,
-    targetType,
-    notebookConfig?.canvasActionLabel,
-    notebookConfig?.canvasActionLabelMessage,
-    t,
-    initialData.actionLabelMessage,
-    resolveMessage,
-  ]);
+  }, [live]);
 
   const navigationOptions = useMemo(() => {
     return {

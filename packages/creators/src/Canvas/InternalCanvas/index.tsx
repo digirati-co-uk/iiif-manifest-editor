@@ -6,7 +6,7 @@ import type { IIIFBrowserProps } from "iiif-browser";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 import { useManifest, useVault, VaultProvider } from "react-iiif-vault";
 import invariant from "tiny-invariant";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -37,6 +37,8 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
   const t = useTranslations("creators");
   const notebookPlugins = useNotebookBrowserPlugins();
   const { runCreate } = props;
+  const live = useRef({ t, runCreate });
+  live.current = { t, runCreate };
   const manifest = useManifest();
   const vault = useVault();
 
@@ -55,16 +57,16 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
     return [
       {
         type: "callback",
-        cb: (url: string) => runCreate({ id: url }),
+        cb: (url: string) => live.current.runCreate({ id: url }),
         // The browser retains output descriptors at mount; resolve the label when displayed.
         get label() {
-          return t("browser.selectCanvas");
+          return live.current.t("browser.selectCanvas");
         },
         supportedTypes: ["Canvas"],
         format: { type: "url" },
       },
     ] as IIIFBrowserProps["output"];
-  }, [runCreate, t]);
+  }, [live]);
 
   const historyOptions = useMemo(() => {
     return {

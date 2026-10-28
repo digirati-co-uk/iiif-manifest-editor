@@ -4,7 +4,7 @@ import { useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import type { IIIFBrowserProps } from "iiif-browser";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 export interface ManifestBrowserCreatorInitialData {
   /** Optional UI message; legacy caller labels remain literal fallbacks. */
@@ -23,16 +23,19 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   }, [props.options.initialData]);
 
   const { runCreate } = props;
+  const live = useRef({ t, resolveMessage, reference: initialData.actionLabelMessage, runCreate });
+  live.current = { t, resolveMessage, reference: initialData.actionLabelMessage, runCreate };
   const output = useMemo(() => {
     return [
       {
         type: "callback",
         // Retained by the browser store: resolve at display time, without replacing the store.
         get label() {
-          return resolveMessage(initialData.actionLabelMessage, t("browser.select"));
+          const { t, resolveMessage, reference } = live.current;
+          return resolveMessage(reference, t("browser.select"));
         },
         supportedTypes: ["Manifest", "Collection", "ManifestList", "CollectionList", "CollectionItemList"],
-        cb: (resource) => runCreate({ output: resource }),
+        cb: (resource) => live.current.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: (resource, parent, vault) => {
@@ -50,7 +53,7 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
         },
       },
     ] as IIIFBrowserProps["output"];
-  }, [runCreate, t, initialData.actionLabelMessage, resolveMessage]);
+  }, [live]);
 
   const navigationOptions = useMemo(() => {
     return {

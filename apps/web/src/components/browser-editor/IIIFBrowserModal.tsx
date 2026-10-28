@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { type IIIFBrowserProps } from "iiif-browser";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { VaultProvider } from "react-iiif-vault";
 import { createManifestFromId } from "./browser-state";
 
@@ -35,20 +35,22 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
   }, []);
 
   const { mutate: openManifest } = createProject;
+  const live = useRef({ webT, openManifest });
+  live.current = { webT, openManifest };
   const output = useMemo(() => {
     return [
       {
         type: "callback",
-        cb: (url: string) => openManifest(url),
+        cb: (url: string) => live.current.openManifest(url),
         // Browser output descriptors are retained; resolve wording at display time.
         get label() {
-          return webT("browser.openManifest");
+          return live.current.webT("browser.openManifest");
         },
         supportedTypes: ["Manifest"],
         format: { type: "url" },
       },
     ] as IIIFBrowserProps["output"];
-  }, [openManifest, webT]);
+  }, [live]);
 
   if (createProject.isPending) {
     return (
