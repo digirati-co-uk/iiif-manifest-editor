@@ -74,7 +74,7 @@ export default function LocalEditor() {
             if (!confirm(webT("local.leaveConfirm"))) event.preventDefault();
           }}
         >
-          <ManifestEditor localisation={webUiResources} Logo />
+          <ManifestEditorLogo />
         </Link>
         <div className="flex-1 flex gap-2"></div>
         <HeaderLanguageSwitcher />
