@@ -60,7 +60,7 @@ export function RangeWorkbenchCanvas(props: {
           <CanvasPanel.RenderCanvas
             renderViewerControls={() => (
               <>
-                <ViewControls editIcon />
+                <ViewControls />
                 <CanvasViewerNavigation enableNavigation={true} onNext={onNextCanvas} onPrevious={onPreviousCanvas} />
               </>
             )}

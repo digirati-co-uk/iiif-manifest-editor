@@ -24,6 +24,8 @@ export const catalog = {
     seek: "Seek in media",
   },
   viewer: {
+    controls: "View controls",
+    rotate: "Rotate clockwise",
     home: "Home",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",

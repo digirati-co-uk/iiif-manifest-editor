@@ -24,6 +24,8 @@ export const catalog = {
     seek: "Naar positie in media gaan",
   },
   viewer: {
+    controls: "Weergavebediening",
+    rotate: "Rechtsom draaien",
     home: "Beginpositie",
     zoomIn: "Inzoomen",
     zoomOut: "Uitzoomen",

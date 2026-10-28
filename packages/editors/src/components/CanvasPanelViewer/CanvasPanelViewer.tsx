@@ -27,12 +27,9 @@ import { Loading } from "@manifest-editor/ui/atoms/Loading";
 import { PaddingComponentMedium, PaddingComponentSmall } from "@manifest-editor/ui/atoms/PaddingComponent";
 import { CanvasContainer, GhostCanvas } from "@manifest-editor/ui/components/layout/CanvasContainer";
 import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
-import { HomeIcon } from "@manifest-editor/ui/icons/HomeIcon";
-import { MinusIcon } from "@manifest-editor/ui/icons/MinusIcon";
-import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { BlockIcon } from "@manifest-editor/ui/icons/BlockIcon";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
-import { CanvasViewerButton, ViewControls } from "@manifest-editor/ui/ViewControls";
+import { CanvasViewerButton, ViewControls, ViewControlsButton } from "@manifest-editor/ui/ViewControls";
 import {
   Fragment,
   useCallback,
@@ -72,6 +69,9 @@ import { InternalRenderCanvas } from "./components/InternalRenderCanvas";
 import { NonAtlasStrategyRenderer } from "./components/NonAtlasStrategyRenderer";
 import { ResizeCanvasOnCanvas } from "./components/ResizeCanvasOnCanvas";
 import { CustomStrategyProvider } from "./components/StrategyContext";
+
+/** Add media in the exhibition viewer is hidden for now. */
+const SHOW_ADD_MEDIA = false;
 
 export interface CanvasPanelViewerProps {
   /** Enable direct positioning of painting images and layout placeholders. */
@@ -475,55 +475,43 @@ export function CanvasPanelViewer({
               </CanvasPanel.Viewer>
             </AuthProvider>
             {moveMode && (
-              <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 6, zIndex: 20 }}>
-                {enableAddMedia && (
-                  <CanvasViewerButton
-                    type="button"
-                    aria-label={t("ui.addMedia")}
-                    title={t("ui.addMedia")}
-                    onClick={() => void addImage()}
-                  >
-                    <AddImageIcon />
-                  </CanvasViewerButton>
-                )}
-                {canvas && canResizeCanvas(vault, canvas) && (
-                  <CanvasViewerButton
-                    type="button"
-                    aria-label={t("ui.resizeCanvas")}
-                    aria-pressed={resizing}
-                    style={{
-                      fontSize: 13,
-                      transition: "none",
-                      background: resizing ? "#b84c74" : "white",
-                      color: resizing ? "white" : "#332f2c",
-                    }}
-                    onClick={() => setResizing((value) => !value)}
-                  >
-                    {t("ui.resizeCanvas")}
-                  </CanvasViewerButton>
-                )}
-                <CanvasViewerButton
-                  type="button"
-                  aria-label={t("ui.home")}
-                  onClick={() => runtime.current?.world.goHome()}
-                >
-                  <HomeIcon />
-                </CanvasViewerButton>
-                <CanvasViewerButton
-                  type="button"
-                  aria-label={t("ui.zoomOut")}
-                  onClick={() => runtime.current?.world.zoomTo(1 / 0.75)}
-                >
-                  <MinusIcon />
-                </CanvasViewerButton>
-                <CanvasViewerButton
-                  type="button"
-                  aria-label={t("ui.zoomIn")}
-                  onClick={() => runtime.current?.world.zoomTo(0.75)}
-                >
-                  <PlusIcon />
-                </CanvasViewerButton>
-              </div>
+              <ViewControls
+                // The exhibition viewer owns its own Atlas runtime and move/resize handles are positioned in
+                // unrotated space, so rotation is left out here.
+                showRotate={false}
+                style={{ top: 12, right: 12 }}
+                onHome={() => runtime.current?.world.goHome()}
+                onZoomIn={() => runtime.current?.world.zoomTo(0.4)}
+                onZoomOut={() => runtime.current?.world.zoomTo(1 / 0.4)}
+                extraControls={
+                  <>
+                    {/* Add media is hidden for now; flip SHOW_ADD_MEDIA to bring it back. */}
+                    {SHOW_ADD_MEDIA && enableAddMedia && (
+                      <CanvasViewerButton
+                        type="button"
+                        aria-label={t("ui.addMedia")}
+                        title={t("ui.addMedia")}
+                        onClick={() => void addImage()}
+                      >
+                        <AddImageIcon />
+                      </CanvasViewerButton>
+                    )}
+                    {canvas && canResizeCanvas(vault, canvas) && (
+                      <CanvasViewerButton
+                        type="button"
+                        data-control="resize-canvas"
+                        aria-label={t("ui.resizeCanvas")}
+                        aria-pressed={resizing}
+                        $active={resizing}
+                        style={{ fontSize: 13, height: "var(--vc-size)" }}
+                        onClick={() => setResizing((value) => !value)}
+                      >
+                        {t("ui.resizeCanvas")}
+                      </CanvasViewerButton>
+                    )}
+                  </>
+                }
+              />
             )}
             {(!moveMode || otherRequest) && (
               <AnnotationEditingTools
@@ -557,20 +545,8 @@ export function CanvasPanelViewer({
             <EditorI18nBoundary instance={i18nInstance}>
               <ViewControls
                 refresh={refresh}
-                editIcon
-                editMode={editMode}
-                toggleEditMode={toggleEditMode}
-                createMode={createMode}
-                enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
-                onNext={onNextCanvas}
-                onPrevious={onPreviousCanvas}
-                toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
-                extraControls={
-                  <>
-                    <CanvasChoiceControls canvasId={canvasId} />
-                    <CanvasViewerFlagButton canvasId={canvasId} />
-                  </>
-                }
+                extraControls={<CanvasChoiceControls canvasId={canvasId} />}
+                actions={<CanvasViewerFlagButton canvasId={canvasId} />}
               />
             </EditorI18nBoundary>
           )
@@ -596,7 +572,7 @@ function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
   const flagged = tags.some((tag) => tag.type === FLAG_TAG.type && tag.id === FLAG_TAG.id);
 
   return (
-    <CanvasViewerButton
+    <ViewControlsButton
       type="button"
       data-control="flag"
       aria-label={t(flagged ? "messages.removeFlag" : "messages.flagCanvas")}
@@ -606,7 +582,7 @@ function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {
       onClick={() => toggleTag(FLAG_TAG)}
     >
       <ManifestEditorTagIcon icon={FLAG_TAG.icon} />
-    </CanvasViewerButton>
+    </ViewControlsButton>
   );
 }
 
