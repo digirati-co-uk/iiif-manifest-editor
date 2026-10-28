@@ -1,54 +1,140 @@
 # Public editor facade and browser distribution
 
-Status: Pending consumer integration. Module: [`packages/manifest-editor`](../../../../packages/manifest-editor).
+Status: **Source implementation complete; publication and integrated browser acceptance pending.**
+Module: [`packages/manifest-editor`](../../../../packages/manifest-editor).
+The shared index and generated inventory are unchanged.
 
-Expose localisation configuration through every published editor entry point and distribution format.
+## Public facade and host integration
 
-## Prerequisites
+`ManifestEditorProps.localisation?: ShellLocalisation` is a public typed resource/runtime
+option forwarded **unchanged** to `ShellProvider`. The root exports `ShellLocalisation`
+and `ShellUiI18nConfig`; `manifest-editor/shell` continues to export the complete shell
+API. Public types reference the shared public `@manifest-editor/i18n/core` contract,
+never private authoring sources. No new facade namespace/messages were necessary.
 
-- [Shell configuration and definition integration](06-shell.md).
-- [Manifest preset workflows](10-manifest-preset.md).
-- [Collection preset workflows](11-collection-preset.md).
-- [Exhibition presets and terminology](12-exhibition-preset.md).
+`Config.uiI18n` remains serialisable selection/policy configuration, distinct from
+content `Config.i18n`. Catalogs, profile overlays, locale metadata, lazy namespace
+registrations, host resource overrides and callbacks stay in local provider/resource
+options. No runtime/function was added to Vault/IIIF exports, worker/remote release
+transport, editing/history data, or persisted configuration.
 
-Namespace ownership: **facade-owned messages use shell/common or a dedicated reviewed namespace**. [Source inventory](../inventories/19-manifest-editor.md)
+The existing Vault fallback/ref, synchronous-data load, URL load deduplication,
+manifest/collection choice, plugin composition/configuration, AppProvider instance ID,
+VaultProvider position and layout mode are preserved. No locale/profile key or remount
+was introduced. Shell remains responsible for effective runtime creation, host/preset
+policy intersection and selection retention. Controlled host requests go through the
+parent provider callbacks; failed requests retain the authoritative selection. With
+no override, the actual inherited instance is retained. Resource/configuration or
+explicit host instance replacement updates the effective runtime without remounting
+children. Resource input identity should be stable between ordinary renders.
 
-## Files and surfaces to inspect
+The web local/example/share hosts now import the actual public `ManifestEditor` and
+pass complete `webUiResources`; the temporary 96-line copied `WebManifestEditor` is
+deleted. `WebShellProvider` already merges those same resources and needs no copy.
+Resources now explicitly register `[...defaultLocales, dutchLocale]`, including
+English fallback metadata. A real NL-only web policy plus facade/Shell override test
+confirms Dutch remains the only selectable locale, English fallback stays registered,
+and requesting English rejects. This fixes the independently reproduced P1
+“Configuration contains an unregistered locale” failure without weakening policy.
 
-- `packages/manifest-editor/src/ManifestEditor.tsx`
-- `packages/manifest-editor/src/index.ts`
-- `packages/manifest-editor/src/remote`
-- `packages/manifest-editor/browser`
-- `packages/manifest-editor/tsdown.config.ts`
+## Entrypoint and update matrix
 
-Paths identify starting points, not a complete allow-list. The inventory ranks actual files and gives individual locations. Proposed new paths are labelled as such; inspect existing exports and call sites before changing contracts.
+| Surface | Source behavior and review evidence |
+| --- | --- |
+| Root React `ManifestEditor` / `ManifestEditorProps` | Public optional localisation forwarded to real Shell; Manifest and Collection paths exercised. Stable Vault/resource/layout/plugin behavior retained. |
+| `manifest-editor/shell` and preset/component/API reexports | Reexport existing public packages; shell/preset localisation composition remains owned there. No new preset assumptions or translated ID matching. |
+| `browser/entry.ts` | Exports the same facade and props, plus shared `i18n` and `i18nCore` namespaces. Browser runtime contract is now **API 2**. |
+| `ManifestEditor.createRuntime` | API 2 requires host `I18n` and `I18nCore` modules alongside the six React/renderer modules. They are supplied to the factory under exact public package keys, retaining context/factory identity. |
+| `ManifestEditor.automaticRuntime` | Imports pinned React and public i18n 2.2.1 root/core modules; caches successful result, retries failed imports, exposes API version 2 and the actual shared namespaces. Public i18n publication/CDN availability is a release gate. |
+| `manifest-editor/remote` loader | API 2 requires the same public root/core entries in `RuntimeHost`; rejects API 1 and absent modules before asset loading. Loaded exports must retain host provider/factory identity. Factory cache is per host object, not merely React identity; CSS disposal remains independent of editor unmount. |
+| Browser/remote configuration updates | No separate imperative mount/update or worker API exists. Keep one React root, Vault and captured runtime/component type; rerender it with updated `localisation`/`config`, or select through the shared provider. Do not recreate a factory/root for language changes. |
+| Release resolver/register/catalog | Existing stable version selection, integrity descriptors and trusted-asset validation stay technical data. Browser build descriptors now identify API 2. Release resolver remains version-agnostic and rejects mismatched requested API contracts. |
+| ESM/CJS source bundling | tsdown already externalizes public i18n subpaths. Browser build now also externalizes root/core and rejects bundled public-runtime/private-catalog source modules. No private language import or dependency is added to facade consumer source/types. |
+| Optional locale assets | Use public `@manifest-editor/i18n/nl` or host-owned registration loaders. Locale metadata alone supplies no messages. No invented standalone facade locale chunk or undocumented locale is advertised. |
+| Server/task boundary | React/CSS facade is client UI; use public `/core` for server/task factories/types and `/nl` for optional server-safe catalog data. Supply matching synchronous SSR/hydration resources. Native-renderer/dependency SSR and emitted RSC boundaries need release/integration checks. |
 
-## Implementation steps
+**Compatibility:** API 1 browser assets/host signatures are incompatible with API 2's
+shared-runtime injection. Regenerate trusted release descriptors and migrate browser
+hosts together; no old descriptor/catalog asset was rewritten or published here.
+`createRuntime` takes `I18n`/`I18nCore`; the lower-level remote host uses package-name
+keys. Use one stable host object to reuse a remote factory result. Automatic CDN imports
+are pinned source configuration, not proof that a new public release already exists.
 
-1. Add documented runtime catalog/loader/selection props while keeping serialisable uiI18n configuration separate from callbacks. Forward them consistently to shell/runtime.
+README examples cover public Dutch/plain resources, independent content languages,
+controlled outer providers, lazy loaders, resource replacement, browser/remote updates,
+shared context injection and source/server-safe boundaries. Standard English remains
+the default; reviewed Dutch resources must be explicitly enabled. Exhibition stores
+are only for explicitly composed exhibition hosts. No complete preset/whole-UI coverage
+is claimed from the facade forwarding.
 
-2. Expose the shared runtime/provider/reference types from stable public subpaths where useful, without leaking private authoring imports in declarations.
+## Whole-module review and exemptions
 
-3. Support optional language chunks with resolvable published export paths and host-supplied loaders. Bundle catalog data explicitly rather than leaving a private dependency external.
+Reviewed all source files, remote resolver/loader, every subpath reexport, browser
+entry/runtime/register/build, package exports/dependencies, tsdown and TS configurations,
+styles and README. The only facade literal is a developer configuration invariant with
+an API usage example; remote/release/build errors and asset names are technical
+configuration diagnostics. They are not user-authored content or application messages
+and were not blindly extracted. CSS/reset files contain no UI text. No English/Dutch
+catalog namespace was changed; all expanded product catalogs remain with their owners.
 
-4. Wire remote/browser mounting APIs and configuration updates to the same instance lifecycle; keep SSR and direct React use consistent.
+No shared runtime/shell/preset/plugin/catalog edits, generated inventory changes,
+rotation-feature changes, dependency-store mutations, next-env edits, server commands,
+build/prepack operations, pushes, PRs or delegates occurred. No ponytail skill was
+available in the supplied skill catalog or installed skill roots.
 
-5. Verify ESM/CJS and browser distributions share one provider with separately installed plugins, and preserve existing English defaults.
+## Actual checks
 
-6. Use CI-produced package artifacts for publication checks while the repository's no-local-build instruction applies.
+Run from root with working Node 24 and direct installed tools:
 
-## Acceptance checks
+- `pnpm install --ignore-scripts --frozen-lockfile`: all 30 workspaces synchronized,
+  no lockfile diff or lifecycle scripts.
+- `node packages/manifest-editor/node_modules/vitest/vitest.mjs run --config packages/manifest-editor/vitest.config.ts`:
+  **33 tests pass** (6 facade, 3 remote-loader, 5 browser API, 19 release resolver).
+- `node packages/manifest-editor/node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts`:
+  **19 tests pass** across 6 web files.
+- `node node_modules/typescript/bin/tsc --noEmit -p packages/manifest-editor/tsconfig.source.json`:
+  **86 baseline dependency diagnostics**, exactly identical complete diagnostic output
+  against starting HEAD `57a2127a` using the same source config. No facade diagnostic added.
+- `node node_modules/typescript/bin/tsc --noEmit -p packages/manifest-editor/tsconfig.test.json`:
+  same **86 dependency diagnostics**, none in facade/test/public contract files.
+  Compile-only public source imports assert the localisation and browser context types
+  and reject executable registrations in persisted `ShellUiI18nConfig`.
+- `node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.i18n-host.json`: **passes**.
+- Direct root `oxlint` over facade source/browser/tests/config and changed web source:
+  **passes**; `git diff --check`: **passes**.
+- `npm --prefix internal-packages/languages run translations:check`: **1,883 required
+  Dutch messages; zero missing, zero unreviewed English copies**. No new keys/reviews.
 
-- [ ] Install a published artifact in an external fixture with no workspace links and switch locale/profile.
-- [ ] Browser and remote entry points load locale assets and update without remounting editor state.
-- [ ] Declaration files and dependency manifests contain no unresolved private package reference.
+Source aliases occur only in explicit `noEmit` source/test configs, never publishing/
+watch tsconfig. Whole-source diagnostics are recorded rather than suppressed.
+Tailwind emits its existing missing-content warning while importing real component CSS
+in the mounted tests; no package build is invoked.
 
-## Boundaries
+The facade tests use actual public i18n, Shell/App/Plugin/Vault providers, real Vault
+edits and editing-stack selection. Fixture preset definitions replace production
+layouts/plugins, and Layout is replaced by probes to avoid native renderers/IO. Mounted
+form-history undo survives configuration replacement; this is **not** native rich-text
+or whole-app undo acceptance. Tests also exercise controlled host rejection/updates,
+explicit host instance replacement, preset/host restrictions, two-editor isolation,
+default English and lazy English/Dutch namespace loading. Remote tests simulate asset
+completion/SRI success but use real public modules to check identity and cache isolation.
+Browser API tests stub CDN imports; they do not fetch published modules.
 
-Developer configuration errors and resource IDs should not be blindly extracted as UI copy.
+## Remaining acceptance / release29 handoff
 
-Keep stable IDs, protocol values and authored content outside UI lookups. Public code must not require the unpublished language package at runtime or in emitted declarations. Resolve references under the editor's shared public provider at render time; use fallback strings for definitions that have not yet migrated.
+- [x] Source React/browser/remote contracts reconciled and tested; public host adapter
+  duplication removed; NL-only fallback registration fixed without selectable English.
+- [x] Source public types and externalization configuration reviewed; no private
+  authoring references in facade consumer source/types.
+- [ ] Build and install CI-produced ESM/CJS tarballs outside workspace links; inspect
+  declarations/exports and verify independent installed-plugin context identity.
+- [ ] Produce API 2 browser assets/trusted descriptors; verify actual classic-script
+  injection, optional locale URLs, CDN availability, real network/SRI and bundle guards.
+- [ ] Parent-owned integrated browser acceptance in main checkout: full preset/editor
+  state, native undo/selection, hydration/SSR and actual dependency renderers. Existing
+  retained-server `gapcursor` HTTP500 is unresolved; no source test here proves it fixed.
+- [ ] Full manifest/collection/exhibition coverage remains with their module owners;
+  Leaflet/Draw and independent notebook UI remain documented upstream gaps.
 
-## Handoff
-
-Record migrated directories, reviewed/exempted inventory entries, added semantic IDs, required namespaces and supported locale/profile combinations. Add translator context for placeholders and terminology. Link validation results and outstanding dependency UI to this guide. Mark this task complete only when its acceptance checks pass; seed catalogs alone do not complete a consumer migration.
+No local build or installed-artifact success is claimed. This source module is ready
+for parent review/integration; the publication acceptance boxes remain deliberately open.

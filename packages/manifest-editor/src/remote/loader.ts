@@ -2,6 +2,8 @@ import { validateCatalog, type RemoteRelease } from "./releases";
 
 export type EditorRuntime = typeof import("../../browser/entry");
 export interface RuntimeHost {
+  "@manifest-editor/i18n": typeof import("@manifest-editor/i18n");
+  "@manifest-editor/i18n/core": typeof import("@manifest-editor/i18n/core");
   react: typeof import("react");
   "react-reconciler": unknown;
   "react-dom": typeof import("react-dom");
@@ -13,6 +15,8 @@ export interface RuntimeHost {
 
 type Factory = (host: RuntimeHost) => EditorRuntime;
 export interface BrowserRuntimeOptions {
+  I18n: RuntimeHost["@manifest-editor/i18n"];
+  I18nCore: RuntimeHost["@manifest-editor/i18n/core"];
   React: RuntimeHost["react"];
   ReactDOM: RuntimeHost["react-dom"];
   ReactDOMClient: RuntimeHost["react-dom/client"];
@@ -21,14 +25,17 @@ export interface BrowserRuntimeOptions {
   ReactReconciler: RuntimeHost["react-reconciler"];
 }
 export interface BrowserRuntimeApi {
+  readonly runtimeApiVersion: 2;
   readonly version: string;
   readonly buildId: string;
   createRuntime(host: BrowserRuntimeOptions): EditorRuntime;
-  automaticRuntime(): Promise<EditorRuntime & {
-    React: RuntimeHost["react"];
-    ReactDOM: RuntimeHost["react-dom"];
-    ReactDOMClient: RuntimeHost["react-dom/client"];
-  }>;
+  automaticRuntime(): Promise<
+    EditorRuntime & {
+      React: RuntimeHost["react"];
+      ReactDOM: RuntimeHost["react-dom"];
+      ReactDOMClient: RuntimeHost["react-dom/client"];
+    }
+  >;
 }
 declare global {
   var __manifestEditorFactories: Record<string, Factory> | undefined;
@@ -36,7 +43,7 @@ declare global {
 }
 
 const scripts = new Map<string, Promise<Factory>>();
-const runtimes = new WeakMap<RuntimeHost["react"], Map<string, EditorRuntime>>();
+const runtimes = new WeakMap<RuntimeHost, Map<string, EditorRuntime>>();
 
 function appendVerified(element: HTMLScriptElement | HTMLLinkElement) {
   return new Promise<void>((resolve, reject) => {
@@ -60,9 +67,14 @@ function appendVerified(element: HTMLScriptElement | HTMLLinkElement) {
 /** Load only descriptors received from your trusted release resolver. */
 export async function loadManifestEditor(release: RemoteRelease, host: RuntimeHost) {
   validateCatalog({ releases: [release], latest: null });
-  if (release.runtimeApiVersion !== 1 || Number(host.react.version.split(".")[0]) !== release.reactMajor) {
+  if (release.runtimeApiVersion !== 2 || Number(host.react.version.split(".")[0]) !== release.reactMajor) {
     throw new Error("Remote editor is incompatible with this host");
   }
+  if (
+    typeof host["@manifest-editor/i18n"]?.EditorI18nProvider !== "function" ||
+    typeof host["@manifest-editor/i18n/core"]?.createEditorI18n !== "function"
+  )
+    throw new Error("Remote editor requires shared @manifest-editor/i18n and /core host modules");
   const key = `${release.script.url}:${release.script.integrity}`;
   let scriptPromise = scripts.get(key);
   if (!scriptPromise) {
@@ -89,17 +101,19 @@ export async function loadManifestEditor(release: RemoteRelease, host: RuntimeHo
   stylesheet.integrity = release.stylesheet.integrity;
   try {
     const [factory] = await Promise.all([scriptPromise, appendVerified(stylesheet)]);
-    let instances = runtimes.get(host.react);
-    if (!instances) runtimes.set(host.react, (instances = new Map()));
+    let instances = runtimes.get(host);
+    if (!instances) runtimes.set(host, (instances = new Map()));
     let runtime = instances.get(key);
     if (!runtime) {
       runtime = factory(host);
       if (
-        runtime.runtimeApiVersion !== 1 ||
+        runtime.runtimeApiVersion !== 2 ||
         typeof runtime.shell?.mapApp !== "function" ||
-        typeof runtime.Vault !== "function"
+        typeof runtime.Vault !== "function" ||
+        runtime.i18n?.EditorI18nProvider !== host["@manifest-editor/i18n"].EditorI18nProvider ||
+        runtime.i18nCore?.createEditorI18n !== host["@manifest-editor/i18n/core"].createEditorI18n
       ) {
-        throw new Error("Remote editor exports do not match runtime API 1");
+        throw new Error("Remote editor exports do not match runtime API 2");
       }
       instances.set(key, runtime);
     }

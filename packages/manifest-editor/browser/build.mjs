@@ -19,6 +19,8 @@ if (!process.argv.includes("--local") && version !== pkg.version) {
   throw new Error("Published runtime version must match package.json; version overrides are local fixtures only");
 }
 const externals = [
+  "@manifest-editor/i18n",
+  "@manifest-editor/i18n/core",
   "react",
   "react-dom",
   "react-dom/client",
@@ -64,6 +66,15 @@ const bundle = await rolldown({
 const { output } = await bundle.generate({ format: "cjs", codeSplitting: false, minify: true });
 await bundle.close();
 const chunks = output.filter((item) => item.type === "chunk");
+if (
+  Object.keys(chunks[0].modules).some(
+    (id) =>
+      /(?:packages\/i18n|internal-packages\/languages)\//.test(id) ||
+      /node_modules\/@manifest-editor\/(?:i18n|languages)\//.test(id)
+  )
+) {
+  throw new Error("Public i18n runtime and private catalogs must not be bundled into the browser facade");
+}
 if (Object.keys(chunks[0].modules).some((id) => /node_modules\/(react|react-dom|react-reconciler)\//.test(id))) {
   throw new Error("React and its renderers must come from the host, not the runtime bundle");
 }
@@ -73,7 +84,7 @@ if (
   chunks[0].imports.some((id) => !externals.includes(id))
 ) {
   throw new Error(
-    "Browser runtime must contain one script with only host React imports: " +
+    "Browser runtime must contain one script with only host React/i18n imports: " +
       JSON.stringify(chunks.map(({ fileName, imports, dynamicImports }) => ({ fileName, imports, dynamicImports })))
   );
 }
@@ -124,7 +135,7 @@ const integrity = (value) => `sha384-${createHash("sha384").update(value).digest
 const descriptor = (base) => ({
   version,
   buildId,
-  runtimeApiVersion: 1,
+  runtimeApiVersion: 2,
   reactMajor: 19,
   script: { url: `${base}/runtime.js`, integrity: integrity(code) },
   stylesheet: { url: `${base}/runtime.css`, integrity: integrity(css) },
