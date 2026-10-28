@@ -1,6 +1,6 @@
 # Web host locale preferences and application UI
 
-Status: Host provider and site/browser switcher bootstrap implemented; remaining web UI migration and integration pending. Module: [`apps/web`](../../../../apps/web).
+Status: Web host implementation and Dutch migration complete in this checkout; combined SSR/browser acceptance pending. Module: [`apps/web`](../../../../apps/web).
 
 Add allowed, persistent interface preferences and localise host-owned UI without coupling reusable packages to Next.js.
 
@@ -63,3 +63,160 @@ The main root layout reads and validates the cookie before emitting HTML, then p
 Validation: six web unit/interaction tests pass, including server-to-client Dutch/plain hydration, immutable policy validation, partial preference persistence, rejected selection, and mounted draft/undo fixture preservation. The host-focused no-emit config and targeted lint pass. Three actual Chromium tests pass on the existing port3000 server: the original create/edit/metadata/preview journey, saved Dutch SSR/hydration, and keyboard switching/reload with bounded 320px header controls. No server/build command was run. These checks do not establish complete translated editor forms or full vault/undo integration; those remain with modules07/20/23.
 
 Coordinate effective shell/preset policy and host preference forwarding after module06 integration; keep its controlled callbacks authoritative. Do not replace this with no-op controls, client-only initial preference reads or locale-derived editor keys. Required-namespace deployment gating, remaining routes, and full Dutch inventory review are still pending.
+
+## Module20 implementation handoff (28 October 2026)
+
+Web implementation is complete in this checkout; combined browser/SSR acceptance remains pending.
+This section supersedes the bootstrap's remaining-web-work list and its historical browser
+results. The parent's current integrated SSR failure is **not** a passing acceptance result.
+
+### Migrated source and reachability
+
+Reviewed every file under `apps/web/src`, route entry points, public JSON, README/help
+Markdown and the tutorial Markdown embedded in TypeScript, rather than stopping at the
+heuristic inventory. Current routes were retained:
+
+- The server launcher route still resolves `searchParams` on the server, then supplies a
+  reactive client `site/Launcher` island. Launcher tabs, create/import/file failure/loading,
+  recent projects/context actions and URL/browser modals now use `web`. Stable tab IDs,
+  project IDs, routes, telemetry values and exported download filenames are unchanged.
+- Browser manifest/collection and all six exhibition normal/focused routes use translated
+  headers, theme accessible names, share/copy feedback, settings/content-language headings,
+  export-type sentences and preset/layout controls. Deferred `labelMessage` references retain
+  panel/preview definitions and fallback labels instead of rebuilding them on UI selection.
+  Content Config.i18n and FormData field names stay separate from UI preferences.
+- Local, external, example and share hosts have interface controls and translated friendly
+  load/import/save errors. Local file parsing/saving catches failures and cancellations;
+  a failed save keeps the editor mounted. Local timestamps use the selected UI locale.
+  Existing raw API diagnostics are not shown as friendly UI messages.
+- `IIIFBrowserModal` now renders the current public `LocalizedIIIFBrowser`. Its caller-owned
+  output label, title, loading-resource sentence and error feedback are translated. Callback
+  URLs, supported IIIF types, navigation/output configuration and isolated Vault stay data.
+- `/legacy` is a real, supported Next route (`legacy/page.tsx` imports the dynamic editor).
+  It was **not removed or silently excluded**. Its initial launcher, header, file/help menus,
+  templates/projects, manifest opener and About/help paragraphs are migrated. Definition
+  titles/labels carry deferred references. Its existing project/storage contracts remain.
+- Iframe-preview route and host plugin panels translate status/title/buttons while preserving
+  origin checks, message types, ports, Vault transport and selection handling.
+- Tutorial listing, counts/duration sentence and start/continue/failure UI are translated.
+  The complete teaching Markdown is a single message with retained links/protocol examples.
+  New tutorial working copies resolve it once at creation. Existing notebook notes, source
+  metadata, checked steps and edits are never rewritten by locale/profile changes.
+  Joyride receives all supported locale labels, including its complete progress sentence.
+- New route-level not-found/error UI uses the runtime, translated retry/home actions and live
+  reset callbacks. Root metadata and footer are product/author credits, kept as proper names.
+  Example identifiers are route/resource identifiers, not UI labels.
+
+Explicit reviewed exclusions: `remote-editor/create-demo.tsx` has no importing consumer or
+Next UI route in this source tree; it remains a developer-only remote-runtime example, with
+no claim that a separately loaded remote runtime shares the local provider. Its release/resolve
+API endpoints remain supported protocol endpoints; JSON diagnostic payloads and catalog URLs
+stay unchanged. `browser-editor/example-specifications.ts` likewise has no consumer/import in
+the current app; its authored terminology, fixed values, metadata-template InternationalString
+values and rule semantics remain example data. `examples.json`, `public/collection.json`,
+remote titles/preview text, IIIF labels and starter resource defaults are authored data.
+`docs/Card` and `docs/Label` render caller-supplied content and contain no owned UI messages.
+No MDX file exists in this module; embedded tutorial Markdown was separately reviewed.
+
+### Policy, controls and effective runtimes
+
+`HeaderLanguageSwitcher` retains the designed language control and adds an independently
+labelled standard/plain selector. Both use the effective runtime's authoritative setters,
+allowed choices and translated loading/rejection feedback. Rejected requests retain the
+current selection/cookie. Supported headers expose the controls; small site screens use three
+rows to accommodate both controls, and local/external/legacy headers can wrap. Real 320px
+layout and keyboard/browser acceptance belongs to the parent; no worktree screenshot claim.
+
+`createWebUiPolicy` measures the runtime's **selected-locale coverage**, excluding English
+fallback, across each exposed locale/profile pair. Its mandatory namespaces are `web`,
+`common`, `components`, `shell`, `editor-api`, `editors`, `projects`, `ui`; the optional
+`NEXT_PUBLIC_MANIFEST_EDITOR_UI_REQUIRED_NAMESPACES` CSV adds deployment requirements.
+Incomplete locales are removed; no remaining locale or an unavailable explicit default
+fails configuration. This is declared-message coverage, not a claim about untranslated
+upstream controls. Standard/plain and en-GB/nl currently cover these contracts.
+
+The host keeps one runtime through ordinary renders, route, locale and profile changes.
+A changed deployment-policy prop replaces its configuration instance while retaining the
+React tree and permitted selection; tests retain the same draft DOM and reject a newly
+forbidden choice. Cookie fields remain independent; policy-induced fallback does not invent
+an explicit user preference. SSR policy/resources/initial preference match the client.
+Document lang/dir synchronization remains host-owned. No localized URLs or locale remount
+keys were introduced.
+
+`resources.ts` forwards the full public Dutch catalog/profile resources to override runtimes.
+`WebShellProvider` merges them with explicit localisation; inherited host control/policy remains
+ShellI18nBoundary's authority. Exhibition hosts additionally forward Dutch exhibition and
+plain-exhibition layers only for exhibition presets; ordinary manifest canvases do not become
+dias. English preset resource expansion belongs to module12; no blanket full-preset UI claim.
+
+**Exact module19 follow-up:** the current public `ManifestEditorProps` lacks `localisation`.
+The web-only `WebManifestEditor` uses that public prop type and preserves the facade's
+Vault/ref/load/plugin/AppProvider/layout behavior while routing its ShellProvider through the
+web resource adapter. Module19 should add typed `localisation?: EditorI18nOptions` (or the
+public ShellLocalisation equivalent), forward it unchanged to ShellProvider, test controlled
+host selection plus preset overrides, then replace this temporary adapter in local/example/
+share hosts. No fabricated prop cast or hook-snapshot-as-instance workaround is used.
+
+### Catalog and check evidence
+
+`web` now has **224 English messages and 224 real Dutch messages** (209 added beyond the
+15-message bootstrap). New groups cover actions/feedback, share/projects, external/local,
+preview, tutorials, legacy/About, preset/exhibition, import/web-page, examples/tour/routes;
+existing navigation/settings/browser/launcher groups expand. Translator context is recorded
+in `translations/notes/web.md`. One exact-source review adds the normal Dutch adjective
+`Recent`; existing brand reviews remain. No wildcard review or English-copy approval.
+Standard/plain selection uses actual runtime profiles; unchanged technical help may inherit
+standard wording. No separate complete plain-language rewrite of every teaching paragraph
+is claimed.
+
+Commands run from the repository root with working Node 24, without builds or lifecycle hooks:
+
+```sh
+pnpm install --ignore-scripts --frozen-lockfile
+node apps/web/node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts
+node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.i18n-host.json
+node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.i18n.json
+node node_modules/oxlint/bin/oxlint apps/web/src apps/web/test apps/web/vitest.config.ts
+npm --prefix internal-packages/languages run translations:check
+```
+
+- Real React tests: **18 pass**, including actual wording controls, server-render/hydrate
+  parity with Dutch help, independent cookie writes, host rejection, live allow-list change,
+  unchanged draft DOM/state, translated route retry, the actual React Aria import modal,
+  collection-loading/failure branches and unchanged imported object/URL. Only navigation,
+  project storage/import I/O are mocked in dialog/tutorial tests; rendering/translations and
+  runtime are real. Tutorial tests verify Dutch creation and existing authored-note retention.
+- Host/control no-emit check passes. Full source no-emit check is **not clean**: 109 diagnostics,
+  with zero added signatures against a temporary unchanged-HEAD web-source snapshot using
+  the same noEmit aliases/type environment (normalize only file-location prefixes/positions).
+  The web-local diagnostic remains unchanged `cloudflare-preview-store.ts:6` TS2339 PREVIEW_KV;
+  108 come from dependent packages/plugins/presets. No suppression was added. Source aliases
+  are limited to explicit local noEmit configs; publishing/watch tsconfig is untouched.
+- Oxlint: zero errors; 18 existing warnings (dependency arrays and legacy image elements).
+  New loading/status markup and browser-output memo dependencies were checked. Changed
+  TS/TSX/JSON files pass oxfmt; `git diff --check` passes.
+- Strict Dutch gate: **1764 required messages, zero missing and zero unreviewed English
+  copies**, across 26 catalog/overlay files. This is catalog evidence, not browser acceptance.
+
+### Remaining integrated gates and dependency limits
+
+Parent owns live browser acceptance in its main checkout. This isolated checkout did not
+exercise unrelated localhost source. No Playwright source was changed; no local/default
+webServer configuration, dev/build/predev, cache deletion, server restart, dependency-global
+mutation, push or PR was used. Required combined checks remain reload/project preference
+retention, full Vault/editing/undo preservation on real routes, mobile headers and current SSR.
+The React state tests are not a claim of full editor undo acceptance.
+
+The reported live `GET /` HTTP500 `Duplicate use of selection JSON ID gapcursor` remains
+unresolved. Source trace: the old server launcher imported the components barrel; that barrel
+re-exports MDXEditor/IIIFBrowser adapters, while shell's Notebook imports `iiif-browser/notebook`,
+`iiif-browser/tiptap` and Tiptap StarterKit. Installed ProseMirror gapcursor has separate ESM/CJS
+entries, each registering `gapcursor` with Selection.jsonID. The launcher now uses a normal
+SSR-enabled client island for reactive copy, reducing its server-barrel exposure, but this is
+**not evidence of a duplicate-module fix**. Parent should inspect cold versus retained HMR
+module identities and those entry boundaries; this work did not disable SSR or add a global
+registration guard. Clean integrated SSR remains an open acceptance gate.
+
+Standalone notebook dependency commands, Leaflet/Draw, vault shape controls and independently
+installed npm consumers still have the limits in guide04-dependency-localisation and
+patches/README. Web translations and current browser adapter wiring do not close those gaps.

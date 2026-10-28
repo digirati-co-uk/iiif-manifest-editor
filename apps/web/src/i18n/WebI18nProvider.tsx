@@ -2,25 +2,24 @@
 
 import { createEditorI18n, type EditorI18n } from "@manifest-editor/i18n/core";
 import { EditorI18nProvider } from "@manifest-editor/i18n";
-import { dutchCatalogs, dutchPlain } from "@manifest-editor/i18n/nl";
-import { useEffect, useState, type ReactNode } from "react";
+import { webUiResources } from "./resources";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { serializeWebUiPreferences, webUiPolicy, type WebUiPolicy, type WebUiPreferences } from "./policy";
 
 export function createWebI18n(preferences: WebUiPreferences = {}, policy: WebUiPolicy = webUiPolicy): EditorI18n {
   return createEditorI18n({
     ...policy,
-    catalogs: dutchCatalogs,
-    profiles: { plain: dutchPlain },
+    ...webUiResources,
     persistedLocale: preferences.locale,
     persistedProfile: preferences.profile,
   });
 }
 
-function synchronizeWebPreferences(runtime: EditorI18n, initialPreferences: WebUiPreferences): () => void {
+function synchronizeWebPreferences(runtime: EditorI18n, preferences: { current: WebUiPreferences }): () => void {
   const root = document.documentElement;
   const original = { locale: root.lang, direction: root.getAttribute("dir") };
   let previous = runtime.getSnapshot();
-  let preferences = { ...initialPreferences };
+
   const synchronize = () => {
     const snapshot = runtime.getSnapshot();
     if (snapshot.loading || snapshot.error) return;
@@ -29,13 +28,13 @@ function synchronizeWebPreferences(runtime: EditorI18n, initialPreferences: WebU
     const localeChanged = snapshot.locale !== previous.locale;
     const profileChanged = snapshot.profile !== previous.profile;
     if (localeChanged || profileChanged) {
-      preferences = {
-        ...preferences,
+      preferences.current = {
+        ...preferences.current,
         ...(localeChanged ? { locale: snapshot.locale } : {}),
         ...(profileChanged ? { profile: snapshot.profile } : {}),
       };
       try {
-        document.cookie = serializeWebUiPreferences(preferences, location.protocol === "https:");
+        document.cookie = serializeWebUiPreferences(preferences.current, location.protocol === "https:");
       } catch {
         // A blocked cookie does not prevent an in-session UI choice.
       }
@@ -62,10 +61,26 @@ export function WebI18nProvider({
   policy?: WebUiPolicy;
   children: ReactNode;
 }) {
-  const [{ runtime, initialPreferences }] = useState(() => ({
-    runtime: createWebI18n(preferences, policy),
-    initialPreferences: { ...preferences },
-  }));
-  useEffect(() => synchronizeWebPreferences(runtime, initialPreferences), [runtime, initialPreferences]);
+  const [savedPreferences] = useState(() => ({ current: { ...preferences } }));
+  const previousRuntime = useRef<EditorI18n | null>(null);
+  const runtime = useMemo(() => {
+    const previous = previousRuntime.current?.getSnapshot();
+    // A changed policy may invalidate only one of the independently persisted choices.
+    savedPreferences.current = {
+      ...(policy.config.availableLocales.includes(savedPreferences.current.locale ?? "")
+        ? { locale: savedPreferences.current.locale }
+        : {}),
+      ...(policy.config.availableProfiles.includes(savedPreferences.current.profile ?? "")
+        ? { profile: savedPreferences.current.profile }
+        : {}),
+    };
+    const next = createWebI18n(
+      previous ? { locale: previous.locale, profile: previous.profile } : savedPreferences.current,
+      policy
+    );
+    previousRuntime.current = next;
+    return next;
+  }, [policy, savedPreferences]);
+  useEffect(() => synchronizeWebPreferences(runtime, savedPreferences), [runtime, savedPreferences]);
   return <EditorI18nProvider instance={runtime}>{children}</EditorI18nProvider>;
 }

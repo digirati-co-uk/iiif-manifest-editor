@@ -1,4 +1,6 @@
 "use client";
+
+import { useTranslations } from "@manifest-editor/i18n";
 import { upgrade } from "@iiif/parser/upgrader";
 import { IIIFBrowserIcon, Modal } from "@manifest-editor/components";
 import { useMutation } from "@tanstack/react-query";
@@ -17,6 +19,8 @@ import { CreateFromUrlModal } from "./CreateFromUrlModal";
 import { IIIFBrowserModal } from "./IIIFBrowserModal";
 
 export default function GettingStarted() {
+  const webT = useTranslations("web");
+
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIIIFBrowserOpen, setIsIIIFBrowserOpen] = useState(false);
@@ -73,7 +77,7 @@ export default function GettingStarted() {
 
   return (
     <div className="bg-me-gray-100 pb-8 pt-4 px-6 border-b">
-      <h1 className="text-lg mb-3">Get started</h1>
+      <h1 className="text-lg mb-3">{webT("launcher.start")}</h1>
       <Toolbar className="flex flex-wrap gap-3">
         <Button
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
@@ -84,7 +88,9 @@ export default function GettingStarted() {
               <AddIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create new manifest</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            {webT("launcher.newManifest")}
+          </div>
         </Button>
         <Button
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
@@ -95,7 +101,9 @@ export default function GettingStarted() {
               <LinkIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest URL</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            {webT("launcher.openUrl")}
+          </div>
         </Button>
         <Button
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
@@ -106,7 +114,9 @@ export default function GettingStarted() {
               <FileIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Open manifest file</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            {webT("launcher.openFile")}
+          </div>
         </Button>
 
         <Button
@@ -118,7 +128,7 @@ export default function GettingStarted() {
               <IIIFBrowserIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Browse for IIIF</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">{webT("launcher.browse")}</div>
         </Button>
         <Button
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
@@ -129,7 +139,9 @@ export default function GettingStarted() {
               <CollectionIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Collection</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            {webT("launcher.newCollection")}
+          </div>
         </Button>
         <Button
           className="w-36 flex items-center flex-col group cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2"
@@ -140,9 +152,24 @@ export default function GettingStarted() {
               <AddIcon aria-hidden="true" />
             </div>
           </div>
-          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">Create Exhibition</div>
+          <div className="text-sm mt-2 text-center group-hover:text-black text-black/70">
+            {webT("launcher.newExhibition")}
+          </div>
         </Button>
       </Toolbar>
+      {blankManifest.isError || blankCollection.isError || blankExhibition.isError ? (
+        <p role="alert">{webT("feedback.createFailed")}</p>
+      ) : null}
+      {filesystemManifest.isError &&
+      !(filesystemManifest.error instanceof Error && filesystemManifest.error.name === "AbortError") ? (
+        <p role="alert">{webT("feedback.fileFailed")}</p>
+      ) : null}
+      {blankManifest.isPending ||
+      blankCollection.isPending ||
+      blankExhibition.isPending ||
+      filesystemManifest.isPending ? (
+        <output>{webT("feedback.loading")}</output>
+      ) : null}
       <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
       <IIIFBrowserModal isOpen={isIIIFBrowserOpen} setIsOpen={setIsIIIFBrowserOpen} />
     </div>
@@ -151,13 +178,7 @@ export default function GettingStarted() {
 
 function CollectionIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 -960 960 960"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 -960 960 960" {...props}>
       <path
         d="M320-320h480v-480h-80v280l-100-60-100 60v-280H320v480Zm0 80q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm360-720h200-200Zm-200 0h480-480Z"
         fill="currentColor"

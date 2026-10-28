@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useProjectCreators } from "@manifest-editor/projects";
 import { FeaturedCard } from "../FeaturedCard/FeaturedCard";
 import { FeaturedCardImageWrapper } from "../FeaturedCard/FeaturedCard.styles";
@@ -8,12 +9,14 @@ export interface GettingStartedProps {
 }
 
 export function GettingStarted(props: GettingStartedProps) {
+  const webT = useTranslations("web");
+
   const { createBlankManifest, createProjectFromManifestId } = useProjectCreators();
 
   return (
     <div className="flex">
       <FeaturedCard
-        label="Create empty manifest"
+        label={webT("legacy.empty")}
         onClick={createBlankManifest}
         thumbnail={
           <svg width="154" height="154" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -46,10 +49,10 @@ export function GettingStarted(props: GettingStartedProps) {
             </g>
           </svg>
         }
-        actionLabel="Create"
+        actionLabel={webT("legacy.create")}
       />
       <FeaturedCard
-        label="Example manifest"
+        label={webT("legacy.example")}
         onClick={() => createProjectFromManifestId(props.exampleId || "https://digirati-co-uk.github.io/wunder.json")}
         thumbnail={
           <FeaturedCardImageWrapper>
@@ -62,7 +65,7 @@ export function GettingStarted(props: GettingStartedProps) {
             />
           </FeaturedCardImageWrapper>
         }
-        actionLabel="Open manifest"
+        actionLabel={webT("browser.openManifest")}
       />
     </div>
   );

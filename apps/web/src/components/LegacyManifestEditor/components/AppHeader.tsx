@@ -1,9 +1,7 @@
+import { HeaderLanguageSwitcher } from "../../site/HeaderLanguageSwitcher";
 import { AppMenu, DraftTitleEditor } from "@manifest-editor/projects";
 import { BackgroundActionsMenu, useApps, PreviewButton } from "@manifest-editor/shell";
-import {
-  ManifestEditorLogo,
-  useLocalStorage,
-} from "@manifest-editor/components";
+import { ManifestEditorLogo, useLocalStorage } from "@manifest-editor/components";
 import { Logo, Container, ProjectPreview, Header } from "./AppHeader.styles";
 import { memo } from "react";
 import { ShellOptions } from "./ShellOptions";
@@ -28,6 +26,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
 
         <div className="flex-1" />
 
+        <HeaderLanguageSwitcher />
         <BackgroundActionsMenu />
         {app && app.metadata.drafts === false ? null : <PreviewButton downloadEnabled />}
 

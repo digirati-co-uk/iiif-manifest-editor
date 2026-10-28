@@ -1,4 +1,17 @@
 "use client";
+import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+export default function SharePage() {
+  return (
+    <>
+      <header className="flex justify-end p-3">
+        <HeaderLanguageSwitcher />
+      </header>
+      <SharePageBody />
+    </>
+  );
+}
+
+import { useTranslations } from "@manifest-editor/i18n";
 
 import { Vault, createThumbnailHelper } from "@iiif/helpers";
 import type { CanvasNormalized, CollectionNormalized, ManifestNormalized } from "@iiif/presentation-3-normalized";
@@ -16,7 +29,9 @@ import {
 } from "../browser-editor/browser-state";
 import { SharePreviewEditor } from "./SharePreviewEditor";
 
-export default function SharePage() {
+function SharePageBody() {
+  const webT = useTranslations("web");
+
   const router = useRouter();
   const [shouldPreview, setShouldPreview] = useState(false);
 
@@ -46,7 +61,7 @@ export default function SharePage() {
           const thumbnail = await thumbnailHelper.getBestThumbnailAtSize(
             newResource,
             { width: 256, height: 256 },
-            false,
+            false
           );
           const resource = {
             id: newResource.id,
@@ -160,18 +175,24 @@ export default function SharePage() {
     }
   }, [queryString, existingImportedProject.data, existingImportedProject.isPending]);
 
+  if (importProject.isError || existingImportedProject.isError)
+    return <p role="alert">{webT("feedback.importFailed")}</p>;
+  if (importProject.isPending) return <output>{webT("feedback.loading")}</output>;
+
   if ((shouldPreview || queryString.action === "preview") && queryString.resource) {
     return (
       <div className="flex flex-col flex-1">
         {queryString.action === "preview" ? (
           <div className="bg-me-primary-100 p-4 text-center flex gap-4 items-center">
-            <div>Previewing the project</div>
-            <ActionButton onPress={() => importProject.mutate({ copy: true })}>Make a copy</ActionButton>
+            <div>{webT("share.previewing")}</div>
+            <ActionButton onPress={() => importProject.mutate({ copy: true })}>
+              {webT("share.copyProject")}
+            </ActionButton>
           </div>
         ) : (
           <div className="bg-me-primary-100 p-4 text-center flex gap-4 items-center">
-            <ActionButton onPress={() => setShouldPreview(false)}>Back</ActionButton>
-            <h3 className="text-lg font-semibold flex-1">Preview</h3>
+            <ActionButton onPress={() => setShouldPreview(false)}>{webT("actions.back")}</ActionButton>
+            <h3 className="text-lg font-semibold flex-1">{webT("actions.preview")}</h3>
             {existingImportedProject.data ? (
               <>
                 <ActionButton
@@ -181,14 +202,14 @@ export default function SharePage() {
                     })
                   }
                 >
-                  Overwrite and import
+                  {webT("share.overwrite")}
                 </ActionButton>
                 <ActionButton onPress={() => importProject.mutate({ existing: null, copy: true })}>
-                  Import a copy
+                  {webT("share.importCopy")}
                 </ActionButton>
               </>
             ) : (
-              <ActionButton onPress={() => importProject.mutate({ copy: true })}>Import</ActionButton>
+              <ActionButton onPress={() => importProject.mutate({ copy: true })}>{webT("actions.import")}</ActionButton>
             )}
           </div>
         )}
@@ -199,7 +220,7 @@ export default function SharePage() {
 
   if (queryString.action === "import" && queryString.resource && queryString.projectId) {
     if (existingImportedProject.isLoading) {
-      return <div>Loading...</div>;
+      return <div>{webT("feedback.loading")}</div>;
     }
 
     if (existingImportedProject.data) {
@@ -208,16 +229,16 @@ export default function SharePage() {
       return (
         <div className="w-full flex items-center justify-center bg-me-gray-300">
           <div className="max-w-xl w-full bg-white p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-3">Project already exists</h3>
-            <div>Do you want to overwrite existing project?</div>
+            <h3 className="text-lg font-semibold mb-3">{webT("share.exists")}</h3>
+            <div>{webT("share.overwriteConfirm")}</div>
             <div className="flex gap-2 my-4">
               <ActionButton onPress={() => importProject.mutate({ existing: project })}>
-                Overwrite and import
+                {webT("share.overwrite")}
               </ActionButton>
               <ActionButton onPress={() => importProject.mutate({ existing: null, copy: true })}>
-                Import a copy
+                {webT("share.importCopy")}
               </ActionButton>
-              <ActionButton onPress={() => setShouldPreview(true)}>Preview</ActionButton>
+              <ActionButton onPress={() => setShouldPreview(true)}>{webT("actions.preview")}</ActionButton>
             </div>
             <a
               href={queryString.preset ? `/editor/${project.id}/${queryString.preset}` : `/editor/${project.id}`}
@@ -225,7 +246,7 @@ export default function SharePage() {
               className="text-me-primary-500 underline"
               rel="noreferrer"
             >
-              View existing project
+              {webT("share.viewExisting")}
             </a>
           </div>
         </div>
@@ -236,19 +257,19 @@ export default function SharePage() {
   }
 
   if (!queryString.resource) {
-    return <div>Invalid query</div>;
+    return <div>{webT("share.invalid")}</div>;
   }
 
   return (
     <div>
-      <h3>Choices for the user</h3>
-      {existingImportedProject.isLoading && <div>Loading...</div>}
-      {existingImportedProject.data ? <div>Existing project</div> : <div>Import new project</div>}
+      <h3>{webT("share.choices")}</h3>
+      {existingImportedProject.isLoading && <div>{webT("feedback.loading")}</div>}
+      {existingImportedProject.data ? <div>{webT("share.existing")}</div> : <div>{webT("share.importNew")}</div>}
       <div>
         <button disabled={importProject.isPending} onClick={() => importProject.mutate({})}>
-          Import
+          {webT("actions.import")}
         </button>
-        <button onClick={() => setShouldPreview(true)}>Preview</button>
+        <button onClick={() => setShouldPreview(true)}>{webT("actions.preview")}</button>
       </div>
     </div>
   );

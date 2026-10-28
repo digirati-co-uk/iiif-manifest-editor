@@ -4,12 +4,20 @@ import { GettingStarted } from "./components/GettingStarted/GettingStarted";
 import { MyProjects } from "./components/MyProjects/MyProjects";
 import { LayoutPanel } from "@manifest-editor/shell";
 
-export default { id: "splash", title: "Splash", type: "launcher", web: true, drafts: false };
+export default {
+  id: "splash",
+  title: "Splash",
+  titleMessage: { namespace: "web", key: "legacy.splash" },
+  type: "launcher",
+  web: true,
+  drafts: false,
+};
 
 export const centerPanels: LayoutPanel[] = [
   {
     id: "splash",
     label: "Splash Screen",
+    labelMessage: { namespace: "web", key: "legacy.splash" },
     icon: "",
     render: () => (
       <div style={{ flex: 1, background: "#fff", overflowY: "auto" }}>

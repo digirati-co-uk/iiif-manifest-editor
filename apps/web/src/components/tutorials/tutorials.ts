@@ -1,3 +1,5 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
+
 /** Add tutorials here: the Markdown and all resource URLs travel with each new project. */
 export interface Tutorial {
   id: string;
@@ -7,6 +9,12 @@ export interface Tutorial {
   thumbnail?: string;
   source: { title: string; url: string };
   markdown: string;
+  messages?: {
+    title: MessageReference;
+    description: MessageReference;
+    duration: MessageReference;
+    markdown: MessageReference;
+  };
 }
 
 const image = "https://iiif.io/api/presentation/2.1/example/fixtures/resources/page1-full.png";
@@ -15,6 +23,12 @@ const recipe = "https://iiif.io/api/cookbook/recipe/0001-mvm-image/";
 export const tutorials: Tutorial[] = [
   {
     id: "single-image-manifest",
+    messages: {
+      title: { namespace: "web", key: "tutorials.firstTitle" },
+      description: { namespace: "web", key: "tutorials.firstDescription" },
+      duration: { namespace: "web", key: "tutorials.tenMinutes" },
+      markdown: { namespace: "web", key: "tutorials.firstNotebook" },
+    },
     title: "Your first image manifest",
     description: "Turn one image into an IIIF manifest. Add a canvas, give it a label, and download your work.",
     duration: "10 minutes",

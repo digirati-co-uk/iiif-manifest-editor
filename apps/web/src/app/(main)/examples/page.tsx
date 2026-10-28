@@ -1,10 +1,16 @@
+"use client";
+
+import Link from "next/link";
+import { useTranslations } from "@manifest-editor/i18n";
 export default function ExamplesListingPage() {
+  const webT = useTranslations("web");
+
   return (
     <div>
       <li>
-        <a href="/examples/iiif-manifest-example">iiif-manifest-example</a>
+        <Link href="/examples/iiif-manifest-example">iiif-manifest-example</Link>
       </li>
-      All examples!
+      {webT("examples.all")}
     </div>
   );
 }

@@ -1,52 +1,63 @@
 "use client";
+import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
+
+import { useTranslations, useEditorI18n } from "@manifest-editor/i18n";
 
 import { Vault } from "@iiif/helpers";
 import { upgrade } from "@iiif/parser/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
-import { ManifestEditor } from "manifest-editor";
+import { WebManifestEditor as ManifestEditor } from "../../i18n/WebManifestEditor";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { GlobalNav } from "../site/GlobalNav";
 
 export default function LocalEditor() {
+  const webT = useTranslations("web");
+
+  const { locale } = useEditorI18n();
   const [file, setFile] = useState<FileWithHandle | null>(null);
   const [manifest, setManifest] = useState<any | null>(null);
   const [vault] = useState(() => new Vault());
   const [lastModified, setLastModified] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   if (!supported) {
-    return <div>Browser FS Access not supported</div>;
+    return (
+      <div>
+        <HeaderLanguageSwitcher />
+        {webT("local.unsupported")}
+      </div>
+    );
   }
 
   if (!file || !manifest) {
     return (
       <div>
+        <HeaderLanguageSwitcher />
+        {error ? <p role="alert">{webT(error)}</p> : null}
         <button
           onClick={async () => {
-            const file = await fileOpen({ mimeTypes: ["json/*"] });
-            if (file) {
-              setFile(file);
-              const text = await file.text();
-              const manifest = JSON.parse(text);
-              setManifest(JSON.parse(text));
-              const upgraded = upgrade(manifest);
-              if (upgraded) {
-                vault.loadManifestSync(upgraded.id, upgraded);
-                setLastModified(file.lastModified);
-              } else {
-                setError("Could not upgrade manifest");
+            setError(null);
+            try {
+              const selectedFile = await fileOpen({ mimeTypes: ["json/*"] });
+              const json = JSON.parse(await selectedFile.text());
+              const upgraded = upgrade(json);
+              if (!upgraded) {
+                setError("local.upgradeFailed");
+                return;
               }
+              vault.loadManifestSync(upgraded.id, upgraded);
+              setFile(selectedFile);
+              setManifest(upgraded);
+              setLastModified(selectedFile.lastModified);
+            } catch (cause) {
+              if (!(cause instanceof Error && cause.name === "AbortError")) setError("feedback.fileFailed");
             }
           }}
         >
-          Open file
+          {webT("local.open")}
         </button>
       </div>
     );
@@ -54,17 +65,25 @@ export default function LocalEditor() {
 
   return (
     <>
-      <header className="h-[64px] flex w-full gap-12 px-4 items-center border-b shadow">
-        <Link href="/" className="w-96 flex justify-start" onClick={() => confirm("Are you sure?")}>
+      <header className="min-h-[64px] flex flex-wrap w-full gap-3 p-3 items-center border-b shadow">
+        <Link
+          href="/"
+          className="min-w-0 flex justify-start"
+          onClick={(event) => {
+            if (!confirm(webT("local.leaveConfirm"))) event.preventDefault();
+          }}
+        >
           <ManifestEditorLogo />
         </Link>
         <div className="flex-1 flex gap-2"></div>
+        <HeaderLanguageSwitcher />
         <div>
           <GlobalNav />
         </div>
       </header>
+      {error ? <p role="alert">{webT(error)}</p> : null}
       <div className="bg-yellow-50 p-3 flex gap-2 items-center">
-        Editing local file <strong>{file.name}</strong>
+        {webT("local.editingFile", { name: file.name })}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
           onClick={async () => {
@@ -76,27 +95,35 @@ export default function LocalEditor() {
               return;
             }
             const blob = new Blob([JSON.stringify(manifestJson, null, 2)], { type: "application/json" });
-            const handle = await fileSave(
-              blob,
-              {
-                fileName: file.name,
-                extensions: [".json"],
-              },
-              file.handle,
-            );
-            if (handle) {
-              const file = await handle.getFile();
-              if (file) {
-                setLastModified(file.lastModified);
+            setError(null);
+            try {
+              const handle = await fileSave(
+                blob,
+                {
+                  fileName: file.name,
+                  extensions: [".json"],
+                },
+                file.handle
+              );
+              if (handle) {
+                const file = await handle.getFile();
+                if (file) {
+                  setLastModified(file.lastModified);
+                }
               }
+            } catch (cause) {
+              if (!(cause instanceof Error && cause.name === "AbortError")) setError("feedback.saveFailed");
             }
           }}
         >
-          Save changes
+          {webT("actions.save")}
         </button>
         <div className="text-xs text-gray-500">
-          Last modified:
-          {lastModified ? new Date(lastModified).toLocaleString() : null}
+          {lastModified
+            ? webT("local.lastModified", {
+                date: new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(lastModified),
+              })
+            : null}
         </div>
       </div>
       <div className="flex flex-col flex-1">

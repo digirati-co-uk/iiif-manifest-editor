@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "@manifest-editor/i18n";
 
 import { collectionPreset } from "@manifest-editor/collection-preset";
 import { extendApp } from "@manifest-editor/shell";
@@ -40,6 +41,7 @@ const collectionWithPreviews = extendApp(
           id: "iiif-preview",
           type: "iiif-preview-service",
           label: "IIIF Preview",
+          labelMessage: { namespace: "web", key: "preview.iiif" },
           config: {
             url: "/api/iiif/store",
           },
@@ -48,13 +50,14 @@ const collectionWithPreviews = extendApp(
           id: "raw-manifest",
           type: "external-manifest-preview",
           label: "Collection JSON",
+          labelMessage: { namespace: "web", key: "preview.collectionJson" },
           config: {
             url: "{manifestId}",
           },
         },
       ],
     },
-  },
+  }
 );
 
 export default function BrowserCollectionEditor({
@@ -64,5 +67,13 @@ export default function BrowserCollectionEditor({
   id: string;
   layoutMode?: "default" | "focused";
 }) {
-  return <BrowserEditor id={id} preset={collectionWithPreviews} presetName="Collections" layoutMode={layoutMode} />;
+  const t = useTranslations("web");
+  return (
+    <BrowserEditor
+      id={id}
+      preset={collectionWithPreviews}
+      presetName={t("navigation.collections")}
+      layoutMode={layoutMode}
+    />
+  );
 }

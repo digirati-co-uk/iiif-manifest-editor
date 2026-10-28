@@ -1,4 +1,6 @@
 "use client";
+import { useTranslations } from "@manifest-editor/i18n";
+
 import {
   exhibitionEditorPreset,
   exhibitionEditorScrollingPreset,
@@ -30,6 +32,7 @@ const defaultConfig: Partial<Config> = {
       id: "delft-theme",
       type: "external-manifest-preview",
       label: "Page Exhibition",
+      labelMessage: { namespace: "web", key: "preset.fullPage" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/delft?manifest={manifestId}",
       },
@@ -38,6 +41,7 @@ const defaultConfig: Partial<Config> = {
       id: "scroll-theme",
       type: "external-manifest-preview",
       label: "Scrolling exhibition",
+      labelMessage: { namespace: "web", key: "preset.scrolling" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/scroll?manifest={manifestId}",
       },
@@ -46,6 +50,7 @@ const defaultConfig: Partial<Config> = {
       id: "delft-slideshow",
       type: "external-manifest-preview",
       label: "Slideshow Exhibition",
+      labelMessage: { namespace: "web", key: "preset.slideshow" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}",
       },
@@ -86,6 +91,7 @@ const defaultConfig: Partial<Config> = {
       id: "iiif-preview",
       type: "iiif-preview-service",
       label: "IIIF Preview",
+      labelMessage: { namespace: "web", key: "preview.iiif" },
       config: {
         url: "/api/iiif/store",
       },
@@ -94,6 +100,7 @@ const defaultConfig: Partial<Config> = {
       id: "raw-manifest",
       type: "external-manifest-preview",
       label: "Raw Manifest",
+      labelMessage: { namespace: "web", key: "preview.rawManifest" },
       config: {
         url: "{manifestId}",
       },
@@ -107,6 +114,7 @@ const slideshowConfig: Partial<Config> = {
       id: "delft-slideshow",
       type: "external-manifest-preview",
       label: "Delft slideshow",
+      labelMessage: { namespace: "web", key: "preset.delft" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}",
       },
@@ -115,6 +123,7 @@ const slideshowConfig: Partial<Config> = {
       id: "minimal-slideshow",
       type: "external-manifest-preview",
       label: "Light slideshow",
+      labelMessage: { namespace: "web", key: "preset.light" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/slideshow?manifest={manifestId}&minimal=true",
       },
@@ -123,6 +132,7 @@ const slideshowConfig: Partial<Config> = {
       id: "iiif-preview",
       type: "iiif-preview-service",
       label: "IIIF Preview",
+      labelMessage: { namespace: "web", key: "preview.iiif" },
       config: {
         url: "/api/iiif/store",
       },
@@ -131,6 +141,7 @@ const slideshowConfig: Partial<Config> = {
       id: "raw-manifest",
       type: "external-manifest-preview",
       label: "Raw Manifest",
+      labelMessage: { namespace: "web", key: "preview.rawManifest" },
       config: {
         url: "{manifestId}",
       },
@@ -144,6 +155,7 @@ const scrollConfig: Partial<Config> = {
       id: "scroll-theme",
       type: "external-manifest-preview",
       label: "Scrolling exhibition",
+      labelMessage: { namespace: "web", key: "preset.scrolling" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/scroll?manifest={manifestId}",
       },
@@ -152,6 +164,7 @@ const scrollConfig: Partial<Config> = {
       id: "minimal-theme",
       type: "external-manifest-preview",
       label: "Light exhibition",
+      labelMessage: { namespace: "web", key: "preview.lightExhibition" },
       config: {
         url: "https://preview.exhibitionviewer.org/preview/minimal?manifest={manifestId}",
       },
@@ -160,6 +173,7 @@ const scrollConfig: Partial<Config> = {
       id: "iiif-preview",
       type: "iiif-preview-service",
       label: "IIIF Preview",
+      labelMessage: { namespace: "web", key: "preview.iiif" },
       config: {
         url: "/api/iiif/store",
       },
@@ -168,6 +182,7 @@ const scrollConfig: Partial<Config> = {
       id: "raw-manifest",
       type: "external-manifest-preview",
       label: "Raw Manifest",
+      labelMessage: { namespace: "web", key: "preview.rawManifest" },
       config: {
         url: "{manifestId}",
       },
@@ -209,6 +224,7 @@ export default function ExhibitionEditor(props: {
   layoutMode?: "default" | "focused";
   preset?: ExhibitionLayoutPreset;
 }) {
+  const t = useTranslations("web");
   const selectedPreset = layoutPresets[props.preset || "full-page"];
 
   return (
@@ -218,7 +234,13 @@ export default function ExhibitionEditor(props: {
         preset={selectedPreset.preset}
         config={selectedPreset.config}
         presetPath={selectedPreset.presetPath}
-        presetName={selectedPreset.presetName}
+        presetName={t(
+          props.preset === "slideshow"
+            ? "preset.slideshow"
+            : props.preset === "scroll"
+              ? "preset.scrolling"
+              : "navigation.exhibitions"
+        )}
         layoutMode={props.layoutMode}
       />
       <OnboardingTour id="exhibition-editor" steps={exhibitionOnboarding} />

@@ -1,4 +1,39 @@
-import { defaultLocales, dutchLocale, type UiI18nConfig } from "@manifest-editor/i18n/core";
+import {
+  createEditorI18n,
+  defaultLocales,
+  dutchLocale,
+  type EditorI18nOptions,
+  type UiI18nConfig,
+} from "@manifest-editor/i18n/core";
+
+import { webUiResources } from "./resources";
+
+export const webRequiredNamespaces = Object.freeze([
+  "web",
+  "common",
+  "components",
+  "shell",
+  "editor-api",
+  "editors",
+  "projects",
+  "ui",
+]);
+
+/** The runtime coverage report excludes English fallback for a Dutch selection. */
+export function webUiCoverage(
+  locale: string,
+  profile: string,
+  requiredNamespaces: readonly string[],
+  resources: EditorI18nOptions = webUiResources
+) {
+  return createEditorI18n({
+    ...resources,
+    locales: registeredLocales,
+    locale,
+    profile,
+    requiredNamespaces,
+  }).getSnapshot().coverage;
+}
 
 export const UI_PREFERENCES_COOKIE = "manifest-editor-ui";
 const registeredLocales = Object.freeze([...defaultLocales, dutchLocale].map((locale) => Object.freeze({ ...locale })));
@@ -11,6 +46,7 @@ export interface WebUiPreferences {
 export interface WebUiPolicy {
   readonly locales: typeof registeredLocales;
   readonly config: UiI18nConfig;
+  readonly requiredNamespaces: readonly string[];
 }
 
 export function createWebUiPolicy(
@@ -19,14 +55,23 @@ export function createWebUiPolicy(
     availableProfiles?: readonly string[];
     defaultLocale?: string;
     defaultProfile?: string;
+    requiredNamespaces?: readonly string[];
   } = {}
 ): WebUiPolicy {
-  const availableLocales = [...new Set(options.availableLocales ?? registeredLocales.map((item) => item.id))];
+  let availableLocales = [...new Set(options.availableLocales ?? registeredLocales.map((item) => item.id))];
   const availableProfiles = [...new Set(options.availableProfiles ?? registeredProfiles)];
   if (!availableLocales.length || availableLocales.some((id) => !registeredLocales.some((locale) => locale.id === id)))
     throw new TypeError("Web UI locales must select registered language catalogs");
   if (!availableProfiles.length || availableProfiles.some((id) => !registeredProfiles.includes(id)))
     throw new TypeError("Web wording profiles must select registered profiles");
+  const requiredNamespaces = Object.freeze([
+    ...new Set([...webRequiredNamespaces, ...(options.requiredNamespaces ?? [])]),
+  ]);
+  // The picker exposes independent axes: every exposed locale must cover every exposed profile.
+  availableLocales = availableLocales.filter((locale) =>
+    availableProfiles.every((profile) => webUiCoverage(locale, profile, requiredNamespaces).complete)
+  );
+  if (!availableLocales.length) throw new TypeError("No web UI locale covers the required namespaces");
   const defaultLocale = options.defaultLocale ?? (availableLocales.includes("en-GB") ? "en-GB" : availableLocales[0]!);
   const defaultProfile =
     options.defaultProfile ?? (availableProfiles.includes("standard") ? "standard" : availableProfiles[0]!);
@@ -34,6 +79,7 @@ export function createWebUiPolicy(
     throw new TypeError("Default web interface settings must be available");
   return Object.freeze({
     locales: registeredLocales,
+    requiredNamespaces,
     config: Object.freeze({
       availableLocales: Object.freeze(availableLocales),
       availableProfiles: Object.freeze(availableProfiles),
@@ -54,6 +100,7 @@ const csv = (value: string | undefined) =>
 export const webUiPolicy = createWebUiPolicy({
   availableLocales: csv(process.env.NEXT_PUBLIC_MANIFEST_EDITOR_UI_LOCALES),
   availableProfiles: csv(process.env.NEXT_PUBLIC_MANIFEST_EDITOR_UI_PROFILES),
+  requiredNamespaces: csv(process.env.NEXT_PUBLIC_MANIFEST_EDITOR_UI_REQUIRED_NAMESPACES),
   defaultLocale: process.env.NEXT_PUBLIC_MANIFEST_EDITOR_UI_DEFAULT_LOCALE,
   defaultProfile: process.env.NEXT_PUBLIC_MANIFEST_EDITOR_UI_DEFAULT_PROFILE,
 });

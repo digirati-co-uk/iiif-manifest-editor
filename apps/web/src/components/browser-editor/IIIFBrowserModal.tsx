@@ -1,6 +1,7 @@
-import { Modal } from "@manifest-editor/components";
+import { useTranslations } from "@manifest-editor/i18n";
+import { LocalizedIIIFBrowser, Modal } from "@manifest-editor/components";
 import { useMutation } from "@tanstack/react-query";
-import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
+import { type IIIFBrowserProps } from "iiif-browser";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useMemo } from "react";
@@ -8,6 +9,8 @@ import { VaultProvider } from "react-iiif-vault";
 import { createManifestFromId } from "./browser-state";
 
 export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
+  const webT = useTranslations("web");
+
   const router = useRouter();
   const createProject = useMutation({
     mutationFn: createManifestFromId,
@@ -31,37 +34,38 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
     } as IIIFBrowserProps["navigation"];
   }, []);
 
+  const { mutate: openManifest } = createProject;
   const output = useMemo(() => {
     return [
       {
         type: "callback",
-        cb: (url: string) => createProject.mutate(url),
-        label: "Open Manifest",
+        cb: (url: string) => openManifest(url),
+        label: webT("browser.openManifest"),
         supportedTypes: ["Manifest"],
         format: { type: "url" },
       },
     ] as IIIFBrowserProps["output"];
-  }, [createProject.mutate]);
+  }, [openManifest, webT]);
 
   if (createProject.isPending) {
     return (
-      <Modal open={isOpen} title="Loading manifest" onClose={() => setIsOpen(false)}>
+      <Modal open={isOpen} title={webT("browser.loadingManifest")} onClose={() => setIsOpen(false)}>
         <div className="p-16 text-center">
-          Loading <strong>{createProject.variables}</strong>
+          {webT("browser.loadingResource", { resource: createProject.variables || "" })}
         </div>
       </Modal>
     );
   }
 
   return (
-    <Modal open={isOpen} title="Browse IIIF manifests" onClose={() => setIsOpen(false)}>
+    <Modal open={isOpen} title={webT("browser.browse")} onClose={() => setIsOpen(false)}>
       <VaultProvider useGlobal={false}>
         {createProject.isError ? (
           <div role="alert" className="border-b border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            The manifest could not be opened. Check the URL and try again.
+            {webT("browser.openFailed")}
           </div>
         ) : null}
-        <IIIFBrowser
+        <LocalizedIIIFBrowser
           className="iiif-browser iiif-browser-accessible border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
           navigation={navigationOptions}
           output={output}

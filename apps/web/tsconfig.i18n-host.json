@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.i18n.json",
+  "include": [
+    "src/i18n/policy.ts",
+    "src/i18n/resources.ts",
+    "src/i18n/WebI18nProvider.tsx",
+    "src/components/site/LanguageSwitcher.tsx",
+    "src/components/site/HeaderLanguageSwitcher.tsx",
+    "test/WebI18n.test.tsx",
+    "test/LanguageSwitcher.test.tsx",
+    "test/HostUI.test.tsx"
+  ]
+}

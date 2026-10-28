@@ -207,6 +207,10 @@
     "navigation.github": {
       "source": "GitHub",
       "reason": "GitHub is the service brand and retains its spelling in Dutch."
+    },
+    "launcher.recentTab": {
+      "source": "Recent",
+      "reason": "Recent is the normal Dutch adjective for recent activity; this is the short project-tab label."
     }
   },
   "profiles/plain/en-GB/editor-api.ts": {

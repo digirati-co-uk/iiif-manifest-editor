@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -51,6 +52,8 @@ async function createBrowserWebPage(data: CreateBrowserWebPagePayload, ctx: Crea
 }
 
 function CreateBrowserWebPageForm(props: CreatorContext) {
+  const webT = useTranslations("web");
+
   const initialUrl = props.options.initialData?.url || "";
   const [url, setUrl] = useState(initialUrl);
   const [label, setLabel] = useState<InternationalString>({ en: [""] });
@@ -109,7 +112,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
       }).then((r) => (r.ok ? r.json() : null))) as WebPagePreview | null;
 
       if (!preview) {
-        setError("Could not fetch a preview for this URL.");
+        setError("webPage.previewFailed");
         setManual(true);
         return;
       }
@@ -118,7 +121,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
       if (preview?.description) setSummary({ en: [preview.description] });
       setThumbnail(preview.image || "");
     } catch {
-      setError("Could not fetch a preview for this URL.");
+      setError("webPage.previewFailed");
       setManual(true);
     } finally {
       setLoadingPreview(false);
@@ -140,19 +143,21 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
     <PaddedSidebarContainer>
       <div className="flex flex-col gap-3">
         <InputContainer $wide>
-          <InputLabel htmlFor="url">Link</InputLabel>
+          <InputLabel htmlFor="url">{webT("webPage.link")}</InputLabel>
           <Input id="url" name="url" value={url} onChange={(e) => setUrl(e.target.value)} onPaste={onPasteUrl} />
         </InputContainer>
 
-        {loadingPreview ? <div className="text-sm text-gray-500">Fetching preview...</div> : null}
-        {error ? <div className="rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">{error}</div> : null}
+        {loadingPreview ? <div className="text-sm text-gray-500">{webT("webPage.loading")}</div> : null}
+        {error ? (
+          <div className="rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">{webT(error)}</div>
+        ) : null}
 
         {url && !manual && !loadingPreview && (label.en?.[0] || summary.en?.[0] || thumbnail) ? (
           <div className="relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm">
             <button
               type="button"
               className="absolute right-2 top-2 z-10 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-sm shadow"
-              aria-label="Close preview"
+              aria-label={webT("webPage.close")}
               onClick={() => setManual(true)}
             >
               X
@@ -176,7 +181,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
             </div>
             <div className="border-t border-gray-100 p-3">
               <ActionButton primary large type="button" onPress={createLink}>
-                Add link
+                {webT("webPage.add")}
               </ActionButton>
             </div>
           </div>
@@ -186,14 +191,14 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
           <>
             <LanguageFieldEditor
               focusId="label"
-              label="Label"
+              label={webT("webPage.label")}
               fields={label}
               onSave={(e: any) => setLabel(e.toInternationalString())}
             />
 
             <LanguageFieldEditor
               focusId="summary"
-              label="Description"
+              label={webT("webPage.description")}
               disallowHTML={false}
               fields={summary}
               onSave={(e: any) => setSummary(e.toInternationalString())}
@@ -201,7 +206,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
 
             {thumbnail ? (
               <InputContainer $wide>
-                <InputLabel>Thumbnail</InputLabel>
+                <InputLabel>{webT("webPage.thumbnail")}</InputLabel>
                 <Image
                   unoptimized
                   className="mb-2 max-h-32 max-w-full object-contain"
@@ -217,13 +222,13 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
                     setThumbnailSize({ height: 0, width: 0 });
                   }}
                 >
-                  Remove thumbnail
+                  {webT("webPage.removeThumbnail")}
                 </ActionButton>
               </InputContainer>
             ) : null}
 
             <ActionButton primary large type="button" onPress={createLink}>
-              Add link
+              {webT("webPage.add")}
             </ActionButton>
           </>
         ) : null}
