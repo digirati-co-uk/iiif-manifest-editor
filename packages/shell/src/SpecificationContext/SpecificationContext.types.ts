@@ -1,3 +1,4 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
 import type { Reference } from "@iiif/presentation-3";
 
 export type SpecificationEntityType =
@@ -26,7 +27,9 @@ export type SpecificationRuleBase = {
   id?: string;
   label?: string;
   description?: string;
+  descriptionMessage?: MessageReference;
   message?: string;
+  messageReference?: MessageReference;
 };
 
 export type SpecificationPropertyRuleBase = SpecificationRuleBase & {
@@ -34,10 +37,9 @@ export type SpecificationPropertyRuleBase = SpecificationRuleBase & {
   path: SpecificationPropertyPath;
 };
 
-export type DisallowPropertySpecificationRule =
-  SpecificationPropertyRuleBase & {
-    type: "disallow-property";
-  };
+export type DisallowPropertySpecificationRule = SpecificationPropertyRuleBase & {
+  type: "disallow-property";
+};
 
 export type RequireNonEmptySpecificationRule = SpecificationPropertyRuleBase & {
   type: "require-non-empty";
@@ -54,12 +56,11 @@ export type CanvasWithImageServiceSpecificationRule = SpecificationRuleBase & {
   serviceIds?: string[];
 };
 
-export type ThumbnailFromBodyServiceSpecificationRule =
-  SpecificationRuleBase & {
-    type: "iiif:thumbnail-from-body-service";
-    entityType?: "Manifest" | "Canvas";
-    requireThumbnail?: boolean;
-  };
+export type ThumbnailFromBodyServiceSpecificationRule = SpecificationRuleBase & {
+  type: "iiif:thumbnail-from-body-service";
+  entityType?: "Manifest" | "Canvas";
+  requireThumbnail?: boolean;
+};
 
 export type ValidRightsSpecificationRule = SpecificationRuleBase & {
   type: "iiif:valid-rights";
@@ -99,7 +100,9 @@ export type SpecificationRule =
 export type ManifestEditorSpecification = {
   id: string;
   label: string;
+  labelMessage?: MessageReference;
   description?: string;
+  descriptionMessage?: MessageReference;
   version?: string;
   terminology?: {
     entities?: Partial<Record<SpecificationEntityType, string>>;
@@ -107,17 +110,13 @@ export type ManifestEditorSpecification = {
       entityType?: SpecificationEntityType;
       path: SpecificationPropertyPath;
       label: string;
+      labelMessage?: MessageReference;
     }>;
   };
   rules: SpecificationRule[];
 };
 
-export type SpecificationReportStatus =
-  | "satisfied"
-  | "missing"
-  | "invalid"
-  | "disallowed"
-  | "not-applicable";
+export type SpecificationReportStatus = "satisfied" | "missing" | "invalid" | "disallowed" | "not-applicable";
 
 export type SpecificationEditorTarget = {
   resource: Reference;
@@ -138,6 +137,7 @@ export type SpecificationReportItem = {
   status: SpecificationReportStatus;
   displayLabel: string;
   message: string;
+  messageReference?: MessageReference;
   expected?: SpecificationJsonValue | SpecificationTextValue | string[];
   actual?: unknown;
   editorTarget?: SpecificationEditorTarget;

@@ -1320,6 +1320,9 @@ importers:
         specifier: 'catalog:'
         version: 4.5.2(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
     devDependencies:
+      jsdom:
+        specifier: 26.1.0
+        version: 26.1.0(supports-color@10.2.2)
       '@manifest-editor/ui':
         specifier: workspace:*
         version: link:../ui

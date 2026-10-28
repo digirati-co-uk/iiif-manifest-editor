@@ -8,12 +8,7 @@ import {
   pluginAppConfigEquals,
 } from "./PluginContext.helpers";
 import type { Config } from "../ConfigContext/ConfigContext";
-import type {
-  MappedPlugin,
-  PluginAppConfig,
-  PluginConfigScope,
-  PluginStore,
-} from "./PluginContext.types";
+import type { MappedPlugin, PluginAppConfig, PluginConfigScope, PluginStore } from "./PluginContext.types";
 
 export function createPluginStore({
   plugins = [],
@@ -49,9 +44,7 @@ export function createPluginStore({
       set((prev) => ({
         ...prev,
         plugins: prev.plugins.map((plugin) =>
-          plugin.metadata.id === id
-            ? { ...plugin, loadStatus: "loading", loadError: undefined }
-            : plugin,
+          plugin.metadata.id === id ? { ...plugin, loadStatus: "loading", loadError: undefined } : plugin
         ),
       }));
     },
@@ -66,13 +59,30 @@ export function createPluginStore({
                 metadata: {
                   ...existing.metadata,
                   ...plugin.metadata,
+                  localisation:
+                    existing.metadata.localisation || plugin.metadata.localisation
+                      ? {
+                          registrations: [
+                            ...new Set([
+                              ...(existing.metadata.localisation?.registrations || []),
+                              ...(plugin.metadata.localisation?.registrations || []),
+                            ]),
+                          ],
+                          requiredNamespaces: [
+                            ...new Set([
+                              ...(existing.metadata.localisation?.requiredNamespaces || []),
+                              ...(plugin.metadata.localisation?.requiredNamespaces || []),
+                            ]),
+                          ],
+                        }
+                      : undefined,
                 },
                 settings: plugin.settings || existing.settings,
                 load: existing.load,
                 loadStatus: "loaded",
                 loadError: undefined,
               }
-            : existing,
+            : existing
         ),
       }));
     },
@@ -81,9 +91,7 @@ export function createPluginStore({
       set((prev) => ({
         ...prev,
         plugins: prev.plugins.map((plugin) =>
-          plugin.metadata.id === id
-            ? { ...plugin, loadStatus: "error", loadError: error }
-            : plugin,
+          plugin.metadata.id === id ? { ...plugin, loadStatus: "error", loadError: error } : plugin
         ),
       }));
     },
@@ -135,7 +143,7 @@ export function createPluginStore({
         plugins: prev.plugins.map((plugin) =>
           plugin.metadata.id === id && plugin.loadStatus === "error"
             ? { ...plugin, loadStatus: "idle", loadError: undefined }
-            : plugin,
+            : plugin
         ),
         ...(scope === "global"
           ? {

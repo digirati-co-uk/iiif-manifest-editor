@@ -78,6 +78,32 @@ export const translatorNotes = {
     },
   },
   shell: {
+    "creator.help": {
+      context: "Accessible help action for a creator. The creator name is already resolved by its own namespace.",
+      placeholders: { name: "Resolved creator display name, never an ID or authored IIIF label." },
+    },
+    "background.items": {
+      context: "Whole progress sentence. Plural category follows the total count; current may be zero.",
+      placeholders: { current: "Completed numeric count.", count: "Total numeric count; controls plurals." },
+    },
+    "background.toastComplete": {
+      context:
+        "Whole completion notification; action names are resolved at render time, including in an already visible toast.",
+      placeholders: { name: "Resolved action display name. Do not translate placeholder contents." },
+    },
+    "background.timeZone": {
+      context: "Explains the explicit timezone used by task timestamps. Defaults to UTC; never changes authored dates.",
+      placeholders: { timeZone: "IANA timezone identifier from host UI configuration, preserved literally." },
+    },
+    "settings.contentDefault": {
+      context:
+        "Default language for authored IIIF content. This setting is independent from interface locale and wording profile.",
+    },
+    "specification.required": {
+      context:
+        "Specification report feedback; the field label is host terminology or a protocol-path fallback. Authored expected/actual values are untouched.",
+      placeholders: { label: "Field display label. Preserve its text and do not change IIIF paths." },
+    },
     "plugins.loadFailed": {
       context: "An editor plugin failed to load.",
       placeholders: {

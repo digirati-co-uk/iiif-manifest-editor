@@ -1,3 +1,5 @@
+import type { CatalogRegistration, EditorI18n } from "@manifest-editor/i18n/core";
+import { useOptionalEditorI18nInstance } from "@manifest-editor/i18n";
 import {
   createContext,
   createElement,
@@ -9,11 +11,7 @@ import {
   useMemo,
 } from "react";
 import { type StoreApi, useStore } from "zustand";
-import {
-  AppReactContext,
-  type MappedApp,
-  PrimeAppReactContext,
-} from "../AppContext/AppContext";
+import { AppReactContext, type MappedApp, PrimeAppReactContext } from "../AppContext/AppContext";
 import { type Config, useConfig, useSaveConfig } from "../ConfigContext/ConfigContext";
 import {
   applyPlugins,
@@ -62,10 +60,7 @@ export function PluginProvider({
   children: ReactNode;
 }): ReactElement {
   const mappedPlugins = useMemo(() => normalisePlugins(plugins), [plugins]);
-  const store = useMemo(
-    () => createPluginStore({ plugins: mappedPlugins, enabled, disabled, globalPluginConfig }),
-    [],
-  );
+  const store = useMemo(() => createPluginStore({ plugins: mappedPlugins, enabled, disabled, globalPluginConfig }), []);
 
   useEffect(() => {
     store.getState().setProviderState({
@@ -78,13 +73,13 @@ export function PluginProvider({
 
   const globalConfigContext = useMemo(
     () => ({ globalPluginConfig, saveGlobalPluginConfig }),
-    [globalPluginConfig, saveGlobalPluginConfig],
+    [globalPluginConfig, saveGlobalPluginConfig]
   );
 
   return createElement(
     PluginGlobalConfigReactContext.Provider,
     { value: globalConfigContext },
-    createElement(PluginReactContext.Provider, { value: store }, children),
+    createElement(PluginReactContext.Provider, { value: store }, children)
   );
 }
 
@@ -124,10 +119,7 @@ export function useEnabledPlugins(appId?: string): MappedPlugin[] {
   const state = usePlugins();
   const resolvedAppId = appId || appContext?.appId;
 
-  return useMemo(
-    () => getEnabledPluginsForApp(state, app, resolvedAppId),
-    [state, app, resolvedAppId],
-  );
+  return useMemo(() => getEnabledPluginsForApp(state, app, resolvedAppId), [state, app, resolvedAppId]);
 }
 
 export function usePluginActions(): {
@@ -183,21 +175,18 @@ export function usePluginRuntimeApi(appId?: string): PluginRuntimeApi {
 
 export function usePluginSettings<T extends PluginSettingsValue = PluginSettingsValue>(
   pluginId: string,
-  appId?: string,
+  appId?: string
 ): T {
   const appContext = useContext(AppReactContext);
   const state = usePlugins();
   const resolvedAppId = appId || appContext?.appId;
 
-  return useMemo(
-    () => getEffectivePluginSettings<T>(state, pluginId, resolvedAppId),
-    [state, pluginId, resolvedAppId],
-  );
+  return useMemo(() => getEffectivePluginSettings<T>(state, pluginId, resolvedAppId), [state, pluginId, resolvedAppId]);
 }
 
 export function usePluginConfigApi<T extends PluginSettingsValue = PluginSettingsValue>(
   pluginId: string,
-  appId?: string,
+  appId?: string
 ) {
   const appContext = useContext(AppReactContext);
   const store = useOptionalPluginStoreApi();
@@ -213,15 +202,15 @@ export function usePluginConfigApi<T extends PluginSettingsValue = PluginSetting
   const defaults = useMemo(() => getPluginDefaultSettings<T>(plugin || undefined), [plugin]);
   const global = useMemo(
     () => getPluginSettingsFromConfig<T>(globalAppConfig, pluginId) as T,
-    [globalAppConfig, pluginId],
+    [globalAppConfig, pluginId]
   );
   const workspace = useMemo(
     () => getPluginSettingsFromConfig<T>(workspaceAppConfig, pluginId) as T,
-    [workspaceAppConfig, pluginId],
+    [workspaceAppConfig, pluginId]
   );
   const effective = useMemo(
     () => getEffectivePluginSettings<T>(state, pluginId, resolvedAppId),
-    [state, pluginId, resolvedAppId],
+    [state, pluginId, resolvedAppId]
   );
 
   const persistWorkspaceAppConfig = useCallback(
@@ -238,14 +227,14 @@ export function usePluginConfigApi<T extends PluginSettingsValue = PluginSetting
         },
       });
     },
-    [config.plugins, resolvedAppId, saveConfig, store],
+    [config.plugins, resolvedAppId, saveConfig, store]
   );
 
   const setWorkspaceSettings = useCallback(
     (settings: T) => {
       persistWorkspaceAppConfig(setPluginSettingsInConfig(workspaceAppConfig || {}, pluginId, settings));
     },
-    [persistWorkspaceAppConfig, pluginId, workspaceAppConfig],
+    [persistWorkspaceAppConfig, pluginId, workspaceAppConfig]
   );
 
   const resetWorkspaceSettings = useCallback(() => {
@@ -273,14 +262,14 @@ export function usePluginConfigApi<T extends PluginSettingsValue = PluginSetting
         throw error;
       }
     },
-    [resolvedAppId, saveGlobalPluginConfig, state.globalApps, store],
+    [resolvedAppId, saveGlobalPluginConfig, state.globalApps, store]
   );
 
   const setGlobalSettings = useCallback(
     async (settings: T) => {
       await persistGlobalAppConfig(setPluginSettingsInConfig(globalAppConfig || {}, pluginId, settings));
     },
-    [globalAppConfig, persistGlobalAppConfig, pluginId],
+    [globalAppConfig, persistGlobalAppConfig, pluginId]
   );
 
   const resetGlobalSettings = useCallback(async () => {
@@ -305,10 +294,7 @@ export function usePluginConfigApi<T extends PluginSettingsValue = PluginSetting
 export function useResolvedPluginApp(definition: MappedApp, appId: string): MappedApp {
   const state = usePlugins();
   const store = useOptionalPluginStoreApi();
-  const enabledPlugins = useMemo(
-    () => getEnabledPluginsForApp(state, definition, appId),
-    [state, definition, appId],
-  );
+  const enabledPlugins = useMemo(() => getEnabledPluginsForApp(state, definition, appId), [state, definition, appId]);
 
   useEffect(() => {
     if (!store) {
@@ -332,9 +318,7 @@ export function useResolvedPluginApp(definition: MappedApp, appId: string): Mapp
           store.getState().setPluginLoaded(plugin.metadata.id, normalisePlugin(loadedPlugin));
         })
         .catch((error) => {
-          store
-            .getState()
-            .setPluginLoadError(plugin.metadata.id, getPluginLoadErrorMessage(error));
+          store.getState().setPluginLoadError(plugin.metadata.id, getPluginLoadErrorMessage(error));
         });
     }
   }, [store, enabledPlugins]);
@@ -344,9 +328,9 @@ export function useResolvedPluginApp(definition: MappedApp, appId: string): Mapp
       applyPlugins(
         definition,
         enabledPlugins.filter((plugin) => !plugin.load || plugin.loadStatus === "loaded"),
-        appId,
+        appId
       ),
-    [definition, enabledPlugins, appId],
+    [definition, enabledPlugins, appId]
   );
 }
 
@@ -370,5 +354,40 @@ export function PluginConfigBridge({ config }: { config?: Partial<Config> }) {
     store.getState().setAppConfig(appId, appConfig || {});
   }, [store, appId, appConfig]);
 
+  return null;
+}
+
+const registeredPluginCatalogs = new WeakMap<EditorI18n, Set<CatalogRegistration>>();
+
+/** Runtime owns collision diagnostics; failed atomic registrations remain retryable. */
+export function PluginI18nBridge() {
+  const runtime = useOptionalEditorI18nInstance();
+  const { plugins } = usePlugins();
+  useEffect(() => {
+    if (!runtime) return;
+    let active = true;
+    void (async () => {
+      for (const plugin of plugins) {
+        for (const registration of plugin.metadata.localisation?.registrations || []) {
+          if (!active) return;
+          let registered = registeredPluginCatalogs.get(runtime);
+          if (!registered) {
+            registered = new Set();
+            registeredPluginCatalogs.set(runtime, registered);
+          }
+          if (!registered.has(registration)) {
+            await runtime.register(registration);
+            registered.add(registration);
+          }
+        }
+        await runtime.loadNamespaces(plugin.metadata.localisation?.requiredNamespaces || []);
+      }
+    })().catch((error) => {
+      if (active) console.error("Plugin translation registration failed", error);
+    });
+    return () => {
+      active = false;
+    };
+  }, [runtime, plugins]);
   return null;
 }

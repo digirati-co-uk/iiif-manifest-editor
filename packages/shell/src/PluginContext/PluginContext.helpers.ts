@@ -215,21 +215,26 @@ export function isPluginCompatible(plugin: MappedPlugin, app?: PluginHostApp | n
   return true;
 }
 
-export function getPluginCompatibilityReason(plugin: MappedPlugin, app?: PluginHostApp | null, appId?: string | null) {
+export function getPluginCompatibilityReason(
+  plugin: MappedPlugin,
+  app?: PluginHostApp | null,
+  appId?: string | null,
+  messages?: { app: string; project: string }
+) {
   const supports = plugin.metadata.supports;
   if (!supports) return null;
 
   if (supports.apps?.length) {
     const appIds = new Set([appId, app?.metadata.id].filter(Boolean));
     if (!supports.apps.some((supportedAppId) => appIds.has(supportedAppId))) {
-      return "This plugin does not support the current app.";
+      return messages?.app || "This plugin does not support the current app.";
     }
   }
 
   if (supports.projectTypes?.length) {
     const projectType = app?.metadata.projectType;
     if (!projectType || !supports.projectTypes.includes(projectType)) {
-      return "This plugin does not support the current project type.";
+      return messages?.project || "This plugin does not support the current project type.";
     }
   }
 
@@ -254,7 +259,7 @@ export function isPluginSelected(plugin: MappedPlugin, state: PluginStoreSnapsho
 export function getPluginSelectionSource(
   plugin: MappedPlugin,
   state: PluginStoreSnapshot,
-  appId?: string | null,
+  appId?: string | null
 ): PluginConfigScope | "provider" | "default" {
   const appConfig = appId ? state.apps[appId] : undefined;
   const globalAppConfig = appId ? state.globalApps[appId] : undefined;
@@ -269,7 +274,7 @@ export function getPluginSelectionSource(
 export function getEnabledPluginsForApp(
   state: PluginStoreSnapshot,
   app?: PluginHostApp | null,
-  appId?: string | null,
+  appId?: string | null
 ): MappedPlugin[] {
   const enabled: MappedPlugin[] = [];
   const activeIds = new Set<string>();
@@ -277,7 +282,7 @@ export function getEnabledPluginsForApp(
   const selected = new Set(
     state.plugins
       .filter((plugin) => isPluginCompatible(plugin, app, appId) && isPluginSelected(plugin, state, appId))
-      .map((plugin) => plugin.metadata.id),
+      .map((plugin) => plugin.metadata.id)
   );
   const byId = new Map(state.plugins.map((plugin) => [plugin.metadata.id, plugin]));
   const visiting = new Set<string>();
@@ -341,7 +346,7 @@ export function getEnabledPluginsForApp(
 
 export function getPluginSettingsFromConfig<T extends PluginSettingsValue = PluginSettingsValue>(
   config: PluginAppConfig | undefined,
-  pluginId: string,
+  pluginId: string
 ): Partial<T> {
   const settings = config?.settings?.[pluginId];
   return isPlainObject(settings) ? (settings as Partial<T>) : {};
@@ -350,7 +355,7 @@ export function getPluginSettingsFromConfig<T extends PluginSettingsValue = Plug
 export function setPluginSettingsInConfig<T extends PluginSettingsValue = PluginSettingsValue>(
   config: PluginAppConfig = {},
   pluginId: string,
-  settings: T,
+  settings: T
 ): PluginAppConfig {
   return {
     ...config,
@@ -372,15 +377,15 @@ export function resetPluginSettingsInConfig(config: PluginAppConfig = {}, plugin
 }
 
 export function getPluginDefaultSettings<T extends PluginSettingsValue = PluginSettingsValue>(
-  plugin?: MappedPlugin,
+  plugin?: MappedPlugin
 ): T {
-  return ({ ...(plugin?.settings?.defaults || {}) } as unknown) as T;
+  return { ...(plugin?.settings?.defaults || {}) } as unknown as T;
 }
 
 export function getEffectivePluginSettings<T extends PluginSettingsValue = PluginSettingsValue>(
   state: PluginStoreSnapshot,
   pluginId: string,
-  appId?: string | null,
+  appId?: string | null
 ): T {
   const plugin = state.plugins.find((item) => item.metadata.id === pluginId);
   const globalAppConfig = appId ? state.globalApps[appId] : undefined;
@@ -406,7 +411,7 @@ export function enablePluginAndDependenciesInConfig(
   state: PluginStoreSnapshot,
   plugin: MappedPlugin,
   app?: PluginHostApp | null,
-  appId?: string | null,
+  appId?: string | null
 ): { config: PluginAppConfig; enabledIds: string[]; blocked: string[] } {
   const byId = new Map(state.plugins.map((item) => [item.metadata.id, item]));
   const enabledIds: string[] = [];
@@ -470,14 +475,16 @@ function filterPluginList<T extends { id: string }>(
   plugin: MappedPlugin,
   key: ExtensionListKey,
   existing: Set<string>,
-  items: T[] | undefined,
+  items: T[] | undefined
 ) {
   if (!items?.length) return undefined;
 
   const next: T[] = [];
   for (const item of items) {
     if (existing.has(item.id)) {
-      warnPlugin(`Plugin "${plugin.metadata.id}" contribution "${item.id}" for "${key}" was skipped because that id already exists.`);
+      warnPlugin(
+        `Plugin "${plugin.metadata.id}" contribution "${item.id}" for "${key}" was skipped because that id already exists.`
+      );
       continue;
     }
 
@@ -521,7 +528,7 @@ export function applyPlugins(app: MappedApp, plugins: MappedPlugin[], appId?: st
     const missingDependencies = (plugin.metadata.dependencies || []).filter((dependency) => !activeIds.has(dependency));
     if (missingDependencies.length) {
       warnPlugin(
-        `Plugin "${plugin.metadata.id}" was not applied because dependencies are missing or later in the plugin order: ${missingDependencies.join(", ")}`,
+        `Plugin "${plugin.metadata.id}" was not applied because dependencies are missing or later in the plugin order: ${missingDependencies.join(", ")}`
       );
       continue;
     }
@@ -550,10 +557,8 @@ export function applyPlugins(app: MappedApp, plugins: MappedPlugin[], appId?: st
     ...nextApp,
     config: mergePartialConfig(
       app.config || {},
-      ...plugins
-        .filter((plugin) => activeIds.has(plugin.metadata.id))
-        .map((plugin) => plugin.extension.config || {}),
-      nextApp.config || {},
+      ...plugins.filter((plugin) => activeIds.has(plugin.metadata.id)).map((plugin) => plugin.extension.config || {}),
+      nextApp.config || {}
     ),
     layout: {
       ...nextApp.layout,

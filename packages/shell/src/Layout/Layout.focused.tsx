@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { DefaultTooltipContent, Modal, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
 import { GhostBlocks } from "@manifest-editor/ui/ui/GhostBlocks/GhostBlocks";
@@ -27,6 +28,10 @@ function getEditedResourceType(data: unknown) {
 }
 
 export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProps) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const appState = useAppState();
   const rootResource = useAppResource();
@@ -53,7 +58,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       layoutState: state,
       appState,
     }),
-    [rootResource, vault, app, state, appState, vaultState],
+    [rootResource, vault, app, state, appState, vaultState]
   );
 
   const leftPanels = useMemo(
@@ -61,28 +66,28 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }).filter((panel) => !panel.focusedMode?.hide),
-    [configuredLeftPanels, supportContext],
+    [configuredLeftPanels, supportContext]
   );
   const centerPanels = useMemo(
     () =>
       filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredCenterPanels, supportContext],
+    [configuredCenterPanels, supportContext]
   );
   const rightPanels = useMemo(
     () =>
       filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }).filter((panel) => !panel.focusedMode?.hide),
-    [configuredRightPanels, supportContext],
+    [configuredRightPanels, supportContext]
   );
   const modals = useMemo(
     () =>
       filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredModals, supportContext],
+    [configuredModals, supportContext]
   );
   const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
   const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
@@ -96,7 +101,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       rightPanels,
       modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels]
   );
 
   const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
@@ -122,7 +127,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       appState,
       actions,
     }),
-    [rootResource, vault, app, state, appState, actions],
+    [rootResource, vault, app, state, appState, actions]
   );
   const handleFocusedPanelSelect = (panel: LayoutPanel) => {
     panel.focusedMode?.onSelect?.(focusedPanelContext);
@@ -156,7 +161,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
           current: actions.centerPanel,
           vault: vault as any,
         },
-        appState,
+        appState
       );
     }
   }, [state.centerPanel.current, centerPanel?.id]);
@@ -245,7 +250,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
         actions.rightPanel.open();
       }
     },
-    [panelIds(rightPanels), rightPanel?.id, state.rightPanel.open],
+    [panelIds(rightPanels), rightPanel?.id, state.rightPanel.open]
   );
 
   const sidebarSmall = "4.5rem";
@@ -312,7 +317,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
             <TooltipTrigger asChild>
               <F.PanelSwitchButton
                 type="button"
-                aria-label={panel.label}
+                aria-label={resolveMessage(panel?.labelMessage, panel.label)}
                 data-selected={current === panel.id}
                 onClick={() => {
                   if (mobile) {
@@ -325,10 +330,10 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                   }
                 }}
               >
-                {panel.icon || panel.label.slice(0, 1)}
+                {panel.icon || resolveMessage(panel?.labelMessage, panel.label).slice(0, 1)}
               </F.PanelSwitchButton>
             </TooltipTrigger>
-            <DefaultTooltipContent>{panel.label}</DefaultTooltipContent>
+            <DefaultTooltipContent>{resolveMessage(panel?.labelMessage, panel.label)}</DefaultTooltipContent>
           </Tooltip>
         ))}
       </F.PanelSwitcher>
@@ -341,9 +346,9 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
     }
 
     return (
-      <F.PanelSwitcher $side="left" aria-label="Main and left panels">
+      <F.PanelSwitcher $side="left" aria-label={t("panels.mainAndLeft")}>
         {centerPanels.length ? (
-          <F.PanelSwitchGroup aria-label="Main panels">
+          <F.PanelSwitchGroup aria-label={t("panels.main")}>
             {centerPanels
               .filter((panel) => !panel.focusedMode?.hide)
               .map((panel) => (
@@ -351,7 +356,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                   <TooltipTrigger asChild>
                     <F.PanelSwitchButton
                       type="button"
-                      aria-label={panel.label}
+                      aria-label={resolveMessage(panel?.labelMessage, panel.label)}
                       data-selected={state.centerPanel.current === panel.id}
                       onClick={() => {
                         actions.centerPanel.open({ id: panel.id });
@@ -360,23 +365,23 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                         handleFocusedPanelSelect(panel);
                       }}
                     >
-                      {panel.icon || panel.label.slice(0, 1)}
+                      {panel.icon || resolveMessage(panel?.labelMessage, panel.label).slice(0, 1)}
                     </F.PanelSwitchButton>
                   </TooltipTrigger>
-                  <DefaultTooltipContent>{panel.label}</DefaultTooltipContent>
+                  <DefaultTooltipContent>{resolveMessage(panel?.labelMessage, panel.label)}</DefaultTooltipContent>
                 </Tooltip>
               ))}
           </F.PanelSwitchGroup>
         ) : null}
         {centerPanels.length && leftPanels.length ? <F.PanelSwitchDivider /> : null}
         {leftPanels.length ? (
-          <F.PanelSwitchGroup aria-label="Left panels">
+          <F.PanelSwitchGroup aria-label={t("panels.left")}>
             {leftPanels.map((panel) => (
               <Tooltip placement="right" key={panel.id}>
                 <TooltipTrigger asChild>
                   <F.PanelSwitchButton
                     type="button"
-                    aria-label={panel.label}
+                    aria-label={resolveMessage(panel?.labelMessage, panel.label)}
                     data-selected={activeLeftPanelId === panel.id}
                     onClick={() => {
                       if (panel.modal) {
@@ -401,10 +406,10 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                       }
                     }}
                   >
-                    {panel.icon || panel.label.slice(0, 1)}
+                    {panel.icon || resolveMessage(panel?.labelMessage, panel.label).slice(0, 1)}
                   </F.PanelSwitchButton>
                 </TooltipTrigger>
-                <DefaultTooltipContent>{panel.label}</DefaultTooltipContent>
+                <DefaultTooltipContent>{resolveMessage(panel?.labelMessage, panel.label)}</DefaultTooltipContent>
               </Tooltip>
             ))}
           </F.PanelSwitchGroup>
@@ -419,7 +424,11 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
     }
 
     return (
-      <Modal title={modalToRender.label} open={state.modal.open} onClose={() => actions.modal.close()}>
+      <Modal
+        title={resolveMessage(modalToRender?.labelMessage, modalToRender.label)}
+        open={state.modal.open}
+        onClose={() => actions.modal.close()}
+      >
         {modalToRender.modal ? (
           <div className="h-[70vh] min-h-[60vh] max-h-full flex w-full">
             <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
@@ -429,8 +438,8 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
             modalToRender.render(
               state.modal.state || modalToRender.defaultState || {},
               { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
-              appState,
-            ),
+              appState
+            )
           )
         )}
       </Modal>
@@ -460,8 +469,8 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
                     current: actions.centerPanel,
                     vault: vault,
                   },
-                  appState,
-                ),
+                  appState
+                )
               )
             ) : null
           ) : null}

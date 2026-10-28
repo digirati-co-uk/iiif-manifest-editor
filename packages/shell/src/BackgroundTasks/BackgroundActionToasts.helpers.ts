@@ -1,3 +1,5 @@
+import type { EditorI18n } from "@manifest-editor/i18n/core";
+import { backgroundActionFormatter, backgroundActionLabel, backgroundActionStatus } from "./BackgroundActionMessages";
 import type { ToastContent } from "../Toast/ToastContext";
 import type { BackgroundActionDefinition, BackgroundActionInstance } from "./BackgroundTasks.types";
 
@@ -13,18 +15,21 @@ export function getBackgroundActionToastContent(
   definition: BackgroundActionDefinition,
   instance: BackgroundActionInstance,
   onResults?: () => void,
+  formatter?: Pick<EditorI18n, "resolveMessage" | "translate">
 ): ToastContent | null {
-  const label = instance.label || definition.label;
+  const i18n = backgroundActionFormatter(formatter);
+  const t = i18n.translate("shell");
+  const label = backgroundActionLabel(definition, instance, i18n);
 
   if (instance.status === "complete") {
     return {
       variant: "success",
-      title: `${label} complete`,
-      description: instance.resultsAvailable ? "Results are ready." : undefined,
+      title: t("background.toastComplete", { name: label }),
+      description: instance.resultsAvailable ? t("background.resultsReady") : undefined,
       action:
         instance.resultsAvailable && onResults
           ? {
-              label: "Results",
+              label: t("background.results"),
               onPress: onResults,
             }
           : undefined,
@@ -34,8 +39,8 @@ export function getBackgroundActionToastContent(
   if (instance.status === "error") {
     return {
       variant: "error",
-      title: `${label} failed`,
-      description: instance.error?.message || instance.statusText || "Action failed",
+      title: t("background.toastFailed", { name: label }),
+      description: backgroundActionStatus(instance, i18n) || t("background.failed"),
     };
   }
 

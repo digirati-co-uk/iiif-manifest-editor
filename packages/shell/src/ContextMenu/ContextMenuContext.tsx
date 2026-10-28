@@ -5,6 +5,7 @@ import { randomId } from "../helpers";
 export type ContextMenuItem = {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   onAction: (options: { position: { x: number; y: number }; resource: { id: string; type: string } }) => void;
   disabled?: boolean;
   enabled?: boolean;
@@ -205,7 +206,7 @@ function mergeSectionsWithTheSameTitle(sections: Array<{ sectionTitle?: string; 
   });
 
   const returnSections: Array<{ sectionTitle?: string; items: Array<ContextMenuItem> }> = Object.entries(
-    sectionMap,
+    sectionMap
   ).map(([title, items]) => ({
     sectionTitle: title,
     items,

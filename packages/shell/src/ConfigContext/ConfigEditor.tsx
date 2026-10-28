@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, Form, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { useDecayState } from "../hooks/use-decay-state";
@@ -7,6 +8,10 @@ import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 import { IIIFOptions } from "./IIIFOptions";
 
 export function ConfigEditor() {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const previews = usePreviewContext();
   const resource = useAppResource();
   const config = useConfig();
@@ -51,13 +56,13 @@ export function ConfigEditor() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Workspace configuration" />
-      {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">Changes saved</div> : null}
+      <SidebarHeader title={t("settings.title")} />
+      {isSaved ? <div className="bg-me-primary-500 text-white p-3 text-sm">{t("settings.saved")}</div> : null}
       <SidebarContent className="p-4">
         <IIIFOptions />
         <Form.Form onSubmit={onSubmit} className="flex flex-col gap-3">
           <Form.InputContainer>
-            <Form.Label htmlFor="defaultLanguage">Default Language</Form.Label>
+            <Form.Label htmlFor="defaultLanguage">{t("settings.contentDefault")}</Form.Label>
             <Form.Input
               type="text"
               name="defaultLanguage"
@@ -67,7 +72,7 @@ export function ConfigEditor() {
           </Form.InputContainer>
 
           <Form.InputContainer>
-            <Form.Label htmlFor="availableLanguages">Available Languages</Form.Label>
+            <Form.Label htmlFor="availableLanguages">{t("settings.contentAvailable")}</Form.Label>
             <Form.Input
               type="text"
               name="availableLanguages"
@@ -83,7 +88,7 @@ export function ConfigEditor() {
               id="advancedLanguageMode"
               defaultChecked={config.i18n?.advancedLanguageMode || false}
             />
-            <Form.Label htmlFor="advancedLanguageMode">Advanced Language Mode</Form.Label>
+            <Form.Label htmlFor="advancedLanguageMode">{t("settings.contentAdvanced")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -93,7 +98,7 @@ export function ConfigEditor() {
               id="textGranularityEnabled"
               defaultChecked={config.i18n?.textGranularityEnabled || false}
             />
-            <Form.Label htmlFor="textGranularityEnabled">Enable text granularity</Form.Label>
+            <Form.Label htmlFor="textGranularityEnabled">{t("settings.textGranularity")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -103,7 +108,7 @@ export function ConfigEditor() {
               id="rememberCanvasId"
               defaultChecked={config.editorFeatureFlags?.rememberCanvasId || false}
             />
-            <Form.Label htmlFor="rememberCanvasId">Remember Canvas ID</Form.Label>
+            <Form.Label htmlFor="rememberCanvasId">{t("settings.rememberCanvas")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -113,7 +118,7 @@ export function ConfigEditor() {
               id="rememberLeftPanelId"
               defaultChecked={config.editorFeatureFlags?.rememberLeftPanelId || false}
             />
-            <Form.Label htmlFor="rememberLeftPanelId">Remember Left panel</Form.Label>
+            <Form.Label htmlFor="rememberLeftPanelId">{t("settings.rememberPanel")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -123,7 +128,7 @@ export function ConfigEditor() {
               id="manifestGridOptions"
               defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
             />
-            <Form.Label htmlFor="manifestGridOptions">Manifest Grid Options</Form.Label>
+            <Form.Label htmlFor="manifestGridOptions">{t("settings.grid")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">
@@ -133,7 +138,9 @@ export function ConfigEditor() {
               id="isVersion2"
               defaultChecked={config.export?.version === 2}
             />
-            <Form.Label htmlFor="isVersion2">Export Presentation 2 {resource.type}s</Form.Label>
+            <Form.Label htmlFor="isVersion2">
+              {t(resource.type === "Collection" ? "settings.exportCollections" : "settings.exportManifests")}
+            </Form.Label>
           </Form.InputContainer>
 
           {/* <Form.InputContainer>
@@ -148,7 +155,7 @@ export function ConfigEditor() {
           </Form.InputContainer> */}
 
           <Form.InputContainer>
-            <Form.Label htmlFor="defaultPreview">Default preview</Form.Label>
+            <Form.Label htmlFor="defaultPreview">{t("settings.defaultPreview")}</Form.Label>
             <div>
               {previews.configs.map((preview, key) => {
                 if (preview.type === "iiif-preview-service") {
@@ -163,7 +170,7 @@ export function ConfigEditor() {
                       value={preview.id}
                       defaultChecked={!config.defaultPreview ? key === 0 : config.defaultPreview === preview.id}
                     />
-                    <label htmlFor={preview.id}>{preview.label}</label>
+                    <label htmlFor={preview.id}>{resolveMessage(preview?.labelMessage, preview.label)}</label>
                   </Form.InputContainer>
                 );
               })}
@@ -178,16 +185,14 @@ export function ConfigEditor() {
                   : `${window.location.pathname}/exhibition`
               }
             >
-              {window.location.pathname.includes("/exhibition")
-                ? "Return to Manifest Editor"
-                : "Go to Exhibition Editor"}
+              {window.location.pathname.includes("/exhibition") ? t("settings.return") : t("settings.exhibition")}
             </a>
           ) : null}
 
           <PluginManager />
 
           <div className="mt-5">
-            <ActionButton type="submit">{"Save changes"}</ActionButton>
+            <ActionButton type="submit">{t("actions.save")}</ActionButton>
           </div>
         </Form.Form>
       </SidebarContent>

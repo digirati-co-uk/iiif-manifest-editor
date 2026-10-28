@@ -1,9 +1,13 @@
 import rawUseDropdownMenu from "react-accessible-dropdown-menu-hook";
 
+// The package may arrive as a callable ESM default or a CommonJS namespace.
+const importedUseDropdownMenu: unknown = rawUseDropdownMenu;
 const useDropdownMenu = (
-  typeof rawUseDropdownMenu === "object" && rawUseDropdownMenu !== null && "default" in rawUseDropdownMenu
-    ? rawUseDropdownMenu.default
-    : rawUseDropdownMenu
+  typeof importedUseDropdownMenu === "object" &&
+  importedUseDropdownMenu !== null &&
+  "default" in importedUseDropdownMenu
+    ? importedUseDropdownMenu.default
+    : importedUseDropdownMenu
 ) as typeof rawUseDropdownMenu;
 
 export default useDropdownMenu;

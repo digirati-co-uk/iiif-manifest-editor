@@ -12,15 +12,17 @@ type IIIFPreviewResponse = {
 export class IIIFPreviewService implements PreviewHandler {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type = "iiif-preview-service";
   focusable = false;
 
   private readonly serviceUrl: string;
   private readonly cache: Record<string, IIIFPreviewResponse & { time: number }> = {};
 
-  constructor({ id, config, label }: PreviewConfiguration<{ url: string }>) {
+  constructor({ id, config, label, labelMessage }: PreviewConfiguration<{ url: string }>) {
     this.id = id;
     this.label = label;
+    this.labelMessage = labelMessage;
     this.serviceUrl = config.url;
   }
 

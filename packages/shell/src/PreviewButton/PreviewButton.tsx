@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { DownloadButton } from "@manifest-editor/components";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
@@ -32,6 +33,10 @@ export function PreviewButton({
   fileName?: string;
   preview?: PresetPreviewOptions;
 }) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const { active, configs, actions, selected } = usePreviewContext();
   const vault = useVault();
   const config = useConfig();
@@ -41,7 +46,7 @@ export function PreviewButton({
   const { isOpen, buttonProps, itemProps } = useDropdownMenu(configsToShow.length + customActions.length);
 
   if (!hasPreviewOption(configsToShow.length, preview)) {
-    return <ButtonEmpty>Preview not available</ButtonEmpty>;
+    return <ButtonEmpty>{t("preview.unavailable")}</ButtonEmpty>;
   }
 
   return (
@@ -50,7 +55,7 @@ export function PreviewButton({
         <div className="mr-4">
           <DownloadButton
             fileName={fileName || "manifest.json"}
-            label="Download manifest"
+            label={t("preview.download")}
             getData={() => {
               if (config.export && config.export.version === 2) {
                 return JSON.stringify(vault.toPresentation2(resource as any), null, 2);
@@ -85,10 +90,10 @@ export function PreviewButton({
             actions.updatePreviews();
           }}
         >
-          {preview?.mainAction?.label || "Preview"}
+          {resolveMessage(preview?.mainAction?.labelMessage, preview?.mainAction?.label) || t("preview.open")}
         </ButtonMain>
         {configsToShow.length + customActions.length > 0 ? (
-          <ButtonChange $open={isOpen} {...buttonProps} aria-label="Choose preview">
+          <ButtonChange $open={isOpen} {...buttonProps} aria-label={t("preview.choose")}>
             <DownIcon aria-hidden />
           </ButtonChange>
         ) : null}
@@ -104,7 +109,7 @@ export function PreviewButton({
                     actions.selectPreview(config.id);
                   }}
                 >
-                  {config.label}
+                  {resolveMessage(config?.labelMessage, config.label)}
                 </MenuItemLabel>
                 {!inactive ? (
                   <MenuItemClose onClick={() => actions.deletePreview(config.id)}>
@@ -124,7 +129,7 @@ export function PreviewButton({
               }}
             >
               <MenuItemStatus $status={action.status || "available"} />
-              <MenuItemLabel>{action.label}</MenuItemLabel>
+              <MenuItemLabel>{resolveMessage(action?.labelMessage, action.label)}</MenuItemLabel>
             </MenuItem>
           ))}
         </MenuContainer>
