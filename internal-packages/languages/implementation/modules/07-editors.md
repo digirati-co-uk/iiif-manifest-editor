@@ -77,7 +77,7 @@ The exact unchanged diagnostic families are:
 - Shell metadata/provider integration is concurrent. Reconcile the serialisable `labelMessage`/`summaryMessage` intersections with the final public shell types; test definition labels under locale/profile switches in the integrated host. Do not use a locale/profile React key or spread hook snapshot as a provider instance.
 - IIIF Browser UI is reached through `LinkingProperties.tsx` partOf `inlineActions` / `initialData.iiifBrowserOptions` and `IIIFBrowserFromPartOfButton` in LinkingPropertyList, plus `CanvasComposition`'s slot browse action → `CanvasLayout/useAddCanvasImage.ts` → `@manifest-editor/iiif-browser-creator`. The owned launch/action labels are translated. These callers retain their exact history/navigation/placeholder payloads and do not import a speculative adapter. Parent must wire the forthcoming shared Browser dictionary adapter at the creator boundary.
 - Media delegates through `InternalRenderCanvas` (`RenderVideoStrategy` with the bridged IIIFMediaPlayer), `NonAtlasStrategyRenderer` and components HTMLEditor in AnnotationBodyEditor. Vidstack spoken units/internal aria and MDX/CodeMirror upstream copy remain the dependency-followup owner's gate; first-party labels do not establish their completion.
-- **Additional reachable dependency gap:** `NavPlaceEditor` → `EditControl` constructs Leaflet.draw's `L.Control.Draw`. Leaflet's default zoom buttons and Draw toolbar/edit/draw tooltips remain upstream English. Draw's localization uses global `L.drawLocal`, which cannot safely supply two independent editor locales. No global mutation or DOM translation hack was introduced. A scoped dependency adapter/patch is still needed; map geometry and active drawing state must survive locale changes.
+- **Map dependency follow-up implemented:** `NavPlaceEditor` → `EditControl` now uses the scoped Leaflet.draw patch and public runtime adapter described below. Initial/live zoom and Draw copy is English/Dutch without global dictionary mutation; real-browser drawing and external publication acceptance remain pending.
 - The exported `AnnotationTargetEditor` also delegates shape controls to `react-iiif-vault`'s `RenderSvgEditorControls`; inspect upstream copy/localization before whole-viewer completion. Owned tools and resize handles are translated, but that does not prove all dependency-generated shape UI is translated.
 
 ## Acceptance evidence
@@ -95,4 +95,99 @@ Integrated with shell06 and component dependency adapters. Parent reran all **45
 
 ## Shape-control boundary follow-up
 
-The reachable vault `RenderSvgEditorControls` fallback is replaced by shared `SvgEditorControls`, which uses its public store/action hook. Both annotation-target editing and polygon creation wrap DOM controls in `EditorI18nBoundary` with their actual bridged instance; translated labels do not enter shape IDs, tool codes or geometry. All icon-only controls are named, and the raw current-tool enum is no longer visible. The real Atlas-store regression covers selected tool/geometry retention. Leaflet/Draw remains a separate open dependency gate; complete canvas/portal browser acceptance is not inferred from JSDOM tests.
+The reachable vault `RenderSvgEditorControls` fallback is replaced by shared `SvgEditorControls`, which uses its public store/action hook. Both annotation-target editing and polygon creation wrap DOM controls in `EditorI18nBoundary` with their actual bridged instance; translated labels do not enter shape IDs, tool codes or geometry. All icon-only controls are named, and the raw current-tool enum is no longer visible. The real Atlas-store regression covers selected tool/geometry retention. The scoped Leaflet/Draw follow-up below closes the map dictionary/adapter implementation gap; complete map/canvas/portal browser acceptance is not inferred from JSDOM tests.
+
+## Scoped map follow-up (isolated base `bc2ba6f4`)
+
+**Implementation complete; parent browser and publication gates remain open.**
+Scope is only `definitions/NavPlaceEditor`, its real map tests, editors English/Dutch
+map messages, translator context/reviews and the maintained Leaflet.draw patch with
+its workspace/lock metadata. No other editor/viewer/runtime/host/experimental
+language source is changed.
+
+- Read the actual shipped Leaflet **1.9.4** Zoom API and Leaflet.draw **1.0.4** main
+  and debug distributions. Draw has only global `L.drawLocal` upstream. The maintained
+  [`leaflet-draw@1.0.4.patch`](../../../../patches/leaflet-draw@1.0.4.patch) adds optional
+  `MapOptions.drawLocalisation`, `map.setDrawLocalisation(input?)` and public Leaflet
+  declaration augmentation. Input callbacks translate semantic dictionary paths,
+  format full distance/area messages and format full radius sentences; vendor code
+  imports neither the editor runtime nor private catalogs. See the exact API,
+  refresh/install procedure and distribution limits in
+  [`patches/README.md`](../../../../patches/README.md#leafletdraw-104--leaflet-194).
+- Both shipped distributions use the same map-scoped API. Constructor-time lookups
+  use the actual map before toolbar/handler `_map` binding. Dynamic initial/end-label
+  reads replace stale display caches. Polyline clones `drawError` per instance,
+  preserving explicit custom error messages and preventing cross-map/prototype leakage.
+  Tooltip content factories re-read the current semantic operation and shape rather
+  than parsing English, replacing arbitrary DOM text or replaying pointer events.
+- Existing mode/action link DOM, focus, event handlers, active draft vertices/layers,
+  crossing error/timer, editing/deleting state, map view and zoom survive input changes.
+  Visible action text, titles, screen-reader text and disabled explanations refresh
+  in place. New callback text is escaped for tooltip content and inserted literally
+  for toolbar copy. Legacy HTML/global-dictionary behavior remains when no input is
+  supplied. Circle resize feedback fixes upstream's unreachable `_editTooltip` branch
+  and scopes its formerly implicit global radius variable.
+- The React adapter uses **only** public `@manifest-editor/i18n`. It observes locale
+  **and profile** (the translator function is intentionally stable), supplies locale
+  number formatting/whole semantic unit plurals and complete radius messages, and
+  refreshes existing Leaflet zoom title/aria-label attributes. Cleanup restores the
+  prior map dictionary and zoom names. Locale/profile changes do not enter the control
+  construction effect; the stable NavPlace draw options prevent accidental reconstruction.
+  Explicit changed draw/edit/position options retain existing caller replacement
+  semantics, callback refs, original event IDs, FeatureGroup payloads and onMounted
+  count. The typed map ref removes its existing zero-argument-ref diagnostic.
+- All **65 new map English keys have real Dutch translations**, including all six
+  tools, start/continue/finish instructions, crossing errors, edit/delete hints,
+  enabled/disabled actions, zoom accessibility and measurement plurals. Plain wording
+  inherits these instructions because no IIIF terminology differs. Singular yard,
+  hectare and acre have exact-source Dutch cognate reviews; no blanket approval.
+  The strict gate here covers **1950 total required messages**, not whole-UI completion.
+  No experimental locales were synchronized or changed.
+- Authored InternationalString values, GeoJSON coordinates/properties/radius numbers,
+  map protocol values, tile URL, legal OpenStreetMap attribution, editing/undo/worker
+  transport and editor content-language configuration retain their existing paths.
+  No stored feature text is translated. No map, control or drawing handler is keyed by
+  UI selection. The patch does not affect the separately closed vault shape controls.
+
+Actual checks (root Node **24.21.0**, no builds/server operations):
+
+```sh
+pnpm install --ignore-scripts --frozen-lockfile
+node packages/editors/node_modules/vitest/vitest.mjs run --config packages/editors/vitest.config.ts
+node node_modules/typescript/bin/tsc -p packages/editors/tsconfig.source.json
+node node_modules/typescript/bin/tsc -p packages/editors/tsconfig.test.json
+node node_modules/oxlint/bin/oxlint packages/editors/src/definitions/NavPlaceEditor packages/editors/test/map-localisation.test.tsx
+node --test internal-packages/languages/test/*.test.mjs
+npm --prefix internal-packages/languages run translations:check
+git diff --check
+```
+
+- Full editors suite: **58 passing tests in 11 files**; languages foundation: **68 passing tests**.
+- Focused map suite: **13 passing tests** with actual Leaflet/Draw, real runtime and
+  React Leaflet. Five cases run independently against **each** shipped distribution;
+  three additional adapter/formatting tests cover mounted React lifecycle, two React
+  maps with different locales and a real map wording override, retained drafts/callback
+  payloads/zoom behavior, and locale-formatted metric/imperial messages. The fixtures
+  shim SVG/layout primitives only; translators, controls and handlers are not mocked.
+  Rejected polygon-edit crossings and active line-error timers keep their state on
+  switch; retained Finish/Remove-all links still dispatch real events exactly once.
+- Source **and** test no-emit checks still fail on **42 pre-existing diagnostics**.
+  Under identical installed dependencies/configs, temporarily reading the original
+  tracked NavPlace/EditControl files gives **43 before / 42 after**: zero added
+  file/code/full-message signatures, and only the existing NavPlace zero-argument-ref
+  error removed. New map source/test files have no diagnostics. This is a regression
+  comparison, not a clean full-package typecheck; no suppressions were added.
+- Targeted map oxlint exits 0 with zero warnings/errors. Strict Dutch has zero missing
+  messages and zero unreviewed identical-English messages. Formatting/diff review and
+  `git diff --check` pass. The full workspace frozen scripts-disabled install succeeds;
+  lock changes are limited to the Draw patch and test-only jsdom declaration dependency.
+
+Parent must run live browser drawing/editing/deleting acceptance against its own
+port-3000 server using **`E2E_TARGET=watch`**, including actual pointer/touch geometry,
+long tooltip/action layout, focus and loaded NavPlace form/undo behavior. JSDOM does
+not establish visual/browser drawing. No server was started, killed, restarted,
+cache-cleared or patched globally here. No publication build, minification, tarball,
+external npm install or upstream publication was performed. External SDK installations
+need the same patch or upstream equivalent for Draw localization; the optional setter
+call keeps unpatched legacy Draw functional in English. No whole-UI or integrated
+SSR acceptance claim follows from this isolated module work.

@@ -95,6 +95,7 @@
     "@tsdown/css": "catalog:",
     "@types/dompurify": "3.0.5",
     "@types/geojson": "^7946.0.14",
+    "@types/jsdom": "21.1.7",
     "@types/leaflet": "^1.9.3",
     "@types/react": "catalog:",
     "@types/react-beautiful-dnd": "^13.1.2",

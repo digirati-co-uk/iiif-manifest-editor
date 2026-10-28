@@ -92,3 +92,67 @@ A filtered install can leave consumers outside its scope linked to the previous
 unpatched virtual package while shared libraries use the new copy. Parent's real
 web-browser-context test reproduced that mismatch; the full scripts-disabled
 installation restores a single matching browser identity across those consumers.
+
+## Leaflet.draw 1.0.4 / Leaflet 1.9.4
+
+`leaflet-draw@1.0.4.patch` adds an optional **per-map** API to both shipped
+`dist/leaflet.draw.js` (the package main) and `dist/leaflet.draw-src.js`, plus the
+side-effect import's Leaflet augmentation in `localisation.d.ts`:
+
+```ts
+import "leaflet-draw";
+map.setDrawLocalisation({
+  translate(path, legacyFallback) {
+    return dictionary[path] ?? legacyFallback;
+  },
+  formatMeasurement(kind, numericValue, options) {
+    /* whole distance/area message */
+  },
+  formatRadius(numericRadius, options) {
+    /* whole radius sentence */
+  },
+});
+// The same input can be supplied as MapOptions.drawLocalisation before controls mount.
+// Update the input to refresh live copy; undefined restores legacy English/global behavior.
+map.setDrawLocalisation(undefined);
+```
+
+Callbacks return plain text. `translate` paths follow the original dictionary's
+`draw.*` / `edit.*` structure; measurement callbacks receive the original numeric
+value in metres or square metres and existing metric/feet/nautic/precision options.
+They return complete messages, without parsing or replacing formatted English.
+No callback imports editor code, and `L.drawLocal` is never changed by the API.
+The unchanged legacy dictionary (including its numeric delimiter options) is still
+the fallback for callers that omit the input/callbacks. Use the dictionary's
+existing `draw.handlers.polyline.error` key for crossing feedback.
+
+A map event refreshes toolbar titles/accessible names, disabled explanations,
+existing action link text and semantic tooltip content factories. No controls,
+buttons, handlers, event bindings, draft vertices or layers are recreated. Factories
+re-read current geometry/error state; they do not replay pointer events. Initial
+handler labels use the constructor's map even before `_map` exists. Per-instance
+Polyline options avoid writing a localized error into shared prototype options.
+Circle resize feedback also fixes the upstream `editTooltip`/`_editTooltip` typo
+and scopes its previously undeclared radius variable. The patch retains upstream
+licenses and source maps; maps still refer to original upstream locations.
+
+NavPlaceEditor's `EditControl` supplies the public editor runtime adapter. Its
+separate zoom adapter updates only the known zoom control's existing button
+`title`/`aria-label` attributes: Leaflet's zoom option props are initialization-only.
+Cleanup restores the map's prior input and zoom names. NavPlaceEditor keeps draw
+configuration identity stable; explicit caller option changes retain their original
+control replacement behavior. When the patch is absent in an external install,
+the optional setter call leaves Draw's legacy English behavior intact; localized
+zoom names still work. Such an installation does **not** have localized Draw UI.
+
+Refresh by extracting the pristine 1.0.4 registry tarball into an independent tree,
+editing its shipped distributions and declarations, and generating a normal patch
+diff against that tree. Do not edit pnpm store hardlinks, build/minify upstream,
+or use `pnpm patch-commit` lifecycle hooks. Update the workspace patch hash with an
+explicit scripts-disabled install, inspect the lockfile, then run the full-workspace
+`pnpm install --ignore-scripts --frozen-lockfile` so consumers share the new identity.
+The editor map tests execute both distributions with real Leaflet/Draw and runtime
+instances. JSDOM verifies state/DOM/events, not visual pointer interaction. Parent
+owns live browser acceptance. External npm consumers must apply the equivalent
+patch or receive upstream support; no upstream publication or tarball/build
+verification is claimed.

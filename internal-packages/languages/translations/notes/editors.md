@@ -31,3 +31,28 @@ Translate each whole message, keeping placeholders unchanged:
 | `action`          | Optional host-supplied display action in `actionNamed`; preserve it as interpolation.                                                                                                                                      |
 
 `unchanged-nl.json` records exact-source reviews for real Dutch cognates/technical abbreviations only (Media, Logo, HTML, Canvas, west and numbered Media). A changed source invalidates its review. English fallback/defaultValue never counts as Dutch completion.
+
+## Scoped map dependency messages
+
+`map.draw.*` and `map.edit.*` mirror the **semantic paths** in Leaflet.draw 1.0.4,
+not English text to search/replace. They cover all six drawing tools, initial and
+continuation/completion instructions, crossing feedback, enabled/disabled editing
+and deletion, save/cancel/finish/delete-last-point/remove-all action names and hints.
+`map.zoomIn` / `map.zoomOut` are the existing Leaflet zoom controls' title and
+accessible name. The fixed OpenStreetMap legal attribution is deliberately retained.
+
+Dutch uses **lijn**, **veelhoek**, **rechthoek**, **cirkel**, **markering** and
+**cirkelmarkering** for drawing tools; **laag** means a map layer, **handgreep** an
+editing handle and **straal** a circle radius. These instructions do not introduce
+IIIF terminology changes, so standard/plain inherit the same complete map messages.
+
+`map.measure.*_one` / `*_other` are complete unit messages. `count` selects the
+semantic plural from the rounded displayed quantity; `value` is already formatted
+using the UI locale (for example Dutch `1,23`). Preserve both placeholders' roles;
+never parse the displayed string. The Dutch unit after a quantity uses singular
+meter/kilometer/voet/hectare, including plural quantities. Exact-source reviews are
+limited to singular yard, hectare and acre, which have identical established Dutch
+spellings. `map.radius` wraps the complete formatted measurement as `{{value}}`;
+its Dutch sentence is `Straal: {{value}}`. No callback changes numeric GeoJSON
+coordinates, radius, handler IDs or authored feature properties. Experimental
+languages can fall back to English; their data is not rewritten by this module.

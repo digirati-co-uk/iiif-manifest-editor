@@ -121,6 +121,18 @@
     "messages.mediaNumber": {
       "source": "Media {{number}}",
       "reason": "Media is the standard Dutch collective noun; this numbered fallback for an unlabelled media resource has the same Dutch word order."
+    },
+    "map.measure.yards_one": {
+      "source": "{{value}} yard",
+      "reason": "The Dutch singular unit yard has the same established spelling as English; the numeric value is formatted using the UI locale."
+    },
+    "map.measure.hectares_one": {
+      "source": "{{value}} hectare",
+      "reason": "The Dutch singular unit hectare has the same established spelling as English; the numeric value is formatted using the UI locale."
+    },
+    "map.measure.acres_one": {
+      "source": "{{value}} acre",
+      "reason": "The Dutch singular unit acre has the same established spelling as English; the numeric value is formatted using the UI locale."
     }
   },
   "locales/en-GB/manifest.ts": {

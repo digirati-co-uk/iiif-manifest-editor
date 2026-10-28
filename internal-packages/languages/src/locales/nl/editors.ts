@@ -11,6 +11,141 @@
  * for grammatical agreement (see translator note editors:canvas.removeConfirm).
  */
 export const catalog = {
+  map: {
+    draw: {
+      toolbar: {
+        actions: {
+          title: "Tekenen annuleren",
+          text: "Annuleren",
+        },
+        finish: {
+          title: "Tekenen voltooien",
+          text: "Voltooien",
+        },
+        undo: {
+          title: "Laatst getekende punt verwijderen",
+          text: "Laatste punt verwijderen",
+        },
+        buttons: {
+          polyline: "Een lijn tekenen",
+          polygon: "Een veelhoek tekenen",
+          rectangle: "Een rechthoek tekenen",
+          circle: "Een cirkel tekenen",
+          marker: "Een markering plaatsen",
+          circlemarker: "Een cirkelmarkering plaatsen",
+        },
+      },
+      handlers: {
+        circle: {
+          tooltip: {
+            start: "Klik en sleep om een cirkel te tekenen.",
+          },
+          radius: "Straal",
+        },
+        circlemarker: {
+          tooltip: {
+            start: "Klik op de kaart om een cirkelmarkering te plaatsen.",
+          },
+        },
+        marker: {
+          tooltip: {
+            start: "Klik op de kaart om een markering te plaatsen.",
+          },
+        },
+        polygon: {
+          tooltip: {
+            start: "Klik om een vorm te tekenen.",
+            cont: "Klik om verder te tekenen.",
+            end: "Klik op het eerste punt om deze vorm te sluiten.",
+          },
+        },
+        polyline: {
+          error: "Fout: de randen van de vorm mogen elkaar niet kruisen!",
+          tooltip: {
+            start: "Klik om een lijn te tekenen.",
+            cont: "Klik om verder te tekenen.",
+            end: "Klik op het laatste punt om de lijn te voltooien.",
+          },
+        },
+        rectangle: {
+          tooltip: {
+            start: "Klik en sleep om een rechthoek te tekenen.",
+          },
+        },
+        simpleshape: {
+          tooltip: {
+            end: "Laat de muisknop los om het tekenen te voltooien.",
+          },
+        },
+      },
+    },
+    edit: {
+      toolbar: {
+        actions: {
+          save: {
+            title: "Wijzigingen opslaan",
+            text: "Opslaan",
+          },
+          cancel: {
+            title: "Bewerken annuleren en alle wijzigingen ongedaan maken",
+            text: "Annuleren",
+          },
+          clearAll: {
+            title: "Alle lagen verwijderen",
+            text: "Alles verwijderen",
+          },
+        },
+        buttons: {
+          edit: "Lagen bewerken",
+          editDisabled: "Geen lagen om te bewerken",
+          remove: "Lagen verwijderen",
+          removeDisabled: "Geen lagen om te verwijderen",
+        },
+      },
+      handlers: {
+        edit: {
+          tooltip: {
+            text: "Sleep de handgrepen of markeringen om vormen te bewerken.",
+            subtext: "Klik op Annuleren om wijzigingen ongedaan te maken.",
+          },
+        },
+        remove: {
+          tooltip: {
+            text: "Klik op een vorm om deze te verwijderen.",
+          },
+        },
+      },
+    },
+    zoomIn: "Inzoomen",
+    zoomOut: "Uitzoomen",
+    radius: "Straal: {{value}}",
+    measure: {
+      metres_one: "{{value}} meter",
+      metres_other: "{{value}} meter",
+      kilometres_one: "{{value}} kilometer",
+      kilometres_other: "{{value}} kilometer",
+      feet_one: "{{value}} voet",
+      feet_other: "{{value}} voet",
+      yards_one: "{{value}} yard",
+      yards_other: "{{value}} yard",
+      miles_one: "{{value}} mijl",
+      miles_other: "{{value}} mijl",
+      nauticalMiles_one: "{{value}} zeemijl",
+      nauticalMiles_other: "{{value}} zeemijl",
+      squareMetres_one: "{{value}} vierkante meter",
+      squareMetres_other: "{{value}} vierkante meter",
+      squareKilometres_one: "{{value}} vierkante kilometer",
+      squareKilometres_other: "{{value}} vierkante kilometer",
+      hectares_one: "{{value}} hectare",
+      hectares_other: "{{value}} hectare",
+      squareYards_one: "{{value}} vierkante yard",
+      squareYards_other: "{{value}} vierkante yard",
+      squareMiles_one: "{{value}} vierkante mijl",
+      squareMiles_other: "{{value}} vierkante mijl",
+      acres_one: "{{value}} acre",
+      acres_other: "{{value}} acre",
+    },
+  },
   fields: {
     label: "Label",
     summary: "Samenvatting",

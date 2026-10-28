@@ -1,5 +1,140 @@
 /** UI copy for the shared editors. Authored IIIF values and creation defaults are not catalog data. */
 export const catalog = {
+  map: {
+    draw: {
+      toolbar: {
+        actions: {
+          title: "Cancel drawing",
+          text: "Cancel",
+        },
+        finish: {
+          title: "Finish drawing",
+          text: "Finish",
+        },
+        undo: {
+          title: "Delete last point drawn",
+          text: "Delete last point",
+        },
+        buttons: {
+          polyline: "Draw a polyline",
+          polygon: "Draw a polygon",
+          rectangle: "Draw a rectangle",
+          circle: "Draw a circle",
+          marker: "Draw a marker",
+          circlemarker: "Draw a circlemarker",
+        },
+      },
+      handlers: {
+        circle: {
+          tooltip: {
+            start: "Click and drag to draw circle.",
+          },
+          radius: "Radius",
+        },
+        circlemarker: {
+          tooltip: {
+            start: "Click map to place circle marker.",
+          },
+        },
+        marker: {
+          tooltip: {
+            start: "Click map to place marker.",
+          },
+        },
+        polygon: {
+          tooltip: {
+            start: "Click to start drawing shape.",
+            cont: "Click to continue drawing shape.",
+            end: "Click first point to close this shape.",
+          },
+        },
+        polyline: {
+          error: "Error: shape edges cannot cross!",
+          tooltip: {
+            start: "Click to start drawing line.",
+            cont: "Click to continue drawing line.",
+            end: "Click last point to finish line.",
+          },
+        },
+        rectangle: {
+          tooltip: {
+            start: "Click and drag to draw rectangle.",
+          },
+        },
+        simpleshape: {
+          tooltip: {
+            end: "Release mouse to finish drawing.",
+          },
+        },
+      },
+    },
+    edit: {
+      toolbar: {
+        actions: {
+          save: {
+            title: "Save changes",
+            text: "Save",
+          },
+          cancel: {
+            title: "Cancel editing, discards all changes",
+            text: "Cancel",
+          },
+          clearAll: {
+            title: "Clear all layers",
+            text: "Clear All",
+          },
+        },
+        buttons: {
+          edit: "Edit layers",
+          editDisabled: "No layers to edit",
+          remove: "Delete layers",
+          removeDisabled: "No layers to delete",
+        },
+      },
+      handlers: {
+        edit: {
+          tooltip: {
+            text: "Drag handles or markers to edit features.",
+            subtext: "Click cancel to undo changes.",
+          },
+        },
+        remove: {
+          tooltip: {
+            text: "Click on a feature to remove.",
+          },
+        },
+      },
+    },
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    radius: "Radius: {{value}}",
+    measure: {
+      metres_one: "{{value}} metre",
+      metres_other: "{{value}} metres",
+      kilometres_one: "{{value}} kilometre",
+      kilometres_other: "{{value}} kilometres",
+      feet_one: "{{value}} foot",
+      feet_other: "{{value}} feet",
+      yards_one: "{{value}} yard",
+      yards_other: "{{value}} yards",
+      miles_one: "{{value}} mile",
+      miles_other: "{{value}} miles",
+      nauticalMiles_one: "{{value}} nautical mile",
+      nauticalMiles_other: "{{value}} nautical miles",
+      squareMetres_one: "{{value}} square metre",
+      squareMetres_other: "{{value}} square metres",
+      squareKilometres_one: "{{value}} square kilometre",
+      squareKilometres_other: "{{value}} square kilometres",
+      hectares_one: "{{value}} hectare",
+      hectares_other: "{{value}} hectares",
+      squareYards_one: "{{value}} square yard",
+      squareYards_other: "{{value}} square yards",
+      squareMiles_one: "{{value}} square mile",
+      squareMiles_other: "{{value}} square miles",
+      acres_one: "{{value}} acre",
+      acres_other: "{{value}} acres",
+    },
+  },
   fields: {
     label: "Label",
     summary: "Summary",

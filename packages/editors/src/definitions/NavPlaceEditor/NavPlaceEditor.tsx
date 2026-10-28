@@ -1,8 +1,7 @@
 import { propertyLabels } from "@manifest-editor/editor-api";
 import { useDisplayLabel } from "../../i18n";
-import { useTranslations } from "@manifest-editor/i18n";
 import * as L from "leaflet";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -12,14 +11,24 @@ import type { GeoJSON } from "geojson";
 import { InputLabel } from "../../components/Input";
 import { EditControl } from "./EditControl";
 
+// EditControl deliberately honors option-identity changes from callers. Locale
+// renders must keep these options stable so an active draft is never reconstructed.
+const mapDrawOptions = {
+  rectangle: true,
+  circle: true,
+  polyline: true,
+  polygon: true,
+  marker: true,
+  circlemarker: true,
+};
+
 export function NavPlaceEditor() {
-  const t = useTranslations("editors");
   const apiLabel = useDisplayLabel();
   const { extensions, notAllowed } = useEditor();
   const { navPlace } = extensions;
-  const [center, setCenter] = useState([51.505, -0.09]);
+  const [center] = React.useState<L.LatLngTuple>([51.505, -0.09]);
   const ZOOM_LEVEL = 1;
-  const mapRef = useRef();
+  const mapRef = useRef<L.Map>(null);
   const ref = React.useRef<L.FeatureGroup>(null);
   const geojson = navPlace.get();
   const isInitialized = useRef(false);
@@ -69,8 +78,6 @@ export function NavPlaceEditor() {
   return (
     <PaddedSidebarContainer>
       <InputLabel>{apiLabel(propertyLabels.navPlace)!}</InputLabel>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore */}
       <MapContainer center={center} zoom={ZOOM_LEVEL} ref={mapRef} style={{ height: 300, zIndex: 1 }}>
         <FeatureGroup ref={ref}>
           <EditControl
@@ -79,14 +86,7 @@ export function NavPlaceEditor() {
             onEdited={handleChange}
             onCreated={handleChange}
             onDeleted={handleChange}
-            draw={{
-              rectangle: true,
-              circle: true,
-              polyline: true,
-              polygon: true,
-              marker: true,
-              circlemarker: true,
-            }}
+            draw={mapDrawOptions}
           />
         </FeatureGroup>
         <TileLayer

@@ -69,6 +69,7 @@ patchedDependencies:
   '@mdxeditor/editor@4.0.4': 1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340
   '@vidstack/react@1.12.12': 50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b
   iiif-browser@2.2.6: fa36313dc3cd554656744b37eb5a6aed682b42f9ce02790f415d4f364cc007df
+  leaflet-draw@1.0.4: 912ff60d9b7c869c2b18e65a5511d2c815af4ada1105dd1c927a7e9c464740b2
 
 importers:
 
@@ -817,7 +818,7 @@ importers:
         version: 1.9.4
       leaflet-draw:
         specifier: ^1.0.4
-        version: 1.0.4
+        version: 1.0.4(patch_hash=912ff60d9b7c869c2b18e65a5511d2c815af4ada1105dd1c927a7e9c464740b2)
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -888,6 +889,9 @@ importers:
       '@types/geojson':
         specifier: ^7946.0.14
         version: 7946.0.14
+      '@types/jsdom':
+        specifier: 21.1.7
+        version: 21.1.7
       '@types/leaflet':
         specifier: ^1.9.3
         version: 1.9.12
@@ -6907,6 +6911,9 @@ packages:
   '@types/hoist-non-react-statics@3.3.5':
     resolution: {integrity: sha512-SbcrWzkKBw2cdwRTwQAswfpB9g9LJWfjtUeW/jvNwbhC8cpmmNYVePa+ncbUe0rGTQ7G3Ff6mYUN2VMfLVr+Sg==}
 
+  '@types/jsdom@21.1.7':
+    resolution: {integrity: sha512-yOriVnggzrnQ3a9OKOCxaVuSug3w3/SbOj5i7VwXWZEyUNl3bLF9V3MfxGbZKuwqJOQyRfqXyROBB1CoZLFWzA==}
+
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
 
@@ -6992,6 +6999,9 @@ packages:
 
   '@types/stylis@4.2.0':
     resolution: {integrity: sha512-n4sx2bqL0mW1tvDf/loQ+aMX7GQD3lc3fkCMC55VFNDu/vBOabO+LTIeXKM14xK0ppk5TUGcWRjiSpIlUpghKw==}
+
+  '@types/tough-cookie@4.0.5':
+    resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -19156,6 +19166,12 @@ snapshots:
       '@types/react': 19.2.18
       hoist-non-react-statics: 3.3.2
 
+  '@types/jsdom@21.1.7':
+    dependencies:
+      '@types/node': 24.10.1
+      '@types/tough-cookie': 4.0.5
+      parse5: 7.3.0
+
   '@types/katex@0.16.7': {}
 
   '@types/leaflet@1.9.12':
@@ -19251,6 +19267,8 @@ snapshots:
   '@types/showdown@2.0.6': {}
 
   '@types/stylis@4.2.0': {}
+
+  '@types/tough-cookie@4.0.5': {}
 
   '@types/trusted-types@2.0.7': {}
 
@@ -21419,7 +21437,7 @@ snapshots:
 
   layout-base@2.0.1: {}
 
-  leaflet-draw@1.0.4: {}
+  leaflet-draw@1.0.4(patch_hash=912ff60d9b7c869c2b18e65a5511d2c815af4ada1105dd1c927a7e9c464740b2): {}
 
   leaflet@1.9.4: {}
 
