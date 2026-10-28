@@ -74,7 +74,7 @@ it("hydrates the server-selected Dutch profile without fallback flash or recover
   expect(html).toContain("Titel");
   const container = document.createElement("div");
   container.innerHTML = html;
-  document.body.append(container);
+  document.body.appendChild(container);
   const recoveries = vi.fn();
   await act(async () => {
     roots.push(hydrateRoot(container, element(), { onRecoverableError: recoveries }));
@@ -102,7 +102,7 @@ it("persists successful choices independently and preserves the draft and undo s
     return <input value={history.at(-1)} readOnly />;
   }
   const container = document.createElement("div");
-  document.body.append(container);
+  document.body.appendChild(container);
   const root = createRoot(container);
   roots.push(root);
   const tree = () => (

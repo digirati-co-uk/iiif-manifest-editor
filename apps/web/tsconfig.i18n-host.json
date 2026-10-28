@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.i18n.json",
   "include": [
+    "cloudflare-env.d.ts",
     "src/i18n/policy.ts",
     "src/i18n/resources.ts",
     "src/i18n/WebI18nProvider.tsx",

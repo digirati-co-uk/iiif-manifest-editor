@@ -34,7 +34,7 @@ const variants = [
 async function mount(props: Partial<LanguageMenuProps> = {}) {
   const onSelect = vi.fn();
   const container = document.createElement("div");
-  document.body.append(container);
+  document.body.appendChild(container);
   const root = createRoot(container);
   roots.push(root);
   await act(async () =>

@@ -24,7 +24,7 @@ afterEach(async () => {
 });
 function mount() {
   const node = document.createElement("div");
-  document.body.append(node);
+  document.body.appendChild(node);
   const root = createRoot(node);
   roots.push(root);
   return { root, node };

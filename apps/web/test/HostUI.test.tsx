@@ -26,7 +26,7 @@ afterEach(async () => {
 });
 function container() {
   const node = document.createElement("div");
-  document.body.append(node);
+  document.body.appendChild(node);
   return node;
 }
 async function openMenu(node: HTMLElement) {
