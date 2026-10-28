@@ -91,7 +91,11 @@
     "lint": "publint",
     "typecheck": "tsc --noEmit",
     "prepack": "tsdown && node browser/build.mjs",
-    "test:remote": "vitest run src/remote/releases.test.ts browser/runtime-api.test.mjs"
+    "test:remote": "vitest run --config vitest.config.ts src/remote browser/runtime-api.test.mjs",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck:source": "tsc --noEmit -p tsconfig.source.json",
+    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "lint:source": "oxlint src browser test vitest.config.ts"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",

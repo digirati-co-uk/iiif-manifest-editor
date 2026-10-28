@@ -5,7 +5,8 @@ import { useTranslations } from "@manifest-editor/i18n";
 
 import { upgrade } from "@iiif/parser/upgrader";
 import { useQuery } from "@tanstack/react-query";
-import { WebManifestEditor as ManifestEditor } from "../../i18n/WebManifestEditor";
+import { ManifestEditor } from "manifest-editor";
+import { webUiResources } from "../../i18n/resources";
 
 export default function ExampleEditor({
   example,
@@ -40,7 +41,7 @@ export default function ExampleEditor({
         ) : null}
       </div>
       <div className="w-full flex flex-1 max-w-full min-w-0">
-        <ManifestEditor resource={{ id: data.id, type: "Manifest" }} data={data as any} />
+        <ManifestEditor localisation={webUiResources} resource={{ id: data.id, type: "Manifest" }} data={data as any} />
       </div>
     </div>
   );

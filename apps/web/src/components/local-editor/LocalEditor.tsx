@@ -7,7 +7,8 @@ import { Vault } from "@iiif/helpers";
 import { upgrade } from "@iiif/parser/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
-import { WebManifestEditor as ManifestEditor } from "../../i18n/WebManifestEditor";
+import { ManifestEditor } from "manifest-editor";
+import { webUiResources } from "../../i18n/resources";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -73,7 +74,7 @@ export default function LocalEditor() {
             if (!confirm(webT("local.leaveConfirm"))) event.preventDefault();
           }}
         >
-          <ManifestEditorLogo />
+          <ManifestEditor localisation={webUiResources} Logo />
         </Link>
         <div className="flex-1 flex gap-2"></div>
         <HeaderLanguageSwitcher />
@@ -129,6 +130,7 @@ export default function LocalEditor() {
       <div className="flex flex-col flex-1">
         <div className="w-full flex flex-1 max-w-full min-w-0">
           <ManifestEditor
+            localisation={webUiResources}
             vault={vault as any}
             resource={{ id: manifest.id, type: "Manifest" }}
             data={manifest as any}
