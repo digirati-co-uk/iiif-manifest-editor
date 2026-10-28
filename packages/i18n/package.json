@@ -8,7 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./core": "./src/core.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./nl": "./src/nl.ts"
   },
   "files": [
     "dist"
@@ -39,7 +40,17 @@
           "default": "./dist/core.cjs"
         }
       },
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./nl": {
+        "import": {
+          "types": "./dist/nl.d.ts",
+          "default": "./dist/nl.js"
+        },
+        "require": {
+          "types": "./dist/nl.d.cts",
+          "default": "./dist/nl.cjs"
+        }
+      }
     }
   },
   "scripts": {

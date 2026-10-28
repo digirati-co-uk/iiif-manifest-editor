@@ -39,7 +39,20 @@ English catalogs and plain overlays are imported synchronously from the private 
 
 `catalogs` extends source catalogs and supplies other locales. `presets` is an ordered array of resource stores. `profiles[profile]`, `presetProfiles[profile]`, and `host` apply in that order after presets. Standard English fallback is composed with the selected wording profile. No state or resources are changed until a new snapshot is ready.
 
-`locales` supplies native names/direction; `config.availableLocales` and `availableProfiles` constrain selection. Host policy intersects optional preset `policies`. Selection precedence is controlled values, explicitly supplied persisted choices, explicitly supplied preferred locales, preset defaults, host defaults. All negotiation is explicit and SSR safe. Metadata alone does not provide translations. `dutchLocale` is exported for future `nl` catalogs/loaders; no Dutch translation data or built-in Dutch availability is shipped here.
+`locales` supplies native names/direction; `config.availableLocales` and `availableProfiles` constrain selection. Host policy intersects optional preset `policies`. Selection precedence is controlled values, explicitly supplied persisted choices, explicitly supplied preferred locales, preset defaults, host defaults. All negotiation is explicit and SSR safe. Metadata alone does not provide translations. Dutch data is available through the optional server-safe `@manifest-editor/i18n/nl` entry; the default runtime remains English. Enable reviewed Dutch catalogs and plain overlays explicitly:
+
+```ts
+import { createEditorI18n, defaultLocales, dutchLocale } from "@manifest-editor/i18n/core";
+import { dutchCatalogs, dutchPlain } from "@manifest-editor/i18n/nl";
+const runtime = createEditorI18n({
+  locales: [...defaultLocales, dutchLocale],
+  catalogs: dutchCatalogs,
+  profiles: { plain: dutchPlain },
+  config: { defaultLocale: "nl" },
+});
+```
+
+The same entry exports `dutchExhibition` and `dutchExhibitionPlain` for explicit preset composition. Source catalog edits are reflected by these imports. Coverage proves the currently declared messages, not all repository UI; each consumer module must expand and migrate its own namespace. The web host owns locale persistence and the picker.
 
 ```ts
 import { createEditorI18n, createCatalogContract, defaultLocales, dutchLocale } from "@manifest-editor/i18n";

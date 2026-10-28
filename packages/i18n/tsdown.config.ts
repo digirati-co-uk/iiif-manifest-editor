@@ -1,6 +1,6 @@
 import { defineConfig } from "tsdown";
 export default defineConfig({
-  entry: { index: "src/index.ts", core: "src/core.ts" },
+  entry: { index: "src/index.ts", core: "src/core.ts", nl: "src/nl.ts" },
   format: ["esm", "cjs"],
   dts: true,
   // Preserve the React client boundary when tsdown combines the entry modules.

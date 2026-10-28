@@ -25,7 +25,11 @@
     "./profiles/plain/en-GB/*": "./src/profiles/plain/en-GB/*.ts",
     "./presets/exhibition/en-GB/*": "./src/presets/exhibition/en-GB/*.ts",
     "./presets/exhibition/plain/en-GB/*": "./src/presets/exhibition/plain/en-GB/*.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./locales/nl/*": "./src/locales/nl/*.ts",
+    "./profiles/plain/nl/*": "./src/profiles/plain/nl/*.ts",
+    "./presets/exhibition/nl/*": "./src/presets/exhibition/nl/*.ts",
+    "./presets/exhibition/plain/nl/*": "./src/presets/exhibition/plain/nl/*.ts"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",

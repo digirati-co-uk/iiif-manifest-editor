@@ -66,14 +66,7 @@ Add inside (or alongside) `<GlobalNav>` on the right of the 64 px site header:
  </header>
 ```
 
-`activeLocale`, `allowedLocales`, and `handleLocaleChange` come from the Sol runtime provider once wired. Until then, a static stub is sufficient for visual integration:
-
-```tsx
-// Stub — replace with provider hook once runtime is integrated
-const activeLocale = "en-GB";
-const allowedLocales = ["en-GB", "nl"] as const;
-const handleLocaleChange = (_locale: string) => {};
-```
+`activeLocale`, `allowedLocales`, and `handleLocaleChange` come from `useEditorI18n()` in the shared public runtime. Mount with real locale selection after provider integration; a no-op switcher must not ship.
 
 ---
 
@@ -137,30 +130,23 @@ This component is purely presentational. It depends on the runtime (module `01-p
    - Persists the user preference (separate from content-language config).
    - Handles the loading race described in the internationalisation plan.
 
-Until that hook exists, mount with a static stub or skip mounting. Do not import from `packages/i18n` or `internal-packages/languages` directly from `apps/web` components.
+Use the public `@manifest-editor/i18n` package for React hooks and `@manifest-editor/i18n/nl` for optional Dutch catalog data. Do not import private authoring sources from application code.
 
 ---
 
 ## Dutch locale registration
 
-The Dutch (nl) catalogs are complete against the current seed catalogs but are **not yet registered** in `internal-packages/languages/src/catalogs.ts`. After runtime integration, the parent must:
+The optional public `@manifest-editor/i18n/nl` entry now exports `dutchCatalogs`, `dutchPlain`, `dutchExhibition` and `dutchExhibitionPlain`. Configure the provider with `locales: [...defaultLocales, dutchLocale]`, `catalogs: dutchCatalogs`, and `profiles: {plain: dutchPlain}`. The runtime remains English by default. See `packages/i18n/README.md` for the full configuration. No application is enabled until the web host wires it.
 
-1. Add `nl` locale metadata to `localeDefinitions` in `catalogs.ts`:
-   ```ts
-   { id: "nl", nativeName: "Nederlands", direction: "ltr" as const }
-   ```
-2. Add nl loaders to `builtinLoaders` for all 19 namespaces.
-3. Add nl plain-profile loaders to `plainLoaders`.
-4. Add nl exhibition preset and plain/exhibition overlay loaders.
-5. Add subpath exports to `package.json`:
-   ```json
-   "./locales/nl/*":                        "./src/locales/nl/*.ts",
-   "./profiles/plain/nl/*":                 "./src/profiles/plain/nl/*.ts",
-   "./presets/exhibition/nl/*":             "./src/presets/exhibition/nl/*.ts",
-   "./presets/exhibition/plain/nl/*":       "./src/presets/exhibition/plain/nl/*.ts"
-   ```
+The private authoring package exports all Dutch catalog subpaths. All 25 source/overlay files pass parity validation and strict unchanged-source review; consumer modules must expand these catalogs as they migrate remaining UI.
 
-The exact file paths are in `test/nl-parity.test.mjs` which imports and validates all 25 nl catalog files.
+## Parent review findings for web integration
+
+- Translate the hidden label, option-list accessible name and loading announcement with web-owned keys.
+- Preserve keyboard focus while loading; the current `isDisabled` behavior conflicts with the tab-order claim above. Use appropriate focus-preserving unavailable/loading behavior and test it.
+- Provide a localized loading/status announcement outside `aria-hidden` content.
+- Check narrow site/editor headers with full native language names and existing navigation.
+- Wire all supported header variants to the same live provider; do not mount a no-op placeholder.
 
 ---
 

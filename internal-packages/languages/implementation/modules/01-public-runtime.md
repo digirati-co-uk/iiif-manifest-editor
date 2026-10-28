@@ -98,3 +98,7 @@ The independent review found unsafe rich interpolation, numeric tags bypassing v
 - `@manifest-editor/i18n/core` as a server/task-safe source entry, separate configured publication entries/banners, and `useOptionalEditorI18nInstance` for provider inheritance.
 
 Regression evidence: 26 runtime/React tests and 67 foundation tests pass, along with both package no-emit typechecks and targeted lint. The runtime/React tests exercise the actual engines and DOM rendering for the reported failures, registration races/retry, unsubscribe behavior and provider identity. Source tests and typechecks do not establish emitted package or actual Next RSC artifact validity; those remain pending under the repository's build prohibition. A fresh independent review follows the parent fix commit.
+
+## Optional Dutch data integration
+
+`@manifest-editor/i18n/nl` exports explicitly typed resource stores for all 19 current Dutch namespaces, the four plain overlays and both exhibition overlays. The host enables these together with Dutch locale metadata; default English behavior is preserved. The private package exposes Dutch source subpaths for bundling into the public entry, with no private imports in its public type signatures. Two additional runtime tests verify complete declared Dutch coverage, real plurals, reversible profile switches and the exhibition/plain intersection through the public subpath exports. App mounting and remaining module translations are still pending.
