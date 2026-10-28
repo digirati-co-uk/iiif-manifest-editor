@@ -9,6 +9,7 @@ export const catalog = {
   settings: {
     title: "Settings",
     interfaceLanguage: "Interface language",
+    availableLanguages: "Available languages",
     wording: "Wording",
     contentLanguages: "Content languages",
   },

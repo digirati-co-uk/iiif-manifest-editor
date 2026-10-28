@@ -17,6 +17,7 @@ export const catalog = {
   settings: {
     title: "Instellingen",
     interfaceLanguage: "Interfacetaal",
+    availableLanguages: "Beschikbare talen",
     wording: "Woordgebruik",
     contentLanguages: "Inhoudstalen",
   },

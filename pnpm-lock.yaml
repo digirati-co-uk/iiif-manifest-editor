@@ -375,6 +375,9 @@ importers:
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
+      jsdom:
+        specifier: 26.1.0
+        version: 26.1.0(supports-color@10.2.2)
       postcss:
         specifier: ^8.5.26
         version: 8.5.26
@@ -384,6 +387,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(jsdom@26.1.0(supports-color@10.2.2))(vite@8.2.1(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.6.1)(less@4.2.0)(sass@1.77.2)(stylus@0.62.0(supports-color@10.2.2))(terser@5.16.9)(yaml@2.9.0))
       wrangler:
         specifier: ^4.120.0
         version: 4.120.0

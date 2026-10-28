@@ -15,6 +15,7 @@ import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
   locale="en-GB"                          // currently active BCP-47 tag
   availableLocales={["en-GB", "nl"]}      // host-allowed list, ordered
   onLocaleChange={(locale) => /* … */}    // called with new tag on selection
+  labels={{ interfaceLanguage: t("settings.interfaceLanguage"), availableLanguages: t("settings.availableLanguages"), loading: t("browser.loading") }}
   loading={false}                         // true while applying the change
   variant="light"                         // "light" | "dark" — see below
 />
@@ -27,15 +28,16 @@ import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 | `locale` | `string` | required | Active BCP-47 tag, e.g. `"en-GB"` or `"nl"` |
 | `availableLocales` | `readonly string[]` | required | Ordered list the host permits |
 | `onLocaleChange` | `(locale: string) => void` | required | Called once on confirmed selection |
+| `labels` | `{ interfaceLanguage, availableLanguages, loading }` | required | Host-translated accessible copy |
 | `loading` | `boolean` | `false` | Renders a spinner; disables control without removing focus |
 | `variant` | `"light" \| "dark"` | `"light"` | See header variants below |
 
 ### Behaviour
 
-- **Display names** — uses `Intl.DisplayNames` with each locale's own base language tag so names are always native: `"en-GB" → English`, `"nl" → Nederlands`. No flags.
-- **Disabled** — automatically disabled when `loading=true` or `availableLocales.length <= 1` (nothing to switch to). The control remains in the tab order when loading (spinner) so keyboard users keep their position.
+- **Display names** — uses `Intl.DisplayNames` with each full locale tag so names are native and regional variants remain distinguishable: `"en-GB" → English (United Kingdom)`, `"nl" → Nederlands`. No flags.
+- **Unavailable/loading** — one available locale disables the control. Loading instead uses `aria-disabled` and guarded opening/selection, retaining keyboard focus and tab position. A localized `<output>` announces loading; the spinner is decorative.
 - **Keyboard** — inherits react-aria-components `Select`: `Space`/`Enter` opens, arrow keys navigate, `Escape` closes, `Tab` moves focus away without selecting.
-- **Screen reader** — the hidden `<Label>` element reads "Interface language". `SelectValue` makes the selected name part of the button's accessible name. Each `ListBoxItem` has `lang={loc}` so the AT uses the correct language's pronunciation rules for the native name. The `ListBox` has `aria-label="Available languages"`.
+- **Screen reader** — the hidden `<Label>` receives translated `labels.interfaceLanguage`. `SelectValue` makes the selected name part of the button's accessible name. Each `ListBoxItem` has `lang={loc}` so the AT uses the correct language's pronunciation rules for the native name. The `ListBox` receives translated `labels.availableLanguages`.
 - **`lang` attribute** — the trigger button renders `<span lang={locale}>` around the active locale name so screen readers pronounce, e.g., "Nederlands" correctly even when the host document is `lang="en"`.
 
 ---
@@ -142,9 +144,9 @@ The private authoring package exports all Dutch catalog subpaths. All 25 source/
 
 ## Parent review findings for web integration
 
-- Translate the hidden label, option-list accessible name and loading announcement with web-owned keys.
-- Preserve keyboard focus while loading; the current `isDisabled` behavior conflicts with the tab-order claim above. Use appropriate focus-preserving unavailable/loading behavior and test it.
-- Provide a localized loading/status announcement outside `aria-hidden` content.
+- [x] Require translated hidden label, option-list accessible name and loading announcement through `labels`; web keys exist in English and Dutch.
+- [x] Preserve keyboard focus while loading and guard new opening/selection. Verified with actual React Aria keyboard interactions in jsdom.
+- [x] Provide localized loading status via semantic `<output>` outside the decorative spinner.
 - Check narrow site/editor headers with full native language names and existing navigation.
 - Wire all supported header variants to the same live provider; do not mount a no-op placeholder.
 
@@ -155,7 +157,11 @@ The private authoring package exports all Dutch catalog subpaths. All 25 source/
 - [ ] Changing locale does not remount the editor, lose vault state, or reset undo history.
 - [ ] A persisted preference is applied on the next page load without flashing the fallback.
 - [ ] The `loading` spinner appears while catalogs are fetching and disappears on success.
-- [ ] With only one available locale, the control renders but is inert (no dropdown opens).
-- [ ] The `lang` attribute on the trigger text changes when the locale changes.
+- [x] With only one available locale, the control renders but is inert (no dropdown opens).
+- [x] The `lang` attribute on the trigger text changes when the locale changes.
 - [ ] Exhibition header switches between `variant="dark"` and `variant="light"` without remount.
 - [ ] No IIIF content-language fields, resource labels, IDs, or export data change when the UI locale changes.
+
+## Parent verification
+
+Three focused web React/jsdom tests pass: keyboard opening/native option selection and translated accessible-name references; retained focus/tab position and prevented reopening while loading; regional distinctions and single-locale inactivity. Component/test/config typecheck and targeted lint pass. These do not prove header layout or page-level integration; narrow headers, persistence, whole-editor state and mounting remain web-host/E2E work. Test dependencies are declared in apps/web and use existing locked versions. `npm --prefix apps/web test` runs this suite without starting a server or building packages.

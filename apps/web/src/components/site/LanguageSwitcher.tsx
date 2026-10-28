@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Label, ListBox, ListBoxItem, Popover, Select, SelectValue } from "react-aria-components";
+import { useEffect, useState } from "react";
 
 /**
  * Presentational language-switcher for the web-host header.
@@ -23,6 +24,12 @@ export interface LanguageSwitcherProps {
   availableLocales: readonly string[];
   /** Called with the new locale tag when the user confirms a selection. */
   onLocaleChange: (locale: string) => void;
+  /** Localised interface copy supplied by the host's web namespace. */
+  labels: {
+    interfaceLanguage: string;
+    availableLanguages: string;
+    loading: string;
+  };
   /**
    * Set true while a locale change is being applied.
    * Renders a spinner and disables the control without removing it from the
@@ -38,9 +45,8 @@ export interface LanguageSwitcherProps {
 
 /** Returns the native display name for a locale, e.g. "en-GB" → "English", "nl" → "Nederlands". */
 function nativeName(locale: string): string {
-  const lang = locale.split("-")[0]!;
   try {
-    return new Intl.DisplayNames([lang], { type: "language" }).of(lang) ?? locale;
+    return new Intl.DisplayNames([locale], { type: "language", languageDisplay: "standard" }).of(locale) ?? locale;
   } catch {
     return locale;
   }
@@ -50,15 +56,20 @@ export function LanguageSwitcher({
   locale,
   availableLocales,
   onLocaleChange,
+  labels,
   loading = false,
   variant = "light",
 }: LanguageSwitcherProps) {
   const isDark = variant === "dark";
-  const isDisabled = loading || availableLocales.length <= 1;
+  const isDisabled = availableLocales.length <= 1;
+  const [isOpen, setOpen] = useState(false);
+  useEffect(() => {
+    if (loading || isDisabled) setOpen(false);
+  }, [loading, isDisabled]);
 
   const triggerClass = isDark
-    ? "flex h-9 items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 disabled:cursor-not-allowed disabled:opacity-50"
-    : "flex h-9 items-center gap-1.5 rounded border border-slate-200 bg-white px-3 text-sm text-slate-900 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+    ? "flex h-9 max-w-full items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+    : "flex h-9 max-w-full items-center gap-1.5 rounded border border-slate-200 bg-white px-3 text-sm text-slate-900 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-me-primary-600 focus-visible:ring-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 
   const popoverClass = isDark
     ? "z-50 min-w-[9rem] overflow-hidden rounded-md border border-white/20 bg-[#2d2836] py-1 shadow-xl outline-none"
@@ -66,36 +77,40 @@ export function LanguageSwitcher({
 
   return (
     <Select
+      className="min-w-0 max-w-[14rem] shrink-0"
       selectedKey={locale}
       onSelectionChange={(key) => {
-        if (typeof key === "string" && key !== locale) onLocaleChange(key);
+        if (!loading && !isDisabled && typeof key === "string" && key !== locale) onLocaleChange(key);
       }}
       isDisabled={isDisabled}
+      isOpen={!loading && !isDisabled && isOpen}
+      onOpenChange={(open) => setOpen(open && !loading && !isDisabled)}
     >
       {/* Visible label is sr-only; the current value is part of the button's accessible name via SelectValue. */}
-      <Label className="sr-only">Interface language</Label>
+      <Label className="sr-only">{labels.interfaceLanguage}</Label>
 
-      <Button className={triggerClass}>
+      <Button className={triggerClass} aria-disabled={loading || isDisabled}>
         {/* SelectValue renders the textValue of the selected ListBoxItem and is part of the button's accessible name. */}
-        <SelectValue className="min-w-[4rem]">
+        <SelectValue className="min-w-0 truncate">
           {(renderProps) => (
-            <span lang={locale}>
-              {renderProps.isPlaceholder || !renderProps.selectedText
-                ? nativeName(locale)
-                : renderProps.selectedText}
+            <span lang={locale} title={nativeName(locale)}>
+              {renderProps.isPlaceholder || !renderProps.selectedText ? nativeName(locale) : renderProps.selectedText}
             </span>
           )}
         </SelectValue>
 
         {loading ? (
-          <SpinnerIcon aria-label="Loading" className={isDark ? "text-white/70" : "text-slate-400"} />
+          <SpinnerIcon className={isDark ? "flex-none text-white/70" : "flex-none text-slate-400"} />
         ) : (
-          <ChevronDownIcon aria-hidden="true" className={isDark ? "text-white/70" : "text-slate-400"} />
+          <ChevronDownIcon
+            aria-hidden="true"
+            className={isDark ? "flex-none text-white/70" : "flex-none text-slate-400"}
+          />
         )}
       </Button>
 
       <Popover placement="bottom end" className={popoverClass}>
-        <ListBox className="outline-none" aria-label="Available languages">
+        <ListBox className="outline-none" aria-label={labels.availableLanguages}>
           {availableLocales.map((loc) => (
             <ListBoxItem
               key={loc}
@@ -119,9 +134,7 @@ export function LanguageSwitcher({
                   </span>
                   {/* Fixed-width slot keeps option text aligned whether or not selected. */}
                   <span aria-hidden="true" className="h-3.5 w-3.5 flex-none">
-                    {isSelected ? (
-                      <CheckIcon className={isDark ? "text-white/80" : "text-me-primary-600"} />
-                    ) : null}
+                    {isSelected ? <CheckIcon className={isDark ? "text-white/80" : "text-me-primary-600"} /> : null}
                   </span>
                 </>
               )}
@@ -129,6 +142,7 @@ export function LanguageSwitcher({
           ))}
         </ListBox>
       </Popover>
+      <output className="sr-only">{loading ? labels.loading : ""}</output>
     </Select>
   );
 }
