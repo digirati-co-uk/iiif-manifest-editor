@@ -58,3 +58,5 @@ Actual checks from repository root on Node `v24.21.0`:
 - No build, dev server operation, browser/E2E run, generated `next-env.d.ts`, shared catalog/index/inventory edit or dependency/lockfile edit was performed. Parent owns integrated browser tests; an existing server requires `E2E_TARGET=watch`.
 
 Self-review: checked the complete guide diff against all source files and traced callers. The module handoff is a documentation-only boundary decision, with no runtime or public declaration changes. The unchecked integrated acceptance gate and host/transport follow-ups above remain explicit.
+
+Parent integration review: the source/caller classification was checked independently, and `tsc --noEmit -p packages/client-vault/tsconfig.json` passed in the primary checkout with normal workspace dependency resolution. This closes the isolated-checkout typecheck limitation; integrated UI locale/state checks still belong to the host acceptance matrix.

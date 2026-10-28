@@ -1,6 +1,6 @@
 # Internationalisation implementation tasks
 
-The catalog foundation is implemented inside this package. **All consumer integration tasks remain pending.** No other workspace package has been connected to it. The seed catalogs cover 264 messages in 19 namespaces; they do not cover every candidate in the repository.
+The catalog foundation and public React runtime are implemented. Production UI migration is underway; no whole-UI or Dutch-completeness claim is made yet. The seed catalogs cover 264 messages in 19 namespaces; they do not cover every candidate in the repository.
 
 Each guide below is a separate unit of work with prerequisites, concrete surfaces, implementation steps and acceptance checks. Work in the listed order when tackling modules one by one; prerequisite links are the authoritative dependency list. Mark completion in the guide and this index only after acceptance checks pass.
 
@@ -9,7 +9,7 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | Order | Module or task | State | Namespace ownership |
 | --- | --- | --- | --- |
 | 00 | [Language catalog foundation](modules/00-languages.md) | Implemented foundation; seed coverage only | all built-in namespaces |
-| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Pending new module | runtime contract; no messages owned |
+| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Implemented; independent review pending | runtime contract; no messages owned |
 | 02 | [Editor API display metadata](modules/02-editor-api.md) | Pending | editor-api |
 | 03 | [Creator API message contracts](modules/03-creator-api.md) | Pending | creator-api |
 | 04 | [Shared component messages and accessibility](modules/04-components.md) | Pending | components and common |
@@ -32,7 +32,7 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | 21 | [Vite external integration example](modules/21-vite-example.md) | Pending | example-owned text, optional; editor messages stay in their owners |
 | 22 | [Storybook localisation coverage](modules/22-storybook.md) | Pending | story titles stay developer-facing unless explicitly needed |
 | 23 | [End to end localisation acceptance](modules/23-playwright.md) | Pending | no catalog ownership |
-| 24 | [Client vault language boundary](modules/24-client-vault.md) | Pending | none by default |
+| 24 | [Client vault language boundary](modules/24-client-vault.md) | Reviewed; remains language-neutral | none |
 | 25 | [Server vault language boundary](modules/25-server-vault.md) | Reviewed; remains language-neutral | none |
 | 26 | [Preview server and external viewer boundary](modules/26-iiif-preview-server.md) | Pending | preview-owned UI only if present |
 | 27 | [Integration and translation contributor documentation](modules/27-docs.md) | Pending | documentation localisation is a separate scope |

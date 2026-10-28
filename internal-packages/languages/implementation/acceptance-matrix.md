@@ -48,4 +48,6 @@ Invoke this from the repository root using the working Node 24 environment. In t
 
 At foundation `288a0405`, `http://localhost:3000/?tab=recent` loaded successfully with the English `Get started` heading, six creation/opening actions, Recent/Examples/Tutorials tabs, and site navigation. The document language was `en`, there was no header language switcher and no UI-language preference key in browser local storage. These observations establish a baseline, not localisation completion.
 
+The existing `01-basic.test.ts` Chromium journey passed against that same running server using `E2E_TARGET=watch`: create a manifest, edit its label, add/edit/reorder/delete metadata, then open a preview. Result: one passed test in 8.5 seconds. This proves the English baseline before integration, not Dutch coverage or locale-switch state preservation.
+
 Some remote example thumbnails already returned external 404/blocked-image responses. Distinguish those pre-existing remote-content failures from runtime/hydration or translation failures when assessing later browser results.
