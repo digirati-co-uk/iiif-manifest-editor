@@ -39,19 +39,19 @@ and requesting English rejects. This fixes the independently reproduced P1
 
 ## Entrypoint and update matrix
 
-| Surface | Source behavior and review evidence |
-| --- | --- |
-| Root React `ManifestEditor` / `ManifestEditorProps` | Public optional localisation forwarded to real Shell; Manifest and Collection paths exercised. Stable Vault/resource/layout/plugin behavior retained. |
-| `manifest-editor/shell` and preset/component/API reexports | Reexport existing public packages; shell/preset localisation composition remains owned there. No new preset assumptions or translated ID matching. |
-| `browser/entry.ts` | Exports the same facade and props, plus shared `i18n` and `i18nCore` namespaces. Browser runtime contract is now **API 2**. |
-| `ManifestEditor.createRuntime` | API 2 requires host `I18n` and `I18nCore` modules alongside the six React/renderer modules. They are supplied to the factory under exact public package keys, retaining context/factory identity. |
-| `ManifestEditor.automaticRuntime` | Imports pinned React and public i18n 2.2.1 root/core modules; caches successful result, retries failed imports, exposes API version 2 and the actual shared namespaces. Public i18n publication/CDN availability is a release gate. |
-| `manifest-editor/remote` loader | API 2 requires the same public root/core entries in `RuntimeHost`; rejects API 1 and absent modules before asset loading. Loaded exports must retain host provider/factory identity. Factory cache is per host object, not merely React identity; CSS disposal remains independent of editor unmount. |
-| Browser/remote configuration updates | No separate imperative mount/update or worker API exists. Keep one React root, Vault and captured runtime/component type; rerender it with updated `localisation`/`config`, or select through the shared provider. Do not recreate a factory/root for language changes. |
-| Release resolver/register/catalog | Existing stable version selection, integrity descriptors and trusted-asset validation stay technical data. Browser build descriptors now identify API 2. Release resolver remains version-agnostic and rejects mismatched requested API contracts. |
-| ESM/CJS source bundling | tsdown already externalizes public i18n subpaths. Browser build now also externalizes root/core and rejects bundled public-runtime/private-catalog source modules. No private language import or dependency is added to facade consumer source/types. |
-| Optional locale assets | Use public `@manifest-editor/i18n/nl` or host-owned registration loaders. Locale metadata alone supplies no messages. No invented standalone facade locale chunk or undocumented locale is advertised. |
-| Server/task boundary | React/CSS facade is client UI; use public `/core` for server/task factories/types and `/nl` for optional server-safe catalog data. Supply matching synchronous SSR/hydration resources. Native-renderer/dependency SSR and emitted RSC boundaries need release/integration checks. |
+| Surface                                                    | Source behavior and review evidence                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Root React `ManifestEditor` / `ManifestEditorProps`        | Public optional localisation forwarded to real Shell; Manifest and Collection paths exercised. Stable Vault/resource/layout/plugin behavior retained.                                                                                                                                                 |
+| `manifest-editor/shell` and preset/component/API reexports | Reexport existing public packages; shell/preset localisation composition remains owned there. No new preset assumptions or translated ID matching.                                                                                                                                                    |
+| `browser/entry.ts`                                         | Exports the same facade and props, plus shared `i18n` and `i18nCore` namespaces. Browser runtime contract is now **API 2**.                                                                                                                                                                           |
+| `ManifestEditor.createRuntime`                             | API 2 requires host `I18n` and `I18nCore` modules alongside the six React/renderer modules. They are supplied to the factory under exact public package keys, retaining context/factory identity.                                                                                                     |
+| `ManifestEditor.automaticRuntime`                          | Imports pinned React and public i18n 2.2.1 root/core modules; caches successful result, retries failed imports, exposes API version 2 and the actual shared namespaces. Public i18n publication/CDN availability is a release gate.                                                                   |
+| `manifest-editor/remote` loader                            | API 2 requires the same public root/core entries in `RuntimeHost`; rejects API 1 and absent modules before asset loading. Loaded exports must retain host provider/factory identity. Factory cache is per host object, not merely React identity; CSS disposal remains independent of editor unmount. |
+| Browser/remote configuration updates                       | No separate imperative mount/update or worker API exists. Keep one React root, Vault and captured runtime/component type; rerender it with updated `localisation`/`config`, or select through the shared provider. Do not recreate a factory/root for language changes.                               |
+| Release resolver/register/catalog                          | Existing stable version selection, integrity descriptors and trusted-asset validation stay technical data. Browser build descriptors now identify API 2. Release resolver remains version-agnostic and rejects mismatched requested API contracts.                                                    |
+| ESM/CJS source bundling                                    | tsdown already externalizes public i18n subpaths. Browser build now also externalizes root/core and rejects bundled public-runtime/private-catalog source modules. No private language import or dependency is added to facade consumer source/types.                                                 |
+| Optional locale assets                                     | Use public `@manifest-editor/i18n/nl` or host-owned registration loaders. Locale metadata alone supplies no messages. No invented standalone facade locale chunk or undocumented locale is advertised.                                                                                                |
+| Server/task boundary                                       | React/CSS facade is client UI; use public `/core` for server/task factories/types and `/nl` for optional server-safe catalog data. Supply matching synchronous SSR/hydration resources. Native-renderer/dependency SSR and emitted RSC boundaries need release/integration checks.                    |
 
 **Compatibility:** API 1 browser assets/host signatures are incompatible with API 2's
 shared-runtime injection. Regenerate trusted release descriptors and migrate browser
@@ -123,18 +123,26 @@ Browser API tests stub CDN imports; they do not fetch published modules.
 ## Remaining acceptance / release29 handoff
 
 - [x] Source React/browser/remote contracts reconciled and tested; public host adapter
-  duplication removed; NL-only fallback registration fixed without selectable English.
+      duplication removed; NL-only fallback registration fixed without selectable English.
 - [x] Source public types and externalization configuration reviewed; no private
-  authoring references in facade consumer source/types.
+      authoring references in facade consumer source/types.
 - [ ] Build and install CI-produced ESM/CJS tarballs outside workspace links; inspect
-  declarations/exports and verify independent installed-plugin context identity.
+      declarations/exports and verify independent installed-plugin context identity.
 - [ ] Produce API 2 browser assets/trusted descriptors; verify actual classic-script
-  injection, optional locale URLs, CDN availability, real network/SRI and bundle guards.
+      injection, optional locale URLs, CDN availability, real network/SRI and bundle guards.
 - [ ] Parent-owned integrated browser acceptance in main checkout: full preset/editor
-  state, native undo/selection, hydration/SSR and actual dependency renderers. Existing
-  retained-server `gapcursor` HTTP500 is unresolved; no source test here proves it fixed.
+      state, native undo/selection, hydration/SSR and actual dependency renderers. Existing
+      retained-server `gapcursor` HTTP500 is unresolved; no source test here proves it fixed.
 - [ ] Full manifest/collection/exhibition coverage remains with their module owners;
-  Leaflet/Draw and independent notebook UI remain documented upstream gaps.
+      Leaflet/Draw and independent notebook UI remain documented upstream gaps.
 
 No local build or installed-artifact success is claimed. This source module is ready
 for parent review/integration; the publication acceptance boxes remain deliberately open.
+
+## Parent integration review
+
+Integrated both source commits with the current creators/web work. Parent reran all **33 facade/browser/remote tests**, the focused web host check and the combined web suite (currently **25 tests**, including concurrent user language-menu tests). The real NL-only facade/Shell test passes with registered English fallback remaining nonselectable. The copied WebManifestEditor is removed from all three hosts. Browser API2 assets, actual remote injection/CDN behavior and independently installed artifacts still need their existing release/integration gates. An independent source review of this boundary is pending.
+
+Production `tsconfig.json` now excludes colocated test files. The no-emit test config explicitly includes them. The existing declaration watcher had followed the facade test's web fixture imports and emitted three .d.ts/.map pairs into apps/web/src/i18n; those untracked, source-map-verified pairs were moved to a temporary recovery directory. The resolved production config has **17 root files and no test roots**. No build or server operation was invoked. This config correction does not claim emitted publication verification.
+
+Additional generated languages are experimental user test data and may be stale. EN/NL remain the required migration targets; source completeness/release claims do not extend to those extra catalogs. Concurrent user rotation, inline-label and language-menu edits remain outside these commits.
