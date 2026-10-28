@@ -1,6 +1,11 @@
 /** Shared component UI; authored IIIF labels and protocol values are never translated. */
 export const catalog = {
   mdx: {
+    diffSource: {
+      parseError: "Unable to read this Markdown.",
+      recovery: "You can fix the errors in source mode and switch to rich text mode when you are ready.",
+      details: "Technical details",
+    },
     toolbar: {
       bold: "Bold",
       removeBold: "Remove bold",

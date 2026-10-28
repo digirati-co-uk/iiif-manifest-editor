@@ -6,6 +6,11 @@
  */
 export const catalog = {
   mdx: {
+    diffSource: {
+      parseError: "Deze Markdown kan niet worden gelezen.",
+      recovery: "Herstel de fouten in de bronweergave. Schakel daarna terug naar de opgemaakte tekst.",
+      details: "Technische details",
+    },
     toolbar: {
       bold: "Vet",
       removeBold: "Vet verwijderen",

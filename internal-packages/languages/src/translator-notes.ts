@@ -48,6 +48,12 @@ export const translatorNotes = {
     },
   },
   components: {
+    "mdx.diffSource.parseError": {
+      context: "Friendly feedback when authored Markdown cannot be parsed; the original parser diagnostic is separate technical data.",
+    },
+    "mdx.diffSource.recovery": {
+      context: "Recovery instruction for malformed Markdown. Source mode means editing the literal Markdown; rich text is its formatted view.",
+    },
     "provider.editNamed": {
       context:
         "Accessible name for the provider edit button. Translate the whole action, preserving the authored provider name.",

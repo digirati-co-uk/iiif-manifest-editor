@@ -81,3 +81,9 @@ These are explicit gaps, not translated by fallback and not counted as completed
 ## Parent integration checkpoint
 
 Integrated and reviewed metadata/reference boundaries, React Aria locale wrappers, MDX plugin updates, portal scopes and translated tab measurements. All nine component tests pass again against the merged runtime/profile changes, as does the component-test no-emit check. The live English create/edit/metadata/preview journey passes after consumer dependency bootstrap. Dependency-language gaps above remain open; neither catalog parity nor this regression establishes whole-UI Dutch completion.
+
+## Maintained malformed-source translation patch
+
+The parent added a version-pinned pnpm patch for MDXEditor 4.0.4, connecting its malformed-source wrapper to the existing translation hook. Three EN/NL components messages provide a friendly parse-error heading, recovery instruction and Technical details label; the original diagnostic remains verbatim in a disclosure. The components catalog now has 145 messages. This resolves that feedback gap for the workspace host, while CodeMirror source/search phrases and independent external SDK dependency support still require integration work.
+
+A second real-rich-editor test verifies English-to-Dutch switching during malformed source without replacing the details DOM, changing Markdown or diagnostics, or emitting extra edit/error callbacks. See `patches/README.md` for application, refresh and distribution boundaries. The pnpm patch command unexpectedly ran root prepare despite environment-only ignore-scripts; subsequent explicit frozen installs disabled scripts. No build/server command was run.

@@ -62,3 +62,6 @@ overrides:
   react-aria: 3.43.2
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0
+
+patchedDependencies:
+  '@mdxeditor/editor@4.0.4': patches/@mdxeditor__editor@4.0.4.patch
