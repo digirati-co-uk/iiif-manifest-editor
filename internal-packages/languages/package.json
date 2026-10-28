@@ -38,7 +38,8 @@
     "inventory": "node scripts/generate-module-inventories.mjs",
     "translations:export": "node scripts/export-translations.mjs",
     "translations:import": "node scripts/import-translation.mjs",
-    "translations:check": "node scripts/check-translation.mjs"
+    "translations:check": "node scripts/check-translation.mjs",
+    "translations:gaps": "node scripts/translation-gaps.mjs"
   },
   "devDependencies": {
     "typescript": "catalog:"
