@@ -108,3 +108,7 @@ Source contracts are free of unpublished imports and runtime/client calls. Emitt
 ## Parent catalog review
 
 The strict Dutch translation gate reviewed the expanded catalog individually: `homepage` is displayed as “Webpagina” and the cascade layout as “Trapsgewijs”. Exact-source reviews retain the Dutch cognates Metadata, Type, Logo and Items, and the technical IIIF term Range. This records deliberate terminology choices rather than accepting English fallback.
+
+## Parent integration validation
+
+Removed the redundant `EditorInstance.ref()` method: `BaseEditor.ref` already provides the same bound implementation and return type. This resolves the pre-existing TS2425 property/method conflict without changing reference values or bindings. Full editor-api no-emit typecheck, 27 editor-api tests and targeted lint now pass. No package build was run.

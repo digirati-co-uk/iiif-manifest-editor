@@ -119,3 +119,7 @@ node node_modules/oxfmt/bin/oxfmt --check packages/creator-api/src/types.ts pack
 ```
 
 Tooling note: initial filtered dependency installation used `--ignore-scripts`. A subsequent `pnpm exec` unexpectedly triggered an automatic full-workspace install and ran dependency lifecycle hooks (including root prepare); it was interrupted and verification switched to direct Node invocations. No editor package build/dev command was run, and no server was started/stopped. The unrelated lockfile resolution change from installation was removed.
+
+## Parent integration validation
+
+After linking the declared runtime dependency with a frozen, scripts-disabled install, and resolving the runtime component typing and redundant editor-api `ref` override, both the normal creator-api no-emit typecheck and source-mapped test/contract typecheck pass. All five creator-api tests pass. The earlier dependent-source blockers above are resolved in the integrated checkout; emitted declaration/tarball and downstream UI checks remain pending.
