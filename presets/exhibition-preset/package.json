@@ -62,7 +62,8 @@
     "react-iiif-vault": "catalog:",
     "tailwind-merge": "^2.3.0",
     "tiny-invariant": "^1.3.3",
-    "zustand": "catalog:"
+    "zustand": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

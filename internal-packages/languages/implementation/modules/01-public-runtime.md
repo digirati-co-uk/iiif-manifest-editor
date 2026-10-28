@@ -110,3 +110,9 @@ The fresh review confirmed the original fixes and source-only `core`/`nl` import
 ## Missing-key fallback review
 
 The follow-up reviewer independently confirmed strict nested-markup rejection and obsolete-registration failure handling. One remaining finding involved Trans using an absent key as implicit markup. `EditorTrans` now resolves and renders identifiers containing markup delimiters as literal React text, including when a safe explicit fallback is supplied. The actual DOM regression confirms no injected anchor. Catalog rich tags remain supported through ordinary semantic message IDs.
+
+## Consumer dependency bootstrap
+
+After component/UI integration, the running web app reported an unresolved `@manifest-editor/i18n` import in shell output. Shell and other packages inline shared components in their distributions, so a dependency declared only by components cannot resolve the moved import from each consumer's output directory. Parent added explicit workspace runtime dependencies to the UI consumers/hosts (shell, editors, creators, projects, facade, presets, plugins, Storybook, web and Vite), and explicit root/subpath externals to their publication configs. No package was built.
+
+A frozen, scripts-disabled install accepted the updated importers; the existing server then returned HTTP 200. The existing Chromium create/edit-label/add-edit-reorder-delete-metadata/preview journey passed in 6.7 seconds with `E2E_TARGET=watch`. This is English regression evidence for the integrated component/UI code, not Dutch whole-editor coverage or emitted-package proof.

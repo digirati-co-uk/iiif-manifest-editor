@@ -74,7 +74,8 @@
     "slugify": "^1.6.6",
     "styled-components": "catalog:",
     "tiny-use-debounce": "^1.0.4",
-    "zustand": "catalog:"
+    "zustand": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

@@ -51,7 +51,8 @@
     "react-dom": "catalog:",
     "react-iiif-vault": "catalog:",
     "styled-components": "catalog:",
-    "tiny-use-debounce": "^1.0.4"
+    "tiny-use-debounce": "^1.0.4",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

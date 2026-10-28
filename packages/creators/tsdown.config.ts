@@ -2,6 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  external: [/^@manifest-editor\/i18n(?:\/|$)/],
   exports: true,
   target: ["es2020"],
   format: ["esm", "cjs"],

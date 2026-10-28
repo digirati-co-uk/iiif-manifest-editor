@@ -112,7 +112,8 @@
     "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-iiif-vault": "catalog:"
+    "react-iiif-vault": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

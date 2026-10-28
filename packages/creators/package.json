@@ -54,7 +54,8 @@
     "react-dom": "catalog:",
     "react-error-boundary": "^4.0.13",
     "react-iiif-vault": "catalog:",
-    "styled-components": "6.1.8"
+    "styled-components": "6.1.8",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@atlas-viewer/iiif-image-api": "^2.2.0",
