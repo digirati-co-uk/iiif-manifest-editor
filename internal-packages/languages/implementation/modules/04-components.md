@@ -1,6 +1,6 @@
 # Shared component messages and accessibility
 
-Status: First-party component migration implemented and tested. Dependency-owned gaps and parent integration checks remain below. Module: [`packages/components`](../../../../packages/components).
+Status: First-party component migration and the three assigned dependency-owned workspace patches are implemented and tested. Consumer adapter wiring, integrated browser and release checks remain below. Module: [`packages/components`](../../../../packages/components).
 
 Namespace ownership in this change: **components only**. No common catalog, shared index, generated inventory or shared runtime edits. [Source inventory](../inventories/04-components.md).
 
@@ -71,19 +71,82 @@ Dependency installation used `pnpm install --ignore-scripts`; the final frozen-l
 
 ## Pending dependency and integration evidence
 
-These are explicit gaps, not translated by fallback and not counted as completed Dutch UI:
+The originally identified browser, Vidstack time-speech and MDX CodeMirror gaps are
+now implemented through maintained version-specific workspace patches. See the
+[dependency localisation handoff](04-dependency-localisation.md) for contracts,
+reviewed surfaces, tests, exact callsites and distribution limits. Direct browser
+consumers still need the exported adapter; patch installation alone does not select
+Dutch. The separate notebook/virtual-collection authoring UI is not covered by a
+claim about its embedded browser.
 
-- Installed `iiif-browser` exposes labels for the toolbar/dialog/output actions (wired above), but has no general locale/message dictionary in `IIIFBrowserProps`. Its browser navigation/search and image-options UI still contain hardcoded English, including the image preview accessible label and option headings. Completing those requires an upstream dependency API/update; copying its UI or editing dependency code is outside this module's assigned scope. Host imports of the same dependency elsewhere remain their owners' work.
-- MDXEditor 4.0.4 `plugins/diff-source/DiffSourceWrapper.js` hardcodes parse-error recovery instructions and displays a raw parser error. Its public diff/source params provide no error-renderer/translation override. Normal reachable toolbar/link/image messages use the translation adapter, but malformed-source feedback needs upstream support. CodeMirror search/source dependency UI is also not claimed translated by the toolbar adapter.
-- Vidstack's layout/announcer dictionary is complete, but its internal `formatSpokenTime` hardcodes time-unit abbreviations/`hour`; that function is used in time-slider/seek announcements. Its layout dictionary has no unit keys. This requires upstream formatter/locale support (or a separate reviewed custom slider/announcer), rather than claiming dictionary coverage proves all spoken UI.
 - Parent owns browser integration against its already-running main feature/i18n checkout, including actual tour progression, overflow popovers, media playback/seek/caption behavior, rich-editor history and full editor undo across switches. No `E2E_TARGET=local` or default Playwright setup was run. RTL visual layout and installed-consumer/publication checks remain integration/release work.
 
 ## Parent integration checkpoint
 
-Integrated and reviewed metadata/reference boundaries, React Aria locale wrappers, MDX plugin updates, portal scopes and translated tab measurements. All nine component tests pass again against the merged runtime/profile changes, as does the component-test no-emit check. The live English create/edit/metadata/preview journey passes after consumer dependency bootstrap. Dependency-language gaps above remain open; neither catalog parity nor this regression establishes whole-UI Dutch completion.
+Integrated and reviewed metadata/reference boundaries, React Aria locale wrappers, MDX plugin updates, portal scopes and translated tab measurements. All nine component tests pass again against the merged runtime/profile changes, as does the component-test no-emit check. The live English create/edit/metadata/preview journey passes after consumer dependency bootstrap. The later dependency checkpoint below supersedes the initial gap list; consumer wiring and integrated regression still determine whole-UI Dutch completion.
 
 ## Maintained malformed-source translation patch
 
-The parent added a version-pinned pnpm patch for MDXEditor 4.0.4, connecting its malformed-source wrapper to the existing translation hook. Three EN/NL components messages provide a friendly parse-error heading, recovery instruction and Technical details label; the original diagnostic remains verbatim in a disclosure. The components catalog now has 145 messages. This resolves that feedback gap for the workspace host, while CodeMirror source/search phrases and independent external SDK dependency support still require integration work.
+The parent added a version-pinned pnpm patch for MDXEditor 4.0.4, connecting its malformed-source wrapper to the existing translation hook. Three EN/NL components messages provide a friendly parse-error heading, recovery instruction and Technical details label; the original diagnostic remains verbatim in a disclosure. The components catalog now has 145 messages. This resolves that feedback gap for the workspace host, with CodeMirror source/search now handled by the extension described in the linked handoff. Independent external SDK dependency support still requires equivalent upstream APIs or installation patches.
 
 A second real-rich-editor test verifies English-to-Dutch switching during malformed source without replacing the details DOM, changing Markdown or diagnostics, or emitting extra edit/error callbacks. See `patches/README.md` for application, refresh and distribution boundaries. The pnpm patch command unexpectedly ran root prepare despite environment-only ignore-scripts; subsequent explicit frozen installs disabled scripts. No build/server command was run.
+
+## Dependency completion checkpoint — 28 October 2026
+
+The three assigned workspace gaps are now implemented. The
+[dependency localisation handoff](04-dependency-localisation.md) records the full
+review, public adapter examples, remaining consumer callsites and exact exclusions.
+Components now has **385 English / 385 real Dutch messages**. Vendor patches expose
+optional instance inputs, retain English fallback and preserve the earlier MDX
+malformed-source patch. No shared runtime/catalog registry changes were required.
+
+Six new real-dependency cases extend the previous ten tests:
+
+1. Real ESM browser: live labels and Dutch command search, unchanged history/store,
+   selected IDs, original Vault data and caller action text/payload; an adjacent
+   unconfigured browser remains English. Singular history and plural selection
+   summaries are exercised, along with the original empty-selection behavior.
+2. The same contract against the shipped CJS browser root.
+3. Real CodeMirror source view: same view/document, nonempty editor selection,
+   search/replacement, focused search control/caret and working undo across locale;
+   no extra edit callbacks.
+4. The same contract in the actual CodeMirror diff view.
+5. Open MDX IIIF image dialog: fetched Image API options, edited Welsh alternative
+   text and `gray` quality selection persist; Dutch option text and formatted sizes
+   change, request URL/protocol quality stay identical, and insertion retains them.
+6. Real Vidstack player: unit plurals, zero/one/many durations, whole range/live ARIA,
+   forward/backward seek announcements and authored chapter durations; player/time,
+   track identity and Welsh content language survive locale changes. The same test
+   passes against the shipped production distribution.
+
+Final commands (root Node 24; no builds or server operations):
+
+```sh
+pnpm install --ignore-scripts --frozen-lockfile
+node packages/components/node_modules/vitest/vitest.mjs run --config packages/components/vitest.config.ts
+COMPONENT_MEDIA_DISTRIBUTION=prod node packages/components/node_modules/vitest/vitest.mjs run --config packages/components/vitest.config.ts packages/components/test/media-time.test.tsx
+node node_modules/typescript/bin/tsc --noEmit -p packages/components/tsconfig.json
+node node_modules/typescript/bin/tsc --noEmit -p packages/components/tsconfig.test.json
+node node_modules/typescript/bin/tsc --noEmit -p internal-packages/languages/tsconfig.json
+node --test internal-packages/languages/test/*.test.mjs
+npm --prefix internal-packages/languages run translations:check
+node node_modules/oxlint/bin/oxlint packages/components/src packages/components/test packages/components/vitest.config.ts
+```
+
+Results: **16 component tests**, **1 production-distribution media test** and
+**68 language tests pass**. All three no-emit checks pass. Strict Dutch gate:
+**26 catalog/overlay files, 966 required messages, zero missing, zero unreviewed
+unchanged English**. Oxlint: zero errors, the same 12 pre-existing warnings noted
+above. All **22 installed patched JavaScript files** pass `node --check`; targeted
+formatting and `git diff --check` pass. Lock changes are limited to patch hashes,
+affected resolutions, the MDX search extension/checksum and explicit test imports;
+unrelated resolver drift was removed. Patch generation edited separate copies,
+and every installation used explicit scripts-disabled flags.
+
+These results establish the owned workspace adapters, not integrated whole-editor
+or published SDK coverage. Parent still owns the callsite wiring listed in the
+handoff, actual-browser media/crop/editor regressions and release artifacts. No
+build, dev-server action, E2E webServer, upstream publication, push, PR or delegation
+was run. Independently installed SDK consumers need equivalent upstream support
+or the maintained patches plus MDX dependency extension. The installed Vidstack
+worker export paths lack shipped server files; no server compatibility is claimed.

@@ -67,3 +67,38 @@ and toast roots also receive the selected UI locale for dependency instructions.
 
 The module implementation guide records dependency-owned localisation gaps and
 validation evidence; optional catalogs alone do not establish whole-editor coverage.
+
+### Dependency adapters
+
+The hosted workspace maintains version-specific patches for `iiif-browser` 2.2.6,
+`@vidstack/react` 1.12.12 and MDXEditor 4.0.4. These adapters require those patches
+(or equivalent upstream APIs); independently installed npm consumers do not receive
+the workspace patches automatically. See [patch maintenance](../../patches/README.md).
+
+```tsx
+import {
+  LocalizedIIIFBrowser, IIIFBrowserI18nProvider,
+  useIIIFBrowserI18n, useMediaTimeTranslations,
+} from "@manifest-editor/components";
+
+// Direct browser: resolves built-in UI under the existing editor runtime.
+<LocalizedIIIFBrowser {...browserProps} />;
+
+// Plugin hosts: covers browser dialogs and their sibling image-options screens.
+<IIIFBrowserI18nProvider><MyTiptapEditor /></IIIFBrowserI18nProvider>;
+
+// When keeping the dependency's component import:
+const i18n = useIIIFBrowserI18n();
+<IIIFBrowser {...browserProps} i18n={i18n} />;
+
+// Independent media consumers; contentLanguage still selects subtitle/content language.
+const uiTime = useMediaTimeTranslations();
+<MediaPlayer uiTime={uiTime} lang={contentLanguage}>{children}</MediaPlayer>;
+```
+
+`MDXEditor` already supplies the browser provider and existing MDX translation
+callback. `IIIFMediaPlayer` already supplies time speech and the layout dictionary.
+Locale switches update phrases/formatters and built-in command search without
+remounting browsers, players or source editors. Caller output labels remain caller
+content; migrate them in their owning namespace. Browser message metadata applies
+only to explicit UI descriptors, never by matching the text of an authored label.
