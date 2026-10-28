@@ -125,6 +125,38 @@
     "media.volume": {
       "source": "Volume",
       "reason": "Volume is the same Dutch noun for audio loudness."
+    },
+    "media.title": {
+      "source": "Media",
+      "reason": "Media is the established Dutch collective noun for audiovisual material."
+    },
+    "export.presentation3": {
+      "source": "IIIF Presentation 3",
+      "reason": "IIIF Presentation 3 is the official specification name and version."
+    },
+    "export.presentation2": {
+      "source": "IIIF Presentation 2",
+      "reason": "IIIF Presentation 2 is the official specification name and version."
+    },
+    "annotation.type": {
+      "source": "Type",
+      "reason": "Type is the Dutch noun for a resource category."
+    },
+    "annotation.label": {
+      "source": "Label",
+      "reason": "Label is the established Dutch term for the IIIF label property."
+    },
+    "annotation.items_one": {
+      "source": "{{count}} item",
+      "reason": "Item is an established Dutch loanword; the singular count phrase is identical."
+    },
+    "annotation.items_other": {
+      "source": "{{count}} items",
+      "reason": "Items is the established Dutch plural; the count phrase is identical."
+    },
+    "structure.canvas": {
+      "source": "Canvas:",
+      "reason": "Canvas is the IIIF technical resource name, with a colon before the authored label."
     }
   },
   "locales/en-GB/web.ts": {

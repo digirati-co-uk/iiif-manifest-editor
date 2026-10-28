@@ -83,6 +83,51 @@ export const translatorNotes = {
       placeholders: { current: "Completed count.", total: "Total count." },
     },
   },
+  ui: {
+    "property.add": {
+      context:
+        "Accessible action label for adding a property; label is the caller-supplied display label, never a protocol property ID.",
+      placeholders: { label: "Display label supplied by the caller; preserve it literally." },
+    },
+    "canvas.imageDimensions": {
+      context:
+        "Explains the dimensions of the source image and the canvas that will be created. Translate the complete sentence.",
+      placeholders: {
+        width: "Source width in pixels; do not alter the numeric value.",
+        height: "Source height in pixels.",
+      },
+    },
+    "annotation.count": {
+      context: "Number of annotations on an internal annotation page; provide singular and plural forms.",
+      placeholders: { count: "Numeric cardinal count of annotations." },
+    },
+    "annotation.items": {
+      context: "Number of items on the legacy annotation page; provide singular and plural forms.",
+      placeholders: { count: "Numeric cardinal count of page items." },
+    },
+    "region.selected": {
+      context:
+        "Whole accessible description of the selected image region, also used as preview image alternative text.",
+      placeholders: {
+        x: "Horizontal pixel coordinate.",
+        y: "Vertical pixel coordinate.",
+        width: "Region width in pixels.",
+        height: "Region height in pixels.",
+      },
+    },
+    "save.replace": {
+      context: "Save option that replaces the existing permalink; keep the URL intact.",
+      placeholders: { url: "Existing permalink URL; never translate or modify." },
+    },
+    "annotation.unavailable": {
+      context: "Failure to retrieve a legacy annotation page from the Vault.",
+      placeholders: { id: "Unmodified annotation-page resource identifier." },
+    },
+    "media.unknownError": {
+      context:
+        "Fallback when the browser media element supplies no error message. Browser-provided diagnostic text remains outside catalogs.",
+    },
+  },
   "plugin-translation": {
     "settings.sourceLanguage": {
       context: "Language of authored IIIF content given to machine translation. Independent of interface language.",
