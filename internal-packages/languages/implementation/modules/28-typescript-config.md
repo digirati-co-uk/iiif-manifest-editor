@@ -80,3 +80,7 @@ All commands ran from repository root with Node **v24.21.0**. Dependency setup w
 The additional ordinary creator-api check (`node node_modules/typescript/bin/tsc --noEmit -p packages/creator-api/tsconfig.json`) fails in this clean, unbuilt checkout: its existing editor-api package entry points require absent output declarations (TS2307), with resulting TS7006/TS2322 diagnostics. Its existing source-mapped test configuration passes. This is an existing clean-workspace/publication boundary, not a shared compiler regression; parent should use the source-mapped check until real artifacts are permitted. No consumer files were edited and no legacy UI diagnostics were repaired.
 
 No build, prepack, package emit, server start/stop/restart, browser integration, push or PR was performed. Parent owns the browser checks on the main checkout. Acceptance remains explicitly pending for emitted artifacts; passing source tests must not be reported as a successful tarball/declaration release check.
+
+## Parent review
+
+Integrated and reran all six compatibility checks. The Bundler fixtures consume the actual React/core/Dutch package exports; core graph inspection excludes the React provider. The NodeNext check deliberately confirms unsupported extensionless workspace source, rather than claiming published ESM passes. Explicit no-emit/source-only flags remain local, shared compiler semantics remain unchanged, and emitted artifacts remain unverified. The runtime README now states this source-resolution boundary.

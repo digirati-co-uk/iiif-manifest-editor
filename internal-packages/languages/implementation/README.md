@@ -17,7 +17,7 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | 06 | [Shell configuration and definition integration](modules/06-shell.md) | Pending | shell and common |
 | 07 | [Shared property editors and forms](modules/07-editors.md) | Pending | editors and common |
 | 08 | [Resource creator forms](modules/08-creators.md) | Pending | creators and common |
-| 09 | [Project and draft controls](modules/09-projects.md) | Pending | projects and common |
+| 09 | [Project and draft controls](modules/09-projects.md) | Migrated and reviewed; dependency typechecks/browser acceptance pending | projects and common |
 | 10 | [Manifest preset workflows](modules/10-manifest-preset.md) | Pending | manifest plus shared namespaces |
 | 11 | [Collection preset workflows](modules/11-collection-preset.md) | Pending | collection plus shared namespaces |
 | 12 | [Exhibition presets and terminology](modules/12-exhibition-preset.md) | Pending | exhibition plus editors overlays |
@@ -36,7 +36,7 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | 25 | [Server vault language boundary](modules/25-server-vault.md) | Reviewed; remains language-neutral | none |
 | 26 | [Preview server and external viewer boundary](modules/26-iiif-preview-server.md) | Pending | preview-owned UI only if present |
 | 27 | [Integration and translation contributor documentation](modules/27-docs.md) | Pending | documentation localisation is a separate scope |
-| 28 | [Shared TypeScript configuration compatibility](modules/28-typescript-config.md) | Pending | none |
+| 28 | [Shared TypeScript configuration compatibility](modules/28-typescript-config.md) | Source compatibility verified; emitted artifacts pending | none |
 | 29 | [Catalog quality gates and publishing](modules/29-release-and-ci.md) | Pending | validation and ownership policy |
 
 ## How to use a module guide

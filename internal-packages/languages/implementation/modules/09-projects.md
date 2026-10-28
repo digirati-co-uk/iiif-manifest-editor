@@ -78,3 +78,7 @@ Dependencies linked using `pnpm install --ignore-scripts --frozen-lockfile`; tes
 Pending: parent-owned integrated browser tests against the existing port-3000 server; full typecheck after dependency-source blockers are resolved; emitted package/tarball verification during the authorized release workflow. No builds, server changes, browser tests, PRs or pushes were performed here.
 
 Commit-hook observation: the first commit unexpectedly invoked an implicit `pnpm install` and root `prepare` (`simple-git-hooks`) before successful `lint-staged`/`oxlint --fix`. Hook setup reported ENOTDIR for the worktree `.git/hooks`; the commit still succeeded. No build/server command ran and the working tree stayed clean. The documentation amendment disables hooks for that one commit to avoid repeating the implicit install; the explicit checks above already ran.
+
+## Parent integration review
+
+Reviewed menu references and legacy fallbacks, native title button/ref focus, uncontrolled draft input, submit navigation prevention and display-only untitled fallback. The seven tests pass again in the merged checkout. A parent source-mapped no-emit run reproduces sixteen dependency diagnostics and zero projects-owned diagnostics after linking test dependencies: thirteen Vault type incompatibilities, the shell dropdown narrowing issue and two CSS-module declarations. These remain tracked with their owners; no typecheck pass is claimed.
