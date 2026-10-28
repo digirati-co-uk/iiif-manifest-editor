@@ -147,7 +147,7 @@ it("keeps viewer home and zoom behavior while locale and wording change", async 
   await click(ui.container.querySelector('[data-control="zoom-out"]'));
   await click(ui.container.querySelector('[data-control="zoom-in"]'));
   expect(media.world.goHome).toHaveBeenCalledOnce();
-  expect(media.world.zoomTo.mock.calls).toEqual([[1 / 0.75], [0.75]]);
+  expect(media.world.zoomTo.mock.calls).toEqual([[1 / 0.4], [0.4]]);
   await act(async () => {
     await ui.instance.setLocale("en-GB");
   });

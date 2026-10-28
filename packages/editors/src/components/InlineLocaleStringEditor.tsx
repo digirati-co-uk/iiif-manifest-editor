@@ -89,7 +89,7 @@ export function InlineLocaleStringEditor({
         }
       }}
       className={twMerge(
-        "relative group hover:ring-2 ring-me-400 focus-within:ring-2 ring-offset-2 rounded",
+        "relative group rounded transition-colors hover:bg-black/5 focus-within:bg-black/5 focus-within:ring-2 ring-me-400",
         buttonClassName
       )}
     >

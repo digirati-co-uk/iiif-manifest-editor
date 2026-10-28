@@ -121,8 +121,7 @@ export function ManifestPanel() {
           as="h2"
           placeholder={t("workflow.manifestTitlePlaceholder")}
           className="text-lg font-semibold [&>a]:underline [&>a]:hover:text-slate-400"
-          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
-          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
+          buttonClassName="mb-3"
           editor={descriptive.label}
         >
           {label}
@@ -134,8 +133,7 @@ export function ManifestPanel() {
           as="p"
           placeholder={t("workflow.manifestSummaryPlaceholder")}
           className="text-sm text-slate-800 block [&>a]:underline [&>a]:hover:text-slate-400"
-          buttonClassName="border border-gray-300 bg-white p-2 pr-16 mb-3"
-          editButtonClassName="top-1 right-1 bottom-auto opacity-100 shadow-none bg-me-gray-100 text-me-primary-700 font-semibold"
+          buttonClassName="mb-3"
           editor={descriptive.summary}
         >
           {summary}
@@ -173,10 +171,11 @@ export function ManifestPanel() {
           allowHtml
           classes={{
             container: "w-full",
-            row: "border-b border-gray-200 flex flex-col flex-wrap py-2",
-            label: "font-bold text-black w-full text-sm font-semibold mb-1",
+            row: "border-b border-gray-200 flex flex-col py-2",
+            label:
+              "font-bold text-black w-full text-sm font-semibold mb-1 [overflow-wrap:anywhere]",
             value:
-              "text-sm text-black block [&>span>a]:underline [&>span>a]:hover:text-slate-400",
+              "text-sm text-black block [overflow-wrap:anywhere] [&>span>a]:underline [&>span>a]:hover:text-slate-400",
             empty: "text-gray-600",
           }}
         />
