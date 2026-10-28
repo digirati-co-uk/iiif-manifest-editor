@@ -4,7 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { ThemeProvider } from "styled-components";
 import { Vault } from "@iiif/helpers";
 import { EditorI18nProvider } from "@manifest-editor/i18n";
-import { createEditorI18n, defaultLocales, dutchLocale } from "@manifest-editor/i18n/core";
+import { createEditorI18n, defaultLocales, dutchLocale, type MessageReference } from "@manifest-editor/i18n/core";
 import { dutchCatalogs, dutchPlain } from "@manifest-editor/i18n/nl";
 import { useBrowserStoreContext, useOutputStore, useOmnisearchStore } from "iiif-browser";
 import { CreateWebPageForm, createWebPage } from "../src/ContentResource/WebPageCreator/create-web-page";
@@ -25,9 +25,16 @@ import { allCreators, manifestBrowserCreator } from "../src/index";
 import { useDecayState } from "../../shell/src/hooks/use-decay-state";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 
-const fixture = vi.hoisted(() => ({ vault: undefined as Vault | undefined, plugins: [] as any[] }));
+const fixture = vi.hoisted(() => ({
+  vault: undefined as Vault | undefined,
+  plugins: [] as any[],
+  notebook: undefined as { canvasActionLabel?: string; canvasActionLabelMessage?: MessageReference } | undefined,
+}));
 vi.mock("@manifest-editor/shell", () => ({
-  useConfig: () => ({ i18n: { defaultLanguage: "cy", availableLanguages: ["cy", "en"], advancedLanguageMode: true } }),
+  useConfig: () => ({
+    notebook: fixture.notebook,
+    i18n: { defaultLanguage: "cy", availableLanguages: ["cy", "en"], advancedLanguageMode: true },
+  }),
   useDecayState: (time: number) => useDecayState(time),
   useNotebookBrowserPlugins: () => fixture.plugins,
   usePreviewVault: () => fixture.vault,
@@ -84,6 +91,7 @@ beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   fixture.vault = new Vault();
   fixture.plugins = [];
+  fixture.notebook = undefined;
   globalThis.ResizeObserver = class {
     observe() {}
     unobserve() {}
@@ -211,6 +219,8 @@ it("retains a WebVTT language code and label while translating help, validation 
   const feedback = creatorValidationError(failure)!;
   expect(i18n.resolveMessage(feedback.message)).toContain("WebVTT-bestand");
   expect(creatorValidationError(new Error("foreign failure"))).toBeUndefined();
+  for (const name of ["constructor", "toString", "__proto__"])
+    expect(creatorValidationError(new Error(name))).toBeUndefined();
 });
 
 it("keeps range payload IDs and labels while switching plain terminology", async () => {
@@ -351,7 +361,7 @@ it.each(["internal", "manifest", "content"])(
   }
 );
 
-it.each(["manifest", "content"])(
+it.each(["manifest", "content", "notebook", "override"])(
   "resolves a caller-owned %s action reference live without recreating its browser",
   async (kind) => {
     const vault = fixture.vault!;
@@ -370,15 +380,28 @@ it.each(["manifest", "content"])(
       return null;
     }
     fixture.plugins = [{ id: "caller-probe", header: <Probe /> }];
-    const props = context({
-      url: "https://example.org/m",
-      actionLabelMessage: { namespace: "common", key: "actions.add" },
-    });
+    fixture.notebook =
+      kind === "notebook" || kind === "override"
+        ? {
+            canvasActionLabel: "Legacy custom action",
+            canvasActionLabelMessage: {
+              namespace: "common",
+              key: kind === "override" ? "actions.delete" : "actions.add",
+            },
+          }
+        : undefined;
+    const props = context(
+      {
+        url: "https://example.org/m",
+        ...(kind === "notebook" ? {} : { actionLabelMessage: { namespace: "common", key: "actions.add" } }),
+      },
+      kind === "notebook" || kind === "override" ? "Canvas" : "ContentResource"
+    );
     const Form = kind === "manifest" ? ManifestBrowserForm : IIIFBrowserForm;
     const { container, i18n } = await mount(<Form {...props} />);
     const id = kind === "manifest" ? "https://example.org/m" : "https://example.org/image";
     const type = kind === "manifest" ? "Manifest" : "ImageService";
-    if (kind === "content")
+    if (kind !== "manifest")
       await vault.load(id, { id, type: "ImageService3", profile: "level1", width: 10, height: 10 });
     await act(async () => output.getState().replaceSelectedItems([{ id, type }]));
     const before = output.getState().selectedItems;

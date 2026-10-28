@@ -38,7 +38,11 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
             targetType === "Canvas"
               ? (notebookConfig?.canvasActionLabel ?? t("browser.addToManifest"))
               : t("browser.select");
-          return resolveMessage(initialData.actionLabelMessage, fallback);
+          return resolveMessage(
+            initialData.actionLabelMessage ||
+              (targetType === "Canvas" ? notebookConfig?.canvasActionLabelMessage : undefined),
+            fallback
+          );
         },
         supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
         cb: (resource) => runCreate({ output: resource }),
@@ -48,7 +52,15 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
         },
       },
     ] as IIIFBrowserProps["output"];
-  }, [runCreate, targetType, notebookConfig?.canvasActionLabel, t, initialData.actionLabelMessage, resolveMessage]);
+  }, [
+    runCreate,
+    targetType,
+    notebookConfig?.canvasActionLabel,
+    notebookConfig?.canvasActionLabelMessage,
+    t,
+    initialData.actionLabelMessage,
+    resolveMessage,
+  ]);
 
   const navigationOptions = useMemo(() => {
     return {

@@ -13,6 +13,6 @@ export function creatorValidationError(error: unknown): CreatorValidationMessage
     "Collection not found": "collection",
     "Canvas not found": "canvas",
   };
-  const key = keys[error.message];
+  const key = Object.hasOwn(keys, error.message) ? keys[error.message] : undefined;
   return key ? { code: key, message: { namespace: "creators", key: `errors.${key}` } } : undefined;
 }

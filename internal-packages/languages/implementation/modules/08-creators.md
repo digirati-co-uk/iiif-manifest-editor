@@ -58,3 +58,11 @@ node --test internal-packages/languages/test/nl-parity.test.mjs internal-package
 ```
 
 Both local no-emit configs contain source aliases only for verification; publishing/watch tsconfig is unchanged. Frozen installation used lifecycle scripts disabled. The creators package now declares the existing workspace jsdom26.1.0 test dependency explicitly; its importer is the only lockfile change, with no new resolution/snapshot or publication dependency changes. The initial unconstrained Vitest worker run exited without results; all reported acceptance results use the explicit single-worker command above. Builds were not used to resolve dependent-source diagnostics.
+
+## Parent integration review
+
+Integrated both module commits after reviewing definitions, retained browser descriptors/action references, request/error handling and unchanged creation paths. Frozen scripts-disabled installation passes. Parent reran **17 tests**, then added notebook-reference/override regressions for **19 passing creator tests**. Strict Dutch validation now covers **1674 combined catalog messages**, with zero missing/unreviewed English copies. The test-inclusive no-emit check retains **69 dependency diagnostics and none in creators/tests**; it remains a nonzero check, not a passing whole-project typecheck.
+
+The shell now exposes optional serialisable `notebook.canvasActionLabelMessage`. The Canvas-target browser resolves an explicit `initialData.actionLabelMessage` first, then this preset/host reference, then its original literal/default fallback. Live labels retain the browser's current selection/store. Tests cover both preset reference resolution and explicit caller precedence. Preset12 still needs to supply the exhibition-owned reference for its English literal; no custom text is implicitly translated.
+
+Parent review also constrained known-error classification to own keys: unknown error messages such as constructor/toString/**proto** retain the unknown-error path. New assertions cover those cases without changing validation or raw thrown errors. The earlier vault shape-control dependency gap is now addressed by shared `SvgEditorControls`; Leaflet/Draw, notebook commands and actual integrated browser/RSC/publication checks remain open.

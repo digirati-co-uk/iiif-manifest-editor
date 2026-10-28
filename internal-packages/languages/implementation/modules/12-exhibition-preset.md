@@ -56,3 +56,7 @@ Record migrated directories, reviewed/exempted inventory entries, added semantic
 ## API metadata terminology handoff
 
 Module 02 now supplies a plain `editor-api` overlay as well as editor-form wording. When applying exhibition-specific slide terminology, include metadata resource/field labels and the blank layout alongside the editors namespace. Define both preset and preset/plain intersections where necessary so plain Page/Pagina does not override Slide/Dia in an exhibition. Keep protocol types (`Canvas`) and authored content unchanged.
+
+## Integrated notebook action contract
+
+Shell06 and creators08 now support `ProjectNotebookConfig.canvasActionLabelMessage` alongside the legacy `canvasActionLabel` fallback. Supply an exhibition namespace reference in `notebook-config.ts` so Add to exhibition resolves under locale/profile changes. The Canvas-target creator reads it live; an explicit `initialData.actionLabelMessage` takes precedence. Keep stable notebook IDs, seeded workshop content, authored note/resource labels and callbacks unchanged. Parent tests verify this display contract; the independent notebook command dependency still requires separate coverage.
