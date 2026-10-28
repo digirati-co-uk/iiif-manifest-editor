@@ -41,6 +41,8 @@ export interface LanguageSwitcherProps {
    * "dark"   — focused-exhibition purple header (bg-[#26212a] / bg-[#18161d]).
    */
   variant?: "light" | "dark";
+  /** UI direction, also applied to the portalled option list. */
+  direction?: "ltr" | "rtl";
 }
 
 /** Returns the native display name for a locale, e.g. "en-GB" → "English", "nl" → "Nederlands". */
@@ -59,6 +61,7 @@ export function LanguageSwitcher({
   labels,
   loading = false,
   variant = "light",
+  direction = "ltr",
 }: LanguageSwitcherProps) {
   const isDark = variant === "dark";
   const isDisabled = availableLocales.length <= 1;
@@ -77,7 +80,7 @@ export function LanguageSwitcher({
 
   return (
     <Select
-      className="min-w-0 max-w-[14rem] shrink-0"
+      className="w-full min-w-0 max-w-[14rem] shrink-0"
       selectedKey={locale}
       onSelectionChange={(key) => {
         if (!loading && !isDisabled && typeof key === "string" && key !== locale) onLocaleChange(key);
@@ -109,7 +112,7 @@ export function LanguageSwitcher({
         )}
       </Button>
 
-      <Popover placement="bottom end" className={popoverClass}>
+      <Popover placement="bottom end" className={popoverClass} lang={locale} dir={direction}>
         <ListBox className="outline-none" aria-label={labels.availableLanguages}>
           {availableLocales.map((loc) => (
             <ListBoxItem

@@ -8,6 +8,11 @@
  * from "interfacetaal" to preserve the separation the plan requires.
  */
 export const catalog = {
+  navigation: {
+    home: "Startpagina van Manifest Editor",
+    github: "GitHub",
+    documentation: "Documentatie",
+  },
   launcher: {
     title: "Manifest Editor",
     open: "Openen",
@@ -15,6 +20,7 @@ export const catalog = {
     recent: "Recente projecten",
   },
   settings: {
+    changeFailed: "De interface-instellingen konden niet worden gewijzigd. Probeer het opnieuw.",
     title: "Instellingen",
     interfaceLanguage: "Interfacetaal",
     availableLanguages: "Beschikbare talen",

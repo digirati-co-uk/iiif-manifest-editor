@@ -163,6 +163,10 @@
     "launcher.title": {
       "source": "Manifest Editor",
       "reason": "Manifest Editor is the product brand, preserved across locales."
+    },
+    "navigation.github": {
+      "source": "GitHub",
+      "reason": "GitHub is the service brand and retains its spelling in Dutch."
     }
   },
   "profiles/plain/en-GB/editor-api.ts": {

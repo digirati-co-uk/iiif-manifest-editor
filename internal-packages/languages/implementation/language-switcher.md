@@ -1,6 +1,6 @@
 # Language Switcher — design and mounting guide
 
-Status: **Component implemented; provider wiring deferred** to Sol web-host module.
+Status: **Component and site/browser mounting implemented**; remaining web routes and inventory migration belong to module20.
 
 File: [`apps/web/src/components/site/LanguageSwitcher.tsx`](../../../../apps/web/src/components/site/LanguageSwitcher.tsx)
 
@@ -165,3 +165,7 @@ The private authoring package exports all Dutch catalog subpaths. All 25 source/
 ## Parent verification
 
 Three focused web React/jsdom tests pass: keyboard opening/native option selection and translated accessible-name references; retained focus/tab position and prevented reopening while loading; regional distinctions and single-locale inactivity. Component/test/config typecheck and targeted lint pass. These do not prove header layout or page-level integration; narrow headers, persistence, whole-editor state and mounting remain web-host/E2E work. Test dependencies are declared in apps/web and use existing locked versions. `npm --prefix apps/web test` runs this suite without starting a server or building packages.
+
+## Live host wiring
+
+`HeaderLanguageSwitcher` is now the runtime-bound wrapper. `WebI18nProvider` initializes from the validated server cookie and supplies English/Dutch catalog/profile data. Site and BrowserEditor headers use the wrapper; remaining routes are explicitly tracked in guide20. The selector also receives UI direction for its portalled list and a React Aria locale provider. The actual 320px browser test verifies visible header controls remain in bounds, keyboard selection persists, and reload returns Dutch in the server HTML.

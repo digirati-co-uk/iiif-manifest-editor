@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": [
+    "src/i18n/**/*.ts",
+    "src/i18n/**/*.tsx",
+    "src/components/site/LanguageSwitcher.tsx",
+    "src/components/site/HeaderLanguageSwitcher.tsx",
+    "src/components/site/GlobalNav.tsx",
+    "test/LanguageSwitcher.test.tsx",
+    "test/WebI18n.test.tsx",
+    "vitest.config.ts"
+  ]
+}

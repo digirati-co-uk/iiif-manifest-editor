@@ -57,3 +57,7 @@ Some remote example thumbnails already returned external 404/blocked-image respo
 At the component and UI migration checkpoint, all nine component and seventeen UI interaction tests pass, plus their component-test/focused-UI no-emit checks. The strict Dutch source check reports 714 required messages across 26 base/overlay files, with zero missing and zero unreviewed unchanged English messages. It does not assert whole-UI migration.
 
 The first live English regression run caught an undeclared runtime dependency in shell's watched output. Consumer runtime dependency/external declarations and a frozen scripts-disabled install resolved it; the same existing Chromium basic journey then passed in 6.7 seconds. No server or package build command was run. Dependency-owned English in IIIF browser navigation, MDX malformed-source feedback and Vidstack spoken units remains tracked by module04 and must be addressed before complete coverage is advertised.
+
+## Live host language-switch checkpoint
+
+The full-page host now reads its validated versioned UI-preference cookie on the server and initializes the same English/Dutch runtime on the client. Six focused web tests pass. The real Chromium host tests prove Dutch appears in server HTML without hydration errors, keyboard switching persists through reload, and controls remain within a 320px site header. The existing basic editing/metadata/preview journey also passes. Remaining editor/preset/plugin/web messages and full-editor state/export invariants are not inferred from these host checks.

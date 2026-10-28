@@ -1,6 +1,7 @@
 "use client";
 
 import headerStyles from "./BrowserEditorHeader.module.css";
+import { HeaderLanguageSwitcher } from "../site/HeaderLanguageSwitcher";
 
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
@@ -458,6 +459,7 @@ export default function BrowserEditor({
           <div className={headerStyles.actionButtons}>
             <ShareButton />
             <BackgroundActionsMenu />
+            <HeaderLanguageSwitcher variant={isFocusedExhibition ? "dark" : "light"} />
             {isFocusedExhibition ? (
               <button
                 type="button"

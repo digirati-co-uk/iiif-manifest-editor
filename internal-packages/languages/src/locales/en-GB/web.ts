@@ -1,5 +1,10 @@
 /** Initial seed catalog; the module inventory tracks the remaining migration. */
 export const catalog = {
+  navigation: {
+    home: "Manifest Editor home",
+    github: "GitHub",
+    documentation: "Documentation",
+  },
   launcher: {
     title: "Manifest Editor",
     open: "Open",
@@ -7,6 +12,7 @@ export const catalog = {
     recent: "Recent projects",
   },
   settings: {
+    changeFailed: "The interface settings could not be changed. Try again.",
     title: "Settings",
     interfaceLanguage: "Interface language",
     availableLanguages: "Available languages",
