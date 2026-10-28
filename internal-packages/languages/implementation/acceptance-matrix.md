@@ -51,3 +51,9 @@ At foundation `288a0405`, `http://localhost:3000/?tab=recent` loaded successfull
 The existing `01-basic.test.ts` Chromium journey passed against that same running server using `E2E_TARGET=watch`: create a manifest, edit its label, add/edit/reorder/delete metadata, then open a preview. Result: one passed test in 8.5 seconds. This proves the English baseline before integration, not Dutch coverage or locale-switch state preservation.
 
 Some remote example thumbnails already returned external 404/blocked-image responses. Distinguish those pre-existing remote-content failures from runtime/hydration or translation failures when assessing later browser results.
+
+## Shared component/UI integration checkpoint
+
+At the component and UI migration checkpoint, all nine component and seventeen UI interaction tests pass, plus their component-test/focused-UI no-emit checks. The strict Dutch source check reports 714 required messages across 26 base/overlay files, with zero missing and zero unreviewed unchanged English messages. It does not assert whole-UI migration.
+
+The first live English regression run caught an undeclared runtime dependency in shell's watched output. Consumer runtime dependency/external declarations and a frozen scripts-disabled install resolved it; the same existing Chromium basic journey then passed in 6.7 seconds. No server or package build command was run. Dependency-owned English in IIIF browser navigation, MDX malformed-source feedback and Vidstack spoken units remains tracked by module04 and must be addressed before complete coverage is advertised.

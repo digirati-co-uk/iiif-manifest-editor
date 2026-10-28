@@ -1,6 +1,6 @@
 # Internationalisation implementation tasks
 
-The catalog foundation and public React runtime are implemented. Production UI migration is underway; no whole-UI or Dutch-completeness claim is made yet. The seed catalogs cover 264 messages in 19 namespaces; they do not cover every candidate in the repository.
+The catalog foundation and public React runtime are implemented. Production UI migration is underway; no whole-UI or Dutch-completeness claim is made yet. The foundation began with 264 messages in 19 namespaces. Catalogs expand with each migrated module; the strict translation check reports current declared coverage, which does not cover every repository candidate.
 
 Each guide below is a separate unit of work with prerequisites, concrete surfaces, implementation steps and acceptance checks. Work in the listed order when tackling modules one by one; prerequisite links are the authoritative dependency list. Mark completion in the guide and this index only after acceptance checks pass.
 
@@ -9,11 +9,11 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | Order | Module or task | State | Namespace ownership |
 | --- | --- | --- | --- |
 | 00 | [Language catalog foundation](modules/00-languages.md) | Implemented foundation; seed coverage only | all built-in namespaces |
-| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Implemented; review fixes under verification | runtime contract; no messages owned |
+| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Reviewed runtime; parent regression fixes pass; release checks pending | runtime contract; no messages owned |
 | 02 | [Editor API display metadata](modules/02-editor-api.md) | Implemented contracts and English/Dutch catalogs; consumer migration pending | editor-api |
 | 03 | [Creator API message contracts](modules/03-creator-api.md) | Implemented contracts; form consumers pending | creator-api |
-| 04 | [Shared component messages and accessibility](modules/04-components.md) | Pending | components and common |
-| 05 | [UI package and duplicate widget audit](modules/05-ui.md) | Pending | ui and common |
+| 04 | [Shared component messages and accessibility](modules/04-components.md) | First-party migrated; dependency gaps and browser acceptance pending | components and common |
+| 05 | [UI package and duplicate widget audit](modules/05-ui.md) | Supported controls migrated; integrated Dutch/browser acceptance pending | ui and common |
 | 06 | [Shell configuration and definition integration](modules/06-shell.md) | Pending | shell and common |
 | 07 | [Shared property editors and forms](modules/07-editors.md) | Pending | editors and common |
 | 08 | [Resource creator forms](modules/08-creators.md) | Pending | creators and common |
