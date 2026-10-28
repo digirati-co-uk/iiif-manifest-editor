@@ -104,3 +104,7 @@ Supported catalog coverage is standard `en-GB` and `nl`. There are no editor-api
 - Full `pnpm exec tsc --noEmit -p packages/editor-api/tsconfig.json`: blocked by pre-existing **TS2425**, `EditorInstance.ts:99` overriding `BaseEditor.ref` property with a method. Both files are unchanged; no new metadata diagnostics.
 
 Source contracts are free of unpublished imports and runtime/client calls. Emitted declaration/tarball validation remains a release check because package builds are prohibited. Parent owns integrated browser checks on its main checkout; no server was started/stopped and this worktree did not test against unrelated running source.
+
+## Parent catalog review
+
+The strict Dutch translation gate reviewed the expanded catalog individually: `homepage` is displayed as “Webpagina” and the cascade layout as “Trapsgewijs”. Exact-source reviews retain the Dutch cognates Metadata, Type, Logo and Items, and the technical IIIF term Range. This records deliberate terminology choices rather than accepting English fallback.

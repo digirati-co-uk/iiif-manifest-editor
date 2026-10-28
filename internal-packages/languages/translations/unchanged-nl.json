@@ -43,6 +43,26 @@
     "fields.label": {
       "source": "Label",
       "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "fields.metadata": {
+      "source": "Metadata",
+      "reason": "Metadata is the same standard collective noun in Dutch."
+    },
+    "fields.type": {
+      "source": "Type",
+      "reason": "Type is the same Dutch noun for a resource category."
+    },
+    "fields.logo": {
+      "source": "Logo",
+      "reason": "Logo is the same Dutch noun for an identifying graphic."
+    },
+    "fields.items": {
+      "source": "Items",
+      "reason": "Items is the established Dutch plural for entries, consistent with the collection heading."
+    },
+    "behavior.groups.range": {
+      "source": "Range",
+      "reason": "Retain the IIIF technical term Range in the standard profile, consistent with the resource type heading."
     }
   },
   "locales/en-GB/editors.ts": {
