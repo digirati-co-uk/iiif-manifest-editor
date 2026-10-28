@@ -16,7 +16,9 @@ export const thumbnailCreator = defineCreator({
   configKey: "iiif-image-services",
   create: createThumbnail,
   label: "IIIF thumbnail",
+  labelMessage: { namespace: "creators", key: "definitions.thumbnail.label" },
   summary: "Create a thumbnail from an IIIF image service.",
+  summaryMessage: { namespace: "creators", key: "definitions.thumbnail.summary" },
   icon: <ScaledImageIcon />,
   async supportsResource(value, helpers, ctx) {
     const result = await imageServiceCreator.supportsResource!(value, helpers, ctx);

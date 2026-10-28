@@ -1,3 +1,5 @@
+import { useServiceRequest } from "../../use-service-request";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import type { ImageService } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
@@ -60,6 +62,9 @@ export async function createThumbnail(data: CreateThumbnailPayload, ctx: Creator
 
 // @todo cover a lot more things - like offering size dropdown.
 export function CreateThumbnailForm(props: CreatorContext) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
+  const { locale } = useEditorI18n();
   const [url, setUrl] = useState(props.options.initialData?.url || "");
   const [service, setService] = useState<ImageService | null>(props.options.initialData?.service || null);
   const [selectedSize, setSelectedSize] = useState({
@@ -73,6 +78,8 @@ export function CreateThumbnailForm(props: CreatorContext) {
     return serviceImageAtSize(service, selectedSize);
   }, [selectedSize, service]);
 
+  const { load, loading, failed } = useServiceRequest();
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -81,21 +88,14 @@ export function CreateThumbnailForm(props: CreatorContext) {
     const url = formData.url;
 
     if (url) {
-      const info = getCanonicalUrl(url);
-
-      if (!info) {
-        throw new Error("Invalid image service request");
-      }
-
-      fetch(info)
-        .then((r) => r.json())
-        .then((service) => {
+      void load(
+        () => getCanonicalUrl(url),
+        (service) => {
           setService(service);
           const size0 = service.sizes?.[0];
-          if (size0) {
-            setSelectedSize(size0);
-          }
-        });
+          if (size0) setSelectedSize(size0);
+        }
+      );
     }
   };
 
@@ -117,13 +117,16 @@ export function CreateThumbnailForm(props: CreatorContext) {
                   large
                   onPress={() => setSelectedSize(size)}
                 >
-                  {size.width}x{size.height}
+                  {t("form.dimensions", {
+                    width: new Intl.NumberFormat(locale).format(size.width),
+                    height: size.height === undefined ? "" : new Intl.NumberFormat(locale).format(size.height),
+                  })}
                 </ActionButton>
               );
             })}
           </div>
 
-          {previewUrl ? <img src={previewUrl} alt="preview of selected resource" /> : null}
+          {previewUrl ? <img src={previewUrl} alt={t("image.previewAlt")} /> : null}
         </div>
 
         <ActionButton
@@ -140,7 +143,7 @@ export function CreateThumbnailForm(props: CreatorContext) {
             });
           }}
         >
-          Add thumbnail
+          {t("form.addThumbnail")}
         </ActionButton>
       </PaddedSidebarContainer>
     );
@@ -148,10 +151,12 @@ export function CreateThumbnailForm(props: CreatorContext) {
 
   return (
     <PaddedSidebarContainer>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} aria-busy={loading}>
+        {failed ? <div role="alert">{t("errors.service")}</div> : null}
+        {loading ? <output>{common("status.loading")}</output> : null}
         <div className="flex gap-2 items-center">
           <InputContainer $wide>
-            <InputLabel htmlFor="url">Link to image service</InputLabel>
+            <InputLabel htmlFor="url">{t("form.serviceUrl")}</InputLabel>
             <Input
               id="url"
               name="url"
@@ -165,8 +170,8 @@ export function CreateThumbnailForm(props: CreatorContext) {
           </InputContainer>
         </div>
         <div>
-          <ActionButton primary large type="submit" isDisabled={!url}>
-            Select size
+          <ActionButton primary large type="submit" isDisabled={!url || loading}>
+            {t("form.selectSize")}
           </ActionButton>
         </div>
       </form>

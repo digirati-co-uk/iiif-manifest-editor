@@ -1,6 +1,8 @@
+import { LocalizedIIIFBrowser } from "@manifest-editor/components";
+import { useTranslations } from "@manifest-editor/i18n";
 import { useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import { type CreatorContext, type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
-import { IIIFBrowser, IIIFBrowserProps } from "iiif-browser";
+import type { IIIFBrowserProps } from "iiif-browser";
 import { ThumbnailStripIcon } from "@manifest-editor/ui/icons/ThumbnailStripIcon";
 import { useManifest, useVault, VaultProvider } from "react-iiif-vault";
 import invariant from "tiny-invariant";
@@ -18,7 +20,9 @@ export const internalCanvas = defineCreator({
   id: "@manifest-editor/internal-canvas",
   create: createInternalCanvas,
   label: "Existing canvas",
+  labelMessage: { namespace: "creators", key: "definitions.internalCanvas.label" },
   summary: "Choose a canvas from this manifest.",
+  summaryMessage: { namespace: "creators", key: "definitions.internalCanvas.summary" },
   icon: <ThumbnailStripIcon />,
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label"],
@@ -30,6 +34,7 @@ export const internalCanvas = defineCreator({
 });
 
 function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
+  const t = useTranslations("creators");
   const notebookPlugins = useNotebookBrowserPlugins();
   const { runCreate } = props;
   const manifest = useManifest();
@@ -51,12 +56,15 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
       {
         type: "callback",
         cb: (url: string) => runCreate({ id: url }),
-        label: "Select canvas",
+        // The browser retains output descriptors at mount; resolve the label when displayed.
+        get label() {
+          return t("browser.selectCanvas");
+        },
         supportedTypes: ["Canvas"],
         format: { type: "url" },
       },
     ] as IIIFBrowserProps["output"];
-  }, [runCreate]);
+  }, [runCreate, t]);
 
   const historyOptions = useMemo(() => {
     return {
@@ -77,7 +85,7 @@ function InternalCanvas(props: CreatorContext<InternalCanvasPayload>) {
 
   return (
     <VaultProvider vault={vault}>
-      <IIIFBrowser
+      <LocalizedIIIFBrowser
         plugins={notebookPlugins}
         vault={vault}
         navigation={navigationOptions}

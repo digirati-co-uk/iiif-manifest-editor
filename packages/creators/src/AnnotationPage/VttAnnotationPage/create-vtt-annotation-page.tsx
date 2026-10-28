@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
@@ -40,6 +41,8 @@ export async function createVttAnnotationPage(data: CreateVttAnnotationPagePaylo
 }
 
 export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnotationPagePayload>) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const [label, setLabel] = useState<InternationalString>(
     props.options.initialData?.label || { en: ["Captions in WebVTT format"] }
   );
@@ -61,11 +64,11 @@ export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnot
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
         <p id="vtt-help" className="mb-4 text-sm text-gray-600">
-          Link an existing WebVTT (.vtt) file to this canvas. Host the file at a public URL before adding it.
+          {t("form.vttHelp")}
         </p>
 
         <InputContainer $wide>
-          <InputLabel htmlFor="vtt-url">WebVTT file URL</InputLabel>
+          <InputLabel htmlFor="vtt-url">{t("form.vttUrl")}</InputLabel>
           <Input
             id="vtt-url"
             name="url"
@@ -73,7 +76,7 @@ export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnot
             required
             placeholder="https://example.org/captions.vtt"
             pattern="https?://.+"
-            title="Enter an absolute http:// or https:// URL"
+            title={t("form.absoluteUrl")}
             aria-describedby="vtt-help"
             defaultValue={props.options.initialData?.url || ""}
           />
@@ -81,25 +84,25 @@ export function CreateVttAnnotationPageForm(props: CreatorContext<CreateVttAnnot
 
         <LanguageFieldEditor
           focusId="vtt-label"
-          label="Label"
+          label={property("fields.label")}
           fields={label}
           onSave={(e: any) => setLabel(e.toInternationalString())}
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="vtt-language">Language (BCP 47 code)</InputLabel>
+          <InputLabel htmlFor="vtt-language">{t("form.languageCode")}</InputLabel>
           <Input
             id="vtt-language"
             name="language"
             type="text"
             placeholder="en"
-            title="A language code such as en, fr or pt-BR"
+            title={t("form.languageCodeHelp")}
             defaultValue={props.options.initialData?.language ?? "en"}
           />
         </InputContainer>
 
         <ActionButton primary large type="submit">
-          Add captions
+          {t("form.addCaptions")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

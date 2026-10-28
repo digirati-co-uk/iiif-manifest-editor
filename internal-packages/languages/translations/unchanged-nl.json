@@ -25,6 +25,22 @@
     "content.manifest": {
       "source": "Manifest",
       "reason": "Retain the IIIF technical term Manifest in the standard wording profile; plain profiles can use item."
+    },
+    "definitions.html.label": {
+      "source": "HTML",
+      "reason": "HTML is the language-independent markup format abbreviation."
+    },
+    "definitions.video.label": {
+      "source": "Video",
+      "reason": "Video is the standard Dutch noun for the same medium."
+    },
+    "definitions.youtube.label": {
+      "source": "YouTube",
+      "reason": "YouTube is a registered platform name; retain its spelling."
+    },
+    "form.dimensions": {
+      "source": "{{width}} × {{height}} pixels",
+      "reason": "Pixels is the Dutch plural for the display unit; multiplication notation is language independent. Display values are locale formatted."
     }
   },
   "locales/en-GB/editor-api.ts": {

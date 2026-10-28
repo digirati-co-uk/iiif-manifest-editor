@@ -9,6 +9,37 @@ export interface TranslatorNote {
 
 /** Add context as catalogs expand. IDs and English wording alone do not fully specify meaning. */
 export const translatorNotes = {
+  creators: {
+    "definitions.emptyCanvas.summary": {
+      context:
+        "Picker description for a new canvas. Plain wording uses page; never change the created Canvas type, label language or layout ID.",
+    },
+    "definitions.browser.copyMetadataHelp": {
+      context:
+        "Configuration checkbox explanation: copies source manifest metadata onto imported canvases. Plain wording uses item/page and descriptive details. Field ID and source values stay unchanged.",
+    },
+    "browser.selectCanvas": {
+      context:
+        "Caller-owned action in the existing-canvas browser. Whole action becomes Select page in plain wording. Selected callback ID is unchanged.",
+    },
+    "form.dimensions": {
+      context: "Thumbnail size option, not an Image API request or stored dimensions.",
+      placeholders: {
+        width: "UI-locale formatted width in pixels",
+        height: "UI-locale formatted height in pixels; empty if absent from source service",
+      },
+      terminology:
+        "Pixels is also the Dutch plural. Keep multiplication notation; do not localise numeric protocol values.",
+    },
+    "form.languageCode": {
+      context:
+        "Language of authored WebVTT captions, independent of the interface language. BCP 47 and examples en/fr/pt-BR are protocol values.",
+    },
+    "errors.media": {
+      context:
+        "Friendly feedback for an external media failure. Original diagnostics remain verbatim under Technical details; this whole message updates with the UI locale.",
+    },
+  },
   common: {
     "actions.remove": {
       context:
