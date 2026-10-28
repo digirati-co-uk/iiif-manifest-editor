@@ -1,0 +1,5 @@
+{
+  "extends": "../../internal-packages/typescript-config/react-library.json",
+  "compilerOptions": { "allowImportingTsExtensions": true },
+  "include": ["src", "test", "tsdown.config.ts"]
+}

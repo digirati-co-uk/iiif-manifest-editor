@@ -1,6 +1,6 @@
 # Public i18n runtime and workspace bootstrap
 
-Status: Pending new module. This task creates a new runtime or changes repository-level integration.
+Status: Runtime implemented and source-tested. Parent application and release-package integration checks remain; see implementation evidence below.
 
 Create the shared, publishable React provider and i18next adapter that every independently published consumer and plugin can resolve.
 
@@ -37,10 +37,10 @@ Paths identify starting points, not a complete allow-list. The inventory ranks a
 
 ## Acceptance checks
 
-- [ ] Two providers on one page use different locales/profiles without leaking text or resource changes.
-- [ ] Switching locale with unsaved form state and undo history preserves both.
+- [x] Two providers on one page use different locales/profiles without leaking text or resource changes (React/jsdom fixture).
+- [x] Switching locale with unsaved form state and undo history preserves both (mounted React fixture; whole-editor integration pending).
 - [ ] A separately installed plugin resolves the host provider; SSR hydration starts with identical messages.
-- [ ] Actual i18next integration verifies English fallback plural rules and a non-English locale; unit tests of option objects alone are insufficient.
+- [x] Actual i18next integration verifies English fallback plural rules and a non-English locale.
 
 ## Boundaries
 
@@ -48,8 +48,42 @@ Keep runtime routing independent of Next.js; keep the private authoring package 
 
 Keep stable IDs, protocol values and authored content outside UI lookups. Public code must not require the unpublished language package at runtime or in emitted declarations. Resolve references under the editor's shared public provider at render time; use fallback strings for definitions that have not yet migrated.
 
-This is the next integration task. No public runtime or engine dependency has been created in the current package-only work.
+The public runtime and engine dependencies now exist. Application bootstrap and consumer migration remain separate modules.
 
 ## Handoff
 
 Record migrated directories, reviewed/exempted inventory entries, added semantic IDs, required namespaces and supported locale/profile combinations. Add translator context for placeholders and terminology. Link validation results and outstanding dependency UI to this guide. Mark this task complete only when its acceptance checks pass; seed catalogs alone do not complete a consumer migration.
+
+## Implementation evidence — 28 October 2026
+
+Implemented in `packages/i18n` as public `@manifest-editor/i18n`; no consumer UI migrated and no authored IIIF/content-language or worker data changed. The package owns no new semantic messages. Existing English namespace sources and plain overlays are consumed synchronously by `src/builtins.ts`, so edits to those source catalogs are immediately available in development. New namespaces can be added there or registered at runtime. No Dutch translations were authored; `dutchLocale` is metadata for host-supplied future `nl` catalogs/loaders.
+
+Completed runtime work:
+
+- Public self-contained serialisable contracts: `MessageReference`, `Catalog`, `CatalogContract`, `ResourceStore`, `UiI18nConfig`, locale metadata and loader registration. No public signature imports private authoring types. Open string namespaces/keys support later complete catalogs and third-party plugins.
+- Pinned actual engine versions `i18next@26.5.11` / `react-i18next@17.1.9`, installed with lifecycle scripts disabled. Added languages/runtime workspace importers to the lockfile; pnpm also updated engine/test-environment peer snapshots. Existing workspace globs suffice; root scripts were not changed.
+- `createEditorI18n()` creates a synchronous SSR-safe isolated instance. `EditorI18nProvider`, `useEditorI18n`, `useTranslations`, `EditorTrans`, `EditorI18nScope`, `createMessageReference`, and `createCatalogContract` are exported from one shared package entry point. There is no initialized global i18next singleton.
+- Foundation composition, validation, locale selection, registry and latest-loader helpers are used behind public wrappers. Presets → profile → preset/profile → host composition remains explicit. Missing/fallback string diagnostics and strict coverage are exposed separately.
+- Locale/profile/resource snapshots commit together. Failed loads preserve the previous snapshot, failed requests retry, overlapping loads coalesce, and superseded selections cannot overwrite newer results. Changing selection does not key/remount the React subtree. Controlled setters request host updates; uncontrolled setters update the instance.
+- English defaults work outside a provider. SSR initializes from supplied resources with no browser/storage reads; client hydration uses the same selection. `lang`/`dir` are scoped locally; portal content can use `EditorI18nScope`. React subscriptions clean up; pending network operations are not aborted.
+- Development exports resolve source directly, with no manual build. `publishConfig` targets ESM/CJS/declarations; tsdown explicitly bundles private authoring data/helpers and externalizes React/engines. Downstream packages must externalize `@manifest-editor/i18n` itself to share the context. See `packages/i18n/README.md` for the precise API and integration examples.
+
+Actual validation (no package build or server operations):
+
+- Runtime Vitest integration suite (7 tests): actual French zero/other plurals, English fallback under Russian plural rules, diagnostics/coverage, profile/layer composition, runtime namespace registration, validation rejection, failed-loader recovery, selection races, atomic locale/profile commits, serialisable references, and interpolation that cannot override engine options.
+- React/jsdom suite (6 tests): two provider instances, a consumer fixture importing the public package export, unsaved form/undo-history preservation, controlled host updates, full rich sentences, scoped portal content, standalone defaults, and SSR-to-hydration parity without recoverable errors.
+- `pnpm --filter @manifest-editor/i18n typecheck` and targeted `oxlint src test --deny-warnings`.
+- Foundation regression suite: 30 tests pass. `pnpm --filter @manifest-editor/languages validate` validates 264 seed messages across 19 namespaces and six profile/preset combinations; this is foundation coverage, not application translation completeness.
+
+Acceptance status and remaining integration checks:
+
+- [x] Two mounted providers use isolated locales/profiles and resources.
+- [x] Mounted React form/undo fixture survives locale/profile switches.
+- [x] Actual i18next plural/fallback tests and real non-English fixture data.
+- [x] SSR/hydration parity with synchronous supplied catalogs.
+- [x] Separate source consumer module resolves the shared public package/context without building.
+- [ ] Whole-editor unsaved state, undo store, unchanged exported IIIF, dependency widgets and browser accessibility: parent/consumer integration checks; this module intentionally does not migrate those surfaces.
+- [ ] Published ESM/CJS tarballs, emitted declaration inspection, independently installed plugin identity and production browser distribution: module 29/release verification. Build prohibition means these have not been executed; source tests are not evidence of tarball validity.
+- [ ] Complete English/Dutch catalogs and their required-namespace coverage belong to consumer/translation modules. Only English is enabled by default. Enabling metadata without catalogs exposes incomplete coverage and fallback, not a claim of translation support.
+
+The parent server at port 3000 was left untouched. This checkout's changes require parent integration before browser verification. The acceptance checklist distinguishes source/runtime evidence from release checks still outstanding.
