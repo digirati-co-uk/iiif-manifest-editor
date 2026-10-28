@@ -220,3 +220,15 @@ registration guard. Clean integrated SSR remains an open acceptance gate.
 Standalone notebook dependency commands, Leaflet/Draw, vault shape controls and independently
 installed npm consumers still have the limits in guide04-dependency-localisation and
 patches/README. Web translations and current browser adapter wiring do not close those gaps.
+
+## Parent integration review
+
+Integrated with creator08 and the shared shape/search/plugin fixes. Parent reran **19 web tests**, including the retained-browser-action regression, the host/control no-emit check and strict Dutch validation (**1883 combined messages**, zero missing/unreviewed). Mandatory host coverage now also includes creators, which is used by the editing workflows.
+
+Review found that the retained IIIFBrowserModal output descriptor captured the initial action label. It now resolves the label through a getter, matching the creator browser contract. A regression mounts the real localized browser through the real import modal, changes EN/NL with a selected Welsh-labelled manifest, and verifies the same action DOM, selection, history, Vault content and callback URL.
+
+The latest running-app create/edit/metadata/preview journey passes; both host SSR/header tests still fail with HTTP500 from duplicate ProseMirror gapcursor registration during Turbopack SSR. The narrow header checks and client selection run before the reload failure, but a full SSR/hydration acceptance result is still absent. No server restart, cache deletion or SSR suppression occurred. Public facade19 must still replace WebManifestEditor while retaining the current resource forwarding and behavior; an independent web/creator integration review remains pending.
+
+The real browser-modal test initially exposed mismatched installed copies: filtered installs had linked patched IIIF Browser in shared packages while apps/web still referenced its old copy. A full `pnpm install --ignore-scripts --frozen-lockfile` synchronized all 30 workspace projects. Web, components, creators and shell now resolve the same patched browser path, and the real-context test passes. The existing SSR500 remains after synchronization, so this is not claimed as its fix. Web Vitest inlines iiif-browser/react-timeago for the dependency's extensionless ESM imports, matching the component/creator test setup.
+
+The latest full source check reports **108 diagnostics**, with the same web-local CloudflareEnv.PREVIEW_KV diagnostic and none in the new browser test. The focused host check passes. Shared shape controls now cover the earlier vault fallback; independent notebook commands and Leaflet/Draw remain open dependency surfaces.

@@ -40,7 +40,10 @@ export function IIIFBrowserModal({ isOpen, setIsOpen }: { isOpen: boolean; setIs
       {
         type: "callback",
         cb: (url: string) => openManifest(url),
-        label: webT("browser.openManifest"),
+        // Browser output descriptors are retained; resolve wording at display time.
+        get label() {
+          return webT("browser.openManifest");
+        },
         supportedTypes: ["Manifest"],
         format: { type: "url" },
       },

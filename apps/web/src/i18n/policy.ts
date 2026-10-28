@@ -15,6 +15,7 @@ export const webRequiredNamespaces = Object.freeze([
   "shell",
   "editor-api",
   "editors",
+  "creators",
   "projects",
   "ui",
 ]);

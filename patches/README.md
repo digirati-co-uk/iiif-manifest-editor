@@ -85,3 +85,10 @@ locations. No dependency rebuild, upstream publication or remote mutation occurs
 Workspace patches cover hosted workspace installs; external npm SDK consumers need
 equivalent upstream support or these same patches and dependency extension.
 Publication bundles/tarballs remain unverified while builds are prohibited.
+
+After changing patch hashes, synchronize the whole workspace with
+`pnpm install --ignore-scripts --frozen-lockfile` before cross-package verification.
+A filtered install can leave consumers outside its scope linked to the previous
+unpatched virtual package while shared libraries use the new copy. Parent's real
+web-browser-context test reproduced that mismatch; the full scripts-disabled
+installation restores a single matching browser identity across those consumers.

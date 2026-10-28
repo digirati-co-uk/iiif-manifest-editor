@@ -11,6 +11,7 @@ export default defineConfig({
   },
   oxc: { jsx: { runtime: "automatic" } },
   test: {
+    server: { deps: { inline: ["iiif-browser", "react-timeago"] } },
     include: ["apps/web/test/**/*.test.tsx"],
     environment: "jsdom",
   },
